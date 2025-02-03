@@ -67,7 +67,7 @@ export class ScheduleSectionComponent implements OnChanges {
 
     if (values.schedule) {
       payload.schedule = {
-        ...crontabToSchedule(values.schedule_picker),
+        ...crontabToSchedule(values.schedule_picker || ''),
         begin: values.schedule_begin,
         end: values.schedule_end,
       };

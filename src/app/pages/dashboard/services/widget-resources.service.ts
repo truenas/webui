@@ -123,7 +123,7 @@ export class WidgetResourcesService {
     );
   }
 
-  getPoolById(poolId: string): Observable<Pool> {
+  getPoolById(poolId: string): Observable<Pool | undefined> {
     return this.pools$.pipe(
       map((pools) => pools.find((pool) => pool.id === +poolId || pool.name === poolId)),
       shareReplay({ bufferSize: 1, refCount: true }),
@@ -169,6 +169,7 @@ export class WidgetResourcesService {
     return this.api.subscribe('app.stats').pipe(
       filter(() => Boolean(appName)),
       map((event) => event.fields.find((stats) => stats.app_name === appName)),
+      filter((stats) => !!stats),
       throttleTime(500),
       toLoadingState(),
     );

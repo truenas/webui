@@ -119,7 +119,7 @@ export class DockerImageDeleteDialogComponent {
             this.bulkItems.set(imageId, {
               ...bulkItem,
               state: BulkListItemState.Success,
-              message: null,
+              message: '',
             });
             if (this.bulkItems.size === 1) {
               this.dialogRef.close(true);

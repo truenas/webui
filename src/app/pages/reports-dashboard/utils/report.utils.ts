@@ -45,7 +45,7 @@ export const maxDecimals = (input: number, max = 2): number => {
   return prepareInput < 1000 ? Number(prepareInput.toString().slice(0, 4)) : Math.round(prepareInput);
 };
 
-export function inferUnits(label: string): string | undefined {
+export function inferUnits(label: string): string {
   const lowerLabel = label.toLowerCase();
 
   if (label.includes('%') || lowerLabel.includes('percentage')) return '%';
@@ -140,7 +140,7 @@ export function formatValue(value: number, units: string): string {
   }
 }
 
-export function convertAggregations(input: ReportingData, labelY?: string): ReportingData {
+export function convertAggregations(input: ReportingData, labelY: string): ReportingData {
   const output = { ...input };
   const units = inferUnits(labelY);
   const keys = Object.keys(output.aggregations);

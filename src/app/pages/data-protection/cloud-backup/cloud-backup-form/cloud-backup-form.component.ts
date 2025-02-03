@@ -288,7 +288,7 @@ export class CloudBackupFormComponent implements OnInit {
     this.form.controls.credentials.valueChanges
       .pipe(untilDestroyed(this))
       .subscribe((credentialId) => {
-        if (credentialId !== this.editingTask?.credentials?.id) {
+        if (credentialId !== (this.editingTask?.credentials?.id || null)) {
           this.form.controls.bucket.patchValue('');
         }
 

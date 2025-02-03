@@ -11,5 +11,4 @@ export const backupTasksWidget = dashboardWidget({
   supportedSizes: [SlotSize.Full],
   category: WidgetCategory.BackupTasks,
   component: WidgetBackupComponent,
-  settingsComponent: null,
 });

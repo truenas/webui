@@ -72,7 +72,7 @@ describe('FibreChannelService', () => {
     });
 
     it('creates new port and updates link', async () => {
-      await lastValueFrom(spectator.service.linkFiberChannelToTarget(fakeTargetId, undefined, fakeHostId));
+      await lastValueFrom(spectator.service.linkFiberChannelToTarget(fakeTargetId, '', fakeHostId));
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
         'fc.fc_host.update',

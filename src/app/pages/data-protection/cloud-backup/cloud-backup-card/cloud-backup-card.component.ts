@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit, signal,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
@@ -74,6 +74,7 @@ export class CloudBackupCardComponent implements OnInit {
   dataProvider: AsyncDataProvider<CloudBackup>;
   readonly requiredRoles = [Role.CloudBackupWrite];
   protected readonly searchableElements = replicationListElements;
+  updatedCount = signal(0);
 
   columns = createTable<CloudBackup>([
     textColumn({
@@ -228,15 +229,22 @@ export class CloudBackupCardComponent implements OnInit {
   }
 
   private onChangeEnabledState(cloudBackup: CloudBackup): void {
+    this.updatedCount.update((count) => count + 1);
     this.api
       .call('cloud_backup.update', [cloudBackup.id, { enabled: !cloudBackup.enabled } as CloudBackupUpdate])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
-          this.getCloudBackups();
+          this.updatedCount.update((count) => count - 1);
+          if (!this.updatedCount()) {
+            this.getCloudBackups();
+          }
         },
         error: (err: unknown) => {
-          this.getCloudBackups();
+          this.updatedCount.update((count) => count - 1);
+          if (!this.updatedCount()) {
+            this.getCloudBackups();
+          }
           this.dialogService.error(this.errorHandler.parseError(err));
         },
       });

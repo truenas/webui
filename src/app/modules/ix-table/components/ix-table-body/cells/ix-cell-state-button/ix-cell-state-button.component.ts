@@ -84,7 +84,11 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> implements
       this.state.set(this.value as JobState);
       return;
     }
-    const jobId = this.getJob(this.row()).id;
+    const jobId = this.getJob(this.row())?.id;
+    if (!jobId) {
+      return;
+    }
+
     this.jobUpdates$ = this.store$.select(selectJob(jobId)).pipe(
       filter((job) => !!job),
       tap((job) => {

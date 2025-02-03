@@ -21,7 +21,7 @@ import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 })
 export class WidgetDatapointComponent {
   size = input.required<SlotSize>();
-  label = input<string>();
+  label = input<string>('');
   text = input.required<string>();
   subText = input<string>();
 

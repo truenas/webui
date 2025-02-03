@@ -4,7 +4,7 @@
       <h2 class="section">
         {{ section.label | translate }}
       </h2>
-      @if (getElementsBySection(section.value)?.length) {
+      @if (getElementsBySection(section.value).length) {
         <div class="section-content">
           @if (getLimitedSectionResults(section.value); as sectionResults) {
             @for (result of sectionResults; track result.anchor; let i = $index) {
