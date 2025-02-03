@@ -9,6 +9,7 @@
   "Instance must be stopped to update VNC.": "",
   "Manage Volumes": "",
   "Not used": "",
+  "Root Disk": "",
   "Root Disk Size (in GiB)": "",
   "Secure Boot": "",
   "Secure Boot ensures that only trusted, signed software runs during a system’s startup process. May be incompatible with some images.": "",
