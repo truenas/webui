@@ -1,9 +1,12 @@
 import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
 import { MatAnchor, MatButton } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { VirtualizationGlobalState } from 'app/enums/virtualization.enum';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
@@ -12,6 +15,9 @@ import {
 import {
   VirtualizationStateComponent,
 } from 'app/pages/virtualization/components/all-instances/all-instances-header/virtualization-state/virtualization-state.component';
+import {
+  VolumesDialogComponent,
+} from 'app/pages/virtualization/components/common/volumes-dialog/volumes-dialog.component';
 import {
   VirtualizationConfigStore,
 } from 'app/pages/virtualization/stores/virtualization-config.store';
@@ -30,6 +36,10 @@ import {
     MatAnchor,
     RouterLink,
     VirtualizationStateComponent,
+    IxIconComponent,
+    MatMenu,
+    MatMenuItem,
+    MatMenuTrigger,
   ],
 })
 export class AllInstancesHeaderComponent {
@@ -48,13 +58,20 @@ export class AllInstancesHeaderComponent {
 
   constructor(
     private slideIn: SlideIn,
+    private matDialog: MatDialog,
     private configStore: VirtualizationConfigStore,
   ) {}
 
-  protected onEdit(): void {
+  protected onGlobalConfiguration(): void {
     this.slideIn
       .open(GlobalConfigFormComponent, { data: this.config() })
       .pipe(untilDestroyed(this))
       .subscribe();
+  }
+
+  protected onManageVolumes(): void {
+    this.matDialog.open(VolumesDialogComponent, {
+      minWidth: '80vw',
+    });
   }
 }
