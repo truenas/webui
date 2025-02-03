@@ -2,7 +2,9 @@ import {
   ChangeDetectionStrategy, Component, input,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
+import { instanceDetailsElements } from 'app/pages/virtualization/components/all-instances/instance-details/instance-details.elements';
 import {
   InstanceDevicesComponent,
 } from 'app/pages/virtualization/components/all-instances/instance-details/instance-devices/instance-devices.component';
@@ -37,8 +39,11 @@ import {
     InstanceMetricsComponent,
     InstanceNicsComponent,
     InstanceIdmapComponent,
+    UiSearchDirective,
   ],
 })
 export class InstanceDetailsComponent {
   instance = input.required<VirtualizationInstance>();
+
+  protected readonly searchableElements = instanceDetailsElements;
 }
