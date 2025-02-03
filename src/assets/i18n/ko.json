@@ -30,7 +30,7 @@
   " bytes.": " 바이트입니다.",
   " seconds.": " 초입니다.",
   "\"Power On Hours\" are how many hours have passed while the disk has been powered on. \"Power On Hours Ago\" is how many power on hours have passed since each test.": "\"전원 인가 시간\"은 디스크에 전원이 인가된 시간입니다. \"검사 후 전원 인가 시간\"은 각 검사 후 전원이 인가된 시간입니다.",
-  "% of all cores": "% (전체 코어) ",
+  "% of all cores": "전체 코어 백분율",
   "'Hosts Allow' or 'Hosts Deny' has been set": "'허용한 호스트' 또는 '거부한 호스트' 설정됨",
   "'Hosts Allow' or 'Hosts Deny' has been updated": "'허용한 호스트' 또는 '거부한 호스트' 갱신함",
   "(24 Hours)": "(24시간제)",
