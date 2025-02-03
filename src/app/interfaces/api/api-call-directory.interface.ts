@@ -248,9 +248,9 @@ import {
   DeleteUserParams, SetPasswordParams, User, UserUpdate,
 } from 'app/interfaces/user.interface';
 import {
-  VirtualizationDevice, VirtualizationGlobalConfig,
-  VirtualizationImage, VirtualizationImageParams,
-  VirtualizationInstance, VirtualizationNetwork, AvailableUsb, AvailableGpus,
+  VirtualizationInstance, VirtualizationDevice, VirtualizationImageParams,
+  VirtualizationImage, AvailableGpus, AvailableUsb, VirtualizationGlobalConfig,
+  VirtualizationNetwork, VirtualizationVolume, VirtualizationVolumeUpdate,
 } from 'app/interfaces/virtualization.interface';
 import {
   MatchDatastoresWithDatasets,
@@ -885,6 +885,10 @@ export interface ApiCallDirectory {
   'virt.global.config': { params: []; response: VirtualizationGlobalConfig };
   'virt.global.get_network': { params: [name: string]; response: VirtualizationNetwork };
   'virt.global.pool_choices': { params: []; response: Choices };
+
+  'virt.volume.query': { params: QueryParams<VirtualizationVolume>; response: VirtualizationVolume[] };
+  'virt.volume.update': { params: VirtualizationVolumeUpdate; response: VirtualizationVolume };
+  'virt.volume.delete': { params: [id: string]; response: true };
 
   'system.advanced.get_gpu_pci_choices': { params: void; response: Choices };
 
