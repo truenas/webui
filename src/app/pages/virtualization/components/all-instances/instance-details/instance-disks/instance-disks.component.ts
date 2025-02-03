@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, computed, input,
+} from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
   MatCard, MatCardContent, MatCardHeader, MatCardTitle,
@@ -8,7 +10,8 @@ import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter } from 'rxjs/operators';
 import { VirtualizationDeviceType } from 'app/enums/virtualization.enum';
-import { VirtualizationDisk } from 'app/interfaces/virtualization.interface';
+import { VirtualizationDisk, VirtualizationInstance } from 'app/interfaces/virtualization.interface';
+import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
@@ -34,9 +37,12 @@ import { VirtualizationDevicesStore } from 'app/pages/virtualization/stores/virt
     TestDirective,
     TranslateModule,
     DeviceActionsMenuComponent,
+    FileSizePipe,
   ],
 })
 export class InstanceDisksComponent {
+  readonly instance = input.required<VirtualizationInstance>();
+
   protected readonly isLoadingDevices = this.deviceStore.isLoading;
 
   constructor(
@@ -60,7 +66,7 @@ export class InstanceDisksComponent {
   }
 
   private openDiskForm(disk?: VirtualizationDisk): void {
-    this.slideIn.open(InstanceDiskFormComponent, { data: { disk, instance: this.deviceStore.selectedInstance() } })
+    this.slideIn.open(InstanceDiskFormComponent, { data: { disk, instance: this.instance() } })
       .pipe(filter((result) => !!result.response), untilDestroyed(this))
       .subscribe(() => this.deviceStore.loadDevices());
   }

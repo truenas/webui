@@ -33,7 +33,6 @@ export interface VirtualizationInstance {
   cpu: string;
   memory: number;
   autostart: boolean;
-  secure_boot?: boolean;
   environment: Record<string, string>;
   aliases: VirtualizationAlias;
   raw: unknown;
@@ -41,6 +40,8 @@ export interface VirtualizationInstance {
   vnc_enabled: boolean;
   vnc_port: number | null;
   vnc_password: string | null;
+  secure_boot: boolean;
+  root_disk_size: number | null;
   userns_idmap?: UserNsIdmap;
 }
 
