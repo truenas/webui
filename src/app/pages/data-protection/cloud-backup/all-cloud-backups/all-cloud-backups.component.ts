@@ -42,7 +42,6 @@ import { cloudBackupListElements } from 'app/pages/data-protection/cloud-backup/
 })
 export class AllCloudBackupsComponent implements OnInit {
   dataProvider: AsyncDataProvider<CloudBackup>;
-  protected readonly selectedBackup = signal<CloudBackup>(null);
   protected readonly cloudBackups = signal<CloudBackup[]>([]);
   protected readonly searchableElements = cloudBackupListElements;
   readonly requiredRoles = [Role.CloudBackupWrite];
@@ -104,7 +103,6 @@ export class AllCloudBackupsComponent implements OnInit {
       direction: SortDirection.Asc,
       propertyName: 'description',
     });
-
     this.dataProvider.load();
   }
 }

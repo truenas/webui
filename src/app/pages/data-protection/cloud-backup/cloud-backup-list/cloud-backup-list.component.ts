@@ -35,7 +35,6 @@ import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -60,7 +59,6 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
     TranslateModule,
     AsyncPipe,
     SearchInput1Component,
-    FakeProgressBarComponent,
   ],
 })
 export class CloudBackupListComponent {

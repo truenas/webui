@@ -1,76 +1,61 @@
+import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { provideMockStore } from '@ngrx/store/testing';
-import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
+import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { ControllerType } from 'app/enums/controller-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyService } from 'app/modules/empty/empty.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   CloudBackupFormComponent,
 } from 'app/pages/data-protection/cloud-backup/cloud-backup-form/cloud-backup-form.component';
 import { CloudBackupListComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-list/cloud-backup-list.component';
-import { selectPreferences } from 'app/store/preferences/preferences.selectors';
-import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
+
+const cloudBackups = [
+  {
+    id: 1,
+    description: 'UA',
+    path: '/mnt/nmnmn',
+    pre_script: 'your_pre_script',
+    snapshot: false,
+    enabled: false,
+    job: {
+      state: JobState.Finished,
+      time_finished: {
+        $date: new Date().getTime() - 50000,
+      },
+    },
+  },
+] as CloudBackup[];
 
 describe('CloudBackupListComponent', () => {
   let spectator: Spectator<CloudBackupListComponent>;
+  let loader: HarnessLoader;
   let table: IxTableHarness;
-
-  const cloudBackups = [
-    {
-      id: 1,
-      description: 'UA',
-      path: '/mnt/nmnmn',
-      pre_script: 'your_pre_script',
-      snapshot: false,
-      enabled: false,
-      job: {
-        state: JobState.Finished,
-        time_finished: {
-          $date: new Date().getTime() - 50000,
-        },
-      },
-    },
-  ] as CloudBackup[];
-
-  const mockDataProvider = {
-    currentPage$: of(cloudBackups),
-    selectedControllerType: ControllerType.Active,
-    load: jest.fn(),
-    setPagination: jest.fn(),
-    setParams: jest.fn(),
-    sorting: {
-      propertyName: 'description',
-      direction: 'asc',
-      active: 1,
-    },
-    pagination: {
-      pageSize: 10,
-      pageNumber: 1,
-    },
-    controlsStateUpdated: of(true),
-  } as unknown as AsyncDataProvider<CloudBackup>;
 
   const createComponent = createComponentFactory({
     component: CloudBackupListComponent,
     imports: [
-      MockComponents(
-        SearchInput1Component,
-      ),
+      SearchInput1Component,
     ],
     providers: [
       mockAuth(),
+      mockApi([
+        mockCall('cloud_backup.query', cloudBackups),
+        mockCall('cloud_backup.delete'),
+        mockCall('cloud_backup.update'),
+        mockJob('cloud_backup.sync'),
+      ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
@@ -79,39 +64,21 @@ describe('CloudBackupListComponent', () => {
           response: true,
         })),
       }),
-      provideMockStore({
-        selectors: [
-          {
-            selector: selectSystemConfigState,
-            value: {},
-          },
-          {
-            selector: selectPreferences,
-            value: {},
-          },
-          {
-            selector: selectJobs,
-            value: [{
-              state: JobState.Finished,
-              time_finished: {
-                $date: new Date().getTime() - 50000,
-              },
-            }],
-          },
-        ],
-      }),
+      mockProvider(SnackbarService),
+      mockProvider(EmptyService),
     ],
   });
 
   beforeEach(async () => {
+    const dataProvider = new AsyncDataProvider(of(cloudBackups));
     spectator = createComponent({
       props: {
-        dataProvider: mockDataProvider,
+        dataProvider,
         cloudBackups,
       },
     });
-    table = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, IxTableHarness);
-    spectator.detectChanges();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    table = await loader.getHarness(IxTableHarness);
   });
 
   it('shows form to edit an existing Cloud Backup when Edit button is pressed', async () => {

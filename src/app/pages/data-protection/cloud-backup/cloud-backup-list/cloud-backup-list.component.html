@@ -1,9 +1,4 @@
 <div class="item-search">
-  <ix-fake-progress-bar
-    class="loader-bar"
-    [loading]="dataProvider()?.isLoading$ | async"
-  ></ix-fake-progress-bar>
-
   <ix-search-input1
     [maxLength]="100"
     [disabled]="!cloudBackups().length"
@@ -12,8 +7,8 @@
   ></ix-search-input1>
 </div>
 
-
 <ix-table
+  class="backups"
   [ixUiSearch]="searchableElements.elements.tasks"
   [ix-table-empty]="!(dataProvider()?.currentPageCount$ | async)"
   [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider()?.emptyType$ | async)"
