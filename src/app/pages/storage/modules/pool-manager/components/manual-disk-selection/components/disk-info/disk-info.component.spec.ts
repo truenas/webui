@@ -34,7 +34,7 @@ describe('DiskInfoComponent', () => {
   it('adds .no-slot class when there is no enclosure', () => {
     spectator.setInput({
       disk: {
-        enclosure: null,
+        enclosure: {},
       } as DetailsDisk,
     });
 

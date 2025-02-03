@@ -10,13 +10,15 @@ import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Preferences } from 'app/interfaces/preferences.interface';
+import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   IxTableExpandableRowComponent,
 } from 'app/modules/ix-table/components/ix-table-expandable-row/ix-table-expandable-row.component';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { ApiService } from 'app/modules/websocket/api.service';
+import { OneTimePasswordCreatedDialogComponent } from 'app/pages/credentials/users/one-time-password-created-dialog/one-time-password-created-dialog.component';
 import {
   DeleteUserDialogComponent,
 } from 'app/pages/credentials/users/user-details-row/delete-user-dialog/delete-user-dialog.component';
@@ -50,6 +52,7 @@ const dummyUser = {
 describe('UserDetailsRowComponent', () => {
   let spectator: Spectator<UserDetailsRowComponent>;
   let loader: HarnessLoader;
+  let api: ApiService;
 
   const createComponent = createComponentFactory({
     component: UserDetailsRowComponent,
@@ -61,8 +64,15 @@ describe('UserDetailsRowComponent', () => {
       mockProvider(SlideIn, {
         open: jest.fn(),
       }),
+      mockProvider(DialogService, {
+        confirm: jest.fn(() => of(true)),
+      }),
       mockApi([
+        mockCall('auth.generate_onetime_password', 'test-password'),
         mockCall('user.delete'),
+        mockCall('system.security.config', {
+          enable_gpos_stig: false,
+        } as SystemSecurityConfig),
         mockCall('group.query', []),
       ]),
       mockProvider(MatDialog, {
@@ -70,8 +80,6 @@ describe('UserDetailsRowComponent', () => {
           afterClosed: () => of(true),
         })),
       }),
-      mockProvider(AppLoaderService),
-      mockProvider(DialogService),
       mockAuth(),
       provideMockStore({
         selectors: [
@@ -93,6 +101,7 @@ describe('UserDetailsRowComponent', () => {
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    api = spectator.inject(ApiService);
   });
 
   it('should open edit user form', async () => {
@@ -138,5 +147,26 @@ describe('UserDetailsRowComponent', () => {
     expect(router.navigateByUrl).toHaveBeenCalledWith(
       '/system/audit/{"searchQuery":{"isBasicQuery":false,"filters":[["username","=","test-user"]]}}',
     );
+  });
+
+  it('generates Generate One-Time Password when Generate One-Time Password button is pressed', async () => {
+    spectator.component.isStigMode.set(true);
+
+    const button = await loader.getHarness(MatButtonHarness.with({ text: /Generate One-Time Password/ }));
+    await button.click();
+
+    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
+      expect.objectContaining({
+        title: 'Generate One-Time Password',
+        message: 'Are you sure you want to generate a one-time password for "test-user" user?',
+        hideCheckbox: true,
+      }),
+    );
+
+    expect(api.call).toHaveBeenCalledWith('auth.generate_onetime_password', [{ username: 'test-user' }]);
+
+    expect(spectator.inject(MatDialog).open).toHaveBeenLastCalledWith(OneTimePasswordCreatedDialogComponent, {
+      data: 'test-password',
+    });
   });
 });

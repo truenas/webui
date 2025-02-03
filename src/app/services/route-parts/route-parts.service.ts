@@ -7,7 +7,7 @@ import { filter } from 'rxjs/operators';
 export interface RoutePart {
   title: string;
   breadcrumb: string;
-  url: string;
+  url: string | null;
   ngUrl?: string[];
   isNew?: boolean;
 }

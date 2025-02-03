@@ -44,6 +44,15 @@
       .es60-cls-8 {
         fill: #cccccb;
       }
+
+      /* Contrast Fixes */
+      #ES60_Gen_1 .sides {
+        opacity: 0.75;
+      }
+
+      #ES60_Gen_1_CHASSIS {
+        opacity: 0.15;
+      }
     </style>
   </defs>
   <g id="ES60_Gen_1_CHASSIS" data-name="ES60 Gen 1 CHASSIS">
@@ -110,13 +119,13 @@
         <path class="es60-cls-6" d="M97.2,1458.9h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M71,1420l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="-15.4" y="1516" width="172.8" height="91.4" transform="translate(1632.7 1490.7) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="-15.4" y="1516" width="172.8" height="91.4" transform="translate(1632.7 1490.7) rotate(90)"/>
       <rect class="es60-cls-8" x="84.7" y="1677" width="60.9" height="3.2" transform="translate(-1563.4 1793.7) rotate(-90)"/>
       <rect class="es60-cls-8" x="-3.6" y="1677" width="60.9" height="3.2" transform="translate(-1651.7 1705.5) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="69.9" y="1660.5" width="7.8" height="75.5" transform="translate(1772 1624.4) rotate(90)"/>
         <rect class="es60-cls-8" x="70.2" y="1653" width="1.6" height="81.1" transform="translate(1764.5 1622.5) rotate(90)"/>
-        <rect class="es60-cls-8" x="48.7" y="1629.9" width="44.6" height="81.1" transform="translate(-1599.4 1741.4) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="48.7" y="1629.9" width="44.6" height="81.1" transform="translate(-1599.4 1741.4) rotate(-90)"/>
         <rect class="es60-cls-8" x="44" y="1692.7" width="9.4" height="9.4" transform="translate(1746.2 1648.7) rotate(90)"/>
         <rect class="es60-cls-8" x="94.9" y="1694" width="9.4" height="6.9" transform="translate(1797 1597.8) rotate(90)"/>
       </g>
@@ -147,13 +156,13 @@
         <path class="es60-cls-6" d="M189.7,1458.9h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M163.5,1420l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="77.1" y="1516" width="172.8" height="91.4" transform="translate(1725.2 1398.2) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="77.1" y="1516" width="172.8" height="91.4" transform="translate(1725.2 1398.2) rotate(90)"/>
       <rect class="es60-cls-8" x="177.2" y="1677" width="60.9" height="3.2" transform="translate(-1470.9 1886.2) rotate(-90)"/>
       <rect class="es60-cls-8" x="88.9" y="1677" width="60.9" height="3.2" transform="translate(-1559.2 1798) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="162.4" y="1660.5" width="7.8" height="75.5" transform="translate(1864.5 1531.9) rotate(90)"/>
         <rect class="es60-cls-8" x="162.7" y="1653" width="1.6" height="81.1" transform="translate(1857.1 1530) rotate(90)"/>
-        <rect class="es60-cls-8" x="141.2" y="1629.9" width="44.6" height="81.1" transform="translate(-1506.9 1833.9) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="141.2" y="1629.9" width="44.6" height="81.1" transform="translate(-1506.9 1833.9) rotate(-90)"/>
         <rect class="es60-cls-8" x="136.5" y="1692.7" width="9.4" height="9.4" transform="translate(1838.7 1556.2) rotate(90)"/>
         <rect class="es60-cls-8" x="187.4" y="1694" width="9.4" height="6.9" transform="translate(1889.5 1505.3) rotate(90)"/>
       </g>
@@ -184,13 +193,13 @@
         <path class="es60-cls-6" d="M282.2,1458.9h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M256,1420l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="169.6" y="1516" width="172.8" height="91.4" transform="translate(1817.7 1305.7) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="169.6" y="1516" width="172.8" height="91.4" transform="translate(1817.7 1305.7) rotate(90)"/>
       <rect class="es60-cls-8" x="269.7" y="1677" width="60.9" height="3.2" transform="translate(-1378.4 1978.7) rotate(-90)"/>
       <rect class="es60-cls-8" x="181.4" y="1677" width="60.9" height="3.2" transform="translate(-1466.7 1890.5) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="254.9" y="1660.5" width="7.8" height="75.5" transform="translate(1957 1439.4) rotate(90)"/>
         <rect class="es60-cls-8" x="255.2" y="1653" width="1.6" height="81.1" transform="translate(1949.6 1437.5) rotate(90)"/>
-        <rect class="es60-cls-8" x="233.7" y="1629.9" width="44.6" height="81.1" transform="translate(-1414.4 1926.4) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="233.7" y="1629.9" width="44.6" height="81.1" transform="translate(-1414.4 1926.4) rotate(-90)"/>
         <rect class="es60-cls-8" x="229" y="1692.7" width="9.4" height="9.4" transform="translate(1931.2 1463.7) rotate(90)"/>
         <rect class="es60-cls-8" x="279.9" y="1694" width="9.4" height="6.9" transform="translate(1982 1412.8) rotate(90)"/>
       </g>
@@ -221,13 +230,13 @@
         <path class="es60-cls-6" d="M374.7,1458.9h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M348.5,1420l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="262.1" y="1516" width="172.8" height="91.4" transform="translate(1910.2 1213.2) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="262.1" y="1516" width="172.8" height="91.4" transform="translate(1910.2 1213.2) rotate(90)"/>
       <rect class="es60-cls-8" x="362.2" y="1677" width="60.9" height="3.2" transform="translate(-1285.9 2071.2) rotate(-90)"/>
       <rect class="es60-cls-8" x="273.9" y="1677" width="60.9" height="3.2" transform="translate(-1374.2 1983) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="347.4" y="1660.5" width="7.8" height="75.5" transform="translate(2049.5 1346.9) rotate(90)"/>
         <rect class="es60-cls-8" x="347.7" y="1653" width="1.6" height="81.1" transform="translate(2042.1 1345) rotate(90)"/>
-        <rect class="es60-cls-8" x="326.2" y="1629.9" width="44.6" height="81.1" transform="translate(-1321.9 2018.9) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="326.2" y="1629.9" width="44.6" height="81.1" transform="translate(-1321.9 2018.9) rotate(-90)"/>
         <rect class="es60-cls-8" x="321.5" y="1692.7" width="9.4" height="9.4" transform="translate(2023.7 1371.2) rotate(90)"/>
         <rect class="es60-cls-8" x="372.4" y="1694" width="9.4" height="6.9" transform="translate(2074.5 1320.3) rotate(90)"/>
       </g>
@@ -258,13 +267,13 @@
         <path class="es60-cls-6" d="M467.2,1458.9h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M441,1420l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="354.6" y="1516" width="172.8" height="91.4" transform="translate(2002.7 1120.7) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="354.6" y="1516" width="172.8" height="91.4" transform="translate(2002.7 1120.7) rotate(90)"/>
       <rect class="es60-cls-8" x="454.7" y="1677" width="60.9" height="3.2" transform="translate(-1193.4 2163.7) rotate(-90)"/>
       <rect class="es60-cls-8" x="366.4" y="1677" width="60.9" height="3.2" transform="translate(-1281.7 2075.5) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="439.9" y="1660.5" width="7.8" height="75.5" transform="translate(2142 1254.4) rotate(90)"/>
         <rect class="es60-cls-8" x="440.2" y="1653" width="1.6" height="81.1" transform="translate(2134.6 1252.5) rotate(90)"/>
-        <rect class="es60-cls-8" x="418.7" y="1629.9" width="44.6" height="81.1" transform="translate(-1229.4 2111.4) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="418.7" y="1629.9" width="44.6" height="81.1" transform="translate(-1229.4 2111.4) rotate(-90)"/>
         <rect class="es60-cls-8" x="414.1" y="1692.7" width="9.4" height="9.4" transform="translate(2116.2 1278.7) rotate(90)"/>
         <rect class="es60-cls-8" x="464.9" y="1694" width="9.4" height="6.9" transform="translate(2167 1227.8) rotate(90)"/>
       </g>
@@ -295,13 +304,13 @@
         <path class="es60-cls-6" d="M559.7,1458.9h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M533.5,1420l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="447.1" y="1516" width="172.8" height="91.4" transform="translate(2095.2 1028.2) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="447.1" y="1516" width="172.8" height="91.4" transform="translate(2095.2 1028.2) rotate(90)"/>
       <rect class="es60-cls-8" x="547.2" y="1677" width="60.9" height="3.2" transform="translate(-1100.9 2256.2) rotate(-90)"/>
       <rect class="es60-cls-8" x="458.9" y="1677" width="60.9" height="3.2" transform="translate(-1189.2 2168) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="532.4" y="1660.5" width="7.8" height="75.5" transform="translate(2234.5 1161.9) rotate(90)"/>
         <rect class="es60-cls-8" x="532.7" y="1653" width="1.6" height="81.1" transform="translate(2227.1 1160) rotate(90)"/>
-        <rect class="es60-cls-8" x="511.2" y="1629.9" width="44.6" height="81.1" transform="translate(-1136.9 2203.9) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="511.2" y="1629.9" width="44.6" height="81.1" transform="translate(-1136.9 2203.9) rotate(-90)"/>
         <rect class="es60-cls-8" x="506.6" y="1692.7" width="9.4" height="9.4" transform="translate(2208.7 1186.2) rotate(90)"/>
         <rect class="es60-cls-8" x="557.4" y="1694" width="9.4" height="6.9" transform="translate(2259.5 1135.3) rotate(90)"/>
       </g>
@@ -332,13 +341,13 @@
         <path class="es60-cls-6" d="M686,1458.9h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M659.8,1420l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="573.4" y="1516" width="172.8" height="91.4" transform="translate(2221.5 901.9) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="573.4" y="1516" width="172.8" height="91.4" transform="translate(2221.5 901.9) rotate(90)"/>
       <rect class="es60-cls-8" x="673.5" y="1677" width="60.9" height="3.2" transform="translate(-974.6 2382.5) rotate(-90)"/>
       <rect class="es60-cls-8" x="585.2" y="1677" width="60.9" height="3.2" transform="translate(-1062.9 2294.2) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="658.7" y="1660.5" width="7.8" height="75.5" transform="translate(2360.8 1035.6) rotate(90)"/>
         <rect class="es60-cls-8" x="659" y="1653" width="1.6" height="81.1" transform="translate(2353.3 1033.7) rotate(90)"/>
-        <rect class="es60-cls-8" x="637.5" y="1629.9" width="44.6" height="81.1" transform="translate(-1010.6 2330.2) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="637.5" y="1629.9" width="44.6" height="81.1" transform="translate(-1010.6 2330.2) rotate(-90)"/>
         <rect class="es60-cls-8" x="632.8" y="1692.7" width="9.4" height="9.4" transform="translate(2334.9 1059.9) rotate(90)"/>
         <rect class="es60-cls-8" x="683.7" y="1694" width="9.4" height="6.9" transform="translate(2385.8 1009) rotate(90)"/>
       </g>
@@ -369,13 +378,13 @@
         <path class="es60-cls-6" d="M778.5,1458.9h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M752.3,1420l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="665.9" y="1516" width="172.8" height="91.4" transform="translate(2314 809.4) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="665.9" y="1516" width="172.8" height="91.4" transform="translate(2314 809.4) rotate(90)"/>
       <rect class="es60-cls-8" x="766" y="1677" width="60.9" height="3.2" transform="translate(-882.1 2475) rotate(-90)"/>
       <rect class="es60-cls-8" x="677.7" y="1677" width="60.9" height="3.2" transform="translate(-970.4 2386.8) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="751.2" y="1660.5" width="7.8" height="75.5" transform="translate(2453.3 943.1) rotate(90)"/>
         <rect class="es60-cls-8" x="751.5" y="1653" width="1.6" height="81.1" transform="translate(2445.8 941.2) rotate(90)"/>
-        <rect class="es60-cls-8" x="730" y="1629.9" width="44.6" height="81.1" transform="translate(-918.1 2422.7) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="730" y="1629.9" width="44.6" height="81.1" transform="translate(-918.1 2422.7) rotate(-90)"/>
         <rect class="es60-cls-8" x="725.3" y="1692.7" width="9.4" height="9.4" transform="translate(2427.4 967.4) rotate(90)"/>
         <rect class="es60-cls-8" x="776.2" y="1694" width="9.4" height="6.9" transform="translate(2478.3 916.5) rotate(90)"/>
       </g>
@@ -406,13 +415,13 @@
         <path class="es60-cls-6" d="M871,1458.9h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M844.8,1420l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="758.4" y="1516" width="172.8" height="91.4" transform="translate(2406.5 716.9) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="758.4" y="1516" width="172.8" height="91.4" transform="translate(2406.5 716.9) rotate(90)"/>
       <rect class="es60-cls-8" x="858.5" y="1677" width="60.9" height="3.2" transform="translate(-789.6 2567.5) rotate(-90)"/>
       <rect class="es60-cls-8" x="770.2" y="1677" width="60.9" height="3.2" transform="translate(-877.9 2479.3) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="843.7" y="1660.5" width="7.8" height="75.5" transform="translate(2545.8 850.6) rotate(90)"/>
         <rect class="es60-cls-8" x="844" y="1653" width="1.6" height="81.1" transform="translate(2538.3 848.7) rotate(90)"/>
-        <rect class="es60-cls-8" x="822.5" y="1629.9" width="44.6" height="81.1" transform="translate(-825.6 2515.2) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="822.5" y="1629.9" width="44.6" height="81.1" transform="translate(-825.6 2515.2) rotate(-90)"/>
         <rect class="es60-cls-8" x="817.8" y="1692.7" width="9.4" height="9.4" transform="translate(2519.9 874.9) rotate(90)"/>
         <rect class="es60-cls-8" x="868.7" y="1694" width="9.4" height="6.9" transform="translate(2570.8 824) rotate(90)"/>
       </g>
@@ -443,13 +452,13 @@
         <path class="es60-cls-6" d="M963.5,1458.9h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M937.3,1420l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="850.9" y="1516" width="172.8" height="91.4" transform="translate(2499 624.4) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="850.9" y="1516" width="172.8" height="91.4" transform="translate(2499 624.4) rotate(90)"/>
       <rect class="es60-cls-8" x="951" y="1677" width="60.9" height="3.2" transform="translate(-697.1 2660) rotate(-90)"/>
       <rect class="es60-cls-8" x="862.7" y="1677" width="60.9" height="3.2" transform="translate(-785.4 2571.8) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="936.2" y="1660.5" width="7.8" height="75.5" transform="translate(2638.3 758.1) rotate(90)"/>
         <rect class="es60-cls-8" x="936.5" y="1653" width="1.6" height="81.1" transform="translate(2630.8 756.2) rotate(90)"/>
-        <rect class="es60-cls-8" x="915" y="1629.9" width="44.6" height="81.1" transform="translate(-733.1 2607.7) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="915" y="1629.9" width="44.6" height="81.1" transform="translate(-733.1 2607.7) rotate(-90)"/>
         <rect class="es60-cls-8" x="910.3" y="1692.7" width="9.4" height="9.4" transform="translate(2612.5 782.4) rotate(90)"/>
         <rect class="es60-cls-8" x="961.2" y="1694" width="9.4" height="6.9" transform="translate(2663.3 731.5) rotate(90)"/>
       </g>
@@ -480,13 +489,13 @@
         <path class="es60-cls-6" d="M1056,1458.9h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M1029.8,1420l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="943.4" y="1516" width="172.8" height="91.4" transform="translate(2591.5 531.9) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="943.4" y="1516" width="172.8" height="91.4" transform="translate(2591.5 531.9) rotate(90)"/>
       <rect class="es60-cls-8" x="1043.5" y="1677" width="60.9" height="3.2" transform="translate(-604.6 2752.5) rotate(-90)"/>
       <rect class="es60-cls-8" x="955.2" y="1677" width="60.9" height="3.2" transform="translate(-692.9 2664.3) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="1028.7" y="1660.5" width="7.8" height="75.5" transform="translate(2730.8 665.6) rotate(90)"/>
         <rect class="es60-cls-8" x="1029" y="1653" width="1.6" height="81.1" transform="translate(2723.3 663.7) rotate(90)"/>
-        <rect class="es60-cls-8" x="1007.5" y="1629.9" width="44.6" height="81.1" transform="translate(-640.6 2700.2) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="1007.5" y="1629.9" width="44.6" height="81.1" transform="translate(-640.6 2700.2) rotate(-90)"/>
         <rect class="es60-cls-8" x="1002.8" y="1692.7" width="9.4" height="9.4" transform="translate(2705 689.9) rotate(90)"/>
         <rect class="es60-cls-8" x="1053.7" y="1694" width="9.4" height="6.9" transform="translate(2755.8 639) rotate(90)"/>
       </g>
@@ -517,13 +526,13 @@
         <path class="es60-cls-6" d="M1148.5,1458.9h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M1122.3,1420l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="1035.9" y="1516" width="172.8" height="91.4" transform="translate(2684 439.4) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="1035.9" y="1516" width="172.8" height="91.4" transform="translate(2684 439.4) rotate(90)"/>
       <rect class="es60-cls-8" x="1136" y="1677" width="60.9" height="3.2" transform="translate(-512.1 2845) rotate(-90)"/>
       <rect class="es60-cls-8" x="1047.7" y="1677" width="60.9" height="3.2" transform="translate(-600.4 2756.8) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="1121.2" y="1660.5" width="7.8" height="75.5" transform="translate(2823.3 573.1) rotate(90)"/>
         <rect class="es60-cls-8" x="1121.5" y="1653" width="1.6" height="81.1" transform="translate(2815.8 571.2) rotate(90)"/>
-        <rect class="es60-cls-8" x="1100" y="1629.9" width="44.6" height="81.1" transform="translate(-548.1 2792.7) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="1100" y="1629.9" width="44.6" height="81.1" transform="translate(-548.1 2792.7) rotate(-90)"/>
         <rect class="es60-cls-8" x="1095.3" y="1692.7" width="9.4" height="9.4" transform="translate(2797.5 597.4) rotate(90)"/>
         <rect class="es60-cls-8" x="1146.2" y="1694" width="9.4" height="6.9" transform="translate(2848.3 546.5) rotate(90)"/>
       </g>
@@ -554,13 +563,13 @@
         <path class="es60-cls-6" d="M97.2,1138.2h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M71,1099.4l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="-15.4" y="1195.4" width="172.8" height="91.4" transform="translate(1312.1 1170.1) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="-15.4" y="1195.4" width="172.8" height="91.4" transform="translate(1312.1 1170.1) rotate(90)"/>
       <rect class="es60-cls-8" x="84.7" y="1356.3" width="60.9" height="3.2" transform="translate(-1242.8 1473.1) rotate(-90)"/>
       <rect class="es60-cls-8" x="-3.6" y="1356.3" width="60.9" height="3.2" transform="translate(-1331 1384.8) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="69.9" y="1339.9" width="7.8" height="75.5" transform="translate(1451.4 1303.8) rotate(90)"/>
         <rect class="es60-cls-8" x="70.2" y="1332.4" width="1.6" height="81.1" transform="translate(1443.9 1301.9) rotate(90)"/>
-        <rect class="es60-cls-8" x="48.7" y="1309.3" width="44.6" height="81.1" transform="translate(-1278.8 1420.8) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="48.7" y="1309.3" width="44.6" height="81.1" transform="translate(-1278.8 1420.8) rotate(-90)"/>
         <rect class="es60-cls-8" x="44" y="1372.1" width="9.4" height="9.4" transform="translate(1425.5 1328.1) rotate(90)"/>
         <rect class="es60-cls-8" x="94.9" y="1373.3" width="9.4" height="6.9" transform="translate(1476.4 1277.2) rotate(90)"/>
       </g>
@@ -591,13 +600,13 @@
         <path class="es60-cls-6" d="M189.7,1138.2h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M163.5,1099.4l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="77.1" y="1195.4" width="172.8" height="91.4" transform="translate(1404.6 1077.6) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="77.1" y="1195.4" width="172.8" height="91.4" transform="translate(1404.6 1077.6) rotate(90)"/>
       <rect class="es60-cls-8" x="177.2" y="1356.3" width="60.9" height="3.2" transform="translate(-1150.3 1565.6) rotate(-90)"/>
       <rect class="es60-cls-8" x="88.9" y="1356.3" width="60.9" height="3.2" transform="translate(-1238.5 1477.3) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="162.4" y="1339.9" width="7.8" height="75.5" transform="translate(1543.9 1211.3) rotate(90)"/>
         <rect class="es60-cls-8" x="162.7" y="1332.4" width="1.6" height="81.1" transform="translate(1536.4 1209.4) rotate(90)"/>
-        <rect class="es60-cls-8" x="141.2" y="1309.3" width="44.6" height="81.1" transform="translate(-1186.3 1513.3) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="141.2" y="1309.3" width="44.6" height="81.1" transform="translate(-1186.3 1513.3) rotate(-90)"/>
         <rect class="es60-cls-8" x="136.5" y="1372.1" width="9.4" height="9.4" transform="translate(1518 1235.6) rotate(90)"/>
         <rect class="es60-cls-8" x="187.4" y="1373.3" width="9.4" height="6.9" transform="translate(1568.9 1184.7) rotate(90)"/>
       </g>
@@ -628,13 +637,13 @@
         <path class="es60-cls-6" d="M282.2,1138.2h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M256,1099.4l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="169.6" y="1195.4" width="172.8" height="91.4" transform="translate(1497.1 985.1) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="169.6" y="1195.4" width="172.8" height="91.4" transform="translate(1497.1 985.1) rotate(90)"/>
       <rect class="es60-cls-8" x="269.7" y="1356.3" width="60.9" height="3.2" transform="translate(-1057.8 1658.1) rotate(-90)"/>
       <rect class="es60-cls-8" x="181.4" y="1356.3" width="60.9" height="3.2" transform="translate(-1146 1569.8) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="254.9" y="1339.9" width="7.8" height="75.5" transform="translate(1636.4 1118.8) rotate(90)"/>
         <rect class="es60-cls-8" x="255.2" y="1332.4" width="1.6" height="81.1" transform="translate(1628.9 1116.9) rotate(90)"/>
-        <rect class="es60-cls-8" x="233.7" y="1309.3" width="44.6" height="81.1" transform="translate(-1093.8 1605.8) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="233.7" y="1309.3" width="44.6" height="81.1" transform="translate(-1093.8 1605.8) rotate(-90)"/>
         <rect class="es60-cls-8" x="229" y="1372.1" width="9.4" height="9.4" transform="translate(1610.5 1143.1) rotate(90)"/>
         <rect class="es60-cls-8" x="279.9" y="1373.3" width="9.4" height="6.9" transform="translate(1661.4 1092.2) rotate(90)"/>
       </g>
@@ -665,13 +674,13 @@
         <path class="es60-cls-6" d="M374.7,1138.2h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M348.5,1099.4l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="262.1" y="1195.4" width="172.8" height="91.4" transform="translate(1589.6 892.6) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="262.1" y="1195.4" width="172.8" height="91.4" transform="translate(1589.6 892.6) rotate(90)"/>
       <rect class="es60-cls-8" x="362.2" y="1356.3" width="60.9" height="3.2" transform="translate(-965.3 1750.6) rotate(-90)"/>
       <rect class="es60-cls-8" x="273.9" y="1356.3" width="60.9" height="3.2" transform="translate(-1053.5 1662.3) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="347.4" y="1339.9" width="7.8" height="75.5" transform="translate(1728.9 1026.3) rotate(90)"/>
         <rect class="es60-cls-8" x="347.7" y="1332.4" width="1.6" height="81.1" transform="translate(1721.4 1024.4) rotate(90)"/>
-        <rect class="es60-cls-8" x="326.2" y="1309.3" width="44.6" height="81.1" transform="translate(-1001.3 1698.3) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="326.2" y="1309.3" width="44.6" height="81.1" transform="translate(-1001.3 1698.3) rotate(-90)"/>
         <rect class="es60-cls-8" x="321.5" y="1372.1" width="9.4" height="9.4" transform="translate(1703 1050.6) rotate(90)"/>
         <rect class="es60-cls-8" x="372.4" y="1373.3" width="9.4" height="6.9" transform="translate(1753.9 999.7) rotate(90)"/>
       </g>
@@ -702,13 +711,13 @@
         <path class="es60-cls-6" d="M467.2,1138.2h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M441,1099.4l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="354.6" y="1195.4" width="172.8" height="91.4" transform="translate(1682.1 800.1) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="354.6" y="1195.4" width="172.8" height="91.4" transform="translate(1682.1 800.1) rotate(90)"/>
       <rect class="es60-cls-8" x="454.7" y="1356.3" width="60.9" height="3.2" transform="translate(-872.8 1843.1) rotate(-90)"/>
       <rect class="es60-cls-8" x="366.4" y="1356.3" width="60.9" height="3.2" transform="translate(-961 1754.8) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="439.9" y="1339.9" width="7.8" height="75.5" transform="translate(1821.4 933.8) rotate(90)"/>
         <rect class="es60-cls-8" x="440.2" y="1332.4" width="1.6" height="81.1" transform="translate(1813.9 931.9) rotate(90)"/>
-        <rect class="es60-cls-8" x="418.7" y="1309.3" width="44.6" height="81.1" transform="translate(-908.8 1790.8) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="418.7" y="1309.3" width="44.6" height="81.1" transform="translate(-908.8 1790.8) rotate(-90)"/>
         <rect class="es60-cls-8" x="414.1" y="1372.1" width="9.4" height="9.4" transform="translate(1795.5 958.1) rotate(90)"/>
         <rect class="es60-cls-8" x="464.9" y="1373.3" width="9.4" height="6.9" transform="translate(1846.4 907.2) rotate(90)"/>
       </g>
@@ -739,13 +748,13 @@
         <path class="es60-cls-6" d="M559.7,1138.2h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M533.5,1099.4l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="447.1" y="1195.4" width="172.8" height="91.4" transform="translate(1774.6 707.6) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="447.1" y="1195.4" width="172.8" height="91.4" transform="translate(1774.6 707.6) rotate(90)"/>
       <rect class="es60-cls-8" x="547.2" y="1356.3" width="60.9" height="3.2" transform="translate(-780.3 1935.6) rotate(-90)"/>
       <rect class="es60-cls-8" x="458.9" y="1356.3" width="60.9" height="3.2" transform="translate(-868.5 1847.3) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="532.4" y="1339.9" width="7.8" height="75.5" transform="translate(1913.9 841.3) rotate(90)"/>
         <rect class="es60-cls-8" x="532.7" y="1332.4" width="1.6" height="81.1" transform="translate(1906.4 839.4) rotate(90)"/>
-        <rect class="es60-cls-8" x="511.2" y="1309.3" width="44.6" height="81.1" transform="translate(-816.3 1883.3) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="511.2" y="1309.3" width="44.6" height="81.1" transform="translate(-816.3 1883.3) rotate(-90)"/>
         <rect class="es60-cls-8" x="506.6" y="1372.1" width="9.4" height="9.4" transform="translate(1888 865.6) rotate(90)"/>
         <rect class="es60-cls-8" x="557.4" y="1373.3" width="9.4" height="6.9" transform="translate(1938.9 814.7) rotate(90)"/>
       </g>
@@ -776,13 +785,13 @@
         <path class="es60-cls-6" d="M686,1138.2h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M659.8,1099.4l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="573.4" y="1195.4" width="172.8" height="91.4" transform="translate(1900.9 581.3) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="573.4" y="1195.4" width="172.8" height="91.4" transform="translate(1900.9 581.3) rotate(90)"/>
       <rect class="es60-cls-8" x="673.5" y="1356.3" width="60.9" height="3.2" transform="translate(-654 2061.9) rotate(-90)"/>
       <rect class="es60-cls-8" x="585.2" y="1356.3" width="60.9" height="3.2" transform="translate(-742.2 1973.6) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="658.7" y="1339.9" width="7.8" height="75.5" transform="translate(2040.2 715) rotate(90)"/>
         <rect class="es60-cls-8" x="659" y="1332.4" width="1.6" height="81.1" transform="translate(2032.7 713.1) rotate(90)"/>
-        <rect class="es60-cls-8" x="637.5" y="1309.3" width="44.6" height="81.1" transform="translate(-690 2009.6) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="637.5" y="1309.3" width="44.6" height="81.1" transform="translate(-690 2009.6) rotate(-90)"/>
         <rect class="es60-cls-8" x="632.8" y="1372.1" width="9.4" height="9.4" transform="translate(2014.3 739.3) rotate(90)"/>
         <rect class="es60-cls-8" x="683.7" y="1373.3" width="9.4" height="6.9" transform="translate(2065.2 688.4) rotate(90)"/>
       </g>
@@ -813,13 +822,13 @@
         <path class="es60-cls-6" d="M778.5,1138.2h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M752.3,1099.4l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="665.9" y="1195.4" width="172.8" height="91.4" transform="translate(1993.4 488.8) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="665.9" y="1195.4" width="172.8" height="91.4" transform="translate(1993.4 488.8) rotate(90)"/>
       <rect class="es60-cls-8" x="766" y="1356.3" width="60.9" height="3.2" transform="translate(-561.5 2154.4) rotate(-90)"/>
       <rect class="es60-cls-8" x="677.7" y="1356.3" width="60.9" height="3.2" transform="translate(-649.7 2066.1) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="751.2" y="1339.9" width="7.8" height="75.5" transform="translate(2132.7 622.5) rotate(90)"/>
         <rect class="es60-cls-8" x="751.5" y="1332.4" width="1.6" height="81.1" transform="translate(2125.2 620.6) rotate(90)"/>
-        <rect class="es60-cls-8" x="730" y="1309.3" width="44.6" height="81.1" transform="translate(-597.5 2102.1) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="730" y="1309.3" width="44.6" height="81.1" transform="translate(-597.5 2102.1) rotate(-90)"/>
         <rect class="es60-cls-8" x="725.3" y="1372.1" width="9.4" height="9.4" transform="translate(2106.8 646.8) rotate(90)"/>
         <rect class="es60-cls-8" x="776.2" y="1373.3" width="9.4" height="6.9" transform="translate(2157.7 595.9) rotate(90)"/>
       </g>
@@ -850,13 +859,13 @@
         <path class="es60-cls-6" d="M871,1138.2h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M844.8,1099.4l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="758.4" y="1195.4" width="172.8" height="91.4" transform="translate(2085.9 396.3) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="758.4" y="1195.4" width="172.8" height="91.4" transform="translate(2085.9 396.3) rotate(90)"/>
       <rect class="es60-cls-8" x="858.5" y="1356.3" width="60.9" height="3.2" transform="translate(-469 2246.9) rotate(-90)"/>
       <rect class="es60-cls-8" x="770.2" y="1356.3" width="60.9" height="3.2" transform="translate(-557.2 2158.6) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="843.7" y="1339.9" width="7.8" height="75.5" transform="translate(2225.2 530) rotate(90)"/>
         <rect class="es60-cls-8" x="844" y="1332.4" width="1.6" height="81.1" transform="translate(2217.7 528.1) rotate(90)"/>
-        <rect class="es60-cls-8" x="822.5" y="1309.3" width="44.6" height="81.1" transform="translate(-505 2194.6) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="822.5" y="1309.3" width="44.6" height="81.1" transform="translate(-505 2194.6) rotate(-90)"/>
         <rect class="es60-cls-8" x="817.8" y="1372.1" width="9.4" height="9.4" transform="translate(2199.3 554.3) rotate(90)"/>
         <rect class="es60-cls-8" x="868.7" y="1373.3" width="9.4" height="6.9" transform="translate(2250.2 503.4) rotate(90)"/>
       </g>
@@ -887,13 +896,13 @@
         <path class="es60-cls-6" d="M963.5,1138.2h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M937.3,1099.4l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="850.9" y="1195.4" width="172.8" height="91.4" transform="translate(2178.4 303.8) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="850.9" y="1195.4" width="172.8" height="91.4" transform="translate(2178.4 303.8) rotate(90)"/>
       <rect class="es60-cls-8" x="951" y="1356.3" width="60.9" height="3.2" transform="translate(-376.5 2339.4) rotate(-90)"/>
       <rect class="es60-cls-8" x="862.7" y="1356.3" width="60.9" height="3.2" transform="translate(-464.7 2251.1) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="936.2" y="1339.9" width="7.8" height="75.5" transform="translate(2317.7 437.5) rotate(90)"/>
         <rect class="es60-cls-8" x="936.5" y="1332.4" width="1.6" height="81.1" transform="translate(2310.2 435.6) rotate(90)"/>
-        <rect class="es60-cls-8" x="915" y="1309.3" width="44.6" height="81.1" transform="translate(-412.5 2287.1) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="915" y="1309.3" width="44.6" height="81.1" transform="translate(-412.5 2287.1) rotate(-90)"/>
         <rect class="es60-cls-8" x="910.3" y="1372.1" width="9.4" height="9.4" transform="translate(2291.8 461.8) rotate(90)"/>
         <rect class="es60-cls-8" x="961.2" y="1373.3" width="9.4" height="6.9" transform="translate(2342.7 410.9) rotate(90)"/>
       </g>
@@ -924,13 +933,13 @@
         <path class="es60-cls-6" d="M1056,1138.2h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M1029.8,1099.4l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="943.4" y="1195.4" width="172.8" height="91.4" transform="translate(2270.9 211.3) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="943.4" y="1195.4" width="172.8" height="91.4" transform="translate(2270.9 211.3) rotate(90)"/>
       <rect class="es60-cls-8" x="1043.5" y="1356.3" width="60.9" height="3.2" transform="translate(-284 2431.9) rotate(-90)"/>
       <rect class="es60-cls-8" x="955.2" y="1356.3" width="60.9" height="3.2" transform="translate(-372.2 2343.6) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="1028.7" y="1339.9" width="7.8" height="75.5" transform="translate(2410.2 345) rotate(90)"/>
         <rect class="es60-cls-8" x="1029" y="1332.4" width="1.6" height="81.1" transform="translate(2402.7 343.1) rotate(90)"/>
-        <rect class="es60-cls-8" x="1007.5" y="1309.3" width="44.6" height="81.1" transform="translate(-320 2379.6) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="1007.5" y="1309.3" width="44.6" height="81.1" transform="translate(-320 2379.6) rotate(-90)"/>
         <rect class="es60-cls-8" x="1002.8" y="1372.1" width="9.4" height="9.4" transform="translate(2384.3 369.3) rotate(90)"/>
         <rect class="es60-cls-8" x="1053.7" y="1373.3" width="9.4" height="6.9" transform="translate(2435.2 318.4) rotate(90)"/>
       </g>
@@ -961,13 +970,13 @@
         <path class="es60-cls-6" d="M1148.5,1138.2h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M1122.3,1099.4l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="1035.9" y="1195.4" width="172.8" height="91.4" transform="translate(2363.4 118.8) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="1035.9" y="1195.4" width="172.8" height="91.4" transform="translate(2363.4 118.8) rotate(90)"/>
       <rect class="es60-cls-8" x="1136" y="1356.3" width="60.9" height="3.2" transform="translate(-191.5 2524.4) rotate(-90)"/>
       <rect class="es60-cls-8" x="1047.7" y="1356.3" width="60.9" height="3.2" transform="translate(-279.7 2436.1) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="1121.2" y="1339.9" width="7.8" height="75.5" transform="translate(2502.7 252.5) rotate(90)"/>
         <rect class="es60-cls-8" x="1121.5" y="1332.4" width="1.6" height="81.1" transform="translate(2495.2 250.6) rotate(90)"/>
-        <rect class="es60-cls-8" x="1100" y="1309.3" width="44.6" height="81.1" transform="translate(-227.5 2472.1) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="1100" y="1309.3" width="44.6" height="81.1" transform="translate(-227.5 2472.1) rotate(-90)"/>
         <rect class="es60-cls-8" x="1095.3" y="1372.1" width="9.4" height="9.4" transform="translate(2476.8 276.8) rotate(90)"/>
         <rect class="es60-cls-8" x="1146.2" y="1373.3" width="9.4" height="6.9" transform="translate(2527.7 225.9) rotate(90)"/>
       </g>
@@ -998,13 +1007,13 @@
         <path class="es60-cls-6" d="M97.2,817.6h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M71,778.8l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="-15.4" y="874.7" width="172.8" height="91.4" transform="translate(991.5 849.4) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="-15.4" y="874.7" width="172.8" height="91.4" transform="translate(991.5 849.4) rotate(90)"/>
       <rect class="es60-cls-8" x="84.7" y="1035.7" width="60.9" height="3.2" transform="translate(-922.2 1152.4) rotate(-90)"/>
       <rect class="es60-cls-8" x="-3.6" y="1035.7" width="60.9" height="3.2" transform="translate(-1010.4 1064.2) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="69.9" y="1019.2" width="7.8" height="75.5" transform="translate(1130.8 983.1) rotate(90)"/>
         <rect class="es60-cls-8" x="70.2" y="1011.7" width="1.6" height="81.1" transform="translate(1123.3 981.3) rotate(90)"/>
-        <rect class="es60-cls-8" x="48.7" y="988.6" width="44.6" height="81.1" transform="translate(-958.2 1100.2) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="48.7" y="988.6" width="44.6" height="81.1" transform="translate(-958.2 1100.2) rotate(-90)"/>
         <rect class="es60-cls-8" x="44" y="1051.5" width="9.4" height="9.4" transform="translate(1104.9 1007.4) rotate(90)"/>
         <rect class="es60-cls-8" x="94.9" y="1052.7" width="9.4" height="6.9" transform="translate(1155.8 956.6) rotate(90)"/>
       </g>
@@ -1035,13 +1044,13 @@
         <path class="es60-cls-6" d="M189.7,817.6h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M163.5,778.8l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="77.1" y="874.7" width="172.8" height="91.4" transform="translate(1084 756.9) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="77.1" y="874.7" width="172.8" height="91.4" transform="translate(1084 756.9) rotate(90)"/>
       <rect class="es60-cls-8" x="177.2" y="1035.7" width="60.9" height="3.2" transform="translate(-829.7 1244.9) rotate(-90)"/>
       <rect class="es60-cls-8" x="88.9" y="1035.7" width="60.9" height="3.2" transform="translate(-917.9 1156.7) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="162.4" y="1019.2" width="7.8" height="75.5" transform="translate(1223.3 890.6) rotate(90)"/>
         <rect class="es60-cls-8" x="162.7" y="1011.7" width="1.6" height="81.1" transform="translate(1215.8 888.8) rotate(90)"/>
-        <rect class="es60-cls-8" x="141.2" y="988.6" width="44.6" height="81.1" transform="translate(-865.7 1192.7) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="141.2" y="988.6" width="44.6" height="81.1" transform="translate(-865.7 1192.7) rotate(-90)"/>
         <rect class="es60-cls-8" x="136.5" y="1051.5" width="9.4" height="9.4" transform="translate(1197.4 914.9) rotate(90)"/>
         <rect class="es60-cls-8" x="187.4" y="1052.7" width="9.4" height="6.9" transform="translate(1248.3 864.1) rotate(90)"/>
       </g>
@@ -1072,13 +1081,13 @@
         <path class="es60-cls-6" d="M282.2,817.6h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M256,778.8l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="169.6" y="874.7" width="172.8" height="91.4" transform="translate(1176.5 664.4) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="169.6" y="874.7" width="172.8" height="91.4" transform="translate(1176.5 664.4) rotate(90)"/>
       <rect class="es60-cls-8" x="269.7" y="1035.7" width="60.9" height="3.2" transform="translate(-737.2 1337.4) rotate(-90)"/>
       <rect class="es60-cls-8" x="181.4" y="1035.7" width="60.9" height="3.2" transform="translate(-825.4 1249.2) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="254.9" y="1019.2" width="7.8" height="75.5" transform="translate(1315.8 798.1) rotate(90)"/>
         <rect class="es60-cls-8" x="255.2" y="1011.7" width="1.6" height="81.1" transform="translate(1308.3 796.3) rotate(90)"/>
-        <rect class="es60-cls-8" x="233.7" y="988.6" width="44.6" height="81.1" transform="translate(-773.2 1285.2) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="233.7" y="988.6" width="44.6" height="81.1" transform="translate(-773.2 1285.2) rotate(-90)"/>
         <rect class="es60-cls-8" x="229" y="1051.5" width="9.4" height="9.4" transform="translate(1289.9 822.4) rotate(90)"/>
         <rect class="es60-cls-8" x="279.9" y="1052.7" width="9.4" height="6.9" transform="translate(1340.8 771.6) rotate(90)"/>
       </g>
@@ -1109,13 +1118,13 @@
         <path class="es60-cls-6" d="M374.7,817.6h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M348.5,778.8l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="262.1" y="874.7" width="172.8" height="91.4" transform="translate(1269 571.9) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="262.1" y="874.7" width="172.8" height="91.4" transform="translate(1269 571.9) rotate(90)"/>
       <rect class="es60-cls-8" x="362.2" y="1035.7" width="60.9" height="3.2" transform="translate(-644.7 1429.9) rotate(-90)"/>
       <rect class="es60-cls-8" x="273.9" y="1035.7" width="60.9" height="3.2" transform="translate(-732.9 1341.7) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="347.4" y="1019.2" width="7.8" height="75.5" transform="translate(1408.3 705.6) rotate(90)"/>
         <rect class="es60-cls-8" x="347.7" y="1011.7" width="1.6" height="81.1" transform="translate(1400.8 703.8) rotate(90)"/>
-        <rect class="es60-cls-8" x="326.2" y="988.6" width="44.6" height="81.1" transform="translate(-680.7 1377.7) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="326.2" y="988.6" width="44.6" height="81.1" transform="translate(-680.7 1377.7) rotate(-90)"/>
         <rect class="es60-cls-8" x="321.5" y="1051.5" width="9.4" height="9.4" transform="translate(1382.4 729.9) rotate(90)"/>
         <rect class="es60-cls-8" x="372.4" y="1052.7" width="9.4" height="6.9" transform="translate(1433.3 679.1) rotate(90)"/>
       </g>
@@ -1146,13 +1155,13 @@
         <path class="es60-cls-6" d="M467.2,817.6h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M441,778.8l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="354.6" y="874.7" width="172.8" height="91.4" transform="translate(1361.5 479.4) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="354.6" y="874.7" width="172.8" height="91.4" transform="translate(1361.5 479.4) rotate(90)"/>
       <rect class="es60-cls-8" x="454.7" y="1035.7" width="60.9" height="3.2" transform="translate(-552.2 1522.4) rotate(-90)"/>
       <rect class="es60-cls-8" x="366.4" y="1035.7" width="60.9" height="3.2" transform="translate(-640.4 1434.2) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="439.9" y="1019.2" width="7.8" height="75.5" transform="translate(1500.8 613.1) rotate(90)"/>
         <rect class="es60-cls-8" x="440.2" y="1011.7" width="1.6" height="81.1" transform="translate(1493.3 611.3) rotate(90)"/>
-        <rect class="es60-cls-8" x="418.7" y="988.6" width="44.6" height="81.1" transform="translate(-588.2 1470.2) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="418.7" y="988.6" width="44.6" height="81.1" transform="translate(-588.2 1470.2) rotate(-90)"/>
         <rect class="es60-cls-8" x="414.1" y="1051.5" width="9.4" height="9.4" transform="translate(1474.9 637.4) rotate(90)"/>
         <rect class="es60-cls-8" x="464.9" y="1052.7" width="9.4" height="6.9" transform="translate(1525.8 586.6) rotate(90)"/>
       </g>
@@ -1183,13 +1192,13 @@
         <path class="es60-cls-6" d="M559.7,817.6h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M533.5,778.8l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="447.1" y="874.7" width="172.8" height="91.4" transform="translate(1454 386.9) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="447.1" y="874.7" width="172.8" height="91.4" transform="translate(1454 386.9) rotate(90)"/>
       <rect class="es60-cls-8" x="547.2" y="1035.7" width="60.9" height="3.2" transform="translate(-459.7 1614.9) rotate(-90)"/>
       <rect class="es60-cls-8" x="458.9" y="1035.7" width="60.9" height="3.2" transform="translate(-547.9 1526.7) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="532.4" y="1019.2" width="7.8" height="75.5" transform="translate(1593.3 520.6) rotate(90)"/>
         <rect class="es60-cls-8" x="532.7" y="1011.7" width="1.6" height="81.1" transform="translate(1585.8 518.8) rotate(90)"/>
-        <rect class="es60-cls-8" x="511.2" y="988.6" width="44.6" height="81.1" transform="translate(-495.7 1562.7) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="511.2" y="988.6" width="44.6" height="81.1" transform="translate(-495.7 1562.7) rotate(-90)"/>
         <rect class="es60-cls-8" x="506.6" y="1051.5" width="9.4" height="9.4" transform="translate(1567.4 544.9) rotate(90)"/>
         <rect class="es60-cls-8" x="557.4" y="1052.7" width="9.4" height="6.9" transform="translate(1618.3 494.1) rotate(90)"/>
       </g>
@@ -1220,13 +1229,13 @@
         <path class="es60-cls-6" d="M686,817.6h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M659.8,778.8l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="573.4" y="874.7" width="172.8" height="91.4" transform="translate(1580.3 260.6) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="573.4" y="874.7" width="172.8" height="91.4" transform="translate(1580.3 260.6) rotate(90)"/>
       <rect class="es60-cls-8" x="673.5" y="1035.7" width="60.9" height="3.2" transform="translate(-333.4 1741.2) rotate(-90)"/>
       <rect class="es60-cls-8" x="585.2" y="1035.7" width="60.9" height="3.2" transform="translate(-421.6 1653) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="658.7" y="1019.2" width="7.8" height="75.5" transform="translate(1719.6 394.4) rotate(90)"/>
         <rect class="es60-cls-8" x="659" y="1011.7" width="1.6" height="81.1" transform="translate(1712.1 392.5) rotate(90)"/>
-        <rect class="es60-cls-8" x="637.5" y="988.6" width="44.6" height="81.1" transform="translate(-369.4 1689) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="637.5" y="988.6" width="44.6" height="81.1" transform="translate(-369.4 1689) rotate(-90)"/>
         <rect class="es60-cls-8" x="632.8" y="1051.5" width="9.4" height="9.4" transform="translate(1693.7 418.7) rotate(90)"/>
         <rect class="es60-cls-8" x="683.7" y="1052.7" width="9.4" height="6.9" transform="translate(1744.6 367.8) rotate(90)"/>
       </g>
@@ -1257,13 +1266,13 @@
         <path class="es60-cls-6" d="M778.5,817.6h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M752.3,778.8l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="665.9" y="874.7" width="172.8" height="91.4" transform="translate(1672.8 168.1) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="665.9" y="874.7" width="172.8" height="91.4" transform="translate(1672.8 168.1) rotate(90)"/>
       <rect class="es60-cls-8" x="766" y="1035.7" width="60.9" height="3.2" transform="translate(-240.9 1833.7) rotate(-90)"/>
       <rect class="es60-cls-8" x="677.7" y="1035.7" width="60.9" height="3.2" transform="translate(-329.1 1745.5) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="751.2" y="1019.2" width="7.8" height="75.5" transform="translate(1812.1 301.9) rotate(90)"/>
         <rect class="es60-cls-8" x="751.5" y="1011.7" width="1.6" height="81.1" transform="translate(1804.6 300) rotate(90)"/>
-        <rect class="es60-cls-8" x="730" y="988.6" width="44.6" height="81.1" transform="translate(-276.9 1781.5) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="730" y="988.6" width="44.6" height="81.1" transform="translate(-276.9 1781.5) rotate(-90)"/>
         <rect class="es60-cls-8" x="725.3" y="1051.5" width="9.4" height="9.4" transform="translate(1786.2 326.2) rotate(90)"/>
         <rect class="es60-cls-8" x="776.2" y="1052.7" width="9.4" height="6.9" transform="translate(1837.1 275.3) rotate(90)"/>
       </g>
@@ -1294,13 +1303,13 @@
         <path class="es60-cls-6" d="M871,817.6h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M844.8,778.8l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="758.4" y="874.7" width="172.8" height="91.4" transform="translate(1765.3 75.6) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="758.4" y="874.7" width="172.8" height="91.4" transform="translate(1765.3 75.6) rotate(90)"/>
       <rect class="es60-cls-8" x="858.5" y="1035.7" width="60.9" height="3.2" transform="translate(-148.4 1926.2) rotate(-90)"/>
       <rect class="es60-cls-8" x="770.2" y="1035.7" width="60.9" height="3.2" transform="translate(-236.6 1838) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="843.7" y="1019.2" width="7.8" height="75.5" transform="translate(1904.6 209.4) rotate(90)"/>
         <rect class="es60-cls-8" x="844" y="1011.7" width="1.6" height="81.1" transform="translate(1897.1 207.5) rotate(90)"/>
-        <rect class="es60-cls-8" x="822.5" y="988.6" width="44.6" height="81.1" transform="translate(-184.4 1874) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="822.5" y="988.6" width="44.6" height="81.1" transform="translate(-184.4 1874) rotate(-90)"/>
         <rect class="es60-cls-8" x="817.8" y="1051.5" width="9.4" height="9.4" transform="translate(1878.7 233.7) rotate(90)"/>
         <rect class="es60-cls-8" x="868.7" y="1052.7" width="9.4" height="6.9" transform="translate(1929.6 182.8) rotate(90)"/>
       </g>
@@ -1331,13 +1340,13 @@
         <path class="es60-cls-6" d="M963.5,817.6h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M937.3,778.8l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="850.9" y="874.7" width="172.8" height="91.4" transform="translate(1857.8 -16.9) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="850.9" y="874.7" width="172.8" height="91.4" transform="translate(1857.8 -16.9) rotate(90)"/>
       <rect class="es60-cls-8" x="951" y="1035.7" width="60.9" height="3.2" transform="translate(-55.9 2018.7) rotate(-90)"/>
       <rect class="es60-cls-8" x="862.7" y="1035.7" width="60.9" height="3.2" transform="translate(-144.1 1930.5) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="936.2" y="1019.2" width="7.8" height="75.5" transform="translate(1997.1 116.8) rotate(90)"/>
         <rect class="es60-cls-8" x="936.5" y="1011.7" width="1.6" height="81.1" transform="translate(1989.6 115) rotate(90)"/>
-        <rect class="es60-cls-8" x="915" y="988.6" width="44.6" height="81.1" transform="translate(-91.9 1966.5) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="915" y="988.6" width="44.6" height="81.1" transform="translate(-91.9 1966.5) rotate(-90)"/>
         <rect class="es60-cls-8" x="910.3" y="1051.5" width="9.4" height="9.4" transform="translate(1971.2 141.1) rotate(90)"/>
         <rect class="es60-cls-8" x="961.2" y="1052.7" width="9.4" height="6.9" transform="translate(2022.1 90.3) rotate(90)"/>
       </g>
@@ -1368,13 +1377,13 @@
         <path class="es60-cls-6" d="M1056,817.6h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M1029.8,778.8l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="943.4" y="874.7" width="172.8" height="91.4" transform="translate(1950.3 -109.4) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="943.4" y="874.7" width="172.8" height="91.4" transform="translate(1950.3 -109.4) rotate(90)"/>
       <rect class="es60-cls-8" x="1043.5" y="1035.7" width="60.9" height="3.2" transform="translate(36.6 2111.2) rotate(-90)"/>
       <rect class="es60-cls-8" x="955.2" y="1035.7" width="60.9" height="3.2" transform="translate(-51.6 2023) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="1028.7" y="1019.2" width="7.8" height="75.5" transform="translate(2089.6 24.3) rotate(90)"/>
         <rect class="es60-cls-8" x="1029" y="1011.7" width="1.6" height="81.1" transform="translate(2082.1 22.5) rotate(90)"/>
-        <rect class="es60-cls-8" x="1007.5" y="988.6" width="44.6" height="81.1" transform="translate(.6 2059) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="1007.5" y="988.6" width="44.6" height="81.1" transform="translate(.6 2059) rotate(-90)"/>
         <rect class="es60-cls-8" x="1002.8" y="1051.5" width="9.4" height="9.4" transform="translate(2063.7 48.6) rotate(90)"/>
         <rect class="es60-cls-8" x="1053.7" y="1052.7" width="9.4" height="6.9" transform="translate(2114.6 -2.2) rotate(90)"/>
       </g>
@@ -1405,13 +1414,13 @@
         <path class="es60-cls-6" d="M1148.5,817.6h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M1122.3,778.8l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="1035.9" y="874.7" width="172.8" height="91.4" transform="translate(2042.8 -201.9) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="1035.9" y="874.7" width="172.8" height="91.4" transform="translate(2042.8 -201.9) rotate(90)"/>
       <rect class="es60-cls-8" x="1136" y="1035.7" width="60.9" height="3.2" transform="translate(129.1 2203.7) rotate(-90)"/>
       <rect class="es60-cls-8" x="1047.7" y="1035.7" width="60.9" height="3.2" transform="translate(40.9 2115.5) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="1121.2" y="1019.2" width="7.8" height="75.5" transform="translate(2182.1 -68.2) rotate(90)"/>
         <rect class="es60-cls-8" x="1121.5" y="1011.7" width="1.6" height="81.1" transform="translate(2174.6 -70) rotate(90)"/>
-        <rect class="es60-cls-8" x="1100" y="988.6" width="44.6" height="81.1" transform="translate(93.1 2151.5) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="1100" y="988.6" width="44.6" height="81.1" transform="translate(93.1 2151.5) rotate(-90)"/>
         <rect class="es60-cls-8" x="1095.3" y="1051.5" width="9.4" height="9.4" transform="translate(2156.2 -43.9) rotate(90)"/>
         <rect class="es60-cls-8" x="1146.2" y="1052.7" width="9.4" height="6.9" transform="translate(2207.1 -94.7) rotate(90)"/>
       </g>
@@ -1442,13 +1451,13 @@
         <path class="es60-cls-6" d="M97.2,497h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M71,458.2l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="-15.4" y="554.1" width="172.8" height="91.4" transform="translate(670.8 528.8) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="-15.4" y="554.1" width="172.8" height="91.4" transform="translate(670.8 528.8) rotate(90)"/>
       <rect class="es60-cls-8" x="84.7" y="715.1" width="60.9" height="3.2" transform="translate(-601.6 831.8) rotate(-90)"/>
       <rect class="es60-cls-8" x="-3.6" y="715.1" width="60.9" height="3.2" transform="translate(-689.8 743.6) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="69.9" y="698.6" width="7.8" height="75.5" transform="translate(810.2 662.5) rotate(90)"/>
         <rect class="es60-cls-8" x="70.2" y="691.1" width="1.6" height="81.1" transform="translate(802.7 660.6) rotate(90)"/>
-        <rect class="es60-cls-8" x="48.7" y="668" width="44.6" height="81.1" transform="translate(-637.5 779.6) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="48.7" y="668" width="44.6" height="81.1" transform="translate(-637.5 779.6) rotate(-90)"/>
         <rect class="es60-cls-8" x="44" y="730.8" width="9.4" height="9.4" transform="translate(784.3 686.8) rotate(90)"/>
         <rect class="es60-cls-8" x="94.9" y="732.1" width="9.4" height="6.9" transform="translate(835.1 636) rotate(90)"/>
       </g>
@@ -1479,13 +1488,13 @@
         <path class="es60-cls-6" d="M189.7,497h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M163.5,458.2l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="77.1" y="554.1" width="172.8" height="91.4" transform="translate(763.3 436.3) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="77.1" y="554.1" width="172.8" height="91.4" transform="translate(763.3 436.3) rotate(90)"/>
       <rect class="es60-cls-8" x="177.2" y="715.1" width="60.9" height="3.2" transform="translate(-509.1 924.3) rotate(-90)"/>
       <rect class="es60-cls-8" x="88.9" y="715.1" width="60.9" height="3.2" transform="translate(-597.3 836.1) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="162.4" y="698.6" width="7.8" height="75.5" transform="translate(902.7 570) rotate(90)"/>
         <rect class="es60-cls-8" x="162.7" y="691.1" width="1.6" height="81.1" transform="translate(895.2 568.1) rotate(90)"/>
-        <rect class="es60-cls-8" x="141.2" y="668" width="44.6" height="81.1" transform="translate(-545 872.1) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="141.2" y="668" width="44.6" height="81.1" transform="translate(-545 872.1) rotate(-90)"/>
         <rect class="es60-cls-8" x="136.5" y="730.8" width="9.4" height="9.4" transform="translate(876.8 594.3) rotate(90)"/>
         <rect class="es60-cls-8" x="187.4" y="732.1" width="9.4" height="6.9" transform="translate(927.6 543.5) rotate(90)"/>
       </g>
@@ -1516,13 +1525,13 @@
         <path class="es60-cls-6" d="M282.2,497h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M256,458.2l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="169.6" y="554.1" width="172.8" height="91.4" transform="translate(855.8 343.8) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="169.6" y="554.1" width="172.8" height="91.4" transform="translate(855.8 343.8) rotate(90)"/>
       <rect class="es60-cls-8" x="269.7" y="715.1" width="60.9" height="3.2" transform="translate(-416.6 1016.8) rotate(-90)"/>
       <rect class="es60-cls-8" x="181.4" y="715.1" width="60.9" height="3.2" transform="translate(-504.8 928.6) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="254.9" y="698.6" width="7.8" height="75.5" transform="translate(995.2 477.5) rotate(90)"/>
         <rect class="es60-cls-8" x="255.2" y="691.1" width="1.6" height="81.1" transform="translate(987.7 475.6) rotate(90)"/>
-        <rect class="es60-cls-8" x="233.7" y="668" width="44.6" height="81.1" transform="translate(-452.5 964.6) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="233.7" y="668" width="44.6" height="81.1" transform="translate(-452.5 964.6) rotate(-90)"/>
         <rect class="es60-cls-8" x="229" y="730.8" width="9.4" height="9.4" transform="translate(969.3 501.8) rotate(90)"/>
         <rect class="es60-cls-8" x="279.9" y="732.1" width="9.4" height="6.9" transform="translate(1020.1 451) rotate(90)"/>
       </g>
@@ -1553,13 +1562,13 @@
         <path class="es60-cls-6" d="M374.7,497h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M348.5,458.2l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="262.1" y="554.1" width="172.8" height="91.4" transform="translate(948.3 251.3) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="262.1" y="554.1" width="172.8" height="91.4" transform="translate(948.3 251.3) rotate(90)"/>
       <rect class="es60-cls-8" x="362.2" y="715.1" width="60.9" height="3.2" transform="translate(-324.1 1109.3) rotate(-90)"/>
       <rect class="es60-cls-8" x="273.9" y="715.1" width="60.9" height="3.2" transform="translate(-412.3 1021.1) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="347.4" y="698.6" width="7.8" height="75.5" transform="translate(1087.7 385) rotate(90)"/>
         <rect class="es60-cls-8" x="347.7" y="691.1" width="1.6" height="81.1" transform="translate(1080.2 383.1) rotate(90)"/>
-        <rect class="es60-cls-8" x="326.2" y="668" width="44.6" height="81.1" transform="translate(-360 1057.1) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="326.2" y="668" width="44.6" height="81.1" transform="translate(-360 1057.1) rotate(-90)"/>
         <rect class="es60-cls-8" x="321.5" y="730.8" width="9.4" height="9.4" transform="translate(1061.8 409.3) rotate(90)"/>
         <rect class="es60-cls-8" x="372.4" y="732.1" width="9.4" height="6.9" transform="translate(1112.6 358.4) rotate(90)"/>
       </g>
@@ -1590,13 +1599,13 @@
         <path class="es60-cls-6" d="M467.2,497h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M441,458.2l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="354.6" y="554.1" width="172.8" height="91.4" transform="translate(1040.8 158.8) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="354.6" y="554.1" width="172.8" height="91.4" transform="translate(1040.8 158.8) rotate(90)"/>
       <rect class="es60-cls-8" x="454.7" y="715.1" width="60.9" height="3.2" transform="translate(-231.6 1201.8) rotate(-90)"/>
       <rect class="es60-cls-8" x="366.4" y="715.1" width="60.9" height="3.2" transform="translate(-319.8 1113.6) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="439.9" y="698.6" width="7.8" height="75.5" transform="translate(1180.2 292.5) rotate(90)"/>
         <rect class="es60-cls-8" x="440.2" y="691.1" width="1.6" height="81.1" transform="translate(1172.7 290.6) rotate(90)"/>
-        <rect class="es60-cls-8" x="418.7" y="668" width="44.6" height="81.1" transform="translate(-267.5 1149.6) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="418.7" y="668" width="44.6" height="81.1" transform="translate(-267.5 1149.6) rotate(-90)"/>
         <rect class="es60-cls-8" x="414.1" y="730.8" width="9.4" height="9.4" transform="translate(1154.3 316.8) rotate(90)"/>
         <rect class="es60-cls-8" x="464.9" y="732.1" width="9.4" height="6.9" transform="translate(1205.1 265.9) rotate(90)"/>
       </g>
@@ -1627,13 +1636,13 @@
         <path class="es60-cls-6" d="M559.7,497h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M533.5,458.2l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="447.1" y="554.1" width="172.8" height="91.4" transform="translate(1133.3 66.3) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="447.1" y="554.1" width="172.8" height="91.4" transform="translate(1133.3 66.3) rotate(90)"/>
       <rect class="es60-cls-8" x="547.2" y="715.1" width="60.9" height="3.2" transform="translate(-139 1294.3) rotate(-90)"/>
       <rect class="es60-cls-8" x="458.9" y="715.1" width="60.9" height="3.2" transform="translate(-227.3 1206.1) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="532.4" y="698.6" width="7.8" height="75.5" transform="translate(1272.7 200) rotate(90)"/>
         <rect class="es60-cls-8" x="532.7" y="691.1" width="1.6" height="81.1" transform="translate(1265.2 198.1) rotate(90)"/>
-        <rect class="es60-cls-8" x="511.2" y="668" width="44.6" height="81.1" transform="translate(-175 1242.1) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="511.2" y="668" width="44.6" height="81.1" transform="translate(-175 1242.1) rotate(-90)"/>
         <rect class="es60-cls-8" x="506.6" y="730.8" width="9.4" height="9.4" transform="translate(1246.8 224.3) rotate(90)"/>
         <rect class="es60-cls-8" x="557.4" y="732.1" width="9.4" height="6.9" transform="translate(1297.6 173.4) rotate(90)"/>
       </g>
@@ -1664,13 +1673,13 @@
         <path class="es60-cls-6" d="M686,497h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M659.8,458.2l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="573.4" y="554.1" width="172.8" height="91.4" transform="translate(1259.6 -60) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="573.4" y="554.1" width="172.8" height="91.4" transform="translate(1259.6 -60) rotate(90)"/>
       <rect class="es60-cls-8" x="673.5" y="715.1" width="60.9" height="3.2" transform="translate(-12.8 1420.6) rotate(-90)"/>
       <rect class="es60-cls-8" x="585.2" y="715.1" width="60.9" height="3.2" transform="translate(-101 1332.4) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="658.7" y="698.6" width="7.8" height="75.5" transform="translate(1399 73.7) rotate(90)"/>
         <rect class="es60-cls-8" x="659" y="691.1" width="1.6" height="81.1" transform="translate(1391.5 71.9) rotate(90)"/>
-        <rect class="es60-cls-8" x="637.5" y="668" width="44.6" height="81.1" transform="translate(-48.7 1368.4) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="637.5" y="668" width="44.6" height="81.1" transform="translate(-48.7 1368.4) rotate(-90)"/>
         <rect class="es60-cls-8" x="632.8" y="730.8" width="9.4" height="9.4" transform="translate(1373.1 98) rotate(90)"/>
         <rect class="es60-cls-8" x="683.7" y="732.1" width="9.4" height="6.9" transform="translate(1423.9 47.2) rotate(90)"/>
       </g>
@@ -1701,13 +1710,13 @@
         <path class="es60-cls-6" d="M778.5,497h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M752.3,458.2l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="665.9" y="554.1" width="172.8" height="91.4" transform="translate(1352.1 -152.5) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="665.9" y="554.1" width="172.8" height="91.4" transform="translate(1352.1 -152.5) rotate(90)"/>
       <rect class="es60-cls-8" x="766" y="715.1" width="60.9" height="3.2" transform="translate(79.7 1513.1) rotate(-90)"/>
       <rect class="es60-cls-8" x="677.7" y="715.1" width="60.9" height="3.2" transform="translate(-8.5 1424.9) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="751.2" y="698.6" width="7.8" height="75.5" transform="translate(1491.5 -18.8) rotate(90)"/>
         <rect class="es60-cls-8" x="751.5" y="691.1" width="1.6" height="81.1" transform="translate(1484 -20.6) rotate(90)"/>
-        <rect class="es60-cls-8" x="730" y="668" width="44.6" height="81.1" transform="translate(43.8 1460.9) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="730" y="668" width="44.6" height="81.1" transform="translate(43.8 1460.9) rotate(-90)"/>
         <rect class="es60-cls-8" x="725.3" y="730.8" width="9.4" height="9.4" transform="translate(1465.6 5.5) rotate(90)"/>
         <rect class="es60-cls-8" x="776.2" y="732.1" width="9.4" height="6.9" transform="translate(1516.4 -45.3) rotate(90)"/>
       </g>
@@ -1738,13 +1747,13 @@
         <path class="es60-cls-6" d="M871,497h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M844.8,458.2l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="758.4" y="554.1" width="172.8" height="91.4" transform="translate(1444.6 -245) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="758.4" y="554.1" width="172.8" height="91.4" transform="translate(1444.6 -245) rotate(90)"/>
       <rect class="es60-cls-8" x="858.5" y="715.1" width="60.9" height="3.2" transform="translate(172.2 1605.6) rotate(-90)"/>
       <rect class="es60-cls-8" x="770.2" y="715.1" width="60.9" height="3.2" transform="translate(84 1517.4) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="843.7" y="698.6" width="7.8" height="75.5" transform="translate(1584 -111.3) rotate(90)"/>
         <rect class="es60-cls-8" x="844" y="691.1" width="1.6" height="81.1" transform="translate(1576.5 -113.1) rotate(90)"/>
-        <rect class="es60-cls-8" x="822.5" y="668" width="44.6" height="81.1" transform="translate(136.3 1553.4) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="822.5" y="668" width="44.6" height="81.1" transform="translate(136.3 1553.4) rotate(-90)"/>
         <rect class="es60-cls-8" x="817.8" y="730.8" width="9.4" height="9.4" transform="translate(1558.1 -87) rotate(90)"/>
         <rect class="es60-cls-8" x="868.7" y="732.1" width="9.4" height="6.9" transform="translate(1608.9 -137.8) rotate(90)"/>
       </g>
@@ -1775,13 +1784,13 @@
         <path class="es60-cls-6" d="M963.5,497h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M937.3,458.2l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="850.9" y="554.1" width="172.8" height="91.4" transform="translate(1537.1 -337.5) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="850.9" y="554.1" width="172.8" height="91.4" transform="translate(1537.1 -337.5) rotate(90)"/>
       <rect class="es60-cls-8" x="951" y="715.1" width="60.9" height="3.2" transform="translate(264.7 1698.1) rotate(-90)"/>
       <rect class="es60-cls-8" x="862.7" y="715.1" width="60.9" height="3.2" transform="translate(176.5 1609.9) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="936.2" y="698.6" width="7.8" height="75.5" transform="translate(1676.5 -203.8) rotate(90)"/>
         <rect class="es60-cls-8" x="936.5" y="691.1" width="1.6" height="81.1" transform="translate(1669 -205.6) rotate(90)"/>
-        <rect class="es60-cls-8" x="915" y="668" width="44.6" height="81.1" transform="translate(228.8 1645.9) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="915" y="668" width="44.6" height="81.1" transform="translate(228.8 1645.9) rotate(-90)"/>
         <rect class="es60-cls-8" x="910.3" y="730.8" width="9.4" height="9.4" transform="translate(1650.6 -179.5) rotate(90)"/>
         <rect class="es60-cls-8" x="961.2" y="732.1" width="9.4" height="6.9" transform="translate(1701.4 -230.3) rotate(90)"/>
       </g>
@@ -1812,13 +1821,13 @@
         <path class="es60-cls-6" d="M1056,497h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M1029.8,458.2l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="943.4" y="554.1" width="172.8" height="91.4" transform="translate(1629.6 -430) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="943.4" y="554.1" width="172.8" height="91.4" transform="translate(1629.6 -430) rotate(90)"/>
       <rect class="es60-cls-8" x="1043.5" y="715.1" width="60.9" height="3.2" transform="translate(357.2 1790.6) rotate(-90)"/>
       <rect class="es60-cls-8" x="955.2" y="715.1" width="60.9" height="3.2" transform="translate(269 1702.4) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="1028.7" y="698.6" width="7.8" height="75.5" transform="translate(1769 -296.3) rotate(90)"/>
         <rect class="es60-cls-8" x="1029" y="691.1" width="1.6" height="81.1" transform="translate(1761.5 -298.2) rotate(90)"/>
-        <rect class="es60-cls-8" x="1007.5" y="668" width="44.6" height="81.1" transform="translate(321.3 1738.4) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="1007.5" y="668" width="44.6" height="81.1" transform="translate(321.3 1738.4) rotate(-90)"/>
         <rect class="es60-cls-8" x="1002.8" y="730.8" width="9.4" height="9.4" transform="translate(1743.1 -272) rotate(90)"/>
         <rect class="es60-cls-8" x="1053.7" y="732.1" width="9.4" height="6.9" transform="translate(1793.9 -322.8) rotate(90)"/>
       </g>
@@ -1849,13 +1858,13 @@
         <path class="es60-cls-6" d="M1148.5,497h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M1122.3,458.2l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="1035.9" y="554.1" width="172.8" height="91.4" transform="translate(1722.1 -522.5) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="1035.9" y="554.1" width="172.8" height="91.4" transform="translate(1722.1 -522.5) rotate(90)"/>
       <rect class="es60-cls-8" x="1136" y="715.1" width="60.9" height="3.2" transform="translate(449.7 1883.1) rotate(-90)"/>
       <rect class="es60-cls-8" x="1047.7" y="715.1" width="60.9" height="3.2" transform="translate(361.5 1794.9) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="1121.2" y="698.6" width="7.8" height="75.5" transform="translate(1861.5 -388.8) rotate(90)"/>
         <rect class="es60-cls-8" x="1121.5" y="691.1" width="1.6" height="81.1" transform="translate(1854 -390.7) rotate(90)"/>
-        <rect class="es60-cls-8" x="1100" y="668" width="44.6" height="81.1" transform="translate(413.8 1830.9) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="1100" y="668" width="44.6" height="81.1" transform="translate(413.8 1830.9) rotate(-90)"/>
         <rect class="es60-cls-8" x="1095.3" y="730.8" width="9.4" height="9.4" transform="translate(1835.6 -364.5) rotate(90)"/>
         <rect class="es60-cls-8" x="1146.2" y="732.1" width="9.4" height="6.9" transform="translate(1886.4 -415.3) rotate(90)"/>
       </g>
@@ -1886,13 +1895,13 @@
         <path class="es60-cls-6" d="M97.2,176.4h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M71,137.5l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="-15.4" y="233.5" width="172.8" height="91.4" transform="translate(350.2 208.2) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="-15.4" y="233.5" width="172.8" height="91.4" transform="translate(350.2 208.2) rotate(90)"/>
       <rect class="es60-cls-8" x="84.7" y="394.5" width="60.9" height="3.2" transform="translate(-280.9 511.2) rotate(-90)"/>
       <rect class="es60-cls-8" x="-3.6" y="394.5" width="60.9" height="3.2" transform="translate(-369.2 422.9) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="69.9" y="378" width="7.8" height="75.5" transform="translate(489.5 341.9) rotate(90)"/>
         <rect class="es60-cls-8" x="70.2" y="370.5" width="1.6" height="81.1" transform="translate(482 340) rotate(90)"/>
-        <rect class="es60-cls-8" x="48.7" y="347.4" width="44.6" height="81.1" transform="translate(-316.9 458.9) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="48.7" y="347.4" width="44.6" height="81.1" transform="translate(-316.9 458.9) rotate(-90)"/>
         <rect class="es60-cls-8" x="44" y="410.2" width="9.4" height="9.4" transform="translate(463.6 366.2) rotate(90)"/>
         <rect class="es60-cls-8" x="94.9" y="411.5" width="9.4" height="6.9" transform="translate(514.5 315.3) rotate(90)"/>
       </g>
@@ -1923,13 +1932,13 @@
         <path class="es60-cls-6" d="M189.7,176.4h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M163.5,137.5l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="77.1" y="233.5" width="172.8" height="91.4" transform="translate(442.7 115.7) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="77.1" y="233.5" width="172.8" height="91.4" transform="translate(442.7 115.7) rotate(90)"/>
       <rect class="es60-cls-8" x="177.2" y="394.5" width="60.9" height="3.2" transform="translate(-188.4 603.7) rotate(-90)"/>
       <rect class="es60-cls-8" x="88.9" y="394.5" width="60.9" height="3.2" transform="translate(-276.7 515.5) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="162.4" y="378" width="7.8" height="75.5" transform="translate(582 249.4) rotate(90)"/>
         <rect class="es60-cls-8" x="162.7" y="370.5" width="1.6" height="81.1" transform="translate(574.5 247.5) rotate(90)"/>
-        <rect class="es60-cls-8" x="141.2" y="347.4" width="44.6" height="81.1" transform="translate(-224.4 551.4) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="141.2" y="347.4" width="44.6" height="81.1" transform="translate(-224.4 551.4) rotate(-90)"/>
         <rect class="es60-cls-8" x="136.5" y="410.2" width="9.4" height="9.4" transform="translate(556.1 273.7) rotate(90)"/>
         <rect class="es60-cls-8" x="187.4" y="411.5" width="9.4" height="6.9" transform="translate(607 222.8) rotate(90)"/>
       </g>
@@ -1960,13 +1969,13 @@
         <path class="es60-cls-6" d="M282.2,176.4h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M256,137.5l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="169.6" y="233.5" width="172.8" height="91.4" transform="translate(535.2 23.2) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="169.6" y="233.5" width="172.8" height="91.4" transform="translate(535.2 23.2) rotate(90)"/>
       <rect class="es60-cls-8" x="269.7" y="394.5" width="60.9" height="3.2" transform="translate(-95.9 696.2) rotate(-90)"/>
       <rect class="es60-cls-8" x="181.4" y="394.5" width="60.9" height="3.2" transform="translate(-184.2 608) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="254.9" y="378" width="7.8" height="75.5" transform="translate(674.5 156.9) rotate(90)"/>
         <rect class="es60-cls-8" x="255.2" y="370.5" width="1.6" height="81.1" transform="translate(667 155) rotate(90)"/>
-        <rect class="es60-cls-8" x="233.7" y="347.4" width="44.6" height="81.1" transform="translate(-131.9 643.9) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="233.7" y="347.4" width="44.6" height="81.1" transform="translate(-131.9 643.9) rotate(-90)"/>
         <rect class="es60-cls-8" x="229" y="410.2" width="9.4" height="9.4" transform="translate(648.6 181.2) rotate(90)"/>
         <rect class="es60-cls-8" x="279.9" y="411.5" width="9.4" height="6.9" transform="translate(699.5 130.3) rotate(90)"/>
       </g>
@@ -1997,13 +2006,13 @@
         <path class="es60-cls-6" d="M374.7,176.4h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M348.5,137.5l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="262.1" y="233.5" width="172.8" height="91.4" transform="translate(627.7 -69.3) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="262.1" y="233.5" width="172.8" height="91.4" transform="translate(627.7 -69.3) rotate(90)"/>
       <rect class="es60-cls-8" x="362.2" y="394.5" width="60.9" height="3.2" transform="translate(-3.4 788.7) rotate(-90)"/>
       <rect class="es60-cls-8" x="273.9" y="394.5" width="60.9" height="3.2" transform="translate(-91.7 700.5) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="347.4" y="378" width="7.8" height="75.5" transform="translate(767 64.4) rotate(90)"/>
         <rect class="es60-cls-8" x="347.7" y="370.5" width="1.6" height="81.1" transform="translate(759.5 62.5) rotate(90)"/>
-        <rect class="es60-cls-8" x="326.2" y="347.4" width="44.6" height="81.1" transform="translate(-39.4 736.4) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="326.2" y="347.4" width="44.6" height="81.1" transform="translate(-39.4 736.4) rotate(-90)"/>
         <rect class="es60-cls-8" x="321.5" y="410.2" width="9.4" height="9.4" transform="translate(741.2 88.7) rotate(90)"/>
         <rect class="es60-cls-8" x="372.4" y="411.5" width="9.4" height="6.9" transform="translate(792 37.8) rotate(90)"/>
       </g>
@@ -2034,13 +2043,13 @@
         <path class="es60-cls-6" d="M467.2,176.4h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M441,137.5l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="354.6" y="233.5" width="172.8" height="91.4" transform="translate(720.2 -161.8) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="354.6" y="233.5" width="172.8" height="91.4" transform="translate(720.2 -161.8) rotate(90)"/>
       <rect class="es60-cls-8" x="454.7" y="394.5" width="60.9" height="3.2" transform="translate(89.1 881.2) rotate(-90)"/>
       <rect class="es60-cls-8" x="366.4" y="394.5" width="60.9" height="3.2" transform="translate(.8 793) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="439.9" y="378" width="7.8" height="75.5" transform="translate(859.5 -28.1) rotate(90)"/>
         <rect class="es60-cls-8" x="440.2" y="370.5" width="1.6" height="81.1" transform="translate(852 -30) rotate(90)"/>
-        <rect class="es60-cls-8" x="418.7" y="347.4" width="44.6" height="81.1" transform="translate(53.1 828.9) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="418.7" y="347.4" width="44.6" height="81.1" transform="translate(53.1 828.9) rotate(-90)"/>
         <rect class="es60-cls-8" x="414.1" y="410.2" width="9.4" height="9.4" transform="translate(833.7 -3.8) rotate(90)"/>
         <rect class="es60-cls-8" x="464.9" y="411.5" width="9.4" height="6.9" transform="translate(884.5 -54.7) rotate(90)"/>
       </g>
@@ -2071,13 +2080,13 @@
         <path class="es60-cls-6" d="M559.7,176.4h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M533.5,137.5l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="447.1" y="233.5" width="172.8" height="91.4" transform="translate(812.7 -254.3) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="447.1" y="233.5" width="172.8" height="91.4" transform="translate(812.7 -254.3) rotate(90)"/>
       <rect class="es60-cls-8" x="547.2" y="394.5" width="60.9" height="3.2" transform="translate(181.6 973.7) rotate(-90)"/>
       <rect class="es60-cls-8" x="458.9" y="394.5" width="60.9" height="3.2" transform="translate(93.3 885.5) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="532.4" y="378" width="7.8" height="75.5" transform="translate(952 -120.6) rotate(90)"/>
         <rect class="es60-cls-8" x="532.7" y="370.5" width="1.6" height="81.1" transform="translate(944.5 -122.5) rotate(90)"/>
-        <rect class="es60-cls-8" x="511.2" y="347.4" width="44.6" height="81.1" transform="translate(145.6 921.4) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="511.2" y="347.4" width="44.6" height="81.1" transform="translate(145.6 921.4) rotate(-90)"/>
         <rect class="es60-cls-8" x="506.6" y="410.2" width="9.4" height="9.4" transform="translate(926.2 -96.3) rotate(90)"/>
         <rect class="es60-cls-8" x="557.4" y="411.5" width="9.4" height="6.9" transform="translate(977 -147.2) rotate(90)"/>
       </g>
@@ -2108,13 +2117,13 @@
         <path class="es60-cls-6" d="M686,176.4h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M659.8,137.5l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="573.4" y="233.5" width="172.8" height="91.4" transform="translate(939 -380.6) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="573.4" y="233.5" width="172.8" height="91.4" transform="translate(939 -380.6) rotate(90)"/>
       <rect class="es60-cls-8" x="673.5" y="394.5" width="60.9" height="3.2" transform="translate(307.9 1100) rotate(-90)"/>
       <rect class="es60-cls-8" x="585.2" y="394.5" width="60.9" height="3.2" transform="translate(219.6 1011.7) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="658.7" y="378" width="7.8" height="75.5" transform="translate(1078.3 -246.9) rotate(90)"/>
         <rect class="es60-cls-8" x="659" y="370.5" width="1.6" height="81.1" transform="translate(1070.8 -248.8) rotate(90)"/>
-        <rect class="es60-cls-8" x="637.5" y="347.4" width="44.6" height="81.1" transform="translate(271.9 1047.7) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="637.5" y="347.4" width="44.6" height="81.1" transform="translate(271.9 1047.7) rotate(-90)"/>
         <rect class="es60-cls-8" x="632.8" y="410.2" width="9.4" height="9.4" transform="translate(1052.4 -222.6) rotate(90)"/>
         <rect class="es60-cls-8" x="683.7" y="411.5" width="9.4" height="6.9" transform="translate(1103.3 -273.5) rotate(90)"/>
       </g>
@@ -2145,13 +2154,13 @@
         <path class="es60-cls-6" d="M778.5,176.4h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M752.3,137.5l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="665.9" y="233.5" width="172.8" height="91.4" transform="translate(1031.5 -473.1) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="665.9" y="233.5" width="172.8" height="91.4" transform="translate(1031.5 -473.1) rotate(90)"/>
       <rect class="es60-cls-8" x="766" y="394.5" width="60.9" height="3.2" transform="translate(400.4 1192.5) rotate(-90)"/>
       <rect class="es60-cls-8" x="677.7" y="394.5" width="60.9" height="3.2" transform="translate(312.1 1104.2) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="751.2" y="378" width="7.8" height="75.5" transform="translate(1170.8 -339.4) rotate(90)"/>
         <rect class="es60-cls-8" x="751.5" y="370.5" width="1.6" height="81.1" transform="translate(1163.3 -341.3) rotate(90)"/>
-        <rect class="es60-cls-8" x="730" y="347.4" width="44.6" height="81.1" transform="translate(364.4 1140.2) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="730" y="347.4" width="44.6" height="81.1" transform="translate(364.4 1140.2) rotate(-90)"/>
         <rect class="es60-cls-8" x="725.3" y="410.2" width="9.4" height="9.4" transform="translate(1144.9 -315.1) rotate(90)"/>
         <rect class="es60-cls-8" x="776.2" y="411.5" width="9.4" height="6.9" transform="translate(1195.8 -366) rotate(90)"/>
       </g>
@@ -2182,13 +2191,13 @@
         <path class="es60-cls-6" d="M871,176.4h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M844.8,137.5l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="758.4" y="233.5" width="172.8" height="91.4" transform="translate(1124 -565.6) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="758.4" y="233.5" width="172.8" height="91.4" transform="translate(1124 -565.6) rotate(90)"/>
       <rect class="es60-cls-8" x="858.5" y="394.5" width="60.9" height="3.2" transform="translate(492.9 1285) rotate(-90)"/>
       <rect class="es60-cls-8" x="770.2" y="394.5" width="60.9" height="3.2" transform="translate(404.6 1196.7) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="843.7" y="378" width="7.8" height="75.5" transform="translate(1263.3 -431.9) rotate(90)"/>
         <rect class="es60-cls-8" x="844" y="370.5" width="1.6" height="81.1" transform="translate(1255.8 -433.8) rotate(90)"/>
-        <rect class="es60-cls-8" x="822.5" y="347.4" width="44.6" height="81.1" transform="translate(456.9 1232.7) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="822.5" y="347.4" width="44.6" height="81.1" transform="translate(456.9 1232.7) rotate(-90)"/>
         <rect class="es60-cls-8" x="817.8" y="410.2" width="9.4" height="9.4" transform="translate(1237.4 -407.6) rotate(90)"/>
         <rect class="es60-cls-8" x="868.7" y="411.5" width="9.4" height="6.9" transform="translate(1288.3 -458.5) rotate(90)"/>
       </g>
@@ -2219,13 +2228,13 @@
         <path class="es60-cls-6" d="M963.5,176.4h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M937.3,137.5l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="850.9" y="233.5" width="172.8" height="91.4" transform="translate(1216.5 -658.1) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="850.9" y="233.5" width="172.8" height="91.4" transform="translate(1216.5 -658.1) rotate(90)"/>
       <rect class="es60-cls-8" x="951" y="394.5" width="60.9" height="3.2" transform="translate(585.4 1377.5) rotate(-90)"/>
       <rect class="es60-cls-8" x="862.7" y="394.5" width="60.9" height="3.2" transform="translate(497.1 1289.2) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="936.2" y="378" width="7.8" height="75.5" transform="translate(1355.8 -524.4) rotate(90)"/>
         <rect class="es60-cls-8" x="936.5" y="370.5" width="1.6" height="81.1" transform="translate(1348.3 -526.3) rotate(90)"/>
-        <rect class="es60-cls-8" x="915" y="347.4" width="44.6" height="81.1" transform="translate(549.4 1325.2) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="915" y="347.4" width="44.6" height="81.1" transform="translate(549.4 1325.2) rotate(-90)"/>
         <rect class="es60-cls-8" x="910.3" y="410.2" width="9.4" height="9.4" transform="translate(1329.9 -500.1) rotate(90)"/>
         <rect class="es60-cls-8" x="961.2" y="411.5" width="9.4" height="6.9" transform="translate(1380.8 -551) rotate(90)"/>
       </g>
@@ -2256,13 +2265,13 @@
         <path class="es60-cls-6" d="M1056,176.4h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M1029.8,137.5l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="943.4" y="233.5" width="172.8" height="91.4" transform="translate(1309 -750.6) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="943.4" y="233.5" width="172.8" height="91.4" transform="translate(1309 -750.6) rotate(90)"/>
       <rect class="es60-cls-8" x="1043.5" y="394.5" width="60.9" height="3.2" transform="translate(677.9 1470) rotate(-90)"/>
       <rect class="es60-cls-8" x="955.2" y="394.5" width="60.9" height="3.2" transform="translate(589.6 1381.7) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="1028.7" y="378" width="7.8" height="75.5" transform="translate(1448.3 -616.9) rotate(90)"/>
         <rect class="es60-cls-8" x="1029" y="370.5" width="1.6" height="81.1" transform="translate(1440.8 -618.8) rotate(90)"/>
-        <rect class="es60-cls-8" x="1007.5" y="347.4" width="44.6" height="81.1" transform="translate(641.9 1417.7) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="1007.5" y="347.4" width="44.6" height="81.1" transform="translate(641.9 1417.7) rotate(-90)"/>
         <rect class="es60-cls-8" x="1002.8" y="410.2" width="9.4" height="9.4" transform="translate(1422.4 -592.6) rotate(90)"/>
         <rect class="es60-cls-8" x="1053.7" y="411.5" width="9.4" height="6.9" transform="translate(1473.3 -643.5) rotate(90)"/>
       </g>
@@ -2293,13 +2302,13 @@
         <path class="es60-cls-6" d="M1148.5,176.4h-50.7c-.7,0-1.2-.8-.8-1.4l25.4-41.5c.4-.6,1.2-.6,1.6,0l25.4,41.5c.4.6,0,1.4-.8,1.4Z"/>
         <path class="es60-cls-2" d="M1122.3,137.5l-21.6,35.3c-.4.6,0,1.4.8,1.4h43.1c.7,0,1.2-.8.8-1.4l-21.6-35.3c-.4-.6-1.2-.6-1.6,0Z"/>
       </g>
-      <rect class="es60-cls-4" x="1035.9" y="233.5" width="172.8" height="91.4" transform="translate(1401.5 -843.1) rotate(90)"/>
+      <rect class="tint-target es60-cls-4" x="1035.9" y="233.5" width="172.8" height="91.4" transform="translate(1401.5 -843.1) rotate(90)"/>
       <rect class="es60-cls-8" x="1136" y="394.5" width="60.9" height="3.2" transform="translate(770.4 1562.5) rotate(-90)"/>
       <rect class="es60-cls-8" x="1047.7" y="394.5" width="60.9" height="3.2" transform="translate(682.1 1474.2) rotate(-90)"/>
       <g>
         <rect class="es60-cls-6" x="1121.2" y="378" width="7.8" height="75.5" transform="translate(1540.8 -709.4) rotate(90)"/>
         <rect class="es60-cls-8" x="1121.5" y="370.5" width="1.6" height="81.1" transform="translate(1533.3 -711.3) rotate(90)"/>
-        <rect class="es60-cls-8" x="1100" y="347.4" width="44.6" height="81.1" transform="translate(734.4 1510.2) rotate(-90)"/>
+        <rect class="tint-target es60-cls-8" x="1100" y="347.4" width="44.6" height="81.1" transform="translate(734.4 1510.2) rotate(-90)"/>
         <rect class="es60-cls-8" x="1095.3" y="410.2" width="9.4" height="9.4" transform="translate(1514.9 -685.1) rotate(90)"/>
         <rect class="es60-cls-8" x="1146.2" y="411.5" width="9.4" height="6.9" transform="translate(1565.8 -736) rotate(90)"/>
       </g>

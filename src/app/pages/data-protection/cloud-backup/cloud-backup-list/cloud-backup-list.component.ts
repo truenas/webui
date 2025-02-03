@@ -213,8 +213,9 @@ export class CloudBackupListComponent {
   }
 
   private updateRowJob(row: CloudBackup, job: Job): void {
-    this.dataProvider().setRows(this.cloudBackups().map((task) => {
-      return task.id === row.id ? { ...task, job } : { ...task };
-    }));
+    this.cloudBackups.update((backups) => {
+      return backups.map((backup) => (backup.id === row.id ? { ...backup, job } : backup));
+    });
+    this.dataProvider().setRows(this.cloudBackups());
   }
 }

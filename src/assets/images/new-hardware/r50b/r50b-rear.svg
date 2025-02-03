@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg id="R50B_REAR" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1270.7 496.3">
+  <defs>
+    <style>
+      /* Contrast Fixes */
+      #R50B_REAR #R50B_CHASSIS,
+      #R50B_REAR #R50B_CASE_FANS,
+      #R50B_REAR #R50B_POWER_SUPPLIES {
+        opacity: 0.25;
+      }
+    </style>
+  </defs>
   <g id="R50B_CHASSIS">
     <g id="_Group_">
       <rect x="21.7" y=".1" width="1230.1" height="496.1" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
@@ -1013,7 +1023,7 @@
       <rect x="114.35" y="10.34" width="51.6" height="26.22" style="fill: #3a3a3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
     </g>
     <g>
-      <rect x="23.84" y="13.4" width="232.54" height="44.35" style="fill: #7f7f7f; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect class="tint-target" x="23.84" y="13.4" width="232.54" height="44.35" style="fill: #7f7f7f; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
       <rect x="256.38" y="26.9" width="2.31" height="17.35" style="fill: #3d5aa8; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
       <polygon points="29.07 9 251.15 9 251.15 13.32 249.88 13.32 249.88 10.34 30.34 10.34 30.34 13.32 29.07 13.32 29.07 9" style="fill: #bfbfbf; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
       <rect x="252.35" y="24.39" width="1.57" height="22.21" style="fill: #8c8c8c; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
@@ -1049,7 +1059,7 @@
       <rect x="113.73" y="68.96" width="51.6" height="26.22" style="fill: #3a3a3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
     </g>
     <g>
-      <rect x="23.23" y="72.02" width="232.54" height="44.35" style="fill: #7f7f7f; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect class="tint-target" x="23.23" y="72.02" width="232.54" height="44.35" style="fill: #7f7f7f; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
       <rect x="255.76" y="85.52" width="2.31" height="17.35" style="fill: #3d5aa8; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
       <polygon points="28.45 67.62 250.54 67.62 250.54 71.94 249.27 71.94 249.27 68.96 29.72 68.96 29.72 71.94 28.45 71.94 28.45 67.62" style="fill: #bfbfbf; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
       <rect x="251.73" y="83.01" width="1.57" height="22.21" style="fill: #8c8c8c; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>

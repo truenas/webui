@@ -142,7 +142,7 @@ export class DatasetCapacitySettingsComponent implements OnInit {
   }
 
   get isRoot(): boolean {
-    return Boolean(this.dataset) && isRootDataset(this.dataset);
+    return !!this.dataset && isRootDataset(this.dataset);
   }
 
   setDatasetForEdit(dataset: DatasetDetails): void {

@@ -6,7 +6,7 @@ import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { map } from 'rxjs';
+import { filter, map } from 'rxjs';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { getAllFormErrors } from 'app/modules/forms/ix-forms/utils/get-form-errors.utils';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
@@ -67,13 +67,19 @@ export class WidgetPoolSettingsComponent implements WidgetSettingsComponent<Widg
     this.widgetSettingsRef.updateValidity(
       getAllFormErrors(this.form, this.formFieldNames),
     );
-    this.form.valueChanges.pipe(untilDestroyed(this)).subscribe({
-      next: (settings) => {
-        this.widgetSettingsRef.updateSettings({ poolId: settings.poolId });
-        this.widgetSettingsRef.updateValidity(
-          getAllFormErrors(this.form, this.formFieldNames),
-        );
-      },
-    });
+    this.form.valueChanges
+      .pipe(
+        map((settings) => settings.poolId),
+        filter<string>((poolId) => !!poolId),
+        untilDestroyed(this),
+      )
+      .subscribe({
+        next: (poolId) => {
+          this.widgetSettingsRef.updateSettings({ poolId });
+          this.widgetSettingsRef.updateValidity(
+            getAllFormErrors(this.form, this.formFieldNames),
+          );
+        },
+      });
   }
 }
