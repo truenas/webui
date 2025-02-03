@@ -861,8 +861,8 @@ export interface ApiCallDirectory {
   'ups.update': { params: [UpsConfigUpdate]; response: UpsConfig };
 
   // User
-  'user.create': { params: [UserUpdate]; response: User };
-  'user.update': { params: [id: number, update: UserUpdate]; response: User };
+  'user.create': { params: [UserUpdate]; response: number };
+  'user.update': { params: [id: number, update: UserUpdate]; response: number };
   'user.delete': { params: DeleteUserParams; response: number };
   'user.get_next_uid': { params: void; response: number };
   'user.get_user_obj': { params: [{ username?: string; uid?: number }]; response: DsUncachedUser };

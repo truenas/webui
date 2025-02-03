@@ -388,6 +388,8 @@ export class UserFormComponent implements OnInit {
       .pipe(
         filter(Boolean),
         switchMap(() => this.submitUserRequest(payload)),
+        switchMap((id) => this.api.call('user.query', [[['id', '=', id]]])),
+        map((users) => users[0]),
         untilDestroyed(this),
       )
       .subscribe({
@@ -448,26 +450,26 @@ export class UserFormComponent implements OnInit {
     return of(true);
   }
 
-  private generateOneTimePasswordIfNeeded(user: User): Observable<User> {
+  private generateOneTimePasswordIfNeeded(id: number): Observable<number> {
     if (this.isNewUser && this.form.value.stig_password === UserStigPasswordOption.OneTimePassword) {
       return this.api.call('auth.generate_onetime_password', [{ username: this.form.value.username }]).pipe(
         switchMap((password) => {
           this.matDialog.open(OneTimePasswordCreatedDialogComponent, { data: password });
-          return of(user);
+          return of(id);
         }),
       );
     }
-    return of(user);
+    return of(id);
   }
 
-  private submitUserRequest(payload: UserUpdate): Observable<User> {
+  private submitUserRequest(payload: UserUpdate): Observable<number> {
     this.isFormLoading = true;
     this.cdr.markForCheck();
 
     return this.editingUser ? this.getUpdateUserRequest(payload) : this.getCreateUserRequest(payload);
   }
 
-  private getCreateUserRequest(payload: UserUpdate): Observable<User> {
+  private getCreateUserRequest(payload: UserUpdate): Observable<number> {
     const oneTimePassword = this.form.value.stig_password === UserStigPasswordOption.OneTimePassword;
 
     const userPayload = {
@@ -483,11 +485,11 @@ export class UserFormComponent implements OnInit {
     }
 
     return this.api.call('user.create', [userPayload]).pipe(
-      switchMap((user) => this.generateOneTimePasswordIfNeeded(user)),
+      switchMap((id) => this.generateOneTimePasswordIfNeeded(id)),
     );
   }
 
-  private getUpdateUserRequest(payload: UserUpdate): Observable<User> {
+  private getUpdateUserRequest(payload: UserUpdate): Observable<number> {
     const values = this.form.value;
 
     const passwordNotEmpty = values.password !== '' && values.password_conf !== '';
