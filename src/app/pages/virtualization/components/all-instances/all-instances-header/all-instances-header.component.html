@@ -1,17 +1,40 @@
 <ix-virtualization-state class="state-indicator" [state]="state()"></ix-virtualization-state>
 
-<button
-  mat-button
-  ixTest="edit-global-settings"
-  [color]="needToSetupPool() ? 'primary' : 'default'"
-  (click)="onEdit()"
->
-  @if (needToSetupPool()) {
+@if (needToSetupPool()) {
+  <button
+    mat-button
+    ixTest="edit-global-settings"
+    color="primary"
+    (click)="onGlobalConfiguration()"
+  >
     {{ 'Select Pool' | translate }}
-  } @else {
-    {{ 'Global Settings' | translate }}
-  }
-</button>
+  </button>
+} @else {
+  <button
+    mat-button
+    ixTest="settings-menu"
+    [matMenuTriggerFor]="menu"
+  >
+    {{ 'Configuration' | translate }}
+    <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
+  </button>
+
+  <mat-menu #menu="matMenu" overlapTrigger="false">
+    <button
+      mat-menu-item
+      ixTest="global-configuration"
+      (click)="onGlobalConfiguration()"
+    >
+      {{ 'Global Settings' | translate }}
+    </button>
+
+    <button
+      mat-menu-item
+      ixTest="manage-volumes"
+      (click)="onManageVolumes()"
+    >{{ 'Manage Volumes' | translate }}</button>
+  </mat-menu>
+}
 
 @if (isLocked() && config()?.dataset) {
   <a
