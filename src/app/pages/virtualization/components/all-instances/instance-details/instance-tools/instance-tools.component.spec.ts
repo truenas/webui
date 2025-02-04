@@ -59,6 +59,15 @@ describe('InstanceToolsComponent', () => {
     });
   });
 
+  describe('console', () => {
+    it('shows a link to console for VMs', async () => {
+      const consoleLink = await loader.getHarness(MatButtonHarness.with({ text: 'Console' }));
+
+      expect(consoleLink).toBeTruthy();
+      expect(await (await consoleLink.host()).getAttribute('href')).toBe('/virtualization/view/my-instance/console');
+    });
+  });
+
   describe('vnc', () => {
     it('shows a link to  VNC', async () => {
       const vncLink = await loader.getHarness(MatButtonHarness.with({ selector: '[ixTest="open-vnc"]' }));
