@@ -111,7 +111,7 @@
               <div class="copy-version">
                 <div class="copy-version-text" [matTooltip]="systemInfo().version">
                   <span>
-                    {{ systemInfo().version | systemVersion }}
+                    {{ systemInfo().version | systemVersion: systemInfo().codename }}
                     {{ rendered() }}
                   </span>
                 </div>

@@ -5,6 +5,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
+import { Codename } from 'app/enums/codename.enum';
 import { helptextAbout } from 'app/helptext/about';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AboutDialogComponent } from 'app/modules/layout/topbar/about-dialog/about-dialog.component';
@@ -27,6 +28,7 @@ describe('AboutDialogComponent', () => {
             selector: selectSystemInfoState,
             value: {
               systemInfo: {
+                codename: Codename.Fangtooth,
                 version: 'TrueNAS-COMMUNITY_EDITION-25.04.0-MASTER-20250126-18480',
                 system_product: 'M40',
               },

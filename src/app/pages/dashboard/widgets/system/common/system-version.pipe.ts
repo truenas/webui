@@ -16,6 +16,10 @@ export class SystemVersionPipe implements PipeTransform {
     if (codename) {
       return `${semanticVersion} - ${codename}`;
     }
-    return `${semanticVersion} - ${versionToCodeNames.get(semanticVersion.slice(0, 5))}`;
+    const codeNameFromSemanticVersion = versionToCodeNames.get(semanticVersion.slice(0, 5));
+    if (codeNameFromSemanticVersion) {
+      return `${semanticVersion} - ${codeNameFromSemanticVersion}`;
+    }
+    return semanticVersion;
   }
 }

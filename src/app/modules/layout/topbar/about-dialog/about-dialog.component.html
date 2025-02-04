@@ -34,7 +34,9 @@
 
     <div id="system-version">
       <span>{{ 'System Version' | translate }}:</span>
-      <span>{{ systemVersion$ | async | systemVersion }}</span>
+      <span [matTooltip]="systemInfo().version">
+        {{ systemInfo().version | systemVersion: systemInfo().codename }}
+      </span>
     </div>
   </div>
 </div>
