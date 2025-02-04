@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder } from '@ngneat/reactive-forms';
@@ -150,8 +150,8 @@ export class TargetFormComponent implements OnInit {
   });
 
   fcForm = this.formBuilder.group({
-    port: new FormControl(null as string | null),
-    host_id: new FormControl(null as number | null, [Validators.required]),
+    port: [null as string | null],
+    host_id: [null as number | null, [Validators.required]],
   });
 
   constructor(
