@@ -355,6 +355,7 @@
   "KMIP Read": "",
   "KMIP Write": "",
   "Keep Last": "",
+  "Keep current port {port}": "",
   "Kerberos Keytabs": "",
   "Kerberos Principal": "",
   "Kernel Parameters": "",

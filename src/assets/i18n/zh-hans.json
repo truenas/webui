@@ -91,6 +91,7 @@
   "Instance is not container": "",
   "Instance must be stopped to add TPM.": "",
   "Instance must be stopped to update VNC.": "",
+  "Keep current port {port}": "",
   "Leca Service Base Url": "",
   "Linux Only": "",
   "Local user accounts using NTLM authentication are not permitted when TrueNAS is running in an enhanced security mode.": "",
