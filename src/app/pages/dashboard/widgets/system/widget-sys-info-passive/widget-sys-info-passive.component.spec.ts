@@ -21,7 +21,6 @@ import { selectCanFailover, selectIsHaEnabled, selectIsHaLicensed } from 'app/st
 import {
   selectIsIxHardware,
   selectProductType,
-  selectIsEnterprise,
   selectHasEnclosureSupport,
 } from 'app/store/system-info/system-info.selectors';
 
@@ -67,10 +66,6 @@ describe('WidgetSysInfoPassiveComponent', () => {
           {
             selector: selectProductType,
             value: ProductType.Enterprise,
-          },
-          {
-            selector: selectIsEnterprise,
-            value: true,
           },
           {
             selector: selectHasEnclosureSupport,
@@ -132,7 +127,8 @@ describe('WidgetSysInfoPassiveComponent', () => {
       const items = await parallel(() => matListItems.map((item) => item.getFullText()));
       expect(items).toEqual([
         'Platform: TRUENAS-M40-HA',
-        'Version: ElectricEel-24.10.0-MASTER-20240301-233006',
+        'Edition: Enterprise',
+        'Version: Goldeye-25.10.0-MASTER-20250126-184805',
         'Support License: Gold Contract,  Expires on 2025-01-01',
         'System Serial: AA-00002',
         'Hostname: test-hostname-b',
