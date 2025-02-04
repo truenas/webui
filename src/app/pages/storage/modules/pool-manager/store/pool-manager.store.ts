@@ -37,7 +37,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 export interface PoolManagerTopologyCategory {
   layout: CreateVdevLayout;
-  width: number;
+  width: number | null;
   diskSize: number;
   diskType: DiskType;
   vdevsNumber: number;

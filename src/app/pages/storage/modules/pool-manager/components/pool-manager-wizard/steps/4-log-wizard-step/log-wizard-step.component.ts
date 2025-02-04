@@ -33,7 +33,7 @@ import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/p
   ],
 })
 export class LogWizardStepComponent implements OnInit {
-  readonly isStepActive = input<boolean>();
+  readonly isStepActive = input<boolean>(false);
   readonly stepWarning = input<string | null>();
 
   readonly goToLastStep = output();

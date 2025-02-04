@@ -110,7 +110,7 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
         return this.resolvedOptions.find((option) => option.value === parseInt(value))?.label;
       }
       return value;
-    }).filter(Boolean);
+    }).filter((value) => value !== undefined);
   }
 
   inputReset$ = new Subject<void>();

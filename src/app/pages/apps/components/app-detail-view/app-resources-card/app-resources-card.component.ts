@@ -50,8 +50,8 @@ export class AppResourcesCardComponent implements OnInit {
       throttleTime(2000),
       untilDestroyed(this),
     ).subscribe((update) => {
-      if (update?.cpu?.aggregated_usage) {
-        this.cpuPercentage.set(parseInt(update.cpu.aggregated_usage.toFixed(1)));
+      if (update?.cpu?.cpu?.usage) {
+        this.cpuPercentage.set(parseInt(update.cpu.cpu.usage.toFixed(1)));
       }
 
       if (update?.memory) {

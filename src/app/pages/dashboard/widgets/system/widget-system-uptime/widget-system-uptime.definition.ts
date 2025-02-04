@@ -9,5 +9,4 @@ export const systemUptimeWidget = dashboardWidget({
   supportedSizes: [SlotSize.Full, SlotSize.Half, SlotSize.Quarter],
   category: WidgetCategory.SystemInfo,
   component: WidgetSystemUptimeComponent,
-  settingsComponent: null,
 });

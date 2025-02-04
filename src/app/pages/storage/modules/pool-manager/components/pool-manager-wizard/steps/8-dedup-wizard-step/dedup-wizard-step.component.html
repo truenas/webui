@@ -1,7 +1,7 @@
 <ix-layout-step
   [description]="helptext.dedup_vdev_description | translate"
   [type]="VdevType.Dedup"
-  [inventory]="inventory$ | async"
+  [inventory]="(inventory$ | async) || []"
   [canChangeLayout]="canChangeLayout"
   [limitLayouts]="allowedLayouts"
   [isStepActive]="isStepActive()"

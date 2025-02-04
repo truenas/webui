@@ -1,6 +1,10 @@
 import {
   AfterViewInit,
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, viewChild,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  viewChild,
 } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -10,7 +14,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  forkJoin, Observable, of, switchMap, map, combineLatest, filter, catchError,
+  catchError, combineLatest, filter, forkJoin, map, Observable, of, switchMap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetPreset } from 'app/enums/dataset.enum';
@@ -73,7 +77,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
   private otherOptionsSection = viewChild(OtherOptionsSectionComponent);
 
   readonly requiredRoles = [Role.DatasetWrite];
-  protected slideInData: { datasetId: string; isNew?: boolean } | null = null;
+  protected slideInData: { datasetId: string; isNew?: boolean };
 
   isNameAndOptionsValid = true;
   isQuotaValid = true;
@@ -138,7 +142,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
     private snackbar: SnackbarService,
     private translate: TranslateService,
     private store$: Store<AppState>,
-    public slideInRef: SlideInRef<{ datasetId: string; isNew?: boolean } | undefined, Dataset>,
+    public slideInRef: SlideInRef<{ datasetId: string; isNew?: boolean }, Dataset>,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(Boolean(
@@ -150,17 +154,14 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
       ));
     });
 
-    const slideInData = slideInRef.getData();
-    if (slideInData) {
-      this.slideInData = slideInData;
-    }
+    this.slideInData = slideInRef.getData();
   }
 
   ngOnInit(): void {
-    if (this.slideInData?.datasetId && !this.slideInData?.isNew) {
+    if (this.slideInData.datasetId && !this.slideInData.isNew) {
       this.setForEdit();
     }
-    if (this.slideInData?.datasetId && this.slideInData?.isNew) {
+    if (this.slideInData.datasetId && this.slideInData.isNew) {
       this.setForNew();
     }
   }

@@ -393,7 +393,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   }
 
   openAdvanced(): void {
-    this.slideInRef.swap(
+    this.slideInRef.swap?.(
       ReplicationFormComponent,
       { wide: true },
     );
@@ -476,7 +476,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
       },
       {
         label: this.translate.instant(helptextReplicationWizard.target_dataset_placeholder),
-        value: values.target_dataset,
+        value: values.target_dataset || '',
       },
     ];
   }

@@ -248,18 +248,10 @@ import {
   DeleteUserParams, SetPasswordParams, User, UserUpdate,
 } from 'app/interfaces/user.interface';
 import {
-  VirtualizationDetails,
-  VirtualMachine, VirtualMachineUpdate, VmCloneParams, VmDeleteParams, VmDisplayWebUri,
-  VmDisplayWebUriParams, VmPortWizardResult,
-} from 'app/interfaces/virtual-machine.interface';
-import {
-  VirtualizationDevice, VirtualizationGlobalConfig,
-  VirtualizationImage, VirtualizationImageParams,
-  VirtualizationInstance, VirtualizationNetwork, AvailableUsb, AvailableGpus,
+  VirtualizationInstance, VirtualizationDevice, VirtualizationImageParams,
+  VirtualizationImage, AvailableGpus, AvailableUsb, VirtualizationGlobalConfig,
+  VirtualizationNetwork, VirtualizationVolume, VirtualizationVolumeUpdate,
 } from 'app/interfaces/virtualization.interface';
-import {
-  VmDevice, VmDeviceDelete, VmDeviceUpdate, VmDisplayDevice, VmPassthroughDeviceChoice, VmUsbPassthroughDeviceChoice,
-} from 'app/interfaces/vm-device.interface';
 import {
   MatchDatastoresWithDatasets,
   MatchDatastoresWithDatasetsParams,
@@ -894,35 +886,11 @@ export interface ApiCallDirectory {
   'virt.global.get_network': { params: [name: string]; response: VirtualizationNetwork };
   'virt.global.pool_choices': { params: []; response: Choices };
 
-  // VM
-  'vm.bootloader_options': { params: void; response: Choices };
-  'vm.clone': { params: VmCloneParams; response: boolean };
-  'vm.cpu_model_choices': { params: void; response: Choices };
-  'vm.create': { params: [VirtualMachineUpdate]; response: VirtualMachine };
-  'vm.delete': { params: VmDeleteParams; response: boolean };
-  'vm.device.bind_choices': { params: void; response: Choices };
-  'vm.device.create': { params: [VmDeviceUpdate]; response: VmDevice };
-  'vm.device.delete': { params: [number, VmDeviceDelete?]; response: boolean };
-  'vm.device.disk_choices': { params: void; response: Choices };
+  'virt.volume.query': { params: QueryParams<VirtualizationVolume>; response: VirtualizationVolume[] };
+  'virt.volume.update': { params: VirtualizationVolumeUpdate; response: VirtualizationVolume };
+  'virt.volume.delete': { params: [id: string]; response: true };
+
   'system.advanced.get_gpu_pci_choices': { params: void; response: Choices };
-  'vm.device.nic_attach_choices': { params: void; response: Choices };
-  'vm.device.passthrough_device_choices': { params: void; response: Record<string, VmPassthroughDeviceChoice> };
-  'vm.device.query': { params: QueryParams<VmDevice>; response: VmDevice[] };
-  'vm.device.update': { params: [id: number, update: VmDeviceUpdate]; response: VmDevice };
-  'vm.device.usb_controller_choices': { params: void; response: Choices };
-  'vm.device.usb_passthrough_choices': { params: void; response: Record<string, VmUsbPassthroughDeviceChoice> };
-  'vm.get_available_memory': { params: void; response: number };
-  'vm.get_display_devices': { params: [id: number]; response: VmDisplayDevice[] };
-  'vm.get_display_web_uri': { params: VmDisplayWebUriParams; response: VmDisplayWebUri };
-  'vm.maximum_supported_vcpus': { params: void; response: number };
-  'vm.port_wizard': { params: void; response: VmPortWizardResult };
-  'vm.poweroff': { params: [id: number]; response: void };
-  'vm.query': { params: QueryParams<VirtualMachine>; response: VirtualMachine[] };
-  'vm.random_mac': { params: void; response: string };
-  'vm.resolution_choices': { params: void; response: Choices };
-  'vm.start': { params: [id: number, params?: { overcommit?: boolean }]; response: void };
-  'vm.update': { params: [id: number, update: VirtualMachineUpdate]; response: VirtualMachine };
-  'vm.virtualization_details': { params: void; response: VirtualizationDetails };
 
   // Vmware
   'vmware.create': { params: [VmwareSnapshotUpdate]; response: VmwareSnapshot };

@@ -45,7 +45,7 @@ import { UrlOptionsService } from 'app/services/url-options.service';
 })
 export class ServiceExtraActionsComponent {
   readonly service = input.required<Service>();
-  readonly requiredRoles = input<Role[]>();
+  readonly requiredRoles = input<Role[]>([]);
   readonly configServiceLabel = this.translate.instant('Config Service');
   readonly serviceNames = serviceNames;
   readonly serviceStateLabel = computed<string>(() => {
