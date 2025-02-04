@@ -5,14 +5,14 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IscsiAuthMethod, IscsiTargetMode } from 'app/enums/iscsi.enum';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
 import {
   IscsiAuthAccess, IscsiInitiatorGroup, IscsiPortal, IscsiTarget,
 } from 'app/interfaces/iscsi.interface';
-import { Option, skipOption } from 'app/interfaces/option.interface';
+import { Option } from 'app/interfaces/option.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
@@ -37,7 +37,7 @@ describe('TargetFormComponent', () => {
     id: 123,
     name: 'name_test',
     alias: 'alias_test',
-    mode: 'ISCSI',
+    mode: IscsiTargetMode.Iscsi,
     groups: [{
       portal: 1,
       initiator: 4,
@@ -84,6 +84,7 @@ describe('TargetFormComponent', () => {
       }),
       mockProvider(DialogService),
       mockProvider(FibreChannelService, {
+        loadTargetPort: jest.fn(() => of(null)),
         linkFiberChannelToTarget: jest.fn(() => of(null)),
       }),
       mockProvider(SlideInRef, slideInRef),
@@ -247,7 +248,7 @@ describe('TargetFormComponent', () => {
       );
       expect(spectator.inject(FibreChannelService).linkFiberChannelToTarget).toHaveBeenCalledWith(
         123,
-        skipOption,
+        null,
         undefined,
       );
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();

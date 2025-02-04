@@ -19,9 +19,9 @@ import { ApiService } from 'app/modules/websocket/api.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-connections-card',
-  styleUrls: ['./connections-card.component.scss'],
-  templateUrl: './connections-card.component.html',
+  selector: 'ix-iscsi-connections-card',
+  styleUrls: ['./iscsi-connections-card.component.scss'],
+  templateUrl: './iscsi-connections-card.component.html',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
@@ -34,7 +34,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
     TranslateModule,
   ],
 })
-export class ConnectionsCardComponent {
+export class IscsiConnectionsCardComponent {
   readonly target = input.required<IscsiTarget>();
 
   isLoading = signal<boolean>(false);
