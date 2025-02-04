@@ -1,3 +1,4 @@
+import { Component } from '@angular/core';
 import { outputToObservable } from '@angular/core/rxjs-interop';
 import { MatDialogRef } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
@@ -22,5 +23,9 @@ export class JobProgressDialogRef<T> {
       outputToObservable(this.matDialogRef.componentInstance.jobFailure)
         .pipe(switchMap((error) => throwError(() => error))),
     ).pipe(take(1));
+  }
+
+  getSubscriptionLimiterInstance(): Component {
+    return this.matDialogRef.componentInstance as Component;
   }
 }

@@ -12,9 +12,8 @@ import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import {
-  filter, map, tap,
+  filter, map,
 } from 'rxjs/operators';
-import { JobState } from 'app/enums/job-state.enum';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { ApiJobMethod, ApiJobResponse } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -104,26 +103,25 @@ export class JobsPanelComponent {
       ) as Observable<Job<ApiJobResponse<ApiJobMethod>>>
     ).pipe(
       observeJob(),
-      tap((jobUpdate) => {
-        if (jobUpdate.state === JobState.Success) {
-          this.snackbar.success(this.translate.instant('Job completed successfully'));
-        }
-      }),
     );
 
-    this.dialog.jobDialog(
+    const jobProgressDialogRef = this.dialog.jobDialog(
       job$,
       {
         title,
         canMinimize: true,
       },
-    )
-      .afterClosed()
+    );
+    jobProgressDialogRef.afterClosed()
       .pipe(
         this.errorHandler.catchError(),
-        untilDestroyed(this),
+        untilDestroyed(jobProgressDialogRef.getSubscriptionLimiterInstance()),
       )
-      .subscribe();
+      .subscribe({
+        next: () => {
+          this.snackbar.success(this.translate.instant('Job completed successfully'));
+        },
+      });
   }
 
   goToJobs(): void {
