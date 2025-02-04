@@ -1,6 +1,9 @@
 import { Routes } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { AllInstancesComponent } from 'app/pages/virtualization/components/all-instances/all-instances.component';
+import {
+  InstanceConsoleComponent,
+} from 'app/pages/virtualization/components/instance-shell/instance-console.component';
 import { InstanceShellComponent } from 'app/pages/virtualization/components/instance-shell/instance-shell.component';
 import { InstanceWizardComponent } from 'app/pages/virtualization/components/instance-wizard/instance-wizard.component';
 import { VirtualizationConfigStore } from 'app/pages/virtualization/stores/virtualization-config.store';
@@ -38,6 +41,11 @@ export const virtualizationRoutes: Routes = [{
           path: 'shell',
           component: InstanceShellComponent,
           data: { title: T('Instance Shell') },
+        },
+        {
+          path: 'console',
+          component: InstanceConsoleComponent,
+          data: { title: T('Instance Console') },
         },
       ],
     },
