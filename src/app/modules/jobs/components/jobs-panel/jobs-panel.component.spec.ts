@@ -19,6 +19,7 @@ import { JobsPanelPageObject } from 'app/modules/jobs/components/jobs-panel/jobs
 import { JobEffects } from 'app/modules/jobs/store/job.effects';
 import { jobReducer, adapter, jobsInitialState } from 'app/modules/jobs/store/job.reducer';
 import { jobStateKey } from 'app/modules/jobs/store/job.selectors';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
@@ -92,10 +93,12 @@ describe('JobsPanelComponent', () => {
       FakeFormatDateTimePipe,
     ],
     providers: [
+      mockProvider(SnackbarService),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
         jobDialog: jest.fn(() => ({
           afterClosed: () => of(undefined),
+          getSubscriptionLimiterInstance: () => spectator.component,
         })),
       }),
       mockApi([
@@ -178,5 +181,6 @@ describe('JobsPanelComponent', () => {
     spectator.click(byText('pool.scrub'));
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Job completed successfully');
   });
 });
