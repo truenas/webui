@@ -30,8 +30,8 @@ export function buildPortsTableRow(
     rows.push({
       name: host.alias,
       target: indexedPorts[host.alias]?.target,
-      wwpn: indexedPorts[host.alias]?.wwpn,
-      wwpn_b: indexedPorts[host.alias]?.wwpn_b,
+      wwpn: indexedPorts[host.alias]?.wwpn || undefined,
+      wwpn_b: indexedPorts[host.alias]?.wwpn_b || undefined,
       aPortState: indexedStatuses[host.alias]?.A?.port_state,
       bPortState: indexedStatuses[host.alias]?.B?.port_state,
       isPhysical: true,
@@ -43,8 +43,8 @@ export function buildPortsTableRow(
       rows.push({
         name: portName,
         target: indexedPorts[portName]?.target,
-        wwpn: indexedPorts[portName]?.wwpn,
-        wwpn_b: indexedPorts[portName]?.wwpn_b,
+        wwpn: indexedPorts[portName]?.wwpn || undefined,
+        wwpn_b: indexedPorts[portName]?.wwpn_b || undefined,
         aPortState: indexedStatuses[portName]?.A?.port_state,
         bPortState: indexedStatuses[portName]?.B?.port_state,
         isPhysical: false,

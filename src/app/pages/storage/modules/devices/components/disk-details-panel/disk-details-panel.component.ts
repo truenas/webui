@@ -53,7 +53,7 @@ export class DiskDetailsPanelComponent {
 
   protected hasSmartTestSupport = computed(() => {
     const disk = this.disk();
-    return disk && this.disksWithSmartTestSupport().includes(disk.devname);
+    return Boolean(disk && this.disksWithSmartTestSupport().includes(disk.devname));
   });
 
   onCloseMobileDetails(): void {

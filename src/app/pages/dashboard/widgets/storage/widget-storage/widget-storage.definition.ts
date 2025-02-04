@@ -9,5 +9,4 @@ export const storageWidget = dashboardWidget({
   supportedSizes: [SlotSize.Full],
   category: WidgetCategory.Storage,
   component: WidgetStorageComponent,
-  settingsComponent: null,
 });

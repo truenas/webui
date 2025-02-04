@@ -143,6 +143,12 @@
       .r20-rear-cls-34 {
         fill: #838782;
       }
+
+      /* Contrast Fixes */
+      #R20_Chassis,
+      #R20_Power_Supplies {
+        opacity: 0.2;
+      }
     </style>
   </defs>
   <g id="R20_Chassis" data-name="R20 Chassis">
@@ -377,20 +383,20 @@
   </g>
   <g id="R20_SATA_Cache" data-name="R20 SATA Cache">
     <g id="DRIVE_CAGE_13">
-      <rect class="r20-rear-cls-3" x="1185.2" y="29.7" width="3.2" height="190.8"/>
-      <rect class="r20-rear-cls-3" x="1188.5" y="29.7" width="18.7" height="28.8"/>
-      <rect class="r20-rear-cls-5" x="1188.5" y="58.5" width="18.7" height="1.9"/>
-      <rect class="r20-rear-cls-3" x="1188.5" y="60.4" width="18.7" height="166.7"/>
-      <rect class="r20-rear-cls-5" x="1185.2" y="17.5" width="22" height="12.2"/>
-      <rect class="r20-rear-cls-11" x="1185.2" y="17.5" width="22" height="7.9"/>
+      <rect class="tint-target r20-rear-cls-3" x="1185.2" y="29.7" width="3.2" height="190.8"/>
+      <rect class="tint-target r20-rear-cls-3" x="1188.5" y="29.7" width="18.7" height="28.8"/>
+      <rect class="tint-target r20-rear-cls-5" x="1188.5" y="58.5" width="18.7" height="1.9"/>
+      <rect class="tint-target r20-rear-cls-3" x="1188.5" y="60.4" width="18.7" height="166.7"/>
+      <rect class="tint-target r20-rear-cls-5" x="1185.2" y="17.5" width="22" height="12.2"/>
+      <rect class="tint-target r20-rear-cls-11" x="1185.2" y="17.5" width="22" height="7.9"/>
     </g>
     <g id="DRIVE_CAGE_14">
-      <rect class="r20-rear-cls-3" x="1210" y="29.7" width="3.2" height="190.8"/>
-      <rect class="r20-rear-cls-3" x="1213.2" y="29.7" width="18.7" height="28.8"/>
-      <rect class="r20-rear-cls-5" x="1213.2" y="58.5" width="18.7" height="1.9"/>
-      <rect class="r20-rear-cls-3" x="1213.2" y="60.4" width="18.7" height="166.7"/>
-      <rect class="r20-rear-cls-5" x="1210" y="17.5" width="22" height="12.2"/>
-      <rect class="r20-rear-cls-11" x="1210" y="17.5" width="22" height="7.9"/>
+      <rect class="tint-target r20-rear-cls-3" x="1210" y="29.7" width="3.2" height="190.8"/>
+      <rect class="tint-target r20-rear-cls-3" x="1213.2" y="29.7" width="18.7" height="28.8"/>
+      <rect class="tint-target r20-rear-cls-5" x="1213.2" y="58.5" width="18.7" height="1.9"/>
+      <rect class="tint-target r20-rear-cls-3" x="1213.2" y="60.4" width="18.7" height="166.7"/>
+      <rect class="tint-target r20-rear-cls-5" x="1210" y="17.5" width="22" height="12.2"/>
+      <rect class="tint-target r20-rear-cls-11" x="1210" y="17.5" width="22" height="7.9"/>
     </g>
   </g>
   <g id="R20_Power_Supplies" data-name="R20 Power Supplies">

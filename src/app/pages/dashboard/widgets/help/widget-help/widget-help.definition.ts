@@ -9,5 +9,4 @@ export const helpWidget = dashboardWidget({
   supportedSizes: [SlotSize.Full, SlotSize.Half, SlotSize.Quarter],
   category: WidgetCategory.Help,
   component: WidgetHelpComponent,
-  settingsComponent: null,
 });

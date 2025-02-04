@@ -42,6 +42,8 @@ export type TintingFunction = (slot: DashboardEnclosureSlot) => string | null;
   imports: [NgxSkeletonLoaderModule],
 })
 export class EnclosureSvgComponent implements OnDestroy {
+  readonly emptyOpacity = 0.15;
+  readonly unselectedOpacity = 0.3;
   readonly svgUrl = input.required<string>();
   readonly slots = input.required<DashboardEnclosureSlot[]>();
   readonly enableMouseEvents = input(true);
@@ -55,6 +57,7 @@ export class EnclosureSvgComponent implements OnDestroy {
   protected svgContainer = viewChild<ElementRef<HTMLElement>>('svgContainer');
 
   private overlayRects: Record<number, SVGRectElement> = {};
+  private slotElements: Record<number, SVGGElement> = {};
 
   constructor(
     private renderer: Renderer2,
@@ -105,6 +108,7 @@ export class EnclosureSvgComponent implements OnDestroy {
         return;
       }
 
+      this.slotElements[slot.drive_bay_number] = tray;
       this.addOverlay(slot, tray);
 
       if (this.enableMouseEvents()) {
@@ -133,6 +137,7 @@ export class EnclosureSvgComponent implements OnDestroy {
   });
 
   private clearSelectionStylesFromAllSlots(): void {
+    this.resetDimValues();
     Object.values(this.overlayRects).forEach((overlay) => {
       overlay.classList.remove('selected');
       overlay.classList.remove('selected-vdev-disk');
@@ -162,8 +167,11 @@ export class EnclosureSvgComponent implements OnDestroy {
     for (const slot of allSlots) {
       if (slot.dev && selectedVdevDisks.includes(slot.dev)) {
         this.renderer.addClass(this.overlayRects[slot.drive_bay_number], 'selected-vdev-disk');
+        if (slot.type) {
+          this.dimSlot(slot.drive_bay_number, 1);
+        }
       } else if (slot.drive_bay_number !== selectedSlot.drive_bay_number) {
-        this.renderer.addClass(this.overlayRects[slot.drive_bay_number], 'not-selected-vdev-disk');
+        this.dimSlot(slot.drive_bay_number, this.unselectedOpacity);
       }
     }
   }
@@ -246,7 +254,6 @@ export class EnclosureSvgComponent implements OnDestroy {
     const prevSlotExists = !!selectedSlot;
 
     if (!isNewSlotEmpty && prevSlotExists && slot.dev === selectedSlot.dev) {
-      this.selectedSlot.set(null);
       return;
     }
 
@@ -254,17 +261,56 @@ export class EnclosureSvgComponent implements OnDestroy {
   };
 
   private addTint(slot: DashboardEnclosureSlot): void {
-    const overlay = this.overlayRects[slot.drive_bay_number];
+    const tintTargets: NodeListOf<SVGGElement> = this.getTintTargets(slot.drive_bay_number);
+    const slotTint = this.slotTintFn()(slot);
 
-    this.renderer.removeClass(overlay, 'tinted');
+    if (slotTint) {
+      tintTargets.forEach((tintTarget: SVGGElement) => {
+        this.renderer.addClass(tintTarget, 'tinted');
+        this.renderer.setStyle(tintTarget, 'fill', slotTint);
+        this.renderer.setStyle(tintTarget, 'filter', 'brightness(1.25)');
+      });
+      this.dimSlot(slot.drive_bay_number, 1);
+    } else {
+      tintTargets.forEach((tintTarget: SVGGElement) => {
+        this.renderer.removeClass(tintTarget, 'tinted');
+        this.renderer.setStyle(tintTarget, 'fill', null);
+        this.renderer.setStyle(tintTarget, 'filter', 'brightness(1)');
+      });
+      this.dimSlot(slot.drive_bay_number, this.emptyOpacity);
+    }
+  }
 
-    const slotTint = this.slotTintFn()?.(slot);
-    if (!slotTint) {
+  private dimSlot(slotNumber: number, opacity: number): void {
+    this.renderer.setStyle(this.slotElements[slotNumber], 'opacity', opacity.toString());
+  }
+
+  private resetDimValues(): void {
+    const svgContainer = this.svgContainer();
+    if (!svgContainer || !this.svg()) {
       return;
     }
 
-    this.renderer.addClass(overlay, 'tinted');
-    this.renderer.setStyle(overlay, 'fill', slotTint);
+    const driveTrays = this.svgContainer().nativeElement.querySelectorAll<SVGGElement>('svg [id^="DRIVE_CAGE_"]');
+    driveTrays.forEach((tray) => {
+      const slot = this.getSlotForTray(tray);
+      if (!slot) {
+        return;
+      }
+
+      if (!slot.dev) {
+        this.dimSlot(slot.drive_bay_number, this.emptyOpacity);
+      } else {
+        this.dimSlot(slot.drive_bay_number, 1);
+      }
+    });
+  }
+
+  private getTintTargets(slotNumber: number): NodeListOf<SVGGElement> {
+    const slotId: string = 'DRIVE_CAGE_' + slotNumber.toString();
+    const tintTargets = this.slotElements[slotNumber].querySelectorAll<SVGGElement>(`svg [id^=${slotId}] .tint-target`);
+
+    return tintTargets;
   }
 
   private getSlotForTray(tray: SVGGElement): DashboardEnclosureSlot | undefined {

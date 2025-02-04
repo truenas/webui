@@ -9,7 +9,7 @@ export enum MenuItemType {
 export interface MenuItem {
   type: MenuItemType;
   name: string; // Used as display text for item and title for separator type
-  state?: string;
+  state: string;
   icon?: MarkedIcon;
   tooltip?: string;
   sub?: SubMenuItem[];

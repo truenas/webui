@@ -22,7 +22,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class IxCellToggleComponent<T> extends ColumnComponent<T> {
-  requiredRoles: Role[];
+  requiredRoles: Role[] = [];
   onRowToggle: (row: T, checked: boolean, toggle: MatSlideToggle) => void;
   dynamicRequiredRoles?: (row: T) => Observable<Role[]>;
 

@@ -40,7 +40,7 @@ export interface WidgetDefinition<
   supportedSizes: SlotSize[];
   category: WidgetCategory;
   component: Type<Component>;
-  settingsComponent: SettingsComponent extends null ? null : Type<SettingsComponent>;
+  settingsComponent?: SettingsComponent extends null ? null : Type<SettingsComponent>;
   visibility?: {
     deps: Type<WidgetVisibilityProvider>[];
     isVisible$: (deps: WidgetVisibilityDepsType<WidgetVisibilityProvider>) => Observable<boolean>;

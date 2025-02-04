@@ -28,7 +28,7 @@ import { getDatasetLabel } from 'app/pages/datasets/utils/dataset.utils';
 })
 export class DatasetNodeComponent {
   readonly dataset = input.required<DatasetDetails>();
-  readonly isSystemDataset = input<boolean>();
+  readonly isSystemDataset = input<boolean>(false);
 
   protected readonly label = computed(() => getDatasetLabel(this.dataset()));
 }
