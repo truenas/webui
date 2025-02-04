@@ -128,7 +128,7 @@ describe('WidgetSysInfoPassiveComponent', () => {
       expect(items).toEqual([
         'Platform: TRUENAS-M40-HA',
         'Edition: Enterprise',
-        'Version: Goldeye-25.10.0-MASTER-20250126-184805',
+        'Version: ElectricEel-24.10.0-MASTER-20240301-233006',
         'Support License: Gold Contract,  Expires on 2025-01-01',
         'System Serial: AA-00002',
         'Hostname: test-hostname-b',
