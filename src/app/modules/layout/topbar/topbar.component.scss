@@ -95,7 +95,7 @@
   }
 }
 
-:host ::ng-deep .topbar {
+:host ::ng-deep nav mat-toolbar {
   min-height: 48px;
 
   .mat-toolbar-row {
