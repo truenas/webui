@@ -2,13 +2,13 @@ import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { IscsiGlobalSession } from 'app/interfaces/iscsi-global-config.interface';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
-import { ConnectionsCardComponent } from './connections-card.component';
+import { IscsiConnectionsCardComponent } from 'app/pages/sharing/iscsi/target/all-targets/target-details/iscsi-connections-card/iscsi-connections-card.component';
 
-describe('ConnectionsCardComponent', () => {
-  let spectator: Spectator<ConnectionsCardComponent>;
+describe('IscsiConnectionsCardComponent', () => {
+  let spectator: Spectator<IscsiConnectionsCardComponent>;
 
   const createComponent = createComponentFactory({
-    component: ConnectionsCardComponent,
+    component: IscsiConnectionsCardComponent,
     providers: [
       mockApi([
         mockCall('iscsi.global.sessions', [
