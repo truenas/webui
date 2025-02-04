@@ -18,7 +18,6 @@ import { SmartTestProgressUpdate } from 'app/interfaces/smart-test-progress.inte
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { User } from 'app/interfaces/user.interface';
-import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { VirtualizationGlobalConfig, VirtualizationInstance, VirtualizationInstanceMetrics } from 'app/interfaces/virtualization.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 
@@ -49,7 +48,6 @@ export interface ApiEventDirectory {
   'virt.global.config': { response: VirtualizationGlobalConfig };
   'virt.instance.metrics': { response: VirtualizationInstanceMetrics };
   'virt.instance.query': { response: VirtualizationInstance };
-  'vm.query': { response: VirtualMachine };
   'zfs.pool.scan': { response: PoolScan };
   'zfs.snapshot.query': { response: ZfsSnapshot };
 }

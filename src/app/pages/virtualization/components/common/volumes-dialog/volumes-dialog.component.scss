@@ -1,0 +1,32 @@
+.header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-right: 20px;
+  margin-top: 18px;
+
+  h1 {
+    margin-bottom: 0;
+    padding-top: 0;
+  }
+}
+
+:host .table ::ng-deep {
+  table {
+    table-layout: auto;
+  }
+
+  .select-cell {
+    text-align: right;
+  }
+}
+
+.new-volume {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.content {
+  padding-bottom: 0;
+  padding-top: 10px;
+}

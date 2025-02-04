@@ -46,6 +46,7 @@ const instance = {
     TEST_ENV: 'value1',
     SAMPLE_ENV: 'value2',
   },
+  root_disk_size: null,
   aliases: {} as VirtualizationAlias,
   raw: null,
   vnc_enabled: true,
