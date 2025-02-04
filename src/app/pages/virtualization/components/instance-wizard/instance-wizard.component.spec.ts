@@ -17,6 +17,7 @@ import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.util
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
   VirtualizationDeviceType,
+  VirtualizationGpuType,
   VirtualizationNicType,
   VirtualizationProxyProtocol,
   VirtualizationSource,
@@ -209,7 +210,7 @@ describe('InstanceWizardComponent', () => {
           },
           { dev_type: VirtualizationDeviceType.Nic, nic_type: VirtualizationNicType.Bridged, parent: 'nic1' },
           { dev_type: VirtualizationDeviceType.Usb, product_id: '0003' },
-          { dev_type: VirtualizationDeviceType.Gpu, pci: 'pci_0000_01_00_0' },
+          { dev_type: VirtualizationDeviceType.Gpu, pci: 'pci_0000_01_00_0', gpu_type: VirtualizationGpuType.Physical },
         ],
         image: 'almalinux/8/cloud',
         memory: GiB,
@@ -358,7 +359,7 @@ describe('InstanceWizardComponent', () => {
           },
           { dev_type: VirtualizationDeviceType.Nic, nic_type: VirtualizationNicType.Bridged, parent: 'nic1' },
           { dev_type: VirtualizationDeviceType.Usb, product_id: '0003' },
-          { dev_type: VirtualizationDeviceType.Gpu, pci: 'pci_0000_01_00_0' },
+          { dev_type: VirtualizationDeviceType.Gpu, pci: 'pci_0000_01_00_0', gpu_type: VirtualizationGpuType.Physical },
         ],
         image: 'almalinux/8/cloud',
         memory: GiB,
