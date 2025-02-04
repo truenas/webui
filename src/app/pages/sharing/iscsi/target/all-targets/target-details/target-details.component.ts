@@ -13,9 +13,9 @@ import { AssociatedExtentsCardComponent } from 'app/pages/sharing/iscsi/target/a
 import {
   AuthorizedNetworksCardComponent,
 } from 'app/pages/sharing/iscsi/target/all-targets/target-details/authorized-networks-card/authorized-networks-card.component';
-import { ConnectionsCardComponent } from 'app/pages/sharing/iscsi/target/all-targets/target-details/connections-card/connections-card.component';
 import { FibreChannelConnectionsCardComponent } from 'app/pages/sharing/iscsi/target/all-targets/target-details/fibre-channel-connections-card/fibre-channel-connections-card.component';
 import { FibreChannelPortCardComponent } from 'app/pages/sharing/iscsi/target/all-targets/target-details/fibre-channel-port-card/fibre-channel-port-card.component';
+import { IscsiConnectionsCardComponent } from 'app/pages/sharing/iscsi/target/all-targets/target-details/iscsi-connections-card/iscsi-connections-card.component';
 
 @UntilDestroy()
 @Component({
@@ -28,7 +28,7 @@ import { FibreChannelPortCardComponent } from 'app/pages/sharing/iscsi/target/al
     FibreChannelPortCardComponent,
     FibreChannelConnectionsCardComponent,
     AssociatedExtentsCardComponent,
-    ConnectionsCardComponent,
+    IscsiConnectionsCardComponent,
   ],
 })
 export class TargetDetailsComponent {

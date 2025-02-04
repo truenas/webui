@@ -44,7 +44,7 @@ import {
   IscsiTargetExtentUpdate,
   IscsiTargetUpdate,
 } from 'app/interfaces/iscsi.interface';
-import { newOption, nullOption } from 'app/interfaces/option.interface';
+import { newOption } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { forbiddenValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
@@ -127,7 +127,7 @@ export class IscsiWizardComponent implements OnInit {
       listen: this.fb.array<string>([]),
       initiators: [[] as string[]],
       fcport: this.fb.group({
-        port: [nullOption as string, [Validators.required]],
+        port: [null as string | null],
         host_id: [null as number | null, [Validators.required]],
       }),
     }),
