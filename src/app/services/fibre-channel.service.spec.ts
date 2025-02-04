@@ -16,7 +16,7 @@ describe('FibreChannelService', () => {
     service: FibreChannelService,
     providers: [
       mockApi([
-        mockCall('fcport.query', [{ id: fakePortId }] as FibreChannelPort[]),
+        mockCall('fcport.query', [{ id: fakePortId, port: 'fc/2' }] as FibreChannelPort[]),
         mockCall('fcport.create'),
         mockCall('fcport.update'),
         mockCall('fcport.delete'),
@@ -54,14 +54,14 @@ describe('FibreChannelService', () => {
       );
     });
 
-    it('deletes link', async () => {
+    it('deletes link when new port is null', async () => {
       await lastValueFrom(spectator.service.linkFiberChannelToTarget(fakeTargetId, null));
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('fcport.delete', [fakePortId]);
     });
 
-    it('skips all operations', async () => {
-      await lastValueFrom(spectator.service.linkFiberChannelToTarget(fakeTargetId, 1));
+    it('skips all operations when new port is the same', async () => {
+      await lastValueFrom(spectator.service.linkFiberChannelToTarget(fakeTargetId, 'fc/2'));
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
         'fcport.query',
