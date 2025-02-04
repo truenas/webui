@@ -10,6 +10,7 @@ export type TerminalConnectionData =
   // Virtualization instances
   | {
     virt_instance_id: string;
+    use_console: boolean;
   }
   // Apps
   | {
