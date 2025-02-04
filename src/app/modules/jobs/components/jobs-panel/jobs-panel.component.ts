@@ -11,7 +11,10 @@ import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import {
+  filter, map,
+} from 'rxjs/operators';
+import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { ApiJobMethod, ApiJobResponse } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -27,6 +30,7 @@ import {
   selectJobsPanelSlice,
   selectJob,
 } from 'app/modules/jobs/store/job.selectors';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
@@ -65,6 +69,7 @@ export class JobsPanelComponent {
     private translate: TranslateService,
     private dialog: DialogService,
     private errorHandler: ErrorHandlerService,
+    private snackbar: SnackbarService,
   ) {}
 
   onAbort(job: Job): void {
@@ -92,19 +97,31 @@ export class JobsPanelComponent {
 
     const title = job.description ? job.description : job.method;
 
-    this.dialog.jobDialog(
-      this.store$.select(selectJob(job.id)) as Observable<Job<ApiJobResponse<ApiJobMethod>>>,
+    const job$ = (
+      this.store$.select(
+        selectJob(job.id),
+      ) as Observable<Job<ApiJobResponse<ApiJobMethod>>>
+    ).pipe(
+      observeJob(),
+    );
+
+    const jobProgressDialogRef = this.dialog.jobDialog(
+      job$,
       {
         title,
         canMinimize: true,
       },
-    )
-      .afterClosed()
+    );
+    jobProgressDialogRef.afterClosed()
       .pipe(
         this.errorHandler.catchError(),
-        untilDestroyed(this),
+        untilDestroyed(jobProgressDialogRef.getSubscriptionLimiterInstance()),
       )
-      .subscribe();
+      .subscribe({
+        next: () => {
+          this.snackbar.success(this.translate.instant('Job completed successfully'));
+        },
+      });
   }
 
   goToJobs(): void {
