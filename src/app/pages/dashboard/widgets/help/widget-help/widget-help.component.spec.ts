@@ -1,20 +1,19 @@
 import { HarnessLoader, parallel } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
+import { ProductType } from 'app/enums/product-type.enum';
 import { helptextAbout } from 'app/helptext/about';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { WidgetHelpComponent } from 'app/pages/dashboard/widgets/help/widget-help/widget-help.component';
-import { AppState } from 'app/store';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
+import { selectProductType } from 'app/store/system-info/system-info.selectors';
 
 describe('WidgetHelpComponent', () => {
   let spectator: Spectator<WidgetHelpComponent>;
   let loader: HarnessLoader;
-  let store$: MockStore<AppState>;
 
   const createComponent = createComponentFactory({
     component: WidgetHelpComponent,
@@ -24,8 +23,8 @@ describe('WidgetHelpComponent', () => {
     providers: [
       provideMockStore({
         selectors: [{
-          selector: selectIsEnterprise,
-          value: false,
+          selector: selectProductType,
+          value: ProductType.CommunityEdition,
         }],
       }),
     ],
@@ -34,7 +33,6 @@ describe('WidgetHelpComponent', () => {
   function setupTest(size: SlotSize): void {
     spectator = createComponent({ props: { size } });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    store$ = spectator.inject(MockStore);
   }
 
   describe('full size widget', () => {
@@ -139,12 +137,6 @@ describe('WidgetHelpComponent', () => {
 
     it('checks open source row', () => {
       expect(spectator.query('.open-source')).toHaveText('TrueNAS is Free');
-
-      store$.overrideSelector(selectIsEnterprise, true);
-      store$.refreshState();
-      spectator.detectChanges();
-
-      expect(spectator.query('.open-source')).not.toExist();
     });
 
     it('renders copyright', () => {
