@@ -14,7 +14,7 @@ import {
   MatDrawerMode, MatSidenav, MatSidenavContainer, MatSidenavContent,
 } from '@angular/material/sidenav';
 import { MatTooltip } from '@angular/material/tooltip';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { RouterOutlet } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
@@ -32,9 +32,9 @@ import { NavigationComponent } from 'app/modules/layout/navigation/navigation.co
 import { SecondaryMenuComponent } from 'app/modules/layout/secondary-menu/secondary-menu.component';
 import { SidenavService } from 'app/modules/layout/sidenav.service';
 import { TopbarComponent } from 'app/modules/layout/topbar/topbar.component';
+import { TruenasLogoComponent } from 'app/modules/layout/topbar/truenas-logo/truenas-logo.component';
 import { DefaultPageHeaderComponent } from 'app/modules/page-header/default-page-header/default-page-header.component';
 import { SlideInControllerComponent } from 'app/modules/slide-ins/components/slide-in-controller/slide-in-controller.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ThemeService } from 'app/modules/theme/theme.service';
 import { SentryService } from 'app/services/sentry.service';
 import { SessionTimeoutService } from 'app/services/session-timeout.service';
@@ -52,7 +52,6 @@ import { selectCopyrightText, selectIsEnterprise, waitForSystemInfo } from 'app/
   imports: [
     MatSidenavContainer,
     MatSidenav,
-    RouterLink,
     IxIconComponent,
     NavigationComponent,
     SecondaryMenuComponent,
@@ -67,7 +66,7 @@ import { selectCopyrightText, selectIsEnterprise, waitForSystemInfo } from 'app/
     SlideInControllerComponent,
     AsyncPipe,
     TranslateModule,
-    TestDirective,
+    TruenasLogoComponent,
   ],
 })
 export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {

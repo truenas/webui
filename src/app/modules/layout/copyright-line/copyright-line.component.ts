@@ -18,6 +18,7 @@ import { selectCopyrightText, selectIsEnterprise } from 'app/store/system-info/s
 export class CopyrightLineComponent {
   readonly withIxLogo = input(false);
   readonly copyrightText = toSignal(this.store$.select(selectCopyrightText));
+
   readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
   readonly targetHref = computed(() => {
     return this.isEnterprise() ? 'https://truenas.com/production' : 'https://truenas.com/testdrive';
