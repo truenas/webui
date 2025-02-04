@@ -384,11 +384,12 @@ export class InstanceWizardComponent {
       });
     }
 
-    const gpuDevices: { pci: string; dev_type: VirtualizationDeviceType }[] = [];
+    const gpuDevices: { pci: string; dev_type: VirtualizationDeviceType; gpu_type: VirtualizationGpuType }[] = [];
     for (const pci of this.form.controls.gpu_devices.value) {
       gpuDevices.push({
         pci,
         dev_type: VirtualizationDeviceType.Gpu,
+        gpu_type: VirtualizationGpuType.Physical,
       });
     }
     const macVlanNics: { parent: string; dev_type: VirtualizationDeviceType; nic_type: VirtualizationNicType }[] = [];
