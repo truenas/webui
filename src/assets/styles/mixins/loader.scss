@@ -4,21 +4,19 @@
 @mixin background-logo-loader($zoom: 1) {
   &::after {
     animation: loading 2s linear infinite;
-    background: transparent url('assets/icons/custom/truenas-logo.svg') no-repeat center center;
+    background: transparent url('assets/icons/custom/truenas-logo-mark.svg') no-repeat center center;
     color: var(--fg2);
     content: '';
     filter: invert(1);
-    height: 65px * $zoom;
     left: 50%;
     opacity: 0.1;
     position: absolute;
     top: 50%;
     transform: translate(-50%, -50%);
-    width: 300px * $zoom;
+    width: 100px * $zoom;
 
-    @media  (max-width: $breakpoint-tablet) {
-      height: 65px * $zoom * 0.75;
-      width: 300px * $zoom * 0.75;
+    @media (max-width: $breakpoint-tablet) {
+      width: 100px * $zoom * 0.75;
     }
   }
 }
