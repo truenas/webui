@@ -1,5 +1,4 @@
 import { miniSeries, serverSeries } from 'app/constants/server-series.constant';
-import { Codename } from 'app/enums/codename.enum';
 import { ProductEnclosure } from 'app/enums/product-enclosure.enum';
 
 export function getServerProduct(systemProduct: string): string | undefined {
@@ -37,11 +36,4 @@ export function getProductEnclosure(systemProduct: string): ProductEnclosure | n
     return ProductEnclosure.Tower;
   }
   return ProductEnclosure.Rackmount;
-}
-
-export function getSystemVersion(version: string, codename?: Codename): string {
-  if (codename) {
-    return version.replace('TrueNAS-COMMUNITY_EDITION', codename);
-  }
-  return version;
 }

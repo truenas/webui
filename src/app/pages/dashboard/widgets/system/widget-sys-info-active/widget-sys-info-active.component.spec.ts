@@ -29,8 +29,8 @@ describe('WidgetSysInfoActiveComponent', () => {
 
   const systemInfo = {
     platform: 'TRUENAS-M40-HA',
-    version: 'TrueNAS-COMMUNITY_EDITION-25.10.0-MASTER-20250126-184805',
-    codename: Codename.Goldeye,
+    version: 'TrueNAS-COMMUNITY_EDITION-25.04.0-MASTER-20250126-184805',
+    codename: Codename.Fangtooth,
     license: {
       contract_type: ContractType.Gold,
       contract_end: {
@@ -117,7 +117,7 @@ describe('WidgetSysInfoActiveComponent', () => {
     expect(items).toEqual([
       'Platform: TRUENAS-M40-HA',
       'Edition: Enterprise',
-      'Version: Goldeye-25.10.0-MASTER-20250126-184805',
+      'Version: 25.04.0 - Fangtooth',
       'Support License: Gold Contract,  Expires on 2025-01-01',
       'System Serial: AA-00001',
       'Hostname: test-hostname-a',

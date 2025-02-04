@@ -27,7 +27,7 @@ describe('AboutDialogComponent', () => {
             selector: selectSystemInfoState,
             value: {
               systemInfo: {
-                version: 'SCALE-24.04',
+                version: 'TrueNAS-COMMUNITY_EDITION-25.04.0-MASTER-20250126-18480',
                 system_product: 'M40',
               },
               isIxHardware: true,
@@ -72,7 +72,7 @@ describe('AboutDialogComponent', () => {
 
   it('should display system version correctly', () => {
     const systemVersionElement = spectator.query('#system-version');
-    expect(systemVersionElement).toHaveText('System Version: SCALE-24.04');
+    expect(systemVersionElement).toHaveText('System Version: 25.04.0 - Fangtooth');
   });
 
   it('should display product-specific open source text', () => {

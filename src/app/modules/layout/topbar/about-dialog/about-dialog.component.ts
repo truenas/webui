@@ -11,6 +11,7 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
 import { TruenasLogoComponent } from 'app/modules/layout/topbar/truenas-logo/truenas-logo.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { SystemVersionPipe } from 'app/pages/dashboard/widgets/system/common/system-version.pipe';
 import { AppState } from 'app/store';
 import { selectIsEnterprise, selectSystemInfoState } from 'app/store/system-info/system-info.selectors';
 
@@ -30,6 +31,7 @@ import { selectIsEnterprise, selectSystemInfoState } from 'app/store/system-info
     TestDirective,
     AsyncPipe,
     TruenasLogoComponent,
+    SystemVersionPipe,
   ],
 })
 export class AboutDialogComponent {

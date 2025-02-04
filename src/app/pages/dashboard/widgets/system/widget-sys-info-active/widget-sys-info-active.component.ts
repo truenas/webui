@@ -22,8 +22,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { ProductImageComponent } from 'app/pages/dashboard/widgets/system/common/product-image/product-image.component';
+import { SystemVersionPipe } from 'app/pages/dashboard/widgets/system/common/system-version.pipe';
 import { UptimePipe } from 'app/pages/dashboard/widgets/system/common/uptime.pipe';
-import { getSystemVersion } from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import {
@@ -52,6 +52,7 @@ import {
     CopyButtonComponent,
     TranslateModule,
     UptimePipe,
+    SystemVersionPipe,
   ],
 })
 export class WidgetSysInfoActiveComponent {
@@ -78,7 +79,6 @@ export class WidgetSysInfoActiveComponent {
     }),
   ), { requireSync: true });
 
-  version = computed(() => getSystemVersion(this.systemInfo().version, this.systemInfo().codename));
   uptime = computed(() => this.systemInfo().uptime_seconds + this.realElapsedSeconds());
   datetime = computed(() => {
     this.realElapsedSeconds();

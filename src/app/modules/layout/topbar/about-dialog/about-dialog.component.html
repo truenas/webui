@@ -33,7 +33,8 @@
     ></div>
 
     <div id="system-version">
-      {{ ('System Version' | translate) + ': ' +  (systemVersion$ | async) }}
+      <span>{{ 'System Version' | translate }}:</span>
+      <span>{{ systemVersion$ | async | systemVersion }}</span>
     </div>
   </div>
 </div>

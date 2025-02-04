@@ -109,13 +109,13 @@
             <strong>{{ 'Version' | translate }}:</strong>
             @if (isLoaded()) {
               <div class="copy-version">
-                <div class="copy-version-text" [matTooltip]="version()">
+                <div class="copy-version-text" [matTooltip]="systemInfo().version">
                   <span>
-                    {{ version() }}
+                    {{ systemInfo().version | systemVersion }}
                     {{ rendered() }}
                   </span>
                 </div>
-                <ix-copy-button [text]="version()"></ix-copy-button>
+                <ix-copy-button [text]="systemInfo().version"></ix-copy-button>
               </div>
             } @else {
               <ngx-skeleton-loader
