@@ -12,7 +12,6 @@ import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-dat
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
-import { JobProgressDialogComponent } from 'app/modules/dialog/components/job-progress/job-progress-dialog.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { JobItemComponent } from 'app/modules/jobs/components/job-item/job-item.component';
 import { JobsPanelComponent } from 'app/modules/jobs/components/jobs-panel/jobs-panel.component';
@@ -91,7 +90,6 @@ describe('JobsPanelComponent', () => {
     ],
     declarations: [
       JobItemComponent,
-      JobProgressDialogComponent,
       FakeFormatDateTimePipe,
     ],
     providers: [
