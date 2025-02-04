@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton, MatAnchor } from '@angular/material/button';
 import { MatCard, MatCardHeader, MatCardTitle } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
@@ -73,7 +73,7 @@ import { AclEditorSaveControlsComponent } from './acl-editor-save-controls/acl-e
 export class DatasetAclEditorComponent implements OnInit {
   datasetPath: string;
   isLoading: boolean;
-  acl: Acl;
+  acl: Acl | null;
   selectedAceIndex: number;
   acesWithError: number[];
 
@@ -105,7 +105,7 @@ export class DatasetAclEditorComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private matDialog: MatDialog,
     private userService: UserService,
-    private formBuilder: FormBuilder,
+    private formBuilder: NonNullableFormBuilder,
   ) { }
 
   ngOnInit(): void {

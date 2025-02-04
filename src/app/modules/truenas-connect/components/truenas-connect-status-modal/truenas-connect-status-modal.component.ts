@@ -52,6 +52,6 @@ export class TruenasConnectStatusModalComponent {
   }
 
   protected open(): void {
-    this.window.open(this.tnc.config().tnc_base_url);
+    this.window.open(this.tnc.config()?.tnc_base_url);
   }
 }

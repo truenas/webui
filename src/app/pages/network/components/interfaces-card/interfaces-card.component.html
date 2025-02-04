@@ -34,7 +34,7 @@
         [columnIndex]="0"
         [dataProvider]="dataProvider"
       >
-        <ix-interface-status-icon [update]="inOutUpdates()?.[interface.name]"></ix-interface-status-icon>
+        <ix-interface-status-icon [update]="inOutUpdates()[interface.name]"></ix-interface-status-icon>
       </ng-template>
     </tbody>
   </ix-table>

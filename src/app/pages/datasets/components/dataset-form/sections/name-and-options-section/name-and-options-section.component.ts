@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnChanges, OnInit, output,
 } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
@@ -78,7 +78,7 @@ export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
   }
 
   constructor(
-    private formBuilder: FormBuilder,
+    private formBuilder: NonNullableFormBuilder,
     private translate: TranslateService,
     private smbValidationService: SmbValidationService,
     private cdr: ChangeDetectorRef,
@@ -140,10 +140,10 @@ export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
 
   private addNameValidators(parent: Dataset): void {
     const isNameCaseSensitive = parent.casesensitivity.value === DatasetCaseSensitivity.Sensitive;
-    const namesInUse = parent.children.map((child) => {
-      const childName = /[^/]*$/.exec(child.name)[0];
+    const namesInUse = parent.children?.map((child) => {
+      const childName = /[^/]*$/.exec(child.name)?.[0];
       if (isNameCaseSensitive) {
-        return childName.toLowerCase();
+        return childName?.toLowerCase();
       }
 
       return childName;
@@ -172,7 +172,7 @@ export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
         } else {
           smbNameControl.clearAsyncValidators();
           smbNameControl.clearValidators();
-          smbNameControl.patchValue(null);
+          smbNameControl.patchValue('');
         }
 
         this.cdr.markForCheck();

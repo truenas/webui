@@ -56,7 +56,7 @@ describe('FirstLoginDialogComponent', () => {
     expect(spectator.component.wasOneTimePasswordChanged()).toBe(true);
     expect(authService.wasOneTimePasswordChanged$.next).toHaveBeenCalledWith(true);
 
-    const twoFactorComponent = spectator.query(TwoFactorComponent);
+    const twoFactorComponent = spectator.query(TwoFactorComponent)!;
     twoFactorComponent.userTwoFactorAuthConfigured = true;
     spectator.detectChanges();
 

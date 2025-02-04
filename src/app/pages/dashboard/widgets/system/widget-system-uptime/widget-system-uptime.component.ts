@@ -48,7 +48,7 @@ export class WidgetSystemUptimeComponent implements WidgetComponent {
   ), { requireSync: true });
 
   uptime = computed(() => {
-    return this.loadedSystemInfo().uptime_seconds + this.realElapsedSeconds();
+    return Number(this.loadedSystemInfo()?.uptime_seconds) + this.realElapsedSeconds();
   });
 
   datetime = computed(() => {
