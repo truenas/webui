@@ -11,5 +11,4 @@ export const hostnameActiveWidget = dashboardWidget({
   supportedSizes: [SlotSize.Quarter, SlotSize.Half, SlotSize.Full],
   category: WidgetCategory.SystemInfo,
   component: WidgetHostnameActiveComponent,
-  settingsComponent: null,
 });

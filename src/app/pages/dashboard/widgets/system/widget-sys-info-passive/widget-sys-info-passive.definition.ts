@@ -12,7 +12,6 @@ export const systemInfoPassiveWidget = dashboardWidget({
   supportedSizes: [SlotSize.Full, SlotSize.Half],
   category: WidgetCategory.SystemInfo,
   component: WidgetSysInfoPassiveComponent,
-  settingsComponent: null,
   visibility: {
     deps: [Store],
     isVisible$: (deps) => {

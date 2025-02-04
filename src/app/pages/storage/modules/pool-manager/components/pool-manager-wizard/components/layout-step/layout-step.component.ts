@@ -21,14 +21,14 @@ import { CustomLayoutAppliedComponent } from './custom-layout-applied/custom-lay
   imports: [AutomatedDiskSelectionComponent, CustomLayoutAppliedComponent],
 })
 export class LayoutStepComponent implements OnInit {
-  readonly isStepActive = input<boolean>();
+  readonly isStepActive = input<boolean>(false);
   readonly type = input.required<VdevType>();
   readonly description = input<string>();
 
   readonly canChangeLayout = input(false);
-  readonly limitLayouts = input<CreateVdevLayout[]>();
+  readonly limitLayouts = input<CreateVdevLayout[]>([]);
 
-  readonly inventory = input<DetailsDisk[]>();
+  readonly inventory = input<DetailsDisk[]>([]);
 
   protected topologyCategory: PoolManagerTopologyCategory;
 

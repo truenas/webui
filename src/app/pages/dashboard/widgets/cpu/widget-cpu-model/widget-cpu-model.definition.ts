@@ -8,6 +8,5 @@ export const cpuModelWidget = dashboardWidget({
   name: T('CPU Model'),
   component: WidgetCpuModelComponent,
   category: WidgetCategory.Cpu,
-  settingsComponent: null,
   supportedSizes: [SlotSize.Full, SlotSize.Half, SlotSize.Quarter],
 });

@@ -31,7 +31,7 @@
     </div>
     <div class="details-item">
       <div class="label">{{ 'Sync' | translate }}:</div>
-      <div class="value">{{ dataset().sync?.value | orNotAvailable }}</div>
+      <div class="value">{{ dataset().sync.value | orNotAvailable }}</div>
     </div>
     <div class="details-item">
       <div class="label">{{ 'Compression Level' | translate }}:</div>
@@ -53,7 +53,7 @@
     }
     <div class="details-item">
       <div class="label">{{ 'ZFS Deduplication' | translate }}:</div>
-      <div class="value">{{ dataset().deduplication?.value | orNotAvailable }}</div>
+      <div class="value">{{ dataset().deduplication.value | orNotAvailable }}</div>
     </div>
     <div class="details-item">
       <div class="label">{{ 'Case Sensitivity' | translate }}:</div>
@@ -76,7 +76,7 @@
     @if (hasComments()) {
       <div class="details-item">
         <div class="label">{{ 'Comments' | translate }}:</div>
-        <div class="value dataset-comments">{{ dataset().comments.value }}</div>
+        <div class="value dataset-comments">{{ dataset().comments.value || '' }}</div>
       </div>
     }
   </mat-card-content>

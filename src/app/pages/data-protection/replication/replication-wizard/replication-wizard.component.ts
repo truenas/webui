@@ -82,7 +82,7 @@ export class ReplicationWizardComponent {
   existSnapshotTasks: number[] = [];
   createdSnapshots: ZfsSnapshot[] = [];
   createdSnapshotTasks: PeriodicSnapshotTask[] = [];
-  createdReplication: ReplicationTask;
+  createdReplication: ReplicationTask | undefined;
 
   constructor(
     private api: ApiService,
@@ -226,7 +226,7 @@ export class ReplicationWizardComponent {
     return this.api.call('replication.create', [payload]);
   }
 
-  getSnapshotsCountPayload(value: ReplicationWizardData): CountManualSnapshotsParams {
+  getSnapshotsCountPayload(value: ReplicationWizardData): CountManualSnapshotsParams | undefined {
     let transport = value.transport || TransportMode.Local;
     if (value.ssh_credentials_target) {
       transport = TransportMode.Local;
@@ -369,8 +369,8 @@ export class ReplicationWizardComponent {
   setSchemaOrRegexForObject(
     data: ReplicationCreate,
     schemaOrRegex: SnapshotNamingOption,
-    schema: string = null,
-    regex: string = null,
+    schema: string | null = null,
+    regex: string | null = null,
   ): ReplicationCreate {
     const values = { ...data };
     if (schemaOrRegex === SnapshotNamingOption.NamingSchema) {
@@ -389,7 +389,7 @@ export class ReplicationWizardComponent {
     this.rollBack();
   }
 
-  callCreateSnapshots(values: ReplicationWizardData): Observable<ZfsSnapshot[]> {
+  callCreateSnapshots(values: ReplicationWizardData): Observable<ZfsSnapshot[] | null> {
     const snapshotsCountPayload = this.getSnapshotsCountPayload(values);
     if (snapshotsCountPayload) {
       return this.getSnapshotsCount(snapshotsCountPayload).pipe(
@@ -409,7 +409,7 @@ export class ReplicationWizardComponent {
     return of(null);
   }
 
-  callCreateTasks(values: ReplicationWizardData): Observable<PeriodicSnapshotTask[]> {
+  callCreateTasks(values: ReplicationWizardData): Observable<PeriodicSnapshotTask[] | null> {
     if (values.schedule_method === ScheduleMethod.Cron && values.source_datasets_from === DatasetSource.Local) {
       this.existSnapshotTasks = [];
       const requestsTasks = [];

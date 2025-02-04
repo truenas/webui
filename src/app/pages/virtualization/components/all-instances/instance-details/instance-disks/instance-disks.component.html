@@ -12,6 +12,15 @@
   </mat-card-header>
 
   <mat-card-content>
+    @if (instance().root_disk_size) {
+      <div class="root-disk-size">
+        <span class="label">{{ 'Root Disk' | translate }}:</span>
+        <span class="value">
+          {{ instance().root_disk_size | ixFileSize }}
+        </span>
+      </div>
+    }
+
     @if (isLoadingDevices()) {
       <ngx-skeleton-loader></ngx-skeleton-loader>
     } @else {
@@ -29,7 +38,9 @@
           ></ix-device-actions-menu>
         </div>
       } @empty {
-        {{ 'No disks added.' | translate }}
+        @if (!instance().root_disk_size) {
+          {{ 'No disks added.' | translate }}
+        }
       }
     }
   </mat-card-content>

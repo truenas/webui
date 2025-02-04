@@ -252,7 +252,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
         ? formValue.folder_destination[0]
         : formValue.folder_destination;
 
-      if (!formValue.path_source.length || !isArray(formValue.path_source)) {
+      if (!formValue.path_source?.length || !isArray(formValue.path_source)) {
         value.path = '/';
       } else if (formValue.path_source.length === 1) {
         value.path = formValue.path_source[0];
