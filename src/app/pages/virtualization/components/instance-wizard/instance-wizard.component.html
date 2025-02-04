@@ -50,24 +50,28 @@
               mat-button
               ixTest="browse-images"
               type="button"
-              (click)="onBrowseImages()"
+              (click)="onBrowseCatalogImages()"
             >{{ 'Browse Catalog' | translate }}</button>
           </div>
         }
 
         @case (VirtualizationSource.Iso) {
-          <ix-file-input
-            formControlName="image_file"
-            acceptedFiles=".iso"
-            [label]="'Image' | translate"
-            [multiple]="false"
-            [required]="true"
-          ></ix-file-input>
-          <ix-input
-            formControlName="image_file_name"
-            [label]="'Image Name' | translate"
-            [required]="true"
-          ></ix-input>
+          <div class="image-field">
+            <ix-input
+              class="input"
+              formControlName="iso_volume"
+              [readonly]="true"
+              [label]="'Image' | translate"
+              [required]="true"
+            ></ix-input>
+
+            <button
+              mat-button
+              ixTest="browse-isos"
+              type="button"
+              (click)="onBrowseIsos()"
+            >{{ 'Select ISO' | translate }}</button>
+          </div>
         }
 
         @case (VirtualizationSource.Zvol) {

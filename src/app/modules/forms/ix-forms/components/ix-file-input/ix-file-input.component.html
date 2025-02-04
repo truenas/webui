@@ -9,8 +9,12 @@
 
 <div class="input-container" [class.disabled]="isDisabled">
   <div>
-    <label tabindex="0" [attr.aria-label]="'Choose File for {label}' | translate: { label: label() }" (keydown.enter)="fileInput.click()">
-      {{ 'Choose File' | translate }}
+    <label
+      tabindex="0"
+      [attr.aria-label]="'Choose File for {label}' | translate: { label: label() }"
+      (keydown.enter)="fileInput.click()"
+    >
+      {{ buttonText() }}
       <input
         #fileInput
         type="file"
@@ -25,7 +29,7 @@
   </div>
   @if (value && value.length) {
     <div>
-      @for (file of value; track file) {
+      @for (file of value; track trackByIdentity(file)) {
         <p class="file">
           <span
             tabindex="0"
