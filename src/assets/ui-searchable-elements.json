@@ -5491,52 +5491,5 @@
     "anchor": "configure-2fa-secret",
     "triggerAnchor": null,
     "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Virtual Machines",
-      "Add VM"
-    ],
-    "synonyms": [
-      "Create VM",
-      "New VM",
-      "VM",
-      "Add Virtual Machine",
-      "New Virtual Machine",
-      "Create Virtual Machine"
-    ],
-    "requiredRoles": [
-      "VM_WRITE"
-    ],
-    "visibleTokens": [
-      "VMS"
-    ],
-    "anchorRouterLink": [
-      "/vm"
-    ],
-    "routerLink": null,
-    "anchor": "add-vm",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Virtual Machines"
-    ],
-    "synonyms": [
-      "VM",
-      "Virtualization"
-    ],
-    "requiredRoles": [],
-    "visibleTokens": [
-      "VMS"
-    ],
-    "anchorRouterLink": [
-      "/vm"
-    ],
-    "routerLink": null,
-    "anchor": "vm-list",
-    "triggerAnchor": null,
-    "section": "ui"
   }
 ]
