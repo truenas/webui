@@ -7,19 +7,19 @@ import { TerminalComponent } from 'app/modules/terminal/components/terminal/term
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-instance-shell',
+  selector: 'ix-instance-container',
   template: '<ix-terminal [conf]="this"></ix-terminal>',
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [TerminalComponent],
 })
-export class InstanceShellComponent implements TerminalConfiguration {
+export class InstanceConsoleComponent implements TerminalConfiguration {
   protected instanceId = signal('');
 
   get connectionData(): TerminalConnectionData {
     return {
       virt_instance_id: this.instanceId(),
-      use_console: false,
+      use_console: true,
     };
   }
 
