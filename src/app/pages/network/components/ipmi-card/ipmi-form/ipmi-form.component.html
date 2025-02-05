@@ -44,12 +44,19 @@
           [tooltip]="helptext.gateway_tooltip | translate"
         ></ix-input>
 
-        <ix-input
-          formControlName="vlan"
-          type="number"
-          [label]="'VLAN ID' | translate"
-          [tooltip]="helptext.vlan_tooltip | translate"
-        ></ix-input>
+        <ix-checkbox
+          formControlName="vlan_id_enable"
+          [label]="'Enable VLAN' | translate"
+        ></ix-checkbox>
+        @if (vlanEnabled()) {
+          <ix-input
+            formControlName="vlan_id"
+            type="number"
+            [required]="true"
+            [label]="'VLAN ID' | translate"
+            [tooltip]="helptext.vlan_tooltip | translate"
+          ></ix-input>
+        }
       </ix-fieldset>
       <mat-divider></mat-divider>
 
