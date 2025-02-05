@@ -73,4 +73,6 @@ set CPU topology. Example: 1-2,5,9-11'),
   add_tpm_tooltip: T('Virtual device that provides hardware-based security functions like encryption key management.'),
 
   secure_boot_tooltip: T('Secure Boot ensures that only trusted, signed software runs during a system’s startup process. May be incompatible with some images.'),
+  secure_boot_on_required_tooltip: T('Secure Boot is required for the VM image you selected'),
+  secure_boot_off_required_tooltip: T('Secure Boot is required to be off for the VM image you selected'),
 };

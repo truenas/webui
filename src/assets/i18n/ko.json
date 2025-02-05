@@ -17,6 +17,8 @@
   "NS ID": "",
   "Not used": "",
   "Root Disk": "",
+  "Secure Boot is required for the VM image you selected": "",
+  "Secure Boot is required to be off for the VM image you selected": "",
   "Select ISO": "",
   "TrueNAS is Free and <a href=\"https://github.com/truenas/\" target=\"_blank\">Open Source</a> software, which is provided as-is with no warranty.": "",
   "Two-Factor Authentication has been enabled on this system. You are required to setup your 2FA authentication. You will not be able to proceed without setting up 2FA for your account. Make sure to scan the QR code with your authenticator app in the end before logging out of the system or navigating away. Otherwise, you will be locked out of the system and will be unable to login after logging out.": "",
