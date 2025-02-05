@@ -11,76 +11,24 @@
   width: 400px;
 }
 
-.app-logo,
-.app-logo-text {
-  position: relative;
-}
-
-.app-logo {
-  height: 36px;
-  top: 13px;
-  width: 36px;
-}
-
-.logo-text {
-  align-items: center;
-  display: flex;
-}
-
-.branding {
-  align-items: center;
+ix-truenas-logo {
   background-color: var(--topbar) !important;
+  box-sizing: border-box;
   color: var(--topbar-txt) !important;
-  display: flex;
   height: 48px;
-  justify-content: center;
   left: 0;
-  line-height: 64px;
-  max-width: var(--sidenav-width); /*15rem;*/
-  overflow: hidden;
+  line-height: 48px;
+  max-width: var(--sidenav-width);
+  padding: 7px;
   position: fixed;
-  text-align: center;
   top: 0;
   width: 100%;
   z-index: 9999;
-
-  .app-logo {
-    margin-left: 8px;
-    margin-right: 8px;
-  }
-
-  .app-logo-text {
-    height: auto;
-    margin-right: 8px;
-    width: 96px;
-  }
-
-  &.truenas-scale {
-    .app-logo {
-      height: 40px;
-      top: 12px;
-      width: 40px;
-    }
-  }
-}
-
-.logo:focus-visible,
-.logo-text:focus-visible {
-  background: var(--focus-bg);
-  box-shadow: 0 0 0 1.5px var(--focus-brd) inset !important;
-  outline-width: 0;
 }
 
 .app-side-nav-container {
   height: 100vh;
   height: 100%;
-}
-
-.enterprise-logo .ix-icon {
-  height: auto !important;
-  margin-left: -4px !important;
-  top: 14px !important;
-  width: 108px !important;
 }
 
 .hostname-label {
@@ -103,7 +51,7 @@
 
   .copyright-line {
     font-size: 10px;
-    margin: 0 58px;
+    margin: 0 46px;
   }
 }
 

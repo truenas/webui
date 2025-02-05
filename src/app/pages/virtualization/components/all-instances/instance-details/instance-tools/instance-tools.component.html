@@ -18,22 +18,39 @@
       >
         <span>{{ 'Shell' | translate }}</span>
 
-        <ix-icon name="mdi-console"></ix-icon>
+        <ix-icon name="mdi-console-line"></ix-icon>
       </a>
-      @if (isVm() && instance().vnc_enabled && instance().vnc_port) {
-        <a 
+
+      @if (isVm()) {
+        <a
           mat-flat-button
           color="default"
-          ixTest="open-vnc"
+          ixTest="open-console"
           class="tool"
-          target="_blank"
           [class.disabled]="isInstanceStopped()"
           [disabled]="isInstanceStopped()"
-          [href]="vncLink()"
+          [routerLink]="['/virtualization', 'view', instance().id, 'console']"
         >
-          <span>{{ 'VNC' | translate }}</span>
-          <span>{{ vncLink() }}</span>
+          <span>{{ 'Console' | translate }}</span>
+
+          <ix-icon name="mdi-console"></ix-icon>
         </a>
+
+        @if (instance().vnc_enabled && instance().vnc_port) {
+          <a
+            mat-flat-button
+            color="default"
+            ixTest="open-vnc"
+            class="tool"
+            target="_blank"
+            [class.disabled]="isInstanceStopped()"
+            [disabled]="isInstanceStopped()"
+            [href]="vncLink()"
+          >
+            <span>{{ 'VNC' | translate }}</span>
+            <span>{{ vncLink() }}</span>
+          </a>
+        }
       }
     </div>
   </mat-card-content>

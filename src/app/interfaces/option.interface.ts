@@ -28,4 +28,3 @@ export interface ActionOption<T = BaseOptionValueType> extends Option<T> {
 
 export const newOption = 'NEW';
 export const nullOption = 'NULL';
-export const skipOption = 'SKIP';

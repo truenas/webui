@@ -251,7 +251,7 @@ export class CloudBackupCardComponent implements OnInit {
   }
 
   private updateRowJob(row: CloudBackup, job: Job): void {
-    this.dataProvider.setRows(this.cloudBackups.map((task) => {
+    this.cloudBackups = this.cloudBackups.map((task) => {
       if (task.id === row.id) {
         return {
           ...task,
@@ -259,6 +259,7 @@ export class CloudBackupCardComponent implements OnInit {
         };
       }
       return task;
-    }));
+    });
+    this.dataProvider.setRows(this.cloudBackups);
   }
 }

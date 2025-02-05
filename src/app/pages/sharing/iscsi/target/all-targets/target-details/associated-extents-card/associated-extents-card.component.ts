@@ -24,6 +24,7 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AssociatedTargetFormComponent } from 'app/pages/sharing/iscsi/target/all-targets/target-details/associated-extents-card/associated-target-form/associated-target-form.component';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
 
 @UntilDestroy()
@@ -83,6 +84,7 @@ export class AssociatedExtentsCardComponent {
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
     private translate: TranslateService,
+    private errorHandler: ErrorHandlerService,
   ) {
     effect(() => {
       if (this.target()) {
@@ -115,6 +117,7 @@ export class AssociatedExtentsCardComponent {
     }).pipe(
       filter(Boolean),
       switchMap(() => this.iscsiService.deleteTargetExtent(extent.id).pipe(this.loader.withLoader())),
+      this.errorHandler.catchError(),
       untilDestroyed(this),
     ).subscribe(() => this.getTargetExtents());
   }
