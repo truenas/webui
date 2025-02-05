@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, Component, computed, effect,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
   MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle,
@@ -42,9 +42,9 @@ export class TruenasConnectModalComponent {
   readonly TruenasConnectStatus = TruenasConnectStatus;
   protected readonly requiredRoles = [Role.TrueCommandWrite];
   protected form = this.formBuilder.group({
-    tnc_base_url: [this.tnc.config().tnc_base_url, [Validators.required]],
-    account_service_base_url: [this.tnc.config().account_service_base_url, [Validators.required]],
-    leca_service_base_url: [this.tnc.config().leca_service_base_url, [Validators.required]],
+    tnc_base_url: [this.tnc.config()?.tnc_base_url || '', [Validators.required]],
+    account_service_base_url: [this.tnc.config()?.account_service_base_url || '', [Validators.required]],
+    leca_service_base_url: [this.tnc.config()?.leca_service_base_url || '', [Validators.required]],
   });
 
   private formChanges = toSignal(this.form.valueChanges);
@@ -61,12 +61,12 @@ export class TruenasConnectModalComponent {
   };
 
   constructor(
-    private formBuilder: FormBuilder,
+    private formBuilder: NonNullableFormBuilder,
     private dialogRef: MatDialogRef<TruenasConnectModalComponent>,
     protected tnc: TruenasConnectService,
   ) {
     effect(() => {
-      if (this.tnc.config().status === TruenasConnectStatus.Disabled) {
+      if (this.tnc.config()?.status === TruenasConnectStatus.Disabled) {
         this.form.enable();
       } else {
         this.form.disable();

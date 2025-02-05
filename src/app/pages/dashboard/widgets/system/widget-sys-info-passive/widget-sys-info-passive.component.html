@@ -161,7 +161,7 @@
             <strong>{{ 'Hostname' | translate }}:</strong>
             @if (isLoaded()) {
               <span>
-                {{ systemInfo().hostname }}
+                {{ systemInfo()?.hostname }}
               </span>
             } @else {
               <ngx-skeleton-loader

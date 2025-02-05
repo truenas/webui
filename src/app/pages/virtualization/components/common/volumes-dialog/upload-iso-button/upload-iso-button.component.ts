@@ -44,7 +44,7 @@ export class UploadIsoButtonComponent implements OnInit {
   ngOnInit(): void {
     this.imageFileControl.valueChanges
       .pipe(
-        filter((files) => !!files.length),
+        filter((files) => !!files?.length),
         untilDestroyed(this),
       )
       .subscribe(() => this.uploadImage());

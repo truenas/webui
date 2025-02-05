@@ -14,7 +14,7 @@
       }
       <div class="categories">
         <button mat-button ixTest="categories" [matMenuTriggerFor]="categoriesMenu">
-          {{ selectedCategory?.title | translate }}
+          {{ selectedCategory?.title ? (selectedCategory.title | translate) : '' }}
           <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
         </button>
         <mat-menu #categoriesMenu="matMenu">

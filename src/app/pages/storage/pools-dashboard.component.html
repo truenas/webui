@@ -47,7 +47,7 @@
   @if (!isEmptyPools && !arePoolsLoading) {
     @if (!isEmptyPools) {
       <ix-unused-resources
-        [pools]="pools$ | async"
+        [pools]="(pools$ | async) || []"
       ></ix-unused-resources>
     }
 

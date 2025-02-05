@@ -45,7 +45,7 @@ const instance = {
   environment: {
     TEST_ENV: 'value1',
     SAMPLE_ENV: 'value2',
-  },
+  } as Record<string, string>,
   root_disk_size: null,
   aliases: {} as VirtualizationAlias,
   raw: null,
