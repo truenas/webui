@@ -271,7 +271,7 @@ export class PoolManagerValidationService {
       });
     }
 
-    if (topologyCategory.width < 10) {
+    if (Number(topologyCategory.width) < 10) {
       errors.push({
         text: this.translate.instant('In order for dRAID to overweight its benefits over RaidZ the minimum recommended number of disks per dRAID vdev is 10.'),
         severity: PoolCreationSeverity.Warning,

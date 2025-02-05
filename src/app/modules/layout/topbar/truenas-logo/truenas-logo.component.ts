@@ -31,7 +31,8 @@ export class TruenasLogoComponent {
   protected readonly activeTheme = toSignal(this.themeService.activeTheme$);
 
   protected isBlueTheme = computed(() => {
-    return ['ix-blue', 'midnight'].includes(this.activeTheme());
+    const activeTheme = this.activeTheme();
+    return activeTheme && ['ix-blue', 'midnight'].includes(activeTheme);
   });
 
   protected useWhite = computed(() => {

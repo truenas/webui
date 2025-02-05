@@ -156,7 +156,7 @@ export class InstanceWizardComponent {
     image: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(200)]],
     enable_vnc: [false],
     vnc_port: [defaultVncPort, [Validators.min(5900), Validators.max(65535)]],
-    vnc_password: [null as string],
+    vnc_password: [null as string | null],
     cpu: ['', [cpuValidator()]],
     memory: [null as number | null],
     tpm: [false],

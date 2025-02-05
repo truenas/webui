@@ -53,7 +53,7 @@ export class BootenvStatsDialogComponent implements OnInit {
     interval: [null as number | null, [Validators.required, Validators.min(1)]],
   });
 
-  state: PoolInstance;
+  state: PoolInstance | undefined = undefined;
 
   readonly PoolStatus = PoolStatus;
   readonly poolStatusLabels = poolStatusLabels;

@@ -121,7 +121,7 @@ export class DashboardComponent implements OnInit {
   @HostListener('document:keydown.escape')
   protected onCancelConfigure(): void {
     this.isEditing.set(false);
-    this.renderedGroups.set(this.savedGroups());
+    this.renderedGroups.set(this.savedGroups() || []);
   }
 
   protected onAddGroup(): void {

@@ -4,7 +4,7 @@
       <div class="empty-message">
         <ix-icon name="mdi-format-list-text" class="empty-icon"></ix-icon>
         <div class="backup-actions">
-          <ng-template *ngTemplateOutlet="backupActions()"></ng-template>
+          <ng-template *ngTemplateOutlet="backupActions() || null"></ng-template>
         </div>
       </div>
 
