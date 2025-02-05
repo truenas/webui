@@ -310,6 +310,7 @@
   "NIC selection is currently restricted due to pending network changes.": "",
   "NIC was added": "",
   "NS ID": "",
+  "Name cannot be changed after instance is created": "",
   "Name ~ \"admin\"": "",
   "Network I/O": "",
   "Network Reconnection Issue": "",

@@ -2051,6 +2051,7 @@
   "NVMe-oF Expansion Shelves": "",
   "Name ^ \"Local\" AND \"Web Shell Access\" = true": "",
   "Name and Naming Schema cannot be provided at the same time.": "",
+  "Name cannot be changed after instance is created": "",
   "Name must start and end with a lowercase alphanumeric character.  Hyphen is allowed in the middle e.g abc123, abc, abcd-1232": "",
   "Name of the WebDAV site, service, or software being used.": "",
   "Name of the extent. If the <i>Extent size</i> is not <i>0</i>, it cannot be an existing file within the pool or dataset.": "",
