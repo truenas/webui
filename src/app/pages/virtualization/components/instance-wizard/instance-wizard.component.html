@@ -149,7 +149,7 @@
       [label]="'Disks' | translate"
     >
 
-      @if (isVm()) {
+      @if (isVm() && form.value.source_type !== VirtualizationSource.Zvol) {
         <ix-input
           formControlName="root_disk_size"
           type="number"

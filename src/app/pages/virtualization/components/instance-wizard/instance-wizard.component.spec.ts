@@ -447,7 +447,6 @@ describe('InstanceWizardComponent', () => {
         vnc_port: null,
         iso_volume: null,
         zvol_path: '/dev/zvol/test',
-        root_disk_size: 10,
       }]);
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
