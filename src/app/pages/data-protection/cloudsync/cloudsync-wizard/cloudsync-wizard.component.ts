@@ -58,7 +58,7 @@ export class CloudSyncWizardComponent {
   isLoading$ = new BehaviorSubject(false);
   isProviderLoading$ = new BehaviorSubject(false);
   mergedLoading$: Observable<boolean> = merge(this.isLoading$, this.isProviderLoading$);
-  existingCredential: CloudSyncCredential;
+  existingCredential: CloudSyncCredential | undefined;
 
   constructor(
     public slideInRef: SlideInRef<undefined, CloudSyncTask | false>,
@@ -70,7 +70,7 @@ export class CloudSyncWizardComponent {
     private errorHandler: ErrorHandlerService,
   ) {
     this.slideInRef.requireConfirmationWhen(() => of(
-      this.whatAndWhen()?.form?.dirty || this.cloudSyncProvider()?.isDirty(),
+      Boolean(this.whatAndWhen()?.form?.dirty || this.cloudSyncProvider()?.isDirty()),
     ));
   }
 

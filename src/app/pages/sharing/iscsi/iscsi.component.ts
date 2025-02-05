@@ -7,7 +7,7 @@ import { MatTabNav, MatTabLink, MatTabNavPanel } from '@angular/material/tabs';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { async, Subject } from 'rxjs';
+import { async } from 'rxjs';
 import { filter, map, startWith } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -46,7 +46,6 @@ import { IscsiService } from 'app/services/iscsi.service';
 export class IscsiComponent {
   protected readonly searchableElements = iscsiElements;
   protected readonly requiredRoles = [Role.SharingIscsiWrite];
-  protected readonly needRefresh$ = new Subject<void>();
 
   protected readonly navLinks$ = this.iscsiService.hasFibreChannel().pipe(
     startWith(false),

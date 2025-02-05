@@ -8,6 +8,7 @@ import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SmbEncryption } from 'app/enums/smb-encryption.enum';
+import { BindIp } from 'app/interfaces/bind-ip.interface';
 import { SmbConfig } from 'app/interfaces/smb-config.interface';
 import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -43,7 +44,6 @@ describe('ServiceSmbComponent', () => {
         mockCall('smb.config', {
           id: 1,
           netbiosname: 'truenas',
-          netbiosalias: [],
           workgroup: 'WORKGROUP',
           description: 'TrueNAS Server',
           unixcharset: 'UTF-8',
@@ -54,13 +54,12 @@ describe('ServiceSmbComponent', () => {
           guest: 'nobody',
           filemask: '',
           dirmask: '',
-          bindip: [],
+          bindip: [] as BindIp[],
           cifs_SID: 'mockSid',
           ntlmv1_auth: false,
           enable_smb1: false,
           admin_group: null,
           next_rid: 0,
-          multichannel: false,
           encryption: SmbEncryption.Negotiate,
         } as SmbConfig),
         mockCall('smb.unixcharset_choices', {

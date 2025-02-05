@@ -48,7 +48,7 @@ export abstract class IxSelectWithNewOption implements OnInit, AfterViewInit {
   ): IxSelectValue;
   abstract getFormComponentType(): ComponentInSlideIn<unknown, unknown>;
   abstract fetchOptions(): Observable<Option[]>;
-  getFormInputData(): Record<string, unknown> {
+  getFormInputData(): Record<string, unknown> | undefined {
     return undefined;
   }
 
@@ -59,7 +59,7 @@ export abstract class IxSelectWithNewOption implements OnInit, AfterViewInit {
     }
     this.ixSelect().options.set(this.options.asObservable());
     this.ixSelect().ngOnChanges();
-    this.ixSelect().controlDirective.control.valueChanges.pipe(
+    this.ixSelect().controlDirective?.control?.valueChanges?.pipe(
       distinctUntilChanged(),
       filter(Boolean),
       filter((newValue: number | string) => newValue === addNewIxSelectValue),
@@ -74,7 +74,7 @@ export abstract class IxSelectWithNewOption implements OnInit, AfterViewInit {
       }),
       filter((response: SlideInResponse) => !response.error),
       tap(
-        (response) => this.ixSelect().controlDirective.control.setValue(
+        (response) => this.ixSelect().controlDirective.control?.setValue(
           this.getValueFromSlideInResponse(response),
         ),
       ),

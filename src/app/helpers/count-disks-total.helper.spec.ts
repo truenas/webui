@@ -1,7 +1,7 @@
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { PoolTopology } from 'app/interfaces/pool.interface';
-import { TopologyDisk, TopologyItemStats } from 'app/interfaces/storage.interface';
+import { TopologyDisk, TopologyItemStats, VDev } from 'app/interfaces/storage.interface';
 import { countDisksTotal } from './count-disks-total.helper';
 
 const stats: TopologyItemStats = {
@@ -39,13 +39,12 @@ const buildTopology = ({ addDisks }: { addDisks: boolean }): PoolTopology => {
       {
         name: 'mirror-0',
         type: TopologyItemType.Mirror,
-        path: null,
         guid: '15021255127715885506',
         status: TopologyItemStatus.Online,
         stats,
         children: addDisks ? [disk, disk] : [],
         unavail_disk: null,
-      },
+      } as VDev,
     ],
     log: addDisks ? [disk] : [],
     cache: [],

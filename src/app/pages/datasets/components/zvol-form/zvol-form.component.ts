@@ -113,7 +113,7 @@ export class ZvolFormComponent implements OnInit {
   inheritEncryptPlaceholder: string = helptextZvol.dataset_form_encryption.inherit_checkbox_placeholder;
   namesInUse: string[] = [];
   volBlockSizeWarning: string | null;
-  protected slideInData: { isNew: boolean; parentId: string } | null = null;
+  protected slideInData: { isNew: boolean; parentId: string };
 
   protected encryptedParent = false;
   protected encryptionAlgorithm: string;
@@ -228,7 +228,7 @@ export class ZvolFormComponent implements OnInit {
     private formErrorHandler: FormErrorHandlerService,
     private errorHandler: ErrorHandlerService,
     protected snackbar: SnackbarService,
-    public slideInRef: SlideInRef<{ isNew: boolean; parentId: string } | undefined, Dataset>,
+    public slideInRef: SlideInRef<{ isNew: boolean; parentId: string }, Dataset>,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
@@ -569,7 +569,7 @@ export class ZvolFormComponent implements OnInit {
       delete data.type;
       delete data.sparse;
     } else {
-      data.name = this.parentId + '/' + data.name;
+      data.name = this.parentId + '/' + (data.name || '');
     }
 
     return data;
@@ -704,7 +704,6 @@ export class ZvolFormComponent implements OnInit {
             title: helptextZvol.zvol_save_errDialog.title,
             message: helptextZvol.zvol_save_errDialog.msg,
           });
-          this.slideInRef.close({ response: undefined, error: null });
         }
       },
       error: (error: unknown): void => {

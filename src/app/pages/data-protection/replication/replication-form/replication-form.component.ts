@@ -110,13 +110,13 @@ export class ReplicationFormComponent implements OnInit {
   ) {
     this.existingReplication = this.slideInRef.getData();
     this.slideInRef.requireConfirmationWhen(() => {
-      return of(
+      return of(Boolean(
         this.generalSection()?.form?.dirty
         || this.transportSection()?.form?.dirty
         || this.sourceSection()?.form?.dirty
         || this.targetSection()?.form?.dirty
         || this.scheduleSection()?.form?.dirty,
-      );
+      ));
     });
   }
 
@@ -174,9 +174,9 @@ export class ReplicationFormComponent implements OnInit {
   onSubmit(): void {
     const payload = this.getPayload();
 
-    const operation$ = this.isNew
-      ? this.api.call('replication.create', [payload])
-      : this.api.call('replication.update', [this.existingReplication.id, payload]);
+    const operation$ = this.existingReplication
+      ? this.api.call('replication.update', [this.existingReplication.id, payload])
+      : this.api.call('replication.create', [payload]);
 
     this.isLoading = true;
     operation$
@@ -203,7 +203,7 @@ export class ReplicationFormComponent implements OnInit {
   }
 
   onSwitchToWizard(): void {
-    this.slideInRef.swap(
+    this.slideInRef.swap?.(
       ReplicationWizardComponent,
       { wide: true },
     );
@@ -236,8 +236,8 @@ export class ReplicationFormComponent implements OnInit {
   private get canCountSnapshots(): boolean {
     const formValues = this.getPayload();
     return this.isPush
-      && Boolean(formValues.source_datasets.length)
-      && (Boolean(formValues.name_regex) || formValues.also_include_naming_schema?.length > 0);
+      && Boolean(formValues.source_datasets?.length)
+      && (Boolean(formValues.name_regex) || Number(formValues.also_include_naming_schema?.length) > 0);
   }
 
   private countEligibleManualSnapshots(): void {
@@ -278,7 +278,7 @@ export class ReplicationFormComponent implements OnInit {
           {
             eligible: eligibleSnapshots.eligible,
             total: eligibleSnapshots.total,
-            dataset: formValues.source_datasets.toString(),
+            dataset: String(formValues.source_datasets),
           },
         );
         this.isLoading = false;

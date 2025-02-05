@@ -7,6 +7,7 @@ import {
 } from '@ngneat/spectator/jest';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { dockerHubRegistry } from 'app/interfaces/docker-registry.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
@@ -22,7 +23,7 @@ describe('DockerRegistryFormComponent', () => {
 
   const mockRegistry = {
     id: 1,
-    uri: 'https://registry-1.docker.io/',
+    uri: dockerHubRegistry,
     name: 'Old Registry',
     username: 'old_user',
     password: '',
@@ -76,7 +77,7 @@ describe('DockerRegistryFormComponent', () => {
 
       expect(api.call).toHaveBeenCalledWith('app.registry.create', [
         {
-          uri: 'https://registry-1.docker.io/',
+          uri: dockerHubRegistry,
           name: 'Docker Hub',
           username: 'admin',
           password: 'password',
@@ -134,7 +135,7 @@ describe('DockerRegistryFormComponent', () => {
       const values = await form.getValues();
 
       expect(values).toEqual({
-        URI: 'https://registry-1.docker.io/',
+        URI: dockerHubRegistry,
         Name: 'Old Registry',
         Username: 'old_user',
         Password: '',
@@ -147,7 +148,7 @@ describe('DockerRegistryFormComponent', () => {
     it('sends an update payload and closes the modal when the save button is clicked', async () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
-        URI: 'https://registry-1.docker.io/',
+        URI: dockerHubRegistry,
         Name: 'Updated Registry',
         Username: 'updated_user',
         Password: 'updated_password',
@@ -159,7 +160,7 @@ describe('DockerRegistryFormComponent', () => {
       expect(api.call).toHaveBeenCalledWith('app.registry.update', [
         1,
         {
-          uri: 'https://registry-1.docker.io/',
+          uri: dockerHubRegistry,
           name: 'Updated Registry',
           username: 'updated_user',
           password: 'updated_password',

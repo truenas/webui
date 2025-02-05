@@ -125,10 +125,10 @@ export class NtpServerFormComponent implements OnInit {
 
     this.isFormLoading = true;
     let request$: Observable<unknown>;
-    if (this.isNew) {
-      request$ = this.api.call('system.ntpserver.create', [body]);
-    } else {
+    if (this.editingServer) {
       request$ = this.api.call('system.ntpserver.update', [this.editingServer.id, body]);
+    } else {
+      request$ = this.api.call('system.ntpserver.create', [body]);
     }
 
     request$.pipe(untilDestroyed(this)).subscribe({

@@ -7,7 +7,7 @@ import {
   viewChild,
 } from '@angular/core';
 import {
-  FormBuilder, Validators, ReactiveFormsModule, FormsModule,
+  Validators, ReactiveFormsModule, FormsModule, NonNullableFormBuilder,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -114,7 +114,7 @@ export class AlertServiceComponent implements OnInit {
   private alertServiceForm: BaseAlertServiceForm;
 
   constructor(
-    private formBuilder: FormBuilder,
+    private formBuilder: NonNullableFormBuilder,
     private api: ApiService,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
@@ -124,7 +124,7 @@ export class AlertServiceComponent implements OnInit {
     public slideInRef: SlideInRef<AlertService | undefined, boolean>,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.commonForm.dirty || this.alertServiceForm?.form.dirty);
+      return of(Boolean(this.commonForm.dirty || this.alertServiceForm?.form.dirty));
     });
     this.existingAlertService = this.slideInRef.getData();
     this.setFormEvents();
@@ -189,9 +189,9 @@ export class AlertServiceComponent implements OnInit {
 
     const payload = this.generatePayload();
 
-    const request$ = this.isNew
-      ? this.api.call('alertservice.create', [payload])
-      : this.api.call('alertservice.update', [this.existingAlertService.id, payload]);
+    const request$ = this.existingAlertService
+      ? this.api.call('alertservice.update', [this.existingAlertService.id, payload])
+      : this.api.call('alertservice.create', [payload]);
 
     request$
       .pipe(untilDestroyed(this))

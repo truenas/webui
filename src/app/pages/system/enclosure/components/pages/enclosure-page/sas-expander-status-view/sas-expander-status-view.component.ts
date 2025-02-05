@@ -18,6 +18,6 @@ export class SasExpanderStatusViewComponent {
 
   protected expanders = computed(() => {
     const expanders = this.enclosure().elements[EnclosureElementType.SasExpander];
-    return Object.values(expanders);
+    return Object.values(expanders || {});
   });
 }

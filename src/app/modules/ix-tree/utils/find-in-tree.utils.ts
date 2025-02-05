@@ -1,5 +1,5 @@
 export function findInTree<T extends { children?: T[] }>(
-  items: T[],
+  items: T[] | undefined,
   predicate: (item: T) => boolean,
 ): T | undefined {
   if (!items?.length) {

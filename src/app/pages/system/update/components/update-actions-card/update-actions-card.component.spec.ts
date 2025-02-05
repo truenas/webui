@@ -11,7 +11,7 @@ import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.util
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
-import { SystemUpdate } from 'app/interfaces/system-update.interface';
+import { SystemUpdate, SystemUpdateChange } from 'app/interfaces/system-update.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -39,7 +39,7 @@ describe('UpdateActionsCardComponent', () => {
         mockCall('core.get_jobs', []),
         mockCall('update.check_available', {
           status: SystemUpdateStatus.Available,
-          changes: [],
+          changes: [] as SystemUpdateChange[],
         } as SystemUpdate),
         mockJob('update.update'),
       ]),

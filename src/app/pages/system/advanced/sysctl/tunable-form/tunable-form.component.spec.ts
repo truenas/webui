@@ -5,9 +5,8 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockJob, mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { TunableType } from 'app/enums/tunable-type.enum';
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
@@ -29,6 +28,10 @@ describe('TunableFormComponent', () => {
       mockApi([
         mockJob('tunable.create', fakeSuccessfulJob()),
         mockJob('tunable.update', fakeSuccessfulJob()),
+        mockCall('tunable.tunable_type_choices', {
+          SYSCTL: 'SYSCTL',
+          UDEV: 'UDEV',
+        }),
       ]),
       mockProvider(SlideIn, {
         open: jest.fn(() => of({ response: true, error: null })),
@@ -54,6 +57,7 @@ describe('TunableFormComponent', () => {
     it('sends a create payload to websocket and closes modal form is saved', async () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
+        Type: 'UDEV',
         Variable: 'some.var',
         Value: '42',
         Description: 'Answer to the question',
@@ -66,7 +70,7 @@ describe('TunableFormComponent', () => {
       expect(api.job).toHaveBeenCalledWith('tunable.create', [{
         comment: 'Answer to the question',
         enabled: true,
-        type: TunableType.Sysctl,
+        type: 'UDEV',
         value: '42',
         var: 'some.var',
       }]);
@@ -83,6 +87,7 @@ describe('TunableFormComponent', () => {
             getData: jest.fn(() => ({
               id: 1,
               comment: 'Existing variable',
+              type: 'SYSCTL',
               enabled: false,
               var: 'var.exist',
               value: 'Existing value',
@@ -99,6 +104,7 @@ describe('TunableFormComponent', () => {
       const values = await form.getValues();
 
       expect(values).toEqual({
+        Type: 'SYSCTL',
         Variable: 'var.exist',
         Description: 'Existing variable',
         Value: 'Existing value',

@@ -206,7 +206,7 @@ export class CloudCredentialsFormComponent implements OnInit {
           } else {
             this.dialogService.error({
               title: this.translate.instant('Error'),
-              message: response.excerpt,
+              message: response.excerpt || '',
               backtrace: response.error,
             });
           }
@@ -223,7 +223,7 @@ export class CloudCredentialsFormComponent implements OnInit {
   }
 
   private preparePayload(): CloudSyncCredentialUpdate {
-    const commonValues = this.commonForm.value;
+    const commonValues = this.commonForm.getRawValue();
     return {
       name: commonValues.name,
       provider: {

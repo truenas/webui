@@ -39,7 +39,7 @@ import { NormalSelectionComponent } from './normal-selection/normal-selection.co
   ],
 })
 export class AutomatedDiskSelectionComponent implements OnChanges {
-  readonly isStepActive = input<boolean>();
+  readonly isStepActive = input<boolean>(false);
   readonly type = input<VdevType>();
   readonly inventory = input<DetailsDisk[]>([]);
   readonly canChangeLayout = input(false);
@@ -85,11 +85,12 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
   private updateStoreOnChanges(): void {
     this.store.isLoading$.pipe(filter((isLoading) => !isLoading), take(1), untilDestroyed(this)).subscribe({
       next: () => {
+        const type = this.type();
         if (
           (!this.canChangeLayout() && !this.isDataVdev())
-          && (this.type() && this.limitLayouts().length)
+          && (type && this.limitLayouts().length)
         ) {
-          this.store.setTopologyCategoryLayout(this.type(), this.limitLayouts()[0]);
+          this.store.setTopologyCategoryLayout(type, this.limitLayouts()[0]);
         }
       },
     });

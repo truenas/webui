@@ -36,7 +36,7 @@ export const helptextCloudBackup = {
   post_script_placeholder: T('Post-script'),
   post_script_tooltip: T('Script to execute after running sync.'),
 
-  snapshot_placeholder: T('Take Snapshot'),
+  snapshot_placeholder: T('Use Snapshot'),
   snapshot_tooltip: T('Set to take a snapshot of the dataset before a <i>PUSH</i>.'),
 
   absolute_paths_placeholder: T('Use Absolute Paths'),

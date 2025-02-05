@@ -63,7 +63,7 @@ export class WidgetMemoryComponent {
     let services = 0;
     const memory = this.memory();
     if (memory) {
-      services = memory.physical_memory_total - memory.physical_memory_available - this.arcSize();
+      services = memory.physical_memory_total - memory.physical_memory_available - (this.arcSize() || 0);
     }
 
     return [

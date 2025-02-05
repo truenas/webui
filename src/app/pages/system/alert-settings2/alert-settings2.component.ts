@@ -141,7 +141,7 @@ export class AlertSettings2Component implements OnInit {
         || this.searchOptions.find((opt) => opt.label.toLocaleLowerCase() === value.toLocaleLowerCase());
 
       if (option) {
-        const path = option.value.toString();
+        const path = String(option.value);
         const nextElement = document.getElementById(path);
         nextElement?.scrollIntoView();
       }

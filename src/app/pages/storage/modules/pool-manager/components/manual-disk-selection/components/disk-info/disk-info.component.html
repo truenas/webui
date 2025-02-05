@@ -1,6 +1,6 @@
 <div
   class="container"
-  [class.no-slot]="!disk().enclosure"
+  [class.no-slot]="!disk().enclosure.drive_bay_number"
 >
   @if (disk().enclosure) {
     <div class="item">

@@ -51,7 +51,7 @@ describe('DeleteDatasetDialogComponent', () => {
           },
         ] as DatasetAttachment[]),
         mockCall('pool.dataset.processes', [
-          { name: 'zsh' },
+          { name: 'zsh' } as Process,
           { name: 'ganesha.nfsd' },
           { pid: '1234', cmdline: 'rm -rf /' },
           { cmdline: 'nano' },

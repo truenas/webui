@@ -2,12 +2,12 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { Validators, ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { uniq } from 'lodash-es';
 import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
@@ -17,11 +17,13 @@ import { Role } from 'app/enums/role.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { IscsiTarget, IscsiTargetGroup } from 'app/interfaces/iscsi.interface';
-import { Option, nullOption, skipOption } from 'app/interfaces/option.interface';
+import { Option } from 'app/interfaces/option.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxIpInputWithNetmaskComponent } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
+import {
+  IxIpInputWithNetmaskComponent,
+} from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
 import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
@@ -31,7 +33,9 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { FcPortsControlsComponent } from 'app/pages/sharing/iscsi/fibre-channel-ports/fc-ports-controls/fc-ports-controls.component';
+import {
+  FcPortsControlsComponent,
+} from 'app/pages/sharing/iscsi/fibre-channel-ports/fc-ports-controls/fc-ports-controls.component';
 import { TargetNameValidationService } from 'app/pages/sharing/iscsi/target/target-name-validation.service';
 import { FibreChannelService } from 'app/services/fibre-channel.service';
 import { IscsiService } from 'app/services/iscsi.service';
@@ -132,6 +136,7 @@ export class TargetFormComponent implements OnInit {
 
   isLoading = false;
   protected editingTarget: IscsiTarget | undefined = undefined;
+  protected editingTargetPort: string | undefined = undefined;
 
   form = this.formBuilder.group({
     name: [
@@ -145,8 +150,8 @@ export class TargetFormComponent implements OnInit {
   });
 
   fcForm = this.formBuilder.group({
-    port: [nullOption as string, [Validators.required]],
-    host_id: [null as number | null, [Validators.required]],
+    port: new FormControl(null as string | null),
+    host_id: new FormControl(null as number | null, [Validators.required]),
   });
 
   constructor(
@@ -174,6 +179,10 @@ export class TargetFormComponent implements OnInit {
   ngOnInit(): void {
     if (this.editingTarget) {
       this.setTargetForEdit(this.editingTarget);
+
+      if ([IscsiTargetMode.Fc, IscsiTargetMode.Both].includes(this.editingTarget.mode)) {
+        this.loadFibreChannelPort();
+      }
     }
   }
 
@@ -183,10 +192,6 @@ export class TargetFormComponent implements OnInit {
 
     this.form.patchValue({
       ...target,
-    });
-
-    this.fcForm.patchValue({
-      port: skipOption,
     });
   }
 
@@ -231,10 +236,10 @@ export class TargetFormComponent implements OnInit {
   addGroup(): void {
     this.form.controls.groups.push(
       this.formBuilder.group({
-        portal: [null as number, Validators.required],
-        initiator: [null as number],
+        portal: new FormControl(null as number | null, Validators.required),
+        initiator: new FormControl(null as number | null),
         authmethod: [IscsiAuthMethod.None, Validators.required],
-        auth: [null as number],
+        auth: new FormControl(null as number | null),
       }),
     );
   }
@@ -251,5 +256,16 @@ export class TargetFormComponent implements OnInit {
 
   deleteNetwork(index: number): void {
     this.form.controls.auth_networks.removeAt(index);
+  }
+
+  private loadFibreChannelPort(): void {
+    this.fcService.loadTargetPort(this.editingTarget.id).pipe(
+      untilDestroyed(this),
+    ).subscribe((port) => {
+      if (port) {
+        this.editingTargetPort = port.port;
+        this.cdr.markForCheck();
+      }
+    });
   }
 }

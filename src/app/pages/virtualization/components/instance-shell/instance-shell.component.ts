@@ -19,6 +19,7 @@ export class InstanceShellComponent implements TerminalConfiguration {
   get connectionData(): TerminalConnectionData {
     return {
       virt_instance_id: this.instanceId(),
+      use_console: false,
     };
   }
 

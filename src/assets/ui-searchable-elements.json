@@ -2674,6 +2674,29 @@
     "hierarchy": [
       "Shares",
       "iSCSI",
+      "Authorized Access",
+      "Add Authorized Access"
+    ],
+    "synonyms": [
+      "New Authorized Access",
+      "Create Authorized Access"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/sharing",
+      "iscsi",
+      "authorized-access"
+    ],
+    "routerLink": null,
+    "anchor": "add-authorized-access",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Shares",
+      "iSCSI",
       "Extents"
     ],
     "synonyms": [],
@@ -2693,18 +2716,22 @@
     "hierarchy": [
       "Shares",
       "iSCSI",
-      "Fibre Channel Ports"
+      "Extents",
+      "Add Extent"
     ],
-    "synonyms": [],
+    "synonyms": [
+      "New Extent",
+      "Create Extent"
+    ],
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
       "/sharing",
       "iscsi",
-      "fibre-channel-ports"
+      "extents"
     ],
     "routerLink": null,
-    "anchor": "fibre-channel-ports-list",
+    "anchor": "add-extent",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -2775,9 +2802,7 @@
       "Global Target Configuration"
     ],
     "synonyms": [],
-    "requiredRoles": [
-      "SHARING_ISCSI_WRITE"
-    ],
+    "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
       "/sharing",
@@ -2811,6 +2836,29 @@
     "hierarchy": [
       "Shares",
       "iSCSI",
+      "Portals",
+      "Add Portal"
+    ],
+    "synonyms": [
+      "New Portal",
+      "Create Portal"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/sharing",
+      "iscsi",
+      "portals"
+    ],
+    "routerLink": null,
+    "anchor": "add-portal",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Shares",
+      "iSCSI",
       "Targets"
     ],
     "synonyms": [],
@@ -2823,6 +2871,29 @@
     ],
     "routerLink": null,
     "anchor": "target-list",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Shares",
+      "iSCSI",
+      "Targets",
+      "Add Target"
+    ],
+    "synonyms": [
+      "New Target",
+      "Create Target"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/sharing",
+      "iscsi",
+      "targets"
+    ],
+    "routerLink": null,
+    "anchor": "add-target",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -5494,48 +5565,239 @@
   },
   {
     "hierarchy": [
-      "Virtual Machines",
-      "Add VM"
+      "Virtualization",
+      "Containers",
+      "Global Settings"
     ],
     "synonyms": [
-      "Create VM",
-      "New VM",
-      "VM",
-      "Add Virtual Machine",
-      "New Virtual Machine",
-      "Create Virtual Machine"
+      "VMs",
+      "Virtual Machines",
+      "VM Settings",
+      "Virtual Machine Settings"
     ],
-    "requiredRoles": [
-      "VM_WRITE"
-    ],
-    "visibleTokens": [
-      "VMS"
-    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
-      "/vm"
+      "/virtualization"
     ],
     "routerLink": null,
-    "anchor": "add-vm",
+    "anchor": "vm-global-settings",
     "triggerAnchor": null,
     "section": "ui"
   },
   {
     "hierarchy": [
-      "Virtual Machines"
+      "Virtualization",
+      "Containers",
+      "Create New Instance"
+    ],
+    "synonyms": [
+      "VMs",
+      "Virtual Machines",
+      "Add Instance",
+      "Create VM",
+      "Add VM",
+      "New VM",
+      "New Container",
+      "Add Container"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/virtualization"
+    ],
+    "routerLink": [
+      "/virtualization/new"
+    ],
+    "anchor": "add-instance",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Virtualization",
+      "Containers",
+      "Instances"
     ],
     "synonyms": [
       "VM",
-      "Virtualization"
+      "Virtual Machines"
     ],
     "requiredRoles": [],
-    "visibleTokens": [
-      "VMS"
-    ],
+    "visibleTokens": [],
     "anchorRouterLink": [
-      "/vm"
+      "/virtualization/view/def"
     ],
     "routerLink": null,
-    "anchor": "vm-list",
+    "anchor": "containers-list",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Virtualization",
+      "Containers",
+      "General Info"
+    ],
+    "synonyms": [
+      "VM",
+      "Virtual Machines",
+      "Instances"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/virtualization/view/def"
+    ],
+    "routerLink": null,
+    "anchor": "general-info",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Virtualization",
+      "Containers",
+      "Devices"
+    ],
+    "synonyms": [
+      "VM",
+      "Virtual Machines",
+      "Instances"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/virtualization/view/def"
+    ],
+    "routerLink": null,
+    "anchor": "devices",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Virtualization",
+      "Containers",
+      "Disks"
+    ],
+    "synonyms": [
+      "VM",
+      "Virtual Machines",
+      "Instances"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/virtualization/view/def"
+    ],
+    "routerLink": null,
+    "anchor": "disks",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Virtualization",
+      "Containers",
+      "NIC"
+    ],
+    "synonyms": [
+      "VM",
+      "Virtual Machines",
+      "Instances"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/virtualization/view/def"
+    ],
+    "routerLink": null,
+    "anchor": "nic",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Virtualization",
+      "Containers",
+      "Proxies"
+    ],
+    "synonyms": [
+      "VM",
+      "Virtual Machines",
+      "Instances"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/virtualization/view/def"
+    ],
+    "routerLink": null,
+    "anchor": "proxies",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Virtualization",
+      "Containers",
+      "Idmap"
+    ],
+    "synonyms": [
+      "VM",
+      "Virtual Machines",
+      "Instances"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/virtualization/view/def"
+    ],
+    "routerLink": null,
+    "anchor": "idmap",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Virtualization",
+      "Containers",
+      "Tools"
+    ],
+    "synonyms": [
+      "VM",
+      "Virtual Machines",
+      "Instances"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/virtualization/view/def"
+    ],
+    "routerLink": null,
+    "anchor": "tools",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Virtualization",
+      "Containers",
+      "Metrics"
+    ],
+    "synonyms": [
+      "VM",
+      "Virtual Machines",
+      "Instances"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/virtualization/view/def"
+    ],
+    "routerLink": null,
+    "anchor": "metrics",
     "triggerAnchor": null,
     "section": "ui"
   }

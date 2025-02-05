@@ -75,5 +75,9 @@ describe('IxCodeEditor', () => {
 
       expect(spectator.component.editorView.state.doc.toString()).toBe('new value');
     });
+
+    it('does not mark form control as dirty initially', () => {
+      expect(formControl.dirty).toBe(false);
+    });
   });
 });

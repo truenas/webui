@@ -12,7 +12,6 @@ import {
   VirtualizationDeviceType,
   VirtualizationGpuType,
   VirtualizationStatus,
-  VirtualizationType,
 } from 'app/enums/virtualization.enum';
 import {
   AvailableUsb,
@@ -75,12 +74,11 @@ export class AddDeviceMenuComponent {
   });
 
   protected canAddTpm = computed(() => {
-    return this.deviceStore.selectedInstance().type === VirtualizationType.Vm
-      && !this.deviceStore.devices().some((device) => device.dev_type === VirtualizationDeviceType.Tpm);
+    return !this.deviceStore.devices().some((device) => device.dev_type === VirtualizationDeviceType.Tpm);
   });
 
   protected canAddTpmNow = computed(() => {
-    return this.canAddTpm() && this.deviceStore.selectedInstance().status === VirtualizationStatus.Stopped;
+    return this.canAddTpm() && this.deviceStore.selectedInstance()?.status === VirtualizationStatus.Stopped;
   });
 
   protected readonly hasDevicesToAdd = computed(() => {

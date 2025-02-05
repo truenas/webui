@@ -104,7 +104,7 @@ export class CertificateConstraintsComponent implements OnInit, SummaryProvider 
   }
 
   hasExtension(extension: CertificateExtension): boolean {
-    return this.form.value[extension].enabled;
+    return this.form.getRawValue()[extension].enabled;
   }
 
   getSummary(): SummarySection {
@@ -122,7 +122,7 @@ export class CertificateConstraintsComponent implements OnInit, SummaryProvider 
       AuthorityKeyIdentifier: authorityKeyIdentifier,
       ExtendedKeyUsage: extendedKeyUsage,
       KeyUsage: keyUsage,
-    } = this.form.value;
+    } = this.form.getRawValue();
 
     return {
       cert_extensions: {
@@ -147,13 +147,13 @@ export class CertificateConstraintsComponent implements OnInit, SummaryProvider 
           usages: extendedKeyUsage.usages,
         },
         KeyUsage: {
-          enabled: keyUsage.enabled,
           ...keyUsage.KeyUsage.reduce((acc, usage) => {
             return {
               ...acc,
               [usage]: true,
             };
           }, {} as KeyUsages),
+          enabled: keyUsage.enabled,
         },
       },
     };
@@ -231,16 +231,16 @@ export class CertificateConstraintsComponent implements OnInit, SummaryProvider 
     const summary = [
       {
         label: this.translate.instant('Basic Constraints'),
-        value: this.form.value.BasicConstraints.BasicConstraints
+        value: this.form.getRawValue().BasicConstraints.BasicConstraints
           .map(findLabelsByValue(basicConstraintOptions))
           .join(', '),
       },
     ];
 
-    if (this.form.value.BasicConstraints.path_length) {
+    if (this.form.getRawValue().BasicConstraints.path_length) {
       summary.push({
         label: this.translate.instant('Path Length'),
-        value: String(this.form.value.BasicConstraints.path_length),
+        value: String(this.form.getRawValue().BasicConstraints.path_length),
       });
     }
 
@@ -255,7 +255,7 @@ export class CertificateConstraintsComponent implements OnInit, SummaryProvider 
     return [
       {
         label: this.translate.instant('Authority Key Identifier'),
-        value: this.form.value.AuthorityKeyIdentifier.AuthorityKeyIdentifier
+        value: this.form.getRawValue().AuthorityKeyIdentifier.AuthorityKeyIdentifier
           .map(findLabelsByValue(authorityKeyIdentifierOptions))
           .join(', '),
       },
@@ -270,13 +270,13 @@ export class CertificateConstraintsComponent implements OnInit, SummaryProvider 
     const summary = [
       {
         label: this.translate.instant('Extended Key Usage'),
-        value: this.form.value.ExtendedKeyUsage.usages
+        value: this.form.getRawValue().ExtendedKeyUsage.usages
           .map(findLabelsByValue(this.extendedKeyUsageOptions))
           .join(', '),
       },
     ];
 
-    if (this.form.value.ExtendedKeyUsage.extension_critical) {
+    if (this.form.getRawValue().ExtendedKeyUsage.extension_critical) {
       summary.push({
         label: this.translate.instant('Critical Extension'),
         value: this.translate.instant('Yes'),
@@ -294,7 +294,7 @@ export class CertificateConstraintsComponent implements OnInit, SummaryProvider 
     return [
       {
         label: this.translate.instant('Key Usage'),
-        value: this.form.value.KeyUsage.KeyUsage
+        value: this.form.getRawValue().KeyUsage.KeyUsage
           .map(findLabelsByValue(keyUsageOptions))
           .join(', '),
       },

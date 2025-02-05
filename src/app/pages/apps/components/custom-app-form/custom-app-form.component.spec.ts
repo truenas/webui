@@ -76,6 +76,7 @@ describe('CustomAppFormComponent', () => {
         getAllApps: jest.fn(() => {
           return of([fakeApp]);
         }),
+        getApp: jest.fn(() => of([fakeApp])),
       }),
       mockProvider(ErrorHandlerService),
       mockProvider(DialogService, {

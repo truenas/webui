@@ -35,17 +35,17 @@ export class DisksOverviewComponent {
     const slots = this.selectedEnclosureSlots();
     return [
       ...new Map(
-        slots.filter((slot) => slot.pool_info).map((slot) => [slot.pool_info.pool_name, slot.pool_info]),
+        slots.filter((slot) => slot.pool_info).map((slot) => [slot.pool_info?.pool_name, slot.pool_info]),
       ).values(),
     ];
   });
 
   readonly expanders = computed(() => {
-    return [...Object.values(this.selectedEnclosure().elements?.[EnclosureElementType.SasExpander] || {})];
+    return [...Object.values(this.selectedEnclosure()?.elements?.[EnclosureElementType.SasExpander] || {})];
   });
 
   readonly unhealthyPoolsInfo = computed(() => {
-    return this.poolsInfo().filter((info) => info.disk_status !== EnclosureDiskStatus.Online);
+    return this.poolsInfo().filter((info) => info?.disk_status !== EnclosureDiskStatus.Online);
   });
 
   readonly failedDisks = computed(() => {

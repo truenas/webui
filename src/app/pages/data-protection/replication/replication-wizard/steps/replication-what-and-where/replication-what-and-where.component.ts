@@ -5,7 +5,7 @@ import {
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatStepperNext } from '@angular/material/stepper';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -85,10 +85,10 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   isSudoDialogShown = false;
 
   form = this.formBuilder.group({
-    exist_replication: [null as number],
+    exist_replication: new FormControl(null as number | null),
 
-    source_datasets_from: [null as DatasetSource, [Validators.required]],
-    ssh_credentials_source: [null as number | typeof newOption, [Validators.required]],
+    source_datasets_from: new FormControl(null as DatasetSource | null, [Validators.required]),
+    ssh_credentials_source: new FormControl(null as number | typeof newOption | null, [Validators.required]),
     source_datasets: [[] as string[], [Validators.required]],
     recursive: [false],
     custom_snapshots: [false],
@@ -96,12 +96,12 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     naming_schema: [this.defaultNamingSchema, [Validators.required]],
     name_regex: ['', [Validators.required]],
 
-    target_dataset_from: [null as DatasetSource, [Validators.required]],
-    ssh_credentials_target: [null as number | typeof newOption, [Validators.required]],
-    target_dataset: [null as string, [Validators.required]],
+    target_dataset_from: new FormControl(null as DatasetSource | null, [Validators.required]),
+    ssh_credentials_target: new FormControl(null as number | typeof newOption | null, [Validators.required]),
+    target_dataset: new FormControl(null as string | null, [Validators.required]),
     encryption: [false],
     encryption_inherit: [false],
-    encryption_key_format: [null as EncryptionKeyFormat, [Validators.required]],
+    encryption_key_format: new FormControl(null as EncryptionKeyFormat | null, [Validators.required]),
     encryption_key_generate: [true],
     encryption_key_hex: ['', [Validators.required]],
     encryption_key_passphrase: ['', [Validators.required]],
@@ -393,7 +393,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   }
 
   openAdvanced(): void {
-    this.slideInRef.swap(
+    this.slideInRef.swap?.(
       ReplicationFormComponent,
       { wide: true },
     );
@@ -476,7 +476,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
       },
       {
         label: this.translate.instant(helptextReplicationWizard.target_dataset_placeholder),
-        value: values.target_dataset,
+        value: values.target_dataset || '',
       },
     ];
   }

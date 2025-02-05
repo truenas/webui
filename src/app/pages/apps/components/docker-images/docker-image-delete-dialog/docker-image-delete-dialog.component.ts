@@ -98,6 +98,10 @@ export class DockerImageDeleteDialogComponent {
       untilDestroyed(this),
     ).subscribe((response) => {
       response.arguments[1].forEach((params, index: number) => {
+        if (!params) {
+          return;
+        }
+
         const [imageId] = params.toString().split(',');
         const bulkItem = this.bulkItems.get(imageId);
         if (bulkItem) {
@@ -115,7 +119,7 @@ export class DockerImageDeleteDialogComponent {
             this.bulkItems.set(imageId, {
               ...bulkItem,
               state: BulkListItemState.Success,
-              message: null,
+              message: '',
             });
             if (this.bulkItems.size === 1) {
               this.dialogRef.close(true);

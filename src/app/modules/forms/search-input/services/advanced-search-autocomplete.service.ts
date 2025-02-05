@@ -107,7 +107,7 @@ export class AdvancedSearchAutocompleteService<T> {
     from: number,
     to: number,
   ): void {
-    let updatedValue = suggestion.value.toString();
+    let updatedValue = String(suggestion.value);
     let anchor = regexMap.strictQuotedString.test(updatedValue)
       ? from + updatedValue.length - 1
       : from + updatedValue.length;

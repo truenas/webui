@@ -31,6 +31,8 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
+type InputValue = string | number | null;
+
 @UntilDestroy()
 @Component({
   selector: 'ix-input',
@@ -74,20 +76,20 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
 
   /** If formatted value returned by parseAndFormatInput has non-numeric letters
    * and input 'type' is a number, the input will stay empty on the form */
-  readonly format = input<(value: string | number) => string>();
-  readonly parse = input<(value: string | number) => string | number | null>();
+  readonly format = input<(value: InputValue) => string>();
+  readonly parse = input<(value: string | number) => InputValue>();
 
   readonly inputElementRef: Signal<ElementRef<HTMLInputElement>> = viewChild.required('ixInput', { read: ElementRef });
 
-  private _value: string | number = this.controlDirective.value as string;
-  formatted: string | number = '';
+  private _value: InputValue = this.controlDirective.value as string;
+  formatted: string | number | null = '';
 
   isDisabled = false;
   showPassword = false;
   invalid = false;
   filteredOptions: Option[] | undefined;
 
-  onChange: (value: string | number) => void = (): void => {};
+  onChange: (value: InputValue) => void = (): void => {};
   onTouch: () => void = (): void => {};
 
   constructor(
@@ -110,11 +112,11 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
     }
   }
 
-  get value(): string | number {
+  get value(): InputValue {
     return this._value;
   }
 
-  set value(val: string | number) {
+  set value(val: InputValue) {
     if (this.type() === 'number') {
       this._value = (val || val === 0) ? Number(val) : null;
       return;
@@ -179,7 +181,7 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
   }
 
   hasValue(): boolean {
-    return this.invalid || this.value?.toString()?.length > 0;
+    return this.invalid || Number(this.value?.toString()?.length) > 0;
   }
 
   resetInput(inputElement: HTMLInputElement): void {
@@ -253,13 +255,13 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
     }
   }
 
-  private findExistingOption(value: string | number): Option | undefined {
+  private findExistingOption(value: string | number | null): Option | undefined {
     return this.autocompleteOptions()?.find((option) => (option.label === value) || (option.value === value));
   }
 
   private handleAutocompleteOptionsOnInit(): void {
     // handle input value changes for this.autocomplete options
-    this.controlDirective.control.valueChanges.pipe(
+    this.controlDirective.control?.valueChanges?.pipe(
       debounceTime(100),
       distinctUntilChanged(),
       untilDestroyed(this),
@@ -279,5 +281,9 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
     }
 
     this.filterOptions('');
+  }
+
+  trackByIdentity(option: Option): Option {
+    return option;
   }
 }

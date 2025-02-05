@@ -6,7 +6,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatProgressBar } from '@angular/material/progress-bar';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -65,7 +65,7 @@ export class FailoverSettingsComponent implements OnInit {
   form = this.formBuilder.group({
     disabled: [false],
     master: [true],
-    timeout: [null as number],
+    timeout: new FormControl(null as number | null),
   });
 
   subscriptions: Subscription[] = [];

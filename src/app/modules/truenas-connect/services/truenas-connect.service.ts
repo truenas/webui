@@ -14,7 +14,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   providedIn: 'root',
 })
 export class TruenasConnectService {
-  config = signal<TruenasConnectConfig>(null);
+  config = signal<TruenasConnectConfig | null>(null);
   config$ = toObservable(this.config);
   constructor(
     @Inject(WINDOW) private window: Window,
@@ -39,12 +39,17 @@ export class TruenasConnectService {
   }
 
   disableService(): Observable<TruenasConnectConfig> {
+    const config = this.config();
+    if (!config) {
+      throw new Error('Truenas Connect config is not available');
+    }
+
     const payload = {
-      ips: this.config().ips,
+      ips: config.ips,
       enabled: false,
-      tnc_base_url: this.config().tnc_base_url,
-      account_service_base_url: this.config().account_service_base_url,
-      leca_service_base_url: this.config().leca_service_base_url,
+      tnc_base_url: config.tnc_base_url,
+      account_service_base_url: config.account_service_base_url,
+      leca_service_base_url: config.leca_service_base_url,
     };
     return this.api.call('tn_connect.update', [payload])
       .pipe(

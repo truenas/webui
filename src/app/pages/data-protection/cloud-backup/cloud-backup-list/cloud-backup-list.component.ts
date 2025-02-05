@@ -155,7 +155,7 @@ export class CloudBackupListComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.fragment.pipe(
-      tap((id) => this.loadCloudBackups(id)),
+      tap((id) => this.loadCloudBackups(id || undefined)),
       untilDestroyed(this),
     ).subscribe();
 

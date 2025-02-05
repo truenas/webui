@@ -3,7 +3,6 @@ import {
   forkJoin, map, Observable, of, switchMap,
 } from 'rxjs';
 import { FibreChannelPort } from 'app/interfaces/fibre-channel.interface';
-import { nullOption, skipOption } from 'app/interfaces/option.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 
 @Injectable({ providedIn: 'root' })
@@ -11,6 +10,12 @@ export class FibreChannelService {
   constructor(
     private api: ApiService,
   ) {}
+
+  loadTargetPort(targetId: number): Observable<FibreChannelPort | undefined> {
+    return this.api.call('fcport.query', [[['target.id', '=', targetId]]]).pipe(
+      map((ports) => ports[0]),
+    );
+  }
 
   /**
    * Specifies the association between target and fiber channel.
@@ -27,20 +32,20 @@ export class FibreChannelService {
 
     return forkJoin([
       fcPort$,
-      this.api.call('fcport.query', [[['target.id', '=', targetId]]]),
+      this.loadTargetPort(targetId),
     ]).pipe(
-      switchMap(([fcPort, fcPorts]) => {
-        const fcPortId = fcPorts[0]?.id || null;
-        if (port === skipOption) {
+      switchMap(([desiredPort, existingPort]) => {
+        const existingPortId = existingPort?.id || null;
+        if (port === (existingPort?.port || null)) {
           return of(null);
         }
-        if (port === nullOption && fcPortId) {
-          return this.api.call('fcport.delete', [fcPortId]);
+        if (port === null && existingPortId) {
+          return this.api.call('fcport.delete', [existingPortId]);
         }
 
-        const payload = { port: fcPort, target_id: targetId };
-        return fcPortId
-          ? this.api.call('fcport.update', [fcPortId, payload])
+        const payload = { port: desiredPort, target_id: targetId };
+        return existingPortId
+          ? this.api.call('fcport.update', [existingPortId, payload])
           : this.api.call('fcport.create', [payload]);
       }),
     );

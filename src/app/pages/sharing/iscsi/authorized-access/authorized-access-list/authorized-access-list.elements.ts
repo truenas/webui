@@ -8,5 +8,10 @@ export const authorizedAccessListElements = {
     list: {
       anchor: 'authorized-access-list',
     },
+    add: {
+      hierarchy: [T('Add Authorized Access')],
+      synonyms: [T('New Authorized Access'), T('Create Authorized Access')],
+      anchor: 'add-authorized-access',
+    },
   },
 } satisfies UiSearchableElement;

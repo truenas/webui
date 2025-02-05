@@ -112,12 +112,12 @@ export interface DetailsDisk {
   dif: boolean;
   exported_zpool: string;
   unsupported_md_devices: unknown;
-  duplicate_serial: unknown[];
+  duplicate_serial: string[];
   devname: string;
   partitions: {
     path: string;
   }[];
-  enclosure?: EnclosureAndSlot;
+  enclosure: EnclosureAndSlot | Record<string, never>;
   vendor: string;
   imported_zpool: string;
 }

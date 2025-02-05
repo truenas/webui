@@ -70,7 +70,7 @@ export class RolesCardComponent {
     if (!this.dataset().smb_shares?.length) {
       return '';
     }
-    const shareNames: string[] = this.dataset().smb_shares.map((item) => item.share_name);
+    const shareNames: string[] = this.dataset().smb_shares?.map((item) => item.share_name) || [];
     if (shareNames.length === 1) {
       return "'" + shareNames[0] + "'";
     }

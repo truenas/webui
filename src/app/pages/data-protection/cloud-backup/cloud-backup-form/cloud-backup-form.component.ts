@@ -4,7 +4,7 @@ import {
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -96,7 +96,7 @@ export class CloudBackupFormComponent implements OnInit {
 
   protected form = this.fb.group({
     path: ['', [Validators.required]],
-    credentials: [null as number, [Validators.required]],
+    credentials: new FormControl(null as number | null, [Validators.required]),
     schedule: [CronPresetValue.Daily, [Validators.required]],
     exclude: [[] as string[]],
     pre_script: [''],
@@ -108,7 +108,7 @@ export class CloudBackupFormComponent implements OnInit {
     args: [''],
     enabled: [true],
     password: ['', [Validators.required]],
-    keep_last: [null as number, [Validators.required]],
+    keep_last: new FormControl(null as number | null, [Validators.required]),
 
     folder: ['', [Validators.required]],
     bucket: ['', [Validators.required]],
@@ -288,7 +288,7 @@ export class CloudBackupFormComponent implements OnInit {
     this.form.controls.credentials.valueChanges
       .pipe(untilDestroyed(this))
       .subscribe((credentialId) => {
-        if (credentialId !== this.editingTask?.credentials?.id) {
+        if (credentialId !== (this.editingTask?.credentials?.id || null)) {
           this.form.controls.bucket.patchValue('');
         }
 

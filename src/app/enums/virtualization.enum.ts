@@ -101,4 +101,6 @@ export const virtualizationNicTypeLabels = new Map<VirtualizationNicType, string
 
 export enum VirtualizationSource {
   Image = 'IMAGE',
+  Zvol = 'ZVOL',
+  Iso = 'ISO',
 }
