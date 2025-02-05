@@ -72,7 +72,7 @@
 
   <mat-autocomplete #auto="matAutocomplete" (optionSelected)="optionSelected($event.option.value)">
     @if (filteredOptions?.length) {
-      @for (option of filteredOptions; track option) {
+      @for (option of filteredOptions; track trackByIdentity(option)) {
         <mat-option
           class="option"
           [value]="option"

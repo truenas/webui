@@ -35,7 +35,7 @@ export class DisksOverviewComponent {
     const slots = this.selectedEnclosureSlots();
     return [
       ...new Map(
-        slots.filter((slot) => slot.pool_info).map((slot) => [slot.pool_info.pool_name, slot.pool_info]),
+        slots.filter((slot) => slot.pool_info).map((slot) => [slot.pool_info?.pool_name, slot.pool_info]),
       ).values(),
     ];
   });

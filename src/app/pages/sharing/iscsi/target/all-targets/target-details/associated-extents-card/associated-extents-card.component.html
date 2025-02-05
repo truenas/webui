@@ -16,7 +16,7 @@
           color="default"
           mat-button
           [disabled]="!unassociatedExtents().length"
-          [ixTest]="[target()?.name, 'associate-target']"
+          [ixTest]="[target().name, 'associate-target']"
           (click)="associateTarget()"
         >
           {{ 'Associate' | translate }}

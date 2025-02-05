@@ -9,5 +9,4 @@ export const cpuUsageRecentWidget = dashboardWidget({
   supportedSizes: [SlotSize.Half, SlotSize.Quarter],
   category: WidgetCategory.Cpu,
   component: WidgetCpuUsageRecentComponent,
-  settingsComponent: null,
 });

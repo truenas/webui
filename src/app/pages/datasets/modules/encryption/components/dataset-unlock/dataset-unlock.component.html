@@ -28,7 +28,7 @@
           [empty]="form.controls.datasets.controls.length === 0"
           [label]="'Datasets' | translate"
           [canAdd]="false"
-          [formArray]="form.get('datasets')"
+          [formArray]="form.controls.datasets"
         >
           @for (dataset of form.controls.datasets.controls; track dataset; let i = $index) {
             <ix-list-item

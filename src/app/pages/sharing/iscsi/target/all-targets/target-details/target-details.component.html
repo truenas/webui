@@ -16,6 +16,9 @@
     }
 
     <ix-associated-extents-card [target]="target()"></ix-associated-extents-card>
-    <ix-connections-card [target]="target()"></ix-connections-card>
+
+    @if (hasIscsiCards()) {
+      <ix-iscsi-connections-card [target]="target()"></ix-iscsi-connections-card>
+    }
   </div>
 </div>

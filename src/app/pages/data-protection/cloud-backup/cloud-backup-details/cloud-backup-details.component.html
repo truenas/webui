@@ -4,7 +4,7 @@
 
     <ix-cloud-backup-stats [backup]="backup()"></ix-cloud-backup-stats>
 
-    @if (backup().exclude?.length) {
+    @if (backup().exclude.length) {
       <ix-cloud-backup-excluded-paths [backup]="backup()"></ix-cloud-backup-excluded-paths>
     }
 

@@ -89,7 +89,7 @@ export class FileTicketComponent {
   onSubmit(token: unknown): void {
     this.isLoadingChange.emit(true);
 
-    this.feedbackService.createTicket(token as string, this.ticketType, this.form.value).pipe(
+    this.feedbackService.createTicket(token as string, this.ticketType, this.form.getRawValue()).pipe(
       finalize(() => this.isLoadingChange.emit(false)),
       untilDestroyed(this),
     ).subscribe({

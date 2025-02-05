@@ -78,7 +78,7 @@ describe('DatasetFormComponent', () => {
   const slideInRef: SlideInRef<{ datasetId: string; isNew?: boolean } | undefined, unknown> = {
     close: jest.fn(),
     requireConfirmationWhen: jest.fn(),
-    getData: jest.fn(() => undefined),
+    getData: jest.fn(() => ({ datasetId: 'dataset', isNew: true })),
   };
 
   const createComponent = createComponentFactory({

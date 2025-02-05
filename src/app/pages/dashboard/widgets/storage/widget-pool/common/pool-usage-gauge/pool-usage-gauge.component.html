@@ -83,7 +83,7 @@
         [colorBlank]="chartBlankColor"
         [width]="size()"
         [height]="size()"
-        [label]="usedPercentage() / 100 | percent: '1.0-1'"
+        [label]="(usedPercentage() / 100 | percent: '1.0-1') || ('Unknown' | translate)"
         [value]="usedPercentage() > 100 ? 100 : usedPercentage()"
         [style]="isLowCapacity() ? 'color: var(--red);' : ''"
       ></ix-gauge-chart>

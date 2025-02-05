@@ -1,23 +1,21 @@
 <ix-radio-group
   [formControl]="optionsControl"
-  [options]="isNewOptions$"
+  [options]="portOptions()"
 ></ix-radio-group>
 <ng-container [formGroup]="form()">
-  @if (optionsControl.value !== null) {
-    @if(optionsControl.value) {
-      <ix-select
-        formControlName="host_id"
-        [label]="'Choose a new virtual port' | translate"
-        [options]="creatingPortOptions$"
-        [required]="true"
-      ></ix-select>
-    } @else {
-      <ix-select
-        formControlName="port"
-        [label]="'Existing Ports' | translate"
-        [options]="existingPortOptions$"
-        [required]="true"
-      ></ix-select>
-    }
+  @if (optionsControl.value === FibrePortOption.CreateNewPort) {
+    <ix-select
+      formControlName="host_id"
+      [label]="'Choose a new virtual port' | translate"
+      [options]="creatingPortOptions$"
+      [required]="true"
+    ></ix-select>
+  } @else if (optionsControl.value === FibrePortOption.UseExistingPort) {
+    <ix-select
+      formControlName="port"
+      [label]="'Existing Ports' | translate"
+      [options]="existingPortOptions$"
+      [required]="true"
+    ></ix-select>
   }
 </ng-container>

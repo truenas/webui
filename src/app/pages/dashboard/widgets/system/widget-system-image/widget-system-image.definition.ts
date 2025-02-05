@@ -9,5 +9,4 @@ export const systemImageWidget = dashboardWidget({
   supportedSizes: [SlotSize.Full, SlotSize.Half, SlotSize.Quarter],
   category: WidgetCategory.SystemInfo,
   component: WidgetSystemImageComponent,
-  settingsComponent: null,
 });

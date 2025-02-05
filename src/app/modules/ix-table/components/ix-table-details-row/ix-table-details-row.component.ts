@@ -19,6 +19,6 @@ import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-
   ],
 })
 export class IxTableDetailsRowComponent<T> {
-  readonly hiddenColumns = input<Column<T, ColumnComponent<T>>[]>();
+  readonly hiddenColumns = input<Column<T, ColumnComponent<T>>[]>([]);
   readonly row = input<T>();
 }

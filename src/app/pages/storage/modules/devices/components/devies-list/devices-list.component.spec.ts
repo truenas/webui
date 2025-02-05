@@ -2,6 +2,7 @@ import { ActivatedRoute } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { DeviceNestedDataNode } from 'app/interfaces/device-nested-data-node.interface';
+import { TopologyItem } from 'app/interfaces/storage.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { NestedTreeNodeComponent } from 'app/modules/ix-tree/components/nested-tree-node/nested-tree-node.component';
 import { TreeNodeComponent } from 'app/modules/ix-tree/components/tree-node/tree-node.component';
@@ -366,7 +367,6 @@ describe('DevicesListComponent', () => {
         {
           name: 'mirror-0',
           type: 'MIRROR',
-          path: null,
           guid: '6132369047780976350',
           status: 'ONLINE',
           stats: {
@@ -447,7 +447,7 @@ describe('DevicesListComponent', () => {
           ],
           unavail_disk: null,
           isRoot: true,
-        },
+        } as TopologyItem,
       ],
       group: 'Data VDEVs',
       guid: 'data',
@@ -497,10 +497,10 @@ describe('DevicesListComponent', () => {
 
   it('shows the devices of the pool', () => {
     spectator.detectChanges();
-    const vdevGroup = spectator.query('ix-vdev-group-node');
-    const text = vdevGroup.querySelector('.caption-name');
+    const vdevGroup = spectator.query('ix-vdev-group-node')!;
+    const text = vdevGroup.querySelector('.caption-name')!;
     expect(text.textContent).toBe('Data VDEVs');
-    const button = spectator.query('.mat-mdc-button-touch-target');
+    const button = spectator.query('.mat-mdc-button-touch-target')!;
     button.dispatchEvent(new Event('click'));
     expect(console.warn).toHaveBeenCalledWith('Tree is using conflicting node types which can cause unexpected behavior. Please use tree nodes of the same type (e.g. only flat or only nested). Current node type: "nested", new node type "flat".');
     spectator.detectChanges();

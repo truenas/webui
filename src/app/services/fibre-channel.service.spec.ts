@@ -2,7 +2,6 @@ import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { lastValueFrom, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { FibreChannelHost, FibreChannelPort } from 'app/interfaces/fibre-channel.interface';
-import { nullOption, skipOption } from 'app/interfaces/option.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { FibreChannelService } from 'app/services/fibre-channel.service';
 
@@ -17,7 +16,7 @@ describe('FibreChannelService', () => {
     service: FibreChannelService,
     providers: [
       mockApi([
-        mockCall('fcport.query', [{ id: fakePortId }] as FibreChannelPort[]),
+        mockCall('fcport.query', [{ id: fakePortId, port: 'fc/2' }] as FibreChannelPort[]),
         mockCall('fcport.create'),
         mockCall('fcport.update'),
         mockCall('fcport.delete'),
@@ -55,14 +54,14 @@ describe('FibreChannelService', () => {
       );
     });
 
-    it('deletes link', async () => {
-      await lastValueFrom(spectator.service.linkFiberChannelToTarget(fakeTargetId, nullOption));
+    it('deletes link when new port is null', async () => {
+      await lastValueFrom(spectator.service.linkFiberChannelToTarget(fakeTargetId, null));
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('fcport.delete', [fakePortId]);
     });
 
-    it('skips all operations', async () => {
-      await lastValueFrom(spectator.service.linkFiberChannelToTarget(fakeTargetId, skipOption));
+    it('skips all operations when new port is the same', async () => {
+      await lastValueFrom(spectator.service.linkFiberChannelToTarget(fakeTargetId, 'fc/2'));
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
         'fcport.query',
@@ -72,7 +71,7 @@ describe('FibreChannelService', () => {
     });
 
     it('creates new port and updates link', async () => {
-      await lastValueFrom(spectator.service.linkFiberChannelToTarget(fakeTargetId, undefined, fakeHostId));
+      await lastValueFrom(spectator.service.linkFiberChannelToTarget(fakeTargetId, '', fakeHostId));
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
         'fc.fc_host.update',

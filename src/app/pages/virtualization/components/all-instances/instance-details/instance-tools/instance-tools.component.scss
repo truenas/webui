@@ -7,7 +7,8 @@
   }
 
   &.disabled {
-    color: var(--mdc-filled-button-disabled-label-text-color);
+    color: var(--fg2) !important;
+    opacity: 0.5;
   }
 
   ::ng-deep .mdc-button__label {

@@ -48,7 +48,6 @@ import { SystemDatasetConfig, SystemDatasetUpdate } from 'app/interfaces/system-
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { UpdateParams } from 'app/interfaces/system-update.interface';
 import { Tunable, TunableCreate, TunableUpdate } from 'app/interfaces/tunable.interface';
-import { VmStopParams } from 'app/interfaces/virtual-machine.interface';
 import {
   CreateVirtualizationInstance,
   UpdateVirtualizationInstance,
@@ -200,6 +199,8 @@ export interface ApiJobDirectory {
   'update.update': { params: [UpdateParams]; response: void };
 
   // Virt
+  'virt.global.update': { params: [VirtualizationGlobalConfigUpdate]; response: VirtualizationGlobalConfig };
+  'virt.volume.import_iso': { params: [{ name: string }]; response: { name: string } };
   'virt.instance.create': { params: [CreateVirtualizationInstance]; response: VirtualizationInstance };
   'virt.instance.delete': { params: [instanceId: string]; response: boolean };
   'virt.instance.restart': { params: [instanceId: string, params: VirtualizationStopParams]; response: boolean };
@@ -209,13 +210,6 @@ export interface ApiJobDirectory {
     params: [instanceId: string, update: UpdateVirtualizationInstance];
     response: VirtualizationInstance;
   };
-
-  'virt.volume.import_iso': { params: [{ name: string }]; response: { name: string } };
-  'virt.global.update': { params: [VirtualizationGlobalConfigUpdate]; response: VirtualizationGlobalConfig };
-
-  // VM
-  'vm.restart': { params: [id: number]; response: void };
-  'vm.stop': { params: VmStopParams; response: void };
 }
 
 export type ApiJobMethod = keyof ApiJobDirectory;

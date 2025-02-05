@@ -4,6 +4,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
+import { GiB } from 'app/constants/bytes.constant';
 import { VirtualizationDeviceType, VirtualizationType } from 'app/enums/virtualization.enum';
 import { VirtualizationDisk, VirtualizationInstance, VirtualizationProxy } from 'app/interfaces/virtualization.interface';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -57,7 +58,11 @@ describe('InstanceDisksComponent', () => {
   });
 
   beforeEach(() => {
-    spectator = createComponent();
+    spectator = createComponent({
+      props: {
+        instance: { id: 'my-instance', type: VirtualizationType.Container } as VirtualizationInstance,
+      },
+    });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
@@ -96,29 +101,39 @@ describe('InstanceDisksComponent', () => {
     });
   });
   describe('vm', () => {
-    it('opens disk form when Add is pressed', async () => {
-      jest.spyOn(spectator.inject(VirtualizationDevicesStore), 'selectedInstance')
-        .mockReturnValue({ id: 'my-instance', type: VirtualizationType.Vm } as VirtualizationInstance);
+    const vm = {
+      id: 'my-instance',
+      type: VirtualizationType.Vm,
+      root_disk_size: 10 * GiB,
+    } as VirtualizationInstance;
+    beforeEach(() => {
+      spectator.setInput('instance', vm);
+    });
 
+    it('opens disk form when Add is pressed', async () => {
       const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
       await addButton.click();
 
       expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
         InstanceDiskFormComponent,
-        { data: { disk: undefined, instance: { id: 'my-instance', type: VirtualizationType.Vm } as VirtualizationInstance } },
+        { data: { disk: undefined, instance: vm } },
       );
     });
 
     it('opens disk for for edit when actions menu emits (edit)', () => {
-      jest.spyOn(spectator.inject(VirtualizationDevicesStore), 'selectedInstance')
-        .mockReturnValue({ id: 'my-instance', type: VirtualizationType.Vm } as VirtualizationInstance);
       const actionsMenu = spectator.query(DeviceActionsMenuComponent)!;
       actionsMenu.edit.emit();
 
       expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
         InstanceDiskFormComponent,
-        { data: { disk: disks[0], instance: { id: 'my-instance', type: VirtualizationType.Vm } as VirtualizationInstance } },
+        { data: { disk: disks[0], instance: vm } },
       );
+    });
+
+    it('shows root disk size', () => {
+      const rootDisk = spectator.query('.root-disk-size');
+
+      expect(rootDisk).toHaveText('Root Disk: 10 GiB');
     });
   });
 });
