@@ -7,6 +7,7 @@ import {
   EnclosureSvgComponent,
 } from 'app/pages/system/enclosure/components/enclosure-side/enclosure-svg/enclosure-svg.component';
 import { SvgCacheService } from 'app/pages/system/enclosure/services/svg-cache.service';
+import { diskStatusTint } from 'app/pages/system/enclosure/utils/disk-status-tint.utils';
 
 describe('EnclosureSvgComponent', () => {
   let spectator: Spectator<EnclosureSvgComponent>;
@@ -63,6 +64,7 @@ describe('EnclosureSvgComponent', () => {
         ] as DashboardEnclosureSlot[],
         enableMouseEvents: true,
         selectedSlot: null,
+        slotTintFn: diskStatusTint,
       },
       providers: [
         mockProvider(SvgCacheService, {
