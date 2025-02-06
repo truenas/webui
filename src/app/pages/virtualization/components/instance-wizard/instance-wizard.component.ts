@@ -343,7 +343,10 @@ export class InstanceWizardComponent {
 
     if (this.isVm()) {
       payload.secure_boot = values.secure_boot;
-      payload.root_disk_size = values.root_disk_size;
+
+      if (values.source_type !== VirtualizationSource.Zvol) {
+        payload.root_disk_size = values.root_disk_size;
+      }
 
       if (values.enable_vnc) {
         payload.vnc_password = values.vnc_password;
