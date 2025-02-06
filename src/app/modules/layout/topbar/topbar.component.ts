@@ -2,7 +2,6 @@ import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, OnInit, signal,
 } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { MatBadge } from '@angular/material/badge';
 import { MatIconButton } from '@angular/material/button';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -46,7 +45,6 @@ import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectRebootInfo } from 'app/store/reboot-info/reboot-info.selectors';
 import { selectHasConsoleFooter } from 'app/store/system-config/system-config.selectors';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 import { alertIndicatorPressed, sidenavIndicatorPressed } from 'app/store/topbar/topbar.actions';
 import { TruenasLogoComponent } from './truenas-logo/truenas-logo.component';
 
@@ -104,7 +102,6 @@ export class TopbarComponent implements OnInit {
 
   readonly alertBadgeCount$ = this.store$.select(selectImportantUnreadAlertsCount);
   readonly hasConsoleFooter$ = this.store$.select(selectHasConsoleFooter);
-  readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
 
   constructor(
     private router: Router,
