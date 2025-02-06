@@ -65,6 +65,8 @@ export class AllInstancesComponent implements OnInit {
     const showVmInstancesWarning = !this.window.localStorage.getItem('showNewVmInstancesWarning');
 
     if (showVmInstancesWarning) {
+      this.dialogService.closeAllDialogs();
+
       this.dialogService.warn(
         'Title',
         'Description',
