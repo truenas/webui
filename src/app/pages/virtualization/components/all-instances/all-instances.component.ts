@@ -1,11 +1,13 @@
 import {
-  ChangeDetectionStrategy, Component, OnInit,
+  ChangeDetectionStrategy, Component, Inject, OnInit,
 } from '@angular/core';
 import { Router, NavigationStart } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { WINDOW } from 'app/helpers/window.helper';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master-detail-view.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import {
@@ -44,6 +46,8 @@ export class AllInstancesComponent implements OnInit {
     private instancesStore: VirtualizationInstancesStore,
     private deviceStore: VirtualizationDevicesStore,
     private router: Router,
+    private dialogService: DialogService,
+    @Inject(WINDOW) private window: Window,
   ) {
     this.router.events
       .pipe(filter((event) => event instanceof NavigationStart), untilDestroyed(this))
@@ -57,5 +61,16 @@ export class AllInstancesComponent implements OnInit {
   ngOnInit(): void {
     this.configStore.initialize();
     this.instancesStore.initialize();
+
+    const showVmInstancesWarning = !this.window.localStorage.getItem('showNewVmInstancesWarning');
+
+    if (showVmInstancesWarning) {
+      this.dialogService.warn(
+        'Title',
+        'Description',
+      ).pipe(untilDestroyed(this)).subscribe(() => {
+        this.window.localStorage.setItem('showNewVmInstancesWarning', 'true');
+      });
+    }
   }
 }
