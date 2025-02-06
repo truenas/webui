@@ -80,11 +80,11 @@ export class DiskFormComponent implements OnInit {
   readonly hddstandbyOptions$ = of(helptextDisks.disk_form_hddstandby_options);
   readonly advpowermgmtOptions$ = of(translateOptions(this.translate, this.helptext.disk_form_advpowermgmt_options));
   readonly isLoading = signal<boolean>(false);
-  readonly existingDisk = signal<Disk>(null);
+  readonly existingDisk = signal<Disk | null>(null);
 
   readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
   readonly showSedSection = computed(() => {
-    return this.isEnterprise() || (this.existingDisk().passwd && this.existingDisk().passwd !== '');
+    return this.isEnterprise() || (this.existingDisk()?.passwd && this.existingDisk()?.passwd !== '');
   });
 
   constructor(

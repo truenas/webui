@@ -411,7 +411,7 @@ export class CloudSyncFormComponent implements OnInit {
   loadBucketOptions(): void {
     if (!this.hasRequiredRoles()) {
       this.isLoading = false;
-      const bucket = this.editingTask.attributes.bucket as string;
+      const bucket = this.editingTask?.attributes?.bucket as string;
       if (bucket) {
         this.form.controls.bucket.enable();
         this.bucketOptions$ = of([{ label: bucket, value: bucket }]);

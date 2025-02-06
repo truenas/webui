@@ -1,5 +1,5 @@
 <ix-fake-progress-bar
-  [loading]="dataProvider.isLoading$ | async"
+  [loading]="(dataProvider.isLoading$ | async) || false"
 ></ix-fake-progress-bar>
 
 <div class="header">
