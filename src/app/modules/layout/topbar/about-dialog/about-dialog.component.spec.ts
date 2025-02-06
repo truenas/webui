@@ -29,7 +29,7 @@ describe('AboutDialogComponent', () => {
             value: {
               systemInfo: {
                 codename: Codename.Fangtooth,
-                version: 'TrueNAS-COMMUNITY_EDITION-25.04.0-MASTER-20250126-18480',
+                version: '25.04.0-MASTER-20250205-114856',
                 system_product: 'M40',
               },
               isIxHardware: true,

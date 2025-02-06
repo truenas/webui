@@ -29,7 +29,7 @@ describe('WidgetSysInfoActiveComponent', () => {
 
   const systemInfo = {
     platform: 'TRUENAS-M40-HA',
-    version: 'TrueNAS-COMMUNITY_EDITION-25.04.0-MASTER-20250126-184805',
+    version: '25.04.0-MASTER-20250205-114856',
     codename: Codename.Fangtooth,
     license: {
       contract_type: ContractType.Gold,
