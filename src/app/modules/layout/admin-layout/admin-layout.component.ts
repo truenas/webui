@@ -40,7 +40,7 @@ import { SentryService } from 'app/services/sentry.service';
 import { SessionTimeoutService } from 'app/services/session-timeout.service';
 import { AppState } from 'app/store';
 import { selectHasConsoleFooter, waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
-import { selectCopyrightText, selectIsEnterprise, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
+import { selectCopyrightText, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -75,7 +75,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly hostname$ = this.store$.pipe(waitForSystemInfo, map(({ hostname }) => hostname));
   readonly isAlertPanelOpen$ = this.store$.select(selectIsAlertPanelOpen);
   readonly hasConsoleFooter$ = this.store$.select(selectHasConsoleFooter);
-  readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
   readonly copyrightText = toSignal(this.store$.select(selectCopyrightText));
   readonly copyrightTooltip = computed(() => `${this.copyrightText()} by iXsystems, Inc.`);
 
