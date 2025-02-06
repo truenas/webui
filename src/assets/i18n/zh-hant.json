@@ -3475,6 +3475,7 @@
   "Volume Size": "",
   "Volume is in use.": "",
   "Volume removed": "",
+  "Volume with this name already exists. After closing this error message, please click <code>Select</code> button next to a name of existing volume.": "",
   "Volumes": "",
   "WARNING: A failover will  temporarily interrupt system services.": "",
   "WARNING: Adding data VDEVs with different numbers of disks is not recommended.": "",
