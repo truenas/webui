@@ -142,8 +142,7 @@ export class ApiService {
       switchMap((message: SuccessfulResponse | ErrorResponse) => {
         if (isErrorResponse(message)) {
           this.printError(message, { method, params });
-          const error = this.enhanceError(message, { method });
-          return throwError(() => error);
+          return throwError(() => message);
         }
 
         performance.mark(`${method} - ${uuid} - end`);
@@ -176,22 +175,5 @@ export class ApiService {
     }
 
     console.error('Error: ', response.error);
-  }
-
-  // TODO: Probably doesn't belong here. Consider building something similar to interceptors.
-  private enhanceError(response: ErrorResponse, context: { method: string }): ErrorResponse {
-    if (response.error.data?.errname === ApiErrorName.NoAccess) {
-      return {
-        ...response,
-        error: {
-          ...response.error,
-          data: {
-            ...response.error.data,
-            reason: response.error.message || this.translate.instant('Access denied to {method}', { method: context.method }),
-          },
-        },
-      };
-    }
-    return response;
   }
 }
