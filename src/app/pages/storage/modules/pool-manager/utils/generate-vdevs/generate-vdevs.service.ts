@@ -105,7 +105,7 @@ export class GenerateVdevsService {
 
   private isCategorySet(category: PoolManagerTopologyCategory): boolean {
     return Boolean(category.layout
-      && category.width > 0
+      && Number(category.width) > 0
       && category.vdevsNumber > 0
       && category.diskSize
       && category.diskType);
@@ -115,7 +115,7 @@ export class GenerateVdevsService {
     category: PoolManagerTopologyCategory,
     maximizeDispersal: boolean,
   ): DetailsDisk[] {
-    const disksNeeded = category.width;
+    const disksNeeded = Number(category.width);
     const suitableDisks = this.groupedDisks.findSuitableDisks(category);
 
     if (suitableDisks.length < disksNeeded) {

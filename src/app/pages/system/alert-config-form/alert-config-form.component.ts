@@ -63,7 +63,7 @@ export class AlertConfigFormComponent implements OnInit {
   };
 
   categories: AlertCategory[] = [];
-  selectedCategory: AlertCategory;
+  selectedCategory: AlertCategory | undefined = undefined;
   form = this.formBuilder.group({});
   isFormLoading = false;
   readonly helptext = helptextAlertSettings;

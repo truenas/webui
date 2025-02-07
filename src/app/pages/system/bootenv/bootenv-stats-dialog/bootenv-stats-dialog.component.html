@@ -17,13 +17,13 @@
     <div class="status-item">
       <span class="status-name"> {{ 'Size' | translate }}: </span>
       <span class="status-value">
-        {{ state?.size | ixFileSize }}
+        {{ state?.size ? (state.size | ixFileSize) : '' }}
       </span>
     </div>
     <div class="status-item">
       <span class="status-name"> {{ 'Used' | translate }}: </span>
       <span class="status-value">
-        {{ state?.allocated | ixFileSize }}
+        {{ state?.allocated ? (state.allocated | ixFileSize) : '' }}
       </span>
     </div>
     <div class="status-item">

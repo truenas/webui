@@ -101,13 +101,14 @@ export class WidgetInterfaceComponent implements WidgetComponent<WidgetInterface
   ));
 
   protected linkState = computed(() => {
-    return this.interfaceUsage() ? this.interfaceUsage().link_state : this.interface().value.state.link_state;
+    const interfaceUsage = this.interfaceUsage();
+    return interfaceUsage ? interfaceUsage.link_state : this.interface().value.state.link_state;
   });
 
   protected isLinkStateUp = computed(() => this.linkState() === LinkState.Up);
   protected linkStateLabel = computed(() => linkStateLabelMap.get(this.linkState()));
-  protected bitsIn = computed(() => this.interfaceUsage().received_bytes_rate * 8);
-  protected bitsOut = computed(() => this.interfaceUsage().sent_bytes_rate * 8);
+  protected bitsIn = computed(() => Number(this.interfaceUsage()?.received_bytes_rate) * 8);
+  protected bitsOut = computed(() => Number(this.interfaceUsage()?.sent_bytes_rate) * 8);
 
   protected showChart = computed(() => [SlotSize.Full, SlotSize.Half].includes(this.size()));
   protected isFullSize = computed(() => this.size() === SlotSize.Full);

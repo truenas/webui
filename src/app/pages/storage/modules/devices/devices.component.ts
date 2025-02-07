@@ -17,7 +17,7 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { DevicesListComponent } from 'app/pages/storage/modules/devices/components/devies-list/devices-list.component';
+import { DevicesListComponent } from 'app/pages/storage/modules/devices/components/devices-list/devices-list.component';
 import { DiskDetailsPanelComponent } from 'app/pages/storage/modules/devices/components/disk-details-panel/disk-details-panel.component';
 import { TopologyItemIconComponent } from 'app/pages/storage/modules/devices/components/topology-item-icon/topology-item-icon.component';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';

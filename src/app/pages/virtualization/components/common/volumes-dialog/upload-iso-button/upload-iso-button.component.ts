@@ -46,7 +46,7 @@ export class UploadIsoButtonComponent implements OnInit {
   ngOnInit(): void {
     this.imageFileControl.valueChanges
       .pipe(
-        filter((files) => !!files.length),
+        filter((files) => !!files?.length),
         switchMap(() => this.api.call('virt.volume.query')),
         map((volumes) => volumes.map((volume) => volume.name)),
         untilDestroyed(this),

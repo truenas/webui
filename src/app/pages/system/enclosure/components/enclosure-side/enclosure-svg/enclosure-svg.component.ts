@@ -47,7 +47,7 @@ export class EnclosureSvgComponent implements OnDestroy {
   readonly svgUrl = input.required<string>();
   readonly slots = input.required<DashboardEnclosureSlot[]>();
   readonly enableMouseEvents = input(true);
-  readonly slotTintFn = input<TintingFunction>();
+  readonly slotTintFn = input.required<TintingFunction>();
   readonly selectedSlot = model<DashboardEnclosureSlot | null>(null);
 
   private keyDownListener: () => void;

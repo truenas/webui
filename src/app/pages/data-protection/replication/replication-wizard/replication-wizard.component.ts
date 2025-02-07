@@ -442,7 +442,7 @@ export class ReplicationWizardComponent {
     const replicationPayload = this.getReplicationPayload(values);
     return this.getUnmatchedSnapshots([
       replicationPayload.direction,
-      replicationPayload.source_datasets,
+      replicationPayload.source_datasets || [],
       replicationPayload.target_dataset,
       replicationPayload.transport,
       replicationPayload.ssh_credentials,

@@ -4,10 +4,10 @@ export function sortSearchResults(term: string, results: UiSearchableElement[]):
   const normalizedTerm = term.toLowerCase();
 
   return results.sort((itemOne, itemTwo) => {
-    const itemOneHierarchy = itemOne.hierarchy.map((hierarchyItem) => hierarchyItem.toLowerCase());
-    const itemTwoHierarchy = itemTwo.hierarchy.map((hierarchyItem) => hierarchyItem.toLowerCase());
-    const itemOneSynonyms = itemOne.synonyms.map((synonym) => synonym.toLowerCase());
-    const itemTwoSynonyms = itemTwo.synonyms.map((synonym) => synonym.toLowerCase());
+    const itemOneHierarchy = itemOne.hierarchy?.map((hierarchyItem) => hierarchyItem.toLowerCase()) || [];
+    const itemTwoHierarchy = itemTwo.hierarchy?.map((hierarchyItem) => hierarchyItem.toLowerCase()) || [];
+    const itemOneSynonyms = itemOne.synonyms?.map((synonym) => synonym.toLowerCase()) || [];
+    const itemTwoSynonyms = itemTwo.synonyms?.map((synonym) => synonym.toLowerCase()) || [];
 
     // Check for exact matches in hierarchy or synonyms
     const itemExactMatchOne = itemOneHierarchy.includes(normalizedTerm) || itemOneSynonyms.includes(normalizedTerm)
@@ -47,8 +47,8 @@ export function sortSearchResults(term: string, results: UiSearchableElement[]):
     }
 
     // Check for root pages (single hierarchy level)
-    const itemIsRootPageOne = itemOne.hierarchy.length === 1 ? 1 : 0;
-    const itemIsRootPageTwo = itemTwo.hierarchy.length === 1 ? 1 : 0;
+    const itemIsRootPageOne = itemOne.hierarchy?.length === 1 ? 1 : 0;
+    const itemIsRootPageTwo = itemTwo.hierarchy?.length === 1 ? 1 : 0;
     if (itemIsRootPageOne !== itemIsRootPageTwo) {
       return itemIsRootPageTwo - itemIsRootPageOne;
     }
@@ -76,6 +76,6 @@ export function sortSearchResults(term: string, results: UiSearchableElement[]):
     }
 
     // If no matches or matches are equal, compare hierarchy lengths
-    return itemOne.hierarchy.length - itemTwo.hierarchy.length;
+    return Number(itemOne.hierarchy?.length) - Number(itemTwo.hierarchy?.length);
   });
 }

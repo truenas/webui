@@ -104,10 +104,16 @@ describe('TwoFactorGuardService', () => {
     const isAllowed = await firstValueFrom(
       spectator.service.canActivateChild({} as ActivatedRouteSnapshot, { url: '/dashboard' } as RouterStateSnapshot),
     );
-    expect(isAllowed).toBe(false);
+    expect(isAllowed).toBe(true);
 
-    expect(spectator.inject(DialogService).fullScreenDialog).toHaveBeenCalled();
-    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/two-factor-auth']);
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(FirstLoginDialogComponent, {
+      maxWidth: '100vw',
+      maxHeight: '100vh',
+      height: '100%',
+      width: '100%',
+      panelClass: 'full-screen-modal',
+      disableClose: true,
+    });
   });
 
   it('handles STIG first login for user to proceed with changing one-time password and setting up 2FA', async () => {
