@@ -1,6 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
@@ -8,6 +9,9 @@ import { GiB } from 'app/constants/bytes.constant';
 import { VirtualizationDeviceType, VirtualizationType } from 'app/enums/virtualization.enum';
 import { VirtualizationDisk, VirtualizationInstance, VirtualizationProxy } from 'app/interfaces/virtualization.interface';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import {
+  IncreaseRootDiskSizeComponent,
+} from 'app/pages/virtualization/components/all-instances/instance-details/instance-disks/increase-root-disk-size/increase-root-disk-size.component';
 import {
   InstanceDiskFormComponent,
 } from 'app/pages/virtualization/components/all-instances/instance-details/instance-disks/instance-disk-form/instance-disk-form.component';
@@ -52,6 +56,11 @@ describe('InstanceDisksComponent', () => {
       mockProvider(SlideIn, {
         open: jest.fn(() => of({
           response: true,
+        })),
+      }),
+      mockProvider(MatDialog, {
+        open: jest.fn(() => ({
+          afterClosed: () => of(true),
         })),
       }),
     ],
@@ -134,6 +143,16 @@ describe('InstanceDisksComponent', () => {
       const rootDisk = spectator.query('.root-disk-size');
 
       expect(rootDisk).toHaveText('Root Disk: 10 GiB');
+    });
+
+    it('opens dialog to increase root disk size when Increase link is pressed', () => {
+      const link = spectator.query('.root-disk-size .action');
+      expect(link).toHaveText('Increase');
+
+      spectator.click(link);
+
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(IncreaseRootDiskSizeComponent);
+      expect(spectator.inject(VirtualizationDevicesStore).loadDevices).toHaveBeenCalled();
     });
   });
 });

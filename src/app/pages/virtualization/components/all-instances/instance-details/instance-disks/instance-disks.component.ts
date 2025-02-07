@@ -5,6 +5,7 @@ import { MatButton } from '@angular/material/button';
 import {
   MatCard, MatCardContent, MatCardHeader, MatCardTitle,
 } from '@angular/material/card';
+import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -14,6 +15,9 @@ import { VirtualizationDisk, VirtualizationInstance } from 'app/interfaces/virtu
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import {
+  IncreaseRootDiskSizeComponent,
+} from 'app/pages/virtualization/components/all-instances/instance-details/instance-disks/increase-root-disk-size/increase-root-disk-size.component';
 import {
   InstanceDiskFormComponent,
 } from 'app/pages/virtualization/components/all-instances/instance-details/instance-disks/instance-disk-form/instance-disk-form.component';
@@ -47,6 +51,7 @@ export class InstanceDisksComponent {
 
   constructor(
     private slideIn: SlideIn,
+    private matDialog: MatDialog,
     private deviceStore: VirtualizationDevicesStore,
   ) {}
 
@@ -63,6 +68,13 @@ export class InstanceDisksComponent {
 
   protected editDisk(disk: VirtualizationDisk): void {
     this.openDiskForm(disk);
+  }
+
+  protected showRootDiskIncreaseDialog(): void {
+    this.matDialog.open(IncreaseRootDiskSizeComponent, { data: this.instance() })
+      .afterClosed()
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe(() => this.deviceStore.loadDevices());
   }
 
   private openDiskForm(disk?: VirtualizationDisk): void {
