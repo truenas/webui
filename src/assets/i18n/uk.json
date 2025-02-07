@@ -1199,6 +1199,7 @@
   "NTP Server": "",
   "NVMe-oF Expansion Shelves": "",
   "Name ^ \"Local\" AND \"Web Shell Access\" = true": "",
+  "Name cannot be changed after instance is created": "",
   "Name must start and end with a lowercase alphanumeric character.  Hyphen is allowed in the middle e.g abc123, abc, abcd-1232": "",
   "Name not added": "",
   "Name ~ \"admin\"": "",
