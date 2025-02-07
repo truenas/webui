@@ -74,7 +74,8 @@ describe('AboutDialogComponent', () => {
 
   it('should display system version correctly', () => {
     const systemVersionElement = spectator.query('#system-version');
-    expect(systemVersionElement).toHaveText('System Version: 25.04.0 - Fangtooth');
+    expect(systemVersionElement).toHaveText('System Version:');
+    expect(systemVersionElement).toHaveText('25.04.0 - Fangtooth');
   });
 
   it('should display product-specific open source text', () => {
