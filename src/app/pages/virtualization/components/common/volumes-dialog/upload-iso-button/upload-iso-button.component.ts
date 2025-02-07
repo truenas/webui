@@ -69,7 +69,7 @@ export class UploadIsoButtonComponent implements OnInit {
     if (existingNames.includes(file.name)) {
       this.dialogService.error({
         title: this.translate.instant('Error'),
-        message: this.translate.instant('Volume with this name already exists. After closing this error message, please click <code>Select</code> button next to a name of existing volume.'),
+        message: this.translate.instant('Volume with this name already exists.'),
       });
       return;
     }
