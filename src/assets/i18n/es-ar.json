@@ -22,6 +22,7 @@
   "NS ID": "",
   "NVMe-oF Expansion Shelves": "",
   "Name ^ \"Local\" AND \"Web Shell Access\" = true": "",
+  "Name cannot be changed after instance is created": "",
   "Pods": "",
   "Post Init": "",
   "Post Script": "",
