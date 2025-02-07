@@ -248,11 +248,13 @@ export class InstanceWizardComponent {
       .subscribe((image: VirtualizationImageWithId) => {
         this.form.controls.image.setValue(image.id);
 
-        if (typeof image.secureboot === 'boolean' && image.secureboot !== null) {
-          this.form.controls.secure_boot.setValue(image.secureboot);
-          this.form.controls.secure_boot.disable();
-        } else {
-          this.form.controls.secure_boot.enable();
+        if (this.isVm()) {
+          if (typeof image.secureboot === 'boolean' && image.secureboot !== null) {
+            this.form.controls.secure_boot.setValue(image.secureboot);
+            this.form.controls.secure_boot.disable();
+          } else {
+            this.form.controls.secure_boot.enable();
+          }
         }
       });
   }
