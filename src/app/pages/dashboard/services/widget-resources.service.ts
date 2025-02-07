@@ -2,19 +2,23 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { subHours, subMinutes } from 'date-fns';
 import {
+  BehaviorSubject,
   Observable, Subject, catchError, combineLatestWith, debounceTime,
   forkJoin, map, of, repeat, shareReplay, switchMap, take, timer,
 } from 'rxjs';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { App } from 'app/interfaces/app.interface';
+import { CloudSyncTask } from 'app/interfaces/cloud-sync-task.interface';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Disk } from 'app/interfaces/disk.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Pool } from 'app/interfaces/pool.interface';
+import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { ReportingData } from 'app/interfaces/reporting.interface';
+import { RsyncTask } from 'app/interfaces/rsync-task.interface';
 import { VolumesData, VolumeData } from 'app/interfaces/volume-data.interface';
-import { processNetworkInterfaces } from 'app/pages/dashboard/widgets/network/widget-interface/widget-interface.utils';
+import { DashboardNetworkInterface, processNetworkInterfaces } from 'app/pages/dashboard/widgets/network/widget-interface/widget-interface.utils';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -37,13 +41,13 @@ export class WidgetResourcesService {
   readonly refreshInterval$ = timer(0, 5000);
   private readonly triggerRefreshSystemInfo$ = new Subject<void>();
 
-  readonly backups$ = forkJoin([
-    this.ws.call('replication.query'),
-    this.ws.call('rsynctask.query'),
-    this.ws.call('cloudsync.query'),
-  ]).pipe(
-    shareReplay({ bufferSize: 1, refCount: true }),
-  );
+  getBackupTasks(): Observable<[ReplicationTask[], RsyncTask[], CloudSyncTask[]]> {
+    return forkJoin([
+      this.ws.call('replication.query'),
+      this.ws.call('rsynctask.query'),
+      this.ws.call('cloudsync.query'),
+    ]);
+  }
 
   readonly systemInfo$ = this.ws.call('webui.main.dashboard.sys_info').pipe(
     repeat({ delay: () => this.triggerRefreshSystemInfo$ }),
@@ -59,10 +63,33 @@ export class WidgetResourcesService {
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
-  readonly networkInterfaces$ = this.ws.call('interface.query').pipe(
-    map((interfaces) => processNetworkInterfaces(interfaces)),
+  private readonly dashboardNetworkInterfaces$ = this.ws.call('interface.query').pipe(
+    map((interfaces) => {
+      const processedNics = processNetworkInterfaces(interfaces);
+      this.nicsEmitter$.next(processedNics);
+      return processedNics;
+    }),
+    toLoadingState(),
+  );
+
+  private readonly lastInterfacesFetch$ = new BehaviorSubject<Date | null>(null);
+
+  private readonly nicsEmitter$ = new Subject<DashboardNetworkInterface[]>();
+  private readonly sharedNetworkInterfaces$ = this.nicsEmitter$.pipe(
     toLoadingState(),
     shareReplay({ bufferSize: 1, refCount: true }),
+  );
+
+  readonly networkInterfaces$ = this.lastInterfacesFetch$.pipe(
+    switchMap((lastFetchTime) => {
+      const now = new Date();
+      if (!lastFetchTime || now.getTime() - lastFetchTime.getTime() > 1000) {
+        this.lastInterfacesFetch$.next(now);
+        return this.dashboardNetworkInterfaces$;
+      }
+      return this.sharedNetworkInterfaces$;
+    }),
+    shareReplay({ bufferSize: 1, refCount: true }), // Shares the latest fetched data
   );
 
   readonly installedApps$ = this.ws.call('app.query').pipe(toLoadingState());
