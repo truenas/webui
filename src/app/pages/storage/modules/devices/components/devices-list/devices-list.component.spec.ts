@@ -7,7 +7,7 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { NestedTreeNodeComponent } from 'app/modules/ix-tree/components/nested-tree-node/nested-tree-node.component';
 import { TreeNodeComponent } from 'app/modules/ix-tree/components/tree-node/tree-node.component';
 import { TreeViewComponent } from 'app/modules/ix-tree/components/tree-view/tree-view.component';
-import { DevicesListComponent } from 'app/pages/storage/modules/devices/components/devies-list/devices-list.component';
+import { DevicesListComponent } from 'app/pages/storage/modules/devices/components/devices-list/devices-list.component';
 import { TopologyItemNodeComponent } from 'app/pages/storage/modules/devices/components/topology-item-node/topology-item-node.component';
 import { VDevGroupNodeComponent } from 'app/pages/storage/modules/devices/components/vdev-group-node/vdev-group-node.component';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';

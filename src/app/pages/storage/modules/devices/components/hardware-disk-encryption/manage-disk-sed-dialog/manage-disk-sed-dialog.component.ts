@@ -47,7 +47,7 @@ export class ManageDiskSedDialogComponent implements OnInit {
     validators: [Validators.required],
   });
 
-  disk: Disk;
+  disk: Disk | undefined = undefined;
 
   readonly helptext = helptextDisks;
 

@@ -59,7 +59,7 @@
               <div class="details-expansion-content">
                 <div class="detail-row row-dark">
                   @if (summary?.changelog) {
-                    <div [innerHTML]="summary.changelog"></div>
+                    <div [innerHTML]="summary?.changelog"></div>
                   } @else {
                     {{ 'No Changelog' | translate }}
                   }

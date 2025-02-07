@@ -147,7 +147,6 @@ describe('IxDynamicFormItemComponent', () => {
     MockInstance(IxInputComponent, 'inputElementRef', signal(null));
     MockInstance(IxCodeEditorComponent, 'inputArea', signal(null));
     MockInstance(IxExplorerComponent, 'tree', signal(null));
-    spectator = createComponent();
   });
 
   describe('Component rendering', () => {

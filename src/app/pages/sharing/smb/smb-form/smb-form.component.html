@@ -130,7 +130,7 @@
             [tooltip]="helptextSharingSmb.tooltip_timemachine | translate"
           ></ix-checkbox>
 
-          <div [hidden]="!form.get('timemachine').value">
+          <div [hidden]="!form.value.timemachine">
             <ix-input
               formControlName="timemachine_quota"
               [label]="helptextSharingSmb.placeholder_timemachine_quota | translate"
