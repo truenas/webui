@@ -41,14 +41,6 @@ export class WidgetResourcesService {
   readonly refreshInterval$ = timer(0, 5000);
   private readonly triggerRefreshSystemInfo$ = new Subject<void>();
 
-  getBackupTasks(): Observable<[ReplicationTask[], RsyncTask[], CloudSyncTask[]]> {
-    return forkJoin([
-      this.ws.call('replication.query'),
-      this.ws.call('rsynctask.query'),
-      this.ws.call('cloudsync.query'),
-    ]);
-  }
-
   readonly systemInfo$ = this.ws.call('webui.main.dashboard.sys_info').pipe(
     repeat({ delay: () => this.triggerRefreshSystemInfo$ }),
     debounceTime(300),
@@ -72,6 +64,31 @@ export class WidgetResourcesService {
     toLoadingState(),
   );
 
+  private readonly dashboardBackupTasks$ = forkJoin([
+    this.ws.call('replication.query'),
+    this.ws.call('rsynctask.query'),
+    this.ws.call('cloudsync.query'),
+  ]);
+
+  private readonly lastBackupTasksFetch$ = new BehaviorSubject<Date | null>(null);
+
+  private readonly backupTasksEmitter$ = new Subject<[ReplicationTask[], RsyncTask[], CloudSyncTask[]]>();
+  private readonly sharedBackupTasks$ = this.backupTasksEmitter$.pipe(
+    shareReplay({ bufferSize: 1, refCount: true }),
+  );
+
+  readonly backupTasks$ = this.lastBackupTasksFetch$.pipe(
+    switchMap((lastFetchTime) => {
+      const now = new Date();
+      if (!lastFetchTime || now.getTime() - lastFetchTime.getTime() > 1000) {
+        this.lastInterfacesFetch$.next(now);
+        return this.dashboardBackupTasks$;
+      }
+      return this.sharedBackupTasks$;
+    }),
+    shareReplay({ bufferSize: 1, refCount: true }),
+  );
+
   private readonly lastInterfacesFetch$ = new BehaviorSubject<Date | null>(null);
 
   private readonly nicsEmitter$ = new Subject<DashboardNetworkInterface[]>();
@@ -89,7 +106,7 @@ export class WidgetResourcesService {
       }
       return this.sharedNetworkInterfaces$;
     }),
-    shareReplay({ bufferSize: 1, refCount: true }), // Shares the latest fetched data
+    shareReplay({ bufferSize: 1, refCount: true }),
   );
 
   readonly installedApps$ = this.ws.call('app.query').pipe(toLoadingState());
