@@ -1659,6 +1659,7 @@
   "Name And Method": "",
   "Name ^ \"Local\" AND \"Web Shell Access\" = true": "",
   "Name and Naming Schema cannot be provided at the same time.": "",
+  "Name cannot be changed after instance is created": "",
   "Name must start and end with a lowercase alphanumeric character.  Hyphen is allowed in the middle e.g abc123, abc, abcd-1232": "",
   "Name of the InfluxDB database.": "",
   "Name of the WebDAV site, service, or software being used.": "",
