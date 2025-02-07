@@ -14,11 +14,10 @@
   .username {
     @include line-clamp(2);
     cursor: pointer;
-
     display: inline-block;
     font-size: 14px;
     margin-right: 0.5rem;
-    max-width: 100px;
+    max-width: 105px;
     min-width: auto;
     overflow: hidden;
     text-overflow: ellipsis;
