@@ -5,6 +5,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
+import { Codename } from 'app/enums/codename.enum';
 import { helptextAbout } from 'app/helptext/about';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AboutDialogComponent } from 'app/modules/layout/topbar/about-dialog/about-dialog.component';
@@ -27,7 +28,8 @@ describe('AboutDialogComponent', () => {
             selector: selectSystemInfoState,
             value: {
               systemInfo: {
-                version: 'SCALE-24.04',
+                codename: Codename.Fangtooth,
+                version: '25.04.0-MASTER-20250205-114856',
                 system_product: 'M40',
               },
               isIxHardware: true,
@@ -72,7 +74,8 @@ describe('AboutDialogComponent', () => {
 
   it('should display system version correctly', () => {
     const systemVersionElement = spectator.query('#system-version');
-    expect(systemVersionElement).toHaveText('System Version: SCALE-24.04');
+    expect(systemVersionElement).toHaveText('System Version:');
+    expect(systemVersionElement).toHaveText('25.04.0 - Fangtooth');
   });
 
   it('should display product-specific open source text', () => {

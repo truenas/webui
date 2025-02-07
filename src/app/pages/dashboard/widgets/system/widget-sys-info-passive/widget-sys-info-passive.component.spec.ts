@@ -33,8 +33,8 @@ describe('WidgetSysInfoPassiveComponent', () => {
   const systemInfo = {
     remote_info: {
       platform: 'TRUENAS-M40-HA',
-      version: 'TrueNAS-SCALE-24.10.0-MASTER-20240301-233006',
-      codename: Codename.ElectricEel,
+      version: '25.04.0-MASTER-20250205-114856',
+      codename: Codename.Fangtooth,
       license: {
         contract_type: ContractType.Gold,
         contract_end: {
@@ -128,7 +128,7 @@ describe('WidgetSysInfoPassiveComponent', () => {
       expect(items).toEqual([
         'Platform: TRUENAS-M40-HA',
         'Edition: Enterprise',
-        'Version: ElectricEel-24.10.0-MASTER-20240301-233006',
+        'Version: 25.04.0 - Fangtooth',
         'Support License: Gold Contract,  Expires on 2025-01-01',
         'System Serial: AA-00002',
         'Hostname: test-hostname-b',

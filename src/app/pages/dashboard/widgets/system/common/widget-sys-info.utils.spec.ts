@@ -1,21 +1,6 @@
-import { Codename } from 'app/enums/codename.enum';
 import {
-  getProductEnclosure, getProductImageSrc, getServerProduct, getSystemVersion,
+  getProductEnclosure, getProductImageSrc, getServerProduct,
 } from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
-
-describe('getSystemVersion', () => {
-  it('should return the correct system version when valid input is provided', () => {
-    expect(getSystemVersion('TrueNAS-SCALE-24.10.0-MASTER-20240301-233006', Codename.ElectricEel)).toBe(
-      'ElectricEel-24.10.0-MASTER-20240301-233006',
-    );
-  });
-
-  it('should initial version if second argument is skipped', () => {
-    expect(getSystemVersion('TrueNAS-SCALE-24.10.0-MASTER-20240301-233006')).toBe(
-      'TrueNAS-SCALE-24.10.0-MASTER-20240301-233006',
-    );
-  });
-});
 
 describe('getServerProduct', () => {
   it('should return the correct image path for provided product', () => {
