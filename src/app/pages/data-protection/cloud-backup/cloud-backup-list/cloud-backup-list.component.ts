@@ -182,7 +182,7 @@ export class CloudBackupListComponent {
       .pipe(
         filter((response) => !!response.response),
         untilDestroyed(this),
-      ).subscribe();
+      ).subscribe(() => this.dataProvider().load());
   }
 
   doDelete(row: CloudBackup): void {
