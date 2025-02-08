@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, input,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, effect, input,
   output,
   signal,
 } from '@angular/core';
@@ -134,7 +134,14 @@ export class CloudBackupListComponent {
     private snackbar: SnackbarService,
     private appLoader: AppLoaderService,
     protected emptyService: EmptyService,
-  ) {}
+  ) {
+    effect(() => {
+      if (!this.cloudBackups().length) {
+        this.dataProvider().expandedRow = null;
+        this.cdr.markForCheck();
+      }
+    });
+  }
 
   runNow(row: CloudBackup): void {
     this.dialogService.confirm({
@@ -193,9 +200,6 @@ export class CloudBackupListComponent {
     ).subscribe({
       next: () => {
         this.dataProvider().load();
-        if (!this.cloudBackups().length) {
-          this.dataProvider().expandedRow = null;
-        }
       },
       error: (err: unknown) => {
         this.dialogService.error(this.errorHandler.parseError(err));
