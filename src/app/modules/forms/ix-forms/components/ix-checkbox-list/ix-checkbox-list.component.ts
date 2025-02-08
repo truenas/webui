@@ -7,7 +7,7 @@ import { MatCheckbox } from '@angular/material/checkbox';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
-import { Option } from 'app/interfaces/option.interface';
+import { BaseOptionValueType, Option } from 'app/interfaces/option.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
@@ -42,7 +42,7 @@ export class IxCheckboxListComponent implements ControlValueAccessor {
   readonly inlineFieldFlex = input<string>();
 
   isDisabled = false;
-  value: (string | number)[];
+  value: BaseOptionValueType[];
 
   constructor(
     public controlDirective: NgControl,
@@ -63,15 +63,15 @@ export class IxCheckboxListComponent implements ControlValueAccessor {
     return '50%';
   });
 
-  onChange: (value: (string | number)[]) => void = (): void => {};
+  onChange: (value: BaseOptionValueType[]) => void = (): void => {};
   onTouch: () => void = (): void => {};
 
-  writeValue(value: (string | number)[]): void {
+  writeValue(value: BaseOptionValueType[]): void {
     this.value = value;
     this.cdr.markForCheck();
   }
 
-  registerOnChange(onChange: (value: (string | number)[]) => void): void {
+  registerOnChange(onChange: (value: BaseOptionValueType[]) => void): void {
     this.onChange = onChange;
   }
 
@@ -84,11 +84,11 @@ export class IxCheckboxListComponent implements ControlValueAccessor {
     this.cdr.markForCheck();
   }
 
-  isChecked(value: string | number): boolean {
+  isChecked(value: BaseOptionValueType): boolean {
     return this.value.includes(value);
   }
 
-  onCheckboxChanged(value: string | number): void {
+  onCheckboxChanged(value: BaseOptionValueType): void {
     if (this.isChecked(value)) {
       this.value = this.value.filter((item) => item !== value);
     } else {

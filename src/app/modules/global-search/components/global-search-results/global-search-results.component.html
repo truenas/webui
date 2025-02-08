@@ -27,7 +27,7 @@
                     class="icon"
                     color="accent"
                     [attr.tabindex]="sectionResults.length + i + 1"
-                    [attr.aria-label]="'Remove {value} from recent searches' | translate:{ value: result.hierarchy[result.hierarchy.length - 1] }"
+                    [attr.aria-label]="'Remove {value} from recent searches' | translate:{ value: result.hierarchy?.[result.hierarchy?.length - 1] }"
                     (click)="removeRecentSearch($event, result)"
                     (keydown.enter)="removeRecentSearch($event, result)"
                   ></ix-icon>
@@ -50,7 +50,7 @@
           }
         </div>
       }
-      @if (!getElementsBySection(section.value)?.length) {
+      @if (!getElementsBySection(section.value).length) {
         <h4 class="no-results">{{ 'No results found in {section}' | translate:{ section: section.label } }}</h4>
       }
     }

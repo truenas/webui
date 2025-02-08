@@ -5,7 +5,7 @@
 </h1>
 
 <mat-dialog-content>
-  @if(tnc.config().status !== TruenasConnectStatus.Disabled) {
+  @if(tnc.config()?.status !== TruenasConnectStatus.Disabled) {
   <span class="warning">{{
     'In order to update the form, you need to disable the service first'
       | translate
@@ -35,7 +35,7 @@
 
 <mat-dialog-actions>
   <div>
-    @if(tnc.config().status !== TruenasConnectStatus.Disabled) {
+    @if(tnc.config()?.status !== TruenasConnectStatus.Disabled) {
     <button
       mat-button
       color="warn"
@@ -57,7 +57,7 @@
   </div>
 
   <div>
-    @if(tnc.config().status === TruenasConnectStatus.ClaimTokenMissing) {
+    @if(tnc.config()?.status === TruenasConnectStatus.ClaimTokenMissing) {
     <button ixTest="tnc-generate-token" mat-button (click)="generateToken()">
       {{ 'Generate Token' | translate }}
     </button>
@@ -66,8 +66,7 @@
       {{ 'Cancel' | translate }}
     </button>
 
-    @if (tnc.config().status ===
-    TruenasConnectStatus.RegistrationFinalizationWaiting) {
+    @if (tnc.config()?.status === TruenasConnectStatus.RegistrationFinalizationWaiting) {
     <button ixTest="tnc-connect" mat-button color="primary" (click)="connect()">
       {{ 'Connect' | translate }}
     </button>

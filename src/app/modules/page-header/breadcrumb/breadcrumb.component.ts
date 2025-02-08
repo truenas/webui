@@ -47,10 +47,12 @@ export class BreadcrumbComponent implements OnInit {
   }
 
   private getBreadcrumbs(): RoutePart[] {
-    const sortedRoutes = this.routePartsService.routeParts.sort((a, b) => a.ngUrl.length - b.ngUrl.length);
+    const sortedRoutes = this.routePartsService.routeParts?.sort((a, b) => {
+      return (a.ngUrl?.length || 0) - (b.ngUrl?.length || 0);
+    });
     const uniqRoutesList = uniqBy(sortedRoutes, 'url');
     const validRoutesBeforeCurrent = uniqRoutesList.filter((routePart) => {
-      routePart.ngUrl = routePart.ngUrl.filter((item) => item !== '');
+      routePart.ngUrl = routePart.ngUrl?.filter((item) => item !== '');
       if (routePart.url === this.router.url) {
         return false;
       }

@@ -16,7 +16,7 @@
       <div class="root-disk-size">
         <span class="label">{{ 'Root Disk' | translate }}:</span>
         <span class="value">
-          {{ instance().root_disk_size | ixFileSize }}
+          {{ +instance().root_disk_size | ixFileSize }}
         </span>
       </div>
     }
