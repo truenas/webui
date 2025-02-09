@@ -46,11 +46,6 @@ export const adminRoutes: Routes = [
         data: { title: T('Directory Services'), breadcrumb: T('Directory Services') },
       },
       {
-        path: 'vm',
-        loadChildren: () => import('app/pages/vm/vm.routes').then((module) => module.vmRoutes),
-        data: { title: T('Virtual Machines'), breadcrumb: T('Virtual Machines') },
-      },
-      {
         path: 'apps',
         loadChildren: () => import('app/pages/apps/apps.routes').then((module) => module.appsRoutes),
         data: { title: T('Applications'), breadcrumb: T('Applications') },

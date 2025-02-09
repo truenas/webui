@@ -9,5 +9,4 @@ export const memoryWidget = dashboardWidget({
   supportedSizes: [SlotSize.Full, SlotSize.Half, SlotSize.Quarter],
   category: WidgetCategory.Memory,
   component: WidgetMemoryComponent,
-  settingsComponent: null,
 });

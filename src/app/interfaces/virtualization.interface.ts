@@ -41,6 +41,8 @@ export interface VirtualizationInstance {
   vnc_port: number | null;
   vnc_password: string | null;
   secure_boot: boolean;
+  root_disk_size: number | null;
+  userns_idmap: UserNsIdmap | null;
 }
 
 export interface VirtualizationAlias {
@@ -64,6 +66,7 @@ export interface CreateVirtualizationInstance {
   autostart?: boolean;
   secure_boot?: boolean;
   cpu: string;
+  iso_volume?: string;
   /**
    * Value must be greater or equal to 33554432
    */
@@ -169,6 +172,17 @@ export interface VirtualizationUsb {
   vendor_id: string;
 }
 
+export interface UserNsIdmap {
+  uid: IdmapUserNsEntry;
+  gid: IdmapUserNsEntry;
+}
+
+export interface IdmapUserNsEntry {
+  hostid: number;
+  maprange: number;
+  nsid: number;
+}
+
 export interface VirtualizationImage {
   archs: string[];
   description: string;
@@ -239,3 +253,20 @@ export type InstanceEnvVariablesFormGroup = FormGroup<{
   name: FormControl<string>;
   value: FormControl<string>;
 }>;
+
+export interface VirtualizationVolume {
+  id: string;
+  name: string;
+  content_type: string;
+  created_at: string;
+  type: string;
+  config: string;
+  used_by: string[];
+}
+
+export type VirtualizationVolumeUpdate = [
+  id: string,
+  update: {
+    size: number;
+  },
+];

@@ -130,7 +130,7 @@ export class CertificateEditComponent implements OnInit {
   }
 
   onCreateAcmePressed(): void {
-    this.slideInRef.swap(
+    this.slideInRef.swap?.(
       CertificateAcmeAddComponent,
       { data: this.certificate },
     );

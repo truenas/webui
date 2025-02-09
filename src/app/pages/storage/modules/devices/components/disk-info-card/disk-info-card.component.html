@@ -31,7 +31,7 @@
       <div class="details-item">
         <div class="label">{{ 'Serial' | translate }}:</div>
         <div class="value">
-          {{ disk().serial }}
+          {{ disk()?.serial }}
           <ix-copy-button [text]="disk().serial"></ix-copy-button>
         </div>
       </div>
@@ -45,9 +45,10 @@
       @if (isHdd()) {
         <div class="details-item">
           <div class="label">{{ 'Rotation Rate' | translate }}:</div>
-          @if (disk()?.rotationrate) {
+          @let rotationRate = disk()?.rotationrate;
+          @if (rotationRate) {
             <div class="value">
-              {{ '{n} RPM' | translate: { n: disk().rotationrate } }}
+              {{ '{n} RPM' | translate: { n: rotationRate } }}
             </div>
           } @else {
             <div class="value">{{ 'N/A' | translate }}</div>
@@ -65,7 +66,7 @@
       </div>
       <div class="details-item">
         <div class="label">{{ 'Description' | translate }}:</div>
-        <div class="value">{{ disk().description || ('N/A' | translate) }}</div>
+        <div class="value">{{ disk()?.description || ('N/A' | translate) }}</div>
       </div>
     </mat-card-content>
   }

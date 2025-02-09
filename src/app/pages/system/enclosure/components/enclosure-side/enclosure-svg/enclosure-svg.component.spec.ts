@@ -7,6 +7,7 @@ import {
   EnclosureSvgComponent,
 } from 'app/pages/system/enclosure/components/enclosure-side/enclosure-svg/enclosure-svg.component';
 import { SvgCacheService } from 'app/pages/system/enclosure/services/svg-cache.service';
+import { diskStatusTint } from 'app/pages/system/enclosure/utils/disk-status-tint.utils';
 
 describe('EnclosureSvgComponent', () => {
   let spectator: Spectator<EnclosureSvgComponent>;
@@ -63,6 +64,7 @@ describe('EnclosureSvgComponent', () => {
         ] as DashboardEnclosureSlot[],
         enableMouseEvents: true,
         selectedSlot: null,
+        slotTintFn: diskStatusTint,
       },
       providers: [
         mockProvider(SvgCacheService, {
@@ -72,6 +74,13 @@ describe('EnclosureSvgComponent', () => {
     });
     tick();
     spectator.detectChanges();
+  }
+
+  function getTintTargets(slotNumber: number): SVGGElement[] {
+    const slotId: string = 'DRIVE_CAGE_' + slotNumber.toString();
+    const driveTrays = spectator.queryAll<SVGGElement>(`svg [id^=${slotId}] .tint-target`);
+
+    return driveTrays;
   }
 
   describe('svg is loaded', () => {
@@ -106,9 +115,14 @@ describe('EnclosureSvgComponent', () => {
       expect(tintFn).toHaveBeenCalledTimes(2);
       expect(tintFn).toHaveBeenNthCalledWith(1, { drive_bay_number: 1 });
 
-      const overlays = spectator.queryAll<SVGRectElement>('.overlay-rect');
-      expect(overlays[0].style.fill).toBe('red');
-      expect(overlays[1].style.fill).toBe('blue');
+      const slotOneTargets: SVGGElement[] = getTintTargets(1);
+      slotOneTargets.forEach((target) => {
+        expect(target.style.fill).toBe('red');
+      });
+      const slotTwoTargets: SVGGElement[] = getTintTargets(2);
+      slotTwoTargets.forEach((target) => {
+        expect(target.style.fill).toBe('blue');
+      });
     });
 
     it('adds overlays for every drive cage in an svg', () => {

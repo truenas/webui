@@ -1,10 +1,10 @@
-@if (!isLoading() || results()?.length) {
+@if (!isLoading() || results().length) {
   <mat-card class="search-results-card">
     @for (section of availableSections; track trackBySection($index, section)) {
       <h2 class="section">
         {{ section.label | translate }}
       </h2>
-      @if (getElementsBySection(section.value)?.length) {
+      @if (getElementsBySection(section.value).length) {
         <div class="section-content">
           @if (getLimitedSectionResults(section.value); as sectionResults) {
             @for (result of sectionResults; track result.anchor; let i = $index) {
@@ -13,8 +13,8 @@
                 role="link"
                 [attr.tabindex]="result.section === GlobalSearchSection.RecentSearches ? i + 1 : 0"
                 [class.highlighted-result]="isSearchInputFocused() && isSameHierarchyResult(firstAvailableSearchResult, result)"
-                [ixTest]="['search-result', result.hierarchy.join('-')]"
-                [attr.aria-label]="'UI Search Result: {result}' | translate: { result: result.hierarchy.join(' ') }"
+                [ixTest]="['search-result', result.hierarchy?.join('-')]"
+                [attr.aria-label]="'UI Search Result: {result}' | translate: { result: result.hierarchy?.join(' ') }"
                 (click)="selectElement(result)"
                 (keydown.enter)="selectElement(result)"
               >

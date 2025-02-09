@@ -998,33 +998,6 @@
   {
     "hierarchy": [
       "Data Protection",
-      "TrueCloud Backup Tasks",
-      "Add TrueCloud Backup Task"
-    ],
-    "synonyms": [
-      "Add Cloud Backup",
-      "Create TrueCloud Backup Task",
-      "Create Cloud Backup",
-      "New TrueCloud Backup Task",
-      "New Cloud Backup",
-      "Task"
-    ],
-    "requiredRoles": [
-      "CLOUD_BACKUP_WRITE"
-    ],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/data-protection",
-      "cloud-backup"
-    ],
-    "routerLink": null,
-    "anchor": "add-cloud-backup",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Data Protection",
       "TrueCloud Backup Tasks"
     ],
     "synonyms": [
@@ -5742,6 +5715,27 @@
     "hierarchy": [
       "Virtualization",
       "Containers",
+      "Idmap"
+    ],
+    "synonyms": [
+      "VM",
+      "Virtual Machines",
+      "Instances"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/virtualization/view/def"
+    ],
+    "routerLink": null,
+    "anchor": "idmap",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Virtualization",
+      "Containers",
       "Tools"
     ],
     "synonyms": [
@@ -5777,53 +5771,6 @@
     ],
     "routerLink": null,
     "anchor": "metrics",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Virtual Machines",
-      "Add VM"
-    ],
-    "synonyms": [
-      "Create VM",
-      "New VM",
-      "VM",
-      "Add Virtual Machine",
-      "New Virtual Machine",
-      "Create Virtual Machine"
-    ],
-    "requiredRoles": [
-      "VM_WRITE"
-    ],
-    "visibleTokens": [
-      "VMS"
-    ],
-    "anchorRouterLink": [
-      "/vm"
-    ],
-    "routerLink": null,
-    "anchor": "add-vm",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Virtual Machines"
-    ],
-    "synonyms": [
-      "VM",
-      "Virtualization"
-    ],
-    "requiredRoles": [],
-    "visibleTokens": [
-      "VMS"
-    ],
-    "anchorRouterLink": [
-      "/vm"
-    ],
-    "routerLink": null,
-    "anchor": "vm-list",
     "triggerAnchor": null,
     "section": "ui"
   }

@@ -139,7 +139,9 @@ export class InstalledAppsListComponent implements OnInit {
   }
 
   get checkedApps(): App[] {
-    return this.checkedAppsNames.map((id) => this.dataSource.find((app) => app.id === id));
+    return this.checkedAppsNames
+      .map((id) => this.dataSource.find((app) => app.id === id))
+      .filter((app): app is App => !!app);
   }
 
   get activeCheckedApps(): App[] {
@@ -343,7 +345,7 @@ export class InstalledAppsListComponent implements OnInit {
     if (!jobId) {
       return;
     }
-    const job$ = this.store$.select(selectJob(jobId));
+    const job$ = this.store$.select(selectJob(jobId), filter((job) => !!job));
     this.dialogService.jobDialog(job$, { title: name, canMinimize: true })
       .afterClosed()
       .pipe(this.errorHandler.catchError(), untilDestroyed(this))

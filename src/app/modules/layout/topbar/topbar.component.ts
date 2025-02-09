@@ -7,7 +7,7 @@ import { MatIconButton } from '@angular/material/button';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
@@ -18,7 +18,6 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { AlertSlice, selectImportantUnreadAlertsCount } from 'app/modules/alerts/store/alert.selectors';
-import { AuthService } from 'app/modules/auth/auth.service';
 import { RebootRequiredDialogComponent } from 'app/modules/dialog/components/reboot-required-dialog/reboot-required-dialog.component';
 import { UpdateDialogComponent } from 'app/modules/dialog/components/update-dialog/update-dialog.component';
 import { FeedbackDialogComponent } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
@@ -38,7 +37,6 @@ import { topbarDialogPosition } from 'app/modules/layout/topbar/topbar-dialog-po
 import { toolBarElements } from 'app/modules/layout/topbar/topbar.elements';
 import { UserMenuComponent } from 'app/modules/layout/topbar/user-menu/user-menu.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ThemeService } from 'app/modules/theme/theme.service';
 import { TruecommandButtonComponent } from 'app/modules/truecommand/truecommand-button.component';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { TruenasConnectButtonComponent } from 'app/modules/truenas-connect/truenas-connect-button.component';
@@ -48,6 +46,7 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectRebootInfo } from 'app/store/reboot-info/reboot-info.selectors';
 import { selectHasConsoleFooter } from 'app/store/system-config/system-config.selectors';
 import { alertIndicatorPressed, sidenavIndicatorPressed } from 'app/store/topbar/topbar.actions';
+import { TruenasLogoComponent } from './truenas-logo/truenas-logo.component';
 
 @UntilDestroy()
 @Component({
@@ -63,7 +62,6 @@ import { alertIndicatorPressed, sidenavIndicatorPressed } from 'app/store/topbar
     MatTooltip,
     IxIconComponent,
     GlobalSearchTriggerComponent,
-    RouterLink,
     IxLogoComponent,
     CheckinIndicatorComponent,
     ResilveringIndicatorComponent,
@@ -78,6 +76,7 @@ import { alertIndicatorPressed, sidenavIndicatorPressed } from 'app/store/topbar
     UiSearchDirective,
     TestDirective,
     TruecommandButtonComponent,
+    TruenasLogoComponent,
     TruenasConnectButtonComponent,
   ],
 })
@@ -105,8 +104,6 @@ export class TopbarComponent implements OnInit {
   readonly hasConsoleFooter$ = this.store$.select(selectHasConsoleFooter);
 
   constructor(
-    public themeService: ThemeService,
-    private authService: AuthService,
     private router: Router,
     private systemGeneralService: SystemGeneralService,
     private matDialog: MatDialog,

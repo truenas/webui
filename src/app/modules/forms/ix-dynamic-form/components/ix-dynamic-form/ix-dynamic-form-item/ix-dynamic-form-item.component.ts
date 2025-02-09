@@ -10,7 +10,12 @@ import { distinctUntilChanged, filter, map } from 'rxjs/operators';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
 import { ChartSchemaNode } from 'app/interfaces/app.interface';
 import {
-  AddListItemEvent, DeleteListItemEvent, DynamicFormSchemaList, DynamicFormSchemaNode,
+  AddListItemEvent,
+  DeleteListItemEvent, DynamicFormSchemaDict, DynamicFormSchemaEnum, DynamicFormSchemaExplorer,
+  DynamicFormSchemaInput,
+  DynamicFormSchemaList,
+  DynamicFormSchemaNode, DynamicFormSchemaSelect, DynamicFormSchemaText,
+  DynamicFormSchemaUri,
 } from 'app/interfaces/dynamic-form-schema.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { CustomUntypedFormField } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
@@ -56,8 +61,8 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
   ],
 })
 export class IxDynamicFormItemComponent implements OnInit {
-  readonly dynamicForm = input<UntypedFormGroup>();
-  readonly dynamicSchema = input<DynamicFormSchemaNode>();
+  readonly dynamicForm = input.required<UntypedFormGroup>();
+  readonly dynamicSchema = input.required<DynamicFormSchemaNode>();
   readonly isEditMode = input<boolean>();
 
   readonly addListItem = output<AddListItemEvent>();
@@ -137,5 +142,37 @@ export class IxDynamicFormItemComponent implements OnInit {
 
   getEnumTypeProvider(options$: Observable<Option[]>): SimpleAsyncComboboxProvider {
     return new SimpleAsyncComboboxProvider(options$);
+  }
+
+  protected asInputSchema(schema: DynamicFormSchemaNode): DynamicFormSchemaInput {
+    return schema as DynamicFormSchemaInput;
+  }
+
+  protected asUriSchema(schema: DynamicFormSchemaNode): DynamicFormSchemaUri {
+    return schema as DynamicFormSchemaUri;
+  }
+
+  protected asDictSchema(schema: DynamicFormSchemaNode): DynamicFormSchemaDict {
+    return schema as DynamicFormSchemaDict;
+  }
+
+  protected asTextSchema(schema: DynamicFormSchemaNode): DynamicFormSchemaText {
+    return schema as DynamicFormSchemaText;
+  }
+
+  protected asListSchema(schema: DynamicFormSchemaNode): DynamicFormSchemaList {
+    return schema as DynamicFormSchemaList;
+  }
+
+  protected asSelectSchema(schema: DynamicFormSchemaNode): DynamicFormSchemaSelect {
+    return schema as DynamicFormSchemaSelect;
+  }
+
+  protected asEnumSchema(schema: DynamicFormSchemaNode): DynamicFormSchemaEnum {
+    return schema as DynamicFormSchemaEnum;
+  }
+
+  protected asExplorerSchema(schema: DynamicFormSchemaNode): DynamicFormSchemaExplorer {
+    return schema as DynamicFormSchemaExplorer;
   }
 }

@@ -8,6 +8,7 @@ import { MatDialogClose } from '@angular/material/dialog';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { map } from 'rxjs';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { ChangePasswordFormComponent } from 'app/modules/layout/topbar/change-password-dialog/change-password-form/change-password-form.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -34,6 +35,9 @@ import { TwoFactorComponent } from 'app/pages/two-factor-auth/two-factor.compone
 export class FirstLoginDialogComponent {
   isOtpwUser = toSignal(this.authService.isOtpwUser$);
   wasOneTimePasswordChanged = toSignal(this.authService.wasOneTimePasswordChanged$);
+  userTwoFactorAuthConfigured = toSignal(this.authService.userTwoFactorConfig$.pipe(
+    map((config) => config.secret_configured),
+  ));
 
   constructor(private authService: AuthService) {}
 

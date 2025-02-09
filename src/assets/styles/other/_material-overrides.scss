@@ -82,7 +82,7 @@ html .ix-dark {
   --mat-table-row-item-label-text-color: var(--fg2);
   --mat-table-header-headline-color: var(--fg2);
   --mdc-filled-text-field-input-text-color: var(--alt-fg2);
-  --mat-option-selected-state-label-text-color: var(--fg1);
+  --mat-option-selected-state-label-text-color: var(--primary-txt);
   --mat-menu-item-label-text-line-height: 36px;
   --mat-menu-item-label-text-font: var(--font-family-body);
   --mat-paginator-container-size: unset;
@@ -129,6 +129,7 @@ html .ix-dark {
   --mat-datepicker-calendar-text-font: var(--font-family-body);
   --mat-datepicker-calendar-date-selected-state-background-color: variable(--primary);
   --mat-datepicker-calendar-navigation-button-icon-color: var(--fg2);
+  --mat-standard-button-toggle-selected-state-text-color: var(--fg2);
 
   .mat-mdc-slide-toggle {
     --mat-switch-label-text-color: var(--fg2);

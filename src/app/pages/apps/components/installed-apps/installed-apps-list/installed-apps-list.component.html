@@ -100,7 +100,7 @@
           tabindex="0"
           [app]="app"
           [stats]="getAppStats(app.name) | async"
-          [class.selected]="selectedApp.id === app.id"
+          [class.selected]="selectedApp?.id === app.id"
           [selected]="selection.isSelected(app.id)"
           [job]="appJobs.get(app.name)"
           (startApp)="start(app.name)"

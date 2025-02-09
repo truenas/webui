@@ -5,6 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
+import { MockAuthService } from 'app/core/testing/classes/mock-auth.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -71,6 +72,9 @@ describe('SystemSecurityFormComponent', () => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
+
+      const mockAuthService = spectator.inject(MockAuthService);
+      jest.spyOn(mockAuthService, 'clearAuthToken').mockImplementation();
     });
 
     it('saves FIPS config when form is filled and Save is pressed', async () => {
@@ -89,6 +93,27 @@ describe('SystemSecurityFormComponent', () => {
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
         'System Security Settings Updated.',
       );
+    });
+
+    it('enables FIPS when STIG is enabled first', async () => {
+      await form.fillForm({
+        'Enable General Purpose OS STIG compatibility mode': true,
+      });
+
+      expect(await form.getValues()).toMatchObject({
+        'Enable FIPS': true,
+      });
+    });
+
+    it('clears auth token when STIG is enabled', async () => {
+      await form.fillForm({
+        'Enable General Purpose OS STIG compatibility mode': true,
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(spectator.inject(MockAuthService).clearAuthToken).toHaveBeenCalled();
     });
 
     it('loads and shows current System Security config', async () => {

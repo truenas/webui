@@ -82,7 +82,7 @@ export class CustomAppFormComponent implements OnInit {
     this.existingApp = this.slideInRef.getData();
 
     if (this.existingApp?.id) {
-      this.handleExistingApp();
+      this.handleExistingApp(this.existingApp);
     }
   }
 
@@ -155,10 +155,10 @@ export class CustomAppFormComponent implements OnInit {
     });
   }
 
-  private handleExistingApp(): void {
+  private handleExistingApp(existingApp: App): void {
     this.isLoading.set(true);
 
-    this.appService.getApp(this.existingApp.id).pipe(
+    this.appService.getApp(existingApp.id).pipe(
       filter((apps) => apps.length > 0),
       untilDestroyed(this),
     ).subscribe({

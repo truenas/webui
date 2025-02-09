@@ -14,8 +14,9 @@
     >
       <div>{{ text() | translate }}</div>
 
-      @if (subText()) {
-        <div class="sub-text">{{ subText() | translate }}</div>
+      @let sub = subText();
+      @if (sub) {
+        <div class="sub-text">{{ sub | translate }}</div>
       }
     </div>
   </mat-card-content>

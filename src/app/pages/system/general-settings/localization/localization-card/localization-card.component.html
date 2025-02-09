@@ -28,13 +28,13 @@
       <mat-list-item [ixUiSearch]="searchableElements.elements.dateFormat">
         <span class="label">{{ helptext.date_format.placeholder | translate }}:</span>
         <span *ixWithLoadingState="generalConfig$ as generalConfig" class="value">
-          {{ localeService.getDateAndTime(generalConfig.timezone)?.[0] }}
+          {{ localeService.getDateAndTime(generalConfig.timezone)[0] }}
         </span>
       </mat-list-item>
       <mat-list-item [ixUiSearch]="searchableElements.elements.timeFormat">
         <span class="label">{{ helptext.time_format.placeholder | translate }}:</span>
         <span *ixWithLoadingState="generalConfig$ as generalConfig" class="value">
-          {{ localeService.getDateAndTime(generalConfig.timezone)?.[1] }}
+          {{ localeService.getDateAndTime(generalConfig.timezone)[1] }}
         </span>
       </mat-list-item>
       <mat-list-item [ixUiSearch]="searchableElements.elements.timezone">

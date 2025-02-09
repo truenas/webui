@@ -33,7 +33,7 @@
               {{ job().progress.description }}
             </div>
           }
-          @if (!job()?.progress?.description) {
+          @if (!job().progress?.description) {
             <div class="job-time">
               {{ 'Started' | translate }}:
               <strong>

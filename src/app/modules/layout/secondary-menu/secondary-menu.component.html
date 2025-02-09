@@ -2,7 +2,7 @@
   @for (subItem of subMenuItems(); track subItem) {
     @if (!subItem.isVisible$ || (subItem.isVisible$ | async)) {
       <mat-list-item
-        *ixHasAccess="!subItem.hasAccess$ || (subItem.hasAccess$ | async)"
+        *ixHasAccess="!subItem.hasAccess$ || (subItem.hasAccess$ | async) || false"
         routerLinkActive="selected"
         class="sidebar-list-item slide-in-nav-item"
         role="listitem"

@@ -145,7 +145,7 @@ export class ReplicationListComponent implements OnInit {
       title: this.translate.instant('State'),
       getValue: (row) => row.state.state,
       cssClass: 'state-button',
-      getJob: (row) => row.job,
+      getJob: (row) => row.job || null,
     }),
     toggleColumn({
       title: this.translate.instant('Enabled'),

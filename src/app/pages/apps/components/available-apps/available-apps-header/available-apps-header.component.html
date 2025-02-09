@@ -33,7 +33,7 @@
           class="sort"
           [formControl]="form.controls.sort"
           [label]="'Sort' | translate"
-          [options]="sortOptions$ | async"
+          [options]="(sortOptions$ | async) || []"
         ></ix-filter-select-list>
         <div class="categories">
           <ix-chips
@@ -57,7 +57,7 @@
           ixTest="available-apps"
           [routerLink]="['/apps/available', AppExtraCategory.All]"
         >
-          <h2>{{ (availableApps$ | async).length }}</h2>
+          <h2>{{ (availableApps$ | async)?.length }}</h2>
         </a>
       } @else {
         <ngx-skeleton-loader></ngx-skeleton-loader>

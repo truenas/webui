@@ -72,7 +72,7 @@ export class AppsFilterStore extends ComponentStore<AppsFilterState> {
         state.searchQuery.length ? [] : recommendedApps,
         state.searchQuery.length ? [] : latestApps,
         appsCategories,
-        state.filter.categories,
+        state.filter.categories || [],
       );
     }),
   );
@@ -96,7 +96,7 @@ export class AppsFilterStore extends ComponentStore<AppsFilterState> {
         recommendedApps,
         latestApps,
         appsCategories,
-        state.filter.categories,
+        state.filter.categories || [],
       );
     }),
   );
@@ -142,17 +142,17 @@ export class AppsFilterStore extends ComponentStore<AppsFilterState> {
 
     let request$: Observable<AvailableApp[]> = this.appsService.getAvailableApps({
       ...filter,
-      categories: filter.categories.filter((category) => !category.includes(AppExtraCategory.Recommended)),
+      categories: filter.categories?.filter((category) => !category.includes(AppExtraCategory.Recommended)) || [],
     });
 
-    if (filter.categories.some((category) => category.includes(AppExtraCategory.NewAndUpdated))) {
+    if (filter.categories?.some((category) => category.includes(AppExtraCategory.NewAndUpdated))) {
       request$ = this.appsService.getLatestApps({
         ...filter,
         categories: filter.categories.filter((category) => !category.includes(AppExtraCategory.NewAndUpdated)),
       });
     }
 
-    if (filter.categories.some((category) => category.includes(AppExtraCategory.All))) {
+    if (filter.categories?.some((category) => category.includes(AppExtraCategory.All))) {
       request$ = this.appsService.getLatestApps({
         ...filter,
         sort: AppsFiltersSort.Name,
@@ -163,7 +163,7 @@ export class AppsFilterStore extends ComponentStore<AppsFilterState> {
     request$.pipe(untilDestroyed(this)).subscribe({
       next: (filteredApps) => {
         this.patchState((state: AppsFilterState): AppsFilterState => {
-          if (filter.categories.some((category) => category.includes(AppExtraCategory.Recommended))) {
+          if (filter.categories?.some((category) => category.includes(AppExtraCategory.Recommended))) {
             filteredApps = [
               ...filteredApps,
               ...filteredApps.filter(

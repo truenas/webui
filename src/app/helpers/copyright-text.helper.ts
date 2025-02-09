@@ -1,6 +1,9 @@
-export function getCopyrightText(isEnterprise: boolean, buildYear: number): string {
-  if (isEnterprise) {
-    return `TrueNAS ENTERPRISE ® © ${buildYear}`;
+import { environment } from 'environments/environment';
+import { ProductType, productTypeLabels } from 'app/enums/product-type.enum';
+
+export function getCopyrightText(productType?: ProductType): string {
+  if (productType) {
+    return `TrueNAS ${productTypeLabels.get(productType)} ® © ${environment.buildYear}`;
   }
-  return `TrueNAS ® © ${buildYear}`;
+  return `TrueNAS ® © ${environment.buildYear}`;
 }

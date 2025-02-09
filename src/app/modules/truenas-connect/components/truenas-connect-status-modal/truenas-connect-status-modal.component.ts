@@ -12,6 +12,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TruenasConnectModalComponent } from 'app/modules/truenas-connect/components/truenas-connect-modal/truenas-connect-modal.component';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 
@@ -27,6 +28,7 @@ import { TruenasConnectService } from 'app/modules/truenas-connect/services/true
     MatButton,
     MatDialogActions,
     TranslateModule,
+    TestDirective,
   ],
   templateUrl: './truenas-connect-status-modal.component.html',
   styleUrl: './truenas-connect-status-modal.component.scss',
@@ -52,6 +54,6 @@ export class TruenasConnectStatusModalComponent {
   }
 
   protected open(): void {
-    this.window.open(this.tnc.config().tnc_base_url);
+    this.window.open(this.tnc.config()?.tnc_base_url);
   }
 }

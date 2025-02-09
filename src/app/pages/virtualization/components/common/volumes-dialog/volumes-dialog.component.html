@@ -1,0 +1,39 @@
+<ix-fake-progress-bar
+  [loading]="(dataProvider.isLoading$ | async) || false"
+></ix-fake-progress-bar>
+
+<div class="header">
+  <h1 mat-dialog-title>{{ 'Volumes' | translate }}</h1>
+  <button
+    mat-icon-button
+    [ixTest]="['close-dialog']"
+    [attr.aria-label]="'Close Dialog' | translate"
+    (click)="dialogRef.close(null)"
+  >
+    <ix-icon name="cancel"></ix-icon>
+  </button>
+</div>
+
+<mat-dialog-content class="content">
+  <ix-table
+    class="table"
+    [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
+    [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
+  >
+    <thead
+      ix-table-head
+      [columns]="columns()"
+      [dataProvider]="dataProvider"
+    ></thead>
+    <tbody
+      ix-table-body
+      [columns]="columns()"
+      [dataProvider]="dataProvider"
+      [isLoading]="!!(dataProvider.isLoading$ | async)"
+    ></tbody>
+  </ix-table>
+
+  <div class="new-volume">
+    <ix-upload-iso (uploaded)="onImageUploaded()"></ix-upload-iso>
+  </div>
+</mat-dialog-content>

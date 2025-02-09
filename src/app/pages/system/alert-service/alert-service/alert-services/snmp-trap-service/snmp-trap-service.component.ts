@@ -118,8 +118,8 @@ export class SnmpTrapServiceComponent extends BaseAlertServiceForm {
   override setValues(values: AlertServiceEdit['attributes']): void {
     super.setValues({
       ...values,
-      v3_authprotocol: values.v3_authprotocol || disabledValue,
-      v3_privprotocol: values.v3_privprotocol || disabledValue,
+      v3_authprotocol: values?.v3_authprotocol || disabledValue,
+      v3_privprotocol: values?.v3_privprotocol || disabledValue,
     });
   }
 

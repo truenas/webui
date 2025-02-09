@@ -206,7 +206,7 @@ export class CloudCredentialsFormComponent implements OnInit {
           } else {
             this.dialogService.error({
               title: this.translate.instant('Error'),
-              message: response.excerpt,
+              message: response.excerpt || '',
               backtrace: response.error,
             });
           }

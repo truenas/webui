@@ -154,7 +154,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
 
   // Flat API
   getLevel = (dataset: DatasetDetails): number => (dataset?.name?.split('/')?.length || 0) - 1;
-  isExpandable = (dataset: DatasetDetails): boolean => dataset?.children?.length > 0;
+  isExpandable = (dataset: DatasetDetails): boolean => Number(dataset?.children?.length) > 0;
   treeControl = new FlatTreeControl<DatasetDetails, string>(
     this.getLevel,
     this.isExpandable,
@@ -170,7 +170,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
 
   dataSource = new TreeDataSource(this.treeControl, this.treeFlattener);
   trackById: TrackByFunction<DatasetDetails> = (index: number, dataset: DatasetDetails): string => dataset?.id;
-  readonly hasChild = (_: number, dataset: DatasetDetails): boolean => dataset?.children?.length > 0;
+  readonly hasChild = (_: number, dataset: DatasetDetails): boolean => Number(dataset?.children?.length) > 0;
 
   constructor(
     private api: ApiService,
@@ -295,7 +295,10 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
           selectedBranch.forEach((datasetFromSelectedBranch) => {
             const expandedDataset = this.treeControl.dataNodes
               .find((dataset) => dataset.id === datasetFromSelectedBranch.id);
-            this.treeControl.expand(expandedDataset);
+
+            if (expandedDataset) {
+              this.treeControl.expand(expandedDataset);
+            }
           });
         },
         error: this.handleError,

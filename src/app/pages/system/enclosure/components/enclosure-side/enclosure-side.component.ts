@@ -23,7 +23,7 @@ import { NotSupportedModelComponent } from './not-supported-model/not-supported-
 export class EnclosureSideComponent {
   readonly enclosure = input.required<DashboardEnclosure>();
   readonly enableMouseEvents = input(true);
-  readonly slotTintFn = input<TintingFunction>();
+  readonly slotTintFn = input.required<TintingFunction>();
   readonly selectedSlot = model<DashboardEnclosureSlot | null>(null);
 
   /**
