@@ -12,6 +12,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master-detail-view.component';
@@ -20,7 +21,6 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { AllCloudBackupsComponent } from 'app/pages/data-protection/cloud-backup/all-cloud-backups/all-cloud-backups.component';
 import { CloudBackupDetailsComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-details.component';
 import { CloudBackupFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-form/cloud-backup-form.component';
-import { CloudBackupListComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-list/cloud-backup-list.component';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectAdvancedConfig, selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
@@ -42,15 +42,28 @@ describe('AllCloudBackupsComponent', () => {
           $date: new Date().getTime() - 50000,
         },
       },
-    } as CloudBackup,
-  ];
+    },
+    {
+      id: 2,
+      description: 'UAH',
+      path: '/mnt/hahah',
+      pre_script: 'your_pre_script',
+      snapshot: false,
+      enabled: true,
+      job: {
+        state: JobState.Finished,
+        time_finished: {
+          $date: new Date().getTime() - 50000,
+        },
+      },
+    },
+  ] as CloudBackup[];
 
   const createComponent = createComponentFactory({
     component: AllCloudBackupsComponent,
     imports: [
       MockComponents(
         PageHeaderComponent,
-        CloudBackupListComponent,
         CloudBackupDetailsComponent,
       ),
       MockDirective(DetailsHeightDirective),
@@ -123,6 +136,16 @@ describe('AllCloudBackupsComponent', () => {
       CloudBackupFormComponent,
       { wide: true },
     );
+  });
+
+  it('should show table rows', async () => {
+    const expectedRows = [
+      ['Name', 'Enabled', 'Snapshot', 'State', 'Last Run', ''],
+      ['UA', '', 'No', 'FINISHED', '1 min. ago', ''],
+      ['UAH', '', 'No', 'FINISHED', '1 min. ago', ''],
+    ];
+    const cells = await loader.getHarness(IxTableHarness).then((table) => table.getCellTexts());
+    expect(cells).toEqual(expectedRows);
   });
 
   it('sets the default sort for dataProvider', () => {
