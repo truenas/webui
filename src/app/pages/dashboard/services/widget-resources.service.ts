@@ -1,20 +1,24 @@
 import { Injectable } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { subHours, subMinutes } from 'date-fns';
 import {
-  Observable, Subject, catchError, combineLatestWith, debounceTime,
-  forkJoin, map, of, repeat, shareReplay, switchMap, take, timer,
+  Observable, Subject, catchError, combineLatest, combineLatestWith, debounceTime,
+  forkJoin, map, of, repeat, shareReplay, switchMap, take, throttleTime, timer,
 } from 'rxjs';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
-import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
+import { LoadingState, toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { App } from 'app/interfaces/app.interface';
+import { CloudSyncTask } from 'app/interfaces/cloud-sync-task.interface';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Disk } from 'app/interfaces/disk.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Pool } from 'app/interfaces/pool.interface';
+import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { ReportingData } from 'app/interfaces/reporting.interface';
+import { RsyncTask } from 'app/interfaces/rsync-task.interface';
 import { VolumesData, VolumeData } from 'app/interfaces/volume-data.interface';
-import { processNetworkInterfaces } from 'app/pages/dashboard/widgets/network/widget-interface/widget-interface.utils';
+import { DashboardNetworkInterface, processNetworkInterfaces } from 'app/pages/dashboard/widgets/network/widget-interface/widget-interface.utils';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -27,6 +31,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
  * 3. Use `toLoadingState` to provide widget with loading status.
  * 4. Use subscriptions when possible.
  */
+@UntilDestroy()
 @Injectable({
   providedIn: 'root',
 })
@@ -37,13 +42,21 @@ export class WidgetResourcesService {
   readonly refreshInterval$ = timer(0, 5000);
   private readonly triggerRefreshSystemInfo$ = new Subject<void>();
 
-  readonly backups$ = forkJoin([
-    this.ws.call('replication.query'),
-    this.ws.call('rsynctask.query'),
-    this.ws.call('cloudsync.query'),
-  ]).pipe(
-    shareReplay({ bufferSize: 1, refCount: true }),
+  private readonly backupsFetchTrigger$ = new Subject<void>();
+  private readonly backups$ = this.backupsFetchTrigger$.pipe(
+    throttleTime(500),
+    switchMap(() => forkJoin([
+      this.ws.call('replication.query'),
+      this.ws.call('rsynctask.query'),
+      this.ws.call('cloudsync.query'),
+    ])),
+    shareReplay({ refCount: true, bufferSize: 1 }),
   );
+
+  getBackups(): Observable<[ReplicationTask[], RsyncTask[], CloudSyncTask[]]> {
+    this.backupsFetchTrigger$.next();
+    return this.backups$;
+  }
 
   readonly systemInfo$ = this.ws.call('webui.main.dashboard.sys_info').pipe(
     repeat({ delay: () => this.triggerRefreshSystemInfo$ }),
@@ -59,11 +72,19 @@ export class WidgetResourcesService {
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
-  readonly networkInterfaces$ = this.ws.call('interface.query').pipe(
+  private readonly nicsTrigger$ = new Subject<void>();
+  private readonly networkInterfaces$ = this.nicsTrigger$.pipe(
+    throttleTime(500),
+    switchMap(() => this.ws.call('interface.query')),
     map((interfaces) => processNetworkInterfaces(interfaces)),
     toLoadingState(),
     shareReplay({ bufferSize: 1, refCount: true }),
   );
+
+  getNetworkInterfaces(): Observable<LoadingState<DashboardNetworkInterface[]>> {
+    this.nicsTrigger$.next();
+    return this.networkInterfaces$;
+  }
 
   readonly installedApps$ = this.ws.call('app.query').pipe(toLoadingState());
 
@@ -173,7 +194,11 @@ export class WidgetResourcesService {
   constructor(
     private ws: WebSocketService,
     private store$: Store<AppState>,
-  ) {}
+  ) {
+    combineLatest([this.backups$, this.networkInterfaces$]).pipe(
+      untilDestroyed(this),
+    ).subscribe();
+  }
 
   private parseVolumeData(datasets: Dataset[]): VolumesData {
     const volumesData = new Map<string, VolumeData>();

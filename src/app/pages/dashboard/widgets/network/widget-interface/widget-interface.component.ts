@@ -40,7 +40,7 @@ export class WidgetInterfaceComponent implements WidgetComponent<WidgetInterface
 
   protected interfaceId = computed(() => this.settings()?.interface || '');
   private interface$ = toObservable(this.interfaceId).pipe(
-    switchMap((interfaceId) => this.resources.networkInterfaces$.pipe(
+    switchMap((interfaceId) => this.resources.getNetworkInterfaces().pipe(
       map((interfaces) => mapLoadedValue(interfaces, (nics) => getNetworkInterface(nics, interfaceId))),
       catchError((error: Error) => {
         return of({ isLoading: false, error } as LoadingState<DashboardNetworkInterface>);

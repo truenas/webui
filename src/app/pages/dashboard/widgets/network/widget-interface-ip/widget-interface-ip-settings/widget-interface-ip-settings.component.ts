@@ -27,7 +27,7 @@ export class WidgetInterfaceIpSettingsComponent implements WidgetSettingsCompone
     interface: [null as string, [Validators.required]],
   });
 
-  protected networkInterfaceOptions$ = this.resources.networkInterfaces$.pipe(
+  protected networkInterfaceOptions$ = this.resources.getNetworkInterfaces().pipe(
     filter((state) => !!state.value && !state.isLoading),
     map((state) => state.value),
     startWith([]),
