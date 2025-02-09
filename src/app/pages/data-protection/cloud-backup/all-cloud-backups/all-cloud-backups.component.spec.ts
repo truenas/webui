@@ -1,6 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents, MockDirective } from 'ng-mocks';
@@ -12,12 +13,14 @@ import { JobState } from 'app/enums/job-state.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master-detail-view.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { AllCloudBackupsComponent } from 'app/pages/data-protection/cloud-backup/all-cloud-backups/all-cloud-backups.component';
 import { CloudBackupDetailsComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-details.component';
 import { CloudBackupFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-form/cloud-backup-form.component';
@@ -27,6 +30,7 @@ import { selectAdvancedConfig, selectSystemConfigState } from 'app/store/system-
 describe('AllCloudBackupsComponent', () => {
   let spectator: Spectator<AllCloudBackupsComponent>;
   let loader: HarnessLoader;
+  let table: IxTableHarness;
 
   const cloudBackups = [
     {
@@ -118,9 +122,10 @@ describe('AllCloudBackupsComponent', () => {
     ],
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    table = await loader.getHarness(IxTableHarness);
   });
 
   it('checks used components on page', () => {
@@ -138,23 +143,79 @@ describe('AllCloudBackupsComponent', () => {
     );
   });
 
-  it('should show table rows', async () => {
-    const expectedRows = [
-      ['Name', 'Enabled', 'Snapshot', 'State', 'Last Run', ''],
-      ['UA', '', 'No', 'FINISHED', '1 min. ago', ''],
-      ['UAH', '', 'No', 'FINISHED', '1 min. ago', ''],
-    ];
-    const cells = await loader.getHarness(IxTableHarness).then((table) => table.getCellTexts());
-    expect(cells).toEqual(expectedRows);
-  });
+  describe('cloud backup list', () => {
+    it('should show table rows', async () => {
+      const expectedRows = [
+        ['Name', 'Enabled', 'Snapshot', 'State', 'Last Run', ''],
+        ['UA', '', 'No', 'FINISHED', '1 min. ago', ''],
+        ['UAH', '', 'No', 'FINISHED', '1 min. ago', ''],
+      ];
+      const cells = await table.getCellTexts();
+      expect(cells).toEqual(expectedRows);
+    });
 
-  it('sets the default sort for dataProvider', () => {
-    spectator.component.dataProvider.load();
+    it('sets the default sort for dataProvider', () => {
+      spectator.component.dataProvider.load();
 
-    expect(spectator.component.dataProvider.sorting).toEqual({
-      active: 1,
-      direction: SortDirection.Asc,
-      propertyName: 'description',
+      expect(spectator.component.dataProvider.sorting).toEqual({
+        active: 1,
+        direction: SortDirection.Asc,
+        propertyName: 'description',
+      });
+    });
+
+    it('shows form to edit an existing Cloud Backup when Edit button is pressed', async () => {
+      const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 5);
+      await editButton.click();
+
+      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
+        CloudBackupFormComponent,
+        {
+          wide: true,
+          data: cloudBackups[0],
+        },
+      );
+    });
+
+    it('shows confirmation dialog when Run Now button is pressed', async () => {
+      const runNowButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-play-circle' }), 1, 5);
+      await runNowButton.click();
+
+      expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
+        title: 'Run Now',
+        message: 'Run «UA» Cloud Backup now?',
+        hideCheckbox: true,
+      });
+
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('cloud_backup.sync', [1]);
+      expect(spectator.component.dataProvider.expandedRow).toEqual({ ...cloudBackups[0] });
+    });
+
+    it('deletes a Cloud Backup with confirmation when Delete button is pressed', async () => {
+      const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 5);
+      await deleteIcon.click();
+
+      expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
+        title: 'Confirmation',
+        message: 'Delete Cloud Backup <b>"UA"</b>?',
+        buttonColor: 'warn',
+        buttonText: 'Delete',
+      });
+
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloud_backup.delete', [1]);
+    });
+
+    it('updates Cloud Backup Enabled status once mat-toggle is updated', async () => {
+      const toggle = await table.getHarnessInCell(MatSlideToggleHarness, 1, 1);
+
+      expect(await toggle.isChecked()).toBe(false);
+
+      await toggle.check();
+
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+        'cloud_backup.update',
+        [1, { enabled: true }],
+      );
     });
   });
 });
