@@ -88,6 +88,7 @@ export class ExportDatasetKeyDialogComponent implements OnInit {
           this.cdr.markForCheck();
         },
         error: (error: unknown) => {
+          this.dialogRef.close();
           this.dialogService.error(this.errorHandler.parseError(error));
         },
       });

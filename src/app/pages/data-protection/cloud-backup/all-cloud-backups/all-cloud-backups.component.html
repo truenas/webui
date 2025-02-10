@@ -1,0 +1,35 @@
+<ix-page-header>
+  <button
+    *ixRequiresRoles="requiredRoles"
+    mat-button
+    color="primary"
+    ixTest="add-task"
+    [ixUiSearch]="searchableElements.elements.add"
+    (click)="openForm()"
+  >
+    {{ 'Add' | translate }}
+  </button>
+</ix-page-header>
+
+<ix-master-detail-view
+  #masterDetailView="masterDetailViewContext"
+  [selectedItem]="dataProvider?.expandedRow"
+>
+  <ix-cloud-backup-list
+    master
+    [dataProvider]="dataProvider"
+    [cloudBackups]="cloudBackups()"
+    [isMobileView]="masterDetailView.isMobileView()"
+    (toggleShowMobileDetails)="masterDetailView.toggleShowMobileDetails($event)"
+  ></ix-cloud-backup-list>
+
+  <ng-container detail-header>
+    {{ 'Task Details for {task}' | translate: { task: dataProvider?.expandedRow?.description} }}
+  </ng-container>
+
+  <ng-container detail>
+    @if (dataProvider.expandedRow) {
+      <ix-cloud-backup-details [backup]="dataProvider.expandedRow"></ix-cloud-backup-details>
+    }
+  </ng-container>
+</ix-master-detail-view>
