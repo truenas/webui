@@ -1,0 +1,51 @@
+<mat-card class="card">
+  <mat-card-header>
+    <h3 mat-card-title>
+      {{ 'Idmap' | translate }}
+    </h3>
+  </mat-card-header>
+
+  <mat-card-content>
+    @if (instance().status !== virtualizationStatus.Running) {
+      {{ 'Instance is not running' | translate }}
+    } @else {
+      <ix-card-expand-collapse [maxHeight]="250">
+        <h4 class="card-subtitle">{{ 'UID' | translate }}</h4>
+        <div class="details-list">
+          <div class="details-entry">
+            <div class="details-item">
+              <div class="label">{{ 'Host ID' | translate }}:</div>
+              <div class="value">{{ instance().userns_idmap.uid.hostid }}</div>
+            </div>
+            <div class="details-item">
+              <div class="label">{{ 'Maprange' | translate }}:</div>
+              <div class="value">{{ instance().userns_idmap.uid.maprange }}</div>
+            </div>
+            <div class="details-item">
+              <div class="label">{{ 'NS ID' | translate }}:</div>
+              <div class="value">{{ instance().userns_idmap.uid.nsid }}</div>
+            </div>
+          </div>
+        </div>
+        <h4 class="card-subtitle">{{ 'GID' | translate }}</h4>
+        <div class="details-list">
+          <div class="details-entry">
+            <div class="details-item">
+              <div class="label">{{ 'Host ID' | translate }}:</div>
+              <div class="value">{{ instance().userns_idmap.gid.hostid }}</div>
+            </div>
+            <div class="details-item">
+              <div class="label">{{ 'Maprange' | translate }}:</div>
+              <div class="value">{{ instance().userns_idmap.gid.maprange }}</div>
+            </div>
+            <div class="details-item">
+              <div class="label">{{ 'NS ID' | translate }}:</div>
+              <div class="value">{{ instance().userns_idmap.gid.nsid }}</div>
+            </div>
+          </div>
+        </div>
+      </ix-card-expand-collapse>
+    }
+  </mat-card-content>
+</mat-card>
+

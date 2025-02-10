@@ -1,0 +1,37 @@
+<div class="cards">
+  <div class="scroll-window">
+    <ix-instance-general-info
+      [instance]="instance()"
+      [ixUiSearch]="searchableElements.elements.generalInfo"
+    ></ix-instance-general-info>
+
+    <ix-instance-devices
+      [ixUiSearch]="searchableElements.elements.devices"
+    ></ix-instance-devices>
+
+    <ix-instance-disks
+      [instance]="instance()"
+      [ixUiSearch]="searchableElements.elements.disks"
+    ></ix-instance-disks>
+
+    <ix-instance-nics
+      [ixUiSearch]="searchableElements.elements.nic"
+    ></ix-instance-nics>
+
+    <ix-instance-proxies
+      [ixUiSearch]="searchableElements.elements.proxies"
+    ></ix-instance-proxies>
+
+    @if (instance().type === VirtualizationType.Container) {
+      <ix-instance-idmap [instance]="instance()"></ix-instance-idmap>
+    }
+
+    <ix-instance-tools [instance]="instance()"
+      [ixUiSearch]="searchableElements.elements.tools"
+    ></ix-instance-tools>
+
+    <ix-instance-metrics [instance]="instance()"
+      [ixUiSearch]="searchableElements.elements.metrics"
+    ></ix-instance-metrics>
+  </div>
+</div>
