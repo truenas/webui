@@ -12,6 +12,7 @@ import { of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideToggleComponent } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
@@ -57,6 +58,7 @@ export class SystemSecurityFormComponent implements OnInit {
     private snackbar: SnackbarService,
     private dialogService: DialogService,
     private api: ApiService,
+    private authService: AuthService,
     private errorHandler: ErrorHandlerService,
     public slideInRef: SlideInRef<SystemSecurityConfig, boolean>,
   ) {
@@ -72,8 +74,9 @@ export class SystemSecurityFormComponent implements OnInit {
   }
 
   onSubmit(): void {
+    const values = this.form.value as SystemSecurityConfig;
     this.dialogService.jobDialog(
-      this.api.job('system.security.update', [this.form.value as SystemSecurityConfig]),
+      this.api.job('system.security.update', [values]),
       {
         title: this.translate.instant('Saving settings'),
       },
@@ -84,6 +87,10 @@ export class SystemSecurityFormComponent implements OnInit {
         untilDestroyed(this),
       )
       .subscribe(() => {
+        if (values.enable_gpos_stig) {
+          this.authService.clearAuthToken();
+        }
+
         this.slideInRef.close({ response: true, error: null });
         this.snackbar.success(this.translate.instant('System Security Settings Updated.'));
       });

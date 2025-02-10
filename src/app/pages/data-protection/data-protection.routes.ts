@@ -1,8 +1,6 @@
 import { Routes } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import {
-  CloudBackupListComponent,
-} from 'app/pages/data-protection/cloud-backup/cloud-backup-list/cloud-backup-list.component';
+import { AllCloudBackupsComponent } from 'app/pages/data-protection/cloud-backup/all-cloud-backups/all-cloud-backups.component';
 import { DataProtectionDashboardComponent } from 'app/pages/data-protection/data-protection-dashboard.component';
 import { RsyncTaskListComponent } from 'app/pages/data-protection/rsync-task/rsync-task-list/rsync-task-list.component';
 import { ScrubListComponent } from 'app/pages/data-protection/scrub-task/scrub-list/scrub-list.component';
@@ -123,7 +121,7 @@ export const dataProtectionRoutes: Routes = [{
         title: T('TrueCloud Backup Tasks'),
         breadcrumb: null,
       },
-      component: CloudBackupListComponent,
+      component: AllCloudBackupsComponent,
     },
   ],
 }];
