@@ -136,7 +136,7 @@ export class QueryToApiService<T> {
   ): string | string[] {
     const parseValue = (textValue: LiteralValue): string => {
       return [...property.enumMap.keys() as unknown as string[]].find(
-        (key) => this.translate.instant(property.enumMap.get(key)).toLowerCase() === textValue.toString().toLowerCase(),
+        (key) => this.translate.instant(property.enumMap.get(key)).toLowerCase() === String(textValue).toLowerCase(),
       ) || textValue as string;
     };
 

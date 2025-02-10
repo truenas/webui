@@ -156,7 +156,7 @@ export class InstanceWizardComponent {
     image: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(200)]],
     enable_vnc: [false],
     vnc_port: [defaultVncPort, [Validators.min(5900), Validators.max(65535)]],
-    vnc_password: [null as string],
+    vnc_password: [null as string | null],
     cpu: ['', [cpuValidator()]],
     memory: [null as number | null],
     tpm: [false],
@@ -362,7 +362,10 @@ export class InstanceWizardComponent {
 
     if (this.isVm()) {
       payload.secure_boot = values.secure_boot;
-      payload.root_disk_size = values.root_disk_size;
+
+      if (values.source_type !== VirtualizationSource.Zvol) {
+        payload.root_disk_size = values.root_disk_size;
+      }
 
       if (values.enable_vnc) {
         payload.vnc_password = values.vnc_password;

@@ -315,11 +315,11 @@ export class AppWizardComponent implements OnInit, OnDestroy {
         this.isLoading = false;
         this.cdr.markForCheck();
 
-        if (this.activatedRoute.routeConfig.path.endsWith('install')) {
+        if (this.activatedRoute.routeConfig?.path?.endsWith('install')) {
           this.loadApplicationForCreation();
         }
 
-        if (this.activatedRoute.routeConfig.path.endsWith('edit')) {
+        if (this.activatedRoute.routeConfig?.path?.endsWith('edit')) {
           this.loadApplicationForEdit();
         }
       });

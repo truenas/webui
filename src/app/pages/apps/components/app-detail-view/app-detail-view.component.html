@@ -24,7 +24,8 @@
             </div>
           } @else {
             <div class="screenshots" gallerize>
-              @for (image of app().screenshots; track image) {
+              @let screenshots = app()?.screenshots || [];
+              @for (image of screenshots; track image) {
                 <div class="screenshot">
                   <img class="screenshot-image" [src]="image" [src-fallback]="imagePlaceholder" />
                 </div>

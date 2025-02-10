@@ -154,7 +154,7 @@ export class CertificateAddComponent {
       step.form.patchValue(otherFields);
     });
 
-    this.constraints().setFromProfile(extensions);
+    this.constraints()?.setFromProfile(extensions);
   }
 
   updateSummary(): void {

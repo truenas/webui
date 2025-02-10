@@ -4,12 +4,13 @@ import {
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { filter } from 'rxjs';
+import { filter, map, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFileInputComponent } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { UploadService } from 'app/services/upload.service';
 
@@ -39,18 +40,21 @@ export class UploadIsoButtonComponent implements OnInit {
     private translate: TranslateService,
     private uploadService: UploadService,
     private snackbar: SnackbarService,
+    private api: ApiService,
   ) {}
 
   ngOnInit(): void {
     this.imageFileControl.valueChanges
       .pipe(
-        filter((files) => !!files.length),
+        filter((files) => !!files?.length),
+        switchMap(() => this.api.call('virt.volume.query')),
+        map((volumes) => volumes.map((volume) => volume.name)),
         untilDestroyed(this),
       )
-      .subscribe(() => this.uploadImage());
+      .subscribe((existingNames) => this.uploadImage(existingNames));
   }
 
-  private uploadImage(): void {
+  private uploadImage(existingNames: string[]): void {
     const file = this.imageFileControl.value[0];
     this.imageFileControl.setValue([]);
     const job$ = this.uploadService.uploadAsJob({
@@ -61,6 +65,14 @@ export class UploadIsoButtonComponent implements OnInit {
         upload_iso: true,
       }],
     });
+
+    if (existingNames.includes(file.name)) {
+      this.dialogService.error({
+        title: this.translate.instant('Error'),
+        message: this.translate.instant('Volume with this name already exists.'),
+      });
+      return;
+    }
 
     this.dialogService
       .jobDialog(job$, { title: this.translate.instant('Uploading Image') })
