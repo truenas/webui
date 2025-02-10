@@ -8,6 +8,7 @@ import {
 } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { GiB } from 'app/constants/bytes.constant';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -53,10 +54,10 @@ export class IncreaseRootDiskSizeComponent {
     protected formatter: IxFormatterService,
   ) {
     this.form.setValue({
-      size: this.instance.root_disk_size,
+      size: this.instance.root_disk_size / GiB,
     });
 
-    this.form.controls.size.addValidators(Validators.min(this.instance.root_disk_size));
+    this.form.controls.size.addValidators(Validators.min(this.instance.root_disk_size / GiB));
   }
 
   onSubmit(): void {
@@ -70,7 +71,7 @@ export class IncreaseRootDiskSizeComponent {
         untilDestroyed(this),
       )
       .subscribe(() => {
-        this.dialogRef.close(true);
+        this.dialogRef.close(this.form.value.size);
         this.snackbar.success(this.translate.instant('Disk size increased'));
       });
   }

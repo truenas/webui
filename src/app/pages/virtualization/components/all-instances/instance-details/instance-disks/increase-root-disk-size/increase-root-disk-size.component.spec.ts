@@ -52,14 +52,14 @@ describe('IncreaseRootDiskSizeComponent', () => {
     const form = await loader.getHarness(IxFormHarness);
 
     expect(await form.getValues()).toEqual({
-      'Root Disk Size': '2 GiB',
+      'Root Disk Size (in GiB)': '2',
     });
   });
 
   it('increases root disk size when new value is set', async () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
-      'Root Disk Size': '4 GiB',
+      'Root Disk Size (in GiB)': '4',
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -67,20 +67,20 @@ describe('IncreaseRootDiskSizeComponent', () => {
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('virt.instance.update', [
       'test',
-      { root_disk_size: 4 * GiB },
+      { root_disk_size: 4 },
     ]);
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
+    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(4);
   });
 
   it('does not allow value that is smaller than previous root disk size', async () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
-      'Root Disk Size': '1',
+      'Root Disk Size (in GiB)': '1',
     });
 
-    const input = await form.getControl('Root Disk Size');
-    expect(await input.getErrorText()).toBe('Minimum value is 2147483648');
+    const input = await form.getControl('Root Disk Size (in GiB)');
+    expect(await input.getErrorText()).toBe('Minimum value is 2');
   });
 });

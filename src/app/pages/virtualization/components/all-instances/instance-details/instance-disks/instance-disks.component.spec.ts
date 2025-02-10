@@ -22,6 +22,7 @@ import {
   DeviceActionsMenuComponent,
 } from 'app/pages/virtualization/components/common/device-actions-menu/device-actions-menu.component';
 import { VirtualizationDevicesStore } from 'app/pages/virtualization/stores/virtualization-devices.store';
+import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
 
 describe('InstanceDisksComponent', () => {
   let spectator: Spectator<InstanceDisksComponent>;
@@ -52,6 +53,9 @@ describe('InstanceDisksComponent', () => {
         selectedInstance: () => ({ id: 'my-instance', type: VirtualizationType.Container }),
         devices: () => disks,
         loadDevices: jest.fn(),
+      }),
+      mockProvider(VirtualizationInstancesStore, {
+        instanceUpdated: jest.fn(),
       }),
       mockProvider(SlideIn, {
         open: jest.fn(() => of({
@@ -109,6 +113,7 @@ describe('InstanceDisksComponent', () => {
       );
     });
   });
+
   describe('vm', () => {
     const vm = {
       id: 'my-instance',
@@ -151,8 +156,10 @@ describe('InstanceDisksComponent', () => {
 
       spectator.click(link);
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(IncreaseRootDiskSizeComponent);
-      expect(spectator.inject(VirtualizationDevicesStore).loadDevices).toHaveBeenCalled();
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(IncreaseRootDiskSizeComponent, {
+        data: vm,
+      });
+      expect(spectator.inject(VirtualizationInstancesStore).instanceUpdated).toHaveBeenCalled();
     });
   });
 });

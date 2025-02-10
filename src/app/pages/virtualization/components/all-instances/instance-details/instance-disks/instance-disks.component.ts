@@ -10,6 +10,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter } from 'rxjs/operators';
+import { GiB } from 'app/constants/bytes.constant';
 import { VirtualizationDeviceType } from 'app/enums/virtualization.enum';
 import { VirtualizationDisk, VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
@@ -23,6 +24,7 @@ import {
 } from 'app/pages/virtualization/components/all-instances/instance-details/instance-disks/instance-disk-form/instance-disk-form.component';
 import { DeviceActionsMenuComponent } from 'app/pages/virtualization/components/common/device-actions-menu/device-actions-menu.component';
 import { VirtualizationDevicesStore } from 'app/pages/virtualization/stores/virtualization-devices.store';
+import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
 
 @UntilDestroy()
 @Component({
@@ -53,6 +55,7 @@ export class InstanceDisksComponent {
     private slideIn: SlideIn,
     private matDialog: MatDialog,
     private deviceStore: VirtualizationDevicesStore,
+    private instanceStore: VirtualizationInstancesStore,
   ) {}
 
   protected readonly visibleDisks = computed(() => {
@@ -74,7 +77,10 @@ export class InstanceDisksComponent {
     this.matDialog.open(IncreaseRootDiskSizeComponent, { data: this.instance() })
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe(() => this.deviceStore.loadDevices());
+      .subscribe((newRootDiskSize: number) => this.instanceStore.instanceUpdated({
+        ...this.instance(),
+        root_disk_size: newRootDiskSize * GiB,
+      }));
   }
 
   private openDiskForm(disk?: VirtualizationDisk): void {
