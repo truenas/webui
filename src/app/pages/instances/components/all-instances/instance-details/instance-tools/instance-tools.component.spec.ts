@@ -45,7 +45,7 @@ describe('InstanceToolsComponent', () => {
       const shellLink = await loader.getHarness(MatButtonHarness.with({ text: 'Shell' }));
 
       expect(shellLink).toBeTruthy();
-      expect(await (await shellLink.host()).getAttribute('href')).toBe('/virtualization/view/my-instance/shell');
+      expect(await (await shellLink.host()).getAttribute('href')).toBe('/instances/view/my-instance/shell');
     });
 
     it('show shell link as disabled when instance is not running', async () => {
@@ -64,7 +64,7 @@ describe('InstanceToolsComponent', () => {
       const consoleLink = await loader.getHarness(MatButtonHarness.with({ text: 'Console' }));
 
       expect(consoleLink).toBeTruthy();
-      expect(await (await consoleLink.host()).getAttribute('href')).toBe('/virtualization/view/my-instance/console');
+      expect(await (await consoleLink.host()).getAttribute('href')).toBe('/instances/view/my-instance/console');
     });
   });
 

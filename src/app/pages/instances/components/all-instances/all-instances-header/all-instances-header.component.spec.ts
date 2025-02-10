@@ -87,7 +87,7 @@ describe('AllInstancesHeaderComponent', () => {
 
       const createNewInstanceButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create New Instance' }));
       expect(createNewInstanceButton).not.toBeDisabled();
-      expect(await (await createNewInstanceButton.host()).getAttribute('href')).toBe('/virtualization/new');
+      expect(await (await createNewInstanceButton.host()).getAttribute('href')).toBe('/instances/new');
     });
 
     it('shows status, Configuration and Go To Dataset for Locked state', async () => {
