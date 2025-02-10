@@ -22,9 +22,11 @@
       [ixUiSearch]="searchableElements.elements.proxies"
     ></ix-instance-proxies>
 
-    <ix-instance-idmap [instance]="instance()"
-      [ixUiSearch]="searchableElements.elements.idmap"
-    ></ix-instance-idmap>
+    @if (instance().type === VirtualizationType.Container) {
+      <ix-instance-idmap [instance]="instance()"
+        [ixUiSearch]="searchableElements.elements.idmap"
+      ></ix-instance-idmap>
+    }
 
     <ix-instance-tools [instance]="instance()"
       [ixUiSearch]="searchableElements.elements.tools"

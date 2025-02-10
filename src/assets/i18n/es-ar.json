@@ -2411,7 +2411,6 @@
   "Instance Protocol": "Protocolo de instancia",
   "Instance Shell": "Shell de instancia",
   "Instance created": "Instancia creada",
-  "Instance is not container": "La instancia no es un contenedor",
   "Instance is not running": "La instancia no se está ejecutando",
   "Instance must be stopped to add TPM.": "La instancia debe detenerse para agregar TPM.",
   "Instance must be stopped to update VNC.": "La instancia debe detenerse para actualizar VNC.",

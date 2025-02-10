@@ -54,14 +54,4 @@ describe('InstanceIdmapComponent', () => {
 
     expect(spectator.query('mat-card-content').textContent.trim()).toBe('Instance is not running');
   });
-
-  it('shows message when instance is not container', () => {
-    spectator.setInput('instance', {
-      id: 'my-instance',
-      status: VirtualizationStatus.Running,
-      type: VirtualizationType.Vm,
-    } as VirtualizationInstance);
-
-    expect(spectator.query('mat-card-content').textContent.trim()).toBe('Instance is not container');
-  });
 });

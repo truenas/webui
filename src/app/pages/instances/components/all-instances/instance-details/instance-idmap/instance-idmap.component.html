@@ -6,9 +6,7 @@
   </mat-card-header>
 
   <mat-card-content>
-    @if (instance().type !== virtualizationType.Container) {
-      {{ 'Instance is not container' | translate }}
-    } @else if (instance().status !== virtualizationStatus.Running) {
+    @if (instance().status !== virtualizationStatus.Running) {
       {{ 'Instance is not running' | translate }}
     } @else {
       <ix-card-expand-collapse [maxHeight]="250">
