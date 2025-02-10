@@ -64,7 +64,7 @@
             @if (isLoaded()) {
               <span>
                 @if (systemInfo()?.platform && isIxHardware()) {
-                  {{ systemInfo().platform }}
+                  {{ systemInfo()?.platform }}
                 } @else {
                   {{ 'Generic' }}
                 }
@@ -157,7 +157,7 @@
             <mat-list-item>
               <strong>{{ 'System Serial' | translate }}:</strong>
               <span>
-                {{ systemInfo().system_serial }}
+                {{ systemInfo()?.system_serial }}
               </span>
             </mat-list-item>
           }
@@ -166,7 +166,7 @@
             <strong>{{ 'Hostname' | translate }}:</strong>
             @if (isLoaded()) {
               <span>
-                {{ systemInfo().hostname }}
+                {{ systemInfo()?.hostname }}
               </span>
             } @else {
               <ngx-skeleton-loader
