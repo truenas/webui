@@ -14,7 +14,7 @@ describe('WidgetInterfaceIpComponent', () => {
     component: WidgetInterfaceIpComponent,
     providers: [
       mockProvider(WidgetResourcesService, {
-        networkInterfaces$: of({
+        getNetworkInterfaces: () => of({
           isLoading: false,
           value: [
             {
