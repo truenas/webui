@@ -31,7 +31,7 @@ describe('WidgetInterfaceComponent', () => {
     ],
     providers: [
       mockProvider(WidgetResourcesService, {
-        networkInterfaces$: of({
+        getNetworkInterfaces: () => of({
           value: [
             {
               id: '1',
