@@ -2,7 +2,8 @@
   <ix-breadcrumb class="breadcrumbs"></ix-breadcrumb>
   <div class="title-container">
     <div class="title-and-indicator">
-      <h1>{{ pageTitle() ? (pageTitle() | translate) : (currentTitle$ | async) | translate }}</h1>
+      @let title = pageTitle();
+      <h1>{{ title ? (title | translate) : (currentTitle$ | async) | translate }}</h1>
       @if ((hasNewIndicator$ | async) || customBadgeTitle()) {
         <ix-header-badge [customBadgeTitle]="customBadgeTitle()"></ix-header-badge>
       }

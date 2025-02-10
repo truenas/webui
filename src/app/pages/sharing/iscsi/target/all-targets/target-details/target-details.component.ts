@@ -37,7 +37,7 @@ export class TargetDetailsComponent {
   targetPort = signal<FibreChannelPort | null>(null);
   isLoading = signal<boolean>(false);
 
-  connections = toSignal(this.api.call('fcport.status'));
+  connections = toSignal(this.api.call('fcport.status'), { initialValue: [] });
 
   protected hasIscsiCards = computed(() => [
     IscsiTargetMode.Iscsi,

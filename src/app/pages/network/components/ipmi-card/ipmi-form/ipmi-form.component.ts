@@ -80,7 +80,7 @@ export class IpmiFormComponent implements OnInit {
   readonly helptext = helptextIpmi;
 
   form = this.fb.group({
-    apply_remote: new FormControl(null as boolean | null),
+    apply_remote: new FormControl(false),
     dhcp: [false],
     ipaddress: ['', [
       this.validatorsService.withMessage(

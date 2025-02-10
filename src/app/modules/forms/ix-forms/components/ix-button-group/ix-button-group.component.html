@@ -17,7 +17,7 @@
 >
   @for (option of options() | async; track option.label) {
     <mat-button-toggle
-      [name]="option.value.toString()"
+      [name]="option.value?.toString() || ''"
       [disabled]="isDisabled"
       [value]="option.value"
       [ixTest]="[controlDirective.name, option.label]"

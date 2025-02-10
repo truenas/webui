@@ -15,5 +15,6 @@ export function accumulateLoadingState<T>(
     tap((state) => container$.next(container$.getValue().set(id, state.isLoading))),
     filter((state) => !state.isLoading),
     map((state) => state.value),
+    filter<T>((value) => !!value),
   );
 }

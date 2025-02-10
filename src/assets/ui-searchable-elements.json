@@ -998,33 +998,6 @@
   {
     "hierarchy": [
       "Data Protection",
-      "TrueCloud Backup Tasks",
-      "Add TrueCloud Backup Task"
-    ],
-    "synonyms": [
-      "Add Cloud Backup",
-      "Create TrueCloud Backup Task",
-      "Create Cloud Backup",
-      "New TrueCloud Backup Task",
-      "New Cloud Backup",
-      "Task"
-    ],
-    "requiredRoles": [
-      "CLOUD_BACKUP_WRITE"
-    ],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/data-protection",
-      "cloud-backup"
-    ],
-    "routerLink": null,
-    "anchor": "add-cloud-backup",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Data Protection",
       "TrueCloud Backup Tasks"
     ],
     "synonyms": [
