@@ -1,6 +1,7 @@
 {
   "": "",
   "Add Custom App": "",
+  "Add Instances": "",
   "Archs": "",
   "Edit Custom App": "",
   "Flash Identify Light": "",
@@ -273,7 +274,6 @@
   "Add Cloud Backup": "Agregar copia de seguridad en la nube",
   "Add Cloud Credential": "Agregar credencial de nube",
   "Add Cloud Sync Task": "Agregar tarea de sincronización en la nube",
-  "Add Container": "Añadir contenedor",
   "Add Credential": "Agregar credencial",
   "Add Cron Job": "Agregar Cron Job",
   "Add DNS Authenticator": "Agregar autenticador de DNS",
@@ -4974,7 +4974,6 @@
   "Virtual IP Address (Failover Address)": "Dirección IP virtual (dirección de conmutación por error)",
   "Virtual Ports": "Puertos virtuales",
   "Virtual device that provides hardware-based security functions like encryption key management.": "Dispositivo virtual que proporciona funciones de seguridad basadas en hardware como la gestión de claves de cifrado.",
-  "Virtualization": "Virtualización",
   "Virtualization Global Read": "Lectura global de virtualización",
   "Virtualization Global Write": "Escritura global de virtualización",
   "Virtualization Image Read": "Lectura de imágenes de virtualización",

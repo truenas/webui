@@ -87,11 +87,11 @@ export class NavigationService {
       ],
     },
     {
-      name: T('Virtualization'),
+      name: T('Instances'),
       type: MenuItemType.Link,
-      tooltip: T('Virtualization'),
+      tooltip: T('Instances'),
       icon: iconMarker('mdi-laptop'),
-      state: 'virtualization',
+      state: 'instances',
     },
     {
       name: T('Apps'),

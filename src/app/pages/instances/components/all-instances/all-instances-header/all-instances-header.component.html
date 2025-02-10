@@ -1,0 +1,55 @@
+<ix-virtualization-state class="state-indicator" [state]="state()"></ix-virtualization-state>
+
+@if (needToSetupPool()) {
+  <button
+    mat-button
+    ixTest="edit-global-settings"
+    color="primary"
+    (click)="onGlobalConfiguration()"
+  >
+    {{ 'Select Pool' | translate }}
+  </button>
+} @else {
+  <button
+    mat-button
+    ixTest="settings-menu"
+    [matMenuTriggerFor]="menu"
+  >
+    {{ 'Configuration' | translate }}
+    <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
+  </button>
+
+  <mat-menu #menu="matMenu" overlapTrigger="false">
+    <button
+      mat-menu-item
+      ixTest="global-configuration"
+      (click)="onGlobalConfiguration()"
+    >
+      {{ 'Global Settings' | translate }}
+    </button>
+
+    <button
+      mat-menu-item
+      ixTest="manage-volumes"
+      (click)="onManageVolumes()"
+    >{{ 'Manage Volumes' | translate }}</button>
+  </mat-menu>
+}
+
+@if (isLocked() && config()?.dataset) {
+  <a
+    mat-button
+    ixTest="go-to-dataset"
+    [routerLink]="['/storage/datasets/' + config().dataset]"
+  >{{ 'Go To Dataset' | translate }}</a>
+}
+
+@if (hasCreateNewButton()) {
+  <a
+    mat-button
+    ixTest="create-new-instance"
+    [color]="canAddNewInstances() ? 'primary' : 'default'"
+    [disabled]="!canAddNewInstances()"
+    [routerLink]="['/instances/new']"
+  >{{ 'Create New Instance' | translate }}</a>
+}
