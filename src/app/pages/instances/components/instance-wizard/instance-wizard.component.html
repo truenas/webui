@@ -165,7 +165,7 @@
         [formArray]="form.controls.disks"
         (add)="addDisk()"
       >
-        @for (disk of form.controls.disks.controls; track disk; let i = $index) {
+        @for (disk of form.controls.disks.controls; track disk.value; let i = $index) {
           <ix-list-item
             [label]="'Disk' | translate"
             [formGroupName]="i"
