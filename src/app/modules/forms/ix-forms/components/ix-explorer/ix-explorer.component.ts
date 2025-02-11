@@ -3,7 +3,7 @@ import {
   ChangeDetectorRef,
   Component, computed, input,
   OnChanges,
-  OnInit, Signal, viewChild,
+  OnInit, signal, Signal, viewChild,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -11,12 +11,14 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatError, MatHint } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import {
-  IActionMapping, ITreeOptions, KEYS, TREE_ACTIONS, TreeComponent, TreeModule,
+  IActionMapping, ITreeOptions, KEYS, TREE_ACTIONS, TreeComponent, TreeModel, TreeModule,
 } from '@bugsplat/angular-tree-component';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { firstValueFrom, Observable, of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import {
+  firstValueFrom, Observable, of,
+} from 'rxjs';
+import { catchError, filter } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
@@ -82,8 +84,8 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   inputValue = '';
   value: string | string[];
   isDisabled = false;
-  nodes: ExplorerNodeData[] = [];
-  loadingError: string | null = null;
+  nodes = signal<ExplorerNodeData[]>([]);
+  readonly loadingError = signal<string | null>(null);
 
   onChange: (value: string | string[]) => void = (): void => {};
   onTouch: () => void = (): void => {};
@@ -96,19 +98,26 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
       || this.isDisabled;
   }
 
+  private toggleExpandNodeFn = (
+    tree: TreeModel,
+    node: TreeNode<ExplorerNodeData>,
+    $event: MouseEvent,
+  ): void => {
+    if (node.isCollapsed && node.hasChildren && node.children) {
+      node.children = null;
+    }
+    TREE_ACTIONS.TOGGLE_EXPANDED(tree, node, $event);
+  };
+
   private readonly actionMapping: IActionMapping = {
     mouse: {
-      dblClick: (tree, node, $event) => {
-        TREE_ACTIONS.TOGGLE_EXPANDED(tree, node, $event);
-      },
-      click: (tree, node, $event) => {
-        TREE_ACTIONS.TOGGLE_SELECTED(tree, node, $event);
-      },
+      expanderClick: this.toggleExpandNodeFn.bind(this),
+      dblClick: this.toggleExpandNodeFn.bind(this),
+      click: TREE_ACTIONS.TOGGLE_SELECTED,
     },
     keys: {
-      [KEYS.ENTER]: (tree, node, $event) => {
-        TREE_ACTIONS.TOGGLE_SELECTED(tree, node, $event);
-      },
+      [KEYS.ENTER]: TREE_ACTIONS.TOGGLE_SELECTED,
+      [KEYS.SPACE]: this.toggleExpandNodeFn.bind(this),
     },
   };
 
@@ -136,7 +145,6 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     if ('nodeProvider' in changes || 'root' in changes) {
       this.setInitialNode();
-      this.cdr.markForCheck();
     }
   }
 
@@ -233,8 +241,11 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
     return typeof this.value === 'string' ? this.value === path : this.value?.some((content: string) => content === path);
   }
 
-  parentDatasetName(path: string): string {
-    return (!path || path === this.root()) ? '' : path.replace(`${this.root()}/`, '');
+  parentDatasetName(path: string | null | undefined): string {
+    if (!path) {
+      return '';
+    }
+    return path === this.root() ? '' : path.replace(`${this.root()}/`, '');
   }
 
   createDataset(): void {
@@ -244,12 +255,8 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
         dataset: this.createDatasetProps(),
       },
     }).afterClosed()
-      .pipe(untilDestroyed(this))
+      .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe((dataset: Dataset) => {
-        if (!dataset) {
-          return;
-        }
-
         const parentNode = this.tree().treeModel.selectedLeafNodes[0] as TreeNode<ExplorerNodeData>;
         parentNode?.expand();
 
@@ -268,7 +275,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   }
 
   private setInitialNode(): void {
-    this.nodes = [
+    this.nodes.set([
       {
         path: this.root(),
         name: this.root(),
@@ -276,7 +283,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
         type: ExplorerNodeType.Directory,
         isMountpoint: true,
       },
-    ];
+    ]);
   }
 
   private updateInputValue(): void {
@@ -293,17 +300,16 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   }
 
   private loadChildren(node: TreeNode<ExplorerNodeData>): Observable<ExplorerNodeData[]> {
-    this.loadingError = null;
-    this.cdr.markForCheck();
+    const provider = this.nodeProvider();
+    this.loadingError.set(null);
 
-    if (!this.nodeProvider()) {
+    if (!provider) {
       return of([]);
     }
 
-    return this.nodeProvider()(node).pipe(
+    return provider(node).pipe(
       catchError((error: unknown) => {
-        this.loadingError = this.errorHandler.getFirstErrorMessage(error);
-        this.cdr.markForCheck();
+        this.loadingError.set(this.errorHandler.getFirstErrorMessage(error));
         return of([]);
       }),
     );

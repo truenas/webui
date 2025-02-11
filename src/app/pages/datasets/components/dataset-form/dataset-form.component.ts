@@ -263,7 +263,6 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
         }
         this.isLoading = false;
         this.cdr.markForCheck();
-        this.filesystem.invokeRefresh();
         this.slideInRef.close({ response: createdDataset, error: null });
         if (shouldGoToEditor) {
           this.router.navigate(['/', 'datasets', 'acl', 'edit'], {

@@ -100,8 +100,6 @@ describe('FilesystemService', () => {
         } as TreeNode<ExplorerNodeData>),
       );
 
-      spectator.service.invokeRefresh();
-
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('filesystem.listdir', childNodes);
     });
   });

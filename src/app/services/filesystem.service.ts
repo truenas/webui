@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {
-  catchError, map, of, repeat, Subject, tap, throwError,
+  catchError, map, of, throwError,
 } from 'rxjs';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { FileAttribute } from 'app/enums/file-attribute.enum';
@@ -36,16 +36,9 @@ const roolDatasetNode = {
 
 @Injectable({ providedIn: 'root' })
 export class FilesystemService {
-  // TODO: NAS-133908 - Remove when middleware provides a better way to do this.
-  private readonly refreshTree$ = new Subject<void>();
-
   constructor(
     private api: ApiService,
   ) {}
-
-  invokeRefresh(): void {
-    this.refreshTree$.next();
-  }
 
   /**
    * Returns a pre-configured node provider for files and directories.
@@ -83,8 +76,6 @@ export class FilesystemService {
       };
 
       return this.api.call('filesystem.listdir', [node.data.path, typeFilter, queryOptions]).pipe(
-        tap((a) => console.info('tap', a, 'before refresh')),
-        repeat({ delay: () => this.refreshTree$ }),
         map((files) => {
           const children: ExplorerNodeData[] = [];
           files.forEach((file) => {

@@ -94,7 +94,6 @@ export class DatasetDetailsPanelComponent {
       untilDestroyed(this),
     ).subscribe(({ response }) => {
       this.datasetStore.datasetUpdated();
-      this.filesystem.invokeRefresh();
 
       this.datasetStore.isLoading$.pipe(
         filter((isLoading) => !isLoading),
