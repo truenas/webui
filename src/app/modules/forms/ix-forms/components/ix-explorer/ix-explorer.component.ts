@@ -241,11 +241,14 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
     return typeof this.value === 'string' ? this.value === path : this.value?.some((content: string) => content === path);
   }
 
-  parentDatasetName(path: string | null | undefined): string {
-    if (!path) {
+  parentDatasetName(path: string): string {
+    if (!path || path === this.root()) {
       return '';
     }
-    return path === this.root() ? '' : path.replace(`${this.root()}/`, '');
+
+    return path
+      .replace(`${this.root()}/`, '')
+      .replace('/mnt/', '');
   }
 
   createDataset(): void {
@@ -258,12 +261,18 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe((dataset: Dataset) => {
         const parentNode = this.tree().treeModel.selectedLeafNodes[0] as TreeNode<ExplorerNodeData>;
-        parentNode?.expand();
+        if (parentNode?.isExpanded) {
+          parentNode.collapse();
+        }
 
-        this.setInitialNode();
-        this.writeValue(`${this.root()}/${dataset.name}`);
+        // This code is necessary to make sure that newly created dataset appears
+        // in the tree if tree has already been expanded.
+        parentNode.data.children = null;
+        parentNode.treeModel.update();
+        parentNode.expand();
+
+        this.writeValue(dataset.mountpoint);
         this.onChange(this.value);
-        this.tree().treeModel.update();
       });
   }
 
