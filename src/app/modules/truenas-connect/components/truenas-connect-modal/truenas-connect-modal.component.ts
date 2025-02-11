@@ -17,6 +17,7 @@ import { helptextTopbar } from 'app/helptext/topbar';
 import { TruenasConnectUpdate } from 'app/interfaces/truenas-connect-config.interface';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 
 @UntilDestroy()
@@ -32,6 +33,7 @@ import { TruenasConnectService } from 'app/modules/truenas-connect/services/true
     MatButton,
     ReactiveFormsModule,
     TranslateModule,
+    TestDirective,
   ],
   templateUrl: './truenas-connect-modal.component.html',
   styleUrl: './truenas-connect-modal.component.scss',
@@ -93,7 +95,7 @@ export class TruenasConnectModalComponent {
       account_service_base_url: config.account_service_base_url,
       leca_service_base_url: config.leca_service_base_url,
     };
-    this.tnc.enableService(payload)
+    this.tnc.enableService(payload as TruenasConnectUpdate)
       .pipe(untilDestroyed(this))
       .subscribe();
   }

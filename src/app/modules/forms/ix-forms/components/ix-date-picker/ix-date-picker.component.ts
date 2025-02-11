@@ -65,7 +65,7 @@ export class IxDatepickerComponent implements ControlValueAccessor {
 
   protected isDisabled = signal(false);
 
-  protected value = signal<Date>(this.controlDirective.value as Date);
+  protected value = signal<Date | null>(this.controlDirective.value as Date);
 
   private onChange: OnChangeFn = () => {};
   private onTouched: OnTouchedFn = () => {};

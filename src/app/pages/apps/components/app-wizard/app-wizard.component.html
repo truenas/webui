@@ -1,4 +1,4 @@
-<ix-page-header [pageTitle]="pageTitle$ | async">
+<ix-page-header [pageTitle]="(pageTitle$ | async) || ''">
   @if (!(hasRequiredRoles | async)) {
     <ix-readonly-badge></ix-readonly-badge>
   }

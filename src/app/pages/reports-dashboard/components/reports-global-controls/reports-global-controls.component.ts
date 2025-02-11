@@ -92,7 +92,7 @@ export class ReportsGlobalControlsComponent implements OnInit {
       .subscribe(() => {
         this.allTabs = this.reportsService.getReportTabs();
         this.activeTab = this.allTabs.find((tab) => {
-          return tab.value === (this.route.routeConfig.path as ReportType);
+          return tab.value === (this.route.routeConfig?.path as ReportType);
         });
         this.cdr.markForCheck();
       });
@@ -104,8 +104,8 @@ export class ReportsGlobalControlsComponent implements OnInit {
     }
     this.form.valueChanges.pipe(debounceTime(300), untilDestroyed(this)).subscribe((values) => {
       this.diskOptionsChanged.emit({
-        devices: values.devices,
-        metrics: values.metrics,
+        devices: values.devices || [],
+        metrics: values.metrics || [],
       });
     });
     this.diskDevices$.pipe(untilDestroyed(this)).subscribe((disks) => {

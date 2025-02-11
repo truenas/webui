@@ -89,7 +89,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
   readonly removeAce = this.updater((state: DatasetAclEditorState, indexToRemove: number) => {
     let selectedAceIndex = state.selectedAceIndex;
 
-    if (selectedAceIndex >= indexToRemove) {
+    if (selectedAceIndex && selectedAceIndex >= indexToRemove) {
       selectedAceIndex = Math.max(0, selectedAceIndex - 1);
     }
 

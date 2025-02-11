@@ -167,7 +167,7 @@ export class IxFormGlossaryComponent implements OnInit {
         || this.searchOptions().find((opt) => opt.label.toLocaleLowerCase() === value.toLocaleLowerCase());
 
       if (option) {
-        this.onControlClick(option.value.toString(), option.label);
+        this.onControlClick(String(option.value), option.label);
       }
     });
   }
