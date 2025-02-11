@@ -1,6 +1,7 @@
 {
   "": "",
   "Add Instances": "",
+  "Failover is unhealthy. Rebooting now will cause a production outage.": "",
   "Name cannot be changed after instance is created": "",
   "Uploading": "",
   "Volume with this name already exists.": "",
