@@ -92,7 +92,10 @@ describe('AllInstancesComponent', () => {
     spectator.component.ngOnInit();
 
     const dialogService = spectator.inject(DialogService);
-    expect(dialogService.warn).toHaveBeenCalledWith('Title', 'Description');
+    expect(dialogService.warn).toHaveBeenCalledWith(
+      'Warning',
+      'Containers and virtual machines powered by Incus are experimental and only recommended for advanced users. Make all configuration changes using the TrueNAS UI. Operations using the command line are not supported.',
+    );
     expect(dialogService.warn).toHaveBeenCalledTimes(1);
 
     expect(mockLocalStorage.setItem).toHaveBeenCalledWith('showNewVmInstancesWarning', 'true');
