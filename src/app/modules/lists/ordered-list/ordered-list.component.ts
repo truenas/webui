@@ -12,7 +12,7 @@ import { ControlValueAccessor } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
-import { Option } from 'app/interfaces/option.interface';
+import { BaseOptionValueType, Option } from 'app/interfaces/option.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -50,9 +50,9 @@ export class OrderedListboxComponent implements ControlValueAccessor, OnInit {
   items: Option[];
 
   isDisabled = false;
-  value: (string | number)[];
+  value: BaseOptionValueType[];
 
-  get orderedValue(): (string | number)[] {
+  get orderedValue(): BaseOptionValueType[] {
     return this.items.filter((item) => this.value.includes(item.value)).map((item) => item.value);
   }
 
@@ -63,15 +63,15 @@ export class OrderedListboxComponent implements ControlValueAccessor, OnInit {
     this.controlDirective.valueAccessor = this;
   }
 
-  onChange: (value: (string | number)[]) => void = (): void => {};
+  onChange: (value: BaseOptionValueType[]) => void = (): void => {};
   onTouch: () => void = (): void => {};
 
-  writeValue(value: (string | number)[]): void {
+  writeValue(value: BaseOptionValueType[]): void {
     this.value = value;
     this.cdr.markForCheck();
   }
 
-  registerOnChange(onChange: (value: (string | number)[]) => void): void {
+  registerOnChange(onChange: (value: BaseOptionValueType[]) => void): void {
     this.onChange = onChange;
   }
 
@@ -84,11 +84,11 @@ export class OrderedListboxComponent implements ControlValueAccessor, OnInit {
     this.cdr.markForCheck();
   }
 
-  isChecked(value: string | number): boolean {
+  isChecked(value: BaseOptionValueType): boolean {
     return this.value.includes(value);
   }
 
-  onCheckboxChanged(value: string | number): void {
+  onCheckboxChanged(value: BaseOptionValueType): void {
     if (this.isChecked(value)) {
       this.value = this.value.filter((item) => item !== value);
     } else {

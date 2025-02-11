@@ -23,7 +23,7 @@
           <button
             class="empty-action"
             mat-button
-            [ixTest]="[conf().button.label]"
+            [ixTest]="[conf().button?.label]"
             (click)="doAction()"
           >
             {{ conf().button.label | translate }}

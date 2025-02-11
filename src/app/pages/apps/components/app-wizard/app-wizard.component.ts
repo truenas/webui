@@ -349,7 +349,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
       hideVersion = true;
     }
     const versionKeys: string[] = [];
-    Object.keys(this.catalogApp.versions).forEach((versionKey) => {
+    Object.keys(this.catalogApp?.versions).forEach((versionKey) => {
       if (this.catalogApp.versions[versionKey].healthy) {
         versionKeys.push(versionKey);
       }
@@ -400,7 +400,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
 
     if (catalogApp?.app_metadata) {
       const controlName = 'show_metadata';
-      this.form.addControl(controlName, new FormControl(true, []));
+      this.form.addControl(controlName, this.formBuilder.control(true, []));
       this.rootDynamicSection.push({
         name: 'Application Metadata',
         description: '',
@@ -554,7 +554,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
         || this.searchOptions.find((opt) => opt.label.toLocaleLowerCase() === value.toLocaleLowerCase());
 
       if (option) {
-        const path = option.value.toString().split('.');
+        const path = String(option.value).split('.');
         path.forEach((id, idx) => {
           if (idx === path.length - 1) {
             this.onSectionClick(id);

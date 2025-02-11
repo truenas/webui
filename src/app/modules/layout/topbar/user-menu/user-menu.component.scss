@@ -14,9 +14,15 @@
   .username {
     @include line-clamp(2);
     cursor: pointer;
+    display: inline-block;
     font-size: 14px;
     margin-right: 0.5rem;
-    max-width: 200px;
+    max-width: 105px;
+    min-width: auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    white-space: nowrap;
 
     @media(max-width: $breakpoint-md) {
       display: none;

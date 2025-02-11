@@ -7,7 +7,7 @@
       @if (topologyParentItem()?.name) {
         <div class="details-item">
           <div class="label">{{ 'Parent' | translate }}:</div>
-          <div class="value">{{ topologyParentItem().name | uppercase }}</div>
+          <div class="value">{{ topologyParentItem()?.name | uppercase }}</div>
         </div>
       }
       <div class="details-item">

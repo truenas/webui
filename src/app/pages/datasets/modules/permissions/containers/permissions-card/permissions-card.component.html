@@ -22,7 +22,7 @@
           <div class="label">{{ 'Owner:' | translate }}</div>
           @if (!isLoading()) {
             <div class="value">
-              {{ stat().user }}
+              {{ stat()?.user }}
             </div>
           } @else {
             <ngx-skeleton-loader></ngx-skeleton-loader>
@@ -32,7 +32,7 @@
           <div class="label">{{ 'Group:' | translate }}</div>
           @if (!isLoading()) {
             <div class="value">
-              {{ stat().group }}
+              {{ stat()?.group }}
             </div>
           } @else {
             <ngx-skeleton-loader></ngx-skeleton-loader>

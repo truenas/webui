@@ -8,13 +8,22 @@ import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TruenasConnectStatusModalComponent } from 'app/modules/truenas-connect/components/truenas-connect-status-modal/truenas-connect-status-modal.component';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 
 @Component({
   selector: 'ix-truenas-connect-button',
   standalone: true,
-  imports: [IxIconComponent, MatButtonModule, MatBadgeModule, MatIconButton, MatTooltip, TranslateModule],
+  imports: [
+    IxIconComponent,
+    MatButtonModule,
+    MatBadgeModule,
+    MatIconButton,
+    MatTooltip,
+    TranslateModule,
+    TestDirective,
+  ],
   templateUrl: './truenas-connect-button.component.html',
   styleUrl: './truenas-connect-button.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

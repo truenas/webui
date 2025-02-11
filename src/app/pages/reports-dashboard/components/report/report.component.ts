@@ -95,7 +95,7 @@ export class ReportComponent implements OnInit, OnChanges {
   autoRefreshTimer: Subscription;
   autoRefreshEnabled: boolean;
   isReady = false;
-  data: ReportingData;
+  data: ReportingData | undefined;
   chartId = `chart-${UUID.UUID()}`;
   chartColors: string[];
   legendData: LegendDataWithStackedTotalHtml = {} as LegendDataWithStackedTotalHtml;
