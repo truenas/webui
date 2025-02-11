@@ -92,15 +92,24 @@ describe('FilesystemService', () => {
     it('check for updating the tree', async () => {
       const treeNodeProvider = spectator.service.getFilesystemNodeProvider({ datasetsAndZvols: true });
 
-      const childNodes = await lastValueFrom(
-        treeNodeProvider({
-          data: {
-            path: '/mnt/parent',
-          },
-        } as TreeNode<ExplorerNodeData>),
-      );
+      await lastValueFrom(treeNodeProvider({
+        data: {
+          path: '/mnt/parent',
+        },
+      } as TreeNode<ExplorerNodeData>));
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('filesystem.listdir', childNodes);
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+        'filesystem.listdir',
+        [
+          '/mnt/parent',
+          [],
+          {
+            select: ['attributes', 'is_ctldir', 'name', 'path', 'type'],
+            order_by: ['name'],
+            limit: 1000,
+          },
+        ],
+      );
     });
   });
 });
