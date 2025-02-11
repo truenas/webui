@@ -84,7 +84,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   inputValue = '';
   value: string | string[];
   isDisabled = false;
-  nodes = signal<ExplorerNodeData[]>([]);
+  readonly nodes = signal<ExplorerNodeData[]>([]);
   readonly loadingError = signal<string | null>(null);
 
   onChange: (value: string | string[]) => void = (): void => {};
