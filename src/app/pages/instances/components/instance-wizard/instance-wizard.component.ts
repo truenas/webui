@@ -190,11 +190,11 @@ export class InstanceWizardComponent {
   protected readonly isVm = computed(() => this.instanceType() === VirtualizationType.Vm);
 
   readonly directoryNodeProvider = computed(() => {
-    if (this.isVm()) {
-      return this.filesystem.getFilesystemNodeProvider({ zvolsOnly: true });
-    }
+    const providerOptions = this.isVm()
+      ? { zvolsOnly: true }
+      : { datasetsAndZvols: true };
 
-    return this.filesystem.getFilesystemNodeProvider({ datasetsAndZvols: true });
+    return this.filesystem.getFilesystemNodeProvider(providerOptions);
   });
 
   protected defaultIpv4Network = computed(() => {
