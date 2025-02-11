@@ -141,7 +141,7 @@ export class WidgetInterfaceComponent implements WidgetComponent<WidgetInterface
   protected chartData = computed<ChartData<'line'>>(() => {
     const currentTheme = this.theme.currentTheme();
     const response = this.networkStats();
-    const networkInterfaceName = this.interface().value.name;
+    const networkInterfaceName = this.interface().value?.name;
     const startDate = Date.now() - oneHourMillis - oneMinuteMillis;
     const labels = response.map((_, index) => (startDate + index * 1000));
 
@@ -181,7 +181,7 @@ export class WidgetInterfaceComponent implements WidgetComponent<WidgetInterface
     let ip = '–';
     if (nic.state.aliases) {
       const addresses = nic.state.aliases.filter((item: NetworkInterfaceAlias) => {
-        return [NetworkInterfaceAliasType.Inet, NetworkInterfaceAliasType.Inet6].includes(item.type);
+        return item.type && [NetworkInterfaceAliasType.Inet, NetworkInterfaceAliasType.Inet6].includes(item.type);
       });
 
       if (addresses.length > 0) {

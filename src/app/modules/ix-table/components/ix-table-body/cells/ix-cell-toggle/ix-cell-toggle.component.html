@@ -1,4 +1,4 @@
-@if (!requiredRoles?.length && !dynamicRequiredRoles) {
+@if (!requiredRoles.length && !dynamicRequiredRoles) {
   <mat-slide-toggle
     color="primary"
     [aria-label]="(checked ? ('Disable' | translate) : ('Enable' | translate)) + ' ' + getAriaLabel(row())"
@@ -8,7 +8,7 @@
     (click)="$event.stopPropagation()"
   ></mat-slide-toggle>
 }
-@if (requiredRoles?.length || dynamicRequiredRoles) {
+@if (requiredRoles.length || dynamicRequiredRoles) {
   <mat-slide-toggle
     *ixRequiresRoles="(dynamicRequiredRoles ? (dynamicRequiredRoles(row()) | async) : requiredRoles) || []"
     color="primary"

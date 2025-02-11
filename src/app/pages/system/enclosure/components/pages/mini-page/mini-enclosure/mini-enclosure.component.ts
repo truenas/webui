@@ -44,22 +44,25 @@ export class MiniEnclosureComponent {
   });
 
   readonly isMini3E = computed(() => {
-    return [
+    const model = this.enclosure()?.model;
+    return model && [
       EnclosureModel.Mini3E,
       EnclosureModel.Mini3EPlus,
-    ].includes(this.enclosure().model);
+    ].includes(model);
   });
 
   readonly isMini3X = computed(() => {
-    return [
+    const model = this.enclosure()?.model;
+    return model && [
       EnclosureModel.Mini3X,
       EnclosureModel.Mini3XPlus,
-    ].includes(this.enclosure().model);
+    ].includes(model);
   });
 
   readonly isMini3Xl = computed(() => {
-    return [
+    const model = this.enclosure()?.model;
+    return model && [
       EnclosureModel.Mini3XlPlus,
-    ].includes(this.enclosure().model);
+    ].includes(model);
   });
 }
