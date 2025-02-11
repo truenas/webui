@@ -35,6 +35,7 @@ import {
   QuotasSectionComponent,
 } from 'app/pages/datasets/components/dataset-form/sections/quotas-section/quotas-section.component';
 import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/utils/dataset-form.service';
+import { FilesystemService } from 'app/services/filesystem.service';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 
 describe('DatasetFormComponent', () => {
@@ -121,6 +122,7 @@ describe('DatasetFormComponent', () => {
       }),
       mockProvider(Router),
       mockProvider(SlideInRef, slideInRef),
+      mockProvider(FilesystemService),
       mockAuth(),
     ],
   });
