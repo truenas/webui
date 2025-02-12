@@ -207,6 +207,10 @@
 
   .header {
     padding: 16px;
+
+    @media (max-width: $breakpoint-xs) {
+      padding: 16px 16px 0;
+    }
   }
 }
 
