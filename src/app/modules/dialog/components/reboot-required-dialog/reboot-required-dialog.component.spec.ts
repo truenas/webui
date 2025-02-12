@@ -1,7 +1,9 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { SystemRebootInfo } from 'app/interfaces/reboot-info.interface';
 import { RebootRequiredDialogComponent } from 'app/modules/dialog/components/reboot-required-dialog/reboot-required-dialog.component';
+import { selectCanFailover, selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import {
   selectOtherNodeRebootInfo,
   selectThisNodeRebootInfo,
@@ -25,6 +27,7 @@ const fakeOtherNodeRebootInfo: SystemRebootInfo = {
 
 describe('RebootRequiredDialogComponent', () => {
   let spectator: Spectator<RebootRequiredDialogComponent>;
+
   const createComponent = createComponentFactory({
     component: RebootRequiredDialogComponent,
     providers: [
@@ -38,6 +41,9 @@ describe('RebootRequiredDialogComponent', () => {
             selector: selectOtherNodeRebootInfo,
             value: fakeOtherNodeRebootInfo,
           },
+          { selector: selectIsHaLicensed, value: true },
+          { selector: selectCanFailover, value: false },
+          { selector: selectHaStatus, value: { reasons: [FailoverDisabledReason.MismatchNics] } },
         ],
       }),
     ],
@@ -45,6 +51,15 @@ describe('RebootRequiredDialogComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
+  });
+
+  it('shows failover warning when failover is unhealthy', () => {
+    expect(spectator.query('.dialog-message.error')).toHaveText(
+      'Failover is unhealthy. Rebooting now will cause a production outage.',
+    );
+
+    expect(spectator.queryAll('.failover-reasons li').map((item) => item.textContent!.trim()))
+      .toContain('Network interfaces do not match between storage controllers.');
   });
 
   it('shows reasons', () => {

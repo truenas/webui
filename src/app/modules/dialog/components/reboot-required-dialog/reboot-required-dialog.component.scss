@@ -2,9 +2,14 @@
   margin-bottom: 5px;
   margin-top: 0;
   padding: 0;
+
+  &.error {
+    color: var(--error);
+  }
 }
 
-.reasons {
+.reasons,
+.failover-reasons {
   padding: 0 12px 12px;
 }
 

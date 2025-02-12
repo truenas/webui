@@ -3,6 +3,20 @@
 </h3>
 
 <div mat-dialog-content>
+  @if (isHaLicensed() && !canFailover()) {
+    <div class="failover-reasons">
+      <p class="dialog-message error">
+        <span>{{ 'Failover is unhealthy. Rebooting now will cause a production outage.' | translate }}</span>
+      </p>
+
+      @for (reason of failoverDisabledReasons(); track reason) {
+        <li>
+          {{ reason | mapValue: disabledReasonExplanations | translate }}
+        </li>
+      }
+    </div>
+  }
+
   @if(thisNodeRebootReasons()?.length) {
     <div class="reasons">
       <p class="dialog-message">
