@@ -37,7 +37,7 @@
   "6 months": "",
   "6 months ago": "",
   "<a href=\"https://www.ixsystems.com/support/truenas-arrays/\" target=\"_blank\"> TrueNAS Licensing</a> - Learn more about enterprise-grade support.": "",
-  "<b>CPU Configuration</b><br />Enter number of cores or multiple values or ranges toset CPU topology. Example: 1-2,5,9-11": "",
+  "<b>CPU Configuration</b><br />Enter the number of cores. Use multiple values or ranges to set the CPU topology.<br />Example: 1-2, 5, 9-11.": "",
   "<b>Copy & Paste</b> <br/>\n                  Context menu copy and paste operations are disabled in the Shell. Copy and paste shortcuts for Mac are <i>Command+C</i> and <i>Command+V</i>. For most operating systems, use <i>Ctrl+Insert</i> to copy and <i>Shift+Insert</i> to paste.<br/><br/>\n                  <b>Kill Process</b> <br/>\n                  Kill process shortcut is <i>Ctrl+C</i>.": "",
   "<b>WARNING:</b> Rolling the dataset back destroys data on the dataset <i>and</i> can destroy additional snapshots that are related to the dataset. <b>This can result in permanent data loss!</b> Do not roll back until all desired data and snapshots are backed up.": "",
   "<b>Why choose Container?</b><br />Containers offer lightweight, efficient virtualization by sharing the host OS kernel, providing faster startup times and reduced resource usage compared to VMs. Ideal for scalable applications.<br /><br /><b>Why choose VM?</b><br />Choose a VM for full OS isolation, kernel independence, and running diverse OS types.": "",

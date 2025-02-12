@@ -22,7 +22,7 @@
   "<a href=\"https://forums.truenas.com/\" target=\"_blank\"> TrueNAS Forums</a> - Find answers from other users in the forums.": "",
   "<a href=\"https://www.ixsystems.com/support/truenas-arrays/\" target=\"_blank\"> TrueNAS Licensing</a> - Learn more about enterprise-grade support.": "",
   "<a href=\"https://www.truenas.com/docs/hub/\" target=\"_blank\"> TrueNAS Documentation Hub</a> - Read and contribute to the open-source documentation.": "",
-  "<b>CPU Configuration</b><br />Enter number of cores or multiple values or ranges toset CPU topology. Example: 1-2,5,9-11": "",
+  "<b>CPU Configuration</b><br />Enter the number of cores. Use multiple values or ranges to set the CPU topology.<br />Example: 1-2, 5, 9-11.": "",
   "<b>Copy & Paste</b> <br/>\n                  Context menu copy and paste operations are disabled in the Shell. Copy and paste shortcuts for Mac are <i>Command+C</i> and <i>Command+V</i>. For most operating systems, use <i>Ctrl+Insert</i> to copy and <i>Shift+Insert</i> to paste.<br/><br/>\n                  <b>Kill Process</b> <br/>\n                  Kill process shortcut is <i>Ctrl+C</i>.": "",
   "<b>WARNING:</b> Rolling the dataset back destroys data on the dataset <i>and</i> can destroy additional snapshots that are related to the dataset. <b>This can result in permanent data loss!</b> Do not roll back until all desired data and snapshots are backed up.": "",
   "<b>WARNING:</b> The configuration file contains sensitive data like system passwords. However, SSH keys that are stored in <samp>/root/.ssh</samp> are <b>NOT</b> backed up by this operation. Additional sensitive information can be included in the configuration file.<br />": "",

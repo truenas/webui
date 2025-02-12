@@ -1,5 +1,6 @@
 {
   "": "",
+  "<b>CPU Configuration</b><br />Enter the number of cores. Use multiple values or ranges to set the CPU topology.<br />Example: 1-2, 5, 9-11.": "",
   "Add Instances": "",
   "Name cannot be changed after instance is created": "",
   "Secure Boot is required for the VM image you selected": "",
@@ -67,7 +68,6 @@
   "<a href=\"https://www.ixsystems.com/support/truenas-arrays/\" target=\"_blank\"> TrueNAS Licensing</a> - Learn more about enterprise-grade support.": "<a href=\"https://www.ixsystems.com/support/truenas-arrays/\" target=\"_blank\">TrueNAS 사용권</a> - 기업 수준의 지원에 대해 더 알아보십시오.",
   "<a href=\"https://www.truenas.com/docs/hub/\" target=\"_blank\"> TrueNAS Documentation Hub</a> - Read and contribute to the open-source documentation.": "<a href=\"https://www.truenas.com/docs/hub/\" target=\"_blank\">TrueNAS 문서 허브</a> - 오픈소스 문서를 읽고 기여하십시오.",
   "<b>COPY</b>: Files from the source are <i><u>copied</u></i> to the destination. If files with the same names are present on the destination, they are <i><u>overwritten</u></i>.": "<b>복사</b>: 원본 파일을 도착지로 <i><u>복사</u></i>합니다. 도착지에 이미 동일한 이름의 파일이 있다면, 해당 파일은 <i><u>덮어씌워집니다</u></i>.",
-  "<b>CPU Configuration</b><br />Enter number of cores or multiple values or ranges toset CPU topology. Example: 1-2,5,9-11": "<b>CPU 구성</b><br />CPU 토폴로지를 설정하려면 코어 수나 여러 개의 값 또는 범위를 입력합니다. 예시: 1-2,5,9-11",
   "<b>Copy & Paste</b> <br/>\n                  Context menu copy and paste operations are disabled in the Shell. Copy and paste shortcuts for Mac are <i>Command+C</i> and <i>Command+V</i>. For most operating systems, use <i>Ctrl+Insert</i> to copy and <i>Shift+Insert</i> to paste.<br/><br/>\n                  <b>Kill Process</b> <br/>\n                  Kill process shortcut is <i>Ctrl+C</i>.": "<b>복사 & 붙여넣기</b> <br />\n 셸에서는 상황에 맞는 메뉴의 복사와 붙여넣기 작업이 비활성화되어 있습니다. Mac의 복사와 붙여넣기 단축키는 <i>Command+C</i>와 <i>Command+V</i>입니다. 대부분의 운영체제에서는 <i>Ctrl+Insert</i>로 복사하고 <i>Shift+Insert</i>로 붙여넣을 수 있습니다.<br /><br />\n <b>프로세스 종료</b> <br />\n 프로세스 종료의 단축키는 <i>Ctrl+C</i>입니다.",
   "<b>MOVE</b>: After files are <i><u>copied</u></i> from the source to the destination, they are <i><u>deleted</u></i> from the source. Files with the same names on the destination are <i><u>overwritten</u></i>.": "<b>이동</b>: 원본 파일을 도착지로 <i><u>복사</u></i>한 후, 원본에서는 해당 파일을 <i><u>삭제</u></i>합니다. 도착지에 이미 동일한 이름의 파일이 있다면, 해당 파일은 <i><u>덮어씌워집니다</u></i>.",
   "<b>SET</b> will changes all destination datasets to <code>readonly=on</code> after finishing the replication. <br><b>REQUIRE</b> stops replication unless all existing destination datasets to have the property <code>readonly=on</code>. <br><b>IGNORE</b> disables checking the <code>readonly</code> property during replication.": "<b>설정</b>은 복제 작업을 완료한 후 모든 도착지 데이터셋을 <code>readonly=on</code>으로 변경합니다.<br /><b>필수</b>는 모든 기존 도착지 데이터셋에 <code>readonly=on</code> 속성이 없으면 복제를 중단합니다.<br /><b>무시</b>는 복제 중에 <code>readonly</code> 속성을 확인하지 않습니다.",
