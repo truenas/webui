@@ -2,5 +2,5 @@ import { Injectable } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
 export class UrlValidationService {
-  urlRegex = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=.]+$/;
+  urlRegex = /^([a-zA-Z][a-zA-Z\d+\-.]*):\/\/([^\s:/?#]+)(:\d{1,5})?(\/[^\s]*)?$/;
 }
