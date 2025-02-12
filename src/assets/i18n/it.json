@@ -1412,6 +1412,7 @@
   "Enable TPC": "",
   "Enable Two Factor Authentication Globally": "",
   "Enable Two Factor Authentication for SSH": "",
+  "Enable VLAN": "",
   "Enable VNC": "",
   "Enable for TrueNAS to periodically review data blocks and identify empty blocks, or obsolete blocks that can be deleted. Unset to use dirty block overwrites (default).": "",
   "Enable iXsystems Proactive Support": "",

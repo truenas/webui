@@ -779,6 +779,7 @@
   "Enable NFS over RDMA": "",
   "Enable Outlook OAuth authentication.": "",
   "Enable TLS": "",
+  "Enable VLAN": "",
   "Enable VNC": "",
   "Enable for TrueNAS to periodically review data blocks and identify empty blocks, or obsolete blocks that can be deleted. Unset to use dirty block overwrites (default).": "",
   "Enable iXsystems Proactive Support": "",
