@@ -55,7 +55,7 @@ set CPU topology. Example: 1-2,5,9-11'),
 <br />\
 <b>Bridged NIC</b> uses an existing bridge on the host and creates a virtual device pair to connect the host bridge to the instance.<br />\
 <br />\
-<b>MACVLAN NIC</b> sets up a new network device based on an existing one, but using a different MAC address.'),
+<b>Macvlan NIC</b> sets up a new network device based on an existing network device, but using a different MAC address.'),
 
   network_use_default_placeholder: T('Use default network settings'),
   network_use_default_tooltip: T('Enable to apply default network configurations.'),
