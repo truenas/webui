@@ -30,7 +30,6 @@ describe('IpmiFormComponent', () => {
   let spectator: Spectator<IpmiFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
-  let api: ApiService;
   let productType: ProductType;
 
   const slideInRef: SlideInRef<number | undefined, unknown> = {
@@ -80,6 +79,8 @@ describe('IpmiFormComponent', () => {
               id: 1,
               ip_address: '10.220.15.115',
               subnet_mask: '255.255.240.0',
+              vlan_id_enable: true,
+              vlan_id: 3,
             }] as Ipmi[];
           }
 
@@ -90,6 +91,8 @@ describe('IpmiFormComponent', () => {
             id: 1,
             ip_address: '10.220.15.114',
             subnet_mask: '255.255.240.0',
+            vlan_id_enable: true,
+            vlan_id: 2,
           }] as Ipmi[];
         }),
         mockCall('ipmi.lan.update', {
@@ -118,7 +121,6 @@ describe('IpmiFormComponent', () => {
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
-    api = spectator.inject(ApiService);
   }
 
   describe('product type is SCALE_ENTERPRISE', () => {
@@ -135,7 +137,8 @@ describe('IpmiFormComponent', () => {
         'IPv4 Default Gateway': '10.220.0.1',
         'IPv4 Address': '10.220.15.114',
         'IPv4 Netmask': '255.255.240.0',
-        'VLAN ID': '',
+        'Enable VLAN': true,
+        'VLAN ID': '2',
         Password: '',
       });
     });
@@ -153,7 +156,8 @@ describe('IpmiFormComponent', () => {
         'IPv4 Default Gateway': '10.220.0.2',
         'IPv4 Netmask': '255.255.240.0',
         Password: '',
-        'VLAN ID': '',
+        'Enable VLAN': true,
+        'VLAN ID': '3',
       });
     });
 
@@ -176,17 +180,19 @@ describe('IpmiFormComponent', () => {
         'IPv4 Default Gateway': '10.220.0.1',
         'IPv4 Address': '10.220.15.114',
         'IPv4 Netmask': '255.255.240.0',
-        'VLAN ID': '',
+        'Enable VLAN': true,
+        'VLAN ID': '2',
         Password: '',
       });
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(api.call).toHaveBeenCalledWith('ipmi.lan.update', [1, {
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('ipmi.lan.update', [1, {
         dhcp: false,
         ipaddress: '10.220.15.114',
         gateway: '10.220.0.1',
         netmask: '255.255.240.0',
+        vlan: 2,
       }]);
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Successfully saved IPMI settings.');
@@ -200,17 +206,44 @@ describe('IpmiFormComponent', () => {
         'IPv4 Default Gateway': '10.220.0.2',
         'IPv4 Netmask': '255.255.240.0',
         Password: '',
-        'VLAN ID': '',
+        'Enable VLAN': true,
+        'VLAN ID': '2',
       });
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(api.call).toHaveBeenCalledWith('ipmi.lan.update', [1, {
+      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('ipmi.lan.update', [1, {
         dhcp: false,
         ipaddress: '10.220.15.115',
         gateway: '10.220.0.2',
         netmask: '255.255.240.0',
         apply_remote: true,
+        vlan: 2,
+      }]);
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Successfully saved IPMI settings.');
+    });
+
+    it('updates remote controller data and closes modal when save is pressed with vlan disabled', async () => {
+      await form.fillForm({
+        'Remote Controller': 'Standby: TrueNAS Controller 2',
+        DHCP: false,
+        'IPv4 Address': '10.220.15.115',
+        'IPv4 Default Gateway': '10.220.0.2',
+        'IPv4 Netmask': '255.255.240.0',
+        Password: '',
+        'Enable VLAN': false,
+      });
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('ipmi.lan.update', [1, {
+        dhcp: false,
+        ipaddress: '10.220.15.115',
+        gateway: '10.220.0.2',
+        netmask: '255.255.240.0',
+        apply_remote: true,
+        vlan: null,
       }]);
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Successfully saved IPMI settings.');
@@ -230,7 +263,8 @@ describe('IpmiFormComponent', () => {
         'IPv4 Default Gateway': '10.220.0.1',
         'IPv4 Address': '10.220.15.114',
         'IPv4 Netmask': '255.255.240.0',
-        'VLAN ID': '',
+        'Enable VLAN': true,
+        'VLAN ID': '2',
         Password: '',
       });
     });
@@ -245,7 +279,7 @@ describe('IpmiFormComponent', () => {
       const flashButton = await loader.getHarness(MatButtonHarness.with({ text: 'Flash Identify Light' }));
       await flashButton.click();
 
-      expect(api.call).toHaveBeenLastCalledWith('ipmi.chassis.identify', [OnOff.On]);
+      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('ipmi.chassis.identify', [OnOff.On]);
     });
 
     it('stops flashing IPMI light when Flash Identify Light is pressed again', async () => {
@@ -254,7 +288,7 @@ describe('IpmiFormComponent', () => {
       const stopFlashing = await loader.getHarness(MatButtonHarness.with({ text: 'Stop Flashing' }));
       await stopFlashing.click();
 
-      expect(api.call).toHaveBeenLastCalledWith('ipmi.chassis.identify', [OnOff.Off]);
+      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('ipmi.chassis.identify', [OnOff.Off]);
     });
   });
 });
