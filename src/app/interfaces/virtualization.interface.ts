@@ -191,6 +191,7 @@ export interface VirtualizationImage {
   release: string;
   variant: string;
   instance_types: VirtualizationType[];
+  secureboot: boolean | null;
 }
 
 export interface VirtualizationStopParams {

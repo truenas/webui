@@ -2,6 +2,8 @@
   "": "",
   "Add Instances": "",
   "Name cannot be changed after instance is created": "",
+  "Secure Boot is required for the VM image you selected": "",
+  "Secure Boot is required to be off for the VM image you selected": "",
   "Uploading": "",
   "Volume with this name already exists.": "",
   "\n              It looks like your session has been inactive for more than {lifetime} seconds.<br>\n              For security reasons we will log you out at {time}.\n            ": "세션의 비활성화 시간이 {lifetime}초를 넘었습니다.<br />보안을 위해 {time}에 로그아웃 되었습니다.",
