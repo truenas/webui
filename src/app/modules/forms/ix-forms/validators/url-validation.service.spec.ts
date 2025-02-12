@@ -20,6 +20,7 @@ describe('UrlValidationService', () => {
       'https://example.com:8080/path',
       'ftp://ftp.example.com',
       'mqtt://server:1234',
+      'whatever://anything',
       'ws://websocket.server',
       'wss://secure.websocket.server',
     ];
