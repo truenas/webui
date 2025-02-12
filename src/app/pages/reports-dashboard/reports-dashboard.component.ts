@@ -82,8 +82,12 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
           };
         });
 
-        this.diskReports = this.allReports.filter((report) => report.name === ReportingGraphName.Disk);
-        this.otherReports = this.allReports.filter((report) => report.name !== ReportingGraphName.Disk);
+        this.diskReports = this.allReports.filter((report) => {
+          return [ReportingGraphName.Disk, ReportingGraphName.DiskTemp].includes(report.name);
+        });
+        this.otherReports = this.allReports.filter((report) => {
+          return ![ReportingGraphName.Disk, ReportingGraphName.DiskTemp].includes(report.name);
+        });
 
         this.activateTabFromUrl();
         this.cdr.markForCheck();
