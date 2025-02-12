@@ -129,6 +129,8 @@ export class TopbarComponent implements OnInit {
     this.store$.select(selectUpdateJob).pipe(untilDestroyed(this)).subscribe((jobs) => {
       const job = jobs[0];
       if (!job) {
+        this.updateIsRunning = false;
+        this.updateDialog?.close();
         return;
       }
 
@@ -136,6 +138,7 @@ export class TopbarComponent implements OnInit {
       if (job.state === JobState.Failed || job.state === JobState.Aborted) {
         this.updateIsRunning = false;
         this.systemWillRestart = false;
+        this.updateDialog?.close();
       }
 
       // When update starts on HA system, listen for 'finish', then quit listening
