@@ -40,6 +40,13 @@
     (toggleShowMobileDetails)="masterDetailView.toggleShowMobileDetails($event)"
   ></ix-installed-apps-list>
 
+  @if (masterDetailView.isMobileView()) {
+    <ng-container detail-header>
+      {{ 'Details for' | translate }}
+      {{ selectedApp?.name }}
+    </ng-container>
+  }
+
   <ng-container detail>
     @if (selectedApp && (!installedAppsList.filterString || selectedApp.name.toLowerCase().includes(installedAppsList.filterString.toLowerCase()))) {
       <ix-app-details-panel

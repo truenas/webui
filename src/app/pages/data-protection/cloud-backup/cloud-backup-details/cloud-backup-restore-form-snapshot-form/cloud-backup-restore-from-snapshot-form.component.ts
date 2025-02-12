@@ -203,7 +203,7 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
         ? [this.form.controls.excludePattern.value]
         : this.form.controls.excludedPaths.value.map((path) => path.replace(subfolder, '') || '/'),
       include: this.isIncludeFromSubfolderSelected
-        ? this.form.value.includedPaths.map((path) => path.replace(subfolder, '') || '/')
+        ? this.form.getRawValue().includedPaths.map((path) => path.replace(subfolder, '') || '/')
         : null,
     };
 

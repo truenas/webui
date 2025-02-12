@@ -62,7 +62,7 @@ export class DashboardPoolComponent implements OnChanges {
   readonly pool = input<Pool>();
   readonly rootDataset = input<Dataset>();
   readonly isLoading = input<boolean>();
-  readonly disks = input<StorageDashboardDisk[]>();
+  readonly disks = input<StorageDashboardDisk[]>([]);
 
   readonly requiredRoles = [Role.FullAdmin];
   protected readonly searchableElements = dashboardPoolElements;

@@ -111,14 +111,14 @@ export class WidgetStorageComponent {
     }
 
     const existingPool = this.pools().find((pool) => pool.name === poolName);
-    const badStatus = [
+    const badStatus = existingPool && [
       PoolStatus.Locked,
       PoolStatus.Unknown,
       PoolStatus.Offline,
       PoolStatus.Degraded,
     ].includes(existingPool.status);
 
-    if (badStatus || !existingPool.topology) {
+    if (badStatus || !existingPool?.topology) {
       return 2;
     }
 

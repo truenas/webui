@@ -1,5 +1,6 @@
 {
   "": "",
+  "Add Instances": "",
   "Name cannot be changed after instance is created": "",
   "Secure Boot is required for the VM image you selected": "",
   "Secure Boot is required to be off for the VM image you selected": "",
@@ -2339,7 +2340,6 @@
   "Instance Protocol": "인스턴스 프로토콜",
   "Instance Shell": "인스턴스 셸",
   "Instance created": "인스턴스 생성함",
-  "Instance is not container": "컨테이너가 아닌 인스턴스",
   "Instance is not running": "실행하지 않은 인스턴스",
   "Instance must be stopped to add TPM.": "TPM을 추가하려면 인스턴스를 중단해야 합니다.",
   "Instance must be stopped to update VNC.": "VNC를 갱신하려면 인스턴스를 중단해야 합니다.",
