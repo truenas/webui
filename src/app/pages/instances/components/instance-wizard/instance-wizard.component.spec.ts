@@ -113,6 +113,7 @@ describe('InstanceWizardComponent', () => {
           afterClosed: () => of({
             id: 'almalinux/8/cloud',
             label: 'Almalinux 8 Cloud',
+            secureboot: true,
           } as VirtualizationImageWithId),
         })),
       }),

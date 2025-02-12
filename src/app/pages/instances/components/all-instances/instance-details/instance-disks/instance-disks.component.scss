@@ -5,7 +5,15 @@
 }
 
 .root-disk-size {
+  display: flex;
   margin-bottom: 6px;
+
+  .action {
+    color: var(--primary);
+    cursor: pointer;
+    margin-left: auto;
+    text-decoration: underline;
+  }
 }
 
 .label {
