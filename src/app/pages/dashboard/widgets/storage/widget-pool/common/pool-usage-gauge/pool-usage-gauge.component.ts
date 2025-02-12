@@ -52,7 +52,7 @@ export class PoolUsageGaugeComponent implements OnInit {
   protected disks = toSignal(toObservable(this.pool).pipe(
     filter(Boolean),
     switchMap((pool) => this.resources.getDisksByPoolId(pool.name)),
-  ));
+  ), { initialValue: [] });
 
   protected rootDataset = toSignal(toObservable(this.pool).pipe(
     filter(Boolean),

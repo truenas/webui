@@ -128,7 +128,7 @@ export class AcmednsFormComponent implements OnInit {
         this.setAuthenticatorOptions(schemas);
         this.createAuthenticatorControls(schemas);
 
-        if (!this.isNew) {
+        if (this.editingAcmedns) {
           this.form.patchValue(this.editingAcmedns);
         }
 

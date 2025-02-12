@@ -213,9 +213,10 @@ export class GroupFormComponent implements OnInit {
   private togglePrivilegesForGroup(groupId: number): Observable<Privilege[]> {
     const requests$: Observable<Privilege>[] = [];
 
-    if (this.form.value.privileges) {
+    const priviliges = this.form.value.privileges;
+    if (priviliges) {
       const privileges = this.privilegesList
-        .filter((privilege) => this.form.value.privileges.some((privilegeId) => privilege.id === privilegeId));
+        .filter((privilege) => priviliges.some((privilegeId) => privilege.id === privilegeId));
 
       privileges.forEach((privilege) => {
         requests$.push(
@@ -258,7 +259,8 @@ export class GroupFormComponent implements OnInit {
       )
       .subscribe((privileges) => {
         this.initialGroupRelatedPrivilegesList = privileges.filter((privilege) => {
-          return privilege.local_groups.map((group) => group.gid).includes(this.editingGroup?.gid);
+          return this.editingGroup?.gid
+            && privilege.local_groups.map((group) => group.gid).includes(this.editingGroup?.gid);
         });
 
         this.privilegesList = privileges;

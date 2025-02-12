@@ -21,7 +21,7 @@
               [ixTest]="getItemName(item)"
               [routerLink]="getRouterLink(item.state)"
               [name]="getItemName(item)"
-              [matTooltip]="isSidenavCollapsed() ? (item.tooltip | translate) : null"
+              [matTooltip]="(isSidenavCollapsed() && item.tooltip) ? (item.tooltip | translate) : null"
               (click)="closeMenu()"
             >
               <ix-icon [name]="item.icon"></ix-icon>
@@ -33,7 +33,7 @@
               matTooltipPosition="right"
               [ixTest]="getItemName(item)"
               [name]="getItemName(item)"
-              [matTooltip]="isSidenavCollapsed() ? (item.tooltip | translate) : null"
+              [matTooltip]="(isSidenavCollapsed() && item.tooltip) ? (item.tooltip | translate) : null"
               (click)="toggleMenu(item.state, item.sub || [])"
               (keyup.enter)="toggleMenu(item.state, item.sub || [])"
               >

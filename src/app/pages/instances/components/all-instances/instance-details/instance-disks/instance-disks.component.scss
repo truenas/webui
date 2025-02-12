@@ -1,0 +1,22 @@
+.disk {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.root-disk-size {
+  display: flex;
+  margin-bottom: 6px;
+
+  .action {
+    color: var(--primary);
+    cursor: pointer;
+    margin-left: auto;
+    text-decoration: underline;
+  }
+}
+
+.label {
+  font-weight: bold;
+  margin-right: 2px;
+}

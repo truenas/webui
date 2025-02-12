@@ -113,7 +113,7 @@ export class ServiceNfsComponent implements OnInit {
       return [
         ...new Set<string>([
           ...config.bindip,
-          ...options.map((option) => option.value.toString()),
+          ...options.map((option) => String(option.value)),
         ]),
       ].map((value) => ({ label: value, value }));
     }),
