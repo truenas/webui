@@ -18,6 +18,13 @@
         <span class="value">
           {{ instance().root_disk_size | ixFileSize }}
         </span>
+        <a
+          class="action"
+          ixTest="increase-root-disk-size"
+          (click)="showRootDiskIncreaseDialog()"
+        >
+          {{ 'Increase' | translate }}
+        </a>
       </div>
     }
 
