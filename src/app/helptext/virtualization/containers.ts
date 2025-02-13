@@ -18,8 +18,8 @@ Ideal for scalable applications.<br /><br />\
 <b>Why choose VM?</b><br />\
 Choose a VM for full OS isolation, kernel independence, and running diverse OS types.'),
 
-  cpu_memory_tooltip: T('<b>CPU Configuration</b><br />Enter number of cores or multiple values or ranges to\
-set CPU topology. Example: 1-2,5,9-11'),
+  cpu_memory_tooltip: T('<b>CPU Configuration</b><br />Enter the number of cores. Use multiple values\
+ or ranges to set the CPU topology.<br />Example: 1-2, 5, 9-11.'),
 
   cpu_placeholder: T('CPU Configuration'),
   cpu_tooltip: T('Enter number of cores or multiple values or ranges to set CPU topology. Example: 1-2,5,9-11'),
