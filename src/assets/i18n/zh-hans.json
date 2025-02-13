@@ -52,6 +52,7 @@
   "Enable General Purpose OS STIG compatibility mode": "",
   "Enable VLAN": "",
   "Enable VNC": "",
+  "Enable iSCSI Extensions for RDMA (iSER)": "",
   "Enable or disable NICs.": "",
   "Enable or disable the USB device for your container.": "",
   "Enable this mode to enhance system security to meet US federal government security requirements. Note that enabling STIG mode will restrict some functionality.": "",

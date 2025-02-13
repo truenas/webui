@@ -167,6 +167,7 @@
   "Enable Outlook OAuth authentication.": "",
   "Enable VLAN": "",
   "Enable VNC": "",
+  "Enable iSCSI Extensions for RDMA (iSER)": "",
   "Enable or disable NICs.": "",
   "Enable or disable the USB device for your container.": "",
   "Enable server support for NFSv3 or NFSv4 or both NFSv3 and NFSv4 clients.": "",
