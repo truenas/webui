@@ -1829,6 +1829,7 @@
   "Failover Write": "",
   "Failover is administratively disabled.": "",
   "Failover is recommended for new FIPS setting to take effect. Would you like to failover now?": "",
+  "Failover is unhealthy. Rebooting now will cause a production outage.": "",
   "Fast Storage": "",
   "Fatal error! Check logs.": "",
   "Faulted": "",

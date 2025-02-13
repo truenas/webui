@@ -1452,6 +1452,7 @@
   "Failover Read": "",
   "Failover Write": "",
   "Failover is recommended for new FIPS setting to take effect. Would you like to failover now?": "",
+  "Failover is unhealthy. Rebooting now will cause a production outage.": "",
   "Fast Storage": "",
   "Fatal error! Check logs.": "",
   "Faulted": "",

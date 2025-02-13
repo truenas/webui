@@ -63,6 +63,7 @@
   "Expires on {date}": "",
   "Failed to configure certificate in system UI": "",
   "Failed to renew certificate": "",
+  "Failover is unhealthy. Rebooting now will cause a production outage.": "",
   "Finish": "",
   "Generate One-Time Password": "",
   "Generate Temporary One-Time Password": "",
