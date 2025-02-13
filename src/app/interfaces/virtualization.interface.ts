@@ -91,6 +91,7 @@ export interface UpdateVirtualizationInstance {
   vnc_port?: number | null;
   secure_boot?: boolean;
   vnc_password?: string | null;
+  root_disk_size?: number;
 }
 
 export type VirtualizationDevice =
@@ -191,6 +192,7 @@ export interface VirtualizationImage {
   release: string;
   variant: string;
   instance_types: VirtualizationType[];
+  secureboot: boolean | null;
 }
 
 export interface VirtualizationStopParams {
