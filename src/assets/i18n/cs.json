@@ -5,7 +5,7 @@
   "<a href=\"https://tools.ietf.org/html/rfc8095\" target=\"_blank\">Transport Protocol</a> for the remote system log server connection. Choosing Transport Layer Security (TLS) also requires selecting a preconfigured system Certificate.": "",
   "<a href=\"https://www.ixsystems.com/support/truenas-arrays/\" target=\"_blank\"> TrueNAS Licensing</a> - Learn more about enterprise-grade support.": "",
   "<a href=\"https://www.truenas.com/docs/hub/\" target=\"_blank\"> TrueNAS Documentation Hub</a> - Read and contribute to the open-source documentation.": "",
-  "<b>CPU Configuration</b><br />Enter number of cores or multiple values or ranges toset CPU topology. Example: 1-2,5,9-11": "",
+  "<b>CPU Configuration</b><br />Enter the number of cores. Use multiple values or ranges to set the CPU topology.<br />Example: 1-2, 5, 9-11.": "",
   "<b>Copy & Paste</b> <br/>\n                  Context menu copy and paste operations are disabled in the Shell. Copy and paste shortcuts for Mac are <i>Command+C</i> and <i>Command+V</i>. For most operating systems, use <i>Ctrl+Insert</i> to copy and <i>Shift+Insert</i> to paste.<br/><br/>\n                  <b>Kill Process</b> <br/>\n                  Kill process shortcut is <i>Ctrl+C</i>.": "",
   "<b>SET</b> will changes all destination datasets to <code>readonly=on</code> after finishing the replication. <br><b>REQUIRE</b> stops replication unless all existing destination datasets to have the property <code>readonly=on</code>. <br><b>IGNORE</b> disables checking the <code>readonly</code> property during replication.": "",
   "<b>SYNC</b>: Files on the destination are <i><u>changed</u></i> to match those on the source. If a file does not exist on the source, it is also <i><u>deleted</u></i> from the destination.": "",
