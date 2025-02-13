@@ -3199,6 +3199,8 @@
   "Section Help": "",
   "Secure Boot": "",
   "Secure Boot ensures that only trusted, signed software runs during a system’s startup process. May be incompatible with some images.": "",
+  "Secure Boot is required for the VM image you selected": "",
+  "Secure Boot is required to be off for the VM image you selected": "",
   "Secure data within this dataset. Data is unusable until      unlocked with an encryption key or passphrase. If parent dataset has encryption enabled,     it is not possible to disable this option.": "",
   "Secure data within this dataset. Data is unusable until      unlocked with an encryption key or passphrase. If parent dataset has encryption enabled, it is      not possible to disable this option.": "",
   "Security": "",

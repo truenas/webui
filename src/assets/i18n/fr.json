@@ -616,6 +616,8 @@
   "Secret Encryption Key": "",
   "Section Help": "",
   "Secure Boot": "",
+  "Secure Boot is required for the VM image you selected": "",
+  "Secure Boot is required to be off for the VM image you selected": "",
   "Select": "",
   "Select All": "",
   "Select ISO": "",

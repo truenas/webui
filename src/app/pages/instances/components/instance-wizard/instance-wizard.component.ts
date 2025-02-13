@@ -185,6 +185,16 @@ export class InstanceWizardComponent {
     return this.authService.hasRole(this.requiredRoles);
   }
 
+  get secureBootTooltip(): string {
+    if (this.form.controls.secure_boot.disabled) {
+      return this.form.controls.secure_boot.value
+        ? this.translate.instant(containersHelptext.secure_boot_on_required_tooltip)
+        : this.translate.instant(containersHelptext.secure_boot_off_required_tooltip);
+    }
+
+    return this.translate.instant(containersHelptext.secure_boot_tooltip);
+  }
+
   protected readonly instanceType = signal<VirtualizationType>(this.form.value.instance_type);
   protected readonly isContainer = computed(() => this.instanceType() === VirtualizationType.Container);
   protected readonly isVm = computed(() => this.instanceType() === VirtualizationType.Vm);
@@ -238,6 +248,15 @@ export class InstanceWizardComponent {
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe((image: VirtualizationImageWithId) => {
         this.form.controls.image.setValue(image.id);
+
+        if (this.isVm()) {
+          if (typeof image.secureboot === 'boolean' && image.secureboot !== null) {
+            this.form.controls.secure_boot.setValue(image.secureboot);
+            this.form.controls.secure_boot.disable();
+          } else {
+            this.form.controls.secure_boot.enable();
+          }
+        }
       });
   }
 
