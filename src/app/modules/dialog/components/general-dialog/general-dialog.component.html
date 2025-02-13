@@ -16,21 +16,23 @@
   </div>
 </div>
 <div mat-dialog-actions>
-  @if (!conf.hideCancel) {
+  @if (!conf.hideCancel && conf.cancelBtnMsg) {
     <button
       mat-button
       ixTest="cancel"
       (click)="dialogRef.close(false)"
     >
-      {{ (conf.cancelBtnMsg | translate) || ('Cancel' | translate) }}
+      {{ conf.cancelBtnMsg | translate }}
     </button>
   }
-  <button
-    mat-button
-    color="primary"
-    ixTest="close"
-    (click)="dialogRef.close(true)"
-  >
-    {{ (conf.confirmBtnMsg | translate) || ('Close' | translate) }}
-  </button>
+  @if (conf.confirmBtnMsg) {
+    <button
+      mat-button
+      color="primary"
+      ixTest="close"
+      (click)="dialogRef.close(true)"
+    >
+      {{ conf.confirmBtnMsg | translate }}
+    </button>
+  }
 </div>

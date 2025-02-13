@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject,
   signal,
 } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogClose,
@@ -78,7 +78,7 @@ export class ManualTestDialogComponent {
   protected readonly Role = Role;
 
   constructor(
-    private formBuilder: FormBuilder,
+    private formBuilder: NonNullableFormBuilder,
     private translate: TranslateService,
     @Inject(MAT_DIALOG_DATA) private params: ManualTestDialogParams,
     public dialogRef: MatDialogRef<ManualTestDialogComponent>,
@@ -92,7 +92,7 @@ export class ManualTestDialogComponent {
     this.isSubmitted.set(true);
     const params = this.selectedDisksWithSmartSupport.map((disk) => ({
       identifier: disk.identifier,
-      type: this.form.value.type,
+      type: this.form.getRawValue().type,
     }));
 
     this.api.call('smart.test.manual_test', [params])

@@ -124,7 +124,7 @@ export class SnmpTrapServiceComponent extends BaseAlertServiceForm {
   }
 
   override getSubmitAttributes(): AlertServiceEdit['attributes'] {
-    const values = this.form.value;
+    const values = this.form.getRawValue();
     let attributes: AlertServiceEdit['attributes'] = {
       host: values.host,
       port: values.port,

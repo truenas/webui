@@ -200,7 +200,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
         next: (app) => {
           this.setAppForCreation({
             ...app,
-            schema: app.versions[app.latest_version].schema,
+            schema: app.versions?.[app.latest_version]?.schema,
           });
           this.afterAppLoaded();
         },
@@ -349,7 +349,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
       hideVersion = true;
     }
     const versionKeys: string[] = [];
-    Object.keys(this.catalogApp?.versions).forEach((versionKey) => {
+    Object.keys(this.catalogApp?.versions || {}).forEach((versionKey) => {
       if (this.catalogApp.versions[versionKey].healthy) {
         versionKeys.push(versionKey);
       }

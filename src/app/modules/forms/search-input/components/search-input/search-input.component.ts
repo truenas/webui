@@ -23,7 +23,7 @@ import {
 export class SearchInputComponent<T> implements OnChanges {
   readonly allowAdvanced = input(true);
   readonly properties = input<SearchProperty<T>[]>([]);
-  readonly query = model<SearchQuery<T>>();
+  readonly query = model.required<SearchQuery<T>>();
   readonly advancedSearchPlaceholder = input<string>('');
 
   readonly queryChange = output<SearchQuery<T>>();

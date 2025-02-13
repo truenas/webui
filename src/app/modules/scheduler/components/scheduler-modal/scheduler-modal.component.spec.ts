@@ -4,6 +4,7 @@ import { signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
+import { MatCalendar } from '@angular/material/datepicker';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
@@ -80,7 +81,7 @@ describe('SchedulerModalComponent', () => {
 
   beforeEach(() => {
     // TODO: Workaround for https://github.com/help-me-mom/ng-mocks/issues/8634
-    MockInstance(SchedulerPreviewColumnComponent, 'calendar', signal(null));
+    MockInstance(SchedulerPreviewColumnComponent, 'calendar', signal({} as MatCalendar<Date>));
   });
 
   describe('base operations', () => {

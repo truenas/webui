@@ -85,7 +85,7 @@ export class DatasetAclEditorComponent implements OnInit {
   });
 
   get isNfsAcl(): boolean {
-    return this.acl.acltype === AclType.Nfs4;
+    return this.acl?.acltype === AclType.Nfs4;
   }
 
   get isHomeShare(): boolean {

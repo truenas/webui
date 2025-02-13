@@ -152,7 +152,7 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
 
   onRemove(itemToRemove: string): void {
     if (this.resolveValue() && this.resolvedOptions?.length) {
-      itemToRemove = this.resolvedOptions.find((option) => option.label === itemToRemove)?.value.toString();
+      itemToRemove = String(this.resolvedOptions.find((option) => option.label === itemToRemove)?.value);
     }
     const updatedValues = this.values.filter((value) => String(value) !== String(itemToRemove));
     this.updateValues(updatedValues);

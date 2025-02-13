@@ -10,9 +10,9 @@
       <ix-app-notes-card [app]="app()"></ix-app-notes-card>
     }
     @if (
-      app().metadata?.host_mounts?.length ||
-      app().metadata?.capabilities?.length ||
-      app().metadata?.run_as_context?.length
+      app().metadata.host_mounts.length
+      || app().metadata.capabilities.length
+      || app().metadata.run_as_context.length
     ) {
       <ix-app-metadata-card
         [appMetadata]="app().metadata"
