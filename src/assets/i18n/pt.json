@@ -1024,6 +1024,7 @@
   "Failed to load datasets": "",
   "Failed to renew certificate": "",
   "Failover Group": "",
+  "Failover is unhealthy. Rebooting now will cause a production outage.": "",
   "Fast Storage": "",
   "Fatal error! Check logs.": "",
   "Feature Request": "",
