@@ -1,7 +1,7 @@
 {
   "": "",
   "...": "",
-  "<b>CPU Configuration</b><br />Enter number of cores or multiple values or ranges toset CPU topology. Example: 1-2,5,9-11": "",
+  "<b>CPU Configuration</b><br />Enter the number of cores. Use multiple values or ranges to set the CPU topology.<br />Example: 1-2, 5, 9-11.": "",
   "<b>Why choose Container?</b><br />Containers offer lightweight, efficient virtualization by sharing the host OS kernel, providing faster startup times and reduced resource usage compared to VMs. Ideal for scalable applications.<br /><br /><b>Why choose VM?</b><br />Choose a VM for full OS isolation, kernel independence, and running diverse OS types.": "",
   "API Key copied to clipboard": "",
   "Account Service Base Url": "",
