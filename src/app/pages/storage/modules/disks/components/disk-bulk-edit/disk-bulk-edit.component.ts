@@ -60,7 +60,6 @@ export class DiskBulkEditComponent {
     hddstandby: [null as DiskStandby | null],
     advpowermgmt: [null as DiskPowerLevel | null],
     togglesmart: [false],
-    smartoptions: [''],
   });
 
   readonly helptext = helptextDisks;
@@ -89,11 +88,9 @@ export class DiskBulkEditComponent {
       hddstandby: '' as DiskStandby,
       advpowermgmt: '' as DiskPowerLevel,
       togglesmart: false,
-      smartoptions: '',
     };
     const hddStandby: DiskStandby[] = [];
     const advPowerMgt: DiskPowerLevel[] = [];
-    const smartOptions: string[] = [];
 
     selectedDisks.forEach((disk) => {
       this.diskIds.push(disk.identifier);
@@ -102,7 +99,6 @@ export class DiskBulkEditComponent {
       advPowerMgt.push(disk.advpowermgmt);
       if (disk.togglesmart) {
         setForm.togglesmart = true;
-        smartOptions.push(disk.smartoptions);
       }
     });
 
@@ -119,22 +115,12 @@ export class DiskBulkEditComponent {
       setForm.advpowermgmt = null;
     }
 
-    if (smartOptions.every((val, i, arr) => val === arr[0])) {
-      setForm.smartoptions = smartOptions[0] || null;
-    } else {
-      setForm.smartoptions = null;
-    }
-
     this.form.patchValue({ ...setForm });
     this.form.controls.disknames.disable();
   }
 
   prepareDataSubmit(): [id: string, update: DiskUpdate][] {
     const data = { ...this.form.value };
-
-    if (!data.togglesmart) {
-      data.smartoptions = '';
-    }
 
     Object.keys(data).forEach((key) => {
       if (data[key as keyof typeof data] === null) {
