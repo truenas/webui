@@ -76,6 +76,7 @@ export class GlobalTargetConfigurationComponent implements OnInit {
     isns_servers: helptextSharingIscsi.globalconf_tooltip_isns_servers,
     pool_avail_threshold: helptextSharingIscsi.globalconf_tooltip_pool_avail_threshold,
     alua: helptextSharingIscsi.globalconf_tooltip_alua,
+    iser: helptextSharingIscsi.globalconf_tooltip_iser,
   };
 
   readonly requiredRoles = [Role.SharingIscsiGlobalWrite];

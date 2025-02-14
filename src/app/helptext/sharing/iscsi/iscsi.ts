@@ -132,6 +132,11 @@ export const helptextSharingIscsi = {
   globalconf_tooltip_alua: T('Do not enable ALUA on TrueNAS unless it is also supported \
     by and enabled on the client computers. ALUA only works when enabled \
     on both the client and server.'),
+  globalconf_tooltip_iser: T('Activates iSCSI Extensions for RDMA (iSER) in TrueNAS to \
+ expand the iSCSI protocol to be capable of directly transferring data into and out\
+ of SCSI memory buffers to improve performance. Enabling this is limited to TrueNAS\
+ Enterprise-licensed systems and requires the TrueNAS system and network environment\
+ have Remote Direct Memory Access (RDMA)-capable hardware.'),
 
   fieldset_extent_basic: T('Basic Info'),
   fieldset_extent_type: T('Type'),
