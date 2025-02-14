@@ -7,11 +7,14 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { map } from 'rxjs';
+import { failoverDisabledReasonLabels } from 'app/enums/failover-disabled-reason.enum';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { FipsService } from 'app/services/fips.service';
 import { AppState } from 'app/store';
+import { selectCanFailover, selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectOtherNodeRebootInfo, selectThisNodeRebootInfo } from 'app/store/reboot-info/reboot-info.selectors';
 
 @UntilDestroy()
@@ -28,6 +31,7 @@ import { selectOtherNodeRebootInfo, selectThisNodeRebootInfo } from 'app/store/r
     IxCheckboxComponent,
     MatButton,
     TestDirective,
+    MapValuePipe,
     FormActionsComponent,
   ],
 })
@@ -38,6 +42,13 @@ export class RebootRequiredDialogComponent {
 
   otherNodeRebootReasons = toSignal(this.store$.select(selectOtherNodeRebootInfo).pipe(
     map((info) => info?.reboot_required_reasons || []),
+  ));
+
+  protected readonly disabledReasonExplanations = failoverDisabledReasonLabels;
+  protected readonly isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
+  protected readonly canFailover = toSignal(this.store$.select(selectCanFailover));
+  protected readonly failoverDisabledReasons = toSignal(this.store$.select(selectHaStatus).pipe(
+    map((status) => status?.reasons || []),
   ));
 
   form = this.fb.group({
