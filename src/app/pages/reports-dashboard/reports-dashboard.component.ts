@@ -236,12 +236,14 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
 
     const visible: number[] = [];
     this.activeReports.forEach((item, index) => {
-      const [,, identifier] = item.identifiers[0].split(' | ');
-      const deviceMatch = devices.includes(identifier);
-      const metricMatch = metrics.includes(item.name);
-      const condition = deviceMatch && metricMatch;
-      if (condition) {
-        visible.push(index);
+      if (item.identifiers[0]) {
+        const [,, identifier] = item.identifiers[0].split(' | ');
+        const deviceMatch = devices.includes(identifier);
+        const metricMatch = metrics.includes(item.name);
+        const condition = deviceMatch && metricMatch;
+        if (condition) {
+          visible.push(index);
+        }
       }
     });
 
