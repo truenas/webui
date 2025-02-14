@@ -5,7 +5,7 @@
   "<b>Why choose Container?</b><br />Containers offer lightweight, efficient virtualization by sharing the host OS kernel, providing faster startup times and reduced resource usage compared to VMs. Ideal for scalable applications.<br /><br /><b>Why choose VM?</b><br />Choose a VM for full OS isolation, kernel independence, and running diverse OS types.": "",
   "API Key copied to clipboard": "",
   "Account Service Base Url": "",
-  "Activates iSCSI Extensions for RDMA (iSER) in TrueNAS to  expand the iSCSI protocol to be capable of directly transferring data into and out of SCSI memory buffers to improve performance. Enabling this is limited to TrueNAS Enterprise-licensed systems and requires the TrueNAS system and network environment have Remote Direct Memory Access (RDMA)-capable hardware.": "",
+  "Activates iSCSI Extensions for RDMA (iSER) in TrueNAS, enabling the iSCSI protocol to directly transfer data into and out of SCSI memory buffers for improved performance. Enabling is limited to TrueNAS Enterprise-licensed systems and requires the system and network environment have Remote Direct Memory Access (RDMA)-capable hardware.": "",
   "Add Docker Registry": "",
   "Add Instance": "",
   "Add Instances": "",
