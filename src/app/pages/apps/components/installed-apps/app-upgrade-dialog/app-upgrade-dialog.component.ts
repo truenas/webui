@@ -62,7 +62,7 @@ export class AppUpgradeDialogComponent {
   helptext = helptextApps;
   versionOptions = new Map<string, Version>();
   selectedVersionKey: string;
-  selectedVersion: Version;
+  selectedVersion: Version | undefined;
 
   protected readonly requiredRoles = [Role.AppsWrite];
 
@@ -87,7 +87,7 @@ export class AppUpgradeDialogComponent {
           this.versionOptions.set(availableVersion.version, {
             latest_version: availableVersion.version,
             latest_human_version: availableVersion.human_version,
-            changelog: null,
+            changelog: '',
             available_versions_for_upgrade: null,
           });
         }
@@ -100,7 +100,7 @@ export class AppUpgradeDialogComponent {
 
   onVersionOptionChanged(): void {
     this.selectedVersion = this.versionOptions.get(this.selectedVersionKey);
-    if (!this.selectedVersion.fetched) {
+    if (!this.selectedVersion?.fetched) {
       this.appService.getAppUpgradeSummary(
         this.dialogConfig.appInfo.name,
         this.selectedVersionKey,

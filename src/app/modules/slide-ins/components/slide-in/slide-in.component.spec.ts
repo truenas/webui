@@ -15,6 +15,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
+import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { CloudCredentialsSelectComponent } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.component';
 import { SlideInComponent } from 'app/modules/slide-ins/components/slide-in/slide-in.component';
@@ -46,8 +47,8 @@ describe('SlideInComponent', () => {
       { time: '13:00', bandwidth: 1024 },
       { time: '15:00' },
     ],
-    include: [],
-    exclude: [],
+    include: [] as string[],
+    exclude: [] as string[],
     transfers: 2,
     create_empty_src_dirs: true,
     follow_symlinks: true,
@@ -120,19 +121,16 @@ describe('SlideInComponent', () => {
           title: 'Http',
           buckets: false,
           bucket_title: 'Bucket',
-          task_schema: [],
-          credentials_schema: [],
-          credentials_oauth: null,
+          task_schema: [] as unknown[],
+          credentials_schema: [] as unknown[],
         },
         {
           name: CloudSyncProviderName.Mega,
           title: 'Mega',
           buckets: false,
           bucket_title: 'Bucket',
-          task_schema: [],
           credentials_schema: [],
-          credentials_oauth: null,
-        }]),
+        }] as CloudSyncProvider[]),
       ]),
       mockProvider(FilesystemService),
       mockProvider(SlideInRef, {

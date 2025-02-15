@@ -244,7 +244,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   }
 
   treeHeaderScrolled(): void {
-    this.scrollSubject.next(this.ixTreeHeader().nativeElement.scrollLeft);
+    this.scrollSubject.next(this.ixTreeHeader()?.nativeElement?.scrollLeft || 0);
   }
 
   datasetTreeScrolled(scrollLeft: number): void {

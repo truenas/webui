@@ -194,7 +194,7 @@ export class InstanceWizardComponent {
     return this.translate.instant(containersHelptext.secure_boot_tooltip);
   }
 
-  protected readonly instanceType = signal<VirtualizationType>(this.form.value.instance_type);
+  protected readonly instanceType = signal<VirtualizationType>(this.form.getRawValue().instance_type);
   protected readonly isContainer = computed(() => this.instanceType() === VirtualizationType.Container);
   protected readonly isVm = computed(() => this.instanceType() === VirtualizationType.Vm);
 

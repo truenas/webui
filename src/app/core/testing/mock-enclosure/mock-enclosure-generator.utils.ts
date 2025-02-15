@@ -44,7 +44,7 @@ export class MockEnclosureGenerator {
     };
   }
 
-  private addEnclosure(model: EnclosureModel): void {
+  private addEnclosure(model: EnclosureModel | null): void {
     const enclosure = enclosureMocks.find((mock) => mock.model === model);
 
     if (!enclosure) {

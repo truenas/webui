@@ -80,7 +80,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
       extractedEnclosuresObjects,
       (slot) => Boolean(slot.pool_info?.pool_name),
     );
-    const poolNames = map(enclosuresWithPools, (slot) => slot.pool_info.pool_name);
+    const poolNames = map(enclosuresWithPools, (slot) => slot.pool_info?.pool_name);
     const uniqPoolNames = uniq(poolNames);
     const poolNamesWithColorsByIndex = map(uniqPoolNames, (poolName, index) => {
       return [poolName, this.theme.getRgbBackgroundColorByIndex(index)];
@@ -89,7 +89,14 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
     return fromPairs(poolNamesWithColorsByIndex);
   });
 
-  readonly enclosureLabel = computed(() => getEnclosureLabel(this.selectedEnclosure()));
+  readonly enclosureLabel = computed(() => {
+    const enclosure = this.selectedEnclosure();
+    if (!enclosure) {
+      return '';
+    }
+
+    return getEnclosureLabel(enclosure);
+  });
 
   readonly hasMoreThanOneSide = computed(() => {
     return [

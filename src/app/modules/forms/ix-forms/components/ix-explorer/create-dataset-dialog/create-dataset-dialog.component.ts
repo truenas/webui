@@ -133,7 +133,7 @@ export class CreateDatasetDialogComponent implements OnInit {
       }
 
       return childName;
-    }) || []);
+    }) || []).filter((name): name is string => name !== undefined);
 
     this.form.controls.name.addValidators([
       datasetNameTooLong(this.parent.name),

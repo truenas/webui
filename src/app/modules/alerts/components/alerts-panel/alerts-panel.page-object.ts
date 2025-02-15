@@ -7,26 +7,32 @@ export class AlertsPanelPageObject {
   constructor(private spectator: Spectator<AlertsPanelComponent>) {}
 
   get unreadAlertComponents(): AlertComponent[] {
+    if (!this.unreadAlertsSection) {
+      throw new Error('Unread alerts section not found');
+    }
     return queryAllNestedDirectives(this.spectator.debugElement, this.unreadAlertsSection, AlertComponent);
   }
 
   get dismissedAlertComponents(): AlertComponent[] {
+    if (!this.dismissedAlertsSection) {
+      throw new Error('Dismissed alerts section not found');
+    }
     return queryAllNestedDirectives(this.spectator.debugElement, this.dismissedAlertsSection, AlertComponent);
   }
 
-  get dismissAllButton(): HTMLElement {
+  get dismissAllButton(): HTMLElement | null {
     return this.spectator.query(byText('Dismiss All Alerts'));
   }
 
-  get reopenAllButton(): HTMLElement {
+  get reopenAllButton(): HTMLElement | null {
     return this.spectator.query(byText('Re-Open All Alerts'));
   }
 
-  get unreadAlertsSection(): HTMLElement {
+  get unreadAlertsSection(): HTMLElement | null {
     return this.spectator.query('.unread-alerts');
   }
 
-  get dismissedAlertsSection(): HTMLElement {
+  get dismissedAlertsSection(): HTMLElement | null {
     return this.spectator.query('.dismissed-alerts');
   }
 }

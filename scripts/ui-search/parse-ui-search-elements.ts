@@ -65,7 +65,7 @@ function createUiSearchElement(
   parentKey: keyof UiSearchableElement,
   childKey: keyof UiSearchableElement,
   componentProperties: Record<string, string>,
-): UiSearchableElement {
+): UiSearchableElement | null {
   try {
     const parent = (elementConfig?.[parentKey] || elementConfig) as UiSearchableElement;
     const child = parent?.elements?.[childKey]

@@ -18,7 +18,9 @@
       <h3 class="empty-title">{{ conf().title | translate }}</h3>
       @if (conf().message && !conf().compact) {
         <p class="empty-message">
-          {{ conf().message | translate }}
+          @if (conf().message; as message) {
+            {{ message | translate }}
+          }
         </p>
       }
       @if (conf().button && !conf().compact) {
@@ -26,7 +28,7 @@
           *ixRequiresRoles="requiredRoles()"
           class="empty-action"
           mat-button
-          [ixTest]="conf().button.label"
+          [ixTest]="conf().button?.label"
           (click)="doAction()"
         >
           {{ conf().button.label | translate }}

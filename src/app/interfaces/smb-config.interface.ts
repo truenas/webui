@@ -3,7 +3,7 @@ import { BindIp } from 'app/interfaces/bind-ip.interface';
 
 export interface SmbConfig {
   aapl_extensions: boolean;
-  admin_group: string;
+  admin_group: string | null;
   bindip: BindIp[];
   cifs_SID: string;
   description: string;

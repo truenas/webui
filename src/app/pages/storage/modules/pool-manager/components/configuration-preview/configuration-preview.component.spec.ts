@@ -4,6 +4,7 @@ import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
@@ -16,7 +17,11 @@ import {
 import {
   TopologyCategoryDescriptionPipe,
 } from 'app/pages/storage/modules/pool-manager/pipes/topology-category-description.pipe';
-import { PoolManagerStore, PoolManagerTopology } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
+import {
+  PoolManagerStore,
+  PoolManagerTopology,
+  PoolManagerTopologyCategory,
+} from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 
 describe('ConfigurationPreviewComponent', () => {
   let spectator: Spectator<ConfigurationPreviewComponent>;
@@ -41,7 +46,7 @@ describe('ConfigurationPreviewComponent', () => {
             layout: CreateVdevLayout.Stripe,
             width: 3,
             diskType: DiskType.Hdd,
-            vdevs: [[{}], [{}]],
+            vdevs: [[{} as DetailsDisk], [{} as DetailsDisk]],
           },
           [VdevType.Log]: {
             diskSize: 3 * GiB,
@@ -49,7 +54,7 @@ describe('ConfigurationPreviewComponent', () => {
             layout: CreateVdevLayout.Raidz1,
             width: 3,
             diskType: DiskType.Hdd,
-            vdevs: [[{}], [{}]],
+            vdevs: [[{} as DetailsDisk], [{} as DetailsDisk]],
           },
           [VdevType.Spare]: {
             diskSize: 3 * GiB,
@@ -58,7 +63,7 @@ describe('ConfigurationPreviewComponent', () => {
             width: 3,
             diskType: DiskType.Hdd,
             hasCustomDiskSelection: true,
-            vdevs: [[{}], [{}]],
+            vdevs: [[{} as DetailsDisk], [{} as DetailsDisk]],
           },
           [VdevType.Cache]: {
             diskSize: 5 * GiB,
@@ -66,7 +71,7 @@ describe('ConfigurationPreviewComponent', () => {
             layout: CreateVdevLayout.Raidz1,
             width: 2,
             diskType: DiskType.Hdd,
-            vdevs: [[{}], [{}]],
+            vdevs: [[{} as DetailsDisk], [{} as DetailsDisk]],
           },
           [VdevType.Dedup]: {
             diskSize: 5 * GiB,
@@ -74,7 +79,7 @@ describe('ConfigurationPreviewComponent', () => {
             layout: CreateVdevLayout.Raidz1,
             width: 0,
             diskType: DiskType.Hdd,
-            vdevs: [],
+            vdevs: [] as DetailsDisk[][],
           },
           [VdevType.Special]: {
             diskSize: 5 * GiB,
@@ -82,8 +87,8 @@ describe('ConfigurationPreviewComponent', () => {
             layout: CreateVdevLayout.Raidz1,
             width: 0,
             diskType: DiskType.Hdd,
-            vdevs: [],
-          },
+            vdevs: [] as DetailsDisk[][],
+          } as PoolManagerTopologyCategory,
         } as PoolManagerTopology),
       }),
     ],

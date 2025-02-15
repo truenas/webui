@@ -3,7 +3,7 @@ import { createComponentFactory } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
 import { ImgFallbackDirective } from 'ngx-img-fallback';
 import { NgxPopperjsContentComponent, NgxPopperjsDirective, NgxPopperjsLooseDirective } from 'ngx-popperjs';
-import { App } from 'app/interfaces/app.interface';
+import { App, Capability, HostMount } from 'app/interfaces/app.interface';
 import { AppDetailsPanelComponent } from 'app/pages/apps/components/installed-apps/app-details-panel/app-details-panel.component';
 import { AppInfoCardComponent } from 'app/pages/apps/components/installed-apps/app-info-card/app-info-card.component';
 import { AppMetadataCardComponent } from 'app/pages/apps/components/installed-apps/app-metadata-card/app-metadata-card.component';
@@ -18,6 +18,8 @@ describe('AppDetailsPanelComponent', () => {
       run_as_context: [{
         description: 'Run as context',
       }],
+      host_mounts: [] as HostMount[],
+      capabilities: [] as Capability[],
     },
   } as App;
 

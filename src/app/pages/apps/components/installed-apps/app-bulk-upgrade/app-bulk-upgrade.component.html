@@ -48,7 +48,7 @@
           }
 
           @if (hasErrors(bulkItem.key)) {
-            <span>{{ bulkItem.value.message | translate }}</span>
+            <span>{{ bulkItem.value.message ? (bulkItem.value.message | translate) : '' }}</span>
           }
 
           <mat-accordion class="details-list" displayMode="flat">

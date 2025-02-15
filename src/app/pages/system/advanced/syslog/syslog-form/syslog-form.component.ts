@@ -135,8 +135,8 @@ export class SyslogFormComponent implements OnInit {
     if (values.syslog_transport === SyslogTransport.Tls) {
       configUpdate = {
         ...configUpdate,
-        syslog_tls_certificate: parseInt(values.syslog_tls_certificate),
-        syslog_tls_certificate_authority: parseInt(values.syslog_tls_certificate_authority),
+        syslog_tls_certificate: parseInt(values.syslog_tls_certificate || ''),
+        syslog_tls_certificate_authority: parseInt(values.syslog_tls_certificate_authority || ''),
       };
     }
 

@@ -249,8 +249,9 @@ export class QueryParserService<T> {
     value: LiteralValue | LiteralValue[],
   ): string | string[] {
     const parseValue = (textValue: LiteralValue): string => {
+      const enumValue = property.enumMap?.get(textValue);
       return (
-        property.enumMap.get(textValue) ? this.translate.instant(property.enumMap.get(textValue)) : textValue
+        enumValue ? this.translate.instant(enumValue) : textValue
       ) as string;
     };
 

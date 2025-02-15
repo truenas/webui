@@ -104,7 +104,7 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
       distinctUntilChanged(),
       untilDestroyed(this),
     ).subscribe((searchQuery) => {
-      this.appsFilterStore.applySearchQuery(searchQuery);
+      this.appsFilterStore.applySearchQuery(searchQuery || '');
     });
     this.appsFilterStore.filterValues$.pipe(take(1), untilDestroyed(this)).subscribe({
       next: (filterValues) => {

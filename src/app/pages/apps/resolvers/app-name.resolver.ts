@@ -4,8 +4,8 @@ import {
 } from '@angular/router';
 import { Observable, of } from 'rxjs';
 
-export const appNameResolver: ResolveFn<string> = (
+export const appNameResolver: ResolveFn<string | null> = (
   route: ActivatedRouteSnapshot,
-): Observable<string> => {
+): Observable<string | null> => {
   return of(route.paramMap.get('appId'));
 };

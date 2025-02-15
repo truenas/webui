@@ -21,12 +21,12 @@ import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 describe('SigninComponent', () => {
   let spectator: Spectator<SigninComponent>;
-  const wasAdminSet$ = new BehaviorSubject<boolean>(undefined);
-  const canLogin$ = new BehaviorSubject<boolean>(undefined);
-  const isConnected$ = new BehaviorSubject<boolean>(undefined);
-  const loginBanner$ = new BehaviorSubject<string>(undefined);
-  const isTokenWithinTimeline$ = new BehaviorSubject<boolean>(undefined);
-  const isConnectedDelayed$ = new BehaviorSubject<boolean>(null);
+  const wasAdminSet$ = new BehaviorSubject<boolean>(true);
+  const canLogin$ = new BehaviorSubject<boolean>(true);
+  const isConnected$ = new BehaviorSubject<boolean>(true);
+  const loginBanner$ = new BehaviorSubject<string>('');
+  const isTokenWithinTimeline$ = new BehaviorSubject<boolean>(true);
+  const isConnectedDelayed$ = new BehaviorSubject<boolean>(false);
 
   const createComponent = createComponentFactory({
     component: SigninComponent,
@@ -110,7 +110,7 @@ describe('SigninComponent', () => {
     });
 
     it('shows the logo when waiting for connection status', () => {
-      isConnectedDelayed$.next(null);
+      isConnectedDelayed$.next(true);
       spectator.detectChanges();
 
       const logo = spectator.query('.logo-wrapper ix-icon');

@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -56,7 +56,7 @@ export class DiskBulkEditComponent {
   diskIds: string[] = [];
   isLoading = false;
   form = this.fb.group({
-    disknames: [null as string[] | null],
+    disknames: [[] as string[]],
     hddstandby: [null as DiskStandby | null],
     advpowermgmt: [null as DiskPowerLevel | null],
     togglesmart: [false],
@@ -69,7 +69,7 @@ export class DiskBulkEditComponent {
   readonly advpowermgmtOptions$ = of(translateOptions(this.translate, this.helptext.disk_form_advpowermgmt_options));
 
   constructor(
-    private fb: FormBuilder,
+    private fb: NonNullableFormBuilder,
     private dialogService: DialogService,
     private api: ApiService,
     private translate: TranslateService,
@@ -84,7 +84,7 @@ export class DiskBulkEditComponent {
   }
 
   setFormDiskBulk(selectedDisks: Disk[]): void {
-    const setForm: DiskBulkEditComponent['form']['value'] = {
+    const setForm: Required<DiskBulkEditComponent['form']['value']> = {
       disknames: [],
       hddstandby: '' as DiskStandby,
       advpowermgmt: '' as DiskPowerLevel,

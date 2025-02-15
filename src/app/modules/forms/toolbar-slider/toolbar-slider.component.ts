@@ -20,8 +20,8 @@ export class ToolbarSliderComponent {
   readonly min = input<number>();
   readonly max = input<number>();
   readonly step = input<number>(1);
-  readonly label = input<number>(1);
-  readonly name = input<number>(1);
+  readonly label = input<string>();
+  readonly name = input<string>();
 
   readonly value = model.required<number>();
 

@@ -52,6 +52,6 @@ describe('InstanceIdmapComponent', () => {
       type: VirtualizationType.Container,
     } as VirtualizationInstance);
 
-    expect(spectator.query('mat-card-content').textContent.trim()).toBe('Instance is not running');
+    expect(spectator.query('mat-card-content')!.textContent!.trim()).toBe('Instance is not running');
   });
 });

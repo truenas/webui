@@ -12,7 +12,10 @@ describe('TopologyItemIconComponent', () => {
   let spectator: Spectator<TopologyItemIconComponent>;
   const diskSsd = { type: DiskType.Ssd } as Disk;
   const diskHdd = { type: DiskType.Hdd } as Disk;
-  const vdevDisk = { type: TopologyItemType.Disk, children: [] } as TopologyDisk;
+  const vdevDisk = {
+    type: TopologyItemType.Disk,
+    children: [] as TopologyDisk[],
+  } as TopologyDisk;
   const vdevMirror = { type: TopologyItemType.Mirror, children: [{}] } as VDev;
 
   const createComponent = createComponentFactory({

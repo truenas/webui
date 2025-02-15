@@ -147,7 +147,7 @@ export class AppBulkUpgradeComponent {
       this.bulkItems.set(name, { ...this.bulkItems.get(name), state: BulkListItemState.Running });
       const params: AppUpgradeParams = [name];
       if (this.expandedItems().includes(name)) {
-        params.push({ app_version: version });
+        params.push({ app_version: version || undefined });
       }
       return params;
     });

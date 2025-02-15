@@ -291,7 +291,7 @@ export class EnclosureSvgComponent implements OnDestroy {
       return;
     }
 
-    const driveTrays = this.svgContainer().nativeElement.querySelectorAll<SVGGElement>('svg [id^="DRIVE_CAGE_"]');
+    const driveTrays = this.svgContainer()?.nativeElement?.querySelectorAll<SVGGElement>('svg [id^="DRIVE_CAGE_"]');
     driveTrays.forEach((tray) => {
       const slot = this.getSlotForTray(tray);
       if (!slot) {

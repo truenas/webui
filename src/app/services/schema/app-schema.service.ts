@@ -256,7 +256,7 @@ export class AppSchemaService {
       return crontabToSchedule(data.toString()) as SerializeFormValue;
     }
     if (Array.isArray(data)) {
-      return this.serializeFormList(data, appSchema, schemaNode, schemaPathToNode);
+      return this.serializeFormList(data, appSchema, schemaNode || undefined, schemaPathToNode);
     }
     if (typeof data === 'object') {
       return this.serializeFormGroup(data as HierarchicalObjectMap<ChartFormValue>, appSchema, schemaPathToNode);
@@ -553,11 +553,11 @@ export class AppSchemaService {
   private handleAddFormControlWithSchemaVisible(payload: CommonSchemaAddControl): void {
     const { schema, subscription } = payload;
 
-    const relations: Relation[] = schema.show_if.map((item) => ({
+    const relations: Relation[] = schema.show_if?.map((item) => ({
       fieldName: item[0],
       operatorName: item[1],
       operatorValue: item[2],
-    }));
+    })) || [];
 
     relations.forEach((relation) => {
       if (relation.operatorName === '=') {

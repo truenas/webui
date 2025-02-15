@@ -12,19 +12,19 @@ export class AlertPageObject {
     this.loader = TestbedHarnessEnvironment.loader(this.spectator.fixture);
   }
 
-  get levelElement(): HTMLElement {
+  get levelElement(): HTMLElement | null {
     return this.spectator.query('.alert-level');
   }
 
-  get messageElement(): HTMLElement {
+  get messageElement(): HTMLElement | null {
     return this.spectator.query('.alert-message');
   }
 
-  get dateTimeElement(): HTMLElement {
+  get dateTimeElement(): HTMLElement | null {
     return this.spectator.query('.alert-time');
   }
 
-  get nodeElement(): HTMLElement {
+  get nodeElement(): HTMLElement | null {
     return this.spectator.query('.alert-node');
   }
 
@@ -34,11 +34,17 @@ export class AlertPageObject {
 
   clickDismissLink(): void {
     const link = this.spectator.query(byText('Dismiss'));
+    if (!link) {
+      throw new Error('Dismiss link not found');
+    }
     this.spectator.click(link);
   }
 
   clickReopenLink(): void {
     const link = this.spectator.query(byText('Re-Open'));
+    if (!link) {
+      throw new Error('Re-Open link not found');
+    }
     this.spectator.click(link);
   }
 }

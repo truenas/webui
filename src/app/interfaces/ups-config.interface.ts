@@ -11,7 +11,7 @@ export interface UpsConfig {
   mode: UpsMode;
   monpwd: string;
   monuser: string;
-  nocommwarntime: number;
+  nocommwarntime: number | null;
   options: string;
   optionsupsd: string;
   port: string;

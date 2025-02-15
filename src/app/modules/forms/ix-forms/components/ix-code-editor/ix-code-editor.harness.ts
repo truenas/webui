@@ -30,13 +30,12 @@ export class IxCodeEditorHarness extends ComponentHarness implements IxFormContr
   getInputArea = this.locatorFor('.cm-content');
 
   async getValue(): Promise<string> {
-    const editor = EditorView.findFromDOM(document.querySelector('.input-container'));
-    return Promise.resolve(editor.state.doc.toString());
+    return Promise.resolve(this.getEditor().state.doc.toString());
   }
 
   async setValue(value: string): Promise<void> {
     const inputArea = await this.getInputArea();
-    await inputArea.setContenteditableValue(value);
+    await inputArea.setContenteditableValue?.(value);
 
     await inputArea.dispatchEvent('input');
 
@@ -49,7 +48,20 @@ export class IxCodeEditorHarness extends ComponentHarness implements IxFormContr
   }
 
   isDisabled(): Promise<boolean> {
-    const editor = EditorView.findFromDOM(document.querySelector('.input-container'));
-    return Promise.resolve(editor.state.readOnly);
+    return Promise.resolve(this.getEditor().state.readOnly);
+  }
+
+  private getEditor(): EditorView {
+    const container = document.querySelector<HTMLElement>('.input-container');
+    if (!container) {
+      throw new Error('Input container not found');
+    }
+
+    const editor = EditorView.findFromDOM(container);
+    if (!editor) {
+      throw new Error('Editor not found');
+    }
+
+    return editor;
   }
 }
