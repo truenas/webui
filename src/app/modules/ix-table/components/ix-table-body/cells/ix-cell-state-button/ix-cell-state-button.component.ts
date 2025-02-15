@@ -56,14 +56,7 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> implements
   errorHandler: ErrorHandlerService = inject(ErrorHandlerService);
 
   private readonly rowUpdateEffect = effect(() => {
-    const row = this.row();
-    const job = !row || !this.getJob ? undefined : this.getJob(row);
-
-    if (!job) {
-      return;
-    }
-
-    this.state.set(job.state);
+    this.setupRow();
   });
 
   getJob: (row: T) => Job | null;
@@ -73,6 +66,10 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> implements
   state = signal<JobState | null>(null);
 
   ngOnInit(): void {
+    this.setupRow();
+  }
+
+  setupRow(): void {
     if (this.getJob) {
       const job = this.getJob(this.row());
       this.job.set(job);
