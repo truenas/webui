@@ -6,7 +6,7 @@ import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialogRef, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { finalize } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
 import { ticketAcceptedFiles } from 'app/enums/file-ticket.enum';
@@ -67,8 +67,17 @@ export class FileReviewComponent {
   });
 
   protected readonly messagePlaceholder = helptext.review.message.placeholder;
+  protected readonly messageAdditionalPlaceholder = helptext.review.message.placeholder_additional;
   protected readonly voteForNewFeaturesText = helptext.review.vote_for_new_features;
   protected readonly acceptedFiles = ticketAcceptedFiles;
+
+  protected get messagePlaceholderText(): string {
+    if (this.form.controls.rating.value === maxRatingValue) {
+      return `${this.messagePlaceholder}\n\n${this.messageAdditionalPlaceholder}`;
+    }
+
+    return this.messagePlaceholder;
+  }
 
   constructor(
     private formBuilder: FormBuilder,
@@ -76,6 +85,7 @@ export class FileReviewComponent {
     private imageValidator: ImageValidatorService,
     private feedbackService: FeedbackService,
     private systemGeneralService: SystemGeneralService,
+    private translate: TranslateService,
   ) {}
 
   onSubmit(): void {
