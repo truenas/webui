@@ -274,7 +274,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
       this.showMobileDetails = true;
 
       // focus on details container
-      setTimeout(() => (this.window.document.getElementsByClassName('mobile-back-button')[0] as HTMLElement).focus(), 0);
+      setTimeout(() => (this.window.document.getElementsByClassName('mobile-back-button')?.[0] as HTMLElement)?.focus(), 0);
     }
   }
 

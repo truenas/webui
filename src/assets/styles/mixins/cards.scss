@@ -8,6 +8,7 @@
   overscroll-behavior: contain;
   padding-bottom: 30px;
   width: 100%;
+  word-break: break-word;
 
   .scroll-window {
     columns: calc(50vw / 2.7);

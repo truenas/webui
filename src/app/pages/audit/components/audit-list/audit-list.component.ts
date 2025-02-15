@@ -103,7 +103,7 @@ export class AuditListComponent {
 
   getUserAvatarForLog(row: AuditEntry): SafeHtml {
     // eslint-disable-next-line sonarjs/no-angular-bypass-sanitization
-    return this.sanitizer.bypassSecurityTrustHtml(toSvg(row.username, this.isMobileView() ? 15 : 35));
+    return this.sanitizer.bypassSecurityTrustHtml(toSvg(row.username, this.isMobileView() ? 20 : 30));
   }
 
   expanded(row: AuditEntry): void {
