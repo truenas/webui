@@ -1,5 +1,15 @@
 @import 'scss-imports/variables';
 
+@media (max-width: $breakpoint-sm) {
+  :host {
+    &::ng-deep {
+      div {
+        word-break: break-word;
+      }
+    }
+  }
+}
+
 .mat-mdc-card-content {
   color: var(--fg2);
 }
@@ -21,6 +31,7 @@
 
   .links {
     margin-bottom: 5px;
+    padding: 0;
   }
 }
 
@@ -41,5 +52,14 @@
 
 .actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
+  width: 100%;
+
+
+  @media (max-width: $breakpoint-sm) {
+    button {
+      width: 100%;
+    }
+  }
 }
