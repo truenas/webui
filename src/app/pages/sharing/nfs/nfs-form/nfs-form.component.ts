@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -44,6 +45,7 @@ import { FilesystemService } from 'app/services/filesystem.service';
 import { UserService } from 'app/services/user.service';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { ServicesState } from 'app/store/services/services.reducer';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -88,6 +90,7 @@ export class NfsFormComponent implements OnInit {
     path: ['', Validators.required],
     comment: [''],
     enabled: [true],
+    expose_snapshots: [false],
     ro: [false],
     maproot_user: [''],
     maproot_group: [''],
@@ -113,6 +116,7 @@ export class NfsFormComponent implements OnInit {
   readonly userProvider = new UserComboboxProvider(this.userService);
   readonly groupProvider = new GroupComboboxProvider(this.userService);
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
+  readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
 
   readonly securityOptions$ = of([
     {
@@ -192,7 +196,12 @@ export class NfsFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const nfsShare = this.form.value;
+    const nfsShare = { ...this.form.value };
+
+    if (!this.isEnterprise()) {
+      delete nfsShare.expose_snapshots;
+    }
+
     let request$: Observable<unknown>;
     if (this.existingNfsShare) {
       request$ = this.api.call('sharing.nfs.update', [this.existingNfsShare.id, nfsShare]);
