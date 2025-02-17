@@ -24,10 +24,10 @@ export interface Dataset {
   compressratio: ZfsProperty<string, string>;
   deduplication: ZfsProperty<DeduplicationSetting, string>;
   encrypted: boolean;
-  encryption_algorithm: ZfsProperty<string>;
+  encryption_algorithm: ZfsProperty<string | null>;
   encryption_root: string;
   id: string;
-  key_format: ZfsProperty<EncryptionKeyFormat>;
+  key_format: ZfsProperty<EncryptionKeyFormat | null>;
   key_loaded: boolean;
   locked: boolean;
   mountpoint: string;
@@ -204,8 +204,8 @@ export interface DatasetDetails {
   deduplication: ZfsProperty<string>;
   refquota_critical?: ZfsProperty<string, number>;
   refquota_warning?: ZfsProperty<string, number>;
-  quota_critical?: ZfsProperty<string, number>;
-  quota_warning?: ZfsProperty<string, number>;
+  quota_critical?: ZfsProperty<string, number | null>;
+  quota_warning?: ZfsProperty<string, number | null>;
   comments?: ZfsProperty<string>;
 }
 

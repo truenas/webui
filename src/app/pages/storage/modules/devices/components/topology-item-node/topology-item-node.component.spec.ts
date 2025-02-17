@@ -21,7 +21,7 @@ describe('TopologyItemNodeComponent', () => {
       write_errors: 2,
       checksum_errors: 3,
     },
-    children: [],
+    children: [] as TopologyDisk[],
     disk: 'sdf',
   } as TopologyDisk;
   const disk = {

@@ -37,7 +37,7 @@ import { selectProductType, selectSystemInfoState, waitForSystemInfo } from 'app
 
 type ReviewData = FileReviewComponent['form']['value'];
 type TicketData = FileTicketComponent['form']['value'];
-type TicketLicensedData = FileTicketLicensedComponent['form']['value'];
+type TicketLicensedData = ReturnType<FileTicketLicensedComponent['form']['getRawValue']>;
 
 @Injectable({
   providedIn: 'root',
@@ -138,7 +138,7 @@ export class FeedbackService {
     }
     return combineLatest([
       this.store$.pipe(waitForSystemInfo),
-      this.store$.select(selectProductType),
+      this.store$.select(selectProductType).pipe(filter((productType) => !!productType)),
     ]).pipe(
       first(),
       switchMap(([systemInfo, productType]) => {
@@ -212,8 +212,8 @@ export class FeedbackService {
       map(([{ systemInfo, isIxHardware }, systemHostId]) => {
         return {
           host_u_id: systemHostId,
-          rating: data.rating,
-          message: data.message,
+          rating: Number(data.rating),
+          message: data.message || '',
           page: this.window.location.pathname,
           user_agent: this.window.navigator.userAgent,
           environment: environment.production ? FeedbackEnvironment.Production : FeedbackEnvironment.Development,
@@ -284,9 +284,9 @@ export class FeedbackService {
       map((body) => ({
         body,
         token,
-        attach_debug: data.attach_debug,
+        attach_debug: Boolean(data.attach_debug),
         type,
-        title: data.title,
+        title: data.title || '',
       })),
     );
   }
@@ -303,7 +303,7 @@ export class FeedbackService {
         criticality: data.criticality,
         category: data.category,
         title: data.title,
-        attach_debug: data.attach_debug,
+        attach_debug: Boolean(data.attach_debug),
       })),
     );
   }
