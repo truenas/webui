@@ -41,10 +41,10 @@ describe('DevicesStore', () => {
                 cache: [
                   { name: 'sdr', guid: 'guid2' },
                 ],
-                log: [],
-                spare: [],
-                special: [],
-                dedup: [],
+                log: [] as TopologyItem[],
+                spare: [] as TopologyItem[],
+                special: [] as TopologyItem[],
+                dedup: [] as TopologyItem[],
               },
             } as Pool],
           });

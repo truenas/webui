@@ -25,7 +25,7 @@ export class FibreChannelService {
    */
   linkFiberChannelToTarget(
     targetId: number,
-    port: string,
+    port: string | null,
     hostId?: number,
   ): Observable<FibreChannelPort | null | true> {
     const fcPort$ = hostId ? this.createNewPort(hostId) : of(port);

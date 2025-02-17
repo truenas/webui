@@ -147,7 +147,7 @@ export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
       }
 
       return childName;
-    }) || []);
+    }) || []).filter((name): name is string => name !== undefined);
 
     this.form.controls.name.addValidators([
       datasetNameTooLong(parent.name),

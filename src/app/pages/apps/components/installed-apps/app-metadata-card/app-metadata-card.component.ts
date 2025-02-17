@@ -24,6 +24,6 @@ import { CardExpandCollapseComponent } from 'app/modules/card-expand-collapse/ca
   ],
 })
 export class AppMetadataCardComponent {
-  readonly appMetadata = input<AppMetadata>();
+  readonly appMetadata = input.required<AppMetadata>();
   readonly maxHeight = input(250);
 }

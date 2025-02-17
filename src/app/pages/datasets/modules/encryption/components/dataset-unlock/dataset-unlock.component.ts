@@ -136,7 +136,7 @@ export class DatasetUnlockComponent implements OnInit {
     this.form.controls.file.valueChanges.pipe(
       switchMap((files: File[]) => (!files?.length ? of('') : from(files[0].text()))),
       untilDestroyed(this),
-    ).subscribe((key) => {
+    ).subscribe((key: string) => {
       this.form.controls.key.setValue(key);
     });
   }
@@ -177,7 +177,7 @@ export class DatasetUnlockComponent implements OnInit {
           this.form.controls.datasets.push(this.formBuilder.group({
             name: [''],
             key: ['', [Validators.minLength(64), Validators.maxLength(64)]],
-            file: [null as File[]],
+            file: [[] as File[]],
             is_passphrase: [false],
           }) as FormGroup<DatasetFormGroup>);
         }
