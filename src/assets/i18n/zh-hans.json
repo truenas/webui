@@ -49,6 +49,7 @@
   "Edit Docker Registry": "",
   "Edition": "",
   "Enable General Purpose OS STIG compatibility mode": "",
+  "Enable VLAN": "",
   "Enable VNC": "",
   "Enable or disable NICs.": "",
   "Enable or disable the USB device for your container.": "",
