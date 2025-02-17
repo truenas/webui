@@ -1,6 +1,12 @@
+@import 'scss-imports/variables';
+
 .root-container {
   display: flex;
   gap: 16px;
+
+  @media (max-width: $breakpoint-sm) {
+    display: block;
+  }
 
   .main-container {
     width: 100%;
@@ -8,6 +14,11 @@
 
   .sidebar {
     width: 60%;
+
+    @media (max-width: $breakpoint-sm) {
+      margin-top: 16px;
+      width: 100%;
+    }
   }
 
   .details-container {
