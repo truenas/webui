@@ -390,6 +390,12 @@ body .mdc-card__actions,
   justify-content: space-between;
   padding: 8px 16px;
 
+  @media(max-width: $breakpoint-sm) {
+    h3 {
+      white-space: normal !important;
+    }
+  }
+
   .toolbar-row-title {
     align-items: center;
     display: flex;

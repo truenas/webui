@@ -1,4 +1,5 @@
 @import 'mixins/loader';
+@import 'scss-imports/variables';
 @import 'scss-imports/cssvars';
 
 :host {
@@ -58,4 +59,15 @@
 cdk-virtual-scroll-viewport {
   height: 100%;
   width: 100%;
+
+  @media(max-width: $breakpoint-sm) {
+    height: 100vh;
+
+    &::ng-deep {
+      .cdk-virtual-scroll-content-wrapper {
+        padding-bottom: 100px;
+        width: 100%;
+      }
+    }
+  }
 }
