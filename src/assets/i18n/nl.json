@@ -25,7 +25,7 @@
   "Edit App YAML": "",
   "Edition": "",
   "Enable VLAN": "",
-  "Enable this NFS share. Unset to disable this NFS share     without deleting it.": "",
+  "Enable this NFS share. Unset to disable this NFS share  without deleting it.": "",
   "Enterprise": "",
   "Expose Snapshots": "",
   "Failover is unhealthy. Rebooting now will cause a production outage.": "",

@@ -709,7 +709,7 @@
   "Enable passwordless sudo for zfs commands": "",
   "Enable server support for NFSv3 or NFSv4 or both NFSv3 and NFSv4 clients.": "",
   "Enable server-side management of group memberships.  This option allows the server to determine group IDs based on server-side lookups rather than relying solely on the information provided by the NFS client.  This can support more than 16 groups and provide more accurate group memberships.": "",
-  "Enable this NFS share. Unset to disable this NFS share     without deleting it.": "",
+  "Enable this NFS share. Unset to disable this NFS share  without deleting it.": "",
   "Enable this SMB share. Unset to disable this SMB share without deleting it.": "",
   "Enable this TrueCloud Backup Task. Unset to disable this TrueCloud Backup Task without deleting it.": "",
   "Enable this mode to enhance system security to meet US federal government security requirements. Note that enabling STIG mode will restrict some functionality.": "",

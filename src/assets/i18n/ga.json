@@ -172,7 +172,7 @@
   "Enable or disable NICs.": "",
   "Enable or disable the USB device for your container.": "",
   "Enable server support for NFSv3 or NFSv4 or both NFSv3 and NFSv4 clients.": "",
-  "Enable this NFS share. Unset to disable this NFS share     without deleting it.": "",
+  "Enable this NFS share. Unset to disable this NFS share  without deleting it.": "",
   "Enable this mode to enhance system security to meet US federal government security requirements. Note that enabling STIG mode will restrict some functionality.": "",
   "Enable this to create a token with no expiration date. The token will stay active until it is manually revoked or updated.": "",
   "Enable to apply default network configurations.": "",

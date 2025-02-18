@@ -56,7 +56,7 @@
   "Enable VNC": "",
   "Enable or disable NICs.": "",
   "Enable or disable the USB device for your container.": "",
-  "Enable this NFS share. Unset to disable this NFS share     without deleting it.": "",
+  "Enable this NFS share. Unset to disable this NFS share  without deleting it.": "",
   "Enable this mode to enhance system security to meet US federal government security requirements. Note that enabling STIG mode will restrict some functionality.": "",
   "Enable to apply default network configurations.": "",
   "Enter number of cores or multiple values or ranges to set CPU topology. Example: 1-2,5,9-11": "",

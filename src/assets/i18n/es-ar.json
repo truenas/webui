@@ -3,7 +3,7 @@
   "Allow accessing ZFS snapshots over the NFS protocol.": "",
   "Any part of TrueNAS that you like in particular?": "",
   "Archs": "",
-  "Enable this NFS share. Unset to disable this NFS share     without deleting it.": "",
+  "Enable this NFS share. Unset to disable this NFS share  without deleting it.": "",
   "Expose Snapshots": "",
   "Flash Identify Light": "",
   "Key Cert Sign": "",
