@@ -219,9 +219,9 @@ describe('AuthService', () => {
       expect(await firstValueFrom(spectator.service.hasRole([Role.SharingSmbRead]))).toBe(true);
     });
 
-    it('returns true for any role when user has FULL_ADMIN role', async () => {
+    it('does not returns true for any role when user has FULL_ADMIN role', async () => {
       await setUserRoles([Role.FullAdmin]);
-      expect(await firstValueFrom(spectator.service.hasRole([Role.AlertListRead]))).toBe(true);
+      expect(await firstValueFrom(spectator.service.hasRole([Role.AlertListRead]))).toBe(false);
     });
   });
 
