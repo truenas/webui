@@ -60,7 +60,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   ],
 })
 export class DockerRegistriesListComponent implements OnInit {
-  readonly requiredRoles = [Role.FullAdmin];
+  readonly requiredRoles = [Role.AppsRead];
   protected readonly searchableElements = dockerRegistriesListElements;
 
   dataProvider: AsyncDataProvider<DockerRegistry>;
