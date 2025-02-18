@@ -40,8 +40,6 @@ export interface Disk {
 
 export interface StorageDashboardDisk extends Disk {
   alerts: Alert[];
-  smartTestsRunning: number;
-  smartTestsFailed: number;
   tempAggregates: TemperatureAgg;
 }
 
