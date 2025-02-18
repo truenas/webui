@@ -18,7 +18,6 @@ import { CheckinIndicatorComponent } from 'app/modules/layout/topbar/checkin-ind
 import {
   DirectoryServicesIndicatorComponent,
 } from 'app/modules/layout/topbar/directory-services-indicator/directory-services-indicator.component';
-import { IxLogoComponent } from 'app/modules/layout/topbar/ix-logo/ix-logo.component';
 import { JobsIndicatorComponent } from 'app/modules/layout/topbar/jobs-indicator/jobs-indicator.component';
 import { PowerMenuComponent } from 'app/modules/layout/topbar/power-menu/power-menu.component';
 import { TopbarComponent } from 'app/modules/layout/topbar/topbar.component';
@@ -52,7 +51,6 @@ describe('TopbarComponent', () => {
     component: TopbarComponent,
     declarations: [
       MockComponents(
-        IxLogoComponent,
         CheckinIndicatorComponent,
         DirectoryServicesIndicatorComponent,
         JobsIndicatorComponent,
