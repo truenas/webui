@@ -45,7 +45,7 @@ describe('ZvolFormComponent', () => {
           name: 'test pool',
           pool: 'test pool',
           encrypted: false,
-          children: [],
+          children: [] as Dataset[],
           deduplication: {
             parsed: 'off',
             rawvalue: 'off',

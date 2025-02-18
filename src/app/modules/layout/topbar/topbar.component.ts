@@ -29,7 +29,6 @@ import {
   DirectoryServicesIndicatorComponent,
 } from 'app/modules/layout/topbar/directory-services-indicator/directory-services-indicator.component';
 import { HaStatusIconComponent } from 'app/modules/layout/topbar/ha-status-icon/ha-status-icon.component';
-import { IxLogoComponent } from 'app/modules/layout/topbar/ix-logo/ix-logo.component';
 import { JobsIndicatorComponent } from 'app/modules/layout/topbar/jobs-indicator/jobs-indicator.component';
 import { PowerMenuComponent } from 'app/modules/layout/topbar/power-menu/power-menu.component';
 import { ResilveringIndicatorComponent } from 'app/modules/layout/topbar/resilvering-indicator/resilvering-indicator.component';
@@ -62,7 +61,6 @@ import { TruenasLogoComponent } from './truenas-logo/truenas-logo.component';
     MatTooltip,
     IxIconComponent,
     GlobalSearchTriggerComponent,
-    IxLogoComponent,
     CheckinIndicatorComponent,
     ResilveringIndicatorComponent,
     HaStatusIconComponent,

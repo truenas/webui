@@ -194,7 +194,7 @@ export class InstanceWizardComponent {
     return this.translate.instant(containersHelptext.secure_boot_tooltip);
   }
 
-  protected readonly instanceType = signal<VirtualizationType>(this.form.value.instance_type);
+  protected readonly instanceType = signal<VirtualizationType>(this.form.getRawValue().instance_type);
   protected readonly isContainer = computed(() => this.instanceType() === VirtualizationType.Container);
   protected readonly isVm = computed(() => this.instanceType() === VirtualizationType.Vm);
 
@@ -475,6 +475,10 @@ export class InstanceWizardComponent {
         this.form.controls.source_type.setValue(VirtualizationSource.Image);
       }
       this.instanceType.set(type);
+
+      this.form.controls.image.reset();
+      this.form.controls.disks.clear();
+
       if (type === VirtualizationType.Container) {
         this.form.controls.cpu.setValidators(cpuValidator());
         this.form.controls.memory.clearValidators();

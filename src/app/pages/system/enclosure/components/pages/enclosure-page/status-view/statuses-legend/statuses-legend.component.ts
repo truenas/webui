@@ -20,15 +20,17 @@ export class StatusesLegendComponent {
   protected readonly legend = computed(() => {
     const slots = this.slots();
     const slotsWithPool = slots.filter((slot) => Boolean(slot.pool_info));
-    const statuses = uniq(slotsWithPool.map((slot) => slot.pool_info.disk_status));
+    const statuses = uniq(slotsWithPool.map((slot) => slot.pool_info?.disk_status));
 
-    return statuses.map((status) => {
-      const statusLabel = enclosureDiskStatusLabels.get(status) || status;
-      return [
-        this.translate.instant(statusLabel),
-        getDiskStatusColor(status),
-      ];
-    });
+    return statuses
+      .filter((status) => status !== undefined)
+      .map((status) => {
+        const statusLabel = enclosureDiskStatusLabels.get(status) || status;
+        return [
+          this.translate.instant(statusLabel),
+          getDiskStatusColor(status),
+        ];
+      });
   });
 
   constructor(

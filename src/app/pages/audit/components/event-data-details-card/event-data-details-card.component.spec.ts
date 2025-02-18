@@ -30,7 +30,6 @@ const logEntry = {
     localAddress: 'ipv4:10.238.238.168:445',
     remoteAddress: 'ipv4:10.220.2.21:10876',
     serviceDescription: 'SMB2',
-    authDescription: null,
     clientDomain: 'AD02',
     clientAccount: 'Administrator',
     workstation: 'TNBUILDS03',
@@ -39,14 +38,15 @@ const logEntry = {
     becameSid: 'S-1-5-21-2898882361-1697523803-787493405-500',
     mappedAccount: 'Administrator',
     mappedDomain: 'AD02',
-    netlogonComputer: null,
-    netlogonTrustAccount: null,
     netlogonNegotiateFlags: '0x00000000',
-    netlogonSecureChannelType: 0,
-    netlogonTrustAccountSid: null,
     passwordType: 'NTLMv2',
-    clientPolicyAccessCheck: null,
-    serverPolicyAccessCheck: null,
+    netlogonSecureChannelType: 0,
+    netlogonComputer: '',
+    netlogonTrustAccount: '',
+    authDescription: '',
+    netlogonTrustAccountSid: '',
+    clientPolicyAccessCheck: '',
+    serverPolicyAccessCheck: '',
     vers: {
       major: 0,
       minor: 1,
@@ -65,7 +65,6 @@ Logon Type: 3
 Local Address: ipv4:10.238.238.168:445
 Remote Address: ipv4:10.220.2.21:10876
 Service Description: SMB2
-Auth Description: Null
 Client Domain: AD02
 Client Account: Administrator
 Workstation: TNBUILDS03
@@ -74,14 +73,15 @@ Became Domain: AD02
 Became Sid: S-1-5-21-2898882361-1697523803-787493405-500
 Mapped Account: Administrator
 Mapped Domain: AD02
-Netlogon Computer: Null
-Netlogon Trust Account: Null
 Netlogon Negotiate Flags: '0x00000000'
-Netlogon Secure Channel Type: 0
-Netlogon Trust Account Sid: Null
 Password Type: NTLMv2
-Client Policy Access Check: Null
-Server Policy Access Check: Null
+Netlogon Secure Channel Type: 0
+Netlogon Computer: ''
+Netlogon Trust Account: ''
+Auth Description: ''
+Netlogon Trust Account Sid: ''
+Client Policy Access Check: ''
+Server Policy Access Check: ''
 Vers:
   Major: 0
   Minor: 1

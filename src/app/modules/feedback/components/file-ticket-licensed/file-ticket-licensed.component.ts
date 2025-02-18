@@ -3,7 +3,7 @@ import {
   Component, Inject, input, output,
 } from '@angular/core';
 import {
-  AbstractControl, FormBuilder, Validators, ReactiveFormsModule,
+  AbstractControl, Validators, ReactiveFormsModule, NonNullableFormBuilder,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialogRef, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
@@ -111,7 +111,7 @@ export class FileTicketLicensedComponent {
   };
 
   constructor(
-    private formBuilder: FormBuilder,
+    private formBuilder: NonNullableFormBuilder,
     private translate: TranslateService,
     private validatorsService: IxValidatorsService,
     private feedbackService: FeedbackService,
@@ -137,7 +137,7 @@ export class FileTicketLicensedComponent {
   onSubmit(): void {
     this.isLoadingChange.emit(true);
 
-    this.feedbackService.createTicketLicensed(this.form.value).pipe(
+    this.feedbackService.createTicketLicensed(this.form.getRawValue()).pipe(
       finalize(() => this.isLoadingChange.emit(false)),
       untilDestroyed(this),
     ).subscribe({

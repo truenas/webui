@@ -345,7 +345,7 @@ export class InstalledAppsListComponent implements OnInit {
     if (!jobId) {
       return;
     }
-    const job$ = this.store$.select(selectJob(jobId), filter((job) => !!job));
+    const job$ = this.store$.select(selectJob(jobId)).pipe(filter((job) => !!job));
     this.dialogService.jobDialog(job$, { title: name, canMinimize: true })
       .afterClosed()
       .pipe(this.errorHandler.catchError(), untilDestroyed(this))

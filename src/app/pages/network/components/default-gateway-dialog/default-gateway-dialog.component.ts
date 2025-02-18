@@ -52,7 +52,7 @@ export class DefaultGatewayDialogComponent {
 
   form = this.fb.nonNullable.group({
     defaultGateway: [
-      null as string | null,
+      '',
       {
         validators: [
           this.validatorsService.withMessage(
