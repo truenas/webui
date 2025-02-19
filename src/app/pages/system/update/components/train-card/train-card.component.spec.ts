@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { BehaviorSubject, of } from 'rxjs';
-import { mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SystemUpdateTrains } from 'app/interfaces/system-update.interface';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
@@ -24,7 +24,9 @@ describe('TrainCardComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockApi([]),
+      mockApi([
+        mockCall('system.security.config', { enable_gpos_stig: false, enable_fips: false }),
+      ]),
       mockProvider(TrainService, {
         getAutoDownload: jest.fn(() => of(false)),
         getTrains: jest.fn(() => of({

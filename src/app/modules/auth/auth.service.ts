@@ -204,6 +204,10 @@ export class AuthService {
     );
   }
 
+  getOneTimeToken(): Observable<string> {
+    return this.api.call('auth.generate_token', [300, {}, true, true]);
+  }
+
   private processLoginResult(loginResult: LoginExResponse): Observable<LoginResult> {
     return of(loginResult).pipe(
       switchMap((result) => {
@@ -261,7 +265,7 @@ export class AuthService {
   }
 
   private setupAuthenticationUpdate(): void {
-    this.wsStatus.isAuthenticated$.pipe().subscribe({
+    this.wsStatus.isAuthenticated$.subscribe({
       next: (isAuthenticated) => {
         if (isAuthenticated) {
           this.store$.dispatch(adminUiInitialized());

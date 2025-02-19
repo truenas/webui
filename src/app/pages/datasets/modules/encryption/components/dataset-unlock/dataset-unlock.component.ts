@@ -10,7 +10,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   Observable,
-  from, of, switchMap, tap,
+  from, of, switchMap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetEncryptionType } from 'app/enums/dataset.enum';
@@ -97,8 +97,6 @@ export class DatasetUnlockComponent implements OnInit {
     return this.form.controls.use_file.value;
   }
 
-  private apiEndPoint: string;
-
   constructor(
     private api: ApiService,
     private formBuilder: NonNullableFormBuilder,
@@ -110,14 +108,7 @@ export class DatasetUnlockComponent implements OnInit {
     private router: Router,
     private translate: TranslateService,
     private upload: UploadService,
-  ) {
-    this.authService.authToken$.pipe(
-      tap((token) => {
-        this.apiEndPoint = '/_upload?auth_token=' + token;
-      }),
-      untilDestroyed(this),
-    ).subscribe();
-  }
+  ) {}
 
   ngOnInit(): void {
     this.pk = this.aroute.snapshot.params['datasetId'] as string;
