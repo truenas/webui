@@ -24,7 +24,6 @@ describe('SmartInfoCardComponent', () => {
   const disk = {
     identifier: 'disk-1',
     togglesmart: true,
-    smartoptions: '--some-option',
   } as Disk;
   const createComponent = createComponentFactory({
     component: SmartInfoCardComponent,
@@ -171,14 +170,6 @@ describe('SmartInfoCardComponent', () => {
     expect(detailsItem).toHaveDescendantWithText({
       selector: '.value',
       text: 'Disabled in Disk Settings',
-    });
-  });
-
-  it('shows SMART options if they are set for the disk', () => {
-    const detailsItem = spectator.query(byText('S.M.A.R.T. Options:'))!.parentElement;
-    expect(detailsItem).toHaveDescendantWithText({
-      selector: '.value',
-      text: '--some-option',
     });
   });
 
