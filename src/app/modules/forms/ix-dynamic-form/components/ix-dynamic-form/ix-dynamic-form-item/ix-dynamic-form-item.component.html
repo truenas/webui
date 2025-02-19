@@ -91,7 +91,10 @@
                 }
               </ix-list-item>
             }
-            <ix-errors [control]="dynamicForm()" [label]="listSchema.title | translate"></ix-errors>
+            <ix-errors
+              [control]="dynamicForm()"
+              [label]="listSchema.title ? (listSchema.title | translate) : ''"
+            ></ix-errors>
           </ix-list>
         }
 
@@ -103,7 +106,7 @@
             [placeholder]="inputSchema.placeholder ? (inputSchema.placeholder | translate) : ''"
             [tooltip]="inputSchema.tooltip ? (inputSchema.tooltip | translate) : ''"
             [required]="inputSchema.required || false"
-            [type]="inputSchema.inputType"
+            [type]="inputSchema.inputType || 'text'"
           ></ix-input>
         }
 
@@ -115,7 +118,7 @@
             [placeholder]="uriSchema.placeholder ? (uriSchema.placeholder | translate) : ''"
             [tooltip]="uriSchema.tooltip ? (uriSchema.tooltip | translate) : ''"
             [required]="uriSchema.required || false"
-            [type]="uriSchema.inputType"
+            [type]="uriSchema.inputType || 'text'"
           ></ix-input>
         }
 

@@ -182,11 +182,6 @@ export class DiskListComponent implements OnInit {
       getValue: (row) => (row.togglesmart ? this.translate.instant('Yes') : this.translate.instant('No')),
       hidden: true,
     }),
-    textColumn({
-      title: this.translate.instant('S.M.A.R.T. extra options'),
-      propertyName: 'smartoptions',
-      hidden: true,
-    }),
   ], {
     uniqueRowTag: (row) => `disk-${row.name}`,
     ariaLabels: (row) => [row.name, this.translate.instant('Disk')],

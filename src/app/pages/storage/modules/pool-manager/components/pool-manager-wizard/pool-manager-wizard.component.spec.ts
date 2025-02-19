@@ -65,7 +65,7 @@ describe('PoolManagerWizardComponent', () => {
   const hasMultipleEnclosuresInAllowedDisks$ = new BehaviorSubject(false);
   const state = {
     name: 'pewl',
-    encryption: undefined,
+    encryption: null,
     diskSettings: {
       allowNonUniqueSerialDisks: true,
     },
@@ -218,7 +218,7 @@ describe('PoolManagerWizardComponent', () => {
     it('creates a pool using store topology last step emits createPool event', async () => {
       await wizard.selectStep({ label: 'Review' });
 
-      spectator.query(ReviewWizardStepComponent).createPool.emit();
+      spectator.query(ReviewWizardStepComponent)!.createPool.emit();
 
       expect(spectator.inject(DialogService, true).jobDialog).toHaveBeenCalled();
       expect(spectator.inject(ApiService, true).job).toHaveBeenCalledWith('pool.create', [{

@@ -23,5 +23,5 @@ export class MockAuthService extends AuthService {
     });
   }
 
-  override refreshUser = jest.fn(() => of(null));
+  override refreshUser = jest.fn(() => of(undefined));
 }

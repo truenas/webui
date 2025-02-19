@@ -7,9 +7,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { ChartData, ChartOptions } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import {
-  filter, map, startWith, tap,
-} from 'rxjs';
+import { map, tap } from 'rxjs';
 import { oneMinuteMillis } from 'app/constants/time.constant';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { ThemeService } from 'app/modules/theme/theme.service';
@@ -37,9 +35,7 @@ export class WidgetCpuUsageRecentComponent implements WidgetComponent {
 
   readonly name = cpuUsageRecentWidget.name;
 
-  protected isLoading = computed(() => {
-    return !this.chartData();
-  });
+  protected isLoading = computed(() => !this.chartData());
 
   protected cpuUsage = toSignal(this.resources.realtimeUpdates$.pipe(
     map((update) => update.fields.cpu),
@@ -50,21 +46,13 @@ export class WidgetCpuUsageRecentComponent implements WidgetComponent {
     }),
   ));
 
-  protected initialCpuStats = toSignal(this.resources.cpuLastMinuteStats().pipe(
-    filter((response) => !!response.length),
-    map((response) => {
-      const [update] = response;
-
-      const usageIndex = update.legend.indexOf('usage');
-
-      return (update.data as number[][]).slice(-60).map((item) => ([item[usageIndex]]));
-    }),
-    startWith(Array.from({ length: 60 }, () => ([0, 0]))),
-  ));
+  protected initialCpuStats = computed(() => {
+    return Array.from({ length: 60 }, () => ([0]));
+  });
 
   protected cachedCpuStats = signal<number[][]>([]);
   protected cpuStats = computed(() => {
-    const initialStats = this.initialCpuStats() || [];
+    const initialStats = this.initialCpuStats();
     const cachedStats = this.cachedCpuStats();
     return [...initialStats, ...cachedStats].slice(-60);
   });

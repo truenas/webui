@@ -31,6 +31,7 @@
 .copyright {
   color: var(--alt-fg1);
   font-size: 85%;
+  margin-bottom: 18px;
   margin-top: 10px;
   text-align: center;
 }
@@ -48,14 +49,6 @@
 .card-bottom {
   overflow: auto;
   padding: 0 16px;
-}
-
-.ix-logo {
-  text-align: center;
-
-  img {
-    height: 40px;
-  }
 }
 
 .form-container {

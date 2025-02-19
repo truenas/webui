@@ -476,4 +476,33 @@ describe('InstanceWizardComponent', () => {
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
     });
   });
+
+  describe('container | vm switching', () => {
+    it('should reset image field and clear disks when "Virtualization Method" changes', async () => {
+      const diskList = await loader.getHarness(IxListHarness.with({ label: 'Disks' }));
+      await diskList.pressAddButton();
+      const diskForm = await diskList.getLastListItem();
+
+      await form.fillForm({ Image: 'container-latest' });
+      await diskForm.fillForm({ Source: '/mnt/container-disk' });
+
+      expect(await form.getValues()).toMatchObject({ Image: 'container-latest' });
+      expect((await diskList.getListItems())).toHaveLength(1);
+
+      const instanceTypeControl = await loader.getHarness(IxIconGroupHarness.with({ label: 'Virtualization Method' }));
+      await instanceTypeControl.setValue('VM');
+
+      expect(await form.getValues()).toMatchObject({ Image: '' });
+      expect((await diskList.getListItems())).toHaveLength(0);
+
+      await diskList.pressAddButton();
+      await diskForm.fillForm({ Source: '/mnt/vm-disk' });
+      await form.fillForm({ Image: 'vm-latest' });
+
+      expect(await form.getValues()).toMatchObject({ Image: 'vm-latest' });
+      expect((await diskList.getListItems())).toHaveLength(1);
+
+      await instanceTypeControl.setValue('CONTAINER');
+    });
+  });
 });

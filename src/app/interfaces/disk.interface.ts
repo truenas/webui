@@ -25,10 +25,9 @@ export interface Disk {
   number: number;
   passwd?: string;
   pool: string;
-  rotationrate: number;
+  rotationrate: number | null;
   serial: string;
   size: number;
-  smartoptions: string;
   subsystem: string;
   supports_smart?: boolean;
   togglesmart: boolean;
@@ -79,7 +78,6 @@ export interface DiskUpdate {
   description?: string;
   hddstandby?: DiskStandby;
   passwd?: string;
-  smartoptions?: string;
   critical?: number;
   difference?: number;
   informational?: number;
@@ -106,11 +104,11 @@ export interface DetailsDisk {
   type: DiskType;
   blocks: number;
   serial_lunid: string;
-  rotationrate: number;
+  rotationrate: number | null;
   stripesize: number;
   parts: unknown[];
   dif: boolean;
-  exported_zpool: string;
+  exported_zpool: string | null;
   unsupported_md_devices: unknown;
   duplicate_serial: string[];
   devname: string;

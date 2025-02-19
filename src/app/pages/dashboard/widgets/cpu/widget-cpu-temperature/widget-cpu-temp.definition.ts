@@ -17,5 +17,4 @@ export const cpuTemperatureBarWidget = dashboardWidget({
   supportedSizes: [SlotSize.Half],
   category: WidgetCategory.Cpu,
   component: WidgetCpuTemperatureBarComponent,
-  settingsComponent: null,
 });

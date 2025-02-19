@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, computed, input,
+  ChangeDetectionStrategy, Component, computed,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
@@ -16,7 +16,6 @@ import { selectCopyrightText, selectIsEnterprise } from 'app/store/system-info/s
   imports: [TestDirective],
 })
 export class CopyrightLineComponent {
-  readonly withIxLogo = input(false);
   readonly copyrightText = toSignal(this.store$.select(selectCopyrightText));
 
   readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));

@@ -65,7 +65,7 @@ export class GlobalSearchSectionsProvider {
     }));
 
     const validRecentSearches = recentSearches.filter((item) => (
-      exitingHierarchies.has(JSON.stringify(item.hierarchy)) || item.hierarchy[0].startsWith('Search Documentation for')
+      exitingHierarchies.has(JSON.stringify(item.hierarchy)) || item.hierarchy?.[0]?.startsWith('Search Documentation for')
     ));
 
     if (recentSearches.length !== validRecentSearches.length) {

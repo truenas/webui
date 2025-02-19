@@ -19,7 +19,7 @@
 </div>
 
 <ix-form-actions mat-dialog-actions class="form-actions">
-  @if (!options.hideCheckbox) {
+  @if (!options.hideCheckbox && options.confirmationCheckboxText) {
     <mat-checkbox
       color="primary"
       name="confirm_checkbox"
@@ -30,7 +30,7 @@
       {{ options.confirmationCheckboxText | translate }}
     </mat-checkbox>
   }
-  @if (!options.hideCancel) {
+  @if (!options.hideCancel && options.cancelText) {
     <button
       mat-button
       name="cancel_button"
@@ -41,15 +41,17 @@
       {{ options.cancelText | translate }}
     </button>
   }
-  <button
-    mat-button
-    name="ok_button"
-    class="mat-mdc-button mat-button mat-primary submit-button"
-    ixTest="dialog-confirm"
-    [disabled]="isDisabled()"
-    [color]="options.buttonColor || 'primary'"
-    (click)="onSubmit()"
-  >
-    {{ options.buttonText | translate }}
-  </button>
+  @if (options.buttonText) {
+    <button
+      mat-button
+      name="ok_button"
+      class="mat-mdc-button mat-button mat-primary submit-button"
+      ixTest="dialog-confirm"
+      [disabled]="isDisabled()"
+      [color]="options.buttonColor || 'primary'"
+      (click)="onSubmit()"
+    >
+      {{ options.buttonText | translate }}
+    </button>
+  }
 </ix-form-actions>
