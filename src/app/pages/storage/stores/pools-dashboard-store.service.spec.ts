@@ -56,8 +56,6 @@ const dashboardDisks: StorageDashboardDisk[] = [
     ...disk,
     alerts: [],
     tempAggregates: { min: 20, max: 50, avg: 40 },
-    smartTestsRunning: 0,
-    smartTestsFailed: 0,
   },
 ];
 
