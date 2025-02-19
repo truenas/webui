@@ -1,9 +1,11 @@
 {
   "": "",
   "<b>CPU Configuration</b><br />Enter the number of cores. Use multiple values or ranges to set the CPU topology.<br />Example: 1-2, 5, 9-11.": "",
+  "Allow accessing ZFS snapshots over the NFS protocol.": "",
   "Any part of TrueNAS that you like in particular?": "",
   "Disk size increased": "",
   "Enable VLAN": "",
+  "Expose Snapshots": "",
   "Failover is unhealthy. Rebooting now will cause a production outage.": "",
   "Increase": "",
   "Increase Root Disk Size": "",

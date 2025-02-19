@@ -1,7 +1,9 @@
 {
   "": "",
+  "Allow accessing ZFS snapshots over the NFS protocol.": "",
   "Any part of TrueNAS that you like in particular?": "",
   "Archs": "",
+  "Expose Snapshots": "",
   "Flash Identify Light": "",
   "Key Cert Sign": "",
   "Key Usage Config": "",

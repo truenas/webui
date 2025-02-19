@@ -15,6 +15,7 @@ export interface NfsShare {
   path: string;
   quiet: boolean;
   ro: boolean;
+  expose_snapshots?: boolean;
   security: NfsSecurityProvider[];
 }
 
