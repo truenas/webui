@@ -18,7 +18,6 @@ import { UploadService } from 'app/services/upload.service';
 @Component({
   selector: 'ix-upload-iso',
   templateUrl: './upload-iso-button.component.html',
-  styleUrls: ['./upload-iso.component.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
