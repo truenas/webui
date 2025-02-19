@@ -29,6 +29,7 @@ export const helptextSharingNfs = {
   ),
   tooltip_enabled: T('Enable this NFS share. Unset to disable this NFS share \
  without deleting it.'),
+  tooltip_expose_snapshots: T('Allow accessing ZFS snapshots over the NFS protocol.'),
   tooltip_networks_wrapper: T(
     'Click "Add" to specify NFS client network ranges for this share.\
  If both networks and hosts are empty the share will be exported to everyone.',

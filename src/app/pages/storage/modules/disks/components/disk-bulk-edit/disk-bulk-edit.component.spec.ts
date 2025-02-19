@@ -38,7 +38,6 @@ describe('DiskBulkEditComponent', () => {
     hddstandby: DiskStandby.AlwaysOn,
     advpowermgmt: DiskPowerLevel.Disabled,
     togglesmart: false,
-    smartoptions: '',
   } as Disk;
   const dataDisk2 = {
     name: 'sdc',
@@ -46,7 +45,6 @@ describe('DiskBulkEditComponent', () => {
     hddstandby: DiskStandby.Minutes10,
     advpowermgmt: DiskPowerLevel.Level64,
     togglesmart: true,
-    smartoptions: '/dev/hd[at], /dev/sd[az]',
   } as Disk;
 
   const slideInRef: SlideInRef<Disk[] | undefined, unknown> = {
@@ -86,7 +84,6 @@ describe('DiskBulkEditComponent', () => {
       'HDD Standby': '',
       'Advanced Power Management': '',
       'Enable S.M.A.R.T.': true,
-      'S.M.A.R.T. Extra Options': '/dev/hd[at], /dev/sd[az]',
     });
     expect(diskIds).toEqual(['{serial}VB76b9dd9d-4e5d8cf2', '{serial}VB5a315293-ea077d3d']);
   });
@@ -101,7 +98,6 @@ describe('DiskBulkEditComponent', () => {
       'HDD Standby': '10',
       'Advanced Power Management': 'Level 64 - Intermediate power usage with Standby',
       'Enable S.M.A.R.T.': true,
-      'S.M.A.R.T. Extra Options': 'new smart options',
     };
     await form.fillForm(changeValue);
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -114,7 +110,6 @@ describe('DiskBulkEditComponent', () => {
           {
             advpowermgmt: '64',
             hddstandby: '10',
-            smartoptions: 'new smart options',
             togglesmart: true,
           },
         ],
@@ -123,7 +118,6 @@ describe('DiskBulkEditComponent', () => {
           {
             advpowermgmt: '64',
             hddstandby: '10',
-            smartoptions: 'new smart options',
             togglesmart: true,
           },
         ],

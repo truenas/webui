@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -20,6 +21,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { NfsListComponent } from 'app/pages/sharing/nfs/nfs-list/nfs-list.component';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 const shares: Partial<NfsShare>[] = [
   {
@@ -65,6 +67,14 @@ describe('NfsListComponent', () => {
       mockProvider(SlideIn, {
         open: jest.fn(() => of()),
       }),
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectIsEnterprise,
+            value: true,
+          },
+        ],
+      }),
     ],
   });
 
@@ -87,7 +97,7 @@ describe('NfsListComponent', () => {
   });
 
   it('opens nfs share form when "Edit" button is pressed', async () => {
-    const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 5);
+    const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 6);
     await editButton.click();
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(NfsFormComponent, {
@@ -96,7 +106,7 @@ describe('NfsListComponent', () => {
   });
 
   it('opens delete dialog when "Delete" button is pressed', async () => {
-    const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 5);
+    const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 6);
     await deleteButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('sharing.nfs.delete', [1]);
@@ -104,8 +114,8 @@ describe('NfsListComponent', () => {
 
   it('should show table rows', async () => {
     const expectedRows = [
-      ['Path', 'Description', 'Networks', 'Hosts', 'Enabled', ''],
-      ['some-path', 'comment', 'network1, network2', 'host1, host2', '', ''],
+      ['Path', 'Description', 'Networks', 'Hosts', 'Enabled', 'Expose Snapshots', ''],
+      ['some-path', 'comment', 'network1, network2', 'host1, host2', '', 'No', ''],
     ];
 
     const cells = await table.getCellTexts();

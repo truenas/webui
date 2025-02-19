@@ -36,7 +36,6 @@ const disks: StorageDashboardDisk[] = [
     rotationrate: 0,
     serial: '',
     size: 5368709120,
-    smartoptions: '',
     subsystem: 'scsi',
     togglesmart: true,
     transfermode: 'Auto',
