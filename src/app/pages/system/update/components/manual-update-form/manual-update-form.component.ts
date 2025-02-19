@@ -102,7 +102,7 @@ export class ManualUpdateFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private upload: UploadService,
   ) {
-    this.authService.authToken$.pipe(
+    this.authService.authToken().pipe(
       tap((token) => {
         this.apiEndPoint = '/_upload?auth_token=' + token;
       }),

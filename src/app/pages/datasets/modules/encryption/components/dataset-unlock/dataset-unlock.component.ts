@@ -111,7 +111,7 @@ export class DatasetUnlockComponent implements OnInit {
     private translate: TranslateService,
     private upload: UploadService,
   ) {
-    this.authService.authToken$.pipe(
+    this.authService.authToken().pipe(
       tap((token) => {
         this.apiEndPoint = '/_upload?auth_token=' + token;
       }),

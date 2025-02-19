@@ -143,11 +143,13 @@ export class TrainCardComponent implements OnInit {
       this.trainService.onTrainChanged(newTrain, prevTrain);
     });
 
-    this.form.controls.auto_check.valueChanges.pipe(
-      filterAsync(() => this.authService.hasRole(Role.FullAdmin)),
-      untilDestroyed(this),
-    ).subscribe(() => {
-      this.trainService.toggleAutoCheck(this.form.controls.auto_check.value);
-    });
+    if (!this.authService.isStigMode()) {
+      this.form.controls.auto_check.valueChanges.pipe(
+        filterAsync(() => this.authService.hasRole(Role.FullAdmin)),
+        untilDestroyed(this),
+      ).subscribe(() => {
+        this.trainService.toggleAutoCheck(this.form.controls.auto_check.value);
+      });
+    }
   }
 }

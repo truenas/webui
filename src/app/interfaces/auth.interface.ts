@@ -71,3 +71,22 @@ export interface LoginExApiKeyQuery {
   username: string;
   api_key: string;
 }
+
+export type AuthTokenParams = [
+  /**
+   * Default is 600
+   */
+  ttl?: number,
+  /**
+   * Default is {}
+   */
+  attrs?: Record<string, unknown>,
+  /**
+   * Default is true
+   */
+  match_origin?: boolean,
+  /**
+   * Default is false
+   */
+  single_use?: boolean,
+];

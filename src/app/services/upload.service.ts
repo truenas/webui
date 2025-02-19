@@ -12,6 +12,7 @@ import { ApiJobMethod, ApiJobResponse } from 'app/interfaces/api/api-job-directo
 import { Job } from 'app/interfaces/job.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { AppState } from 'app/store';
 
 export interface UploadOptions<M extends ApiJobMethod = ApiJobMethod> {
@@ -29,6 +30,7 @@ export class UploadService {
     private translate: TranslateService,
     private authService: AuthService,
     private store$: Store<AppState>,
+    private api: ApiService,
   ) {}
 
   /**
@@ -36,10 +38,10 @@ export class UploadService {
    * You need to filter for `(event) => event instanceof HttpResponse` to wait for response.
    */
   upload(options: UploadOptions): Observable<HttpEvent<unknown>> {
-    return this.authService.authToken$.pipe(
+    return this.authService.authToken().pipe(
       take(1),
       map((token) => {
-        const endPoint = '/_upload?auth_token=' + token;
+        const endPoint = `/_upload?auth_token=${token}`;
         const formData = new FormData();
         formData.append('data', JSON.stringify({
           method: options.method,

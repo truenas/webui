@@ -1,4 +1,5 @@
-import { Inject, Injectable } from '@angular/core';
+import { computed, Inject, Injectable } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { LocalStorage } from 'ngx-webstorage';
 import {
@@ -79,6 +80,24 @@ export class AuthService {
     filter(Boolean),
     map((user) => user.two_factor_config),
   );
+
+  readonly loggedInUser = computed(() => this.loggedInUser$.value);
+  readonly isStigMode = computed(() => {
+    if (!this.loggedInUser()) {
+      return false;
+    }
+
+    return this.api.call('system.security.config');
+  });
+
+  readonly isTokenAllowed = toSignal(this.isTokenAllowed$);
+  readonly authToken = computed(() => {
+    if (this.isStigMode()) {
+      return this.getOneTimeToken();
+    }
+
+    return this.authToken$;
+  });
 
   private cachedGlobalTwoFactorConfig: GlobalTwoFactorConfig | null;
 
@@ -204,6 +223,10 @@ export class AuthService {
     );
   }
 
+  getOneTimeToken(): Observable<string> {
+    return this.api.call('auth.generate_token', [300, {}, true, true]);
+  }
+
   private processLoginResult(loginResult: LoginExResponse): Observable<LoginResult> {
     return of(loginResult).pipe(
       switchMap((result) => {
@@ -261,7 +284,7 @@ export class AuthService {
   }
 
   private setupAuthenticationUpdate(): void {
-    this.wsStatus.isAuthenticated$.pipe().subscribe({
+    this.wsStatus.isAuthenticated$.subscribe({
       next: (isAuthenticated) => {
         if (isAuthenticated) {
           this.store$.dispatch(adminUiInitialized());

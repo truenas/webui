@@ -125,7 +125,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
   }
 
   initShell(): void {
-    this.authService.authToken$.pipe(
+    this.authService.authToken().pipe(
       take(1),
       tap((token) => {
         this.token = token;
