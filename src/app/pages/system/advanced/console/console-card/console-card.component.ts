@@ -54,7 +54,7 @@ export interface ConsoleConfig {
 })
 export class ConsoleCardComponent {
   private readonly reloadConfig$ = new Subject<void>();
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.SystemAdvancedWrite];
   private consoleConfig: ConsoleConfig;
   protected readonly searchableElements = consoleCardElements;
   readonly advancedConfig$ = this.reloadConfig$.pipe(

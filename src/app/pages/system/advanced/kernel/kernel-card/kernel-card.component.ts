@@ -47,7 +47,7 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
 export class KernelCardComponent {
   private readonly reloadConfig$ = new Subject<void>();
   protected readonly searchableElements = kernelCardElements;
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.SystemAdvancedWrite];
   readonly debugKernel$ = this.reloadConfig$.pipe(
     startWith(undefined),
     switchMap(() => this.store$.pipe(waitForAdvancedConfig)),

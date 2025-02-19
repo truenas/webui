@@ -58,7 +58,7 @@ export class SmartInfoCardComponent implements OnChanges {
   readonly disk = input<Disk>();
   readonly hasSmartTestSupport = input(false);
 
-  readonly requiredRoles = [Role.FullAdmin];
+  readonly requiredRoles = [Role.DiskWrite];
 
   totalResults$: Observable<LoadingState<number>>;
   lastResultsInCategory$: Observable<SmartTestResult[]>;

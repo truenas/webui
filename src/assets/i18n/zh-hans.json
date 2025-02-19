@@ -146,6 +146,8 @@
   "Restart is required after changing these settings.": "",
   "Root Disk": "",
   "Root Disk Size (in GiB)": "",
+  "SSH Read": "",
+  "SSH Write": "",
   "Secure Boot": "",
   "Secure Boot ensures that only trusted, signed software runs during a system’s startup process. May be incompatible with some images.": "",
   "Secure Boot is required for the VM image you selected": "",

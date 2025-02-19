@@ -40,7 +40,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   ],
 })
 export class ManageDiskSedDialogComponent implements OnInit {
-  readonly requiredRoles = [Role.FullAdmin];
+  readonly requiredRoles = [Role.DiskWrite];
 
   passwordControl = new FormControl('', {
     nonNullable: true,

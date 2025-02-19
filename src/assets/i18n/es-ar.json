@@ -65,6 +65,8 @@
   "SMB - Vers Minor": "",
   "SMB Lock": "",
   "SMB Locks": "",
+  "SSH Read": "",
+  "SSH Write": "",
   "Script": "",
   "Service = \"SMB\" AND Event = \"CLOSE\"": "",
   "Sharing iSCSI Auth Read": "",

@@ -81,7 +81,7 @@ interface DiskUi extends Disk {
   ],
 })
 export class DiskListComponent implements OnInit {
-  readonly requiredRoles = [Role.FullAdmin];
+  readonly requiredRoles = [Role.DiskWrite];
   protected readonly searchableElements = diskListElements;
 
   dataProvider: AsyncDataProvider<DiskUi>;

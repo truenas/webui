@@ -61,7 +61,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   ],
 })
 export class InitShutdownListComponent implements OnInit {
-  readonly requiredRoles = [Role.FullAdmin];
+  readonly requiredRoles = [Role.SystemCronWrite];
   protected readonly searchableElements = initShudownListElements;
 
   dataProvider: AsyncDataProvider<InitShutdownScript>;

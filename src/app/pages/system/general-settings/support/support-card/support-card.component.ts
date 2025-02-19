@@ -75,6 +75,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 })
 export class SupportCardComponent implements OnInit {
   readonly requiredRoles = [Role.FullAdmin];
+  protected readonly Role = Role;
   protected readonly searchableElements = supportCardElements;
 
   extraMargin = true;

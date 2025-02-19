@@ -50,7 +50,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   ],
 })
 export class GlobalTwoFactorAuthFormComponent implements OnInit {
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.SystemSecurityWrite];
 
   isFormLoading = false;
   form = this.fb.nonNullable.group({

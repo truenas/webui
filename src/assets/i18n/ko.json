@@ -25,6 +25,8 @@
   "Pool Write": "",
   "Privilege Read": "",
   "Privilege Write": "",
+  "SSH Read": "",
+  "SSH Write": "",
   "Secure Boot is required for the VM image you selected": "",
   "Secure Boot is required to be off for the VM image you selected": "",
   "System Cron Read": "",

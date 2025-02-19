@@ -16,7 +16,6 @@ import {
   filter, tap,
 } from 'rxjs/operators';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
-import { Role } from 'app/enums/role.enum';
 import { FibreChannelHost, FibreChannelPort, FibreChannelStatus } from 'app/interfaces/fibre-channel.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
@@ -69,7 +68,6 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 })
 export class FibreChannelPortsComponent implements OnInit {
   protected readonly searchableElements = fibreChannelPortsElements;
-  protected requiredRoles: Role[] = [Role.FullAdmin];
   protected searchQuery = signal<string>('');
   protected dataProvider = new ArrayDataProvider<FibreChannelPortRow>();
   protected isLoading = signal(false);
