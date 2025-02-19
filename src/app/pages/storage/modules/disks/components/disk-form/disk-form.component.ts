@@ -71,7 +71,6 @@ export class DiskFormComponent implements OnInit {
     hddstandby: [null as DiskStandby | null],
     advpowermgmt: [null as DiskPowerLevel | null],
     togglesmart: [false],
-    smartoptions: [''],
     passwd: [''],
     clear_pw: [false],
   });

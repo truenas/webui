@@ -28,7 +28,6 @@ export interface Disk {
   rotationrate: number;
   serial: string;
   size: number;
-  smartoptions: string;
   subsystem: string;
   supports_smart?: boolean;
   togglesmart: boolean;
@@ -79,7 +78,6 @@ export interface DiskUpdate {
   description?: string;
   hddstandby?: DiskStandby;
   passwd?: string;
-  smartoptions?: string;
   critical?: number;
   difference?: number;
   informational?: number;
