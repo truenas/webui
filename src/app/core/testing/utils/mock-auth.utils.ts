@@ -19,7 +19,7 @@ import { WebSocketStatusService } from 'app/services/websocket-status.service';
 export const dummyUser = {
   privilege: {
     roles: {
-      $set: [Role.FullAdmin],
+      $set: Object.values(Role),
     },
     web_shell: true,
   },
