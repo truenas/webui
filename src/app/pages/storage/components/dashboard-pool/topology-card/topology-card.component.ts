@@ -229,8 +229,6 @@ export class TopologyCardComponent implements OnInit, OnChanges {
     keys.forEach((key: keyof StorageDashboardDisk) => {
       if (
         key === 'alerts'
-        || key === 'smartTestsRunning'
-        || key === 'smartTestsFailed'
         || key === 'tempAggregates'
       ) {
         return;

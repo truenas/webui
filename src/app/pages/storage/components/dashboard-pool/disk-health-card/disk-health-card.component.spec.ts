@@ -43,8 +43,6 @@ const disks: StorageDashboardDisk[] = [
     zfs_guid: '12387051346845729003',
     alerts: [],
     tempAggregates: { min: 10, max: 50, avg: 30 },
-    smartTestsRunning: 0,
-    smartTestsFailed: 0,
   },
 ];
 
@@ -100,13 +98,6 @@ describe('DiskHealthCardComponent', () => {
     it('shows average temperature', () => {
       const detailsItem = spectator.query(byText('Average Disk Temperature:'))!.parentElement!;
       expect(detailsItem.querySelector('.value')).toHaveText('30 °C');
-    });
-  });
-
-  describe('Smart Tests', () => {
-    it('shows failed smart tests', () => {
-      const detailsItem = spectator.query(byText('Failed S.M.A.R.T. Tests:'))!.parentElement!;
-      expect(detailsItem.querySelector('.value')).toHaveText('0');
     });
   });
 });

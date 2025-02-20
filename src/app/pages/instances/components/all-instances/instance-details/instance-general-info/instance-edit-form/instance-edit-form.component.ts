@@ -156,7 +156,7 @@ export class InstanceEditFormComponent {
       environment: this.environmentVariablesPayload,
       autostart: values.autostart,
       cpu: values.cpu,
-      memory: values.memory,
+      memory: values.memory || null,
       enable_vnc: values.enable_vnc,
       vnc_port: values.enable_vnc ? values.vnc_port || defaultVncPort : null,
       vnc_password: values.enable_vnc ? values.vnc_password : null,
