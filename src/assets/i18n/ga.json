@@ -15,6 +15,7 @@
   "Activates iSCSI Extensions for RDMA (iSER) in TrueNAS, enabling the iSCSI protocol to directly transfer data into and out of SCSI memory buffers for improved performance. Enabling is limited to TrueNAS Enterprise-licensed systems and requires the system and network environment have Remote Direct Memory Access (RDMA)-capable hardware.": "",
   "Active Controller": "",
   "Add Container": "",
+  "Add Device": "",
   "Add Disk": "",
   "Add Docker Registry": "",
   "Add Instance": "",

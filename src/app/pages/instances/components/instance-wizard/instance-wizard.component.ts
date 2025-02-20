@@ -493,7 +493,11 @@ export class InstanceWizardComponent {
       })
       .afterClosed()
       .pipe(untilDestroyed(this))
-      .subscribe((addedDevices: Option<string>[]) => {
+      .subscribe((addedDevices: Option<string>[] | undefined) => {
+        if (!addedDevices?.length) {
+          return;
+        }
+
         this.form.patchValue({
           pci_devices: unionBy(this.form.controls.pci_devices.value, addedDevices, 'value'),
         });

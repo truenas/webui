@@ -141,7 +141,11 @@ export class AddDeviceMenuComponent {
       })
       .afterClosed()
       .pipe(untilDestroyed(this))
-      .subscribe((addedDevices: Option<string>[]) => {
+      .subscribe((addedDevices: Option<string>[] | undefined) => {
+        if (!addedDevices?.length) {
+          return;
+        }
+
         this.addDevice({
           dev_type: VirtualizationDeviceType.Pci,
           address: addedDevices[0].value,

@@ -177,7 +177,7 @@ describe('AddDeviceMenuComponent', () => {
       const menu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Add' }));
       await menu.open();
 
-      const menuItems = await menu.getItems({ text: 'Add PCI Passthrough' });
+      const menuItems = await menu.getItems({ text: 'Add Device' });
       expect(menuItems).toHaveLength(0);
     });
 
@@ -199,7 +199,7 @@ describe('AddDeviceMenuComponent', () => {
       const menu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Add' }));
       await menu.open();
 
-      await menu.clickItem({ text: 'Add PCI Passthrough' });
+      await menu.clickItem({ text: 'Add Device' });
 
       expect(matDialog.open).toHaveBeenCalledWith(PciPassthroughDialogComponent, {
         minWidth: '90vw',
