@@ -92,6 +92,7 @@ export class SaveConfigDialogComponent {
   onSubmit(): void {
     this.store$.pipe(
       waitForSystemInfo,
+      this.loader.withLoader(),
       switchMap((systemInfo) => {
         const hostname = systemInfo.hostname.split('.')[0];
         const date = this.datePipe.transform(new Date(), 'yyyyMMddHHmmss');
@@ -107,7 +108,6 @@ export class SaveConfigDialogComponent {
         }
 
         return this.api.call('core.download', ['config.save', [{ secretseed: this.exportSeedCheckbox.value }], fileName]).pipe(
-          this.loader.withLoader(),
           switchMap(([, url]) => this.download.downloadUrl(url, fileName, mimeType)),
         );
       }),
