@@ -74,7 +74,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 export class CertificateSigningRequestsListComponent implements OnInit {
   protected certificateCreated = output();
 
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.CertificateWrite];
   protected readonly searchableElements = csrListElements;
 
   dataProvider: AsyncDataProvider<Certificate>;

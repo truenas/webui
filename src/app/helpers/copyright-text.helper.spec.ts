@@ -1,19 +1,19 @@
 import { environment } from 'environments/environment';
 import { ProductType } from 'app/enums/product-type.enum';
-import { getCopyrightText } from 'app/helpers/copyright-text.helper';
+import { getCopyrightHtml } from 'app/helpers/copyright-text.helper';
 
 const buildYear = environment.buildYear;
 
-describe('getCopyrightText', () => {
+describe('getCopyrightHtml', () => {
   it('general: copyright text', () => {
-    expect(getCopyrightText()).toBe(`TrueNAS ® © ${buildYear}`);
+    expect(getCopyrightHtml()).toBe(`TrueNAS® <br /> © ${buildYear}`);
   });
 
   it('community edition: copyright text', () => {
-    expect(getCopyrightText(ProductType.CommunityEdition)).toBe(`TrueNAS Community Edition ® © ${buildYear}`);
+    expect(getCopyrightHtml(ProductType.CommunityEdition)).toBe(`TrueNAS® Community Edition <br /> © ${buildYear}`);
   });
 
   it('enterprise: copyright text', () => {
-    expect(getCopyrightText(ProductType.Enterprise)).toBe(`TrueNAS Enterprise ® © ${buildYear}`);
+    expect(getCopyrightHtml(ProductType.Enterprise)).toBe(`TrueNAS® Enterprise <br /> © ${buildYear}`);
   });
 });

@@ -85,7 +85,7 @@ export class CloudBackupSnapshotsComponent implements OnChanges {
         {
           iconName: iconMarker('mdi-delete'),
           tooltip: this.translate.instant('Delete'),
-          requiredRoles: [Role.FullAdmin],
+          requiredRoles: [Role.CloudBackupWrite],
           onClick: (row) => this.doDelete(row),
         },
       ],

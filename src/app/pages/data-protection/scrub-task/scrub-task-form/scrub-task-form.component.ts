@@ -53,7 +53,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
   ],
 })
 export class ScrubTaskFormComponent implements OnInit {
-  readonly requiredRoles = [Role.FullAdmin];
+  readonly requiredRoles = [Role.PoolScrubWrite];
   protected editingTask: PoolScrubTask | undefined;
 
   get isNew(): boolean {

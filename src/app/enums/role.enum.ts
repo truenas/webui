@@ -3,6 +3,8 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 export enum Role {
   ApiKeyWrite = 'API_KEY_WRITE',
   ApiKeyRead = 'API_KEY_READ',
+  PrivilegeWrite = 'PRIVILEGE_WRITE',
+  PrivilegeRead = 'PRIVILEGE_READ',
   TrueCommandRead = 'TRUECOMMAND_READ',
   TrueCommandWrite = 'TRUECOMMAND_WRITE',
   AccountRead = 'ACCOUNT_READ',
@@ -104,6 +106,8 @@ export enum Role {
   JbofWrite = 'JBOF_WRITE',
   PoolScrubRead = 'POOL_SCRUB_READ',
   PoolScrubWrite = 'POOL_SCRUB_WRITE',
+  PoolRead = 'POOL_READ',
+  PoolWrite = 'POOL_WRITE',
   VirtImageRead = 'VIRT_IMAGE_READ',
   VirtImageWrite = 'VIRT_IMAGE_WRITE',
   VirtInstanceRead = 'VIRT_INSTANCE_READ',
@@ -121,6 +125,8 @@ export enum Role {
 }
 
 export const roleNames = new Map<Role, string>([
+  [Role.PrivilegeWrite, T('Privilege Write')],
+  [Role.PrivilegeRead, T('Privilege Read')],
   [Role.ApiKeyRead, T('API Key Read')],
   [Role.ApiKeyWrite, T('API Key Write')],
   [Role.TrueCommandRead, T('TrueCommand Read')],
@@ -227,6 +233,8 @@ export const roleNames = new Map<Role, string>([
   [Role.JbofWrite, T('JBOF Write')],
   [Role.PoolScrubRead, T('Pool Scrub Read')],
   [Role.PoolScrubWrite, T('Pool Scrub Write')],
+  [Role.PoolRead, T('Pool Read')],
+  [Role.PoolWrite, T('Pool Write')],
   [Role.VirtImageRead, T('Virtualization Image Read')],
   [Role.VirtImageWrite, T('Virtualization Image Write')],
   [Role.VirtInstanceRead, T('Virtualization Instance Read')],

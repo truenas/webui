@@ -98,10 +98,10 @@ export class SystemSecurityFormComponent implements OnInit {
 
   private initSystemSecurityForm(): void {
     this.form.patchValue(this.systemSecurityConfig());
-    this.form.controls.enable_gpos_stig.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
-      if (value && !this.form.controls.enable_fips.value) {
-        this.form.patchValue({ enable_fips: true });
-      }
-    });
+    this.form.controls.enable_gpos_stig.valueChanges
+      .pipe(untilDestroyed(this))
+      .subscribe((value) => {
+        this.form.patchValue({ enable_fips: value });
+      });
   }
 }

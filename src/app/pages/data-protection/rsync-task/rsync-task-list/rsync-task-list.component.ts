@@ -78,7 +78,7 @@ import { TaskService } from 'app/services/task.service';
   ],
 })
 export class RsyncTaskListComponent implements OnInit {
-  readonly requiredRoles = [Role.FullAdmin];
+  readonly requiredRoles = [Role.SnapshotTaskWrite];
   protected readonly searchableElements = rsyncTaskListElements;
 
   dataProvider: AsyncDataProvider<RsyncTask>;

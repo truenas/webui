@@ -61,7 +61,7 @@ interface DnsAuthenticatorList {
   ],
 })
 export class AcmednsFormComponent implements OnInit {
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.NetworkInterfaceWrite];
 
   get isNew(): boolean {
     return !this.editingAcmedns;

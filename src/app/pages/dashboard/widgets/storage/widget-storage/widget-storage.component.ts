@@ -80,7 +80,7 @@ export class WidgetStorageComponent {
     return poolsInfo;
   });
 
-  readonly requiredRoles = [Role.FullAdmin];
+  readonly requiredRoles = [Role.PoolWrite];
 
   private pools = toSignal(this.resources.pools$);
   private volumesData = toSignal(this.resources.volumesData$);

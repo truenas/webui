@@ -59,7 +59,7 @@ import { TaskService } from 'app/services/task.service';
   ],
 })
 export class SnapshotTaskFormComponent implements OnInit {
-  readonly requiredRoles = [Role.FullAdmin];
+  readonly requiredRoles = [Role.SnapshotTaskWrite];
 
   get isNew(): boolean {
     return !this.editingTask;
