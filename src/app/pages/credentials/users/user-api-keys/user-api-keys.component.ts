@@ -116,21 +116,21 @@ export class UserApiKeysComponent implements OnInit {
           requiredRoles: this.requiredRoles,
           hidden: (row) => of(row.revoked),
           onClick: (row) => this.openForm(row),
-          disabled: (row) => this.authService.hasRole([Role.FullAdmin]).pipe(
+          disabled: (row) => this.authService.hasRole([Role.ApiKeyWrite]).pipe(
             withLatestFrom(this.authService.user$.pipe(
               filter((user) => !!user),
               map((user) => user.pw_name),
             )),
-            map(([isFullAdmin, username]) => !isFullAdmin && row.username !== username),
+            map(([canWriteApiKeys, username]) => !canWriteApiKeys && row.username !== username),
           ),
         },
         {
           iconName: iconMarker('mdi-delete'),
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
-          disabled: (row) => this.authService.hasRole([Role.FullAdmin]).pipe(
+          disabled: (row) => this.authService.hasRole([Role.ApiKeyWrite]).pipe(
             withLatestFrom(this.authService.user$.pipe(map((user) => user.pw_name))),
-            map(([isFullAdmin, username]) => !isFullAdmin && row.username !== username),
+            map(([canWriteApiKeys, username]) => !canWriteApiKeys && row.username !== username),
           ),
           requiredRoles: this.requiredRoles,
         },

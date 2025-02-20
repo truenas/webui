@@ -58,7 +58,7 @@ import {
   ],
 })
 export class CertificateEditComponent implements OnInit {
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.CertificateWrite];
 
   isLoading = false;
 

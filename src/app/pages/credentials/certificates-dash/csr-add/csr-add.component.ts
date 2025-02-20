@@ -84,7 +84,7 @@ export class CsrAddComponent {
   // Importing
   protected readonly import = viewChild(CsrImportComponent);
 
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.CertificateWrite];
 
   isLoading = false;
   summary: SummarySection[];
