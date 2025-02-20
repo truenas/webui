@@ -173,12 +173,9 @@ export class AuthService {
       map((user) => {
         const currentRoles = user?.privilege?.roles?.$set || [];
         const neededRoles = Array.isArray(roles) ? roles : [roles];
+
         if (!neededRoles?.length || !currentRoles.length) {
           return false;
-        }
-
-        if (currentRoles.includes(Role.FullAdmin)) {
-          return true;
         }
 
         return neededRoles.some((role) => currentRoles.includes(role));

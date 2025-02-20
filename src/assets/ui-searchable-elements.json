@@ -292,7 +292,7 @@
       "Add Docker Registry"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "APPS_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -575,7 +575,7 @@
       "Create DNS Authenticator"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "NETWORK_INTERFACE_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -618,7 +618,7 @@
       "Certificate Authority"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "CERTIFICATE_AUTHORITY_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -642,7 +642,7 @@
       "Generate Certificate"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "CERTIFICATE_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -708,7 +708,7 @@
       "Generate Certificate Signing Requests"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "CERTIFICATE_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -795,7 +795,7 @@
       "Privilege"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "PRIVILEGE_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -1150,7 +1150,7 @@
       "Task"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "SNAPSHOT_TASK_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -1212,7 +1212,7 @@
       "Task"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "POOL_SCRUB_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -1254,7 +1254,7 @@
       "Adjust Resilver Priority"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "POOL_SCRUB_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -2362,7 +2362,7 @@
       "New Static Route"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "NETWORK_INTERFACE_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [

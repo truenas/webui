@@ -65,7 +65,7 @@ import { SystemGeneralService } from 'app/services/system-general.service';
   ],
 })
 export class ServiceFtpComponent implements OnInit {
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.SharingFtpWrite];
 
   isFormLoading = false;
   isAdvancedMode = false;

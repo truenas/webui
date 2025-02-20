@@ -75,7 +75,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 export class CertificateListComponent implements OnInit {
   readonly certificateDeleted = output();
 
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.CertificateWrite];
   protected readonly searchableElements = certificateListElements;
 
   dataProvider: AsyncDataProvider<Certificate>;

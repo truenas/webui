@@ -69,7 +69,7 @@ import { UserService } from 'app/services/user.service';
   ],
 })
 export class RsyncTaskFormComponent implements OnInit {
-  readonly requiredRoles = [Role.FullAdmin];
+  readonly requiredRoles = [Role.SnapshotTaskWrite];
 
   get isNew(): boolean {
     return !this.editingTask;

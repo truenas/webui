@@ -44,7 +44,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   ],
 })
 export class SelectPoolDialogComponent implements OnInit {
-  readonly requiredRoles = [Role.FullAdmin];
+  readonly requiredRoles = [Role.AppsWrite];
 
   form = this.formBuilder.nonNullable.group({
     pool: [''],
