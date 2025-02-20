@@ -1,6 +1,7 @@
 {
   "": "",
   "<b>CPU Configuration</b><br />Enter the number of cores. Use multiple values or ranges to set the CPU topology.<br />Example: 1-2, 5, 9-11.": "",
+  "Activates iSCSI Extensions for RDMA (iSER) in TrueNAS, enabling the iSCSI protocol to directly transfer data into and out of SCSI memory buffers for improved performance. Enabling is limited to TrueNAS Enterprise-licensed systems and requires the system and network environment have Remote Direct Memory Access (RDMA)-capable hardware.": "",
   "Add Instance": "",
   "Add Instances": "",
   "Add Target": "",
@@ -15,6 +16,7 @@
   "Disk size increased": "",
   "Edit App YAML": "",
   "Enable VLAN": "",
+  "Enable iSCSI Extensions for RDMA (iSER)": "",
   "Expose Snapshots": "",
   "Failover is unhealthy. Rebooting now will cause a production outage.": "",
   "Hottest": "",
