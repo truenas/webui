@@ -110,46 +110,43 @@
     </ix-form-section>
 
     @if (isContainer()) {
-    <ix-form-section
-      [label]="'Environment' | translate"
-    >
-      <ix-list
-        formArrayName="environment_variables"
-        [empty]="form.controls.environment_variables.controls.length === 0"
-        [label]="containersHelptext.env_placeholder | translate"
-        (add)="addEnvironmentVariable()"
+      <ix-form-section
+        [label]="'Environment' | translate"
       >
-        @for (envControl of form.controls.environment_variables.controls; track envControl; let i = $index) {
-          <ix-list-item
-            [formGroupName]="i"
-            [label]="'Environment Variable' | translate"
-            (delete)="removeEnvironmentVariable(i)"
-          >
-            <div class="environment-variable">
-              <ix-input
-                formControlName="name"
-                [label]="containersHelptext.env_name_placeholder | translate"
-                [tooltip]="containersHelptext.env_name_tooltip | translate"
-                [required]="true"
-              ></ix-input>
+        <ix-list
+          formArrayName="environment_variables"
+          [empty]="form.controls.environment_variables.controls.length === 0"
+          [label]="containersHelptext.env_placeholder | translate"
+          (add)="addEnvironmentVariable()"
+        >
+          @for (envControl of form.controls.environment_variables.controls; track envControl; let i = $index) {
+            <ix-list-item
+              [formGroupName]="i"
+              [label]="'Environment Variable' | translate"
+              (delete)="removeEnvironmentVariable(i)"
+            >
+              <div class="environment-variable">
+                <ix-input
+                  formControlName="name"
+                  [label]="containersHelptext.env_name_placeholder | translate"
+                  [tooltip]="containersHelptext.env_name_tooltip | translate"
+                  [required]="true"
+                ></ix-input>
 
-              <ix-input
-                formControlName="value"
-                [label]="containersHelptext.env_value_placeholder | translate"
-                [tooltip]="containersHelptext.env_value_tooltip | translate"
-                [required]="true"
-              ></ix-input>
-            </div>
-          </ix-list-item>
-        }
-      </ix-list>
-    </ix-form-section>
+                <ix-input
+                  formControlName="value"
+                  [label]="containersHelptext.env_value_placeholder | translate"
+                  [tooltip]="containersHelptext.env_value_tooltip | translate"
+                  [required]="true"
+                ></ix-input>
+              </div>
+            </ix-list-item>
+          }
+        </ix-list>
+      </ix-form-section>
     }
 
-    <ix-form-section
-      [label]="'Disks' | translate"
-    >
-
+    <ix-form-section [label]="'Disks' | translate">
       @if (isVm() && form.value.source_type !== VirtualizationSource.Zvol) {
         <ix-input
           formControlName="root_disk_size"
@@ -347,9 +344,42 @@
     }
 
     @if (isVm()) {
-      <ix-form-section
-        [label]="'VNC' | translate"
-      >
+      <ix-form-section [label]="'PCI Passthrough' | translate">
+        @if (form.value.pci_devices.length) {
+          <p>{{ 'Selected Devices' | translate }}:</p>
+
+          <ul class="pci-devices">
+            @for (device of form.value.pci_devices; track device) {
+              <li>
+                <div class="device">
+                  {{ device.label }}
+
+                  <button
+                    mat-icon-button
+                    type="button"
+                    [ixTest]="['remove-pci', device.label]"
+                    (click)="removePciDevice(device.value)"
+                  >
+                    <ix-icon name="mdi-close"></ix-icon>
+                  </button>
+                </div>
+              </li>
+            }
+          </ul>
+        }
+
+        <button
+          mat-button
+          ixTest="add-pci"
+          type="button"
+          class="add-pci-button"
+          (click)="onAddPciPassthrough()"
+        >{{ 'Add PCI Passthrough' | translate }}</button>
+      </ix-form-section>
+    }
+
+    @if (isVm()) {
+      <ix-form-section [label]="'VNC' | translate">
         <ix-checkbox
           formControlName="enable_vnc"
           [label]="containersHelptext.enable_vnc_placeholder | translate"
