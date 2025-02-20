@@ -16,12 +16,10 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
-export const fullAdminUserRoles: Role[] = Object.values(Role);
-
 export const dummyUser = {
   privilege: {
     roles: {
-      $set: [...fullAdminUserRoles],
+      $set: Object.values(Role),
     },
     web_shell: true,
   },
