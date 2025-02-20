@@ -43,7 +43,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
   ],
 })
 export class StaticRouteFormComponent implements OnInit {
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.NetworkInterfaceWrite];
 
   get isNew(): boolean {
     return !this.editingRoute;

@@ -71,7 +71,7 @@ import { AppState } from 'app/store';
   ],
 })
 export class RsyncTaskCardComponent implements OnInit {
-  readonly requiredRoles = [Role.FullAdmin];
+  readonly requiredRoles = [Role.SnapshotTaskWrite];
 
   rsyncTasks: RsyncTaskUi[] = [];
   dataProvider: AsyncDataProvider<RsyncTaskUi>;

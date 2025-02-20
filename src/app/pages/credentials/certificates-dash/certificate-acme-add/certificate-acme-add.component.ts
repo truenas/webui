@@ -57,7 +57,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   ],
 })
 export class CertificateAcmeAddComponent implements OnInit {
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.CertificateWrite];
 
   form = this.formBuilder.nonNullable.group({
     name: ['', [
