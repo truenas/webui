@@ -206,7 +206,6 @@ export class RsyncTaskCardComponent implements OnInit {
     }).pipe(
       filter(Boolean),
       tap(() => this.updateRowStateAndJob(row, JobState.Running, row.job)),
-      tap(() => row.state = { state: JobState.Running }),
       switchMap(() => this.api.job('rsynctask.run', [row.id])),
       tapOnce(() => this.snackbar.success(
         this.translate.instant('Rsync task «{name}» has started.', {
