@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent, MatCardActions } from '@angular/material/card';
@@ -100,7 +101,8 @@ export class IpmiFormComponent implements OnInit {
         this.translate.instant(helptextIpmi.ip_error),
       ),
     ]],
-    vlan: [null as number | null],
+    vlan_id_enable: [false],
+    vlan_id: [null as number | null, [Validators.required]],
     password: ['', [
       this.validatorsService.withMessage(
         Validators.maxLength(20),
@@ -108,6 +110,8 @@ export class IpmiFormComponent implements OnInit {
       ),
     ]],
   });
+
+  vlanEnabled = toSignal(this.form.controls.vlan_id_enable.valueChanges);
 
   constructor(
     private api: ApiService,
@@ -211,7 +215,8 @@ export class IpmiFormComponent implements OnInit {
       ipaddress: ipmi.ip_address || '',
       netmask: ipmi.subnet_mask || '',
       gateway: ipmi.default_gateway_ip_address || '',
-      vlan: ipmi.vlan_id || null,
+      vlan_id: ipmi.vlan_id || null,
+      vlan_id_enable: ipmi.vlan_id_enable,
     });
   }
 
@@ -255,16 +260,23 @@ export class IpmiFormComponent implements OnInit {
   onSubmit(): void {
     this.isLoading = true;
 
-    const updateParams: IpmiUpdate = { ...this.form.value };
+    const updateParams: IpmiUpdate = {
+      dhcp: this.form.value.dhcp,
+      gateway: this.form.value.gateway,
+      ipaddress: this.form.value.ipaddress,
+      netmask: this.form.value.netmask,
+      vlan: this.form.value.vlan_id_enable ? this.form.value.vlan_id : null,
+      password: this.form.value.password,
+      apply_remote: this.form.value.apply_remote,
+    };
+
     if (!updateParams.apply_remote) {
       delete updateParams.apply_remote;
     }
     if (!updateParams.password) {
       delete updateParams.password;
     }
-    if (!updateParams.vlan) {
-      delete updateParams.vlan;
-    }
+
     this.api.call('ipmi.lan.update', [this.ipmiId, updateParams])
       .pipe(untilDestroyed(this))
       .subscribe({

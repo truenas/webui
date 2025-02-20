@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { subHours, subMinutes } from 'date-fns';
+import { subHours } from 'date-fns';
 import {
   Observable, Subject, catchError, combineLatestWith, debounceTime,
   filter,
@@ -94,19 +94,6 @@ export class WidgetResourcesService {
       return serverTime;
     }),
   );
-
-  cpuLastMinuteStats(minutes = 1): Observable<ReportingData[]> {
-    return this.serverTime$.pipe(
-      take(1),
-      switchMap((serverTime) => {
-        const end = Math.floor(serverTime.getTime() / 1000);
-        const start = Math.floor(subMinutes(serverTime, minutes).getTime() / 1000);
-
-        return this.api.call('reporting.netdata_get_data', [[{ name: 'cpu' }], { end, start }]);
-      }),
-      shareReplay({ bufferSize: 1, refCount: true }),
-    );
-  }
 
   networkInterfaceLastHourStats(interfaceName: string): Observable<ReportingData[]> {
     return this.serverTime$.pipe(

@@ -191,8 +191,8 @@ export class AuthService {
       tap(() => {
         this.clearAuthToken();
         this.wasOneTimePasswordChanged$.next(false);
-        this.api.clearSubscriptions();
         this.wsStatus.setLoginStatus(false);
+        this.api.clearSubscriptions();
       }),
     );
   }

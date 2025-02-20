@@ -476,6 +476,10 @@ export class InstanceWizardComponent {
         this.form.controls.source_type.setValue(VirtualizationSource.Image);
       }
       this.instanceType.set(type);
+
+      this.form.controls.image.reset();
+      this.form.controls.disks.clear();
+
       if (type === VirtualizationType.Container) {
         this.form.controls.cpu.setValidators(cpuValidator());
         this.form.controls.memory.clearValidators();

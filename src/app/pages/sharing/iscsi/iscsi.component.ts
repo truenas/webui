@@ -96,7 +96,9 @@ export class IscsiComponent {
         filter((response) => !!response.response),
         untilDestroyed(this),
       )
-      .subscribe(() => this.iscsiService.refreshData());
+      .subscribe(({ response }) => {
+        this.iscsiService.refreshData(response);
+      });
   }
 
   openGlobalTargetConfiguration(): void {
