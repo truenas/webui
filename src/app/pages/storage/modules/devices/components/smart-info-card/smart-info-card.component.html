@@ -71,12 +71,5 @@
         <div class="value">{{ 'Disabled in Disk Settings' | translate }}</div>
       </div>
     }
-
-    @if (disk()?.smartoptions) {
-      <div class="details-item">
-        <div class="label">{{ 'S.M.A.R.T. Options' | translate }}:</div>
-        <div class="value">{{ disk().smartoptions }}</div>
-      </div>
-    }
   </mat-card-content>
 </mat-card>
