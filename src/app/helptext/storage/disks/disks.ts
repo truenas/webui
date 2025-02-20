@@ -52,11 +52,6 @@ export const helptextDisks = {
  <a href="https://www.truenas.com/docs/scale/scaleuireference/dataprotection/smarttestsscreensscale/" target="_blank">SMART monitoring and scheduled SMART tests</a> \
  are enabled.'),
 
-  disk_form_smartoptions_placeholder: T('S.M.A.R.T. extra options'),
-  disk_form_smartoptions_tooltip: T('Additional <a\
- href="https://www.smartmontools.org/browser/trunk/smartmontools/smartctl.8.in"\
- target="_blank">smartctl(8)</a> options.'),
-
   disk_form_critical_placeholder: T('Critical'),
   disk_form_critical_tooltip: T('Threshold temperature in Celsius. If the\
  drive temperature is higher than this value, a LOG_CRIT level log entry\

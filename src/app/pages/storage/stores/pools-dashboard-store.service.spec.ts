@@ -40,7 +40,6 @@ const disk: Disk = {
   rotationrate: 0,
   serial: '',
   size: 5368709120,
-  smartoptions: '',
   subsystem: 'scsi',
   togglesmart: true,
   transfermode: 'Auto',
@@ -57,8 +56,6 @@ const dashboardDisks: StorageDashboardDisk[] = [
     ...disk,
     alerts: [],
     tempAggregates: { min: 20, max: 50, avg: 40 },
-    smartTestsRunning: 0,
-    smartTestsFailed: 0,
   },
 ];
 
