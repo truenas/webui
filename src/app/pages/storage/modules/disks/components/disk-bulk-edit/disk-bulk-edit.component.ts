@@ -18,7 +18,6 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
@@ -42,7 +41,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
     IxChipsComponent,
     IxSelectComponent,
     IxCheckboxComponent,
-    IxInputComponent,
     FormActionsComponent,
     RequiresRolesDirective,
     MatButton,
@@ -60,7 +58,6 @@ export class DiskBulkEditComponent {
     hddstandby: [null as DiskStandby | null],
     advpowermgmt: [null as DiskPowerLevel | null],
     togglesmart: [false],
-    smartoptions: [''],
   });
 
   readonly helptext = helptextDisks;
@@ -89,11 +86,9 @@ export class DiskBulkEditComponent {
       hddstandby: '' as DiskStandby,
       advpowermgmt: '' as DiskPowerLevel,
       togglesmart: false,
-      smartoptions: '',
     };
     const hddStandby: DiskStandby[] = [];
     const advPowerMgt: DiskPowerLevel[] = [];
-    const smartOptions: string[] = [];
 
     selectedDisks.forEach((disk) => {
       this.diskIds.push(disk.identifier);
@@ -102,7 +97,6 @@ export class DiskBulkEditComponent {
       advPowerMgt.push(disk.advpowermgmt);
       if (disk.togglesmart) {
         setForm.togglesmart = true;
-        smartOptions.push(disk.smartoptions);
       }
     });
 
@@ -119,22 +113,12 @@ export class DiskBulkEditComponent {
       setForm.advpowermgmt = null;
     }
 
-    if (smartOptions.every((val, i, arr) => val === arr[0])) {
-      setForm.smartoptions = smartOptions[0] || null;
-    } else {
-      setForm.smartoptions = null;
-    }
-
     this.form.patchValue({ ...setForm });
     this.form.controls.disknames.disable();
   }
 
   prepareDataSubmit(): [id: string, update: DiskUpdate][] {
     const data = { ...this.form.value };
-
-    if (!data.togglesmart) {
-      data.smartoptions = '';
-    }
 
     Object.keys(data).forEach((key) => {
       if (data[key as keyof typeof data] === null) {

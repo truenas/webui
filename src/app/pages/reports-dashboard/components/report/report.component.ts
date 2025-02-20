@@ -268,7 +268,7 @@ export class ReportComponent implements OnInit, OnChanges {
 
   formatTime(stamp: number): string {
     const result = this.formatDateTimePipe.transform(new Date(stamp));
-    return result.toLowerCase() !== invalidDate.toLowerCase() ? result : null;
+    return result.toLowerCase() !== this.translate.instant(invalidDate).toLowerCase() ? result : '';
   }
 
   onZoomChange(interval: number[]): void {

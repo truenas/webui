@@ -28,7 +28,6 @@ export interface Disk {
   rotationrate: number;
   serial: string;
   size: number;
-  smartoptions: string;
   subsystem: string;
   supports_smart?: boolean;
   togglesmart: boolean;
@@ -40,8 +39,6 @@ export interface Disk {
 
 export interface StorageDashboardDisk extends Disk {
   alerts: Alert[];
-  smartTestsRunning: number;
-  smartTestsFailed: number;
   tempAggregates: TemperatureAgg;
 }
 
@@ -79,7 +76,6 @@ export interface DiskUpdate {
   description?: string;
   hddstandby?: DiskStandby;
   passwd?: string;
-  smartoptions?: string;
   critical?: number;
   difference?: number;
   informational?: number;

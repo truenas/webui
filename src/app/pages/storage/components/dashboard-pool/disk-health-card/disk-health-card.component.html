@@ -68,15 +68,11 @@
     </div>
 
     <div class="details-item">
-      <div class="label">{{ 'Failed S.M.A.R.T. Tests' | translate }}:</div>
-      <div class="value">
-        {{ diskState.smartTests | number }}
-      </div>
       <a
         ixTest="view-all-smart-tests"
         [routerLink]="['/storage', 'disks', 'smartresults', SmartTestResultPageType.Pool, poolState().name]"
       >
-        {{ 'View All S.M.A.R.T. Tests' | translate }}
+        {{ 'View S.M.A.R.T. Tests' | translate }}
       </a>
     </div>
 
