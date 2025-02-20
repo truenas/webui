@@ -23,7 +23,7 @@ describe('UploadService', () => {
         select: jest.fn(() => of(job)),
       }),
       mockProvider(AuthService, {
-        authToken$: of('token'),
+        getOneTimeToken: jest.fn(() => of('token')),
       }),
     ],
   });
