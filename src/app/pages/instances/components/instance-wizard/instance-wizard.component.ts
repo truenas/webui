@@ -352,7 +352,7 @@ export class InstanceWizardComponent {
       vnc_port: this.isVm() && values.enable_vnc ? values.vnc_port || defaultVncPort : null,
       name: values.name,
       cpu: values.cpu,
-      memory: values.memory,
+      memory: values.memory || null,
       image: values.source_type === VirtualizationSource.Image ? values.image : null,
       source_type: values.source_type,
       iso_volume: values.source_type === VirtualizationSource.Iso ? values.iso_volume : null,
