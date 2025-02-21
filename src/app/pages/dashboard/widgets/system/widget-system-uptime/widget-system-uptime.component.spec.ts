@@ -28,7 +28,7 @@ describe('WidgetSystemUptimeComponent', () => {
             getDateFromString: (date: string) => new Date(date),
           }),
           mockProvider(WidgetResourcesService, {
-            systemInfo$: of({
+            dashboardSystemInfo$: of({
               value: {
                 uptime_seconds: 83532.938532175,
                 datetime: {
@@ -81,7 +81,7 @@ describe('WidgetSystemUptimeComponent', () => {
             getDateFromString: (date: string) => new Date(date),
           }),
           mockProvider(WidgetResourcesService, {
-            systemInfo$: of({
+            dashboardSystemInfo$: of({
               isLoading: false,
               error: new Error('Fatal error'),
             } as LoadingState<SystemInfo>),
