@@ -35,6 +35,9 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
+  PciPassthroughDialogComponent,
+} from 'app/pages/instances/components/common/pci-passthough-dialog/pci-passthrough-dialog.component';
+import {
   VolumesDialogComponent,
 } from 'app/pages/instances/components/common/volumes-dialog/volumes-dialog.component';
 import { InstanceWizardComponent } from 'app/pages/instances/components/instance-wizard/instance-wizard.component';
@@ -353,6 +356,17 @@ describe('InstanceWizardComponent', () => {
       const gpuDeviceCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'NVIDIA GeForce GTX 1080' }));
       await gpuDeviceCheckbox.check();
 
+      const matDialog = spectator.inject(MatDialog);
+      jest.spyOn(matDialog, 'open').mockReturnValue({
+        afterClosed: () => of([{
+          label: '0000:08:02.0 SCSI storage controller',
+          value: '0000:08:02.0',
+        }]),
+      } as MatDialogRef<PciPassthroughDialogComponent>);
+
+      const addPciButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add PCI Passthrough' }));
+      await addPciButton.click();
+
       await form.fillForm({
         'Enable VNC': true,
         'VNC Port': 9000,
@@ -384,6 +398,10 @@ describe('InstanceWizardComponent', () => {
           { dev_type: VirtualizationDeviceType.Nic, nic_type: VirtualizationNicType.Bridged, parent: 'nic1' },
           { dev_type: VirtualizationDeviceType.Usb, product_id: '0003' },
           { dev_type: VirtualizationDeviceType.Gpu, pci: 'pci_0000_01_00_0', gpu_type: VirtualizationGpuType.Physical },
+          {
+            dev_type: VirtualizationDeviceType.Pci,
+            address: '0000:08:02.0',
+          },
         ],
         image: 'almalinux/8/cloud',
         memory: GiB,
