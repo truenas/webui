@@ -6,11 +6,12 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import {
   FormArray, FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule, Validators,
 } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
+import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { unionBy } from 'lodash-es';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
   filter,
@@ -57,10 +58,14 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { cpuValidator } from 'app/modules/forms/ix-forms/validators/cpu-validation/cpu-validation';
 import { forbiddenAsyncValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import {
+  PciPassthroughDialogComponent,
+} from 'app/pages/instances/components/common/pci-passthough-dialog/pci-passthrough-dialog.component';
 import {
   VolumesDialogComponent, VolumesDialogOptions,
 } from 'app/pages/instances/components/common/volumes-dialog/volumes-dialog.component';
@@ -95,6 +100,8 @@ import { FilesystemService } from 'app/services/filesystem.service';
     TestDirective,
     TranslateModule,
     IxIconGroupComponent,
+    MatIconButton,
+    IxIconComponent,
   ],
   templateUrl: './instance-wizard.component.html',
   styleUrls: ['./instance-wizard.component.scss'],
@@ -165,6 +172,7 @@ export class InstanceWizardComponent {
     use_default_network: [true],
     usb_devices: [[] as string[]],
     gpu_devices: [[] as string[]],
+    pci_devices: [[] as Option<string>[]],
     bridged_nics: [[] as string[]],
     mac_vlan_nics: [[] as string[]],
     proxies: this.formBuilder.array<FormGroup<{
@@ -213,6 +221,8 @@ export class InstanceWizardComponent {
   protected defaultIpv6Network = computed(() => {
     return this.configStore.config()?.v6_network || 'N/A';
   });
+
+  protected readonly of = of;
 
   constructor(
     private api: ApiService,
@@ -449,6 +459,11 @@ export class InstanceWizardComponent {
       dest_port: proxy.dest_port,
     }));
 
+    const pciDevices = this.form.controls.pci_devices.value.map((pci) => ({
+      dev_type: VirtualizationDeviceType.Pci,
+      address: pci.value,
+    }));
+
     const tpmDevice = [];
     if (this.isVm() && this.form.value.tpm) {
       tpmDevice.push({
@@ -464,7 +479,35 @@ export class InstanceWizardComponent {
       ...usbDevices,
       ...gpuDevices,
       ...tpmDevice,
+      ...pciDevices,
     ] as VirtualizationDevice[];
+  }
+
+  protected onAddPciPassthrough(): void {
+    this.matDialog
+      .open(PciPassthroughDialogComponent, {
+        minWidth: '90vw',
+        data: {
+          existingDeviceAddresses: this.form.value.pci_devices.map((device: Option) => device.value),
+        },
+      })
+      .afterClosed()
+      .pipe(untilDestroyed(this))
+      .subscribe((addedDevices: Option<string>[] | undefined) => {
+        if (!addedDevices?.length) {
+          return;
+        }
+
+        this.form.patchValue({
+          pci_devices: unionBy(this.form.controls.pci_devices.value, addedDevices, 'value'),
+        });
+      });
+  }
+
+  protected removePciDevice(address: string): void {
+    this.form.patchValue({
+      pci_devices: this.form.controls.pci_devices.value.filter((device: Option) => device.value !== address),
+    });
   }
 
   protected readonly containersHelptext = containersHelptext;
