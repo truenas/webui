@@ -31,7 +31,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 })
 export class EmptyComponent {
   readonly conf = input.required<EmptyConfig>();
-  protected readonly requiredRoles = input<Role[]>([]);
+  readonly requiredRoles = input<Role[]>([]);
 
   doAction(): void {
     const action = this.conf().button?.action;

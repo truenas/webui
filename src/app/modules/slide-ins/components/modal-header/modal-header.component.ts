@@ -39,7 +39,7 @@ export class ModalHeaderComponent implements AfterViewInit {
   readonly title = input<string>('');
   readonly loading = input<boolean>();
   readonly disableClose = input(false);
-  protected readonly requiredRoles = input<Role[]>([]);
+  readonly requiredRoles = input<Role[]>([]);
 
   protected componentsSize = signal(1);
 
