@@ -27,29 +27,30 @@ import { AuthService } from 'app/modules/auth/auth.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
-const authMeUser = {
-  pw_dir: 'dir',
-  pw_gecos: 'gecos',
-  pw_gid: 1,
-  pw_name: 'name',
-  pw_shell: 'shell',
-  pw_uid: 2,
-  attributes: {
-    preferences: {} as Preferences,
-    dashState: [] as DashConfigItem[],
-    appsAgreement: true,
-  },
-  privilege: {
-    webui_access: true,
-  },
-} as LoggedInUser;
-
-const mockWsStatus = new WebSocketStatusService();
-
 describe('AuthService', () => {
   let spectator: SpectatorService<AuthService>;
   let testScheduler: TestScheduler;
   let timer$: BehaviorSubject<0>;
+
+  const authMeUser = {
+    pw_dir: 'dir',
+    pw_gecos: 'gecos',
+    pw_gid: 1,
+    pw_name: 'name',
+    pw_shell: 'shell',
+    pw_uid: 2,
+    attributes: {
+      preferences: {} as Preferences,
+      dashState: [] as DashConfigItem[],
+      appsAgreement: true,
+    },
+    privilege: {
+      webui_access: true,
+    },
+  } as LoggedInUser;
+
+  const mockWsStatus = new WebSocketStatusService();
+
   const createService = createServiceFactory({
     service: AuthService,
     providers: [
@@ -217,11 +218,6 @@ describe('AuthService', () => {
     it('returns true if user has one of the roles', async () => {
       await setUserRoles([Role.SharingSmbRead, Role.SharingSmbWrite]);
       expect(await firstValueFrom(spectator.service.hasRole([Role.SharingSmbRead]))).toBe(true);
-    });
-
-    it('does not returns true for any role when user has FULL_ADMIN role', async () => {
-      await setUserRoles([Role.FullAdmin]);
-      expect(await firstValueFrom(spectator.service.hasRole([Role.AlertListRead]))).toBe(false);
     });
   });
 

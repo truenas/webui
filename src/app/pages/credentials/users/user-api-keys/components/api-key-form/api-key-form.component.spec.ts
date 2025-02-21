@@ -128,6 +128,20 @@ describe('ApiKeyFormComponent', () => {
     });
   });
 
+  it('disables username on edit', async () => {
+    await setupTest({
+      id: 1,
+      name: 'existing key',
+      username: 'root',
+      expires_at: { $date: parseISO('2024-11-22T00:00:00Z').getTime() },
+    });
+
+    const disabledFields = await form.getDisabledState();
+    expect(disabledFields).toMatchObject({
+      Username: true,
+    });
+  });
+
   it('allows existing api key to be reset and shows newly generated key', async () => {
     await setupTest({
       id: 1,

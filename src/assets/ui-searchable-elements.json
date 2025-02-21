@@ -292,7 +292,7 @@
       "Add Docker Registry"
     ],
     "requiredRoles": [
-      "APPS_READ"
+      "APPS_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [

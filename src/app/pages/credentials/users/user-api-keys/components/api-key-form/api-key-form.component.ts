@@ -133,6 +133,7 @@ export class ApiKeyFormComponent implements OnInit {
           : null,
         nonExpiring: !editingRow.expires_at?.$date,
       });
+      this.form.controls.username.disable();
     } else {
       this.addForbiddenNamesValidator();
       this.setCurrentUsername();
