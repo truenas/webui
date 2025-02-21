@@ -100,7 +100,8 @@ export type VirtualizationDevice =
   | VirtualizationProxy
   | VirtualizationTpm
   | VirtualizationUsb
-  | VirtualizationNic;
+  | VirtualizationNic
+  | VirtualizationPciDevice;
 
 export interface VirtualizationDisk {
   name: string;
@@ -111,6 +112,14 @@ export interface VirtualizationDisk {
   destination: string | null;
   product_id: string;
   boot_priority?: number;
+}
+
+export interface VirtualizationPciDevice {
+  name: string;
+  description: string;
+  dev_type: VirtualizationDeviceType.Pci;
+  readonly: boolean;
+  address: string;
 }
 
 export interface VirtualizationGpu {
@@ -272,3 +281,27 @@ export type VirtualizationVolumeUpdate = [
     size: number;
   },
 ];
+
+export type VirtualizationPciChoices = Record<string, VirtualizationPciDeviceOption>;
+
+export interface VirtualizationPciDeviceOption {
+  capability: VirtualizationPciDeviceCapability;
+  controller_type: string | null;
+  critical: boolean;
+  iommu_group: unknown;
+  drivers: string[];
+  error: string;
+  device_path: string;
+  reset_mechanism_defined: boolean;
+  description: string;
+}
+
+export interface VirtualizationPciDeviceCapability {
+  class: string;
+  domain: string;
+  bus: string;
+  slot: string;
+  function: string;
+  product: string;
+  vendor: string;
+}
