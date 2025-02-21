@@ -252,7 +252,7 @@ import {
 import {
   VirtualizationInstance, VirtualizationDevice, VirtualizationImageParams,
   VirtualizationImage, AvailableGpus, AvailableUsb, VirtualizationGlobalConfig,
-  VirtualizationNetwork, VirtualizationVolume, VirtualizationVolumeUpdate,
+  VirtualizationNetwork, VirtualizationVolume, VirtualizationVolumeUpdate, VirtualizationPciChoices,
 } from 'app/interfaces/virtualization.interface';
 import {
   MatchDatastoresWithDatasets,
@@ -882,6 +882,7 @@ export interface ApiCallDirectory {
   };
   'virt.device.usb_choices': { params: []; response: Record<string, AvailableUsb> };
   'virt.device.nic_choices': { params: [nicType: VirtualizationNicType]; response: Record<string, string> };
+  'virt.device.pci_choices': { params: []; response: VirtualizationPciChoices };
 
   'virt.global.bridge_choices': { params: []; response: Choices };
   'virt.global.config': { params: []; response: VirtualizationGlobalConfig };
