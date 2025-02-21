@@ -17,14 +17,14 @@ import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
+  IncreaseRootDiskSizeComponent,
+} from 'app/pages/instances/components/all-instances/instance-details/instance-disks/increase-root-disk-size/increase-root-disk-size.component';
+import {
   InstanceDiskFormComponent,
 } from 'app/pages/instances/components/all-instances/instance-details/instance-disks/instance-disk-form/instance-disk-form.component';
 import { DeviceActionsMenuComponent } from 'app/pages/instances/components/common/device-actions-menu/device-actions-menu.component';
 import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
-import {
-  IncreaseRootDiskSizeComponent,
-} from 'app/pages/virtualization/components/all-instances/instance-details/instance-disks/increase-root-disk-size/increase-root-disk-size.component';
 
 @UntilDestroy()
 @Component({

@@ -1,6 +1,5 @@
 import {
   ChangeDetectionStrategy, Component, Inject, signal, OnInit,
-  computed,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
@@ -71,10 +70,6 @@ export class SelectImageDialogComponent implements OnInit {
     type: EmptyType.Loading,
     large: true,
   } as EmptyConfig);
-
-  protected isContainer = computed(() => {
-    return this.data.type === VirtualizationType.Container;
-  });
 
   constructor(
     private api: ApiService,
