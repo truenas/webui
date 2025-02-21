@@ -39,11 +39,11 @@ describe('getDeviceDescription', () => {
   it('should return "typeLabel: description" for PCI devices', () => {
     const device: VirtualizationDevice = {
       dev_type: VirtualizationDeviceType.Pci,
-      description: 'My device',
+      address: '0000:00:00.0',
     } as VirtualizationPciDevice;
 
     const result = getDeviceDescription(mockTranslate as TranslateService, device);
-    expect(result).toBe('PCI: My device');
+    expect(result).toBe('PCI: 0000:00:00.0');
   });
 
   it('should return "dev_type: description" if dev_type label is not in the map', () => {

@@ -13,6 +13,9 @@ export function getDeviceDescription(translate: TranslateService, device: Virtua
   if (device.dev_type === VirtualizationDeviceType.Nic) {
     return `${typeLabel}: ${device.name} (${device.nic_type})`;
   }
+  if (device.dev_type === VirtualizationDeviceType.Pci) {
+    return `${typeLabel}: ${device.address}`;
+  }
 
   return `${typeLabel}: ${device.description}`;
 }

@@ -30,7 +30,7 @@ describe('InstanceDevicesComponent', () => {
     },
     {
       dev_type: VirtualizationDeviceType.Pci,
-      description: '0000:00:00.0 Host bridge: 82G33/G31/P35/P31 Express DRAM Controller',
+      address: '0000:00:00.0',
     },
     {
       name: 'gpu1',
@@ -67,7 +67,7 @@ describe('InstanceDevicesComponent', () => {
     expect(deviceRows[0]).toHaveText('USB Microphone');
     expect(deviceRows[1]).toHaveText('Matrox G200eW');
     expect(deviceRows[2]).toHaveText('Trusted Platform Module');
-    expect(deviceRows[3]).toHaveText('PCI: 0000:00:00.0 Host bridge: 82G33/G31/P35/P31 Express DRAM Controller');
+    expect(deviceRows[3]).toHaveText('PCI: 0000:00:00.0');
   });
 
   it('renders a menu to delete the device', () => {
