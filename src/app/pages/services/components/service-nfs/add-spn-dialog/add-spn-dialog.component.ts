@@ -35,7 +35,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   ],
 })
 export class AddSpnDialogComponent {
-  readonly requiredRoles = [Role.SharingNfsWrite];
+  protected readonly requiredRoles = [Role.SharingNfsWrite];
 
   readonly form = this.formBuilder.nonNullable.group({
     username: ['', Validators.required],

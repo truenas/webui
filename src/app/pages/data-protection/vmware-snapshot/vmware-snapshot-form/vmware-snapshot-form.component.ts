@@ -49,7 +49,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   ],
 })
 export class VmwareSnapshotFormComponent implements OnInit {
-  readonly requiredRoles = [Role.SnapshotTaskWrite];
+  protected readonly requiredRoles = [Role.SnapshotTaskWrite];
 
   get isNew(): boolean {
     return !this.editingSnapshot;

@@ -66,7 +66,7 @@ import { FirstTimeWarningService } from 'app/services/first-time-warning.service
   ],
 })
 export class InitShutdownCardComponent implements OnInit {
-  readonly requiredRoles = [Role.SystemCronWrite];
+  protected readonly requiredRoles = [Role.SystemCronWrite];
   protected readonly searchableElements = initShutdownCardElements;
 
   dataProvider: AsyncDataProvider<InitShutdownScript>;

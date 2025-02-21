@@ -54,7 +54,7 @@ import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-st
   ],
 })
 export class PoolsDashboardComponent implements OnInit {
-  readonly requiredRoles = [Role.PoolWrite];
+  protected readonly requiredRoles = [Role.PoolWrite];
   readonly searchableElements = storageElements;
 
   pools$ = this.store.pools$;

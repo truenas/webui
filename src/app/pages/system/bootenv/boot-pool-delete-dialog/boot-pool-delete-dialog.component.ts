@@ -43,7 +43,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   ],
 })
 export class BootPoolDeleteDialogComponent {
-  readonly requiredRoles = [Role.BootEnvWrite];
+  protected readonly requiredRoles = [Role.BootEnvWrite];
 
   form = this.fb.group({
     confirm: [false, [Validators.requiredTrue]],

@@ -43,7 +43,7 @@ export class BootenvNodeItemComponent {
 
   readonly invokeAction = output<BootPoolActionEvent>();
 
-  readonly requiredRoles = [Role.BootEnvWrite];
+  protected readonly requiredRoles = [Role.BootEnvWrite];
 
   protected readonly topologyItem = computed(() => this.node() as TopologyItem);
 

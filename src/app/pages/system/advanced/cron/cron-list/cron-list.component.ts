@@ -67,7 +67,7 @@ import { TaskService } from 'app/services/task.service';
   ],
 })
 export class CronListComponent implements OnInit {
-  readonly requiredRoles = [Role.SystemCronWrite];
+  protected readonly requiredRoles = [Role.SystemCronWrite];
   protected readonly searchableElements = cronElements;
 
   cronjobs: CronjobRow[] = [];

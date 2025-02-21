@@ -67,7 +67,7 @@ import { IscsiService } from 'app/services/iscsi.service';
 export class PortalListComponent implements OnInit {
   protected readonly searchableElements = portalListElements;
 
-  readonly requiredRoles = [
+  protected readonly requiredRoles = [
     Role.SharingIscsiPortalWrite,
     Role.SharingIscsiWrite,
     Role.SharingWrite,

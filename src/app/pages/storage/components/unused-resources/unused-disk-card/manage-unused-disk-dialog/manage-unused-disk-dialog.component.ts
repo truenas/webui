@@ -50,7 +50,7 @@ import { AddToPoolType, ManageUnusedDiskDialogResource } from 'app/pages/storage
   ],
 })
 export class ManageUnusedDiskDialogComponent implements OnInit {
-  readonly requiredRoles = [Role.DiskWrite];
+  protected readonly requiredRoles = [Role.DiskWrite];
 
   readonly toPoolOptions$: Observable<SelectOption<AddToPoolType>[]> = of([
     {

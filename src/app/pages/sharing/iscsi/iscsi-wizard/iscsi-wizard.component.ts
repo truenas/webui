@@ -141,7 +141,7 @@ export class IscsiWizardComponent implements OnInit {
     ],
   });
 
-  readonly requiredRoles = [
+  protected readonly requiredRoles = [
     Role.SharingIscsiTargetWrite,
     Role.SharingIscsiWrite,
     Role.SharingWrite,

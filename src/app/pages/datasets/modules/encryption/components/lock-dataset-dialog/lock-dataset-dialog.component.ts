@@ -40,7 +40,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   ],
 })
 export class LockDatasetDialogComponent {
-  readonly requiredRoles = [Role.DatasetWrite];
+  protected readonly requiredRoles = [Role.DatasetWrite];
 
   forceCheckbox = new FormControl(false, { nonNullable: true });
 

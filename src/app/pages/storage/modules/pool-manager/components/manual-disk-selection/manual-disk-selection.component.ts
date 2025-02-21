@@ -64,7 +64,7 @@ export interface ManualDiskSelectionParams {
   ],
 })
 export class ManualDiskSelectionComponent implements OnInit {
-  readonly requiredRoles = [Role.DiskWrite];
+  protected readonly requiredRoles = [Role.DiskWrite];
 
   isSaveDisabled$ = combineLatest([
     this.manualDiskSelectionStore.vdevs$,

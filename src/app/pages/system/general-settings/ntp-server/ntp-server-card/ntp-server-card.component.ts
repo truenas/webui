@@ -53,7 +53,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   ],
 })
 export class NtpServerCardComponent implements OnInit {
-  readonly requiredRoles = [Role.NetworkGeneralWrite];
+  protected readonly requiredRoles = [Role.NetworkGeneralWrite];
   protected readonly searchableElements = ntpServerElements;
 
   dataProvider: AsyncDataProvider<NtpServer>;

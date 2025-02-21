@@ -67,7 +67,7 @@ import { TaskService } from 'app/services/task.service';
   ],
 })
 export class SmartTaskListComponent implements OnInit {
-  readonly requiredRoles = [Role.DiskWrite];
+  protected readonly requiredRoles = [Role.DiskWrite];
   protected readonly searchableElements = smartTaskListElements;
 
   smartTasks: SmartTestTaskUi[] = [];

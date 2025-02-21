@@ -53,7 +53,7 @@ export class DiskInfoCardComponent {
   readonly topologyDisk = input.required<TopologyDisk>();
   readonly disk = input<Disk>();
 
-  readonly requiredRoles = [Role.PoolWrite];
+  protected readonly requiredRoles = [Role.PoolWrite];
 
   constructor(
     private matDialog: MatDialog,

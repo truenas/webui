@@ -68,7 +68,7 @@ import { TaskService } from 'app/services/task.service';
   ],
 })
 export class CronCardComponent implements OnInit {
-  readonly requiredRoles = [Role.SystemCronWrite];
+  protected readonly requiredRoles = [Role.SystemCronWrite];
   protected readonly searchableElements = cronCardElements;
 
   title = helptextSystemAdvanced.fieldset_cron;

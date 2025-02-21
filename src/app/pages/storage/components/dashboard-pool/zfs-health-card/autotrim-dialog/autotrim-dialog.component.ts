@@ -41,7 +41,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   ],
 })
 export class AutotrimDialogComponent implements OnInit {
-  readonly requiredRoles = [Role.PoolWrite];
+  protected readonly requiredRoles = [Role.PoolWrite];
 
   autotrimControl = new FormControl(false);
 

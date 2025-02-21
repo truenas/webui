@@ -60,7 +60,7 @@ import { VmwareStatusCellComponent } from './vmware-status-cell/vmware-status-ce
 })
 export class VmwareSnapshotListComponent implements OnInit {
   protected readonly searchableElements = vmwareSnapshotListElements;
-  readonly requiredRoles = [Role.SnapshotTaskWrite];
+  protected readonly requiredRoles = [Role.SnapshotTaskWrite];
 
   filterString = '';
 
