@@ -99,13 +99,10 @@ export class DeleteDatasetDialogComponent implements OnInit {
           return this.askToForceDelete();
         }
 
-        return throwError(() => error);
+        return this.errorHandler.catchError()(throwError(error));
       }),
       this.loader.withLoader(),
-      tap(() => {
-        this.dialogRef.close(true);
-      }),
-      catchError(this.handleDeleteError.bind(this)),
+      tap(() => this.dialogRef.close(true)),
       untilDestroyed(this),
     ).subscribe();
   }
