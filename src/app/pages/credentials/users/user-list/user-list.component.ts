@@ -34,6 +34,7 @@ import { createTable } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { NewUserFormComponent } from 'app/pages/credentials/users/new-user-form/new-user-form.component';
 import { userPageEntered, userRemoved } from 'app/pages/credentials/users/store/user.actions';
 import { selectUsers, selectUserState, selectUsersTotal } from 'app/pages/credentials/users/store/user.selectors';
 import { UserDetailsRowComponent } from 'app/pages/credentials/users/user-details-row/user-details-row.component';
@@ -178,6 +179,10 @@ export class UserListComponent implements OnInit {
 
   doAdd(): void {
     this.slideIn.open(UserFormComponent, { wide: true });
+  }
+
+  doNewAdd(): void {
+    this.slideIn.open(NewUserFormComponent, { wide: false });
   }
 
   navigateToApiKeys(): void {

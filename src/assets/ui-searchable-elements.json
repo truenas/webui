@@ -936,6 +936,29 @@
   {
     "hierarchy": [
       "Credentials",
+      "Users",
+      "Add User"
+    ],
+    "synonyms": [
+      "New User",
+      "Create User",
+      "User",
+      "Add Local User"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/credentials",
+      "users"
+    ],
+    "routerLink": null,
+    "anchor": "add-user",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
       "Users"
     ],
     "synonyms": [
