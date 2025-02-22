@@ -15,7 +15,7 @@
         [label]="'CPU Configuration' | translate"
         [tooltip]="containersHelptext.cpu_tooltip | translate"
         [required]="isVm"
-        [hint]="isVm ? null : (containersHelptext.cpuHint | translate)"
+        [hint]="isVm ? undefined : (containersHelptext.cpuHint | translate)"
       ></ix-input>
 
       <ix-input
@@ -25,7 +25,7 @@
         [format]="formatter.memorySizeFormatting"
         [parse]="formatter.memorySizeParsing"
         [required]="isVm"
-        [hint]="isVm ? null : (containersHelptext.memoryHint | translate)"
+        [hint]="isVm ? undefined : (containersHelptext.memoryHint | translate)"
       ></ix-input>
     </ix-fieldset>
 

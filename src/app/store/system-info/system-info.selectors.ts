@@ -40,7 +40,7 @@ export const selectBuildYear = createSelector(
 
 export const selectCopyrightHtml = createSelector(
   selectProductType,
-  (productType) => getCopyrightHtml(productType),
+  (productType) => getCopyrightHtml(productType || undefined),
 );
 
 export const waitForSystemInfo = selectNotNull(selectSystemInfo);

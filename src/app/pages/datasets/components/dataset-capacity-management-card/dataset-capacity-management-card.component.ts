@@ -143,7 +143,7 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
 
   getInheritedQuotas(): void {
     this.datasetStore.selectedBranch$.pipe(
-      filter((branch) => !!(branch)),
+      filter((branch): branch is DatasetDetails[] => !!(branch)),
       map((datasets) => {
         const datasetWithQuotas = datasets.filter((dataset) => Boolean(dataset?.quota?.parsed));
         return maxBy(datasetWithQuotas, (dataset) => dataset.quota.parsed);

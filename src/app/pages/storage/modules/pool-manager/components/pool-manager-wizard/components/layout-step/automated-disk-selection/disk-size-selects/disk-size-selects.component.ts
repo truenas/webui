@@ -65,7 +65,7 @@ export class DiskSizeSelectsComponent implements OnChanges {
   }
 
   get selectedDiskSize(): number {
-    return this.form.controls.sizeAndType.value?.[0];
+    return Number(this.form.controls.sizeAndType.value?.[0]);
   }
 
   get selectedDiskType(): DiskType {

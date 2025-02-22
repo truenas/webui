@@ -40,9 +40,7 @@ const certificates = Array.from({ length: 10 }).map((_, index) => ({
   key_length: 2048,
   key_type: 'RSA',
   common: 'localhost',
-  san: [
-    'DNS:localhost',
-  ],
+  san: ['DNS:localhost'],
   digest_algorithm: 'SHA256',
   lifetime: 397,
   from: 'Tue Jun 20 06:55:04 2023',

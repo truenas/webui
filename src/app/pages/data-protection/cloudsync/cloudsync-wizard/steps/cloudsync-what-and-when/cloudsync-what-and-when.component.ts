@@ -302,7 +302,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
       filter(Boolean),
       untilDestroyed(this),
     ).subscribe(() => {
-      this.slideInRef.swap(CloudSyncFormComponent, { wide: true });
+      this.slideInRef.swap?.(CloudSyncFormComponent, { wide: true });
     });
   }
 
