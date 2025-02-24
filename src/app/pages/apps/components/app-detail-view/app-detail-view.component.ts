@@ -71,7 +71,9 @@ export class AppDetailViewComponent implements OnInit {
     private router: Router,
   ) {
     effect(() => {
-      this.loadAppInfo();
+      if (this.appId() && this.train()) {
+        this.loadAppInfo();
+      }
     });
   }
 

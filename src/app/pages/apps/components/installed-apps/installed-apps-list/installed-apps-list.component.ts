@@ -18,6 +18,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { injectRouteData } from 'ngxtension/inject-route-data';
 import {
   combineLatest, filter, forkJoin, Observable, switchMap,
 } from 'rxjs';
@@ -88,6 +89,7 @@ function doSortCompare(a: number | string, b: number | string, isAsc: boolean): 
 })
 
 export class InstalledAppsListComponent implements OnInit {
+  readonly appId = injectRouteData<string>('appId');
   readonly isMobileView = input<boolean>();
   readonly toggleShowMobileDetails = output<boolean>();
 
@@ -293,7 +295,7 @@ export class InstalledAppsListComponent implements OnInit {
     ).subscribe({
       next: ([,, apps]) => {
         this.sortChanged(this.sortingInfo, apps);
-        this.selectAppForDetails(this.activatedRoute.snapshot.paramMap.get('appId'));
+        this.selectAppForDetails(this.appId());
         this.cdr.markForCheck();
       },
     });
