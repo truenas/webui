@@ -31,7 +31,7 @@ import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.st
 export class EnclosureHeaderComponent {
   readonly title = input.required<string>();
 
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.EnclosureWrite];
 
   constructor(
     private enclosureStore: EnclosureStore,

@@ -66,7 +66,7 @@ export class AssociatedTargetFormComponent {
     extent: helptextSharingIscsi.associated_target_tooltip_extent,
   };
 
-  readonly requiredRoles = [
+  protected readonly requiredRoles = [
     Role.SharingIscsiTargetExtentWrite,
     Role.SharingIscsiWrite,
     Role.SharingWrite,

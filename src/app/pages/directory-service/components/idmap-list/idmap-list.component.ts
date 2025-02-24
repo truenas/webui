@@ -73,7 +73,7 @@ export class IdmapListComponent implements OnInit {
   readonly paginator = input(true);
   readonly inCard = input(false);
 
-  readonly requiredRoles = [Role.DirectoryServiceWrite];
+  protected readonly requiredRoles = [Role.DirectoryServiceWrite];
   protected readonly searchableElements = idMapElements;
 
   filterString = '';

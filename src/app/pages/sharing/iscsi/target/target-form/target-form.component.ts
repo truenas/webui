@@ -128,7 +128,7 @@ export class TargetFormComponent implements OnInit {
 
   readonly modeOptions$ = of(mapToOptions(iscsiTargetModeNames, this.translate));
 
-  readonly requiredRoles = [
+  protected readonly requiredRoles = [
     Role.SharingIscsiTargetWrite,
     Role.SharingIscsiWrite,
     Role.SharingWrite,

@@ -50,7 +50,7 @@ export class StorageCardComponent {
   private readonly reloadConfig$ = new Subject<void>();
   private storageSettings: { systemDsPool: string };
   protected readonly searchableElements = storageCardElements;
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.DatasetWrite];
 
   readonly storageSettings$ = this.reloadConfig$.pipe(
     startWith(undefined),

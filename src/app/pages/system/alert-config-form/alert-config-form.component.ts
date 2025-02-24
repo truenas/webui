@@ -54,7 +54,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   ],
 })
 export class AlertConfigFormComponent implements OnInit {
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.AlertWrite];
 
   noResponseConfig = {
     type: EmptyType.Errors,
