@@ -83,7 +83,7 @@ interface BootEnvironmentUi extends BootEnvironment {
   ],
 })
 export class BootEnvironmentListComponent implements OnInit {
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.BootEnvWrite];
   protected readonly searchableElements = bootListElements;
   protected dataProvider: AsyncDataProvider<BootEnvironmentUi>;
   protected readonly filterString = signal('');

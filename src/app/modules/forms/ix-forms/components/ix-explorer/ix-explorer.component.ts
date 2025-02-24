@@ -79,7 +79,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   // TODO: Should be private, but it's used directly in tests
   readonly tree = viewChild.required(TreeComponent);
 
-  readonly requiredRoles = [Role.DatasetWrite];
+  protected readonly requiredRoles = [Role.DatasetWrite];
 
   inputValue = '';
   value: string | string[];

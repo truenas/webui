@@ -80,7 +80,7 @@ import { waitForAdvancedConfig, waitForGeneralConfig } from 'app/store/system-co
 })
 export class AccessCardComponent implements OnInit {
   protected readonly searchableElements = accessCardElements;
-  readonly requiredRoles = [Role.AuthSessionsWrite];
+  protected readonly requiredRoles = [Role.AuthSessionsWrite];
   readonly sessionTimeout$ = this.store$.pipe(
     waitForPreferences,
     map((preferences) => {

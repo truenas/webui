@@ -43,7 +43,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   ],
 })
 export class DockerImageDeleteDialogComponent {
-  readonly requiredRoles = [Role.AppsWrite];
+  protected readonly requiredRoles = [Role.AppsWrite];
   protected readonly forceCheckboxTooltip = 'When set will force delete the image regardless of the state of\
    containers and should be used cautiously.';
 

@@ -44,7 +44,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   ],
 })
 export class DeleteUserDialogComponent implements OnInit {
-  readonly requiredRoles = [Role.AccountWrite];
+  protected readonly requiredRoles = [Role.AccountWrite];
 
   deleteGroupCheckbox = new FormControl(false, { nonNullable: true });
   isLastGroupMember = false;

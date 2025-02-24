@@ -80,7 +80,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 export class ReplicationTaskCardComponent implements OnInit {
   dataProvider: AsyncDataProvider<ReplicationTask>;
   jobStates = new Map<number, string>();
-  readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
+  protected readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
 
   columns = createTable<ReplicationTask>([
     textColumn({

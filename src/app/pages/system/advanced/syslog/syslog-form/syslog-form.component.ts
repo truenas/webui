@@ -60,7 +60,7 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
   ],
 })
 export class SyslogFormComponent implements OnInit {
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.SystemAdvancedWrite];
 
   isFormLoading = false;
   subscriptions: Subscription[] = [];

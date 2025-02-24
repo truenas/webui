@@ -45,7 +45,7 @@ export class AllTargetsComponent implements OnInit {
   protected dataProvider: AsyncDataProvider<IscsiTarget>;
   targets = signal<IscsiTarget[] | null>(null);
 
-  readonly requiredRoles = [
+  protected readonly requiredRoles = [
     Role.SharingIscsiTargetWrite,
     Role.SharingIscsiWrite,
     Role.SharingWrite,

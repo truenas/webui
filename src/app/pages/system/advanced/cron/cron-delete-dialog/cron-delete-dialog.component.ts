@@ -37,7 +37,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   ],
 })
 export class CronDeleteDialogComponent {
-  readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.SystemCronWrite];
 
   readonly deleteMessage = T('Are you sure you want to delete cronjob <b>"{name}"</b>?');
 
