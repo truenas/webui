@@ -61,7 +61,7 @@ describe('InstanceToolsComponent', () => {
 
   describe('console', () => {
     it('shows a link to console for VMs', async () => {
-      const consoleLink = await loader.getHarness(MatButtonHarness.with({ text: 'Console' }));
+      const consoleLink = await loader.getHarness(MatButtonHarness.with({ text: 'Serial Console' }));
 
       expect(consoleLink).toBeTruthy();
       expect(await (await consoleLink.host()).getAttribute('href')).toBe('/instances/view/my-instance/console');

@@ -56,6 +56,7 @@
   "Secure Boot is required for the VM image you selected": "",
   "Secure Boot is required to be off for the VM image you selected": "",
   "Selected Devices": "",
+  "Serial Console": "",
   "Set to use a snapshot of the dataset before a <i>PUSH</i>.": "",
   "System Cron Read": "",
   "System Cron Write": "",
