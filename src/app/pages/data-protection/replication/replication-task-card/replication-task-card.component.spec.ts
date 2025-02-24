@@ -7,7 +7,8 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -81,6 +82,7 @@ describe('ReplicationTaskCardComponent', () => {
         mockCall('replication.delete'),
         mockCall('replication.update'),
         mockCall('core.download', [9, 'http://someurl/file.json']),
+        mockJob('replication.run', fakeSuccessfulJob()),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
