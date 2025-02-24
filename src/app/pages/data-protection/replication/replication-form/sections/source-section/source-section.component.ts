@@ -200,7 +200,7 @@ export class SourceSectionComponent implements OnChanges {
   }
 
   private getPropertiesOverride(): ReplicationCreate['properties_override'] {
-    return this.form.value.properties_override.reduce((overrides, property) => {
+    return this.form.getRawValue().properties_override.reduce((overrides, property) => {
       const [key, value] = property.split('=');
       overrides[key] = value;
       return overrides;

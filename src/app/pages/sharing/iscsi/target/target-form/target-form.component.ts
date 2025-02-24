@@ -172,7 +172,7 @@ export class TargetFormComponent implements OnInit {
     this.editingTarget = slideInRef.getData();
 
     this.form.controls.name.setAsyncValidators(
-      [this.targetNameValidationService.validateTargetName(this.editingTarget?.name)],
+      [this.targetNameValidationService.validateTargetName(String(this.editingTarget?.name))],
     );
   }
 
