@@ -1,4 +1,11 @@
+:host {
+  height: 100%;
+  width: 100%;
+}
+
 ix-view-chart-area {
   display: flex;
+  gap: 15px;
+  height: 100%;
   width: 100%;
 }
