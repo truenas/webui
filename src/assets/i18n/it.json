@@ -1887,7 +1887,6 @@
   "Error In Apps Service": "Errore nel Servizio delle App",
   "Error Updating Production Status": "Errore nell'Aggiornamento dello Stato di Produzione",
   "Error counting eligible snapshots.": "Errore nel conteggio degli snapshot idonei.",
-  "Error deleting dataset {datasetName}.": "Errore durante l'eliminazione del dataset {datasetName}.",
   "Error details for ": "Dettagli dell'errore per ",
   "Error detected reading App": "Errore rilevato durante la lettura dell'App",
   "Error exporting the Private Key": "Errore durante l'esportazione della Chiave Privata",
