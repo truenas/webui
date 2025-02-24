@@ -10,7 +10,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   filter, Observable, Subscription, switchMap, tap,
 } from 'rxjs';
@@ -108,6 +108,7 @@ export class TopbarComponent implements OnInit {
     private store$: Store<AlertSlice>,
     private appStore$: Store<AppState>,
     private cdr: ChangeDetectorRef,
+    private translate: TranslateService,
     private tnc: TruenasConnectService,
   ) {
     this.systemGeneralService.updateRunningNoticeSent.pipe(untilDestroyed(this)).subscribe(() => {
@@ -186,8 +187,10 @@ export class TopbarComponent implements OnInit {
 
   showUpdateDialog(): void {
     const message = this.isFailoverLicensed || !this.systemWillRestart
-      ? helptextTopbar.updateRunning_dialog.message
-      : helptextTopbar.updateRunning_dialog.message + helptextTopbar.updateRunning_dialog.message_pt2;
+      ? this.translate.instant(helptextTopbar.updateRunning_dialog.message)
+      : this.translate.instant(helptextTopbar.updateRunning_dialog.message)
+        + '<br />'
+        + this.translate.instant(helptextTopbar.updateRunning_dialog.message_pt2);
     const title = helptextTopbar.updateRunning_dialog.title;
 
     this.updateDialog = this.matDialog.open(UpdateDialogComponent, {
