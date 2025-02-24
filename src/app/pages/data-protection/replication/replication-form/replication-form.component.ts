@@ -90,7 +90,7 @@ export class ReplicationFormComponent implements OnInit {
   isSudoDialogShown = false;
   sshCredentials: KeychainSshCredentials[] = [];
 
-  readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
+  protected readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
 
   protected existingReplication: ReplicationTask | undefined;
 

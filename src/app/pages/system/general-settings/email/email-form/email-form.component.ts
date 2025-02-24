@@ -63,7 +63,7 @@ import { SystemGeneralService } from 'app/services/system-general.service';
   ],
 })
 export class EmailFormComponent implements OnInit {
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.AlertWrite];
 
   sendMethodControl = new FormControl(MailSendMethod.Smtp, { nonNullable: true });
 

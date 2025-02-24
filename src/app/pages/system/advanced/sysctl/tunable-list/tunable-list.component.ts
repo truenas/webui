@@ -60,7 +60,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   ],
 })
 export class TunableListComponent implements OnInit {
-  readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.SystemTunableWrite];
   protected readonly searchableElements = tunableListElements;
 
   dataProvider: AsyncDataProvider<Tunable>;

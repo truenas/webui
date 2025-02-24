@@ -52,7 +52,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   ],
 })
 export class SnapshotBatchDeleteDialogComponent implements OnInit {
-  readonly requiredRoles = [Role.SnapshotDelete];
+  protected readonly requiredRoles = [Role.SnapshotDelete];
 
   isJobCompleted = false;
   form = this.fb.group({

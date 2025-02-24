@@ -1,7 +1,7 @@
 import {
   Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit,
 } from '@angular/core';
-import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -53,7 +53,7 @@ export interface SedConfig {
   ],
 })
 export class SelfEncryptingDriveFormComponent implements OnInit {
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.SystemAdvancedWrite];
 
   isFormLoading = false;
   title = helptextSystemAdvanced.fieldset_sed;
@@ -90,8 +90,8 @@ export class SelfEncryptingDriveFormComponent implements OnInit {
   private sedConfig: SedConfig;
 
   constructor(
-    private fb: FormBuilder,
-    private ws: ApiService,
+    private fb: NonNullableFormBuilder,
+    private api: ApiService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
@@ -116,7 +116,7 @@ export class SelfEncryptingDriveFormComponent implements OnInit {
     const values = this.form.value;
     delete values.sed_passwd2;
 
-    this.ws.call('system.advanced.update', [values]).pipe(untilDestroyed(this)).subscribe({
+    this.api.call('system.advanced.update', [values]).pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isFormLoading = false;
         this.snackbar.success(this.translate.instant('Settings saved'));

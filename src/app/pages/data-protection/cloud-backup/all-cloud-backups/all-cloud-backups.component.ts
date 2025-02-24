@@ -44,7 +44,7 @@ export class AllCloudBackupsComponent implements OnInit {
   dataProvider: AsyncDataProvider<CloudBackup>;
   protected readonly cloudBackups = signal<CloudBackup[]>([]);
   protected readonly searchableElements = cloudBackupListElements;
-  readonly requiredRoles = [Role.CloudBackupWrite];
+  protected readonly requiredRoles = [Role.CloudBackupWrite];
 
   constructor(
     private api: ApiService,

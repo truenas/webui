@@ -33,7 +33,7 @@ interface RestartDialogData {
   ],
 })
 export class RestartSmbDialogComponent {
-  readonly requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
+  protected readonly requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
 
   readonly helptext = helptextSharingSmb;
   constructor(

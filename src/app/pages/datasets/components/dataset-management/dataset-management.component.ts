@@ -102,7 +102,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   readonly ixTreeHeader = viewChild<ElementRef<HTMLElement>>('ixTreeHeader');
   readonly ixTree = viewChild<ElementRef<HTMLElement>>('ixTree');
 
-  readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.DatasetWrite];
   protected readonly searchableElements = datasetManagementElements;
 
   isLoading$ = this.datasetStore.isLoading$;

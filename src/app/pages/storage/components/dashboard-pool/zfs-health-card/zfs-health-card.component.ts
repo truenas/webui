@@ -88,8 +88,7 @@ export class ZfsHealthCardComponent implements OnChanges {
   hasScrubTask$: Observable<LoadingState<boolean>>;
 
   readonly poolStatusLabels = poolStatusLabels;
-
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly Role = Role;
 
   constructor(
     private api: ApiService,

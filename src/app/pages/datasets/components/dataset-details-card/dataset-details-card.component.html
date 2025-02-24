@@ -84,7 +84,7 @@
     <mat-card-actions>
       @if (canBePromoted()) {
         <button
-          *ixRequiresRoles="[Role.FullAdmin]"
+          *ixRequiresRoles="[Role.DatasetWrite]"
           mat-button
           ixTest="promote-dataset"
           (click)="promoteDataset()"

@@ -69,7 +69,7 @@ export class ResilverConfigComponent implements OnInit {
     ], Validators.required],
   });
 
-  readonly requiredRoles = [Role.PoolWrite];
+  protected readonly requiredRoles = [Role.PoolWrite];
 
   readonly tooltips = {
     enabled: helptextResilver.enabled_tooltip,

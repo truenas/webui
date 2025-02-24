@@ -65,7 +65,7 @@ import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service
   ],
 })
 export class SnapshotAddFormComponent implements OnInit {
-  readonly requiredRoles = [Role.SnapshotWrite];
+  protected readonly requiredRoles = [Role.SnapshotWrite];
 
   isFormLoading = true;
   protected datasetId: string | undefined;

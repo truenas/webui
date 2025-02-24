@@ -87,7 +87,7 @@ export class PortalFormComponent implements OnInit {
 
   protected editingIscsiPortal: IscsiPortal | undefined;
 
-  readonly requiredRoles = [
+  protected readonly requiredRoles = [
     Role.SharingIscsiPortalWrite,
     Role.SharingIscsiWrite,
     Role.SharingWrite,

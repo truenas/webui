@@ -69,7 +69,7 @@ interface DataCard {
   ],
 })
 export class DirectoryServicesComponent implements OnInit {
-  readonly requiredRoles = [Role.DirectoryServiceWrite];
+  protected readonly requiredRoles = [Role.DirectoryServiceWrite];
   protected readonly searchableElements = directoryServicesElements;
 
   isActiveDirectoryEnabled = false;

@@ -37,7 +37,7 @@ import { UploadService } from 'app/services/upload.service';
   ],
 })
 export class UploadConfigDialogComponent {
-  readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.FullAdmin];
 
   form = this.formBuilder.group({
     config: [null as File[] | null, Validators.required],
