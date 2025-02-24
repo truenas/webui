@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import {
   BehaviorSubject,
-  combineLatest, map, Observable,
+  combineLatest, filter, map, Observable,
 } from 'rxjs';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { Choices } from 'app/interfaces/choices.interface';
@@ -32,7 +32,7 @@ export class IscsiService {
   ) {}
 
   listenForDataRefresh(): Observable<IscsiTarget | null> {
-    return this.refreshData$;
+    return this.refreshData$.pipe(filter(Boolean));
   }
 
   refreshData(target?: IscsiTarget): void {
