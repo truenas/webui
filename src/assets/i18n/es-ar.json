@@ -11,6 +11,7 @@
   "Archs": "",
   "Boot Environment Read": "",
   "Boot Environment Write": "",
+  "Compression": "",
   "Disk Read": "",
   "Disk Write": "",
   "Docker Read": "",
