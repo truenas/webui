@@ -51,7 +51,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   ],
 })
 export class ProactiveComponent implements OnInit {
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.SupportWrite];
 
   isLoading = false;
   title = helptext.proactive.title;

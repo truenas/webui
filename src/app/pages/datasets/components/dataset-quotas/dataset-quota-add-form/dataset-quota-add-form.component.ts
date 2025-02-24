@@ -51,7 +51,7 @@ import { UserService } from 'app/services/user.service';
   ],
 })
 export class DatasetQuotaAddFormComponent implements OnInit {
-  readonly requiredRoles = [Role.DatasetWrite];
+  protected readonly requiredRoles = [Role.DatasetWrite];
 
   isLoading = false;
   quotaType: DatasetQuotaType;

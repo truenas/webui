@@ -63,7 +63,7 @@ export class TrainCardComponent implements OnInit {
     train: ['', Validators.required],
   });
 
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.SystemUpdateRead];
   protected readonly clickForInformationLink = helptextSystemUpdate.clickForInformationLink;
   protected readonly SystemUpdateStatus = SystemUpdateStatus;
   protected readonly isStigMode = toSignal(this.api.call('system.security.config').pipe(
@@ -150,7 +150,7 @@ export class TrainCardComponent implements OnInit {
 
     if (!this.isStigMode()) {
       this.form.controls.auto_check.valueChanges.pipe(
-        filterAsync(() => this.authService.hasRole(Role.FullAdmin)),
+        filterAsync(() => this.authService.hasRole(Role.SystemUpdateWrite)),
         untilDestroyed(this),
       ).subscribe(() => {
         this.trainService.toggleAutoCheck(this.form.controls.auto_check.value);

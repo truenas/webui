@@ -23,6 +23,8 @@
   "Pool Write": "",
   "Privilege Read": "",
   "Privilege Write": "",
+  "SSH Read": "",
+  "SSH Write": "",
   "Search Devices": "",
   "Selected Devices": "",
   "Serial Console": "",

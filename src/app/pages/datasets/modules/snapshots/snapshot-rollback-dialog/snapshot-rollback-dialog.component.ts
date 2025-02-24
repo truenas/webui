@@ -57,7 +57,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   ],
 })
 export class SnapshotRollbackDialogComponent implements OnInit {
-  readonly requiredRoles = [Role.SnapshotWrite];
+  protected readonly requiredRoles = [Role.SnapshotWrite];
 
   isLoading = true;
   wasDatasetRolledBack = false;

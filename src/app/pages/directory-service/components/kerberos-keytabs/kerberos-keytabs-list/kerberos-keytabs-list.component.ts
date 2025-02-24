@@ -65,7 +65,7 @@ export class KerberosKeytabsListComponent implements OnInit {
   readonly paginator = input(true);
   readonly inCard = input(false);
 
-  readonly requiredRoles = [Role.DirectoryServiceWrite];
+  protected readonly requiredRoles = [Role.DirectoryServiceWrite];
   protected readonly searchableElements = kerberosKeytabsListElements;
 
   filterString = '';

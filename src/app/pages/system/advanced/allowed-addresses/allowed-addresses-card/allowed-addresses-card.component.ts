@@ -66,7 +66,7 @@ interface AllowedAddressRow {
 })
 export class AllowedAddressesCardComponent implements OnInit {
   protected readonly searchableElements = allowedAddressesCardElements;
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.SystemGeneralWrite];
   dataProvider: AsyncDataProvider<AllowedAddressRow>;
 
   columns = createTable<AllowedAddressRow>([
@@ -80,7 +80,7 @@ export class AllowedAddressesCardComponent implements OnInit {
           iconName: iconMarker('mdi-delete'),
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.promptDeleteAllowedAddress(row),
-          requiredRoles: [Role.FullAdmin],
+          requiredRoles: [Role.SystemGeneralWrite],
         },
       ],
     }),

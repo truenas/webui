@@ -153,6 +153,8 @@
   "Restart is required after changing these settings.": "",
   "Root Disk": "",
   "Root Disk Size (in GiB)": "",
+  "SSH Read": "",
+  "SSH Write": "",
   "Search Devices": "",
   "Secure Boot": "",
   "Secure Boot ensures that only trusted, signed software runs during a system’s startup process. May be incompatible with some images.": "",

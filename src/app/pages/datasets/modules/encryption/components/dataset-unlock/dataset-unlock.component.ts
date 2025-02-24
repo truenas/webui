@@ -67,7 +67,7 @@ interface DatasetFormGroup {
   ],
 })
 export class DatasetUnlockComponent implements OnInit {
-  readonly requiredRoles = [Role.DatasetWrite];
+  protected readonly requiredRoles = [Role.DatasetWrite];
 
   pk: string;
   dialogOpen = false;

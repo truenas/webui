@@ -60,7 +60,7 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
   ],
 })
 export class NetworkConfigurationComponent implements OnInit {
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.NetworkGeneralWrite];
 
   isFormLoading = false;
 
