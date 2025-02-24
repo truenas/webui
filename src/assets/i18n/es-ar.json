@@ -125,6 +125,7 @@
   "Secure Boot is required to be off for the VM image you selected": "",
   "Select ISO": "",
   "Selected Devices": "",
+  "Serial Console": "",
   "Service = \"SMB\" AND Event = \"CLOSE\"": "",
   "Set New Password": "",
   "Set Up Two-Factor Authentication": "",
