@@ -187,7 +187,7 @@ export class TopbarComponent implements OnInit {
 
   showUpdateDialog(): void {
     const message = this.isFailoverLicensed || !this.systemWillRestart
-      ? this.translate.instant(helptextTopbar.updateRunning_dialog.message)
+      ? helptextTopbar.updateRunning_dialog.message
       : this.translate.instant(helptextTopbar.updateRunning_dialog.message)
         + '<br />'
         + this.translate.instant(helptextTopbar.updateRunning_dialog.message_pt2);
