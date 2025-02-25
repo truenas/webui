@@ -10,7 +10,7 @@ export interface Certificate {
   CA_type_existing: boolean;
   CA_type_intermediate: boolean;
   CA_type_internal: boolean;
-  CSR: string;
+  CSR: string | null;
   acme?: unknown;
   DN: string;
   can_be_revoked: boolean;
@@ -47,7 +47,7 @@ export interface Certificate {
   privatekey: string;
   privatekey_path: string;
   revoked: boolean;
-  revoked_date: string;
+  revoked_date: string | null;
   root_path: string;
   san: string[];
   serial: number;

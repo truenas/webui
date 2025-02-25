@@ -55,7 +55,7 @@ import { FilesystemService } from 'app/services/filesystem.service';
   ],
 })
 export class InitShutdownFormComponent implements OnInit {
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.SystemCronWrite];
 
   get isNew(): boolean {
     return !this.editingScript;

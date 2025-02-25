@@ -53,7 +53,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   ],
 })
 export class ServiceSnmpComponent implements OnInit {
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.SystemGeneralWrite];
 
   isFormLoading = false;
 

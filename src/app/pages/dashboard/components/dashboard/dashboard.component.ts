@@ -211,7 +211,7 @@ export class DashboardComponent implements OnInit {
           return;
         }
 
-        this.renderedGroups.set(groups);
+        this.renderedGroups.set(groups || []);
       });
   }
 }

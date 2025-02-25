@@ -1,6 +1,8 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export enum Role {
+  SshRead = 'SSH_READ',
+  SshWrite = 'SSH_WRITE',
   AlertRead = 'ALERT_READ',
   AlertWrite = 'ALERT_WRITE',
   BootEnvRead = 'BOOT_ENV_READ',
@@ -143,6 +145,8 @@ export enum Role {
 }
 
 export const roleNames = new Map<Role, string>([
+  [Role.SshRead, T('SSH Read')],
+  [Role.SshWrite, T('SSH Write')],
   [Role.AlertRead, T('Alert Read')],
   [Role.AlertWrite, T('Alert Write')],
   [Role.BootEnvRead, T('Boot Environment Read')],

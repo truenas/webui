@@ -98,7 +98,7 @@ export class ServiceSmbComponent implements OnInit {
     encryption: [SmbEncryption.Default],
   });
 
-  readonly requiredRoles = [Role.SharingSmbWrite];
+  protected readonly requiredRoles = [Role.SharingSmbWrite];
   readonly helptext = helptextServiceSmb;
   readonly tooltips = {
     netbiosname: helptextServiceSmb.cifs_srv_netbiosname_tooltip,

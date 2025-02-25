@@ -9,7 +9,7 @@
       </a>
 
       <ix-service-state-button
-        [service]="service$ | async"
+        [service]="(service$ | async) || undefined"
         [count]="+(dataProvider.currentPageCount$ | async)"
       ></ix-service-state-button>
     </div>

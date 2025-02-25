@@ -49,7 +49,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
   ],
 })
 export class DiskBulkEditComponent {
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.DiskWrite];
 
   diskIds: string[] = [];
   isLoading = false;

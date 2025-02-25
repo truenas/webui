@@ -95,7 +95,7 @@
         [label]="containersHelptext.cpu_placeholder | translate"
         [tooltip]="containersHelptext.cpu_tooltip | translate"
         [required]="isVm()"
-        [hint]="isContainer() ? (containersHelptext.cpuHint | translate) : null"
+        [hint]="isContainer() ? (containersHelptext.cpuHint | translate) : undefined"
       ></ix-input>
 
       <ix-input
@@ -105,7 +105,7 @@
         [format]="formatter.memorySizeFormatting"
         [parse]="formatter.memorySizeParsing"
         [required]="isVm()"
-        [hint]="isContainer() ? (containersHelptext.memoryHint | translate) : null"
+        [hint]="isContainer() ? (containersHelptext.memoryHint | translate) : undefined"
       ></ix-input>
     </ix-form-section>
 
@@ -345,7 +345,7 @@
 
     @if (isVm()) {
       <ix-form-section [label]="'PCI Passthrough' | translate">
-        @if (form.value.pci_devices.length) {
+        @if (form.value.pci_devices?.length) {
           <p>{{ 'Selected Devices' | translate }}:</p>
 
           <ul class="pci-devices">

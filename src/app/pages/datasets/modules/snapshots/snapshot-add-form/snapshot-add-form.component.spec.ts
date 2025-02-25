@@ -32,7 +32,7 @@ const mockNamingSchema = ['%Y %H %d %M %m'];
 describe('SnapshotAddFormComponent', () => {
   let spectator: Spectator<SnapshotAddFormComponent>;
   let loader: HarnessLoader;
-  let ws: MockApiService;
+  let api: MockApiService;
 
   const createComponent = createComponentFactory({
     component: SnapshotAddFormComponent,
@@ -60,7 +60,7 @@ describe('SnapshotAddFormComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(MockApiService);
+    api = spectator.inject(MockApiService);
   });
 
   it('presets name with current date and time', async () => {
@@ -78,7 +78,7 @@ describe('SnapshotAddFormComponent', () => {
       Name: 'test-snapshot-name',
     });
 
-    expect(ws.call).toHaveBeenCalledWith('vmware.dataset_has_vms', ['APPS', false]);
+    expect(api.call).toHaveBeenCalledWith('vmware.dataset_has_vms', ['APPS', false]);
 
     await form.fillForm({
       'VMWare Sync': true,
@@ -87,7 +87,7 @@ describe('SnapshotAddFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.call).toHaveBeenCalledWith('zfs.snapshot.create', [
+    expect(api.call).toHaveBeenCalledWith('zfs.snapshot.create', [
       {
         dataset: 'APPS',
         name: 'test-snapshot-name',
@@ -106,12 +106,12 @@ describe('SnapshotAddFormComponent', () => {
       'Naming Schema': '%Y %H %d %M %m',
     });
 
-    expect(ws.call).toHaveBeenCalledWith('vmware.dataset_has_vms', ['APPS', true]);
+    expect(api.call).toHaveBeenCalledWith('vmware.dataset_has_vms', ['APPS', true]);
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.call).toHaveBeenCalledWith('zfs.snapshot.create', [
+    expect(api.call).toHaveBeenCalledWith('zfs.snapshot.create', [
       {
         dataset: 'APPS',
         naming_schema: '%Y %H %d %M %m',
@@ -132,7 +132,7 @@ describe('SnapshotAddFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.call).not.toHaveBeenCalledWith('zfs.snapshot.create');
+    expect(api.call).not.toHaveBeenCalledWith('zfs.snapshot.create');
   });
 
   it('re-checks for VMs in dataset when recursive checkbox is toggled or dataset changed', async () => {
@@ -144,9 +144,9 @@ describe('SnapshotAddFormComponent', () => {
     await form.fillForm({ Dataset: 'APPS' });
     await form.fillForm({ Recursive: false });
 
-    expect(ws.call).toHaveBeenNthCalledWith(1, 'vmware.dataset_has_vms', ['POOL', false]);
-    expect(ws.call).toHaveBeenNthCalledWith(2, 'vmware.dataset_has_vms', ['POOL', true]);
-    expect(ws.call).toHaveBeenNthCalledWith(3, 'vmware.dataset_has_vms', ['APPS', true]);
-    expect(ws.call).toHaveBeenNthCalledWith(4, 'vmware.dataset_has_vms', ['APPS', false]);
+    expect(api.call).toHaveBeenNthCalledWith(1, 'vmware.dataset_has_vms', ['POOL', false]);
+    expect(api.call).toHaveBeenNthCalledWith(2, 'vmware.dataset_has_vms', ['POOL', true]);
+    expect(api.call).toHaveBeenNthCalledWith(3, 'vmware.dataset_has_vms', ['APPS', true]);
+    expect(api.call).toHaveBeenNthCalledWith(4, 'vmware.dataset_has_vms', ['APPS', false]);
   });
 });

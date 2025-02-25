@@ -128,7 +128,7 @@ export class FormErrorHandlerService {
       const isExactMatch = (text: string, match: string): boolean => new RegExp(`\\b${match}\\b`).test(text);
 
       control = (control as UntypedFormArray).controls
-        .find((controlOfArray) => isExactMatch(errorMessage, controlOfArray.value as string));
+        .find((controlOfArray) => isExactMatch(errorMessage, controlOfArray.value as string)) || null;
     }
 
     if (!control) {

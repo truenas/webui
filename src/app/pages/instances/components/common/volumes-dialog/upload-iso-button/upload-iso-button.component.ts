@@ -30,7 +30,7 @@ import { UploadService } from 'app/services/upload.service';
 export class UploadIsoButtonComponent implements OnInit {
   readonly uploaded = output();
 
-  protected readonly imageFileControl = new FormControl<File[]>([]);
+  protected readonly imageFileControl = new FormControl<File[]>([], { nonNullable: true });
   protected readonly requiredRoles = [Role.VirtImageWrite];
 
   constructor(
