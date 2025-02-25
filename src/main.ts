@@ -27,6 +27,7 @@ import {
 } from '@ngx-translate/core';
 import * as Sentry from '@sentry/angular';
 import { environment } from 'environments/environment';
+import product from 'environments/product';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 import { MarkdownModule } from 'ngx-markdown';
 import { NgxPopperjsModule } from 'ngx-popperjs';
@@ -58,6 +59,7 @@ Sentry.init({
     Sentry.browserTracingIntegration(),
     Sentry.replayIntegration(),
   ],
+  release: product.product || '',
   replaysOnErrorSampleRate: 1.0,
 });
 

@@ -5,11 +5,8 @@ import * as Sentry from '@sentry/angular';
 import {
   catchError, EMPTY, MonoTypeOperatorFunction, Observable,
 } from 'rxjs';
-import { apiErrorNames } from 'app/enums/api.enum';
-import {
-  isApiError, isErrorResponse, isFailedJob,
-} from 'app/helpers/api.helper';
-import { sentryCustomExceptionExtraction } from 'app/helpers/error-parser.helper';
+import { ApiErrorName, apiErrorNames } from 'app/enums/api.enum';
+import { isApiError, isErrorResponse, isFailedJob } from 'app/helpers/api.helper';
 import { ApiError } from 'app/interfaces/api-error.interface';
 import { JsonRpcError } from 'app/interfaces/api-message.interface';
 import { ErrorReport } from 'app/interfaces/error-report.interface';
@@ -36,16 +33,26 @@ export class ErrorHandlerService implements ErrorHandler {
     return this.dialogService;
   }
 
-  private sentry = Sentry.createErrorHandler();
+  private sentryErrorExtractor = (error: unknown, defaultExtractor: (error: unknown) => unknown): unknown => {
+    const errorReports = this.parseError(error);
+    const firstReport = Array.isArray(errorReports) ? errorReports[0] : errorReports;
+
+    if (firstReport) {
+      return firstReport.message || firstReport.title;
+    }
+
+    return defaultExtractor(error);
+  };
+
+  private sentry = Sentry.createErrorHandler({
+    extractor: this.sentryErrorExtractor,
+    logErrors: false,
+  });
 
   constructor(private injector: Injector) { }
 
   handleError(error: unknown): void {
     console.error(error);
-    const parsedError = this.parseError(error);
-    if (parsedError) {
-      error = parsedError;
-    }
 
     if (!this.shouldLogToSentry(error)) {
       return;
@@ -54,7 +61,7 @@ export class ErrorHandlerService implements ErrorHandler {
     this.sentry.handleError(error);
   }
 
-  parseError(error: unknown): ErrorReport | ErrorReport[] {
+  parseError(error: unknown): ErrorReport | ErrorReport[] | null {
     if (isErrorResponse(error)) {
       const actualError = error.error;
       if (isApiError(actualError.data)) {
@@ -87,10 +94,6 @@ export class ErrorHandlerService implements ErrorHandler {
       return parsedError[0].message;
     }
     return parsedError.message;
-  }
-
-  private logToSentry(error: unknown): void {
-    Sentry.captureException(sentryCustomExceptionExtraction(error));
   }
 
   private isHttpError(obj: unknown): obj is HttpErrorResponse {
@@ -269,6 +272,21 @@ export class ErrorHandlerService implements ErrorHandler {
 
   private shouldLogToSentry(error: unknown): boolean {
     if (error instanceof CloseEvent) {
+      return false;
+    }
+
+    const ignoredApiErrors = [
+      ApiErrorName.Validation,
+      ApiErrorName.Again,
+      ApiErrorName.NoMemory,
+      ApiErrorName.NotAuthenticated,
+    ];
+
+    if (isApiError(error) && ignoredApiErrors.includes(error.errname)) {
+      return false;
+    }
+
+    if (isErrorResponse(error) && isApiError(error.error) && ignoredApiErrors.includes(error.error.errname)) {
       return false;
     }
 

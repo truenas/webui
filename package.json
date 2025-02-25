@@ -32,7 +32,8 @@
     "test:pr": "yarn run check-env && echo 'Setting up temporary environment file...\\n' && yarn run ui remote -i 'headless.local' && jest --coverage --maxWorkers=2",
     "test:watch": "jest --watch",
     "ui": "cd $(git rev-parse --show-toplevel) && tsx ./scripts/ui/ui.ts",
-    "validate-translations": "node scripts/validate_translations.js"
+    "validate-translations": "node scripts/validate_translations.js",
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org ixsystems --project webui-scale ./dist && sentry-cli --url https://sentry.ixsystems.com/ sourcemaps upload --org ixsystems --project webui-scale ./dist"
   },
   "repository": {
     "type": "git",
@@ -97,6 +98,7 @@
     "@ngx-translate/http-loader": "~8.0.0",
     "@popperjs/core": "^2.9.3",
     "@sentry/angular": "~9.2.0",
+    "@sentry/cli": "~2.42.2",
     "@sentry/utils": "~7.42.0",
     "@shopify/eslint-plugin": "~46.0.0",
     "@smarttools/eslint-plugin-rxjs": "~1.0.7",

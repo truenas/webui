@@ -145,7 +145,6 @@
     "./src/app/enums/zfs-snapshot-retention-source.enum.ts",
     "./src/app/helpers/assert-unreachable.utils.ts",
     "./src/app/helpers/count-disks-total.helper.ts",
-    "./src/app/helpers/error-parser.helper.ts",
     "./src/app/helpers/file-size.utils.ts",
     "./src/app/helpers/format-distance-to-now-shortened.ts",
     "./src/app/helpers/json-to-yaml.helper.ts",
