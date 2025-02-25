@@ -8,7 +8,7 @@ import { GiB } from 'app/constants/bytes.constant';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { VirtualizationStatus, VirtualizationType } from 'app/enums/virtualization.enum';
+import { DiskIoBus, VirtualizationStatus, VirtualizationType } from 'app/enums/virtualization.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -38,6 +38,7 @@ describe('InstanceEditFormComponent', () => {
     status: VirtualizationStatus.Stopped,
     vnc_password: null,
     secure_boot: true,
+    root_disk_io_bus: DiskIoBus.Nvme,
   } as VirtualizationInstance;
 
   const createComponent = createComponentFactory({
@@ -87,6 +88,7 @@ describe('InstanceEditFormComponent', () => {
         Autostart: false,
         'CPU Configuration': '1-3',
         'Memory Size': '2 GiB',
+        'Root Disk I/O Bus': 'NVME',
         'Enable VNC': true,
         'VNC Port': '9001',
         'VNC Password': '',
@@ -102,6 +104,7 @@ describe('InstanceEditFormComponent', () => {
         'VNC Port': 9000,
         'VNC Password': 'testing',
         'Secure Boot': false,
+        'Root Disk I/O Bus': DiskIoBus.VirtioBlk,
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -114,6 +117,7 @@ describe('InstanceEditFormComponent', () => {
         environment: {},
         enable_vnc: true,
         vnc_port: 9000,
+        root_disk_io_bus: DiskIoBus.VirtioBlk,
         vnc_password: 'testing',
         secure_boot: false,
       }]);

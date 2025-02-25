@@ -11,6 +11,18 @@ export const virtualizationTypeLabels = new Map<VirtualizationType, string>([
   [VirtualizationType.Vm, T('VM')],
 ]);
 
+export enum DiskIoBus {
+  Nvme = 'NVME',
+  VirtioBlk = 'VIRTIO-BLK',
+  VirtioScsi = 'VIRTIO-SCSI',
+}
+
+export const diskIoBusLabels = new Map<DiskIoBus, string>([
+  [DiskIoBus.Nvme, T('NVME')],
+  [DiskIoBus.VirtioBlk, T('VIRTIO-BLK')],
+  [DiskIoBus.VirtioScsi, T('VIRTIO-SCSI')],
+]);
+
 export const virtualizationTypeIcons = [
   {
     value: VirtualizationType.Container,

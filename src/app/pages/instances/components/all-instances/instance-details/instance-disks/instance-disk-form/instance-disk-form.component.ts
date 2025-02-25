@@ -52,7 +52,7 @@ export class InstanceDiskFormComponent implements OnInit {
   protected readonly isLoading = signal(false);
 
   readonly directoryNodeProvider = computed(() => {
-    if (this.instance.type === VirtualizationType.Vm) {
+    if (this.isVm) {
       return this.filesystem.getFilesystemNodeProvider({ zvolsOnly: true });
     }
 
@@ -72,6 +72,10 @@ export class InstanceDiskFormComponent implements OnInit {
 
   protected get instance(): VirtualizationInstance {
     return this.slideInRef.getData().instance;
+  }
+
+  protected get isVm(): boolean {
+    return this.instance.type === VirtualizationType.Vm;
   }
 
   constructor(
@@ -97,7 +101,7 @@ export class InstanceDiskFormComponent implements OnInit {
         destination: disk.destination || '',
       });
     }
-    if (this.instance.type === VirtualizationType.Vm) {
+    if (this.isVm) {
       this.form.controls.destination.disable();
     }
   }
@@ -127,6 +131,10 @@ export class InstanceDiskFormComponent implements OnInit {
       ...this.form.value,
       dev_type: VirtualizationDeviceType.Disk,
     } as VirtualizationDisk;
+
+    if (this.isVm) {
+      payload.io_bus = this.instance.root_disk_io_bus;
+    }
 
     const existingDisk = this.existingDisk();
     return existingDisk
