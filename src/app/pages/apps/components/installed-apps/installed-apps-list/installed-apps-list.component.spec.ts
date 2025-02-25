@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockDeclaration } from 'ng-mocks';
 import { ImgFallbackDirective } from 'ngx-img-fallback';
@@ -109,9 +109,6 @@ describe('InstalledAppsListComponent', () => {
           fields: { arguments: ['test-app', { replica_count: 1 }], state: JobState.Success },
         })),
         checkIfAppIxVolumeExists: jest.fn(() => of(true)),
-      }),
-      mockProvider(ActivatedRoute, {
-        params: { appId: 'unknown_id' },
       }),
       mockApi([
         mockJob('core.bulk'),
