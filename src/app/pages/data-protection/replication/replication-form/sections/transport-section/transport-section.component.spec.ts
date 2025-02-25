@@ -70,7 +70,6 @@ describe('TransportSectionComponent', () => {
         ssh_credentials: {
           id: 1,
         },
-        compression: null,
         speed_limit: 2 * GiB,
         large_block: true,
         compressed: false,

@@ -70,7 +70,7 @@ export class IxFileInputComponent implements ControlValueAccessor {
   writeValue(value: File[] | null): void {
     this.value = this.transformFiles(value || []);
     if (!value?.length) {
-      this.fileInput().nativeElement.value = null;
+      this.fileInput().nativeElement.value = '';
     }
 
     this.cdr.markForCheck();

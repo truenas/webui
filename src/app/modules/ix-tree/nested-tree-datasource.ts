@@ -30,7 +30,7 @@ export class NestedTreeDataSource<T extends { children?: T[] }> extends DataSour
     super();
 
     if (initialData) {
-      this.data = this.initialData;
+      this.data = initialData;
     }
 
     this.detectFilterChanges();

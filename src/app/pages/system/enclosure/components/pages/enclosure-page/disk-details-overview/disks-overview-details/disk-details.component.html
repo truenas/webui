@@ -24,24 +24,24 @@
       </div>
     }
 
-    @if (selectedSlot().pool_info) {
+    @if (selectedSlot().pool_info; as poolInfo) {
       <div class="item">
         <div class="label">{{ 'Status' | translate }}</div>
         <div class="value">
-          {{ selectedSlot().pool_info?.disk_status | mapValue: enclosureDiskStatusLabels | translate }}
+          {{ poolInfo.disk_status | mapValue: enclosureDiskStatusLabels | translate }}
         </div>
       </div>
       <div class="item">
         <div class="label">{{ 'Read Errors' | translate }}</div>
-        <div class="value">{{ selectedSlot().pool_info.disk_read_errors | number }}</div>
+        <div class="value">{{ poolInfo.disk_read_errors | number }}</div>
       </div>
       <div class="item">
         <div class="label">{{ 'Write Errors' | translate }}</div>
-        <div class="value">{{ selectedSlot().pool_info.disk_write_errors | number }}</div>
+        <div class="value">{{ poolInfo.disk_write_errors | number }}</div>
       </div>
       <div class="item">
         <div class="label">{{ 'Checksum Errors' | translate }}</div>
-        <div class="value">{{ selectedSlot().pool_info.disk_checksum_errors | number }}</div>
+        <div class="value">{{ poolInfo.disk_checksum_errors | number }}</div>
       </div>
     }
   </div>
