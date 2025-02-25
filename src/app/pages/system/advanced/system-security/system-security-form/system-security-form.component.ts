@@ -43,7 +43,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   ],
 })
 export class SystemSecurityFormComponent implements OnInit {
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.SystemSecurityWrite];
 
   form = this.formBuilder.group({
     enable_fips: [false],
@@ -98,10 +98,10 @@ export class SystemSecurityFormComponent implements OnInit {
 
   private initSystemSecurityForm(): void {
     this.form.patchValue(this.systemSecurityConfig());
-    this.form.controls.enable_gpos_stig.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
-      if (value && !this.form.controls.enable_fips.value) {
-        this.form.patchValue({ enable_fips: true });
-      }
-    });
+    this.form.controls.enable_gpos_stig.valueChanges
+      .pipe(untilDestroyed(this))
+      .subscribe((value) => {
+        this.form.patchValue({ enable_fips: value });
+      });
   }
 }

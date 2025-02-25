@@ -60,7 +60,7 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
   ],
 })
 export class SyslogFormComponent implements OnInit {
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.SystemAdvancedWrite];
 
   isFormLoading = false;
   subscriptions: Subscription[] = [];
@@ -125,10 +125,10 @@ export class SyslogFormComponent implements OnInit {
   onSubmit(): void {
     const { ...values } = this.form.value;
     let configUpdate: Partial<AdvancedConfigUpdate> = {
-      syslog_transport: values.syslog_transport,
+      syslog_transport: values.syslog_transport || undefined,
       fqdn_syslog: values.fqdn_syslog,
       syslogserver: values.syslogserver,
-      sysloglevel: values.sysloglevel,
+      sysloglevel: values.sysloglevel || undefined,
       syslog_audit: values.syslog_audit,
     };
 

@@ -15,12 +15,12 @@ export class MockAuthService extends AuthService {
     this.loggedInUser$.next({
       ...currentUser,
       privilege: {
-        ...currentUser.privilege,
+        ...(currentUser?.privilege || {}),
         roles: {
           $set: roles,
         },
       },
-    });
+    } as LoggedInUser);
   }
 
   override refreshUser = jest.fn(() => of(undefined));

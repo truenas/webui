@@ -83,7 +83,7 @@ export class InitiatorFormComponent implements OnInit {
   }
 
   readonly helptext = helptextSharingIscsi;
-  readonly requiredRoles = [
+  protected readonly requiredRoles = [
     Role.SharingIscsiInitiatorWrite,
     Role.SharingIscsiWrite,
     Role.SharingWrite,

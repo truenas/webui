@@ -101,7 +101,7 @@ export class SetDedupQuotaComponent {
       case QuotaType.Custom:
         payload = {
           dedup_table_quota: NewDeduplicationQuotaSetting.Custom,
-          dedup_table_quota_value: this.form.value.quotaValue,
+          dedup_table_quota_value: this.form.value.quotaValue || undefined,
         };
         break;
       case QuotaType.None:

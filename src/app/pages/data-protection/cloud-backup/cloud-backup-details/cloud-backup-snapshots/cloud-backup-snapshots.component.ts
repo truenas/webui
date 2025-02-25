@@ -61,7 +61,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 export class CloudBackupSnapshotsComponent implements OnChanges {
   readonly backup = input.required<CloudBackup>();
 
-  readonly requiredRoles = [Role.CloudBackupWrite];
+  protected readonly requiredRoles = [Role.CloudBackupWrite];
 
   dataProvider: AsyncDataProvider<CloudBackupSnapshot>;
 
@@ -85,7 +85,7 @@ export class CloudBackupSnapshotsComponent implements OnChanges {
         {
           iconName: iconMarker('mdi-delete'),
           tooltip: this.translate.instant('Delete'),
-          requiredRoles: [Role.FullAdmin],
+          requiredRoles: [Role.CloudBackupWrite],
           onClick: (row) => this.doDelete(row),
         },
       ],

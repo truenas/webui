@@ -97,7 +97,7 @@ export interface DashboardEnclosureSlot {
 export interface EnclosureVdevDisk {
   enclosure_id: string;
   slot: number;
-  dev: string;
+  dev: string | null;
 }
 
 export interface EnclosureSlotPoolInfo {

@@ -60,7 +60,7 @@ import { staticRoutesCardElements } from 'app/pages/network/components/static-ro
 })
 export class StaticRoutesCardComponent implements OnInit {
   protected readonly searchableElements = staticRoutesCardElements.elements;
-  readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.NetworkInterfaceWrite];
 
   dataProvider: AsyncDataProvider<StaticRoute>;
   staticRoutes: StaticRoute[] = [];

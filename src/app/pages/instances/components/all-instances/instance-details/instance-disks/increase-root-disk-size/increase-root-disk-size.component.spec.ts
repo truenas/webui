@@ -14,7 +14,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   IncreaseRootDiskSizeComponent,
-} from 'app/pages/virtualization/components/all-instances/instance-details/instance-disks/increase-root-disk-size/increase-root-disk-size.component';
+} from 'app/pages/instances/components/all-instances/instance-details/instance-disks/increase-root-disk-size/increase-root-disk-size.component';
 
 describe('IncreaseRootDiskSizeComponent', () => {
   let spectator: Spectator<IncreaseRootDiskSizeComponent>;

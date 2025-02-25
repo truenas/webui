@@ -71,7 +71,7 @@ export class AssociatedExtentsCardComponent {
     }).filter((extent) => extent.target === this.target().id);
   });
 
-  readonly requiredRoles = [
+  protected readonly requiredRoles = [
     Role.SharingIscsiTargetExtentWrite,
     Role.SharingIscsiWrite,
     Role.SharingWrite,

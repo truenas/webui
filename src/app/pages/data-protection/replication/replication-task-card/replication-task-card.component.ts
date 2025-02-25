@@ -82,7 +82,7 @@ export class ReplicationTaskCardComponent implements OnInit {
   dataProvider: AsyncDataProvider<ReplicationTask>;
   jobStates = new Map<number, JobState>();
   replicationTasks: ReplicationTask[] = [];
-  readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
+  protected readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
 
   columns = createTable<ReplicationTask>([
     textColumn({

@@ -292,7 +292,7 @@
       "Add Docker Registry"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "APPS_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -575,7 +575,7 @@
       "Create DNS Authenticator"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "NETWORK_INTERFACE_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -618,7 +618,7 @@
       "Certificate Authority"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "CERTIFICATE_AUTHORITY_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -642,7 +642,7 @@
       "Generate Certificate"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "CERTIFICATE_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -708,7 +708,7 @@
       "Generate Certificate Signing Requests"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "CERTIFICATE_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -795,7 +795,7 @@
       "Privilege"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "PRIVILEGE_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -1150,7 +1150,7 @@
       "Task"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "SNAPSHOT_TASK_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -1212,7 +1212,7 @@
       "Task"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "POOL_SCRUB_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -1254,7 +1254,7 @@
       "Adjust Resilver Priority"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "POOL_SCRUB_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -1289,7 +1289,7 @@
       "Create Disk Test"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "DISK_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -2383,7 +2383,7 @@
       "New Static Route"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "NETWORK_INTERFACE_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -3348,7 +3348,7 @@
       "Offline"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "POOL_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -3366,7 +3366,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "POOL_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -3464,7 +3464,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "POOL_SCRUB_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -3522,7 +3522,7 @@
       "Add Pool"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "POOL_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -3545,7 +3545,7 @@
       "Pool Creation Wizard"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "POOL_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -3736,7 +3736,7 @@
       "Allowed IP Addresses Settings"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "SYSTEM_GENERAL_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -3913,7 +3913,7 @@
       "Console Settings"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "SYSTEM_ADVANCED_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -4037,7 +4037,7 @@
       "Cronjob"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "SYSTEM_CRON_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -4096,7 +4096,7 @@
       "2FA Settings"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "SYSTEM_SECURITY_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -4186,7 +4186,7 @@
       "Init/Shutdown Script"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "SYSTEM_CRON_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -4244,7 +4244,7 @@
       "Isolated GPU Devices Settings"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "SYSTEM_ADVANCED_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -4304,7 +4304,7 @@
       "Kernel Settings"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "SYSTEM_ADVANCED_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -4441,7 +4441,7 @@
       "Self-Encrypting Drive Settings"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "SYSTEM_ADVANCED_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -4525,7 +4525,7 @@
       "Storage Settings"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "DATASET_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -4596,7 +4596,7 @@
       "New Tunable"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "SYSTEM_TUNABLE_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -4654,7 +4654,7 @@
       "Syslog Settings"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "SYSTEM_ADVANCED_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -4823,7 +4823,7 @@
       "Create boot environment"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "BOOT_ENV_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -4845,7 +4845,7 @@
       "Create boot environment"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "BOOT_ENV_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -5089,7 +5089,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "SYSTEM_GENERAL_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -5327,7 +5327,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "SYSTEM_GENERAL_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -5575,7 +5575,7 @@
       "Time Server"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "NETWORK_GENERAL_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [

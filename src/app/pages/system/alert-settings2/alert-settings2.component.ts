@@ -50,7 +50,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
   ],
 })
 export class AlertSettings2Component implements OnInit {
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.AlertListWrite];
 
   categories: AlertCategory[] = [];
   alertClasses: AlertClasses;

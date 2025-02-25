@@ -89,7 +89,7 @@ export class CloudSyncListComponent implements OnInit {
   filterString = '';
   dataProvider: AsyncDataProvider<CloudSyncTaskUi>;
   readonly jobState = JobState;
-  readonly requiredRoles = [Role.CloudSyncWrite];
+  protected readonly requiredRoles = [Role.CloudSyncWrite];
 
   columns = createTable<CloudSyncTaskUi>([
     textColumn({

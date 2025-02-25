@@ -65,7 +65,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   ],
 })
 export class PrivilegeListComponent implements OnInit {
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.PrivilegeWrite];
 
   protected dataProvider: ApiDataProvider<'privilege.query'>;
   protected readonly advancedSearchPlaceholder = this.translate.instant('Name ^ "Local" AND "Web Shell Access" = true');

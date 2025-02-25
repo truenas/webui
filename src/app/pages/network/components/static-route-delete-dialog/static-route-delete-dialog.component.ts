@@ -37,7 +37,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   ],
 })
 export class StaticRouteDeleteDialogComponent {
-  readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.NetworkInterfaceWrite];
 
   readonly deleteMessage = T('Are you sure you want to delete static route <b>"{name}"</b>?');
 

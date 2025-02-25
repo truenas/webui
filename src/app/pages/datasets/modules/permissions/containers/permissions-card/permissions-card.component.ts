@@ -62,7 +62,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 export class PermissionsCardComponent implements OnInit, OnChanges {
   readonly dataset = input.required<DatasetDetails>();
 
-  readonly requiredRoles = [Role.DatasetWrite];
+  protected readonly requiredRoles = [Role.DatasetWrite];
 
   protected readonly isLoading = signal(false);
   protected readonly isMissingMountpoint = signal(false);

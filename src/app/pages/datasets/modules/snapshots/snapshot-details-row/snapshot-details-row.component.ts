@@ -57,7 +57,7 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
   snapshotInfo: ZfsSnapshotUi | undefined;
   holdControl = new FormControl(false);
 
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.SnapshotWrite];
 
   get hasClones(): boolean {
     return !!this.snapshotInfo?.properties?.clones?.value;

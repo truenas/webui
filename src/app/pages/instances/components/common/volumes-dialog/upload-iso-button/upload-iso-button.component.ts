@@ -18,7 +18,6 @@ import { UploadService } from 'app/services/upload.service';
 @Component({
   selector: 'ix-upload-iso',
   templateUrl: './upload-iso-button.component.html',
-  styleUrls: ['./upload-iso.component.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
@@ -31,7 +30,7 @@ import { UploadService } from 'app/services/upload.service';
 export class UploadIsoButtonComponent implements OnInit {
   readonly uploaded = output();
 
-  protected readonly imageFileControl = new FormControl<File[]>([]);
+  protected readonly imageFileControl = new FormControl<File[]>([], { nonNullable: true });
   protected readonly requiredRoles = [Role.VirtImageWrite];
 
   constructor(

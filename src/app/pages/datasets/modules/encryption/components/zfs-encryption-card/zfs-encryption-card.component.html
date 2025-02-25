@@ -13,7 +13,7 @@
     }
     @if (canUnlock()) {
       <a
-        *ixRequiresRoles="[Role.FullAdmin]"
+        *ixRequiresRoles="[Role.DatasetWrite]"
         mat-button
         color="primary"
         ixTest="unlock"
@@ -60,7 +60,7 @@
   </mat-card-content>
   @if (dataset().encrypted && isEncryptionRoot() && !dataset().locked) {
     <mat-card-actions>
-      <ng-container *ixRequiresRoles="[Role.FullAdmin]">
+      <ng-container *ixRequiresRoles="[Role.DatasetWrite]">
         @if (canExportKey() && isRoot()) {
           <button
             mat-button
@@ -71,14 +71,14 @@
           </button>
         }
       </ng-container>
-      <ng-container *ixRequiresRoles="[Role.FullAdmin]">
+      <ng-container *ixRequiresRoles="[Role.DatasetWrite]">
         @if (canExportKey()) {
           <button mat-button ixTest="export-key" (click)="onExportKey()">
             {{ 'Export Key' | translate }}
           </button>
         }
       </ng-container>
-      <ng-container *ixRequiresRoles="[Role.FullAdmin]">
+      <ng-container *ixRequiresRoles="[Role.DatasetWrite]">
         <button
           mat-button
           ixTest="lock"

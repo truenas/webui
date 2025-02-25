@@ -48,7 +48,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   ],
 })
 export class DefaultGatewayDialogComponent {
-  readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.NetworkInterfaceWrite];
 
   form = this.fb.nonNullable.group({
     defaultGateway: [
