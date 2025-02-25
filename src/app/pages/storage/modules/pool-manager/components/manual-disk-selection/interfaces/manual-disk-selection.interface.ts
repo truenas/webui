@@ -7,5 +7,5 @@ export interface ManualSelectionDisk extends DetailsDisk {
 
 export interface ManualSelectionVdev {
   disks: ManualSelectionDisk[];
-  uuid?: string;
+  uuid: string;
 }

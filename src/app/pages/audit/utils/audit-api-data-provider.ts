@@ -13,7 +13,7 @@ export class AuditApiDataProvider extends ApiDataProvider<'audit.query'> {
   selectedControllerType: ControllerType;
 
   get isLastOffset(): boolean {
-    return Boolean((this.totalRows / this.pagination.pageNumber) < this.pagination.pageSize);
+    return Boolean((this.totalRows / Number(this.pagination.pageNumber)) < Number(this.pagination.pageSize));
   }
 
   get avoidCountRowsRequest(): boolean {

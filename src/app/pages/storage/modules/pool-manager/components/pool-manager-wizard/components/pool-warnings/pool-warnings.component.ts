@@ -100,7 +100,9 @@ export class PoolWarningsComponent implements OnInit {
   }
 
   private setExportedPoolOptions(): void {
-    const exportedPools = this.disksWithExportedPools.map((disk) => disk.exported_zpool);
+    const exportedPools = this.disksWithExportedPools
+      .map((disk) => disk.exported_zpool)
+      .filter((pool): pool is string => !!pool);
     const options = uniq(exportedPools).map((pool) => {
       this.poolAndDisks.set(pool, this.getDiskNamesByPool(pool));
       return { label: pool, value: pool };
