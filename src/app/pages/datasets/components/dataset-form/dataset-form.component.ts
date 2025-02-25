@@ -77,7 +77,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
   private quotasSection = viewChild(QuotasSectionComponent);
   private otherOptionsSection = viewChild(OtherOptionsSectionComponent);
 
-  readonly requiredRoles = [Role.DatasetWrite];
+  protected readonly requiredRoles = [Role.DatasetWrite];
   protected slideInData: { datasetId: string; isNew?: boolean };
 
   isNameAndOptionsValid = true;

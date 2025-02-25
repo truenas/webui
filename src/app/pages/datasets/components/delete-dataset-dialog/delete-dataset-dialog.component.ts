@@ -10,7 +10,7 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  combineLatest, Observable, of, throwError,
+  combineLatest, Observable, of,
 } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -53,7 +53,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   ],
 })
 export class DeleteDatasetDialogComponent implements OnInit {
-  readonly requiredRoles = [Role.DatasetDelete];
+  protected readonly requiredRoles = [Role.DatasetDelete];
 
   attachments: DatasetAttachment[] = [];
   knownProcesses: Process[] = [];
@@ -97,13 +97,15 @@ export class DeleteDatasetDialogComponent implements OnInit {
       tap(() => this.dialogRef.close(true)),
       catchError((error: unknown) => {
         const apiError = extractApiError(error);
+
         if (apiError?.reason?.includes('Device busy')) {
           return this.askToForceDelete();
         }
 
         this.dialogRef.close();
+        this.errorHandler.showErrorModal(error);
 
-        return this.errorHandler.catchError()(throwError(error));
+        return of(error);
       }),
       untilDestroyed(this),
     ).subscribe();

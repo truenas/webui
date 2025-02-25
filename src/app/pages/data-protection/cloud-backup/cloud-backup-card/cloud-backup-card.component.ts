@@ -72,7 +72,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 export class CloudBackupCardComponent implements OnInit {
   cloudBackups: CloudBackup[] = [];
   dataProvider: AsyncDataProvider<CloudBackup>;
-  readonly requiredRoles = [Role.CloudBackupWrite];
+  protected readonly requiredRoles = [Role.CloudBackupWrite];
   protected readonly searchableElements = replicationListElements;
   updatedCount = signal(0);
 

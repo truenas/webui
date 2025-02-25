@@ -47,7 +47,7 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
 })
 export class LocalizationCardComponent {
   protected readonly searchableElements = localizationCardElements;
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.SystemGeneralWrite];
 
   readonly generalConfig$ = this.store$.pipe(
     waitForGeneralConfig,

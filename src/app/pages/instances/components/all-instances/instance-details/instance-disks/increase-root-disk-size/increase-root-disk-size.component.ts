@@ -54,10 +54,10 @@ export class IncreaseRootDiskSizeComponent {
     protected formatter: IxFormatterService,
   ) {
     this.form.setValue({
-      size: this.instance.root_disk_size / GiB,
+      size: Number(this.instance.root_disk_size) / GiB,
     });
 
-    this.form.controls.size.addValidators(Validators.min(this.instance.root_disk_size / GiB));
+    this.form.controls.size.addValidators(Validators.min(Number(this.instance.root_disk_size) / GiB));
   }
 
   onSubmit(): void {

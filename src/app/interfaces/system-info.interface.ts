@@ -24,7 +24,7 @@ export interface SystemInfo {
   uptime: string;
   uptime_seconds: number;
   version: string;
-  remote_info?: SystemInfo;
+  remote_info: SystemInfo | null;
   codename: Codename;
 }
 

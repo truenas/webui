@@ -42,7 +42,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   ],
 })
 export class DeleteGroupDialogComponent {
-  readonly requiredRoles = [Role.AccountWrite];
+  protected readonly requiredRoles = [Role.AccountWrite];
 
   deleteUsersCheckbox = new FormControl(false, { nonNullable: true });
 

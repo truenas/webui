@@ -7,7 +7,6 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   map, switchMap, tap,
 } from 'rxjs';
-import { Role } from 'app/enums/role.enum';
 import { SmartTestResultPageType } from 'app/enums/smart-test-results-page-type.enum';
 import { Disk } from 'app/interfaces/disk.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
@@ -56,7 +55,6 @@ export class SmartTestResultListComponent implements OnInit {
   smartTestResults: SmartTestResultsRow[];
   filterString = '';
   dataProvider: AsyncDataProvider<SmartTestResultsRow>;
-  protected readonly requiredRoles = [Role.FullAdmin];
 
   columns = createTable<SmartTestResultsRow>([
     textColumn({

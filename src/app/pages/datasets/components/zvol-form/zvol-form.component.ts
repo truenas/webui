@@ -99,7 +99,7 @@ interface ZvolFormData {
   ],
 })
 export class ZvolFormComponent implements OnInit {
-  readonly requiredRoles = [Role.DatasetWrite];
+  protected readonly requiredRoles = [Role.DatasetWrite];
 
   get title(): string {
     return this.isNew

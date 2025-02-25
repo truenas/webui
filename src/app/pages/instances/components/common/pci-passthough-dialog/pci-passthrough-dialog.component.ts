@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, Inject, OnInit, signal,
 } from '@angular/core';
-import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogContent, MatDialogRef, MatDialogTitle,
@@ -89,7 +89,7 @@ export class PciPassthroughDialogComponent implements OnInit {
 
   constructor(
     private api: ApiService,
-    private formBuilder: FormBuilder,
+    private formBuilder: NonNullableFormBuilder,
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     protected dialogRef: MatDialogRef<PciPassthroughDialogComponent, Option[]>,
@@ -106,7 +106,7 @@ export class PciPassthroughDialogComponent implements OnInit {
     this.api.call('virt.device.pci_choices').pipe(
       map((choices) => {
         const devices: PciPassthroughDevice[] = [];
-        const types = new Set<string>();
+        const types = new Set<string | null>();
 
         Object.entries(choices).forEach(([address, device]) => {
           if (device.error) {
@@ -150,7 +150,7 @@ export class PciPassthroughDialogComponent implements OnInit {
 
   protected filterTable(): void {
     const filteredDevices = this.devices().filter((device) => {
-      const searchQuery = this.filterForm.get('searchQuery')?.value.toLowerCase();
+      const searchQuery = this.filterForm.getRawValue().searchQuery.toLowerCase();
       const type = this.filterForm.get('type')?.value;
 
       if (searchQuery && !device.description.toLowerCase().includes(searchQuery)) {

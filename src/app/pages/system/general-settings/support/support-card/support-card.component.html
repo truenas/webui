@@ -74,7 +74,7 @@
                   <span>{{ ticketText | translate }}</span>
                 </button>
                 <button
-                  *ixRequiresRoles="requiredRoles"
+                  *ixRequiresRoles="[Role.SupportWrite]"
                   id="proactiveSupport"
                   mat-menu-item
                   ixTest="proactive-support"
@@ -93,7 +93,7 @@
               >
                 {{ ticketText | translate }}
               </button>
-              <ng-container *ixRequiresRoles="requiredRoles">
+              <ng-container *ixRequiresRoles="[Role.SupportWrite]">
                 @if (hasLicense) {
                   <button
                     id="proactive-btn"

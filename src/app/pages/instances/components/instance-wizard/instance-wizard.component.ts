@@ -488,7 +488,7 @@ export class InstanceWizardComponent {
       .open(PciPassthroughDialogComponent, {
         minWidth: '90vw',
         data: {
-          existingDeviceAddresses: this.form.value.pci_devices.map((device: Option) => device.value),
+          existingDeviceAddresses: this.form.getRawValue().pci_devices.map((device: Option) => device.value),
         },
       })
       .afterClosed()

@@ -41,7 +41,7 @@ import { SystemSecurityFormComponent } from 'app/pages/system/advanced/system-se
 })
 export class SystemSecurityCardComponent {
   private readonly reloadConfig$ = new Subject<void>();
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.SystemSecurityWrite];
   readonly systemSecurityConfig$ = this.reloadConfig$.pipe(
     startWith(undefined),
     switchMap(() => this.api.call('system.security.config').pipe(toLoadingState())),

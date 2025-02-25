@@ -41,7 +41,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   ],
 })
 export class DeleteExtentDialogComponent {
-  readonly requiredRoles = [
+  protected readonly requiredRoles = [
     Role.SharingIscsiExtentWrite,
     Role.SharingIscsiWrite,
     Role.SharingWrite,

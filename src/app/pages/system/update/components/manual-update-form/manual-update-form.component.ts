@@ -71,7 +71,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   ],
 })
 export class ManualUpdateFormComponent implements OnInit {
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.SystemUpdateWrite];
   protected readonly searchableElements = systemManualUpdateFormElements;
 
   isFormLoading$ = new BehaviorSubject(false);

@@ -69,7 +69,7 @@ import { IscsiService } from 'app/services/iscsi.service';
 export class AuthorizedAccessListComponent implements OnInit {
   protected readonly searchableElements = authorizedAccessListElements;
 
-  readonly requiredRoles = [
+  protected readonly requiredRoles = [
     Role.SharingIscsiAuthWrite,
     Role.SharingIscsiWrite,
     Role.SharingWrite,

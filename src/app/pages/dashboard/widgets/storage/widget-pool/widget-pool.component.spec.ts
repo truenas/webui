@@ -8,6 +8,7 @@ import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { Disk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
+import { TopologyItem } from 'app/interfaces/storage.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
@@ -89,7 +90,7 @@ describe('WidgetPoolComponent', () => {
             topology: {
               data: [
                 {
-                  children: [],
+                  children: [] as TopologyItem[],
                   disk: 'sda',
                   type: TopologyItemType.Disk,
                   stats: {

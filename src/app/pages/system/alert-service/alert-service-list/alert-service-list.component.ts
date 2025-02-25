@@ -64,7 +64,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   ],
 })
 export class AlertServiceListComponent implements OnInit {
-  readonly requiredRoles = [Role.AlertListWrite];
+  protected readonly requiredRoles = [Role.AlertListWrite];
   protected readonly searchableElements = alertServiceListElements;
 
   dataProvider: AsyncDataProvider<AlertService>;
