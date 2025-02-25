@@ -4,7 +4,7 @@ import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
-import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockDeclaration } from 'ng-mocks';
 import { ImgFallbackDirective } from 'ngx-img-fallback';
 import { NgxPopperjsContentComponent, NgxPopperjsDirective, NgxPopperjsLooseDirective } from 'ngx-popperjs';
@@ -31,36 +31,36 @@ import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 
-const apps = [
-  {
-    id: 'ix-test-app-1',
-    name: 'test-app-1',
-    metadata: {
-      name: 'rude-cardinal',
-      train: 'test-catalog-train',
-    },
-    state: AppState.Running,
-    upgrade_available: true,
-  },
-  {
-
-    id: 'ix-test-app-2',
-    name: 'test-app-2',
-    metadata: {
-      name: 'rude-cardinal',
-      train: 'test-catalog-train',
-    },
-    state: AppState.Stopped,
-    upgrade_available: true,
-  },
-] as App[];
-
 describe('InstalledAppsListComponent', () => {
   let spectator: Spectator<InstalledAppsListComponent>;
   let applicationsService: ApplicationsService;
   let loader: HarnessLoader;
 
-  const createComponent = createComponentFactory({
+  const apps = [
+    {
+      id: 'ix-test-app-1',
+      name: 'test-app-1',
+      metadata: {
+        name: 'rude-cardinal',
+        train: 'test-catalog-train',
+      },
+      state: AppState.Running,
+      upgrade_available: true,
+    },
+    {
+
+      id: 'ix-test-app-2',
+      name: 'test-app-2',
+      metadata: {
+        name: 'rude-cardinal',
+        train: 'test-catalog-train',
+      },
+      state: AppState.Stopped,
+      upgrade_available: true,
+    },
+  ] as App[];
+
+  const createComponent = createRoutingFactory({
     component: InstalledAppsListComponent,
     imports: [
       MatTableModule,
@@ -110,22 +110,16 @@ describe('InstalledAppsListComponent', () => {
         })),
         checkIfAppIxVolumeExists: jest.fn(() => of(true)),
       }),
-      {
-        provide: ActivatedRoute,
-        useValue: {
-          snapshot: {
-            paramMap: {
-              get: () => 'unknown_id',
-            },
-          },
-        },
-      },
+      mockProvider(ActivatedRoute, {
+        params: { appId: 'unknown_id' },
+      }),
       mockApi([
         mockJob('core.bulk'),
       ]),
       mockAuth(),
       mockProvider(AppsStatsService),
     ],
+    params: { appId: 'webdav', train: 'community' },
   });
 
   beforeEach(() => {
