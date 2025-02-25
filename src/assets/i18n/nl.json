@@ -1889,7 +1889,6 @@
   "Error In Apps Service": "Fout in Apps service",
   "Error Updating Production Status": "Fout bij het updaten van de productiestatus",
   "Error counting eligible snapshots.": "Fout bij het tellen van in aanmerking komende momentopnamen.",
-  "Error deleting dataset {datasetName}.": "Fout bij het verwijderen van dataset {datasetName}.",
   "Error details for ": "Foutdetails voor ",
   "Error detected reading App": "Fout gedetecteerd bij het lezen van App",
   "Error exporting the Private Key": "Fout bij het exporteren van de persoonlijke sleutel",

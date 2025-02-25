@@ -2238,7 +2238,6 @@
   "Error In Apps Service": "Earráid i Seirbhís Aipeanna",
   "Error Updating Production Status": "Earráid agus Stádas Táirgthe á Nuashonrú",
   "Error counting eligible snapshots.": "Earráid agus grianghraif incháilithe á n-áireamh.",
-  "Error deleting dataset {datasetName}.": "Tharla earráid agus tacar sonraí {datasetName} á scriosadh.",
   "Error details for ": "Sonraí earráide le haghaidh ",
   "Error detected reading App": "Braitheadh earráid agus an Feidhmchlár á léamh",
   "Error exporting the Private Key": "Earráid agus an Eochair Phríobháideach á heaspórtáil",
