@@ -5,7 +5,7 @@ import { UUID } from 'angular2-uuid';
 import { environment } from 'environments/environment';
 import { BehaviorSubject, combineLatest } from 'rxjs';
 import { AppState } from 'app/store';
-import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
+import { selectIsEnterprise, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @Injectable({
   providedIn: 'root',
@@ -24,15 +24,12 @@ export class SentryService {
 
     combineLatest([
       this.store$.pipe(waitForSystemInfo),
+      this.store$.select(selectIsEnterprise),
       this.sessionId$,
-    ]).subscribe(([sysInfo, sessionId]) => {
-      Sentry.init({
-        dsn: environment.sentryPublicDsn,
-        release: sysInfo.version,
-      });
-      Sentry.configureScope((scope) => {
-        scope.setTag('session_id', sessionId);
-      });
+    ]).subscribe(([sysInfo, isEnterprise, sessionId]) => {
+      Sentry.setTag('release', sysInfo.version);
+      Sentry.setTag('enterprise', isEnterprise);
+      Sentry.setTag('session_id', sessionId);
     });
   }
 }

@@ -1,5 +1,6 @@
 import { provideHttpClient, withInterceptorsFromDi, HttpClient } from '@angular/common/http';
 import {
+  APP_INITIALIZER,
   enableProdMode, ErrorHandler, importProvidersFrom, inject,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
@@ -16,7 +17,7 @@ import {
   PreloadAllModules,
   withComponentInputBinding,
   withNavigationErrorHandler,
-  NavigationError,
+  NavigationError, Router,
 } from '@angular/router';
 import { provideEffects } from '@ngrx/effects';
 import { provideRouterStore } from '@ngrx/router-store';
@@ -24,6 +25,7 @@ import { provideStore } from '@ngrx/store';
 import {
   TranslateService, TranslateModule, TranslateLoader, TranslateCompiler, MissingTranslationHandler,
 } from '@ngx-translate/core';
+import * as Sentry from '@sentry/angular';
 import { environment } from 'environments/environment';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 import { MarkdownModule } from 'ngx-markdown';
@@ -49,6 +51,15 @@ import { CustomRouterStateSerializer } from 'app/store/router/custom-router-seri
 if (environment.production) {
   enableProdMode();
 }
+
+Sentry.init({
+  dsn: environment.sentryPublicDsn,
+  integrations: [
+    Sentry.browserTracingIntegration(),
+    Sentry.replayIntegration(),
+  ],
+  replaysOnErrorSampleRate: 1.0,
+});
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -115,6 +126,16 @@ bootstrapApplication(AppComponent, {
     {
       provide: MatIconRegistry,
       useClass: IxIconRegistry,
+    },
+    {
+      provide: Sentry.TraceService,
+      deps: [Router],
+    },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: () => () => {},
+      deps: [Sentry.TraceService],
+      multi: true,
     },
     {
       provide: ApiService,

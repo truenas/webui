@@ -96,7 +96,7 @@
     "@ngx-translate/core": "~15.0.0",
     "@ngx-translate/http-loader": "~8.0.0",
     "@popperjs/core": "^2.9.3",
-    "@sentry/angular": "5.30.0",
+    "@sentry/angular": "~9.2.0",
     "@sentry/utils": "~7.42.0",
     "@shopify/eslint-plugin": "~46.0.0",
     "@smarttools/eslint-plugin-rxjs": "~1.0.7",

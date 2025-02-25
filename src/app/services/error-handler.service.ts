@@ -36,6 +36,8 @@ export class ErrorHandlerService implements ErrorHandler {
     return this.dialogService;
   }
 
+  private sentry = Sentry.createErrorHandler();
+
   constructor(private injector: Injector) { }
 
   handleError(error: unknown): void {
@@ -49,7 +51,7 @@ export class ErrorHandlerService implements ErrorHandler {
       return;
     }
 
-    this.logToSentry(error);
+    this.sentry.handleError(error);
   }
 
   parseError(error: unknown): ErrorReport | ErrorReport[] {
