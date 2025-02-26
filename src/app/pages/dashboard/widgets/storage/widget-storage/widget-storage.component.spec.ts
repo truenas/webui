@@ -11,7 +11,8 @@ import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
-import { Pool } from 'app/interfaces/pool.interface';
+import { Pool, PoolTopology } from 'app/interfaces/pool.interface';
+import { TopologyItem } from 'app/interfaces/storage.interface';
 import { VolumesData } from 'app/interfaces/volume-data.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
@@ -44,30 +45,32 @@ const fakePools: Pool[] = [
     topology: {
       data: [
         {
-          children: [],
+          children: [] as TopologyItem[],
           type: TopologyItemType.Disk,
           stats: {
             read_errors: 0,
             write_errors: 0,
             checksum_errors: 0,
           },
-        },
+        } as TopologyItem,
         {
-          children: [],
+          children: [] as TopologyItem[],
           type: TopologyItemType.Disk,
           stats: {
             read_errors: 1,
             write_errors: 2,
             checksum_errors: 3,
           },
-        },
-      ],
-      log: [],
-      cache: [],
-      spare: [{ children: [] }],
-      special: [],
-      dedup: [],
-    },
+        } as TopologyItem,
+      ] as TopologyItem[],
+      log: [] as TopologyItem[],
+      cache: [] as TopologyItem[],
+      spare: [{
+        children: [] as TopologyItem[],
+      }] as TopologyItem[],
+      special: [] as TopologyItem[],
+      dedup: [] as TopologyItem[],
+    } as PoolTopology,
   },
 ] as Pool[];
 

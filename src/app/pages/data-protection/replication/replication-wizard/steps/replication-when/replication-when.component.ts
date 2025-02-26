@@ -62,7 +62,7 @@ export class ReplicationWhenComponent implements OnInit, OnChanges, SummaryProvi
   });
 
   readonly helptext = helptextReplicationWizard;
-  readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
+  protected readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
 
   scheduleMethodOptions$ = of([
     { label: this.translate.instant('Run On a Schedule'), value: ScheduleMethod.Cron },

@@ -10,7 +10,7 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  combineLatest, EMPTY, Observable, of, throwError,
+  combineLatest, Observable, of,
 } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -53,7 +53,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   ],
 })
 export class DeleteDatasetDialogComponent implements OnInit {
-  readonly requiredRoles = [Role.DatasetDelete];
+  protected readonly requiredRoles = [Role.DatasetDelete];
 
   attachments: DatasetAttachment[] = [];
   knownProcesses: Process[] = [];
@@ -93,19 +93,20 @@ export class DeleteDatasetDialogComponent implements OnInit {
 
   onDelete(): void {
     this.deleteDataset().pipe(
+      this.loader.withLoader(),
+      tap(() => this.dialogRef.close(true)),
       catchError((error: unknown) => {
         const apiError = extractApiError(error);
+
         if (apiError?.reason?.includes('Device busy')) {
           return this.askToForceDelete();
         }
 
-        return throwError(() => error);
+        this.dialogRef.close();
+        this.errorHandler.showErrorModal(error);
+
+        return of(error);
       }),
-      this.loader.withLoader(),
-      tap(() => {
-        this.dialogRef.close(true);
-      }),
-      catchError(this.handleDeleteError.bind(this)),
       untilDestroyed(this),
     ).subscribe();
   }
@@ -134,19 +135,6 @@ export class DeleteDatasetDialogComponent implements OnInit {
       buttonText: this.translate.instant('Force Delete'),
       buttonColor: 'warn',
     });
-  }
-
-  private handleDeleteError(error: { reason: string; stack: string; [key: string]: unknown }): Observable<void> {
-    this.dialog.error({
-      title: this.translate.instant(
-        'Error deleting dataset {datasetName}.',
-        { datasetName: this.dataset.name },
-      ),
-      message: error.reason,
-      backtrace: error.stack,
-    });
-    this.dialogRef.close(true);
-    return EMPTY;
   }
 
   private loadDatasetRelatedEntities(): void {

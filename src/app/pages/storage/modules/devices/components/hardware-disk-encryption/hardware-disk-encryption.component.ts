@@ -45,7 +45,7 @@ export class HardwareDiskEncryptionComponent {
 
   protected readonly hasGlobalEncryption = toSignal(this.api.call('system.advanced.sed_global_password_is_set'));
   protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.DiskWrite];
 
   hasSedSupport = computed(() => {
     return this.isEnterprise() || (this.hasDiskEncryption() || this.hasGlobalEncryption());

@@ -56,7 +56,7 @@ export class ReplicationService {
           .map((dataset) => {
             return {
               path: dataset,
-              name: dataset.split('/').pop(),
+              name: String(dataset.split('/').pop()),
               type: ExplorerNodeType.Directory,
               hasChildren: (cachedDatasets || []).some((cachedDataset) => {
                 return cachedDataset.startsWith(`${dataset}/`) && cachedDataset !== dataset;

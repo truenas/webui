@@ -50,7 +50,7 @@ export class DevicesComponent implements OnInit, AfterViewInit {
   protected poolId = signal<number>(null);
   protected poolName = signal<string>(null);
 
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.PoolWrite];
 
   protected isMobileView = signal(false);
   protected showMobileDetails = signal(false);

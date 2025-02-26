@@ -79,7 +79,7 @@ export class GlobalTargetConfigurationComponent implements OnInit {
     iser: helptextSharingIscsi.globalconf_tooltip_iser,
   };
 
-  readonly requiredRoles = [Role.SharingIscsiGlobalWrite];
+  protected readonly requiredRoles = [Role.SharingIscsiGlobalWrite];
 
   constructor(
     private api: ApiService,

@@ -25,7 +25,7 @@ describe('DownloadKeyDialogComponent', () => {
     ],
     providers: [
       mockApi([
-        mockCall('core.download', [null, 'http://localhost:8000/key.json']),
+        mockCall('core.download', [23, 'http://localhost:8000/key.json']),
       ]),
       mockProvider(AppLoaderService, {
         open: jest.fn(),

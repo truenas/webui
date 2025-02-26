@@ -11,14 +11,14 @@ export class RebootInfoEffects {
     ofType(failoverLicensedStatusLoaded),
     mergeMap(({ isHaLicensed }) => {
       if (isHaLicensed) {
-        return this.ws.call('failover.reboot.info').pipe(
+        return this.api.call('failover.reboot.info').pipe(
           map((info) => rebootInfoLoaded({
             thisNodeRebootInfo: info.this_node,
             otherNodeRebootInfo: info.other_node,
           })),
         );
       }
-      return this.ws.call('system.reboot.info').pipe(
+      return this.api.call('system.reboot.info').pipe(
         map((info) => rebootInfoLoaded({
           thisNodeRebootInfo: info,
           otherNodeRebootInfo: null,
@@ -31,14 +31,14 @@ export class RebootInfoEffects {
     ofType(failoverLicensedStatusLoaded),
     mergeMap(({ isHaLicensed }) => {
       if (isHaLicensed) {
-        return this.ws.subscribe('failover.reboot.info').pipe(
+        return this.api.subscribe('failover.reboot.info').pipe(
           map((event) => rebootInfoLoaded({
             thisNodeRebootInfo: event.fields?.this_node,
             otherNodeRebootInfo: event.fields?.other_node,
           })),
         );
       }
-      return this.ws.subscribe('system.reboot.info').pipe(
+      return this.api.subscribe('system.reboot.info').pipe(
         map((event) => rebootInfoLoaded({
           thisNodeRebootInfo: event.fields,
           otherNodeRebootInfo: null,
@@ -49,6 +49,6 @@ export class RebootInfoEffects {
 
   constructor(
     private actions$: Actions,
-    private ws: ApiService,
+    private api: ApiService,
   ) { }
 }

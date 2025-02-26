@@ -67,8 +67,8 @@ export class CloudBackupListComponent {
   readonly isMobileView = input<boolean>(false);
 
   readonly toggleShowMobileDetails = output<boolean>();
-  readonly requiredRoles = [Role.CloudBackupWrite];
   readonly searchQuery = signal<string>('');
+  protected readonly requiredRoles = [Role.CloudBackupWrite];
   protected readonly searchableElements = cloudBackupListElements;
 
   columns = createTable<CloudBackup>([
