@@ -7,7 +7,7 @@
   "Alert Read": "경고 읽기",
   "Alert Write": "경고 쓰기",
   "Allow accessing ZFS snapshots over the NFS protocol.": "NFS 프로토콜을 통한 ZFS 스냅샷 접근을 허용합니다.",
-  "Boot Environment Read": "부트 환경 쓰기",
+  "Boot Environment Read": "부트 환경 읽기",
   "Boot Environment Write": "부트 환경 쓰기",
   "Disk Read": "디스크 읽기",
   "Disk Write": "디스크 쓰기",
