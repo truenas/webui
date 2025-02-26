@@ -84,16 +84,6 @@
           ></ix-explorer>
         }
       }
-
-      @if (isVm()) {
-        <ix-select
-          formControlName="root_disk_io_bus"
-          [label]="'Root Disk I/O Bus' | translate"
-          [tooltip]="containersHelptext.root_disk_io_bus_tooltip | translate"
-          [required]="true"
-          [options]="diskIoBusOptions$"
-        ></ix-select>
-      }
     </ix-form-section>
 
     <ix-form-section
@@ -157,13 +147,23 @@
     }
 
     <ix-form-section [label]="'Disks' | translate">
-      @if (isVm() && form.value.source_type !== VirtualizationSource.Zvol) {
-        <ix-input
-          formControlName="root_disk_size"
-          type="number"
+      @if (isVm()) {
+        <ix-select
+          formControlName="root_disk_io_bus"
+          [label]="'Root Disk I/O Bus' | translate"
+          [tooltip]="containersHelptext.root_disk_io_bus_tooltip | translate"
           [required]="true"
-          [label]="'Root Disk Size (in GiB)' | translate"
-        ></ix-input>
+          [options]="diskIoBusOptions$"
+        ></ix-select>
+
+        @if (form.value.source_type !== VirtualizationSource.Zvol) {
+          <ix-input
+            formControlName="root_disk_size"
+            type="number"
+            [required]="true"
+            [label]="'Root Disk Size (in GiB)' | translate"
+          ></ix-input>
+        }
       }
 
       <ix-list
@@ -196,6 +196,16 @@
                 [tooltip]="containersHelptext.disks_dst_tooltip | translate"
                 [required]="true"
               ></ix-input>
+            }
+
+            @if (isVm()) {
+              <ix-select
+                formControlName="io_bus"
+                [label]="'I/O Bus' | translate"
+                [tooltip]="containersHelptext.io_bus_tooltip | translate"
+                [required]="true"
+                [options]="diskIoBusOptions$"
+              ></ix-select>
             }
           </ix-list-item>
         }

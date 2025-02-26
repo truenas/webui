@@ -188,6 +188,7 @@ export class InstanceWizardComponent {
     disks: this.formBuilder.array<FormGroup<{
       source: FormControl<string>;
       destination: FormControl<string>;
+      io_bus: FormControl<DiskIoBus>;
     }>>([]),
     environment_variables: new FormArray<InstanceEnvVariablesFormGroup>([]),
   });
@@ -307,10 +308,15 @@ export class InstanceWizardComponent {
     const control = this.formBuilder.group({
       source: ['', Validators.required],
       destination: ['', Validators.required],
+      io_bus: [DiskIoBus.Nvme, Validators.required],
     });
 
     if (this.isVm()) {
       control.removeControl('destination');
+    }
+
+    if (this.isContainer()) {
+      control.removeControl('io_bus');
     }
 
     this.form.controls.disks.push(control);
@@ -412,11 +418,11 @@ export class InstanceWizardComponent {
   }
 
   private getDevicesPayload(): VirtualizationDevice[] {
-    const disks = this.form.controls.disks.value.map((proxy) => ({
+    const disks = this.form.controls.disks.value.map((disk) => ({
       dev_type: VirtualizationDeviceType.Disk,
-      source: proxy.source,
-      ...(this.isContainer() ? { destination: proxy.destination } : null),
-      ...(this.isVm() ? { io_bus: this.form.controls.root_disk_io_bus.value } : null),
+      source: disk.source,
+      ...(this.isContainer() ? { destination: disk.destination } : null),
+      ...(this.isVm() ? { io_bus: disk.io_bus } : null),
     }));
 
     const usbDevices: { dev_type: VirtualizationDeviceType; product_id: string }[] = [];

@@ -7,12 +7,14 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
-import { VirtualizationDeviceType, VirtualizationType } from 'app/enums/virtualization.enum';
+import { diskIoBusLabels, VirtualizationDeviceType, VirtualizationType } from 'app/enums/virtualization.enum';
+import { mapToOptions } from 'app/helpers/options.helper';
 import { VirtualizationDisk, VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -43,12 +45,14 @@ interface InstanceDiskFormOptions {
     IxFieldsetComponent,
     FormActionsComponent,
     MatButton,
+    IxSelectComponent,
     TestDirective,
   ],
 })
 export class InstanceDiskFormComponent implements OnInit {
   private existingDisk = signal<VirtualizationDisk | null>(null);
 
+  protected readonly diskIoBusOptions$ = of(mapToOptions(diskIoBusLabels, this.translate));
   protected readonly isLoading = signal(false);
 
   readonly directoryNodeProvider = computed(() => {
@@ -62,6 +66,7 @@ export class InstanceDiskFormComponent implements OnInit {
   protected form = this.formBuilder.nonNullable.group({
     source: ['', Validators.required],
     destination: ['', Validators.required],
+    io_bus: ['', Validators.required],
   });
 
   protected isNew = computed(() => !this.existingDisk());
@@ -99,10 +104,13 @@ export class InstanceDiskFormComponent implements OnInit {
       this.form.patchValue({
         source: disk.source || '',
         destination: disk.destination || '',
+        io_bus: disk.io_bus || null,
       });
     }
     if (this.isVm) {
       this.form.controls.destination.disable();
+    } else {
+      this.form.controls.io_bus.disable();
     }
   }
 
@@ -131,10 +139,6 @@ export class InstanceDiskFormComponent implements OnInit {
       ...this.form.value,
       dev_type: VirtualizationDeviceType.Disk,
     } as VirtualizationDisk;
-
-    if (this.isVm) {
-      payload.io_bus = this.instance.root_disk_io_bus;
-    }
 
     const existingDisk = this.existingDisk();
     return existingDisk

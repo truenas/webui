@@ -134,13 +134,13 @@ describe('InstanceDiskFormComponent', () => {
     });
   });
 
-  describe('vm with root_disk_io_bus', () => {
+  describe('handling vm', () => {
     beforeEach(() => {
       spectator = createComponent({
         providers: [
           mockProvider(SlideInRef, {
             getData: () => ({
-              instance: { id: 'my-instance', type: VirtualizationType.Vm, root_disk_io_bus: DiskIoBus.VirtioBlk },
+              instance: { id: 'my-instance', type: VirtualizationType.Vm },
             }),
             close: jest.fn(),
             requireConfirmationWhen: jest.fn(),
@@ -150,10 +150,10 @@ describe('InstanceDiskFormComponent', () => {
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
-    it('creates a new disk with io_bus taken from the instance when form is submitted', async () => {
+    it('creates a new disk with io_bus option', async () => {
       const form = await loader.getHarness(IxFormHarness);
 
-      await form.fillForm({ Source: '/mnt/path' });
+      await form.fillForm({ Source: '/mnt/path', 'I/O Bus': DiskIoBus.VirtioBlk });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();

@@ -328,6 +328,7 @@ describe('InstanceWizardComponent', () => {
       const diskForm = await diskList.getLastListItem();
       await diskForm.fillForm({
         Source: '/mnt/source',
+        'I/O Bus': DiskIoBus.Nvme,
       });
 
       const proxiesList = await loader.getHarness(IxListHarness.with({ label: 'Proxies' }));

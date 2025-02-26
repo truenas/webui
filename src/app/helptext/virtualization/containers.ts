@@ -47,6 +47,7 @@ Choose a VM for full OS isolation, kernel independence, and running diverse OS t
   host_port_tooltip: T('Specify the host port to be mapped to the container\'s port.'),
 
   root_disk_io_bus_tooltip: T('Select the root disk I/O bus type.'),
+  io_bus_tooltip: T('Select disk I/O bus type.'),
 
   instance_protocol_placeholder: T('Instance Protocol'),
   instance_protocol_tooltip: T('Select the protocol for the instance\'s network connection.'),

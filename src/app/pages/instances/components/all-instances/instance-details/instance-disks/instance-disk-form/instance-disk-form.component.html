@@ -16,6 +16,15 @@
           [canCreateDataset]="isNew()"
         ></ix-explorer>
 
+        @if (form.controls.io_bus.enabled) {
+          <ix-select
+            formControlName="io_bus"
+            [label]="'I/O Bus' | translate"
+            [required]="true"
+            [options]="diskIoBusOptions$"
+          ></ix-select>
+        }
+
         @if (form.controls.destination.enabled) {
           <ix-input
             formControlName="destination"
