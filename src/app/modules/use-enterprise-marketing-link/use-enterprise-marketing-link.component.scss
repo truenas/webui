@@ -1,0 +1,24 @@
+
+@import 'scss-imports/variables';
+
+:host {
+  margin: 0 auto;
+}
+
+a {
+  align-items: center;
+  color: var(--primary);
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 7px;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  @media(max-width: $breakpoint-xs) {
+    margin-bottom: 2px;
+  }
+}
