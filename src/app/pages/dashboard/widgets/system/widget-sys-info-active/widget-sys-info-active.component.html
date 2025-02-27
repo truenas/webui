@@ -200,11 +200,10 @@
             }
           </mat-list-item>
 
-          <mat-list-item>
-            <ix-use-enterprise-marketing-link></ix-use-enterprise-marketing-link>
-          </mat-list-item>
           @if (!isEnterprise()) {
-            1
+            <mat-list-item>
+              <ix-use-enterprise-marketing-link></ix-use-enterprise-marketing-link>
+            </mat-list-item>
           }
         </mat-list>
       </div>

@@ -11,14 +11,10 @@ a {
   cursor: pointer;
   display: flex;
   justify-content: center;
-  margin-bottom: 7px;
+  margin-bottom: 3px;
   text-decoration: none;
 
   &:hover {
     text-decoration: underline;
-  }
-
-  @media(max-width: $breakpoint-xs) {
-    margin-bottom: 2px;
   }
 }

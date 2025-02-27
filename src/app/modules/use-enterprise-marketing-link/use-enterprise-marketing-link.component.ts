@@ -20,14 +20,12 @@ export class UseEnterpriseMarketingLinkComponent {
   protected readonly targetUrl = 'https://truenas.com/explore-truenas-enterprise/';
 
   messages = [
-    this.translate.instant('Bring TrueNAS to work'),
-    this.translate.instant('Unlock Enterprise Power'),
-    this.translate.instant('Maximize Uptime! Learn more'),
-    this.translate.instant('Maximize Security! Learn more'),
-    this.translate.instant('Ready for TrueNAS Enterprise?'),
-    this.translate.instant('Need Ultimate Reliability?'),
-    this.translate.instant('High Availability Awaits!'),
-    this.translate.instant('Discover Mission Critical Solutions'),
+    this.translate.instant('Optimize Your Storage'),
+    this.translate.instant('More Performance, More Protection'),
+    this.translate.instant('Boost Performance & Support'),
+    this.translate.instant('Unlock High Performance Solutions'),
+    this.translate.instant('Expert Support When You Need It'),
+    this.translate.instant('5 Nines of Uptime with HA'),
   ];
 
   currentMessage = computed(() => this.getTodaysMessage());
@@ -48,10 +46,10 @@ export class UseEnterpriseMarketingLinkComponent {
       localStorage.setItem('marketingMessageLastShownDate', today);
       localStorage.setItem('marketingMessageLastHash', this.hashMessage(nextMessage));
 
-      return nextMessage + ' 🔥';
+      return nextMessage;
     }
 
-    return this.getCurrentMessage(lastMessageHash) + ' 🔥';
+    return this.getCurrentMessage(lastMessageHash);
   }
 
   getNextMessage(lastMessageHash: string | null): string {
