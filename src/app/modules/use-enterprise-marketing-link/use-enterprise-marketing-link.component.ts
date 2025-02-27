@@ -17,7 +17,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class UseEnterpriseMarketingLinkComponent {
-  targetUrl = 'https://example.com/truenas-marketing';
+  protected readonly targetUrl = 'https://truenas.com/explore-truenas-enterprise/';
 
   messages = [
     this.translate.instant('Bring TrueNAS to work'),
@@ -40,25 +40,29 @@ export class UseEnterpriseMarketingLinkComponent {
   getTodaysMessage(): string {
     const today = new Date().toDateString();
     const lastShownDate = localStorage.getItem('marketingMessageLastShownDate');
-    const lastMessageHash = localStorage.getItem('marketingMessageLastMessageHash');
-
-    const nextMessage = this.getNextMessage(lastMessageHash);
+    const lastMessageHash = localStorage.getItem('marketingMessageLastHash');
 
     if (lastShownDate !== today) {
+      const nextMessage = this.getNextMessage(lastMessageHash);
+
       localStorage.setItem('marketingMessageLastShownDate', today);
-      localStorage.setItem('marketingMessageLastMessageHash', this.hashMessage(nextMessage));
+      localStorage.setItem('marketingMessageLastHash', this.hashMessage(nextMessage));
+
+      return nextMessage + ' 🔥';
     }
 
-    return nextMessage + ' 🔥';
+    return this.getCurrentMessage(lastMessageHash) + ' 🔥';
   }
 
   getNextMessage(lastMessageHash: string | null): string {
-    // Find index using the hash
     const lastIndex = this.messages.findIndex((message) => this.hashMessage(message) === lastMessageHash);
-
-    // Rotate to the next message, or start from the first if not found
     const nextIndex = lastIndex >= 0 ? (lastIndex + 1) % this.messages.length : 0;
     return this.messages[nextIndex];
+  }
+
+  getCurrentMessage(lastMessageHash: string | null): string {
+    const currentIndex = this.messages.findIndex((message) => this.hashMessage(message) === lastMessageHash);
+    return currentIndex >= 0 ? this.messages[currentIndex] : this.messages[0];
   }
 
   hashMessage(message: string): string {
@@ -66,7 +70,7 @@ export class UseEnterpriseMarketingLinkComponent {
   }
 
   trackClick(message: string): void {
-    const trackedUrl = `${this.targetUrl}?utm_source=truenas&utm_medium=widget&utm_campaign=${encodeURIComponent(message)}`;
+    const trackedUrl = `${this.targetUrl}?m=${this.hashMessage(message)}`;
     this.window.open(trackedUrl, '_blank');
   }
 }

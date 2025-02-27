@@ -5,7 +5,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { UseEnterpriseMarketingLinkComponent } from './use-enterprise-marketing-link.component';
 
 const lastShownDate = 'marketingMessageLastShownDate';
-const lastMessageHash = 'marketingMessageLastMessageHash';
+const lastMessageHash = 'marketingMessageLastHash';
 
 describe('UseEnterpriseMarketingLinkComponent', () => {
   let spectator: Spectator<UseEnterpriseMarketingLinkComponent>;
@@ -76,7 +76,7 @@ describe('UseEnterpriseMarketingLinkComponent', () => {
     spectator.component.trackClick(message);
 
     expect(windowSpy).toHaveBeenCalledWith(
-      'https://example.com/truenas-marketing?utm_source=truenas&utm_medium=widget&utm_campaign=Bring%20TrueNAS%20to%20work',
+      'https://truenas.com/explore-truenas-enterprise/?m=QnJpbmclMjBUcnVlTkFTJTIwdG8lMjB3b3Jr',
       '_blank',
     );
   });
@@ -84,7 +84,7 @@ describe('UseEnterpriseMarketingLinkComponent', () => {
   it('should maintain consistent message even if array order changes', () => {
     const originalHash = spectator.component.hashMessage('Maximize Uptime! Learn more');
     localStorage.setItem('marketingMessageLastShownDate', '2025-02-25');
-    localStorage.setItem('marketingMessageLastMessageHash', originalHash);
+    localStorage.setItem('marketingMessageLastHash', originalHash);
 
     spectator.component.messages = [
       'Maximize Uptime! Learn more',
