@@ -6,7 +6,7 @@ import {
 describe('getSystemVersion', () => {
   it('should return the correct system version when valid input is provided', () => {
     expect(getSystemVersion('25.10.0-MASTER-20250126-184805', Codename.Goldeye)).toBe(
-      'Goldeye-25.10.0-MASTER-20250126-184805',
+      '25.10.0-MASTER-20250126-184805 - Goldeye',
     );
   });
 
