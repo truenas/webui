@@ -4345,7 +4345,6 @@
   "Enter the IP address of the gateway.": "Insira o endereço IP do gateway.",
   "Environment": "Ambiente",
   "Error": "Erro",
-  "Error deleting dataset {datasetName}.": "Erro ao eliminar o conjunto de dados {datasetName}.",
   "Error details for ": "Detalhes do erro para ",
   "Error detected reading App": "Detetado erroa aler a App",
   "Error exporting the Private Key": "Erro ao exportar a chave privada",
