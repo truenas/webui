@@ -930,6 +930,7 @@
   "Secure data within this dataset. Data is unusable until      unlocked with an encryption key or passphrase. If parent dataset has encryption enabled,     it is not possible to disable this option.": "",
   "Select the protocol for the instance's network connection.": "",
   "Selected Devices": "",
+  "Serial Console": "",
   "Service started": "",
   "Service stopped": "",
   "Set New Password": "",
