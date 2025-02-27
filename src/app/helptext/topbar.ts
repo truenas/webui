@@ -10,7 +10,7 @@ export const helptextTopbar = {
   updateRunning_dialog: {
     title: T('Update in Progress'),
     message: helptextGlobal.sysUpdateMessage,
-    message_pt2: `<b>${helptextGlobal.sysUpdateMessagePt2}</b>`,
+    message_pt2: helptextGlobal.sysUpdateMessagePt2,
   },
 
   mat_tooltips: {
