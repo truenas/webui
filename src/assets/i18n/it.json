@@ -61,7 +61,6 @@
   "Name of this SSH connection. SSH connection names  must be unique.": "",
   "Network addresses allowed to use this initiator. Leave blank to allow all      networks or list network addresses with a CIDR mask. Separate entries by pressing      <code>Enter</code>.": "",
   "Network community string.  The community string acts like a user ID or password. A user with  the correct community string has access to network information. The  default is <i>public</i>. For more information, see  <a href=\"https://community.helpsystems.com/knowledge-base/intermapper/snmp/snmp-community-strings/\"  target=\"_blank\">What is an SNMP Community String?</a>.": "",
-  "Secure data within this dataset. Data is unusable until      unlocked with an encryption key or passphrase. If parent dataset has encryption enabled,     it is not possible to disable this option.": "",
   "SSH Read": "",
   "SSH Write": "",
   "Secure data within this dataset. Data is unusable until      unlocked with an encryption key or passphrase. If parent dataset has encryption enabled,     it is not possible to disable this option.": "",
