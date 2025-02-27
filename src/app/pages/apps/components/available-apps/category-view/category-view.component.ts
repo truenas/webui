@@ -4,13 +4,13 @@ import {
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
-  ActivatedRoute,
   Router,
   RouterLink,
 } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { injectParams } from 'ngxtension/inject-params';
 import {
   BehaviorSubject,
 } from 'rxjs';
@@ -43,6 +43,7 @@ import { AppsStore } from 'app/pages/apps/store/apps-store.service';
   ],
 })
 export class CategoryViewComponent implements OnInit, OnDestroy {
+  protected readonly category = injectParams('category');
   pageTitle$ = new BehaviorSubject('Category');
   apps$ = this.appsFilterStore.filteredApps$;
   isLoading$ = this.applicationsStore.isLoading$;
@@ -50,12 +51,11 @@ export class CategoryViewComponent implements OnInit, OnDestroy {
   constructor(
     protected router: Router,
     private applicationsStore: AppsStore,
-    private route: ActivatedRoute,
     private appsFilterStore: AppsFilterStore,
   ) {}
 
   ngOnInit(): void {
-    const category = this.route.snapshot.params.category as string;
+    const category = this.category();
     this.pageTitle$.next(category.replace(/-/g, ' '));
     this.appsFilterStore.applyFilters({
       categories: [category],
