@@ -20,6 +20,11 @@ export const credentialsRoutes: Routes = [{
       loadChildren: () => import('app/pages/credentials/users/user.routes').then((module) => module.userRoutes),
     },
     {
+      path: 'users-new',
+      data: { title: T('Users'), breadcrumb: T('Users') },
+      loadChildren: () => import('app/pages/credentials/new-users/user.routes').then((module) => module.userRoutes),
+    },
+    {
       path: 'groups',
       data: { title: T('Groups'), breadcrumb: T('Groups') },
       loadChildren: () => import('app/pages/credentials/groups/group.routes').then((module) => module.groupRoutes),
