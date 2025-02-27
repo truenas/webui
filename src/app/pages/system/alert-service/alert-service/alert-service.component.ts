@@ -90,7 +90,7 @@ import {
   ],
 })
 export class AlertServiceComponent implements OnInit {
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.AlertWrite];
 
   commonForm = this.formBuilder.group({
     name: ['', Validators.required],

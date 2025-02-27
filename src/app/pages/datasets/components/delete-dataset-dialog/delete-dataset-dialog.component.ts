@@ -53,7 +53,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   ],
 })
 export class DeleteDatasetDialogComponent implements OnInit {
-  readonly requiredRoles = [Role.DatasetDelete];
+  protected readonly requiredRoles = [Role.DatasetDelete];
 
   attachments: DatasetAttachment[] = [];
   knownProcesses: Process[] = [];

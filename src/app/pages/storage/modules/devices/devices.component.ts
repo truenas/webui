@@ -87,7 +87,7 @@ const raidzItems = [TopologyItemType.Raidz, TopologyItemType.Raidz1, TopologyIte
   ],
 })
 export class DevicesComponent implements OnInit, AfterViewInit {
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.PoolWrite];
 
   isLoading$ = this.devicesStore.isLoading$;
   selectedNode$ = this.devicesStore.selectedNode$;

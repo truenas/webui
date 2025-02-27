@@ -1289,7 +1289,7 @@
       "Create Disk Test"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "DISK_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -3327,7 +3327,7 @@
       "Offline"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "POOL_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -3345,7 +3345,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "POOL_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -3443,7 +3443,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "POOL_SCRUB_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -3501,7 +3501,7 @@
       "Add Pool"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "POOL_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -3524,7 +3524,7 @@
       "Pool Creation Wizard"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "POOL_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -3715,7 +3715,7 @@
       "Allowed IP Addresses Settings"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "SYSTEM_GENERAL_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -3892,7 +3892,7 @@
       "Console Settings"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "SYSTEM_ADVANCED_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -4016,7 +4016,7 @@
       "Cronjob"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "SYSTEM_CRON_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -4075,7 +4075,7 @@
       "2FA Settings"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "SYSTEM_SECURITY_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -4165,7 +4165,7 @@
       "Init/Shutdown Script"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "SYSTEM_CRON_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -4223,7 +4223,7 @@
       "Isolated GPU Devices Settings"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "SYSTEM_ADVANCED_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -4283,7 +4283,7 @@
       "Kernel Settings"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "SYSTEM_ADVANCED_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -4420,7 +4420,7 @@
       "Self-Encrypting Drive Settings"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "SYSTEM_ADVANCED_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -4504,7 +4504,7 @@
       "Storage Settings"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "DATASET_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -4575,7 +4575,7 @@
       "New Tunable"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "SYSTEM_TUNABLE_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -4633,7 +4633,7 @@
       "Syslog Settings"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "SYSTEM_ADVANCED_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -4802,7 +4802,7 @@
       "Create boot environment"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "BOOT_ENV_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -4824,7 +4824,7 @@
       "Create boot environment"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "BOOT_ENV_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -5068,7 +5068,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "SYSTEM_GENERAL_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -5306,7 +5306,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "SYSTEM_GENERAL_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -5554,7 +5554,7 @@
       "Time Server"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "NETWORK_GENERAL_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [

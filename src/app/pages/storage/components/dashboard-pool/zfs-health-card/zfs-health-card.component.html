@@ -7,7 +7,7 @@
 
     @if (!wasScanInitiated) {
       <button
-        *ixRequiresRoles="requiredRoles"
+        *ixRequiresRoles="[Role.PoolScrubWrite]"
         mat-button
         ixTest="scrub"
         [ixUiSearch]="searchableElements.elements.scrub"
@@ -17,7 +17,7 @@
       </button>
     } @else {
       @if (isScrub) {
-        <ng-container *ixRequiresRoles="requiredRoles">
+        <ng-container *ixRequiresRoles="[Role.PoolScrubWrite]">
           <div class="controls">
             <button
               mat-button
@@ -78,7 +78,7 @@
       <div class="value">
         {{ pool().autotrim.value === 'on' ? ('On' | translate) : ('Off' | translate) }}
       </div>
-      <a *ixRequiresRoles="requiredRoles" class="action" ixTest="edit-auto-trim" (click)="onEditAutotrim()">
+      <a *ixRequiresRoles="[Role.PoolWrite]" class="action" ixTest="edit-auto-trim" (click)="onEditAutotrim()">
         {{ 'Edit Auto TRIM' | translate }}
       </a>
     </div>
@@ -129,10 +129,10 @@
         <div class="label">{{ 'Deduplication Table' | translate }}:</div>
         <div class="value">{{ deduplicationStats() }}</div>
         <div class="dedup-actions">
-          <a *ixRequiresRoles="requiredRoles" class="action" ixTest="prune-dedup" (click)="onPruneDedupTable()">
+          <a *ixRequiresRoles="[Role.PoolWrite]" class="action" ixTest="prune-dedup" (click)="onPruneDedupTable()">
             {{ 'Prune' | translate }}
           </a>
-          <a *ixRequiresRoles="requiredRoles" class="action" ixTest="set-dedup-quota" (click)="onSetDedupQuota()">
+          <a *ixRequiresRoles="[Role.PoolWrite]" class="action" ixTest="set-dedup-quota" (click)="onSetDedupQuota()">
             {{ 'Set Quota' | translate }}
           </a>
         </div>

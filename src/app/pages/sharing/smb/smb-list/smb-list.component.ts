@@ -81,7 +81,7 @@ import { selectService } from 'app/store/services/services.selectors';
   ],
 })
 export class SmbListComponent implements OnInit {
-  readonly requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
+  protected readonly requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
   protected readonly searchableElements = smbListElements;
 
   service$ = this.store$.select(selectService(ServiceName.Cifs));

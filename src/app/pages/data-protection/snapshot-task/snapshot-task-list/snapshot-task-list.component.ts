@@ -75,7 +75,7 @@ import { TaskService } from 'app/services/task.service';
   ],
 })
 export class SnapshotTaskListComponent implements OnInit {
-  readonly requiredRoles = [Role.SnapshotTaskWrite];
+  protected readonly requiredRoles = [Role.SnapshotTaskWrite];
   protected readonly searchableElements = snapshotTaskListElements;
 
   snapshotTasks: PeriodicSnapshotTaskUi[] = [];

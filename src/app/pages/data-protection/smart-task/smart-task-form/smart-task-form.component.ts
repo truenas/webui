@@ -58,7 +58,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
   ],
 })
 export class SmartTaskFormComponent implements OnInit {
-  readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.DiskWrite];
 
   get isNew(): boolean {
     return !this.editingTest;

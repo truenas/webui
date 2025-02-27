@@ -126,7 +126,7 @@ export class AuthorizedAccessFormComponent implements OnInit {
     discovery_auth: helptextSharingIscsi.portal_form_tooltip_discovery_authmethod,
   };
 
-  readonly requiredRoles = [
+  protected readonly requiredRoles = [
     Role.SharingIscsiAuthWrite,
     Role.SharingIscsiWrite,
     Role.SharingWrite,

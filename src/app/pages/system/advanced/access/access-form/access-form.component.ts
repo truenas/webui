@@ -59,7 +59,7 @@ import {
   ],
 })
 export class AccessFormComponent implements OnInit {
-  readonly requiredRoles = [Role.AuthSessionsWrite];
+  protected readonly requiredRoles = [Role.AuthSessionsWrite];
 
   isLoading = false;
   form = this.fb.nonNullable.group({

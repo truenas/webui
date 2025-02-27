@@ -50,7 +50,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   ],
 })
 export class CreateDatasetDialogComponent implements OnInit {
-  readonly requiredRoles = [Role.DatasetWrite];
+  protected readonly requiredRoles = [Role.DatasetWrite];
 
   isLoading$ = new BehaviorSubject(false);
   form = this.fb.group({

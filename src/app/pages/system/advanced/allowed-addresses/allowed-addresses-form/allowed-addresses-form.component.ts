@@ -53,7 +53,7 @@ import { generalConfigUpdated } from 'app/store/system-config/system-config.acti
   ],
 })
 export class AllowedAddressesFormComponent implements OnInit {
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.SystemGeneralWrite];
   protected readonly helpText = helptextSystemAdvanced;
 
   isFormLoading = true;
