@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  filter, repeat, switchMap, tap,
+  filter, switchMap, tap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -146,9 +146,12 @@ export class InitiatorListComponent implements OnInit {
 
   ngOnInit(): void {
     const initiators$ = this.iscsiService.getInitiators().pipe(
-      repeat({ delay: () => this.iscsiService.listenForDataRefresh() }),
       tap((initiators) => this.initiators = initiators),
     );
+
+    this.iscsiService.listenForDataRefresh()
+      .pipe(untilDestroyed(this))
+      .subscribe(() => this.dataProvider.load());
 
     this.dataProvider = new AsyncDataProvider(initiators$);
     this.refresh();
