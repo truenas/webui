@@ -1,11 +1,5 @@
 <mat-card class="train-card">
-  @if (updateService.isLoading$ | async) {
-    <mat-spinner
-      class="update-spinner"
-      [diameter]="40"
-    >
-    </mat-spinner>
-  }
+  <ix-fake-progress-bar [loading]="updateService.isLoading$ | async"></ix-fake-progress-bar>
   <form class="ix-form-container" [formGroup]="form">
     <div class="train-card-row">
       <ix-checkbox
@@ -38,7 +32,8 @@
     } @else {
       <div class="train-card-row train-select-row">
         <div class="single-train-name">
-          {{ 'Current Train:' | translate }} {{ trainService.trainValue$ | async }}
+          <b>{{ 'Current Train:' | translate }}</b>
+          {{ trainService.trainValue$ | async }}
           @if (singleDescription) {
             <span>- {{ singleDescription }}</span>
           }
@@ -71,7 +66,7 @@
 
     @if ((updateService.status$ | async) === SystemUpdateStatus.Unavailable) {
       <div>
-        {{ 'No updates available.' | translate }}
+        <b>{{ 'No updates available.' | translate }}</b>
       </div>
     }
   </div>
