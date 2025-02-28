@@ -135,7 +135,7 @@ export class InstanceWizardComponent {
   );
 
   imageSourceTypeOptions$: Observable<Option<VirtualizationSource>[]> = of([
-    { label: this.translate.instant('Use a Linux image (linuxcontainer.org)'), value: VirtualizationSource.Image },
+    { label: this.translate.instant('Use a Linux image (linuxcontainers.org)'), value: VirtualizationSource.Image },
     { label: this.translate.instant('Use an ISO image'), value: VirtualizationSource.Iso },
     { label: this.translate.instant('Use zvol with previously installed OS'), value: VirtualizationSource.Zvol },
   ]);

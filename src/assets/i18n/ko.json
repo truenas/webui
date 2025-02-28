@@ -4898,7 +4898,7 @@
   "Use Snapshot": "스냅샷 사용",
   "Use Sudo For ZFS Commands": "ZFS 명령어를 Sudo로 사용",
   "Use Syslog Only": "Syslog만 사용",
-  "Use a Linux image (linuxcontainer.org)": "리눅스 이미지 사용(linuxcontainer.org)",
+  "Use a Linux image (linuxcontainers.org)": "리눅스 이미지 사용(linuxcontainers.org)",
   "Use all disk space": "모든 디스크 공간 사용",
   "Use an ISO image": "ISO 이미지 사용",
   "Use an existing port": "기존 포트 사용",
