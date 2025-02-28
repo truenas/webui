@@ -88,7 +88,7 @@ describe('InstanceEditFormComponent', () => {
         Autostart: false,
         'CPU Configuration': '1-3',
         'Memory Size': '2 GiB',
-        'Root Disk I/O Bus': 'NVME',
+        'Root Disk I/O Bus': 'NVMe',
         'Enable VNC': true,
         'VNC Port': '9001',
         'VNC Password': '',
@@ -104,7 +104,7 @@ describe('InstanceEditFormComponent', () => {
         'VNC Port': 9000,
         'VNC Password': 'testing',
         'Secure Boot': false,
-        'Root Disk I/O Bus': DiskIoBus.VirtioBlk,
+        'Root Disk I/O Bus': 'Virtio-BLK',
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));

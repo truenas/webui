@@ -9,15 +9,17 @@
       ></ix-checkbox>
     </ix-fieldset>
 
-    <ix-fieldset [title]="'Disks' | translate">
-      <ix-select
-        formControlName="root_disk_io_bus"
-        [label]="'Root Disk I/O Bus' | translate"
-        [tooltip]="containersHelptext.root_disk_io_bus_tooltip | translate"
-        [required]="true"
-        [options]="diskIoBusOptions$"
-      ></ix-select>
-    </ix-fieldset>
+    @if (isVm) {
+      <ix-fieldset [title]="'Disks' | translate">
+        <ix-select
+          formControlName="root_disk_io_bus"
+          [label]="'Root Disk I/O Bus' | translate"
+          [tooltip]="containersHelptext.io_bus_tooltip | translate"
+          [required]="true"
+          [options]="diskIoBusOptions$"
+        ></ix-select>
+      </ix-fieldset>
+    }
 
     <ix-fieldset [title]="'CPU & Memory' | translate">
       <ix-input

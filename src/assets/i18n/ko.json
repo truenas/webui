@@ -1,12 +1,8 @@
 {
   "": "",
+  "Choose the disk I/O bus type that best suits your system’s needs: <br /><br /> • NVMe – Ideal for high-performance storage with faster read and write speeds. <br /><br /> • Virtio-BLK – Efficient for virtualized environments, offering direct block device access with lower overhead. <br /><br /> • Virtio-SCSI – Flexible and scalable, supporting advanced features like hot-swapping and multiple devices.": "",
   "I/O Bus": "",
-  "NVME": "",
   "Root Disk I/O Bus": "",
-  "Select disk I/O bus type.": "",
-  "Select the root disk I/O bus type.": "",
-  "VIRTIO-BLK": "",
-  "VIRTIO-SCSI": "",
   "\n              It looks like your session has been inactive for more than {lifetime} seconds.<br>\n              For security reasons we will log you out at {time}.\n            ": "세션의 비활성화 시간이 {lifetime}초를 넘었습니다.<br />보안을 위해 {time}에 로그아웃 되었습니다.",
   " Est. Usable Raw Capacity": " 사용 가능한 원시 용량 추정",
   " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network port number of the UPS <i>Master</i> system. The default port is <i>3493</i>.": " <b>UPS 모드</b>가 <i>슬레이브</i>일 때, <i>마스터</i> UPS 시스템의 네트워크 포트 번호를 입력합니다. 기본 포트는 <i>3493</i>입니다.",

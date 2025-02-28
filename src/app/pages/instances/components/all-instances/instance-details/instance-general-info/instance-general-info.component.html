@@ -41,11 +41,6 @@
           <span class="label">{{ 'Secure Boot' | translate }}:</span>
           {{ instance.secure_boot | yesNo }}
         </p>
-
-        <p>
-          <span class="label">{{ 'Root Disk I/O Bus' | translate }}:</span>
-          {{ instance.root_disk_io_bus | mapValue: diskIoBusLabels }}
-        </p>
       }
 
       @if (instance.environment && (instance.environment | keyvalue)?.length) {

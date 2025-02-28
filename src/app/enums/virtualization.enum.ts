@@ -18,9 +18,9 @@ export enum DiskIoBus {
 }
 
 export const diskIoBusLabels = new Map<DiskIoBus, string>([
-  [DiskIoBus.Nvme, T('NVME')],
-  [DiskIoBus.VirtioBlk, T('VIRTIO-BLK')],
-  [DiskIoBus.VirtioScsi, T('VIRTIO-SCSI')],
+  [DiskIoBus.Nvme, 'NVMe'],
+  [DiskIoBus.VirtioBlk, 'Virtio-BLK'],
+  [DiskIoBus.VirtioScsi, 'Virtio-SCSI'],
 ]);
 
 export const virtualizationTypeIcons = [

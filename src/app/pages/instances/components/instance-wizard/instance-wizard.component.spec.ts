@@ -328,7 +328,7 @@ describe('InstanceWizardComponent', () => {
       const diskForm = await diskList.getLastListItem();
       await diskForm.fillForm({
         Source: '/mnt/source',
-        'I/O Bus': DiskIoBus.Nvme,
+        'I/O Bus': 'NVMe',
       });
 
       const proxiesList = await loader.getHarness(IxListHarness.with({ label: 'Proxies' }));
@@ -436,7 +436,7 @@ describe('InstanceWizardComponent', () => {
         'VM Image Options': 'Use an ISO image',
         'CPU Configuration': '2',
         'Memory Size': '1 GiB',
-        'Root Disk I/O Bus': DiskIoBus.VirtioBlk,
+        'Root Disk I/O Bus': 'Virtio-BLK',
       });
 
       const selectIso = await loader.getHarness(MatButtonHarness.with({ text: 'Select ISO' }));
@@ -476,7 +476,7 @@ describe('InstanceWizardComponent', () => {
         'CPU Configuration': '2',
         'Memory Size': '1 GiB',
         Zvol: '/dev/zvol/test',
-        'Root Disk I/O Bus': DiskIoBus.VirtioScsi,
+        'Root Disk I/O Bus': 'Virtio-SCSI',
       });
 
       const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create' }));
