@@ -69,7 +69,10 @@ export class DatasetDetailsCardComponent {
   ) { }
 
   protected readonly datasetCompression = computed(() => {
-    const compression = `${this.dataset().compressratio?.value} (${this.dataset().compression?.value})`;
+    const compressRatioValue = this.dataset().compressratio?.value;
+    const compressionValue = this.dataset().compression?.value;
+    const compression = compressRatioValue ? `${compressRatioValue} (${compressionValue})` : compressionValue;
+
     return this.dataset()?.compression?.source === ZfsPropertySource.Inherited
       ? this.translate.instant('Inherit ({value})', { value: compression })
       : compression;
