@@ -5,8 +5,8 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { BaseAlertServiceForm } from 'app/pages/system/alert-service/alert-service/alert-services/base-alert-service-form';
 
 @Component({
-  selector: 'ix-victor-ops-service',
-  templateUrl: './victor-ops-service.component.html',
+  selector: 'ix-splunk-on-call-service',
+  templateUrl: './splunk-on-call-service.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
@@ -15,7 +15,7 @@ import { BaseAlertServiceForm } from 'app/pages/system/alert-service/alert-servi
     TranslateModule,
   ],
 })
-export class VictorOpsServiceComponent extends BaseAlertServiceForm {
+export class SplunkOnCallServiceComponent extends BaseAlertServiceForm {
   form = this.formBuilder.group({
     api_key: ['', Validators.required],
     routing_key: ['', Validators.required],
