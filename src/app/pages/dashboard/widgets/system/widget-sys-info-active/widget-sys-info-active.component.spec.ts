@@ -46,7 +46,7 @@ describe('WidgetSysInfoActiveComponent', () => {
     },
   } as SystemInfo;
 
-  const systemInfo$ = new BehaviorSubject({
+  const dashboardSystemInfo$ = new BehaviorSubject({
     isLoading: false,
     error: null,
     value: systemInfo,
@@ -59,7 +59,7 @@ describe('WidgetSysInfoActiveComponent', () => {
     providers: [
       mockAuth(),
       mockProvider(WidgetResourcesService, {
-        systemInfo$,
+        dashboardSystemInfo$,
         updateAvailable$,
         refreshInterval$,
       }),

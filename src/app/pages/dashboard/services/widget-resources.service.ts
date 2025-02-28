@@ -19,6 +19,7 @@ import { VolumesData, VolumeData } from 'app/interfaces/volume-data.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { processNetworkInterfaces } from 'app/pages/dashboard/widgets/network/widget-interface/widget-interface.utils';
 import { AppState } from 'app/store';
+import { systemInfoLoaded, systemInfoUpdated } from 'app/store/system-info/system-info.actions';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 /**
@@ -36,7 +37,7 @@ export class WidgetResourcesService {
   readonly realtimeUpdates$ = this.api.subscribe('reporting.realtime');
 
   readonly refreshInterval$ = timer(0, 5000).pipe(startWith(0));
-  private readonly triggerRefreshSystemInfo$ = new Subject<void>();
+  private readonly triggerRefreshDashboardSystemInfo$ = new Subject<void>();
 
   readonly backups$ = forkJoin([
     this.api.call('replication.query'),
@@ -46,8 +47,8 @@ export class WidgetResourcesService {
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
-  readonly systemInfo$ = this.api.call('webui.main.dashboard.sys_info').pipe(
-    repeat({ delay: () => this.triggerRefreshSystemInfo$ }),
+  readonly dashboardSystemInfo$ = this.api.call('webui.main.dashboard.sys_info').pipe(
+    repeat({ delay: () => this.triggerRefreshDashboardSystemInfo$ }),
     debounceTime(300),
     toLoadingState(),
     shareReplay({ bufferSize: 1, refCount: true }),
@@ -96,6 +97,7 @@ export class WidgetResourcesService {
   );
 
   networkInterfaceLastHourStats(interfaceName: string): Observable<ReportingData[]> {
+    this.refreshSystemInfo();
     return this.serverTime$.pipe(
       take(1),
       switchMap((serverTime) => {
@@ -196,6 +198,11 @@ export class WidgetResourcesService {
   }
 
   refreshSystemInfo(): void {
-    this.triggerRefreshSystemInfo$.next();
+    this.store$.dispatch(systemInfoLoaded({ systemInfo: null }));
+    this.store$.dispatch(systemInfoUpdated());
+  }
+
+  refreshDashboardSystemInfo(): void {
+    this.triggerRefreshDashboardSystemInfo$.next();
   }
 }

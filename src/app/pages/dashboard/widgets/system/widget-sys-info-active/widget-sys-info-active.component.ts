@@ -65,7 +65,7 @@ export class WidgetSysInfoActiveComponent {
   protected readonly getLabelForContractType = getLabelForContractType;
 
   updateAvailable = toSignal(this.resources.updateAvailable$);
-  systemInfo = toSignal(this.resources.systemInfo$.pipe(
+  systemInfo = toSignal(this.resources.dashboardSystemInfo$.pipe(
     map((state) => state.value),
     filter((value) => !!value),
   ));
@@ -93,7 +93,7 @@ export class WidgetSysInfoActiveComponent {
     private store$: Store<AppState>,
     private localeService: LocaleService,
   ) {
-    this.resources.refreshSystemInfo();
+    this.resources.refreshDashboardSystemInfo();
   }
 
   isFirstRender = true;

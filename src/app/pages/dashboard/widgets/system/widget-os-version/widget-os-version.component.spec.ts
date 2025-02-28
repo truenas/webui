@@ -20,7 +20,7 @@ describe('WidgetOsVersionComponent', () => {
       },
       providers: [
         mockProvider(WidgetResourcesService, {
-          systemInfo$: of({
+          dashboardSystemInfo$: of({
             value: {
               version: 'TrueNAS-SCALE-24.10.0-MASTER-20240518-113154',
             },
@@ -41,7 +41,7 @@ describe('WidgetOsVersionComponent', () => {
     spectator = createComponent({
       providers: [
         mockProvider(WidgetResourcesService, {
-          systemInfo$: of({
+          dashboardSystemInfo$: of({
             isLoading: false,
             error: new Error('Fatal error'),
           } as LoadingState<SystemInfo>),

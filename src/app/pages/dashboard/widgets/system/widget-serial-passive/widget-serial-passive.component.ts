@@ -29,7 +29,7 @@ export class WidgetSerialPassiveComponent implements WidgetComponent {
   size = input.required<SlotSize>();
   readonly name = serialPassiveWidget.name;
 
-  systemInfo$ = this.resources.systemInfo$;
+  systemInfo$ = this.resources.dashboardSystemInfo$;
 
   constructor(
     private resources: WidgetResourcesService,
