@@ -12,6 +12,8 @@
   "Boot Environment Read": "",
   "Boot Environment Write": "",
   "Choose the disk I/O bus type that best suits your system’s needs: <br /><br /> • NVMe – Ideal for high-performance storage with faster read and write speeds. <br /><br /> • Virtio-BLK – Efficient for virtualized environments, offering direct block device access with lower overhead. <br /><br /> • Virtio-SCSI – Flexible and scalable, supporting advanced features like hot-swapping and multiple devices.": "",
+  "Current version": "",
+  "Current version (standby node)": "",
   "Disk Read": "",
   "Disk Write": "",
   "Docker Read": "",

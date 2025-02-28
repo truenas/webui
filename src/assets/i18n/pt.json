@@ -552,6 +552,8 @@
   "Cryptographic protocols for securing client/server connections. Select which <a href=\"https://en.wikipedia.org/wiki/Transport_Layer_Security\" target=\"_blank\">Transport Layer Security (TLS)</a> versions TrueNAS can use for connection security.": "",
   "Current Sensor": "",
   "Current Train:": "",
+  "Current version": "",
+  "Current version (standby node)": "",
   "Custom App via YAML": "",
   "Custom Config": "",
   "Custom Name": "",

@@ -8,8 +8,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-  filter, of, repeat, switchMap,
-  withLatestFrom,
+  filter,
+  tap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -59,23 +59,23 @@ export class AllTargetsComponent implements OnInit {
 
   ngOnInit(): void {
     const targets$ = this.iscsiService.getTargets().pipe(
-      repeat({ delay: () => this.iscsiService.listenForDataRefresh() }),
-      withLatestFrom(this.iscsiService.listenForDataRefresh()),
-      switchMap(([targets, newTarget]) => {
-        this.targets.set(targets);
-
-        if (newTarget) {
-          this.dataProvider.expandedRow = newTarget;
-        } else {
-          const firstTarget = targets[targets.length - 1];
-          if (!this.dataProvider.expandedRow && firstTarget) {
-            this.dataProvider.expandedRow = firstTarget;
-          }
+      tap((targets) => {
+        const firstTarget = targets[targets.length - 1];
+        if (!this.dataProvider.expandedRow && firstTarget) {
+          this.dataProvider.expandedRow = firstTarget;
         }
-
-        return of(targets);
       }),
     );
+
+    this.iscsiService.listenForDataRefresh()
+      .pipe(untilDestroyed(this))
+      .subscribe((newTarget) => {
+        if (newTarget) {
+          this.dataProvider.expandedRow = newTarget;
+        }
+
+        this.dataProvider.load();
+      });
 
     this.dataProvider = new AsyncDataProvider(targets$);
   }

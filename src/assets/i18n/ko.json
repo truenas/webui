@@ -1,6 +1,8 @@
 {
   "": "",
   "Choose the disk I/O bus type that best suits your system’s needs: <br /><br /> • NVMe – Ideal for high-performance storage with faster read and write speeds. <br /><br /> • Virtio-BLK – Efficient for virtualized environments, offering direct block device access with lower overhead. <br /><br /> • Virtio-SCSI – Flexible and scalable, supporting advanced features like hot-swapping and multiple devices.": "",
+  "Current version": "",
+  "Current version (standby node)": "",
   "I/O Bus": "",
   "Root Disk I/O Bus": "",
   "\n              It looks like your session has been inactive for more than {lifetime} seconds.<br>\n              For security reasons we will log you out at {time}.\n            ": "세션의 비활성화 시간이 {lifetime}초를 넘었습니다.<br />보안을 위해 {time}에 로그아웃 되었습니다.",
