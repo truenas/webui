@@ -1126,6 +1126,7 @@
   "Expert Support When You Need It": "",
   "Expires On": "",
   "Expires on {date}": "",
+  "Explore TrueNAS Enterprise": "",
   "Export Password Secret Seed": "",
   "Export ZFS snapshots as <a href=\"https://docs.microsoft.com/en-us/windows/desktop/vss/shadow-copies-and-shadow-copy-sets\" target=_blank>Shadow Copies</a> for VSS clients.": "",
   "Export/disconnect pool: {pool}": "",

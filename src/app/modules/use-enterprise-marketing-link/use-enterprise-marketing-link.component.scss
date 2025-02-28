@@ -5,15 +5,23 @@
 }
 
 a {
-  align-items: center;
-  color: var(--primary);
   cursor: pointer;
-  display: flex;
-  justify-content: center;
-  margin-bottom: 3px;
+  display: block;
+  margin-bottom: 2px;
+  text-align: center;
   text-decoration: none;
 
-  &:hover {
-    text-decoration: underline;
+  span {
+    color: var(--primary-txt);
+    display: block;
+
+    &.text-above {
+      color: var(--primary);
+      margin-bottom: 2px;
+    }
+
+    &.text-below {
+      font-size: x-small;
+    }
   }
 }

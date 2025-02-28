@@ -1,7 +1,13 @@
 <a
-  href="javascript:void(0)"
   ixTest="use-enterprise-marketing-link"
-  (click)="trackClick(currentMessage())"
+  target="_blank"
+  [href]="currentMessageHref()"
 >
-  {{ currentMessage() }}
+  <span class="text-above">
+    {{ currentMessage() }}
+  </span>
+
+  <span class="text-below">
+    {{ 'Explore TrueNAS Enterprise' | translate }}
+  </span>
 </a>

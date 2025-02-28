@@ -1,9 +1,7 @@
 import {
   Component, ChangeDetectionStrategy, computed,
-  Inject,
 } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
-import { WINDOW } from 'app/helpers/window.helper';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
@@ -14,6 +12,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   standalone: true,
   imports: [
     TestDirective,
+    TranslateModule,
   ],
 })
 export class UseEnterpriseMarketingLinkComponent {
@@ -29,10 +28,10 @@ export class UseEnterpriseMarketingLinkComponent {
   ];
 
   currentMessage = computed(() => this.getTodaysMessage());
+  currentMessageHref = computed(() => `${this.targetUrl}?m=${this.hashMessage(this.currentMessage())}`);
 
   constructor(
     private translate: TranslateService,
-    @Inject(WINDOW) private window: Window,
   ) {}
 
   getTodaysMessage(): string {
@@ -65,10 +64,5 @@ export class UseEnterpriseMarketingLinkComponent {
 
   hashMessage(message: string): string {
     return btoa(encodeURIComponent(message));
-  }
-
-  trackClick(message: string): void {
-    const trackedUrl = `${this.targetUrl}?m=${this.hashMessage(message)}`;
-    this.window.open(trackedUrl, '_blank');
   }
 }
