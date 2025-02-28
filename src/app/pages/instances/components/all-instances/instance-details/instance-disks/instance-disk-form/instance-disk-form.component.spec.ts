@@ -153,7 +153,7 @@ describe('InstanceDiskFormComponent', () => {
     it('creates a new disk with io_bus option', async () => {
       const form = await loader.getHarness(IxFormHarness);
 
-      await form.fillForm({ Source: '/mnt/path', 'I/O Bus': DiskIoBus.VirtioBlk });
+      await form.fillForm({ Source: '/mnt/path', 'I/O Bus': 'Virtio-BLK' });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
