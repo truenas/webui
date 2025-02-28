@@ -4914,7 +4914,7 @@
   "Use Snapshot": "Snapshot gebruiken",
   "Use Sudo For ZFS Commands": "Gebruik Sudo voor ZFS-opdrachten",
   "Use Syslog Only": "Alleen Syslog gebruiken",
-  "Use a Linux image (linuxcontainer.org)": "Gebruik een Linux-image (linuxcontainer.org)",
+  "Use a Linux image (linuxcontainers.org)": "Gebruik een Linux-image (linuxcontainers.org)",
   "Use all disk space": "Alle schijfruimte gebruiken",
   "Use an existing port": "Gebruik een bestaande poort",
   "Use an exported encryption key file to unlock datasets.": "Een geëxporteerd versleutelingssleutelbestand gebruiken om datasets te ontgrendelen.",
