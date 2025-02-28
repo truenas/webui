@@ -159,6 +159,7 @@ export class PortalListComponent implements OnInit {
     const portals$ = this.api.call('iscsi.portal.query', []).pipe(
       repeat({ delay: () => this.iscsiService.listenForDataRefresh() }),
       tap((portals) => this.portals = portals),
+      untilDestroyed(this),
     );
 
     this.dataProvider = new AsyncDataProvider(portals$);

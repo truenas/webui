@@ -148,6 +148,7 @@ export class InitiatorListComponent implements OnInit {
     const initiators$ = this.iscsiService.getInitiators().pipe(
       repeat({ delay: () => this.iscsiService.listenForDataRefresh() }),
       tap((initiators) => this.initiators = initiators),
+      untilDestroyed(this),
     );
 
     this.dataProvider = new AsyncDataProvider(initiators$);
