@@ -8,7 +8,7 @@ export enum AlertServiceType {
   Slack = 'Slack',
   SnmpTrap = 'SNMPTrap',
   Telegram = 'Telegram',
-  SplunkOnCall = 'Splunk On-Call',
+  SplunkOnCall = 'VictorOps',
 }
 
 export const alertServiceNames = [
