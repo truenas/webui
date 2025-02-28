@@ -53,8 +53,8 @@ export class WidgetPoolSettingsComponent implements WidgetSettingsComponent<Widg
   }
 
   ngOnInit(): void {
-    this.setCurrentSettings();
     this.setupSettingsUpdate();
+    this.setCurrentSettings();
   }
 
   private setCurrentSettings(): void {
