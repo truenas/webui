@@ -28,6 +28,7 @@ const dataset = {
   type: DatasetType.Filesystem,
   sync: { value: 'STANDARD' },
   compression: { source: ZfsPropertySource.Inherited, value: 'LZ4' },
+  compressratio: { value: '3.81x' },
   atime: true,
   deduplication: { value: 'OFF' },
   casesensitive: false,
@@ -95,13 +96,18 @@ describe('DatasetDetailsCardComponent', () => {
 
   describe('filesystem dataset', () => {
     it('shows filesystem details', () => {
-      setupTest({ dataset });
+      setupTest({
+        dataset: {
+          ...dataset,
+          compression: { source: ZfsPropertySource.Default, value: 'LZ3' },
+        } as DatasetDetails,
+      });
 
       const details = getDetails();
       expect(details).toEqual({
         'Type:': 'FILESYSTEM',
         'Sync:': 'STANDARD',
-        'Compression Level:': 'Inherit (LZ4)',
+        'Compression:': '3.81x (LZ3)',
         'Enable Atime:': 'ON',
         'ZFS Deduplication:': 'OFF',
         'Case Sensitivity:': 'OFF',
@@ -140,7 +146,7 @@ describe('DatasetDetailsCardComponent', () => {
       expect(details).toEqual({
         'Type:': 'VOLUME',
         'Sync:': 'STANDARD',
-        'Compression Level:': 'Inherit (LZ4)',
+        'Compression:': 'Inherit (3.81x (LZ4))',
         'ZFS Deduplication:': 'OFF',
         'Case Sensitivity:': 'OFF',
         'Path:': 'pool/child',
