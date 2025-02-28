@@ -1,6 +1,6 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
 import { ProductType } from 'app/enums/product-type.enum';
-import { getCopyrightText } from 'app/helpers/copyright-text.helper';
+import { getCopyrightHtml } from 'app/helpers/copyright-text.helper';
 import { selectNotNull } from 'app/helpers/operators/select-not-null.helper';
 import { SystemInfoState } from 'app/store/system-info/system-info.reducer';
 
@@ -38,9 +38,9 @@ export const selectBuildYear = createSelector(
   (state) => state.buildYear,
 );
 
-export const selectCopyrightText = createSelector(
+export const selectCopyrightHtml = createSelector(
   selectProductType,
-  (productType) => getCopyrightText(productType),
+  (productType) => getCopyrightHtml(productType || undefined),
 );
 
 export const waitForSystemInfo = selectNotNull(selectSystemInfo);

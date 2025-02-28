@@ -53,7 +53,7 @@ export interface SedConfig {
   ],
 })
 export class SelfEncryptingDriveFormComponent implements OnInit {
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.SystemAdvancedWrite];
 
   isFormLoading = false;
   title = helptextSystemAdvanced.fieldset_sed;
@@ -91,7 +91,7 @@ export class SelfEncryptingDriveFormComponent implements OnInit {
 
   constructor(
     private fb: NonNullableFormBuilder,
-    private ws: ApiService,
+    private api: ApiService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
@@ -116,7 +116,7 @@ export class SelfEncryptingDriveFormComponent implements OnInit {
     const values = this.form.value;
     delete values.sed_passwd2;
 
-    this.ws.call('system.advanced.update', [values]).pipe(untilDestroyed(this)).subscribe({
+    this.api.call('system.advanced.update', [values]).pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isFormLoading = false;
         this.snackbar.success(this.translate.instant('Settings saved'));

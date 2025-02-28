@@ -19,15 +19,15 @@
       <ul>
         <li class="item">
           <div class="label">{{ 'Read Errors' | translate }}:</div>
-          <div class="value">{{ slot().pool_info.disk_read_errors | number }}</div>
+          <div class="value">{{ slot().pool_info?.disk_read_errors | number }}</div>
         </li>
         <li class="item">
           <div class="label">{{ 'Write Errors' | translate }}:</div>
-          <div class="value">{{ slot().pool_info.disk_write_errors | number }}</div>
+          <div class="value">{{ slot().pool_info?.disk_write_errors | number }}</div>
         </li>
         <li class="item">
           <div class="label">{{ 'Checksum Errors' | translate }}:</div>
-          <div class="value">{{ slot().pool_info.disk_checksum_errors | number }}</div>
+          <div class="value">{{ slot().pool_info?.disk_checksum_errors | number }}</div>
         </li>
       </ul>
     }

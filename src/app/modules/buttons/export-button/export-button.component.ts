@@ -120,7 +120,7 @@ export class ExportButtonComponent<T, M extends ApiJobMethod> {
     }] as ApiJobParams<M>;
   }
 
-  private getQueryFilters(searchQuery: SearchQuery<T>): QueryFilters<T> {
+  private getQueryFilters(searchQuery?: SearchQuery<T>): QueryFilters<T> {
     if (searchQuery) {
       return (searchQuery as AdvancedSearchQuery<T>)?.filters || this.defaultFilters();
     }
@@ -128,7 +128,7 @@ export class ExportButtonComponent<T, M extends ApiJobMethod> {
     return [];
   }
 
-  private getQueryOptions(sorting: TableSort<T>): QueryOptions<T> {
+  private getQueryOptions(sorting?: TableSort<T>): QueryOptions<T> {
     if (!sorting?.propertyName || !sorting?.direction) {
       return {};
     }

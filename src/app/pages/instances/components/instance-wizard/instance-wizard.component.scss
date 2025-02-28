@@ -1,0 +1,63 @@
+.container {
+  color: var(--fg1);
+  display: flex;
+  gap: 15px;
+
+  .form {
+    flex: 1;
+  }
+}
+
+.actions {
+  margin: 9px;
+}
+
+ix-fieldset {
+  display: block;
+  width: 40%;
+}
+
+.image-field {
+  align-items: flex-start;
+  display: flex;
+  gap: 10px;
+
+  .input {
+    flex: 1;
+  }
+
+  button {
+    margin-top: 43px;
+  }
+}
+
+.protocol-and-port {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 1fr 1fr;
+}
+
+.pci-devices {
+  margin-bottom: 20px;
+
+  .device {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 7px;
+  }
+}
+
+ngx-skeleton-loader {
+  ::ng-deep span {
+    min-height: 25px;
+  }
+}
+
+.glossary {
+  width: 25%;
+}
+
+.network-list-item {
+  margin-bottom: 12px;
+  margin-top: 12px;
+}

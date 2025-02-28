@@ -173,12 +173,9 @@ export class AuthService {
       map((user) => {
         const currentRoles = user?.privilege?.roles?.$set || [];
         const neededRoles = Array.isArray(roles) ? roles : [roles];
+
         if (!neededRoles?.length || !currentRoles.length) {
           return false;
-        }
-
-        if (currentRoles.includes(Role.FullAdmin)) {
-          return true;
         }
 
         return neededRoles.some((role) => currentRoles.includes(role));
@@ -191,8 +188,8 @@ export class AuthService {
       tap(() => {
         this.clearAuthToken();
         this.wasOneTimePasswordChanged$.next(false);
-        this.api.clearSubscriptions();
         this.wsStatus.setLoginStatus(false);
+        this.api.clearSubscriptions();
       }),
     );
   }
@@ -202,6 +199,10 @@ export class AuthService {
     return this.getLoggedInUserInformation().pipe(
       map(() => undefined),
     );
+  }
+
+  getOneTimeToken(): Observable<string> {
+    return this.api.call('auth.generate_token', [300, {}, true, true]);
   }
 
   private processLoginResult(loginResult: LoginExResponse): Observable<LoginResult> {
@@ -261,7 +262,7 @@ export class AuthService {
   }
 
   private setupAuthenticationUpdate(): void {
-    this.wsStatus.isAuthenticated$.pipe().subscribe({
+    this.wsStatus.isAuthenticated$.subscribe({
       next: (isAuthenticated) => {
         if (isAuthenticated) {
           this.store$.dispatch(adminUiInitialized());

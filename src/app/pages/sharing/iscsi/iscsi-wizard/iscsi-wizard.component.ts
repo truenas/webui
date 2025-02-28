@@ -141,7 +141,7 @@ export class IscsiWizardComponent implements OnInit {
     ],
   });
 
-  readonly requiredRoles = [
+  protected readonly requiredRoles = [
     Role.SharingIscsiTargetWrite,
     Role.SharingIscsiWrite,
     Role.SharingWrite,
@@ -257,7 +257,7 @@ export class IscsiWizardComponent implements OnInit {
     private translate: TranslateService,
     private loader: AppLoaderService,
     private store$: Store<ServicesState>,
-    public slideInRef: SlideInRef<undefined, boolean>,
+    public slideInRef: SlideInRef<undefined, IscsiTarget>,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
@@ -468,6 +468,6 @@ export class IscsiWizardComponent implements OnInit {
     this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Iscsi }));
 
     this.isLoading.set(false);
-    this.slideInRef.close({ response: true, error: null });
+    this.slideInRef.close({ response: this.createdTarget, error: null });
   }
 }

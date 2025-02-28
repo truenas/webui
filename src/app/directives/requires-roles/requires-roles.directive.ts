@@ -14,7 +14,7 @@ import { AuthService } from 'app/modules/auth/auth.service';
   standalone: true,
 })
 export class RequiresRolesDirective extends HasAccessDirective {
-  private previousRoles: Role[] = null;
+  private previousRoles: Role[] | null = null;
 
   // eslint-disable-next-line @angular-eslint/prefer-signals
   @Input()

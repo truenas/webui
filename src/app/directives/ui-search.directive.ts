@@ -22,7 +22,8 @@ export class UiSearchDirective implements OnInit, OnDestroy {
   }
 
   get ariaLabel(): string {
-    const hierarchyItem = this.config().hierarchy?.[this.config().hierarchy.length - 1] || '';
+    const hierarchy = this.config().hierarchy;
+    const hierarchyItem = (hierarchy ? hierarchy[hierarchy.length - 1] : '') || '';
     const isSingleWord = hierarchyItem.trim().split(/\s+/).length === 1;
 
     const synonyms = this.config().synonyms;
@@ -67,7 +68,7 @@ export class UiSearchDirective implements OnInit, OnDestroy {
         this.highlightAndClickElement(anchorRef, !!element.triggerAnchor);
       }, searchDelayConst);
 
-      if (this.elementRef.nativeElement.id !== element.anchor) {
+      if (element.anchor && this.elementRef.nativeElement.id !== element.anchor) {
         this.highlightElementAnchor(element.anchor);
       }
     } else if (attemptCount < 2) {

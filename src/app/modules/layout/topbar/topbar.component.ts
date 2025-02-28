@@ -10,7 +10,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   filter, Observable, Subscription, switchMap, tap,
 } from 'rxjs';
@@ -29,7 +29,6 @@ import {
   DirectoryServicesIndicatorComponent,
 } from 'app/modules/layout/topbar/directory-services-indicator/directory-services-indicator.component';
 import { HaStatusIconComponent } from 'app/modules/layout/topbar/ha-status-icon/ha-status-icon.component';
-import { IxLogoComponent } from 'app/modules/layout/topbar/ix-logo/ix-logo.component';
 import { JobsIndicatorComponent } from 'app/modules/layout/topbar/jobs-indicator/jobs-indicator.component';
 import { PowerMenuComponent } from 'app/modules/layout/topbar/power-menu/power-menu.component';
 import { ResilveringIndicatorComponent } from 'app/modules/layout/topbar/resilvering-indicator/resilvering-indicator.component';
@@ -62,7 +61,6 @@ import { TruenasLogoComponent } from './truenas-logo/truenas-logo.component';
     MatTooltip,
     IxIconComponent,
     GlobalSearchTriggerComponent,
-    IxLogoComponent,
     CheckinIndicatorComponent,
     ResilveringIndicatorComponent,
     HaStatusIconComponent,
@@ -110,6 +108,7 @@ export class TopbarComponent implements OnInit {
     private store$: Store<AlertSlice>,
     private appStore$: Store<AppState>,
     private cdr: ChangeDetectorRef,
+    private translate: TranslateService,
     private tnc: TruenasConnectService,
   ) {
     this.systemGeneralService.updateRunningNoticeSent.pipe(untilDestroyed(this)).subscribe(() => {
@@ -129,6 +128,8 @@ export class TopbarComponent implements OnInit {
     this.store$.select(selectUpdateJob).pipe(untilDestroyed(this)).subscribe((jobs) => {
       const job = jobs[0];
       if (!job) {
+        this.updateIsRunning = false;
+        this.updateDialog?.close();
         return;
       }
 
@@ -136,6 +137,7 @@ export class TopbarComponent implements OnInit {
       if (job.state === JobState.Failed || job.state === JobState.Aborted) {
         this.updateIsRunning = false;
         this.systemWillRestart = false;
+        this.updateDialog?.close();
       }
 
       // When update starts on HA system, listen for 'finish', then quit listening
@@ -186,7 +188,9 @@ export class TopbarComponent implements OnInit {
   showUpdateDialog(): void {
     const message = this.isFailoverLicensed || !this.systemWillRestart
       ? helptextTopbar.updateRunning_dialog.message
-      : helptextTopbar.updateRunning_dialog.message + helptextTopbar.updateRunning_dialog.message_pt2;
+      : this.translate.instant(helptextTopbar.updateRunning_dialog.message)
+        + '<br />'
+        + this.translate.instant(helptextTopbar.updateRunning_dialog.message_pt2);
     const title = helptextTopbar.updateRunning_dialog.title;
 
     this.updateDialog = this.matDialog.open(UpdateDialogComponent, {

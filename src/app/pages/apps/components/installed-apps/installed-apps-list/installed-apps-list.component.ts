@@ -18,6 +18,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { injectParams } from 'ngxtension/inject-params';
 import {
   combineLatest, filter, forkJoin, Observable, switchMap,
 } from 'rxjs';
@@ -88,6 +89,7 @@ function doSortCompare(a: number | string, b: number | string, isAsc: boolean): 
 })
 
 export class InstalledAppsListComponent implements OnInit {
+  readonly appId = injectParams('appId');
   readonly isMobileView = input<boolean>();
   readonly toggleShowMobileDetails = output<boolean>();
 
@@ -293,7 +295,7 @@ export class InstalledAppsListComponent implements OnInit {
     ).subscribe({
       next: ([,, apps]) => {
         this.sortChanged(this.sortingInfo, apps);
-        this.selectAppForDetails(this.activatedRoute.snapshot.paramMap.get('appId'));
+        this.selectAppForDetails(this.appId());
         this.cdr.markForCheck();
       },
     });
@@ -345,7 +347,7 @@ export class InstalledAppsListComponent implements OnInit {
     if (!jobId) {
       return;
     }
-    const job$ = this.store$.select(selectJob(jobId), filter((job) => !!job));
+    const job$ = this.store$.select(selectJob(jobId)).pipe(filter((job) => !!job));
     this.dialogService.jobDialog(job$, { title: name, canMinimize: true })
       .afterClosed()
       .pipe(this.errorHandler.catchError(), untilDestroyed(this))

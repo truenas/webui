@@ -3,7 +3,8 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { Dataset } from 'app/interfaces/dataset.interface';
@@ -16,8 +17,6 @@ describe('ExportDatasetKeyDialogComponent', () => {
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
     component: ExportDatasetKeyDialogComponent,
-    imports: [
-    ],
     providers: [
       mockApi([
         mockCall('core.download', [1, 'http://localhost/download']),
@@ -62,5 +61,14 @@ describe('ExportDatasetKeyDialogComponent', () => {
       'dataset_my-dataset_key.json',
       'application/json',
     );
+  });
+
+  it('auto closes dialog if there was an error loading the key', () => {
+    const mockedApi = spectator.inject(MockApiService);
+    jest.spyOn(mockedApi, 'job').mockReturnValue(throwError(() => new Error('Failed to load key')));
+
+    spectator.component.ngOnInit();
+
+    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
   });
 });

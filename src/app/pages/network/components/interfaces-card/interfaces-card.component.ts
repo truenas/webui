@@ -78,7 +78,7 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
 
   readonly interfacesUpdated = output();
 
-  readonly requiredRoles = [Role.NetworkInterfaceWrite];
+  protected readonly requiredRoles = [Role.NetworkInterfaceWrite];
 
   isHaEnabled$ = new BehaviorSubject(false);
 

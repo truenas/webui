@@ -1,0 +1,57 @@
+<mat-card class="card">
+  <mat-card-header>
+    <h3 mat-card-title>
+      {{ 'Tools' | translate }}
+    </h3>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div [matTooltip]="isInstanceStopped() ? ('Instance is not running' | translate) : ''">
+      <a
+        mat-flat-button
+        color="default"
+        ixTest="open-shell"
+        class="tool"
+        [class.disabled]="isInstanceStopped()"
+        [disabled]="isInstanceStopped()"
+        [routerLink]="['/instances', 'view', instance().id, 'shell']"
+      >
+        <span>{{ 'Shell' | translate }}</span>
+
+        <ix-icon name="mdi-console-line"></ix-icon>
+      </a>
+
+      @if (isVm()) {
+        <a
+          mat-flat-button
+          color="default"
+          ixTest="open-console"
+          class="tool"
+          [class.disabled]="isInstanceStopped()"
+          [disabled]="isInstanceStopped()"
+          [routerLink]="['/instances', 'view', instance().id, 'console']"
+        >
+          <span>{{ 'Serial Console' | translate }}</span>
+
+          <ix-icon name="mdi-console"></ix-icon>
+        </a>
+
+        @if (instance().vnc_enabled && instance().vnc_port) {
+          <a
+            mat-flat-button
+            color="default"
+            ixTest="open-vnc"
+            class="tool"
+            target="_blank"
+            [class.disabled]="isInstanceStopped()"
+            [disabled]="isInstanceStopped()"
+            [href]="vncLink()"
+          >
+            <span>{{ 'VNC' | translate }}</span>
+            <span>{{ vncLink() }}</span>
+          </a>
+        }
+      }
+    </div>
+  </mat-card-content>
+</mat-card>

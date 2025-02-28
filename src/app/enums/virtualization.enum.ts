@@ -46,6 +46,7 @@ export enum VirtualizationDeviceType {
   Usb = 'USB',
   Tpm = 'TPM',
   Disk = 'DISK',
+  Pci = 'PCI',
   Gpu = 'GPU',
   Nic = 'NIC',
   Proxy = 'PROXY',
@@ -54,6 +55,7 @@ export enum VirtualizationDeviceType {
 export const virtualizationDeviceTypeLabels = new Map<VirtualizationDeviceType, string>([
   [VirtualizationDeviceType.Usb, 'USB'],
   [VirtualizationDeviceType.Tpm, 'TPM'],
+  [VirtualizationDeviceType.Pci, 'PCI'],
   [VirtualizationDeviceType.Disk, T('Disk')],
   [VirtualizationDeviceType.Gpu, T('GPU')],
   [VirtualizationDeviceType.Nic, T('NIC')],
@@ -96,7 +98,7 @@ export enum VirtualizationNicType {
 
 export const virtualizationNicTypeLabels = new Map<VirtualizationNicType, string>([
   [VirtualizationNicType.Bridged, T('Bridged Adaptors')],
-  [VirtualizationNicType.Macvlan, T('MAC VLAN')],
+  [VirtualizationNicType.Macvlan, T('Macvlan')],
 ]);
 
 export enum VirtualizationSource {

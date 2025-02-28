@@ -71,7 +71,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   ],
 })
 export class ManualUpdateFormComponent implements OnInit {
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.SystemUpdateWrite];
   protected readonly searchableElements = systemManualUpdateFormElements;
 
   isFormLoading$ = new BehaviorSubject(false);
@@ -80,8 +80,6 @@ export class ManualUpdateFormComponent implements OnInit {
     updateFile: [null as FileList | null],
     rebootAfterManualUpdate: [false],
   });
-
-  private apiEndPoint: string;
 
   readonly helptext = helptext;
   currentVersion = '';
@@ -101,14 +99,7 @@ export class ManualUpdateFormComponent implements OnInit {
     private store$: Store<AppState>,
     private cdr: ChangeDetectorRef,
     private upload: UploadService,
-  ) {
-    this.authService.authToken$.pipe(
-      tap((token) => {
-        this.apiEndPoint = '/_upload?auth_token=' + token;
-      }),
-      untilDestroyed(this),
-    ).subscribe();
-  }
+  ) {}
 
   ngOnInit(): void {
     this.checkHaLicenseAndUpdateStatus();

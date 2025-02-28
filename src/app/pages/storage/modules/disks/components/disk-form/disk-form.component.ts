@@ -59,7 +59,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   ],
 })
 export class DiskFormComponent implements OnInit {
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.DiskWrite];
 
   form = this.fb.group({
     name: [''],
@@ -71,7 +71,6 @@ export class DiskFormComponent implements OnInit {
     hddstandby: [null as DiskStandby | null],
     advpowermgmt: [null as DiskPowerLevel | null],
     togglesmart: [false],
-    smartoptions: [''],
     passwd: [''],
     clear_pw: [false],
   });

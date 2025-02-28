@@ -66,7 +66,7 @@ import { IscsiService } from 'app/services/iscsi.service';
 export class InitiatorListComponent implements OnInit {
   protected readonly searchableElements = initiatorListElements;
 
-  readonly requiredRoles = [
+  protected readonly requiredRoles = [
     Role.SharingIscsiInitiatorWrite,
     Role.SharingIscsiWrite,
     Role.SharingWrite,

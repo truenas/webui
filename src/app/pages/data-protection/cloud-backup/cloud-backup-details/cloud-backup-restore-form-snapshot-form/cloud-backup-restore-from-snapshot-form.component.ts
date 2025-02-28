@@ -66,7 +66,7 @@ import { FilesystemService } from 'app/services/filesystem.service';
   ],
 })
 export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
-  readonly requiredRoles = [Role.CloudBackupWrite];
+  protected readonly requiredRoles = [Role.CloudBackupWrite];
   readonly mntPath = mntPath;
   readonly helptext = helptextTruecloudBackup;
 
@@ -203,7 +203,7 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
         ? [this.form.controls.excludePattern.value]
         : this.form.controls.excludedPaths.value.map((path) => path.replace(subfolder, '') || '/'),
       include: this.isIncludeFromSubfolderSelected
-        ? this.form.value.includedPaths.map((path) => path.replace(subfolder, '') || '/')
+        ? this.form.getRawValue().includedPaths.map((path) => path.replace(subfolder, '') || '/')
         : null,
     };
 

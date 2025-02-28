@@ -45,7 +45,7 @@ import { GpuService } from 'app/services/gpu/gpu.service';
   ],
 })
 export class IsolatedGpusCardComponent implements OnInit {
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.SystemAdvancedWrite];
 
   isolatedGpus: Device[] = [];
   protected readonly searchableElements = isolatedGpusCardElements;

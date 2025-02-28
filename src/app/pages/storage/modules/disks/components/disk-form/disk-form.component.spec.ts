@@ -37,7 +37,6 @@ describe('DiskFormComponent', () => {
     informational: 5,
     hddstandby: DiskStandby.Minutes10,
     passwd: '',
-    smartoptions: 'smart options',
     togglesmart: false,
     devname: 'sdc',
     identifier: '{serial}VB9fbb6dfe-9cf26570',
@@ -100,7 +99,6 @@ describe('DiskFormComponent', () => {
         'HDD Standby': '10',
         Informational: '5',
         Name: 'sdc',
-        'S.M.A.R.T. extra options': 'smart options',
         Serial: 'VB9fbb6dfe-9cf26570',
       });
     });
@@ -113,7 +111,6 @@ describe('DiskFormComponent', () => {
         Difference: '',
         Informational: '10',
         'HDD Standby': '10',
-        'S.M.A.R.T. extra options': 'new smart options',
         'Enable S.M.A.R.T.': true,
       });
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -126,7 +123,6 @@ describe('DiskFormComponent', () => {
         difference: null,
         informational: 10,
         hddstandby: '10',
-        smartoptions: 'new smart options',
         togglesmart: true,
       }]);
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: true, error: null });
@@ -161,7 +157,6 @@ describe('DiskFormComponent', () => {
         Informational: '5',
         Name: 'sdc',
         'SED Password': '',
-        'S.M.A.R.T. extra options': 'smart options',
         Serial: 'VB9fbb6dfe-9cf26570',
       });
     });
@@ -174,7 +169,6 @@ describe('DiskFormComponent', () => {
         Difference: '',
         Informational: '10',
         'HDD Standby': '10',
-        'S.M.A.R.T. extra options': 'new smart options',
         'Enable S.M.A.R.T.': true,
         'SED Password': '123456',
       });
@@ -188,7 +182,6 @@ describe('DiskFormComponent', () => {
         difference: null,
         informational: 10,
         hddstandby: '10',
-        smartoptions: 'new smart options',
         togglesmart: true,
         passwd: '123456',
       }]);

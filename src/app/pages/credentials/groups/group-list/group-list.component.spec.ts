@@ -24,9 +24,9 @@ const fakeGroupDataSource: Group[] = [{
   group: 'mock',
   gid: 1000,
   builtin: true,
-  sudo_commands: [],
-  sudo_commands_nopasswd: [],
-  roles: [],
+  sudo_commands: [] as string[],
+  sudo_commands_nopasswd: [] as string[],
+  roles: [] as Role[],
   smb: true,
   users: [1],
 }, {

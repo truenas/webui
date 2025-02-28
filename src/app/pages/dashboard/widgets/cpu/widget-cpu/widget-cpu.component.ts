@@ -61,7 +61,7 @@ export class WidgetCpuComponent {
   protected isLoading = computed(() => !this.cpuData() || !this.sysInfo());
   protected cpuModel = computed(() => this.sysInfo()?.model);
   protected coreCount = computed(() => this.sysInfo()?.physical_cores);
-  protected threadCount = computed(() => this.sysInfo()?.cores);
+  protected threadCount = computed(() => this.sysInfo()?.cores || 0);
 
   protected highest = computed(() => {
     const cpuParams = this.getCpuParams();

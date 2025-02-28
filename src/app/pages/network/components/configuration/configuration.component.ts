@@ -60,7 +60,7 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
   ],
 })
 export class NetworkConfigurationComponent implements OnInit {
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.NetworkGeneralWrite];
 
   isFormLoading = false;
 
@@ -318,10 +318,13 @@ export class NetworkConfigurationComponent implements OnInit {
     const values = { ...this.form.value };
     let activity: NetworkConfigurationActivity;
 
-    if ([NetworkActivityType.Allow, NetworkActivityType.Deny].includes(values.outbound_network_activity)) {
+    if (
+      values.outbound_network_activity
+      && [NetworkActivityType.Allow, NetworkActivityType.Deny].includes(values.outbound_network_activity)
+    ) {
       activity = { type: values.outbound_network_activity, activities: [] };
     } else {
-      activity = { type: NetworkActivityType.Allow, activities: values.outbound_network_value };
+      activity = { type: NetworkActivityType.Allow, activities: values.outbound_network_value || [] };
     }
 
     if (values.inherit_dhcp) {

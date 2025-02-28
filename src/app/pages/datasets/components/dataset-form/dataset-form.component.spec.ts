@@ -35,6 +35,7 @@ import {
   QuotasSectionComponent,
 } from 'app/pages/datasets/components/dataset-form/sections/quotas-section/quotas-section.component';
 import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/utils/dataset-form.service';
+import { FilesystemService } from 'app/services/filesystem.service';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 
 describe('DatasetFormComponent', () => {
@@ -42,15 +43,15 @@ describe('DatasetFormComponent', () => {
   let loader: HarnessLoader;
 
   const datasetPresetForm = new FormGroup({
-    create_smb: new FormControl(true),
-    create_nfs: new FormControl(true),
-    smb_name: new FormControl('new_sbm_name'),
+    create_smb: new FormControl(true, { nonNullable: true }),
+    create_nfs: new FormControl(true, { nonNullable: true }),
+    smb_name: new FormControl('new_sbm_name', { nonNullable: true }),
   });
 
   MockInstance(NameAndOptionsSectionComponent, 'form', new FormGroup({
-    name: new FormControl(''),
-    parent: new FormControl(''),
-    share_type: new FormControl(DatasetPreset.Generic),
+    name: new FormControl('', { nonNullable: true }),
+    parent: new FormControl('', { nonNullable: true }),
+    share_type: new FormControl(DatasetPreset.Generic, { nonNullable: true }),
   }));
   MockInstance(NameAndOptionsSectionComponent, 'datasetPresetForm', datasetPresetForm);
   MockInstance(NameAndOptionsSectionComponent, 'canCreateSmb', true);
@@ -121,6 +122,7 @@ describe('DatasetFormComponent', () => {
       }),
       mockProvider(Router),
       mockProvider(SlideInRef, slideInRef),
+      mockProvider(FilesystemService),
       mockAuth(),
     ],
   });

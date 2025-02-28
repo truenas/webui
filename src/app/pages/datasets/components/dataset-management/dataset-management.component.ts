@@ -102,7 +102,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   readonly ixTreeHeader = viewChild<ElementRef<HTMLElement>>('ixTreeHeader');
   readonly ixTree = viewChild<ElementRef<HTMLElement>>('ixTree');
 
-  readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.DatasetWrite];
   protected readonly searchableElements = datasetManagementElements;
 
   isLoading$ = this.datasetStore.isLoading$;
@@ -244,7 +244,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   }
 
   treeHeaderScrolled(): void {
-    this.scrollSubject.next(this.ixTreeHeader().nativeElement.scrollLeft);
+    this.scrollSubject.next(this.ixTreeHeader()?.nativeElement?.scrollLeft || 0);
   }
 
   datasetTreeScrolled(scrollLeft: number): void {
@@ -274,7 +274,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
       this.showMobileDetails = true;
 
       // focus on details container
-      setTimeout(() => (this.window.document.getElementsByClassName('mobile-back-button')[0] as HTMLElement).focus(), 0);
+      setTimeout(() => (this.window.document.getElementsByClassName('mobile-back-button')?.[0] as HTMLElement)?.focus(), 0);
     }
   }
 

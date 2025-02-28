@@ -1,3 +1,3 @@
 export interface ReplicationConfig {
-  max_parallel_replication_tasks: number;
+  max_parallel_replication_tasks: number | null;
 }

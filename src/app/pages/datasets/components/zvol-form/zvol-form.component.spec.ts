@@ -16,6 +16,7 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
+import { FilesystemService } from 'app/services/filesystem.service';
 
 describe('ZvolFormComponent', () => {
   let loader: HarnessLoader;
@@ -44,7 +45,7 @@ describe('ZvolFormComponent', () => {
           name: 'test pool',
           pool: 'test pool',
           encrypted: false,
-          children: [],
+          children: [] as Dataset[],
           deduplication: {
             parsed: 'off',
             rawvalue: 'off',
@@ -120,6 +121,7 @@ describe('ZvolFormComponent', () => {
       }),
       mockProvider(DialogService),
       mockProvider(SlideInRef, slideInRef),
+      mockProvider(FilesystemService),
       mockAuth(),
     ],
   });

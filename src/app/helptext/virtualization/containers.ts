@@ -2,6 +2,7 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const containersHelptext = {
   cpuHint: T('Leave empty to allow all host CPUs to be used.'),
+  nameHint: T('Name cannot be changed after instance is created'),
   memoryHint: T('Leave empty to not limit instance memory.'),
   vncHint: T('VNC connection is currently insecure. Secure the connection in other ways.'),
 
@@ -17,8 +18,8 @@ Ideal for scalable applications.<br /><br />\
 <b>Why choose VM?</b><br />\
 Choose a VM for full OS isolation, kernel independence, and running diverse OS types.'),
 
-  cpu_memory_tooltip: T('<b>CPU Configuration</b><br />Enter number of cores or multiple values or ranges to\
-set CPU topology. Example: 1-2,5,9-11'),
+  cpu_memory_tooltip: T('<b>CPU Configuration</b><br />Enter the number of cores. Use multiple values\
+ or ranges to set the CPU topology.<br />Example: 1-2, 5, 9-11.'),
 
   cpu_placeholder: T('CPU Configuration'),
   cpu_tooltip: T('Enter number of cores or multiple values or ranges to set CPU topology. Example: 1-2,5,9-11'),
@@ -54,7 +55,7 @@ set CPU topology. Example: 1-2,5,9-11'),
 <br />\
 <b>Bridged NIC</b> uses an existing bridge on the host and creates a virtual device pair to connect the host bridge to the instance.<br />\
 <br />\
-<b>MACVLAN NIC</b> sets up a new network device based on an existing one, but using a different MAC address.'),
+<b>Macvlan NIC</b> sets up a new network device based on an existing network device, but using a different MAC address.'),
 
   network_use_default_placeholder: T('Use default network settings'),
   network_use_default_tooltip: T('Enable to apply default network configurations.'),
@@ -73,4 +74,6 @@ set CPU topology. Example: 1-2,5,9-11'),
   add_tpm_tooltip: T('Virtual device that provides hardware-based security functions like encryption key management.'),
 
   secure_boot_tooltip: T('Secure Boot ensures that only trusted, signed software runs during a system’s startup process. May be incompatible with some images.'),
+  secure_boot_on_required_tooltip: T('Secure Boot is required for the VM image you selected'),
+  secure_boot_off_required_tooltip: T('Secure Boot is required to be off for the VM image you selected'),
 };

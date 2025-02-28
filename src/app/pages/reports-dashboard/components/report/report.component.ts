@@ -95,7 +95,7 @@ export class ReportComponent implements OnInit, OnChanges {
   autoRefreshTimer: Subscription;
   autoRefreshEnabled: boolean;
   isReady = false;
-  data: ReportingData;
+  data: ReportingData | undefined;
   chartId = `chart-${UUID.UUID()}`;
   chartColors: string[];
   legendData: LegendDataWithStackedTotalHtml = {} as LegendDataWithStackedTotalHtml;
@@ -274,7 +274,7 @@ export class ReportComponent implements OnInit, OnChanges {
 
   formatTime(stamp: number): string {
     const result = this.formatDateTimePipe.transform(new Date(stamp));
-    return result.toLowerCase() !== invalidDate.toLowerCase() ? result : '';
+    return result.toLowerCase() !== this.translate.instant(invalidDate).toLowerCase() ? result : '';
   }
 
   onZoomChange(interval: number[]): void {

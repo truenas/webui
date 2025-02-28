@@ -43,20 +43,24 @@
   <mat-card-content>
     <div class="info-container">
       <a class="app-logo" [ixTest]="[app().name, 'image-details']" [routerLink]="appDetailsRouterUrl()">
-        <img [src]="app().metadata?.icon" [src-fallback]="imagePlaceholder" />
+        <img [src]="app().metadata.icon" [src-fallback]="imagePlaceholder" />
       </a>
       <div class="details-list">
         <div class="details-item">
           <div class="label">{{ 'Name' | translate }}:</div>
-          <a class="value" [ixTest]="[app().name, 'name-details']" [routerLink]="appDetailsRouterUrl()">
-            {{ app().name | orNotAvailable }}
-          </a>
+          @if (app().custom_app) {
+            <span class="value">{{ name() | orNotAvailable }}</span>
+          } @else {
+            <a class="value" [ixTest]="[app().name, 'name-details']" [routerLink]="appDetailsRouterUrl()">
+              {{ name() | orNotAvailable }}
+            </a>
+          }
         </div>
         <div class="details-item">
           <div class="label">{{ 'App Version' | translate }}:</div>
           <div class="value">
             @if (!isCustomApp()) {
-              {{ app().metadata?.app_version | appVersion | orNotAvailable }}
+              {{ app().metadata.app_version | appVersion | orNotAvailable }}
             } @else if (app().human_version) {
               <!-- Show docker image tag as version for custom apps -->
               {{ app().human_version?.split(':')?.[1]?.split('_')?.[0] }}
@@ -75,7 +79,7 @@
           <div class="label">{{ 'Source' | translate }}:</div>
           <div class="value">
             <div>
-              @for (source of app().metadata?.sources; track source; let last = $last) {
+              @for (source of app().metadata.sources; track source; let last = $last) {
                 <a
                   class="source-link"
                   target="_blank"
@@ -96,7 +100,7 @@
         <div class="details-item">
           <div class="label">{{ 'Train' | translate }}:</div>
           <div class="value">
-            {{ app().metadata?.train | orNotAvailable }}
+            {{ app().metadata.train | orNotAvailable }}
           </div>
         </div>
         @if ((app().portals | keyvalue).length > 0 ) {

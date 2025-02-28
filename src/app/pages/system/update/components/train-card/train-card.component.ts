@@ -2,15 +2,15 @@ import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatMiniFabButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 import {
-  Observable, forkJoin, of, pairwise,
+  Observable, forkJoin, map, of, pairwise,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -22,7 +22,9 @@ import { AuthService } from 'app/modules/auth/auth.service';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { TrainService } from 'app/pages/system/update/services/train.service';
 import { UpdateService } from 'app/pages/system/update/services/update.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -37,7 +39,6 @@ import { SystemGeneralService } from 'app/services/system-general.service';
   standalone: true,
   imports: [
     MatCard,
-    MatProgressSpinner,
     ReactiveFormsModule,
     RequiresRolesDirective,
     IxCheckboxComponent,
@@ -48,6 +49,7 @@ import { SystemGeneralService } from 'app/services/system-general.service';
     IxIconComponent,
     TranslateModule,
     AsyncPipe,
+    FakeProgressBarComponent,
   ],
 })
 export class TrainCardComponent implements OnInit {
@@ -61,13 +63,16 @@ export class TrainCardComponent implements OnInit {
     train: ['', Validators.required],
   });
 
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.SystemUpdateRead];
   protected readonly clickForInformationLink = helptextSystemUpdate.clickForInformationLink;
   protected readonly SystemUpdateStatus = SystemUpdateStatus;
+  protected readonly isStigMode = toSignal(this.api.call('system.security.config').pipe(
+    map((config) => config.enable_gpos_stig),
+  ));
 
   constructor(
+    private api: ApiService,
     private sysGenService: SystemGeneralService,
-    private translate: TranslateService,
     private fb: FormBuilder,
     private authService: AuthService,
     protected trainService: TrainService,
@@ -143,11 +148,13 @@ export class TrainCardComponent implements OnInit {
       this.trainService.onTrainChanged(newTrain, prevTrain);
     });
 
-    this.form.controls.auto_check.valueChanges.pipe(
-      filterAsync(() => this.authService.hasRole(Role.FullAdmin)),
-      untilDestroyed(this),
-    ).subscribe(() => {
-      this.trainService.toggleAutoCheck(this.form.controls.auto_check.value);
-    });
+    if (!this.isStigMode()) {
+      this.form.controls.auto_check.valueChanges.pipe(
+        filterAsync(() => this.authService.hasRole(Role.SystemUpdateWrite)),
+        untilDestroyed(this),
+      ).subscribe(() => {
+        this.trainService.toggleAutoCheck(this.form.controls.auto_check.value);
+      });
+    }
   }
 }

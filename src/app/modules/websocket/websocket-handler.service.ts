@@ -114,7 +114,7 @@ export class WebSocketHandlerService {
       filter((message) => 'id' in message && message.id === call.id),
       take(1),
       tap((message) => {
-        // Following `if` block needs to be removed once NAS-131829 is resolved
+        // TODO: Following `if` block needs to be removed once NAS-131829 is resolved
         if (isErrorResponse(message)) {
           console.error('Error: ', message.error);
         }

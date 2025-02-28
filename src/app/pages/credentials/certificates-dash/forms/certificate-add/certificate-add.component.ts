@@ -84,7 +84,7 @@ export class CertificateAddComponent {
   // Importing existing certificate
   protected readonly import = viewChild(CertificateImportComponent);
 
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.CertificateWrite];
 
   isLoading = false;
   summary: SummarySection[];

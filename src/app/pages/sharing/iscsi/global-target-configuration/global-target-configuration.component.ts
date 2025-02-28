@@ -9,10 +9,12 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import {
+  forkJoin, of, take,
+} from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
-import { ServiceName } from 'app/enums/service-name.enum';
+import { RdmaProtocolName, ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { IscsiGlobalConfigUpdate } from 'app/interfaces/iscsi-global-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -31,6 +33,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -65,6 +68,7 @@ export class GlobalTargetConfigurationComponent implements OnInit {
     pool_avail_threshold: [null as number | null],
     listen_port: [null as number | null, Validators.required],
     alua: [false],
+    iser: [false],
   });
 
   readonly tooltips = {
@@ -72,9 +76,10 @@ export class GlobalTargetConfigurationComponent implements OnInit {
     isns_servers: helptextSharingIscsi.globalconf_tooltip_isns_servers,
     pool_avail_threshold: helptextSharingIscsi.globalconf_tooltip_pool_avail_threshold,
     alua: helptextSharingIscsi.globalconf_tooltip_alua,
+    iser: helptextSharingIscsi.globalconf_tooltip_iser,
   };
 
-  readonly requiredRoles = [Role.SharingIscsiGlobalWrite];
+  protected readonly requiredRoles = [Role.SharingIscsiGlobalWrite];
 
   constructor(
     private api: ApiService,
@@ -96,11 +101,12 @@ export class GlobalTargetConfigurationComponent implements OnInit {
   ngOnInit(): void {
     this.loadFormValues();
     this.listenForHaStatus();
+    this.checkForRdmaSupport();
   }
 
   onSubmit(): void {
     this.isLoading.set(true);
-    const values = this.form.value as IscsiGlobalConfigUpdate;
+    const values = { ...this.form.value } as IscsiGlobalConfigUpdate;
 
     this.api.call('iscsi.global.update', [values])
       .pipe(untilDestroyed(this))
@@ -148,6 +154,22 @@ export class GlobalTargetConfigurationComponent implements OnInit {
       }
 
       this.cdr.markForCheck();
+    });
+  }
+
+  private checkForRdmaSupport(): void {
+    forkJoin([
+      this.api.call('rdma.capable_protocols'),
+      this.store$.select(selectIsEnterprise).pipe(take(1)),
+    ]).pipe(
+      untilDestroyed(this),
+    ).subscribe(([capableProtocols, isEnterprise]) => {
+      const hasRdmaSupport = capableProtocols.includes(RdmaProtocolName.Iser) && isEnterprise;
+      if (hasRdmaSupport) {
+        this.form.controls.iser.enable();
+      } else {
+        this.form.controls.iser.disable();
+      }
     });
   }
 }

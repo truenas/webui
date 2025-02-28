@@ -8,7 +8,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-  filter, repeat, tap,
+  filter, of, repeat, switchMap,
+  withLatestFrom,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -44,7 +45,7 @@ export class AllTargetsComponent implements OnInit {
   protected dataProvider: AsyncDataProvider<IscsiTarget>;
   targets = signal<IscsiTarget[] | null>(null);
 
-  readonly requiredRoles = [
+  protected readonly requiredRoles = [
     Role.SharingIscsiTargetWrite,
     Role.SharingIscsiWrite,
     Role.SharingWrite,
@@ -59,13 +60,20 @@ export class AllTargetsComponent implements OnInit {
   ngOnInit(): void {
     const targets$ = this.iscsiService.getTargets().pipe(
       repeat({ delay: () => this.iscsiService.listenForDataRefresh() }),
-      tap((targets) => {
+      withLatestFrom(this.iscsiService.listenForDataRefresh()),
+      switchMap(([targets, newTarget]) => {
         this.targets.set(targets);
 
-        const firstTarget = targets[targets.length - 1];
-        if (!this.dataProvider.expandedRow && firstTarget) {
-          this.dataProvider.expandedRow = firstTarget;
+        if (newTarget) {
+          this.dataProvider.expandedRow = newTarget;
+        } else {
+          const firstTarget = targets[targets.length - 1];
+          if (!this.dataProvider.expandedRow && firstTarget) {
+            this.dataProvider.expandedRow = firstTarget;
+          }
         }
+
+        return of(targets);
       }),
     );
 

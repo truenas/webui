@@ -128,7 +128,7 @@ export class TargetFormComponent implements OnInit {
 
   readonly modeOptions$ = of(mapToOptions(iscsiTargetModeNames, this.translate));
 
-  readonly requiredRoles = [
+  protected readonly requiredRoles = [
     Role.SharingIscsiTargetWrite,
     Role.SharingIscsiWrite,
     Role.SharingWrite,
@@ -172,7 +172,7 @@ export class TargetFormComponent implements OnInit {
     this.editingTarget = slideInRef.getData();
 
     this.form.controls.name.setAsyncValidators(
-      [this.targetNameValidationService.validateTargetName(this.editingTarget?.name)],
+      [this.targetNameValidationService.validateTargetName(String(this.editingTarget?.name))],
     );
   }
 

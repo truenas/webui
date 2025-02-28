@@ -13,6 +13,7 @@ export interface Ipmi {
   mac_addresss: string;
   subnet_mask: string;
   vlan_id: number;
+  vlan_id_enable: boolean;
   vlan_priority: number;
 }
 
@@ -29,7 +30,7 @@ export interface IpmiUpdate {
   gateway: string;
   ipaddress: string;
   netmask: string;
-  vlan: unknown;
+  vlan: number;
   password: string;
   apply_remote: boolean;
 }

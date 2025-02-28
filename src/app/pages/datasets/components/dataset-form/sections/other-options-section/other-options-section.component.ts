@@ -99,12 +99,12 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     exec: [inherit as WithInherit<OnOff>],
     snapdir: [null as WithInherit<DatasetSnapdir> | null],
     snapdev: [inherit as WithInherit<DatasetSnapdev>],
-    copies: [1],
+    copies: [1 as number | null],
     recordsize: [inherit as string],
     acltype: [DatasetAclType.Inherit as DatasetAclType],
     aclmode: [AclMode.Inherit as AclMode],
     casesensitivity: [DatasetCaseSensitivity.Sensitive as DatasetCaseSensitivity],
-    special_small_block_size: [inherit as WithInherit<number>],
+    special_small_block_size: [inherit as WithInherit<number> | null],
   });
 
   syncOptions$: Observable<Option[]>;
@@ -210,7 +210,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
       checksum: values.checksum as DatasetChecksum,
       copies: values.copies || 1,
     };
-    if ([DatasetAclType.Posix, DatasetAclType.Off].includes(values.acltype)) {
+    if (values.acltype && [DatasetAclType.Posix, DatasetAclType.Off].includes(values.acltype)) {
       payload.aclmode = AclMode.Discard;
     } else if (values.acltype === DatasetAclType.Inherit) {
       payload.aclmode = AclMode.Inherit;
@@ -250,7 +250,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
       return;
     }
 
-    let specialSmallBlockSize = getFieldValue(existing.special_small_block_size, this.parent()) as (number | 'INHERIT');
+    let specialSmallBlockSize: number | null | 'INHERIT' = getFieldValue(existing.special_small_block_size, this.parent()) as (number | 'INHERIT');
     if (specialSmallBlockSize !== 'INHERIT') {
       specialSmallBlockSize = this.formatter.convertHumanStringToNum(specialSmallBlockSize.toString());
     }

@@ -87,7 +87,7 @@ export class FormErrorHandlerService {
           triggerAnchorRef.click();
           setTimeout(() => {
             this.showValidationError({
-              control: this.getFormField(formGroup, field, fieldsMap),
+              control,
               field,
               errorMessage,
               error,
@@ -111,7 +111,7 @@ export class FormErrorHandlerService {
   private showValidationError({
     control, field, error, errorMessage,
   }: {
-    control: AbstractControl;
+    control: AbstractControl | null;
     field: string;
     errorMessage: string;
     error: ApiError | Job;
@@ -128,7 +128,7 @@ export class FormErrorHandlerService {
       const isExactMatch = (text: string, match: string): boolean => new RegExp(`\\b${match}\\b`).test(text);
 
       control = (control as UntypedFormArray).controls
-        .find((controlOfArray) => isExactMatch(errorMessage, controlOfArray.value as string));
+        .find((controlOfArray) => isExactMatch(errorMessage, controlOfArray.value as string)) || null;
     }
 
     if (!control) {
@@ -152,7 +152,11 @@ export class FormErrorHandlerService {
     }
   }
 
-  private getFormField(formGroup: UntypedFormGroup, field: string, fieldsMap: Record<string, string>): AbstractControl {
+  private getFormField(
+    formGroup: UntypedFormGroup,
+    field: string,
+    fieldsMap: Record<string, string>,
+  ): AbstractControl | null {
     const fieldName = fieldsMap[field] ?? field;
     return formGroup.get(fieldName);
   }

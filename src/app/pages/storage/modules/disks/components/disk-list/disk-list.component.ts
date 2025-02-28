@@ -81,7 +81,7 @@ interface DiskUi extends Disk {
   ],
 })
 export class DiskListComponent implements OnInit {
-  readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.DiskWrite];
   protected readonly searchableElements = diskListElements;
 
   dataProvider: AsyncDataProvider<DiskUi>;
@@ -180,11 +180,6 @@ export class DiskListComponent implements OnInit {
       title: this.translate.instant('Enable S.M.A.R.T.'),
       propertyName: 'togglesmart',
       getValue: (row) => (row.togglesmart ? this.translate.instant('Yes') : this.translate.instant('No')),
-      hidden: true,
-    }),
-    textColumn({
-      title: this.translate.instant('S.M.A.R.T. extra options'),
-      propertyName: 'smartoptions',
       hidden: true,
     }),
   ], {

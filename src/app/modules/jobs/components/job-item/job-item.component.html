@@ -33,7 +33,7 @@
               {{ job().progress.description }}
             </div>
           }
-          @if (!job().progress?.description) {
+          @if (!job().progress.description) {
             <div class="job-time">
               {{ 'Started' | translate }}:
               <strong>
@@ -54,20 +54,21 @@
           <div class="job-time">
             {{ 'Stopped' | translate }}:
             <strong>
-              {{ job().time_finished?.$date ? (job().time_finished.$date | formatDateTime) : '–' }}
+              @let timeFinished = job().time_finished?.$date;
+              {{ timeFinished ? (timeFinished | formatDateTime) : '–' }}
             </strong>
           </div>
         }
       }
     </div>
 
-    @if (job().credentials) {
+    @if (job().credentials; as credentials) {
       <div>
         <div class="job-credentials">
           {{
           'Created by: {creationSource} ({creationType})' | translate: {
-          creationSource: getCredentialsCreationSource(job().credentials),
-          creationType: (job().credentials.type | mapValue: credentialTypeLabels | translate)
+          creationSource: getCredentialsCreationSource(credentials),
+          creationType: (credentials.type | mapValue: credentialTypeLabels | translate)
         }
         }}
       </div>

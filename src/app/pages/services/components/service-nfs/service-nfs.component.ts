@@ -113,14 +113,14 @@ export class ServiceNfsComponent implements OnInit {
       return [
         ...new Set<string>([
           ...config.bindip,
-          ...options.map((option) => option.value.toString()),
+          ...options.map((option) => String(option.value)),
         ]),
       ].map((value) => ({ label: value, value }));
     }),
   );
 
   readonly protocolOptions$ = of(mapToOptions(nfsProtocolLabels, this.translate));
-  readonly requiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
+  protected readonly requiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
 
   private readonly v4SpecificFields = ['v4_domain', 'v4_krb'] as const;
 

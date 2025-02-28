@@ -1,0 +1,113 @@
+<ix-modal-header [requiredRoles]="requiredRoles" [title]="title" [loading]="isLoading()"></ix-modal-header>
+
+<div class="container">
+  <form class="form" [formGroup]="form" (submit)="onSubmit()">
+    <ix-fieldset [title]="'Instance Configuration' | translate">
+      <ix-checkbox
+        formControlName="autostart"
+        [label]="'Autostart' | translate"
+      ></ix-checkbox>
+    </ix-fieldset>
+
+    <ix-fieldset [title]="'CPU & Memory' | translate">
+      <ix-input
+        formControlName="cpu"
+        [label]="'CPU Configuration' | translate"
+        [tooltip]="containersHelptext.cpu_tooltip | translate"
+        [required]="isVm"
+        [hint]="isVm ? undefined : (containersHelptext.cpuHint | translate)"
+      ></ix-input>
+
+      <ix-input
+        formControlName="memory"
+        [label]="'Memory Size' | translate"
+        [tooltip]="containersHelptext.memory_tooltip | translate"
+        [format]="formatter.memorySizeFormatting"
+        [parse]="formatter.memorySizeParsing"
+        [required]="isVm"
+        [hint]="isVm ? undefined : (containersHelptext.memoryHint | translate)"
+      ></ix-input>
+    </ix-fieldset>
+
+    @if (isVm) {
+      <ix-fieldset [title]="'VNC' | translate">
+
+        <div [matTooltip]="isStopped ? '' : ('Instance must be stopped to update VNC.' | translate)">
+          <ix-checkbox
+            formControlName="enable_vnc"
+            [label]="'Enable VNC' | translate"
+          ></ix-checkbox>
+
+          @if (form.getRawValue().enable_vnc) {
+            <ix-input
+              formControlName="vnc_port"
+              type="number"
+              [label]="'VNC Port' | translate"
+              [required]="true"
+            ></ix-input>
+
+            <ix-input
+              formControlName="vnc_password"
+              type="password"
+              [label]="'VNC Password' | translate"
+              [hint]="'VNC password is not cryptographically secure. You should not rely on it as a single authentication mechanism for your VMs.' | translate"
+            ></ix-input>
+          }
+        </div>
+      </ix-fieldset>
+    }
+
+    <ix-fieldset [title]="'Environment' | translate">
+      <ix-list
+        formArrayName="environmentVariables"
+        [empty]="form.controls.environmentVariables.controls.length === 0"
+        [label]="'Environment Variables' | translate"
+        (add)="addEnvironmentVariable()"
+      >
+        @for (envControl of form.controls.environmentVariables.controls; track envControl; let i = $index) {
+          <ix-list-item
+            [formGroupName]="i"
+            [label]="'Environment Variable' | translate"
+            (delete)="removeEnvironmentVariable(i)"
+          >
+            <div class="environment-variable">
+              <ix-input
+                formControlName="name"
+                [label]="'Name' | translate"
+                [required]="true"
+              ></ix-input>
+
+              <ix-input
+                formControlName="value"
+                [label]="'Value' | translate"
+                [required]="true"
+              ></ix-input>
+            </div>
+          </ix-list-item>
+        }
+      </ix-list>
+    </ix-fieldset>
+
+    @if (isVm) {
+      <ix-fieldset [title]="'Security' | translate">
+        <ix-checkbox
+          formControlName="secure_boot"
+          [label]="'Secure Boot' | translate"
+          [tooltip]="containersHelptext.secure_boot_tooltip | translate"
+        ></ix-checkbox>
+      </ix-fieldset>
+    }
+
+    <div class="actions">
+      <button
+        mat-button
+        type="submit"
+        color="primary"
+        ixTest="save"
+        [disabled]="form.invalid || isLoading()"
+      >
+        {{ 'Save' | translate }}
+      </button>
+    </div>
+  </form>
+</div>

@@ -35,7 +35,9 @@ import {
 import { AppUpgradeSummary } from 'app/interfaces/application.interface';
 import { AuditConfig, AuditEntry, AuditQueryParams } from 'app/interfaces/audit/audit.interface';
 import { AuthSession } from 'app/interfaces/auth-session.interface';
-import { LoginExOtpTokenQuery, LoginExQuery, LoginExResponse } from 'app/interfaces/auth.interface';
+import {
+  AuthTokenParams, LoginExOtpTokenQuery, LoginExQuery, LoginExResponse,
+} from 'app/interfaces/auth.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { BootenvCloneParams, BootEnvironment, BootenvKeepParams } from 'app/interfaces/boot-environment.interface';
 import {
@@ -250,7 +252,7 @@ import {
 import {
   VirtualizationInstance, VirtualizationDevice, VirtualizationImageParams,
   VirtualizationImage, AvailableGpus, AvailableUsb, VirtualizationGlobalConfig,
-  VirtualizationNetwork, VirtualizationVolume, VirtualizationVolumeUpdate,
+  VirtualizationNetwork, VirtualizationVolume, VirtualizationVolumeUpdate, VirtualizationPciChoices,
 } from 'app/interfaces/virtualization.interface';
 import {
   MatchDatastoresWithDatasets,
@@ -338,7 +340,7 @@ export interface ApiCallDirectory {
   'audit.download_report': { params: [{ report_name?: string }]; response: string[] };
 
   // Auth
-  'auth.generate_token': { params: void; response: string };
+  'auth.generate_token': { params: AuthTokenParams; response: string };
   'auth.generate_onetime_password': { params: [{ username: string }]; response: string };
   'auth.login_ex': { params: [LoginExQuery]; response: LoginExResponse };
   'auth.login_ex_continue': { params: [LoginExOtpTokenQuery]; response: LoginExResponse };
@@ -880,6 +882,7 @@ export interface ApiCallDirectory {
   };
   'virt.device.usb_choices': { params: []; response: Record<string, AvailableUsb> };
   'virt.device.nic_choices': { params: [nicType: VirtualizationNicType]; response: Record<string, string> };
+  'virt.device.pci_choices': { params: []; response: VirtualizationPciChoices };
 
   'virt.global.bridge_choices': { params: []; response: Choices };
   'virt.global.config': { params: []; response: VirtualizationGlobalConfig };

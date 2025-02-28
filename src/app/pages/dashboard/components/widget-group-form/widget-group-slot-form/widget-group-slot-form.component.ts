@@ -231,7 +231,7 @@ export class WidgetGroupSlotFormComponent implements OnInit, AfterViewInit, OnCh
         switchMap((widgets) => combineLatest(this.getVisibilityList(widgets))),
         map(([widgets, visibilityList]) => this.filterHiddenWidgets(widgets, visibilityList)),
         map((widgets) => widgets.map(([type, widget]) => ({ ...widget, type: type as WidgetType }))),
-      ));
+      ), { initialValue: [] });
     });
   }
 

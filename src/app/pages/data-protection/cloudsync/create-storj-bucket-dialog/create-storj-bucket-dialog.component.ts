@@ -39,7 +39,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
   ],
 })
 export class CreateStorjBucketDialogComponent {
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.CloudSyncWrite];
 
   form = this.formBuilder.group({
     bucket: ['', Validators.required],

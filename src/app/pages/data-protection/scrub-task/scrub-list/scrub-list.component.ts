@@ -68,7 +68,7 @@ import { TaskService } from 'app/services/task.service';
   ],
 })
 export class ScrubListComponent implements OnInit {
-  readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.PoolScrubWrite];
   protected readonly searchableElements = scrubListElements;
 
   dataProvider: AsyncDataProvider<PoolScrubTask>;

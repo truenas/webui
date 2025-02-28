@@ -86,7 +86,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
 
   value: string | number | null = '';
   isDisabled = false;
-  filterValue: string | null;
+  filterValue: string | null | undefined;
   selectedOption: Option | null = null;
   textContent = '';
 
@@ -198,7 +198,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
 
           this.loading = true;
           this.cdr.markForCheck();
-          this.comboboxProviderHandler()?.nextPage(this.filterValue !== null || this.filterValue !== undefined ? this.filterValue : '')
+          this.comboboxProviderHandler()?.nextPage(this.filterValue !== null && this.filterValue !== undefined ? this.filterValue : '')
             .pipe(untilDestroyed(this)).subscribe((options: Option[]) => {
               this.loading = false;
               this.cdr.markForCheck();

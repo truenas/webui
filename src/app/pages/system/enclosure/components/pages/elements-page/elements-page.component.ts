@@ -1,11 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import {
+  ChangeDetectionStrategy, Component, computed,
+} from '@angular/core';
 import { MatCardHeader, MatCardContent } from '@angular/material/card';
-import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { map } from 'rxjs/operators';
+import { injectParams } from 'ngxtension/inject-params';
 import { EmptyType } from 'app/enums/empty-type.enum';
-import { EnclosureElementType, enclosureElementTypeLabels } from 'app/enums/enclosure-slot-status.enum';
+import { enclosureElementTypeLabels, EnclosureElementType } from 'app/enums/enclosure-slot-status.enum';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { EnclosureElement } from 'app/interfaces/enclosure.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
@@ -34,10 +34,9 @@ import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.st
   ],
 })
 export class ElementsPageComponent {
-  protected readonly currentView = toSignal(
-    this.route.paramMap.pipe(map((params) => params.get('view') as EnclosureElementType)),
-    { initialValue: undefined },
-  );
+  protected readonly currentView = injectParams<EnclosureElementType>((params) => {
+    return params.view as EnclosureElementType;
+  });
 
   protected readonly title = computed(() => {
     const view = enclosureElementTypeLabels.has(this.currentView())
@@ -90,7 +89,6 @@ export class ElementsPageComponent {
   });
 
   constructor(
-    private route: ActivatedRoute,
     private translate: TranslateService,
     private store: EnclosureStore,
   ) {}

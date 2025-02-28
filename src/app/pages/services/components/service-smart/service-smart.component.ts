@@ -48,7 +48,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   ],
 })
 export class ServiceSmartComponent implements OnInit {
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.DiskWrite];
 
   isFormLoading = false;
 

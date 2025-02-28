@@ -42,7 +42,7 @@ import { DatasetService } from 'app/services/dataset-service/dataset.service';
   ],
 })
 export class ReplicationRestoreDialogComponent {
-  readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
+  protected readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
 
   form = this.formBuilder.group({
     name: ['', Validators.required],

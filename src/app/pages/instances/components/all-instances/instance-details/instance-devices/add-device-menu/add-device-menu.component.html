@@ -1,0 +1,68 @@
+@if (isLoadingDevices()) {
+  <ngx-skeleton-loader class="loader"></ngx-skeleton-loader>
+} @else if (hasDevicesToAdd()) {
+  <button
+    mat-button
+    ixTest="add-device"
+    [disabled]=""
+    [matMenuTriggerFor]="addDeviceMenu"
+  >
+    {{ 'Add' | translate }}
+  </button>
+
+  <mat-menu #addDeviceMenu="matMenu">
+    @if (availableUsbDevices().length) {
+      <h4 class="menu-header">{{ 'USB Devices' | translate }}</h4>
+      @for (usb of availableUsbDevices(); track usb.product_id) {
+        <button
+          mat-menu-item
+          [ixTest]="['add-usb-device', usb.product]"
+          (click)="addUsb(usb)"
+        >
+          {{ usb.product }}
+        </button>
+      }
+    }
+
+    @let gpus = availableGpuDevices() | keyvalue;
+    @if (gpus.length) {
+      <h4 class="menu-header">{{ 'GPUs' | translate }}</h4>
+      @for (gpu of gpus; track gpu.key) {
+        <button
+          mat-menu-item
+          [ixTest]="['add-gpu-device', gpu.value.description]"
+          (click)="addGpu(gpu.key)"
+        >
+          {{ gpu.value.description }}
+        </button>
+      }
+    }
+
+    @if (canAddTpm()) {
+      <h4 class="menu-header">TPM</h4>
+      <button
+        mat-menu-item
+        [ixTest]="['add-tpm']"
+        [matTooltip]="isInstanceStopped() ? '' : ('Instance must be stopped to add TPM.' | translate)"
+        [disabled]="!isInstanceStopped()"
+        (click)="addTpm()"
+      >
+        {{ 'Add Trusted Platform Module' | translate }}
+      </button>
+    }
+
+    @if (isVm()) {
+      <h4 class="menu-header">{{ 'PCI Passthrough' | translate }}</h4>
+
+      <button
+        mat-menu-item
+        [ixTest]="['add-pci-passthrough']"
+        [matTooltip]="isInstanceStopped() ? '' : ('Instance must be stopped to add devices.' | translate)"
+        [disabled]="!isInstanceStopped()"
+        (click)="addPciPassthrough()"
+      >
+        {{ 'Add Device' | translate }}
+      </button>
+    }
+  </mat-menu>
+}

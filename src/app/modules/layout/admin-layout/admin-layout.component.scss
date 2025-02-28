@@ -51,7 +51,7 @@ ix-truenas-logo {
 
   .copyright-line {
     font-size: 10px;
-    margin: 0 46px;
+    margin: 0 35px;
   }
 }
 
@@ -69,6 +69,7 @@ ix-jw-modal {
   background-color: var(--contrast-darker);
   height: calc(100vh - 48px);
   left: -239px;
+  overflow: auto;
   position: absolute;
   top: 48px;
   transition: 200ms;

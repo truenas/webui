@@ -41,6 +41,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { getDatasetLabel } from 'app/pages/datasets/utils/dataset.utils';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { FilesystemService } from 'app/services/filesystem.service';
 
 interface ZvolFormData {
   name?: string;
@@ -98,7 +99,7 @@ interface ZvolFormData {
   ],
 })
 export class ZvolFormComponent implements OnInit {
-  readonly requiredRoles = [Role.DatasetWrite];
+  protected readonly requiredRoles = [Role.DatasetWrite];
 
   get title(): string {
     return this.isNew
@@ -228,6 +229,7 @@ export class ZvolFormComponent implements OnInit {
     private formErrorHandler: FormErrorHandlerService,
     private errorHandler: ErrorHandlerService,
     protected snackbar: SnackbarService,
+    private filesystem: FilesystemService,
     public slideInRef: SlideInRef<{ isNew: boolean; parentId: string }, Dataset>,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {

@@ -38,7 +38,7 @@ export interface SetProductionStatusDialogResult {
   ],
 })
 export class SetProductionStatusDialogComponent {
-  readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.FullAdmin];
 
   sendInitialDebugCheckbox = new FormControl(false, { nonNullable: true });
 

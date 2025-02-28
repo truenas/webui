@@ -67,7 +67,7 @@ import { IscsiService } from 'app/services/iscsi.service';
 export class ExtentListComponent implements OnInit {
   protected readonly searchableElements = extentListElements;
 
-  readonly requiredRoles = [
+  protected readonly requiredRoles = [
     Role.SharingIscsiExtentWrite,
     Role.SharingIscsiWrite,
     Role.SharingWrite,

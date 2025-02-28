@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, input, viewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, input, viewChild,
 } from '@angular/core';
 import {
   ControlValueAccessor, NgControl,
@@ -50,7 +50,7 @@ export class IxFileInputComponent implements ControlValueAccessor {
 
   private onChange: (value: File[]) => void = (): void => {};
   private onTouch: () => void = (): void => {};
-  private fileInput = viewChild.required<HTMLInputElement>('fileInput');
+  private fileInput = viewChild.required<ElementRef<HTMLInputElement>>('fileInput');
 
   constructor(
     public controlDirective: NgControl,
@@ -70,7 +70,7 @@ export class IxFileInputComponent implements ControlValueAccessor {
   writeValue(value: File[] | null): void {
     this.value = this.transformFiles(value || []);
     if (!value?.length) {
-      this.fileInput().value = null;
+      this.fileInput().nativeElement.value = '';
     }
 
     this.cdr.markForCheck();
