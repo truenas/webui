@@ -164,7 +164,7 @@ describe('CloudSyncListComponent', () => {
 
   it('shows confirmation dialog when Run Now button is pressed', async () => {
     jest.spyOn(spectator.inject(DialogService), 'confirm');
-    await table.clickToggle(0);
+    await table.expandRow(0);
 
     const runNowButton = await loader.getHarness(MatButtonHarness.with({ text: 'Run Now' }));
     await runNowButton.click();
@@ -182,7 +182,7 @@ describe('CloudSyncListComponent', () => {
   });
 
   it('shows form to edit an existing CloudSync when Edit button is pressed', async () => {
-    await table.clickToggle(0);
+    await table.expandRow(0);
 
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
     await editButton.click();
@@ -201,7 +201,7 @@ describe('CloudSyncListComponent', () => {
   it('deletes a Cloud Sync with confirmation when Delete button is pressed', async () => {
     jest.spyOn(spectator.inject(DialogService), 'confirm');
 
-    await table.clickToggle(0);
+    await table.expandRow(0);
 
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
     await deleteButton.click();
@@ -219,7 +219,7 @@ describe('CloudSyncListComponent', () => {
   });
 
   it('shows dialog when Restore button is pressed', async () => {
-    await table.clickToggle(0);
+    await table.expandRow(0);
 
     jest.spyOn(spectator.inject(MatDialog), 'open');
 
@@ -235,7 +235,7 @@ describe('CloudSyncListComponent', () => {
   });
 
   it('shows confirmation dialog when Dry Run button is pressed', async () => {
-    await table.clickToggle(0);
+    await table.expandRow(0);
 
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Dry Run' }));
     await editButton.click();

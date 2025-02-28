@@ -277,7 +277,7 @@ export class DiskListComponent implements OnInit {
     let slideInRef$: Observable<SlideInResponse<boolean>>;
 
     if (preparedDisks.length > 1) {
-      slideInRef$ = this.slideIn.open(DiskBulkEditComponent);
+      slideInRef$ = this.slideIn.open(DiskBulkEditComponent, { data: preparedDisks });
     } else {
       slideInRef$ = this.slideIn.open(DiskFormComponent, { wide: true, data: preparedDisks[0] });
     }

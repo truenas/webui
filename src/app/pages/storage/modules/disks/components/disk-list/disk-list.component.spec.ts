@@ -22,6 +22,9 @@ import {
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import {
+  DiskBulkEditComponent,
+} from 'app/pages/storage/modules/disks/components/disk-bulk-edit/disk-bulk-edit.component';
 import { DiskFormComponent } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
 import { DiskListComponent } from 'app/pages/storage/modules/disks/components/disk-list/disk-list.component';
 import {
@@ -152,7 +155,7 @@ describe('DiskListComponent', () => {
 
   it('opens edit form when Edit button is pressed', async () => {
     const fakeDisk = fakeDisks[0];
-    await table.clickToggle(0);
+    await table.expandRow(0);
 
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
     await editButton.click();
@@ -162,7 +165,7 @@ describe('DiskListComponent', () => {
 
   it('shows manual smart test dialog when Manual Test button is pressed', async () => {
     const fakeDisk = fakeDisks[0];
-    await table.clickToggle(0);
+    await table.expandRow(0);
 
     const manualTestButton = await loader.getHarness(MatButtonHarness.with({ text: 'Manual Test' }));
     await manualTestButton.click();
@@ -178,7 +181,7 @@ describe('DiskListComponent', () => {
 
   it('redirects to smart results when S.M.A.R.T. Test Results button is pressed', async () => {
     const fakeDisk = fakeDisks[0];
-    await table.clickToggle(0);
+    await table.expandRow(0);
 
     const manualTestButton = await loader.getHarness(MatButtonHarness.with({ text: 'S.M.A.R.T. Test Results' }));
     await manualTestButton.click();
@@ -190,7 +193,7 @@ describe('DiskListComponent', () => {
 
   it('shows wipe disk dialog when Wipe button is pressed', async () => {
     const fakeDisk = fakeDisks[1];
-    await table.clickToggle(1);
+    await table.expandRow(1);
 
     const manualTestButton = await loader.getHarness(MatButtonHarness.with({ text: 'Wipe' }));
     await manualTestButton.click();
@@ -201,5 +204,26 @@ describe('DiskListComponent', () => {
         exportedPool: fakeUnusedDisks[0].exported_zpool,
       },
     });
+  });
+
+  it('opens bulk edit form when multiple disks are selected and Edit is pressed', async () => {
+    await table.selectRows([0, 1]);
+
+    const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit Disks' }));
+    await editButton.click();
+
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
+      DiskBulkEditComponent,
+      {
+        data: [
+          expect.objectContaining({
+            name: 'sda',
+          }),
+          expect.objectContaining({
+            name: 'sdb',
+          }),
+        ],
+      },
+    );
   });
 });
