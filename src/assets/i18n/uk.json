@@ -685,7 +685,7 @@
   "Each disk stores data. A stripe requires at least one disk and has no data redundancy.": "",
   "Edit ACL": "",
   "Edit App YAML": "",
-  "Edit Disk(s)": "",
+  "Edit Disks": "",
   "Edit Docker Registry": "",
   "Edit Expansion Shelf": "",
   "Edit Instance: {name}": "",
