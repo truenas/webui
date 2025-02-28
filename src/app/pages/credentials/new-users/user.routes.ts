@@ -6,6 +6,6 @@ export const userRoutes: Routes = [
   {
     path: '',
     component: AllUsersComponent,
-    data: { title: T('Users'), breadcrumb: T('Users'), isNew: true },
+    data: { title: T('Users'), breadcrumb: T('Users') },
   },
 ];
