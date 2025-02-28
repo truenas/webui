@@ -151,7 +151,7 @@ describe('InstanceDisksComponent', () => {
     });
 
     it('opens dialog to increase root disk size when Increase link is pressed', () => {
-      const link = spectator.query('.root-disk-size .action');
+      const link = spectator.query('.root-disk-size .action')!;
       expect(link).toHaveText('Increase');
 
       spectator.click(link);

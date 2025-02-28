@@ -207,11 +207,11 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
     } as FilesystemSetPermParams;
 
     if (values.applyUser) {
-      update.user = values.owner;
+      update.user = values.owner || undefined;
     }
 
     if (values.applyGroup) {
-      update.group = values.ownerGroup;
+      update.group = values.ownerGroup || undefined;
     }
 
     return update;

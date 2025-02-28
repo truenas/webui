@@ -33,7 +33,7 @@ describe('WidgetSysInfoPassiveComponent', () => {
   const systemInfo = {
     remote_info: {
       platform: 'TRUENAS-M40-HA',
-      version: 'TrueNAS-COMMUNITY_EDITION-25.10.0-MASTER-20250126-184805',
+      version: '25.10.0-MASTER-20250126-184805',
       codename: Codename.Goldeye,
       license: {
         contract_type: ContractType.Gold,
@@ -128,7 +128,7 @@ describe('WidgetSysInfoPassiveComponent', () => {
       expect(items).toEqual([
         'Platform: TRUENAS-M40-HA',
         'Edition: Enterprise',
-        'Version: Goldeye-25.10.0-MASTER-20250126-184805',
+        'Version: 25.10.0-MASTER-20250126-184805 - Goldeye',
         'Support License: Gold Contract,  Expires on 2025-01-01',
         'System Serial: AA-00002',
         'Hostname: test-hostname-b',
