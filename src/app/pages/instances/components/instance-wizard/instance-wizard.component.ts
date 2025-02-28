@@ -17,7 +17,6 @@ import {
   filter,
   map, Observable, of,
 } from 'rxjs';
-import { nameValidatorRegex } from 'app/constants/name-validator.constant';
 import { Role } from 'app/enums/role.enum';
 import {
   VirtualizationDeviceType,
@@ -153,7 +152,7 @@ export class InstanceWizardComponent {
   protected readonly form = this.formBuilder.group({
     name: [
       '',
-      [Validators.required, Validators.minLength(1), Validators.maxLength(200), Validators.pattern(nameValidatorRegex)],
+      [Validators.required, Validators.minLength(1), Validators.maxLength(200), Validators.pattern(/^[a-zA-Z0-9-]+$/)],
       [forbiddenAsyncValues(this.forbiddenNames$)],
     ],
     instance_type: [VirtualizationType.Container, Validators.required],
