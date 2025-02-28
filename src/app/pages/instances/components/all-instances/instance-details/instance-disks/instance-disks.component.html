@@ -17,6 +17,10 @@
         <span class="label">{{ 'Root Disk' | translate }}:</span>
         <span class="value">
           {{ +instance().root_disk_size | ixFileSize }}
+
+          @if (isVm()) {
+            ({{ instance().root_disk_io_bus | mapValue: diskIoBusLabels}})
+          }
         </span>
         <a
           class="action"
@@ -36,7 +40,13 @@
           @if (disk.destination) {
             <div>{{ disk.source }} → {{ disk.destination }}</div>
           } @else {
-            <div>{{ disk.source }}</div>
+            <div>
+              {{ disk.source }}
+
+              @if (isVm()) {
+                ({{ disk.io_bus | mapValue: diskIoBusLabels}})
+              }
+            </div>
           }
 
           <ix-device-actions-menu

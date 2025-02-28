@@ -11,9 +11,10 @@ import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter } from 'rxjs/operators';
 import { GiB } from 'app/constants/bytes.constant';
-import { VirtualizationDeviceType } from 'app/enums/virtualization.enum';
+import { diskIoBusLabels, VirtualizationDeviceType, VirtualizationType } from 'app/enums/virtualization.enum';
 import { VirtualizationDisk, VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
+import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
@@ -44,12 +45,16 @@ import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtual
     TranslateModule,
     DeviceActionsMenuComponent,
     FileSizePipe,
+    MapValuePipe,
   ],
 })
 export class InstanceDisksComponent {
   readonly instance = input.required<VirtualizationInstance>();
 
   protected readonly isLoadingDevices = this.deviceStore.isLoading;
+  protected readonly diskIoBusLabels = diskIoBusLabels;
+
+  protected readonly isVm = computed(() => this.instance().type === VirtualizationType.Vm);
 
   constructor(
     private slideIn: SlideIn,
