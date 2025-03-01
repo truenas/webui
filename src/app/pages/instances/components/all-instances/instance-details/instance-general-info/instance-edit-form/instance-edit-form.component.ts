@@ -10,10 +10,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
-import {
-  DiskIoBus, diskIoBusLabels, VirtualizationStatus, VirtualizationType,
-} from 'app/enums/virtualization.enum';
-import { mapToOptions } from 'app/helpers/options.helper';
+import { VirtualizationStatus, VirtualizationType } from 'app/enums/virtualization.enum';
 import { containersHelptext } from 'app/helptext/virtualization/containers';
 import {
   InstanceEnvVariablesFormGroup,
@@ -26,7 +23,6 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { cpuValidator } from 'app/modules/forms/ix-forms/validators/cpu-validation/cpu-validation';
@@ -53,7 +49,6 @@ import { defaultVncPort } from 'app/pages/instances/instances.constants';
     IxListComponent,
     IxListItemComponent,
     MatTooltip,
-    IxSelectComponent,
   ],
   templateUrl: './instance-edit-form.component.html',
   styleUrls: ['./instance-edit-form.component.scss'],
@@ -67,7 +62,6 @@ export class InstanceEditFormComponent {
   editingInstance: VirtualizationInstance;
 
   protected readonly containersHelptext = containersHelptext;
-  protected readonly diskIoBusOptions$ = of(mapToOptions(diskIoBusLabels, this.translate));
 
   get isVm(): boolean {
     return this.editingInstance.type === VirtualizationType.Vm;
@@ -80,7 +74,6 @@ export class InstanceEditFormComponent {
   protected readonly form = this.formBuilder.group({
     autostart: [false],
     cpu: ['', [cpuValidator()]],
-    root_disk_io_bus: [DiskIoBus.Nvme],
     memory: [null as number | null],
     enable_vnc: [false],
     vnc_port: [defaultVncPort as number | null, [Validators.min(5900), Validators.max(65535)]],
@@ -114,7 +107,6 @@ export class InstanceEditFormComponent {
       vnc_port: this.editingInstance.vnc_port,
       vnc_password: this.editingInstance.vnc_password,
       secure_boot: this.editingInstance.secure_boot,
-      root_disk_io_bus: this.editingInstance.root_disk_io_bus || DiskIoBus.Nvme,
     });
 
     this.setVncControls();
@@ -180,10 +172,6 @@ export class InstanceEditFormComponent {
 
     if (this.isVm) {
       payload.secure_boot = values.secure_boot;
-
-      if (values.root_disk_io_bus !== this.editingInstance.root_disk_io_bus) {
-        payload.root_disk_io_bus = values.root_disk_io_bus;
-      }
     }
 
     return payload;

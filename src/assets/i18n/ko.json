@@ -1,5 +1,6 @@
 {
   "": "",
+  "Change Root Disk Setup": "",
   "Choose the disk I/O bus type that best suits your system’s needs: <br /><br /> • NVMe – Ideal for high-performance storage with faster read and write speeds. <br /><br /> • Virtio-BLK – Efficient for virtualized environments, offering direct block device access with lower overhead. <br /><br /> • Virtio-SCSI – Flexible and scalable, supporting advanced features like hot-swapping and multiple devices.": "",
   "Current version": "",
   "Current version (standby node)": "",
@@ -2302,8 +2303,6 @@
   "Incorrect Password": "잘못된 비밀번호",
   "Incorrect crontab value.": "잘못된 Crontab 값입니다.",
   "Incorrect or expired OTP. Please try again.": "잘못되거나 만료된 OTP입니다. 다시 시도해 주십시오.",
-  "Increase": "증가",
-  "Increase Root Disk Size": "루트 디스크 크기 증가",
   "Increase logging verbosity related to the active directory service in /var/log/middlewared.log": "/var/log/middlewared.log의 액티브 디렉터리 서비스에 대한 기록 상세 정도 증가",
   "Increasing disk size": "디스크 크기 증가 중",
   "InfluxDB time series name for collected points.": "수집한 지점에 대한 InfluxDB 시계열 이름입니다.",

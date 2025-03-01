@@ -18,8 +18,8 @@ import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
-  IncreaseRootDiskSizeComponent,
-} from 'app/pages/instances/components/all-instances/instance-details/instance-disks/increase-root-disk-size/increase-root-disk-size.component';
+  ChangeRootDiskSetupComponent,
+} from 'app/pages/instances/components/all-instances/instance-details/instance-disks/change-root-disk-setup/change-root-disk-setup.component';
 import {
   InstanceDiskFormComponent,
 } from 'app/pages/instances/components/all-instances/instance-details/instance-disks/instance-disk-form/instance-disk-form.component';
@@ -79,7 +79,7 @@ export class InstanceDisksComponent {
   }
 
   protected showRootDiskIncreaseDialog(): void {
-    this.matDialog.open(IncreaseRootDiskSizeComponent, { data: this.instance() })
+    this.matDialog.open(ChangeRootDiskSetupComponent, { data: this.instance() })
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe((newRootDiskSize: number) => this.instanceStore.instanceUpdated({

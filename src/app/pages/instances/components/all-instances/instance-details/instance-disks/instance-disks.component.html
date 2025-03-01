@@ -12,22 +12,22 @@
   </mat-card-header>
 
   <mat-card-content>
-    @if (instance().root_disk_size) {
+    @if (isVm() && instance().root_disk_size) {
       <div class="root-disk-size">
         <span class="label">{{ 'Root Disk' | translate }}:</span>
         <span class="value">
           {{ +instance().root_disk_size | ixFileSize }}
 
-          @if (isVm()) {
+          @if (instance().root_disk_io_bus) {
             ({{ instance().root_disk_io_bus | mapValue: diskIoBusLabels}})
           }
         </span>
         <a
           class="action"
-          ixTest="increase-root-disk-size"
+          ixTest="change-disk-setup"
           (click)="showRootDiskIncreaseDialog()"
         >
-          {{ 'Increase' | translate }}
+          {{ 'Change' | translate }}
         </a>
       </div>
     }
