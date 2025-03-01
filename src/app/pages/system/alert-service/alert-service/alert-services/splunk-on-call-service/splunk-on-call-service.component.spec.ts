@@ -2,15 +2,13 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import {
-  VictorOpsServiceComponent,
-} from 'app/pages/system/alert-service/alert-service/alert-services/victor-ops-service/victor-ops-service.component';
+import { SplunkOnCallServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-services/splunk-on-call-service/splunk-on-call-service.component';
 
-describe('VictorOpsServiceComponent', () => {
-  let spectator: Spectator<VictorOpsServiceComponent>;
+describe('SplunkOnCallServiceComponent', () => {
+  let spectator: Spectator<SplunkOnCallServiceComponent>;
   let form: IxFormHarness;
   const createComponent = createComponentFactory({
-    component: VictorOpsServiceComponent,
+    component: SplunkOnCallServiceComponent,
     imports: [
       ReactiveFormsModule,
     ],
