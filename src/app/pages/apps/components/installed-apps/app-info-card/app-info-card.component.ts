@@ -95,7 +95,19 @@ export class AppInfoCardComponent {
 
   protected readonly appDetailsRouterUrl = computed<string[]>(() => {
     const app = this.app();
-    return ['/apps', 'available', app.metadata.train, app.id];
+    return ['/apps', 'available', app.metadata.train, app.metadata.name];
+  });
+
+  protected readonly name = computed(() => {
+    if (this.app().name === this.app().metadata.name) {
+      return this.app().name;
+    }
+
+    if (this.app().custom_app) {
+      return this.app().name;
+    }
+
+    return `${this.app().name} (${this.app().metadata.name})`;
   });
 
   constructor(
