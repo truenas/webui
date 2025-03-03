@@ -32,3 +32,23 @@ jobs:
         uses: ./.github/actions/prepare
       - name: Validate
         run: yarn run validate-translations
+
+  auto-merge-translations:
+    name: Auto-Merge Translation Conflicts
+    needs: [lint-translations]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Auto-resolve translation conflicts
+        run: |
+          git merge --strategy-option theirs || git checkout --theirs -- src/assets/i18n/**
+          git add src/assets/i18n/**
+          git commit -m "Auto-resolved translation conflicts in i18n files" || echo "No conflicts to resolve"
+
+      - name: Push resolved merge
+        run: git push origin HEAD
