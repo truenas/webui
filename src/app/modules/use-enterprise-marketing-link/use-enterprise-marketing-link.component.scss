@@ -1,7 +1,7 @@
 @import 'scss-imports/variables';
 
 :host {
-  margin: 0 auto;
+  margin: 0 auto 5px;
 }
 
 a {
@@ -18,10 +18,6 @@ a {
     &.text-above {
       color: var(--primary);
       margin-bottom: 2px;
-    }
-
-    &.text-below {
-      font-size: x-small;
     }
   }
 }
