@@ -8,7 +8,6 @@ import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SmbEncryption } from 'app/enums/smb-encryption.enum';
-import { BindIp } from 'app/interfaces/bind-ip.interface';
 import { SmbConfig } from 'app/interfaces/smb-config.interface';
 import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -54,7 +53,7 @@ describe('ServiceSmbComponent', () => {
           guest: 'nobody',
           filemask: '',
           dirmask: '',
-          bindip: [] as BindIp[],
+          bindip: [] as string[],
           cifs_SID: 'mockSid',
           ntlmv1_auth: false,
           enable_smb1: false,
@@ -195,10 +194,10 @@ describe('ServiceSmbComponent', () => {
     const bindIpList = await loader.getHarness(IxListHarness.with({ label: 'Bind IP Addresses' }));
     await bindIpList.pressAddButton();
     const bindIpForm1 = await bindIpList.getLastListItem();
-    await bindIpForm1.fillForm({ 'IP Address': '1.1.1.1/32' });
+    await bindIpForm1.fillForm({ 'IP Address': '1.1.1.1' });
     await bindIpList.pressAddButton();
     const bindIpForm2 = await bindIpList.getLastListItem();
-    await bindIpForm2.fillForm({ 'IP Address': '2.2.2.2/32' });
+    await bindIpForm2.fillForm({ 'IP Address': '2.2.2.2' });
 
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
@@ -229,8 +228,8 @@ describe('ServiceSmbComponent', () => {
       aapl_extensions: true,
       admin_group: 'test-group',
       bindip: [
-        { $ipv4_interface: '1.1.1.1/32' },
-        { $ipv4_interface: '2.2.2.2/32' },
+        '1.1.1.1',
+        '2.2.2.2',
       ],
       guest: 'nobody',
       dirmask: '0777',

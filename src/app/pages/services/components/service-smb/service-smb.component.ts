@@ -138,8 +138,8 @@ export class ServiceSmbComponent implements OnInit {
     map(([options, config]) => {
       return [
         ...new Set<string>([
-          ...config.bindip.map((item) => item.$ipv4_interface),
-          ...options.map((option) => `${option.value}/32`),
+          ...config.bindip,
+          ...options.map((option) => `${option.value}`),
         ]),
       ].map((value) => ({ label: value, value }));
     }),
@@ -171,7 +171,7 @@ export class ServiceSmbComponent implements OnInit {
     this.api.call('smb.config').pipe(untilDestroyed(this)).subscribe({
       next: (config) => {
         config.bindip.forEach(() => this.addBindIp());
-        this.form.patchValue(config);
+        this.form.patchValue({ ...config, bindip: config.bindip.map((ip) => ({ bindIp: ip })) });
         this.isFormLoading = false;
         this.cdr.markForCheck();
       },
@@ -185,7 +185,7 @@ export class ServiceSmbComponent implements OnInit {
 
   addBindIp(): void {
     this.form.controls.bindip.push(this.fb.group({
-      $ipv4_interface: ['', [Validators.required]],
+      bindIp: ['', [Validators.required]],
     }));
   }
 
@@ -198,7 +198,10 @@ export class ServiceSmbComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const values: SmbConfigUpdate = this.form.value;
+    const values: SmbConfigUpdate = {
+      ...this.form.value,
+      bindip: this.form.value.bindip.map((value) => value.bindIp),
+    };
 
     this.isFormLoading = true;
     this.api.call('smb.update', [values])
