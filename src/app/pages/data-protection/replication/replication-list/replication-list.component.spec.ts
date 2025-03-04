@@ -182,7 +182,7 @@ describe('ReplicationListComponent', () => {
 
   it('shows confirmation dialog when Run Now button is pressed', async () => {
     jest.spyOn(spectator.inject(DialogService), 'confirm');
-    await table.clickToggle(0);
+    await table.expandRow(0);
 
     const runNowButton = await loader.getHarness(MatButtonHarness.with({ text: 'Run Now' }));
     await runNowButton.click();
@@ -197,7 +197,7 @@ describe('ReplicationListComponent', () => {
   });
 
   it('shows form to edit an existing interface when edit button is pressed', async () => {
-    await table.clickToggle(0);
+    await table.expandRow(0);
 
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
     await editButton.click();
@@ -214,7 +214,7 @@ describe('ReplicationListComponent', () => {
   it('deletes a task with confirmation when delete button is pressed', async () => {
     jest.spyOn(spectator.inject(DialogService), 'confirm');
 
-    await table.clickToggle(0);
+    await table.expandRow(0);
 
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
     await deleteButton.click();
@@ -230,7 +230,7 @@ describe('ReplicationListComponent', () => {
   });
 
   it('shows dialog when Restore button is pressed', async () => {
-    await table.clickToggle(0);
+    await table.expandRow(0);
 
     jest.spyOn(spectator.inject(MatDialog), 'open');
 
@@ -256,7 +256,7 @@ describe('ReplicationListComponent', () => {
   });
 
   it('checks if downloads encryption keys when button is pressed', async () => {
-    await table.clickToggle(0);
+    await table.expandRow(0);
 
     jest.spyOn(spectator.inject(MatDialog), 'open');
 

@@ -120,7 +120,7 @@ describe('CronListComponent', () => {
   });
 
   it('shows confirmation dialog when Run Now button is pressed', async () => {
-    await table.clickToggle(0);
+    await table.expandRow(0);
 
     const runNowButton = await loader.getHarness(MatButtonHarness.with({ text: 'Run Now' }));
     await runNowButton.click();
@@ -135,7 +135,7 @@ describe('CronListComponent', () => {
   });
 
   it('shows form to edit an existing interface when Edit button is pressed', async () => {
-    await table.clickToggle(0);
+    await table.expandRow(0);
 
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
     await editButton.click();
@@ -147,7 +147,7 @@ describe('CronListComponent', () => {
   });
 
   it('deletes a cronjob with confirmation when Delete button is pressed', async () => {
-    await table.clickToggle(0);
+    await table.expandRow(0);
 
     const deleteIcon = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
     await deleteIcon.click();
