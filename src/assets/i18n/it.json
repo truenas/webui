@@ -1,6 +1,13 @@
 {
   "": "",
+  "5 Nines of Uptime with HA": "",
+  "Boost Performance & Support": "",
   "Edit Disks": "",
+  "Expert Support When You Need It": "",
+  "Explore TrueNAS Enterprise": "",
+  "More Performance, More Protection": "",
+  "Optimize Your Storage": "",
+  "Unlock High Performance Solutions": "",
   "\n              It looks like your session has been inactive for more than {lifetime} seconds.<br>\n              For security reasons we will log you out at {time}.\n            ": "\nSembra che la tua sessione sia stata inattiva per più di {lifetime} secondi.<br>\nPer motivi di sicurezza, verrai disconnesso alle {time}.",
   " Est. Usable Raw Capacity": " Capacità lorda utilizzabile stimata",
   " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network port number of the UPS <i>Master</i> system. The default port is <i>3493</i>.": " Quando la <b>Modalità UPS</b> è impostata su <i>slave</i>. Inserisci il numero della porta di rete aperta del sistema UPS <i>Master</i>. La porta predefinita è <i>3493</i>.",
