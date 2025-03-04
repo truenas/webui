@@ -5015,7 +5015,7 @@
   "Use Snapshot": "Utiliser l'instantané",
   "Use Sudo For ZFS Commands": "Utiliser Sudo pour les commandes ZFS",
   "Use Syslog Only": "Utiliser uniquement Syslog",
-  "Use a Linux image (linuxcontainer.org)": "Utiliser une image Linux (linuxcontainer.org)",
+  "Use a Linux image (linuxcontainers.org)": "Utiliser une image Linux (linuxcontainers.org)",
   "Use all disk space": "Utiliser tout l'espace disque",
   "Use an existing port": "Utiliser un port existant",
   "Use an exported encryption key file to unlock datasets.": "Utilisez un fichier de clé de chiffrement exporté pour déverrouiller les datasets.",

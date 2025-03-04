@@ -4912,7 +4912,7 @@
   "Use Snapshot": "Usar instantánea",
   "Use Sudo For ZFS Commands": "Utilizar sudo para comandos ZFS",
   "Use Syslog Only": "Utilizar solo syslog",
-  "Use a Linux image (linuxcontainer.org)": "Usar una imagen de Linux (linuxcontainer.org)",
+  "Use a Linux image (linuxcontainers.org)": "Usar una imagen de Linux (linuxcontainers.org)",
   "Use all disk space": "Usar todo el espacio del disco",
   "Use an existing port": "Utilizar un puerto existente",
   "Use an exported encryption key file to unlock datasets.": "Usá un archivo de clave de cifrado exportado para desbloquear conjuntos de datos.",
