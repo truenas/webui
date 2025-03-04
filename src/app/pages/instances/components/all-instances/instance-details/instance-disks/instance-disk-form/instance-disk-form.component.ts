@@ -56,7 +56,7 @@ export class InstanceDiskFormComponent implements OnInit {
       return this.filesystem.getFilesystemNodeProvider({ zvolsOnly: true });
     }
 
-    return this.filesystem.getFilesystemNodeProvider({ datasetsAndZvols: true });
+    return this.filesystem.getFilesystemNodeProvider({ datasetsOnly: true });
   });
 
   protected form = this.formBuilder.nonNullable.group({
