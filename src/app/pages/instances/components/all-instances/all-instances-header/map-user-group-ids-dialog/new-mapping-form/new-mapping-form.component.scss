@@ -1,0 +1,30 @@
+:host ix-fieldset {
+  margin-top: 16px;
+
+  ::ng-deep fieldset {
+    padding: 0;
+  }
+
+  form.form {
+    align-items: flex-start;
+    display: flex;
+    gap: 12px;
+    margin-top: -10px;
+    padding: 0;
+
+    > * {
+      margin-bottom: 0;
+      margin-top: 0;
+    }
+
+    .default-checkbox {
+      // TODO: This should be handled by baseline
+      margin-top: 30px;
+    }
+
+    .set-button {
+      margin-left: 16px;
+      margin-top: 32px;
+    }
+  }
+}

@@ -1,0 +1,32 @@
+.header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+
+  h1 {
+    align-items: center;
+    display: flex;
+    gap: 6px;
+    margin-bottom: 0;
+    padding-top: 20px;
+
+    .tooltip ::ng-deep ix-icon {
+      height: 20px;
+      // TODO: Add size to ix-icon and tooltip.
+      width: 20px;
+    }
+  }
+
+  button {
+    margin-right: 20px;
+  }
+}
+
+.type-selector {
+  display: block;
+  margin-bottom: 7px;
+}
+
+.dialog-content {
+  padding-top: 18px;
+}

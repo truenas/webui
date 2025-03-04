@@ -15,6 +15,9 @@ import {
   GlobalConfigFormComponent,
 } from 'app/pages/instances/components/all-instances/all-instances-header/global-config-form/global-config-form.component';
 import {
+  MapUserGroupIdsDialogComponent,
+} from 'app/pages/instances/components/all-instances/all-instances-header/map-user-group-ids-dialog/map-user-group-ids-dialog.component';
+import {
   VirtualizationStateComponent,
 } from 'app/pages/instances/components/all-instances/all-instances-header/virtualization-state/virtualization-state.component';
 import {
@@ -77,6 +80,12 @@ export class AllInstancesHeaderComponent {
 
   protected onManageVolumes(): void {
     this.matDialog.open(VolumesDialogComponent, {
+      minWidth: '80vw',
+    });
+  }
+
+  protected onMapUserGroupIds(): void {
+    this.matDialog.open(MapUserGroupIdsDialogComponent, {
       minWidth: '80vw',
     });
   }

@@ -12,6 +12,9 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import {
   GlobalConfigFormComponent,
 } from 'app/pages/instances/components/all-instances/all-instances-header/global-config-form/global-config-form.component';
+import {
+  MapUserGroupIdsDialogComponent,
+} from 'app/pages/instances/components/all-instances/all-instances-header/map-user-group-ids-dialog/map-user-group-ids-dialog.component';
 import { VirtualizationStateComponent } from 'app/pages/instances/components/all-instances/all-instances-header/virtualization-state/virtualization-state.component';
 import {
   VolumesDialogComponent,
@@ -142,6 +145,20 @@ describe('AllInstancesHeaderComponent', () => {
 
       expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
         VolumesDialogComponent,
+        expect.anything(),
+      );
+    });
+
+    it('opens MapUserGroupIdsDialog when Map User/Group IDs is pressed', async () => {
+      storeMock.virtualizationState.set(VirtualizationGlobalState.Initialized);
+      spectator.detectChanges();
+
+      const configurationMenu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Configuration' }));
+      await configurationMenu.open();
+      await configurationMenu.clickItem({ text: 'Map User/Group IDs' });
+
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
+        MapUserGroupIdsDialogComponent,
         expect.anything(),
       );
     });
