@@ -135,11 +135,11 @@ describe('InstanceWizardComponent', () => {
   });
 
   describe('name validation', () => {
-    it('shows error for invalid name', async () => {
+    it('shows error for invalid name, it could only contain alphanumeric and hyphen characters', async () => {
       const instanceNameControl = await loader.getHarness(IxInputHarness.with({ label: 'Name' }));
 
       await form.fillForm({
-        Name: 'invalid+_@name',
+        Name: 'invalid_name',
       });
 
       expect(await instanceNameControl.getErrorText()).toBe('Invalid format or character');

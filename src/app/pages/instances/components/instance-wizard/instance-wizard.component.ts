@@ -17,7 +17,6 @@ import {
   filter,
   map, Observable, of,
 } from 'rxjs';
-import { nameValidatorRegex } from 'app/constants/name-validator.constant';
 import { Role } from 'app/enums/role.enum';
 import {
   DiskIoBus,
@@ -138,7 +137,7 @@ export class InstanceWizardComponent {
   );
 
   imageSourceTypeOptions$: Observable<Option<VirtualizationSource>[]> = of([
-    { label: this.translate.instant('Use a Linux image (linuxcontainer.org)'), value: VirtualizationSource.Image },
+    { label: this.translate.instant('Use a Linux image (linuxcontainers.org)'), value: VirtualizationSource.Image },
     { label: this.translate.instant('Use an ISO image'), value: VirtualizationSource.Iso },
     { label: this.translate.instant('Use zvol with previously installed OS'), value: VirtualizationSource.Zvol },
   ]);
@@ -156,7 +155,7 @@ export class InstanceWizardComponent {
   protected readonly form = this.formBuilder.group({
     name: [
       '',
-      [Validators.required, Validators.minLength(1), Validators.maxLength(200), Validators.pattern(nameValidatorRegex)],
+      [Validators.required, Validators.minLength(1), Validators.maxLength(200), Validators.pattern(/^[a-zA-Z0-9-]+$/)],
       [forbiddenAsyncValues(this.forbiddenNames$)],
     ],
     instance_type: [VirtualizationType.Container, Validators.required],
