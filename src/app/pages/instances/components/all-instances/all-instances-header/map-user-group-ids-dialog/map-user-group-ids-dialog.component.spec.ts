@@ -53,13 +53,13 @@ describe('MapUserGroupIdsDialogComponent', () => {
         mockCall('group.query', [
           {
             id: 1231,
-            name: 'admins',
+            group: 'admins',
             gid: 1000,
             userns_idmap: directIdMapping,
           },
           {
             id: 1232,
-            name: 'users',
+            group: 'users',
             gid: 2000,
             userns_idmap: 4000,
           },
