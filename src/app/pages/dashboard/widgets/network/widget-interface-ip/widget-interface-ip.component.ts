@@ -53,7 +53,7 @@ export class WidgetInterfaceIpComponent implements WidgetComponent<WidgetInterfa
     return mapLoadedValue(this.interfaces(), (interfaces) => this.getIpAddresses(interfaces, interfaceId));
   });
 
-  private interfaces = toSignal(this.resources.networkInterfaces$);
+  private interfaces = toSignal(this.resources.getNetworkInterfaces());
 
   constructor(
     private resources: WidgetResourcesService,
