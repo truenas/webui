@@ -17,7 +17,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { Job } from 'app/interfaces/job.interface';
-import { RsyncTaskUi, RsyncTaskUpdate } from 'app/interfaces/rsync-task.interface';
+import { RsyncTask, RsyncTaskUi, RsyncTaskUpdate } from 'app/interfaces/rsync-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
@@ -205,7 +205,7 @@ export class RsyncTaskCardComponent implements OnInit {
       hideCheckbox: true,
     }).pipe(
       filter(Boolean),
-      tap(() => row.state = { state: JobState.Running }),
+      tap(() => this.updateRowStateAndJob(row, JobState.Running, row.job)),
       switchMap(() => this.api.job('rsynctask.run', [row.id])),
       tapOnce(() => this.snackbar.success(
         this.translate.instant('Rsync task «{name}» has started.', {
@@ -219,8 +219,7 @@ export class RsyncTaskCardComponent implements OnInit {
       }),
       untilDestroyed(this),
     ).subscribe((job: Job) => {
-      row.state = { state: job.state };
-      row.job = job;
+      this.updateRowStateAndJob(row, job.state, job);
       if (this.jobStates.get(job.id) !== job.state) {
         this.getRsyncTasks();
       }
@@ -259,5 +258,19 @@ export class RsyncTaskCardComponent implements OnInit {
           this.dialogService.error(this.errorHandler.parseError(err));
         },
       });
+  }
+
+  private updateRowStateAndJob(row: RsyncTask, state: JobState, job: Job | null): void {
+    this.rsyncTasks = this.rsyncTasks.map((task) => {
+      if (task.id === row.id) {
+        return {
+          ...task,
+          state: { state },
+          job,
+        };
+      }
+      return task;
+    });
+    this.dataProvider.setRows(this.rsyncTasks);
   }
 }

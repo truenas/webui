@@ -20,7 +20,7 @@ describe('WidgetHostnameActiveComponent', () => {
       },
       providers: [
         mockProvider(WidgetResourcesService, {
-          systemInfo$: of({
+          dashboardSystemInfo$: of({
             value: {
               hostname: 'truenas.com',
             },
@@ -40,7 +40,7 @@ describe('WidgetHostnameActiveComponent', () => {
     spectator = createComponent({
       providers: [
         mockProvider(WidgetResourcesService, {
-          systemInfo$: of({
+          dashboardSystemInfo$: of({
             value: {} as SystemInfo,
             isLoading: false,
             error: new Error('Fatal error'),

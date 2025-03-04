@@ -39,7 +39,7 @@ export class WidgetSystemImageComponent implements WidgetComponent {
   isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
   hasEnclosureSupport = toSignal(this.store$.select(selectHasEnclosureSupport));
 
-  systemInfo = toSignal(this.resources.systemInfo$.pipe(
+  systemInfo = toSignal(this.resources.dashboardSystemInfo$.pipe(
     filter((state) => !state.isLoading),
     map((state) => state.value),
   ));

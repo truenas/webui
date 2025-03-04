@@ -75,7 +75,7 @@ export class WidgetSysInfoPassiveComponent {
   protected readonly getLabelForContractType = getLabelForContractType;
 
   updateAvailable = toSignal(this.resources.updateAvailable$);
-  systemInfo = toSignal(this.resources.systemInfo$.pipe(
+  systemInfo = toSignal(this.resources.dashboardSystemInfo$.pipe(
     map((state) => state.value?.remote_info),
     filter((value) => !!value),
   ));
@@ -108,7 +108,7 @@ export class WidgetSysInfoPassiveComponent {
   ) {
     effect(() => {
       if (!this.systemInfo() && this.canFailover()) {
-        this.resources.refreshSystemInfo();
+        this.resources.refreshDashboardSystemInfo();
       }
     });
   }
