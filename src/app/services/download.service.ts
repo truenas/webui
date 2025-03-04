@@ -1,27 +1,41 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { Observable, switchMap } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
+import { observeJob } from 'app/helpers/operators/observe-job.operator';
+import { selectJob } from 'app/modules/jobs/store/job.selectors';
+import { ApiService } from 'app/modules/websocket/api.service';
+import { AppState } from 'app/store';
+
+interface CoreDownloadParams {
+  method: string;
+  arguments: unknown;
+  fileName: string;
+  mimeType: string;
+}
 
 @Injectable({
   providedIn: 'root',
 })
 export class DownloadService {
-  constructor(protected http: HttpClient) {}
+  constructor(
+    protected http: HttpClient,
+    private api: ApiService,
+    private store$: Store<AppState>,
+  ) {}
 
-  downloadFile(filename: string, contents: string, mimeType = 'text/plain'): void {
-    const byteCharacters = atob(contents);
-
-    const byteNumbers = new Array(byteCharacters.length);
-    for (let i = 0; i < byteCharacters.length; i++) {
-      byteNumbers[i] = byteCharacters.charCodeAt(i);
-    }
-
-    const byteArray = new Uint8Array(byteNumbers);
-
-    const blob = new Blob([byteArray], { type: mimeType });
-
-    this.downloadBlob(blob, filename);
+  coreDownload(params: CoreDownloadParams): Observable<Blob> {
+    return this.api.call('core.download', [params.method, params.arguments, params.fileName]).pipe(
+      switchMap(([jobId, url]) => {
+        return this.store$.select(selectJob(jobId)).pipe(
+          observeJob(),
+          switchMap(() => {
+            return this.downloadUrl(url, params.fileName, params.mimeType);
+          }),
+        );
+      }),
+    );
   }
 
   downloadText(contents: string, filename: string): void {

@@ -19,7 +19,6 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/modules/websocket/api.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { AppState } from 'app/store';
@@ -72,7 +71,6 @@ export class SaveConfigDialogComponent {
   };
 
   constructor(
-    private api: ApiService,
     private store$: Store<AppState>,
     private download: DownloadService,
     private loader: AppLoaderService,
@@ -107,9 +105,12 @@ export class SaveConfigDialogComponent {
           fileName += '.db';
         }
 
-        return this.api.call('core.download', ['config.save', [{ secretseed: this.exportSeedCheckbox.value }], fileName]).pipe(
-          switchMap(([, url]) => this.download.downloadUrl(url, fileName, mimeType)),
-        );
+        return this.download.coreDownload({
+          fileName,
+          mimeType,
+          method: 'config.save',
+          arguments: [{ secretseed: this.exportSeedCheckbox.value }],
+        });
       }),
       untilDestroyed(this),
     ).subscribe({

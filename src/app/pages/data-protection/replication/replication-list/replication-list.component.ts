@@ -302,24 +302,18 @@ export class ReplicationListComponent implements OnInit {
 
   downloadKeys(row: ReplicationTask): void {
     const fileName = `${row.name}_encryption_keys.json`;
-    this.api.call('core.download', ['pool.dataset.export_keys_for_replication', [row.id], fileName])
-      .pipe(this.appLoader.withLoader(), untilDestroyed(this))
-      .subscribe({
-        next: ([, url]) => {
-          const mimetype = 'application/json';
-          this.download.streamDownloadFile(url, fileName, mimetype).pipe(untilDestroyed(this)).subscribe({
-            next: (file) => {
-              this.download.downloadBlob(file, fileName);
-            },
-            error: (err: unknown) => {
-              this.dialogService.error(this.errorHandler.parseError(err));
-            },
-          });
-        },
-        error: (err: unknown) => {
-          this.dialogService.error(this.errorHandler.parseError(err));
-        },
-      });
+    this.download.coreDownload({
+      fileName,
+      method: 'pool.dataset.export_keys_for_replication',
+      arguments: [row.id],
+      mimeType: 'application/json',
+    })
+      .pipe(
+        this.appLoader.withLoader(),
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe();
   }
 
   private onChangeEnabledState(replicationTask: ReplicationTask): void {

@@ -90,9 +90,13 @@ export class ExportButtonComponent<T, M extends ApiJobMethod> {
           customArguments.report_name = url;
         }
 
-        return this.api.call('core.download', [downloadMethod, [customArguments], url]);
+        return this.download.coreDownload({
+          method: downloadMethod,
+          arguments: [customArguments],
+          fileName: `${this.filename()}.${this.fileType()}`,
+          mimeType: this.fileMimeType(),
+        });
       }),
-      switchMap(([, url]) => this.download.downloadUrl(url, `${this.filename()}.${this.fileType()}`, this.fileMimeType())),
       catchError((error: unknown) => {
         this.isLoading = false;
         this.cdr.markForCheck();

@@ -5,7 +5,6 @@ import {
 } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { switchMap } from 'rxjs/operators';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -44,12 +43,15 @@ export class ExportAllKeysDialogComponent {
 
   onDownload(): void {
     const fileName = 'dataset_' + this.dataset.name + '_keys.json';
-    const mimetype = 'application/json';
-    this.api.call('core.download', ['pool.dataset.export_keys', [this.dataset.name], fileName])
+    this.download.coreDownload({
+      fileName,
+      method: 'pool.dataset.export_keys',
+      arguments: [this.dataset.name],
+      mimeType: 'application/json',
+    })
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.catchError(),
-        switchMap(([, url]) => this.download.downloadUrl(url, fileName, mimetype)),
         untilDestroyed(this),
       )
       .subscribe(() => {
