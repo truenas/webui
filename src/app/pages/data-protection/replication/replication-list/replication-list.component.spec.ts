@@ -146,7 +146,6 @@ describe('ReplicationListComponent', () => {
         mockCall('replication.update', { ...tasks[0], enabled: true }),
         mockJob('replication.run', fakeSuccessfulJob()),
         mockCall('replication.delete'),
-        mockCall('core.download', [undefined, 'http://someurl/file.json']),
       ]),
       mockProvider(SlideIn, {
         open: jest.fn(() => of()),
@@ -160,8 +159,7 @@ describe('ReplicationListComponent', () => {
         })),
       }),
       mockProvider(DownloadService, {
-        streamDownloadFile: jest.fn(() => of()),
-        downloadBlob: jest.fn(),
+        coreDownload: jest.fn(() => of(undefined)),
       }),
     ],
   });
@@ -265,15 +263,11 @@ describe('ReplicationListComponent', () => {
     const downloadKeysButtons = await loader.getHarness(MatButtonHarness.with({ text: 'Download Keys' }));
     await downloadKeysButtons.click();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('core.download', [
-      'pool.dataset.export_keys_for_replication',
-      [1],
-      'pewl - pewl_encryption_keys.json',
-    ]);
-    expect(spectator.inject(DownloadService).streamDownloadFile).toHaveBeenCalledWith(
-      'http://someurl/file.json',
-      'pewl - pewl_encryption_keys.json',
-      'application/json',
-    );
+    expect(spectator.inject(DownloadService).coreDownload).toHaveBeenCalledWith({
+      arguments: [1],
+      fileName: 'pewl - pewl_encryption_keys.json',
+      method: 'pool.dataset.export_keys_for_replication',
+      mimeType: 'application/json',
+    });
   });
 });

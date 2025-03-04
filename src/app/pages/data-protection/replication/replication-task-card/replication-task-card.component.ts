@@ -253,30 +253,16 @@ export class ReplicationTaskCardComponent implements OnInit {
   }
 
   downloadKeys(row: ReplicationTask): void {
-    this.api.call('core.download', [
-      'pool.dataset.export_keys_for_replication',
-      [row.id],
-      `${row.name}_encryption_keys.json`,
-    ]).pipe(untilDestroyed(this)).subscribe({
-      next: ([, url]) => {
-        const mimetype = 'application/json';
-        this.download.streamDownloadFile(
-          url,
-          `${row.name}_encryption_keys.json`,
-          mimetype,
-        ).pipe(untilDestroyed(this)).subscribe({
-          next: (file) => {
-            this.download.downloadBlob(file, `${row.name}_encryption_keys.json`);
-          },
-          error: (err: unknown) => {
-            this.dialogService.error(this.errorHandler.parseError(err));
-          },
-        });
-      },
-      error: (err: unknown) => {
-        this.dialogService.error(this.errorHandler.parseError(err));
-      },
-    });
+    this.download.coreDownload({
+      method: 'pool.dataset.export_keys_for_replication',
+      mimeType: 'application/json',
+      arguments: [row.id],
+      fileName: `${row.name}_encryption_keys.json`,
+    })
+      .pipe(
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      ).subscribe();
   }
 
   private onChangeEnabledState(replicationTask: ReplicationTask): void {
