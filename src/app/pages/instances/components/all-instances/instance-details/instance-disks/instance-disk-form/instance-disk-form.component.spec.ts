@@ -4,7 +4,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { VirtualizationDeviceType, VirtualizationType } from 'app/enums/virtualization.enum';
+import { DiskIoBus, VirtualizationDeviceType, VirtualizationType } from 'app/enums/virtualization.enum';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -131,6 +131,43 @@ describe('InstanceDiskFormComponent', () => {
         response: true,
         error: false,
       });
+    });
+  });
+
+  describe('handling vm', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        providers: [
+          mockProvider(SlideInRef, {
+            getData: () => ({
+              instance: { id: 'my-instance', type: VirtualizationType.Vm },
+            }),
+            close: jest.fn(),
+            requireConfirmationWhen: jest.fn(),
+          }),
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('creates a new disk with io_bus option', async () => {
+      const form = await loader.getHarness(IxFormHarness);
+
+      await form.fillForm({ Source: '/mnt/path', 'I/O Bus': 'Virtio-BLK' });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({
+        response: true,
+        error: false,
+      });
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('virt.instance.device_add', ['my-instance', {
+        source: '/mnt/path',
+        dev_type: VirtualizationDeviceType.Disk,
+        io_bus: DiskIoBus.VirtioBlk,
+      }]);
     });
   });
 });
