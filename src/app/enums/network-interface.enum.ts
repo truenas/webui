@@ -17,12 +17,15 @@ export enum CreateNetworkInterfaceType {
 export enum NetworkInterfaceAliasType {
   Inet = 'INET',
   Inet6 = 'INET6',
+  Link = 'LINK',
 }
 
 export enum NetworkInterfaceFlag {
   Multicast = 'MULTICAST',
   Up = 'UP',
   Broadcast = 'BROADCAST',
+  Running = 'RUNNING',
+  LowerUp = 'LOWER_UP',
 }
 
 export enum LinkAggregationProtocol {
