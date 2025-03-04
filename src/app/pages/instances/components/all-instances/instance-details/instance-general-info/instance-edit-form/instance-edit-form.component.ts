@@ -11,7 +11,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { VirtualizationStatus, VirtualizationType } from 'app/enums/virtualization.enum';
-import { containersHelptext } from 'app/helptext/virtualization/containers';
+import { containersHelptext } from 'app/helptext/instances/instances';
 import {
   InstanceEnvVariablesFormGroup,
   UpdateVirtualizationInstance,
