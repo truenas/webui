@@ -1,4 +1,5 @@
-import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { Router } from '@angular/router';
+import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { VirtualizationStatus, VirtualizationType } from 'app/enums/virtualization.enum';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
@@ -7,31 +8,34 @@ import { InstanceRowComponent } from 'app/pages/instances/components/all-instanc
 import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 
-const instance = {
-  id: '1',
-  name: 'agi_instance',
-  status: VirtualizationStatus.Running,
-  type: VirtualizationType.Container,
-} as VirtualizationInstance;
-
 describe('InstanceListComponent', () => {
   let spectator: Spectator<InstanceListComponent>;
 
-  const createComponent = createComponentFactory({
+  const mockInstance = {
+    id: '1',
+    name: 'agi_instance',
+    status: VirtualizationStatus.Running,
+    type: VirtualizationType.Container,
+  } as VirtualizationInstance;
+
+  const createComponent = createRoutingFactory({
     component: InstanceListComponent,
     imports: [InstanceRowComponent],
     providers: [
       mockAuth(),
       mockProvider(VirtualizationInstancesStore, {
         initialize: jest.fn(),
-        instances: jest.fn(() => [instance]),
+        instances: jest.fn(() => [mockInstance]),
         isLoading: jest.fn(() => false),
       }),
       mockProvider(VirtualizationDevicesStore, {
         selectInstance: jest.fn(),
-        selectedInstance: jest.fn(),
+        selectedInstance: jest.fn(() => null),
       }),
     ],
+    params: {
+      id: 'invalid',
+    },
   });
 
   beforeEach(() => {
@@ -42,6 +46,11 @@ describe('InstanceListComponent', () => {
     const instances = spectator.queryAll(InstanceRowComponent);
 
     expect(instances).toHaveLength(1);
-    expect(instances[0].instance()).toEqual(instance);
+    expect(instances[0].instance()).toEqual(mockInstance);
+  });
+
+  it('redirects to instances when given invalid instanceId', () => {
+    const spyOn = jest.spyOn(spectator.inject(Router), 'navigate');
+    expect(spyOn).toHaveBeenCalledWith(['/instances']);
   });
 });
