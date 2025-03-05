@@ -1,0 +1,23 @@
+@import 'scss-imports/variables';
+
+:host {
+  margin: 0 auto 5px;
+}
+
+a {
+  cursor: pointer;
+  display: block;
+  margin-bottom: 2px;
+  text-align: center;
+  text-decoration: none;
+
+  span {
+    color: var(--primary-txt);
+    display: block;
+
+    &.text-above {
+      color: var(--primary);
+      margin-bottom: 2px;
+    }
+  }
+}
