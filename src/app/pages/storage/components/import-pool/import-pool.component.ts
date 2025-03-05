@@ -68,7 +68,6 @@ export class ImportPoolComponent implements OnInit {
   pool = {
     fcName: 'guid',
     label: helptextImport.guid_placeholder,
-    tooltip: helptextImport.guid_tooltip,
     options: of<Option[]>([]),
   };
 

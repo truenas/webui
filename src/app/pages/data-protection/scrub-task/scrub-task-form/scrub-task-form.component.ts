@@ -83,10 +83,7 @@ export class ScrubTaskFormComponent implements OnInit {
   );
 
   readonly tooltips = {
-    pool: helptextScrubForm.scrub_volume_tooltip,
     threshold: helptextScrubForm.scrub_threshold_tooltip,
-    description: helptextScrubForm.scrub_description_tooltip,
-    schedule: helptextScrubForm.scrub_picker_tooltip,
     enabled: helptextScrubForm.scrub_enabled_tooltip,
   };
 

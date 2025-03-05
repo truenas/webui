@@ -5,7 +5,6 @@ export const helptextServiceUps = {
   ups_fieldset_general: T('General Options'),
   ups_fieldset_monitor: T('Monitor'),
   ups_fieldset_shutdown: T('Shutdown'),
-  ups_fieldset_email: T('Email'),
   ups_fieldset_other: T('Other Options'),
 
   ups_mode_placeholder: T('UPS Mode'),
@@ -95,17 +94,6 @@ export const helptextServiceUps = {
   ups_rmonitor_tooltip: T('Set for the default configuration to listen on all\
  interfaces using the known values of user:\
  <i>upsmon</i> and password: <i>fixmepass</i>.'),
-
-  ups_emailnotify_placeholder: T('Send Email Status Updates'),
-  ups_emailnotify_tooltip: T('Set enable sending messages to the address defined in\
- the <b>Email</b> field.'),
-
-  ups_toemail_placeholder: T('Email'),
-  ups_toemail_tooltip: T('Enter any email addresses to receive status updates.\
- Separate entries by pressing <code>Enter</code>.'),
-
-  ups_subject_placeholder: T('Email Subject'),
-  ups_subject_tooltip: T('Enter the subject for status emails.'),
 
   ups_powerdown_placeholder: T('Power Off UPS'),
   ups_powerdown_tooltip: T('Set for the UPS to power off after shutting down the system.'),

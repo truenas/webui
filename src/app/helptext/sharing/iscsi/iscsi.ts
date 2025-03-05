@@ -1,5 +1,5 @@
-import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { IscsiAuthMethod, IscsiExtentType } from 'app/enums/iscsi.enum';
 
 export const helptextSharingIscsi = {
   fieldset_target_basic: T('Basic Info'),
@@ -35,13 +35,13 @@ export const helptextSharingIscsi = {
   ),
   target_form_enum_authmethod: [{
     label: 'None',
-    value: 'NONE',
+    value: IscsiAuthMethod.None,
   }, {
     label: 'CHAP',
-    value: 'CHAP',
+    value: IscsiAuthMethod.Chap,
   }, {
     label: 'Mutual CHAP',
-    value: 'CHAP_MUTUAL',
+    value: IscsiAuthMethod.ChapMutual,
   }],
 
   target_form_placeholder_auth: T('Authentication Group Number'),
@@ -50,24 +50,16 @@ export const helptextSharingIscsi = {
  represents the number of existing authorized accesses.',
   ),
 
-  target_form_placeholder_delete: T('Delete'),
-
   portal_form_placeholder_comment: T('Description'),
   portal_form_tooltip_comment: T(
     'Optional description. Portals are automatically assigned a numeric\
  group.',
   ),
 
-  portal_form_placeholder_discovery_authmethod: T('Discovery Authentication Method'),
   portal_form_tooltip_discovery_authmethod: T('iSCSI supports multiple \
  authentication methods that are used by the target to discover valid \
  devices. <i>None</i> allows anonymous discovery while <i>CHAP</i> and \
  <i>Mutual CHAP</i> require authentication.'),
-
-  portal_form_placeholder_discovery_authgroup: T('Discovery Authentication Group'),
-  portal_form_tooltip_discovery_authgroup: T('Group ID created in \
- Authorized Access. Required when the Discovery Authentication Method is set to \
- CHAP or Mutual CHAP.'),
 
   portal_form_placeholder_ip: T('IP Address'),
   portal_form_tooltip_ip: T('Select the IP addresses to be listened on \
@@ -81,14 +73,6 @@ export const helptextSharingIscsi = {
  Default is <i>3260</i>.',
   ),
 
-  initiator_form_tooltip_connected_initiators: T(
-    'Initiators currently connected to the system. Shown in IQN\
- format with an IP address. Set initiators and click an <b>-></b>\
- (arrow) to add the initiators to either the <i>Allowed Initiators</i>\
- or <i>Authorized Networks</i> lists. Clicking <i>Refresh</i> updates\
- the <i>Connected Initiators</i> list.',
-  ),
-
   all_placeholder_initiators: T('Allow All Initiators'),
 
   initiator_form_placeholder_initiators: T('Add Allowed Initiators (IQN)'),
@@ -100,17 +84,7 @@ export const helptextSharingIscsi = {
  <i>iqn.1994-09.org.freebsd:freenas.local</i>',
   ),
 
-  initiator_form_placeholder_auth_network: T('Authorized Networks'),
-  initiator_form_tooltip_auth_network: T(
-    'Network addresses allowed use this initiator. Each address can\
- include an optional\
- <a href="https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing"\
- target="_blank">CIDR</a> netmask. Click <i>+</i> to add the network\
- address to the list. Example: <i>192.168.2.0/24</i>.',
-  ),
-
   initiator_form_placeholder_comment: T('Description'),
-  initiator_form_tooltip_comment: T('Any notes about initiators.'),
 
   globalconf_tooltip_basename: T(
     'Lowercase alphanumeric characters plus dot (.), dash (-),\
@@ -146,7 +120,6 @@ export const helptextSharingIscsi = {
     'Name of the extent. If the <i>Extent size</i> is not <i>0</i>,\
  it cannot be an existing file within the pool or dataset.',
   ),
-  extent_validators_name: [Validators.required],
 
   extent_placeholder_type: T('Extent Type'),
   extent_tooltip_type: T('<i>Device</i> provides virtual storage access to zvols, zvol snapshots, or physical devices.\
@@ -233,8 +206,8 @@ export const helptextSharingIscsi = {
   ],
 
   extent_form_enum_type: [
-    { label: T('Device'), value: 'DISK' },
-    { label: T('File'), value: 'FILE' },
+    { label: T('Device'), value: IscsiExtentType.Disk },
+    { label: T('File'), value: IscsiExtentType.File },
   ],
 
   extent_form_enum_blocksize: [
@@ -244,7 +217,6 @@ export const helptextSharingIscsi = {
     { label: '4096', value: 4096 },
   ],
 
-  authaccess_placeholder_tag: T('Group ID'),
   authaccess_tooltip_tag: T(
     'Allow different groups to be configured\
  with different authentication profiles.\
@@ -253,19 +225,10 @@ export const helptextSharingIscsi = {
  associated with Group <i>1</i>.',
   ),
 
-  authaccess_placeholder_user: T('User'),
   authaccess_tooltip_user: T(
     'User account to create for CHAP authentication with the user on the\
  remote system. Many initiators use the initiator name as the user name.',
   ),
-
-  authaccess_placeholder_secret: T('Secret'),
-  authaccess_tooltip_secret: T(
-    'User password. Must be at least 12 and no more than 16 characters\
- long.',
-  ),
-
-  authaccess_placeholder_secret_confirm: T('Secret (Confirm)'),
 
   authaccess_tooltip_peeruser: T(
     'Only entered when configuring mutual CHAP. Usually the same value\
@@ -276,7 +239,6 @@ export const helptextSharingIscsi = {
  different than the <i>Secret</i>.',
   ),
 
-  associated_target_tooltip_target: T('Select an existing target.'),
   associated_target_tooltip_lunid: T(
     'Select the value or enter a value between\
  <i>0</i> and <i>1023</i>. Some initiators\
@@ -286,18 +248,6 @@ export const helptextSharingIscsi = {
   ),
 
   associated_target_tooltip_extent: T('Select an existing extent.'),
-
-  fc_mode_placeholder: T('Mode'),
-  fc_mode_tooltip: T(''),
-
-  fc_target_placeholder: T('Targets'),
-  fc_target_tooltip: T(''),
-
-  fc_initiators_placeholder: T('Connected Initiators'),
-  fc_initiators_tooltip: T(''),
-
-  // wizard
-  step1_label: T('Create or Choose Block Device'),
 
   name_placeholder: T('Name'),
   name_tooltip: T('Keep the name short and only lowercase. Using a name longer than 63 characters can prevent accessing the block device. Allowed characters: letters, numbers, period (.), dash (-), and colon (:).'),
@@ -312,21 +262,14 @@ export const helptextSharingIscsi = {
   volsize_placeholder: T('Size'),
   volsize_tooltip: T('Specify the size of the new zvol.'),
 
-  volblocksize_placeholder: T('Block Size'),
-  volblocksize_tooltip: T('Only override the default if the initiator requires a different block size.'),
-
   usefor_placeholder: T('Sharing Platform'),
   usefor_tooltip: T('Choose the platform that will use this share. The associated options are applied to this share.'),
 
   target_placeholder: T('Target'),
   target_tooltip: T('Create a new Target or choose an existing target for this share.'),
 
-  step2_label: T('Portal'),
-
   portal_placeholder: T('Portal'),
   portal_tooltip: T('Select an existing portal or choose <i>Create New</i> to configure a new portal.'),
-
-  step3_label: T('Initiator'),
 
   initiators_placeholder: T('Initiators'),
   initiators_tooltip: T('Leave blank to allow all or enter a list of initiator hostnames. \

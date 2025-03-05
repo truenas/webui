@@ -78,7 +78,6 @@ export class CronFormComponent implements OnInit {
   isLoading = false;
 
   readonly tooltips = {
-    description: helptextCron.cron_description_tooltip,
     command: helptextCron.cron_command_tooltip,
     user: helptextCron.cron_user_tooltip,
     schedule: helptextCron.crontab_tooltip,

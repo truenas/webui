@@ -56,7 +56,6 @@ export const helptextDatasetForm = {
  data to save space. Deduplication can improve storage capacity, but is RAM intensive. \
  Compressing data is generally recommended before using deduplication. Deduplicating data is \
  a one-way process. <b>Deduplicated data cannot be undeduplicated!</b>.'),
-  dataset_form_deduplication_warning: T('This feature is memory-intensive and <b>permanently affects how the data is stored</b>. It is recommended to be very familiar with the benefits and drawbacks of deduplication before activating this feature.'),
 
   deduplicationWarning: T('Deduplication is experimental and not fully supported. When enabled, data is permanently stored with this memory-intensive method and cannot be undone. Take extreme caution and ensure you have adequate data backups before enabling this feature.'),
   deduplicationChecksumWarning: T(`The default "Checksum" value for datasets with deduplication used to be SHA256.

@@ -7,7 +7,7 @@ import { MatButton } from '@angular/material/button';
 import {
   MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle,
 } from '@angular/material/dialog';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { tooltips } from '@codemirror/view';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { Omit } from 'utility-types';
@@ -55,12 +55,6 @@ export class TruenasConnectModalComponent {
     const formValue = this.formChanges();
     return Object.keys(formValue).some((key: keyof typeof formValue) => formValue[key] !== (initialValue)[key]);
   });
-
-  protected readonly tooltips = {
-    account_service_base_url: T('Account Service Base Url'),
-    leca_service_base_url: T('Leca Service Base Url'),
-    tnc_base_url: T('TNC Base Url'),
-  };
 
   constructor(
     private formBuilder: NonNullableFormBuilder,
@@ -121,4 +115,6 @@ export class TruenasConnectModalComponent {
   protected cancel(): void {
     this.dialogRef.close();
   }
+
+  protected readonly tooltips = tooltips;
 }

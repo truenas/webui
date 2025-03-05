@@ -27,11 +27,6 @@ export const helptextSystemUpdate = {
   },
 
   manual_update_action: T('Manual Update'),
-  manual_update_description: T('Uploading file...'),
-
-  manual_update_error_dialog: {
-    message: T('Error submitting file'),
-  },
 
   continueDialogTitle: T('Warning'),
   continueDialogAction: T('Continue with the upgrade'),

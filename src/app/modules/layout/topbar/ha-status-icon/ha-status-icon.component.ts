@@ -39,8 +39,6 @@ export class HaStatusIconComponent implements OnInit {
 
   failoverDisabledReasons: FailoverDisabledReason[] = [];
 
-  protected readonly FailoverDisabledReason = FailoverDisabledReason;
-
   private isStatusPanelOpen = false;
   private statusPanelRef: MatDialogRef<HaStatusPopoverComponent>;
 
