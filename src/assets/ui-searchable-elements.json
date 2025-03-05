@@ -847,6 +847,62 @@
   {
     "hierarchy": [
       "Credentials",
+      "Users (new)",
+      "Create New User"
+    ],
+    "synonyms": [
+      "Add User",
+      "Create User",
+      "New User"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/credentials/users-new"
+    ],
+    "routerLink": [
+      "/credentials/users-new"
+    ],
+    "anchor": "add-user",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
+      "Users (new)"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/credentials/users-new"
+    ],
+    "routerLink": null,
+    "anchor": "users-list",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
+      "Users (new)",
+      "General Info"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/credentials/users-new"
+    ],
+    "routerLink": null,
+    "anchor": "general-info",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
       "Users",
       "Add API Key"
     ],
