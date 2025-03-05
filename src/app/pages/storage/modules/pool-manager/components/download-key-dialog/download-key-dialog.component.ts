@@ -8,14 +8,11 @@ import {
 } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { EMPTY, switchMap } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
 import { helptextDownloadKey } from 'app/helptext/storage/volumes/download-key';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/modules/websocket/api.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
@@ -48,7 +45,6 @@ export class DownloadKeyDialogComponent {
   private filename: string;
 
   constructor(
-    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private loader: AppLoaderService,
     private download: DownloadService,
@@ -61,27 +57,21 @@ export class DownloadKeyDialogComponent {
   downloadKey(): void {
     this.loader.open();
 
-    this.api.call('core.download', ['pool.dataset.export_keys', [this.data.name], this.filename]).pipe(
-      switchMap(([, url]) => {
-        return this.download.streamDownloadFile(url, this.filename, 'application/json').pipe(
-          tap((file) => {
-            this.download.downloadBlob(file, this.filename);
-            this.wasDownloaded.set(true);
-          }),
-          catchError((error: unknown) => {
-            this.dialog.error(this.errorHandler.parseError(error));
-            this.wasDownloaded.set(true);
-            return EMPTY;
-          }),
-        );
-      }),
-      untilDestroyed(this),
-    ).subscribe({
-      error: (error: unknown) => {
-        this.loader.close();
-        this.dialog.error(this.errorHandler.parseError(error));
-      },
-      complete: () => this.loader.close(),
-    });
+    this.download.coreDownload({
+      method: 'pool.dataset.export_keys',
+      arguments: [this.data.name],
+      fileName: this.filename,
+      mimeType: 'application/json',
+    })
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: () => this.wasDownloaded.set(true),
+        error: (error: unknown) => {
+          this.wasDownloaded.set(true);
+          this.loader.close();
+          this.dialog.error(this.errorHandler.parseError(error));
+        },
+        complete: () => this.loader.close(),
+      });
   }
 }

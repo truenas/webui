@@ -1,6 +1,6 @@
 import { computed, Injectable } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import { of, switchMap, tap } from 'rxjs';
 import { catchError, map, startWith } from 'rxjs/operators';
@@ -78,6 +78,7 @@ export class VirtualizationInstancesStore extends ComponentStore<VirtualizationI
           }),
         );
       }),
+      untilDestroyed(this),
     );
   });
 
