@@ -10,8 +10,8 @@ import { VirtualizationDeviceType, VirtualizationType } from 'app/enums/virtuali
 import { VirtualizationDisk, VirtualizationInstance, VirtualizationProxy } from 'app/interfaces/virtualization.interface';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import {
-  IncreaseRootDiskSizeComponent,
-} from 'app/pages/instances/components/all-instances/instance-details/instance-disks/increase-root-disk-size/increase-root-disk-size.component';
+  ChangeRootDiskSetupComponent,
+} from 'app/pages/instances/components/all-instances/instance-details/instance-disks/change-root-disk-setup/change-root-disk-setup.component';
 import {
   InstanceDiskFormComponent,
 } from 'app/pages/instances/components/all-instances/instance-details/instance-disks/instance-disk-form/instance-disk-form.component';
@@ -151,12 +151,12 @@ describe('InstanceDisksComponent', () => {
     });
 
     it('opens dialog to increase root disk size when Increase link is pressed', () => {
-      const link = spectator.query('.root-disk-size .action');
-      expect(link).toHaveText('Increase');
+      const link = spectator.query('.root-disk-size .action')!;
+      expect(link).toHaveText('Change');
 
       spectator.click(link);
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(IncreaseRootDiskSizeComponent, {
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ChangeRootDiskSetupComponent, {
         data: vm,
       });
       expect(spectator.inject(VirtualizationInstancesStore).instanceUpdated).toHaveBeenCalled();
