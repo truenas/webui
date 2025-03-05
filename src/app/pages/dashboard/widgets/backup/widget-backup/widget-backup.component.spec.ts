@@ -143,7 +143,7 @@ describe('WidgetBackupComponent', () => {
         },
         providers: [
           mockProvider(WidgetResourcesService, {
-            backups$: of([[], [], []]),
+            getBackups: () => of([[], [], []]),
           }),
         ],
       });
@@ -170,7 +170,7 @@ describe('WidgetBackupComponent', () => {
         },
         providers: [
           mockProvider(WidgetResourcesService, {
-            backups$: of([replicationTasks, rsyncTasks, cloudSyncTasks]),
+            getBackups: () => of([replicationTasks, rsyncTasks, cloudSyncTasks]),
           }),
         ],
       });
@@ -214,7 +214,7 @@ describe('WidgetBackupComponent', () => {
         },
         providers: [
           mockProvider(WidgetResourcesService, {
-            backups$: of([
+            getBackups: () => of([
               [{
                 id: 1,
                 direction: Direction.Pull,
@@ -257,7 +257,7 @@ describe('WidgetBackupComponent', () => {
         },
         providers: [
           mockProvider(WidgetResourcesService, {
-            backups$: of([
+            getBackups: () => of([
               [{
                 id: 1,
                 direction: Direction.Pull,
@@ -300,7 +300,7 @@ describe('WidgetBackupComponent', () => {
         },
         providers: [
           mockProvider(WidgetResourcesService, {
-            backups$: of([
+            getBackups: () => of([
               [],
               [],
               cloudSyncTasks,
