@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, input,
+  ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -48,4 +48,8 @@ export class InstanceDetailsComponent {
 
   protected readonly searchableElements = instanceDetailsElements;
   protected readonly VirtualizationType = VirtualizationType;
+
+  protected readonly isContainer = computed(() => {
+    return this.instance().type === VirtualizationType.Container;
+  });
 }

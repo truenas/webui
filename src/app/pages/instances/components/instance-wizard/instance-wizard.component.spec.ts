@@ -331,16 +331,6 @@ describe('InstanceWizardComponent', () => {
         'I/O Bus': 'NVMe',
       });
 
-      const proxiesList = await loader.getHarness(IxListHarness.with({ label: 'Proxies' }));
-      await proxiesList.pressAddButton();
-      const proxyForm = await proxiesList.getLastListItem();
-      await proxyForm.fillForm({
-        'Host Port': 3000,
-        'Host Protocol': 'TCP',
-        'Instance Port': 2000,
-        'Instance Protocol': 'UDP',
-      });
-
       // TODO: Fix this to use IxCheckboxHarness
       const usbDeviceCheckbox = await loader.getHarness(MatCheckboxHarness.with({
         label: 'xHCI Host Controller (0003)',
@@ -391,13 +381,6 @@ describe('InstanceWizardComponent', () => {
             dev_type: VirtualizationDeviceType.Disk,
             source: '/mnt/source',
             io_bus: DiskIoBus.Nvme,
-          },
-          {
-            dev_type: VirtualizationDeviceType.Proxy,
-            source_port: 3000,
-            source_proto: VirtualizationProxyProtocol.Tcp,
-            dest_port: 2000,
-            dest_proto: VirtualizationProxyProtocol.Udp,
           },
           { dev_type: VirtualizationDeviceType.Nic, nic_type: VirtualizationNicType.Bridged, parent: 'nic1' },
           { dev_type: VirtualizationDeviceType.Usb, product_id: '0003' },
@@ -464,6 +447,14 @@ describe('InstanceWizardComponent', () => {
       }]);
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
+    });
+
+    it('does not show Proxies section when instance type is VM', async () => {
+      const instanceType = await loader.getHarness(IxIconGroupHarness.with({ label: 'Virtualization Method' }));
+      await instanceType.setValue('VM');
+
+      const proxiesList = await loader.getHarnessOrNull(IxListHarness.with({ label: 'Proxies' }));
+      expect(proxiesList).toBeNull();
     });
 
     it('creates new instance using zvol path when form is submitted', async () => {
