@@ -13,7 +13,7 @@ describe('WidgetInterfaceIpComponent', () => {
     component: WidgetInterfaceIpComponent,
     providers: [
       mockProvider(WidgetResourcesService, {
-        networkInterfaces$: of({
+        getNetworkInterfaces: jest.fn(() => of({
           isLoading: false,
           value: [
             {
@@ -45,7 +45,7 @@ describe('WidgetInterfaceIpComponent', () => {
               },
             },
           ],
-        }),
+        })),
       }),
     ],
   });

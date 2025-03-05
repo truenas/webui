@@ -143,7 +143,7 @@ describe('WidgetBackupComponent', () => {
         },
         providers: [
           mockProvider(WidgetResourcesService, {
-            backups$: of([[], [], []]),
+            getBackups: jest.fn(() => of([[], [], []])),
           }),
         ],
       });
@@ -170,7 +170,7 @@ describe('WidgetBackupComponent', () => {
         },
         providers: [
           mockProvider(WidgetResourcesService, {
-            backups$: of([replicationTasks, rsyncTasks, cloudSyncTasks]),
+            getBackups: jest.fn(() => of([replicationTasks, rsyncTasks, cloudSyncTasks])),
           }),
         ],
       });
@@ -214,7 +214,7 @@ describe('WidgetBackupComponent', () => {
         },
         providers: [
           mockProvider(WidgetResourcesService, {
-            backups$: of([
+            getBackups: jest.fn(() => of([
               [{
                 id: 1,
                 direction: Direction.Pull,
@@ -232,7 +232,7 @@ describe('WidgetBackupComponent', () => {
                 },
               }] as RsyncTask[],
               [],
-            ]),
+            ])),
           }),
         ],
       });
@@ -257,7 +257,7 @@ describe('WidgetBackupComponent', () => {
         },
         providers: [
           mockProvider(WidgetResourcesService, {
-            backups$: of([
+            getBackups: jest.fn(() => of([
               [{
                 id: 1,
                 direction: Direction.Pull,
@@ -275,7 +275,7 @@ describe('WidgetBackupComponent', () => {
                 },
               }] as RsyncTask[],
               [],
-            ]),
+            ])),
           }),
         ],
       });
@@ -300,11 +300,11 @@ describe('WidgetBackupComponent', () => {
         },
         providers: [
           mockProvider(WidgetResourcesService, {
-            backups$: of([
+            getBackups: jest.fn(() => of([
               [],
               [],
               cloudSyncTasks,
-            ]),
+            ])),
           }),
         ],
       });

@@ -134,7 +134,7 @@ export class WidgetBackupComponent implements OnInit {
 
   getBackups(): void {
     this.isLoading = true;
-    this.widgetResourcesService.backups$
+    this.widgetResourcesService.getBackups()
       .pipe(untilDestroyed(this))
       .subscribe(([replicationTasks, rsyncTasks, cloudSyncTasks]) => {
         this.isLoading = false;
