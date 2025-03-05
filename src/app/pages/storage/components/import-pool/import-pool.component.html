@@ -3,6 +3,7 @@
   [title]="helptext.import_title | translate"
   [loading]="isLoading"
 ></ix-modal-header>
+
 <mat-card>
   <mat-card-content>
     <form
@@ -14,7 +15,6 @@
         <ix-select
           [formControlName]="pool.fcName"
           [label]="pool.label | translate"
-          [tooltip]="pool.tooltip | translate"
           [options]="pool.options"
           [required]="true"
         ></ix-select>

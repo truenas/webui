@@ -13,7 +13,6 @@
       <ix-input
         formControlName="name"
         [label]="containersHelptext.name_placeholder | translate"
-        [tooltip]="containersHelptext.name_tooltip | translate"
         [required]="true"
         [hint]="containersHelptext.nameHint | translate"
       ></ix-input>
@@ -129,14 +128,12 @@
                 <ix-input
                   formControlName="name"
                   [label]="containersHelptext.env_name_placeholder | translate"
-                  [tooltip]="containersHelptext.env_name_tooltip | translate"
                   [required]="true"
                 ></ix-input>
 
                 <ix-input
                   formControlName="value"
                   [label]="containersHelptext.env_value_placeholder | translate"
-                  [tooltip]="containersHelptext.env_value_tooltip | translate"
                   [required]="true"
                 ></ix-input>
               </div>
@@ -183,7 +180,6 @@
               formControlName="source"
               root="/"
               [label]="containersHelptext.disks_src_placeholder | translate"
-              [tooltip]="containersHelptext.disks_src_tooltip | translate"
               [required]="true"
               [nodeProvider]="directoryNodeProvider()"
               [canCreateDataset]="true"
@@ -233,7 +229,6 @@
                 class="protocol"
                 formControlName="source_proto"
                 [label]="containersHelptext.host_protocol_placeholder | translate"
-                [tooltip]="containersHelptext.host_protocol_tooltip | translate"
                 [required]="true"
                 [options]="proxyProtocols$"
               ></ix-select>
@@ -263,7 +258,6 @@
                 type="number"
                 formControlName="dest_port"
                 [label]="containersHelptext.instance_port_placeholder | translate"
-                [tooltip]="containersHelptext.instance_port_tooltip | translate"
                 [required]="true"
               ></ix-input>
             </div>
@@ -279,7 +273,6 @@
       <ix-checkbox
         formControlName="use_default_network"
         [label]="containersHelptext.network_use_default_placeholder | translate"
-        [tooltip]="containersHelptext.network_use_default_tooltip | translate"
       ></ix-checkbox>
 
       @if (!form.controls.use_default_network.value) {
@@ -295,7 +288,6 @@
               <ix-checkbox-list
                 formControlName="bridged_nics"
                 [label]="containersHelptext.network_bridged_nics_placeholder | translate"
-                [tooltip]="containersHelptext.network_bridged_nics_tooltip | translate"
                 [options]="bridgedNicDevices$"
               ></ix-checkbox-list>
             }
@@ -310,7 +302,6 @@
               <ix-checkbox-list
                 formControlName="mac_vlan_nics"
                 [label]="containersHelptext.network_mac_vlan_nics_placeholder | translate"
-                [tooltip]="containersHelptext.network_mac_vlan_nics_tooltip | translate"
                 [options]="macVlanNicDevices$"
               ></ix-checkbox-list>
             }
@@ -344,7 +335,6 @@
         <ix-checkbox-list
           formControlName="usb_devices"
           [label]="containersHelptext.usb_devices_placeholder | translate"
-          [tooltip]="containersHelptext.usb_devices_tooltip | translate"
           [options]="usbDevices$"
         ></ix-checkbox-list>
       </ix-form-section>

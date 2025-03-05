@@ -12,21 +12,18 @@
           <ix-input
             formControlName="name"
             [label]="'Name' | translate"
-            [tooltip]="helptext.disk_form_name_tooltip | translate"
             [readonly]="true"
           ></ix-input>
 
           <ix-input
             formControlName="serial"
             [label]="'Serial' | translate"
-            [tooltip]="helptext.disk_form_serial_tooltip | translate"
             [readonly]="true"
           ></ix-input>
 
           <ix-input
             formControlName="description"
             [label]="'Description' | translate"
-            [tooltip]="helptext.disk_form_description_tooltip | translate"
           ></ix-input>
         </ix-fieldset>
 
@@ -69,7 +66,6 @@
           formControlName="advpowermgmt"
           [required]="true"
           [label]="'Advanced Power Management' | translate"
-          [tooltip]="helptext.disk_form_advpowermgmt_tooltip | translate"
           [options]="advpowermgmtOptions$"
         ></ix-select>
       </ix-fieldset>
@@ -97,7 +93,6 @@
             <ix-checkbox
               formControlName="clear_pw"
               [label]="'Clear SED Password' | translate"
-              [tooltip]="helptext.clear_pw.tooltip | translate"
             ></ix-checkbox>
           </ix-fieldset>
         }

@@ -7,8 +7,6 @@ export const helptextInterfacesForm = {
  connections into a single interface. A <i>Virtual LAN (VLAN)</i> partitions\
  and isolates a segment of the connection. Read-only when editing an\
  interface.'),
-  int_interface_tooltip: T('Enter the device name of the\
- interface. This cannot be changed after the interface is created.'),
   int_description_tooltip: T('Enter a description of the interface.'),
   int_name_tooltip: T('Enter a name for the interface.\
  Use the format <samp>bond<i>X</i></samp>,\
@@ -24,7 +22,6 @@ export const helptextInterfacesForm = {
  on this TrueNAS controller. The alias can be an IPv4 or IPv6 \
  address.'),
   bridge_members_tooltip: T('Network interfaces to include in the bridge.'),
-  bridge_stp_tooltip: T('Enable/Disable STP on the bridge interfaces configurable.'),
   failover_critical_tooltip: T('Interfaces marked <i>critical</i> are\
  considered necessary for normal operation. When the last critical\
  interface in a failover group is preempted by the other storage\
@@ -36,9 +33,6 @@ export const helptextInterfacesForm = {
  interface trigger a failover when that interface fails. Configuring the \
  system to failover when any interface fails requires marking each \
  interface as critical and placing them in separate groups.'),
-  failover_vhid_tooltip: T('Unique Virtual Host ID on the broadcast \
- segment of the network. Configuring multiple Virtual IP addresses \
- requires a separate VHID for each address.'),
   failover_alias_address_tooltip: T('Alias for the identical interface \
  on the other TrueNAS controller. The alias can be an IPv4 or IPv6 address.'),
   failover_virtual_alias_address_tooltip: T('Define an alias that can \
@@ -51,10 +45,6 @@ export const helptextInterfacesForm = {
   vlan_pcp_tooltip: T('Select the Class of Service. The available 802.1p\
  Class of Service ranges from <i>Best effort (default)</i> \
  to <i>Network control (highest)</i>.'),
-  lagg_protocol_tooltip: T('Determines the outgoing and incoming traffic ports.<br> \
- <i>LACP</i> is the recommended protocol if the network switch is capable of \
- active LACP.<br><i>Failover</i> is the default protocol choice and \
- should only be used if the network switch does not support active LACP.'),
   lagg_interfaces_tooltip: T('Select the interfaces to use in the aggregation.<br>\
  Warning: Link Aggregation creation fails if any of the selected\
  interfaces have been manually configured.'),

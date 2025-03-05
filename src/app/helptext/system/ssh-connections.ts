@@ -22,7 +22,6 @@ export const helptextSshConnections = {
   sudo_tooltip: T('Checking this option will lead to <i>/usr/sbin/zfs</i> being allowed to be executed using sudo without password.\
     If not checked, <i>zfs allow</i> must be used to grant non-user permissions to perform ZFS tasks. Mounting ZFS filesystems by non-root still would not be possible due to Linux restrictions.'),
 
-  private_key_placeholder: T('Private Key'),
   private_key_tooltip: T('Choose a saved SSH Keypair or select \
  <i>Generate New</i> to create a new keypair and use it for this \
  connection.'),

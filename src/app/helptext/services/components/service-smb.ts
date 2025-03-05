@@ -53,11 +53,6 @@ export const helptextServiceSmb = {
  and automatically have privileges to take ownership of any file in an SMB\
  share, reset permissions, and administer the SMB server through the\
  Computer Management MMC snap-in.'),
-  cifs_srv_smb_options_tooltip: T('Enter additional <b>smb.conf</b> options. See the \
- <a href="http://www.oreilly.com/openbook/samba/book/appb_02.html" target="_blank">Samba Guide</a> \
- for more information on these settings.<br> \
- To log more details when a client attempts to authenticate to the share, add \
- <code>log level = 1, auth_audit:5</code>.'),
   cifs_srv_bindip_tooltip: T('Static IP addresses which SMB listens on for connections. \
  Leaving all unselected defaults to listening on all active interfaces.'),
 };

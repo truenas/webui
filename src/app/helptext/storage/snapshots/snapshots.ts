@@ -2,7 +2,6 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const helptextSnapshots = {
   snapshot_add_dataset_placeholder: T('Dataset'),
-  snapshot_add_dataset_tooltip: T('Select a dataset or zvol.'),
 
   snapshot_add_name_placeholder: T('Name'),
   snapshot_add_name_tooltip: T('Unique snapshot name. Cannot be used with \
@@ -51,5 +50,4 @@ export const helptextSnapshots = {
     button_show: T('Show'),
     button_hide: T('Hide'),
   },
-
 };

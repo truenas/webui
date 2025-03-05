@@ -133,10 +133,6 @@ matches your certificate usage scenario.'),
     },
   },
 
-  list: {
-    action_sign: T('Sign CSR'),
-  },
-
   sign: {
     csr_cert_id: {
       tooltip: T(

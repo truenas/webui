@@ -55,9 +55,6 @@ export class PullImageFormComponent {
 
   readonly tooltips = {
     image: helptextApps.pullImageForm.imageName.tooltip,
-    tag: helptextApps.pullImageForm.imageTags.tooltip,
-    username: helptextApps.pullImageForm.username.tooltip,
-    password: helptextApps.pullImageForm.password.tooltip,
   };
 
   constructor(

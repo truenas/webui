@@ -28,10 +28,6 @@ export const helptextSystemTunable = {
     ),
   },
 
-  description: {
-    tooltip: T('Enter a description of the tunable.'),
-  },
-
   enabled: {
     tooltip: T(
       'Enable this tunable. Unset to disable this tunable\

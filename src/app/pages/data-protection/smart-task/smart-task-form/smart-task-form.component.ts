@@ -84,10 +84,7 @@ export class SmartTaskFormComponent implements OnInit {
   isAllDisksSelected$ = this.form.select((values) => values.all_disks);
 
   readonly tooltips = {
-    disks: helptextSmart.smarttest_disks_tooltip,
     type: helptextSmart.smarttest_type_tooltip,
-    desc: helptextSmart.smarttest_desc_tooltip,
-    schedule: helptextSmart.smarttest_picker_tooltip,
   };
 
   readonly diskOptions$ = this.api.call('smart.test.disk_choices').pipe(choicesToOptions());

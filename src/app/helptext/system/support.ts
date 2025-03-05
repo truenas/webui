@@ -67,14 +67,6 @@ export const helptextSystemSupport = {
     ),
   },
 
-  environment: {
-    tooltip: T('Select the appropriate environment.'),
-  },
-
-  criticality: {
-    tooltip: T('Select the appropriate level of criticality.'),
-  },
-
   attach_debug: {
     tooltip: T(
       'Set to generate and attach to the new issue a report\
@@ -85,7 +77,7 @@ export const helptextSystemSupport = {
   },
 
   title: {
-    tooltip: T('Enter a descriptive title for the new issue.'),
+    placeholder: T('Enter a descriptive title for the new issue.'),
   },
 
   body: {
@@ -107,10 +99,6 @@ export const helptextSystemSupport = {
     reload_dialog_action: T('Reload now'),
   },
 
-  is_production_error_dialog: {
-    title: T('Error Updating Production Status'),
-  },
-
   is_production_dialog: {
     message: T('Production status successfully updated'),
   },
@@ -127,10 +115,6 @@ export const helptextSystemSupport = {
   updateTxt: T('Update License'),
   enterTxt: T('Add License'),
   ticket: T('File Ticket'),
-  debugSizeLimitWarning: T('The ticket was created successfully (see link below), but the debug file\
-   failed to attach. Please download the debug manually \
-   (System → Advanced → Save Debug), upload it to a third-party storage service and provide\
-    a link in the JIRA issue comment.'),
 
   attachmentsFailed: {
     title: T('Attachments not uploaded'),

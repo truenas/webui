@@ -119,7 +119,6 @@ export const helptextIdmap = {
       message: T('The Idmap cache should be cleared after finalizing idmap changes. \
  Click "Continue" to clear the cache.'),
       job_title: T('Clearing Cache...'),
-      success_title: T('Success'),
       success_msg: T('The cache has been cleared.'),
     },
   },

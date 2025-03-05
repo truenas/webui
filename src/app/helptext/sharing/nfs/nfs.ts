@@ -10,23 +10,11 @@ export const helptextSharingNfs = {
   // NFSFormComponent
   tooltip_path: T('Full path to the pool, dataset or directory to share. \
   The path must reside within a pool. Mandatory.'),
-  error_alias: T('The <i>Alias</i> field can either be left empty or \
- have an alias defined for each path in the share.'),
   tooltip_comment: T(
     'Provide helpful notations related to the share, e.g. ‘Shared to everybody’. \
     Maximum length is 120 characters.',
   ),
-  tooltip_alldirs: T(
-    'Set to allow the client to mount any\
- subdirectory within the <b>Path</b>.',
-  ),
   tooltip_ro: T('Set to prohibit writing to the share.'),
-  tooltip_quiet: T(
-    'Set to inhibit some syslog diagnostics\
- to avoid error messages. See\
- <a href="https://man7.org/linux/man-pages/man5/exports.5.html"\
- target="_blank">exports(5)</a> for examples.',
-  ),
   tooltip_enabled: T('Enable this NFS share. Unset to disable this NFS share \
  without deleting it.'),
   tooltip_expose_snapshots: T('Allow accessing ZFS snapshots over the NFS protocol.'),

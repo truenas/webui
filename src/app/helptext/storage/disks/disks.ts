@@ -4,21 +4,11 @@ import { DiskStandby } from 'app/enums/disk-standby.enum';
 
 export const helptextDisks = {
   fieldset_smart: 'S.M.A.R.T.',
-  disk_form_title: T('Edit Disk'),
   fieldset_disk: T('General'),
   fieldset_powermgmt: T('Power Management'),
   fieldset_temperature: T('Temperature Alerts'),
   fieldset_sed: T('SED'),
-  disk_form_name_placeholder: T('Name'),
-  disk_form_name_tooltip: T('Disk device name.'),
 
-  disk_form_serial_placeholder: T('Serial'),
-  disk_form_serial_tooltip: T('Serial number for this disk.'),
-
-  disk_form_description_placeholder: T('Description'),
-  disk_form_description_tooltip: T('Notes about this disk.'),
-
-  disk_form_hddstandby_placeholder: T('HDD Standby'),
   disk_form_hddstandby_tooltip: T('Minutes of inactivity before the drive enters standby mode. Temperature monitoring is disabled for standby disks.'),
 
   disk_form_hddstandby_options: [
@@ -35,8 +25,6 @@ export const helptextDisks = {
     { label: '330', value: DiskStandby.Minutes330 },
   ],
 
-  disk_form_advpowermgmt_placeholder: T('Advanced Power Management'),
-  disk_form_advpowermgmt_tooltip: T('Select a power management profile from the menu.'),
   disk_form_advpowermgmt_options: [
     { label: T('Disabled'), value: DiskPowerLevel.Disabled },
     { label: T('Level 1 - Minimum power usage with Standby (spindown)'), value: DiskPowerLevel.Level1 },
@@ -47,26 +35,21 @@ export const helptextDisks = {
     { label: T('Level 254 - Maximum performance, maximum power usage'), value: DiskPowerLevel.Level254 },
   ],
 
-  disk_form_togglesmart_placeholder: T('Enable S.M.A.R.T.'),
   disk_form_togglesmart_tooltip: T('Controls whether \
  <a href="https://www.truenas.com/docs/scale/scaleuireference/dataprotection/smarttestsscreensscale/" target="_blank">SMART monitoring and scheduled SMART tests</a> \
  are enabled.'),
 
-  disk_form_critical_placeholder: T('Critical'),
   disk_form_critical_tooltip: T('Threshold temperature in Celsius. If the\
  drive temperature is higher than this value, a LOG_CRIT level log entry\
  is created and an email is sent. <i>0</i> disables this check.'),
 
-  disk_form_difference_placeholder: T('Difference'),
   disk_form_difference_tooltip: T('Report if the temperature of a drive\
  has changed by this many degrees Celsius since the last report.\
  <i>0</i> disables the report.'),
 
-  disk_form_informational_placeholder: T('Informational'),
   disk_form_informational_tooltip: T('Report if drive temperature is at or\
  above this temperature in Celsius. <i>0</i> disables the report.'),
 
-  disk_form_passwd_placeholder: T('SED Password'),
   disk_form_passwd_tooltip: T('Set or change the password of this SED. \
  This password is used instead of the global SED password.'),
 
@@ -87,7 +70,6 @@ export const helptextDisks = {
 
   clear_pw: {
     placeholder: T('Clear SED Password'),
-    tooltip: T('Clear the SED password for this disk.'),
   },
 
   dw_wipe_method_tooltip: T('<i>Quick</i> erases only the partitioning information\
@@ -97,8 +79,6 @@ export const helptextDisks = {
  disk with random binary data.'),
 
   diskWipeDialogForm: {
-    confirmContent: T('Wipe this disk?'),
-    startDescription: T('Wiping disk...'),
     infoContent: T('Disk Wiped successfully'),
   },
 };

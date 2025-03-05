@@ -5,11 +5,6 @@ export enum TicketType {
   Suggestion = 'FEATURE',
 }
 
-export const ticketTypeLabels = new Map<TicketType, string>([
-  [TicketType.Bug, T('Bug')],
-  [TicketType.Suggestion, T('Suggestion')],
-]);
-
 export enum TicketCategory {
   Bug = 'BUG',
   Hardware = 'HARDWARE',

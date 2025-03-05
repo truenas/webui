@@ -11,13 +11,7 @@ export const helptextSharingSmb = {
 
   placeholder_path: T('Path'),
   tooltip_path: T('Select pool, dataset, or directory to share.'),
-  errormsg_name: T(
-    '<i>global</i> is a reserved name that cannot be used as a share\
- name. Please enter a different share name.',
-  ),
-
   placeholder_name: T('Name'),
-  tooltip_name: T('Enter a name for the share.'),
 
   placeholder_comment: T('Description'),
   tooltip_comment: T('Description of the share or notes on how it is used.'),
@@ -148,7 +142,7 @@ export const helptextSharingSmb = {
   tooltip_streams: T(
     'Allows multiple \
  <a href="http://www.ntfs.com/ntfs-multiple.htm">NTFS data streams</a>. \
- Disabling this option causes MacOS to write streams to files on the filesystem.',
+ Disabling this option causes macOS to write streams to files on the filesystem.',
   ),
 
   placeholder_durablehandle: T('Enable SMB2/3 Durable Handles'),
@@ -180,53 +174,13 @@ export const helptextSharingSmb = {
   placeholder_auxsmbconf: T('Additional Parameters String'),
   tooltip_auxsmbconf: T('String of additional smb4.conf parameters not covered by the system\'s API.'),
 
-  actions_basic_mode: T('Basic Mode'),
-  actions_advanced_mode: T('Advanced Mode'),
-
   action_share_acl: T('Edit Share ACL'),
   action_edit_acl: T('Edit Filesystem ACL'),
-  action_edit_acl_dialog: {
-    title: T('Error'),
-  },
-
-  dialog_warning: T('Warning'),
-  dialog_warning_message: T(
-    'Setting default permissions will reset the permissions of this share and any others within its path.',
-  ),
-
-  dialog_edit_acl_title: T('Configure ACL'),
-  dialog_edit_acl_message: T(
-    "Configure permissions for this share's dataset now?",
-  ),
-  dialog_edit_acl_button: T('Configure now'),
-
-  restart_smb_dialog: {
-    title: T('Restart SMB Service?'),
-    message_time_machine: T(
-      'Enabling <em>Time Machine</em> on an SMB share requires restarting the SMB service.',
-    ),
-    message_allow_deny: T(
-      'Changes to <em>Hosts Allow</em> or <em>Hosts Deny</em> take effect when the \
- SMB service restarts.',
-    ),
-    action_btn: T('Save and Restart SMB Now'),
-    cancel_btn: T('Save Without Restarting'),
-  },
   restarted_smb_dialog: {
     title: T('SMB Service'),
     message: T('The SMB service has been restarted.'),
   },
 
-  // share acl
-  ae_who_sid_tooltip: T(
-    'Who this ACL entry applies to, shown as a\
- <a href="https://docs.microsoft.com/en-us/windows/win32/secauthz/security-identifiers" target="_blank">Windows\
- Security Identifier</a>. Either a <i>SID</i> or a <i>Domain</i> and <i>Name</i> is required for this ACL.',
-  ),
-  ae_who_name_domain_tooltip: T('The domain for local users is the NetBIOS name of the TrueNAS server.'),
-  ae_who_name_name_tooltip: T(
-    'Who this ACL entry applies to, shown as a user name. Requires adding the user <i>Domain</i>.',
-  ),
   ae_perm_tooltip: T(
     'Predefined permission combinations:<br><i>Read</i>:\
  Read access and Execute permission on the object (RX).<br><i>Change</i>: Read\

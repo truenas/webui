@@ -77,9 +77,6 @@ export class ApiKeyFormComponent implements OnInit {
 
   protected readonly username = toSignal(this.currentUsername$);
   protected readonly tooltips = {
-    name: helptextApiKeys.name.tooltip,
-    expires: helptextApiKeys.expires.tooltip,
-    username: helptextApiKeys.username.tooltip,
     reset: helptextApiKeys.reset.tooltip,
     nonExpiring: helptextApiKeys.nonExpiring.tooltip,
   };

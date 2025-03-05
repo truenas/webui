@@ -22,12 +22,6 @@ export const helptextDashboard = {
     appdefaults: T('Appdefaults Auxiliary Parameters'),
     libdefaults: T('Libdefaults Auxiliary Parameters'),
   },
-  kerberosRealms: {
-    title: T('Kerberos Realms'),
-  },
-  kerberosKeytab: {
-    title: T('Kerberos Keytab'),
-  },
   advancedEdit: {
     title: T('Warning'),
     message: T('Changing Advanced settings can be dangerous when done incorrectly. Please use caution before saving.'),

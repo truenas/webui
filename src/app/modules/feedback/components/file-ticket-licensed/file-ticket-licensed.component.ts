@@ -104,9 +104,7 @@ export class FileTicketLicensedComponent {
     cc: helptext.cc.tooltip,
     phone: helptext.phone.tooltip,
     category: helptext.type.tooltip,
-    environment: helptext.environment.tooltip,
-    criticality: helptext.criticality.tooltip,
-    title: helptext.title.tooltip,
+    title: helptext.title.placeholder,
     attach_debug: helptext.attach_debug.tooltip,
   };
 

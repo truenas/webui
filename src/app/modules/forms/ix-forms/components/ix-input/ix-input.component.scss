@@ -80,7 +80,7 @@
 
 .input-container {
   .toggle_pw {
-    @include variable(display, --toggle_pw_display_prop, $toggle-pw-display-prop);
+    @include variable(display, --toggle_pw_display_prop, 'inline');
     opacity: var(--disabled-opacity);
   }
 

@@ -68,7 +68,7 @@ export class FileTicketComponent {
   protected readonly acceptedFiles = ticketAcceptedFiles;
 
   protected readonly tooltips = {
-    title: helptext.title.tooltip,
+    title: helptext.title.placeholder,
     attach_debug: helptext.attach_debug.tooltip,
   };
 

@@ -87,7 +87,6 @@ export class InitShutdownFormComponent implements OnInit {
   readonly whenOptions$ = of(mapToOptions(initShutdownScriptWhenLabels, this.translate));
 
   readonly tooltips = {
-    comment: helptextInitShutdown.ini_description_tooltip,
     type: helptextInitShutdown.ini_type_tooltip,
     command: helptextInitShutdown.ini_command_tooltip,
     script: helptextInitShutdown.ini_script_tooltip,
