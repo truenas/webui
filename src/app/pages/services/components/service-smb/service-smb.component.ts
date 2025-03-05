@@ -15,7 +15,6 @@ import { SmbEncryption, smbEncryptionLabels } from 'app/enums/smb-encryption.enu
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextServiceSmb } from 'app/helptext/services/components/service-smb';
-import { BindIp } from 'app/interfaces/bind-ip.interface';
 import { SmbConfigUpdate } from 'app/interfaces/smb-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SimpleAsyncComboboxProvider } from 'app/modules/forms/ix-forms/classes/simple-async-combobox-provider';
@@ -37,6 +36,10 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { UserService } from 'app/services/user.service';
+
+interface BindIp {
+  bindIp: string;
+}
 
 @UntilDestroy({ arrayName: 'subscriptions' })
 @Component({
