@@ -211,9 +211,7 @@ export class InstanceWizardComponent {
   protected readonly isVm = computed(() => this.instanceType() === VirtualizationType.Vm);
 
   readonly directoryNodeProvider = computed(() => {
-    const providerOptions = this.isVm()
-      ? { zvolsOnly: true }
-      : { datasetsAndZvols: true };
+    const providerOptions = this.isVm() ? { zvolsOnly: true } : { datasetsOnly: true };
 
     return this.filesystem.getFilesystemNodeProvider(providerOptions);
   });
