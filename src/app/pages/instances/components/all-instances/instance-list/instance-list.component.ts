@@ -57,7 +57,6 @@ export class InstanceListComponent {
   protected readonly isLoading = this.store.isLoading;
 
   protected readonly selectedInstance = this.deviceStore.selectedInstance;
-
   get isAllSelected(): boolean {
     return this.selection.selected.length === this.filteredInstances().length;
   }
@@ -101,12 +100,17 @@ export class InstanceListComponent {
     private searchDirectives: UiSearchDirectivesService,
   ) {
     effect(() => {
-      if (this.instanceId()) {
-        this.deviceStore.selectInstance(this.instanceId()); // Corrected to call this.instanceId()
+      const instanceId = this.instanceId();
+      if (instanceId) {
+        this.deviceStore.selectInstance(instanceId);
+        if (this.selectedInstance() === null) {
+          this.router.navigate(['/instances']);
+        }
       }
-      if (this.instances()?.length > 0) {
-        if (!this.instanceId()) {
-          this.navigateToDetails(this.instances()[0]);
+      const instances = this.instances();
+      if (instances?.length > 0) {
+        if (!instanceId) {
+          this.navigateToDetails(instances[0]);
         }
 
         setTimeout(() => {
