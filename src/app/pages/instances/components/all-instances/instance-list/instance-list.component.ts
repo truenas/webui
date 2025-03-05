@@ -6,12 +6,11 @@ import {
   input,
   effect,
 } from '@angular/core';
-import { toObservable } from '@angular/core/rxjs-interop';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { filter, switchMap } from 'rxjs';
+import { injectParams } from 'ngxtension/inject-params';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
@@ -46,6 +45,7 @@ import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtual
 })
 
 export class InstanceListComponent {
+  readonly instanceId = injectParams('id');
   readonly isMobileView = input<boolean>();
   readonly toggleShowMobileDetails = output<boolean>();
 
@@ -101,21 +101,12 @@ export class InstanceListComponent {
     private deviceStore: VirtualizationDevicesStore,
     private searchDirectives: UiSearchDirectivesService,
   ) {
-    toObservable(this.instances).pipe(
-      filter((instances) => !!instances?.length),
-      switchMap(() => this.activatedRoute.params),
-      untilDestroyed(this),
-    ).subscribe((params) => {
-      const instanceId = params.id as string;
-      if (instanceId && this.instances().some((instance) => instance.id === instanceId)) {
-        this.deviceStore.selectInstance(instanceId);
-      } else {
-        this.navigateToDetails(this.instances()[0]);
-      }
-    });
-
     effect(() => {
-      if (this.instances()?.length > 0) {
+      if (this.instanceId()) {
+        this.deviceStore.selectInstance(this.instanceId());
+      } else if (this.instances()?.length > 0) {
+        this.navigateToDetails(this.instances()[0]);
+
         setTimeout(() => {
           this.handlePendingGlobalSearchElement();
         });
@@ -149,6 +140,7 @@ export class InstanceListComponent {
   }
 
   private handlePendingGlobalSearchElement(): void {
+    console.info('handlePendingGlobalSearchElement called');
     const pendingHighlightElement = this.searchDirectives.pendingUiHighlightElement;
 
     if (pendingHighlightElement) {
