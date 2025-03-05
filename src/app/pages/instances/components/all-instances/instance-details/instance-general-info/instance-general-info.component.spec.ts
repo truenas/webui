@@ -11,7 +11,7 @@ import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
-import { VirtualizationStatus, VirtualizationType } from 'app/enums/virtualization.enum';
+import { DiskIoBus, VirtualizationStatus, VirtualizationType } from 'app/enums/virtualization.enum';
 import { VirtualizationAlias, VirtualizationImage, VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
@@ -52,6 +52,7 @@ const instance = {
   vnc_enabled: true,
   vnc_password: '123456',
   secure_boot: true,
+  root_disk_io_bus: DiskIoBus.Nvme,
   vnc_port: 9000,
 } as VirtualizationInstance;
 
