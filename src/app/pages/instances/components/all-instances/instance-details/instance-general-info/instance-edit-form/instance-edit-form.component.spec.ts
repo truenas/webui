@@ -111,7 +111,6 @@ describe('InstanceEditFormComponent', () => {
         autostart: true,
         cpu: '2-5',
         memory: GiB,
-        environment: {},
         enable_vnc: true,
         vnc_port: 9000,
         vnc_password: 'testing',
