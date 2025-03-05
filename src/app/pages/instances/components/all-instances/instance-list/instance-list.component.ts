@@ -7,7 +7,7 @@ import {
   effect,
 } from '@angular/core';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { injectParams } from 'ngxtension/inject-params';
@@ -96,16 +96,18 @@ export class InstanceListComponent {
   constructor(
     private store: VirtualizationInstancesStore,
     private router: Router,
-    private activatedRoute: ActivatedRoute,
     private translate: TranslateService,
     private deviceStore: VirtualizationDevicesStore,
     private searchDirectives: UiSearchDirectivesService,
   ) {
     effect(() => {
       if (this.instanceId()) {
-        this.deviceStore.selectInstance(this.instanceId());
-      } else if (this.instances()?.length > 0) {
-        this.navigateToDetails(this.instances()[0]);
+        this.deviceStore.selectInstance(this.instanceId()); // Corrected to call this.instanceId()
+      }
+      if (this.instances()?.length > 0) {
+        if (!this.instanceId()) {
+          this.navigateToDetails(this.instances()[0]);
+        }
 
         setTimeout(() => {
           this.handlePendingGlobalSearchElement();
@@ -140,7 +142,6 @@ export class InstanceListComponent {
   }
 
   private handlePendingGlobalSearchElement(): void {
-    console.info('handlePendingGlobalSearchElement called');
     const pendingHighlightElement = this.searchDirectives.pendingUiHighlightElement;
 
     if (pendingHighlightElement) {
