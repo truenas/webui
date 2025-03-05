@@ -77,6 +77,19 @@ export class ChangeRootDiskSetupComponent {
       root_disk_io_bus: this.form.value.root_disk_io_bus,
     };
 
+    if (payload.root_disk_size === Number(this.instance.root_disk_size) / GiB) {
+      delete payload.root_disk_size;
+    }
+
+    if (payload.root_disk_io_bus === this.instance.root_disk_io_bus) {
+      delete payload.root_disk_io_bus;
+    }
+
+    if (!Object.keys(payload).length) {
+      this.dialogRef.close();
+      return;
+    }
+
     this.dialogService.jobDialog(
       this.api.job('virt.instance.update', [this.instance.id, payload]),
       { title: this.translate.instant('Increasing disk size') },
