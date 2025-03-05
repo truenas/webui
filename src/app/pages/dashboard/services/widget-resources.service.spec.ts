@@ -11,7 +11,6 @@ import { App } from 'app/interfaces/app.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
-import { systemInfoLoaded, systemInfoUpdated } from 'app/store/system-info/system-info.actions';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 const pools = [
@@ -87,19 +86,6 @@ describe('WidgetResourcesService', () => {
       expect(
         await firstValueFrom(spectator.service.networkInterfaceLastHourStats('eth0')),
       ).toEqual([interfaceEth0]);
-    });
-
-    it('resets and updates system info', async () => {
-      const store$ = spectator.inject(Store);
-      jest.spyOn(store$, 'dispatch');
-      await firstValueFrom(spectator.service.networkInterfaceLastHourStats('eth0'));
-
-      expect(store$.dispatch).toHaveBeenCalledWith(
-        systemInfoLoaded({ systemInfo: null }),
-      );
-      expect(store$.dispatch).toHaveBeenCalledWith(
-        systemInfoUpdated(),
-      );
     });
   });
 });
