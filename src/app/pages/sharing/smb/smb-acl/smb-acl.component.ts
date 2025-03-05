@@ -22,9 +22,9 @@ import { Option } from 'app/interfaces/option.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { SmbSharesecAce } from 'app/interfaces/smb-share.interface';
 import { User } from 'app/interfaces/user.interface';
+import { GroupComboboxProvider } from 'app/modules/forms/ix-forms/classes/group-combobox-provider';
 import { SmbBothComboboxProvider } from 'app/modules/forms/ix-forms/classes/smb-both-combobox-provider';
-import { SmbGroupComboboxProvider } from 'app/modules/forms/ix-forms/classes/smb-group-combobox-provider';
-import { SmbUserComboboxProvider } from 'app/modules/forms/ix-forms/classes/smb-user-combobox-provider';
+import { UserComboboxProvider } from 'app/modules/forms/ix-forms/classes/user-combobox-provider';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
@@ -117,8 +117,8 @@ export class SmbAclComponent implements OnInit {
   readonly helptext = helptextSharingSmb;
   readonly nfsAclTag = NfsAclTag;
   readonly bothProvider = new SmbBothComboboxProvider(this.userService, 'uid', 'gid');
-  readonly userProvider = new SmbUserComboboxProvider(this.userService, 'uid');
-  protected groupProvider: SmbGroupComboboxProvider;
+  readonly userProvider = new UserComboboxProvider(this.userService, { valueField: 'uid', queryType: 'smb' });
+  protected groupProvider: GroupComboboxProvider;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -277,21 +277,26 @@ export class SmbAclComponent implements OnInit {
         const initialOptions: Option[] = [];
 
         if (response.length) {
+          const firstItem = response[0] as Group | User;
           let option: Option;
-          if ((response as Group[])[0].gid) {
-            option = { label: (response as Group[])[0].group, value: (response as Group[])[0].gid };
-          } else if (
-            (response as User[])[0].uid
-            || (response as User[])[0].uid?.toString() === '0'
-          ) {
-            option = { label: (response as User[])[0].username, value: (response as User[])[0].uid };
+
+          if ('gid' in firstItem) {
+            option = { label: firstItem.group, value: firstItem.gid };
+          } else if ('uid' in firstItem || (firstItem as User).uid?.toString() === '0') {
+            option = { label: firstItem.username, value: firstItem.uid };
           } else {
             return;
           }
+
           initialOptions.push(option);
         }
 
-        this.groupProvider = new SmbGroupComboboxProvider(this.userService, 'gid', initialOptions);
+        this.groupProvider = new GroupComboboxProvider(this.userService, {
+          valueField: 'gid',
+          initialOptions,
+          queryType: 'smb',
+        });
+
         this.isLoading = false;
         this.cdr.markForCheck();
       });
