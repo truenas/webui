@@ -119,7 +119,7 @@ export class IxFormGlossaryComponent implements OnInit {
   }
 
   private initializeSectionValidity(section: IxFormSectionComponent, controls: NgControl[]): void {
-    const isSectionValid = controls.every((control) => (control ? control.valid : true));
+    const isSectionValid = controls.every((control) => (control ? (control.valid || control.disabled) : true));
     this.sectionsValidity.set(section, isSectionValid);
   }
 
@@ -129,7 +129,7 @@ export class IxFormGlossaryComponent implements OnInit {
     valid: boolean,
   ): void {
     const sectionControlValidities = this.sectionControlsValidities.get(section) || new Map<NgControl, boolean>();
-    sectionControlValidities.set(control, valid);
+    sectionControlValidities.set(control, control?.disabled || valid);
 
     this.sectionControlsValidities.set(section, sectionControlValidities);
     this.sectionsValidity.set(section, Array.from(sectionControlValidities.values()).every(Boolean));
