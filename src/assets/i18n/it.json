@@ -1,6 +1,8 @@
 {
   "": "",
   "Edit Disks": "",
+  "Incus": "",
+  "List": "",
   "Set to use a snapshot of the dataset before a <i>PUSH</i>.": "",
   "Truenas Connect Service": "",
   "\n              It looks like your session has been inactive for more than {lifetime} seconds.<br>\n              For security reasons we will log you out at {time}.\n            ": "\nSembra che la tua sessione sia stata inattiva per più di {lifetime} secondi.<br>\nPer motivi di sicurezza, verrai disconnesso alle {time}.",
