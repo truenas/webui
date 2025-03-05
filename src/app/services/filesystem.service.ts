@@ -18,6 +18,7 @@ export interface ProviderOptions {
   includeSnapshots?: boolean;
   datasetsAndZvols?: boolean;
   zvolsOnly?: boolean;
+  datasetsOnly?: boolean;
 }
 
 const roolZvolNode = {
@@ -50,6 +51,7 @@ export class FilesystemService {
       includeSnapshots: true,
       datasetsAndZvols: false,
       zvolsOnly: false,
+      datasetsOnly: false,
       ...providerOptions,
     };
 
@@ -59,6 +61,9 @@ export class FilesystemService {
       }
       if (options.zvolsOnly && node.data.path.trim() === '/') {
         return of([roolZvolNode]);
+      }
+      if (options.datasetsOnly && node.data.path.trim() === '/') {
+        return of([roolDatasetNode]);
       }
       const typeFilter: [QueryFilter<FileRecord>?] = [];
       if (options.directoriesOnly) {
