@@ -130,7 +130,7 @@ describe('SnapshotTaskListComponent', () => {
   });
 
   it('shows form to edit an existing task when Edit button is pressed', async () => {
-    await table.clickToggle(0);
+    await table.expandRow(0);
 
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
     await editButton.click();
@@ -149,7 +149,7 @@ describe('SnapshotTaskListComponent', () => {
   it('deletes a Cloud Sync with confirmation when Delete button is pressed', async () => {
     jest.spyOn(spectator.inject(DialogService), 'confirm');
 
-    await table.clickToggle(0);
+    await table.expandRow(0);
 
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
     await deleteButton.click();

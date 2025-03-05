@@ -65,6 +65,7 @@ describe('NtpServerFormComponent', () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
         Address: 'ua.pool.ntp.org',
+        'Min Poll': 8,
         Force: true,
       });
 
@@ -76,7 +77,7 @@ describe('NtpServerFormComponent', () => {
         burst: false,
         iburst: true,
         prefer: false,
-        minpoll: 6,
+        minpoll: 8,
         maxpoll: 10,
         force: true,
       }]);
@@ -113,6 +114,7 @@ describe('NtpServerFormComponent', () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
         Address: 'updated.mock.ntp.server',
+        'Max Poll': 14,
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -126,7 +128,7 @@ describe('NtpServerFormComponent', () => {
           iburst: true,
           prefer: false,
           minpoll: 6,
-          maxpoll: 10,
+          maxpoll: 14,
           force: false,
         },
       ]);

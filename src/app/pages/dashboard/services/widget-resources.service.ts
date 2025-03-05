@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { subHours } from 'date-fns';
 import {
-  Observable, Subject, catchError, combineLatestWith, debounceTime,
+  Observable, Subject, catchError, combineLatest, combineLatestWith, debounceTime,
   filter,
   forkJoin, map, of, repeat, shareReplay, startWith, switchMap, take, throttleTime, timer,
 } from 'rxjs';
@@ -10,14 +11,17 @@ import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { LoadingState, toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { App, AppStartQueryParams, AppStats } from 'app/interfaces/app.interface';
+import { CloudSyncTask } from 'app/interfaces/cloud-sync-task.interface';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Disk } from 'app/interfaces/disk.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Pool } from 'app/interfaces/pool.interface';
+import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { ReportingData } from 'app/interfaces/reporting.interface';
+import { RsyncTask } from 'app/interfaces/rsync-task.interface';
 import { VolumesData, VolumeData } from 'app/interfaces/volume-data.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { processNetworkInterfaces } from 'app/pages/dashboard/widgets/network/widget-interface/widget-interface.utils';
+import { DashboardNetworkInterface, processNetworkInterfaces } from 'app/pages/dashboard/widgets/network/widget-interface/widget-interface.utils';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
@@ -29,6 +33,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
  * 3. Use `toLoadingState` to provide widget with loading status.
  * 4. Use subscriptions when possible.
  */
+@UntilDestroy()
 @Injectable({
   providedIn: 'root',
 })
@@ -38,13 +43,21 @@ export class WidgetResourcesService {
   readonly refreshInterval$ = timer(0, 5000).pipe(startWith(0));
   private readonly triggerRefreshSystemInfo$ = new Subject<void>();
 
-  readonly backups$ = forkJoin([
-    this.api.call('replication.query'),
-    this.api.call('rsynctask.query'),
-    this.api.call('cloudsync.query'),
-  ]).pipe(
-    shareReplay({ bufferSize: 1, refCount: true }),
+  private readonly backupsFetchTrigger$ = new Subject<void>();
+  private readonly backups$ = this.backupsFetchTrigger$.pipe(
+    throttleTime(500),
+    switchMap(() => forkJoin([
+      this.api.call('replication.query'),
+      this.api.call('rsynctask.query'),
+      this.api.call('cloudsync.query'),
+    ])),
+    shareReplay({ refCount: true, bufferSize: 1 }),
   );
+
+  getBackups(): Observable<[ReplicationTask[], RsyncTask[], CloudSyncTask[]]> {
+    this.backupsFetchTrigger$.next();
+    return this.backups$;
+  }
 
   readonly systemInfo$ = this.api.call('webui.main.dashboard.sys_info').pipe(
     repeat({ delay: () => this.triggerRefreshSystemInfo$ }),
@@ -60,11 +73,19 @@ export class WidgetResourcesService {
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
-  readonly networkInterfaces$ = this.api.call('interface.query').pipe(
+  private readonly nicsTrigger$ = new Subject<void>();
+  private readonly networkInterfaces$ = this.nicsTrigger$.pipe(
+    throttleTime(500),
+    switchMap(() => this.api.call('interface.query')),
     map((interfaces) => processNetworkInterfaces(interfaces)),
     toLoadingState(),
     shareReplay({ bufferSize: 1, refCount: true }),
   );
+
+  getNetworkInterfaces(): Observable<LoadingState<DashboardNetworkInterface[]>> {
+    this.nicsTrigger$.next();
+    return this.networkInterfaces$;
+  }
 
   readonly installedApps$ = this.api.callAndSubscribe('app.query').pipe(
     shareReplay({ bufferSize: 1, refCount: true }),
@@ -173,7 +194,11 @@ export class WidgetResourcesService {
   constructor(
     private api: ApiService,
     private store$: Store<AppState>,
-  ) {}
+  ) {
+    combineLatest([this.backups$, this.networkInterfaces$]).pipe(
+      untilDestroyed(this),
+    ).subscribe();
+  }
 
   private parseVolumeData(datasets: Dataset[]): VolumesData {
     const volumesData = new Map<string, VolumeData>();

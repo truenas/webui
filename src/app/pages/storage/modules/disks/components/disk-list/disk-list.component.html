@@ -25,7 +25,13 @@
         (click)="edit(selectedDisks)"
       >
         <ix-icon name="edit"></ix-icon>
-        <span>{{ 'Edit Disk(s)' | translate }}</span>
+        <span>
+          @if (selectedDisks.length === 1) {
+            {{ 'Edit Disk' | translate }}
+          } @else {
+            {{ 'Edit Disks' | translate }}
+          }
+        </span>
       </button>
 
       <button
