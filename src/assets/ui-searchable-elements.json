@@ -1952,21 +1952,20 @@
   },
   {
     "hierarchy": [
-      "Instances",
+      "Virtualization",
+      "Containers",
       "Global Settings"
     ],
     "synonyms": [
       "VMs",
       "Virtual Machines",
-      "Virtualization",
-      "Containers",
       "VM Settings",
       "Virtual Machine Settings"
     ],
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/instances"
+      "/virtualization"
     ],
     "routerLink": null,
     "anchor": "vm-global-settings",
@@ -1975,14 +1974,13 @@
   },
   {
     "hierarchy": [
-      "Instances",
+      "Virtualization",
+      "Containers",
       "Create New Instance"
     ],
     "synonyms": [
       "VMs",
       "Virtual Machines",
-      "Virtualization",
-      "Containers",
       "Add Instance",
       "Create VM",
       "Add VM",
@@ -1993,7 +1991,7 @@
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/instances"
+      "/virtualization"
     ],
     "routerLink": [
       "/instances/new"
@@ -2004,19 +2002,18 @@
   },
   {
     "hierarchy": [
-      "Instances",
-      "List"
+      "Virtualization",
+      "Containers",
+      "Instances"
     ],
     "synonyms": [
       "VM",
-      "Virtual Machines",
-      "Incus",
-      "Containers"
+      "Virtual Machines"
     ],
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/instances/view/def"
+      "/virtualization/view/def"
     ],
     "routerLink": null,
     "anchor": "containers-list",
@@ -2025,19 +2022,19 @@
   },
   {
     "hierarchy": [
-      "Instances",
+      "Virtualization",
+      "Containers",
       "General Info"
     ],
     "synonyms": [
       "VM",
       "Virtual Machines",
-      "Virtualization",
-      "Containers"
+      "Instances"
     ],
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/instances/view/def"
+      "/virtualization/view/def"
     ],
     "routerLink": null,
     "anchor": "general-info",
@@ -2046,19 +2043,19 @@
   },
   {
     "hierarchy": [
-      "Instances",
+      "Virtualization",
+      "Containers",
       "Devices"
     ],
     "synonyms": [
       "VM",
       "Virtual Machines",
-      "Virtualization",
-      "Containers"
+      "Instances"
     ],
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/instances/view/def"
+      "/virtualization/view/def"
     ],
     "routerLink": null,
     "anchor": "devices",
@@ -2067,19 +2064,19 @@
   },
   {
     "hierarchy": [
-      "Instances",
+      "Virtualization",
+      "Containers",
       "Disks"
     ],
     "synonyms": [
       "VM",
       "Virtual Machines",
-      "Virtualization",
-      "Containers"
+      "Instances"
     ],
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/instances/view/def"
+      "/virtualization/view/def"
     ],
     "routerLink": null,
     "anchor": "disks",
@@ -2088,19 +2085,19 @@
   },
   {
     "hierarchy": [
-      "Instances",
+      "Virtualization",
+      "Containers",
       "NIC"
     ],
     "synonyms": [
       "VM",
       "Virtual Machines",
-      "Virtualization",
-      "Containers"
+      "Instances"
     ],
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/instances/view/def"
+      "/virtualization/view/def"
     ],
     "routerLink": null,
     "anchor": "nic",
@@ -2109,19 +2106,19 @@
   },
   {
     "hierarchy": [
-      "Instances",
+      "Virtualization",
+      "Containers",
       "Proxies"
     ],
     "synonyms": [
       "VM",
       "Virtual Machines",
-      "Virtualization",
-      "Containers"
+      "Instances"
     ],
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/instances/view/def"
+      "/virtualization/view/def"
     ],
     "routerLink": null,
     "anchor": "proxies",
@@ -2130,19 +2127,19 @@
   },
   {
     "hierarchy": [
-      "Instances",
+      "Virtualization",
+      "Containers",
       "Idmap"
     ],
     "synonyms": [
       "VM",
       "Virtual Machines",
-      "Virtualization",
-      "Containers"
+      "Instances"
     ],
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/instances/view/def"
+      "/virtualization/view/def"
     ],
     "routerLink": null,
     "anchor": "idmap",
@@ -2151,19 +2148,19 @@
   },
   {
     "hierarchy": [
-      "Instances",
+      "Virtualization",
+      "Containers",
       "Tools"
     ],
     "synonyms": [
       "VM",
       "Virtual Machines",
-      "Virtualization",
-      "Containers"
+      "Instances"
     ],
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/instances/view/def"
+      "/virtualization/view/def"
     ],
     "routerLink": null,
     "anchor": "tools",
@@ -2172,19 +2169,19 @@
   },
   {
     "hierarchy": [
-      "Instances",
+      "Virtualization",
+      "Containers",
       "Metrics"
     ],
     "synonyms": [
       "VM",
       "Virtual Machines",
-      "Virtualization",
-      "Containers"
+      "Instances"
     ],
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/instances/view/def"
+      "/virtualization/view/def"
     ],
     "routerLink": null,
     "anchor": "metrics",
