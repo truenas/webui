@@ -19,6 +19,8 @@ import {
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import {
+  DiskIoBus,
+  diskIoBusLabels,
   VirtualizationDeviceType,
   VirtualizationGpuType,
   VirtualizationNicType,
@@ -113,6 +115,7 @@ export class InstanceWizardComponent {
 
   protected readonly hasPendingInterfaceChanges = toSignal(this.api.call('interface.has_pending_changes'));
 
+  protected readonly diskIoBusOptions$ = of(mapToOptions(diskIoBusLabels, this.translate));
   protected readonly proxyProtocols$ = of(mapToOptions(virtualizationProxyProtocolLabels, this.translate));
   protected readonly bridgedNicTypeLabel = virtualizationNicTypeLabels.get(VirtualizationNicType.Bridged);
   protected readonly macVlanNicTypeLabel = virtualizationNicTypeLabels.get(VirtualizationNicType.Macvlan);
@@ -157,6 +160,7 @@ export class InstanceWizardComponent {
     ],
     instance_type: [VirtualizationType.Container, Validators.required],
     source_type: [VirtualizationSource.Image, [Validators.required]],
+    root_disk_io_bus: [DiskIoBus.Nvme, []],
     iso_volume: ['', [Validators.required]],
     zvol_path: ['', [Validators.required]],
     image: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(200)]],
@@ -183,6 +187,7 @@ export class InstanceWizardComponent {
     disks: this.formBuilder.array<FormGroup<{
       source: FormControl<string>;
       destination: FormControl<string>;
+      io_bus: FormControl<DiskIoBus>;
     }>>([]),
     environment_variables: new FormArray<InstanceEnvVariablesFormGroup>([]),
   });
@@ -206,9 +211,7 @@ export class InstanceWizardComponent {
   protected readonly isVm = computed(() => this.instanceType() === VirtualizationType.Vm);
 
   readonly directoryNodeProvider = computed(() => {
-    const providerOptions = this.isVm()
-      ? { zvolsOnly: true }
-      : { datasetsAndZvols: true };
+    const providerOptions = this.isVm() ? { zvolsOnly: true } : { datasetsOnly: true };
 
     return this.filesystem.getFilesystemNodeProvider(providerOptions);
   });
@@ -302,10 +305,15 @@ export class InstanceWizardComponent {
     const control = this.formBuilder.group({
       source: ['', Validators.required],
       destination: ['', Validators.required],
+      io_bus: [DiskIoBus.Nvme, Validators.required],
     });
 
     if (this.isVm()) {
       control.removeControl('destination');
+    }
+
+    if (this.isContainer()) {
+      control.removeControl('io_bus');
     }
 
     this.form.controls.disks.push(control);
@@ -371,6 +379,7 @@ export class InstanceWizardComponent {
 
     if (this.isVm()) {
       payload.secure_boot = values.secure_boot;
+      payload.root_disk_io_bus = values.root_disk_io_bus;
 
       if (values.source_type !== VirtualizationSource.Zvol) {
         payload.root_disk_size = values.root_disk_size;
@@ -406,10 +415,11 @@ export class InstanceWizardComponent {
   }
 
   private getDevicesPayload(): VirtualizationDevice[] {
-    const disks = this.form.controls.disks.value.map((proxy) => ({
+    const disks = this.form.controls.disks.value.map((disk) => ({
       dev_type: VirtualizationDeviceType.Disk,
-      source: proxy.source,
-      ...(this.isContainer() ? { destination: proxy.destination } : null),
+      source: disk.source,
+      ...(this.isContainer() ? { destination: disk.destination } : null),
+      ...(this.isVm() ? { io_bus: disk.io_bus } : null),
     }));
 
     const usbDevices: { dev_type: VirtualizationDeviceType; product_id: string }[] = [];
