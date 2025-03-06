@@ -199,6 +199,12 @@
               ></ngx-skeleton-loader>
             }
           </mat-list-item>
+
+          @if (!isEnterprise()) {
+            <mat-list-item class="use-enterprise">
+              <ix-use-enterprise-marketing-link></ix-use-enterprise-marketing-link>
+            </mat-list-item>
+          }
         </mat-list>
       </div>
     </div>
