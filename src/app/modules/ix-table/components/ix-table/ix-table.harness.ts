@@ -111,6 +111,12 @@ export class IxTableHarness extends ContentContainerComponentHarness {
     return toggles[row];
   }
 
+  async selectRows(rows: number[]): Promise<void> {
+    for (const rowIndex of rows) {
+      await (await this.getRows())[rowIndex].check();
+    }
+  }
+
   async getCellTexts(): Promise<string[][]> {
     const cells = await this.getCells();
     const texts = await parallel(() => cells.map((cell) => cell.getText()));
@@ -132,7 +138,7 @@ export class IxTableHarness extends ContentContainerComponentHarness {
     (await this.getRowElement(row)).click();
   }
 
-  async clickToggle(row: number): Promise<void> {
+  async expandRow(row: number): Promise<void> {
     (await this.getToggle(row)).click();
   }
 }

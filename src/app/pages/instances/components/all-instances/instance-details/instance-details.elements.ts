@@ -2,9 +2,9 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 
 export const instanceDetailsElements = {
-  hierarchy: [T('Virtualization'), T('Containers')],
-  synonyms: [T('VM'), T('Virtual Machines'), T('Instances')],
-  anchorRouterLink: ['/virtualization/view/def'],
+  hierarchy: [T('Instances')],
+  synonyms: [T('VM'), T('Virtual Machines'), T('Instances'), T('Virtualization'), T('Containers')],
+  anchorRouterLink: ['/instances/view/def'],
   elements: {
     generalInfo: {
       hierarchy: [T('General Info')],

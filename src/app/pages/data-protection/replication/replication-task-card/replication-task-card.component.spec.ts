@@ -28,7 +28,6 @@ describe('ReplicationTaskCardComponent', () => {
   let spectator: Spectator<ReplicationTaskCardComponent>;
   let loader: HarnessLoader;
   let table: IxTableHarness;
-  let api: ApiService;
 
   const replicationTasks = [
     {
@@ -81,7 +80,6 @@ describe('ReplicationTaskCardComponent', () => {
         mockCall('core.get_jobs', []),
         mockCall('replication.delete'),
         mockCall('replication.update'),
-        mockCall('core.download', [9, 'http://someurl/file.json']),
         mockJob('replication.run', fakeSuccessfulJob()),
       ]),
       mockProvider(DialogService, {
@@ -96,7 +94,7 @@ describe('ReplicationTaskCardComponent', () => {
         })),
       }),
       mockProvider(DownloadService, {
-        streamDownloadFile: jest.fn(() => of()),
+        coreDownload: jest.fn(() => of(undefined)),
       }),
     ],
   });
@@ -105,7 +103,6 @@ describe('ReplicationTaskCardComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     table = await loader.getHarness(IxTableHarness);
-    api = spectator.inject(ApiService);
   });
 
   it('should show table rows', async () => {
@@ -169,16 +166,12 @@ describe('ReplicationTaskCardComponent', () => {
     const downloadButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-download' }), 1, 5);
     await downloadButton.click();
 
-    expect(api.call).toHaveBeenCalledWith('core.download', [
-      'pool.dataset.export_keys_for_replication',
-      [1],
-      'APPS/test2 - APPS/test3_encryption_keys.json',
-    ]);
-    expect(spectator.inject(DownloadService).streamDownloadFile).toHaveBeenCalledWith(
-      'http://someurl/file.json',
-      'APPS/test2 - APPS/test3_encryption_keys.json',
-      'application/json',
-    );
+    expect(spectator.inject(DownloadService).coreDownload).toHaveBeenCalledWith({
+      arguments: [1],
+      fileName: 'APPS/test2 - APPS/test3_encryption_keys.json',
+      method: 'pool.dataset.export_keys_for_replication',
+      mimeType: 'application/json',
+    });
   });
 
   it('deletes a Replication Task with confirmation when Delete button is pressed', async () => {

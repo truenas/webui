@@ -98,7 +98,7 @@ export class InstanceGeneralInfoComponent {
       this.errorHandler.catchError(),
       untilDestroyed(this),
     ).subscribe(() => {
-      this.router.navigate(['/virtualization'], { state: { hideMobileDetails: true } });
+      this.router.navigate(['/instances'], { state: { hideMobileDetails: true } });
     });
   }
 }

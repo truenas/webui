@@ -16,6 +16,7 @@ import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
+  DiskIoBus,
   VirtualizationDeviceType,
   VirtualizationGpuType,
   VirtualizationNicType,
@@ -134,11 +135,11 @@ describe('InstanceWizardComponent', () => {
   });
 
   describe('name validation', () => {
-    it('shows error for invalid name', async () => {
+    it('shows error for invalid name, it could only contain alphanumeric and hyphen characters', async () => {
       const instanceNameControl = await loader.getHarness(IxInputHarness.with({ label: 'Name' }));
 
       await form.fillForm({
-        Name: 'invalid+_@name',
+        Name: 'invalid_name',
       });
 
       expect(await instanceNameControl.getErrorText()).toBe('Invalid format or character');
@@ -327,6 +328,7 @@ describe('InstanceWizardComponent', () => {
       const diskForm = await diskList.getLastListItem();
       await diskForm.fillForm({
         Source: '/mnt/source',
+        'I/O Bus': 'NVMe',
       });
 
       const proxiesList = await loader.getHarness(IxListHarness.with({ label: 'Proxies' }));
@@ -381,12 +383,14 @@ describe('InstanceWizardComponent', () => {
         name: 'new',
         autostart: true,
         cpu: '1-2',
+        root_disk_io_bus: DiskIoBus.Nvme,
         instance_type: VirtualizationType.Vm,
         iso_volume: null,
         devices: [
           {
             dev_type: VirtualizationDeviceType.Disk,
             source: '/mnt/source',
+            io_bus: DiskIoBus.Nvme,
           },
           {
             dev_type: VirtualizationDeviceType.Proxy,
@@ -432,6 +436,7 @@ describe('InstanceWizardComponent', () => {
         'VM Image Options': 'Use an ISO image',
         'CPU Configuration': '2',
         'Memory Size': '1 GiB',
+        'Root Disk I/O Bus': 'Virtio-BLK',
       });
 
       const selectIso = await loader.getHarness(MatButtonHarness.with({ text: 'Select ISO' }));
@@ -444,6 +449,7 @@ describe('InstanceWizardComponent', () => {
         name: 'new',
         autostart: true,
         cpu: '2',
+        root_disk_io_bus: DiskIoBus.VirtioBlk,
         instance_type: VirtualizationType.Vm,
         devices: [],
         image: null,
@@ -470,6 +476,7 @@ describe('InstanceWizardComponent', () => {
         'CPU Configuration': '2',
         'Memory Size': '1 GiB',
         Zvol: '/dev/zvol/test',
+        'Root Disk I/O Bus': 'Virtio-SCSI',
       });
 
       const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create' }));
@@ -478,6 +485,7 @@ describe('InstanceWizardComponent', () => {
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('virt.instance.create', [{
         name: 'new',
         autostart: true,
+        root_disk_io_bus: DiskIoBus.VirtioScsi,
         cpu: '2',
         instance_type: VirtualizationType.Vm,
         devices: [],

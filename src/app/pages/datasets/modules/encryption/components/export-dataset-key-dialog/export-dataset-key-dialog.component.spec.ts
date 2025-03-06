@@ -6,7 +6,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of, throwError } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DownloadService } from 'app/services/download.service';
@@ -19,11 +19,10 @@ describe('ExportDatasetKeyDialogComponent', () => {
     component: ExportDatasetKeyDialogComponent,
     providers: [
       mockApi([
-        mockCall('core.download', [1, 'http://localhost/download']),
         mockJob('pool.dataset.export_key', fakeSuccessfulJob('12345678')),
       ]),
       mockProvider(DownloadService, {
-        downloadUrl: jest.fn(() => of(undefined)),
+        coreDownload: jest.fn(() => of(undefined)),
       }),
       mockProvider(MatDialogRef),
       {
@@ -51,16 +50,12 @@ describe('ExportDatasetKeyDialogComponent', () => {
     const downloadButton = await loader.getHarness(MatButtonHarness.with({ text: 'Download Key' }));
     await downloadButton.click();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('core.download', [
-      'pool.dataset.export_key',
-      ['pool/my-dataset', true],
-      'dataset_my-dataset_key.json',
-    ]);
-    expect(spectator.inject(DownloadService).downloadUrl).toHaveBeenCalledWith(
-      'http://localhost/download',
-      'dataset_my-dataset_key.json',
-      'application/json',
-    );
+    expect(spectator.inject(DownloadService).coreDownload).toHaveBeenCalledWith({
+      arguments: ['pool/my-dataset', true],
+      fileName: 'dataset_my-dataset_key.json',
+      method: 'pool.dataset.export_key',
+      mimeType: 'application/json',
+    });
   });
 
   it('auto closes dialog if there was an error loading the key', () => {
