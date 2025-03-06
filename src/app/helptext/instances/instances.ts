@@ -81,4 +81,11 @@ Choose a VM for full OS isolation, kernel independence, and running diverse OS t
   secure_boot_tooltip: T('Secure Boot ensures that only trusted, signed software runs during a system’s startup process. May be incompatible with some images.'),
   secure_boot_on_required_tooltip: T('Secure Boot is required for the VM image you selected'),
   secure_boot_off_required_tooltip: T('Secure Boot is required to be off for the VM image you selected'),
+
+  idMapHint: T('By default, accounts inside instances are mapped to a special private range of UIDs and GIDs to perform security isolation for the containers.\
+  This range starts at 2147000001.\
+  <br>\
+  You can use this dialog to control mapping manually.'),
+
+  mapDirectlyTooltip: T('UID/GID from the host is directly mapped to the same id in a container. This means that GID 3000 will appear as GID 3000 in the container.'),
 };
