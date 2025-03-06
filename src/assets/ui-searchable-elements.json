@@ -847,7 +847,7 @@
   {
     "hierarchy": [
       "Credentials",
-      "Users (new)",
+      "Users (WIP)",
       "Create New User"
     ],
     "synonyms": [
@@ -870,7 +870,7 @@
   {
     "hierarchy": [
       "Credentials",
-      "Users (new)"
+      "Users (WIP)"
     ],
     "synonyms": [],
     "requiredRoles": [],
@@ -886,7 +886,7 @@
   {
     "hierarchy": [
       "Credentials",
-      "Users (new)",
+      "Users (WIP)",
       "General Info"
     ],
     "synonyms": [],

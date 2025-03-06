@@ -6,7 +6,7 @@ export const allUsersElements = {
   anchorRouterLink: ['/credentials/users-new'],
   elements: {
     list: {
-      hierarchy: [T('Users (new)')],
+      hierarchy: [T('Users (WIP)')],
       anchor: 'users-list',
     },
   },

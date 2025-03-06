@@ -42,15 +42,11 @@ export class UserListComponent {
   readonly userName = injectParams('id');
   readonly isMobileView = input<boolean>();
   readonly toggleShowMobileDetails = output<boolean>();
-
-  protected readonly selection = new SelectionModel<string>(true, []);
-
   protected readonly searchQuery = signal<string>('');
   protected readonly window = inject<Window>(WINDOW);
-
+  protected readonly selection = new SelectionModel<string>(true, []);
   protected readonly users = this.usersStore.users;
   protected readonly isLoading = this.usersStore.isLoading;
-
   protected readonly selectedUser = this.usersStore.selectedUser;
 
   protected readonly filteredUsers = computed(() => {
