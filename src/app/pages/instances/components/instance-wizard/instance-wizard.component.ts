@@ -530,6 +530,7 @@ export class InstanceWizardComponent {
 
       this.form.controls.image.reset();
       this.form.controls.disks.clear();
+      this.form.controls.proxies.clear();
 
       if (type === VirtualizationType.Container) {
         this.form.controls.cpu.setValidators(cpuValidator());
