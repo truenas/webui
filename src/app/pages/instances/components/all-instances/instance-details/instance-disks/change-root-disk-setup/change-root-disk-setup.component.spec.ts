@@ -7,21 +7,22 @@ import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
+import { DiskIoBus } from 'app/enums/virtualization.enum';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
-  IncreaseRootDiskSizeComponent,
-} from 'app/pages/instances/components/all-instances/instance-details/instance-disks/increase-root-disk-size/increase-root-disk-size.component';
+  ChangeRootDiskSetupComponent,
+} from 'app/pages/instances/components/all-instances/instance-details/instance-disks/change-root-disk-setup/change-root-disk-setup.component';
 
-describe('IncreaseRootDiskSizeComponent', () => {
-  let spectator: Spectator<IncreaseRootDiskSizeComponent>;
+describe('ChangeRootDiskSetupComponent', () => {
+  let spectator: Spectator<ChangeRootDiskSetupComponent>;
   let loader: HarnessLoader;
 
   const createComponent = createComponentFactory({
-    component: IncreaseRootDiskSizeComponent,
+    component: ChangeRootDiskSetupComponent,
     providers: [
       mockApi([
         mockJob('virt.instance.update', fakeSuccessfulJob()),
@@ -38,6 +39,7 @@ describe('IncreaseRootDiskSizeComponent', () => {
         useValue: {
           id: 'test',
           root_disk_size: 2 * GiB,
+          root_disk_io_bus: DiskIoBus.VirtioBlk,
         } as VirtualizationInstance,
       },
     ],
@@ -53,6 +55,7 @@ describe('IncreaseRootDiskSizeComponent', () => {
 
     expect(await form.getValues()).toEqual({
       'Root Disk Size (in GiB)': '2',
+      'Root Disk I/O Bus': 'Virtio-BLK',
     });
   });
 
@@ -60,6 +63,7 @@ describe('IncreaseRootDiskSizeComponent', () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
       'Root Disk Size (in GiB)': '4',
+      'Root Disk I/O Bus': 'NVMe',
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -67,7 +71,7 @@ describe('IncreaseRootDiskSizeComponent', () => {
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('virt.instance.update', [
       'test',
-      { root_disk_size: 4 },
+      { root_disk_size: 4, root_disk_io_bus: DiskIoBus.Nvme },
     ]);
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();

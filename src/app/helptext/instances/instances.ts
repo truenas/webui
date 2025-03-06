@@ -46,6 +46,11 @@ Choose a VM for full OS isolation, kernel independence, and running diverse OS t
   host_port_placeholder: T('Host Port'),
   host_port_tooltip: T('Specify the host port to be mapped to the container\'s port.'),
 
+  io_bus_tooltip: T('Choose the disk I/O bus type that best suits your system’s needs:\
+ <br /><br /> • NVMe – Ideal for high-performance storage with faster read and write speeds.\
+ <br /><br /> • Virtio-BLK – Efficient for virtualized environments, offering direct block device access with lower overhead.\
+ <br /><br /> • Virtio-SCSI – Flexible and scalable, supporting advanced features like hot-swapping and multiple devices.'),
+
   instance_protocol_placeholder: T('Instance Protocol'),
   instance_protocol_tooltip: T('Select the protocol for the instance\'s network connection.'),
   instance_port_placeholder: T('Instance Port'),
