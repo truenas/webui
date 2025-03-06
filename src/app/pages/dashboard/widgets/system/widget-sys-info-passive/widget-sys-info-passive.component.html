@@ -66,15 +66,7 @@
                 }
               </span>
             } @else {
-              <ngx-skeleton-loader
-                class="inline-loader"
-                [theme]="{
-                  height: '20px',
-                  background: 'var(--alt-bg2)',
-                  opacity: 0.25,
-                  margin: 0,
-                }"
-              ></ngx-skeleton-loader>
+              <ng-container *ngTemplateOutlet="skeletonLoader"></ng-container>
             }
           </mat-list-item>
 
@@ -89,15 +81,7 @@
                 }
               </span>
             } @else {
-              <ngx-skeleton-loader
-                class="inline-loader"
-                [theme]="{
-                  height: '20px',
-                  background: 'var(--alt-bg2)',
-                  opacity: 0.25,
-                  margin: 0,
-                }"
-              ></ngx-skeleton-loader>
+              <ng-container *ngTemplateOutlet="skeletonLoader"></ng-container>
             }
           </mat-list-item>
 
@@ -113,15 +97,7 @@
                 <ix-copy-button [text]="version()"></ix-copy-button>
               </div>
             } @else {
-              <ngx-skeleton-loader
-                class="inline-loader"
-                [theme]="{
-                  height: '20px',
-                  background: 'var(--alt-bg2)',
-                  opacity: 0.25,
-                  margin: 0,
-                }"
-              ></ngx-skeleton-loader>
+              <ng-container *ngTemplateOutlet="skeletonLoader"></ng-container>
             }
           </mat-list-item>
 
@@ -164,15 +140,7 @@
                 {{ systemInfo()?.hostname }}
               </span>
             } @else {
-              <ngx-skeleton-loader
-                class="inline-loader"
-                [theme]="{
-                  height: '20px',
-                  background: 'var(--alt-bg2)',
-                  opacity: 0.25,
-                  margin: 0,
-                }"
-              ></ngx-skeleton-loader>
+              <ng-container *ngTemplateOutlet="skeletonLoader"></ng-container>
             }
           </mat-list-item>
 
@@ -183,15 +151,7 @@
                 {{ uptime() | uptime: datetime() }}
               </span>
             } @else {
-              <ngx-skeleton-loader
-                class="inline-loader"
-                [theme]="{
-                  height: '20px',
-                  background: 'var(--alt-bg2)',
-                  opacity: 0.25,
-                  margin: 0,
-                }"
-              ></ngx-skeleton-loader>
+              <ng-container *ngTemplateOutlet="skeletonLoader"></ng-container>
             }
           </mat-list-item>
         </mat-list>
@@ -217,3 +177,14 @@
   </mat-card-content>
 </mat-card>
 
+<ng-template #skeletonLoader>
+  <ngx-skeleton-loader
+    class="inline-loader"
+    [theme]="{
+      height: '20px',
+      background: 'var(--alt-bg2)',
+      opacity: 0.25,
+      margin: 0,
+    }"
+  ></ngx-skeleton-loader>
+</ng-template>

@@ -19,6 +19,10 @@
   }
 }
 
+.hostname {
+  text-align: center;
+}
+
 .use-enterprise {
   height: calc(var(--mdc-list-list-item-one-line-container-height, 48px) * 2);
 }
