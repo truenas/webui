@@ -1,28 +1,28 @@
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { ComboboxQueryType } from 'app/enums/combobox.enum';
 import { Option } from 'app/interfaces/option.interface';
 import { User } from 'app/interfaces/user.interface';
 import { IxComboboxProvider } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox-provider';
 import { UserService } from 'app/services/user.service';
 
 interface UserComboboxOptions {
-  valueField?: 'username' | 'uid' | 'id';
-  queryType?: 'default' | 'smb';
+  valueField?: keyof Pick<User, 'username' | 'uid' | 'id'>;
+  queryType?: ComboboxQueryType;
 }
 
 export class UserComboboxProvider implements IxComboboxProvider {
   protected page = 1;
   readonly pageSize = 50;
-  protected options: UserComboboxOptions;
+  protected valueField: keyof Pick<User, 'username' | 'uid' | 'id'>;
+  protected queryType: ComboboxQueryType;
 
   constructor(
     protected userService: UserService,
     options: UserComboboxOptions = {},
   ) {
-    this.options = {
-      valueField: options.valueField ?? 'username',
-      queryType: options.queryType ?? 'default',
-    };
+    this.valueField = options.valueField ?? 'username';
+    this.queryType = options.queryType ?? ComboboxQueryType.Default;
   }
 
   fetch(filterValue: string): Observable<Option[]> {
@@ -37,11 +37,11 @@ export class UserComboboxProvider implements IxComboboxProvider {
 
   private queryUsers(filterValue: string): Observable<Option[]> {
     const offset = this.page * this.pageSize;
-    const queryMethod = this.options.queryType === 'smb'
-      ? this.userService.smbUserQueryDsCache
-      : this.userService.userQueryDsCache;
+    const queryMethod = this.queryType === ComboboxQueryType.Smb
+      ? this.userService.smbUserQueryDsCache.bind(this.userService)
+      : this.userService.userQueryDsCache.bind(this.userService);
 
-    return queryMethod.call(this.userService, filterValue, offset).pipe(
+    return queryMethod(filterValue, offset).pipe(
       map((users) => this.userQueryResToOptions(users)),
     );
   }
@@ -49,7 +49,7 @@ export class UserComboboxProvider implements IxComboboxProvider {
   private userQueryResToOptions(users: User[]): Option[] {
     return users.map((user) => ({
       label: user.username,
-      value: user[this.options.valueField],
+      value: user[this.valueField],
     }));
   }
 }

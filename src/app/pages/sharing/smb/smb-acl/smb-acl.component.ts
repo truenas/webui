@@ -12,6 +12,7 @@ import {
   concatMap, firstValueFrom, forkJoin, mergeMap, Observable, of, from,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { ComboboxQueryType } from 'app/enums/combobox.enum';
 import { NfsAclTag, smbAclTagLabels } from 'app/enums/nfs-acl.enum';
 import { Role } from 'app/enums/role.enum';
 import { SmbSharesecPermission, SmbSharesecType } from 'app/enums/smb-sharesec.enum';
@@ -117,7 +118,11 @@ export class SmbAclComponent implements OnInit {
   readonly helptext = helptextSharingSmb;
   readonly nfsAclTag = NfsAclTag;
   readonly bothProvider = new SmbBothComboboxProvider(this.userService, 'uid', 'gid');
-  readonly userProvider = new UserComboboxProvider(this.userService, { valueField: 'uid', queryType: 'smb' });
+  readonly userProvider = new UserComboboxProvider(
+    this.userService,
+    { valueField: 'uid', queryType: ComboboxQueryType.Smb },
+  );
+
   protected groupProvider: GroupComboboxProvider;
 
   constructor(
@@ -292,9 +297,9 @@ export class SmbAclComponent implements OnInit {
         }
 
         this.groupProvider = new GroupComboboxProvider(this.userService, {
-          valueField: 'gid',
           initialOptions,
-          queryType: 'smb',
+          valueField: 'gid',
+          queryType: ComboboxQueryType.Smb,
         });
 
         this.isLoading = false;
