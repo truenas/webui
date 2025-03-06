@@ -68,6 +68,10 @@ export class InstanceEditFormComponent {
     return this.editingInstance.type === VirtualizationType.Vm;
   }
 
+  get isContainer(): boolean {
+    return this.editingInstance.type === VirtualizationType.Container;
+  }
+
   get isStopped(): boolean {
     return this.editingInstance.status === VirtualizationStatus.Stopped;
   }
@@ -154,13 +158,13 @@ export class InstanceEditFormComponent {
     const values = this.form.getRawValue();
 
     let payload = {
-      environment: this.environmentVariablesPayload,
       autostart: values.autostart,
       cpu: values.cpu,
       memory: values.memory || null,
       enable_vnc: values.enable_vnc,
       vnc_port: values.enable_vnc ? values.vnc_port || defaultVncPort : null,
       vnc_password: values.enable_vnc ? values.vnc_password : null,
+      ...(this.isContainer ? { environment: this.environmentVariablesPayload } : null),
     } as UpdateVirtualizationInstance;
 
     if (payload.enable_vnc) {
