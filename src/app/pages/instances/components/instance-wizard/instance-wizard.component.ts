@@ -34,7 +34,7 @@ import {
   virtualizationTypeIcons,
 } from 'app/enums/virtualization.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
-import { containersHelptext } from 'app/helptext/virtualization/containers';
+import { containersHelptext } from 'app/helptext/instances/instances';
 import { Option } from 'app/interfaces/option.interface';
 import {
   CreateVirtualizationInstance,
