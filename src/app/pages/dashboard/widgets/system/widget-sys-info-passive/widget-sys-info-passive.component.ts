@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, computed, effect, input,
 } from '@angular/core';
@@ -58,6 +59,7 @@ import {
     CopyButtonComponent,
     TranslateModule,
     UptimePipe,
+    NgTemplateOutlet,
   ],
 })
 export class WidgetSysInfoPassiveComponent {
