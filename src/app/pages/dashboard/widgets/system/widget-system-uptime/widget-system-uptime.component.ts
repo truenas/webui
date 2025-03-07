@@ -32,7 +32,7 @@ export class WidgetSystemUptimeComponent implements WidgetComponent {
   size = input.required<SlotSize>();
   readonly name = systemUptimeWidget.name;
 
-  systemInfo$ = this.resources.systemInfo$;
+  systemInfo$ = this.resources.dashboardSystemInfo$;
 
   loadedSystemInfo = toSignal(this.systemInfo$.pipe(
     map((state) => state.value),

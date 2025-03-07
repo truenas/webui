@@ -30,7 +30,7 @@ describe('WidgetSysInfoPassiveComponent', () => {
   let store$: MockStore;
   const refreshInterval$ = new BehaviorSubject<number>(0);
 
-  const systemInfo = {
+  const dashboardSystemInfo = {
     remote_info: {
       platform: 'TRUENAS-M40-HA',
       version: '25.10.0-MASTER-20250126-184805',
@@ -104,10 +104,10 @@ describe('WidgetSysInfoPassiveComponent', () => {
         },
         providers: [
           mockProvider(WidgetResourcesService, {
-            systemInfo$: of({
+            dashboardSystemInfo$: of({
               isLoading: false,
               error: null,
-              value: systemInfo,
+              value: dashboardSystemInfo,
             } as LoadingState<SystemInfo>),
             updateAvailable$: of(true),
             refreshInterval$,
@@ -174,10 +174,10 @@ describe('WidgetSysInfoPassiveComponent', () => {
         },
         providers: [
           mockProvider(WidgetResourcesService, {
-            systemInfo$: of({
+            dashboardSystemInfo$: of({
               isLoading: false,
               error: null,
-              value: { ...systemInfo, remote_info: null },
+              value: { ...dashboardSystemInfo, remote_info: null },
             } as LoadingState<SystemInfo>),
             updateAvailable$: of(true),
             refreshInterval$,

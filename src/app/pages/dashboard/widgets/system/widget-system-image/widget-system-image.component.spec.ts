@@ -34,7 +34,7 @@ describe('WidgetSystemImageComponent', () => {
     providers: [
       mockAuth(),
       mockProvider(WidgetResourcesService, {
-        systemInfo$: of({
+        dashboardSystemInfo$: of({
           isLoading: false,
           error: null,
           value: systemInfo,
