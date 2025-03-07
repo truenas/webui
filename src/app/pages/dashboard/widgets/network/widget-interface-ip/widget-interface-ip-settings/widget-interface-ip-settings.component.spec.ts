@@ -22,7 +22,7 @@ describe('WidgetInterfaceIpSettingsComponent', () => {
         updateSettings: jest.fn(),
       }),
       mockProvider(WidgetResourcesService, {
-        networkInterfaces$: of({
+        getNetworkInterfaces: jest.fn(() => of({
           isLoading: false,
           error: null,
           value: [{
@@ -35,7 +35,7 @@ describe('WidgetInterfaceIpSettingsComponent', () => {
             id: '3',
             name: 'eth2',
           }],
-        }),
+        })),
       }),
     ],
   });

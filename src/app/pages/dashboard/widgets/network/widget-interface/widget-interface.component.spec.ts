@@ -31,7 +31,7 @@ describe('WidgetInterfaceComponent', () => {
     ],
     providers: [
       mockProvider(WidgetResourcesService, {
-        networkInterfaces$: of({
+        getNetworkInterfaces: jest.fn(() => of({
           value: [
             {
               id: '1',
@@ -55,7 +55,7 @@ describe('WidgetInterfaceComponent', () => {
           ],
           isLoading: false,
           error: null,
-        }),
+        })),
         realtimeUpdates$: of({
           fields: {
             interfaces: {
