@@ -54,7 +54,7 @@ describe('ServiceSmbComponent', () => {
           guest: 'nobody',
           filemask: '',
           dirmask: '',
-          bindip: [],
+          bindip: [] as string[],
           cifs_SID: 'mockSid',
           ntlmv1_auth: false,
           enable_smb1: false,
@@ -196,10 +196,10 @@ describe('ServiceSmbComponent', () => {
     const bindIpList = await loader.getHarness(IxListHarness.with({ label: 'Bind IP Addresses' }));
     await bindIpList.pressAddButton();
     const bindIpForm1 = await bindIpList.getLastListItem();
-    await bindIpForm1.fillForm({ 'IP Address': '1.1.1.1/32' });
+    await bindIpForm1.fillForm({ 'IP Address': '1.1.1.1' });
     await bindIpList.pressAddButton();
     const bindIpForm2 = await bindIpList.getLastListItem();
-    await bindIpForm2.fillForm({ 'IP Address': '2.2.2.2/32' });
+    await bindIpForm2.fillForm({ 'IP Address': '2.2.2.2' });
 
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
@@ -230,8 +230,8 @@ describe('ServiceSmbComponent', () => {
       aapl_extensions: true,
       admin_group: 'test-group',
       bindip: [
-        { $ipv4_interface: '1.1.1.1/32' },
-        { $ipv4_interface: '2.2.2.2/32' },
+        '1.1.1.1',
+        '2.2.2.2',
       ],
       guest: 'nobody',
       dirmask: '0777',
