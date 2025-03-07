@@ -90,17 +90,14 @@ export class EmailFormComponent implements OnInit {
   readonly sendMethodOptions$ = of([
     {
       label: helptextSystemEmail.send_mail_method.smtp.placeholder,
-      tooltip: this.translate.instant(helptextSystemEmail.send_mail_method.smtp.tooltip),
       value: MailSendMethod.Smtp,
     },
     {
       label: helptextSystemEmail.send_mail_method.gmail.placeholder,
-      tooltip: this.translate.instant(helptextSystemEmail.send_mail_method.gmail.tooltip),
       value: MailSendMethod.Gmail,
     },
     {
       label: helptextSystemEmail.send_mail_method.outlook.placeholder,
-      tooltip: this.translate.instant(helptextSystemEmail.send_mail_method.outlook.tooltip),
       value: MailSendMethod.Outlook,
     },
   ]);

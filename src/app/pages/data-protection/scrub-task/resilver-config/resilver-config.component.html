@@ -11,28 +11,27 @@
         <ix-checkbox
           formControlName="enabled"
           [label]="'Enabled' | translate"
-          [tooltip]="tooltips.enabled"
+          [tooltip]="tooltips.enabled | translate"
         ></ix-checkbox>
 
         <ix-select
           formControlName="begin"
           [label]="'Begin' | translate"
           [options]="timeOptions$"
-          [tooltip]="tooltips.begin"
+          [tooltip]="tooltips.begin | translate"
         ></ix-select>
 
         <ix-select
           formControlName="end"
           [label]="'End' | translate"
           [options]="timeOptions$"
-          [tooltip]="tooltips.end"
+          [tooltip]="tooltips.end | translate"
         ></ix-select>
 
         <ix-select
           formControlName="weekday"
           [label]="'Days of the Week' | translate"
           [options]="daysOfWeek$"
-          [tooltip]="tooltips.weekday"
           [multiple]="true"
           [required]="true"
         ></ix-select>

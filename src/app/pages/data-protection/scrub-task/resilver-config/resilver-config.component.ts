@@ -75,7 +75,6 @@ export class ResilverConfigComponent implements OnInit {
     enabled: helptextResilver.enabled_tooltip,
     begin: helptextResilver.begin_tooltip,
     end: helptextResilver.end_tooltip,
-    weekday: helptextResilver.weekday_tooltip,
   };
 
   daysOfWeek$ = of(this.calendarService.getWeekdayOptions());

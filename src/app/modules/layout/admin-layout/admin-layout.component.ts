@@ -92,10 +92,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.sidenavService.isOpen;
   }
 
-  get isDefaultTheme(): boolean {
-    return this.themeService.isDefaultTheme;
-  }
-
   get isOpenSecondaryMenu(): boolean {
     return this.sidenavService.isOpenSecondaryMenu;
   }
