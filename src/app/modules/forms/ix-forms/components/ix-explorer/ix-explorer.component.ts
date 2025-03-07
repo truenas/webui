@@ -103,7 +103,8 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
     node: TreeNode<ExplorerNodeData>,
     $event: MouseEvent,
   ): void => {
-    if (node.isCollapsed && node.hasChildren && node.children) {
+    const path = node.path.reduce((prev, curr) => `${prev}/${curr}`);
+    if (node.isCollapsed && node.hasChildren && node.children && path.includes('/dev/zvol')) {
       node.children = null;
     }
     TREE_ACTIONS.TOGGLE_EXPANDED(tree, node, $event);
