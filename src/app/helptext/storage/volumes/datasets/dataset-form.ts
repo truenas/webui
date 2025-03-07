@@ -57,7 +57,7 @@ export const helptextDatasetForm = {
  Compressing data is generally recommended before using deduplication. Deduplicating data is \
  a one-way process. <b>Deduplicated data cannot be undeduplicated!</b>.'),
 
-  deduplicationWarning: T('Deduplication is experimental and not fully supported. When enabled, data is permanently stored with this memory-intensive method and cannot be undone. Take extreme caution and ensure you have adequate data backups before enabling this feature.'),
+  deduplicationWarning: T('Once enabled, deduplication settings cannot be reverted. Use caution and be certain that you have adequate data backups before activating this feature.'),
   deduplicationChecksumWarning: T(`The default "Checksum" value for datasets with deduplication used to be SHA256.
        Our testing has shown that SHA512 performs better for such datasets.
        We've changed the checksum value from SHA256 to SHA512. You can change it back in "Advanced Options".`),
