@@ -33,7 +33,7 @@ import {
   virtualizationTypeIcons,
 } from 'app/enums/virtualization.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
-import { containersHelptext } from 'app/helptext/virtualization/containers';
+import { containersHelptext } from 'app/helptext/instances/instances';
 import { Option } from 'app/interfaces/option.interface';
 import {
   CreateVirtualizationInstance,
@@ -211,9 +211,7 @@ export class InstanceWizardComponent {
   protected readonly isVm = computed(() => this.instanceType() === VirtualizationType.Vm);
 
   readonly directoryNodeProvider = computed(() => {
-    const providerOptions = this.isVm()
-      ? { zvolsOnly: true }
-      : { datasetsAndZvols: true };
+    const providerOptions = this.isVm() ? { zvolsOnly: true } : { datasetsOnly: true };
 
     return this.filesystem.getFilesystemNodeProvider(providerOptions);
   });
@@ -532,6 +530,7 @@ export class InstanceWizardComponent {
 
       this.form.controls.image.reset();
       this.form.controls.disks.clear();
+      this.form.controls.proxies.clear();
 
       if (type === VirtualizationType.Container) {
         this.form.controls.cpu.setValidators(cpuValidator());

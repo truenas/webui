@@ -11,7 +11,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { VirtualizationStatus, VirtualizationType } from 'app/enums/virtualization.enum';
-import { containersHelptext } from 'app/helptext/virtualization/containers';
+import { containersHelptext } from 'app/helptext/instances/instances';
 import {
   InstanceEnvVariablesFormGroup,
   UpdateVirtualizationInstance,
@@ -65,6 +65,10 @@ export class InstanceEditFormComponent {
 
   get isVm(): boolean {
     return this.editingInstance.type === VirtualizationType.Vm;
+  }
+
+  get isContainer(): boolean {
+    return this.editingInstance.type === VirtualizationType.Container;
   }
 
   get isStopped(): boolean {
@@ -153,13 +157,13 @@ export class InstanceEditFormComponent {
     const values = this.form.getRawValue();
 
     let payload = {
-      environment: this.environmentVariablesPayload,
       autostart: values.autostart,
       cpu: values.cpu,
       memory: values.memory || null,
       enable_vnc: values.enable_vnc,
       vnc_port: values.enable_vnc ? values.vnc_port || defaultVncPort : null,
       vnc_password: values.enable_vnc ? values.vnc_password : null,
+      ...(this.isContainer ? { environment: this.environmentVariablesPayload } : null),
     } as UpdateVirtualizationInstance;
 
     if (payload.enable_vnc) {
