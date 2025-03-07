@@ -211,7 +211,8 @@ html .ix-dark {
     --mat-text-button-ripple-color: var(--alt-bg1);
   }
 
-  .mat-mdc-tab-nav-bar {
+  .mat-mdc-tab-nav-bar,
+  .mat-mdc-tab-list {
     --mat-tab-header-inactive-label-text-color: var(--fg2);
     --mat-tab-header-inactive-hover-label-text-color: var(--fg1);
     --mat-tab-header-active-ripple-color: var(--focus-bg);

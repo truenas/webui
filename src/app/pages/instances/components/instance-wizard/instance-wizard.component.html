@@ -208,63 +208,65 @@
       </ix-list>
     </ix-form-section>
 
-    <ix-form-section
-      [label]="'Proxies' | translate"
-    >
-      <ix-list
-        formArrayName="proxies"
-        [empty]="form.controls.proxies.controls.length === 0"
-        [label]="containersHelptext.proxies_placeholder | translate"
-        [formArray]="form.controls.proxies"
-        (add)="addProxy()"
+    @if (isContainer()) {
+      <ix-form-section
+        [label]="'Proxies' | translate"
       >
-        @for (proxy of form.controls.proxies.controls; track proxy; let i = $index) {
-          <ix-list-item
-            [label]="'Proxy' | translate"
-            [formGroupName]="i"
-            (delete)="removeProxy(i)"
-          >
-            <div class="protocol-and-port">
-              <ix-select
-                class="protocol"
-                formControlName="source_proto"
-                [label]="containersHelptext.host_protocol_placeholder | translate"
-                [required]="true"
-                [options]="proxyProtocols$"
-              ></ix-select>
+        <ix-list
+          formArrayName="proxies"
+          [empty]="form.controls.proxies.controls.length === 0"
+          [label]="containersHelptext.proxies_placeholder | translate"
+          [formArray]="form.controls.proxies"
+          (add)="addProxy()"
+        >
+          @for (proxy of form.controls.proxies.controls; track proxy; let i = $index) {
+            <ix-list-item
+              [label]="'Proxy' | translate"
+              [formGroupName]="i"
+              (delete)="removeProxy(i)"
+            >
+              <div class="protocol-and-port">
+                <ix-select
+                  class="protocol"
+                  formControlName="source_proto"
+                  [label]="containersHelptext.host_protocol_placeholder | translate"
+                  [required]="true"
+                  [options]="proxyProtocols$"
+                ></ix-select>
 
-              <ix-input
-                class="port"
-                type="number"
-                formControlName="source_port"
-                [label]="containersHelptext.host_port_placeholder | translate"
-                [tooltip]="containersHelptext.host_port_tooltip | translate"
-                [required]="true"
-              ></ix-input>
-            </div>
+                <ix-input
+                  class="port"
+                  type="number"
+                  formControlName="source_port"
+                  [label]="containersHelptext.host_port_placeholder | translate"
+                  [tooltip]="containersHelptext.host_port_tooltip | translate"
+                  [required]="true"
+                ></ix-input>
+              </div>
 
-            <div class="protocol-and-port">
-              <ix-select
-                class="protocol"
-                formControlName="dest_proto"
-                [label]="containersHelptext.instance_protocol_placeholder | translate"
-                [tooltip]="containersHelptext.instance_protocol_tooltip | translate"
-                [required]="true"
-                [options]="proxyProtocols$"
-              ></ix-select>
+              <div class="protocol-and-port">
+                <ix-select
+                  class="protocol"
+                  formControlName="dest_proto"
+                  [label]="containersHelptext.instance_protocol_placeholder | translate"
+                  [tooltip]="containersHelptext.instance_protocol_tooltip | translate"
+                  [required]="true"
+                  [options]="proxyProtocols$"
+                ></ix-select>
 
-              <ix-input
-                class="port"
-                type="number"
-                formControlName="dest_port"
-                [label]="containersHelptext.instance_port_placeholder | translate"
-                [required]="true"
-              ></ix-input>
-            </div>
-          </ix-list-item>
-        }
-      </ix-list>
-    </ix-form-section>
+                <ix-input
+                  class="port"
+                  type="number"
+                  formControlName="dest_port"
+                  [label]="containersHelptext.instance_port_placeholder | translate"
+                  [required]="true"
+                ></ix-input>
+              </div>
+            </ix-list-item>
+          }
+        </ix-list>
+      </ix-form-section>
+    }
 
     <ix-form-section
       [label]="'Network' | translate"
