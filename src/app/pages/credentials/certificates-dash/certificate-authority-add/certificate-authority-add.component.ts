@@ -124,14 +124,14 @@ export class CertificateAuthorityAddComponent implements AfterViewInit {
 
   getNewCaSteps(): [
     CaIdentifierAndTypeComponent,
-    CertificateOptionsComponent,
-    CertificateSubjectComponent,
-    CertificateConstraintsComponent,
+    CertificateOptionsComponent?,
+    CertificateSubjectComponent?,
+    CertificateConstraintsComponent?,
   ] {
     return [this.identifierAndType(), this.options(), this.subject(), this.constraints()];
   }
 
-  getImportCaSteps(): [CaIdentifierAndTypeComponent, CaImportComponent] {
+  getImportCaSteps(): [CaIdentifierAndTypeComponent, CaImportComponent?] {
     return [this.identifierAndType(), this.import()];
   }
 
@@ -142,9 +142,11 @@ export class CertificateAuthorityAddComponent implements AfterViewInit {
 
     const { cert_extensions: extensions, ...otherFields } = profile;
 
-    this.getNewCaSteps().forEach((step) => {
-      step.form.patchValue(otherFields);
-    });
+    this.getNewCaSteps()
+      .filter((step) => !!step)
+      .forEach((step) => {
+        step.form.patchValue(otherFields);
+      });
 
     this.constraints().setFromProfile(extensions);
   }
@@ -179,7 +181,9 @@ export class CertificateAuthorityAddComponent implements AfterViewInit {
   private preparePayload(): CertificateAuthorityUpdate {
     const steps = this.isImport ? this.getImportCaSteps() : this.getNewCaSteps();
 
-    const values = steps.map((step) => step.getPayload());
+    const values = steps
+      .filter((step) => !!step)
+      .map((step) => step.getPayload());
     return merge({}, ...values);
   }
 

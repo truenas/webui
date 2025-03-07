@@ -140,7 +140,7 @@ export interface PoolInstance {
   is_decrypted: boolean;
   status: PoolStatus;
   path: string;
-  scan: PoolScanUpdate;
+  scan: PoolScanUpdate | null;
   is_upgraded: boolean;
   healthy: boolean;
   warning: boolean;

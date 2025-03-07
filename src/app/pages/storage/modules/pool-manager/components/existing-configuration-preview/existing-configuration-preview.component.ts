@@ -57,7 +57,7 @@ export class ExistingConfigurationPreviewComponent implements OnChanges {
   readonly name = input<string>();
   readonly topology = input.required<PoolTopology>();
   readonly size = input<number>();
-  readonly disks = input<DetailsDisk[]>();
+  readonly disks = input.required<DetailsDisk[]>();
 
   VdevType = VdevType;
 

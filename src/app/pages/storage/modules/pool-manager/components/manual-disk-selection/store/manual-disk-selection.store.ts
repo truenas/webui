@@ -10,7 +10,7 @@ import {
 } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/interfaces/manual-disk-selection.interface';
 
 export interface ManualDiskSelectionState {
-  layout: CreateVdevLayout;
+  layout: CreateVdevLayout | null;
   vdevs: ManualSelectionVdev[];
   inventory: DetailsDisk[];
 }

@@ -132,7 +132,7 @@ describe('AppInfoCardComponent', () => {
       });
 
       spectator.detectChanges();
-      const appNameLink = spectator.query('.details-list .value');
+      const appNameLink = spectator.query('.details-list .value')!;
       expect(appNameLink.tagName.toLowerCase()).toBe('span');
       expect(appNameLink).toHaveText('test-user-app-name');
     });

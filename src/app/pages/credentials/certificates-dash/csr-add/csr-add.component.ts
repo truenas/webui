@@ -109,16 +109,16 @@ export class CsrAddComponent {
 
   getNewCsrSteps(): [
     CsrIdentifierAndTypeComponent,
-    CertificateOptionsComponent,
-    CertificateSubjectComponent,
-    CertificateConstraintsComponent,
+    CertificateOptionsComponent?,
+    CertificateSubjectComponent?,
+    CertificateConstraintsComponent?,
   ] {
     return [this.identifierAndType(), this.options(), this.subject(), this.constraints()];
   }
 
   getImportCsrSteps(): [
     CsrIdentifierAndTypeComponent,
-    CsrImportComponent,
+    CsrImportComponent?,
   ] {
     return [this.identifierAndType(), this.import()];
   }
@@ -131,9 +131,11 @@ export class CsrAddComponent {
 
     const { cert_extensions: extensions, ...otherFields } = profile;
 
-    this.getNewCsrSteps().forEach((step) => {
-      step.form.patchValue(otherFields);
-    });
+    this.getNewCsrSteps()
+      .filter((step) => !!step)
+      .forEach((step) => {
+        step.form.patchValue(otherFields);
+      });
 
     this.constraints().setFromProfile(extensions);
   }
@@ -168,7 +170,9 @@ export class CsrAddComponent {
   private preparePayload(): CertificateCreate {
     const steps = this.isImport ? this.getImportCsrSteps() : this.getNewCsrSteps();
 
-    const values = steps.map((step) => step.getPayload());
+    const values = steps
+      .filter((step) => !!step)
+      .map((step) => step.getPayload());
     return merge({}, ...values);
   }
 }

@@ -77,7 +77,7 @@ describe('CloudBackupFormComponent', () => {
   let loader: HarnessLoader;
   let spectator: Spectator<CloudBackupFormComponent>;
   const getData = jest.fn(() => existingTask);
-  const slideInRef: SlideInRef<CloudBackup, unknown> = {
+  const slideInRef: SlideInRef<CloudBackup | undefined, unknown> = {
     close: jest.fn(),
     requireConfirmationWhen: jest.fn(),
     getData: jest.fn(() => undefined),

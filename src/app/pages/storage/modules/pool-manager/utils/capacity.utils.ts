@@ -8,8 +8,8 @@ export function categoryCapacity(topologyCategory: PoolManagerTopologyCategory):
     return sum + vdevCapacity({
       vdev,
       layout: topologyCategory.layout,
-      draidDataDisks: topologyCategory.draidDataDisks,
-      draidSpareDisks: topologyCategory.draidSpareDisks,
+      draidDataDisks: topologyCategory.draidDataDisks || undefined,
+      draidSpareDisks: topologyCategory.draidSpareDisks || undefined,
     });
   }, 0);
 }
@@ -26,9 +26,9 @@ export function vdevCapacity({
     return 0;
   }
 
-  const smallestDiskSize = vdev.reduce((smallest, disk) => {
-    return smallest?.size < disk.size ? smallest : disk;
-  }, undefined).size;
+  const smallestDiskSize = Number(vdev.reduce<DetailsDisk | undefined>((smallest, disk) => {
+    return Number(smallest?.size) < disk.size ? smallest : disk;
+  }, undefined)?.size);
 
   const totalSize = smallestDiskSize * vdev.length;
 
@@ -44,25 +44,25 @@ export function vdevCapacity({
     case CreateVdevLayout.Draid1:
       return dRaidCapacity({
         children: vdev.length,
-        dataPerGroup: draidDataDisks,
+        dataPerGroup: Number(draidDataDisks),
         parity: 1,
-        spares: draidSpareDisks,
+        spares: Number(draidSpareDisks),
         size: smallestDiskSize,
       });
     case CreateVdevLayout.Draid2:
       return dRaidCapacity({
         children: vdev.length,
-        dataPerGroup: draidDataDisks,
+        dataPerGroup: Number(draidDataDisks),
         parity: 2,
-        spares: draidSpareDisks,
+        spares: Number(draidSpareDisks),
         size: smallestDiskSize,
       });
     case CreateVdevLayout.Draid3:
       return dRaidCapacity({
         children: vdev.length,
-        dataPerGroup: draidDataDisks,
+        dataPerGroup: Number(draidDataDisks),
         parity: 3,
-        spares: draidSpareDisks,
+        spares: Number(draidSpareDisks),
         size: smallestDiskSize,
       });
     case CreateVdevLayout.Stripe:

@@ -29,7 +29,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 })
 export class IdentifyLightComponent {
   protected readonly isStatusKnown = computed(() => Boolean(this.status()));
-  protected readonly status = computed(() => this.store.selectedSlot().drive_bay_light_status);
+  protected readonly status = computed(() => this.store.selectedSlot()?.drive_bay_light_status);
 
   protected readonly DriveBayLightStatus = DriveBayLightStatus;
 

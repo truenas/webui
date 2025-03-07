@@ -12,23 +12,12 @@ import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.compon
 const datasetDummy = {
   id: '/mnt/pool/ds',
   encrypted: false,
-  available: null,
-  encryption_algorithm: null,
   snapshot_count: 2,
   snapshot_tasks_count: 3,
   replication_tasks_count: 4,
   cloudsync_tasks_count: 5,
   rsync_tasks_count: 6,
-  encryption_root: null,
-  key_format: null,
-  key_loaded: null,
-  locked: null,
   mountpoint: '/mnt/pool/ds',
-  name: null,
-  pool: null,
-  type: null,
-  used: null,
-  quota: null,
   thick_provisioned: false,
 } as DatasetDetails;
 

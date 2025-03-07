@@ -4,7 +4,7 @@
       {{ 'S.M.A.R.T. Info for {disk}' | translate: { disk: topologyDisk().disk } }}
     </h3>
 
-    @if(hasSmartTestSupport()) {
+    @if (hasSmartTestSupport()) {
       <button
         *ixRequiresRoles="requiredRoles"
         mat-button

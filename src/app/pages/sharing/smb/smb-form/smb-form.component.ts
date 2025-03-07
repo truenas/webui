@@ -328,9 +328,12 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
   setupPurposeControl(): void {
     this.form.controls.purpose.valueChanges.pipe(untilDestroyed(this))
-      .subscribe((value: string) => {
+      .subscribe((value) => {
         this.clearPresets();
-        this.setValuesFromPreset(value);
+
+        if (value) {
+          this.setValuesFromPreset(value);
+        }
       });
   }
 

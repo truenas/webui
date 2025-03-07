@@ -51,8 +51,8 @@ describe('CloudSyncFormComponent', () => {
       { time: '13:00', bandwidth: 1024 },
       { time: '15:00' },
     ],
-    include: [],
-    exclude: [],
+    include: [] as string[],
+    exclude: [] as string[],
     transfers: 2,
     create_empty_src_dirs: true,
     follow_symlinks: true,
@@ -136,7 +136,7 @@ describe('CloudSyncFormComponent', () => {
   let loader: HarnessLoader;
   let spectator: Spectator<CloudSyncFormComponent>;
   const getData = jest.fn(() => existingTask);
-  const slideInRef: SlideInRef<CloudSyncTaskUi, unknown> = {
+  const slideInRef: SlideInRef<CloudSyncTaskUi | undefined, unknown> = {
     close: jest.fn(),
     requireConfirmationWhen: jest.fn(),
     getData: jest.fn(() => undefined),

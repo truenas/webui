@@ -56,6 +56,12 @@ export class CategoryViewComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     const category = this.category();
+    if (!category) {
+      console.error('Missing category parameter');
+      this.router.navigate(['/apps']);
+      return;
+    }
+
     this.pageTitle$.next(category.replace(/-/g, ' '));
     this.appsFilterStore.applyFilters({
       categories: [category],

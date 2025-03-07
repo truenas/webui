@@ -109,14 +109,14 @@ export class CertificateAddComponent {
 
   getNewCertificateSteps(): [
     CertificateIdentifierAndTypeComponent,
-    CertificateOptionsComponent,
-    CertificateSubjectComponent,
-    CertificateConstraintsComponent,
+    CertificateOptionsComponent?,
+    CertificateSubjectComponent?,
+    CertificateConstraintsComponent?,
   ] {
     return [this.identifierAndType(), this.options(), this.subject(), this.constraints()];
   }
 
-  getImportCertificateSteps(): [CertificateIdentifierAndTypeComponent, CertificateImportComponent] {
+  getImportCertificateSteps(): [CertificateIdentifierAndTypeComponent, CertificateImportComponent?] {
     return [this.identifierAndType(), this.import()];
   }
 
@@ -150,22 +150,28 @@ export class CertificateAddComponent {
 
     const { cert_extensions: extensions, ...otherFields } = profile;
 
-    this.getNewCertificateSteps().forEach((step) => {
-      step.form.patchValue(otherFields);
-    });
+    this.getNewCertificateSteps()
+      .filter((step) => !!step)
+      .forEach((step) => {
+        step.form.patchValue(otherFields);
+      });
 
     this.constraints()?.setFromProfile(extensions);
   }
 
   updateSummary(): void {
     const stepsWithSummary = this.isImport ? this.getImportCertificateSteps() : this.getNewCertificateSteps();
-    this.summary = stepsWithSummary.map((step) => step.getSummary());
+    this.summary = stepsWithSummary
+      .filter((step) => !!step)
+      .map((step) => step.getSummary());
   }
 
   private preparePayload(): CertificateCreate {
     const steps = this.isImport ? this.getImportCertificateSteps() : this.getNewCertificateSteps();
 
-    const values = steps.map((step) => step.getPayload());
+    const values = steps
+      .filter((step) => !!step)
+      .map((step) => step.getPayload());
     return merge({}, ...values);
   }
 }
