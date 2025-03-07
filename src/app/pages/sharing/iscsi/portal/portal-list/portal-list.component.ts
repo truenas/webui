@@ -158,6 +158,7 @@ export class PortalListComponent implements OnInit {
     });
     const portals$ = this.api.call('iscsi.portal.query', []).pipe(
       tap((portals) => this.portals = portals),
+      untilDestroyed(this),
     );
 
     this.iscsiService.listenForDataRefresh()

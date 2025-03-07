@@ -147,6 +147,7 @@ export class InitiatorListComponent implements OnInit {
   ngOnInit(): void {
     const initiators$ = this.iscsiService.getInitiators().pipe(
       tap((initiators) => this.initiators = initiators),
+      untilDestroyed(this),
     );
 
     this.iscsiService.listenForDataRefresh()
