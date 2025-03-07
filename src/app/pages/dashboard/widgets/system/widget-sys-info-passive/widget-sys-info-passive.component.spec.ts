@@ -131,7 +131,6 @@ describe('WidgetSysInfoPassiveComponent', () => {
         'Version: 25.10.0-MASTER-20250126-184805 - Goldeye',
         'Support License: Gold Contract,  Expires on 2025-01-01',
         'System Serial: AA-00002',
-        'Hostname: test-hostname-b',
         'Uptime: 1 minute 17 seconds as of 10:34',
       ]);
     });
@@ -163,6 +162,10 @@ describe('WidgetSysInfoPassiveComponent', () => {
 
       expect(spectator.query('.container.empty div')).toHaveText('This system is not licensed for HA.');
       expect(spectator.query('.container.empty small')).toHaveText('Configure dashboard to edit this widget.');
+    });
+
+    it('shows hostname near product image when system serial is present', () => {
+      expect(spectator.query('.hostname').textContent.trim()).toBe('test-hostname-b');
     });
   });
 
