@@ -4,9 +4,6 @@ import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 
 export const helptextTopbar = {
   ha_status: T('HA Status'),
-  ha_status_text_enabled: T('HA Enabled'),
-  ha_is_enabled: T('HA is enabled'),
-  ha_status_text_disabled: T('HA Disabled'),
   updateRunning_dialog: {
     title: T('Update in Progress'),
     message: helptextGlobal.sysUpdateMessage,
@@ -17,7 +14,7 @@ export const helptextTopbar = {
     toggle_collapse: T('Toggle Collapse'),
     tc_connect: T('Connecting to TrueCommand'),
     tc_status: T('Status of TrueCommand'),
-    tnc_status: T('Status of Truenas Connect'),
+    tnc_status: T('Status of TrueNAS Connect'),
     update: T('Update in Progress'),
     reboot_info: T('Reboot Required'),
     pending_network_changes: T('Pending Network Changes'),
@@ -83,7 +80,6 @@ address. Please verify the email address before continuing.'),
     pw_new_pw_tooltip: T('Passwords cannot contain a <b>?</b>. Passwords should \
 be at least eight characters and contain a mix of lower and \
 upper case, numbers, and special characters.'),
-    pw_invalid_title: T('Incorrect Password'),
     pw_updated: T('Password updated.'),
   },
 };

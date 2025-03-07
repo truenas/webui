@@ -3,11 +3,7 @@ import { SyslogLevel, SyslogTransport } from 'app/enums/syslog.enum';
 
 export const helptextSystemAdvanced = {
   fieldset_sed: T('Self-Encrypting Drive'),
-  fieldset_sysctl: T('Sysctl'),
   fieldset_cron: T('Cron Jobs'),
-  fieldset_initshutdown: T('Init/Shutdown Scripts'),
-  fieldset_sessions_table: T('Active Sessions'),
-  fieldset_addresses: T('Allowed IP Addresses'),
 
   dialog_generate_debug_title: T('Generate Debug File'),
   dialog_generate_debug_message: T('Warning: Debugs may contain log files with personal information such as usernames or other identifying information about your system. Please review debugs and redact any sensitive information before sharing with external entities.'),
@@ -24,11 +20,6 @@ export const helptextSystemAdvanced = {
   serialport_tooltip: T('Select the serial port address in hex.'),
 
   serialspeed_tooltip: T('Choose the speed in bps used by the serial port.'),
-
-  autotune_tooltip: T('Activates a tuning script which attempts to optimize \
- the system depending on the installed hardware. <b>Warning:</b> Autotuning \
- is only used as a temporary measure and is not a permanent fix for system \
- hardware issues.'),
 
   debugkernel_tooltip: T('Set to boot a debug kernel after the next system\
   restart.'),
@@ -50,8 +41,6 @@ simultaneously.'),
   sed_passwd_tooltip: T('Global password to unlock SEDs.'),
 
   sed_passwd2_placeholder: T('Confirm SED Password'),
-
-  debug_download_failed_message: T('Debug could not be downloaded.'),
 
   retention_tooltip: T('Number of days to retain local audit messages.'),
   reservation_tooltip: T('Size in GiB of refreservation to set on ZFS dataset \

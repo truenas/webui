@@ -21,20 +21,10 @@ export const helptextAcl = {
 
   dataset_acl_group_tooltip: T('Group to which this ACL entry applies.'),
 
-  dataset_acl_uid_tooltip: T('User who controls the dataset. This user\
- always has permissions to read or write the ACL and read or write\
- attributes. Users created manually or imported from a directory service\
- appear in the drop-down menu.'),
-
   apply_user: {
     tooltip: T('Confirm changes to <i>User</i>. To prevent errors, changes to the <i>User</i> \
 are submitted only when this box is set.'),
   },
-
-  dataset_acl_gid_tooltip: T('The group which controls the dataset. This\
- group has the same permissions as granted to the <i>group@</i>\
- <i>Who</i>. Groups created manually or imported from a directory\
- service appear in the drop-down menu.'),
 
   apply_group: {
     tooltip: T('Confirm changes to <i>Group</i>. To prevent errors, changes to the <i>Group</i> \
@@ -67,17 +57,11 @@ are submitted only when this box is set.'),
  It is recommended to keep this option enabled.'),
 
   dataset_acl_dialog_warning: T('Warning'),
-  dataset_acl_dialog_warning_message: T('Changing dataset permission mode\
- can severely affect existing permissions.'),
 
   dataset_acl_recursive_dialog_warning: T('Warning'),
   dataset_acl_recursive_dialog_warning_message: T('Setting permissions\
  recursively affects this directory and any others below it. This can\
  make data inaccessible.'),
-
-  dataset_acl_stripacl_tooltip: T('Set to remove all ACLs from the current\
- dataset. ACLs are also recursively stripped from directories and child\
- datasets when those options are set.'),
 
   stripACL_dialog: {
     title: T('Strip ACLs'),
@@ -93,21 +77,6 @@ are submitted only when this box is set.'),
 
   dataset_acl_toplevel_dialog_message: T('Editing top-level datasets can\
  prevent users from accessing data in child datasets.'),
-
-  posix_perms: {
-    placeholder: T('Permissions'),
-    tooltip: T('Permissions'),
-  },
-
-  posix_tag: {
-    placeholder: T('Who'),
-    tooltip: T('Tag'),
-  },
-
-  posix_default: {
-    placeholder: T('Default'),
-    tooltip: T('Default'),
-  },
 
   type_dialog: {
     title: T('Create an ACL'),
@@ -125,8 +94,6 @@ are submitted only when this box is set.'),
   save_dialog: {
     title: T('Updating ACL'),
     message: T('This process continues in the background after closing this dialog.'),
-    abort_message: T('Clicking Continue allows TrueNAS to finish the update in the background while \
- Abort stops the process and reverts the dataset ACL to the previously active ACL.'),
   },
 
 };

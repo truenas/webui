@@ -84,22 +84,18 @@ export const helptextSystemGeneral = {
 
   stg_kbdmap: {
     placeholder: T('Console Keyboard Map'),
-    tooltip: T('Select a keyboard layout.'),
   },
 
   stg_timezone: {
     placeholder: T('Timezone'),
-    tooltip: T('Select a time zone.'),
   },
 
   date_format: {
     placeholder: T('Date Format'),
-    tooltip: T('Choose a date format.'),
   },
 
   time_format: {
     placeholder: T('Time Format'),
-    tooltip: T('Choose a time format.'),
   },
 
   usage_collection: {
@@ -153,13 +149,9 @@ export const helptextSystemGeneral = {
   dialog_confirm_title: T('Restart Web Service'),
   dialog_confirm_message: T('The web service must restart for the protocol changes to take effect. The UI will be temporarily unavailable. Restart the service?'),
 
-  dialog_error_title: T('Error restarting web service'),
-
   enabled: T('Enabled'),
   disabled: T('Disabled'),
   default: T('Default'),
   localeTitle: T('Localization'),
   guiTitle: T('GUI'),
-  guiPageTitle: T('GUI Settings'),
-  ntpTitle: T('NTP Servers'),
 };

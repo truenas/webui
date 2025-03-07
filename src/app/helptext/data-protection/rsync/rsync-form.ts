@@ -21,8 +21,6 @@ export const helptextRsyncForm = {
                 target="_blank">rsyncd.conf(5)</a> of the rsync\
                 server or in the <b>Rsync Modules</b> of another\
                 system.'),
-  rsync_remotepath_tooltip: T('Browse to the existing path on the remote host to\
-                sync with. Maximum path length is 255 characters'),
   rsync_validate_rpath_tooltip: T('Set to automatically create the defined <b>Remote\
                 Path</b> if it does not exist.'),
   rsync_direction_tooltip: T('Direct the flow of data to the remote host.'),

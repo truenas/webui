@@ -42,21 +42,6 @@ export const helptextCloudBackup = {
   absolute_paths_placeholder: T('Use Absolute Paths'),
   absolute_paths_tooltip: T('Determines whether restic backup will contain absolute or relative paths'),
 
-  transfers_placeholder: T('Transfers'),
-  transfers_tooltip: T('Number of simultaneous file transfers. Enter a\
- number based on the available bandwidth and destination system\
- performance. See <a href="https://rclone.org/docs/#transfers-n"\
- target="_blank">rclone --transfers</a>.'),
-
-  bwlimit_placeholder: T('Bandwidth Limit'),
-  bwlimit_tooltip: T('A single bandwidth limit or bandwidth limit schedule in rclone format.\
- Separate entries by pressing <code>Enter</code>. Example: \
- <samp>08:00,512 12:00,10MB 13:00,512 18:00,30MB 23:00,off</samp>.\
- Units can be specified with a suffix of <samp>b</samp>,\
- <samp>k</samp> (default), <samp>M</samp>, or <samp>G</samp>.\
- See <a href="https://rclone.org/docs/#bwlimit-bandwidth-spec"\
- target="_blank">rclone --bwlimit</a>.'),
-
   exclude_placeholder: T('Exclude'),
   exclude_tooltip: T('List of files and directories to exclude from backup.<br> \
  Separate entries by pressing <code>Enter</code>. See \
@@ -67,8 +52,6 @@ export const helptextCloudBackup = {
   keep_last_tooltip: T('Enter the number of last kept backups.'),
 
   password_placeholder: T('Password'),
-  password_tooltip: T('Enter password.'),
 
   schedule_placeholder: T('Schedule'),
-  schedule_tooltip: T('Select a schedule preset or choose <i>Custom</i> to setup custom schedule.'),
 };

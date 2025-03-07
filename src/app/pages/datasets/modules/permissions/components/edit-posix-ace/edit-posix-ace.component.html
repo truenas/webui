@@ -3,7 +3,6 @@
     <ix-select
       formControlName="tag"
       [label]="'Who' | translate"
-      [tooltip]="tooltips.tag | translate"
       [options]="tags$"
       [required]="true"
     ></ix-select>
@@ -34,7 +33,6 @@
       formControlName="permissions"
       inlineFieldFlex="33%"
       [label]="'Permissions' | translate"
-      [tooltip]="tooltips.permissions | translate"
       [options]="permissions$"
       [inlineFields]="true"
     ></ix-checkbox-list>

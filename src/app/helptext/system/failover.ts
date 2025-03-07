@@ -16,7 +16,6 @@ export const helptextSystemFailover = {
   dialog_sync_from_peer_message: T('Are you sure you want to sync from peer?'),
 
   confirm_dialogs: {
-    sync_title: T('Success'),
     sync_from_message: T('Sync from peer succeeded.'),
     sync_to_message: T('Sync to peer succeeded.'),
   },

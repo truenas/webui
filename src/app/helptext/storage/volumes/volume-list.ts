@@ -42,13 +42,10 @@ the system dataset transfers back to the TrueNAS operating system device.'),
   },
 
   exporting: T('Exporting Pool'),
-  exportDisconnect: T('Export/Disconnect Pool'),
 
   upgradePoolDialog_warning: T('Proceed with upgrading the pool? WARNING: Upgrading a pool is a\
  one-way operation that might make some features of\
  the pool incompatible with older versions of TrueNAS: '),
-
-  acl_edit_msg: T('Root dataset ACL cannot be edited.'),
 
   expand_pool_dialog: {
     title: T('Expand pool '),

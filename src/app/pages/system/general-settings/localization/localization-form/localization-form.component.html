@@ -20,7 +20,6 @@
 
         <ix-select
           [label]="kbdMap.label | translate"
-          [tooltip]="kbdMap.tooltip | translate"
           [options]="kbdMap.options"
           [required]="true"
           [formControlName]="kbdMap.fcName"
@@ -28,19 +27,16 @@
         <ix-combobox
           [formControlName]="timezone.fcName"
           [label]="timezone.label | translate"
-          [tooltip]="timezone.tooltip | translate"
           [provider]="timezone.provider"
           [required]="true"
         ></ix-combobox>
         <ix-select
           [label]="dateFormat.label | translate"
-          [tooltip]="dateFormat.tooltip | translate"
           [options]="dateFormat.options"
           [formControlName]="dateFormat.fcName"
         ></ix-select>
         <ix-select
           [label]="timeFormat.label | translate"
-          [tooltip]="timeFormat.tooltip | translate"
           [options]="timeFormat.options"
           [formControlName]="timeFormat.fcName"
         ></ix-select>

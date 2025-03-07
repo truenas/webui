@@ -100,7 +100,6 @@ export class ReportComponent implements OnInit, OnChanges {
   chartColors: string[];
   legendData: LegendDataWithStackedTotalHtml = {} as LegendDataWithStackedTotalHtml;
   subtitle: string = this.translate.instant('% of all cores');
-  isActive = true;
   stepForwardDisabled = true;
   stepBackDisabled = false;
   timezone: string;
