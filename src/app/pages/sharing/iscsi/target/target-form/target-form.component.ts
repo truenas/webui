@@ -216,7 +216,7 @@ export class TargetFormComponent implements OnInit {
         return this.fcService.linkFiberChannelToTarget(
           target.id,
           this.fcForm.value.port,
-          this.fcForm.value.host_id,
+          this.fcForm.value.host_id || undefined,
         ).pipe(map(() => target));
       }),
       untilDestroyed(this),

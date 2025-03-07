@@ -247,6 +247,11 @@ export class AlertServiceComponent implements OnInit {
       [AlertServiceType.SplunkOnCall, SplunkOnCallServiceComponent],
     ]);
 
-    return formMapping.get(this.commonForm.controls.type.value);
+    const serviceClass = formMapping.get(this.commonForm.controls.type.value);
+    if (!serviceClass) {
+      throw new Error(`Invalid alert service type: ${this.commonForm.controls.type.value}`);
+    }
+
+    return serviceClass;
   }
 }

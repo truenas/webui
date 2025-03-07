@@ -186,7 +186,7 @@ export class AppBulkUpgradeComponent {
         untilDestroyed(this),
       )
       .subscribe(([app, version]) => {
-        this.getUpgradeSummary(app, version);
+        this.getUpgradeSummary(app, version || undefined);
       });
   }
 }

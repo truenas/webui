@@ -43,13 +43,13 @@ export interface SmartTestResults {
 
 export interface SmartTestResult {
   description: string;
-  lba_of_first_error: number;
+  lba_of_first_error: number | null;
   lifetime: number;
   num: number;
-  remaining: number;
+  remaining: number | null;
   status: SmartTestResultStatus;
-  status_verbose: string;
-  segment_number: number;
+  status_verbose: string | null;
+  segment_number: number | null;
   power_on_hours_ago: number;
 }
 

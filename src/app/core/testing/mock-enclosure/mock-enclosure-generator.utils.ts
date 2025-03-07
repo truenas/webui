@@ -40,7 +40,7 @@ export class MockEnclosureGenerator {
             platform: `TRUENAS-${this.config.controllerModel}`,
             system_product: `TRUENAS-${this.config.controllerModel}`,
           }
-        : undefined,
+        : null,
     };
   }
 

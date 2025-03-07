@@ -6,7 +6,7 @@ export interface AlertServiceEdit {
   level?: AlertLevel;
   name?: string;
   type?: AlertServiceType;
-  attributes?: Record<string, string | number | boolean | number[] | string[]>;
+  attributes?: Record<string, string | number | boolean | number[] | string[] | null>;
 }
 
 export interface AlertService extends AlertServiceEdit {

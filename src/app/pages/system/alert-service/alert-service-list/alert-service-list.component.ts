@@ -85,7 +85,13 @@ export class AlertServiceListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Level'),
       propertyName: 'level',
-      getValue: (service) => this.translate.instant(alertLevelLabels.get(service.level) || service.level),
+      getValue: (service) => {
+        if (service.level) {
+          return this.translate.instant(alertLevelLabels.get(service.level) || service.level);
+        }
+
+        return this.translate.instant('Unknown');
+      },
     }),
     textColumn({
       title: this.translate.instant('Enabled'),

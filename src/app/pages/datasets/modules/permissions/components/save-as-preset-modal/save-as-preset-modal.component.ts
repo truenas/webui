@@ -157,7 +157,7 @@ export class SaveAsPresetModalComponent implements OnInit {
     const userWhoToIds = new Map<string, number>();
     const groupWhoToIds = new Map<string, number>();
     for (const ace of acl.acl) {
-      if ([NfsAclTag.User, PosixAclTag.User].includes(ace.tag)) {
+      if ([NfsAclTag.User, PosixAclTag.User].includes(ace.tag) && ace.who) {
         requests$.push(
           this.userService.getUserByName(ace.who).pipe(
             tap((user: DsUncachedUser) => userWhoToIds.set(ace.who, user.pw_uid)),
@@ -168,7 +168,7 @@ export class SaveAsPresetModalComponent implements OnInit {
           ),
         );
       }
-      if ([NfsAclTag.UserGroup, PosixAclTag.Group].includes(ace.tag)) {
+      if ([NfsAclTag.UserGroup, PosixAclTag.Group].includes(ace.tag) && ace.who) {
         requests$.push(
           this.userService.getGroupByName(ace.who).pipe(
             tap((group: DsUncachedGroup) => groupWhoToIds.set(ace.who, group.gr_gid)),
@@ -186,12 +186,12 @@ export class SaveAsPresetModalComponent implements OnInit {
         const newAcl = cloneDeep(acl);
         const newAces = [];
         for (const ace of newAcl.acl) {
-          if ([NfsAclTag.User, PosixAclTag.User].includes(ace.tag)) {
+          if ([NfsAclTag.User, PosixAclTag.User].includes(ace.tag) && ace.who) {
             const id = userWhoToIds.has(ace.who) ? userWhoToIds.get(ace.who) : -1;
             newAces.push({ ...ace, id });
             continue;
           }
-          if ([NfsAclTag.UserGroup, PosixAclTag.Group].includes(ace.tag)) {
+          if ([NfsAclTag.UserGroup, PosixAclTag.Group].includes(ace.tag) && ace.who) {
             const id = groupWhoToIds.has(ace.who) ? groupWhoToIds.get(ace.who) : -1;
             newAces.push({ ...ace, id });
             continue;
