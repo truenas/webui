@@ -3,9 +3,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { subHours } from 'date-fns';
 import {
-  Observable, Subject, catchError, combineLatest, combineLatestWith, debounceTime,
+  Observable, Subject, catchError, combineLatest, debounceTime,
   filter,
-  forkJoin, map, of, repeat, shareReplay, startWith, switchMap, take, throttleTime, timer,
+  forkJoin, map, of, repeat, shareReplay, startWith, switchMap, throttleTime, timer,
 } from 'rxjs';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { LoadingState, toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
@@ -106,27 +106,17 @@ export class WidgetResourcesService {
     shareReplay({ refCount: false, bufferSize: 1 }),
   );
 
-  readonly serverTime$ = this.store$.pipe(
-    waitForSystemInfo,
-    map((systemInfo) => new Date(systemInfo.datetime.$date)),
-    combineLatestWith(this.refreshInterval$),
-    map(([serverTime]) => {
-      serverTime.setSeconds(serverTime.getSeconds() + 5);
-      return serverTime;
-    }),
-  );
-
   networkInterfaceLastHourStats(interfaceName: string): Observable<ReportingData[]> {
-    return this.serverTime$.pipe(
-      take(1),
-      switchMap((serverTime) => {
-        const end = Math.floor(serverTime.getTime() / 1000);
-        const start = Math.floor(subHours(serverTime, 1).getTime() / 1000);
-        return this.api.call('reporting.netdata_get_data', [[{
-          identifier: interfaceName,
-          name: 'interface',
-        }], { end, start }]);
-      }),
+    const now = new Date();
+    now.setSeconds(now.getSeconds() + 5);
+
+    const end = Math.floor(now.getTime() / 1000);
+    const start = Math.floor(subHours(now, 1).getTime() / 1000);
+
+    return this.api.call('reporting.netdata_get_data', [[{
+      identifier: interfaceName,
+      name: 'interface',
+    }], { end, start }]).pipe(
       shareReplay({ bufferSize: 1, refCount: true }),
     );
   }

@@ -28,6 +28,20 @@ const apps = [
   { id: '2', name: 'app_2' },
 ] as App[];
 
+const interfaceEth0 = {
+  name: 'interface',
+  identifier: 'eth0',
+  legend: ['time', 'received', 'sent'],
+  start: 1735281261,
+  end: 1735281265,
+  data: [
+    [1740117920, 2.2, 0.5],
+    [1740117921, 2.3, 1.2],
+    [1740117922, 2.4, 1.1],
+  ],
+  aggregations: { min: [0], mean: [5], max: [10] },
+};
+
 describe('WidgetResourcesService', () => {
   let spectator: SpectatorService<WidgetResourcesService>;
   let testScheduler: TestScheduler;
@@ -201,6 +215,7 @@ describe('WidgetResourcesService', () => {
         mockCall('app.query', apps),
         mockCall('pool.query', pools),
         mockCall('update.check_available'),
+        mockCall('reporting.netdata_get_data', [interfaceEth0]),
       ]),
     ],
   });
@@ -235,5 +250,13 @@ describe('WidgetResourcesService', () => {
 
   it('returns apps', async () => {
     expect(await firstValueFrom(spectator.service.installedApps$)).toEqual(apps);
+  });
+
+  describe('networkInterfaceLastHourStats', () => {
+    it('returns network interface stats for the last hour', async () => {
+      expect(
+        await firstValueFrom(spectator.service.networkInterfaceLastHourStats('eth0')),
+      ).toEqual([interfaceEth0]);
+    });
   });
 });
