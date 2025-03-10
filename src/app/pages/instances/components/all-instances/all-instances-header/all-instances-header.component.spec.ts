@@ -20,6 +20,7 @@ import {
   VolumesDialogComponent,
 } from 'app/pages/instances/components/common/volumes-dialog/volumes-dialog.component';
 import { VirtualizationConfigStore } from 'app/pages/instances/stores/virtualization-config.store';
+import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 import { AllInstancesHeaderComponent } from './all-instances-header.component';
 
 describe('AllInstancesHeaderComponent', () => {
@@ -37,6 +38,9 @@ describe('AllInstancesHeaderComponent', () => {
       MockComponent(VirtualizationStateComponent),
     ],
     providers: [
+      mockProvider(VirtualizationInstancesStore, {
+        initialize: jest.fn(),
+      }),
       mockProvider(VirtualizationConfigStore, storeMock),
       mockProvider(SlideIn, {
         open: jest.fn(() => of(undefined)),
@@ -133,6 +137,7 @@ describe('AllInstancesHeaderComponent', () => {
         GlobalConfigFormComponent,
         { data: { dataset: 'pool1/dataset1' } },
       );
+      expect(spectator.inject(VirtualizationInstancesStore).initialize).toHaveBeenCalled();
     });
 
     it('opens VolumesDialogComponent when Manage Volumes in Configuration menu is pressed', async () => {
