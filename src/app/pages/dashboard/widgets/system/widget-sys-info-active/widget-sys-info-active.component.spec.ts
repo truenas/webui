@@ -120,7 +120,6 @@ describe('WidgetSysInfoActiveComponent', () => {
       'Version: Goldeye-25.10.0-MASTER-20250126-184805',
       'Support License: Gold Contract,  Expires on 2025-01-01',
       'System Serial: AA-00001',
-      'Hostname: test-hostname-a',
       'Uptime: 23 hours 12 minutes as of 10:34',
     ]);
   });
@@ -153,5 +152,9 @@ describe('WidgetSysInfoActiveComponent', () => {
     updateAvailable$.next(true);
     const updateButton = await loader.getHarness(MatButtonHarness.with({ text: /Updates Available/ }));
     expect(await updateButton.host()).toExist();
+  });
+
+  it('shows hostname near product image when system serial is present', () => {
+    expect(spectator.query('.hostname').textContent.trim()).toBe('test-hostname-a');
   });
 });
