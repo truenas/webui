@@ -9,7 +9,7 @@ import { AuthGuardService } from 'app/modules/auth/auth-guard.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 describe('AuthGuardService', () => {
-  const redirectUrl = 'storage/disks';
+  const redirectUrl = 'storage/disks?pool=pool1';
   const isAuthenticated$ = new BehaviorSubject(false);
   const arSnapshot = { queryParams: {} } as ActivatedRouteSnapshot;
   const state = { url: redirectUrl } as RouterStateSnapshot;
