@@ -11,11 +11,16 @@
   </button>
 </ix-page-header>
 
+@let cloudBackup = dataProvider?.expandedRow;
+@let showDetails = !masterList.searchQuery() || cloudBackup.description.toLowerCase().includes(masterList.searchQuery().toLowerCase());
+
 <ix-master-detail-view
   #masterDetailView="masterDetailViewContext"
-  [selectedItem]="dataProvider?.expandedRow"
+  [showDetails]="showDetails"
+  [selectedItem]="cloudBackup"
 >
   <ix-cloud-backup-list
+    #masterList
     master
     [dataProvider]="dataProvider"
     [cloudBackups]="cloudBackups()"
@@ -24,12 +29,14 @@
   ></ix-cloud-backup-list>
 
   <ng-container detail-header>
-    {{ 'Task Details for {task}' | translate: { task: dataProvider?.expandedRow?.description} }}
+    @if (cloudBackup) {
+      {{ 'Task Details for {task}' | translate: { task: cloudBackup?.description} }}
+    }
   </ng-container>
 
   <ng-container detail>
-    @if (dataProvider.expandedRow) {
-      <ix-cloud-backup-details [backup]="dataProvider.expandedRow"></ix-cloud-backup-details>
+    @if (cloudBackup) {
+      <ix-cloud-backup-details [backup]="cloudBackup"></ix-cloud-backup-details>
     }
   </ng-container>
 </ix-master-detail-view>

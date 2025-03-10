@@ -11,18 +11,23 @@
   </a>
 </ix-page-header>
 
-@let selectedNode = selectedNode$ | async;
 @if (pool) {
+  @let selectedNode = selectedNode$ | async;
+  @let showDetails = !masterList.filterString || selectedNode.disk.toLowerCase().includes(masterList.filterString.toLowerCase());
+
   <ix-master-detail-view
     #masterDetailView="masterDetailViewContext"
     [selectedItem]="selectedNode"
+    [showDetails]="showDetails"
     >
     <ix-devices-list
+      #masterList
       master
       [poolId]="pool"
       [isMobileView]="isMobileView()"
       (showMobileDetails)="masterDetailView.toggleShowMobileDetails($event)"
     ></ix-devices-list>
+
     <ng-container detail-header>
       @if (selectedNode) {
         <span>{{ 'Details for ' | translate }}</span>
@@ -36,6 +41,7 @@
         </span>
       }
     </ng-container>
+
     <ng-container detail>
       @if (selectedNode) {
         <ix-disk-details-panel

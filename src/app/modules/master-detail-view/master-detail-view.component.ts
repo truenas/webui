@@ -32,6 +32,7 @@ import { FocusService } from 'app/services/focus.service';
 })
 export class MasterDetailViewComponent<T> implements AfterViewInit {
   readonly selectedItem = input<T | null>(null);
+  readonly showDetails = input<boolean | null>(true);
   readonly showMobileDetails = signal<boolean>(false);
   readonly isMobileView = signal<boolean>(false);
 

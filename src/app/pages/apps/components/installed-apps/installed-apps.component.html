@@ -1,5 +1,6 @@
 <ix-page-header [pageTitle]="'Installed' | translate">
   <ix-docker-status></ix-docker-status>
+
   @if (hasUpdates) {
     <div class="global-update">
       <button
@@ -19,6 +20,7 @@
       </button>
     </div>
   }
+
   <ix-app-settings-button></ix-app-settings-button>
   <a
     mat-button
@@ -31,10 +33,11 @@
 
 <ix-master-detail-view
   #masterDetailView="masterDetailViewContext"
+  [showDetails]="masterList.isSelectedAppVisible"
   [selectedItem]="selectedApp"
 >
   <ix-installed-apps-list
-    #installedAppsList
+    #masterList
     master
     [isMobileView]="masterDetailView.isMobileView()"
     (toggleShowMobileDetails)="masterDetailView.toggleShowMobileDetails($event)"
@@ -48,7 +51,7 @@
   }
 
   <ng-container detail>
-    @if (selectedApp && (!installedAppsList.filterString || selectedApp.name.toLowerCase().includes(installedAppsList.filterString.toLowerCase()))) {
+    @if (selectedApp) {
       <ix-app-details-panel
         [app]="selectedApp"
         (startApp)="start(selectedApp.name)"
