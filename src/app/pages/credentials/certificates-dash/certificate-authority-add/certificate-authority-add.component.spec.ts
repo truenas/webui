@@ -13,6 +13,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { CaCreateType } from 'app/enums/ca-create-type.enum';
 import { CertificateDigestAlgorithm } from 'app/enums/certificate-digest-algorithm.enum';
 import { CertificateKeyType } from 'app/enums/certificate-key-type.enum';
+import { ExtendedKeyUsageFlag } from 'app/enums/extended-key-usage-flag.enum';
 import { CertificateAuthority, CertificateAuthorityUpdate } from 'app/interfaces/certificate-authority.interface';
 import { CertificateProfile } from 'app/interfaces/certificate.interface';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
@@ -76,7 +77,7 @@ describe('CertificateAuthorityAddComponent', () => {
       ExtendedKeyUsage: {
         enabled: false,
         extension_critical: false,
-        usages: [],
+        usages: [] as ExtendedKeyUsageFlag[],
       },
       KeyUsage: {
         enabled: true,

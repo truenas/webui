@@ -38,7 +38,7 @@ export function parseUiSearchElements(
   }
 
   cheerioRoot$('[\\[ixUiSearch\\]]').each((_, element) => {
-    const configKeysSplit = cheerioRoot$(element).attr('[ixuisearch]').split('.');
+    const configKeysSplit = (cheerioRoot$(element).attr('[ixuisearch]') || '').split('.');
     const childKey = configKeysSplit[configKeysSplit.length - 1] as keyof UiSearchableElement;
 
     const mergedElement = createUiSearchElement(
@@ -60,7 +60,7 @@ export function parseUiSearchElements(
 
 function createUiSearchElement(
   cheerioRoot$: (selector: CheerioElement | string) => { attr: (attr: string) => string },
-  element: CheerioElement,
+  element: CheerioElement | null,
   elementConfig: Record<string, UiSearchableElement>,
   parentKey: keyof UiSearchableElement,
   childKey: keyof UiSearchableElement,
@@ -83,7 +83,8 @@ function createUiSearchElement(
 
     const anchorRouterLink = child?.anchorRouterLink || parent?.anchorRouterLink;
     const triggerAnchor = child?.triggerAnchor || parent?.triggerAnchor || null;
-    const routerLink = parseRouterLink(cheerioRoot$(element).attr('[routerlink]')) ?? null;
+    const routerLinkAttr = cheerioRoot$(element).attr('[routerlink]');
+    const routerLink = (routerLinkAttr && parseRouterLink(routerLinkAttr)) ?? null;
     let requiredRoles = child.requiredRoles || parent.requiredRoles || [];
 
     const rolesAttrName = cheerioRoot$(element).attr('*ixrequiresroles') || '';

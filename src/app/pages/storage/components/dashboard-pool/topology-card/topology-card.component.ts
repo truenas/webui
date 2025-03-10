@@ -64,8 +64,8 @@ export type EmptyDiskObject = Record<
   ],
 })
 export class TopologyCardComponent implements OnInit, OnChanges {
-  readonly poolState = input<Pool>();
-  readonly disks = input<StorageDashboardDisk[]>();
+  readonly poolState = input.required<Pool>();
+  readonly disks = input<StorageDashboardDisk[]>([]);
 
   protected readonly searchableElements = topologyCardElements;
   notAssignedDev = this.translate.instant('VDEVs not assigned');

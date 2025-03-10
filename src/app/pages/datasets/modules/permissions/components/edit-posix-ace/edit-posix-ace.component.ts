@@ -116,9 +116,9 @@ export class EditPosixAceComponent implements OnInit, OnChanges {
     } as PosixAclItem;
 
     if (this.isUserTag) {
-      ace.who = formValues.user;
+      ace.who = formValues.user || undefined;
     } else if (this.isGroupTag) {
-      ace.who = formValues.group;
+      ace.who = formValues.group || undefined;
     }
 
     return ace;

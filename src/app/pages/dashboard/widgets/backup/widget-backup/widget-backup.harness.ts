@@ -9,13 +9,13 @@ export class WidgetBackupHarness extends ComponentHarness {
     const icon = await this.locatorForOptional(IxIconHarness.with({ selector: '.icon' }))();
     const message = await this.locatorForOptional('.status-container')();
     return {
-      title: await title?.text(),
-      icon: await icon?.getName(),
-      message: await message?.text(),
+      title: await title?.text() || '',
+      icon: await icon?.getName() || '',
+      message: await message?.text() || '',
     };
   }
 
-  async getBannerMessage(): Promise<string> {
+  async getBannerMessage(): Promise<string | null> {
     const message = await this.locatorForOptional('.banner')();
     return message ? (await message.text()).trim() : null;
   }

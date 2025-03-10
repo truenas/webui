@@ -53,7 +53,7 @@ export class GenerateVdevsService {
       }
 
       const vdevs: DetailsDisk[][] = [];
-      for (let i = 0; i < category.vdevsNumber; i++) {
+      for (let i = 0; i < Number(category.vdevsNumber); i++) {
         vdevs.push(this.pickDisks(category, maximizeDispersal));
       }
 
@@ -106,7 +106,7 @@ export class GenerateVdevsService {
   private isCategorySet(category: PoolManagerTopologyCategory): boolean {
     return Boolean(category.layout
       && Number(category.width) > 0
-      && category.vdevsNumber > 0
+      && Number(category.vdevsNumber) > 0
       && category.diskSize
       && category.diskType);
   }
