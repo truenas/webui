@@ -59,8 +59,8 @@ export class NewMappingFormComponent implements OnChanges {
     instanceUidOrGid: [null as number | null],
   });
 
-  protected readonly userProvider = new UserComboboxProvider(this.userService, 'id');
-  protected readonly groupProvider = new GroupComboboxProvider(this.userService, 'id');
+  protected readonly userProvider = new UserComboboxProvider(this.userService, { valueField: 'id' });
+  protected readonly groupProvider = new GroupComboboxProvider(this.userService, { valueField: 'id' });
 
   constructor(
     private api: ApiService,
