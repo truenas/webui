@@ -17,7 +17,6 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
@@ -36,6 +35,8 @@ const initialState: SigninState = {
   wasAdminSet: true,
   loginBanner: null,
 };
+
+const tokenParam = 'token' as const;
 
 @UntilDestroy()
 @Injectable()
@@ -62,7 +63,6 @@ export class SigninStore extends ComponentStore<SigninState> {
     private systemGeneralService: SystemGeneralService,
     private router: Router,
     private snackbar: MatSnackBar,
-    private wsManager: WebSocketHandlerService,
     private errorHandler: ErrorHandlerService,
     private authService: AuthService,
     private updateService: UpdateService,
@@ -85,7 +85,7 @@ export class SigninStore extends ComponentStore<SigninState> {
     ])),
     tap(() => this.setLoadingState(false)),
     switchMap(() => {
-      const queryToken = this.activatedRoute.snapshot.queryParamMap.get('token');
+      const queryToken = this.activatedRoute.snapshot.queryParamMap.get(tokenParam);
       if (queryToken) {
         return this.handleLoginWithQueryToken(queryToken);
       }
@@ -124,7 +124,13 @@ export class SigninStore extends ComponentStore<SigninState> {
   getRedirectUrl(): string {
     const redirectUrl = this.window.sessionStorage.getItem('redirectUrl');
     if (redirectUrl) {
-      return redirectUrl;
+      try {
+        const url = new URL(redirectUrl, this.window.location.origin);
+        url.searchParams.delete(tokenParam);
+        return url.pathname + url.search;
+      } catch (error) {
+        console.error('Invalid redirect URL:', redirectUrl);
+      }
     }
 
     return '/dashboard';
