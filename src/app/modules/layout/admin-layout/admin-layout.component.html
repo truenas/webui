@@ -27,7 +27,7 @@
 
       @if (isSidenavCollapsed) {
         <div
-          class="sidenav-copyright-icon"
+        class="sidenav-copyright-icon"
           matTooltipPosition="right"
           [matTooltip]="copyrightHtml()"
         >
@@ -42,6 +42,9 @@
               [matTooltip]="'Hostname: {hostname}' | translate: { hostname }"
             >{{ hostname }}</div>
           }
+
+          <p class="product-type">{{ productTypeText }}</p>
+
           <ix-copyright-line class="copyright-line"></ix-copyright-line>
         </div>
       }
