@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from '@angular/common';
 import {
   Component, ChangeDetectionStrategy, input,
   computed,
@@ -50,6 +51,7 @@ import {
     MatList,
     MatListItem,
     NgxSkeletonLoaderModule,
+    NgTemplateOutlet,
     CopyButtonComponent,
     TranslateModule,
     UptimePipe,

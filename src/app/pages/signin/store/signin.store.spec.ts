@@ -56,6 +56,7 @@ describe('SigninStore', () => {
             getItem: jest.fn(),
           },
           location: {
+            origin: 'https://localhost',
             protocol: 'https:',
           },
         },
@@ -108,11 +109,31 @@ describe('SigninStore', () => {
   });
 
   describe('handleSuccessfulLogin', () => {
-    it('redirects user', () => {
+    it('redirects user to dashboard by default', () => {
       jest.spyOn(spectator.inject(ApiService), 'call').mockReturnValueOnce(of({ enabled: false }));
       jest.spyOn(spectator.inject(Router), 'navigateByUrl');
       spectator.service.handleSuccessfulLogin();
       expect(spectator.inject(Router).navigateByUrl).toHaveBeenCalledWith('/dashboard');
+    });
+
+    it('redirects user to url stored in sessionStorage', () => {
+      jest.spyOn(spectator.inject(ApiService), 'call').mockReturnValueOnce(of({ enabled: false }));
+      jest.spyOn(spectator.inject(Router), 'navigateByUrl');
+      jest.spyOn(spectator.inject<Window>(WINDOW).sessionStorage, 'getItem').mockReturnValueOnce('/some-url');
+
+      spectator.service.handleSuccessfulLogin();
+
+      expect(spectator.inject(Router).navigateByUrl).toHaveBeenCalledWith('/some-url');
+    });
+
+    it('redirects url to url stored in sessionStorage cropping out token query param', () => {
+      jest.spyOn(spectator.inject(ApiService), 'call').mockReturnValueOnce(of({ enabled: false }));
+      jest.spyOn(spectator.inject(Router), 'navigateByUrl');
+      jest.spyOn(spectator.inject<Window>(WINDOW).sessionStorage, 'getItem').mockReturnValueOnce('/some-url?token=123');
+
+      spectator.service.handleSuccessfulLogin();
+
+      expect(spectator.inject(Router).navigateByUrl).toHaveBeenCalledWith('/some-url');
     });
   });
 

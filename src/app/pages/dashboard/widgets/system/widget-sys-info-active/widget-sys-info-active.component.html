@@ -17,6 +17,16 @@
           <span>{{ 'Active' | translate }}</span>
         </ix-product-image>
 
+        @if (systemInfo()?.system_serial && isIxHardware()) {
+          <div class="hostname">
+            @if (isLoaded()) {
+              <span>
+                {{ systemInfo()?.hostname }}
+              </span>
+            }
+          </div>
+        }
+
         <div class="card-action-container">
           @if (isUpdateRunning()) {
             <button
@@ -70,15 +80,7 @@
                 }
               </span>
             } @else {
-              <ngx-skeleton-loader
-                class="inline-loader"
-                [theme]="{
-                  height: '20px',
-                  background: 'var(--alt-bg2)',
-                  opacity: 0.25,
-                  margin: 0,
-                }"
-              ></ngx-skeleton-loader>
+              <ng-container *ngTemplateOutlet="skeletonLoader"></ng-container>
             }
           </mat-list-item>
 
@@ -93,15 +95,7 @@
                 }
               </span>
             } @else {
-              <ngx-skeleton-loader
-                class="inline-loader"
-                [theme]="{
-                  height: '20px',
-                  background: 'var(--alt-bg2)',
-                  opacity: 0.25,
-                  margin: 0,
-                }"
-              ></ngx-skeleton-loader>
+              <ng-container *ngTemplateOutlet="skeletonLoader"></ng-container>
             }
           </mat-list-item>
 
@@ -118,15 +112,7 @@
                 <ix-copy-button [text]="version()"></ix-copy-button>
               </div>
             } @else {
-              <ngx-skeleton-loader
-                class="inline-loader"
-                [theme]="{
-                  height: '20px',
-                  background: 'var(--alt-bg2)',
-                  opacity: 0.25,
-                  margin: 0,
-                }"
-              ></ngx-skeleton-loader>
+              <ng-container *ngTemplateOutlet="skeletonLoader"></ng-container>
             }
           </mat-list-item>
 
@@ -160,26 +146,18 @@
                 {{ systemInfo()?.system_serial }}
               </span>
             </mat-list-item>
+          } @else {
+            <mat-list-item>
+              <strong>{{ 'Hostname' | translate }}:</strong>
+              @if (isLoaded()) {
+                <span>
+                  {{ systemInfo()?.hostname }}
+                </span>
+              } @else {
+                <ng-container *ngTemplateOutlet="skeletonLoader"></ng-container>
+              }
+            </mat-list-item>
           }
-
-          <mat-list-item>
-            <strong>{{ 'Hostname' | translate }}:</strong>
-            @if (isLoaded()) {
-              <span>
-                {{ systemInfo()?.hostname }}
-              </span>
-            } @else {
-              <ngx-skeleton-loader
-                class="inline-loader"
-                [theme]="{
-                  height: '20px',
-                  background: 'var(--alt-bg2)',
-                  opacity: 0.25,
-                  margin: 0,
-                }"
-              ></ngx-skeleton-loader>
-            }
-          </mat-list-item>
 
           <mat-list-item>
             <strong>{{ 'Uptime' | translate }}:</strong>
@@ -188,15 +166,7 @@
                 {{ uptime() | uptime: datetime() }}
               </span>
             } @else {
-              <ngx-skeleton-loader
-                class="inline-loader"
-                [theme]="{
-                  height: '20px',
-                  background: 'var(--alt-bg2)',
-                  opacity: 0.25,
-                  margin: 0,
-                }"
-              ></ngx-skeleton-loader>
+              <ng-container *ngTemplateOutlet="skeletonLoader"></ng-container>
             }
           </mat-list-item>
 
@@ -211,3 +181,14 @@
   </mat-card-content>
 </mat-card>
 
+<ng-template #skeletonLoader>
+  <ngx-skeleton-loader
+    class="inline-loader"
+    [theme]="{
+      height: '20px',
+      background: 'var(--alt-bg2)',
+      opacity: 0.25,
+      margin: 0,
+    }"
+  ></ngx-skeleton-loader>
+</ng-template>
