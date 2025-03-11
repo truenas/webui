@@ -130,7 +130,7 @@ export class CertificateImportComponent implements OnInit, SummaryProvider {
 
   private loadCsrs(): void {
     this.api.call('certificate.query', [[['CSR', '!=', null]]])
-      .pipe(this.errorHandler.catchError(), untilDestroyed(this))
+      .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
       .subscribe((csrs) => {
         this.csrs = csrs;
         this.csrOptions$ = of(

@@ -35,8 +35,8 @@ import { SearchInput1Component } from 'app/modules/forms/search-input1/search-in
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -174,7 +174,7 @@ export class InstalledAppsListComponent implements OnInit {
     private store$: Store<WebuiAppState>,
     private location: Location,
     private appsStats: AppsStatsService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
   ) {
     this.router.events
       .pipe(
@@ -304,7 +304,7 @@ export class InstalledAppsListComponent implements OnInit {
   start(name: string): void {
     this.appService.startApplication(name)
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe((job: Job<void, AppStartQueryParams>) => {
@@ -317,7 +317,7 @@ export class InstalledAppsListComponent implements OnInit {
   stop(name: string): void {
     this.appService.stopApplication(name)
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe({
@@ -332,7 +332,7 @@ export class InstalledAppsListComponent implements OnInit {
   restart(name: string): void {
     this.appService.restartApplication(name)
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe((job: Job<void, AppStartQueryParams>) => {
@@ -350,7 +350,7 @@ export class InstalledAppsListComponent implements OnInit {
     const job$ = this.store$.select(selectJob(jobId)).pipe(filter((job) => !!job));
     this.dialogService.jobDialog(job$, { title: name, canMinimize: true })
       .afterClosed()
-      .pipe(this.errorHandler.catchError(), untilDestroyed(this))
+      .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
       .subscribe();
   }
 
@@ -396,7 +396,7 @@ export class InstalledAppsListComponent implements OnInit {
         }),
         filter(Boolean),
         switchMap((options) => this.executeBulkDeletion(options)),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe((job: Job<CoreBulkResponse[]>) => this.handleDeletionResult(job));

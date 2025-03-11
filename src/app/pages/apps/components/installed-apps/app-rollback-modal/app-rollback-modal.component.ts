@@ -74,7 +74,7 @@ export class AppRollbackModalComponent {
       { title: helptextApps.apps.rollback_dialog.job },
     )
       .afterClosed()
-      .pipe(this.errorHandler.catchError(), untilDestroyed(this))
+      .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
       .subscribe(() => this.dialogRef.close(true));
   }
 

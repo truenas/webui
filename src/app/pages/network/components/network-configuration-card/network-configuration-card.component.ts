@@ -159,7 +159,7 @@ export class NetworkConfigurationCardComponent implements OnInit {
       this.api.call('network.configuration.config'),
     ])
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(([summary, config]) => {

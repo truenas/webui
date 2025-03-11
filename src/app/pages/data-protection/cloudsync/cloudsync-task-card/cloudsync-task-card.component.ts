@@ -267,7 +267,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
         filter(Boolean),
         switchMap(() => {
           return this.api.call('cloudsync.abort', [row.id]).pipe(
-            this.errorHandler.catchError(),
+            this.errorHandler.withErrorHandler(),
           );
         }),
         untilDestroyed(this),

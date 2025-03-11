@@ -114,7 +114,7 @@ export class JobsPanelComponent {
     );
     jobProgressDialogRef.afterClosed()
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(jobProgressDialogRef.getSubscriptionLimiterInstance()),
       )
       .subscribe({

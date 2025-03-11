@@ -116,7 +116,7 @@ export class AlertEffects {
         }),
       );
     }),
-    this.errorHandler.catchError(),
+    this.errorHandler.withErrorHandler(),
   ), { dispatch: false });
 
   reopenAllAlerts$ = createEffect(() => this.actions$.pipe(

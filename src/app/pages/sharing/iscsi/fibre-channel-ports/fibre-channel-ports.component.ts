@@ -174,7 +174,7 @@ export class FibreChannelPortsComponent implements OnInit {
     ])
       .pipe(
         finalize(() => this.isLoading.set(false)),
-        catchError(this.errorHandler.catchError()),
+        catchError(this.errorHandler.withErrorHandler()),
         untilDestroyed(this),
       )
       .subscribe(([hosts, ports, statuses]: [FibreChannelHost[], FibreChannelPort[], FibreChannelStatus[]]) => {

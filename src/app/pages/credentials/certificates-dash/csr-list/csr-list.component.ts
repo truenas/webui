@@ -195,7 +195,7 @@ export class CertificateSigningRequestsListComponent implements OnInit {
 
         return jobDialogRef.afterClosed();
       }),
-      this.errorHandler.catchError(),
+      this.errorHandler.withErrorHandler(),
       untilDestroyed(this),
     ).subscribe({
       next: () => {
@@ -217,7 +217,7 @@ export class CertificateSigningRequestsListComponent implements OnInit {
       arguments: [path],
     })
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe();
@@ -229,7 +229,7 @@ export class CertificateSigningRequestsListComponent implements OnInit {
       mimeType: 'text/plain',
     })
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe();

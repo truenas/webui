@@ -89,7 +89,7 @@ export class CertificateIdentifierAndTypeComponent implements OnInit, SummaryPro
 
   private loadProfiles(): void {
     this.api.call('webui.crypto.certificate_profiles')
-      .pipe(this.errorHandler.catchError(), untilDestroyed(this))
+      .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
       .subscribe((profiles) => {
         this.profiles = profiles;
         const profileOptions = Object.keys(profiles).map((name) => ({ label: name, value: name }));

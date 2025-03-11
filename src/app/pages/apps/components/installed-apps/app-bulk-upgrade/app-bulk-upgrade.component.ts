@@ -155,7 +155,7 @@ export class AppBulkUpgradeComponent {
     this.api
       .job('core.bulk', ['app.upgrade', payload])
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => {

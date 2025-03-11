@@ -162,7 +162,7 @@ export class AlertConfigFormComponent implements OnInit {
       });
 
     this.api.call('alertclasses.update', [payload]).pipe(
-      this.errorHandler.catchError(),
+      this.errorHandler.withErrorHandler(),
       untilDestroyed(this),
     ).subscribe(() => {
       this.snackbarService.success(this.translate.instant('Settings saved.'));

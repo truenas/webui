@@ -19,7 +19,7 @@ import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -67,7 +67,7 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
     private dialogService: DialogService,
     private api: ApiService,
     private translate: TranslateService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private errorHandler: ErrorHandlerService,
     private matDialog: MatDialog,
     private cdr: ChangeDetectorRef,
@@ -147,7 +147,7 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
       switchMap(() => {
         return this.api.call('zfs.snapshot.delete', [snapshot.name]).pipe(
           this.loader.withLoader(),
-          this.errorHandler.catchError(),
+          this.errorHandler.withErrorHandler(),
           tap(() => {
             this.snackbar.success(this.translate.instant('Snapshot deleted.'));
           }),

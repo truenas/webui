@@ -94,7 +94,7 @@ export class DockerImageDeleteDialogComponent {
 
     this.api.job('core.bulk', ['app.image.delete', deleteParams]).pipe(
       filter((job: Job<CoreBulkResponse<void>[], DeleteContainerImageParams[]>) => !!job.result),
-      this.errorHandler.catchError(),
+      this.errorHandler.withErrorHandler(),
       untilDestroyed(this),
     ).subscribe((response) => {
       response.arguments[1].forEach((params, index: number) => {

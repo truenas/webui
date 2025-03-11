@@ -89,7 +89,7 @@ export class TrainService {
   toggleAutoCheck(autoCheck: boolean): void {
     this.api.call('update.set_auto_download', [autoCheck])
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => {

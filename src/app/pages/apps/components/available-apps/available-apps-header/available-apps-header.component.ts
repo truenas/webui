@@ -155,7 +155,7 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
     )
       .afterClosed()
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => {

@@ -41,7 +41,7 @@ export class DiskStore extends ComponentStore<DiskState> {
 
   loadDisks(): Observable<DiskDetailsResponse> {
     return this.api.call('disk.details').pipe(
-      this.errorHandler.catchError(),
+      this.errorHandler.withErrorHandler(),
       tap((diskResponse) => {
         this.patchState({
           unusedDisks: diskResponse.unused,

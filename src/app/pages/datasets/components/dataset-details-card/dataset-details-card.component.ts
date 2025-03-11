@@ -105,7 +105,7 @@ export class DatasetDetailsCardComponent {
 
   promoteDataset(): void {
     this.api.call('pool.dataset.promote', [this.dataset().id])
-      .pipe(this.errorHandler.catchError(), untilDestroyed(this))
+      .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Dataset promoted successfully.'));
         this.datasetStore.datasetUpdated();

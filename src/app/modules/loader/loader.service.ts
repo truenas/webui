@@ -8,7 +8,7 @@ import { AppLoaderComponent } from 'app/modules/loader/components/app-loader/app
 import { FocusService } from 'app/services/focus.service';
 
 @Injectable({ providedIn: 'root' })
-export class AppLoaderService {
+export class LoaderService {
   dialogRef: MatDialogRef<AppLoaderComponent> | null = null;
 
   constructor(

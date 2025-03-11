@@ -82,7 +82,7 @@ export class EnclosureSvgComponent implements OnDestroy {
     this.svgLoader
       .loadSvg(this.svgUrl())
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         delay(0),
         untilDestroyed(this),
       )

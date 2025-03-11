@@ -7,7 +7,7 @@ import { AlertLevel } from 'app/enums/alert-level.enum';
 import { AlertPolicy } from 'app/enums/alert-policy.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AlertConfigFormComponent } from 'app/pages/system/alert-config-form/alert-config-form.component';
 
@@ -75,7 +75,7 @@ describe('AlertConfigFormComponent', () => {
         ]),
         mockCall('alertclasses.update'),
       ]),
-      mockProvider(AppLoaderService),
+      mockProvider(LoaderService),
       mockProvider(DialogService),
       mockProvider(FormErrorHandlerService),
       mockAuth(),

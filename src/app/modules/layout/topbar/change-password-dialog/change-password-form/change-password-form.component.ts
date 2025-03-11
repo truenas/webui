@@ -16,7 +16,7 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -70,7 +70,7 @@ export class ChangePasswordFormComponent {
     private fb: FormBuilder,
     private api: ApiService,
     private authService: AuthService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private formErrorHandler: FormErrorHandlerService,
     private snackbar: SnackbarService,
   ) {

@@ -154,7 +154,7 @@ export class CertificateOptionsComponent implements OnInit, OnChanges, SummaryPr
     this.systemGeneralService.getUnsignedCas()
       .pipe(
         idNameArrayToOptions(),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe((options) => {

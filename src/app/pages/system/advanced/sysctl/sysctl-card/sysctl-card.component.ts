@@ -138,7 +138,7 @@ export class SysctlCardComponent implements OnInit {
       .pipe(
         filter(Boolean),
         switchMap(() => this.api.job('tunable.delete', [row.id])),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe({
