@@ -55,8 +55,8 @@ export class WidgetAppSettingsComponent implements WidgetSettingsComponent<Widge
   }
 
   ngOnInit(): void {
-    this.setCurrentSettings();
     this.setupSettingsUpdate();
+    this.setCurrentSettings();
   }
 
   private setCurrentSettings(): void {
