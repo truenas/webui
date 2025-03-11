@@ -2,8 +2,12 @@ import { computed, Injectable } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
-import { of, switchMap, tap } from 'rxjs';
-import { catchError, map, startWith } from 'rxjs/operators';
+import {
+  of, Subject, switchMap, tap,
+} from 'rxjs';
+import {
+  catchError, map, startWith, takeUntil,
+} from 'rxjs/operators';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -28,6 +32,8 @@ export class VirtualizationInstancesStore extends ComponentStore<VirtualizationI
     return this.stateAsSignal().instances?.filter((instance) => !!instance) ?? [];
   });
 
+  private readonly killSubscription$ = new Subject<void>();
+
   constructor(
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
@@ -36,6 +42,7 @@ export class VirtualizationInstancesStore extends ComponentStore<VirtualizationI
   }
 
   readonly initialize = this.effect((trigger$) => {
+    this.killSubscription$.next();
     return trigger$.pipe(
       switchMap(() => {
         this.patchState({ isLoading: true });
@@ -76,6 +83,7 @@ export class VirtualizationInstancesStore extends ComponentStore<VirtualizationI
             this.errorHandler.showErrorModal(error);
             return of(undefined);
           }),
+          takeUntil(this.killSubscription$),
         );
       }),
       untilDestroyed(this),
