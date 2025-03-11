@@ -6,12 +6,12 @@ import {
   input,
   effect,
 } from '@angular/core';
-import { toObservable } from '@angular/core/rxjs-interop';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { filter, switchMap } from 'rxjs';
+import { map } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
@@ -46,6 +46,8 @@ import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtual
 })
 
 export class InstanceListComponent {
+  readonly instanceId = toSignal<string>(this.activatedRoute.params.pipe(map((params) => params.id)));
+
   readonly isMobileView = input<boolean>();
   readonly toggleShowMobileDetails = output<boolean>();
 
@@ -57,7 +59,6 @@ export class InstanceListComponent {
   protected readonly isLoading = this.store.isLoading;
 
   protected readonly selectedInstance = this.deviceStore.selectedInstance;
-
   get isAllSelected(): boolean {
     return this.selection.selected.length === this.filteredInstances().length;
   }
@@ -96,29 +97,33 @@ export class InstanceListComponent {
   constructor(
     private store: VirtualizationInstancesStore,
     private router: Router,
-    private activatedRoute: ActivatedRoute,
     private translate: TranslateService,
     private deviceStore: VirtualizationDevicesStore,
     private searchDirectives: UiSearchDirectivesService,
+    private activatedRoute: ActivatedRoute,
   ) {
-    toObservable(this.instances).pipe(
-      filter((instances) => !!instances?.length),
-      switchMap(() => this.activatedRoute.params),
-      untilDestroyed(this),
-    ).subscribe((params) => {
-      const instanceId = params.id as string;
-      if (instanceId && this.instances().some((instance) => instance.id === instanceId)) {
-        this.deviceStore.selectInstance(instanceId);
-      } else {
-        this.navigateToDetails(this.instances()[0]);
-      }
-    });
-
     effect(() => {
-      if (this.instances()?.length > 0) {
+      const instanceId = this.instanceId();
+      const selectedInstance = this.selectedInstance();
+      if (instanceId && selectedInstance?.id !== instanceId) {
+        this.deviceStore.selectInstance(instanceId);
+      }
+
+      const instances = this.instances();
+      if (instances?.length > 0) {
+        if (instanceId) {
+          this.deviceStore.selectInstance(instanceId);
+        } else {
+          this.navigateToDetails(instances[0]);
+        }
+
         setTimeout(() => {
           this.handlePendingGlobalSearchElement();
         });
+      }
+
+      if (!this.isLoading() && instances?.length > 0 && instanceId && selectedInstance === null) {
+        this.router.navigate(['/instances']);
       }
     });
   }
