@@ -6,11 +6,12 @@ import {
   input,
   effect,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { injectParams } from 'ngxtension/inject-params';
+import { map } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
@@ -45,7 +46,8 @@ import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtual
 })
 
 export class InstanceListComponent {
-  readonly instanceId = injectParams('id');
+  readonly instanceId = toSignal<string>(this.activatedRoute.params.pipe(map((params) => params.id)));
+
   readonly isMobileView = input<boolean>();
   readonly toggleShowMobileDetails = output<boolean>();
 
@@ -98,24 +100,29 @@ export class InstanceListComponent {
     private translate: TranslateService,
     private deviceStore: VirtualizationDevicesStore,
     private searchDirectives: UiSearchDirectivesService,
+    private activatedRoute: ActivatedRoute,
   ) {
     effect(() => {
       const instanceId = this.instanceId();
       if (instanceId) {
         this.deviceStore.selectInstance(instanceId);
-        if (this.selectedInstance() === null) {
-          this.router.navigate(['/instances']);
-        }
       }
+
       const instances = this.instances();
       if (instances?.length > 0) {
-        if (!instanceId) {
+        if (instanceId) {
+          this.deviceStore.selectInstance(instanceId);
+        } else {
           this.navigateToDetails(instances[0]);
         }
 
         setTimeout(() => {
           this.handlePendingGlobalSearchElement();
         });
+      }
+
+      if (!this.isLoading() && instances?.length > 0 && instanceId && this.selectedInstance() === null) {
+        this.router.navigate(['/instances']);
       }
     });
   }
