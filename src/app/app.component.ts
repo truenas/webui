@@ -62,9 +62,9 @@ export class AppComponent implements OnInit {
   }
 
   private setFavicon(isDarkMode: boolean): void {
-    let path = 'assets/images/truenas_scale_favicon.png';
+    let path = 'assets/images/truenas_favicon.png';
     if (isDarkMode) {
-      path = 'assets/images/truenas_scale_ondark_favicon.png';
+      path = 'assets/images/truenas_ondark_favicon.png';
     }
 
     const existingLinkElement = document.querySelector('link[rel=icon]');
