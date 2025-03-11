@@ -101,21 +101,25 @@ export class InstanceListComponent {
   ) {
     effect(() => {
       const instanceId = this.instanceId();
-      if (instanceId && this.selectedInstance()?.id !== instanceId) {
+      if (instanceId) {
         this.deviceStore.selectInstance(instanceId);
-        if (this.selectedInstance() === null) {
-          this.router.navigate(['/instances']);
-        }
       }
+
       const instances = this.instances();
       if (instances?.length > 0) {
-        if (!instanceId) {
+        if (instanceId) {
+          this.deviceStore.selectInstance(instanceId);
+        } else {
           this.navigateToDetails(instances[0]);
         }
 
         setTimeout(() => {
           this.handlePendingGlobalSearchElement();
         });
+      }
+
+      if (!this.isLoading() && instances?.length > 0 && instanceId && this.selectedInstance() === null) {
+        this.router.navigate(['/instances']);
       }
     });
   }
