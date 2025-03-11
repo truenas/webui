@@ -577,7 +577,7 @@ describe('SmbFormComponent', () => {
             },
           }));
         }
-        return null;
+        return of(null);
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);

@@ -107,7 +107,7 @@ export class BootPoolDeleteDialogComponent {
             this.bulkItems.set(bootenvId, {
               ...bulkItem,
               state: BulkListItemState.Success,
-              message: null,
+              message: undefined,
             });
             if (this.bulkItems.size === 1) {
               this.dialogRef.close(true);

@@ -57,7 +57,7 @@ export class ElementsPageComponent {
   };
 
   protected readonly viewElements = computed(() => {
-    return this.store.selectedEnclosure().elements[this.currentView()];
+    return this.store.selectedEnclosure()?.elements?.[this.currentView()];
   });
 
   protected readonly columns = createTable<EnclosureElement>(
@@ -83,7 +83,7 @@ export class ElementsPageComponent {
 
   protected readonly dataProvider = computed(() => {
     const dataProvider = new ArrayDataProvider<EnclosureElement>();
-    const elements = Object.values(this.viewElements()) as EnclosureElement[];
+    const elements = Object.values(this.viewElements() || {}) as EnclosureElement[];
     dataProvider.setRows(elements);
     return dataProvider;
   });

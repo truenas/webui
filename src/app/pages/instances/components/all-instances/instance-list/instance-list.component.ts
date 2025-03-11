@@ -101,7 +101,7 @@ export class InstanceListComponent {
   ) {
     effect(() => {
       const instanceId = this.instanceId();
-      if (instanceId) {
+      if (instanceId && this.selectedInstance()?.id !== instanceId) {
         this.deviceStore.selectInstance(instanceId);
         if (this.selectedInstance() === null) {
           this.router.navigate(['/instances']);
