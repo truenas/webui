@@ -104,7 +104,8 @@ export class InstanceListComponent {
   ) {
     effect(() => {
       const instanceId = this.instanceId();
-      if (instanceId) {
+      const selectedInstance = this.selectedInstance();
+      if (instanceId && selectedInstance?.id !== instanceId) {
         this.deviceStore.selectInstance(instanceId);
       }
 
@@ -121,7 +122,7 @@ export class InstanceListComponent {
         });
       }
 
-      if (!this.isLoading() && instances?.length > 0 && instanceId && this.selectedInstance() === null) {
+      if (!this.isLoading() && instances?.length > 0 && instanceId && selectedInstance === null) {
         this.router.navigate(['/instances']);
       }
     });
