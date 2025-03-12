@@ -489,7 +489,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     this.replicationService
       .getReplicationTasks()
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(

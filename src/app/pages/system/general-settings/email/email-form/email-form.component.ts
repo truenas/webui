@@ -182,7 +182,7 @@ export class EmailFormComponent implements OnInit {
   onSendTestEmailPressed(): void {
     this.api.call('mail.local_administrator_email')
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe((email) => {
@@ -248,7 +248,7 @@ export class EmailFormComponent implements OnInit {
     )
       .afterClosed()
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => {

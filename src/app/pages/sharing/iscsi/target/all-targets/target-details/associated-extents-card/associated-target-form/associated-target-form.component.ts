@@ -21,7 +21,7 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 
@@ -77,7 +77,7 @@ export class AssociatedTargetFormComponent {
     private api: ApiService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     @Inject(MAT_DIALOG_DATA) public data: AssociatedTargetDialogData,
     public dialogRef: MatDialogRef<AssociatedTargetFormComponent>,
   ) {}

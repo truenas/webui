@@ -77,10 +77,10 @@ import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-h
 import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { IcuMissingTranslationHandler } from 'app/modules/language/translations/icu-missing-translation-handler';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import {
   WithLoadingStateDirective,
 } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import {
   ModalHeaderComponent,
 } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
@@ -186,11 +186,11 @@ defineGlobalsInjections({
       // eslint-disable-next-line no-restricted-globals
       useValue: window,
     },
-    mockProvider(AppLoaderService, {
+    mockProvider(LoaderService, {
       withLoader: () => (source$: Observable<unknown>) => source$,
     }),
     mockProvider(ErrorHandlerService, {
-      catchError: () => (source$: Observable<unknown>) => source$,
+      withErrorHandler: () => (source$: Observable<unknown>) => source$,
     }),
     {
       provide: AuthService,

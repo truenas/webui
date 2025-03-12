@@ -28,7 +28,7 @@ import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-h
 import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -122,7 +122,7 @@ export class InitShutdownListComponent implements OnInit {
     private dialogService: DialogService,
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     protected emptyService: EmptyService,
   ) {}
 
@@ -152,7 +152,7 @@ export class InitShutdownListComponent implements OnInit {
       filter(Boolean),
       switchMap(() => {
         return this.api.call('initshutdownscript.delete', [script.id]).pipe(
-          this.errorHandler.catchError(),
+          this.errorHandler.withErrorHandler(),
           this.loader.withLoader(),
         );
       }),

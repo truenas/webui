@@ -40,7 +40,7 @@ import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { TablePagination } from 'app/modules/ix-table/interfaces/table-pagination.interface';
 import { createTable } from 'app/modules/ix-table/utils';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -164,7 +164,7 @@ export class UserApiKeysComponent implements OnInit {
     private translate: TranslateService,
     private api: ApiService,
     private dialog: DialogService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private errorHandler: ErrorHandlerService,
     private authService: AuthService,
     private slideIn: SlideIn,

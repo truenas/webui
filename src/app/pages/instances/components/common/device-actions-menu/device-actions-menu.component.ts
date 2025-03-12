@@ -13,7 +13,7 @@ import { VirtualizationDeviceType, VirtualizationStatus } from 'app/enums/virtua
 import { VirtualizationDevice } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -69,7 +69,7 @@ export class DeviceActionsMenuComponent {
     private translate: TranslateService,
     private snackbar: SnackbarService,
     private deviceStore: VirtualizationDevicesStore,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
   ) {}
 
   protected deletePressed(): void {
@@ -101,7 +101,7 @@ export class DeviceActionsMenuComponent {
     return this.api.call('virt.instance.device_delete', [selectedInstanceId, this.device().name])
       .pipe(
         this.loader.withLoader(),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         tap(() => {
           this.snackbar.success(this.translate.instant('Device deleted'));
           this.deviceStore.deviceDeleted(this.device().name);

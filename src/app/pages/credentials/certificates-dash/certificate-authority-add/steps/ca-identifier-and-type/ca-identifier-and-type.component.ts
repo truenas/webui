@@ -95,7 +95,7 @@ export class CaIdentifierAndTypeComponent implements OnInit, SummaryProvider {
   private loadProfiles(): void {
     this.api.call('webui.crypto.certificateauthority_profiles')
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe((profiles) => {

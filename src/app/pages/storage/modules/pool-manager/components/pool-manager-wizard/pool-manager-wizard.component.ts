@@ -184,7 +184,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
             data: job.result,
           }).afterClosed();
         }),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => {
@@ -280,7 +280,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
     )
       .afterClosed()
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => {

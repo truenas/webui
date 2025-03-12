@@ -24,7 +24,7 @@ import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/i
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -167,7 +167,7 @@ describe('SmbFormComponent', () => {
         components$: of([]),
       }),
       mockProvider(Router),
-      mockProvider(AppLoaderService),
+      mockProvider(LoaderService),
       mockProvider(FilesystemService),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({

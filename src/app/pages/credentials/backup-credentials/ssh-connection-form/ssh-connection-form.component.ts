@@ -37,7 +37,7 @@ import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-te
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -168,7 +168,7 @@ export class SshConnectionFormComponent implements OnInit {
     private formErrorHandler: FormErrorHandlerService,
     private errorHandler: ErrorHandlerService,
     private keychainCredentialService: KeychainCredentialService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private validatorsService: IxValidatorsService,
     public formatter: IxFormatterService,
     private dialogService: DialogService,

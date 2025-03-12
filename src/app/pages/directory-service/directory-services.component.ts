@@ -23,7 +23,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -94,7 +94,7 @@ export class DirectoryServicesComponent implements OnInit {
     private api: ApiService,
     private slideIn: SlideIn,
     private dialog: DialogService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
@@ -114,7 +114,7 @@ export class DirectoryServicesComponent implements OnInit {
     ])
       .pipe(
         this.loader.withLoader(),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(([servicesState, activeDirectoryConfig, ldapConfig, kerberosSettings]) => {

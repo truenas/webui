@@ -15,7 +15,7 @@ import { helptextVolumes } from 'app/helptext/storage/volumes/volume-list';
 import { Pool } from 'app/interfaces/pool.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -48,7 +48,7 @@ export class AutotrimDialogComponent implements OnInit {
   readonly helptext = helptextVolumes;
 
   constructor(
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private errorHandler: ErrorHandlerService,
     private api: ApiService,
     private dialogRef: MatDialogRef<AutotrimDialogComponent>,
@@ -66,7 +66,7 @@ export class AutotrimDialogComponent implements OnInit {
     this.api.job('pool.update', [this.pool.id, { autotrim: this.autotrimControl.value ? OnOff.On : OnOff.Off }])
       .pipe(
         this.loader.withLoader(),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe({

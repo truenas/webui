@@ -26,7 +26,7 @@ import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -90,7 +90,7 @@ export class UpdateActionsCardComponent implements OnInit {
     private matDialog: MatDialog,
     private sysGenService: SystemGeneralService,
     private errorHandler: ErrorHandlerService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private dialogService: DialogService,
     private translate: TranslateService,
     private store$: Store<AppState>,
@@ -149,7 +149,7 @@ export class UpdateActionsCardComponent implements OnInit {
     )
       .afterClosed()
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => {
@@ -159,7 +159,7 @@ export class UpdateActionsCardComponent implements OnInit {
 
   downloadUpdate(): void {
     this.api.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', JobState.Running]]])
-      .pipe(this.errorHandler.catchError(), untilDestroyed(this))
+      .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
       .subscribe((jobs) => {
         if (jobs[0]) {
           this.showRunningUpdate(jobs[0].id);
@@ -330,7 +330,7 @@ export class UpdateActionsCardComponent implements OnInit {
           this.cdr.markForCheck();
           return this.isHaLicensed ? this.finishHaUpdate() : this.finishNonHaUpdate();
         }),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe();
@@ -403,7 +403,7 @@ export class UpdateActionsCardComponent implements OnInit {
     )
       .afterClosed()
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => {

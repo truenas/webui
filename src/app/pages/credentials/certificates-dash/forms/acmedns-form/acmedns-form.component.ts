@@ -121,7 +121,7 @@ export class AcmednsFormComponent implements OnInit {
     this.isLoading = true;
     this.getAuthenticatorSchemas()
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe((schemas: AuthenticatorSchema[]) => {

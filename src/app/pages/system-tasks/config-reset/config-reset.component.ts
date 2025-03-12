@@ -11,7 +11,7 @@ import { Timeout } from 'app/interfaces/timeout.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -38,7 +38,7 @@ export class ConfigResetComponent implements OnInit, OnDestroy {
     private wsManager: WebSocketHandlerService,
     private wsStatus: WebSocketStatusService,
     protected router: Router,
-    protected loader: AppLoaderService,
+    protected loader: LoaderService,
     private errorHandler: ErrorHandlerService,
     public translate: TranslateService,
     protected dialogService: DialogService,
@@ -88,7 +88,7 @@ export class ConfigResetComponent implements OnInit, OnDestroy {
     )
       .afterClosed()
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => {

@@ -77,7 +77,7 @@ export class UploadIsoButtonComponent implements OnInit {
       .jobDialog(job$, { title: this.translate.instant('Uploading Image') })
       .afterClosed()
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => {

@@ -153,7 +153,7 @@ export class InitShutdownCardComponent implements OnInit {
         filter(Boolean),
         switchMap(() => this.api.call('initshutdownscript.delete', [row.id])),
         filter(Boolean),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => {

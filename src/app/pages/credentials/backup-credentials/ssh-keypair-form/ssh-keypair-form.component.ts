@@ -23,7 +23,7 @@ import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-te
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { atLeastOne } from 'app/modules/forms/ix-forms/validators/at-least-one-validation';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -96,7 +96,7 @@ export class SshKeypairFormComponent implements OnInit {
     private snackbar: SnackbarService,
     private errorHandler: ErrorHandlerService,
     private formErrorHandler: FormErrorHandlerService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private download: DownloadService,
     public slideInRef: SlideInRef<KeychainSshKeyPair | undefined, boolean>,
   ) {
@@ -125,7 +125,7 @@ export class SshKeypairFormComponent implements OnInit {
     this.api.call('keychaincredential.generate_ssh_key_pair')
       .pipe(
         this.loader.withLoader(),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe((keyPair) => {

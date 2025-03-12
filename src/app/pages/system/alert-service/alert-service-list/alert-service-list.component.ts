@@ -177,7 +177,7 @@ export class AlertServiceListComponent implements OnInit {
     }).pipe(
       filter(Boolean),
       switchMap(() => this.api.call('alertservice.delete', [alertService.id])),
-      this.errorHandler.catchError(),
+      this.errorHandler.withErrorHandler(),
       untilDestroyed(this),
     ).subscribe(() => this.getAlertServices());
   }

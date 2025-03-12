@@ -32,7 +32,7 @@ export class NetworkInterfacesEffects {
         this.api.call('interface.has_pending_changes'),
         this.api.call('interface.checkin_waiting'),
       ]).pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         map(([hasPendingChanges, checkinWaiting]) => {
           return networkInterfacesCheckinLoaded({ hasPendingChanges, checkinWaiting });
         }),

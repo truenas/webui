@@ -31,8 +31,8 @@ import {
   IxButtonGroupComponent,
 } from 'app/modules/forms/ix-forms/components/ix-button-group/ix-button-group.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
@@ -111,7 +111,7 @@ export class MapUserGroupIdsDialogComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     protected dialogRef: MatDialogRef<MapUserGroupIdsDialogComponent>,
     private translate: TranslateService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private snackbar: SnackbarService,
   ) {}
 
@@ -154,7 +154,7 @@ export class MapUserGroupIdsDialogComponent implements OnInit {
 
     request$
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         finalize(() => this.isLoading.set(false)),
         untilDestroyed(this),
       )
@@ -175,7 +175,7 @@ export class MapUserGroupIdsDialogComponent implements OnInit {
     request$
       .pipe(
         this.loader.withLoader(),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => {

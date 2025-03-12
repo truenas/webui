@@ -128,7 +128,7 @@ export class CloudCredentialsCardComponent implements OnInit {
     this.cloudCredentialService
       .getProviders()
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe((providers) => {
@@ -179,7 +179,7 @@ export class CloudCredentialsCardComponent implements OnInit {
       .pipe(
         filter(Boolean),
         switchMap(() => this.api.call('cloudsync.credentials.delete', [credential.id])),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => {

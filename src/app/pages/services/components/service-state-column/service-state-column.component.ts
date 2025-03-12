@@ -13,7 +13,7 @@ import { ServiceRow } from 'app/interfaces/service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { convertStringToId } from 'app/modules/ix-table/utils';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -51,7 +51,7 @@ export class ServiceStateColumnComponent extends ColumnComponent<ServiceRow> {
   private api = inject(ApiService);
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
-  private loader = inject(AppLoaderService);
+  private loader = inject(LoaderService);
   private errorHandler = inject(ErrorHandlerService);
   private snackbar = inject(SnackbarService);
   private iscsiService = inject(IscsiService);

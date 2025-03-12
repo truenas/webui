@@ -14,7 +14,7 @@ import { Role } from 'app/enums/role.enum';
 import { User } from 'app/interfaces/user.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -54,7 +54,7 @@ export class DeleteUserDialogComponent implements OnInit {
   constructor(
     private errorHandler: ErrorHandlerService,
     private api: ApiService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     @Inject(MAT_DIALOG_DATA) public user: User,
     private dialogRef: MatDialogRef<DeleteUserDialogComponent>,
     private snackbar: SnackbarService,
@@ -70,7 +70,7 @@ export class DeleteUserDialogComponent implements OnInit {
     this.api.call('user.delete', [this.user.id, { delete_group: this.deleteGroupCheckbox.value }])
       .pipe(
         this.loader.withLoader(),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => {
@@ -83,7 +83,7 @@ export class DeleteUserDialogComponent implements OnInit {
     this.api.call('group.query', [[['id', '=', this.user.group.id]]])
       .pipe(
         this.loader.withLoader(),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe((groups) => {

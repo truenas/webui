@@ -26,7 +26,7 @@ export class EulaEffects {
       return this.api.call('truenas.is_eula_accepted').pipe(
         filter((isEulaAccepted) => !isEulaAccepted),
         switchMap(() => this.showEulaDialog()),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
       );
     }),
   ), { dispatch: false });

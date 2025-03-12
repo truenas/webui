@@ -16,7 +16,7 @@ import { helptextTopbar } from 'app/helptext/topbar';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   TruecommandConnectModalComponent,
@@ -76,7 +76,7 @@ export class TruecommandButtonComponent implements OnInit {
     private api: ApiService,
     private dialogService: DialogService,
     private matDialog: MatDialog,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
   ) {}

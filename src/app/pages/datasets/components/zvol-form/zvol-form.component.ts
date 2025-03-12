@@ -292,7 +292,7 @@ export class ZvolFormComponent implements OnInit {
           parentDatasetId = parentDatasetId.join('/');
 
           this.api.call('pool.dataset.query', [[['id', '=', parentDatasetId]]]).pipe(
-            this.errorHandler.catchError(),
+            this.errorHandler.withErrorHandler(),
             untilDestroyed(this),
           ).subscribe({
             next: (parentDataset) => {
@@ -727,7 +727,7 @@ export class ZvolFormComponent implements OnInit {
   private loadRecommendedBlocksize(): void {
     const root = this.parentId.split('/')[0];
     this.api.call('pool.dataset.recommended_zvol_blocksize', [root]).pipe(
-      this.errorHandler.catchError(),
+      this.errorHandler.withErrorHandler(),
       untilDestroyed(this),
     ).subscribe((recommendedSize) => {
       this.form.controls.volblocksize.setValue(recommendedSize);

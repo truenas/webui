@@ -333,7 +333,7 @@ export class InterfaceFormComponent implements OnInit {
       this.api.call('failover.node'),
     ])
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(([isHaLicensed, failoverNode]) => {

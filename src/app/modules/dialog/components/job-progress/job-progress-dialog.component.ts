@@ -200,7 +200,7 @@ export class JobProgressDialogComponent<T> implements OnInit, AfterViewChecked {
 
   abortJob(): void {
     this.api.call('core.job_abort', [this.job.id]).pipe(
-      this.errorHandler.catchError(),
+      this.errorHandler.withErrorHandler(),
       untilDestroyed(this),
     )
       .subscribe(() => {

@@ -11,7 +11,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { helptextDownloadKey } from 'app/helptext/storage/volumes/download-key';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -46,7 +46,7 @@ export class DownloadKeyDialogComponent {
 
   constructor(
     private errorHandler: ErrorHandlerService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private download: DownloadService,
     private dialog: DialogService,
     @Inject(MAT_DIALOG_DATA) private data: DownloadKeyDialogParams,

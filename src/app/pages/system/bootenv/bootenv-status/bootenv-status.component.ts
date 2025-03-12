@@ -29,8 +29,8 @@ import { TreeNodeDefDirective } from 'app/modules/ix-tree/directives/tree-node-d
 import { TreeNodeOutletDirective } from 'app/modules/ix-tree/directives/tree-node-outlet.directive';
 import { TreeNodeToggleDirective } from 'app/modules/ix-tree/directives/tree-node-toggle.directive';
 import { NestedTreeDataSource } from 'app/modules/ix-tree/nested-tree-datasource';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -108,7 +108,7 @@ export class BootStatusListComponent implements OnInit {
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
     private matDialog: MatDialog,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
     private cdr: ChangeDetectorRef,
@@ -157,7 +157,7 @@ export class BootStatusListComponent implements OnInit {
     this.api.call('boot.detach', [disk])
       .pipe(
         this.loader.withLoader(),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => {

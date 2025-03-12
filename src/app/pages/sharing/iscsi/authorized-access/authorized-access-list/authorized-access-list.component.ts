@@ -28,8 +28,8 @@ import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-h
 import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -138,7 +138,7 @@ export class AuthorizedAccessListComponent implements OnInit {
 
   constructor(
     public emptyService: EmptyService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private dialogService: DialogService,
     private api: ApiService,
     private translate: TranslateService,

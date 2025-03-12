@@ -15,7 +15,7 @@ import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/for
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -61,7 +61,7 @@ export class BootenvStatsDialogComponent implements OnInit {
 
   constructor(
     private api: ApiService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private store$: Store<AppState>,
     private dialogRef: MatDialogRef<BootenvStatsDialogComponent>,
     private translate: TranslateService,
@@ -109,7 +109,7 @@ export class BootenvStatsDialogComponent implements OnInit {
     this.api.call('boot.get_state')
       .pipe(
         this.loader.withLoader(),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe((state) => {

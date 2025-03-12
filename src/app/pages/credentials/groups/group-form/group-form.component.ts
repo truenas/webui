@@ -254,7 +254,7 @@ export class GroupFormComponent implements OnInit {
   private getPrivilegesList(): void {
     this.api.call('privilege.query', [])
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe((privileges) => {

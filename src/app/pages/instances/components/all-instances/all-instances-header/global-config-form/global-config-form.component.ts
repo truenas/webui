@@ -103,7 +103,7 @@ export class GlobalConfigFormComponent {
     )
       .afterClosed()
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         finalize(() => this.isLoading.set(false)),
         untilDestroyed(this),
       )

@@ -95,7 +95,7 @@ export class ErrorHandlerService implements ErrorHandler {
     return obj instanceof HttpErrorResponse;
   }
 
-  catchError<T>(): MonoTypeOperatorFunction<T> {
+  withErrorHandler<T>(): MonoTypeOperatorFunction<T> {
     return (source$: Observable<T>) => {
       return source$.pipe(
         catchError((error: unknown) => {
