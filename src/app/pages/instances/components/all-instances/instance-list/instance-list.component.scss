@@ -100,7 +100,7 @@
   .instances-header-row,
   ix-instance-row {
     display: grid;
-    grid-template-columns: 45px minmax(160px, auto) minmax(100px, 120px) 100px 88px;
+    grid-template-columns: 5% minmax(20%, auto) 10% 10% 10% 10% 10% 15%;
 
     @media (max-width: $breakpoint-xs) {
       grid-template-columns: 45px minmax(160px, auto) minmax(100px, 120px);

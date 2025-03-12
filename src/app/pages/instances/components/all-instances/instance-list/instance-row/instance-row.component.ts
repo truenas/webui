@@ -1,6 +1,8 @@
 import {
   Component, ChangeDetectionStrategy, input, computed, output,
+  signal,
 } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
@@ -8,12 +10,14 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  filter, switchMap,
+  distinctUntilChanged,
+  filter, map, switchMap,
+  throttleTime,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { VirtualizationStatus, virtualizationStatusLabels, virtualizationTypeLabels } from 'app/enums/virtualization.enum';
-import { VirtualizationInstance, VirtualizationStopParams } from 'app/interfaces/virtualization.interface';
+import { VirtualizationInstance, VirtualizationInstanceMetrics, VirtualizationStopParams } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
@@ -47,6 +51,9 @@ export class InstanceRowComponent {
   protected readonly requiredRoles = [Role.VirtInstanceWrite];
   readonly instance = input.required<VirtualizationInstance>();
   readonly selected = input<boolean>(false);
+  protected cpuData = signal<number | null>(null);
+  protected memoryData = signal<number>(null);
+  protected ioPressureData = signal<number>(null);
   protected readonly isStopped = computed(() => this.instance().status === VirtualizationStatus.Stopped);
 
   readonly selectionChange = output();
@@ -61,7 +68,20 @@ export class InstanceRowComponent {
     private errorHandler: ErrorHandlerService,
     private matDialog: MatDialog,
     private snackbar: SnackbarService,
-  ) {}
+  ) {
+    toObservable(this.instance).pipe(
+      filter((instance) => instance.status === VirtualizationStatus.Running),
+      distinctUntilChanged((prev, curr) => prev.id === curr.id),
+      switchMap((instance) => this.api.subscribe(`virt.instance.metrics:{"id": "${instance.id}"}`)),
+      map((response) => response.fields),
+      throttleTime(5000),
+      untilDestroyed(this),
+    ).subscribe((fields: VirtualizationInstanceMetrics) => {
+      this.cpuData.set(fields.cpu?.cpu_user_percentage || null);
+      this.memoryData.set(fields.mem_usage?.mem_usage_ram_mib || null);
+      this.ioPressureData.set(fields.io_full_pressure?.io_full_pressure_full_60_percentage || null);
+    });
+  }
 
   start(): void {
     const instanceId = this.instance().id;

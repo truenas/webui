@@ -16,10 +16,6 @@
   <mat-card-content>
     @if (instance(); as instance) {
       <p>
-        <span class="label">{{ 'Status' | translate }}:</span>
-        {{ (instance.status | mapValue: virtualizationStatusLabels) | translate }}
-      </p>
-      <p>
         <span class="label">{{ 'Autostart' | translate }}:</span>
         {{ instance.autostart | yesNo }}
       </p>
