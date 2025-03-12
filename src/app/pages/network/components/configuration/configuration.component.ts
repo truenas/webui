@@ -34,6 +34,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
+import { systemInfoUpdated } from 'app/store/system-info/system-info.actions';
 
 @UntilDestroy()
 @Component({
@@ -353,6 +354,7 @@ export class NetworkConfigurationComponent implements OnInit {
       .subscribe({
         next: () => {
           this.isFormLoading = false;
+          this.store$.dispatch(systemInfoUpdated());
           this.cdr.markForCheck();
           this.slideInRef.close({ response: true, error: null });
         },
