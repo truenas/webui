@@ -60,6 +60,7 @@ export class AllTargetsComponent implements OnInit {
   ngOnInit(): void {
     const targets$ = this.iscsiService.getTargets().pipe(
       tap((targets) => {
+        this.targets.set(targets);
         const firstTarget = targets[targets.length - 1];
         if (!this.dataProvider.expandedRow && firstTarget) {
           this.dataProvider.expandedRow = firstTarget;
