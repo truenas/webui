@@ -51,6 +51,18 @@ export class NavigationComponent {
     this.menuToggled.emit([state, sub]);
   }
 
+  getTooltip(menuItem: MenuItem): string | null {
+    if (!menuItem.tooltip) {
+      return null;
+    }
+
+    if (menuItem.hideTooltipOnSidebarCollapsed && !this.isSidenavCollapsed()) {
+      return null;
+    }
+
+    return menuItem.tooltip;
+  }
+
   closeMenu(): void {
     this.menuClosed.emit();
   }

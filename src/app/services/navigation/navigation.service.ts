@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
+import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
@@ -24,17 +26,20 @@ export class NavigationService {
   readonly hasVms$ = new BehaviorSubject(false);
   readonly hasApps$ = new BehaviorSubject(false);
 
+  private readonly hostname = toSignal(this.store$.pipe(waitForSystemInfo, map(({ hostname }) => hostname)));
   readonly menuItems: MenuItem[] = [
     {
       name: T('Dashboard'),
       type: MenuItemType.Link,
       tooltip: T('Dashboard'),
+      hideTooltipOnSidebarCollapsed: true,
       icon: iconMarker('dashboard'),
       state: 'dashboard',
     },
     {
       name: T('Storage'),
       type: MenuItemType.Link,
+      hideTooltipOnSidebarCollapsed: true,
       tooltip: T('Storage'),
       icon: iconMarker('dns'),
       state: 'storage',
@@ -42,6 +47,7 @@ export class NavigationService {
     {
       name: T('Datasets'),
       type: MenuItemType.Link,
+      hideTooltipOnSidebarCollapsed: true,
       tooltip: T('Datasets'),
       icon: iconMarker('ix-dataset-root'),
       state: 'datasets',
@@ -49,6 +55,7 @@ export class NavigationService {
     {
       name: T('Shares'),
       type: MenuItemType.Link,
+      hideTooltipOnSidebarCollapsed: true,
       tooltip: T('Shares'),
       icon: iconMarker('folder_shared'),
       state: 'sharing',
@@ -56,6 +63,7 @@ export class NavigationService {
     {
       name: T('Data Protection'),
       type: MenuItemType.Link,
+      hideTooltipOnSidebarCollapsed: true,
       tooltip: T('Data Protection'),
       icon: iconMarker('security'),
       state: 'data-protection',
@@ -63,6 +71,7 @@ export class NavigationService {
     {
       name: T('Network'),
       type: MenuItemType.Link,
+      hideTooltipOnSidebarCollapsed: true,
       tooltip: T('Network'),
       icon: iconMarker('device_hub'),
       state: 'network',
@@ -71,6 +80,7 @@ export class NavigationService {
       name: T('Credentials'),
       type: MenuItemType.SlideOut,
       tooltip: T('Credentials'),
+      hideTooltipOnSidebarCollapsed: true,
       icon: iconMarker('vpn_key'),
       state: 'credentials',
       sub: [
@@ -89,6 +99,7 @@ export class NavigationService {
     },
     {
       name: T('Instances'),
+      hideTooltipOnSidebarCollapsed: true,
       type: MenuItemType.Link,
       tooltip: T('Instances'),
       icon: iconMarker('mdi-laptop'),
@@ -98,6 +109,7 @@ export class NavigationService {
       name: T('Apps'),
       type: MenuItemType.Link,
       tooltip: T('Apps'),
+      hideTooltipOnSidebarCollapsed: true,
       icon: iconMarker('apps'),
       state: 'apps',
       isVisible$: this.hasApps$,
@@ -105,6 +117,7 @@ export class NavigationService {
     {
       name: T('Reporting'),
       type: MenuItemType.Link,
+      hideTooltipOnSidebarCollapsed: true,
       tooltip: T('Reports'),
       icon: iconMarker('insert_chart'),
       state: 'reportsdashboard/cpu',
@@ -112,7 +125,8 @@ export class NavigationService {
     {
       name: T('System'),
       type: MenuItemType.SlideOut,
-      tooltip: T('System'),
+      tooltip: this.translate.instant('Hostname: {hostname}', { hostname: this.hostname() }),
+      hideTooltipOnSidebarCollapsed: false,
       icon: iconMarker('settings'),
       state: 'system',
       sub: [
@@ -135,6 +149,7 @@ export class NavigationService {
   ];
 
   constructor(
+    private translate: TranslateService,
     private store$: Store<AppState>,
     private systemGeneralService: SystemGeneralService,
     private authService: AuthService,
