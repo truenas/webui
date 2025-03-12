@@ -232,7 +232,7 @@
   "UID/GID from the host is directly mapped to the same id in a container. This means that GID 3000 will appear as GID 3000 in the container.": "",
   "URI": "",
   "Unlock High Performance Solutions": "",
-  "Update completed successfully. The system will reboot shortly": "",
+  "Update completed successfully. The system will restart shortly": "",
   "Upload New Image": "",
   "Uploading": "",
   "Uploading Image": "",
