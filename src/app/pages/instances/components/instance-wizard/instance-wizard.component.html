@@ -13,7 +13,6 @@
       <ix-input
         formControlName="name"
         [label]="containersHelptext.name_placeholder | translate"
-        [tooltip]="containersHelptext.name_tooltip | translate"
         [required]="true"
         [hint]="containersHelptext.nameHint | translate"
       ></ix-input>
@@ -129,14 +128,12 @@
                 <ix-input
                   formControlName="name"
                   [label]="containersHelptext.env_name_placeholder | translate"
-                  [tooltip]="containersHelptext.env_name_tooltip | translate"
                   [required]="true"
                 ></ix-input>
 
                 <ix-input
                   formControlName="value"
                   [label]="containersHelptext.env_value_placeholder | translate"
-                  [tooltip]="containersHelptext.env_value_tooltip | translate"
                   [required]="true"
                 ></ix-input>
               </div>
@@ -147,13 +144,23 @@
     }
 
     <ix-form-section [label]="'Disks' | translate">
-      @if (isVm() && form.value.source_type !== VirtualizationSource.Zvol) {
-        <ix-input
-          formControlName="root_disk_size"
-          type="number"
+      @if (isVm()) {
+        <ix-select
+          formControlName="root_disk_io_bus"
+          [label]="'Root Disk I/O Bus' | translate"
+          [tooltip]="containersHelptext.io_bus_tooltip | translate"
           [required]="true"
-          [label]="'Root Disk Size (in GiB)' | translate"
-        ></ix-input>
+          [options]="diskIoBusOptions$"
+        ></ix-select>
+
+        @if (form.value.source_type !== VirtualizationSource.Zvol) {
+          <ix-input
+            formControlName="root_disk_size"
+            type="number"
+            [required]="true"
+            [label]="'Root Disk Size (in GiB)' | translate"
+          ></ix-input>
+        }
       }
 
       <ix-list
@@ -173,7 +180,6 @@
               formControlName="source"
               root="/"
               [label]="containersHelptext.disks_src_placeholder | translate"
-              [tooltip]="containersHelptext.disks_src_tooltip | translate"
               [required]="true"
               [nodeProvider]="directoryNodeProvider()"
               [canCreateDataset]="true"
@@ -187,70 +193,80 @@
                 [required]="true"
               ></ix-input>
             }
+
+            @if (isVm()) {
+              <ix-select
+                formControlName="io_bus"
+                [label]="'I/O Bus' | translate"
+                [tooltip]="containersHelptext.io_bus_tooltip | translate"
+                [required]="true"
+                [options]="diskIoBusOptions$"
+              ></ix-select>
+            }
           </ix-list-item>
         }
       </ix-list>
     </ix-form-section>
 
-    <ix-form-section
-      [label]="'Proxies' | translate"
-    >
-      <ix-list
-        formArrayName="proxies"
-        [empty]="form.controls.proxies.controls.length === 0"
-        [label]="containersHelptext.proxies_placeholder | translate"
-        [formArray]="form.controls.proxies"
-        (add)="addProxy()"
+    @if (isContainer()) {
+      <ix-form-section
+        [label]="'Proxies' | translate"
       >
-        @for (proxy of form.controls.proxies.controls; track proxy; let i = $index) {
-          <ix-list-item
-            [label]="'Proxy' | translate"
-            [formGroupName]="i"
-            (delete)="removeProxy(i)"
-          >
-            <div class="protocol-and-port">
-              <ix-select
-                class="protocol"
-                formControlName="source_proto"
-                [label]="containersHelptext.host_protocol_placeholder | translate"
-                [tooltip]="containersHelptext.host_protocol_tooltip | translate"
-                [required]="true"
-                [options]="proxyProtocols$"
-              ></ix-select>
+        <ix-list
+          formArrayName="proxies"
+          [empty]="form.controls.proxies.controls.length === 0"
+          [label]="containersHelptext.proxies_placeholder | translate"
+          [formArray]="form.controls.proxies"
+          (add)="addProxy()"
+        >
+          @for (proxy of form.controls.proxies.controls; track proxy; let i = $index) {
+            <ix-list-item
+              [label]="'Proxy' | translate"
+              [formGroupName]="i"
+              (delete)="removeProxy(i)"
+            >
+              <div class="protocol-and-port">
+                <ix-select
+                  class="protocol"
+                  formControlName="source_proto"
+                  [label]="containersHelptext.host_protocol_placeholder | translate"
+                  [required]="true"
+                  [options]="proxyProtocols$"
+                ></ix-select>
 
-              <ix-input
-                class="port"
-                type="number"
-                formControlName="source_port"
-                [label]="containersHelptext.host_port_placeholder | translate"
-                [tooltip]="containersHelptext.host_port_tooltip | translate"
-                [required]="true"
-              ></ix-input>
-            </div>
+                <ix-input
+                  class="port"
+                  type="number"
+                  formControlName="source_port"
+                  [label]="containersHelptext.host_port_placeholder | translate"
+                  [tooltip]="containersHelptext.host_port_tooltip | translate"
+                  [required]="true"
+                ></ix-input>
+              </div>
 
-            <div class="protocol-and-port">
-              <ix-select
-                class="protocol"
-                formControlName="dest_proto"
-                [label]="containersHelptext.instance_protocol_placeholder | translate"
-                [tooltip]="containersHelptext.instance_protocol_tooltip | translate"
-                [required]="true"
-                [options]="proxyProtocols$"
-              ></ix-select>
+              <div class="protocol-and-port">
+                <ix-select
+                  class="protocol"
+                  formControlName="dest_proto"
+                  [label]="containersHelptext.instance_protocol_placeholder | translate"
+                  [tooltip]="containersHelptext.instance_protocol_tooltip | translate"
+                  [required]="true"
+                  [options]="proxyProtocols$"
+                ></ix-select>
 
-              <ix-input
-                class="port"
-                type="number"
-                formControlName="dest_port"
-                [label]="containersHelptext.instance_port_placeholder | translate"
-                [tooltip]="containersHelptext.instance_port_tooltip | translate"
-                [required]="true"
-              ></ix-input>
-            </div>
-          </ix-list-item>
-        }
-      </ix-list>
-    </ix-form-section>
+                <ix-input
+                  class="port"
+                  type="number"
+                  formControlName="dest_port"
+                  [label]="containersHelptext.instance_port_placeholder | translate"
+                  [required]="true"
+                ></ix-input>
+              </div>
+            </ix-list-item>
+          }
+        </ix-list>
+      </ix-form-section>
+    }
 
     <ix-form-section
       [label]="'Network' | translate"
@@ -259,7 +275,6 @@
       <ix-checkbox
         formControlName="use_default_network"
         [label]="containersHelptext.network_use_default_placeholder | translate"
-        [tooltip]="containersHelptext.network_use_default_tooltip | translate"
       ></ix-checkbox>
 
       @if (!form.controls.use_default_network.value) {
@@ -275,7 +290,6 @@
               <ix-checkbox-list
                 formControlName="bridged_nics"
                 [label]="containersHelptext.network_bridged_nics_placeholder | translate"
-                [tooltip]="containersHelptext.network_bridged_nics_tooltip | translate"
                 [options]="bridgedNicDevices$"
               ></ix-checkbox-list>
             }
@@ -290,7 +304,6 @@
               <ix-checkbox-list
                 formControlName="mac_vlan_nics"
                 [label]="containersHelptext.network_mac_vlan_nics_placeholder | translate"
-                [tooltip]="containersHelptext.network_mac_vlan_nics_tooltip | translate"
                 [options]="macVlanNicDevices$"
               ></ix-checkbox-list>
             }
@@ -324,7 +337,6 @@
         <ix-checkbox-list
           formControlName="usb_devices"
           [label]="containersHelptext.usb_devices_placeholder | translate"
-          [tooltip]="containersHelptext.usb_devices_tooltip | translate"
           [options]="usbDevices$"
         ></ix-checkbox-list>
       </ix-form-section>

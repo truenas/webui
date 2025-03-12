@@ -60,11 +60,11 @@ import {
   SnmpTrapServiceComponent,
 } from 'app/pages/system/alert-service/alert-service/alert-services/snmp-trap-service/snmp-trap-service.component';
 import {
+  SplunkOnCallServiceComponent,
+} from 'app/pages/system/alert-service/alert-service/alert-services/splunk-on-call-service/splunk-on-call-service.component';
+import {
   TelegramServiceComponent,
 } from 'app/pages/system/alert-service/alert-service/alert-services/telegram-service/telegram-service.component';
-import {
-  VictorOpsServiceComponent,
-} from 'app/pages/system/alert-service/alert-service/alert-services/victor-ops-service/victor-ops-service.component';
 
 @UntilDestroy()
 @Component({
@@ -244,9 +244,14 @@ export class AlertServiceComponent implements OnInit {
       [AlertServiceType.Slack, SlackServiceComponent],
       [AlertServiceType.SnmpTrap, SnmpTrapServiceComponent],
       [AlertServiceType.Telegram, TelegramServiceComponent],
-      [AlertServiceType.VictorOps, VictorOpsServiceComponent],
+      [AlertServiceType.SplunkOnCall, SplunkOnCallServiceComponent],
     ]);
 
-    return formMapping.get(this.commonForm.controls.type.value);
+    const serviceClass = formMapping.get(this.commonForm.controls.type.value);
+    if (!serviceClass) {
+      throw new Error(`Invalid alert service type: ${this.commonForm.controls.type.value}`);
+    }
+
+    return serviceClass;
   }
 }

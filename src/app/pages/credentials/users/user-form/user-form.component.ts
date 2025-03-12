@@ -170,19 +170,16 @@ export class UserFormComponent implements OnInit {
   });
 
   readonly tooltips = {
-    full_name: helptextUsers.user_form_full_name_tooltip,
     username: helptextUsers.user_form_username_tooltip,
-    email: helptextUsers.user_form_email_tooltip,
     password: helptextUsers.user_form_password_tooltip,
-    password_edit: helptextUsers.user_form_password_edit_tooltip,
-    password_conf_edit: helptextUsers.user_form_password_edit_tooltip,
+    password_edit: helptextUsers.user_form_password_tooltip,
+    password_conf_edit: helptextUsers.user_form_password_tooltip,
     uid: helptextUsers.user_form_uid_tooltip,
     group: helptextUsers.user_form_primary_group_tooltip,
     group_create: helptextUsers.user_form_group_create_tooltip,
     groups: helptextUsers.user_form_aux_groups_tooltip,
     home: helptextUsers.user_form_dirs_explorer_tooltip,
     home_mode: helptextUsers.user_form_home_dir_permissions_tooltip,
-    home_create: helptextUsers.user_form_home_create_tooltip,
     sshpubkey: helptextUsers.user_form_auth_sshkey_tooltip,
     password_disabled: helptextUsers.user_form_auth_pw_enable_tooltip,
     one_time_password: helptextUsers.user_form_auth_one_time_pw_tooltip,
@@ -337,7 +334,7 @@ export class UserFormComponent implements OnInit {
 
     if (this.editingUser?.home && this.editingUser.home !== defaultHomePath) {
       this.storageService.filesystemStat(this.editingUser.home)
-        .pipe(this.errorHandler.catchError(), untilDestroyed(this))
+        .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
         .subscribe((stat) => {
           this.form.patchValue({ home_mode: stat.mode.toString(8).substring(2, 5) });
           this.homeModeOldValue = stat.mode.toString(8).substring(2, 5);

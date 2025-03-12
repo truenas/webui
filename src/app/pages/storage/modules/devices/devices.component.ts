@@ -47,8 +47,8 @@ const raidzItems = [TopologyItemType.Raidz, TopologyItemType.Raidz1, TopologyIte
   ],
 })
 export class DevicesComponent implements OnInit, AfterViewInit {
-  protected poolId = signal<number>(null);
-  protected poolName = signal<string>(null);
+  protected poolId = signal<number | null>(null);
+  protected poolName = signal<string>('');
 
   protected readonly requiredRoles = [Role.PoolWrite];
 

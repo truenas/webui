@@ -29,7 +29,7 @@ describe('WidgetSysInfoActiveComponent', () => {
 
   const systemInfo = {
     platform: 'TRUENAS-M40-HA',
-    version: 'TrueNAS-COMMUNITY_EDITION-25.10.0-MASTER-20250126-184805',
+    version: '25.10.0-MASTER-20250126-184805',
     codename: Codename.Goldeye,
     license: {
       contract_type: ContractType.Gold,
@@ -46,7 +46,7 @@ describe('WidgetSysInfoActiveComponent', () => {
     },
   } as SystemInfo;
 
-  const systemInfo$ = new BehaviorSubject({
+  const dashboardSystemInfo$ = new BehaviorSubject({
     isLoading: false,
     error: null,
     value: systemInfo,
@@ -59,7 +59,7 @@ describe('WidgetSysInfoActiveComponent', () => {
     providers: [
       mockAuth(),
       mockProvider(WidgetResourcesService, {
-        systemInfo$,
+        dashboardSystemInfo$,
         updateAvailable$,
         refreshInterval$,
       }),
@@ -117,10 +117,9 @@ describe('WidgetSysInfoActiveComponent', () => {
     expect(items).toEqual([
       'Platform: TRUENAS-M40-HA',
       'Edition: Enterprise',
-      'Version: Goldeye-25.10.0-MASTER-20250126-184805',
+      'Version: 25.10.0-MASTER-20250126-184805 - Goldeye',
       'Support License: Gold Contract,  Expires on 2025-01-01',
       'System Serial: AA-00001',
-      'Hostname: test-hostname-a',
       'Uptime: 23 hours 12 minutes as of 10:34',
     ]);
   });
@@ -153,5 +152,9 @@ describe('WidgetSysInfoActiveComponent', () => {
     updateAvailable$.next(true);
     const updateButton = await loader.getHarness(MatButtonHarness.with({ text: /Updates Available/ }));
     expect(await updateButton.host()).toExist();
+  });
+
+  it('shows hostname near product image when system serial is present', () => {
+    expect(spectator.query('.hostname').textContent.trim()).toBe('test-hostname-a');
   });
 });

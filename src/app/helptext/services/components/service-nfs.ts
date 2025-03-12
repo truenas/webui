@@ -37,14 +37,4 @@ export const helptextServiceNfs = {
   userd_manage_gids: T('Enable server-side management of group memberships. \
  This option allows the server to determine group IDs based on server-side lookups rather than relying solely on the information provided by the NFS client. \
  This can support more than 16 groups and provide more accurate group memberships.'),
-
-  nfs_srv_mountd_log_tooltip: T('Set to log <a\
- href="https://man7.org/linux/man-pages/man8/mountd.8.html"\
- target="_blank">mountd(8)</a> syslog requests.'),
-
-  nfs_srv_statd_lockd_log_tooltip: T('Set to log <a\
- href="https://man7.org/linux/man-pages/man8/statd.8.html"\
- target="_blank">rpc.statd(8)</a> and <a\
- href="https://linux.die.net/man/8/rpc.lockd"\
- target="_blank">rpc.lockd(8)</a> syslog requests.'),
 };

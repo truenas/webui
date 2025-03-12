@@ -6,7 +6,6 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatMiniFabButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
@@ -23,6 +22,7 @@ import { AuthService } from 'app/modules/auth/auth.service';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { TrainService } from 'app/pages/system/update/services/train.service';
@@ -39,7 +39,6 @@ import { SystemGeneralService } from 'app/services/system-general.service';
   standalone: true,
   imports: [
     MatCard,
-    MatProgressSpinner,
     ReactiveFormsModule,
     RequiresRolesDirective,
     IxCheckboxComponent,
@@ -50,6 +49,7 @@ import { SystemGeneralService } from 'app/services/system-general.service';
     IxIconComponent,
     TranslateModule,
     AsyncPipe,
+    FakeProgressBarComponent,
   ],
 })
 export class TrainCardComponent implements OnInit {

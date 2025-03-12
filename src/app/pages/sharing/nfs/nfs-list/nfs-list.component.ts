@@ -33,8 +33,8 @@ import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -147,7 +147,7 @@ export class NfsListComponent implements OnInit {
             ).subscribe({
               next: () => {
                 this.api.call('sharing.nfs.delete', [row.id]).pipe(
-                  this.appLoader.withLoader(),
+                  this.loader.withLoader(),
                   untilDestroyed(this),
                 ).subscribe({
                   next: () => this.refresh(),
@@ -165,7 +165,7 @@ export class NfsListComponent implements OnInit {
   });
 
   constructor(
-    private appLoader: AppLoaderService,
+    private loader: LoaderService,
     private api: ApiService,
     private translate: TranslateService,
     private dialog: DialogService,

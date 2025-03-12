@@ -67,7 +67,7 @@ export class DockerStore extends ComponentStore<DockerConfigState> {
           });
         },
       ),
-      this.errorHandler.catchError(),
+      this.errorHandler.withErrorHandler(),
     );
   });
 
@@ -85,7 +85,7 @@ export class DockerStore extends ComponentStore<DockerConfigState> {
       { title: this.translate.instant('Configuring...') },
     )
       .afterClosed()
-      .pipe(this.errorHandler.catchError());
+      .pipe(this.errorHandler.withErrorHandler());
   }
 
   reloadDockerConfig(): Observable<DockerConfig> {

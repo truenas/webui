@@ -7,5 +7,4 @@ export const helptextResilver = {
   end_tooltip: T('Choose the hour and minute when new resilver tasks\
                 are not allowed to start. This does not affect active\
                 resilver tasks.'),
-  weekday_tooltip: T('Select the days to run resilver tasks.'),
 };

@@ -133,7 +133,7 @@ export class PciPassthroughDialogComponent implements OnInit {
         })));
         this.filterTable();
       }),
-      this.errorHandler.catchError(),
+      this.errorHandler.withErrorHandler(),
       untilDestroyed(this),
     ).subscribe();
   }

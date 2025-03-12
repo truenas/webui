@@ -1,8 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const helptextAlertService = {
-  name_tooltip: T('Name of the new alert service.'),
-
   enabled_tooltip: T('Unset to disable this service without deleting it.'),
 
   type_tooltip: T('Choose an alert service to display options for that\
@@ -131,12 +129,12 @@ export const helptextAlertService = {
  <a href="https://api.telegram.org/bot(BOT_TOKEN)/getUpdates" \
  target="_blank">https://api.telegram.org/bot(BOT_TOKEN)/getUpdates</a>.'),
 
-  VictorOps_api_key_tooltip: T('Enter or paste the <a\
+  SplunkOnCall_api_key_tooltip: T('Enter or paste the <a\
  href="https://help.victorops.com/knowledge-base/api/"\
- target="_blank">VictorOps API key</a>.'),
+ target="_blank">Splunk On-Call API key</a>.'),
 
-  VictorOps_routing_key_tooltip: T('Enter or paste the <a\
+  SplunkOnCall_routing_key_tooltip: T('Enter or paste the <a\
  href="https://portal.victorops.com/public/api-docs.html#/Routing32Keys"\
- target="_blank">VictorOps routing key</a>.'),
+ target="_blank">Splunk On-Call routing key</a>.'),
 
 };

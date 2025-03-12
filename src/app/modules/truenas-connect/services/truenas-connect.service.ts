@@ -6,7 +6,7 @@ import {
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { TruenasConnectConfig, TruenasConnectUpdate } from 'app/interfaces/truenas-connect-config.interface';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
@@ -20,7 +20,7 @@ export class TruenasConnectService {
     @Inject(WINDOW) private window: Window,
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
   ) {
     this.getConfig();
   }
@@ -59,7 +59,7 @@ export class TruenasConnectService {
             filter((configRes: TruenasConnectConfig) => configRes.status === TruenasConnectStatus.Disabled),
           );
         }),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
       );
   }
 
@@ -83,7 +83,7 @@ export class TruenasConnectService {
             }),
           );
         }),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
       );
   }
 
@@ -99,7 +99,7 @@ export class TruenasConnectService {
           );
         }),
         this.loader.withLoader(),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
       );
   }
 
@@ -107,7 +107,7 @@ export class TruenasConnectService {
     return this.api.call('tn_connect.generate_claim_token')
       .pipe(
         this.loader.withLoader(),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
       );
   }
 }

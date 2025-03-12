@@ -56,7 +56,7 @@ export class DirectoryServicesMonitorComponent implements OnInit {
     this.isLoading.set(true);
     this.api.call('directoryservices.get_state')
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         finalize(() => this.isLoading.set(false)),
         untilDestroyed(this),
       )

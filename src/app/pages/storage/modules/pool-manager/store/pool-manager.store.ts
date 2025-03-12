@@ -36,18 +36,18 @@ import {
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 export interface PoolManagerTopologyCategory {
-  layout: CreateVdevLayout;
+  layout: CreateVdevLayout | null;
   width: number | null;
-  diskSize: number;
-  diskType: DiskType;
-  vdevsNumber: number;
+  diskSize: number | null;
+  diskType: DiskType | null;
+  vdevsNumber: number | null;
   treatDiskSizeAsMinimum: boolean;
   vdevs: DetailsDisk[][];
   hasCustomDiskSelection: boolean;
 
   // Only used for data step when dRAID is selected.
-  draidDataDisks: number;
-  draidSpareDisks: number;
+  draidDataDisks: number | null;
+  draidSpareDisks: number | null;
 }
 
 export type PoolManagerTopology = {
@@ -83,6 +83,7 @@ const initialTopology = Object.values(VdevType).reduce((topology, value) => {
   return {
     ...topology,
     [value]: {
+      layout: null,
       width: null,
       diskSize: null,
       diskType: null,
@@ -179,7 +180,8 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
 
   isUsingDraidLayout(topology: PoolManagerTopology): boolean {
     const dataCategory = topology[VdevType.Data];
-    return [CreateVdevLayout.Draid1, CreateVdevLayout.Draid2, CreateVdevLayout.Draid3].includes(dataCategory.layout);
+    return dataCategory.layout
+      && [CreateVdevLayout.Draid1, CreateVdevLayout.Draid2, CreateVdevLayout.Draid3].includes(dataCategory.layout);
   }
 
   getLayoutsForVdevType(vdevType: VdevType): Observable<CreateVdevLayout[]> {

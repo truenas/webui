@@ -18,6 +18,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { injectParams } from 'ngxtension/inject-params';
 import {
   combineLatest, filter, forkJoin, Observable, switchMap,
 } from 'rxjs';
@@ -34,8 +35,8 @@ import { SearchInput1Component } from 'app/modules/forms/search-input1/search-in
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -88,6 +89,7 @@ function doSortCompare(a: number | string, b: number | string, isAsc: boolean): 
 })
 
 export class InstalledAppsListComponent implements OnInit {
+  readonly appId = injectParams('appId');
   readonly isMobileView = input<boolean>();
   readonly toggleShowMobileDetails = output<boolean>();
 
@@ -111,6 +113,10 @@ export class InstalledAppsListComponent implements OnInit {
     large: false,
     title: helptextApps.message.loading,
   };
+
+  get isSelectedAppVisible(): boolean {
+    return this.filteredApps?.some((app) => app.id === this.selectedApp?.id);
+  }
 
   get filteredApps(): App[] {
     return this.dataSource
@@ -172,7 +178,7 @@ export class InstalledAppsListComponent implements OnInit {
     private store$: Store<WebuiAppState>,
     private location: Location,
     private appsStats: AppsStatsService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
   ) {
     this.router.events
       .pipe(
@@ -293,7 +299,7 @@ export class InstalledAppsListComponent implements OnInit {
     ).subscribe({
       next: ([,, apps]) => {
         this.sortChanged(this.sortingInfo, apps);
-        this.selectAppForDetails(this.activatedRoute.snapshot.paramMap.get('appId'));
+        this.selectAppForDetails(this.appId());
         this.cdr.markForCheck();
       },
     });
@@ -302,7 +308,7 @@ export class InstalledAppsListComponent implements OnInit {
   start(name: string): void {
     this.appService.startApplication(name)
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe((job: Job<void, AppStartQueryParams>) => {
@@ -315,7 +321,7 @@ export class InstalledAppsListComponent implements OnInit {
   stop(name: string): void {
     this.appService.stopApplication(name)
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe({
@@ -330,7 +336,7 @@ export class InstalledAppsListComponent implements OnInit {
   restart(name: string): void {
     this.appService.restartApplication(name)
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe((job: Job<void, AppStartQueryParams>) => {
@@ -348,7 +354,7 @@ export class InstalledAppsListComponent implements OnInit {
     const job$ = this.store$.select(selectJob(jobId)).pipe(filter((job) => !!job));
     this.dialogService.jobDialog(job$, { title: name, canMinimize: true })
       .afterClosed()
-      .pipe(this.errorHandler.catchError(), untilDestroyed(this))
+      .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
       .subscribe();
   }
 
@@ -394,7 +400,7 @@ export class InstalledAppsListComponent implements OnInit {
         }),
         filter(Boolean),
         switchMap((options) => this.executeBulkDeletion(options)),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe((job: Job<CoreBulkResponse[]>) => this.handleDeletionResult(job));

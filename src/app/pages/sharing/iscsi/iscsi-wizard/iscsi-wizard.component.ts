@@ -51,7 +51,7 @@ import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/pa
 import {
   UseIxIconsInStepperComponent,
 } from 'app/modules/ix-icon/use-ix-icons-in-stepper/use-ix-icons-in-stepper.component';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -255,7 +255,7 @@ export class IscsiWizardComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private translate: TranslateService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private store$: Store<ServicesState>,
     public slideInRef: SlideInRef<undefined, IscsiTarget>,
   ) {

@@ -23,7 +23,7 @@ import { ChartContainerImage } from 'app/interfaces/app.interface';
 import { AppUpgradeSummary } from 'app/interfaces/application.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -68,7 +68,7 @@ export class AppUpgradeDialogComponent {
 
   constructor(
     public dialogRef: MatDialogRef<AppUpgradeDialogComponent>,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private errorHandler: ErrorHandlerService,
     private appService: ApplicationsService,
     public dialogService: DialogService,
@@ -107,7 +107,7 @@ export class AppUpgradeDialogComponent {
       )
         .pipe(
           this.loader.withLoader(),
-          this.errorHandler.catchError(),
+          this.errorHandler.withErrorHandler(),
           untilDestroyed(this),
         ).subscribe((summary: AppUpgradeSummary) => {
           this.selectedVersion.changelog = summary.changelog;

@@ -8,7 +8,7 @@ import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  filter, repeat, switchMap, tap,
+  filter, switchMap, tap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -28,8 +28,8 @@ import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-h
 import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -138,7 +138,7 @@ export class AuthorizedAccessListComponent implements OnInit {
 
   constructor(
     public emptyService: EmptyService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private dialogService: DialogService,
     private api: ApiService,
     private translate: TranslateService,
@@ -150,10 +150,13 @@ export class AuthorizedAccessListComponent implements OnInit {
 
   ngOnInit(): void {
     const authorizedAccess$ = this.iscsiService.getAuth().pipe(
-      repeat({ delay: () => this.iscsiService.listenForDataRefresh() }),
       tap((authAccess) => this.authAccess = authAccess),
       untilDestroyed(this),
     );
+
+    this.iscsiService.listenForDataRefresh()
+      .pipe(untilDestroyed(this))
+      .subscribe(() => this.dataProvider.load());
 
     this.dataProvider = new AsyncDataProvider(authorizedAccess$);
     this.refresh();

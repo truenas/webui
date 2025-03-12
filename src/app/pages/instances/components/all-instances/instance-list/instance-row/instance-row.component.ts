@@ -71,7 +71,7 @@ export class InstanceRowComponent {
       { title: this.translate.instant('Starting...') },
     )
       .afterClosed()
-      .pipe(this.errorHandler.catchError(), untilDestroyed(this))
+      .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Instance started'));
       });
@@ -91,7 +91,7 @@ export class InstanceRowComponent {
             { title: this.translate.instant('Stopping...') },
           )
             .afterClosed()
-            .pipe(this.errorHandler.catchError());
+            .pipe(this.errorHandler.withErrorHandler());
         }),
         untilDestroyed(this),
       )
@@ -114,7 +114,7 @@ export class InstanceRowComponent {
             { title: this.translate.instant('Restarting...') },
           )
             .afterClosed()
-            .pipe(this.errorHandler.catchError());
+            .pipe(this.errorHandler.withErrorHandler());
         }),
         untilDestroyed(this),
       )

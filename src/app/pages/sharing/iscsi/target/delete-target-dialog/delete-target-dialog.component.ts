@@ -16,7 +16,7 @@ import { Role } from 'app/enums/role.enum';
 import { IscsiTarget, IscsiTargetExtent } from 'app/interfaces/iscsi.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -59,7 +59,7 @@ export class DeleteTargetDialogComponent implements OnInit {
     private formBuilder: FormBuilder,
     private dialogRef: MatDialogRef<DeleteTargetDialogComponent>,
     private errorHandler: ErrorHandlerService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private iscsiService: IscsiService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
@@ -86,7 +86,7 @@ export class DeleteTargetDialogComponent implements OnInit {
     this.api.call('iscsi.target.delete', [this.target.id, this.form.value.force, this.form.value.delete_extents])
       .pipe(
         this.loader.withLoader(),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => {

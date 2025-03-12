@@ -16,6 +16,7 @@ import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
+  DiskIoBus,
   VirtualizationDeviceType,
   VirtualizationGpuType,
   VirtualizationNicType,
@@ -134,11 +135,11 @@ describe('InstanceWizardComponent', () => {
   });
 
   describe('name validation', () => {
-    it('shows error for invalid name', async () => {
+    it('shows error for invalid name, it could only contain alphanumeric and hyphen characters', async () => {
       const instanceNameControl = await loader.getHarness(IxInputHarness.with({ label: 'Name' }));
 
       await form.fillForm({
-        Name: 'invalid+_@name',
+        Name: 'invalid_name',
       });
 
       expect(await instanceNameControl.getErrorText()).toBe('Invalid format or character');
@@ -327,16 +328,7 @@ describe('InstanceWizardComponent', () => {
       const diskForm = await diskList.getLastListItem();
       await diskForm.fillForm({
         Source: '/mnt/source',
-      });
-
-      const proxiesList = await loader.getHarness(IxListHarness.with({ label: 'Proxies' }));
-      await proxiesList.pressAddButton();
-      const proxyForm = await proxiesList.getLastListItem();
-      await proxyForm.fillForm({
-        'Host Port': 3000,
-        'Host Protocol': 'TCP',
-        'Instance Port': 2000,
-        'Instance Protocol': 'UDP',
+        'I/O Bus': 'NVMe',
       });
 
       // TODO: Fix this to use IxCheckboxHarness
@@ -381,19 +373,14 @@ describe('InstanceWizardComponent', () => {
         name: 'new',
         autostart: true,
         cpu: '1-2',
+        root_disk_io_bus: DiskIoBus.Nvme,
         instance_type: VirtualizationType.Vm,
         iso_volume: null,
         devices: [
           {
             dev_type: VirtualizationDeviceType.Disk,
             source: '/mnt/source',
-          },
-          {
-            dev_type: VirtualizationDeviceType.Proxy,
-            source_port: 3000,
-            source_proto: VirtualizationProxyProtocol.Tcp,
-            dest_port: 2000,
-            dest_proto: VirtualizationProxyProtocol.Udp,
+            io_bus: DiskIoBus.Nvme,
           },
           { dev_type: VirtualizationDeviceType.Nic, nic_type: VirtualizationNicType.Bridged, parent: 'nic1' },
           { dev_type: VirtualizationDeviceType.Usb, product_id: '0003' },
@@ -432,6 +419,7 @@ describe('InstanceWizardComponent', () => {
         'VM Image Options': 'Use an ISO image',
         'CPU Configuration': '2',
         'Memory Size': '1 GiB',
+        'Root Disk I/O Bus': 'Virtio-BLK',
       });
 
       const selectIso = await loader.getHarness(MatButtonHarness.with({ text: 'Select ISO' }));
@@ -444,6 +432,7 @@ describe('InstanceWizardComponent', () => {
         name: 'new',
         autostart: true,
         cpu: '2',
+        root_disk_io_bus: DiskIoBus.VirtioBlk,
         instance_type: VirtualizationType.Vm,
         devices: [],
         image: null,
@@ -460,6 +449,14 @@ describe('InstanceWizardComponent', () => {
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
     });
 
+    it('does not show Proxies section when instance type is VM', async () => {
+      const instanceType = await loader.getHarness(IxIconGroupHarness.with({ label: 'Virtualization Method' }));
+      await instanceType.setValue('VM');
+
+      const proxiesList = await loader.getHarnessOrNull(IxListHarness.with({ label: 'Proxies' }));
+      expect(proxiesList).toBeNull();
+    });
+
     it('creates new instance using zvol path when form is submitted', async () => {
       const instanceType = await loader.getHarness(IxIconGroupHarness.with({ label: 'Virtualization Method' }));
       await instanceType.setValue('VM');
@@ -470,6 +467,7 @@ describe('InstanceWizardComponent', () => {
         'CPU Configuration': '2',
         'Memory Size': '1 GiB',
         Zvol: '/dev/zvol/test',
+        'Root Disk I/O Bus': 'Virtio-SCSI',
       });
 
       const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create' }));
@@ -478,6 +476,7 @@ describe('InstanceWizardComponent', () => {
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('virt.instance.create', [{
         name: 'new',
         autostart: true,
+        root_disk_io_bus: DiskIoBus.VirtioScsi,
         cpu: '2',
         instance_type: VirtualizationType.Vm,
         devices: [],

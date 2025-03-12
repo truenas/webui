@@ -115,7 +115,7 @@ export class AllowedAddressesFormComponent implements OnInit {
           return of(true);
         }
         return this.api.call('system.general.ui_restart').pipe(
-          this.errorHandler.catchError(),
+          this.errorHandler.withErrorHandler(),
           map(() => true),
         );
       }),

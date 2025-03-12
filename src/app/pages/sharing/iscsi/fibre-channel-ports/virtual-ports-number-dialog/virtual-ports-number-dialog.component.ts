@@ -12,7 +12,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { FibreChannelHost } from 'app/interfaces/fibre-channel.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -41,7 +41,7 @@ export class VirtualPortsNumberDialogComponent {
 
   constructor(
     private api: ApiService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private dialogRef: MatDialogRef<VirtualPortsNumberDialogComponent>,
     private errorHandler: ErrorHandlerService,
     @Inject(MAT_DIALOG_DATA) private host: FibreChannelHost,
@@ -56,7 +56,7 @@ export class VirtualPortsNumberDialogComponent {
       .call('fc.fc_host.update', [this.host.id, { npiv: this.form.value.virtualPorts }])
       .pipe(
         this.loader.withLoader(),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => this.dialogRef.close(true));

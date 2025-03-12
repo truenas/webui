@@ -10,7 +10,7 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  combineLatest, EMPTY, Observable, of, throwError,
+  combineLatest, Observable, of,
 } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -26,7 +26,7 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -73,7 +73,7 @@ export class DeleteDatasetDialogComponent implements OnInit {
   }
 
   constructor(
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private fb: FormBuilder,
     private errorHandler: ErrorHandlerService,
     private api: ApiService,
@@ -93,19 +93,20 @@ export class DeleteDatasetDialogComponent implements OnInit {
 
   onDelete(): void {
     this.deleteDataset().pipe(
+      this.loader.withLoader(),
+      tap(() => this.dialogRef.close(true)),
       catchError((error: unknown) => {
         const apiError = extractApiError(error);
+
         if (apiError?.reason?.includes('Device busy')) {
           return this.askToForceDelete();
         }
 
-        return throwError(() => error);
+        this.dialogRef.close();
+        this.errorHandler.showErrorModal(error);
+
+        return of(error);
       }),
-      this.loader.withLoader(),
-      tap(() => {
-        this.dialogRef.close(true);
-      }),
-      catchError(this.handleDeleteError.bind(this)),
       untilDestroyed(this),
     ).subscribe();
   }
@@ -134,19 +135,6 @@ export class DeleteDatasetDialogComponent implements OnInit {
       buttonText: this.translate.instant('Force Delete'),
       buttonColor: 'warn',
     });
-  }
-
-  private handleDeleteError(error: { reason: string; stack: string; [key: string]: unknown }): Observable<void> {
-    this.dialog.error({
-      title: this.translate.instant(
-        'Error deleting dataset {datasetName}.',
-        { datasetName: this.dataset.name },
-      ),
-      message: error.reason,
-      backtrace: error.stack,
-    });
-    this.dialogRef.close(true);
-    return EMPTY;
   }
 
   private loadDatasetRelatedEntities(): void {

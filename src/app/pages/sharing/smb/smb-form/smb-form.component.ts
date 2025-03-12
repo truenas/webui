@@ -50,7 +50,7 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -235,7 +235,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     private translate: TranslateService,
     private router: Router,
     private userService: UserService,
-    protected loader: AppLoaderService,
+    protected loader: LoaderService,
     private formErrorHandler: FormErrorHandlerService,
     private filesystemService: FilesystemService,
     private snackbar: SnackbarService,
@@ -328,9 +328,12 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
   setupPurposeControl(): void {
     this.form.controls.purpose.valueChanges.pipe(untilDestroyed(this))
-      .subscribe((value: string) => {
+      .subscribe((value) => {
         this.clearPresets();
-        this.setValuesFromPreset(value);
+
+        if (value) {
+          this.setValuesFromPreset(value);
+        }
       });
   }
 

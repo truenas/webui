@@ -150,7 +150,7 @@ export class ServiceNfsComponent implements OnInit {
       this.loadActiveDirectoryState(),
     ])
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         finalize(() => this.isFormLoading.set(false)),
         untilDestroyed(this),
       )

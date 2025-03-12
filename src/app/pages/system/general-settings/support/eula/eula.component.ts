@@ -44,7 +44,7 @@ export class EulaComponent implements OnInit {
   ngOnInit(): void {
     this.api.call('truenas.get_eula')
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe((eula) => {

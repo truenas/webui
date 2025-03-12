@@ -1,9 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const helptextSystemCloudcredentials = {
-  name: {
-    tooltip: T('Enter a name for the new credential.'),
-  },
   provider: {
     tooltip: T('Third-party Cloud service providers. Choose a provider \
  to configure connection credentials.'),
@@ -262,15 +259,6 @@ target="_blank">OpenStack credentials file</a>.'),
     tooltip: T('Auth Token from alternate authentication - optional \
 <a href="https://rclone.org/swift/#swift-region" target="_blank">(rclone documentation)</a>.'),
   },
-  application_credential_id_openstack_swift: {
-    tooltip: T('<a href="https://rclone.org/swift/#swift-region" target="_blank">(rclone documentation)</a>.'),
-  },
-  application_credential_name_openstack_swift: {
-    tooltip: T('<a href="https://rclone.org/swift/#swift-region" target="_blank">(rclone documentation)</a>.'),
-  },
-  application_credential_secret_openstack_swift: {
-    tooltip: T('<a href="https://rclone.org/swift/#swift-region" target="_blank">(rclone documentation)</a>.'),
-  },
   auth_version_openstack_swift: {
     tooltip: T('AuthVersion - optional - set to (1,2,3) if your auth URL has no version \
 <a href="https://rclone.org/swift/#swift-region" target="_blank">(rclone documentation)</a>.'),
@@ -298,12 +286,6 @@ target="_blank">OpenStack credentials file</a>.'),
  <i>22</i>.',
     ),
   },
-  user_sftp: {
-    tooltip: T('SSH Username.'),
-  },
-  pass_sftp: {
-    tooltip: T('Password for the SSH Username account.'),
-  },
   private_key_sftp: {
     tooltip: T('Import the private key from an existing SSH keypair or \
  select <i>Generate New</i> to create a new SSH key for this credential.'),
@@ -313,12 +295,6 @@ target="_blank">OpenStack credentials file</a>.'),
   },
   vendor_webdav: {
     tooltip: T('Name of the WebDAV site, service, or software being used.'),
-  },
-  user_webdav: {
-    tooltip: T('WebDAV account username.'),
-  },
-  pass_webdav: {
-    tooltip: T('WebDAV account password.'),
   },
   token_yandex: {
     tooltip: T(

@@ -178,7 +178,7 @@ export class DashboardComponent implements OnInit {
 
   protected onSave(): void {
     this.dashboardStore.save(this.renderedGroups())
-      .pipe(this.errorHandler.catchError(), untilDestroyed(this))
+      .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
       .subscribe(() => {
         this.isEditing.set(false);
         this.snackbar.success(this.translate.instant('Dashboard settings saved'));

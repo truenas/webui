@@ -29,7 +29,7 @@ import { AppUpgradeDialogConfig } from 'app/interfaces/app-upgrade-dialog-config
 import { App } from 'app/interfaces/app.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { CleanLinkPipe } from 'app/modules/pipes/clean-link/clean-link.pipe';
 import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -95,12 +95,24 @@ export class AppInfoCardComponent {
 
   protected readonly appDetailsRouterUrl = computed<string[]>(() => {
     const app = this.app();
-    return ['/apps', 'available', app.metadata.train, app.id];
+    return ['/apps', 'available', app.metadata.train, app.metadata.name];
+  });
+
+  protected readonly name = computed(() => {
+    if (this.app().name === this.app().metadata.name) {
+      return this.app().name;
+    }
+
+    if (this.app().custom_app) {
+      return this.app().name;
+    }
+
+    return `${this.app().name} (${this.app().metadata.name})`;
   });
 
   constructor(
     private api: ApiService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private redirect: RedirectService,
     private errorHandler: ErrorHandlerService,
     private appService: ApplicationsService,
@@ -147,7 +159,7 @@ export class AppInfoCardComponent {
           { title: helptextApps.apps.upgrade_dialog.job },
         ).afterClosed(),
       ),
-      this.errorHandler.catchError(),
+      this.errorHandler.withErrorHandler(),
       untilDestroyed(this),
     ).subscribe();
   }
@@ -176,7 +188,7 @@ export class AppInfoCardComponent {
         }).afterClosed();
       }),
       filter(Boolean),
-      this.errorHandler.catchError(),
+      this.errorHandler.withErrorHandler(),
       untilDestroyed(this),
     )
       .subscribe((options) => this.executeDelete(name, options));
@@ -194,7 +206,7 @@ export class AppInfoCardComponent {
       .afterClosed()
       .pipe(
         filter(Boolean),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => {
@@ -239,7 +251,7 @@ export class AppInfoCardComponent {
         this.api.job('app.convert_to_custom', [appName]),
         { title: this.translate.instant('Convert to custom app') },
       ).afterClosed()),
-      this.errorHandler.catchError(),
+      this.errorHandler.withErrorHandler(),
       untilDestroyed(this),
     ).subscribe();
   }

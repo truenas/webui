@@ -116,7 +116,7 @@ export class SetDedupQuotaComponent {
     })
       .afterClosed()
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => {

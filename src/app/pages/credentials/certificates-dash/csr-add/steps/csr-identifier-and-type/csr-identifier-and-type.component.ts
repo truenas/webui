@@ -108,7 +108,7 @@ export class CsrIdentifierAndTypeComponent implements OnInit, SummaryProvider {
 
   private loadProfiles(): void {
     this.api.call('webui.crypto.csr_profiles')
-      .pipe(this.errorHandler.catchError(), untilDestroyed(this))
+      .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
       .subscribe((profiles) => {
         this.profiles = profiles;
         const profileOptions = Object.keys(profiles).map((name) => ({ label: name, value: name }));

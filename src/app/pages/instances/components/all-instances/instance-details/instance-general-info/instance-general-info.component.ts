@@ -95,10 +95,10 @@ export class InstanceGeneralInfoComponent {
           this.api.job('virt.instance.delete', [this.instance().id]),
         ).afterClosed();
       }),
-      this.errorHandler.catchError(),
+      this.errorHandler.withErrorHandler(),
       untilDestroyed(this),
     ).subscribe(() => {
-      this.router.navigate(['/virtualization'], { state: { hideMobileDetails: true } });
+      this.router.navigate(['/instances'], { state: { hideMobileDetails: true } });
     });
   }
 }

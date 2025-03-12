@@ -19,7 +19,7 @@ import {
   isTopologyDisk, TopologyItem, VDev,
 } from 'app/interfaces/storage.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -124,7 +124,7 @@ export class ZfsInfoCardComponent {
 
   constructor(
     private errorHandler: ErrorHandlerService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private api: ApiService,
     private dialogService: DialogService,
     private matDialog: MatDialog,
@@ -143,7 +143,7 @@ export class ZfsInfoCardComponent {
       switchMap(() => {
         return this.api.call('pool.offline', [this.poolId(), { label: this.topologyItem().guid }]).pipe(
           this.loader.withLoader(),
-          this.errorHandler.catchError(),
+          this.errorHandler.withErrorHandler(),
           tap(() => this.devicesStore.reloadList()),
           untilDestroyed(this),
         );
@@ -162,7 +162,7 @@ export class ZfsInfoCardComponent {
       switchMap(() => {
         return this.api.call('pool.online', [this.poolId(), { label: this.topologyItem().guid }]).pipe(
           this.loader.withLoader(),
-          this.errorHandler.catchError(),
+          this.errorHandler.withErrorHandler(),
           tap(() => this.devicesStore.reloadList()),
         );
       }),
@@ -180,7 +180,7 @@ export class ZfsInfoCardComponent {
       switchMap(() => {
         return this.api.call('pool.detach', [this.poolId(), { label: this.topologyItem().guid }]).pipe(
           this.loader.withLoader(),
-          this.errorHandler.catchError(),
+          this.errorHandler.withErrorHandler(),
           tap(() => this.devicesStore.reloadList()),
         );
       }),
@@ -204,7 +204,7 @@ export class ZfsInfoCardComponent {
           { title: this.translate.instant('Remove device') },
         )
           .afterClosed()
-          .pipe(this.errorHandler.catchError());
+          .pipe(this.errorHandler.withErrorHandler());
       }),
       untilDestroyed(this),
     ).subscribe(() => {

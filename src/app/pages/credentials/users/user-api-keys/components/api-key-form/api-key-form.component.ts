@@ -26,7 +26,7 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { forbiddenAsyncValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -77,9 +77,6 @@ export class ApiKeyFormComponent implements OnInit {
 
   protected readonly username = toSignal(this.currentUsername$);
   protected readonly tooltips = {
-    name: helptextApiKeys.name.tooltip,
-    expires: helptextApiKeys.expires.tooltip,
-    username: helptextApiKeys.username.tooltip,
     reset: helptextApiKeys.reset.tooltip,
     nonExpiring: helptextApiKeys.nonExpiring.tooltip,
   };
@@ -112,7 +109,7 @@ export class ApiKeyFormComponent implements OnInit {
     private fb: NonNullableFormBuilder,
     private matDialog: MatDialog,
     private api: ApiService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private errorHandler: FormErrorHandlerService,
     private authService: AuthService,
     public slideInRef: SlideInRef<ApiKey | undefined, boolean>,

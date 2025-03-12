@@ -87,7 +87,7 @@ export class BootPoolDeleteDialogComponent {
 
     this.api.job('core.bulk', ['boot.environment.destroy', bootenvsToDelete]).pipe(
       filter((job: Job<CoreBulkResponse<void>[], { id: string }[][]>) => !!job.result?.length),
-      this.errorHandler.catchError(),
+      this.errorHandler.withErrorHandler(),
       untilDestroyed(this),
     ).subscribe((response) => {
       response.arguments[1].flat().forEach((params, index: number) => {
@@ -107,7 +107,7 @@ export class BootPoolDeleteDialogComponent {
             this.bulkItems.set(bootenvId, {
               ...bulkItem,
               state: BulkListItemState.Success,
-              message: null,
+              message: undefined,
             });
             if (this.bulkItems.size === 1) {
               this.dialogRef.close(true);

@@ -14,8 +14,6 @@ export const helptextInterfaces = {
   commit_changes_title: T('Test Changes'),
   commit_changes_warning: T('Test network interface changes? Network connectivity can be interrupted.'),
 
-  changes_saved_successfully: T('Network changes applied successfully.'),
-
   commit_button: T('Test Changes'),
   keep_button: T('Save Changes'),
   rollback_button: T('Revert Changes'),
@@ -35,7 +33,6 @@ export const helptextInterfaces = {
 
   checkin_title: T('Save Changes'),
   checkin_message: T('Save network interface changes?'),
-  checkin_complete_title: T('Changes Saved'),
   checkin_complete_message: T('Network interface changes have been made permanent.'),
   checkin_button: T('Save'),
   go_to_network: T('Go To Network Settings'),
@@ -43,7 +40,6 @@ export const helptextInterfaces = {
   pending_changes_title: T('Pending Network Changes'),
   pending_changes_message: T('There are pending network interface changes. Review them now?'),
 
-  ha_enabled_edit_title: T('Cannot Edit while HA is Enabled'),
   ha_enabled_edit_msg: T('Editing interfaces while HA is enabled is not allowed.'),
 
   ha_enabled_delete_msg: T('Deleting interfaces while HA is enabled is not allowed.'),

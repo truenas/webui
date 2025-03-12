@@ -91,7 +91,7 @@ describe('TopbarComponent', () => {
             value: [
               {
                 state: JobState.Running,
-                arguments: [],
+                arguments: [] as unknown[],
               } as Job,
             ],
           },

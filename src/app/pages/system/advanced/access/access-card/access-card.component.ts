@@ -32,8 +32,8 @@ import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-h
 import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
@@ -141,7 +141,7 @@ export class AccessCardComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private translate: TranslateService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private api: ApiService,
     private firstTimeWarning: FirstTimeWarningService,
     private systemGeneralService: SystemGeneralService,
@@ -204,7 +204,7 @@ export class AccessCardComponent implements OnInit {
   private terminateOtherSessions(): void {
     this.api.call('auth.terminate_other_sessions').pipe(
       this.loader.withLoader(),
-      this.errorHandler.catchError(),
+      this.errorHandler.withErrorHandler(),
       untilDestroyed(this),
     ).subscribe(() => {
       this.updateSessions();
@@ -228,7 +228,7 @@ export class AccessCardComponent implements OnInit {
   private terminateSession(sessionId: string): void {
     this.api.call('auth.terminate_session', [sessionId]).pipe(
       this.loader.withLoader(),
-      this.errorHandler.catchError(),
+      this.errorHandler.withErrorHandler(),
       untilDestroyed(this),
     ).subscribe(() => {
       this.updateSessions();

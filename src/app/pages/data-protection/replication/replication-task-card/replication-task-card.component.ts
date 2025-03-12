@@ -14,6 +14,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
+import { Job } from 'app/interfaces/job.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -79,7 +80,8 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 })
 export class ReplicationTaskCardComponent implements OnInit {
   dataProvider: AsyncDataProvider<ReplicationTask>;
-  jobStates = new Map<number, string>();
+  jobStates = new Map<number, JobState>();
+  replicationTasks: ReplicationTask[] = [];
   protected readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
 
   columns = createTable<ReplicationTask>([
@@ -167,7 +169,10 @@ export class ReplicationTaskCardComponent implements OnInit {
   ngOnInit(): void {
     const replicationTasks$ = this.api.call('replication.query', [[], {
       extra: { check_dataset_encryption_keys: true },
-    }]).pipe(untilDestroyed(this));
+    }]).pipe(
+      tap((replicationTasks) => this.replicationTasks = replicationTasks),
+      untilDestroyed(this),
+    );
     this.dataProvider = new AsyncDataProvider<ReplicationTask>(replicationTasks$);
     this.getReplicationTasks();
   }
@@ -218,21 +223,12 @@ export class ReplicationTaskCardComponent implements OnInit {
       hideCheckbox: true,
     }).pipe(
       filter(Boolean),
-      tap(() => row.state.state = JobState.Running),
+      tap(() => this.updateRowStateAndJob(row, JobState.Running, row.job)),
       switchMap(() => this.api.job('replication.run', [row.id])),
       tapOnce(() => {
         this.snackbar.success(
           this.translate.instant('Replication «{name}» has started.', { name: row.name }),
         );
-      }),
-      tap((job) => {
-        if (!([JobState.Running, JobState.Pending].includes(job.state))) {
-          this.getReplicationTasks();
-          return;
-        }
-        row.state.state = job.state;
-        row.job = { ...job };
-        this.jobStates.set(job.id, job.state);
       }),
       catchError((error: unknown) => {
         this.getReplicationTasks();
@@ -240,7 +236,13 @@ export class ReplicationTaskCardComponent implements OnInit {
         return EMPTY;
       }),
       untilDestroyed(this),
-    ).subscribe();
+    ).subscribe((job: Job) => {
+      this.updateRowStateAndJob(row, job.state, job);
+      if (this.jobStates.get(job.id) !== job.state) {
+        this.getReplicationTasks();
+      }
+      this.jobStates.set(job.id, job.state);
+    });
   }
 
   restore(row: ReplicationTask): void {
@@ -251,30 +253,16 @@ export class ReplicationTaskCardComponent implements OnInit {
   }
 
   downloadKeys(row: ReplicationTask): void {
-    this.api.call('core.download', [
-      'pool.dataset.export_keys_for_replication',
-      [row.id],
-      `${row.name}_encryption_keys.json`,
-    ]).pipe(untilDestroyed(this)).subscribe({
-      next: ([, url]) => {
-        const mimetype = 'application/json';
-        this.download.streamDownloadFile(
-          url,
-          `${row.name}_encryption_keys.json`,
-          mimetype,
-        ).pipe(untilDestroyed(this)).subscribe({
-          next: (file) => {
-            this.download.downloadBlob(file, `${row.name}_encryption_keys.json`);
-          },
-          error: (err: unknown) => {
-            this.dialogService.error(this.errorHandler.parseError(err));
-          },
-        });
-      },
-      error: (err: unknown) => {
-        this.dialogService.error(this.errorHandler.parseError(err));
-      },
-    });
+    this.download.coreDownload({
+      method: 'pool.dataset.export_keys_for_replication',
+      mimeType: 'application/json',
+      arguments: [row.id],
+      fileName: `${row.name}_encryption_keys.json`,
+    })
+      .pipe(
+        this.errorHandler.withErrorHandler(),
+        untilDestroyed(this),
+      ).subscribe();
   }
 
   private onChangeEnabledState(replicationTask: ReplicationTask): void {
@@ -290,5 +278,19 @@ export class ReplicationTaskCardComponent implements OnInit {
           this.dialogService.error(this.errorHandler.parseError(err));
         },
       });
+  }
+
+  private updateRowStateAndJob(row: ReplicationTask, state: JobState, job: Job | null): void {
+    this.replicationTasks = this.replicationTasks.map((task) => {
+      if (task.id === row.id) {
+        return {
+          ...task,
+          state: { state },
+          job,
+        };
+      }
+      return task;
+    });
+    this.dataProvider.setRows(this.replicationTasks);
   }
 }

@@ -101,12 +101,41 @@ describe('AppInfoCardComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   }
 
-  it('shows app name as a link', () => {
-    setupTest(fakeApp);
-    spectator.detectChanges();
-    const appNameLink = spectator.query('.details-list a.value');
-    expect(appNameLink).toHaveText('test-user-app-name');
-    expect(appNameLink).toHaveAttribute('href', '/apps/available/stable/ix-test-app');
+  describe('name', () => {
+    it('shows app name as a link when app name matches image name', () => {
+      setupTest({
+        ...fakeApp,
+        name: 'test-user-app-name',
+        metadata: {
+          ...fakeApp.metadata,
+          name: 'test-user-app-name',
+        },
+      });
+      spectator.detectChanges();
+      const appNameLink = spectator.query('.details-list a.value');
+      expect(appNameLink).toHaveText('test-user-app-name');
+      expect(appNameLink).toHaveAttribute('href', '/apps/available/stable/test-user-app-name');
+    });
+
+    it('shows both name and image name when they are different', () => {
+      setupTest(fakeApp);
+
+      spectator.detectChanges();
+      const appNameLink = spectator.query('.details-list a.value');
+      expect(appNameLink).toHaveText('test-user-app-name (ix-test-app)');
+    });
+
+    it('shows name as a static text for custom apps', () => {
+      setupTest({
+        ...fakeApp,
+        custom_app: true,
+      });
+
+      spectator.detectChanges();
+      const appNameLink = spectator.query('.details-list .value')!;
+      expect(appNameLink.tagName.toLowerCase()).toBe('span');
+      expect(appNameLink).toHaveText('test-user-app-name');
+    });
   });
 
   it('shows details', () => {
@@ -116,10 +145,10 @@ describe('AppInfoCardComponent', () => {
       label: element.querySelector('.label')!.textContent!,
       value: element.querySelector('.value')!.textContent!.trim(),
     }));
-    expect(details).toEqual([
+    expect(details).toMatchObject([
       {
         label: 'Name:',
-        value: 'test-user-app-name',
+        value: 'test-user-app-name (ix-test-app)',
       },
       {
         label: 'App Version:',

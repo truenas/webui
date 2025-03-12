@@ -27,7 +27,7 @@ import {
   IxSlideToggleComponent,
 } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -95,7 +95,7 @@ export class SupportCardComponent implements OnInit {
 
   constructor(
     protected api: ApiService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private matDialog: MatDialog,
     private slideIn: SlideIn,
     private store$: Store<AppState>,
@@ -188,7 +188,7 @@ export class SupportCardComponent implements OnInit {
 
         return this.api.job('truenas.set_production', [newStatus, attachDebug]).pipe(
           this.loader.withLoader(),
-          this.errorHandler.catchError(),
+          this.errorHandler.withErrorHandler(),
           tap({
             complete: () => {
               this.snackbar.success(

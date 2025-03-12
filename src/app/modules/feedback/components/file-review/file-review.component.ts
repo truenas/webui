@@ -92,7 +92,7 @@ export class FileReviewComponent {
     this.isLoadingChange.emit(true);
 
     this.feedbackService.createReview(this.form.value).pipe(
-      this.errorHandler.catchError(),
+      this.errorHandler.withErrorHandler(),
       finalize(() => this.isLoadingChange.emit(false)),
       untilDestroyed(this),
     ).subscribe(() => this.onSuccess());

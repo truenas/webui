@@ -8,7 +8,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -35,7 +35,7 @@ export class RestartComponent implements OnInit {
     protected router: Router,
     private route: ActivatedRoute,
     private errorHandler: ErrorHandlerService,
-    protected loader: AppLoaderService,
+    protected loader: LoaderService,
     protected dialogService: DialogService,
     protected matDialog: MatDialog,
     private location: Location,

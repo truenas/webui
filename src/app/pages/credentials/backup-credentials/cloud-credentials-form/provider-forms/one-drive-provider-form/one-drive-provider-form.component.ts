@@ -124,7 +124,7 @@ export class OneDriveProviderFormComponent extends BaseProviderFormComponent imp
       token: this.form.getRawValue().token,
     }])
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe((drives) => {

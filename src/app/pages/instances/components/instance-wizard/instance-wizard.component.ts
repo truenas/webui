@@ -17,9 +17,10 @@ import {
   filter,
   map, Observable, of,
 } from 'rxjs';
-import { nameValidatorRegex } from 'app/constants/name-validator.constant';
 import { Role } from 'app/enums/role.enum';
 import {
+  DiskIoBus,
+  diskIoBusLabels,
   VirtualizationDeviceType,
   VirtualizationGpuType,
   VirtualizationNicType,
@@ -32,7 +33,7 @@ import {
   virtualizationTypeIcons,
 } from 'app/enums/virtualization.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
-import { containersHelptext } from 'app/helptext/virtualization/containers';
+import { containersHelptext } from 'app/helptext/instances/instances';
 import { Option } from 'app/interfaces/option.interface';
 import {
   CreateVirtualizationInstance,
@@ -114,6 +115,7 @@ export class InstanceWizardComponent {
 
   protected readonly hasPendingInterfaceChanges = toSignal(this.api.call('interface.has_pending_changes'));
 
+  protected readonly diskIoBusOptions$ = of(mapToOptions(diskIoBusLabels, this.translate));
   protected readonly proxyProtocols$ = of(mapToOptions(virtualizationProxyProtocolLabels, this.translate));
   protected readonly bridgedNicTypeLabel = virtualizationNicTypeLabels.get(VirtualizationNicType.Bridged);
   protected readonly macVlanNicTypeLabel = virtualizationNicTypeLabels.get(VirtualizationNicType.Macvlan);
@@ -135,7 +137,7 @@ export class InstanceWizardComponent {
   );
 
   imageSourceTypeOptions$: Observable<Option<VirtualizationSource>[]> = of([
-    { label: this.translate.instant('Use a Linux image (linuxcontainer.org)'), value: VirtualizationSource.Image },
+    { label: this.translate.instant('Use a Linux image (linuxcontainers.org)'), value: VirtualizationSource.Image },
     { label: this.translate.instant('Use an ISO image'), value: VirtualizationSource.Iso },
     { label: this.translate.instant('Use zvol with previously installed OS'), value: VirtualizationSource.Zvol },
   ]);
@@ -153,11 +155,12 @@ export class InstanceWizardComponent {
   protected readonly form = this.formBuilder.group({
     name: [
       '',
-      [Validators.required, Validators.minLength(1), Validators.maxLength(200), Validators.pattern(nameValidatorRegex)],
+      [Validators.required, Validators.minLength(1), Validators.maxLength(200), Validators.pattern(/^[a-zA-Z0-9-]+$/)],
       [forbiddenAsyncValues(this.forbiddenNames$)],
     ],
     instance_type: [VirtualizationType.Container, Validators.required],
     source_type: [VirtualizationSource.Image, [Validators.required]],
+    root_disk_io_bus: [DiskIoBus.Nvme, []],
     iso_volume: ['', [Validators.required]],
     zvol_path: ['', [Validators.required]],
     image: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(200)]],
@@ -184,6 +187,7 @@ export class InstanceWizardComponent {
     disks: this.formBuilder.array<FormGroup<{
       source: FormControl<string>;
       destination: FormControl<string>;
+      io_bus: FormControl<DiskIoBus>;
     }>>([]),
     environment_variables: new FormArray<InstanceEnvVariablesFormGroup>([]),
   });
@@ -207,9 +211,7 @@ export class InstanceWizardComponent {
   protected readonly isVm = computed(() => this.instanceType() === VirtualizationType.Vm);
 
   readonly directoryNodeProvider = computed(() => {
-    const providerOptions = this.isVm()
-      ? { zvolsOnly: true }
-      : { datasetsAndZvols: true };
+    const providerOptions = this.isVm() ? { zvolsOnly: true } : { datasetsOnly: true };
 
     return this.filesystem.getFilesystemNodeProvider(providerOptions);
   });
@@ -303,10 +305,15 @@ export class InstanceWizardComponent {
     const control = this.formBuilder.group({
       source: ['', Validators.required],
       destination: ['', Validators.required],
+      io_bus: [DiskIoBus.Nvme, Validators.required],
     });
 
     if (this.isVm()) {
       control.removeControl('destination');
+    }
+
+    if (this.isContainer()) {
+      control.removeControl('io_bus');
     }
 
     this.form.controls.disks.push(control);
@@ -372,6 +379,7 @@ export class InstanceWizardComponent {
 
     if (this.isVm()) {
       payload.secure_boot = values.secure_boot;
+      payload.root_disk_io_bus = values.root_disk_io_bus;
 
       if (values.source_type !== VirtualizationSource.Zvol) {
         payload.root_disk_size = values.root_disk_size;
@@ -407,10 +415,11 @@ export class InstanceWizardComponent {
   }
 
   private getDevicesPayload(): VirtualizationDevice[] {
-    const disks = this.form.controls.disks.value.map((proxy) => ({
+    const disks = this.form.controls.disks.value.map((disk) => ({
       dev_type: VirtualizationDeviceType.Disk,
-      source: proxy.source,
-      ...(this.isContainer() ? { destination: proxy.destination } : null),
+      source: disk.source,
+      ...(this.isContainer() ? { destination: disk.destination } : null),
+      ...(this.isVm() ? { io_bus: disk.io_bus } : null),
     }));
 
     const usbDevices: { dev_type: VirtualizationDeviceType; product_id: string }[] = [];
@@ -521,6 +530,7 @@ export class InstanceWizardComponent {
 
       this.form.controls.image.reset();
       this.form.controls.disks.clear();
+      this.form.controls.proxies.clear();
 
       if (type === VirtualizationType.Container) {
         this.form.controls.cpu.setValidators(cpuValidator());

@@ -1,0 +1,41 @@
+<h1 matDialogTitle>
+  {{ 'Change Root Disk Setup' | translate }}
+</h1>
+
+<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+  <ix-input
+    type="number"
+    formControlName="size"
+    [label]="'Root Disk Size (in GiB)' | translate"
+    [required]="true"
+  ></ix-input>
+
+  <ix-select
+    formControlName="root_disk_io_bus"
+    [label]="'Root Disk I/O Bus' | translate"
+    [tooltip]="containersHelptext.io_bus_tooltip | translate"
+    [required]="true"
+    [options]="diskIoBusOptions$"
+  ></ix-select>
+
+  <ix-form-actions>
+    <button
+      mat-button
+      type="button"
+      ixTest="cancel"
+      matDialogClose
+    >
+      {{ 'Cancel' | translate }}
+    </button>
+
+    <button
+      mat-button
+      color="primary"
+      type="submit"
+      ixTest="save"
+      [disabled]="form.invalid"
+    >
+      {{ 'Save' | translate }}
+    </button>
+  </ix-form-actions>
+</form>

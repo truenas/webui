@@ -37,8 +37,8 @@ import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -136,11 +136,11 @@ export class SmbListComponent implements OnInit {
             } else {
               // A home share has a name (homes) set; row.name works for other shares
               const searchName = row.home ? 'homes' : row.name;
-              this.appLoader.open();
+              this.loader.open();
               this.api.call('sharing.smb.getacl', [{ share_name: searchName }])
                 .pipe(untilDestroyed(this))
                 .subscribe((shareAcl) => {
-                  this.appLoader.close();
+                  this.loader.close();
                   this.slideIn.open(SmbAclComponent, { data: shareAcl.share_name }).pipe(
                     take(1),
                     filter((response) => !!response.response),
@@ -185,8 +185,8 @@ export class SmbListComponent implements OnInit {
             ).subscribe({
               next: () => {
                 this.api.call('sharing.smb.delete', [row.id]).pipe(
-                  this.appLoader.withLoader(),
-                  this.errorHandler.catchError(),
+                  this.loader.withLoader(),
+                  this.errorHandler.withErrorHandler(),
                   untilDestroyed(this),
                 ).subscribe(() => {
                   this.dataProvider.load();
@@ -203,7 +203,7 @@ export class SmbListComponent implements OnInit {
   });
 
   constructor(
-    private appLoader: AppLoaderService,
+    private loader: LoaderService,
     private api: ApiService,
     private translate: TranslateService,
     private dialog: DialogService,
@@ -272,7 +272,7 @@ export class SmbListComponent implements OnInit {
 
   private onChangeEnabledState(row: SmbShare): void {
     this.api.call('sharing.smb.update', [row.id, { enabled: !row.enabled }]).pipe(
-      this.appLoader.withLoader(),
+      this.loader.withLoader(),
       untilDestroyed(this),
     ).subscribe({
       next: () => {

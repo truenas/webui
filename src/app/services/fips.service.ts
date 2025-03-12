@@ -103,7 +103,7 @@ export class FipsService {
     )
       .afterClosed()
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         tap(() => {
           this.snackbar.success(this.translate.instant('System Security Settings Updated.'));
         }),

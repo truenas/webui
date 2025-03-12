@@ -1,5 +1,13 @@
 .train-card {
   padding: 15px 20px 20px;
+  position: relative;
+
+  ix-fake-progress-bar {
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
 }
 
 .train-card-row {
@@ -7,7 +15,6 @@
 }
 
 .click-for-information {
-  font-size: 0.75rem;
   margin-bottom: 12px;
   margin-top: 5px;
 
@@ -55,6 +62,7 @@ mat-card {
   margin: 0 auto 15px;
   max-width: 960px;
   padding: 20px !important;
+  position: relative;
 }
 
 @media screen and (max-width: 1270px) {

@@ -55,7 +55,7 @@ export class EmailCardComponent {
   openEmailSettings(): void {
     this.api.call('mail.config')
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe((config) => {

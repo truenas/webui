@@ -215,7 +215,7 @@ export class CertificateListComponent implements OnInit {
 
         return jobDialogRef.afterClosed();
       }),
-      this.errorHandler.catchError(),
+      this.errorHandler.withErrorHandler(),
       untilDestroyed(this),
     ).subscribe(() => {
       this.getCertificates();
@@ -227,44 +227,30 @@ export class CertificateListComponent implements OnInit {
     const isCsr = certificate.cert_type_CSR;
     const path = isCsr ? certificate.csr_path : certificate.certificate_path;
     const fileName = `${certificate.name}.${isCsr ? 'csr' : 'crt'}`;
-    this.api
-      .call('core.download', ['filesystem.get', [path], fileName])
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: ([, url]) => {
-          const mimetype = 'application/x-x509-user-cert';
-          this.download
-            .streamDownloadFile(url, fileName, mimetype)
-            .pipe(
-              this.errorHandler.catchError(),
-              untilDestroyed(this),
-            )
-            .subscribe((file) => {
-              this.download.downloadBlob(file, fileName);
-            });
-        },
-        error: (err: unknown) => {
-          this.dialogService.error(this.errorHandler.parseError(err));
-        },
-      });
-    const keyName = `${certificate.name}.key`;
-    this.api
-      .call('core.download', ['filesystem.get', [certificate.privatekey_path], keyName])
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: ([, url]) => {
-          const mimetype = 'text/plain';
-          this.download
-            .streamDownloadFile(url, keyName, mimetype)
-            .pipe(untilDestroyed(this))
-            .subscribe((file) => {
-              this.download.downloadBlob(file, keyName);
-            });
-        },
-        error: (err: unknown) => {
-          this.dialogService.error(this.errorHandler.parseError(err));
-        },
-      });
+
+    this.download.coreDownload({
+      fileName,
+      method: 'filesystem.get',
+      arguments: [path],
+      mimeType: 'application/x-x509-user-cert',
+    })
+      .pipe(
+        this.errorHandler.withErrorHandler(),
+        untilDestroyed(this),
+      )
+      .subscribe();
+
+    this.download.coreDownload({
+      method: 'filesystem.get',
+      fileName: `${certificate.name}.key`,
+      arguments: [certificate.privatekey_path],
+      mimeType: 'text/plain',
+    })
+      .pipe(
+        this.errorHandler.withErrorHandler(),
+        untilDestroyed(this),
+      )
+      .subscribe();
   }
 
   doRevoke(certificate: Certificate): void {
@@ -286,7 +272,7 @@ export class CertificateListComponent implements OnInit {
             { title: this.translate.instant('Revoking Certificate') },
           ).afterClosed();
         }),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => {

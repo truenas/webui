@@ -14,7 +14,7 @@ import {
 import { AppContainerLog } from 'app/interfaces/app.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ToolbarSliderComponent } from 'app/modules/forms/toolbar-slider/toolbar-slider.component';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -56,7 +56,7 @@ export class ContainerLogsComponent implements OnInit {
     private api: ApiService,
     private dialogService: DialogService,
     protected aroute: ActivatedRoute,
-    protected loader: AppLoaderService,
+    protected loader: LoaderService,
     protected download: DownloadService,
     private errorHandler: ErrorHandlerService,
     private matDialog: MatDialog,

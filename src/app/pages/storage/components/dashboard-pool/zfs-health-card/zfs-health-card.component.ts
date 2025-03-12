@@ -214,7 +214,7 @@ export class ZfsHealthCardComponent implements OnChanges {
       .pipe(
         filter(Boolean),
         switchMap(() => this.api.startJob('pool.scrub', [this.pool().id, PoolScrubAction.Start])),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe();
@@ -229,7 +229,7 @@ export class ZfsHealthCardComponent implements OnChanges {
     }).pipe(
       filter(Boolean),
       switchMap(() => this.api.startJob('pool.scrub', [this.pool().id, PoolScrubAction.Stop])),
-      this.errorHandler.catchError(),
+      this.errorHandler.withErrorHandler(),
       untilDestroyed(this),
     ).subscribe();
   }
@@ -278,7 +278,7 @@ export class ZfsHealthCardComponent implements OnChanges {
       .pipe(
         map((apiEvent) => apiEvent.fields),
         filter((scan) => scan.name === this.pool().name),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe((scan) => {

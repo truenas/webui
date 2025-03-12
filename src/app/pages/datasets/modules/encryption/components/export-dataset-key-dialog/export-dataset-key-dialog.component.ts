@@ -7,12 +7,11 @@ import {
 } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { switchMap } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DownloadService } from 'app/services/download.service';
@@ -41,11 +40,11 @@ export class ExportDatasetKeyDialogComponent implements OnInit {
 
   constructor(
     private api: ApiService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private errorHandler: ErrorHandlerService,
     private dialogRef: MatDialogRef<ExportDatasetKeyDialogComponent>,
     private dialogService: DialogService,
-    private storageService: DownloadService,
+    private download: DownloadService,
     private cdr: ChangeDetectorRef,
     @Inject(MAT_DIALOG_DATA) public dataset: Dataset,
   ) { }
@@ -56,21 +55,20 @@ export class ExportDatasetKeyDialogComponent implements OnInit {
 
   onDownload(): void {
     const fileName = `dataset_${this.dataset.name}_key.json`;
-    const mimetype = 'application/json';
 
-    this.api.call('core.download', ['pool.dataset.export_key', [this.dataset.id, true], fileName])
+    this.download.coreDownload({
+      fileName,
+      method: 'pool.dataset.export_key',
+      arguments: [this.dataset.id, true],
+      mimeType: 'application/json',
+    })
       .pipe(
         this.loader.withLoader(),
-        switchMap(([, url]) => this.storageService.downloadUrl(url, fileName, mimetype)),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
-      .subscribe({
-        next: () => {
-          this.dialogRef.close();
-        },
-        error: (error: unknown) => {
-          this.dialogService.error(this.errorHandler.parseError(error));
-        },
+      .subscribe(() => {
+        this.dialogRef.close();
       });
   }
 

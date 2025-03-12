@@ -73,7 +73,7 @@ export class ErrorTemplateComponent {
     }
 
     this.api.call('core.job_download_logs', [logsId, `${logsId}.log`])
-      .pipe(this.errorHandler.catchError(), untilDestroyed(this))
+      .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
       .subscribe((url) => {
         const mimetype = 'text/plain';
         this.download.streamDownloadFile(url, `${logsId}.log`, mimetype).pipe(untilDestroyed(this)).subscribe({

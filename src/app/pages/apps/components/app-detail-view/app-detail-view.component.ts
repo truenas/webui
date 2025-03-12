@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy, Component, OnInit,
   signal,
   computed,
+  effect,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
@@ -13,12 +14,11 @@ import {
 import { LightboxModule } from 'ng-gallery/lightbox';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { injectParams } from 'ngxtension/inject-params';
 import {
   map, filter, switchMap,
-  tap,
 } from 'rxjs';
 import { appImagePlaceholder } from 'app/constants/catalog.constants';
-import { AppDetailsRouteParams } from 'app/interfaces/app-details-route-params.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { AppAvailableInfoCardComponent } from 'app/pages/apps/components/app-detail-view/app-available-info-card/app-available-info-card.component';
@@ -52,8 +52,8 @@ import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 })
 export class AppDetailViewComponent implements OnInit {
   readonly app = signal<AvailableApp | null>(null);
-  readonly appId = signal<string>('');
-  readonly train = signal<string>('');
+  readonly appId = injectParams('appId');
+  readonly train = injectParams('train');
   readonly isLoading = signal(true);
   readonly imagePlaceholder = appImagePlaceholder;
   readonly items = signal<GalleryItem[]>([]);
@@ -69,26 +69,16 @@ export class AppDetailViewComponent implements OnInit {
     private applicationsStore: AppsStore,
     private gallery: Gallery,
     private router: Router,
-  ) { }
-
-  ngOnInit(): void {
-    this.listenForRouteChanges();
-    this.setLightbox();
+  ) {
+    effect(() => {
+      if (this.appId() && this.train()) {
+        this.loadAppInfo();
+      }
+    });
   }
 
-  private listenForRouteChanges(): void {
-    // TODO: Update when `input()` will have support for router params
-    this.activatedRoute.params
-      .pipe(
-        filter(({ appId, train }: AppDetailsRouteParams) => Boolean(appId && train)),
-        tap(() => this.isLoading.set(true)),
-        untilDestroyed(this),
-      )
-      .subscribe(({ appId, train }) => {
-        this.appId.set(appId);
-        this.train.set(train);
-        this.loadAppInfo();
-      });
+  ngOnInit(): void {
+    this.setLightbox();
   }
 
   private loadAppInfo(): void {

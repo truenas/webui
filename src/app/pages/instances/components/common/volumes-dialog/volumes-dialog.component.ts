@@ -31,8 +31,8 @@ import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-b
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -134,7 +134,7 @@ export class VolumesDialogComponent implements OnInit {
     private api: ApiService,
     private dialog: DialogService,
     private errorHandler: ErrorHandlerService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
     protected emptyService: EmptyService,
@@ -158,7 +158,7 @@ export class VolumesDialogComponent implements OnInit {
         switchMap(() => {
           return this.api.call('virt.volume.delete', [volume.id]).pipe(
             this.loader.withLoader(),
-            this.errorHandler.catchError(),
+            this.errorHandler.withErrorHandler(),
           );
         }),
         untilDestroyed(this),

@@ -1,0 +1,15 @@
+<ng-container [formGroup]="form">
+  <ix-input
+    formControlName="api_key"
+    [label]="'API Key' | translate"
+    [required]="true"
+    [tooltip]="helptext.SplunkOnCall_api_key_tooltip | translate"
+  ></ix-input>
+
+  <ix-input
+    formControlName="routing_key"
+    [label]="'Routing Key' | translate"
+    [required]="true"
+    [tooltip]="helptext.SplunkOnCall_routing_key_tooltip | translate"
+  ></ix-input>
+</ng-container>
