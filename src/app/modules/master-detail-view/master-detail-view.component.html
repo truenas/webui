@@ -3,7 +3,7 @@
     <ng-content select="[master]"></ng-content>
   </div>
 
-  @if (selectedItem()) {
+  @if (selectedItem() && showDetails()) {
     <div
       class="details-container"
       ixDetailsHeight

@@ -49,6 +49,10 @@ export class UserListComponent {
   protected readonly isLoading = this.usersStore.isLoading;
   protected readonly selectedUser = this.usersStore.selectedUser;
 
+  readonly isSelectedUserVisible = computed(() => {
+    return this.filteredUsers()?.some((user) => user.id === this.selectedUser()?.id);
+  });
+
   protected readonly filteredUsers = computed(() => {
     return (this.users() || []).filter((user) => {
       return user?.username?.toLocaleLowerCase().includes(this.searchQuery().toLocaleLowerCase());
