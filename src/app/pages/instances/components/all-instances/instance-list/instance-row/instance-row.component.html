@@ -12,9 +12,32 @@
   <span class="name">{{ instance().name }}</span>
 </div>
 
-<div class="cell">{{ instance().type | mapValue: typeLabels | translate }}</div>
+<div class="cell cell-status">
+  {{ instance().status | mapValue: statusLabels | translate }}
+</div>
+<div class="cell">
+  @if (!isStopped() && cpuData() >= 0) {
+    <span>{{ (cpuData() || 0).toFixed(0) }}%</span>
+  } @else {
+    {{ 'N/A' | translate }}
+  }
+</div>
+<div class="cell">
+  @if (!isStopped() && memoryData() >= 0) {
+    <span>{{ (memoryData() || 0).toFixed(memoryData() > 0 ? 2 : 0) }} MiB</span>
+  } @else {
+    {{ 'N/A' | translate }}
+  }
+</div>
+<div class="cell">
+  @if (!isStopped() && ioPressureData() >= 0) {
+    <span>{{ (ioPressureData() || 0).toFixed(0) }}%</span>
+  } @else {
+    {{ 'N/A' | translate }}
+  }
+</div>
 
-<div class="cell">{{ instance().status | mapValue: statusLabels | translate }}</div>
+<div class="cell">{{ instance().type | mapValue: typeLabels | translate }}</div>
 
 <div class="cell actions">
   @if (isStopped()) {

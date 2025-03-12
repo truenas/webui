@@ -1,8 +1,10 @@
 import { Router } from '@angular/router';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { VirtualizationStatus, VirtualizationType } from 'app/enums/virtualization.enum';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { InstanceListComponent } from 'app/pages/instances/components/all-instances/instance-list/instance-list.component';
 import { InstanceRowComponent } from 'app/pages/instances/components/all-instances/instance-list/instance-row/instance-row.component';
 import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
@@ -31,6 +33,9 @@ describe('InstanceListComponent', () => {
       mockProvider(VirtualizationDevicesStore, {
         selectInstance: jest.fn(),
         selectedInstance: jest.fn(() => null),
+      }),
+      mockProvider(ApiService, {
+        subscribe: jest.fn(() => of()),
       }),
     ],
     params: {

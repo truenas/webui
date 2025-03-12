@@ -46,6 +46,15 @@ describe('InstanceRowComponent', () => {
         mockJob('virt.instance.start', fakeSuccessfulJob()),
         mockJob('virt.instance.stop', fakeSuccessfulJob()),
       ]),
+      mockProvider(ApiService, {
+        subscribe: jest.fn(() => of({
+          fields: {
+            cpu: { cpu_user_percentage: 21.1 },
+            mem_usage: { mem_usage_ram_mib: 51.555 },
+            io_full_pressure: { io_full_pressure_full_60_percentage: 2.2 },
+          },
+        })),
+      }),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
           afterClosed: () => of({
@@ -76,14 +85,29 @@ describe('InstanceRowComponent', () => {
       expect(spectator.query('.cell-name')).toHaveText('agi_instance');
     });
 
+    it('shows instance CPU usage', () => {
+      const cells = spectator.queryAll('.cell');
+      expect(cells[3]).toHaveText('21%');
+    });
+
+    it('shows instance Memory usage', () => {
+      const cells = spectator.queryAll('.cell');
+      expect(cells[4]).toHaveText('51.55 MiB');
+    });
+
+    it('shows instance Disk I/O usage', () => {
+      const cells = spectator.queryAll('.cell');
+      expect(cells[5]).toHaveText('2%');
+    });
+
     it('shows instance type', () => {
       const cells = spectator.queryAll('.cell');
-      expect(cells[2]).toHaveText('Container');
+      expect(cells[6]).toHaveText('Container');
     });
 
     it('shows instance status', () => {
       const cells = spectator.queryAll('.cell');
-      expect(cells[3]).toHaveText('Running');
+      expect(cells[2]).toHaveText('Running');
     });
 
     it('shows Stop and Restart button when instance is Running', async () => {
