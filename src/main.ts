@@ -51,18 +51,18 @@ import { CustomRouterStateSerializer } from 'app/store/router/custom-router-seri
 
 if (environment.production) {
   enableProdMode();
-}
 
-Sentry.init({
-  dsn: environment.sentryPublicDsn,
-  integrations: [
-    Sentry.browserTracingIntegration(),
-    Sentry.replayIntegration(),
-    Sentry.captureConsoleIntegration({ levels: ['error'] }),
-  ],
-  release: product.product || '',
-  replaysOnErrorSampleRate: 1.0,
-});
+  Sentry.init({
+    dsn: environment.sentryPublicDsn,
+    integrations: [
+      Sentry.browserTracingIntegration(),
+      Sentry.replayIntegration(),
+      Sentry.captureConsoleIntegration({ levels: ['error'] }),
+    ],
+    release: product.product || '',
+    replaysOnErrorSampleRate: 1.0,
+  });
+}
 
 bootstrapApplication(AppComponent, {
   providers: [
