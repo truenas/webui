@@ -30,7 +30,7 @@ import { DatasetPreset } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
-import { extractApiError } from 'app/helpers/api.helper';
+import { extractApiErrorDetails } from 'app/helpers/api.helper';
 import { helptextSharingSmb } from 'app/helptext/sharing';
 import { DatasetCreate } from 'app/interfaces/dataset.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -58,7 +58,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { RestartSmbDialogComponent } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
 import { SmbValidationService } from 'app/pages/sharing/smb/smb-form/smb-validator.service';
-import { DatasetService } from 'app/services/dataset-service/dataset.service';
+import { DatasetService } from 'app/services/dataset/dataset.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { UserService } from 'app/services/user.service';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
@@ -528,7 +528,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
         }
       },
       error: (error: unknown) => {
-        const apiError = extractApiError(error);
+        const apiError = extractApiErrorDetails(error);
         if (apiError?.reason?.includes('[ENOENT]') || apiError?.reason?.includes('[EXDEV]')) {
           this.dialogService.closeAllDialogs();
         }

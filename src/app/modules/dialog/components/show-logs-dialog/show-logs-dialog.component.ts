@@ -8,11 +8,10 @@ import { TranslateModule } from '@ngx-translate/core';
 import { catchError, EMPTY, switchMap } from 'rxjs';
 import { Job } from 'app/interfaces/job.interface';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DownloadService } from 'app/services/download.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -36,7 +35,6 @@ export class ShowLogsDialogComponent {
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private download: DownloadService,
-    private dialogService: DialogService,
     @Inject(MAT_DIALOG_DATA) public job: Job,
   ) { }
 
@@ -44,7 +42,7 @@ export class ShowLogsDialogComponent {
     this.api.call('core.job_download_logs', [this.job.id, `${this.job.id}.log`]).pipe(
       switchMap((url) => this.download.downloadUrl(url, `${this.job.id}.log`, 'text/plain')),
       catchError((error: unknown) => {
-        this.dialogService.error(this.errorHandler.parseError(error));
+        this.errorHandler.showErrorModal(error);
         return EMPTY;
       }),
       untilDestroyed(this),

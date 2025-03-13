@@ -32,7 +32,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import {
   LeaveDomainDialogComponent,
 } from 'app/pages/directory-service/components/leave-domain-dialog/leave-domain-dialog.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 
 @UntilDestroy()
@@ -146,7 +146,7 @@ export class ActiveDirectoryComponent implements OnInit {
         },
         error: (error: unknown) => {
           this.isLoading = false;
-          this.dialogService.error(this.errorHandler.parseError(error));
+          this.errorHandler.showErrorModal(error);
           this.cdr.markForCheck();
         },
       });
@@ -204,7 +204,7 @@ export class ActiveDirectoryComponent implements OnInit {
         error: (error: unknown) => {
           this.isLoading = false;
           this.cdr.markForCheck();
-          this.dialogService.error(this.errorHandler.parseError(error));
+          this.errorHandler.showErrorModal(error);
         },
       });
   }

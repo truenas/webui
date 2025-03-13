@@ -32,7 +32,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { groupAdded, groupChanged } from 'app/pages/credentials/groups/store/group.actions';
 import { GroupSlice } from 'app/pages/credentials/groups/store/group.selectors';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UserService } from 'app/services/user.service';
 
 @UntilDestroy()

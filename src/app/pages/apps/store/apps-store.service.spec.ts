@@ -9,7 +9,7 @@ import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { AppsState, AppsStore } from 'app/pages/apps/store/apps-store.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 describe('AppsStore', () => {
   let spectator: SpectatorService<AppsStore>;

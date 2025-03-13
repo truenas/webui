@@ -56,7 +56,7 @@ import {
   ReplicationWizardComponent,
 } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
 import { DownloadService } from 'app/services/download.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -232,7 +232,7 @@ export class ReplicationListComponent implements OnInit {
         this.cdr.markForCheck();
       },
       error: (error: unknown) => {
-        this.dialogService.error(this.errorHandler.parseError(error));
+        this.errorHandler.showErrorModal(error);
         this.getReplicationTasks();
       },
     });
@@ -283,8 +283,8 @@ export class ReplicationListComponent implements OnInit {
       next: () => {
         this.getReplicationTasks();
       },
-      error: (err: unknown) => {
-        this.dialogService.error(this.errorHandler.parseError(err));
+      error: (error: unknown) => {
+        this.errorHandler.showErrorModal(error);
       },
     });
   }
@@ -324,9 +324,9 @@ export class ReplicationListComponent implements OnInit {
         next: () => {
           this.getReplicationTasks();
         },
-        error: (err: unknown) => {
+        error: (error: unknown) => {
           this.getReplicationTasks();
-          this.dialogService.error(this.errorHandler.parseError(err));
+          this.errorHandler.showErrorModal(error);
         },
       });
   }

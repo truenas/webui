@@ -1,78 +1,53 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { ErrorHandler, Injectable, Injector } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import * as Sentry from '@sentry/angular';
+import { apiErrorNames } from 'app/enums/api.enum';
 import {
-  catchError, EMPTY, MonoTypeOperatorFunction, Observable,
-} from 'rxjs';
-import { ApiErrorName, apiErrorNames } from 'app/enums/api.enum';
-import { isApiError, isErrorResponse, isFailedJob } from 'app/helpers/api.helper';
-import { ApiError } from 'app/interfaces/api-error.interface';
+  isApiCallError,
+  isApiErrorDetails,
+  isErrorResponse,
+  isFailedJob,
+  isFailedJobError,
+} from 'app/helpers/api.helper';
+import { ApiErrorDetails } from 'app/interfaces/api-error.interface';
 import { JsonRpcError } from 'app/interfaces/api-message.interface';
 import { ErrorReport } from 'app/interfaces/error-report.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
+import { FailedJobError } from 'app/services/errors/error.classes';
 
 @Injectable({
   providedIn: 'root',
 })
-export class ErrorHandlerService implements ErrorHandler {
-  private dialogService: DialogService;
-  private translateService: TranslateService;
-  get translate(): TranslateService {
-    if (!this.translateService) {
-      this.translateService = this.injector.get(TranslateService);
+export class ErrorParserService {
+  constructor(
+    private translate: TranslateService,
+  ) {}
+
+  getFirstErrorMessage(error: unknown): string {
+    const parsedError = this.parseError(error);
+    if (Array.isArray(parsedError)) {
+      return parsedError[0].message;
     }
-    return this.translateService;
+    return parsedError?.message || this.translate.instant('Unknown error');
   }
 
-  get dialog(): DialogService {
-    if (!this.dialogService) {
-      this.dialogService = this.injector.get(DialogService);
-    }
-    return this.dialogService;
+  private isHttpError(obj: unknown): obj is HttpErrorResponse {
+    return obj instanceof HttpErrorResponse;
   }
 
-  private sentryErrorExtractor = (error: unknown, defaultExtractor: (error: unknown) => unknown): unknown => {
-    const errorReports = this.parseError(error);
-    const firstReport = Array.isArray(errorReports) ? errorReports[0] : errorReports;
-
-    if (firstReport) {
-      return firstReport.message || firstReport.title;
-    }
-
-    return defaultExtractor(error);
-  };
-
-  private sentry = Sentry.createErrorHandler({
-    extractor: this.sentryErrorExtractor,
-    logErrors: false,
-  });
-
-  constructor(private injector: Injector) { }
-
-  handleError(error: unknown): void {
-    console.error(error);
-
-    if (!this.shouldLogToSentry(error)) {
-      return;
-    }
-
-    this.sentry.handleError(error);
-  }
-
+  /**
+   * Prefer `showErrorModal(error)`
+   */
   parseError(error: unknown): ErrorReport | ErrorReport[] | null {
-    if (isErrorResponse(error)) {
-      const actualError = error.error;
-      if (isApiError(actualError.data)) {
-        return this.parseApiError(actualError.data);
+    if (isApiCallError(error)) {
+      if (isApiErrorDetails(error.error.data)) {
+        return this.parseApiError(error.error.data);
       }
-      return this.parseRawJsonRpcError(actualError);
+
+      return this.parseRawJsonRpcError(error.error);
     }
-    if (isApiError(error)) {
-      return this.parseApiError(error);
-    }
-    if (isFailedJob(error)) {
+
+    if (isFailedJobError(error)) {
       return this.parseJobError(error);
     }
     if (this.isHttpError(error)) {
@@ -85,37 +60,30 @@ export class ErrorHandlerService implements ErrorHandler {
       };
     }
 
+    // TODO: Items below should not be happening, but were kept for compatibility purposes.
+    if (isErrorResponse(error)) {
+      console.error('Unexpected error response:', error);
+      const actualError = error.error;
+      if (isApiErrorDetails(actualError.data)) {
+        return this.parseApiError(actualError.data);
+      }
+      return this.parseRawJsonRpcError(actualError);
+    }
+
+    if (isFailedJob(error)) {
+      console.error('Unexpected failed job', error);
+      return this.parseJobError(new FailedJobError(error));
+    }
+
+    if (isApiErrorDetails(error)) {
+      console.error('Unexpected api error details:', error);
+      return this.parseApiError(error);
+    }
+
     return null;
   }
 
-  getFirstErrorMessage(error: unknown): string {
-    const parsedError = this.parseError(error);
-    if (Array.isArray(parsedError)) {
-      return parsedError[0].message;
-    }
-    return parsedError.message;
-  }
-
-  private isHttpError(obj: unknown): obj is HttpErrorResponse {
-    return obj instanceof HttpErrorResponse;
-  }
-
-  withErrorHandler<T>(): MonoTypeOperatorFunction<T> {
-    return (source$: Observable<T>) => {
-      return source$.pipe(
-        catchError((error: unknown) => {
-          this.showErrorModal(error);
-          return EMPTY;
-        }),
-      );
-    };
-  }
-
-  showErrorModal(error: unknown): void {
-    this.dialog.error(this.parseError(error));
-  }
-
-  private parseApiError(error: ApiError): ErrorReport {
+  private parseApiError(error: ApiErrorDetails): ErrorReport {
     const title = apiErrorNames.has(error.errname)
       ? this.translate.instant(apiErrorNames.get(error.errname) || error.errname)
       : error.trace?.class || this.translate.instant('Error');
@@ -127,20 +95,20 @@ export class ErrorHandlerService implements ErrorHandler {
     };
   }
 
-  private parseJobError(failedJob: Job): ErrorReport | ErrorReport[] {
-    const errorJob = { ...failedJob };
-    if (errorJob.exc_info?.extra) {
-      errorJob.extra = errorJob.exc_info.extra as Record<string, unknown>;
+  private parseJobError(failedJob: FailedJobError): ErrorReport | ErrorReport[] {
+    const job = { ...failedJob.job };
+    if (job.exc_info?.extra) {
+      job.extra = job.exc_info.extra as Record<string, unknown>;
     }
 
-    if (errorJob.extra && Array.isArray(errorJob.extra)) {
-      return this.parseJobWithArrayExtra(errorJob);
+    if (job.extra && Array.isArray(job.extra)) {
+      return this.parseJobWithArrayExtra(job);
     }
 
     return {
-      title: errorJob.state,
-      message: errorJob.error,
-      backtrace: errorJob.logs_excerpt || errorJob.exception,
+      title: job.state,
+      message: job.error,
+      backtrace: job.logs_excerpt || job.exception,
     };
   }
 
@@ -148,7 +116,7 @@ export class ErrorHandlerService implements ErrorHandler {
     const errors: ErrorReport[] = [];
     (errorJob.extra as unknown as unknown[]).forEach((extraItem: [string, unknown]) => {
       const field = extraItem[0].split('.')[1];
-      const extractedError = extraItem[1] as string | ApiError | Job;
+      const extractedError = extraItem[1] as string | ApiErrorDetails | FailedJobError;
 
       const parsedError = this.parseJobExtractedError(errorJob, extractedError);
 
@@ -175,12 +143,12 @@ export class ErrorHandlerService implements ErrorHandler {
 
   private parseJobExtractedError(
     errorJob: Job,
-    extractedError: string | ApiError | Job,
+    extractedError: string | ApiErrorDetails | FailedJobError,
   ): ErrorReport | ErrorReport[] {
     let parsedError: ErrorReport | ErrorReport[];
-    if (isApiError(extractedError)) {
+    if (isApiErrorDetails(extractedError)) {
       parsedError = this.parseApiError(extractedError);
-    } else if (isFailedJob(extractedError)) {
+    } else if (isFailedJobError(extractedError)) {
       parsedError = this.parseJobError(extractedError);
     } else {
       parsedError = {
@@ -221,7 +189,6 @@ export class ErrorHandlerService implements ErrorHandler {
   }
 
   parseHttpError(error: HttpErrorResponse): ErrorReport | ErrorReport[] {
-    console.error(error);
     switch (error.status) {
       case 401:
       case 403:
@@ -268,28 +235,5 @@ export class ErrorHandlerService implements ErrorHandler {
         };
       }
     }
-  }
-
-  private shouldLogToSentry(error: unknown): boolean {
-    if (error instanceof CloseEvent) {
-      return false;
-    }
-
-    const ignoredApiErrors = [
-      ApiErrorName.Validation,
-      ApiErrorName.Again,
-      ApiErrorName.NoMemory,
-      ApiErrorName.NotAuthenticated,
-    ];
-
-    if (isApiError(error) && ignoredApiErrors.includes(error.errname)) {
-      return false;
-    }
-
-    if (isErrorResponse(error) && isApiError(error.error) && ignoredApiErrors.includes(error.error.errname)) {
-      return false;
-    }
-
-    return true;
   }
 }

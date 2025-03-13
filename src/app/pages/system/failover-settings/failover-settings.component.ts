@@ -29,7 +29,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { failoverElements } from 'app/pages/system/failover-settings/failover-settings.elements';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
 import { haSettingsUpdated } from 'app/store/ha-info/ha-info.actions';
 
@@ -159,7 +159,7 @@ export class FailoverSettingsComponent implements OnInit {
         error: (error: unknown) => {
           this.isLoading = false;
           this.cdr.markForCheck();
-          this.dialogService.error(this.errorHandler.parseError(error));
+          this.errorHandler.showErrorModal(error);
         },
       });
   }
@@ -190,7 +190,7 @@ export class FailoverSettingsComponent implements OnInit {
         error: (error: unknown) => {
           this.isLoading = false;
           this.cdr.markForCheck();
-          this.dialogService.error(this.errorHandler.parseError(error));
+          this.errorHandler.showErrorModal(error);
         },
       });
   }
@@ -213,7 +213,7 @@ export class FailoverSettingsComponent implements OnInit {
         },
         error: (error: unknown) => {
           this.isLoading = false;
-          this.dialogService.error(this.errorHandler.parseError(error));
+          this.errorHandler.showErrorModal(error);
           this.cdr.markForCheck();
         },
       });

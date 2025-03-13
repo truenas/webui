@@ -13,7 +13,6 @@ import { SshSftpLogFacility, SshSftpLogLevel, SshWeakCipher } from 'app/enums/ss
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextServiceSsh } from 'app/helptext/services/components/service-ssh';
 import { SshConfigUpdate } from 'app/interfaces/ssh-config.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { ChipsProvider } from 'app/modules/forms/ix-forms/components/ix-chips/chips-provider';
@@ -28,7 +27,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UserService } from 'app/services/user.service';
 
 @UntilDestroy()
@@ -107,7 +106,6 @@ export class ServiceSshComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private formErrorHandler: FormErrorHandlerService,
     private fb: NonNullableFormBuilder,
-    private dialogService: DialogService,
     private userService: UserService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
@@ -128,7 +126,7 @@ export class ServiceSshComponent implements OnInit {
       },
       error: (error: unknown) => {
         this.isFormLoading = false;
-        this.dialogService.error(this.errorHandler.parseError(error));
+        this.errorHandler.showErrorModal(error);
         this.cdr.markForCheck();
       },
     });

@@ -14,7 +14,6 @@ import {
   takeUntil,
   throwError,
 } from 'rxjs';
-import { ApiErrorName } from 'app/enums/api.enum';
 import { isErrorResponse } from 'app/helpers/api.helper';
 import { applyApiEvent } from 'app/helpers/operators/apply-api-event.operator';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
@@ -34,6 +33,7 @@ import {
 import { Job } from 'app/interfaces/job.interface';
 import { SubscriptionManagerService } from 'app/modules/websocket/subscription-manager.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
+import { ApiCallError } from 'app/services/errors/error.classes';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 @Injectable({
@@ -110,8 +110,7 @@ export class ApiService {
       switchMap((apiEvent) => {
         const erroredEvent = apiEvent as unknown as IncomingMessage;
         if (isErrorResponse(erroredEvent)) {
-          console.error('Error: ', erroredEvent.error);
-          return throwError(() => erroredEvent.error);
+          return throwError(() => new ApiCallError(erroredEvent.error));
         }
         return of(apiEvent);
       }),
@@ -141,8 +140,7 @@ export class ApiService {
       }),
       switchMap((message: SuccessfulResponse | ErrorResponse) => {
         if (isErrorResponse(message)) {
-          this.printError(message, { method, params });
-          return throwError(() => message);
+          return throwError(() => new ApiCallError(message.error));
         }
 
         performance.mark(`${method} - ${uuid} - end`);
@@ -161,19 +159,5 @@ export class ApiService {
       map((apiEvent) => apiEvent.fields),
       takeUntil(this.clearSubscriptions$),
     );
-  }
-
-  private printError(response: ErrorResponse, context: { method: string; params: unknown }): void {
-    if (response.error.data?.errname === ApiErrorName.NoAccess) {
-      console.error(`Access denied to ${context.method} with ${context.params ? JSON.stringify(context.params) : 'no params'}. Original message: ${response.error.message}`);
-      return;
-    }
-
-    // Do not log validation errors.
-    if (response.error.data?.errname === ApiErrorName.Validation) {
-      return;
-    }
-
-    console.error('Error: ', response.error);
   }
 }

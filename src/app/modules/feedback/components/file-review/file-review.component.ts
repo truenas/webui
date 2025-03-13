@@ -21,7 +21,7 @@ import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-te
 import { ImageValidatorService } from 'app/modules/forms/ix-forms/validators/image-validator/image-validator.service';
 import { rangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 
 export const maxRatingValue = 5;

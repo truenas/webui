@@ -34,7 +34,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { scrubTaskCardElements } from 'app/pages/data-protection/scrub-task/scrub-task-card/scrub-task-card.elements';
 import { ScrubTaskFormComponent } from 'app/pages/data-protection/scrub-task/scrub-task-form/scrub-task-form.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { TaskService } from 'app/services/task.service';
 
 @UntilDestroy()
@@ -146,8 +146,8 @@ export class ScrubTaskCardComponent implements OnInit {
       next: () => {
         this.getScrubTasks();
       },
-      error: (err: unknown) => {
-        this.dialogService.error(this.errorHandler.parseError(err));
+      error: (error: unknown) => {
+        this.errorHandler.showErrorModal(error);
       },
     });
   }
@@ -167,9 +167,9 @@ export class ScrubTaskCardComponent implements OnInit {
         next: () => {
           this.getScrubTasks();
         },
-        error: (err: unknown) => {
+        error: (error: unknown) => {
           this.getScrubTasks();
-          this.dialogService.error(this.errorHandler.parseError(err));
+          this.errorHandler.showErrorModal(error);
         },
       });
   }

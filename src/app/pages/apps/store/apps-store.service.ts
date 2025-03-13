@@ -8,7 +8,7 @@ import {
 import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export interface AppsByCategory {
   title: string;

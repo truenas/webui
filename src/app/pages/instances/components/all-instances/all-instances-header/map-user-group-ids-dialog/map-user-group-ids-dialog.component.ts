@@ -44,7 +44,7 @@ import {
 import {
   NewMappingFormComponent,
 } from 'app/pages/instances/components/all-instances/all-instances-header/map-user-group-ids-dialog/new-mapping-form/new-mapping-form.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({

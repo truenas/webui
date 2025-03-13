@@ -18,7 +18,6 @@ import { RollbackRecursiveType } from 'app/enums/rollback-recursive-type.enum';
 import { helptextSnapshots } from 'app/helptext/storage/snapshots/snapshots';
 import { ZfsRollbackParams, ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -27,7 +26,7 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -104,7 +103,6 @@ export class SnapshotRollbackDialogComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
-    private dialogService: DialogService,
     @Inject(MAT_DIALOG_DATA) private snapshotName: string,
   ) {}
 
@@ -130,7 +128,7 @@ export class SnapshotRollbackDialogComponent implements OnInit {
       error: (error: unknown) => {
         this.isLoading = false;
         this.cdr.markForCheck();
-        this.dialogService.error(this.errorHandler.parseError(error));
+        this.errorHandler.showErrorModal(error);
       },
     });
   }

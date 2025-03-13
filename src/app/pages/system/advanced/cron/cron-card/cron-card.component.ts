@@ -39,7 +39,7 @@ import { cronCardElements } from 'app/pages/system/advanced/cron/cron-card/cron-
 import { CronDeleteDialogComponent } from 'app/pages/system/advanced/cron/cron-delete-dialog/cron-delete-dialog.component';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row.interface';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { TaskService } from 'app/services/task.service';
 
@@ -183,7 +183,7 @@ export class CronCardComponent implements OnInit {
           message,
         );
       },
-      error: (error: unknown) => this.dialog.error(this.errorHandler.parseError(error)),
+      error: (error: unknown) => this.errorHandler.showErrorModal(error),
     });
   }
 

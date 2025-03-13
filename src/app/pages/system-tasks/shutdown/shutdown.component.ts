@@ -4,12 +4,11 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -33,7 +32,6 @@ export class ShutdownComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     protected router: Router,
     private route: ActivatedRoute,
-    protected dialogService: DialogService,
     private location: Location,
   ) {}
 
@@ -45,7 +43,7 @@ export class ShutdownComponent implements OnInit {
 
     this.api.job('system.shutdown', [reason]).pipe(untilDestroyed(this)).subscribe({
       error: (error: unknown) => { // error on shutdown
-        this.dialogService.error(this.errorHandler.parseError(error))
+        this.errorHandler.showErrorModal(error)
           .pipe(untilDestroyed(this))
           .subscribe(() => {
             this.router.navigate(['/signin']);

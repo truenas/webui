@@ -20,7 +20,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { delay } from 'rxjs';
 import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import { SvgCacheService } from 'app/pages/system/enclosure/services/svg-cache.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export type TintingFunction = (slot: DashboardEnclosureSlot) => string | null;
 

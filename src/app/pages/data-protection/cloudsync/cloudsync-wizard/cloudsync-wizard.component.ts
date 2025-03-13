@@ -16,7 +16,6 @@ import { cloudSyncProviderNameMap } from 'app/enums/cloudsync-provider.enum';
 import { Role } from 'app/enums/role.enum';
 import { CloudSyncTask, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   UseIxIconsInStepperComponent,
 } from 'app/modules/ix-icon/use-ix-icons-in-stepper/use-ix-icons-in-stepper.component';
@@ -25,7 +24,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudSyncWhatAndWhenComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-what-and-when/cloudsync-what-and-when.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { CloudSyncProviderComponent } from './steps/cloudsync-provider/cloudsync-provider.component';
 
 @UntilDestroy()
@@ -66,7 +65,6 @@ export class CloudSyncWizardComponent {
     private snackbarService: SnackbarService,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
-    private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
   ) {
     this.slideInRef.requireConfirmationWhen(() => of(
@@ -107,9 +105,9 @@ export class CloudSyncWizardComponent {
 
         this.cdr.markForCheck();
       },
-      error: (err: unknown) => {
+      error: (error: unknown) => {
         this.isLoading$.next(false);
-        this.dialogService.error(this.errorHandler.parseError(err));
+        this.errorHandler.showErrorModal(error);
       },
     });
   }

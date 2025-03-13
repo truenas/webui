@@ -38,7 +38,7 @@ import { Package } from 'app/pages/system/update/interfaces/package.interface';
 import { TrainService } from 'app/pages/system/update/services/train.service';
 import { UpdateService } from 'app/pages/system/update/services/update.service';
 import { updateAgainCode } from 'app/pages/system/update/utils/update-again-code.constant';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
@@ -393,7 +393,7 @@ export class UpdateActionsCardComponent implements OnInit {
       });
       return;
     }
-    this.dialogService.error(this.errorHandler.parseError(error));
+    this.errorHandler.showErrorModal(error);
   }
 
   private downloadUpdates(): void {

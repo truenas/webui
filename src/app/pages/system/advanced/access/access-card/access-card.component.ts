@@ -41,7 +41,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { accessCardElements } from 'app/pages/system/advanced/access/access-card/access-card.elements';
 import { AccessFormComponent } from 'app/pages/system/advanced/access/access-form/access-form.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
@@ -182,7 +182,7 @@ export class AccessCardComponent implements OnInit {
         untilDestroyed(this),
       ).subscribe({
         next: () => this.terminateSession(id),
-        error: (err: unknown) => this.dialogService.error(this.errorHandler.parseError(err)),
+        error: (error: unknown) => this.errorHandler.showErrorModal(error),
       });
   }
 
@@ -197,7 +197,7 @@ export class AccessCardComponent implements OnInit {
         untilDestroyed(this),
       ).subscribe({
         next: () => this.terminateOtherSessions(),
-        error: (error: unknown) => this.dialogService.error(this.errorHandler.parseError(error)),
+        error: (error: unknown) => this.errorHandler.showErrorModal(error),
       });
   }
 

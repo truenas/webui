@@ -51,7 +51,7 @@ import {
   SignCsrDialogComponent,
 } from 'app/pages/credentials/certificates-dash/sign-csr-dialog/sign-csr-dialog.component';
 import { DownloadService } from 'app/services/download.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -275,7 +275,7 @@ export class CertificateAuthorityListComponent implements OnInit {
         switchMap(() => {
           return this.api.call('certificateauthority.update', [certificate.id, { revoked: true }]).pipe(
             catchError((error: unknown) => {
-              this.dialogService.error(this.errorHandler.parseError(error));
+              this.errorHandler.showErrorModal(error);
               return EMPTY;
             }),
           );

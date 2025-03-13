@@ -21,7 +21,7 @@ import { CloudSyncProviderDescriptionComponent } from 'app/pages/data-protection
 import { storjProvider, googlePhotosProvider, googlePhotosCreds } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.testing.utils';
 import { CloudSyncProviderComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-provider/cloudsync-provider.component';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
-import { DatasetService } from 'app/services/dataset-service/dataset.service';
+import { DatasetService } from 'app/services/dataset/dataset.service';
 
 describe('CloudSyncProviderComponent', () => {
   let spectator: Spectator<CloudSyncProviderComponent>;

@@ -17,7 +17,7 @@ import {
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { SshConnectionsSetupMethod } from 'app/enums/ssh-connections-setup-method.enum';
-import { extractApiError } from 'app/helpers/api.helper';
+import { extractApiErrorDetails } from 'app/helpers/api.helper';
 import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSshConnections } from 'app/helptext/system/ssh-connections';
 import {
@@ -43,7 +43,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 
 const generateNewKeyValue = 'GENERATE_NEW_KEY';
@@ -279,9 +279,9 @@ export class SshConnectionFormComponent implements OnInit {
 
     return this.api.call('keychaincredential.setup_ssh_connection', [params]).pipe(
       catchError((error: unknown) => {
-        const apiError = extractApiError(error);
+        const apiError = extractApiErrorDetails(error);
         if (apiError?.errname?.includes(sslCertificationError) || apiError?.reason?.includes(sslCertificationError)) {
-          return this.dialogService.error(this.errorHandler.parseError(error)).pipe(
+          return this.errorHandler.showErrorModal(error).pipe(
             switchMap(() => {
               return this.dialogService.confirm({
                 title: this.translate.instant('Confirm'),

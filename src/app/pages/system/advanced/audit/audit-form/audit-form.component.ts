@@ -18,7 +18,6 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemAdvanced as helptext } from 'app/helptext/system/advanced';
 import { AuditConfig } from 'app/interfaces/audit/audit.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -28,7 +27,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 
@@ -76,7 +75,6 @@ export class AuditFormComponent implements OnInit {
   constructor(
     private fb: NonNullableFormBuilder,
     private api: ApiService,
-    private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
     private store$: Store<AppState>,
@@ -130,7 +128,7 @@ export class AuditFormComponent implements OnInit {
         error: (error: unknown) => {
           this.isFormLoading = false;
           this.cdr.markForCheck();
-          this.dialogService.error(this.errorHandler.parseError(error));
+          this.errorHandler.showErrorModal(error);
         },
       });
   }

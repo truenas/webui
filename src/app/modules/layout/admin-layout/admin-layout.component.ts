@@ -35,7 +35,7 @@ import { TruenasLogoComponent } from 'app/modules/layout/topbar/truenas-logo/tru
 import { DefaultPageHeaderComponent } from 'app/modules/page-header/default-page-header/default-page-header.component';
 import { SlideInControllerComponent } from 'app/modules/slide-ins/components/slide-in-controller/slide-in-controller.component';
 import { ThemeService } from 'app/modules/theme/theme.service';
-import { SentryService } from 'app/services/sentry.service';
+import { SentryConfigurationService } from 'app/services/errors/sentry-configuration.service';
 import { SessionTimeoutService } from 'app/services/session-timeout.service';
 import { AppState } from 'app/store';
 import { selectHasConsoleFooter, waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
@@ -110,7 +110,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     private store$: Store<AppState>,
     private languageService: LanguageService,
     private sessionTimeoutService: SessionTimeoutService,
-    private sentryService: SentryService,
+    private sentryService: SentryConfigurationService,
   ) {}
 
   ngOnInit(): void {

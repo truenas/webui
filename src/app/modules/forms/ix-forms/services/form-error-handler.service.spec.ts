@@ -4,41 +4,38 @@ import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/sp
 import { ApiErrorName, JsonRpcErrorCode } from 'app/enums/api.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { JobExceptionType } from 'app/enums/response-error-type.enum';
-import { ApiError, ApiTraceFrame } from 'app/interfaces/api-error.interface';
-import { ErrorResponse } from 'app/interfaces/api-message.interface';
+import { ApiErrorDetails, ApiTraceFrame } from 'app/interfaces/api-error.interface';
 import { ErrorReport } from 'app/interfaces/error-report.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormService } from 'app/modules/forms/ix-forms/services/ix-form.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { ErrorParserService } from 'app/services/errors/error-parser.service';
+import { ApiCallError, FailedJobError } from 'app/services/errors/error.classes';
 
-const errorResponse = {
-  jsonrpc: '2.0',
-  id: '1',
-  error: {
-    code: JsonRpcErrorCode.CallError,
-    message: 'Validation error',
-    data: {
-      error: 11,
-      errname: ApiErrorName.Validation,
-      extra: [
-        [
-          'test-query.test_control_1',
-          'Error string for control 1',
-          22,
-        ],
-        [
-          'test-query.test_control_2',
-          'Error string for control 2',
-          22,
-        ],
+const callError = new ApiCallError({
+  code: JsonRpcErrorCode.CallError,
+  message: 'Validation error',
+  data: {
+    error: 11,
+    errname: ApiErrorName.Validation,
+    extra: [
+      [
+        'test-query.test_control_1',
+        'Error string for control 1',
+        22,
       ],
-      trace: { class: 'ValidationErrors', formatted: 'Formatted string', frames: [] as ApiTraceFrame[] },
-      reason: 'Test reason',
-    },
+      [
+        'test-query.test_control_2',
+        'Error string for control 2',
+        22,
+      ],
+    ],
+    trace: { class: 'ValidationErrors', formatted: 'Formatted string', frames: [] as ApiTraceFrame[] },
+    reason: 'Test reason',
   },
-} satisfies ErrorResponse;
+});
 
 const formGroup = new FormGroup({
   test_control_1: new FormControl(''),
@@ -51,8 +48,9 @@ describe('FormErrorHandlerService', () => {
     service: FormErrorHandlerService,
     providers: [
       mockProvider(DialogService),
-      mockProvider(ErrorHandlerService, {
-        parseError: jest.fn((error: ApiError) => ({
+      mockProvider(ErrorHandlerService),
+      mockProvider(ErrorParserService, {
+        parseError: jest.fn((error: ApiErrorDetails) => ({
           title: 'Error',
           message: error.reason,
           backtrace: error.trace?.formatted,
@@ -74,7 +72,7 @@ describe('FormErrorHandlerService', () => {
       jest.spyOn(formGroup.controls.test_control_1, 'setErrors').mockImplementation();
       jest.spyOn(formGroup.controls.test_control_1, 'markAsTouched').mockImplementation();
 
-      spectator.service.handleValidationErrors(errorResponse, formGroup);
+      spectator.service.handleValidationErrors(callError, formGroup);
 
       expect(formGroup.controls.test_control_1.setErrors).toHaveBeenCalledWith({
         ixManualValidateError: {
@@ -90,7 +88,7 @@ describe('FormErrorHandlerService', () => {
       jest.spyOn(formGroup.controls.test_control_1, 'setErrors').mockImplementation();
       jest.spyOn(formGroup.controls.test_control_1, 'markAsTouched').mockImplementation();
 
-      const failedJob = {
+      const failedJob = new FailedJobError({
         state: JobState.Failed,
         error: '[EINVAL] Value error, Not a valid integer',
         exception: '',
@@ -104,7 +102,7 @@ describe('FormErrorHandlerService', () => {
             ],
           ],
         },
-      } as Job;
+      } as Job);
       spectator.service.handleValidationErrors(failedJob, formGroup);
 
       expect(formGroup.controls.test_control_1.setErrors).toHaveBeenCalledWith({
@@ -117,16 +115,12 @@ describe('FormErrorHandlerService', () => {
       expect(formGroup.controls.test_control_1.markAsTouched).toHaveBeenCalled();
     });
 
-    it('shows error dialog and error message in logs when control is not found', () => {
-      spectator.service.handleValidationErrors(errorResponse, formGroup);
+    it('shows error dialog with original error when control is not found', () => {
+      spectator.service.handleValidationErrors(callError, formGroup);
 
       expect(console.error).not.toHaveBeenCalledWith('Could not find control test_control_1.');
       expect(console.error).toHaveBeenCalledWith('Could not find control test_control_2.');
-      expect(spectator.inject(DialogService).error).toHaveBeenCalledWith({
-        title: 'Error',
-        message: errorResponse.error.data.reason,
-        backtrace: errorResponse.error.data.trace.formatted,
-      });
+      expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalledWith(callError);
     });
 
     it('scrolls element with an error into view', fakeAsync(() => {
@@ -136,7 +130,7 @@ describe('FormErrorHandlerService', () => {
       } as unknown as HTMLElement;
       jest.spyOn(spectator.inject(IxFormService), 'getElementByControlName').mockReturnValue(elementMock);
 
-      spectator.service.handleValidationErrors(errorResponse, formGroup);
+      spectator.service.handleValidationErrors(callError, formGroup);
 
       tick();
 

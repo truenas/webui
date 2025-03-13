@@ -15,14 +15,13 @@ import { ApiCallDirectory } from 'app/interfaces/api/api-call-directory.interfac
 import { ApiJobMethod, ApiJobParams } from 'app/interfaces/api/api-job-directory.interface';
 import { PropertyPath } from 'app/interfaces/property-path.type';
 import { QueryFilters, QueryOptions } from 'app/interfaces/query-api.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AdvancedSearchQuery, SearchQuery } from 'app/modules/forms/search-input/types/search-query.interface';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { TableSort } from 'app/modules/ix-table/interfaces/table-sort.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DownloadService } from 'app/services/download.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
@@ -61,7 +60,6 @@ export class ExportButtonComponent<T, M extends ApiJobMethod> {
     private api: ApiService,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
-    private dialogService: DialogService,
     private download: DownloadService,
     private store$: Store<AppState>,
   ) {}
@@ -75,7 +73,7 @@ export class ExportButtonComponent<T, M extends ApiJobMethod> {
       switchMap((job) => {
         this.cdr.markForCheck();
         if (job.state === JobState.Failed) {
-          this.dialogService.error(this.errorHandler.parseError(job));
+          this.errorHandler.showErrorModal(job);
           return EMPTY;
         }
         if (job.state !== JobState.Success) {
@@ -100,7 +98,7 @@ export class ExportButtonComponent<T, M extends ApiJobMethod> {
       catchError((error: unknown) => {
         this.isLoading = false;
         this.cdr.markForCheck();
-        this.dialogService.error(this.errorHandler.parseError(error));
+        this.errorHandler.showErrorModal(error);
         return EMPTY;
       }),
       untilDestroyed(this),

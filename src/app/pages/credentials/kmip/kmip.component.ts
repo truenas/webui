@@ -27,7 +27,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { kmipElements } from 'app/pages/credentials/kmip/kmip.elements';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
@@ -113,8 +113,8 @@ export class KmipComponent implements OnInit {
         this.isLoading = false;
         this.cdr.markForCheck();
       },
-      error: (err: unknown) => {
-        this.dialogService.error(this.errorHandler.parseError(err));
+      error: (error: unknown) => {
+        this.errorHandler.showErrorModal(error);
         this.isLoading = false;
         this.cdr.markForCheck();
       },
@@ -132,8 +132,8 @@ export class KmipComponent implements OnInit {
         this.isLoading = false;
         this.cdr.markForCheck();
       },
-      error: (err: unknown) => {
-        this.dialogService.error(this.errorHandler.parseError(err));
+      error: (error: unknown) => {
+        this.errorHandler.showErrorModal(error);
         this.isLoading = false;
         this.cdr.markForCheck();
       },
@@ -172,7 +172,7 @@ export class KmipComponent implements OnInit {
         },
         error: (error: unknown) => {
           this.isLoading = false;
-          this.dialogService.error(this.errorHandler.parseError(error));
+          this.errorHandler.showErrorModal(error);
           this.cdr.markForCheck();
         },
       });

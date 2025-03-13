@@ -25,9 +25,8 @@ import {
 } from 'app/interfaces/auth.interface';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { AppState } from 'app/store';
@@ -87,7 +86,6 @@ export class AuthService {
     private api: ApiService,
     private tokenLastUsedService: TokenLastUsedService,
     private wsStatus: WebSocketStatusService,
-    private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
     @Inject(WINDOW) private window: Window,
   ) {
@@ -155,7 +153,7 @@ export class AuthService {
     }]).pipe(
       switchMap((loginResult) => this.processLoginResult(loginResult)),
       catchError((error: unknown) => {
-        this.dialogService.error(this.errorHandler.parseError(error));
+        this.errorHandler.showErrorModal(error);
         return of(LoginResult.NoAccess);
       }),
     );

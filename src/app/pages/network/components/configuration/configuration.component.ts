@@ -17,7 +17,6 @@ import { helptextNetworkConfiguration } from 'app/helptext/network/configuration
 import {
   NetworkConfiguration, NetworkConfigurationActivity, NetworkConfigurationConfig, NetworkConfigurationUpdate,
 } from 'app/interfaces/network-configuration.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -30,7 +29,7 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
@@ -226,7 +225,6 @@ export class NetworkConfigurationComponent implements OnInit {
     private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: NonNullableFormBuilder,
-    private dialogService: DialogService,
     private systemGeneralService: SystemGeneralService,
     private store$: Store<AppState>,
     public slideInRef: SlideInRef<undefined, boolean>,
@@ -308,7 +306,7 @@ export class NetworkConfigurationComponent implements OnInit {
           this.cdr.markForCheck();
         },
         error: (error: unknown) => {
-          this.dialogService.error(this.errorHandler.parseError(error));
+          this.errorHandler.showErrorModal(error);
           this.isFormLoading = false;
           this.cdr.markForCheck();
         },

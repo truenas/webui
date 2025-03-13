@@ -10,7 +10,7 @@ import { selectIsEnterprise, waitForSystemInfo } from 'app/store/system-info/sys
 @Injectable({
   providedIn: 'root',
 })
-export class SentryService {
+export class SentryConfigurationService {
   sessionId$ = new BehaviorSubject<string>(UUID.UUID());
 
   constructor(

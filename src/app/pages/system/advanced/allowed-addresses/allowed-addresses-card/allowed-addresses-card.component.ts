@@ -32,7 +32,7 @@ import { allowedAddressesCardElements } from 'app/pages/system/advanced/allowed-
 import {
   AllowedAddressesFormComponent,
 } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-form/allowed-addresses-form.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { AppState } from 'app/store';
 import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
@@ -131,7 +131,7 @@ export class AllowedAddressesCardComponent implements OnInit {
         untilDestroyed(this),
       ).subscribe({
         next: () => this.deleteAllowedAddress(row),
-        error: (err: unknown) => this.dialog.error(this.errorHandler.parseError(err)),
+        error: (error: unknown) => this.errorHandler.showErrorModal(error),
       });
   }
 
@@ -147,7 +147,7 @@ export class AllowedAddressesCardComponent implements OnInit {
         this.store$.dispatch(generalConfigUpdated());
         this.getAllowedAddresses();
       },
-      error: (err: unknown) => this.dialog.error(this.errorHandler.parseError(err)),
+      error: (error: unknown) => this.errorHandler.showErrorModal(error),
     });
   }
 

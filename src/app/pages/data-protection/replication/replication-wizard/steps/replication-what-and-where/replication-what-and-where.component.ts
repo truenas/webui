@@ -42,8 +42,9 @@ import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.int
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
-import { DatasetService } from 'app/services/dataset-service/dataset.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { DatasetService } from 'app/services/dataset/dataset.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { ErrorParserService } from 'app/services/errors/error-parser.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 import { ReplicationService } from 'app/services/replication.service';
 
@@ -172,6 +173,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     private dialogService: DialogService,
     private api: ApiService,
     private cdr: ChangeDetectorRef,
+    private errorParser: ErrorParserService,
     private errorHandler: ErrorHandlerService,
     public slideInRef: SlideInRef<unknown, unknown>,
   ) {
@@ -446,7 +448,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
         },
         error: (error: unknown) => {
           this.snapshotsText = '';
-          const errorMessage = this.errorHandler.getFirstErrorMessage(error);
+          const errorMessage = this.errorParser.getFirstErrorMessage(error);
           if (errorMessage) {
             this.form.controls.source_datasets.setErrors({ [ixManualValidateError]: { message: errorMessage } });
           }

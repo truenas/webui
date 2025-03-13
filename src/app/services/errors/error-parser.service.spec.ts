@@ -1,28 +1,25 @@
 import { HttpErrorResponse, HttpEventType, HttpHeaders } from '@angular/common/http';
 import { Injector } from '@angular/core';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
-import { TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
 import { ApiErrorName } from 'app/enums/api.enum';
 import { JobState } from 'app/enums/job-state.enum';
-import { ApiError } from 'app/interfaces/api-error.interface';
+import { ApiErrorDetails } from 'app/interfaces/api-error.interface';
+import { JsonRpcError } from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorParserService } from 'app/services/errors/error-parser.service';
+import { ApiCallError, FailedJobError } from 'app/services/errors/error.classes';
 
 const error = new Error('Dummy Error');
-const wsError = {
-  jsonrpc: '2.0',
-  error: {
-    data: {
-      error: 11,
-      errname: ApiErrorName.Validation,
-      reason: '[EINVAL] user_update.smb: This attribute cannot be changed\n[EINVAL] user_update.smb: Password must be changed in order to enable SMB authentication\n',
-      trace: {},
-      extra: [],
-    } as ApiError,
-  },
-};
+const wsError = new ApiCallError({
+  message: 'Validation Error',
+  data: {
+    error: 11,
+    errname: ApiErrorName.Validation,
+    reason: '[EINVAL] user_update.smb: This attribute cannot be changed\n[EINVAL] user_update.smb: Password must be changed in order to enable SMB authentication\n',
+    trace: {},
+    extra: [],
+  } as ApiErrorDetails,
+} as JsonRpcError);
 
 const failedJob = {
   method: 'cloudsync.sync_onetime',
@@ -58,12 +55,10 @@ const httpError: HttpErrorResponse = {
   url: '',
 };
 
-const logToSentry = jest.fn();
-
-describe('ErrorHandlerService', () => {
-  let spectator: SpectatorService<ErrorHandlerService>;
+describe('ErrorParserService', () => {
+  let spectator: SpectatorService<ErrorParserService>;
   const createService = createServiceFactory({
-    service: ErrorHandlerService,
+    service: ErrorParserService,
     providers: [
       mockProvider(Injector, {
         get: jest.fn(),
@@ -72,85 +67,7 @@ describe('ErrorHandlerService', () => {
   });
 
   beforeEach(() => {
-    jest.resetAllMocks();
     spectator = createService();
-
-    const dialogService = spectator.inject(DialogService);
-    Object.defineProperty(dialogService, 'error', {
-      value: jest.fn(() => of(true)),
-    });
-
-    Object.defineProperty(spectator.service, 'dialog', {
-      get: () => dialogService,
-    });
-
-    const translateService = spectator.inject(TranslateService);
-    Object.defineProperty(spectator.service, 'translate', {
-      value: translateService,
-    });
-
-    Object.defineProperty(spectator.service, 'logToSentry', {
-      value: logToSentry,
-    });
-
-    jest.spyOn(console, 'error').mockImplementation();
-  });
-
-  afterAll(() => {
-    jest.restoreAllMocks();
-  });
-
-  describe('handleError', () => {
-    it('logs normal error to console and sentry', () => {
-      jest.spyOn(spectator.service, 'parseError');
-      spectator.service.handleError(error);
-
-      expect(console.error).toHaveBeenCalledWith(error);
-      expect(spectator.service.parseError).toHaveBeenCalledWith(error);
-      expect(logToSentry).toHaveBeenCalledWith({
-        message: 'Dummy Error',
-        title: 'Error',
-      });
-    });
-
-    it('does not log Websocket CloseEvent to Sentry', () => {
-      spectator.service.handleError(new CloseEvent('close'));
-
-      expect(logToSentry).not.toHaveBeenCalled();
-    });
-
-    it('logs websocket error response', () => {
-      spectator.service.handleError(wsError);
-
-      expect(logToSentry).toHaveBeenCalledWith({
-        backtrace: '',
-        message: wsError.error.data.reason,
-        title: 'Validation Error',
-      });
-    });
-
-    it('logs job errors', () => {
-      spectator.service.handleError(failedJob);
-
-      expect(logToSentry).toHaveBeenCalledWith({
-        title: 'FAILED',
-        backtrace: 'LOGS',
-        message: 'DUMMY_ERROR',
-      });
-    });
-
-    it('logs job error for jobs with `extra` available', () => {
-      spectator.service.handleError({
-        ...failedJob,
-        exc_info: excInfo,
-      });
-
-      expect(logToSentry).toHaveBeenCalledWith([{
-        backtrace: 'EXCEPTION',
-        message: 'DUMMY_ERROR',
-        title: 'Error: path',
-      }]);
-    });
   });
 
   describe('parseHttpError', () => {
@@ -223,25 +140,15 @@ describe('ErrorHandlerService', () => {
         error: 'Odd error',
       });
 
-      expect(console.error).toHaveBeenCalledWith({
-        ...httpError,
-        status: 510,
-        statusText: 'Bad Request',
-        error: 'Odd error',
-      });
-
       expect(errorReport).toEqual({ message: 'This error occurred', title: 'Error (510)' });
     });
   });
 
   describe('parseError', () => {
     it('parses json rpc error', () => {
-      const errorReport = spectator.service.parseError({
-        jsonrpc: '2.0',
-        error: {
-          message: 'This error',
-        },
-      });
+      const errorReport = spectator.service.parseError(new ApiCallError({
+        message: 'This error',
+      } as JsonRpcError));
 
       expect(errorReport).toEqual({
         title: 'Error',
@@ -260,7 +167,7 @@ describe('ErrorHandlerService', () => {
     });
 
     it('parses a failed job', () => {
-      const errorReport = spectator.service.parseError(failedJob);
+      const errorReport = spectator.service.parseError(new FailedJobError(failedJob));
 
       expect(errorReport).toEqual({
         title: 'FAILED',
@@ -270,10 +177,10 @@ describe('ErrorHandlerService', () => {
     });
 
     it('parses a failed job with exc info', () => {
-      const errorReport = spectator.service.parseError({
+      const errorReport = spectator.service.parseError(new FailedJobError({
         ...failedJob,
         exc_info: excInfo,
-      });
+      } as Job));
 
       expect(errorReport).toEqual([{
         title: 'Error: path',

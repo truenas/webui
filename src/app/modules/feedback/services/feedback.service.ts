@@ -28,7 +28,7 @@ import {
 } from 'app/modules/feedback/interfaces/file-ticket.interface';
 import { SnackbarComponent } from 'app/modules/snackbar/components/snackbar/snackbar.component';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { SentryService } from 'app/services/sentry.service';
+import { SentryConfigurationService } from 'app/services/errors/sentry-configuration.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { UploadService } from 'app/services/upload.service';
 import { AppState } from 'app/store';
@@ -51,7 +51,7 @@ export class FeedbackService {
     private api: ApiService,
     private store$: Store<AppState>,
     private systemGeneralService: SystemGeneralService,
-    private sentryService: SentryService,
+    private sentryService: SentryConfigurationService,
     private fileUpload: UploadService,
     private matSnackBar: MatSnackBar,
     private translate: TranslateService,

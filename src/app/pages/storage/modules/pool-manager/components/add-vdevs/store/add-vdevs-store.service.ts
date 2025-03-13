@@ -7,10 +7,9 @@ import {
 } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Pool, PoolTopology } from 'app/interfaces/pool.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DiskStore } from 'app/pages/storage/modules/pool-manager/store/disk.store';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export interface AddVdevsState {
   pool: Pool | null;
@@ -40,7 +39,6 @@ export class AddVdevsStore extends ComponentStore<AddVdevsState> {
   constructor(
     private diskStore: DiskStore,
     private api: ApiService,
-    private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
   ) {
     super(initialState);
@@ -73,7 +71,7 @@ export class AddVdevsStore extends ComponentStore<AddVdevsState> {
           this.patchState({
             isLoading: false,
           });
-          this.dialogService.error(this.errorHandler.parseError(error));
+          this.errorHandler.showErrorModal(error);
         },
       ),
       filter((pools) => !!pools),

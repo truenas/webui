@@ -9,6 +9,7 @@ import { delay, of, throwError } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { JobState } from 'app/enums/job-state.enum';
+import { JsonRpcError } from 'app/interfaces/api-message.interface';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
@@ -22,6 +23,8 @@ import {
 import {
   CloudBackupFormComponent,
 } from 'app/pages/data-protection/cloud-backup/cloud-backup-form/cloud-backup-form.component';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { ApiCallError } from 'app/services/errors/error.classes';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
@@ -75,6 +78,7 @@ describe('CloudBackupCardComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
+      mockProvider(ErrorHandlerService),
       mockProvider(SlideIn, {
         open: jest.fn(() => of({
           response: true,
@@ -214,22 +218,19 @@ describe('CloudBackupCardComponent', () => {
   it('shows cloud backup update error', async () => {
     jest.spyOn(spectator.inject(ApiService), 'call').mockImplementationOnce((method) => {
       if (method === 'cloud_backup.update') {
-        return throwError(() => ({
-          jsonrpc: '2.0',
-          error: {
-            data: {
-              reason: 'cloud backup update error',
-            },
+        return throwError(() => new ApiCallError({
+          data: {
+            reason: 'cloud backup update error',
           },
-        }));
+        } as JsonRpcError));
       }
       throw new Error(`Unexpected method: ${method}`);
     });
 
-    expect(spectator.inject(DialogService).error).not.toHaveBeenCalled();
+    expect(spectator.inject(ErrorHandlerService).showErrorModal).not.toHaveBeenCalled();
     const toggle = await table.getHarnessInCell(MatSlideToggleHarness, 1, 1);
     await toggle.check();
-    expect(spectator.inject(DialogService).error).toHaveBeenCalled();
+    expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalled();
   });
 
   it('navigates to the details page when View Details button is pressed', async () => {

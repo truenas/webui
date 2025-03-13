@@ -16,7 +16,7 @@ import { EnclosureView } from 'app/pages/system/enclosure/types/enclosure-view.e
 import { getDefaultSide } from 'app/pages/system/enclosure/utils/get-default-side.utils';
 import { getEnclosureLabel } from 'app/pages/system/enclosure/utils/get-enclosure-label.utils';
 import { EnclosureSide } from 'app/pages/system/enclosure/utils/supported-enclosures';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export interface EnclosureState {
   enclosures: DashboardEnclosure[];

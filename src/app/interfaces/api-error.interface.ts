@@ -1,6 +1,6 @@
 import { ApiErrorName } from 'app/enums/api.enum';
 
-export interface ApiError {
+export interface ApiErrorDetails {
   errname: ApiErrorName;
   error: number;
   extra: unknown;

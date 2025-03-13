@@ -37,7 +37,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { snapshotTaskCardElements } from 'app/pages/data-protection/snapshot-task/snapshot-task-card/snapshot-task-card.elements';
 import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { TaskService } from 'app/services/task.service';
 
 @UntilDestroy()
@@ -165,8 +165,8 @@ export class SnapshotTaskCardComponent implements OnInit {
       next: () => {
         this.getSnapshotTasks();
       },
-      error: (err: unknown) => {
-        this.dialogService.error(this.errorHandler.parseError(err));
+      error: (error: unknown) => {
+        this.errorHandler.showErrorModal(error);
       },
     });
   }
@@ -188,9 +188,9 @@ export class SnapshotTaskCardComponent implements OnInit {
         next: () => {
           this.getSnapshotTasks();
         },
-        error: (err: unknown) => {
+        error: (error: unknown) => {
           this.getSnapshotTasks();
-          this.dialogService.error(this.errorHandler.parseError(err));
+          this.errorHandler.showErrorModal(error);
         },
       });
   }

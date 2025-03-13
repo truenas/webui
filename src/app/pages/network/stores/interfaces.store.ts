@@ -2,9 +2,8 @@ import { Injectable } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import { switchMap, tap } from 'rxjs/operators';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export interface InterfacesState {
   interfaces: NetworkInterface[];
@@ -20,7 +19,6 @@ const initialState: InterfacesState = {
 export class InterfacesStore extends ComponentStore<InterfacesState> {
   constructor(
     private api: ApiService,
-    private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
   ) {
     super(initialState);
@@ -33,7 +31,7 @@ export class InterfacesStore extends ComponentStore<InterfacesState> {
         return this.api.call('interface.query').pipe(
           tap({
             next: (interfaces) => this.patchState({ interfaces }),
-            error: (error: unknown) => this.dialogService.error(this.errorHandler.parseError(error)),
+            error: (error: unknown) => this.errorHandler.showErrorModal(error),
             complete: () => this.patchState({ isLoading: false }),
           }),
         );

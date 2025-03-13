@@ -6,6 +6,7 @@ import {
 } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import {
+  ApiEventTyped,
   IncomingMessage,
   JsonRpcError,
 } from 'app/interfaces/api-message.interface';
@@ -13,6 +14,7 @@ import { Pool } from 'app/interfaces/pool.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SubscriptionManagerService } from 'app/modules/websocket/subscription-manager.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
+import { ApiCallError, FailedJobError } from 'app/services/errors/error.classes';
 
 describe('ApiService', () => {
   let spectator: SpectatorService<ApiService>;
@@ -42,7 +44,7 @@ describe('ApiService', () => {
   });
 
   describe('call', () => {
-    it('should make a WS call and get a response', () => {
+    it('should make a WS call and get a response', async () => {
       const uuid = 'fakeUUID';
       jest.spyOn(UUID, 'UUID').mockReturnValue(uuid);
       const someResult = {};
@@ -52,14 +54,13 @@ describe('ApiService', () => {
         result: someResult,
       });
 
-      spectator.service.call('cloudsync.providers').subscribe((result) => {
-        expect(result).toBe(someResult);
-      });
+      const result = await firstValueFrom(spectator.service.call('cloudsync.providers'));
 
+      expect(result).toBe(someResult);
       expect(wsHandler.scheduleCall).toHaveBeenCalled();
     });
 
-    it('should handle WS call errors', () => {
+    it('should handle WS call errors', async () => {
       jest.spyOn(console, 'error').mockImplementation();
       const uuid = 'fakeUUID';
       jest.spyOn(UUID, 'UUID').mockReturnValue(uuid);
@@ -73,14 +74,11 @@ describe('ApiService', () => {
         error: someError,
       });
 
-      spectator.service.call('cloudsync.providers').subscribe(
-        {
-          next: () => {},
-          error: (error: unknown) => {
-            expect(error).toBe(someError);
-          },
-        },
-      );
+      const call = firstValueFrom(spectator.service.call('cloudsync.providers'));
+      await expect(call).rejects.toBeInstanceOf(ApiCallError);
+      await expect(call).rejects.toMatchObject({
+        error: someError,
+      });
     });
   });
 
@@ -101,25 +99,119 @@ describe('ApiService', () => {
     });
   });
 
-  describe('job', () => {
-    it('should start a job successfully', () => {
-      const uuid = 'fakeUUID';
-      const mockJobId = 1234;
+  describe('startJob', () => {
+    const uuid = 'fakeUUID';
+    const mockJobId = 1234;
+
+    beforeEach(() => {
       jest.spyOn(UUID, 'UUID').mockReturnValue(uuid);
       responses$.next({
         jsonrpc: '2.0',
         id: uuid,
         result: mockJobId,
       });
+    });
 
-      spectator.service.startJob('boot.attach').subscribe((response) => {
-        expect(response).toEqual(mockJobId);
+    it('should schedule a call to start a job and return job id', async () => {
+      const response = await firstValueFrom(spectator.service.startJob('boot.attach', ['something', {}]));
+
+      expect(response).toBe(1234);
+      expect(wsHandler.scheduleCall).toHaveBeenCalledWith({
+        id: expect.any(String),
+        method: 'boot.attach',
+        params: ['something', {}],
+      });
+    });
+  });
+
+  describe('job', () => {
+    const uuid = 'fakeUUID';
+    const mockJobId = 1234;
+    const jobUpdate = {
+      id: mockJobId,
+      method: 'boot.attach',
+      state: JobState.Finished,
+      time_finished: {
+        $date: 123456789,
+      },
+    };
+
+    beforeEach(() => {
+      jest.spyOn(UUID, 'UUID').mockReturnValue(uuid);
+
+      jest.spyOn(wsHandler, 'scheduleCall').mockImplementation((call) => {
+        if (call.method === 'boot.attach') {
+          responses$.next({
+            jsonrpc: '2.0',
+            id: uuid,
+            result: mockJobId,
+          });
+        } else if (call.method === 'core.get_jobs') {
+          responses$.next({
+            jsonrpc: '2.0',
+            id: uuid,
+            result: [
+              jobUpdate,
+            ],
+          });
+        }
       });
     });
 
-    it('should handle a successful job', () => {
-      spectator.service.job('boot.attach').subscribe((result) => {
-        expect(result.state).toEqual(JobState.Failed);
+    it('should schedule a call to start a job', async () => {
+      await firstValueFrom(spectator.service.startJob('boot.attach', ['something', {}]));
+
+      expect(wsHandler.scheduleCall).toHaveBeenCalledWith({
+        id: expect.any(String),
+        method: 'boot.attach',
+        params: ['something', {}],
+      });
+    });
+
+    it('should subscribe to job updates by calling subscription manager for core.get_jobs', async () => {
+      await firstValueFrom(spectator.service.job('boot.attach', ['something', {}]));
+
+      expect(spectator.inject(SubscriptionManagerService).subscribe).toHaveBeenCalledWith('core.get_jobs');
+    });
+
+    it('should also call core.get_jobs in case job completes too quickly', async () => {
+      await firstValueFrom(spectator.service.job('boot.attach', ['something', {}]));
+
+      expect(wsHandler.scheduleCall).toHaveBeenCalledWith({
+        id: expect.any(String),
+        method: 'core.get_jobs',
+        params: [[['id', '=', mockJobId]]],
+      });
+    });
+
+    it('should return a job update when it is received', async () => {
+      jest.spyOn(spectator.service, 'subscribe').mockReturnValue(of({
+        id: mockJobId,
+        fields: jobUpdate,
+      } as ApiEventTyped<'core.get_jobs'>));
+
+      const response = await firstValueFrom(spectator.service.job('boot.attach', ['something', {}]));
+      expect(response).toEqual(jobUpdate);
+    });
+
+    it('should throw on a failed job', async () => {
+      const faileJobUpdate = {
+        id: mockJobId,
+        method: 'boot.attach',
+        state: JobState.Failed,
+        time_finished: {
+          $date: 123456789,
+        },
+      };
+
+      jest.spyOn(spectator.service, 'subscribe').mockReturnValue(of({
+        id: mockJobId,
+        fields: faileJobUpdate,
+      } as ApiEventTyped<'core.get_jobs'>));
+
+      await expect(firstValueFrom(spectator.service.job('boot.attach'))).rejects.toBeInstanceOf(FailedJobError);
+      await expect(firstValueFrom(spectator.service.job('boot.attach'))).rejects.toMatchObject({
+        job: faileJobUpdate,
       });
     });
   });

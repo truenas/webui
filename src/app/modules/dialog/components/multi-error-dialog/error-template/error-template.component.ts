@@ -6,12 +6,11 @@ import { MatDialogTitle } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { Job } from 'app/interfaces/job.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DownloadService } from 'app/services/download.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -45,7 +44,6 @@ export class ErrorTemplateComponent {
     private api: ApiService,
     private download: DownloadService,
     private errorHandler: ErrorHandlerService,
-    private dialogService: DialogService,
   ) {}
 
   toggleOpen(): void {
@@ -81,7 +79,7 @@ export class ErrorTemplateComponent {
             this.download.downloadBlob(file, `${logsId}.log`);
           },
           error: (error: unknown) => {
-            this.dialogService.error(this.errorHandler.parseError(error));
+            this.errorHandler.showErrorModal(error);
           },
         });
       });

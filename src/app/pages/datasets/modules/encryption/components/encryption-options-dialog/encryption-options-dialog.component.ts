@@ -33,7 +33,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { isPasswordEncrypted, isEncryptionRoot } from 'app/pages/datasets/utils/dataset.utils';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { EncryptionOptionsDialogData } from './encryption-options-dialog-data.interface';
 
 enum EncryptionType {
@@ -220,7 +220,7 @@ export class EncryptionOptionsDialogComponent implements OnInit {
           });
         },
         error: (error: unknown) => {
-          this.dialog.error(this.errorHandler.parseError(error));
+          this.errorHandler.showErrorModal(error);
         },
       });
   }

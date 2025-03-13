@@ -48,7 +48,7 @@ import {
 import {
   DatasetQuotaEditFormComponent,
 } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-edit-form/dataset-quota-edit-form.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 interface QuotaData {
   quotaType: DatasetQuotaType.User | DatasetQuotaType.Group;
@@ -252,7 +252,7 @@ export class DatasetQuotasListComponent implements OnInit {
 
   handleError = (error: unknown): void => {
     this.isLoading = false;
-    this.dialogService.error(this.errorHandler.parseError(error));
+    this.errorHandler.showErrorModal(error);
     this.cdr.markForCheck();
   };
 

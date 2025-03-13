@@ -23,7 +23,6 @@ import {
   ReportingExporterSchema,
   ReportingExporter,
 } from 'app/interfaces/reporting-exporters.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { CustomUntypedFormField } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
 import {
   IxDynamicFormComponent,
@@ -38,7 +37,7 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -101,7 +100,6 @@ export class ReportingExportersFormComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
-    private dialogService: DialogService,
     public slideInRef: SlideInRef<ReportingExporter | undefined, boolean>,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
@@ -144,7 +142,7 @@ export class ReportingExportersFormComponent implements OnInit {
         this.cdr.markForCheck();
       },
       error: (error: unknown) => {
-        this.dialogService.error(this.errorHandler.parseError(error));
+        this.errorHandler.showErrorModal(error);
         this.isLoading = false;
         this.isLoadingSchemas = false;
         this.cdr.markForCheck();

@@ -19,7 +19,7 @@ import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { AppControlsComponent } from 'app/pages/dashboard/widgets/apps/common/app-controls/app-controls.component';
 import { AppNetworkInfoComponent } from 'app/pages/dashboard/widgets/apps/common/app-network-info/app-network-info.component';
 import { WidgetAppNetworkComponent } from 'app/pages/dashboard/widgets/apps/widget-app-network/widget-app-network.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { RedirectService } from 'app/services/redirect.service';
 
 describe('WidgetAppNetworkComponent', () => {

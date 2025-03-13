@@ -44,7 +44,7 @@ import { createTranslateLoader } from 'app/modules/language/translations/icu-tra
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SubscriptionManagerService } from 'app/modules/websocket/subscription-manager.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { rootReducers, rootEffects } from 'app/store';
 import { CustomRouterStateSerializer } from 'app/store/router/custom-router-serializer';
@@ -58,6 +58,7 @@ Sentry.init({
   integrations: [
     Sentry.browserTracingIntegration(),
     Sentry.replayIntegration(),
+    Sentry.captureConsoleIntegration({ levels: ['error'] }),
   ],
   release: product.product || '',
   replaysOnErrorSampleRate: 1.0,

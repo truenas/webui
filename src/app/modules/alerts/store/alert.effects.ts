@@ -26,7 +26,7 @@ import {
   AlertSlice, selectDismissedAlerts, selectIsAlertPanelOpen, selectUnreadAlerts,
 } from 'app/modules/alerts/store/alert.selectors';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { alertIndicatorPressed } from 'app/store/topbar/topbar.actions';
 

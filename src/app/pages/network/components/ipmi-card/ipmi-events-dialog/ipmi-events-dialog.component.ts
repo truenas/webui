@@ -13,13 +13,12 @@ import { JobState } from 'app/enums/job-state.enum';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { IpmiEvent } from 'app/interfaces/ipmi.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -55,7 +54,6 @@ export class IpmiEventsDialogComponent implements OnInit {
     private api: ApiService,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
-    private dialogService: DialogService,
     private translate: TranslateService,
   ) {}
 
@@ -79,7 +77,7 @@ export class IpmiEventsDialogComponent implements OnInit {
         this.cdr.markForCheck();
       },
       error: (error: unknown) => {
-        this.dialogService.error(this.errorHandler.parseError(error));
+        this.errorHandler.showErrorModal(error);
       },
     });
   }
@@ -108,7 +106,7 @@ export class IpmiEventsDialogComponent implements OnInit {
         this.cdr.markForCheck();
       },
       error: (error: unknown) => {
-        this.dialogService.error(this.errorHandler.parseError(error));
+        this.errorHandler.showErrorModal(error);
         this.isLoading = false;
         this.cdr.markForCheck();
       },

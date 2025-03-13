@@ -11,7 +11,6 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { Role } from 'app/enums/role.enum';
 import { helptextKerberosSettings } from 'app/helptext/directory-service/kerberos-settings';
 import { KerberosConfigUpdate } from 'app/interfaces/kerberos-config.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
@@ -20,7 +19,7 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -63,7 +62,6 @@ export class KerberosSettingsComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
     private fb: FormBuilder,
-    private dialogService: DialogService,
     public slideInRef: SlideInRef<KerberosSettingsComponent | undefined, boolean>,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
@@ -81,7 +79,7 @@ export class KerberosSettingsComponent implements OnInit {
         this.cdr.markForCheck();
       },
       error: (error: unknown) => {
-        this.dialogService.error(this.errorHandler.parseError(error));
+        this.errorHandler.showErrorModal(error);
         this.isFormLoading = false;
         this.cdr.markForCheck();
       },

@@ -20,7 +20,6 @@ import { DeviceNestedDataNode } from 'app/interfaces/device-nested-data-node.int
 import { PoolInstance } from 'app/interfaces/pool.interface';
 import { TopologyItem } from 'app/interfaces/storage.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { NestedTreeNodeComponent } from 'app/modules/ix-tree/components/nested-tree-node/nested-tree-node.component';
 import { TreeNodeComponent } from 'app/modules/ix-tree/components/tree-node/tree-node.component';
@@ -37,7 +36,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { BootPoolAttachDialogComponent } from 'app/pages/system/bootenv/boot-pool-attach/boot-pool-attach-dialog.component';
 import { BootPoolReplaceDialogComponent } from 'app/pages/system/bootenv/boot-pool-replace/boot-pool-replace-dialog.component';
 import { bootEnvStatusElements } from 'app/pages/system/bootenv/bootenv-status/bootenv-status.elements';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { BootenvNodeItemComponent } from './bootenv-node-item/bootenv-node-item.component';
 
 export enum BootPoolActionType {
@@ -105,7 +104,6 @@ export class BootStatusListComponent implements OnInit {
   constructor(
     private router: Router,
     private api: ApiService,
-    private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
     private matDialog: MatDialog,
     private loader: LoaderService,
@@ -133,7 +131,7 @@ export class BootStatusListComponent implements OnInit {
       error: (error: unknown) => {
         this.isLoading$.next(false);
         this.cdr.markForCheck();
-        this.dialogService.error(this.errorHandler.parseError(error));
+        this.errorHandler.showErrorModal(error);
       },
     });
   }

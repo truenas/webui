@@ -32,8 +32,7 @@
     "test:pr": "yarn run check-env && echo 'Setting up temporary environment file...\\n' && yarn run ui remote -i 'headless.local' && jest --coverage --maxWorkers=2",
     "test:watch": "jest --watch",
     "ui": "cd $(git rev-parse --show-toplevel) && tsx ./scripts/ui/ui.ts",
-    "validate-translations": "node scripts/validate_translations.js",
-    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org ixsystems --project webui-scale ./dist && sentry-cli --url https://sentry.ixsystems.com/ sourcemaps upload --org ixsystems --project webui-scale ./dist"
+    "validate-translations": "node scripts/validate_translations.js"
   },
   "repository": {
     "type": "git",

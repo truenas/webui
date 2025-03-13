@@ -46,7 +46,7 @@ import { servicesElements } from 'app/pages/services/services.elements';
 import {
   GlobalTargetConfigurationComponent,
 } from 'app/pages/sharing/iscsi/global-target-configuration/global-target-configuration.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { ServicesService } from 'app/services/services.service';
 import { UrlOptionsService } from 'app/services/url-options.service';
 import { serviceChanged } from 'app/store/services/services.actions';

@@ -23,7 +23,7 @@ import {
   DatasetAclEditorState,
 } from 'app/pages/datasets/modules/permissions/interfaces/dataset-acl-editor-state.interface';
 import { newNfsAce, newPosixAce } from 'app/pages/datasets/modules/permissions/utils/new-ace.utils';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { StorageService } from 'app/services/storage.service';
 
 const initialState: DatasetAclEditorState = {
@@ -73,7 +73,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
             });
           }),
           catchError((error: unknown) => {
-            this.dialogService.error(this.errorHandler.parseError(error));
+            this.errorHandler.showErrorModal(error);
 
             this.patchState({
               isLoading: false,

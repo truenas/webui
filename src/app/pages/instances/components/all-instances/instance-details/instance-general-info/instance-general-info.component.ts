@@ -26,7 +26,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { InstanceEditFormComponent } from 'app/pages/instances/components/all-instances/instance-details/instance-general-info/instance-edit-form/instance-edit-form.component';
 import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({

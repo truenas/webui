@@ -16,7 +16,6 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { IscsiGlobalSession } from 'app/interfaces/iscsi-global-config.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -24,7 +23,7 @@ import { DualListBoxComponent } from 'app/modules/lists/dual-listbox/dual-listbo
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { initiatorFormElements } from 'app/pages/sharing/iscsi/initiator/initiator-form/initiator-form.elements';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 interface InitiatorItem {
   id: string;
@@ -93,7 +92,6 @@ export class InitiatorFormComponent implements OnInit {
     private api: ApiService,
     private activatedRoute: ActivatedRoute,
     private router: Router,
-    private dialog: DialogService,
     private errorHandler: ErrorHandlerService,
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
@@ -140,7 +138,7 @@ export class InitiatorFormComponent implements OnInit {
       error: (error: unknown) => {
         this.isFormLoading = false;
         this.cdr.markForCheck();
-        this.dialog.error(this.errorHandler.parseError(error));
+        this.errorHandler.showErrorModal(error);
       },
     });
   }
@@ -152,7 +150,7 @@ export class InitiatorFormComponent implements OnInit {
         this.cdr.markForCheck();
       },
       error: (error: unknown) => {
-        this.dialog.error(this.errorHandler.parseError(error));
+        this.errorHandler.showErrorModal(error);
       },
     });
   }
@@ -186,7 +184,7 @@ export class InitiatorFormComponent implements OnInit {
         error: (error: unknown) => {
           this.isFormLoading = false;
           this.cdr.markForCheck();
-          this.dialog.error(this.errorHandler.parseError(error));
+          this.errorHandler.showErrorModal(error);
         },
       });
   }

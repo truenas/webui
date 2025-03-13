@@ -30,7 +30,7 @@ import {
   ExportDisconnectModalComponent,
 } from 'app/pages/storage/components/dashboard-pool/export-disconnect-modal/export-disconnect-modal.component';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { DiskHealthCardComponent } from './disk-health-card/disk-health-card.component';
 import { PoolUsageCardComponent } from './pool-usage-card/pool-usage-card.component';
 import { TopologyCardComponent } from './topology-card/topology-card.component';

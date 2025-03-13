@@ -9,7 +9,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { StopOptionsDialogComponent, StopOptionsOperation } from 'app/pages/instances/components/all-instances/instance-list/stop-options-dialog/stop-options-dialog.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { InstanceListBulkActionsComponent } from './instance-list-bulk-actions.component';
 
 describe('InstanceListBulkActionsComponent', () => {

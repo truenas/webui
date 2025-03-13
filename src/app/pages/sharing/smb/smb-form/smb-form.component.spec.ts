@@ -13,6 +13,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { helptextSharingSmb } from 'app/helptext/sharing';
+import { JsonRpcError } from 'app/interfaces/api-message.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { Group } from 'app/interfaces/group.interface';
 import { Service } from 'app/interfaces/service.interface';
@@ -30,6 +31,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { RestartSmbDialogComponent } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
+import { ApiCallError } from 'app/services/errors/error.classes';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { AppState } from 'app/store';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
@@ -570,12 +572,9 @@ describe('SmbFormComponent', () => {
       api = spectator.inject(ApiService);
       jest.spyOn(api, 'call').mockImplementation((method) => {
         if (method === 'sharing.smb.share_precheck') {
-          return throwError(() => ({
-            jsonrpc: '2.0',
-            error: {
-              data: { reason: '[EEXIST] sharing.smb.share_precheck.name: Share with this name already exists.' },
-            },
-          }));
+          return throwError(() => new ApiCallError({
+            data: { reason: '[EEXIST] sharing.smb.share_precheck.name: Share with this name already exists.' },
+          } as JsonRpcError));
         }
         return of(null);
       });

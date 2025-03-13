@@ -53,7 +53,7 @@ import {
   ReplicationWizardComponent,
 } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
 import { DownloadService } from 'app/services/download.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -197,8 +197,8 @@ export class ReplicationTaskCardComponent implements OnInit {
       next: () => {
         this.getReplicationTasks();
       },
-      error: (err: unknown) => {
-        this.dialogService.error(this.errorHandler.parseError(err));
+      error: (error: unknown) => {
+        this.errorHandler.showErrorModal(error);
       },
     });
   }
@@ -232,7 +232,7 @@ export class ReplicationTaskCardComponent implements OnInit {
       }),
       catchError((error: unknown) => {
         this.getReplicationTasks();
-        this.dialogService.error(this.errorHandler.parseError(error));
+        this.errorHandler.showErrorModal(error);
         return EMPTY;
       }),
       untilDestroyed(this),
@@ -273,9 +273,9 @@ export class ReplicationTaskCardComponent implements OnInit {
         next: () => {
           this.getReplicationTasks();
         },
-        error: (err: unknown) => {
+        error: (error: unknown) => {
           this.getReplicationTasks();
-          this.dialogService.error(this.errorHandler.parseError(err));
+          this.errorHandler.showErrorModal(error);
         },
       });
   }

@@ -37,7 +37,7 @@ import { AuthorizedAccessFormComponent } from 'app/pages/sharing/iscsi/authorize
 import {
   authorizedAccessListElements,
 } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-list/authorized-access-list.elements';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
 
 @UntilDestroy()
@@ -123,7 +123,7 @@ export class AuthorizedAccessListComponent implements OnInit {
             ).subscribe({
               next: () => this.refresh(),
               error: (error: unknown) => {
-                this.dialogService.error(this.errorHandler.parseError(error));
+                this.errorHandler.showErrorModal(error);
               },
             });
           },
