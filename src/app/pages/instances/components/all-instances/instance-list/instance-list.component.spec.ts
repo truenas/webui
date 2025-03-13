@@ -30,6 +30,7 @@ describe('InstanceListComponent', () => {
       }),
       mockProvider(VirtualizationDevicesStore, {
         selectInstance: jest.fn(),
+        selectInstanceById: jest.fn(),
         selectedInstance: jest.fn(() => null),
       }),
     ],

@@ -59,18 +59,22 @@ export class VirtualizationDevicesStore extends ComponentStore<VirtualizationIns
     );
   });
 
-  selectInstance(instanceId: string): void {
+  selectInstanceById(instanceId: string): void {
     const selectedInstance = this.instances()?.find((instance) => instance.id === instanceId);
     if (!selectedInstance?.id) {
       this.resetInstance();
       return;
     }
-    const oldSelectedInstance = this.selectedInstance();
-    if (!selectedInstance || selectedInstance === oldSelectedInstance) {
-      return;
-    }
 
     this.patchState({ selectedInstance });
+    this.loadDevices();
+  }
+
+  selectInstance(instance: VirtualizationInstance): void {
+    if (this.selectedInstance()?.id === instance.id) {
+      return;
+    }
+    this.patchState({ selectedInstance: instance });
     this.loadDevices();
   }
 
