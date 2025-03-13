@@ -48,7 +48,7 @@ describe('UserRowComponent', () => {
 
     it('shows last login value', () => {
       const cells = spectator.queryAll('.cell');
-      expect(cells[3]).toHaveText('-');
+      expect(cells[3]).toHaveText('N/A');
     });
 
     it('shows role if available', () => {
