@@ -904,7 +904,7 @@
     "hierarchy": [
       "Credentials",
       "Users (WIP)",
-      "General Info"
+      "Access Card"
     ],
     "synonyms": [],
     "requiredRoles": [],
@@ -913,7 +913,7 @@
       "/credentials/users-new"
     ],
     "routerLink": null,
-    "anchor": "general-info",
+    "anchor": "access-card",
     "triggerAnchor": null,
     "section": "ui"
   },
