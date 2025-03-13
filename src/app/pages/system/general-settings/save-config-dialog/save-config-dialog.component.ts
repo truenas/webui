@@ -58,7 +58,7 @@ export interface SaveConfigDialogMessages {
 export class SaveConfigDialogComponent {
   protected readonly requiredRoles = [Role.FullAdmin];
 
-  exportSeedCheckbox = new FormControl(false);
+  exportSeedCheckbox = new FormControl(true);
 
   helptext: SaveConfigDialogMessages;
 
