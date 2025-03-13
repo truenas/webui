@@ -56,11 +56,11 @@ export class NavigationComponent {
       return null;
     }
 
-    if (menuItem.hideTooltipOnSidebarCollapsed && !this.isSidenavCollapsed()) {
-      return null;
+    if (menuItem.showTooltipAlways || this.isSidenavCollapsed()) {
+      return menuItem.tooltip;
     }
 
-    return menuItem.tooltip;
+    return null;
   }
 
   closeMenu(): void {

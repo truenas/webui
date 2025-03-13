@@ -14,7 +14,7 @@ export interface MenuItem {
   tooltip?: string;
   sub?: SubMenuItem[];
   isVisible$?: Observable<boolean>;
-  hideTooltipOnSidebarCollapsed: boolean;
+  showTooltipAlways?: boolean;
 }
 
 export interface SubMenuItem {

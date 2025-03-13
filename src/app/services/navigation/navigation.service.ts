@@ -32,14 +32,12 @@ export class NavigationService {
       name: T('Dashboard'),
       type: MenuItemType.Link,
       tooltip: T('Dashboard'),
-      hideTooltipOnSidebarCollapsed: true,
       icon: iconMarker('dashboard'),
       state: 'dashboard',
     },
     {
       name: T('Storage'),
       type: MenuItemType.Link,
-      hideTooltipOnSidebarCollapsed: true,
       tooltip: T('Storage'),
       icon: iconMarker('dns'),
       state: 'storage',
@@ -47,7 +45,6 @@ export class NavigationService {
     {
       name: T('Datasets'),
       type: MenuItemType.Link,
-      hideTooltipOnSidebarCollapsed: true,
       tooltip: T('Datasets'),
       icon: iconMarker('ix-dataset-root'),
       state: 'datasets',
@@ -55,7 +52,6 @@ export class NavigationService {
     {
       name: T('Shares'),
       type: MenuItemType.Link,
-      hideTooltipOnSidebarCollapsed: true,
       tooltip: T('Shares'),
       icon: iconMarker('folder_shared'),
       state: 'sharing',
@@ -63,7 +59,6 @@ export class NavigationService {
     {
       name: T('Data Protection'),
       type: MenuItemType.Link,
-      hideTooltipOnSidebarCollapsed: true,
       tooltip: T('Data Protection'),
       icon: iconMarker('security'),
       state: 'data-protection',
@@ -71,7 +66,6 @@ export class NavigationService {
     {
       name: T('Network'),
       type: MenuItemType.Link,
-      hideTooltipOnSidebarCollapsed: true,
       tooltip: T('Network'),
       icon: iconMarker('device_hub'),
       state: 'network',
@@ -80,7 +74,6 @@ export class NavigationService {
       name: T('Credentials'),
       type: MenuItemType.SlideOut,
       tooltip: T('Credentials'),
-      hideTooltipOnSidebarCollapsed: true,
       icon: iconMarker('vpn_key'),
       state: 'credentials',
       sub: [
@@ -99,7 +92,6 @@ export class NavigationService {
     },
     {
       name: T('Instances'),
-      hideTooltipOnSidebarCollapsed: true,
       type: MenuItemType.Link,
       tooltip: T('Instances'),
       icon: iconMarker('mdi-laptop'),
@@ -109,7 +101,6 @@ export class NavigationService {
       name: T('Apps'),
       type: MenuItemType.Link,
       tooltip: T('Apps'),
-      hideTooltipOnSidebarCollapsed: true,
       icon: iconMarker('apps'),
       state: 'apps',
       isVisible$: this.hasApps$,
@@ -117,7 +108,6 @@ export class NavigationService {
     {
       name: T('Reporting'),
       type: MenuItemType.Link,
-      hideTooltipOnSidebarCollapsed: true,
       tooltip: T('Reports'),
       icon: iconMarker('insert_chart'),
       state: 'reportsdashboard/cpu',
@@ -126,7 +116,7 @@ export class NavigationService {
       name: T('System'),
       type: MenuItemType.SlideOut,
       tooltip: this.translate.instant('Hostname: {hostname}', { hostname: this.hostname() }),
-      hideTooltipOnSidebarCollapsed: false,
+      showTooltipAlways: true,
       icon: iconMarker('settings'),
       state: 'system',
       sub: [
