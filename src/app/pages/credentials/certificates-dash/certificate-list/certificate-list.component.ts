@@ -215,7 +215,7 @@ export class CertificateListComponent implements OnInit {
 
         return jobDialogRef.afterClosed();
       }),
-      this.errorHandler.catchError(),
+      this.errorHandler.withErrorHandler(),
       untilDestroyed(this),
     ).subscribe(() => {
       this.getCertificates();
@@ -235,7 +235,7 @@ export class CertificateListComponent implements OnInit {
       mimeType: 'application/x-x509-user-cert',
     })
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe();
@@ -247,7 +247,7 @@ export class CertificateListComponent implements OnInit {
       mimeType: 'text/plain',
     })
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe();
@@ -272,7 +272,7 @@ export class CertificateListComponent implements OnInit {
             { title: this.translate.instant('Revoking Certificate') },
           ).afterClosed();
         }),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => {

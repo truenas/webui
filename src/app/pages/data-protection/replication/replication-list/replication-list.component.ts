@@ -39,7 +39,7 @@ import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { createTable } from 'app/modules/ix-table/utils';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -180,7 +180,7 @@ export class ReplicationListComponent implements OnInit {
     private matDialog: MatDialog,
     private snackbar: SnackbarService,
     private download: DownloadService,
-    private appLoader: AppLoaderService,
+    private loader: LoaderService,
     protected emptyService: EmptyService,
   ) {}
 
@@ -277,7 +277,7 @@ export class ReplicationListComponent implements OnInit {
       buttonText: this.translate.instant('Delete'),
     }).pipe(
       filter(Boolean),
-      switchMap(() => this.api.call('replication.delete', [row.id]).pipe(this.appLoader.withLoader())),
+      switchMap(() => this.api.call('replication.delete', [row.id]).pipe(this.loader.withLoader())),
       untilDestroyed(this),
     ).subscribe({
       next: () => {
@@ -309,8 +309,8 @@ export class ReplicationListComponent implements OnInit {
       mimeType: 'application/json',
     })
       .pipe(
-        this.appLoader.withLoader(),
-        this.errorHandler.catchError(),
+        this.loader.withLoader(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe();

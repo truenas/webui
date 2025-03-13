@@ -14,7 +14,7 @@ import { helptextDisks } from 'app/helptext/storage/disks/disks';
 import { Disk } from 'app/interfaces/disk.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -54,7 +54,7 @@ export class ManageDiskSedDialogComponent implements OnInit {
   constructor(
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private dialogRef: MatDialogRef<ManageDiskSedDialogComponent>,
     private snackbar: SnackbarService,
     private translate: TranslateService,
@@ -78,7 +78,7 @@ export class ManageDiskSedDialogComponent implements OnInit {
     this.api.call('disk.query', [[['devname', '=', this.diskName]], { extra: { passwords: true } }])
       .pipe(
         this.loader.withLoader(),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe((disks) => {
@@ -91,7 +91,7 @@ export class ManageDiskSedDialogComponent implements OnInit {
     this.api.call('disk.update', [this.disk.identifier, { passwd: password }])
       .pipe(
         this.loader.withLoader(),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => {

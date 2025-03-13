@@ -27,7 +27,7 @@ import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-h
 import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -112,7 +112,7 @@ export class JbofListComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     private emptyService: EmptyService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private cdr: ChangeDetectorRef,
   ) { }
 

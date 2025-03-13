@@ -30,8 +30,8 @@ import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -87,7 +87,7 @@ export class ReportingExporterListComponent implements OnInit {
       propertyName: 'enabled',
       requiredRoles: this.requiredRoles,
       onRowToggle: (row, checked) => {
-        this.appLoader.open(
+        this.loader.open(
           this.translate.instant(
             '{checked} exporter: {name}',
             { name: row.name, checked: checked ? 'Enabling' : 'Disabling' },
@@ -97,7 +97,7 @@ export class ReportingExporterListComponent implements OnInit {
           untilDestroyed(this),
         ).subscribe({
           complete: () => {
-            this.appLoader.close();
+            this.loader.close();
             this.getExporters();
           },
           error: (error: unknown) => this.errorCaught(error),
@@ -153,7 +153,7 @@ export class ReportingExporterListComponent implements OnInit {
     private slideIn: SlideIn,
     private dialogService: DialogService,
     protected emptyService: EmptyService,
-    private appLoader: AppLoaderService,
+    private loader: LoaderService,
     private errorHandler: ErrorHandlerService,
   ) {}
 
@@ -225,7 +225,7 @@ export class ReportingExporterListComponent implements OnInit {
       buttonColor: 'warn',
     }).pipe(
       filter(Boolean),
-      tap(() => this.appLoader.open(this.translate.instant('Deleting exporter'))),
+      tap(() => this.loader.open(this.translate.instant('Deleting exporter'))),
       switchMap(() => this.api.call('reporting.exporters.delete', [exporter.id])),
       untilDestroyed(this),
     ).subscribe({
@@ -234,14 +234,14 @@ export class ReportingExporterListComponent implements OnInit {
           this.getExporters();
         }
       },
-      complete: () => this.appLoader.close(),
+      complete: () => this.loader.close(),
       error: (error: unknown) => this.errorCaught(error),
     });
   }
 
   private errorCaught(error: unknown): void {
     this.errorHandler.showErrorModal(error);
-    this.appLoader.close();
+    this.loader.close();
     this.getExporters();
   }
 }

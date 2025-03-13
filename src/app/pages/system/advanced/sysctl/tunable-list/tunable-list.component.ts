@@ -175,7 +175,7 @@ export class TunableListComponent implements OnInit {
                 this.getTunables();
                 this.snackbar.success(this.translate.instant('Sysctl "{name}" deleted', { name: tunable.var }));
               }),
-              this.errorHandler.catchError(),
+              this.errorHandler.withErrorHandler(),
             );
         }),
         untilDestroyed(this),

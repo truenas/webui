@@ -241,7 +241,7 @@ export class CertificateAuthorityListComponent implements OnInit {
       mimeType: 'application/x-x509-user-cert',
     })
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe();
@@ -253,7 +253,7 @@ export class CertificateAuthorityListComponent implements OnInit {
       mimeType: 'text/plain',
     })
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe();

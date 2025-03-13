@@ -21,7 +21,7 @@ import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -72,7 +72,7 @@ export class DashboardPoolComponent implements OnChanges {
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private api: ApiService,
     private snackbar: SnackbarService,
     private store: PoolsDashboardStore,
@@ -118,7 +118,7 @@ export class DashboardPoolComponent implements OnChanges {
           );
           this.store.loadDashboard();
         }),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe();
@@ -139,7 +139,7 @@ export class DashboardPoolComponent implements OnChanges {
         );
         this.store.loadDashboard();
       }),
-      this.errorHandler.catchError(),
+      this.errorHandler.withErrorHandler(),
       untilDestroyed(this),
     ).subscribe();
   }

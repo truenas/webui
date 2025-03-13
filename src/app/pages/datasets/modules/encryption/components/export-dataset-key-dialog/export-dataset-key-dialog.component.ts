@@ -11,7 +11,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DownloadService } from 'app/services/download.service';
@@ -40,7 +40,7 @@ export class ExportDatasetKeyDialogComponent implements OnInit {
 
   constructor(
     private api: ApiService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private errorHandler: ErrorHandlerService,
     private dialogRef: MatDialogRef<ExportDatasetKeyDialogComponent>,
     private dialogService: DialogService,
@@ -64,7 +64,7 @@ export class ExportDatasetKeyDialogComponent implements OnInit {
     })
       .pipe(
         this.loader.withLoader(),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => {

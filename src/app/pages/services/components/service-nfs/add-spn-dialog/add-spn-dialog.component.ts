@@ -9,7 +9,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -49,7 +49,7 @@ export class AddSpnDialogComponent {
     private translate: TranslateService,
     private dialogRef: MatDialogRef<CloudSyncRestoreDialogComponent>,
     private snackbar: SnackbarService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
   ) { }
 
   onSubmit(): void {
@@ -61,7 +61,7 @@ export class AddSpnDialogComponent {
 
     this.api.call('nfs.add_principal', [payload])
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         this.loader.withLoader(),
         untilDestroyed(this),
       )

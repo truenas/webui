@@ -49,7 +49,7 @@ export class UnusedResourcesComponent implements OnInit {
 
   updateUnusedDisks(): void {
     this.api.call('disk.details').pipe(
-      this.errorHandler.catchError(),
+      this.errorHandler.withErrorHandler(),
       untilDestroyed(this),
     ).subscribe((diskDetails) => {
       this.noPoolsDisks = diskDetails.unused;

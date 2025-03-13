@@ -5,7 +5,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of, throwError } from 'rxjs';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import {
   DownloadKeyDialogComponent, DownloadKeyDialogParams,
 } from 'app/pages/storage/modules/pool-manager/components/download-key-dialog/download-key-dialog.component';
@@ -19,7 +19,7 @@ describe('DownloadKeyDialogComponent', () => {
   const createComponent = createComponentFactory({
     component: DownloadKeyDialogComponent,
     providers: [
-      mockProvider(AppLoaderService, {
+      mockProvider(LoaderService, {
         open: jest.fn(),
         close: jest.fn(),
       }),
@@ -67,8 +67,8 @@ describe('DownloadKeyDialogComponent', () => {
       const downloadButton = await loader.getHarness(MatButtonHarness.with({ text: 'Download Encryption Key' }));
       await downloadButton.click();
 
-      expect(spectator.inject(AppLoaderService).open).toHaveBeenCalled();
-      expect(spectator.inject(AppLoaderService).close).toHaveBeenCalled();
+      expect(spectator.inject(LoaderService).open).toHaveBeenCalled();
+      expect(spectator.inject(LoaderService).close).toHaveBeenCalled();
     });
   });
 
@@ -91,7 +91,7 @@ describe('DownloadKeyDialogComponent', () => {
       const downloadButton = await loader.getHarness(MatButtonHarness.with({ text: 'Download Encryption Key' }));
       await downloadButton.click();
 
-      expect(spectator.inject(AppLoaderService).close).toHaveBeenCalled();
+      expect(spectator.inject(LoaderService).close).toHaveBeenCalled();
       expect(spectator.inject(ErrorHandlerService).parseError).toHaveBeenCalled();
 
       const doneButton = await loader.getHarness(MatButtonHarness.with({ text: 'Done' }));

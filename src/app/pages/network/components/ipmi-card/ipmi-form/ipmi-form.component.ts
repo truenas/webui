@@ -151,7 +151,7 @@ export class IpmiFormComponent implements OnInit {
 
   toggleFlashing(): void {
     this.api.call('ipmi.chassis.identify', [this.isFlashing ? OnOff.Off : OnOff.On])
-      .pipe(this.errorHandler.catchError(), untilDestroyed(this))
+      .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
       .subscribe(() => {
         this.snackbar.success(
           this.isFlashing
@@ -241,7 +241,7 @@ export class IpmiFormComponent implements OnInit {
             ? of([this.defaultControllerData])
             : this.api.call('ipmi.lan.query', this.queryParams);
         }),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe((dataIpma) => {

@@ -37,7 +37,7 @@ import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -196,7 +196,7 @@ export class DatasetQuotasListComponent implements OnInit {
     protected formatter: IxFormatterService,
     protected dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
-    protected loader: AppLoaderService,
+    protected loader: LoaderService,
     protected route: ActivatedRoute,
     private translate: TranslateService,
     private slideIn: SlideIn,

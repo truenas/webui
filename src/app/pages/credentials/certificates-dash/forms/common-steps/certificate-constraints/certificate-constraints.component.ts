@@ -305,7 +305,7 @@ export class CertificateConstraintsComponent implements OnInit, SummaryProvider 
     this.api.call('certificate.extended_key_usage_choices')
       .pipe(
         choicesToOptions(),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe((options) => {

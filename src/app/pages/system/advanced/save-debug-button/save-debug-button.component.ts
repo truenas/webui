@@ -86,7 +86,7 @@ export class SaveDebugButtonComponent {
               .afterClosed()
               .pipe(switchMap(() => this.download.downloadUrl(url, fileName, mimeType)));
           }),
-          this.errorHandler.catchError(),
+          this.errorHandler.withErrorHandler(),
         );
       }),
     );

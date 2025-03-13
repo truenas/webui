@@ -155,7 +155,7 @@ export class AcmeDnsAuthenticatorListComponent implements OnInit {
         filter(Boolean),
         switchMap(() => {
           return this.api.call('acme.dns.authenticator.delete', [authenticator.id]).pipe(
-            this.errorHandler.catchError(),
+            this.errorHandler.withErrorHandler(),
           );
         }),
         untilDestroyed(this),

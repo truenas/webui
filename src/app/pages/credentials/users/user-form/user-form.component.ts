@@ -334,7 +334,7 @@ export class UserFormComponent implements OnInit {
 
     if (this.editingUser?.home && this.editingUser.home !== defaultHomePath) {
       this.storageService.filesystemStat(this.editingUser.home)
-        .pipe(this.errorHandler.catchError(), untilDestroyed(this))
+        .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
         .subscribe((stat) => {
           this.form.patchValue({ home_mode: stat.mode.toString(8).substring(2, 5) });
           this.homeModeOldValue = stat.mode.toString(8).substring(2, 5);

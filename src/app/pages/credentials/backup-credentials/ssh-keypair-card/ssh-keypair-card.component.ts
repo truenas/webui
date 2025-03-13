@@ -161,7 +161,7 @@ export class SshKeypairCardComponent implements OnInit {
         filter(Boolean),
         switchMap(() => {
           return this.api.call('keychaincredential.delete', [credential.id]).pipe(
-            this.errorHandler.catchError(),
+            this.errorHandler.withErrorHandler(),
           );
         }),
         untilDestroyed(this),

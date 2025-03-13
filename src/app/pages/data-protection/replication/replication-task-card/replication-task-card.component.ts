@@ -260,7 +260,7 @@ export class ReplicationTaskCardComponent implements OnInit {
       fileName: `${row.name}_encryption_keys.json`,
     })
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       ).subscribe();
   }

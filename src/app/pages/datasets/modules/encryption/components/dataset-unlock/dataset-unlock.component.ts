@@ -142,7 +142,7 @@ export class DatasetUnlockComponent implements OnInit {
     )
       .afterClosed()
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe((job) => {
@@ -210,7 +210,7 @@ export class DatasetUnlockComponent implements OnInit {
     })
       .afterClosed()
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe((job) => {
@@ -253,7 +253,7 @@ export class DatasetUnlockComponent implements OnInit {
     })
       .afterClosed()
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe((job) => {

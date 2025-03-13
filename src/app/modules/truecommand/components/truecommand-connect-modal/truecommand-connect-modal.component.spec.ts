@@ -13,7 +13,7 @@ import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { TruecommandConnectModalComponent, TruecommandSignupModalState } from 'app/modules/truecommand/components/truecommand-connect-modal/truecommand-connect-modal.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 
@@ -48,7 +48,7 @@ describe('TruecommandConnectModalComponent', () => {
         mockApi([
           mockCall('truecommand.update'),
         ]),
-        mockProvider(AppLoaderService),
+        mockProvider(LoaderService),
         mockProvider(DialogService),
         mockProvider(MatDialogRef),
         mockAuth(),

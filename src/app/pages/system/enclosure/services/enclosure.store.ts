@@ -128,7 +128,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
               };
             });
           }),
-          this.errorHandler.catchError(),
+          this.errorHandler.withErrorHandler(),
           finalize(() => {
             this.patchState({ isLoading: false });
           }),
@@ -144,7 +144,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
           tap((enclosures: DashboardEnclosure[]) => {
             this.patchState({ enclosures });
           }),
-          this.errorHandler.catchError(),
+          this.errorHandler.withErrorHandler(),
         );
       }),
     );

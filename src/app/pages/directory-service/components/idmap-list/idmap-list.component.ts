@@ -208,7 +208,7 @@ export class IdmapListComponent implements OnInit {
   doAdd(): void {
     this.idmapService.getActiveDirectoryStatus()
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe((adConfig) => {

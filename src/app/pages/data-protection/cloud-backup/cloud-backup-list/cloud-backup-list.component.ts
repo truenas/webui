@@ -34,7 +34,7 @@ import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-h
 import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -132,7 +132,7 @@ export class CloudBackupListComponent {
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
     private snackbar: SnackbarService,
-    private appLoader: AppLoaderService,
+    private loader: LoaderService,
     protected emptyService: EmptyService,
   ) {
     effect(() => {
@@ -195,7 +195,7 @@ export class CloudBackupListComponent {
       }),
     }).pipe(
       filter(Boolean),
-      switchMap(() => this.api.call('cloud_backup.delete', [row.id]).pipe(this.appLoader.withLoader())),
+      switchMap(() => this.api.call('cloud_backup.delete', [row.id]).pipe(this.loader.withLoader())),
       untilDestroyed(this),
     ).subscribe({
       next: () => {
@@ -215,7 +215,7 @@ export class CloudBackupListComponent {
   private onChangeEnabledState(cloudBackup: CloudBackup): void {
     this.api
       .call('cloud_backup.update', [cloudBackup.id, { enabled: !cloudBackup.enabled } as CloudBackupUpdate])
-      .pipe(this.appLoader.withLoader(), untilDestroyed(this))
+      .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: () => this.dataProvider().load(),
         error: (err: unknown) => {

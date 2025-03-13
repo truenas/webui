@@ -18,7 +18,7 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -76,7 +76,7 @@ export class SelectPresetModalComponent implements OnInit {
     private dialogRef: MatDialogRef<SelectPresetModalComponent>,
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private aclEditorStore: DatasetAclEditorStore,
     private validatorsService: IxValidatorsService,
     @Inject(MAT_DIALOG_DATA) public data: SelectPresetModalConfig,
@@ -102,7 +102,7 @@ export class SelectPresetModalComponent implements OnInit {
     }])
       .pipe(
         this.loader.withLoader(),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe((presets) => {
