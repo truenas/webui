@@ -99,6 +99,7 @@ export class DevicesComponent implements OnInit, AfterViewInit {
   dataSource: NestedTreeDataSource<DeviceNestedDataNode>;
   poolId: number;
   poolName: string;
+  filterString = '';
 
   treeControl = new NestedTreeControl<DeviceNestedDataNode, string>((vdev) => vdev.children, {
     trackBy: (vdev) => vdev.guid,
@@ -175,6 +176,7 @@ export class DevicesComponent implements OnInit, AfterViewInit {
   }
 
   onSearch(query: string): void {
+    this.filterString = query;
     this.dataSource.filter(query);
   }
 

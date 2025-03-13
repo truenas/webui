@@ -112,6 +112,10 @@ export class InstalledAppsListComponent implements OnInit {
     title: helptextApps.message.loading,
   };
 
+  get isSelectedAppVisible(): boolean {
+    return this.filteredApps?.some((app) => app.id === this.selectedApp?.id);
+  }
+
   get filteredApps(): App[] {
     return this.dataSource
       .filter((app) => app?.name?.toLocaleLowerCase().includes(this.filterString.toLocaleLowerCase()));

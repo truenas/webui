@@ -11,6 +11,8 @@
 </ix-page-header>
 
 @let selectedNode = selectedNode$ | async;
+@let showDetails = !filterString || selectedNode.disk.toLowerCase().includes(filterString.toLowerCase());
+
 <div class="container">
   <div class="table-container">
     <ix-fake-progress-bar
@@ -145,7 +147,7 @@
     ixDetailsHeight
     [class.details-container-mobile]="showMobileDetails"
   >
-    @if (selectedNode) {
+    @if (selectedNode && showDetails) {
       <ix-disk-details-panel
         [topologyItem]="selectedNode | cast"
         [topologyParentItem]="selectedParentNode$ | async | cast"
