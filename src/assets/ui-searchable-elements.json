@@ -903,6 +903,23 @@
   {
     "hierarchy": [
       "Credentials",
+      "Users (WIP)",
+      "Access Card"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/credentials/users-new"
+    ],
+    "routerLink": null,
+    "anchor": "access-card",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
       "Users",
       "Add API Key"
     ],
