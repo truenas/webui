@@ -59,7 +59,10 @@ export class DockerRegistryFormComponent implements OnInit {
     name: ['', Validators.required],
     username: ['', Validators.required],
     password: ['', Validators.required],
-    uri: ['', Validators.pattern(this.urlValidationService.urlRegex)],
+    uri: ['', {
+      validators: Validators.pattern(this.urlValidationService.urlRegex),
+      updateOn: 'blur',
+    }],
   });
 
   get title(): string {
