@@ -23,12 +23,12 @@ export class ErrorParserService {
     private translate: TranslateService,
   ) {}
 
-  getFirstErrorMessage(error: unknown): string {
+  getFirstErrorMessage(error: unknown): string | undefined {
     const parsedError = this.parseError(error);
     if (Array.isArray(parsedError)) {
       return parsedError[0].message;
     }
-    return parsedError?.message || this.translate.instant('Unknown error');
+    return parsedError?.message;
   }
 
   private isHttpError(obj: unknown): obj is HttpErrorResponse {
