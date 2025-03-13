@@ -6,6 +6,7 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { User } from 'app/interfaces/user.interface';
 import { userDetailsElements } from 'app/pages/credentials/new-users/all-users/user-details/user-details.elements';
 import { UserGeneralInfoComponent } from 'app/pages/credentials/new-users/all-users/user-details/user-general-info/user-general-info.component';
+import { UserProfileCardComponent } from 'app/pages/credentials/new-users/all-users/user-details/user-profile-card/user-profile-card.component';
 
 @Component({
   selector: 'ix-user-details',
@@ -15,6 +16,7 @@ import { UserGeneralInfoComponent } from 'app/pages/credentials/new-users/all-us
   imports: [
     TranslateModule,
     UserGeneralInfoComponent,
+    UserProfileCardComponent,
     UiSearchDirective,
   ],
 })

@@ -3,6 +3,7 @@ import { MockComponents } from 'ng-mocks';
 import { User } from 'app/interfaces/user.interface';
 import { UserDetailsComponent } from 'app/pages/credentials/new-users/all-users/user-details/user-details.component';
 import { UserGeneralInfoComponent } from 'app/pages/credentials/new-users/all-users/user-details/user-general-info/user-general-info.component';
+import { UserProfileCardComponent } from 'app/pages/credentials/new-users/all-users/user-details/user-profile-card/user-profile-card.component';
 
 describe('UserDetailsComponent', () => {
   let spectator: Spectator<UserDetailsComponent>;
@@ -10,6 +11,7 @@ describe('UserDetailsComponent', () => {
     component: UserDetailsComponent,
     imports: [
       MockComponents(UserGeneralInfoComponent),
+      MockComponents(UserProfileCardComponent),
     ],
   });
 
@@ -26,5 +28,6 @@ describe('UserDetailsComponent', () => {
 
   it('should render the cards', () => {
     expect(spectator.query(UserGeneralInfoComponent)).toExist();
+    expect(spectator.query(UserProfileCardComponent)).toExist();
   });
 });

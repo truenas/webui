@@ -903,6 +903,23 @@
   {
     "hierarchy": [
       "Credentials",
+      "Users (WIP)",
+      "Profile"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/credentials/users-new"
+    ],
+    "routerLink": null,
+    "anchor": "profile",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
       "Users",
       "Add API Key"
     ],
