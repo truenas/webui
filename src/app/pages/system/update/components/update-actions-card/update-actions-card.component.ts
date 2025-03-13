@@ -296,7 +296,7 @@ export class UpdateActionsCardComponent implements OnInit {
   private finishNonHaUpdate(): Observable<boolean> {
     return this.dialogService.confirm({
       title: helptext.ha_update.complete_title,
-      message: this.translate.instant('Update completed successfully. The system will reboot shortly'),
+      message: this.translate.instant('Update completed successfully. The system will restart shortly'),
       buttonText: helptext.ha_update.complete_action,
       hideCheckbox: true,
       hideCancel: true,

@@ -1,6 +1,7 @@
 {
   "": "",
   "Unknown error": "",
+  "Update completed successfully. The system will restart shortly": "",
   "\n              It looks like your session has been inactive for more than {lifetime} seconds.<br>\n              For security reasons we will log you out at {time}.\n            ": "세션의 비활성화 시간이 {lifetime}초를 넘었습니다.<br />보안을 위해 {time}에 로그아웃 되었습니다.",
   " Est. Usable Raw Capacity": " 사용 가능한 원시 용량 추정",
   " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network port number of the UPS <i>Master</i> system. The default port is <i>3493</i>.": " <b>UPS 모드</b>가 <i>슬레이브</i>일 때, <i>마스터</i> UPS 시스템의 네트워크 포트 번호를 입력합니다. 기본 포트는 <i>3493</i>입니다.",
@@ -4684,7 +4685,6 @@
   "Update System": "시스템 갱신",
   "Update TrueCommand Settings": "TrueCommand 설정 갱신",
   "Update available": "갱신 가능",
-  "Update completed successfully. The system will reboot shortly": "갱신을 성공적으로 완료했습니다. 잠시 후 시스템을 재시작합니다.",
   "Update in Progress": "갱신하는 중",
   "Update successful. Please restart for the update to take effect. Restart now?": "성공적으로 갱신했습니다. 적용을 위해서 재시작하시기 바랍니다. 지금 재시작하시겠습니까?",
   "Updated 'Use as Home Share'": "'홈 공유로 사용' 갱신함",
