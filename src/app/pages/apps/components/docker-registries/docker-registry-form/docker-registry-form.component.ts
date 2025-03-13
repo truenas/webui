@@ -48,6 +48,7 @@ export class DockerRegistryFormComponent implements OnInit {
   protected existingDockerRegistry: DockerRegistry | undefined;
   protected isLoggedInToDockerHub = false;
   protected isFormLoading = false;
+  protected readonly dockerHubRegistry = dockerHubRegistry;
 
   protected registriesOptions$ = of([
     { label: this.translate.instant('Docker Hub'), value: dockerHubRegistry },
