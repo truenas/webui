@@ -26,7 +26,7 @@ binary-indep: binary-stamp
 binary-stamp:
 	mkdir -p debian/truenas-webui/usr/share/truenas/webui
 	mkdir -p debian/truenas-webui/usr/share/doc/truenas-webui
-	echo "export default { product:'${PRODUCT}' }" > src/environment/product.ts
+	echo "export default { product:'${PRODUCT}' }" > src/environments/product.ts
 	tar xf node_files.tgz
 	/usr/bin/yarn run build:prod:aot
 	date +%s > dist/assets/buildtime
