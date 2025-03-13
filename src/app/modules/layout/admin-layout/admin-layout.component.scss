@@ -5,6 +5,16 @@
   height: 100vh;
 }
 
+.product-type {
+  background: var(--fg1);
+  color: var(--bg1);
+  font-size: 12px;
+  margin: 10px auto;
+  padding: 0 5px;
+  text-transform: uppercase;
+  width: max-content;
+}
+
 .alert-sidenav {
   max-width: 30%;
   min-width: 330px;
@@ -24,6 +34,12 @@ ix-truenas-logo {
   top: 0;
   width: 100%;
   z-index: 9999;
+
+  &::ng-deep {
+    .app-link {
+      transform: scale(1.4);
+    }
+  }
 }
 
 .app-side-nav-container {
