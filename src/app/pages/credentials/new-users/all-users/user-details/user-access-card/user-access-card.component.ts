@@ -97,20 +97,22 @@ export class UserAccessCardComponent {
     this.router.navigateByUrl(url);
   }
 
-  lockUnlockUser(): void {
+  toggleLockStatus(): void {
+    const { locked, username, id } = this.user();
+    const message = locked
+      ? this.translate.instant('Are you sure you want to unlock "{user}" user?', { user: username })
+      : this.translate.instant('Are you sure you want to lock "{user}" user?', { user: username });
+    const buttonText = locked ? this.translate.instant('Unlock User') : this.translate.instant('Lock User');
+
     this.dialogService.confirm({
+      message,
+      buttonText,
       title: this.translate.instant('Confirmation'),
-      message: this.user().locked
-        ? this.translate.instant('Are you sure you want to unlock "{user}" user?', { user: this.user().username })
-        : this.translate.instant('Are you sure you want to lock "{user}" user?', { user: this.user().username }),
       hideCheckbox: true,
-      buttonText: this.translate.instant(this.user().locked
-        ? this.translate.instant('Unlock User')
-        : this.translate.instant('Lock User')),
     }).pipe(
       filter(Boolean),
       tap(() => this.loader.open()),
-      switchMap(() => this.api.call('user.update', [this.user().id, { locked: !this.user().locked }])),
+      switchMap(() => this.api.call('user.update', [id, { locked: !locked }])),
       untilDestroyed(this),
     ).subscribe({
       next: (updatedUser) => this.usersStore.userUpdated(updatedUser),
