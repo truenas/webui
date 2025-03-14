@@ -1,5 +1,6 @@
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { BehaviorSubject } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { VirtualizationStatus, VirtualizationType } from 'app/enums/virtualization.enum';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
@@ -10,6 +11,7 @@ import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtual
 
 describe('InstanceListComponent', () => {
   let spectator: Spectator<InstanceListComponent>;
+  let router: Router;
 
   const mockInstance = {
     id: '1',
@@ -18,6 +20,9 @@ describe('InstanceListComponent', () => {
     type: VirtualizationType.Container,
   } as VirtualizationInstance;
 
+  const mockInstance2 = { ...mockInstance, id: '2' };
+  const params$ = new BehaviorSubject({});
+
   const createComponent = createRoutingFactory({
     component: InstanceListComponent,
     imports: [InstanceRowComponent],
@@ -25,7 +30,7 @@ describe('InstanceListComponent', () => {
       mockAuth(),
       mockProvider(VirtualizationInstancesStore, {
         initialize: jest.fn(),
-        instances: jest.fn(() => [mockInstance]),
+        instances: jest.fn(() => [mockInstance, mockInstance2]),
         isLoading: jest.fn(() => false),
       }),
       mockProvider(VirtualizationDevicesStore, {
@@ -33,25 +38,31 @@ describe('InstanceListComponent', () => {
         selectInstanceById: jest.fn(),
         selectedInstance: jest.fn(() => null),
       }),
+      {
+        provide: ActivatedRoute,
+        useValue: params$,
+      },
     ],
-    params: {
-      id: 'invalid',
-    },
   });
 
   beforeEach(() => {
     spectator = createComponent();
+    router = spectator.inject(Router);
   });
 
   it('shows a list of instances', () => {
     const instances = spectator.queryAll(InstanceRowComponent);
 
-    expect(instances).toHaveLength(1);
+    params$.next({});
+
+    expect(instances).toHaveLength(2);
     expect(instances[0].instance()).toEqual(mockInstance);
+    expect(router.navigate).toHaveBeenCalledWith(['/instances', 'view', mockInstance.id]);
   });
 
-  it('redirects to instances when given invalid instanceId', () => {
-    const spyOn = jest.spyOn(spectator.inject(Router), 'navigate');
-    expect(spyOn).toHaveBeenCalledWith(['/instances']);
+  it('redirects to the first instance when passed invalid id', () => {
+    params$.next({});
+
+    expect(router.navigate).toHaveBeenCalledWith(['/instances', 'view', '1']);
   });
 });
