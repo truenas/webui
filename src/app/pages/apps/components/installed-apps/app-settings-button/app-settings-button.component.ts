@@ -65,7 +65,11 @@ export class AppSettingsButtonComponent {
   ) { }
 
   onChoosePool(): void {
-    this.matDialog.open(SelectPoolDialogComponent, { viewContainerRef: this.viewContainerRef });
+    this.matDialog
+      .open(SelectPoolDialogComponent, { viewContainerRef: this.viewContainerRef })
+      .afterClosed()
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe(() => this.appsStore.initialize());
   }
 
   onUnsetPool(): void {

@@ -23,7 +23,11 @@ describe('AppSettingsButtonComponent', () => {
     component: AppSettingsButtonComponent,
     providers: [
       mockAuth(),
-      mockProvider(MatDialog),
+      mockProvider(MatDialog, {
+        open: jest.fn(() => ({
+          afterClosed: () => of(true),
+        })),
+      }),
       mockProvider(SlideIn, {
         open: jest.fn(() => of()),
       }),
@@ -38,6 +42,7 @@ describe('AppSettingsButtonComponent', () => {
         setDockerPool: jest.fn(() => of({})),
       }),
       mockProvider(AppsStore, {
+        initialize: jest.fn(),
         loadCatalog: jest.fn(() => of({})),
       }),
     ],
@@ -60,15 +65,17 @@ describe('AppSettingsButtonComponent', () => {
     await menu.clickItem({ text: 'Choose Pool' });
 
     expect(matDialog.open).toHaveBeenCalledWith(SelectPoolDialogComponent, { viewContainerRef });
+    expect(spectator.inject(AppsStore).loadCatalog).toHaveBeenCalled();
   });
 
   it('shows Unset Pool modal once Settings button -> Unset Pool clicked', async () => {
     await menu.open();
     await menu.clickItem({ text: 'Unset Pool' });
 
-    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
-      message: 'Confirm to unset pool?',
-    }));
+    expect(spectator.inject(DialogService).confirm)
+      .toHaveBeenCalledWith(expect.objectContaining({
+        message: 'Confirm to unset pool?',
+      }));
     expect(spectator.inject(DockerStore).setDockerPool).toHaveBeenCalledWith(null);
   });
 });
