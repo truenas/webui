@@ -1,11 +1,10 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { tooltips } from '@codemirror/view';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
 import { User } from 'app/interfaces/user.interface';
@@ -16,13 +15,14 @@ import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { AllowedAccessSectionComponent } from 'app/pages/credentials/users/new-user-form/allowed-access-section/allowed-access-section.component';
+import { AllowAccessConfig } from 'app/pages/credentials/users/new-user-form/interfaces/allow-access-config.interface';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { UserService } from 'app/services/user.service';
 
@@ -40,11 +40,11 @@ import { UserService } from 'app/services/user.service';
     TranslateModule,
     IxInputComponent,
     FormActionsComponent,
+    AllowedAccessSectionComponent,
     MatButton,
     TestDirective,
     IxIconComponent,
     IxCheckboxComponent,
-    IxSelectComponent,
     IxTextareaComponent,
     IxChipsComponent,
     IxExplorerComponent,
@@ -52,6 +52,16 @@ import { UserService } from 'app/services/user.service';
   ],
 })
 export class NewUserFormComponent {
+  protected allowedAccessConfig = signal<AllowAccessConfig>({
+    smbAccess: true,
+    truenasAccess: {
+      enabled: true,
+      role: 'prompt',
+    },
+    sshAccess: false,
+    shellAccess: false,
+  });
+
   protected form = this.formBuilder.group({
     username: ['', [
       Validators.required,
@@ -60,17 +70,10 @@ export class NewUserFormComponent {
     ]],
     full_name: [''],
 
-    smb_access: [true],
-    truenas_access: [false],
-    ssh_access: [false],
-    shell_access: [false],
-
     password: [''],
     disable_password: [false],
     allow_ssh_login_with_password: [false],
     ssh_key: [''],
-
-    role: ['prompt'],
 
     groups: [[]],
     create_group: [true],
@@ -79,8 +82,6 @@ export class NewUserFormComponent {
     create_home_directory: [false],
     default_permissions: [true],
   });
-
-  protected readonly fakeTooltip = '';
 
   protected isEditingGroups = false;
   protected isEditingHomeDirectory = false;
@@ -94,16 +95,20 @@ export class NewUserFormComponent {
     );
   };
 
+  protected readonly fakeTooltip = '';
+
   readonly groupOptions$ = this.api.call('group.query', [[['local', '=', true]]]).pipe(
     map((groups) => groups.map((group) => ({ label: group.group, value: group.id }))),
   );
 
-  protected readonly roles$ = of([
-    { label: 'Select Role', value: 'prompt' },
-    { label: 'Full Admin', value: Role.FullAdmin },
-    { label: 'Sharing Admin', value: Role.SharingAdmin },
-    { label: 'Readonly Admin', value: Role.ReadonlyAdmin },
-  ]);
+  protected setAllowAccessConfig(config: AllowAccessConfig): void {
+    this.allowedAccessConfig.set(config);
+    if (config.smbAccess) {
+      this.form.controls.disable_password.disable();
+    } else {
+      this.form.controls.disable_password.enable();
+    }
+  }
 
   protected isUsingAlternativeColors = false;
 
@@ -117,27 +122,11 @@ export class NewUserFormComponent {
   }
 
   protected get hasSharingRole(): boolean {
-    return this.form.value.truenas_access && this.form.value.role.includes(Role.SharingAdmin);
+    return this.allowedAccessConfig().truenasAccess?.role.includes(Role.SharingAdmin);
   }
 
   protected setDemoRelations(): void {
     this.form.controls.disable_password.disable();
-    this.form.controls.smb_access.valueChanges.pipe(untilDestroyed(this)).subscribe((hasSmbAccess) => {
-      if (hasSmbAccess) {
-        this.form.controls.disable_password.disable();
-      } else {
-        this.form.controls.disable_password.enable();
-      }
-    });
-
-    this.form.controls.ssh_access.valueChanges.pipe(untilDestroyed(this)).subscribe((hasSshAccess) => {
-      if (hasSshAccess) {
-        this.form.controls.shell_access.disable();
-        this.form.controls.shell_access.setValue(true);
-      } else {
-        this.form.controls.shell_access.enable();
-      }
-    });
   }
 
   protected onCloseInlineEdits(event: MouseEvent): void {
