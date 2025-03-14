@@ -15,13 +15,13 @@ import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AllowedAccessSectionComponent } from 'app/pages/credentials/users/new-user-form/allowed-access-section/allowed-access-section.component';
+import { AuthSectionComponent } from 'app/pages/credentials/users/new-user-form/auth-section/auth-section.component';
 import { AllowAccessConfig } from 'app/pages/credentials/users/new-user-form/interfaces/allow-access-config.interface';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { UserService } from 'app/services/user.service';
@@ -45,9 +45,9 @@ import { UserService } from 'app/services/user.service';
     TestDirective,
     IxIconComponent,
     IxCheckboxComponent,
-    IxTextareaComponent,
     IxChipsComponent,
     IxExplorerComponent,
+    AuthSectionComponent,
     MatCheckbox,
   ],
 })
@@ -69,11 +69,6 @@ export class NewUserFormComponent {
       Validators.maxLength(32),
     ]],
     full_name: [''],
-
-    password: [''],
-    disable_password: [false],
-    allow_ssh_login_with_password: [false],
-    ssh_key: [''],
 
     groups: [[]],
     create_group: [true],
@@ -103,11 +98,6 @@ export class NewUserFormComponent {
 
   protected setAllowAccessConfig(config: AllowAccessConfig): void {
     this.allowedAccessConfig.set(config);
-    if (config.smbAccess) {
-      this.form.controls.disable_password.disable();
-    } else {
-      this.form.controls.disable_password.enable();
-    }
   }
 
   protected isUsingAlternativeColors = false;
@@ -117,16 +107,10 @@ export class NewUserFormComponent {
     private api: ApiService,
     private filesystemService: FilesystemService,
     public slideInRef: SlideInRef<User | undefined, boolean>,
-  ) {
-    this.setDemoRelations();
-  }
+  ) { }
 
   protected get hasSharingRole(): boolean {
     return this.allowedAccessConfig().truenasAccess?.role.includes(Role.SharingAdmin);
-  }
-
-  protected setDemoRelations(): void {
-    this.form.controls.disable_password.disable();
   }
 
   protected onCloseInlineEdits(event: MouseEvent): void {
