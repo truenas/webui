@@ -40,7 +40,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudBackupFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-form/cloud-backup-form.component';
 import { cloudBackupListElements } from 'app/pages/data-protection/cloud-backup/cloud-backup-list/cloud-backup-list.elements';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -166,7 +166,7 @@ export class CloudBackupListComponent {
         this.cdr.markForCheck();
       },
       error: (error: unknown) => {
-        this.dialogService.error(this.errorHandler.parseError(error));
+        this.errorHandler.showErrorModal(error);
         this.dataProvider().load();
       },
     });
@@ -201,8 +201,8 @@ export class CloudBackupListComponent {
       next: () => {
         this.dataProvider().load();
       },
-      error: (err: unknown) => {
-        this.dialogService.error(this.errorHandler.parseError(err));
+      error: (error: unknown) => {
+        this.errorHandler.showErrorModal(error);
       },
     });
   }
@@ -218,9 +218,9 @@ export class CloudBackupListComponent {
       .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: () => this.dataProvider().load(),
-        error: (err: unknown) => {
+        error: (error: unknown) => {
           this.dataProvider().load();
-          this.dialogService.error(this.errorHandler.parseError(err));
+          this.errorHandler.showErrorModal(error);
         },
       });
   }

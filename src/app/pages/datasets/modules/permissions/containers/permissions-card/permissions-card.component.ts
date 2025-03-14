@@ -20,7 +20,6 @@ import { Acl } from 'app/interfaces/acl.interface';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -29,7 +28,7 @@ import { ViewPosixPermissionsComponent } from 'app/pages/datasets/modules/permis
 import { ViewTrivialPermissionsComponent } from 'app/pages/datasets/modules/permissions/components/view-trivial-permissions/view-trivial-permissions.component';
 import { PermissionsCardStore } from 'app/pages/datasets/modules/permissions/stores/permissions-card.store';
 import { isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -89,7 +88,6 @@ export class PermissionsCardComponent implements OnInit, OnChanges {
   constructor(
     private store: PermissionsCardStore,
     private errorHandler: ErrorHandlerService,
-    private dialogService: DialogService,
     private router: Router,
     private translate: TranslateService,
   ) {}
@@ -169,7 +167,7 @@ export class PermissionsCardComponent implements OnInit, OnChanges {
         },
         error: (error: unknown) => {
           this.isLoading.set(false);
-          this.dialogService.error(this.errorHandler.parseError(error));
+          this.errorHandler.showErrorModal(error);
         },
       });
   }

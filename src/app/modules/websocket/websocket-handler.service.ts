@@ -17,7 +17,7 @@ import {
   timer,
 } from 'rxjs';
 import { webSocket as rxjsWebSocket } from 'rxjs/webSocket';
-import { isErrorResponse, makeRequestMessage } from 'app/helpers/api.helper';
+import { makeRequestMessage } from 'app/helpers/api.helper';
 import { WEBSOCKET } from 'app/helpers/websocket.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import {
@@ -113,11 +113,7 @@ export class WebSocketHandlerService {
     return this.responses$.pipe(
       filter((message) => 'id' in message && message.id === call.id),
       take(1),
-      tap((message) => {
-        // TODO: Following `if` block needs to be removed once NAS-131829 is resolved
-        if (isErrorResponse(message)) {
-          console.error('Error: ', message.error);
-        }
+      tap(() => {
         this.activeCalls--;
         this.pendingCalls.delete(call.id);
         this.triggerNextCall$.next();

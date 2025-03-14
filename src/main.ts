@@ -1,5 +1,6 @@
 import { provideHttpClient, withInterceptorsFromDi, HttpClient } from '@angular/common/http';
 import {
+  APP_INITIALIZER,
   enableProdMode, ErrorHandler, importProvidersFrom, inject,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
@@ -16,7 +17,7 @@ import {
   PreloadAllModules,
   withComponentInputBinding,
   withNavigationErrorHandler,
-  NavigationError,
+  NavigationError, Router,
 } from '@angular/router';
 import { provideEffects } from '@ngrx/effects';
 import { provideRouterStore } from '@ngrx/router-store';
@@ -24,7 +25,9 @@ import { provideStore } from '@ngrx/store';
 import {
   TranslateService, TranslateModule, TranslateLoader, TranslateCompiler, MissingTranslationHandler,
 } from '@ngx-translate/core';
+import * as Sentry from '@sentry/angular';
 import { environment } from 'environments/environment';
+import product from 'environments/product';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 import { MarkdownModule } from 'ngx-markdown';
 import { NgxPopperjsModule } from 'ngx-popperjs';
@@ -41,13 +44,24 @@ import { createTranslateLoader } from 'app/modules/language/translations/icu-tra
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SubscriptionManagerService } from 'app/modules/websocket/subscription-manager.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { rootReducers, rootEffects } from 'app/store';
 import { CustomRouterStateSerializer } from 'app/store/router/custom-router-serializer';
 
 if (environment.production) {
   enableProdMode();
+
+  Sentry.init({
+    dsn: environment.sentryPublicDsn,
+    integrations: [
+      Sentry.browserTracingIntegration(),
+      Sentry.replayIntegration(),
+      Sentry.captureConsoleIntegration({ levels: ['error'] }),
+    ],
+    release: product.product || '',
+    replaysOnErrorSampleRate: 1.0,
+  });
 }
 
 bootstrapApplication(AppComponent, {
@@ -115,6 +129,16 @@ bootstrapApplication(AppComponent, {
     {
       provide: MatIconRegistry,
       useClass: IxIconRegistry,
+    },
+    {
+      provide: Sentry.TraceService,
+      deps: [Router],
+    },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: () => () => {},
+      deps: [Sentry.TraceService],
+      multi: true,
     },
     {
       provide: ApiService,

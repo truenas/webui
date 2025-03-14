@@ -5,7 +5,7 @@ import { MockComponent } from 'ng-mocks';
 import { BehaviorSubject, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { ErrorResponse } from 'app/interfaces/api-message.interface';
+import { JsonRpcError } from 'app/interfaces/api-message.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
@@ -13,6 +13,7 @@ import { TreeVirtualScrollViewComponent } from 'app/modules/ix-tree/components/t
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { DatasetsManagementComponent } from 'app/pages/datasets/components/dataset-management/dataset-management.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
+import { ApiCallError } from 'app/services/errors/error.classes';
 
 describe('DatasetsManagementComponent', () => {
   let spectator: SpectatorRouting<DatasetsManagementComponent>;
@@ -79,14 +80,11 @@ describe('DatasetsManagementComponent', () => {
   });
 
   it('should display error when datasets loading fails', () => {
-    error$.next({
-      jsonrpc: '2.0',
-      error: {
-        data: {
-          reason: 'Network Error',
-        },
+    error$.next(new ApiCallError({
+      data: {
+        reason: 'Network Error',
       },
-    } as ErrorResponse);
+    } as JsonRpcError));
     datasets$.next([]);
 
     spectator.detectChanges();

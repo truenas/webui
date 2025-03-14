@@ -18,7 +18,7 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
 import { SnackbarComponent } from 'app/modules/snackbar/components/snackbar/snackbar.component';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { SentryService } from 'app/services/sentry.service';
+import { SentryConfigurationService } from 'app/services/errors/sentry-configuration.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { UploadService } from 'app/services/upload.service';
 import { SystemInfoState } from 'app/store/system-info/system-info.reducer';
@@ -67,7 +67,7 @@ describe('FeedbackService', () => {
       mockProvider(HttpClient, {
         post: jest.fn(() => of(newReview)),
       }),
-      mockProvider(SentryService, {
+      mockProvider(SentryConfigurationService, {
         sessionId$: of('testSessionId'),
       }),
       mockProvider(UploadService, {

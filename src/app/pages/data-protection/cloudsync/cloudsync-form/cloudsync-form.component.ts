@@ -27,7 +27,7 @@ import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
 import { TransferMode, transferModeNames } from 'app/enums/transfer-mode.enum';
-import { extractApiError } from 'app/helpers/api.helper';
+import { extractApiErrorDetails } from 'app/helpers/api.helper';
 import { prepareBwlimit } from 'app/helpers/bwlimit.utils';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { mapToOptions } from 'app/helpers/options.helper';
@@ -65,7 +65,7 @@ import { CreateStorjBucketDialogComponent } from 'app/pages/data-protection/clou
 import { CustomTransfersDialogComponent } from 'app/pages/data-protection/cloudsync/custom-transfers-dialog/custom-transfers-dialog.component';
 import { TransferModeExplanationComponent } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 
 const customOptionValue = -1;
@@ -451,9 +451,9 @@ export class CloudSyncFormComponent implements OnInit {
           this.isCredentialInvalid$.next(true);
           this.dialogService.closeAllDialogs();
           this.cdr.markForCheck();
-          const apiError = extractApiError(error);
+          const apiError = extractApiErrorDetails(error);
           if (!apiError) {
-            this.errorHandler.handleError(error);
+            this.errorHandler.showErrorModal(error);
             return;
           }
 

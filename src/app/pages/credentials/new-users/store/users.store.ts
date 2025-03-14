@@ -7,7 +7,7 @@ import { catchError, map, startWith } from 'rxjs/operators';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { User } from 'app/interfaces/user.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export interface UsersState {
   isLoading: boolean;
