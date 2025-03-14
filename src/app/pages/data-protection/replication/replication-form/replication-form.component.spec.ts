@@ -84,7 +84,7 @@ describe('ReplicationFormComponent', () => {
   let loader: HarnessLoader;
   const remoteNodeProvider = jest.fn();
   const localNodeProvider = jest.fn();
-  const slideInRef: SlideInRef<ReplicationTask, unknown> = {
+  const slideInRef: SlideInRef<ReplicationTask | undefined, unknown> = {
     close: jest.fn(),
     requireConfirmationWhen: jest.fn(),
     swap: jest.fn(),

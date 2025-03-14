@@ -68,7 +68,7 @@
     <div
       class="app-update-header"
       [matColumnDef]="sortableField.Updates"
-      [mat-sort-header]="hasUpdates ? sortableField.Updates : null"
+      [mat-sort-header]="hasUpdates ? sortableField.Updates : ''"
       [disabled]="!hasUpdates"
     >
       <span>{{ 'Updates' | translate }}</span>

@@ -38,7 +38,7 @@ const maxPct = 80;
   ],
 })
 export class PoolUsageGaugeComponent implements OnInit {
-  readonly pool = input.required<Pool>();
+  readonly pool = input<Pool>();
   readonly size = input<number>(150);
 
   protected chartLowCapacityColor: string;
@@ -47,7 +47,6 @@ export class PoolUsageGaugeComponent implements OnInit {
 
   protected isDatasetLoading = computed(() => !this.rootDataset());
   protected isDisksLoading = computed(() => !this.disks());
-  protected isPoolLoading = computed(() => !this.pool());
 
   protected disks = toSignal(toObservable(this.pool).pipe(
     filter(Boolean),

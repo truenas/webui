@@ -1,7 +1,7 @@
 <div class="item">
   <h2 class="value">
-    @if (!isPoolLoading()) {
-      {{ pool().status }}
+    @if (pool(); as loadedPool) {
+      {{ loadedPool.status }}
     } @else {
       <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
     }

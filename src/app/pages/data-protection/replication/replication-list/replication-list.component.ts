@@ -331,7 +331,7 @@ export class ReplicationListComponent implements OnInit {
       });
   }
 
-  private updateRowStateAndJob(row: ReplicationTask, state: JobState, job: Job): void {
+  private updateRowStateAndJob(row: ReplicationTask, state: JobState, job: Job | undefined): void {
     this.dataProvider.setRows(this.replicationTasks.map((task) => {
       if (task.id === row.id) {
         return {

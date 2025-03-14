@@ -5,7 +5,7 @@
 
 <div class="tree-wrapper" [ixUiSearch]="searchableElements.elements.bootStatus">
   <div class="tree-inner">
-    @if (poolInstance) {
+    @if (poolInstance && poolInstance.scan) {
       <mat-accordion>
         <mat-expansion-panel class="mat-elevation-z0">
           <mat-expansion-panel-header>

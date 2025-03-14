@@ -110,6 +110,9 @@ export class AppUpgradeDialogComponent {
           this.errorHandler.withErrorHandler(),
           untilDestroyed(this),
         ).subscribe((summary: AppUpgradeSummary) => {
+          if (!this.selectedVersion) {
+            return;
+          }
           this.selectedVersion.changelog = summary.changelog;
           this.selectedVersion.fetched = true;
         });

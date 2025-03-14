@@ -8,7 +8,7 @@ import { MAT_DIALOG_DATA, MatDialogRef, MatDialogClose } from '@angular/material
 import { MatDivider } from '@angular/material/divider';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { combineLatest, map } from 'rxjs';
+import { combineLatest, filter, map } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
@@ -68,7 +68,7 @@ export class ManualDiskSelectionComponent implements OnInit {
 
   isSaveDisabled$ = combineLatest([
     this.manualDiskSelectionStore.vdevs$,
-    this.manualDiskSelectionStore.layout$,
+    this.manualDiskSelectionStore.layout$.pipe(filter((value) => !!value)),
   ]).pipe(
     map(([vdevs, layout]) => {
       let vdevError = false;

@@ -137,7 +137,7 @@ export class SourceSectionComponent implements OnChanges {
       schema_or_regex: replication.name_regex ? SnapshotNamingOption.NameRegex : SnapshotNamingOption.NamingSchema,
     });
 
-    if (this.replication().restrict_schedule) {
+    if (this.replication()?.restrict_schedule) {
       this.form.patchValue({
         restrict_schedule_picker: replication.restrict_schedule
           ? scheduleToCrontab(replication.restrict_schedule)

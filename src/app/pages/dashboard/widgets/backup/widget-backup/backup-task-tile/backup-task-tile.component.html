@@ -5,7 +5,7 @@
         <span class="title">{{ tile.title | translate }}</span>
         @if (hasSendTasks() && !tile.totalSend) {
           <div class="backup-actions">
-            <ng-template *ngTemplateOutlet="backupActions()"></ng-template>
+            <ng-template *ngTemplateOutlet="backupActions() || null"></ng-template>
           </div>
         }
       </ul>

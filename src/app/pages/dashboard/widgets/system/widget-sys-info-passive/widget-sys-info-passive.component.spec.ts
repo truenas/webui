@@ -165,7 +165,7 @@ describe('WidgetSysInfoPassiveComponent', () => {
     });
 
     it('shows hostname near product image when system serial is present', () => {
-      expect(spectator.query('.hostname').textContent.trim()).toBe('test-hostname-b');
+      expect(spectator.query('.hostname')!.textContent!.trim()).toBe('test-hostname-b');
     });
   });
 

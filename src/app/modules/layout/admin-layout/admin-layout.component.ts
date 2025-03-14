@@ -109,7 +109,12 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   get productTypeText(): string {
-    return productTypeLabels.get(this.productType());
+    const productType = this.productType();
+    if (!productType) {
+      return '';
+    }
+
+    return productTypeLabels.get(productType) || productType;
   }
 
   constructor(

@@ -135,12 +135,14 @@ export class CsrAddComponent {
         step.form.patchValue(otherFields);
       });
 
-    this.constraints().setFromProfile(extensions);
+    this.constraints()?.setFromProfile(extensions);
   }
 
   updateSummary(): void {
     const stepsWithSummary = this.isImport ? this.getImportCsrSteps() : this.getNewCsrSteps();
-    this.summary = stepsWithSummary.map((step) => step.getSummary());
+    this.summary = stepsWithSummary
+      .map((step) => step?.getSummary())
+      .filter((summary) => !!summary);
   }
 
   onSubmit(): void {

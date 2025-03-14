@@ -121,9 +121,9 @@ export class AppBulkUpgradeComponent {
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (summary) => {
-          const availableOptions = summary.available_versions_for_upgrade.map((item) => {
+          const availableOptions = summary.available_versions_for_upgrade?.map((item) => {
             return { value: item.version, label: item.version } as Option;
-          });
+          }) || [];
           this.upgradeSummaryMap.set(name, summary);
           this.optionsMap.set(name, of(availableOptions));
           this.form.patchValue({

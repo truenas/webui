@@ -129,7 +129,7 @@ export class WidgetInterfaceComponent implements WidgetComponent<WidgetInterface
       const [update] = response;
       return (update.data as number[][]).map((row) => row.slice(1).map((value) => value * kb));
     }),
-  ));
+  ), { initialValue: [] });
 
   protected cachedNetworkStats = signal<number[][]>([]);
   protected networkStats = computed(() => {

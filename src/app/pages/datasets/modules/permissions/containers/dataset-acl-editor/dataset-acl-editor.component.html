@@ -71,11 +71,11 @@
           <div class="controls-container">
             <div class="controls">
               <ix-acl-editor-save-controls
-                [canBeSaved]="acesWithError.length === 0 && !!acl.acl.length && ownerFormGroup.valid"
+                [canBeSaved]="acesWithError.length === 0 && !!acl?.acl.length && ownerFormGroup.valid"
                 [ownerValues]="ownerFormGroup.getRawValue()"
               ></ix-acl-editor-save-controls>
               <div class="control-buttons">
-                @if (acl.trivial) {
+                @if (acl?.trivial) {
                   <a
                     mat-button
                     class="action"
@@ -122,7 +122,7 @@
           </div>
         </div>
         <div class="column-right">
-          @if (acl.acl[selectedAceIndex]; as selectedAce) {
+          @if (acl?.acl[selectedAceIndex]; as selectedAce) {
             @if (isNfsAcl) {
               <ix-edit-nfs-ace
                 [ace]="selectedAce | cast"

@@ -203,6 +203,10 @@ export class VmwareSnapshotFormComponent implements OnInit {
     const datastoreObj = this.datastoreList.find((datastore) => datastore.name === values.datastore);
     const fileSystemObj = this.filesystemList.find((filesystem) => filesystem.name === values.filesystem);
 
+    if (!datastoreObj || !fileSystemObj) {
+      throw new Error('Datastore or filesystem not found');
+    }
+
     (
       datastoreObj.filesystems[0] !== values.filesystem
         ? this.dialogService.confirm({
