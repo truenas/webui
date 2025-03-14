@@ -69,8 +69,8 @@ import { ReplicationService } from 'app/services/replication.service';
   ],
 })
 export class ReplicationWizardComponent {
-  protected whatAndWhere = viewChild(ReplicationWhatAndWhereComponent);
-  protected when = viewChild(ReplicationWhenComponent);
+  protected whatAndWhere = viewChild.required(ReplicationWhatAndWhereComponent);
+  protected when = viewChild.required(ReplicationWhenComponent);
 
   protected readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
 

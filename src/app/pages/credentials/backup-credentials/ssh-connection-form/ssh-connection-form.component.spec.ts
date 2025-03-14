@@ -66,7 +66,7 @@ describe('SshConnectionFormComponent', () => {
         getData: getNoData,
         swap: jest.fn(),
         requireConfirmationWhen: jest.fn(),
-      } as SlideInRef<KeychainSshCredentials, unknown>),
+      } as SlideInRef<KeychainSshCredentials | undefined, unknown>),
     ],
   });
 

@@ -148,12 +148,14 @@ export class CertificateAuthorityAddComponent implements AfterViewInit {
         step.form.patchValue(otherFields);
       });
 
-    this.constraints().setFromProfile(extensions);
+    this.constraints()?.setFromProfile(extensions);
   }
 
   updateSummary(): void {
     const stepsWithSummary = this.isImport ? this.getImportCaSteps() : this.getNewCaSteps();
-    this.summary = stepsWithSummary.map((step) => step.getSummary());
+    this.summary = stepsWithSummary
+      .map((step) => step?.getSummary())
+      .filter((summary) => !!summary);
   }
 
   onSubmit(): void {
@@ -188,7 +190,7 @@ export class CertificateAuthorityAddComponent implements AfterViewInit {
   }
 
   private setDefaultConstraints(): void {
-    this.constraints().form.patchValue({
+    this.constraints()?.form.patchValue({
       BasicConstraints: {
         enabled: true,
         BasicConstraints: [BasicConstraint.Ca],
