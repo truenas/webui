@@ -30,7 +30,7 @@ import { UserAuthConfig } from 'app/pages/credentials/users/new-user-form/interf
 export class AuthSectionComponent implements OnInit {
   sshAccessEnabled = input.required<boolean>();
   smbAccessEnabled = input.required<boolean>();
-  authConfig = output<UserAuthConfig>();
+  authConfigUpdate = output<UserAuthConfig>();
   protected fakeTooltip = '';
   form = this.fb.group({
     password: [''],
@@ -54,7 +54,7 @@ export class AuthSectionComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe({
       next: () => {
-        this.authConfig.emit({
+        this.authConfigUpdate.emit({
           allowSshLoginWithPassword: this.form.value.allow_ssh_login_with_password,
           disablePassword: this.form.value.disable_password,
           password: this.form.value.password,

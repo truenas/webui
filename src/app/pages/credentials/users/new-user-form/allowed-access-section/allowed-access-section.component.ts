@@ -30,7 +30,7 @@ import { AllowAccessConfig } from 'app/pages/credentials/users/new-user-form/int
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AllowedAccessSectionComponent {
-  allowAccessConfig = output<AllowAccessConfig>();
+  allowAccessConfigUpdate = output<AllowAccessConfig>();
   protected readonly fakeTooltip = '';
 
   protected readonly roles$ = of([
@@ -65,7 +65,7 @@ export class AllowedAccessSectionComponent {
     });
     this.form.valueChanges.pipe(untilDestroyed(this)).subscribe({
       next: () => {
-        this.allowAccessConfig.emit({
+        this.allowAccessConfigUpdate.emit({
           smbAccess: this.form.controls.smb_access.value,
           truenasAccess: {
             enabled: this.form.controls.truenas_access.value,
