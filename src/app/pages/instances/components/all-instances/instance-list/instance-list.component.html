@@ -50,9 +50,9 @@
       [instance]="instance"
       [class.selected]="selectedInstance()?.id === instance.id"
       [selected]="selection.isSelected(instance.id)"
-      (click)="navigateToDetails(instance)"
+      (click)="navigateToDetails(instance.id)"
       (selectionChange)="selection.toggle(instance.id)"
-      (keydown.enter)="navigateToDetails(instance)"
+      (keydown.enter)="navigateToDetails(instance.id)"
     ></ix-instance-row>
   }
 </div>

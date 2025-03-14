@@ -43,7 +43,7 @@ describe('VirtualizationDevicesStore', () => {
   });
 
   it('should load devices when loadDevices is called', () => {
-    spectator.service.selectInstance('instance1');
+    spectator.service.selectInstanceById('instance1');
     spectator.service.loadDevices();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalled();
@@ -57,7 +57,7 @@ describe('VirtualizationDevicesStore', () => {
   it('selectInstance - selects an instance and loads its devices', () => {
     jest.spyOn(spectator.service, 'loadDevices');
 
-    spectator.service.selectInstance('instance1');
+    spectator.service.selectInstanceById('instance1');
     spectator.service.loadDevices();
 
     expect(spectator.service.selectedInstance()!.id).toEqual(instances[0].id);
@@ -65,7 +65,7 @@ describe('VirtualizationDevicesStore', () => {
   });
 
   it('loadDevices – loads a list of devices for the selected instance', () => {
-    spectator.service.selectInstance('instance2');
+    spectator.service.selectInstanceById('instance2');
     spectator.service.loadDevices();
 
     expect(spectator.service.devices()).toBe(devices);
@@ -74,7 +74,7 @@ describe('VirtualizationDevicesStore', () => {
   });
 
   it('deviceDeleted – removes a device from list of devices for selected instance', () => {
-    spectator.service.selectInstance('instance1');
+    spectator.service.selectInstanceById('instance1');
     spectator.service.deviceDeleted('device1');
 
     expect(spectator.service.devices()).toEqual([devices[1]]);

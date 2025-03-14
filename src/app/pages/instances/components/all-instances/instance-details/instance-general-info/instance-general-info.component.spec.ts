@@ -160,6 +160,6 @@ describe('InstanceGeneralInfoComponent', () => {
     expect(spectator.inject(VirtualizationInstancesStore).instanceUpdated)
       .toHaveBeenCalledWith({ id: 'updated_instance' });
     expect(spectator.inject(VirtualizationDevicesStore).selectInstance)
-      .toHaveBeenCalledWith('updated_instance');
+      .toHaveBeenCalledWith({ id: 'updated_instance' });
   });
 });

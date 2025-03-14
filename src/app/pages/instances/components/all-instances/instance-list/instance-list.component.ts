@@ -106,17 +106,14 @@ export class InstanceListComponent {
   ) {
     effect(() => {
       const instanceId = this.instanceId();
-      if (instanceId && this.selectedInstance()?.id !== instanceId) {
-        this.deviceStore.selectInstance(instanceId);
-        if (this.selectedInstance() === null) {
-          this.router.navigate(['/instances']);
-        }
+      if (instanceId) {
+        this.deviceStore.selectInstanceById(instanceId);
       }
+
       const instances = this.instances();
-      if (instances?.length > 0) {
-        if (!instanceId) {
-          this.navigateToDetails(instances[0]);
-        }
+      if (!this.isLoading() && instances?.length > 0) {
+        const nextInstanceId = instanceId || instances[0].id;
+        this.navigateToDetails(nextInstanceId);
 
         setTimeout(() => {
           this.handlePendingGlobalSearchElement();
@@ -137,9 +134,15 @@ export class InstanceListComponent {
     }
   }
 
-  navigateToDetails(instance: VirtualizationInstance): void {
-    this.deviceStore.selectInstance(instance.id);
-    this.router.navigate(['/instances', 'view', instance.id]);
+  navigateToDetails(instanceId: string): void {
+    const nextInstance = this.instances()?.find((instance) => instance.id === instanceId);
+    if (!nextInstance) {
+      this.router.navigate(['/instances']);
+      return;
+    }
+
+    this.deviceStore.selectInstance(nextInstance);
+    this.router.navigate(['/instances', 'view', nextInstance.id]);
 
     if (this.isMobileView()) {
       this.toggleShowMobileDetails.emit(true);
