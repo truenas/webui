@@ -12,7 +12,7 @@ import {
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
-import { VirtualizationStatus, virtualizationStatusLabels, virtualizationTypeLabels } from 'app/enums/virtualization.enum';
+import { VirtualizationStatus, virtualizationTypeLabels } from 'app/enums/virtualization.enum';
 import { VirtualizationInstance, VirtualizationStopParams } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -20,6 +20,7 @@ import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { InstanceStatusCellComponent } from 'app/pages/instances/components/all-instances/instance-list/instance-row/instance-status-cell/instance-status-cell.component';
 import {
   StopOptionsDialogComponent, StopOptionsOperation,
 } from 'app/pages/instances/components/all-instances/instance-list/stop-options-dialog/stop-options-dialog.component';
@@ -41,6 +42,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
     MatCheckboxModule,
     RequiresRolesDirective,
     MapValuePipe,
+    InstanceStatusCellComponent,
   ],
 })
 export class InstanceRowComponent {
@@ -52,7 +54,6 @@ export class InstanceRowComponent {
   readonly selectionChange = output();
 
   protected readonly typeLabels = virtualizationTypeLabels;
-  protected readonly statusLabels = virtualizationStatusLabels;
 
   constructor(
     private dialog: DialogService,
