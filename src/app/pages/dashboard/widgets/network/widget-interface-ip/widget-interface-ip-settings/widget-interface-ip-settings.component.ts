@@ -59,8 +59,8 @@ export class WidgetInterfaceIpSettingsComponent implements WidgetSettingsCompone
   }
 
   ngOnInit(): void {
-    this.setCurrentSettings();
     this.setupSettingsUpdate();
+    this.setCurrentSettings();
   }
 
   private setCurrentSettings(): void {
