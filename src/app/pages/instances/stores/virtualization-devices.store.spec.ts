@@ -26,6 +26,7 @@ describe('VirtualizationDevicesStore', () => {
       ]),
       mockProvider(VirtualizationInstancesStore, {
         instances: jest.fn(() => instances),
+        selectedInstance: jest.fn(() => instances[0]),
       }),
     ],
   });
@@ -38,43 +39,29 @@ describe('VirtualizationDevicesStore', () => {
     expect(spectator.service.stateAsSignal()).toEqual({
       isLoading: false,
       devices: [],
-      selectedInstance: null,
     });
   });
 
   it('should load devices when loadDevices is called', () => {
-    spectator.service.selectInstance('instance1');
     spectator.service.loadDevices();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalled();
     expect(spectator.service.stateAsSignal()).toEqual({
       devices,
       isLoading: false,
-      selectedInstance: instances[0],
     });
   });
 
-  it('selectInstance - selects an instance and loads its devices', () => {
-    jest.spyOn(spectator.service, 'loadDevices');
-
-    spectator.service.selectInstance('instance1');
-    spectator.service.loadDevices();
-
-    expect(spectator.service.selectedInstance()!.id).toEqual(instances[0].id);
-    expect(spectator.service.loadDevices).toHaveBeenCalled();
-  });
-
   it('loadDevices – loads a list of devices for the selected instance', () => {
-    spectator.service.selectInstance('instance2');
     spectator.service.loadDevices();
 
     expect(spectator.service.devices()).toBe(devices);
     expect(spectator.inject(ApiService).call)
-      .toHaveBeenCalledWith('virt.instance.device_list', ['instance2']);
+      .toHaveBeenCalledWith('virt.instance.device_list', ['instance1']);
   });
 
   it('deviceDeleted – removes a device from list of devices for selected instance', () => {
-    spectator.service.selectInstance('instance1');
+    spectator.service.loadDevices();
     spectator.service.deviceDeleted('device1');
 
     expect(spectator.service.devices()).toEqual([devices[1]]);
@@ -83,10 +70,6 @@ describe('VirtualizationDevicesStore', () => {
   describe('selectors', () => {
     it('isLoading - returns isLoading part of the state', () => {
       expect(spectator.service.isLoading()).toBeFalsy();
-    });
-
-    it('selectedInstance - returns selected instance from the state', () => {
-      expect(spectator.service.selectedInstance()).toBeNull();
     });
 
     it('devices - returns flag showing whether devices are being loaded', () => {
