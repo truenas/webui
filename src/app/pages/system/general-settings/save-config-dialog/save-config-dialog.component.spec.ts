@@ -56,7 +56,10 @@ describe('SaveConfigDialogComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('saves configuration when save dialog is submitted', async () => {
+  it('saves configuration when save dialog is submitted is submitted without Export checkbox', async () => {
+    const checkbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Export Password Secret Seed' }));
+    await checkbox.setValue(false);
+
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
@@ -70,9 +73,6 @@ describe('SaveConfigDialogComponent', () => {
   });
 
   it('saves configuration together with password seed when dialog is submitted with Export checkbox', async () => {
-    const checkbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Export Password Secret Seed' }));
-    await checkbox.setValue(true);
-
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
