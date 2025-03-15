@@ -18,6 +18,7 @@ import {
   DeviceActionsMenuComponent,
 } from 'app/pages/instances/components/common/device-actions-menu/device-actions-menu.component';
 import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
+import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 
 @UntilDestroy()
 @Component({
@@ -44,6 +45,7 @@ export class InstanceProxiesComponent {
   constructor(
     private slideIn: SlideIn,
     private deviceStore: VirtualizationDevicesStore,
+    private instancesStore: VirtualizationInstancesStore,
   ) {}
 
   protected readonly proxies = computed(() => {
@@ -61,7 +63,7 @@ export class InstanceProxiesComponent {
   }
 
   private openProxyForm(proxy?: VirtualizationProxy): void {
-    const instanceId = this.deviceStore.selectedInstance()?.id;
+    const instanceId = this.instancesStore.selectedInstance()?.id;
     if (!instanceId) {
       return;
     }

@@ -34,6 +34,8 @@ describe('VirtualizationInstancesStore', () => {
   it('should have initial state', () => {
     expect(spectator.service.stateAsSignal()).toEqual({
       isLoading: true,
+      selectedInstance: undefined,
+      selectedInstanceId: null,
       instances: undefined,
     });
   });
@@ -44,7 +46,38 @@ describe('VirtualizationInstancesStore', () => {
     expect(spectator.inject(ApiService).call).toHaveBeenCalled();
     expect(spectator.service.stateAsSignal()).toEqual({
       instances,
+      selectedInstance: undefined,
+      selectedInstanceId: null,
       isLoading: false,
+    });
+  });
+
+  it('should select instance when method is called', () => {
+    spectator.service.initialize();
+    spectator.service.selectInstance('instance1');
+    expect(spectator.service.stateAsSignal()).toEqual({
+      instances,
+      isLoading: false,
+      selectedInstance: instances[0],
+      selectedInstanceId: 'instance1',
+    });
+  });
+
+  it('resets selected instance', () => {
+    spectator.service.initialize();
+    spectator.service.selectInstance('instance1');
+    expect(spectator.service.stateAsSignal()).toEqual({
+      instances,
+      isLoading: false,
+      selectedInstance: instances[0],
+      selectedInstanceId: 'instance1',
+    });
+    spectator.service.resetInstance();
+    expect(spectator.service.stateAsSignal()).toEqual({
+      instances,
+      isLoading: false,
+      selectedInstance: null,
+      selectedInstanceId: 'instance1',
     });
   });
 

@@ -4,6 +4,7 @@ import {
 import { Router, NavigationStart } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { injectParams } from 'ngxtension/inject-params';
 import { filter } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -17,7 +18,6 @@ import { allInstancesElements } from 'app/pages/instances/components/all-instanc
 import { InstanceDetailsComponent } from 'app/pages/instances/components/all-instances/instance-details/instance-details.component';
 import { InstanceListComponent } from 'app/pages/instances/components/all-instances/instance-list/instance-list.component';
 import { VirtualizationConfigStore } from 'app/pages/instances/stores/virtualization-config.store';
-import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 
 @UntilDestroy()
@@ -37,14 +37,14 @@ import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtual
   ],
 })
 export class AllInstancesComponent implements OnInit {
-  readonly selectedInstance = this.deviceStore.selectedInstance;
+  readonly selectedInstance = this.instancesStore.selectedInstance;
+  readonly instanceId = injectParams('id');
 
   protected readonly searchableElements = allInstancesElements;
 
   constructor(
     private configStore: VirtualizationConfigStore,
     private instancesStore: VirtualizationInstancesStore,
-    private deviceStore: VirtualizationDevicesStore,
     private router: Router,
     private dialogService: DialogService,
     @Inject(WINDOW) private window: Window,
@@ -53,7 +53,7 @@ export class AllInstancesComponent implements OnInit {
       .pipe(filter((event) => event instanceof NavigationStart), untilDestroyed(this))
       .subscribe(() => {
         if (this.router.getCurrentNavigation()?.extras?.state?.hideMobileDetails) {
-          this.deviceStore.resetInstance();
+          this.instancesStore.resetInstance();
         }
       });
   }
