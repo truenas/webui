@@ -43,7 +43,7 @@ import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares
 import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
 import { isRootShare } from 'app/pages/sharing/utils/smb.utils';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectService } from 'app/store/services/services.selectors';
 
@@ -180,8 +180,8 @@ export class SmbCardComponent implements OnInit {
       next: () => {
         this.dataProvider.load();
       },
-      error: (err: unknown) => {
-        this.dialogService.error(this.errorHandler.parseError(err));
+      error: (error: unknown) => {
+        this.errorHandler.showErrorModal(error);
       },
     });
   }
@@ -204,7 +204,7 @@ export class SmbCardComponent implements OnInit {
             });
           },
           error: (error: unknown) => {
-            this.dialogService.error(this.errorHandler.parseError(error));
+            this.errorHandler.showErrorModal(error);
           },
         });
     }
@@ -241,7 +241,7 @@ export class SmbCardComponent implements OnInit {
       },
       error: (error: unknown) => {
         this.dataProvider.load();
-        this.dialogService.error(this.errorHandler.parseError(error));
+        this.errorHandler.showErrorModal(error);
       },
     });
   }

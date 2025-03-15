@@ -14,7 +14,7 @@ import { Role } from 'app/enums/role.enum';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 
@@ -49,7 +49,7 @@ export class CreateStorjBucketDialogComponent {
     private formBuilder: FormBuilder,
     private dialogRef: MatDialogRef<CreateStorjBucketDialogComponent>,
     private api: ApiService,
-    private appLoader: AppLoaderService,
+    private loader: LoaderService,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: { credentialsId: number },
     private formErrorHandler: FormErrorHandlerService,
   ) {}
@@ -57,7 +57,7 @@ export class CreateStorjBucketDialogComponent {
   onSubmit(): void {
     this.api.call('cloudsync.create_bucket', [this.data.credentialsId, this.form.controls.bucket.value])
       .pipe(
-        this.appLoader.withLoader(),
+        this.loader.withLoader(),
         untilDestroyed(this),
       )
       .subscribe({

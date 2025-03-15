@@ -9,13 +9,12 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { JobState } from 'app/enums/job-state.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DownloadService } from 'app/services/download.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -40,10 +39,9 @@ export class ExportDatasetKeyDialogComponent implements OnInit {
 
   constructor(
     private api: ApiService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private errorHandler: ErrorHandlerService,
     private dialogRef: MatDialogRef<ExportDatasetKeyDialogComponent>,
-    private dialogService: DialogService,
     private download: DownloadService,
     private cdr: ChangeDetectorRef,
     @Inject(MAT_DIALOG_DATA) public dataset: Dataset,
@@ -64,7 +62,7 @@ export class ExportDatasetKeyDialogComponent implements OnInit {
     })
       .pipe(
         this.loader.withLoader(),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => {
@@ -78,7 +76,7 @@ export class ExportDatasetKeyDialogComponent implements OnInit {
       .subscribe({
         next: (job) => {
           if (job.state === JobState.Failed) {
-            this.dialogService.error(this.errorHandler.parseError(job));
+            this.errorHandler.showErrorModal(job);
           } else if (job.state !== JobState.Success) {
             return;
           }
@@ -87,7 +85,7 @@ export class ExportDatasetKeyDialogComponent implements OnInit {
         },
         error: (error: unknown) => {
           this.dialogRef.close();
-          this.dialogService.error(this.errorHandler.parseError(error));
+          this.errorHandler.showErrorModal(error);
         },
       });
   }

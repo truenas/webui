@@ -31,7 +31,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { cloudCredentialsCardElements } from 'app/pages/credentials/backup-credentials/cloud-credentials-card/cloud-credentials-card.elements';
 import { CloudCredentialFormInput, CloudCredentialsFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/cloud-credentials-form.component';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -128,7 +128,7 @@ export class CloudCredentialsCardComponent implements OnInit {
     this.cloudCredentialService
       .getProviders()
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe((providers) => {
@@ -179,7 +179,7 @@ export class CloudCredentialsCardComponent implements OnInit {
       .pipe(
         filter(Boolean),
         switchMap(() => this.api.call('cloudsync.credentials.delete', [credential.id])),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => {

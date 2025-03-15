@@ -13,14 +13,14 @@ import { VirtualizationDeviceType, VirtualizationStatus } from 'app/enums/virtua
 import { VirtualizationDevice } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { getDeviceDescription } from 'app/pages/instances/components/common/utils/get-device-description.utils';
 import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -71,7 +71,7 @@ export class DeviceActionsMenuComponent {
     private snackbar: SnackbarService,
     private deviceStore: VirtualizationDevicesStore,
     private instancesStore: VirtualizationInstancesStore,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
   ) {}
 
   protected deletePressed(): void {
@@ -103,7 +103,7 @@ export class DeviceActionsMenuComponent {
     return this.api.call('virt.instance.device_delete', [selectedInstanceId, this.device().name])
       .pipe(
         this.loader.withLoader(),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         tap(() => {
           this.snackbar.success(this.translate.instant('Device deleted'));
           this.deviceStore.deviceDeleted(this.device().name);

@@ -31,7 +31,7 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 interface DnsAuthenticatorList {
   key: DnsAuthenticatorType;
@@ -121,7 +121,7 @@ export class AcmednsFormComponent implements OnInit {
     this.isLoading = true;
     this.getAuthenticatorSchemas()
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe((schemas: AuthenticatorSchema[]) => {

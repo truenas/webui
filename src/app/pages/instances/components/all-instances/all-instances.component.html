@@ -4,9 +4,11 @@
 
 <ix-master-detail-view
   #masterDetailView="masterDetailViewContext"
+  [showDetails]="masterList.isSelectedInstanceVisible()"
   [selectedItem]="selectedInstance()"
 >
   <ix-instance-list
+    #masterList
     master
     [ixUiSearch]="searchableElements.elements.list"
     [isMobileView]="masterDetailView.isMobileView()"

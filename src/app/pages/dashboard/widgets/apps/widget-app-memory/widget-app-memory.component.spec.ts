@@ -16,7 +16,7 @@ import { AppCardInfoComponent } from 'app/pages/dashboard/widgets/apps/common/ap
 import { AppControlsComponent } from 'app/pages/dashboard/widgets/apps/common/app-controls/app-controls.component';
 import { AppMemoryInfoComponent } from 'app/pages/dashboard/widgets/apps/common/app-memory-info/app-memory-info.component';
 import { WidgetAppMemoryComponent } from 'app/pages/dashboard/widgets/apps/widget-app-memory/widget-app-memory.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { RedirectService } from 'app/services/redirect.service';
 
 describe('WidgetAppMemoryComponent', () => {

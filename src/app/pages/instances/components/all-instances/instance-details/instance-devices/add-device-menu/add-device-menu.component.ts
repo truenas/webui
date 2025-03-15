@@ -23,7 +23,7 @@ import {
   VirtualizationTpm,
   VirtualizationUsb,
 } from 'app/interfaces/virtualization.interface';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -32,7 +32,7 @@ import {
 } from 'app/pages/instances/components/common/pci-passthough-dialog/pci-passthrough-dialog.component';
 import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -101,7 +101,7 @@ export class AddDeviceMenuComponent {
   constructor(
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
     private deviceStore: VirtualizationDevicesStore,
@@ -164,7 +164,7 @@ export class AddDeviceMenuComponent {
     this.api.call('virt.instance.device_add', [instanceId, payload])
       .pipe(
         this.loader.withLoader(),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => {

@@ -49,7 +49,7 @@ export class InstanceListComponent {
   readonly isMobileView = input<boolean>();
   readonly toggleShowMobileDetails = output<boolean>();
 
-  protected readonly searchQuery = signal<string>('');
+  readonly searchQuery = signal<string>('');
   protected readonly window = inject<Window>(WINDOW);
   protected readonly selection = new SelectionModel<string>(true, []);
 
@@ -68,6 +68,10 @@ export class InstanceListComponent {
       })
       .filter((instance) => !!instance);
   }
+
+  readonly isSelectedInstanceVisible = computed(() => {
+    return this.filteredInstances()?.some((instance) => instance.id === this.selectedInstance()?.id);
+  });
 
   protected readonly filteredInstances = computed(() => {
     return (this.instances() || []).filter((instance) => {

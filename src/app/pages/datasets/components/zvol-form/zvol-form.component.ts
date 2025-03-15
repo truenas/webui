@@ -40,8 +40,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { getDatasetLabel } from 'app/pages/datasets/utils/dataset.utils';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { FilesystemService } from 'app/services/filesystem.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 interface ZvolFormData {
   name?: string;
@@ -229,7 +228,6 @@ export class ZvolFormComponent implements OnInit {
     private formErrorHandler: FormErrorHandlerService,
     private errorHandler: ErrorHandlerService,
     protected snackbar: SnackbarService,
-    private filesystem: FilesystemService,
     public slideInRef: SlideInRef<{ isNew: boolean; parentId: string }, Dataset>,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
@@ -292,7 +290,7 @@ export class ZvolFormComponent implements OnInit {
           parentDatasetId = parentDatasetId.join('/');
 
           this.api.call('pool.dataset.query', [[['id', '=', parentDatasetId]]]).pipe(
-            this.errorHandler.catchError(),
+            this.errorHandler.withErrorHandler(),
             untilDestroyed(this),
           ).subscribe({
             next: (parentDataset) => {
@@ -308,7 +306,7 @@ export class ZvolFormComponent implements OnInit {
               this.cdr.markForCheck();
             },
             error: (error: unknown): void => {
-              this.dialogService.error(this.errorHandler.parseError(error));
+              this.errorHandler.showErrorModal(error);
             },
           });
         }
@@ -316,7 +314,7 @@ export class ZvolFormComponent implements OnInit {
         this.cdr.markForCheck();
       },
       error: (error: unknown): void => {
-        this.dialogService.error(this.errorHandler.parseError(error));
+        this.errorHandler.showErrorModal(error);
       },
     });
   }
@@ -709,7 +707,7 @@ export class ZvolFormComponent implements OnInit {
         }
       },
       error: (error: unknown): void => {
-        this.dialogService.error(this.errorHandler.parseError(error));
+        this.errorHandler.showErrorModal(error);
         this.isLoading = false;
         this.cdr.markForCheck();
       },
@@ -727,7 +725,7 @@ export class ZvolFormComponent implements OnInit {
   private loadRecommendedBlocksize(): void {
     const root = this.parentId.split('/')[0];
     this.api.call('pool.dataset.recommended_zvol_blocksize', [root]).pipe(
-      this.errorHandler.catchError(),
+      this.errorHandler.withErrorHandler(),
       untilDestroyed(this),
     ).subscribe((recommendedSize) => {
       this.form.controls.volblocksize.setValue(recommendedSize);

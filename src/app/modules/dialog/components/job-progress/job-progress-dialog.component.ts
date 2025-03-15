@@ -17,7 +17,7 @@ import { Job, JobProgress } from 'app/interfaces/job.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export interface JobProgressDialogConfig<Result> {
   job$: Observable<Job<Result>>;
@@ -200,7 +200,7 @@ export class JobProgressDialogComponent<T> implements OnInit, AfterViewChecked {
 
   abortJob(): void {
     this.api.call('core.job_abort', [this.job.id]).pipe(
-      this.errorHandler.catchError(),
+      this.errorHandler.withErrorHandler(),
       untilDestroyed(this),
     )
       .subscribe(() => {

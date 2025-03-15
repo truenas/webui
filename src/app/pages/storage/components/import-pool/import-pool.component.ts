@@ -23,13 +23,13 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -80,7 +80,7 @@ export class ImportPoolComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private router: Router,
     private snackbar: SnackbarService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     public slideInRef: SlideInRef<undefined, boolean>,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
@@ -113,7 +113,7 @@ export class ImportPoolComponent implements OnInit {
         this.isLoading = false;
         this.cdr.markForCheck();
 
-        this.dialogService.error(this.errorHandler.parseError(error));
+        this.errorHandler.showErrorModal(error);
       },
     });
   }
@@ -126,7 +126,7 @@ export class ImportPoolComponent implements OnInit {
       .afterClosed()
       .pipe(
         switchMap(() => this.checkIfUnlockNeeded()),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(([datasets, shouldTryUnlocking]) => {

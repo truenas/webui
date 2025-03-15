@@ -38,13 +38,8 @@
   }
 
   .app-logo,
-  .app-logo-text,
-  .app-logo-badge {
+  .app-logo-text {
     position: relative;
-  }
-
-  .app-logo-badge {
-    display: inline-flex;
   }
 
   .app-link {
@@ -64,12 +59,6 @@
     .app-logo-text {
       height: auto;
       width: 81px;
-    }
-
-    .app-logo-badge {
-      height: auto;
-      left: 3px;
-      width: calc(81px - 3px);
     }
   }
 }
