@@ -31,6 +31,7 @@ import {
   PciPassthroughDialogComponent,
 } from 'app/pages/instances/components/common/pci-passthough-dialog/pci-passthrough-dialog.component';
 import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
+import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 @UntilDestroy()
@@ -84,7 +85,7 @@ export class AddDeviceMenuComponent {
   });
 
   protected isInstanceStopped = computed(() => {
-    return this.deviceStore.selectedInstance()?.status === VirtualizationStatus.Stopped;
+    return this.instancesStore.selectedInstance()?.status === VirtualizationStatus.Stopped;
   });
 
   protected readonly hasDevicesToAdd = computed(() => {
@@ -94,7 +95,7 @@ export class AddDeviceMenuComponent {
   });
 
   protected readonly isVm = computed(() => {
-    return this.deviceStore.selectedInstance()?.type === VirtualizationType.Vm;
+    return this.instancesStore.selectedInstance()?.type === VirtualizationType.Vm;
   });
 
   constructor(
@@ -104,6 +105,7 @@ export class AddDeviceMenuComponent {
     private snackbar: SnackbarService,
     private translate: TranslateService,
     private deviceStore: VirtualizationDevicesStore,
+    private instancesStore: VirtualizationInstancesStore,
     private matDialog: MatDialog,
   ) {}
 
@@ -154,7 +156,7 @@ export class AddDeviceMenuComponent {
   }
 
   private addDevice(payload: VirtualizationDevice): void {
-    const instanceId = this.deviceStore.selectedInstance()?.id;
+    const instanceId = this.instancesStore.selectedInstance()?.id;
     if (!instanceId) {
       return;
     }
