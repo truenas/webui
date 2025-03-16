@@ -52,6 +52,7 @@ describe('AllInstancesComponent', () => {
         initialize: jest.fn(),
       }),
       mockProvider(VirtualizationInstancesStore, {
+        selectedInstance: jest.fn(() => ({})),
         initialize: jest.fn(),
         instances: jest.fn(() => []),
         isLoading: jest.fn(() => false),
