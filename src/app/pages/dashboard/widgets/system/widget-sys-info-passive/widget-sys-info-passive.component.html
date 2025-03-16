@@ -20,7 +20,7 @@
         @if (systemInfo()?.system_serial && isIxHardware()) {
           <div class="hostname">
             @if (isLoaded()) {
-              <span [matTooltip]="systemInfo()?.hostname">
+              <span [matTooltip]="'Hostname: {hostname}' | translate: { hostname: systemInfo()?.hostname }">
                 {{ systemInfo()?.hostname }}
               </span>
             }
@@ -145,7 +145,7 @@
             <mat-list-item>
               <strong>{{ 'Hostname' | translate }}:</strong>
               @if (isLoaded()) {
-                <span [matTooltip]="systemInfo()?.hostname">
+                <span>
                   {{ systemInfo()?.hostname }}
                 </span>
               } @else {
