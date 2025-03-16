@@ -47,7 +47,6 @@ describe('WidgetAppMemoryComponent', () => {
     providers: [
       mockProvider(ErrorHandlerService),
       mockProvider(WidgetResourcesService, {
-        serverTime$: of(new Date()),
         getApp: () => of(app),
         getAppStats: () => of({
           cpu: 55,
