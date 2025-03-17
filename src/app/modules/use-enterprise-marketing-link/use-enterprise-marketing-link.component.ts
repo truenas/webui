@@ -18,7 +18,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class UseEnterpriseMarketingLinkComponent {
-  protected messages = [
+  messages = [
     this.translate.instant('Optimize Your Storage'),
     this.translate.instant('More Performance, More Protection'),
     this.translate.instant('Boost Performance & Support'),
