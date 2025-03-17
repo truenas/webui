@@ -37,3 +37,9 @@
   height: 62px;
   justify-content: end;
 }
+
+.extended-height div {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+}

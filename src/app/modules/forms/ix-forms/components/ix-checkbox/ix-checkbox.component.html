@@ -1,27 +1,30 @@
 <div [class.extended-height]="extendedHeight()">
-  <mat-checkbox
-    color="primary"
-    [checked]="value"
-    [required]="required()"
-    [disabled]="isDisabled"
-    [ixTest]="controlDirective.name"
-    [attr.aria-label]="label()"
-    (change)="onCheckboxChanged($event)"
-    (blur)="onTouch()"
-  >
-    {{ label() }}
-    @if (required()) {
-      <span class="required">*</span>
-    }
-  </mat-checkbox>
+  <div>
+    <mat-checkbox
+      color="primary"
+      [checked]="value"
+      [required]="required()"
+      [disabled]="isDisabled"
+      [ixTest]="controlDirective.name"
+      [attr.aria-label]="label()"
+      (change)="onCheckboxChanged($event)"
+      (blur)="onTouch()"
+    >
+      {{ label() }}
+      @if (required()) {
+        <span class="required">*</span>
+      }
+    </mat-checkbox>
 
-  @if (tooltip()) {
-    <ix-tooltip
-      class="tooltip"
-      [header]="label() || ''"
-      [message]="tooltip() || ''"
-    ></ix-tooltip>
-  }
+    @if (tooltip()) {
+      <ix-tooltip
+        class="tooltip"
+        [header]="label() || ''"
+        [message]="tooltip() || ''"
+      ></ix-tooltip>
+    }
+  </div>
+  
 
   @if (warning()) {
     <ix-warning [message]="warning() || ''"></ix-warning>

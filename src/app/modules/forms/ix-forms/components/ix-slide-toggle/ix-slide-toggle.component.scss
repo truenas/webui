@@ -4,7 +4,7 @@
   display: flex;
   flex-wrap: wrap;
   font-size: 12px;
-  margin: 12px 0;
+  margin: 13px 0;
   padding: 4px 0;
 
   mat-slide-toggle {
@@ -23,7 +23,7 @@
 .extended-height {
   display: flex;
   flex-direction: column;
-  height: 45px;
+  height: 43px;
   justify-content: end;
   margin: 10px 0;
 }
@@ -32,5 +32,4 @@
   align-items: end;
   display: flex;
   flex-direction: row;
-  justify-content: end;
 }
