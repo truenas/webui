@@ -45,7 +45,6 @@ import {
   IscsiTargetUpdate,
 } from 'app/interfaces/iscsi.interface';
 import { newOption } from 'app/interfaces/option.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { forbiddenValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import {
@@ -58,7 +57,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ProtocolOptionsWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/steps/protocol-options-wizard-step/protocol-options-wizard-step.component';
 import { TargetWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/steps/target-wizard-step/target-wizard-step.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FibreChannelService } from 'app/services/fibre-channel.service';
 import { IscsiService } from 'app/services/iscsi.service';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
@@ -253,7 +252,6 @@ export class IscsiWizardComponent implements OnInit {
     private fcService: FibreChannelService,
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
-    private dialogService: DialogService,
     private translate: TranslateService,
     private loader: LoaderService,
     private store$: Store<ServicesState>,
@@ -368,9 +366,9 @@ export class IscsiWizardComponent implements OnInit {
     }
   }
 
-  handleError(err: unknown): void {
+  handleError(error: unknown): void {
     this.toStop.set(true);
-    this.dialogService.error(this.errorHandler.parseError(err));
+    this.errorHandler.showErrorModal(error);
   }
 
   async onSubmit(): Promise<void> {

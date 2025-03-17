@@ -19,7 +19,7 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { DatasetService } from 'app/services/dataset-service/dataset.service';
+import { DatasetService } from 'app/services/dataset/dataset.service';
 
 @UntilDestroy()
 @Component({

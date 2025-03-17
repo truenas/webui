@@ -7,13 +7,12 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { AlertSlice } from 'app/modules/alerts/store/alert.selectors';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { passiveNodeReplaced } from 'app/store/system-info/system-info.actions';
 
@@ -40,7 +39,6 @@ export class FailoverComponent implements OnInit {
     private wsStatus: WebSocketStatusService,
     protected router: Router,
     protected loader: LoaderService,
-    protected dialogService: DialogService,
     protected matDialog: MatDialog,
     private location: Location,
     private store$: Store<AlertSlice>,
@@ -68,7 +66,7 @@ export class FailoverComponent implements OnInit {
     this.matDialog.closeAll();
     this.api.call('failover.become_passive').pipe(untilDestroyed(this)).subscribe({
       error: (error: unknown) => { // error on restart
-        this.dialogService.error(this.errorHandler.parseError(error))
+        this.errorHandler.showErrorModal(error)
           .pipe(untilDestroyed(this))
           .subscribe(() => {
             this.router.navigate(['/signin']);

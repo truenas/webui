@@ -19,7 +19,7 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -48,6 +48,7 @@ export class DockerRegistryFormComponent implements OnInit {
   protected existingDockerRegistry: DockerRegistry | undefined;
   protected isLoggedInToDockerHub = false;
   protected isFormLoading = false;
+  protected readonly dockerHubRegistry = dockerHubRegistry;
 
   protected registriesOptions$ = of([
     { label: this.translate.instant('Docker Hub'), value: dockerHubRegistry },
@@ -59,7 +60,10 @@ export class DockerRegistryFormComponent implements OnInit {
     name: ['', Validators.required],
     username: ['', Validators.required],
     password: ['', Validators.required],
-    uri: ['', Validators.pattern(this.urlValidationService.urlRegex)],
+    uri: ['', {
+      validators: Validators.pattern(this.urlValidationService.urlRegex),
+      updateOn: 'blur',
+    }],
   });
 
   get title(): string {

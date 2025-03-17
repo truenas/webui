@@ -1,4 +1,5 @@
 import { WebUiEnvironment } from 'environments/environment.interface';
+import { sentryPublicDsn } from 'environments/sentry-public-dns.const';
 import { MockEnclosureScenario } from 'app/core/testing/mock-enclosure/enums/mock-enclosure.enum';
 import { EnclosureModel } from 'app/enums/enclosure-model.enum';
 
@@ -8,7 +9,7 @@ export const environment: WebUiEnvironment = {
   buildYear: _BUILD_YEAR_,
   port: 4200,
   production: false,
-  sentryPublicDsn: 'https://7ac3e76fe2a94f77a58e1c38ea6b42d9@sentry.ixsystems.com/4',
+  sentryPublicDsn,
   mockConfig: {
     enabled: _MOCK_ENABLED_,
     controllerModel: _MOCK_CONTROLLER_,
