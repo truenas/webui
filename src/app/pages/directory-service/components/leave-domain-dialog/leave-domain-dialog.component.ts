@@ -9,14 +9,13 @@ import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextActiveDirectory } from 'app/helptext/directory-service/active-directory';
 import { LeaveActiveDirectory } from 'app/interfaces/active-directory-config.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -51,7 +50,6 @@ export class LeaveDomainDialogComponent {
     private loader: LoaderService,
     private api: ApiService,
     private dialogRef: MatDialogRef<LeaveDomainDialogComponent>,
-    private dialogService: DialogService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
   ) {}
@@ -74,7 +72,7 @@ export class LeaveDomainDialogComponent {
           this.dialogRef.close(true);
         },
         error: (error: unknown) => {
-          this.dialogService.error(this.errorHandler.parseError(error));
+          this.errorHandler.showErrorModal(error);
         },
       });
   }

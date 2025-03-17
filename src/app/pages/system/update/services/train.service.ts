@@ -5,13 +5,13 @@ import {
   BehaviorSubject, Observable, combineLatest,
 } from 'rxjs';
 import { SystemUpdateOperationType, SystemUpdateStatus } from 'app/enums/system-update.enum';
-import { extractApiError } from 'app/helpers/api.helper';
+import { extractApiErrorDetails } from 'app/helpers/api.helper';
 import { SystemUpdateTrain, SystemUpdateTrains } from 'app/interfaces/system-update.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { Package } from 'app/pages/system/update/interfaces/package.interface';
 import { UpdateService } from 'app/pages/system/update/services/update.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Injectable({
@@ -104,7 +104,7 @@ export class TrainService {
         this.check();
       },
       error: (error: unknown) => {
-        this.dialogService.error(this.errorHandler.parseError(error));
+        this.errorHandler.showErrorModal(error);
         this.trainValue$.next(prevTrain);
         this.updateService.isLoading$.next(false);
       },
@@ -192,7 +192,7 @@ export class TrainService {
         this.updateService.isLoading$.next(false);
       },
       error: (err: unknown) => {
-        const apiError = extractApiError(err);
+        const apiError = extractApiErrorDetails(err);
         this.updateService.generalUpdateError$.next(
           `${apiError?.reason?.replace('>', '')?.replace('<', '')}: ${this.translate.instant('Automatic update check failed. Please check system network settings.')}`,
         );

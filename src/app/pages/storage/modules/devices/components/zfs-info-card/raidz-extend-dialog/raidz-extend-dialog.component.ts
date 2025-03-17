@@ -21,7 +21,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export interface RaidzExtendDialogParams {
   poolId: number;

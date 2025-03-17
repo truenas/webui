@@ -11,7 +11,7 @@ import { AppsFiltersSort, AppsFiltersValues } from 'app/interfaces/apps-filters-
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { AppsByCategory, AppsStore } from 'app/pages/apps/store/apps-store.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export const filterInitialValues: AppsFiltersValues = {
   categories: [],

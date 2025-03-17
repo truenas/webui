@@ -19,7 +19,7 @@ import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export enum PruneBy {
   Percentage = 'percentage',

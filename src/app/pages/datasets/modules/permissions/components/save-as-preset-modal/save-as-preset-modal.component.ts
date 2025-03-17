@@ -20,7 +20,6 @@ import {
   Acl, AclTemplateByPath, AclTemplateCreateParams, NfsAclItem, PosixAclItem,
 } from 'app/interfaces/acl.interface';
 import { DsUncachedGroup, DsUncachedUser } from 'app/interfaces/ds-cache.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -29,7 +28,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SaveAsPresetModalConfig } from 'app/pages/datasets/modules/permissions/interfaces/save-as-preset-modal-config.interface';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UserService } from 'app/services/user.service';
 
 @UntilDestroy()
@@ -69,7 +68,6 @@ export class SaveAsPresetModalComponent implements OnInit {
     private api: ApiService,
     private loader: LoaderService,
     private errorHandler: ErrorHandlerService,
-    private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
     private userService: UserService,
     private dialogRef: MatDialogRef<SaveAsPresetModalComponent>,
@@ -162,7 +160,7 @@ export class SaveAsPresetModalComponent implements OnInit {
           this.userService.getUserByName(ace.who).pipe(
             tap((user: DsUncachedUser) => userWhoToIds.set(ace.who, user.pw_uid)),
             catchError((error: unknown) => {
-              this.dialogService.error(this.errorHandler.parseError(error));
+              this.errorHandler.showErrorModal(error);
               return EMPTY;
             }),
           ),
@@ -173,7 +171,7 @@ export class SaveAsPresetModalComponent implements OnInit {
           this.userService.getGroupByName(ace.who).pipe(
             tap((group: DsUncachedGroup) => groupWhoToIds.set(ace.who, group.gr_gid)),
             catchError((error: unknown) => {
-              this.dialogService.error(this.errorHandler.parseError(error));
+              this.errorHandler.showErrorModal(error);
               return EMPTY;
             }),
           ),

@@ -11,7 +11,6 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { Role } from 'app/enums/role.enum';
 import { helptextServiceSmart } from 'app/helptext/services/components/service-snmp';
 import { SnmpConfigUpdate } from 'app/interfaces/snmp-config.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -26,7 +25,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -105,7 +104,6 @@ export class ServiceSnmpComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private api: ApiService,
-    private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private formErrorHandler: FormErrorHandlerService,
@@ -158,7 +156,7 @@ export class ServiceSnmpComponent implements OnInit {
         this.cdr.markForCheck();
       },
       error: (error: unknown) => {
-        this.dialogService.error(this.errorHandler.parseError(error));
+        this.errorHandler.showErrorModal(error);
         this.isFormLoading = false;
         this.cdr.markForCheck();
       },

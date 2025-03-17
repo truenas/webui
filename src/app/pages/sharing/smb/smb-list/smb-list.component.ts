@@ -47,7 +47,7 @@ import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
 import { smbListElements } from 'app/pages/sharing/smb/smb-list/smb-list.elements';
 import { isRootShare } from 'app/pages/sharing/utils/smb.utils';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectService } from 'app/store/services/services.selectors';
 
@@ -280,7 +280,7 @@ export class SmbListComponent implements OnInit {
       },
       error: (error: unknown) => {
         this.dataProvider.load();
-        this.dialog.error(this.errorHandler.parseError(error));
+        this.errorHandler.showErrorModal(error);
       },
     });
   }

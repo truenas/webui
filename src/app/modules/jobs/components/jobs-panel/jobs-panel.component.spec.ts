@@ -21,7 +21,7 @@ import { jobReducer, adapter, jobsInitialState } from 'app/modules/jobs/store/jo
 import { jobStateKey } from 'app/modules/jobs/store/job.selectors';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 
 const runningJob = {

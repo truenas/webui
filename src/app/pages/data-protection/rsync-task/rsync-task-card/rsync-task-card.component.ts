@@ -43,7 +43,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { TaskService } from 'app/services/task.service';
 import { AppState } from 'app/store';
 
@@ -182,8 +182,8 @@ export class RsyncTaskCardComponent implements OnInit {
       next: () => {
         this.getRsyncTasks();
       },
-      error: (err: unknown) => {
-        this.dialogService.error(this.errorHandler.parseError(err));
+      error: (error: unknown) => {
+        this.errorHandler.showErrorModal(error);
       },
     });
   }
@@ -214,7 +214,7 @@ export class RsyncTaskCardComponent implements OnInit {
       )),
       catchError((error: unknown) => {
         this.getRsyncTasks();
-        this.dialogService.error(this.errorHandler.parseError(error));
+        this.errorHandler.showErrorModal(error);
         return EMPTY;
       }),
       untilDestroyed(this),
@@ -253,9 +253,9 @@ export class RsyncTaskCardComponent implements OnInit {
         next: () => {
           this.getRsyncTasks();
         },
-        error: (err: unknown) => {
+        error: (error: unknown) => {
           this.getRsyncTasks();
-          this.dialogService.error(this.errorHandler.parseError(err));
+          this.errorHandler.showErrorModal(error);
         },
       });
   }

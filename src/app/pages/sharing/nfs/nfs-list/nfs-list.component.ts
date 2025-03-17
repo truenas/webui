@@ -40,7 +40,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { nfsListElements } from 'app/pages/sharing/nfs/nfs-list/nfs-list.elements';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
@@ -236,7 +236,7 @@ export class NfsListComponent implements OnInit {
       },
       error: (error: unknown) => {
         this.dataProvider.load();
-        this.errorHandler.showErrorModal(this.errorHandler.parseError(error));
+        this.errorHandler.showErrorModal(error);
       },
     });
   }

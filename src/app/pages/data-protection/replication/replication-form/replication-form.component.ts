@@ -44,8 +44,9 @@ import {
 import {
   ReplicationWizardComponent,
 } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
-import { DatasetService } from 'app/services/dataset-service/dataset.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { DatasetService } from 'app/services/dataset/dataset.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { ErrorParserService } from 'app/services/errors/error-parser.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 import { ReplicationService } from 'app/services/replication.service';
 
@@ -97,6 +98,7 @@ export class ReplicationFormComponent implements OnInit {
   constructor(
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
+    private errorParser: ErrorParserService,
     private translate: TranslateService,
     public formatter: IxFormatterService,
     private cdr: ChangeDetectorRef,
@@ -196,7 +198,7 @@ export class ReplicationFormComponent implements OnInit {
           error: (error: unknown) => {
             this.isLoading = false;
             this.cdr.markForCheck();
-            this.dialog.error(this.errorHandler.parseError(error));
+            this.errorHandler.showErrorModal(error);
           },
         },
       );
@@ -287,7 +289,7 @@ export class ReplicationFormComponent implements OnInit {
       error: (error: unknown) => {
         this.isEligibleSnapshotsMessageRed = true;
         this.eligibleSnapshotsMessage = this.translate.instant('Error counting eligible snapshots.');
-        const firstError = this.errorHandler.getFirstErrorMessage(error);
+        const firstError = this.errorParser.getFirstErrorMessage(error);
         if (firstError) {
           this.eligibleSnapshotsMessage = `${this.eligibleSnapshotsMessage} ${firstError}`;
         }

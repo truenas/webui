@@ -43,7 +43,7 @@ import {
 import { supportCardElements } from 'app/pages/system/general-settings/support/support-card/support-card.elements';
 import { SysInfoComponent } from 'app/pages/system/general-settings/support/sys-info/sys-info.component';
 import { SystemInfoInSupport } from 'app/pages/system/general-settings/support/system-info-in-support.interface';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 

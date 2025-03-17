@@ -39,7 +39,7 @@ import { fibreChannelPortsElements } from 'app/pages/sharing/iscsi/fibre-channel
 import {
   VirtualPortsNumberDialogComponent,
 } from 'app/pages/sharing/iscsi/fibre-channel-ports/virtual-ports-number-dialog/virtual-ports-number-dialog.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
