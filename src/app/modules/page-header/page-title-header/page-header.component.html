@@ -8,7 +8,7 @@
       @if (tooltip()) {
         <ix-tooltip
           class="tooltip"
-          [message]="tooltip()"
+          [message]="tooltip() | translate"
         ></ix-tooltip>
       }
 
