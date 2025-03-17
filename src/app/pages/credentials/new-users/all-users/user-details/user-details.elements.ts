@@ -9,5 +9,9 @@ export const userDetailsElements = {
       hierarchy: [T('General Info')],
       anchor: 'general-info',
     },
+    profile: {
+      hierarchy: [T('Profile')],
+      anchor: 'profile',
+    },
   },
 } satisfies UiSearchableElement;
