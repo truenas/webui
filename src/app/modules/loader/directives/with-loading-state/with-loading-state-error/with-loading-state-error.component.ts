@@ -1,9 +1,8 @@
 import {
   ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
-import { TranslateModule } from '@ngx-translate/core';
-import { isApiError } from 'app/helpers/api.helper';
-import { ApiError } from 'app/interfaces/api-error.interface';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { ErrorParserService } from 'app/services/errors/error-parser.service';
 
 @Component({
   selector: 'ix-with-loading-state-error',
@@ -13,16 +12,14 @@ import { ApiError } from 'app/interfaces/api-error.interface';
   imports: [TranslateModule],
 })
 export class WithLoadingStateErrorComponent {
-  readonly error = input<Error | ApiError>();
+  readonly error = input<unknown>();
+
+  constructor(
+    private errorParser: ErrorParserService,
+    private translate: TranslateService,
+  ) {}
 
   protected errorMessage = computed(() => {
-    const error = this.error();
-    if (isApiError(error)) {
-      return error?.reason || error.error.toString();
-    }
-    if (error instanceof Error) {
-      return error.message;
-    }
-    return '';
+    return this.errorParser.getFirstErrorMessage(this.error()) || this.translate.instant('Error');
   });
 }

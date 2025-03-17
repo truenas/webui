@@ -18,7 +18,7 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -100,7 +100,7 @@ export class DiskWipeDialogComponent {
     )
       .afterClosed()
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => {

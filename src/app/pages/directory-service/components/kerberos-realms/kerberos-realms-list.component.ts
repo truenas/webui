@@ -36,7 +36,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { KerberosRealmRow } from 'app/pages/directory-service/components/kerberos-realms/kerberos-realm-row.interface';
 import { kerberosRealmsListElements } from 'app/pages/directory-service/components/kerberos-realms/kerberos-realms-list.elements';
 import { KerberosRealmsFormComponent } from 'app/pages/directory-service/components/kerberos-realms-form/kerberos-realms-form.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -117,7 +117,7 @@ export class KerberosRealmsListComponent implements OnInit {
               untilDestroyed(this),
             ).subscribe({
               error: (error: unknown) => {
-                this.dialogService.error(this.errorHandler.parseError(error));
+                this.errorHandler.showErrorModal(error);
               },
               complete: () => {
                 this.getKerberosRealms();

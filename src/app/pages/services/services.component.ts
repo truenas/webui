@@ -28,7 +28,7 @@ import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-b
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -46,7 +46,7 @@ import { servicesElements } from 'app/pages/services/services.elements';
 import {
   GlobalTargetConfigurationComponent,
 } from 'app/pages/sharing/iscsi/global-target-configuration/global-target-configuration.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { ServicesService } from 'app/services/services.service';
 import { UrlOptionsService } from 'app/services/url-options.service';
 import { serviceChanged } from 'app/store/services/services.actions';
@@ -146,7 +146,7 @@ export class ServicesComponent implements OnInit {
     private store$: Store<ServicesState>,
     private urlOptions: UrlOptionsService,
     private errorHandler: ErrorHandlerService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
   ) {}
 
   ngOnInit(): void {

@@ -15,10 +15,10 @@ import { TrueCommandConfig, UpdateTrueCommand } from 'app/interfaces/true-comman
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export interface TruecommandSignupModalState {
   isConnected: boolean;
@@ -68,7 +68,7 @@ export class TruecommandConnectModalComponent implements OnInit {
     private dialogService: DialogService,
     private dialogRef: MatDialogRef<TruecommandConnectModalComponent, TruecommandSignupModalResult>,
     private fb: FormBuilder,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private api: ApiService,
   ) {}
 
@@ -115,9 +115,9 @@ export class TruecommandConnectModalComponent implements OnInit {
           );
         }
       },
-      error: (err: unknown) => {
+      error: (error: unknown) => {
         this.loader.close();
-        this.dialogService.error(this.errorHandler.parseError(err));
+        this.errorHandler.showErrorModal(error);
       },
     });
   }
@@ -146,9 +146,9 @@ export class TruecommandConnectModalComponent implements OnInit {
               hideCancel: true,
             });
           },
-          error: (err: unknown) => {
+          error: (error: unknown) => {
             this.loader.close();
-            this.dialogService.error(this.errorHandler.parseError(err));
+            this.errorHandler.showErrorModal(error);
           },
         });
     });

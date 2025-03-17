@@ -15,7 +15,7 @@ import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { AppCardInfoComponent } from 'app/pages/dashboard/widgets/apps/common/app-card-info/app-card-info.component';
 import { AppControlsComponent } from 'app/pages/dashboard/widgets/apps/common/app-controls/app-controls.component';
 import { WidgetAppInfoComponent } from 'app/pages/dashboard/widgets/apps/widget-app-info/widget-app-info.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { RedirectService } from 'app/services/redirect.service';
 
 describe('WidgetAppInfoComponent', () => {

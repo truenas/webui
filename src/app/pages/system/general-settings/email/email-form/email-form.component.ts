@@ -34,7 +34,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 
 @UntilDestroy()
@@ -182,7 +182,7 @@ export class EmailFormComponent implements OnInit {
   onSendTestEmailPressed(): void {
     this.api.call('mail.local_administrator_email')
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe((email) => {
@@ -248,7 +248,7 @@ export class EmailFormComponent implements OnInit {
     )
       .afterClosed()
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => {

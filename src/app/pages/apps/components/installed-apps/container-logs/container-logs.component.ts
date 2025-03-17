@@ -12,15 +12,14 @@ import {
   combineLatest, map, Subscription, switchMap, tap,
 } from 'rxjs';
 import { AppContainerLog } from 'app/interfaces/app.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ToolbarSliderComponent } from 'app/modules/forms/toolbar-slider/toolbar-slider.component';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { LogsDetailsDialogComponent } from 'app/pages/apps/components/logs-details-dialog/logs-details-dialog.component';
 import { DownloadService } from 'app/services/download.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { ShellService } from 'app/services/shell.service';
 
 @UntilDestroy()
@@ -54,9 +53,8 @@ export class ContainerLogsComponent implements OnInit {
 
   constructor(
     private api: ApiService,
-    private dialogService: DialogService,
     protected aroute: ActivatedRoute,
-    protected loader: AppLoaderService,
+    protected loader: LoaderService,
     protected download: DownloadService,
     private errorHandler: ErrorHandlerService,
     private matDialog: MatDialog,
@@ -117,7 +115,7 @@ export class ContainerLogsComponent implements OnInit {
       },
       error: (error: unknown) => {
         this.isLoading = false;
-        this.dialogService.error(this.errorHandler.parseError(error));
+        this.errorHandler.showErrorModal(error);
         this.cdr.markForCheck();
       },
     });

@@ -18,6 +18,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { map } from 'rxjs';
+import { productTypeLabels } from 'app/enums/product-type.enum';
 import { SubMenuItem } from 'app/interfaces/menu-item.interface';
 import { AlertsPanelComponent } from 'app/modules/alerts/components/alerts-panel/alerts-panel.component';
 import { alertPanelClosed } from 'app/modules/alerts/store/alert.actions';
@@ -35,11 +36,13 @@ import { TruenasLogoComponent } from 'app/modules/layout/topbar/truenas-logo/tru
 import { DefaultPageHeaderComponent } from 'app/modules/page-header/default-page-header/default-page-header.component';
 import { SlideInControllerComponent } from 'app/modules/slide-ins/components/slide-in-controller/slide-in-controller.component';
 import { ThemeService } from 'app/modules/theme/theme.service';
-import { SentryService } from 'app/services/sentry.service';
+import { SentryConfigurationService } from 'app/services/errors/sentry-configuration.service';
 import { SessionTimeoutService } from 'app/services/session-timeout.service';
 import { AppState } from 'app/store';
 import { selectHasConsoleFooter, waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
-import { selectCopyrightHtml, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
+import {
+  selectCopyrightHtml, selectProductType, waitForSystemInfo,
+} from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -75,6 +78,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly isAlertPanelOpen$ = this.store$.select(selectIsAlertPanelOpen);
   readonly hasConsoleFooter$ = this.store$.select(selectHasConsoleFooter);
   readonly copyrightHtml = toSignal(this.store$.select(selectCopyrightHtml));
+  readonly productType = toSignal(this.store$.select(selectProductType));
 
   get sidenavWidth(): string {
     return this.sidenavService.sidenavWidth;
@@ -104,13 +108,17 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.sidenavService.menuName;
   }
 
+  get productTypeText(): string {
+    return productTypeLabels.get(this.productType());
+  }
+
   constructor(
     private themeService: ThemeService,
     private sidenavService: SidenavService,
     private store$: Store<AppState>,
     private languageService: LanguageService,
     private sessionTimeoutService: SessionTimeoutService,
-    private sentryService: SentryService,
+    private sentryService: SentryConfigurationService,
   ) {}
 
   ngOnInit(): void {

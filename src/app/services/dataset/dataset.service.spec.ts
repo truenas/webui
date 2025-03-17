@@ -4,7 +4,7 @@ import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { DatasetService } from 'app/services/dataset-service/dataset.service';
+import { DatasetService } from 'app/services/dataset/dataset.service';
 
 describe('DatasetService', () => {
   let spectator: SpectatorService<DatasetService>;

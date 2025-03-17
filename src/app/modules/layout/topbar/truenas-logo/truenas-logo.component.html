@@ -25,16 +25,6 @@
           [fullSize]="true"
           [name]="logoTypeIcon()"
         ></ix-icon>
-
-        @if (!hideBadge()) {
-          <ix-icon
-            class="app-logo-badge"
-            [class.enterprise]="isEnterprise()"
-            [class.community-edition]="!isEnterprise()"
-            [name]="badgeIcon()"
-            [fullSize]="true"
-          ></ix-icon>
-        }
       </div>
     }
   }

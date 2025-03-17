@@ -29,7 +29,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 
 @UntilDestroy()
@@ -143,7 +143,7 @@ export class LdapComponent implements OnInit {
         },
         error: (error: unknown) => {
           this.isLoading = false;
-          this.dialogService.error(this.errorHandler.parseError(error));
+          this.errorHandler.showErrorModal(error);
           this.cdr.markForCheck();
         },
       });
@@ -161,7 +161,7 @@ export class LdapComponent implements OnInit {
     )
       .afterClosed()
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe({
@@ -189,7 +189,7 @@ export class LdapComponent implements OnInit {
         },
         error: (error: unknown) => {
           this.isLoading = false;
-          this.dialogService.error(this.errorHandler.parseError(error));
+          this.errorHandler.showErrorModal(error);
           this.cdr.markForCheck();
         },
       });

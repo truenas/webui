@@ -13,7 +13,6 @@ import { Role } from 'app/enums/role.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { helptextNetworkConfiguration } from 'app/helptext/network/configuration/configuration';
 import { helptextIpmi } from 'app/helptext/network/ipmi/ipmi';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -22,7 +21,7 @@ import { ipv4Validator } from 'app/modules/forms/ix-forms/validators/ip-validati
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -77,7 +76,6 @@ export class DefaultGatewayDialogComponent {
     private fb: FormBuilder,
     public cdr: ChangeDetectorRef,
     private dialogRef: MatDialogRef<DefaultGatewayDialogComponent>,
-    private dialog: DialogService,
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     private validatorsService: IxValidatorsService,
@@ -88,7 +86,7 @@ export class DefaultGatewayDialogComponent {
     const formValues = this.form.getRawValue();
     this.api.call('interface.save_default_route', [formValues.defaultGateway]).pipe(
       catchError((error: unknown) => {
-        this.dialog.error(this.errorHandler.parseError(error));
+        this.errorHandler.showErrorModal(error);
         return EMPTY;
       }),
       untilDestroyed(this),

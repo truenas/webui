@@ -76,14 +76,14 @@ describe('InstanceRowComponent', () => {
       expect(spectator.query('.cell-name')).toHaveText('agi_instance');
     });
 
-    it('shows instance type', () => {
-      const cells = spectator.queryAll('.cell');
-      expect(cells[2]).toHaveText('Container');
-    });
-
     it('shows instance status', () => {
       const cells = spectator.queryAll('.cell');
-      expect(cells[3]).toHaveText('Running');
+      expect(cells[2]).toHaveText('Running');
+    });
+
+    it('shows instance type', () => {
+      const cells = spectator.queryAll('.cell');
+      expect(cells[3]).toHaveText('Container');
     });
 
     it('shows Stop and Restart button when instance is Running', async () => {

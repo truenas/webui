@@ -12,7 +12,7 @@ import { IxFileInputComponent } from 'app/modules/forms/ix-forms/components/ix-f
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UploadService } from 'app/services/upload.service';
 
 @UntilDestroy()
@@ -80,7 +80,7 @@ export class UploadIsoButtonComponent implements OnInit {
       .jobDialog(job$, { title: this.translate.instant('Uploading Image') })
       .afterClosed()
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => {

@@ -5,7 +5,7 @@ import { sortBy } from 'lodash-es';
 import { Observable, tap } from 'rxjs';
 import { DetailsDisk, DiskDetailsResponse } from 'app/interfaces/disk.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 interface DiskState {
   usedDisks: DetailsDisk[];
@@ -41,7 +41,7 @@ export class DiskStore extends ComponentStore<DiskState> {
 
   loadDisks(): Observable<DiskDetailsResponse> {
     return this.api.call('disk.details').pipe(
-      this.errorHandler.catchError(),
+      this.errorHandler.withErrorHandler(),
       tap((diskResponse) => {
         this.patchState({
           unusedDisks: diskResponse.unused,

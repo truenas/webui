@@ -36,7 +36,7 @@ import {
   basicConstraintOptions,
   keyUsageOptions,
 } from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-constraints/extensions.constants';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -305,7 +305,7 @@ export class CertificateConstraintsComponent implements OnInit, SummaryProvider 
     this.api.call('certificate.extended_key_usage_choices')
       .pipe(
         choicesToOptions(),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe((options) => {

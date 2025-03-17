@@ -25,14 +25,14 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
 import { WithManageCertificatesLinkComponent } from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ipValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ThemeService } from 'app/modules/theme/theme.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { AppState } from 'app/store';
@@ -99,7 +99,7 @@ export class GuiFormComponent {
     private wsManager: WebSocketHandlerService,
     private wsStatus: WebSocketStatusService,
     private dialog: DialogService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private translate: TranslateService,
     private formErrorHandler: FormErrorHandlerService,
     private errorHandler: ErrorHandlerService,

@@ -15,7 +15,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -88,7 +88,7 @@ export class TestProgressRowComponent implements OnInit {
   protected showLogs(): void {
     const test = this.test();
     if (test.wsError) {
-      this.dialogService.error(this.errorHandler.parseError(test.wsError));
+      this.errorHandler.showErrorModal(test.wsError);
       return;
     }
     this.dialogService.info(

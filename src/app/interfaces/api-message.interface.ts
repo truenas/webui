@@ -2,7 +2,7 @@ import { CollectionChangeType, JsonRpcErrorCode } from 'app/enums/api.enum';
 import { ApiCallMethod } from 'app/interfaces/api/api-call-directory.interface';
 import { ApiEventDirectory } from 'app/interfaces/api/api-event-directory.interface';
 import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
-import { ApiError } from 'app/interfaces/api-error.interface';
+import { ApiErrorDetails } from 'app/interfaces/api-error.interface';
 
 /**
  * General documentation about message format: https://www.jsonrpc.org/specification
@@ -35,7 +35,7 @@ export interface CollectionUpdateMessage extends BaseJsonRpc {
 export interface JsonRpcError {
   code: JsonRpcErrorCode;
   message: string;
-  data?: ApiError;
+  data?: ApiErrorDetails;
 }
 
 export type IncomingMessage =

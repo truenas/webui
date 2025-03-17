@@ -28,12 +28,12 @@ import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-te
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import { findInTree } from 'app/modules/ix-tree/utils/find-in-tree.utils';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { isPasswordEncrypted, isEncryptionRoot } from 'app/pages/datasets/utils/dataset.utils';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { EncryptionOptionsDialogData } from './encryption-options-dialog-data.interface';
 
 enum EncryptionType {
@@ -109,7 +109,7 @@ export class EncryptionOptionsDialogComponent implements OnInit {
     private fb: FormBuilder,
     private api: ApiService,
     private translate: TranslateService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private dialog: DialogService,
     private dialogRef: MatDialogRef<EncryptionOptionsDialogComponent>,
     private formErrorHandler: FormErrorHandlerService,
@@ -220,7 +220,7 @@ export class EncryptionOptionsDialogComponent implements OnInit {
           });
         },
         error: (error: unknown) => {
-          this.dialog.error(this.errorHandler.parseError(error));
+          this.errorHandler.showErrorModal(error);
         },
       });
   }

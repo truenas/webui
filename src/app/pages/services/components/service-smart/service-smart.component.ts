@@ -12,7 +12,6 @@ import { Role } from 'app/enums/role.enum';
 import { SmartPowerMode } from 'app/enums/smart-power.mode';
 import { helptextServiceSmart } from 'app/helptext/services/components/service-smart';
 import { SmartConfigUpdate } from 'app/interfaces/smart-test.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -23,7 +22,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -82,7 +81,6 @@ export class ServiceSmartComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private fb: FormBuilder,
     private translate: TranslateService,
-    private dialogService: DialogService,
     private snackbar: SnackbarService,
     public slideInRef: SlideInRef<undefined, boolean>,
   ) {
@@ -102,7 +100,7 @@ export class ServiceSmartComponent implements OnInit {
           this.cdr.markForCheck();
         },
         error: (error: unknown) => {
-          this.dialogService.error(this.errorHandler.parseError(error));
+          this.errorHandler.showErrorModal(error);
           this.isFormLoading = false;
           this.cdr.markForCheck();
         },

@@ -26,28 +26,16 @@ export class TruenasLogoComponent {
   readonly color = input<'primary' | 'white'>('primary');
   readonly fullSize = input(false);
   readonly hideText = input(false);
-  readonly hideBadge = input(false);
   readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
   protected readonly activeTheme = toSignal(this.themeService.activeTheme$);
 
-  protected isBlueTheme = computed(() => {
+  protected useWhiteLogo = computed(() => {
     const activeTheme = this.activeTheme();
-    return activeTheme && ['ix-blue', 'midnight'].includes(activeTheme);
+    return activeTheme && !['ix-dark', 'high-contrast'].includes(activeTheme);
   });
 
   protected useWhite = computed(() => {
-    return this.color() === 'white' || this.isBlueTheme();
-  });
-
-  readonly badgeIcon = computed(() => {
-    if (this.isEnterprise()) {
-      return this.useWhite()
-        ? iconMarker('ix-truenas-enterprise-badge')
-        : iconMarker('ix-truenas-enterprise-badge-color');
-    }
-    return this.useWhite()
-      ? iconMarker('ix-truenas-ce-badge')
-      : iconMarker('ix-truenas-ce-badge-color');
+    return this.color() === 'white' || this.useWhiteLogo();
   });
 
   readonly logoTypeIcon = computed(() => {

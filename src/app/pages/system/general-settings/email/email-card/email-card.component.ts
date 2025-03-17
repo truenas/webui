@@ -18,7 +18,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { emailCardElements } from 'app/pages/system/general-settings/email/email-card/email-card.elements';
 import { EmailFormComponent } from 'app/pages/system/general-settings/email/email-form/email-form.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -55,7 +55,7 @@ export class EmailCardComponent {
   openEmailSettings(): void {
     this.api.call('mail.config')
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe((config) => {

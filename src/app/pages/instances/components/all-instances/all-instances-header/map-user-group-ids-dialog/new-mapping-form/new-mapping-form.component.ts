@@ -21,14 +21,14 @@ import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-ch
 import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   ViewType,
 } from 'app/pages/instances/components/all-instances/all-instances-header/map-user-group-ids-dialog/mapping.types';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UserService } from 'app/services/user.service';
 
 @UntilDestroy()
@@ -65,7 +65,7 @@ export class NewMappingFormComponent implements OnChanges {
   constructor(
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private formBuilder: NonNullableFormBuilder,
     private snackbar: SnackbarService,
     private translate: TranslateService,
@@ -102,7 +102,7 @@ export class NewMappingFormComponent implements OnChanges {
     request$
       .pipe(
         this.loader.withLoader(),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => {

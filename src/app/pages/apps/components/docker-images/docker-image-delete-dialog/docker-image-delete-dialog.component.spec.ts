@@ -14,7 +14,7 @@ import { CoreBulkQuery, CoreBulkResponse } from 'app/interfaces/core-bulk.interf
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { BulkListItemComponent } from 'app/modules/lists/bulk-list-item/bulk-list-item.component';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DockerImageDeleteDialogComponent } from 'app/pages/apps/components/docker-images/docker-image-delete-dialog/docker-image-delete-dialog.component';
 import { fakeDockerImagesDataSource } from 'app/pages/apps/components/docker-images/test/fake-docker-images';
@@ -54,7 +54,7 @@ describe('DockerImageDeleteDialogComponent', () => {
         provide: MAT_DIALOG_DATA,
         useValue: fakeDockerImagesDataSource,
       },
-      mockProvider(AppLoaderService),
+      mockProvider(LoaderService),
       mockProvider(MatDialogRef),
       mockProvider(DialogService, {
         confirm: () => of(true),
