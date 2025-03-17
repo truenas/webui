@@ -1,7 +1,6 @@
 {
   "": "",
   "Access Card": "",
-  "Add Api Key": "",
   "Are you sure you want to lock \"{user}\" user?": "",
   "Are you sure you want to unlock \"{user}\" user?": "",
   "Has Password": "",
@@ -14,6 +13,7 @@
   "No Shell Access": "",
   "No TrueNAS Access": "",
   "No Two-Factor Authentication": "",
+  "Search Logs": "",
   "Shell Access": "",
   "TrueNAS Access": "",
   "Unlock User": "",

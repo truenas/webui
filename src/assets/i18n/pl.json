@@ -1,7 +1,6 @@
 {
   "": "",
   "Access Card": "",
-  "Add Api Key": "",
   "Add New Mapping": "",
   "Allows multiple  <a href=\"http://www.ntfs.com/ntfs-multiple.htm\">NTFS data streams</a>.  Disabling this option causes macOS to write streams to files on the filesystem.": "",
   "Are you sure you want to lock \"{user}\" user?": "",
@@ -64,6 +63,7 @@
   "Passwords cannot contain a <b>?</b>.": "",
   "Root Disk I/O Bus": "",
   "Same": "",
+  "Search Logs": "",
   "Shell Access": "",
   "Status of TrueNAS Connect": "",
   "This action will set all dataset quotas for the removed or invalid groups to 0, virtually removing any dataset quota entries for such groups. Are you sure you want to proceed?": "",

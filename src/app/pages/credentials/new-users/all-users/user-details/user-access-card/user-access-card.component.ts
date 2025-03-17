@@ -47,6 +47,8 @@ export class UserAccessCardComponent {
   user = input.required<User>();
 
   protected readonly Role = Role;
+  protected readonly unlockUserText = this.translate.instant('Unlock User');
+  protected readonly lockUserText = this.translate.instant('Lock User');
 
   readonly sshAccessStatus = computed<string | null>(() => {
     const keySet = this.translate.instant('Key set');
@@ -102,7 +104,7 @@ export class UserAccessCardComponent {
     const message = locked
       ? this.translate.instant('Are you sure you want to unlock "{user}" user?', { user: username })
       : this.translate.instant('Are you sure you want to lock "{user}" user?', { user: username });
-    const buttonText = locked ? this.translate.instant('Unlock User') : this.translate.instant('Lock User');
+    const buttonText = locked ? this.unlockUserText : this.lockUserText;
 
     this.dialogService.confirm({
       message,

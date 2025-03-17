@@ -1,7 +1,6 @@
 {
   "": "",
   "Access Card": "",
-  "Add Api Key": "",
   "Are you sure you want to lock \"{user}\" user?": "",
   "Are you sure you want to unlock \"{user}\" user?": "",
   "Has Password": "",
@@ -25,6 +24,7 @@
   "Privilege Write": "",
   "Pull": "",
   "Replication Task Write Pull": "",
+  "Search Logs": "",
   "Sharing iSCSI Auth Read": "",
   "Sharing iSCSI Auth Write": "",
   "Sharing iSCSI Extent Read": "",
