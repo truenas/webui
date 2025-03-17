@@ -43,7 +43,7 @@ import {
 import {
   ReplicationWizardComponent,
 } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
-import { DatasetService } from 'app/services/dataset-service/dataset.service';
+import { DatasetService } from 'app/services/dataset/dataset.service';
 import { ReplicationService } from 'app/services/replication.service';
 
 const existingTask: ReplicationTask = {

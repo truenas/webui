@@ -35,7 +35,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { PortalFormComponent } from 'app/pages/sharing/iscsi/portal/portal-form/portal-form.component';
 import { portalListElements } from 'app/pages/sharing/iscsi/portal/portal-list/portal-list.elements';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
 
 @UntilDestroy()
@@ -127,7 +127,7 @@ export class PortalListComponent implements OnInit {
             ).subscribe({
               next: () => this.refresh(),
               error: (error: unknown) => {
-                this.dialogService.error(this.errorHandler.parseError(error));
+                this.errorHandler.showErrorModal(error);
               },
             });
           },

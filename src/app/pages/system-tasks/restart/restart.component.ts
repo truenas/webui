@@ -5,13 +5,12 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -36,7 +35,6 @@ export class RestartComponent implements OnInit {
     private route: ActivatedRoute,
     private errorHandler: ErrorHandlerService,
     protected loader: LoaderService,
-    protected dialogService: DialogService,
     protected matDialog: MatDialog,
     private location: Location,
   ) {
@@ -51,7 +49,7 @@ export class RestartComponent implements OnInit {
     this.matDialog.closeAll();
     this.api.job('system.reboot', [reason]).pipe(untilDestroyed(this)).subscribe({
       error: (error: unknown) => { // error on restart
-        this.dialogService.error(this.errorHandler.parseError(error))
+        this.errorHandler.showErrorModal(error)
           .pipe(untilDestroyed(this))
           .subscribe(() => {
             this.router.navigate(['/signin']);

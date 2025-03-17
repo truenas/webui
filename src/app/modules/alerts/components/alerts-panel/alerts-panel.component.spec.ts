@@ -125,8 +125,8 @@ describe('AlertsPanelComponent', () => {
     const dismissedAlertComponents = alertPanel.dismissedAlertComponents;
 
     expect(dismissedAlertComponents).toHaveLength(2);
-    expect(dismissedAlertComponents[0].alert).toEqual(dismissedAlerts[1]);
-    expect(dismissedAlertComponents[1].alert).toEqual(dismissedAlerts[0]);
+    expect(dismissedAlertComponents[0].alert).toEqual(dismissedAlerts[0]);
+    expect(dismissedAlertComponents[1].alert).toEqual(dismissedAlerts[1]);
   });
 
   it('dismisses all alerts when Dismiss All Alerts is pressed', () => {

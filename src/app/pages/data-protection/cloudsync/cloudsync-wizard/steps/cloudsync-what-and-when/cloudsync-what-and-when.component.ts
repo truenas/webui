@@ -23,7 +23,7 @@ import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
 import { TransferMode, transferModeNames } from 'app/enums/transfer-mode.enum';
-import { extractApiError } from 'app/helpers/api.helper';
+import { extractApiErrorDetails } from 'app/helpers/api.helper';
 import { prepareBwlimit } from 'app/helpers/bwlimit.utils';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextCloudSync } from 'app/helptext/data-protection/cloudsync/cloudsync';
@@ -51,7 +51,7 @@ import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/clou
 import { CreateStorjBucketDialogComponent } from 'app/pages/data-protection/cloudsync/create-storj-bucket-dialog/create-storj-bucket-dialog.component';
 import { TransferModeExplanationComponent } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 
 type FormValue = CloudSyncWhatAndWhenComponent['form']['value'];
@@ -509,9 +509,9 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
         error: (error: unknown) => {
           this.isCredentialInvalid$.next(true);
           this.dialog.closeAllDialogs();
-          const apiError = extractApiError(error);
+          const apiError = extractApiErrorDetails(error);
           if (!apiError) {
-            this.errorHandler.handleError(error);
+            this.errorHandler.showErrorModal(error);
             return;
           }
 

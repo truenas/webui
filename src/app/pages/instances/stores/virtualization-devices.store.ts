@@ -8,7 +8,7 @@ import {
 import { VirtualizationDevice, VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export interface VirtualizationInstanceDeviceState {
   isLoading: boolean;

@@ -1,9 +1,8 @@
 import { enableProdMode } from '@angular/core';
+import { sentryPublicDsn } from 'environments/sentry-public-dns.const';
 import { MockEnclosureScenario } from 'app/core/testing/mock-enclosure/enums/mock-enclosure.enum';
 import { EnclosureModel } from 'app/enums/enclosure-model.enum';
-import {
-  WebUiEnvironment, environmentVersion, remote, sentryPublicDsn,
-} from './environment.interface';
+import { WebUiEnvironment, environmentVersion, remote } from './environment.interface';
 
 export const environment: WebUiEnvironment = {
   environmentVersion,

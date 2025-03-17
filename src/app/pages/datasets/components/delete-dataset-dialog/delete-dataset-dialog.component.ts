@@ -16,7 +16,7 @@ import { catchError, switchMap, tap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
-import { extractApiError } from 'app/helpers/api.helper';
+import { extractApiErrorDetails } from 'app/helpers/api.helper';
 import { deleteDatasetHelptext } from 'app/helptext/storage/volumes/datasets/delete-dataset';
 import { DatasetAttachment } from 'app/interfaces/pool-attachment.interface';
 import { Process } from 'app/interfaces/process.interface';
@@ -29,7 +29,7 @@ import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-vali
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -96,7 +96,7 @@ export class DeleteDatasetDialogComponent implements OnInit {
       this.loader.withLoader(),
       tap(() => this.dialogRef.close(true)),
       catchError((error: unknown) => {
-        const apiError = extractApiError(error);
+        const apiError = extractApiErrorDetails(error);
 
         if (apiError?.reason?.includes('Device busy')) {
           return this.askToForceDelete();
@@ -151,7 +151,7 @@ export class DeleteDatasetDialogComponent implements OnInit {
         },
         error: (error: unknown) => {
           this.dialogRef.close(false);
-          this.dialog.error(this.errorHandler.parseError(error));
+          this.errorHandler.showErrorModal(error);
         },
       });
   }

@@ -17,13 +17,12 @@ import { Role } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { User } from 'app/interfaces/user.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ReadOnlyComponent } from 'app/modules/forms/ix-forms/components/readonly-badge/readonly-badge.component';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { DualListBoxComponent } from 'app/modules/lists/dual-listbox/dual-listbox.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -65,7 +64,6 @@ export class GroupMembersComponent implements OnInit {
     private api: ApiService,
     private activatedRoute: ActivatedRoute,
     private router: Router,
-    private dialog: DialogService,
     private errorHandler: ErrorHandlerService,
     private authService: AuthService,
   ) {}
@@ -104,7 +102,7 @@ export class GroupMembersComponent implements OnInit {
       },
       error: (error: unknown) => {
         this.isLoading.set(false);
-        this.dialog.error(this.errorHandler.parseError(error));
+        this.errorHandler.showErrorModal(error);
       },
     });
   }

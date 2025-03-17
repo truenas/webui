@@ -44,7 +44,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { ReplicationWizardData } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard-data.interface';
 import { ReplicationWhatAndWhereComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-what-and-where/replication-what-and-where.component';
 import { ReplicationWhenComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-when/replication-when.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { ReplicationService } from 'app/services/replication.service';
 
 @UntilDestroy()
@@ -384,8 +384,8 @@ export class ReplicationWizardComponent {
     return values;
   }
 
-  handleError(err: unknown): void {
-    this.dialogService.error(this.errorHandler.parseError(err));
+  handleError(error: unknown): void {
+    this.errorHandler.showErrorModal(error);
     this.rollBack();
   }
 

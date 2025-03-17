@@ -29,7 +29,7 @@ import {
 import { TruecommandStatusModalComponent } from 'app/modules/truecommand/components/truecommand-status-modal/truecommand-status-modal.component';
 import { trueCommandElements } from 'app/modules/truecommand/truecommand-button.elements';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -137,9 +137,9 @@ export class TruecommandButtonComponent implements OnInit {
           next: () => {
             this.loader.close();
           },
-          error: (err: unknown) => {
+          error: (error: unknown) => {
             this.loader.close();
-            this.dialogService.error(this.errorHandler.parseError(err));
+            this.errorHandler.showErrorModal(error);
           },
         });
       }

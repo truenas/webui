@@ -7,7 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   Observable, catchError, debounceTime, distinctUntilChanged, of, switchMap, take,
 } from 'rxjs';
-import { extractApiError } from 'app/helpers/api.helper';
+import { extractApiErrorDetails } from 'app/helpers/api.helper';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 
@@ -52,7 +52,7 @@ export class SmbValidationService {
       return of(null);
     }
 
-    const apiError = extractApiError(error);
+    const apiError = extractApiErrorDetails(error);
     const errorText = this.extractError(apiError?.reason || '');
 
     if (errorText === this.noSmbUsersError) {

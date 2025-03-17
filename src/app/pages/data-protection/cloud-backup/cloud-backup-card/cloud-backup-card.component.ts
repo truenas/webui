@@ -44,7 +44,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudBackupFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-form/cloud-backup-form.component';
 import { replicationListElements } from 'app/pages/data-protection/replication/replication-list/replication-list.elements';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -188,7 +188,7 @@ export class CloudBackupCardComponent implements OnInit {
         this.cdr.markForCheck();
       },
       error: (error: unknown) => {
-        this.dialogService.error(this.errorHandler.parseError(error));
+        this.errorHandler.showErrorModal(error);
         this.getCloudBackups();
       },
     });
@@ -222,8 +222,8 @@ export class CloudBackupCardComponent implements OnInit {
       next: () => {
         this.getCloudBackups();
       },
-      error: (err: unknown) => {
-        this.dialogService.error(this.errorHandler.parseError(err));
+      error: (error: unknown) => {
+        this.errorHandler.showErrorModal(error);
       },
     });
   }
@@ -240,12 +240,12 @@ export class CloudBackupCardComponent implements OnInit {
             this.getCloudBackups();
           }
         },
-        error: (err: unknown) => {
+        error: (error: unknown) => {
           this.updatedCount.update((count) => count - 1);
           if (!this.updatedCount()) {
             this.getCloudBackups();
           }
-          this.dialogService.error(this.errorHandler.parseError(err));
+          this.errorHandler.showErrorModal(error);
         },
       });
   }
