@@ -69,7 +69,7 @@ export class AppSettingsButtonComponent {
       .open(SelectPoolDialogComponent, { viewContainerRef: this.viewContainerRef })
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe(() => this.appsStore.initialize());
+      .subscribe(() => this.appsStore.loadCatalog());
   }
 
   onUnsetPool(): void {
