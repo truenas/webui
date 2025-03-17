@@ -5,7 +5,7 @@ import { UsersStore } from 'app/pages/credentials/new-users/store/users.store';
 
 export const userRoutes: Routes = [{
   path: '',
-  data: { title: T('Users'), breadcrumb: null },
+  data: { title: T('Users (WIP)'), breadcrumb: null },
   providers: [
     UsersStore,
   ],
@@ -16,7 +16,7 @@ export const userRoutes: Routes = [{
     },
     {
       path: 'view/:id',
-      data: { title: T('Users'), breadcrumb: null },
+      data: { title: T('Users (WIP)'), breadcrumb: null },
       children: [
         {
           path: '',
