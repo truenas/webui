@@ -42,7 +42,6 @@ describe('AppSettingsButtonComponent', () => {
         setDockerPool: jest.fn(() => of({})),
       }),
       mockProvider(AppsStore, {
-        initialize: jest.fn(),
         loadCatalog: jest.fn(() => of({})),
       }),
     ],
@@ -58,13 +57,10 @@ describe('AppSettingsButtonComponent', () => {
   });
 
   it('shows Choose Pool modal once Settings button -> Choose Pool clicked', async () => {
-    const matDialog = spectator.inject(MatDialog);
-    jest.spyOn(matDialog, 'open').mockImplementation();
-
     await menu.open();
     await menu.clickItem({ text: 'Choose Pool' });
 
-    expect(matDialog.open).toHaveBeenCalledWith(SelectPoolDialogComponent, { viewContainerRef });
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(SelectPoolDialogComponent, { viewContainerRef });
     expect(spectator.inject(AppsStore).loadCatalog).toHaveBeenCalled();
   });
 
