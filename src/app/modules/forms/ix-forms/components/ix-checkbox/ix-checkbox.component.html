@@ -1,36 +1,38 @@
-<mat-checkbox
-  color="primary"
-  [checked]="value"
-  [required]="required()"
-  [disabled]="isDisabled"
-  [ixTest]="controlDirective.name"
-  [attr.aria-label]="label()"
-  (change)="onCheckboxChanged($event)"
-  (blur)="onTouch()"
->
-  {{ label() }}
-  @if (required()) {
-    <span class="required">*</span>
+<div [class.extended-height]="extendedHeight()">
+  <mat-checkbox
+    color="primary"
+    [checked]="value"
+    [required]="required()"
+    [disabled]="isDisabled"
+    [ixTest]="controlDirective.name"
+    [attr.aria-label]="label()"
+    (change)="onCheckboxChanged($event)"
+    (blur)="onTouch()"
+  >
+    {{ label() }}
+    @if (required()) {
+      <span class="required">*</span>
+    }
+  </mat-checkbox>
+
+  @if (tooltip()) {
+    <ix-tooltip
+      class="tooltip"
+      [header]="label() || ''"
+      [message]="tooltip() || ''"
+    ></ix-tooltip>
   }
-</mat-checkbox>
 
-@if (tooltip()) {
-  <ix-tooltip
-    class="tooltip"
-    [header]="label() || ''"
-    [message]="tooltip() || ''"
-  ></ix-tooltip>
-}
+  @if (warning()) {
+    <ix-warning [message]="warning() || ''"></ix-warning>
+  }
 
-@if (warning()) {
-  <ix-warning [message]="warning() || ''"></ix-warning>
-}
+  @let control = controlDirective.control;
+  @if (control) {
+    <ix-errors [control]="control" [label]="label()"></ix-errors>
+  }
 
-@let control = controlDirective.control;
-@if (control) {
-  <ix-errors [control]="control" [label]="label()"></ix-errors>
-}
-
-@if (hint()) {
-  <mat-hint>{{ hint() }}</mat-hint>
-}
+  @if (hint()) {
+    <mat-hint>{{ hint() }}</mat-hint>
+  }
+</div>

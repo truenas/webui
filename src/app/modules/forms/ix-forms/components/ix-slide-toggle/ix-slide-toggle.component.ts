@@ -34,6 +34,7 @@ export class IxSlideToggleComponent implements ControlValueAccessor {
   readonly label = input<string>();
   readonly tooltip = input<string>();
   readonly required = input<boolean>();
+  readonly extendedHeight = input<boolean>();
 
   isDisabled = false;
   value: boolean;

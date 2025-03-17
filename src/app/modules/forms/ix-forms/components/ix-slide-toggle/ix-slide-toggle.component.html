@@ -1,27 +1,31 @@
-<mat-slide-toggle
-  color="primary"
-  [checked]="value"
-  [required]="required()"
-  [disabled]="isDisabled"
-  [ixTest]="controlDirective.name"
-  (change)="onSlideToggleChanged($event)"
-  (blur)="onTouch()"
->
-  {{ label() }}
-  @if (required()) {
-    <span class="required">*</span>
+<div [class.extended-height]="extendedHeight()">
+  <div>
+    <mat-slide-toggle
+    color="primary"
+    [checked]="value"
+    [required]="required()"
+    [disabled]="isDisabled"
+    [ixTest]="controlDirective.name"
+    (change)="onSlideToggleChanged($event)"
+    (blur)="onTouch()"
+  >
+    {{ label() }}
+    @if (required()) {
+      <span class="required">*</span>
+    }
+  </mat-slide-toggle>
+
+  @if (tooltip()) {
+    <ix-tooltip
+      class="tooltip"
+      [header]="label() || ''"
+      [message]="tooltip() || ''"
+    ></ix-tooltip>
   }
-</mat-slide-toggle>
 
-@if (tooltip()) {
-  <ix-tooltip
-    class="tooltip"
-    [header]="label() || ''"
-    [message]="tooltip() || ''"
-  ></ix-tooltip>
-}
-
-@let control = controlDirective.control;
-@if (control) {
-  <ix-errors [control]="control" [label]="label()"></ix-errors>
-}
+  @let control = controlDirective.control;
+  @if (control) {
+    <ix-errors [control]="control" [label]="label()"></ix-errors>
+  }
+  </div>
+</div>

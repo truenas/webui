@@ -5,6 +5,7 @@
   flex-wrap: wrap;
   font-size: 12px;
   margin: 12px 0;
+  padding: 4px 0;
 
   mat-slide-toggle {
     margin: 0 8px 0 0;
@@ -17,4 +18,19 @@
 
 .required {
   margin-left: 2px;
+}
+
+.extended-height {
+  display: flex;
+  flex-direction: column;
+  height: 45px;
+  justify-content: end;
+  margin: 10px 0;
+}
+
+.extended-height div {
+  align-items: end;
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
 }

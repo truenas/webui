@@ -40,6 +40,7 @@ export class IxCheckboxComponent implements ControlValueAccessor {
   readonly tooltip = input<string>();
   readonly warning = input<string>();
   readonly required = input<boolean>();
+  readonly extendedHeight = input<boolean>();
 
   isDisabled = false;
   value: boolean;
