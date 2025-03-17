@@ -276,8 +276,16 @@ export interface VirtualizationVolume {
   content_type: string;
   created_at: string;
   type: string;
-  config: string;
+  config: {
+    size: number;
+  };
   used_by: string[];
+}
+
+export interface CreateVirtualizationVolume {
+  name: string;
+  content_type?: string;
+  size?: number;
 }
 
 export type VirtualizationVolumeUpdate = [
@@ -309,4 +317,14 @@ export interface VirtualizationPciDeviceCapability {
   function: string;
   product: string;
   vendor: string;
+}
+
+export interface ImportZvolParams {
+  to_import: ZvolToImport[];
+  clone: boolean;
+}
+
+export interface ZvolToImport {
+  virt_volume_name: string;
+  zvol_path: string;
 }

@@ -1,15 +1,27 @@
 import {
   ChangeDetectionStrategy, Component, computed, OnInit, signal,
 } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder, ReactiveFormsModule, Validators,
+} from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { Observable, of } from 'rxjs';
-import { diskIoBusLabels, VirtualizationDeviceType, VirtualizationType } from 'app/enums/virtualization.enum';
+import { filter, Observable, of } from 'rxjs';
+import {
+  DiskIoBus,
+  diskIoBusLabels,
+  VirtualizationDeviceType,
+  VirtualizationType,
+} from 'app/enums/virtualization.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
-import { VirtualizationDisk, VirtualizationInstance } from 'app/interfaces/virtualization.interface';
+import {
+  VirtualizationDisk,
+  VirtualizationInstance,
+  VirtualizationVolume,
+} from 'app/interfaces/virtualization.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -21,6 +33,10 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import {
+  VolumesDialogComponent,
+  VolumesDialogOptions,
+} from 'app/pages/instances/components/common/volumes-dialog/volumes-dialog.component';
 import { FilesystemService } from 'app/services/filesystem.service';
 
 interface InstanceDiskFormOptions {
@@ -31,6 +47,7 @@ interface InstanceDiskFormOptions {
 @UntilDestroy()
 @Component({
   selector: 'ix-instance-disk-form',
+  styleUrls: ['./instance-disk-form.component.scss'],
   templateUrl: './instance-disk-form.component.html',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -55,18 +72,12 @@ export class InstanceDiskFormComponent implements OnInit {
   protected readonly diskIoBusOptions$ = of(mapToOptions(diskIoBusLabels, this.translate));
   protected readonly isLoading = signal(false);
 
-  readonly directoryNodeProvider = computed(() => {
-    if (this.isVm) {
-      return this.filesystem.getFilesystemNodeProvider({ zvolsOnly: true });
-    }
-
-    return this.filesystem.getFilesystemNodeProvider({ datasetsOnly: true });
-  });
+  readonly datasetProvider = this.filesystem.getFilesystemNodeProvider({ datasetsOnly: true });
 
   protected form = this.formBuilder.nonNullable.group({
     source: ['', Validators.required],
     destination: ['', Validators.required],
-    io_bus: ['', Validators.required],
+    io_bus: [DiskIoBus.Nvme, Validators.required],
   });
 
   protected isNew = computed(() => !this.existingDisk());
@@ -89,6 +100,7 @@ export class InstanceDiskFormComponent implements OnInit {
     private api: ApiService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
+    private matDialog: MatDialog,
     private filesystem: FilesystemService,
     public slideInRef: SlideInRef<InstanceDiskFormOptions, boolean>,
   ) {
@@ -107,6 +119,7 @@ export class InstanceDiskFormComponent implements OnInit {
         io_bus: disk.io_bus || null,
       });
     }
+
     if (this.isVm) {
       this.form.controls.destination.disable();
     } else {
@@ -114,7 +127,22 @@ export class InstanceDiskFormComponent implements OnInit {
     }
   }
 
-  onSubmit(): void {
+  protected onSelectVolume(): void {
+    this.matDialog
+      .open<VolumesDialogComponent, VolumesDialogOptions, VirtualizationVolume>(VolumesDialogComponent, {
+        minWidth: '90vw',
+        data: {
+          selectionMode: true,
+        },
+      })
+      .afterClosed()
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe((volume) => {
+        this.form.patchValue({ source: volume.id });
+      });
+  }
+
+  protected onSubmit(): void {
     this.isLoading.set(true);
     this.prepareRequest()
       .pipe(untilDestroyed(this))

@@ -61,7 +61,7 @@
               class="input"
               formControlName="iso_volume"
               [readonly]="true"
-              [label]="'Image' | translate"
+              [label]="'Volume' | translate"
               [required]="true"
             ></ix-input>
 
@@ -69,18 +69,9 @@
               mat-button
               ixTest="browse-isos"
               type="button"
-              (click)="onBrowseIsos()"
-            >{{ 'Select ISO' | translate }}</button>
+              (click)="onSelectVolume(form.controls.iso_volume)"
+            >{{ 'Select Volume' | translate }}</button>
           </div>
-        }
-
-        @case (VirtualizationSource.Zvol) {
-          <ix-explorer
-            formControlName="zvol_path"
-            root="/"
-            [label]="'Zvol' | translate"
-            [nodeProvider]="directoryNodeProvider()"
-          ></ix-explorer>
         }
       }
     </ix-form-section>
@@ -176,16 +167,16 @@
             [formGroupName]="i"
             (delete)="removeDisk(i)"
           >
-            <ix-explorer
-              formControlName="source"
-              root="/"
-              [label]="containersHelptext.disks_src_placeholder | translate"
-              [required]="true"
-              [nodeProvider]="directoryNodeProvider()"
-              [canCreateDataset]="true"
-            ></ix-explorer>
-
             @if (isContainer()) {
+              <ix-explorer
+                formControlName="source"
+                root="/"
+                [label]="containersHelptext.disks_src_placeholder | translate"
+                [required]="true"
+                [nodeProvider]="datasetProvider"
+                [canCreateDataset]="true"
+              ></ix-explorer>
+
               <ix-input
                 formControlName="destination"
                 [label]="containersHelptext.disks_dst_placeholder | translate"
@@ -195,6 +186,23 @@
             }
 
             @if (isVm()) {
+              <div class="image-field">
+                <ix-input
+                  class="input"
+                  formControlName="source"
+                  [readonly]="true"
+                  [label]="'Volume' | translate"
+                  [required]="true"
+                ></ix-input>
+
+                <button
+                  mat-button
+                  ixTest="browse-isos"
+                  type="button"
+                  (click)="onSelectVolume(disk.controls.source)"
+                >{{ 'Select Volume' | translate }}</button>
+              </div>
+
               <ix-select
                 formControlName="io_bus"
                 [label]="'I/O Bus' | translate"

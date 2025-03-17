@@ -14,7 +14,6 @@ import { helptextSystemCa } from 'app/helptext/system/ca';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { CertificateProfile, CertificateProfiles } from 'app/interfaces/certificate.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
@@ -73,7 +72,6 @@ export class CsrIdentifierAndTypeComponent implements OnInit, SummaryProvider {
     private translate: TranslateService,
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
-    private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
     private validators: IxValidatorsService,
   ) {}

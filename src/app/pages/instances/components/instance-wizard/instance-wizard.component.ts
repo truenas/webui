@@ -33,7 +33,7 @@ import {
   virtualizationTypeIcons,
 } from 'app/enums/virtualization.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
-import { containersHelptext } from 'app/helptext/instances/instances';
+import { instancesHelptext } from 'app/helptext/instances/instances';
 import { Option } from 'app/interfaces/option.interface';
 import {
   CreateVirtualizationInstance,
@@ -138,8 +138,7 @@ export class InstanceWizardComponent {
 
   imageSourceTypeOptions$: Observable<Option<VirtualizationSource>[]> = of([
     { label: this.translate.instant('Use a Linux image (linuxcontainers.org)'), value: VirtualizationSource.Image },
-    { label: this.translate.instant('Use an ISO image'), value: VirtualizationSource.Iso },
-    { label: this.translate.instant('Use zvol with previously installed OS'), value: VirtualizationSource.Zvol },
+    { label: this.translate.instant('Upload ISO, import a zvol or use another volume'), value: VirtualizationSource.Iso },
   ]);
 
   gpuDevices$ = this.api.call(
@@ -162,7 +161,6 @@ export class InstanceWizardComponent {
     source_type: [VirtualizationSource.Image, [Validators.required]],
     root_disk_io_bus: [DiskIoBus.Nvme, []],
     iso_volume: ['', [Validators.required]],
-    zvol_path: ['', [Validators.required]],
     image: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(200)]],
     enable_vnc: [false],
     vnc_port: [defaultVncPort, [Validators.min(5900), Validators.max(65535)]],
@@ -199,29 +197,25 @@ export class InstanceWizardComponent {
   get secureBootTooltip(): string {
     if (this.form.controls.secure_boot.disabled) {
       return this.form.controls.secure_boot.value
-        ? this.translate.instant(containersHelptext.secure_boot_on_required_tooltip)
-        : this.translate.instant(containersHelptext.secure_boot_off_required_tooltip);
+        ? this.translate.instant(instancesHelptext.secure_boot_on_required_tooltip)
+        : this.translate.instant(instancesHelptext.secure_boot_off_required_tooltip);
     }
 
-    return this.translate.instant(containersHelptext.secure_boot_tooltip);
+    return this.translate.instant(instancesHelptext.secure_boot_tooltip);
   }
 
   protected readonly instanceType = signal<VirtualizationType>(this.form.getRawValue().instance_type);
   protected readonly isContainer = computed(() => this.instanceType() === VirtualizationType.Container);
   protected readonly isVm = computed(() => this.instanceType() === VirtualizationType.Vm);
 
-  readonly directoryNodeProvider = computed(() => {
-    const providerOptions = this.isVm() ? { zvolsOnly: true } : { datasetsOnly: true };
-
-    return this.filesystem.getFilesystemNodeProvider(providerOptions);
-  });
+  readonly datasetProvider = this.filesystem.getFilesystemNodeProvider({ datasetsOnly: true });
 
   protected defaultIpv4Network = computed(() => {
-    return this.configStore.config()?.v4_network || 'N/A';
+    return this.configStore.config()?.v4_network || this.translate.instant('N/A');
   });
 
   protected defaultIpv6Network = computed(() => {
-    return this.configStore.config()?.v6_network || 'N/A';
+    return this.configStore.config()?.v6_network || this.translate.instant('N/A');
   });
 
   protected readonly of = of;
@@ -271,7 +265,7 @@ export class InstanceWizardComponent {
       });
   }
 
-  protected onBrowseIsos(): void {
+  protected onSelectVolume(targetField: FormControl<string>): void {
     this.matDialog
       .open<VolumesDialogComponent, VolumesDialogOptions, VirtualizationVolume>(VolumesDialogComponent, {
         minWidth: '90vw',
@@ -282,7 +276,7 @@ export class InstanceWizardComponent {
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe((volume) => {
-        this.form.controls.iso_volume.setValue(volume.id);
+        targetField.setValue(volume.id);
       });
   }
 
@@ -373,17 +367,13 @@ export class InstanceWizardComponent {
       image: values.source_type === VirtualizationSource.Image ? values.image : null,
       source_type: values.source_type,
       iso_volume: values.source_type === VirtualizationSource.Iso ? values.iso_volume : null,
-      zvol_path: values.source_type === VirtualizationSource.Zvol ? values.zvol_path : null,
       ...(this.isContainer() ? { environment: this.environmentVariablesPayload } : null),
     } as CreateVirtualizationInstance;
 
     if (this.isVm()) {
       payload.secure_boot = values.secure_boot;
       payload.root_disk_io_bus = values.root_disk_io_bus;
-
-      if (values.source_type !== VirtualizationSource.Zvol) {
-        payload.root_disk_size = values.root_disk_size;
-      }
+      payload.root_disk_size = values.root_disk_size;
 
       if (values.enable_vnc) {
         payload.vnc_password = values.vnc_password;
@@ -519,7 +509,7 @@ export class InstanceWizardComponent {
     });
   }
 
-  protected readonly containersHelptext = containersHelptext;
+  protected readonly containersHelptext = instancesHelptext;
 
   private listenForInstanceTypeChanges(): void {
     this.form.controls.instance_type.valueChanges.pipe(untilDestroyed(this)).subscribe((type) => {
@@ -544,19 +534,15 @@ export class InstanceWizardComponent {
 
   private listenForSourceTypeChanges(): void {
     this.form.controls.iso_volume.disable();
-    this.form.controls.zvol_path.disable();
 
     this.form.controls.source_type.valueChanges.pipe(untilDestroyed(this)).subscribe((type) => {
       this.form.controls.image.disable();
       this.form.controls.iso_volume.disable();
-      this.form.controls.zvol_path.disable();
 
       if (type === VirtualizationSource.Image) {
         this.form.controls.image.enable();
       } else if (type === VirtualizationSource.Iso) {
         this.form.controls.iso_volume.enable();
-      } else if (type === VirtualizationSource.Zvol) {
-        this.form.controls.zvol_path.enable();
       }
     });
   }

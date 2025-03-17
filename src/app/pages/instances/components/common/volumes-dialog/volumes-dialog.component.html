@@ -33,7 +33,25 @@
     ></tbody>
   </ix-table>
 
-  <div class="new-volume">
+  <div class="controls">
+    <button
+      mat-button
+      [ixTest]="['create-volume']"
+      (click)="createVolume()"
+    >
+      <ix-icon name="add"></ix-icon>
+      {{ 'Create Volume' | translate }}
+    </button>
+
+    <button
+      mat-button
+      [ixTest]="['import-zvols']"
+      (click)="importZvols()"
+    >
+      <ix-icon name="mdi-database"></ix-icon>
+      {{ 'Import Zvols' | translate }}
+    </button>
+
     <ix-upload-iso (uploaded)="onImageUploaded()"></ix-upload-iso>
   </div>
 </mat-dialog-content>

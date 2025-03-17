@@ -12,7 +12,7 @@ import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { DiskIoBus, diskIoBusLabels } from 'app/enums/virtualization.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
-import { containersHelptext } from 'app/helptext/instances/instances';
+import { instancesHelptext } from 'app/helptext/instances/instances';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -50,7 +50,7 @@ export class ChangeRootDiskSetupComponent {
   });
 
   protected readonly diskIoBusOptions$ = of(mapToOptions(diskIoBusLabels, this.translate));
-  protected readonly containersHelptext = containersHelptext;
+  protected readonly containersHelptext = instancesHelptext;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) private instance: VirtualizationInstance,

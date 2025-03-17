@@ -422,7 +422,7 @@ describe('InstanceWizardComponent', () => {
         'Root Disk I/O Bus': 'Virtio-BLK',
       });
 
-      const selectIso = await loader.getHarness(MatButtonHarness.with({ text: 'Select ISO' }));
+      const selectIso = await loader.getHarness(MatButtonHarness.with({ text: 'Select Volume' }));
       await selectIso.click();
 
       const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create' }));
