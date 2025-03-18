@@ -107,7 +107,7 @@ export class ErrorParserService {
 
     return {
       title: job.state,
-      message: job.error,
+      message: job.error || job.exception || this.translate.instant('Unknown error'),
       backtrace: job.logs_excerpt || job.exception,
     };
   }
