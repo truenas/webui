@@ -1,4 +1,5 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { hashMessage } from 'app/helpers/hash-message';
 import { UseEnterpriseMarketingLinkComponent } from './use-enterprise-marketing-link.component';
 
 const lastShownDate = 'marketingMessageLastShownDate';
@@ -28,7 +29,7 @@ describe('UseEnterpriseMarketingLinkComponent', () => {
 
   it('should rotate to the next message on a new day', () => {
     localStorage.setItem(lastShownDate, '2025-02-25');
-    localStorage.setItem(lastMessageHash, spectator.component.hashMessage('Optimize Your Storage'));
+    localStorage.setItem(lastMessageHash, hashMessage('Optimize Your Storage'));
 
     const nextMessage = spectator.component.getTodaysMessage();
     expect(nextMessage).toBe('More Performance, More Protection');
@@ -36,7 +37,7 @@ describe('UseEnterpriseMarketingLinkComponent', () => {
 
   it('should loop to the first message after the last message', () => {
     localStorage.setItem(lastShownDate, '2025-02-25');
-    localStorage.setItem(lastMessageHash, spectator.component.hashMessage('5 Nines of Uptime with HA'));
+    localStorage.setItem(lastMessageHash, hashMessage('5 Nines of Uptime with HA'));
 
     const nextMessage = spectator.component.getTodaysMessage();
     expect(nextMessage).toBe('Optimize Your Storage');
@@ -46,11 +47,11 @@ describe('UseEnterpriseMarketingLinkComponent', () => {
     spectator.component.getTodaysMessage();
 
     expect(localStorage.getItem(lastShownDate)).toBe('2025-02-26');
-    expect(localStorage.getItem(lastMessageHash)).toBe(spectator.component.hashMessage('Optimize Your Storage'));
+    expect(localStorage.getItem(lastMessageHash)).toBe(hashMessage('Optimize Your Storage'));
   });
 
   it('should maintain consistent message even if array order changes', () => {
-    const originalHash = spectator.component.hashMessage('Boost Performance & Support');
+    const originalHash = hashMessage('Boost Performance & Support');
     localStorage.setItem('marketingMessageLastShownDate', '2025-02-25');
     localStorage.setItem('marketingMessageLastHash', originalHash);
 
@@ -74,7 +75,7 @@ describe('UseEnterpriseMarketingLinkComponent', () => {
 
   it('should not change message within the same day', () => {
     localStorage.setItem(lastShownDate, '2025-02-26');
-    localStorage.setItem(lastMessageHash, spectator.component.hashMessage('Optimize Your Storage'));
+    localStorage.setItem(lastMessageHash, hashMessage('Optimize Your Storage'));
 
     const currentMessage = spectator.component.getTodaysMessage();
     expect(currentMessage).toBe('Optimize Your Storage');
