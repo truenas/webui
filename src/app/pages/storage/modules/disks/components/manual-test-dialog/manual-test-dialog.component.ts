@@ -105,7 +105,7 @@ export class ManualTestDialogComponent {
             (test) => ({ disk: test.disk, error: test.error }),
           );
           this.selectedDisksWithSmartSupport = this.selectedDisksWithSmartSupport.map((disk) => {
-            disk.error = disksWithErrors.find((errorDisk) => errorDisk.disk === disk.name)?.error;
+            disk.error = disksWithErrors.find((errorDisk) => errorDisk.disk === disk.name)?.error || '';
             return disk;
           });
           this.cdr.markForCheck();

@@ -18,7 +18,7 @@ export class FailedJobError extends Error {
   constructor(
     public job: Job,
   ) {
-    super(job.error);
+    super(job.error || 'Unknown error');
     this.name = 'FailedJob';
   }
 }

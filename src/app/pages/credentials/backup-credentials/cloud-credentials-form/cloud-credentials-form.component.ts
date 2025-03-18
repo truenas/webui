@@ -121,7 +121,7 @@ export class CloudCredentialsFormComponent implements OnInit {
     return !this.existingCredential;
   }
 
-  get selectedProvider(): CloudSyncProvider {
+  get selectedProvider(): CloudSyncProvider | undefined {
     return this.providers?.find((provider) => {
       return provider.name === this.commonForm.controls.type.value;
     });
