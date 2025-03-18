@@ -29,6 +29,15 @@
       ></ix-input>
     </ix-fieldset>
 
+    <ix-fieldset [title]="'Storage' | translate">
+      <ix-select
+        formControlName="storage_pool"
+        [label]="'Pool' | translate"
+        [required]="true"
+        [options]="poolOptions$"
+      ></ix-select>
+    </ix-fieldset>
+
     @if (isVm) {
       <ix-fieldset [title]="'VNC' | translate">
 

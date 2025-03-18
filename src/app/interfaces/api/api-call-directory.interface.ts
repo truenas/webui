@@ -253,6 +253,8 @@ import {
   VirtualizationInstance, VirtualizationDevice, VirtualizationImageParams,
   VirtualizationImage, AvailableGpus, AvailableUsb, VirtualizationGlobalConfig,
   VirtualizationNetwork, VirtualizationVolume, VirtualizationVolumeUpdate, VirtualizationPciChoices,
+  VirtualizationVolumeCreate,
+  VirtualizationImportIsoParams,
 } from 'app/interfaces/virtualization.interface';
 import {
   MatchDatastoresWithDatasets,
@@ -890,8 +892,10 @@ export interface ApiCallDirectory {
   'virt.global.pool_choices': { params: []; response: Choices };
 
   'virt.volume.query': { params: QueryParams<VirtualizationVolume>; response: VirtualizationVolume[] };
+  'virt.volume.create': { params: VirtualizationVolumeCreate; response: VirtualizationVolume };
   'virt.volume.update': { params: VirtualizationVolumeUpdate; response: VirtualizationVolume };
   'virt.volume.delete': { params: [id: string]; response: true };
+  'virt.volume.import_iso': { params: VirtualizationImportIsoParams; response: VirtualizationVolume };
 
   'system.advanced.get_gpu_pci_choices': { params: void; response: Choices };
 

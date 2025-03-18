@@ -32,6 +32,7 @@ import {
   VirtualizationType,
   virtualizationTypeIcons,
 } from 'app/enums/virtualization.enum';
+import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { containersHelptext } from 'app/helptext/instances/instances';
 import { Option } from 'app/interfaces/option.interface';
@@ -152,6 +153,8 @@ export class InstanceWizardComponent {
     }))),
   );
 
+  protected poolOptions$ = this.api.call('virt.global.pool_choices').pipe(choicesToOptions());
+
   protected readonly form = this.formBuilder.group({
     name: [
       '',
@@ -169,6 +172,7 @@ export class InstanceWizardComponent {
     vnc_password: [null as string | null],
     cpu: ['', [cpuValidator()]],
     memory: [null as number | null],
+    storage_pool: [null as string | null],
     tpm: [false],
     secure_boot: [false],
     root_disk_size: [10],
@@ -374,6 +378,7 @@ export class InstanceWizardComponent {
       source_type: values.source_type,
       iso_volume: values.source_type === VirtualizationSource.Iso ? values.iso_volume : null,
       zvol_path: values.source_type === VirtualizationSource.Zvol ? values.zvol_path : null,
+      storage_pool: values.storage_pool,
       ...(this.isContainer() ? { environment: this.environmentVariablesPayload } : null),
     } as CreateVirtualizationInstance;
 

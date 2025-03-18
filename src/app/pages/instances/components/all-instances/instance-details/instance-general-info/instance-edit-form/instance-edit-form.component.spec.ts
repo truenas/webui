@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { GiB } from 'app/constants/bytes.constant';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
+import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { VirtualizationStatus, VirtualizationType } from 'app/enums/virtualization.enum';
 import { Job } from 'app/interfaces/job.interface';
@@ -38,6 +38,7 @@ describe('InstanceEditFormComponent', () => {
     status: VirtualizationStatus.Stopped,
     vnc_password: null,
     secure_boot: true,
+    storage_pool: 'dozer',
   } as VirtualizationInstance;
 
   const createComponent = createComponentFactory({
@@ -46,6 +47,9 @@ describe('InstanceEditFormComponent', () => {
       mockAuth(),
       mockApi([
         mockJob('virt.instance.update', fakeSuccessfulJob({ id: 'test' } as VirtualizationInstance)),
+        mockCall('virt.global.pool_choices', {
+          dozer: 'dozer',
+        }),
       ]),
       mockProvider(SnackbarService),
       mockProvider(DialogService, {
@@ -87,6 +91,7 @@ describe('InstanceEditFormComponent', () => {
         Autostart: false,
         'CPU Configuration': '1-3',
         'Memory Size': '2 GiB',
+        Pool: 'dozer',
         'Enable VNC': true,
         'VNC Port': '9001',
         'VNC Password': '',
@@ -115,6 +120,7 @@ describe('InstanceEditFormComponent', () => {
         vnc_port: 9000,
         vnc_password: 'testing',
         secure_boot: false,
+        storage_pool: 'dozer',
       }]);
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();

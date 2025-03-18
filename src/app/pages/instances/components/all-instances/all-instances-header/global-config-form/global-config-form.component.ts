@@ -4,7 +4,7 @@ import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { finalize, of } from 'rxjs';
+import { finalize, map, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
@@ -54,9 +54,14 @@ export class GlobalConfigFormComponent {
     bridge: [this.autoBridge],
     v4_network: [null as string | null],
     v6_network: [null as string | null],
+    storage_pools: [[] as string[] | null],
   });
 
   protected poolOptions$ = this.api.call('virt.global.pool_choices').pipe(choicesToOptions());
+  protected storagePools$ = this.poolOptions$.pipe(
+    map((options) => options.slice(1)),
+  );
+
   protected bridgeOptions$ = this.api.call('virt.global.bridge_choices').pipe(choicesToOptions());
 
   get isAutoBridge(): boolean {
@@ -83,6 +88,7 @@ export class GlobalConfigFormComponent {
       bridge: !currentConfig.bridge ? this.autoBridge : currentConfig.bridge,
       v4_network: currentConfig.v4_network,
       v6_network: currentConfig.v6_network,
+      storage_pools: currentConfig.storage_pools || [],
     });
   }
 
@@ -95,6 +101,7 @@ export class GlobalConfigFormComponent {
       bridge: controls.bridge.value,
       v4_network: (!this.isAutoBridge || !controls.v4_network.value) ? null : controls.v4_network.value,
       v6_network: (!this.isAutoBridge || !controls.v6_network.value) ? null : controls.v6_network.value,
+      storage_pools: controls.storage_pools.value.length ? controls.storage_pools.value : null,
     };
 
     this.dialogService.jobDialog(

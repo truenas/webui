@@ -45,6 +45,7 @@ export interface VirtualizationInstance {
   root_disk_io_bus: DiskIoBus;
   root_disk_size: number | null;
   userns_idmap: UserNsIdmap | null;
+  storage_pool: string;
 }
 
 export interface VirtualizationAlias {
@@ -83,6 +84,7 @@ export interface CreateVirtualizationInstance {
   vnc_password?: string | null;
 
   zvol_path?: string | null;
+  storage_pool: string | null;
 }
 
 export interface UpdateVirtualizationInstance {
@@ -219,6 +221,7 @@ export interface VirtualizationGlobalConfigUpdate {
   bridge?: string | null;
   v4_network?: string | null;
   v6_network?: string | null;
+  storage_pools: string[] | null;
 }
 
 export interface VirtualizationGlobalConfig {
@@ -229,6 +232,7 @@ export interface VirtualizationGlobalConfig {
   v6_network: string | null;
   dataset: string | null;
   state: VirtualizationGlobalState;
+  storage_pools: string[];
 }
 
 export interface VirtualizationNetwork {
@@ -278,6 +282,40 @@ export interface VirtualizationVolume {
   type: string;
   config: string;
   used_by: string[];
+  storage_pool: string;
+}
+
+export enum VirtualizationVolumeContentType {
+  Block = 'BLOCK',
+}
+
+export interface VirtualizationVolumeCreate {
+  /**
+   * Must be between 1 and 63 characters long.
+   */
+  name: string;
+  /**
+   * @default Block
+   */
+  content_type: VirtualizationVolumeContentType;
+  /**
+   * Size of volume in MB and it should at least be 512 MB.
+   * @default 1024
+   */
+  size: number;
+  /**
+   * Storage pool in which to create the volume. This must be one of pools listed
+   * in `virt.global.config` output under `storage_pools`. If the value is `None`, then
+   * the pool defined as pool in `virt.global.config` will be used.
+   */
+  storage_pool: string | null;
+}
+
+export interface VirtualizationImportIsoParams {
+  name: string;
+  iso_location?: string | null;
+  upload_iso: boolean;
+  storage_pool: string | null;
 }
 
 export type VirtualizationVolumeUpdate = [

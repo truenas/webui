@@ -4,7 +4,7 @@ import {
 import { Router, NavigationStart } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { filter } from 'rxjs';
+import { distinctUntilChanged, filter, map } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { WINDOW } from 'app/helpers/window.helper';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -61,6 +61,12 @@ export class AllInstancesComponent implements OnInit {
   ngOnInit(): void {
     this.configStore.initialize();
     this.instancesStore.initialize();
+
+    this.configStore.state$.pipe(
+      map((state) => state.config.state),
+      distinctUntilChanged(),
+      untilDestroyed(this),
+    ).subscribe(() => this.instancesStore.initialize());
 
     const showVmInstancesWarning = !this.window.localStorage.getItem('showNewVmInstancesWarning');
 

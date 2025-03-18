@@ -62,6 +62,7 @@ describe('GlobalConfigFormComponent', () => {
     expect(await form.getValues()).toEqual({
       Bridge: 'bridge1',
       Pool: 'poolio',
+      'Storage Pools': [],
     });
 
     const v4NetworkInput = await form.getControl('v4_network');
@@ -74,6 +75,7 @@ describe('GlobalConfigFormComponent', () => {
     await form.fillForm({
       Pool: '[Disabled]',
       Bridge: '[AUTO]',
+      'Storage Pools': [],
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -81,6 +83,7 @@ describe('GlobalConfigFormComponent', () => {
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('virt.global.update', [{
       pool: '[Disabled]',
+      storage_pools: [],
       bridge: '[AUTO]',
       v4_network: '1.2.3.4/24',
       v6_network: null,
