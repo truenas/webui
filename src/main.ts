@@ -56,7 +56,9 @@ if (environment.production) {
     dsn: environment.sentryPublicDsn,
     integrations: [
       Sentry.browserTracingIntegration(),
-      Sentry.replayIntegration(),
+      Sentry.replayIntegration({
+        maskAllText: false,
+      }),
       Sentry.captureConsoleIntegration({ levels: ['error'] }),
     ],
     release: product.product || '',
