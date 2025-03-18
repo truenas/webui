@@ -4,15 +4,17 @@ import { MatButton } from '@angular/material/button';
 import { MatDialogClose, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { of } from 'rxjs';
 import { instancesHelptext } from 'app/helptext/instances/instances';
+import { RadioOption } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
+import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 
 @UntilDestroy()
@@ -23,11 +25,11 @@ import { FilesystemService } from 'app/services/filesystem.service';
     TranslateModule,
     ReactiveFormsModule,
     IxExplorerComponent,
-    IxCheckboxComponent,
     FormActionsComponent,
     MatButton,
     TestDirective,
     MatDialogClose,
+    IxRadioGroupComponent,
   ],
   templateUrl: './import-zvols-dialog.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -41,6 +43,19 @@ export class ImportZvolsDialogComponent {
   protected zvolProvider = this.filesystem.getFilesystemNodeProvider({
     zvolsOnly: true,
   });
+
+  protected cloneOrMoveOptions$ = of<RadioOption[]>([
+    {
+      label: this.translate.instant('Clone'),
+      tooltip: this.translate.instant(instancesHelptext.importZvol.cloneTooltip),
+      value: true,
+    },
+    {
+      label: this.translate.instant('Move'),
+      tooltip: this.translate.instant(instancesHelptext.importZvol.moveTooltip),
+      value: false,
+    },
+  ]);
 
   protected helptext = instancesHelptext;
 
@@ -76,7 +91,7 @@ export class ImportZvolsDialogComponent {
     )
       .afterClosed()
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => {

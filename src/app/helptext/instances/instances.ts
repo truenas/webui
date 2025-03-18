@@ -81,6 +81,9 @@ Choose a VM for full OS isolation, kernel independence, and running diverse OS t
 
   importZvol: {
     cloneTooltip: T('Clone and promote a temporary snapshot of the zvol into a custom storage volume.'),
-    description: T('Importing zvols is great because...'),
+    moveTooltip: T('Renames the ZFS dataset to a path in the `ix-virt` dataset in which the zvol is located.'),
+    description: T('Importing a zvol as Instances volume allows its lifecycle to be managed, including backups, restores, and snapshots. This allows portability between systems using standard tools.'),
   },
+
+  bootPriorityHint: T('Disks with highest boot priority are booted first. Root disk by default has a priority of 1.'),
 };

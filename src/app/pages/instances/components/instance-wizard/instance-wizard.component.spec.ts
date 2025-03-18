@@ -243,7 +243,6 @@ describe('InstanceWizardComponent', () => {
         image: 'almalinux/8/cloud',
         memory: GiB,
         source_type: VirtualizationSource.Image,
-        zvol_path: null,
         environment: {},
         enable_vnc: false,
         vnc_port: null,
@@ -289,7 +288,6 @@ describe('InstanceWizardComponent', () => {
         memory: GiB,
         source_type: VirtualizationSource.Image,
         enable_vnc: false,
-        zvol_path: null,
         vnc_port: null,
         iso_volume: null,
         instance_type: VirtualizationType.Container,
@@ -325,9 +323,20 @@ describe('InstanceWizardComponent', () => {
 
       const diskList = await loader.getHarness(IxListHarness.with({ label: 'Disks' }));
       await diskList.pressAddButton();
+
       const diskForm = await diskList.getLastListItem();
+
+      jest.spyOn(spectator.inject(MatDialog), 'open').mockReturnValue({
+        afterClosed: () => of({
+          id: 'my-volume',
+        } as VirtualizationVolume),
+      } as MatDialogRef<VolumesDialogComponent>);
+
+      const selectVolumeButton = await diskForm.getHarness(MatButtonHarness.with({ text: 'Select Volume' }));
+      await selectVolumeButton.click();
+
       await diskForm.fillForm({
-        Source: '/mnt/source',
+        'Boot Priority': 2,
         'I/O Bus': 'NVMe',
       });
 
@@ -369,7 +378,7 @@ describe('InstanceWizardComponent', () => {
       const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create' }));
       await createButton.click();
 
-      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('virt.instance.create', [{
+      expect(spectator.inject(ApiService).job).toHaveBeenLastCalledWith('virt.instance.create', [{
         name: 'new',
         autostart: true,
         cpu: '1-2',
@@ -379,7 +388,8 @@ describe('InstanceWizardComponent', () => {
         devices: [
           {
             dev_type: VirtualizationDeviceType.Disk,
-            source: '/mnt/source',
+            source: 'my-volume',
+            boot_priority: 2,
             io_bus: DiskIoBus.Nvme,
           },
           { dev_type: VirtualizationDeviceType.Nic, nic_type: VirtualizationNicType.Bridged, parent: 'nic1' },
@@ -395,7 +405,6 @@ describe('InstanceWizardComponent', () => {
         enable_vnc: true,
         vnc_port: 9000,
         source_type: VirtualizationSource.Image,
-        zvol_path: null,
         root_disk_size: 9,
         vnc_password: 'testing',
         secure_boot: true,
@@ -404,7 +413,7 @@ describe('InstanceWizardComponent', () => {
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
     });
 
-    it('creates new instance with an ISO when form is submitted', async () => {
+    it('creates new instance with a volume when form is submitted', async () => {
       jest.spyOn(spectator.inject(MatDialog), 'open').mockReturnValue({
         afterClosed: () => of({
           id: 'myiso.iso',
@@ -416,7 +425,7 @@ describe('InstanceWizardComponent', () => {
 
       await form.fillForm({
         Name: 'new',
-        'VM Image Options': 'Use an ISO image',
+        'VM Image Options': 'Upload ISO, import a zvol or use another volume',
         'CPU Configuration': '2',
         'Memory Size': '1 GiB',
         'Root Disk I/O Bus': 'Virtio-BLK',
@@ -442,7 +451,6 @@ describe('InstanceWizardComponent', () => {
         secure_boot: false,
         memory: 1073741824,
         vnc_port: null,
-        zvol_path: null,
         root_disk_size: 10,
       }]);
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
@@ -455,42 +463,6 @@ describe('InstanceWizardComponent', () => {
 
       const proxiesList = await loader.getHarnessOrNull(IxListHarness.with({ label: 'Proxies' }));
       expect(proxiesList).toBeNull();
-    });
-
-    it('creates new instance using zvol path when form is submitted', async () => {
-      const instanceType = await loader.getHarness(IxIconGroupHarness.with({ label: 'Virtualization Method' }));
-      await instanceType.setValue('VM');
-
-      await form.fillForm({
-        Name: 'new',
-        'VM Image Options': 'Use zvol with previously installed OS',
-        'CPU Configuration': '2',
-        'Memory Size': '1 GiB',
-        Zvol: '/dev/zvol/test',
-        'Root Disk I/O Bus': 'Virtio-SCSI',
-      });
-
-      const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create' }));
-      await createButton.click();
-
-      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('virt.instance.create', [{
-        name: 'new',
-        autostart: true,
-        root_disk_io_bus: DiskIoBus.VirtioScsi,
-        cpu: '2',
-        instance_type: VirtualizationType.Vm,
-        devices: [],
-        image: null,
-        source_type: VirtualizationSource.Zvol,
-        enable_vnc: false,
-        secure_boot: false,
-        memory: 1073741824,
-        vnc_port: null,
-        iso_volume: null,
-        zvol_path: '/dev/zvol/test',
-      }]);
-      expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-      expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
     });
   });
 

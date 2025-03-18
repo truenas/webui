@@ -186,6 +186,7 @@ export class InstanceWizardComponent {
       source: FormControl<string>;
       destination: FormControl<string>;
       io_bus: FormControl<DiskIoBus>;
+      boot_priority: FormControl<number>;
     }>>([]),
     environment_variables: new FormArray<InstanceEnvVariablesFormGroup>([]),
   });
@@ -300,6 +301,7 @@ export class InstanceWizardComponent {
       source: ['', Validators.required],
       destination: ['', Validators.required],
       io_bus: [DiskIoBus.Nvme, Validators.required],
+      boot_priority: [1, Validators.required],
     });
 
     if (this.isVm()) {
@@ -308,6 +310,7 @@ export class InstanceWizardComponent {
 
     if (this.isContainer()) {
       control.removeControl('io_bus');
+      control.removeControl('boot_priority');
     }
 
     this.form.controls.disks.push(control);
@@ -405,12 +408,25 @@ export class InstanceWizardComponent {
   }
 
   private getDevicesPayload(): VirtualizationDevice[] {
-    const disks = this.form.controls.disks.value.map((disk) => ({
-      dev_type: VirtualizationDeviceType.Disk,
-      source: disk.source,
-      ...(this.isContainer() ? { destination: disk.destination } : null),
-      ...(this.isVm() ? { io_bus: disk.io_bus } : null),
-    }));
+    const disks = this.form.controls.disks.value.map((disk) => {
+      const diskPayload = {
+        dev_type: VirtualizationDeviceType.Disk,
+        source: disk.source,
+      };
+
+      if (this.isContainer()) {
+        return {
+          ...diskPayload,
+          destination: disk.destination,
+        };
+      }
+
+      return {
+        ...diskPayload,
+        boot_priority: disk.boot_priority,
+        io_bus: disk.io_bus,
+      };
+    });
 
     const usbDevices: { dev_type: VirtualizationDeviceType; product_id: string }[] = [];
     for (const productId of this.form.controls.usb_devices.value) {
@@ -509,7 +525,7 @@ export class InstanceWizardComponent {
     });
   }
 
-  protected readonly containersHelptext = instancesHelptext;
+  protected readonly instancesHelptext = instancesHelptext;
 
   private listenForInstanceTypeChanges(): void {
     this.form.controls.instance_type.valueChanges.pipe(untilDestroyed(this)).subscribe((type) => {

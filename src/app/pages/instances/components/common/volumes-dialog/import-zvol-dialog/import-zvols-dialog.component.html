@@ -7,6 +7,7 @@
   </p>
 
   <ix-explorer
+    root="/dev/zvol"
     formControlName="zvols"
     [label]="'Select Zvols' | translate"
     [required]="true"
@@ -14,11 +15,10 @@
     [multiple]="true"
   ></ix-explorer>
 
-  <ix-checkbox
+  <ix-radio-group
     formControlName="clone"
-    [label]="'Clone' | translate"
-    [tooltip]="helptext.importZvol.cloneTooltip"
-  ></ix-checkbox>
+    [options]="cloneOrMoveOptions$"
+  ></ix-radio-group>
 
   <ix-form-actions>
     <button

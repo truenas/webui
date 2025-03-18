@@ -7,6 +7,7 @@ import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxRadioGroupHarness } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -48,8 +49,10 @@ describe('ImportZvolsDialogComponent', () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
       'Select Zvols': ['/dev/zvol/tank/zvol1', '/dev/zvol/tank/zvol1'],
-      Clone: true,
     });
+
+    const moveOrClone = await loader.getHarness(IxRadioGroupHarness);
+    await moveOrClone.setValue('Clone');
 
     const importButton = await loader.getHarness(MatButtonHarness.with({ text: 'Import' }));
     await importButton.click();
