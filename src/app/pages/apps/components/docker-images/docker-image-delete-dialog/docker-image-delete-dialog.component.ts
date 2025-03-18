@@ -44,8 +44,8 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 export class DockerImageDeleteDialogComponent {
   protected readonly requiredRoles = [Role.AppsWrite];
-  protected readonly forceCheckboxTooltip = 'When set will force delete the image regardless of the state of\
-   containers and should be used cautiously.';
+  protected readonly forceCheckboxTooltip = 'Use force only if other methods fail as it can leave images in a undefined state. \
+   You cannot delete Docker Images (even with force) when the image is in use in a running Docker container.';
 
   form = this.fb.nonNullable.group({
     confirm: [false, [Validators.requiredTrue]],
