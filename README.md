@@ -8,12 +8,11 @@ TrueNAS WebUI
 ================
 Angular-based WebUI for TrueNAS.
 
-## I'd like to
 ### Participate In The Project
-- :earth_africa: by [translating UI in my language.](https://github.com/truenas/webui/blob/master/docs/contributing_translations.md)
-- :mage: by [contributing code.](https://github.com/truenas/webui/blob/master/docs/contributing_code.md)
+- :earth_africa: [Translate UI in your language.](https://github.com/truenas/webui/blob/master/docs/contributing_translations.md)
+- :mage: [Contribute code.](https://github.com/truenas/webui/blob/master/docs/contributing_code.md)
 
-### Set up a Development Environment
+### Set up Development Environment
 - :toolbox: [Set up local environment.](https://github.com/truenas/webui/blob/master/docs/setup.md)
 
 ### Test Specific UI Version
