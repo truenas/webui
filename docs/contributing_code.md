@@ -11,17 +11,17 @@ We've created this document to explain how to contribute to the project.
 
 We maintain a [Help Wanted list](https://ixsystems.atlassian.net/issues/?filter=12107) – a list of tasks that are easier to get started with.
 
-- [ ] Pick an issue from the [Help Wanted list.](https://ixsystems.atlassian.net/issues/?filter=12107)
-- [ ] Assign it to yourself, so that no one else works on it. 
+- Pick an issue from the [Help Wanted list.](https://ixsystems.atlassian.net/issues/?filter=12107)
+- Assign it to yourself, so that no one else works on it. 
 
 Feel free to assign any one issue from the queue, regardless of current assignee.
 
 ### Update The code
-- [ ] Fork the repo.
+- Fork the repo.
 
-- [ ] Set up development environment by following the [Setup Guide.](https://github.com/truenas/webui/blob/master/docs/setup.md)
+- Set up development environment by following the [Setup Guide.](https://github.com/truenas/webui/blob/master/docs/setup.md)
 
-- [ ] Fix the issue.
+- Fix the issue.
 
 ### Add Tests If Necessary
 
@@ -47,15 +47,15 @@ Please see other `.spec.ts` files in the repo for examples.
 
 Our CI will make sure that your code matches our code style, but it may be a good idea to run linter locally first:
 
-- [ ] `yarn lint`
+- `yarn lint`
 
-- [ ] Please name your branch `NAS-<issue number>`, e.g. `NAS-12345`.
+- Please name your branch `NAS-<issue number>`, e.g. `NAS-12345`.
 
-- [ ] Commit description should be in the format `NAS-<issue number>: <description>`, e.g. `NAS-12345: Fix the issue with ...`.
+- Commit description should be in the format `NAS-<issue number>: <description>`, e.g. `NAS-12345: Fix the issue with ...`.
 
-- [ ] Push changes to your fork.
+- Push changes to your fork.
 
-- [ ] Open a PR against our repo.
+- Open a PR against our repo.
 
 ### Wait For Changes To Be Merged
 
