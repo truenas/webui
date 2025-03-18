@@ -23,6 +23,7 @@ export const extraRules = {
     "methods": false,
   }],
   "@smarttools/rxjs/prefer-observer": ["error"],
+  "@smarttools/rxjs/throw-error": ["error"],
 
   // Angular
   "@angular-eslint/use-lifecycle-interface": ["error"],
