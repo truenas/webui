@@ -2,6 +2,8 @@ import {
   Component, ChangeDetectionStrategy, computed,
 } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { exploreNasEnterpriseLink } from 'app/constants/explore-nas-enterprise-link.constant';
+import { hashMessage } from 'app/helpers/hash-message';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
@@ -16,8 +18,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class UseEnterpriseMarketingLinkComponent {
-  protected readonly targetUrl = 'https://truenas.com/explore-truenas-enterprise/';
-
   messages = [
     this.translate.instant('Optimize Your Storage'),
     this.translate.instant('More Performance, More Protection'),
@@ -28,7 +28,7 @@ export class UseEnterpriseMarketingLinkComponent {
   ];
 
   currentMessage = computed(() => this.getTodaysMessage());
-  currentMessageHref = computed(() => `${this.targetUrl}?m=${this.hashMessage(this.currentMessage())}`);
+  currentMessageHref = computed(() => `${exploreNasEnterpriseLink}?m=${hashMessage(this.currentMessage())}`);
 
   constructor(
     private translate: TranslateService,
@@ -43,7 +43,7 @@ export class UseEnterpriseMarketingLinkComponent {
       const nextMessage = this.getNextMessage(lastMessageHash);
 
       localStorage.setItem('marketingMessageLastShownDate', today);
-      localStorage.setItem('marketingMessageLastHash', this.hashMessage(nextMessage));
+      localStorage.setItem('marketingMessageLastHash', hashMessage(nextMessage));
 
       return nextMessage;
     }
@@ -52,17 +52,13 @@ export class UseEnterpriseMarketingLinkComponent {
   }
 
   getNextMessage(lastMessageHash: string | null): string {
-    const lastIndex = this.messages.findIndex((message) => this.hashMessage(message) === lastMessageHash);
+    const lastIndex = this.messages.findIndex((message) => hashMessage(message) === lastMessageHash);
     const nextIndex = lastIndex >= 0 ? (lastIndex + 1) % this.messages.length : 0;
     return this.messages[nextIndex];
   }
 
   getCurrentMessage(lastMessageHash: string | null): string {
-    const currentIndex = this.messages.findIndex((message) => this.hashMessage(message) === lastMessageHash);
+    const currentIndex = this.messages.findIndex((message) => hashMessage(message) === lastMessageHash);
     return currentIndex >= 0 ? this.messages[currentIndex] : this.messages[0];
-  }
-
-  hashMessage(message: string): string {
-    return btoa(encodeURIComponent(message));
   }
 }

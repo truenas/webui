@@ -10,12 +10,14 @@ export const containersHelptext = {
 
   instance_type_placeholder: T('Virtualization Method'),
   instance_type_tooltip: T('<b>Why choose Container?</b><br />\
-Containers offer lightweight, \
-efficient virtualization by sharing the host OS kernel, \
+Containers, powered by LXC, offer lightweight, efficient virtualization by sharing the host OS kernel, \
 providing faster startup times and reduced resource usage compared to VMs. \
+<br /><br />\
 Ideal for scalable applications.<br /><br />\
 <b>Why choose VM?</b><br />\
-Choose a VM for full OS isolation, kernel independence, and running diverse OS types.'),
+Virtual Machines (VMs), powered by QEMU, offer full OS isolation, kernel independence, and can run diverse OS types. \
+<br /><br />\
+Ideal for legacy applications, full-featured desktops, or software with strict OS dependencies.'),
 
   cpu_memory_tooltip: T('<b>CPU Configuration</b><br />Enter the number of cores. Use multiple values\
  or ranges to set the CPU topology.<br />Example: 1-2, 5, 9-11.'),
