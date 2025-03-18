@@ -34,7 +34,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { JbofFormComponent } from 'app/pages/system/enclosure/components/jbof-list/jbof-form/jbof-form.component';
 import { jbofListElements } from 'app/pages/system/enclosure/components/jbof-list/jbof-list.elements';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -155,7 +155,7 @@ export class JbofListComponent implements OnInit {
     ).subscribe({
       next: () => this.getJbofs(),
       error: (error: unknown) => {
-        this.dialogService.error(this.errorHandler.parseError(error));
+        this.errorHandler.showErrorModal(error);
       },
     });
   }

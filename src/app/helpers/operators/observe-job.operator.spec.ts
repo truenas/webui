@@ -2,6 +2,7 @@ import { TestScheduler } from 'rxjs/testing';
 import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
+import { FailedJobError } from 'app/services/errors/error.classes';
 import { observeJob } from './observe-job.operator';
 
 describe('observeJob', () => {
@@ -36,7 +37,7 @@ describe('observeJob', () => {
       } as Job;
       const source$ = cold('a', { a: job });
 
-      expectObservable(observeJob()(source$)).toBe('#', undefined, job);
+      expectObservable(observeJob()(source$)).toBe('#', undefined, new FailedJobError(job));
     });
   });
 

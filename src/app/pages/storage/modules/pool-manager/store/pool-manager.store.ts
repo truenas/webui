@@ -16,7 +16,6 @@ import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk, DiskDetailsResponse } from 'app/interfaces/disk.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ManualDiskSelectionComponent, ManualDiskSelectionParams } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/manual-disk-selection.component';
 import {
@@ -33,7 +32,7 @@ import {
   topologyCategoryToDisks,
   topologyToDisks,
 } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export interface PoolManagerTopologyCategory {
   layout: CreateVdevLayout | null;
@@ -231,7 +230,6 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     private diskStore: DiskStore,
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
-    private dialogService: DialogService,
     private generateVdevs: GenerateVdevsService,
     private matDialog: MatDialog,
   ) {
@@ -274,7 +272,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
         },
         (error: unknown) => {
           this.patchState({ isLoading: false });
-          this.dialogService.error(this.errorHandler.parseError(error));
+          this.errorHandler.showErrorModal(error);
         },
       ),
     );

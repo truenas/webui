@@ -37,7 +37,7 @@ import { CronDeleteDialogComponent } from 'app/pages/system/advanced/cron/cron-d
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { cronElements } from 'app/pages/system/advanced/cron/cron-list/cron-list.elements';
 import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row.interface';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { TaskService } from 'app/services/task.service';
 
 @UntilDestroy()
@@ -196,7 +196,7 @@ export class CronListComponent implements OnInit {
           message,
         );
       },
-      error: (error: unknown) => this.dialog.error(this.errorHandler.parseError(error)),
+      error: (error: unknown) => this.errorHandler.showErrorModal(error),
     });
   }
 

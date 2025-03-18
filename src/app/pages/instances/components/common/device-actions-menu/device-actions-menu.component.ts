@@ -19,7 +19,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { getDeviceDescription } from 'app/pages/instances/components/common/utils/get-device-description.utils';
 import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({

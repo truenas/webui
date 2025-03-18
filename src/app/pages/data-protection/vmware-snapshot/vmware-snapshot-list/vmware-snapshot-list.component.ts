@@ -29,7 +29,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { VmwareSnapshotFormComponent } from 'app/pages/data-protection/vmware-snapshot/vmware-snapshot-form/vmware-snapshot-form.component';
 import { vmwareSnapshotListElements } from 'app/pages/data-protection/vmware-snapshot/vmware-snapshot-list/vmware-snapshot-list.elements';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { VmwareStatusCellComponent } from './vmware-status-cell/vmware-status-cell.component';
 
 @UntilDestroy()
@@ -151,8 +151,8 @@ export class VmwareSnapshotListComponent implements OnInit {
       next: () => {
         this.getSnapshotsData();
       },
-      error: (err: unknown) => {
-        this.dialogService.error(this.errorHandler.parseError(err));
+      error: (error: unknown) => {
+        this.errorHandler.showErrorModal(error);
       },
     });
   }

@@ -51,7 +51,7 @@ import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/clou
 import { cloudSyncListElements } from 'app/pages/data-protection/cloudsync/cloudsync-list/cloudsync-list.elements';
 import { CloudSyncRestoreDialogComponent } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
 import { CloudSyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { TaskService } from 'app/services/task.service';
 import { AppState } from 'app/store';
 
@@ -204,7 +204,7 @@ export class CloudSyncListComponent implements OnInit {
       )),
       catchError((error: unknown) => {
         this.getCloudSyncTasks();
-        this.dialogService.error(this.errorHandler.parseError(error));
+        this.errorHandler.showErrorModal(error);
         return EMPTY;
       }),
       untilDestroyed(this),
@@ -250,7 +250,7 @@ export class CloudSyncListComponent implements OnInit {
       )),
       catchError((error: unknown) => {
         this.getCloudSyncTasks();
-        this.dialogService.error(this.errorHandler.parseError(error));
+        this.errorHandler.showErrorModal(error);
         return EMPTY;
       }),
       untilDestroyed(this),
@@ -313,8 +313,8 @@ export class CloudSyncListComponent implements OnInit {
         );
         this.getCloudSyncTasks();
       },
-      error: (err: unknown) => {
-        this.dialogService.error(this.errorHandler.parseError(err));
+      error: (error: unknown) => {
+        this.errorHandler.showErrorModal(error);
       },
     });
   }

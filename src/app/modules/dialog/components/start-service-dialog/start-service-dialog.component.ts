@@ -12,14 +12,13 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Observable, forkJoin, filter } from 'rxjs';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { Service } from 'app/interfaces/service.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxSlideToggleComponent } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectService } from 'app/store/services/services.selectors';
 
@@ -67,7 +66,6 @@ export class StartServiceDialogComponent implements OnInit {
     private snackbar: SnackbarService,
     private dialogRef: MatDialogRef<StartServiceDialogComponent, StartServiceDialogResult>,
     private store$: Store<ServicesState>,
-    private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
     @Inject(MAT_DIALOG_DATA) public serviceName: ServiceName,
   ) {}
@@ -120,7 +118,7 @@ export class StartServiceDialogComponent implements OnInit {
         },
         error: (error: unknown) => {
           this.isLoading = false;
-          this.dialogService.error(this.errorHandler.parseError(error));
+          this.errorHandler.showErrorModal(error);
           this.dialogRef.close({
             start: false,
             startAutomatically: false,

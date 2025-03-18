@@ -23,7 +23,7 @@ import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/s
 import {
   GlobalTargetConfigurationComponent,
 } from 'app/pages/sharing/iscsi/global-target-configuration/global-target-configuration.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UrlOptionsService } from 'app/services/url-options.service';
 
 @UntilDestroy()

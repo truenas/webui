@@ -18,7 +18,7 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export interface TruecommandSignupModalState {
   isConnected: boolean;
@@ -115,9 +115,9 @@ export class TruecommandConnectModalComponent implements OnInit {
           );
         }
       },
-      error: (err: unknown) => {
+      error: (error: unknown) => {
         this.loader.close();
-        this.dialogService.error(this.errorHandler.parseError(err));
+        this.errorHandler.showErrorModal(error);
       },
     });
   }
@@ -146,9 +146,9 @@ export class TruecommandConnectModalComponent implements OnInit {
               hideCancel: true,
             });
           },
-          error: (err: unknown) => {
+          error: (error: unknown) => {
             this.loader.close();
-            this.dialogService.error(this.errorHandler.parseError(err));
+            this.errorHandler.showErrorModal(error);
           },
         });
     });

@@ -26,7 +26,7 @@ import { NetworkConfigurationComponent } from 'app/pages/network/components/conf
 import {
   networkConfigurationCardElements,
 } from 'app/pages/network/components/network-configuration-card/network-configuration-card.elements';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
 
 @UntilDestroy()

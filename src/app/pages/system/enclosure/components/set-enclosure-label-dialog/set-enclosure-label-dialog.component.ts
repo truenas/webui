@@ -8,7 +8,6 @@ import {
 } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -16,7 +15,7 @@ import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-vali
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export interface SetEnclosureLabelDialogData {
   enclosureId: string;
@@ -62,7 +61,6 @@ export class SetEnclosureLabelDialogComponent implements OnInit {
     private loader: LoaderService,
     private dialogRef: MatDialogRef<SetEnclosureLabelDialogComponent, string>,
     private errorHandler: ErrorHandlerService,
-    private dialogService: DialogService,
     private validatorsService: IxValidatorsService,
     private translate: TranslateService,
     @Inject(MAT_DIALOG_DATA) private data: SetEnclosureLabelDialogData,
@@ -87,7 +85,7 @@ export class SetEnclosureLabelDialogComponent implements OnInit {
           this.dialogRef.close(newLabel);
         },
         error: (error: unknown) => {
-          this.dialogService.error(this.errorHandler.parseError(error));
+          this.errorHandler.showErrorModal(error);
           this.dialogRef.close();
         },
       });

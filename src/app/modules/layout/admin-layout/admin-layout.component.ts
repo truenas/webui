@@ -3,6 +3,7 @@ import {
   AfterViewInit,
   ChangeDetectionStrategy,
   Component,
+  computed,
   OnDestroy,
   OnInit,
   QueryList,
@@ -18,7 +19,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { map } from 'rxjs';
+import { exploreNasEnterpriseLink } from 'app/constants/explore-nas-enterprise-link.constant';
 import { productTypeLabels } from 'app/enums/product-type.enum';
+import { hashMessage } from 'app/helpers/hash-message';
 import { SubMenuItem } from 'app/interfaces/menu-item.interface';
 import { AlertsPanelComponent } from 'app/modules/alerts/components/alerts-panel/alerts-panel.component';
 import { alertPanelClosed } from 'app/modules/alerts/store/alert.actions';
@@ -36,7 +39,7 @@ import { TruenasLogoComponent } from 'app/modules/layout/topbar/truenas-logo/tru
 import { DefaultPageHeaderComponent } from 'app/modules/page-header/default-page-header/default-page-header.component';
 import { SlideInControllerComponent } from 'app/modules/slide-ins/components/slide-in-controller/slide-in-controller.component';
 import { ThemeService } from 'app/modules/theme/theme.service';
-import { SentryService } from 'app/services/sentry.service';
+import { SentryConfigurationService } from 'app/services/errors/sentry-configuration.service';
 import { SessionTimeoutService } from 'app/services/session-timeout.service';
 import { AppState } from 'app/store';
 import { selectHasConsoleFooter, waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
@@ -74,11 +77,13 @@ import {
 export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChildren(MatSidenav) private sideNavs: QueryList<MatSidenav>;
 
+  protected readonly iconMarker = iconMarker;
   readonly hostname$ = this.store$.pipe(waitForSystemInfo, map(({ hostname }) => hostname));
   readonly isAlertPanelOpen$ = this.store$.select(selectIsAlertPanelOpen);
   readonly hasConsoleFooter$ = this.store$.select(selectHasConsoleFooter);
   readonly copyrightHtml = toSignal(this.store$.select(selectCopyrightHtml));
   readonly productType = toSignal(this.store$.select(selectProductType));
+  protected currentMessageHref = computed(() => `${exploreNasEnterpriseLink}?m=${hashMessage(this.productType())}`);
 
   get sidenavWidth(): string {
     return this.sidenavService.sidenavWidth;
@@ -123,7 +128,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     private store$: Store<AppState>,
     private languageService: LanguageService,
     private sessionTimeoutService: SessionTimeoutService,
-    private sentryService: SentryService,
+    private sentryService: SentryConfigurationService,
   ) {}
 
   ngOnInit(): void {
@@ -163,6 +168,4 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   onAlertsPanelClosed(): void {
     this.store$.dispatch(alertPanelClosed());
   }
-
-  protected readonly iconMarker = iconMarker;
 }

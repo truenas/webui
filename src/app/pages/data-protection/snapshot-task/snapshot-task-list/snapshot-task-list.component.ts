@@ -41,7 +41,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
 import { snapshotTaskListElements } from 'app/pages/data-protection/snapshot-task/snapshot-task-list/snapshot-task-list.elements';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { StorageService } from 'app/services/storage.service';
 import { TaskService } from 'app/services/task.service';
 
@@ -242,8 +242,8 @@ export class SnapshotTaskListComponent implements OnInit {
       next: () => {
         this.getSnapshotTasks();
       },
-      error: (err: unknown) => {
-        this.dialogService.error(this.errorHandler.parseError(err));
+      error: (error: unknown) => {
+        this.errorHandler.showErrorModal(error);
       },
     });
   }

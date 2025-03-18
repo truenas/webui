@@ -40,7 +40,7 @@ import { IdmapFormComponent } from 'app/pages/directory-service/components/idmap
 import { idMapElements } from 'app/pages/directory-service/components/idmap-list/idmap-list.elements';
 import { IdmapRow } from 'app/pages/directory-service/components/idmap-list/idmap-row.interface';
 import { requiredIdmapDomains } from 'app/pages/directory-service/utils/required-idmap-domains.utils';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { IdmapService } from 'app/services/idmap.service';
 
 @UntilDestroy()
@@ -132,7 +132,7 @@ export class IdmapListComponent implements OnInit {
               untilDestroyed(this),
             ).subscribe({
               error: (error: unknown) => {
-                this.dialogService.error(this.errorHandler.parseError(error));
+                this.errorHandler.showErrorModal(error);
               },
               complete: () => {
                 this.getIdmaps();
