@@ -8,16 +8,11 @@
 
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   <ix-select
-    formControlName="timeout"
-    [label]="'Timeout' | translate"
+    formControlName="waitFor"
+    [label]="'Wait to stop cleanly' | translate"
     [required]="true"
-    [options]="timeoutOptions$"
+    [options]="waitForOptions$"
   ></ix-select>
-
-  <ix-checkbox
-    formControlName="force"
-    [label]="'Force' | translate"
-  ></ix-checkbox>
 
   <ix-form-actions>
     <button mat-button type="button" ixTest="cancel" [matDialogClose]="false">
