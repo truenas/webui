@@ -3,6 +3,13 @@
   <div class="title-container">
     <div class="title-and-indicator">
       <h1>{{ pageTitle() ? (pageTitle() | translate) : (currentTitle$ | async) | translate }}</h1>
+
+      @if (tooltip()) {
+        <ix-tooltip
+          class="tooltip"
+          [message]="tooltip() | translate"
+        ></ix-tooltip>
+      }
       @if ((hasNewIndicator$ | async) || customBadgeTitle()) {
         <ix-header-badge [customBadgeTitle]="customBadgeTitle()"></ix-header-badge>
       }
