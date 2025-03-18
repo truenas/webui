@@ -1,7 +1,13 @@
 # Translating TrueNAS UI
 
-All JSON files for translating TrueNAS web interface are included in this repository under [src/assets/i18n](https://github.com/truenas/webui/tree/master/src/assets/i18n). \
-These can be edited using your editor of choice or directly via the GitHub Web based code editing system.
+## TL;DR
+
+:point_right: Translate files in `src/assets/i18n` and submit a PR.
+
+## Details
+
+All JSON files for translating TrueNAS UI are located in [src/assets/i18n](https://github.com/truenas/webui/tree/master/src/assets/i18n). \
+These files can be edited using your editor of choice or directly on GitHub.
 
 Translation needs to be added to the right part of the string. For example:
 
@@ -15,21 +21,20 @@ becomes
 "1 day": "1 jour",
 ```
 
-### Branches
+## Branches
 
 Different branches correspond to different versions of TrueNAS.
 
-It's easiest to make changes to the `master` branch, which corresponds to the most recent unreleased version of TrueNAS SCALE.
+To keep things simple, we suggest you make changes to the `master` branch.\
+After your PR is merged, changes will appear in the next nightly.
 
-Once changes to `master` are merged, they will appear in next nightly build.
+## Tips
 
-### General Recommendations
-
-- Source files may often change, so it's better to make multiple smaller PRs instead of trying to translate everything at once.
+- Source files often change, so to avoid conflicts it's better to make multiple smaller PRs instead of trying to translate everything at once.
 - CI job will validate your changes and will fail if there are any issues.
 - If you want to validate translation strings locally, you need to have Node.js and `yarn` installed, do `yarn install` and execute `yarn validate-translations` in the root of the project.
 
-### Placeholder Tokens
+## Placeholder Tokens
 
 Some strings may contain placeholder tokens in `{curly braces}`.
 
@@ -39,7 +44,7 @@ For example:
 "Delete {file}?": "",
 ```
 
-In the UI `{file}` will be replaced with the name of the file, resulting in a string like `"Delete file.txt?"`.
+In the UI `{file}` will be replaced with the name of the file, resulting in a string like `"Delete myfile.txt?"`.
 
 You should keep these tokens as is in the translated string, but you can move them around if needed.
 
@@ -47,7 +52,7 @@ You should keep these tokens as is in the translated string, but you can move th
 "Delete {file}?": "Supprimer {file}?",
 ```
 
-### Plural Forms
+## Plural Forms
 
 Some strings may use [ICU Message Format](https://formatjs.io/docs/core-concepts/icu-syntax/#plural-format) for pluralization.
 
@@ -64,11 +69,11 @@ Everything inside the curly braces is a part of the ICU Message Format.
 This particular example can be read as:
 
 1. Look at the value of `n`.
-2. If `n` is `1`, print `User`.
+2. If `n` is `one`, print `User`.
 3. If `n` is anything else, print `# users`, where `#` is replaced with the value of `n`.
 4. Add `deleted` at the end.
 
-#### Translating Plural Forms
+## Plural Forms In Different Languages
 
 Different languages have different ways of expressing plural forms.
 
@@ -82,7 +87,13 @@ You can express it in the following way:
 {n, plural, one {Usuario eliminado} other {# usuarios eliminados}}
 ```
 
-Russian is an example of a language that has more than just singular and plural form of the word. It has one word for 1 item, another for 2 to 4 items and yet another for 5 items and more: `Пользователь -> пользователя -> пользователей`.
+Russian is an example of a language that has even more complicated plural forms. 
+
+In Russian, the word for `user` has three different forms depending on the number of users:
+
+- `1` (one) - `пользователь`
+- `2, 3, 4` (few) - `пользователя`
+- `5, 6, 7, 8, 9, 0` (other) - `пользователей`
 
 This can be expressed via:
 
@@ -92,4 +103,4 @@ This can be expressed via:
 
 You would have to research ICU Message Format for your language to find out how to express plural forms.
 
-Plural strings can be tested in an [online editor](http://format-message.github.io/icu-message-format-for-translators/editor.html).
+It's also helpful to test plural strings in an [online editor](http://format-message.github.io/icu-message-format-for-translators/editor.html).
