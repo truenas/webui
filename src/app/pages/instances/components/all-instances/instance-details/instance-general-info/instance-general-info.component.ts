@@ -77,7 +77,7 @@ export class InstanceGeneralInfoComponent {
       .pipe(map((response) => response.response), filter(Boolean), untilDestroyed(this))
       .subscribe((instance: VirtualizationInstance) => {
         this.instancesStore.instanceUpdated(instance);
-        this.deviceStore.selectInstance(instance.id);
+        this.deviceStore.selectInstanceById(instance.id);
       });
   }
 

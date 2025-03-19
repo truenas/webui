@@ -57,7 +57,7 @@ describe('InstanceRowComponent', () => {
       }),
       mockProvider(VirtualizationDevicesStore, {
         selectedInstance: () => instance,
-        updateSelectedInstance: jest.fn(),
+        setSelectedInstance: jest.fn(),
       }),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({

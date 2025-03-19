@@ -77,7 +77,7 @@ export class InstanceRowComponent {
       .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Instance started'));
-        this.deviceStore.updateSelectedInstance(this.instance());
+        this.deviceStore.setSelectedInstance(this.instance());
       });
   }
 
@@ -101,7 +101,7 @@ export class InstanceRowComponent {
       )
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Instance stopped'));
-        this.deviceStore.updateSelectedInstance(this.instance());
+        this.deviceStore.setSelectedInstance(this.instance());
       });
   }
 
@@ -125,7 +125,7 @@ export class InstanceRowComponent {
       )
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Instance restarted'));
-        this.deviceStore.updateSelectedInstance(this.instance());
+        this.deviceStore.setSelectedInstance(this.instance());
       });
   }
 }
