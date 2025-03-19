@@ -54,7 +54,7 @@ describe('RsyncTaskFormComponent', () => {
     extra: ['param=value'],
   } as RsyncTask;
 
-  const slideInRef: SlideInRef<RsyncTask, unknown> = {
+  const slideInRef: SlideInRef<RsyncTask | undefined, unknown> = {
     close: jest.fn(),
     getData: jest.fn(() => undefined),
     requireConfirmationWhen: jest.fn(),

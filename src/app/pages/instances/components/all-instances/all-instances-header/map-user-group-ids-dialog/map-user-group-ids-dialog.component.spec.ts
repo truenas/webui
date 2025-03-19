@@ -102,7 +102,7 @@ describe('MapUserGroupIdsDialogComponent', () => {
     });
 
     it('shows a form to add a new mapping and reloads a list when it is added', () => {
-      const form = spectator.query(NewMappingFormComponent);
+      const form = spectator.query(NewMappingFormComponent)!;
       expect(form.type).toBe(ViewType.Users);
 
       form.mappingAdded.emit();
@@ -140,7 +140,7 @@ describe('MapUserGroupIdsDialogComponent', () => {
     });
 
     it('shows a form to add a new mapping and reloads a list when it is added', () => {
-      const form = spectator.query(NewMappingFormComponent);
+      const form = spectator.query(NewMappingFormComponent)!;
       expect(form.type).toBe(ViewType.Groups);
 
       form.mappingAdded.emit();

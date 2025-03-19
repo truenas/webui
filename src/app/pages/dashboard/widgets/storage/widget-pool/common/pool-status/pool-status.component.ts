@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, computed, input,
+  ChangeDetectionStrategy, Component, input,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -14,7 +14,5 @@ import { Pool } from 'app/interfaces/pool.interface';
   imports: [NgxSkeletonLoaderModule, TranslateModule],
 })
 export class PoolStatusComponent {
-  readonly pool = input.required<Pool>();
-
-  protected isPoolLoading = computed(() => !this.pool());
+  readonly pool = input<Pool>();
 }

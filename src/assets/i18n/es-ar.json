@@ -50,6 +50,7 @@
   "Stripe": "",
   "TrueNAS Access": "",
   "UID/GID from the host is directly mapped to the same id in a container. This means that GID 3000 will appear as GID 3000 in the container.": "",
+  "Unknown error": "",
   "Unlock User": "",
   "Update completed successfully. The system will restart shortly": "",
   "Use Instances to configure Incus-based containers (LXC) or VMs (QEMU) in TrueNAS.": "",

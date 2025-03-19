@@ -124,8 +124,8 @@ export class GlobalSearchResultsComponent implements OnChanges {
     return this.results().filter((element) => element?.section === section);
   }
 
-  isSameHierarchyResult(a: UiSearchableElement, b: UiSearchableElement): boolean {
-    return isEqual(a.hierarchy, b.hierarchy);
+  isSameHierarchyResult(a: UiSearchableElement | null, b: UiSearchableElement | null): boolean {
+    return Boolean(a && b && isEqual(a.hierarchy, b.hierarchy));
   }
 
   removeRecentSearch(event: Event, result: UiSearchableElement): void {
