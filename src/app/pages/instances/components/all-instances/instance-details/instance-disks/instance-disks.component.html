@@ -1,3 +1,6 @@
+@let isVmRunning = instance().status === instanceStatus.Running && instance().type === instanceType.Vm;
+@let isContainer = instance().type === instanceType.Container;
+
 <mat-card class="card">
   <mat-card-header>
     <h3 mat-card-title>
@@ -7,9 +10,9 @@
     <button
       mat-button
       ixTest="add-disk"
-      [matTooltip]="'Cannot add a disk while the instance is running.' | translate"
-      [matTooltipDisabled]="instance().status !== instanceStatus.Running"
-      [disabled]="instance().status === instanceStatus.Running"
+      [matTooltip]="'VM disks cannot be managed while the instance is running.' | translate"
+      [matTooltipDisabled]="!isVmRunning || isContainer"
+      [disabled]="isVmRunning"
       (click)="addDisk()"
     >
       {{ 'Add' | translate }}
@@ -27,13 +30,16 @@
             ({{ instance().root_disk_io_bus | mapValue: diskIoBusLabels}})
           }
         </span>
-        <a
-          class="action"
-          ixTest="change-disk-setup"
-          (click)="showRootDiskIncreaseDialog()"
-        >
-          {{ 'Change' | translate }}
-        </a>
+
+        @if (!isVmRunning || isContainer) {
+          <a
+            class="action"
+            ixTest="change-disk-setup"
+            (click)="showRootDiskIncreaseDialog()"
+          >
+            {{ 'Change' | translate }}
+          </a>
+        }
       </div>
     }
 
@@ -54,7 +60,7 @@
             </div>
           }
 
-          @if (instance().status !== instanceStatus.Running) {
+          @if (!isVmRunning || isContainer) {
             <ix-device-actions-menu
               [device]="disk"
               (edit)="editDisk(disk)"

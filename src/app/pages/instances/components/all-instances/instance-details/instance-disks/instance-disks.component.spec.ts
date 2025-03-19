@@ -162,7 +162,7 @@ describe('InstanceDisksComponent', () => {
       expect(spectator.inject(VirtualizationInstancesStore).instanceUpdated).toHaveBeenCalled();
     });
 
-    it('disables Add button when instance is running and hides devices actions buttons', async () => {
+    it('disables Add button & hides devices actions buttons when VM is running', async () => {
       const runningInstance = {
         id: 'my-instance',
         type: VirtualizationType.Vm,

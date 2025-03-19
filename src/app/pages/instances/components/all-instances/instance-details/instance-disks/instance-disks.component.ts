@@ -58,6 +58,7 @@ export class InstanceDisksComponent {
   protected readonly isLoadingDevices = this.deviceStore.isLoading;
   protected readonly diskIoBusLabels = diskIoBusLabels;
   protected readonly instanceStatus = VirtualizationStatus;
+  protected readonly instanceType = VirtualizationType;
 
   protected readonly isVm = computed(() => this.instance().type === VirtualizationType.Vm);
 
