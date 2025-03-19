@@ -56,6 +56,7 @@
   "Unlock User": "",
   "Update completed successfully. The system will restart shortly": "",
   "Use Instances to configure Incus-based containers (LXC) or VMs (QEMU) in TrueNAS.": "",
+  "VM disks cannot be managed while the instance is running.": "",
   "View API Keys": "",
   "Wait to stop cleanly": "",
   "{license} Contract,": "",

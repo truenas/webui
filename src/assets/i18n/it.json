@@ -22,6 +22,7 @@
   "Unknown error": "",
   "Unlock User": "",
   "Use Instances to configure Incus-based containers (LXC) or VMs (QEMU) in TrueNAS.": "",
+  "VM disks cannot be managed while the instance is running.": "",
   "View API Keys": "",
   "Wait to stop cleanly": "",
   "\n              It looks like your session has been inactive for more than {lifetime} seconds.<br>\n              For security reasons we will log you out at {time}.\n            ": "\nSembra che la tua sessione sia stata inattiva per più di {lifetime} secondi.<br>\nPer motivi di sicurezza, verrai disconnesso alle {time}.",
