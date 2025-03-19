@@ -609,13 +609,11 @@ describe('SmbFormComponent', () => {
           case 'sharing.smb.presets':
             return of({ ...presets });
           case 'sharing.smb.create':
-            return throwError(() => ({
-              error: {
-                data: {
-                  reason: '[EINVAL] sharingsmb_create.afp: Apple SMB2/3 protocol extension support is required by this parameter.',
-                },
+            return throwError(() => new ApiCallError({
+              data: {
+                reason: '[EINVAL] sharingsmb_create.afp: Apple SMB2/3 protocol extension support is required by this parameter.',
               },
-            }));
+            } as JsonRpcError));
           default:
             return of(null);
         }
@@ -647,13 +645,11 @@ describe('SmbFormComponent', () => {
       await saveButton.click();
 
       expect(spectator.inject(FormErrorHandlerService).handleValidationErrors).toHaveBeenCalledWith(
-        {
-          error: {
-            data: {
-              reason: '[EINVAL] sharingsmb_create.afp: Apple SMB2/3 protocol extension support is required by this parameter.',
-            },
+        new ApiCallError({
+          data: {
+            reason: '[EINVAL] sharingsmb_create.afp: Apple SMB2/3 protocol extension support is required by this parameter.',
           },
-        },
+        } as JsonRpcError),
         spectator.component.form,
         {},
         'smb-form-toggle-advanced-options',

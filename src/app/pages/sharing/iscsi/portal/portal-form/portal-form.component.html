@@ -21,6 +21,7 @@
           [formArray]="form.get('ip')"
           [empty]="listen.length === 0"
           [label]="'Add listen' | translate"
+          [required]="true"
           (add)="onAdd()"
         >
           @for (item of listen; track item; let i = $index) {
