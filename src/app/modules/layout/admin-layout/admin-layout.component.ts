@@ -3,6 +3,7 @@ import {
   AfterViewInit,
   ChangeDetectionStrategy,
   Component,
+  computed,
   OnDestroy,
   OnInit,
   QueryList,
@@ -18,7 +19,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { map } from 'rxjs';
+import { exploreNasEnterpriseLink } from 'app/constants/explore-nas-enterprise-link.constant';
 import { productTypeLabels } from 'app/enums/product-type.enum';
+import { hashMessage } from 'app/helpers/hash-message';
 import { SubMenuItem } from 'app/interfaces/menu-item.interface';
 import { AlertsPanelComponent } from 'app/modules/alerts/components/alerts-panel/alerts-panel.component';
 import { alertPanelClosed } from 'app/modules/alerts/store/alert.actions';
@@ -74,11 +77,13 @@ import {
 export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChildren(MatSidenav) private sideNavs: QueryList<MatSidenav>;
 
+  protected readonly iconMarker = iconMarker;
   readonly hostname$ = this.store$.pipe(waitForSystemInfo, map(({ hostname }) => hostname));
   readonly isAlertPanelOpen$ = this.store$.select(selectIsAlertPanelOpen);
   readonly hasConsoleFooter$ = this.store$.select(selectHasConsoleFooter);
   readonly copyrightHtml = toSignal(this.store$.select(selectCopyrightHtml));
   readonly productType = toSignal(this.store$.select(selectProductType));
+  protected currentMessageHref = computed(() => `${exploreNasEnterpriseLink}?m=${hashMessage(this.productType())}`);
 
   get sidenavWidth(): string {
     return this.sidenavService.sidenavWidth;
@@ -109,7 +114,12 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   get productTypeText(): string {
-    return productTypeLabels.get(this.productType());
+    const productType = this.productType();
+    if (!productType) {
+      return '';
+    }
+
+    return productTypeLabels.get(productType) || productType;
   }
 
   constructor(
@@ -158,6 +168,4 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   onAlertsPanelClosed(): void {
     this.store$.dispatch(alertPanelClosed());
   }
-
-  protected readonly iconMarker = iconMarker;
 }

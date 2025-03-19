@@ -9,6 +9,9 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { Direction } from 'app/enums/direction.enum';
+import { JobState } from 'app/enums/job-state.enum';
+import { RsyncMode } from 'app/enums/rsync-mode.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { RsyncTaskUi } from 'app/interfaces/rsync-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -37,15 +40,14 @@ describe('RsyncTaskCardComponent', () => {
       remotemodule: 'asdad',
       desc: 'asd',
       user: 'test',
-      extra: [],
       enabled: false,
-      mode: 'MODULE',
+      mode: RsyncMode.Module,
       remotepath: '',
-      direction: 'PUSH',
+      direction: Direction.Push,
       delayupdates: true,
       job: {
         id: 1,
-        state: 'FINISHED',
+        state: JobState.Finished,
         time_finished: {
           $date: new Date().getTime() - 50000,
         },

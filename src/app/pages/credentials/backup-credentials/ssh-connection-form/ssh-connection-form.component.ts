@@ -158,7 +158,7 @@ export class SshConnectionFormComponent implements OnInit {
 
   readonly helptext = helptextSshConnections;
 
-  private existingConnection: KeychainSshCredentials;
+  private existingConnection: KeychainSshCredentials | undefined;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -173,7 +173,7 @@ export class SshConnectionFormComponent implements OnInit {
     public formatter: IxFormatterService,
     private dialogService: DialogService,
     private snackbar: SnackbarService,
-    public slideInRef: SlideInRef<KeychainSshCredentials, KeychainCredential | null>,
+    public slideInRef: SlideInRef<KeychainSshCredentials | undefined, KeychainCredential | null>,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
