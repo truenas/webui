@@ -1,6 +1,6 @@
 {
   "": "",
-  "5 Nines of Uptime with HA": "",
+  "Achieve 99.999% Uptime with HA": "",
   "Add New Mapping": "",
   "Boost Performance & Support": "",
   "By default, accounts inside instances are mapped to a special private range of UIDs and GIDs to perform security isolation for the containers.  This range starts at 2147000001.  <br>  You can use this dialog to control mapping manually.": "",
@@ -28,7 +28,6 @@
   "More Performance, More Protection": "",
   "No entries have been mapped yet.": "",
   "Once enabled, deduplication settings cannot be reverted. Use caution and be certain that you have adequate data backups before activating this feature.": "",
-  "Optimize Your Storage": "",
   "Root Disk I/O Bus": "",
   "Same": "",
   "Set to use a snapshot of the dataset before a <i>PUSH</i>.": "",
@@ -36,6 +35,7 @@
   "UID/GID from the host is directly mapped to the same id in a container. This means that GID 3000 will appear as GID 3000 in the container.": "",
   "Unlock High Performance Solutions": "",
   "Wait to stop cleanly": "",
+  "When set will force delete the image regardless of the state of   containers and should be used cautiously.": "",
   "\n              It looks like your session has been inactive for more than {lifetime} seconds.<br>\n              For security reasons we will log you out at {time}.\n            ": "\nSembra che la tua sessione sia stata inattiva per più di {lifetime} secondi.<br>\nPer motivi di sicurezza, verrai disconnesso alle {time}.",
   " Est. Usable Raw Capacity": " Capacità lorda utilizzabile stimata",
   " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network port number of the UPS <i>Master</i> system. The default port is <i>3493</i>.": " Quando la <b>Modalità UPS</b> è impostata su <i>slave</i>. Inserisci il numero della porta di rete aperta del sistema UPS <i>Master</i>. La porta predefinita è <i>3493</i>.",
