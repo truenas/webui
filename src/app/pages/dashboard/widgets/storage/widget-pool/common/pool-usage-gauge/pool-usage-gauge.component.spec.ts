@@ -15,6 +15,45 @@ import { ThemeService } from 'app/modules/theme/theme.service';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { PoolUsageGaugeComponent } from './pool-usage-gauge.component';
 
+const mockPool = {
+  name: 'dozer',
+  id: 1,
+  status: PoolStatus.Online,
+  scan: {
+    errors: 2,
+    start_time: {
+      $date: 1717916320000,
+    },
+    end_time: {
+      $date: 1717916420000,
+    },
+  },
+  topology: {
+    data: [
+      {
+        children: [] as TopologyItem[],
+        disk: 'sda',
+        type: TopologyItemType.Disk,
+        stats: {
+          read_errors: 0,
+          write_errors: 0,
+          checksum_errors: 0,
+        },
+      },
+      {
+        children: [],
+        disk: 'sdb',
+        type: TopologyItemType.Disk,
+        stats: {
+          read_errors: 1,
+          write_errors: 2,
+          checksum_errors: 3,
+        },
+      },
+    ],
+  },
+} as Pool;
+
 describe('PoolUsageGaugeComponent', () => {
   let spectator: Spectator<PoolUsageGaugeComponent>;
   const createComponent = createComponentFactory({
@@ -35,76 +74,37 @@ describe('PoolUsageGaugeComponent', () => {
           red: 'red',
         })),
       }),
+      mockProvider(WidgetResourcesService, {
+        getDisksByPoolId: jest.fn(() => of([
+          { name: 'sda', size: 1024 ** 3 * 5 },
+          { name: 'sdb', size: 1024 ** 3 * 5 },
+        ] as Disk[])),
+        realtimeUpdates$: of({
+          fields: {
+            pools: {
+              dozer: {
+                available: 557187072,
+                used: 2261385216,
+                total: 2818572288,
+              },
+            },
+          },
+        }),
+      }),
     ],
   });
-
-  const mockPool = {
-    name: 'Pool 1',
-    id: 1,
-    status: PoolStatus.Online,
-    scan: {
-      errors: 2,
-      start_time: {
-        $date: 1717916320000,
-      },
-      end_time: {
-        $date: 1717916420000,
-      },
-    },
-    topology: {
-      data: [
-        {
-          children: [] as TopologyItem[],
-          disk: 'sda',
-          type: TopologyItemType.Disk,
-          stats: {
-            read_errors: 0,
-            write_errors: 0,
-            checksum_errors: 0,
-          },
-        },
-        {
-          children: [],
-          disk: 'sdb',
-          type: TopologyItemType.Disk,
-          stats: {
-            read_errors: 1,
-            write_errors: 2,
-            checksum_errors: 3,
-          },
-        },
-      ],
-    },
-  } as Pool;
 
   beforeEach(() => {
     spectator = createComponent({
       props: {
         pool: mockPool,
       },
-      providers: [
-        mockProvider(WidgetResourcesService, {
-          getDatasetById: jest.fn(() => of({
-            id: '1',
-            available: {
-              parsed: 557187072,
-            },
-            used: {
-              parsed: 2261385216,
-            },
-          })),
-          getDisksByPoolId: jest.fn(() => of([
-            { name: 'sda', size: 1024 ** 3 * 5 },
-            { name: 'sdb', size: 1024 ** 3 * 5 },
-          ] as Disk[])),
-        }),
-      ],
     });
     spectator.detectChanges();
   });
 
   it('should display pool name when pool is loaded', () => {
-    expect(spectator.query('.pool-name')).toHaveText('Pool 1');
+    expect(spectator.query('.pool-name')).toHaveText('dozer');
   });
 
   it('shows lines', () => {
