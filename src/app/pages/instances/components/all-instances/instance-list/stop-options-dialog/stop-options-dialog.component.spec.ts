@@ -43,7 +43,24 @@ describe('StopOptionsDialogComponent', () => {
     expect(await loader.getHarness(MatButtonHarness.with({ text: 'Restart' }))).toBeTruthy();
   });
 
-  it('closes the form with parameters when Wait for n minutes is selected', async () => {
+  it('closes the form with parameters when Wait for 30 seconds is selected', async () => {
+    setupTest(StopOptionsOperation.Stop);
+
+    const form = await loader.getHarness(IxFormHarness);
+    await form.fillForm({
+      'Wait to stop cleanly': 'Wait for 30 seconds',
+    });
+
+    const stopButton = await loader.getHarness(MatButtonHarness.with({ text: 'Stop' }));
+    await stopButton.click();
+
+    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({
+      timeout: 30,
+      force: false,
+    });
+  });
+
+  it('closes the form with parameters when Wait for 5 minutes is selected', async () => {
     setupTest(StopOptionsOperation.Stop);
 
     const form = await loader.getHarness(IxFormHarness);
