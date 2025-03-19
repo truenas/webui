@@ -4,7 +4,6 @@ import {
 import { Router, NavigationStart } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { injectParams } from 'ngxtension/inject-params';
 import { filter } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -38,7 +37,6 @@ import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtual
 })
 export class AllInstancesComponent implements OnInit {
   readonly selectedInstance = this.instancesStore.selectedInstance;
-  readonly instanceId = injectParams('id');
 
   protected readonly searchableElements = allInstancesElements;
 

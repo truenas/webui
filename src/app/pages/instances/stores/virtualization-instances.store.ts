@@ -66,6 +66,8 @@ export class VirtualizationInstancesStore extends ComponentStore<VirtualizationI
                 this.patchState({ selectedInstance: updatedSelectedInstance });
               } else if (instances.length) {
                 this.router.navigate(['/instances', 'view', instances[0].id]);
+              } else {
+                this.router.navigate(['/instances']);
               }
             }
           }),
