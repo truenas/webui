@@ -394,6 +394,7 @@
   "Calculate number of threads dynamically": "",
   "Callback Address": "",
   "Callback State": "",
+  "Cannot add a disk while the instance is running.": "",
   "Capture and attach screenshot to the review": "",
   "Certificate Authority": "",
   "Certificate Authority (CA) to use for connecting to the key server. A valid CA public certificate is required to authenticate the connection. WARNING: for security reasons, please protect the Certificate Authority used for key server authentication.": "",

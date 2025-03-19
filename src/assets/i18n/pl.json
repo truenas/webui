@@ -11,6 +11,7 @@
   "Browse to the exported key file that can be used to unlock this      dataset.": "",
   "By default, Samba uses a hashing algorithm for NTFS illegal  characters. Enabling this option translates NTFS illegal characters to the Unicode private range.": "",
   "By default, accounts inside instances are mapped to a special private range of UIDs and GIDs to perform security isolation for the containers.  This range starts at 2147000001.  <br>  You can use this dialog to control mapping manually.": "",
+  "Cannot add a disk while the instance is running.": "",
   "Certificate to use when performing LDAP  certificate-based authentication. To configure LDAP certificate-based  authentication, create a Certificate Signing Request for the LDAP  provider to sign. A certificate is not required when using  username/password or Kerberos authentication.": "",
   "Change Root Disk Setup": "",
   "Choose the disk I/O bus type that best suits your system’s needs: <br /><br /> • NVMe – Ideal for high-performance storage with faster read and write speeds. <br /><br /> • Virtio-BLK – Efficient for virtualized environments, offering direct block device access with lower overhead. <br /><br /> • Virtio-SCSI – Flexible and scalable, supporting advanced features like hot-swapping and multiple devices.": "",

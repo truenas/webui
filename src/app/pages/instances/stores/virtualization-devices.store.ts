@@ -74,6 +74,10 @@ export class VirtualizationDevicesStore extends ComponentStore<VirtualizationIns
     this.loadDevices();
   }
 
+  updateSelectedInstance(instance: VirtualizationInstance): void {
+    this.patchState({ selectedInstance: instance });
+  }
+
   resetInstance(): void {
     this.patchState({ selectedInstance: null });
   }

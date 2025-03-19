@@ -687,6 +687,7 @@
   "Cancel any pending Key synchronization.": "",
   "Canceled Resilver on {date}": "",
   "Canceled Scrub on {date}": "",
+  "Cannot add a disk while the instance is running.": "",
   "Cannot be enabled for built-in users.": "",
   "Cannot edit while HA is enabled.": "",
   "Capabilities": "",

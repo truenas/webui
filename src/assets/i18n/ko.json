@@ -4,6 +4,7 @@
   "Access Card": "",
   "Are you sure you want to lock \"{user}\" user?": "",
   "Are you sure you want to unlock \"{user}\" user?": "",
+  "Cannot add a disk while the instance is running.": "",
   "Has Password": "",
   "Has SMB Access": "",
   "Has Two-Factor Authentication": "",

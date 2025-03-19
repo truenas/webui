@@ -7,8 +7,13 @@
     <button
       mat-button
       ixTest="add-disk"
+      [matTooltip]="'Cannot add a disk while the instance is running.' | translate"
+      [matTooltipDisabled]="instance().status !== instanceStatus.Running"
+      [disabled]="instance().status === instanceStatus.Running"
       (click)="addDisk()"
-    >{{ 'Add' | translate }}</button>
+    >
+      {{ 'Add' | translate }}
+    </button>
   </mat-card-header>
 
   <mat-card-content>
@@ -32,6 +37,8 @@
       </div>
     }
 
+    {{ instance().status }}
+
     @if (isLoadingDevices()) {
       <ngx-skeleton-loader></ngx-skeleton-loader>
     } @else {
@@ -49,10 +56,12 @@
             </div>
           }
 
-          <ix-device-actions-menu
-            [device]="disk"
-            (edit)="editDisk(disk)"
-          ></ix-device-actions-menu>
+          @if (instance().status !== instanceStatus.Running) {
+            <ix-device-actions-menu
+              [device]="disk"
+              (edit)="editDisk(disk)"
+            ></ix-device-actions-menu>
+          }
         </div>
       } @empty {
         @if (!instance().root_disk_size) {

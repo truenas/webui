@@ -28,6 +28,7 @@
   "Boot Environment Write": "",
   "By default, accounts inside instances are mapped to a special private range of UIDs and GIDs to perform security isolation for the containers.  This range starts at 2147000001.  <br>  You can use this dialog to control mapping manually.": "",
   "CPU Temperature Per Core": "",
+  "Cannot add a disk while the instance is running.": "",
   "Change Root Disk Setup": "",
   "Choose the disk I/O bus type that best suits your system’s needs: <br /><br /> • NVMe – Ideal for high-performance storage with faster read and write speeds. <br /><br /> • Virtio-BLK – Efficient for virtualized environments, offering direct block device access with lower overhead. <br /><br /> • Virtio-SCSI – Flexible and scalable, supporting advanced features like hot-swapping and multiple devices.": "",
   "Clear mapping": "",

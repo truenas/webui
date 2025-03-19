@@ -91,6 +91,7 @@
   "CPU Temp": "",
   "CPU Temperature Per Core": "",
   "CPU Usage Per Core": "",
+  "Cannot add a disk while the instance is running.": "",
   "Cannot be enabled for built-in users.": "",
   "Certificate generation failed": "",
   "Certificate generation is in progress": "",
