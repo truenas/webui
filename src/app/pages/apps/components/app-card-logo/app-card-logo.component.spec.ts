@@ -36,7 +36,7 @@ describe('AppCardLogoComponent', () => {
   });
 
   it('shows default image', () => {
-    expect(spectator.query('img')).toHaveAttribute('src', 'assets/images/truenas_favicon.png');
+    expect(spectator.query('img')).toHaveAttribute('src', 'assets/images/truenas_ondark_favicon.png');
   });
 
   it('shows app logo', () => {
