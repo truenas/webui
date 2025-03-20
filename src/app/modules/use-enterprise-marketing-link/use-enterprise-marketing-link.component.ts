@@ -19,12 +19,11 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 })
 export class UseEnterpriseMarketingLinkComponent {
   messages = [
-    this.translate.instant('Optimize Your Storage'),
     this.translate.instant('More Performance, More Protection'),
     this.translate.instant('Boost Performance & Support'),
     this.translate.instant('Unlock High Performance Solutions'),
     this.translate.instant('Expert Support When You Need It'),
-    this.translate.instant('5 Nines of Uptime with HA'),
+    this.translate.instant('Achieve 99.999% Uptime with HA'),
   ];
 
   currentMessage = computed(() => this.getTodaysMessage());

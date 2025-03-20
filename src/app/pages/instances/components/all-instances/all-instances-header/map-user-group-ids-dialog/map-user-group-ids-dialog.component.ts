@@ -23,7 +23,7 @@ import {
   finalize, map, Observable, of,
 } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
-import { containersHelptext } from 'app/helptext/instances/instances';
+import { instancesHelptext } from 'app/helptext/instances/instances';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { directIdMapping } from 'app/interfaces/user.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
@@ -82,7 +82,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 export class MapUserGroupIdsDialogComponent implements OnInit {
   protected readonly columns = ['name', 'hostUidOrGid', 'instanceUidOrGid', 'actions'];
-  protected readonly containersHelptext = containersHelptext;
+  protected readonly containersHelptext = instancesHelptext;
 
   protected readonly isLoading = signal(false);
   protected readonly mappings = signal<IdMapping[]>([]);

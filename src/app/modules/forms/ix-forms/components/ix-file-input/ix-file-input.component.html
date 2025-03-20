@@ -14,7 +14,9 @@
       [attr.aria-label]="'Choose File for {label}' | translate: { label: label() }"
       (keydown.enter)="fileInput.click()"
     >
-      {{ buttonText() }}
+      <ng-content>
+        {{ multiple() ? ('Choose Files' | translate) : ('Choose File' | translate) }}
+      </ng-content>
       <input
         #fileInput
         type="file"
