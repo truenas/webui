@@ -63,6 +63,7 @@ export class AllInstancesComponent implements OnInit {
     this.instancesStore.initialize();
 
     this.configStore.state$.pipe(
+      filter((state) => Boolean(state?.config)),
       map((state) => state.config.state),
       distinctUntilChanged(),
       untilDestroyed(this),

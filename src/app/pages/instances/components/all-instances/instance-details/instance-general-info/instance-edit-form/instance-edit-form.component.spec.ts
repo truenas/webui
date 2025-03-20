@@ -38,7 +38,6 @@ describe('InstanceEditFormComponent', () => {
     status: VirtualizationStatus.Stopped,
     vnc_password: null,
     secure_boot: true,
-    storage_pool: 'dozer',
   } as VirtualizationInstance;
 
   const createComponent = createComponentFactory({
@@ -48,7 +47,8 @@ describe('InstanceEditFormComponent', () => {
       mockApi([
         mockJob('virt.instance.update', fakeSuccessfulJob({ id: 'test' } as VirtualizationInstance)),
         mockCall('virt.global.pool_choices', {
-          dozer: 'dozer',
+          '[Disabled]': '[Disabled]',
+          poolio: 'poolio',
         }),
       ]),
       mockProvider(SnackbarService),
@@ -91,7 +91,6 @@ describe('InstanceEditFormComponent', () => {
         Autostart: false,
         'CPU Configuration': '1-3',
         'Memory Size': '2 GiB',
-        Pool: 'dozer',
         'Enable VNC': true,
         'VNC Port': '9001',
         'VNC Password': '',
@@ -120,7 +119,6 @@ describe('InstanceEditFormComponent', () => {
         vnc_port: 9000,
         vnc_password: 'testing',
         secure_boot: false,
-        storage_pool: 'dozer',
       }]);
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();

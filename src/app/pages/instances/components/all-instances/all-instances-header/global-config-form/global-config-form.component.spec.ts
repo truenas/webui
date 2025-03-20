@@ -43,6 +43,7 @@ describe('GlobalConfigFormComponent', () => {
         requireConfirmationWhen: jest.fn(),
         getData: jest.fn(() => ({
           pool: 'poolio',
+          storage_pools: ['poolio'],
           bridge: 'bridge1',
           v4_network: '1.2.3.4/24',
           v6_network: null,
@@ -61,8 +62,8 @@ describe('GlobalConfigFormComponent', () => {
   it('shows current global settings from the slide-in data', async () => {
     expect(await form.getValues()).toEqual({
       Bridge: 'bridge1',
-      Pool: 'poolio',
-      'Storage Pools': [],
+      Enabled: true,
+      Pools: ['poolio'],
     });
 
     const v4NetworkInput = await form.getControl('v4_network');
@@ -73,17 +74,17 @@ describe('GlobalConfigFormComponent', () => {
 
   it('updates global settings and shows network fields when bridge is [AUTO] and closes slide-in', async () => {
     await form.fillForm({
-      Pool: '[Disabled]',
+      Enabled: true,
       Bridge: '[AUTO]',
-      'Storage Pools': [],
+      Pools: ['poolio'],
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('virt.global.update', [{
-      pool: '[Disabled]',
-      storage_pools: [],
+      pool: 'poolio',
+      storage_pools: ['poolio'],
       bridge: '[AUTO]',
       v4_network: '1.2.3.4/24',
       v6_network: null,

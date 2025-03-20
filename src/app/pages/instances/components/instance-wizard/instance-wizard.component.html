@@ -144,15 +144,15 @@
     }
 
     <ix-form-section [label]="'Storage' | translate">
-      <ix-select
-        formControlName="storage_pool"
-        [label]="'Pool' | translate"
-        [options]="poolOptions$"
-        [hint]="'Select a storage pool for the root filesystem. If left empty, the default pool from the global configuration will be used. This setting cannot be changed after creation.' | translate"
-      ></ix-select>
-    </ix-form-section>
+      @if (!hasOnePool()) {
+        <ix-select
+          formControlName="storage_pool"
+          [label]="'Store At' | translate"
+          [required]="true"
+          [options]="poolOptions$"
+        ></ix-select>
+      }
 
-    <ix-form-section [label]="'Disks' | translate">
       @if (isVm()) {
         <ix-select
           formControlName="root_disk_io_bus"

@@ -24,7 +24,6 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { cpuValidator } from 'app/modules/forms/ix-forms/validators/cpu-validation/cpu-validation';
@@ -50,7 +49,6 @@ import { defaultVncPort } from 'app/pages/instances/instances.constants';
     IxFieldsetComponent,
     IxListComponent,
     IxListItemComponent,
-    IxSelectComponent,
     MatTooltip,
   ],
   templateUrl: './instance-edit-form.component.html',
@@ -88,7 +86,6 @@ export class InstanceEditFormComponent {
     vnc_password: [null as string | null],
     secure_boot: [false],
     environmentVariables: new FormArray<InstanceEnvVariablesFormGroup>([]),
-    storage_pool: [null as string | null],
   });
 
   constructor(
@@ -116,10 +113,7 @@ export class InstanceEditFormComponent {
       vnc_port: this.editingInstance.vnc_port,
       vnc_password: this.editingInstance.vnc_password,
       secure_boot: this.editingInstance.secure_boot,
-      storage_pool: this.editingInstance.storage_pool,
     });
-
-    this.form.controls.storage_pool.disable();
 
     this.setVncControls();
 
@@ -171,7 +165,6 @@ export class InstanceEditFormComponent {
       enable_vnc: values.enable_vnc,
       vnc_port: values.enable_vnc ? values.vnc_port || defaultVncPort : null,
       vnc_password: values.enable_vnc ? values.vnc_password : null,
-      storage_pool: values.storage_pool,
       ...(this.isContainer ? { environment: this.environmentVariablesPayload } : null),
     } as UpdateVirtualizationInstance;
 

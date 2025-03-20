@@ -8,19 +8,19 @@
   <mat-card-content>
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset [title]="'Storage' | translate">
-        <ix-select
+        <ix-checkbox
           formControlName="pool"
-          [label]="'Pool' | translate"
-          [required]="true"
-          [options]="poolOptions$"
-        ></ix-select>
+          [label]="'Enabled' | translate"
+        ></ix-checkbox>
 
-        <ix-select
-          formControlName="storage_pools"
-          [label]="'Storage Pools' | translate"
-          [multiple]="true"
-          [options]="storagePools$"
-        ></ix-select>
+        @if (form.controls.pool.value) {
+          <ix-select
+            formControlName="storage_pools"
+            [label]="'Pools' | translate"
+            [multiple]="true"
+            [options]="poolOptions$"
+          ></ix-select>
+        }
       </ix-fieldset>
 
       <ix-fieldset [title]="'Default Network' | translate">

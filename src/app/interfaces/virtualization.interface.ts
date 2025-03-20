@@ -217,7 +217,7 @@ export interface VirtualizationStopParams {
 }
 
 export interface VirtualizationGlobalConfigUpdate {
-  pool: string;
+  pool?: string;
   bridge?: string | null;
   v4_network?: string | null;
   v6_network?: string | null;
