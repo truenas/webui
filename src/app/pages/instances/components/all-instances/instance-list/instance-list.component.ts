@@ -11,7 +11,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { injectParams } from 'ngxtension/inject-params';
-import { distinctUntilChanged, filter, tap } from 'rxjs';
+import { distinctUntilChanged, tap } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
@@ -105,7 +105,6 @@ export class InstanceListComponent {
   ) {
     toObservable(this.instanceId).pipe(
       distinctUntilChanged(),
-      filter(Boolean),
       tap((instanceId) => {
         this.instancesStore.selectInstance(instanceId);
       }),
