@@ -152,10 +152,31 @@ export class NewUserFormComponent implements OnInit {
     // `password_conf` when `password_disabled`
     // `locked` when `password_disabled`
 
+    // TODO: Add `stig_password` field for "stig password" field which is heavily impacted by `isStigMode`
+    // Use `isStigMode` to determine smb related controls disable status and values
+    // `isStigMode` also affects `password` and `password_conf` fields to be disabled
+    // `isStigMode` also affects `locked` to be disabled while
+    // `stig_password` value is `UserStigPasswordOption.DisablePassword`
+
+    // TODO: set tooltips for sections
+
+    // TODO: Add create home options warnings
+
+    // TODO: Add controls for sudo related values
+
     this.editingUser = this.slideInRef.getData();
   }
 
   protected onSubmit(): void {
+    // TODO: password related fields are impacted if
+    // UserStigPasswordOption.OneTimePassword is used as value for `stig_password`
+
+    // TODO: If updating an existing user, and home properties are set,
+    // two update calls should be made. First one to set `home_create:true` with the `home` value
+    // second one that removes the `home` and `home_create` values from the payload and updates the rest of the user
+
+    // TODO: Add option to download ssh public key entered with a button next to the save button
+
     const { username } = this.form.value;
     const {
       fullName,
@@ -200,6 +221,9 @@ export class NewUserFormComponent implements OnInit {
         }
       },
     });
+
+    // TODO: Add function to generate one time password from middleware using `auth.generate_onetime_password`
+    // after the user create request is submitted
   }
 
   protected readonly tooltips = tooltips;
