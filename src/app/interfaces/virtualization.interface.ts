@@ -11,7 +11,7 @@ import {
   VirtualizationRemote,
   VirtualizationSource,
   VirtualizationStatus,
-  VirtualizationType,
+  VirtualizationType, VolumeContentType,
 } from 'app/enums/virtualization.enum';
 
 export interface VirtualizationInstanceMetrics {
@@ -85,6 +85,7 @@ export interface CreateVirtualizationInstance {
 
   zvol_path?: string | null;
   storage_pool: string | null;
+  volume?: string | null;
 }
 
 export interface UpdateVirtualizationInstance {
@@ -277,10 +278,12 @@ export type InstanceEnvVariablesFormGroup = FormGroup<{
 export interface VirtualizationVolume {
   id: string;
   name: string;
-  content_type: string;
+  content_type: VolumeContentType;
   created_at: string;
   type: string;
-  config: string;
+  config: {
+    size: number;
+  };
   used_by: string[];
   storage_pool: string;
 }
@@ -318,6 +321,12 @@ export interface VirtualizationImportIsoParams {
   storage_pool: string | null;
 }
 
+export interface CreateVirtualizationVolume {
+  name: string;
+  content_type?: VolumeContentType;
+  size?: number;
+}
+
 export type VirtualizationVolumeUpdate = [
   id: string,
   update: {
@@ -347,4 +356,14 @@ export interface VirtualizationPciDeviceCapability {
   function: string;
   product: string;
   vendor: string;
+}
+
+export interface ImportZvolParams {
+  to_import: ZvolToImport[];
+  clone: boolean;
+}
+
+export interface ZvolToImport {
+  virt_volume_name: string;
+  zvol_path: string;
 }

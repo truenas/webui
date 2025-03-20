@@ -137,13 +137,13 @@ export class WebSocketHandlerService {
     if (!callsWithoutErrorsReported.length) {
       return;
     }
-    console.error('Max concurrent calls', JSON.stringify(callsWithoutErrorsReported));
 
     if (this.showingConcurrentCallsError) {
       return;
     }
 
     if (!environment.production) {
+      console.error('Max concurrent calls', JSON.stringify(callsWithoutErrorsReported));
       this.showingConcurrentCallsError = true;
       this.dialogService.error({
         message: this.translate.instant(`Max concurrent calls limit reached.

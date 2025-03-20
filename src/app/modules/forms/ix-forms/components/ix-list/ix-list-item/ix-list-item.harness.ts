@@ -1,4 +1,4 @@
-import { ComponentHarness } from '@angular/cdk/testing';
+import { ContentContainerComponentHarness } from '@angular/cdk/testing';
 import { IxFormControlHarness } from 'app/modules/forms/ix-forms/interfaces/ix-form-control-harness.interface';
 import {
   getControlValues,
@@ -11,7 +11,7 @@ import {
  * TODO: Some functionality is very similar to IxFormHarness.
  * See if can be optimized somehow.
  */
-export class IxListItemHarness extends ComponentHarness {
+export class IxListItemHarness extends ContentContainerComponentHarness {
   static readonly hostSelector = 'ix-list-item';
 
   getControlHarnesses = this.locatorForAll(...supportedFormControlSelectors);
