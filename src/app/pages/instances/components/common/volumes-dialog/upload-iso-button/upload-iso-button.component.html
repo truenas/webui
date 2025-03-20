@@ -1,6 +1,9 @@
 <ix-file-input
   *ixRequiresRoles="requiredRoles"
   acceptedFiles=".iso"
-  [buttonText]="'Upload New Image' | translate"
+  class="file-input"
   [formControl]="imageFileControl"
-></ix-file-input>
+>
+  <ix-icon name="mdi-upload" class="upload-icon"></ix-icon>
+  {{ 'Upload ISO' | translate }}
+</ix-file-input>

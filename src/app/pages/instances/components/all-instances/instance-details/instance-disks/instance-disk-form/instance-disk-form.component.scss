@@ -1,0 +1,13 @@
+.image-field {
+  align-items: flex-start;
+  display: flex;
+  gap: 10px;
+
+  .input {
+    flex: 1;
+  }
+
+  button {
+    margin-top: 43px;
+  }
+}
