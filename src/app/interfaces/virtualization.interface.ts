@@ -288,32 +288,6 @@ export interface VirtualizationVolume {
   storage_pool: string;
 }
 
-export enum VirtualizationVolumeContentType {
-  Block = 'BLOCK',
-}
-
-export interface VirtualizationVolumeCreate {
-  /**
-   * Must be between 1 and 63 characters long.
-   */
-  name: string;
-  /**
-   * @default Block
-   */
-  content_type: VirtualizationVolumeContentType;
-  /**
-   * Size of volume in MB and it should at least be 512 MB.
-   * @default 1024
-   */
-  size: number;
-  /**
-   * Storage pool in which to create the volume. This must be one of pools listed
-   * in `virt.global.config` output under `storage_pools`. If the value is `None`, then
-   * the pool defined as pool in `virt.global.config` will be used.
-   */
-  storage_pool: string | null;
-}
-
 export interface VirtualizationImportIsoParams {
   name: string;
   iso_location?: string | null;
