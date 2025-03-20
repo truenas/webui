@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component, computed, input, OnInit,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatAnchor } from '@angular/material/button';
 import {
   MatCard, MatCardHeader, MatCardTitle, MatCardContent,
@@ -18,6 +19,7 @@ import { GaugeChartComponent } from 'app/modules/charts/gauge-chart/gauge-chart.
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ThemeService } from 'app/modules/theme/theme.service';
+import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { PoolCardIconComponent } from 'app/pages/storage/components/dashboard-pool/pool-card-icon/pool-card-icon.component';
 import { usageCardElements } from 'app/pages/storage/components/dashboard-pool/pool-usage-card/pool-usage-card.elements';
 import { getPoolDisks } from 'app/pages/storage/modules/disks/utils/get-pool-disks.utils';
@@ -51,6 +53,12 @@ export class PoolUsageCardComponent implements OnInit {
   readonly poolState = input.required<Pool>();
   readonly rootDataset = input.required<Dataset>();
 
+  protected readonly realtimeUpdates = toSignal(this.resources.realtimeUpdates$);
+
+  protected poolStats = computed(() => {
+    return this.realtimeUpdates()?.fields?.pools?.[this.rootDataset()?.name];
+  });
+
   chartLowCapacityColor: string;
   chartFillColor: string;
   chartBlankColor: string;
@@ -60,6 +68,7 @@ export class PoolUsageCardComponent implements OnInit {
   constructor(
     public themeService: ThemeService,
     private translate: TranslateService,
+    private resources: WidgetResourcesService,
   ) {}
 
   ngOnInit(): void {
@@ -77,11 +86,11 @@ export class PoolUsageCardComponent implements OnInit {
   });
 
   protected capacity = computed(() => {
-    return this.rootDataset().available.parsed + this.rootDataset().used.parsed;
+    return this.poolStats()?.total || this.rootDataset().available.parsed + this.rootDataset().used.parsed;
   });
 
   protected usedPercentage = computed(() => {
-    return this.rootDataset().used.parsed / this.capacity() * 100;
+    return this.poolStats()?.used / this.capacity() * 100 || this.rootDataset().used.parsed / this.capacity() * 100;
   });
 
   protected iconType = computed(() => {
