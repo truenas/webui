@@ -1,0 +1,43 @@
+<h1 matDialogTitle>
+  {{ 'Import Zvol' | translate }}
+</h1>
+<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+  <p>
+    {{ helptext.importZvol.description | translate }}
+  </p>
+
+  <ix-explorer
+    root="/dev/zvol"
+    formControlName="zvols"
+    [label]="'Select Zvols' | translate"
+    [required]="true"
+    [nodeProvider]="zvolProvider"
+    [multiple]="true"
+  ></ix-explorer>
+
+  <ix-radio-group
+    formControlName="clone"
+    [options]="cloneOrMoveOptions$"
+  ></ix-radio-group>
+
+  <ix-form-actions>
+    <button
+      mat-button
+      type="button"
+      ixTest="cancel"
+      matDialogClose
+    >
+      {{ 'Cancel' | translate }}
+    </button>
+
+    <button
+      mat-button
+      color="primary"
+      type="submit"
+      ixTest="import"
+      [disabled]="form.invalid"
+    >
+      {{ 'Import' | translate }}
+    </button>
+  </ix-form-actions>
+</form>

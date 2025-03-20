@@ -34,7 +34,7 @@ import { FilesystemService } from 'app/services/filesystem.service';
 describe('CloudBackupFormComponent', () => {
   const storjCreds = {
     id: 2,
-    name: 'Storj iX',
+    name: 'Storj',
     provider: {
       type: CloudSyncProviderName.Storj,
       client_id: 'test-client-id',
@@ -145,7 +145,7 @@ describe('CloudBackupFormComponent', () => {
         'Source Path': '/mnt/my pool 2',
         Name: 'Cloud Backup Task With New Bucket',
         Password: 'qwerty',
-        Credentials: 'Storj iX (Storj)',
+        Credentials: 'Storj (Storj)',
         'Keep Last': 5,
         Folder: '/',
         Bucket: 'Add new',
@@ -189,7 +189,7 @@ describe('CloudBackupFormComponent', () => {
         'Source Path': '/mnt/my pool 2',
         Name: 'New Cloud Backup Task',
         Password: 'qwerty',
-        Credentials: 'Storj iX (Storj)',
+        Credentials: 'Storj (Storj)',
         'Keep Last': 3,
         Folder: '/',
         Enabled: false,
@@ -248,7 +248,7 @@ describe('CloudBackupFormComponent', () => {
       const form = await loader.getHarness(IxFormHarness);
       expect(await form.getValues()).toEqual({
         Bucket: '',
-        Credentials: 'Storj iX (Storj)',
+        Credentials: 'Storj (Storj)',
         Enabled: true,
         Exclude: [],
         Name: 'sdf',

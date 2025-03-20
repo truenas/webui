@@ -178,6 +178,7 @@ html .ix-dark {
   .mat-mdc-radio-button {
     --mdc-form-field-label-text-color: var(--fg2);
     --mdc-form-field-label-text-size: 12px;
+    --mat-radio-label-text-line-height: 1rem;
 
     &.mat-primary {
       --mdc-radio-disabled-selected-icon-color: var(--primary);
