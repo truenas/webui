@@ -71,7 +71,7 @@ export class AdditionalDetailsSectionComponent {
 
     groups: [[] as string[]],
     create_group: [true],
-
+    email: [null as string],
     home: [''],
     create_home_directory: [false],
     default_permissions: [true],
@@ -93,6 +93,7 @@ export class AdditionalDetailsSectionComponent {
           fullName: this.form.value.full_name,
           groups: this.form.value.groups,
           home: this.form.value.home,
+          email: this.form.value.email,
         });
       },
     });

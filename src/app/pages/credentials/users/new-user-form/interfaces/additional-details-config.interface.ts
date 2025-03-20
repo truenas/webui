@@ -4,5 +4,6 @@ export interface AdditionalDetailsConfig {
   groups: string[];
   createHomeDirectory: boolean;
   home: string;
+  email: string;
   defaultPermissions: boolean;
 }
