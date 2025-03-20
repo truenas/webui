@@ -4,7 +4,12 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
-  FormArray, FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule, Validators,
+  FormArray,
+  FormControl,
+  FormGroup,
+  NonNullableFormBuilder,
+  ReactiveFormsModule,
+  Validators,
 } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -14,8 +19,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { unionBy } from 'lodash-es';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
-  filter,
-  map, Observable, of,
+  filter, map, Observable, of,
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import {
@@ -31,6 +35,7 @@ import {
   VirtualizationSource,
   VirtualizationType,
   virtualizationTypeIcons,
+  VolumeContentType,
 } from 'app/enums/virtualization.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { instancesHelptext } from 'app/helptext/instances/instances';
@@ -39,15 +44,22 @@ import {
   CreateVirtualizationInstance,
   InstanceEnvVariablesFormGroup,
   VirtualizationDevice,
-  VirtualizationInstance, VirtualizationVolume,
+  VirtualizationInstance,
+  VirtualizationVolume,
 } from 'app/interfaces/virtualization.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxCheckboxListComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.component';
+import {
+  IxCheckboxListComponent,
+} from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
-import { IxFormGlossaryComponent } from 'app/modules/forms/ix-forms/components/ix-form-glossary/ix-form-glossary.component';
-import { IxFormSectionComponent } from 'app/modules/forms/ix-forms/components/ix-form-section/ix-form-section.component';
+import {
+  IxFormGlossaryComponent,
+} from 'app/modules/forms/ix-forms/components/ix-form-glossary/ix-form-glossary.component';
+import {
+  IxFormSectionComponent,
+} from 'app/modules/forms/ix-forms/components/ix-form-section/ix-form-section.component';
 import { IxIconGroupComponent } from 'app/modules/forms/ix-forms/components/ix-icon-group/ix-icon-group.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
@@ -58,7 +70,9 @@ import { ReadOnlyComponent } from 'app/modules/forms/ix-forms/components/readonl
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { cpuValidator } from 'app/modules/forms/ix-forms/validators/cpu-validation/cpu-validation';
-import { forbiddenAsyncValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
+import {
+  forbiddenAsyncValues,
+} from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -68,10 +82,12 @@ import {
   PciPassthroughDialogComponent,
 } from 'app/pages/instances/components/common/pci-passthough-dialog/pci-passthrough-dialog.component';
 import {
-  VolumesDialogComponent, VolumesDialogOptions,
+  VolumesDialogComponent,
+  VolumesDialogOptions,
 } from 'app/pages/instances/components/common/volumes-dialog/volumes-dialog.component';
 import {
-  SelectImageDialogComponent, VirtualizationImageWithId,
+  SelectImageDialogComponent,
+  VirtualizationImageWithId,
 } from 'app/pages/instances/components/instance-wizard/select-image-dialog/select-image-dialog.component';
 import { defaultVncPort } from 'app/pages/instances/instances.constants';
 import { VirtualizationConfigStore } from 'app/pages/instances/stores/virtualization-config.store';
@@ -138,7 +154,7 @@ export class InstanceWizardComponent {
 
   imageSourceTypeOptions$: Observable<Option<VirtualizationSource>[]> = of([
     { label: this.translate.instant('Use a Linux image (linuxcontainers.org)'), value: VirtualizationSource.Image },
-    { label: this.translate.instant('Upload ISO, import a zvol or use another volume'), value: VirtualizationSource.Iso },
+    { label: this.translate.instant('Upload ISO, import a zvol or use another volume'), value: VirtualizationSource.Zvol },
   ]);
 
   gpuDevices$ = this.api.call(
@@ -159,8 +175,9 @@ export class InstanceWizardComponent {
     ],
     instance_type: [VirtualizationType.Container, Validators.required],
     source_type: [VirtualizationSource.Image, [Validators.required]],
+    volume_type: [null as VolumeContentType | null],
     root_disk_io_bus: [DiskIoBus.Nvme, []],
-    iso_volume: ['', [Validators.required]],
+    volume: ['', [Validators.required]],
     image: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(200)]],
     enable_vnc: [false],
     vnc_port: [defaultVncPort, [Validators.min(5900), Validators.max(65535)]],
@@ -266,6 +283,25 @@ export class InstanceWizardComponent {
       });
   }
 
+  protected onSelectRootVolume(): void {
+    this.matDialog
+      .open<VolumesDialogComponent, VolumesDialogOptions, VirtualizationVolume>(VolumesDialogComponent, {
+        minWidth: '90vw',
+        data: {
+          selectionMode: true,
+        },
+      })
+      .afterClosed()
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe((volume) => {
+        this.form.patchValue({
+          volume_type: volume.content_type,
+        });
+
+        this.form.patchValue({ volume: volume.id });
+      });
+  }
+
   protected onSelectVolume(targetField: FormControl<string>): void {
     this.matDialog
       .open<VolumesDialogComponent, VolumesDialogOptions, VirtualizationVolume>(VolumesDialogComponent, {
@@ -358,6 +394,13 @@ export class InstanceWizardComponent {
     const devices = this.getDevicesPayload();
     const values = this.form.getRawValue();
 
+    let sourceType = VirtualizationSource.Image;
+    if (values.volume_type === VolumeContentType.Iso) {
+      sourceType = VirtualizationSource.Iso;
+    } else if (values.volume_type === VolumeContentType.Block) {
+      sourceType = VirtualizationSource.Volume;
+    }
+
     const payload = {
       devices,
       autostart: true,
@@ -368,8 +411,10 @@ export class InstanceWizardComponent {
       cpu: values.cpu,
       memory: values.memory || null,
       image: values.source_type === VirtualizationSource.Image ? values.image : null,
-      source_type: values.source_type,
-      iso_volume: values.source_type === VirtualizationSource.Iso ? values.iso_volume : null,
+      // TODO: Messy, clean up on API side.
+      source_type: sourceType,
+      iso_volume: values.volume_type === VolumeContentType.Iso ? values.volume : null,
+      volume: values.volume_type === VolumeContentType.Block ? values.volume : null,
       ...(this.isContainer() ? { environment: this.environmentVariablesPayload } : null),
     } as CreateVirtualizationInstance;
 
@@ -549,16 +594,16 @@ export class InstanceWizardComponent {
   }
 
   private listenForSourceTypeChanges(): void {
-    this.form.controls.iso_volume.disable();
+    this.form.controls.volume.disable();
 
     this.form.controls.source_type.valueChanges.pipe(untilDestroyed(this)).subscribe((type) => {
       this.form.controls.image.disable();
-      this.form.controls.iso_volume.disable();
+      this.form.controls.volume.disable();
 
       if (type === VirtualizationSource.Image) {
         this.form.controls.image.enable();
       } else if (type === VirtualizationSource.Iso) {
-        this.form.controls.iso_volume.enable();
+        this.form.controls.volume.enable();
       }
     });
   }

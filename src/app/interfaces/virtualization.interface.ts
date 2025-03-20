@@ -11,7 +11,7 @@ import {
   VirtualizationRemote,
   VirtualizationSource,
   VirtualizationStatus,
-  VirtualizationType,
+  VirtualizationType, VolumeContentType,
 } from 'app/enums/virtualization.enum';
 
 export interface VirtualizationInstanceMetrics {
@@ -83,6 +83,7 @@ export interface CreateVirtualizationInstance {
   vnc_password?: string | null;
 
   zvol_path?: string | null;
+  volume?: string | null;
 }
 
 export interface UpdateVirtualizationInstance {
@@ -273,7 +274,8 @@ export type InstanceEnvVariablesFormGroup = FormGroup<{
 export interface VirtualizationVolume {
   id: string;
   name: string;
-  content_type: string;
+  content_type: VolumeContentType;
+  storage_pool: string;
   created_at: string;
   type: string;
   config: {
@@ -284,7 +286,7 @@ export interface VirtualizationVolume {
 
 export interface CreateVirtualizationVolume {
   name: string;
-  content_type?: string;
+  content_type?: VolumeContentType;
   size?: number;
 }
 

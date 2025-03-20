@@ -55,11 +55,11 @@
           </div>
         }
 
-        @case (VirtualizationSource.Iso) {
+        @case (VirtualizationSource.Zvol) {
           <div class="image-field">
             <ix-input
               class="input"
-              formControlName="iso_volume"
+              formControlName="volume"
               [readonly]="true"
               [label]="'Volume' | translate"
               [required]="true"
@@ -69,7 +69,7 @@
               mat-button
               ixTest="browse-isos"
               type="button"
-              (click)="onSelectVolume(form.controls.iso_volume)"
+              (click)="onSelectRootVolume()"
             >{{ 'Select Volume' | translate }}</button>
           </div>
         }
