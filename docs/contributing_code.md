@@ -59,9 +59,15 @@ Our CI will make sure that your code matches our code style, but it may be a goo
 
 ### Wait For Changes To Be Merged
 
-After you open a PR, a member of the UI team will be automatically asked to review it.\
+After you open a PR, a member of the UI team will be automatically asked to review it.
 
 Once your PR is merged, it will appear in the next nightly build. :tada:
 
 We appreciate your contribution.
+
+### Get [Forum](https://forums.truenas.com) Contributor Credit!
+
+Once you have successfully had your pull-request merged into the TrueNAS repository, you are eligible for an exclusive forum badge and group to highlight your contributor status!
+
+To claim your contributor badge, please include a `TrueNAS Forums Username: <name>` on your pull request description. Once the pull request merges, message the forum moderators with a link to the PR and your will be granted membership to the contributors group.
 

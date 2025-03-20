@@ -59,7 +59,7 @@ export class ErrorHandlerService extends SentryErrorHandler implements ErrorHand
   }
 
   private shouldLogToSentry(error: unknown): boolean {
-    if (error instanceof CloseEvent) {
+    if (String(error) === '[object CloseEvent]') {
       return false;
     }
 
