@@ -49,7 +49,7 @@ import { SystemSecurityConfig } from 'app/interfaces/system-security-config.inte
 import { UpdateParams } from 'app/interfaces/system-update.interface';
 import { Tunable, TunableCreate, TunableUpdate } from 'app/interfaces/tunable.interface';
 import {
-  CreateVirtualizationInstance,
+  CreateVirtualizationInstance, ImportZvolParams,
   UpdateVirtualizationInstance,
   VirtualizationGlobalConfig,
   VirtualizationGlobalConfigUpdate,
@@ -201,6 +201,7 @@ export interface ApiJobDirectory {
   // Virt
   'virt.global.update': { params: [VirtualizationGlobalConfigUpdate]; response: VirtualizationGlobalConfig };
   'virt.volume.import_iso': { params: [{ name: string }]; response: { name: string } };
+  'virt.volume.import_zvol': { params: [ImportZvolParams]; response: void };
   'virt.instance.create': { params: [CreateVirtualizationInstance]; response: VirtualizationInstance };
   'virt.instance.delete': { params: [instanceId: string]; response: boolean };
   'virt.instance.restart': { params: [instanceId: string, params: VirtualizationStopParams]; response: boolean };

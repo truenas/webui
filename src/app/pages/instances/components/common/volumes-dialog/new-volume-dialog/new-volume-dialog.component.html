@@ -1,0 +1,39 @@
+<h1 matDialogTitle>
+  {{ 'Create New Volume' | translate }}
+</h1>
+<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+  <ix-input
+    formControlName="name"
+    [label]="'Name' | translate"
+    [required]="true"
+  ></ix-input>
+
+  <ix-input
+    formControlName="size"
+    [label]="'Size' | translate"
+    [required]="true"
+    [format]="formatter.memorySizeFormatting"
+    [parse]="formatter.memorySizeParsing"
+  ></ix-input>
+
+  <ix-form-actions>
+    <button
+      mat-button
+      type="button"
+      ixTest="cancel"
+      matDialogClose
+    >
+      {{ 'Cancel' | translate }}
+    </button>
+
+    <button
+      mat-button
+      color="primary"
+      type="submit"
+      ixTest="save"
+      [disabled]="form.invalid"
+    >
+      {{ 'Create' | translate }}
+    </button>
+  </ix-form-actions>
+</form>
