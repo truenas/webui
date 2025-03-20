@@ -55,12 +55,12 @@ export class VirtualizationInstancesStore extends ComponentStore<VirtualizationI
     this.destroySubscription$.next();
     return trigger$.pipe(
       switchMap(() => {
-        this.patchState({ ...initialState });
         return this.api.call('virt.instance.query').pipe(
           tap((instances) => {
             const selectedInstanceId = this.selectedInstanceId();
             const selectedInstance = this.selectedInstance();
-            if (selectedInstanceId !== selectedInstance?.id) {
+
+            if (!selectedInstance || selectedInstance.id !== selectedInstanceId) {
               const updatedSelectedInstance = instances.find((instance) => instance.id === selectedInstanceId);
               if (updatedSelectedInstance) {
                 this.patchState({ selectedInstance: updatedSelectedInstance });
