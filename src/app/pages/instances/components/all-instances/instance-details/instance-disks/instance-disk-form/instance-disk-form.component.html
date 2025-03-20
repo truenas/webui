@@ -7,14 +7,42 @@
   <mat-card-content>
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset>
-        <ix-explorer
-          formControlName="source"
-          root="/"
-          [label]="'Source' | translate"
-          [required]="true"
-          [nodeProvider]="directoryNodeProvider()"
-          [canCreateDataset]="isNew()"
-        ></ix-explorer>
+        <!-- TODO: Code is similar to the form in instance wizard -->
+        @if (isVm) {
+          <div class="image-field">
+            <ix-input
+              class="input"
+              formControlName="source"
+              [readonly]="true"
+              [label]="'Volume' | translate"
+              [required]="true"
+            ></ix-input>
+
+            <button
+              mat-button
+              ixTest="browse-isos"
+              type="button"
+              (click)="onSelectVolume()"
+            >{{ 'Select Volume' | translate }}</button>
+          </div>
+
+          <ix-input
+            type="number"
+            formControlName="boot_priority"
+            [label]="'Boot Priority' | translate"
+            [required]="true"
+            [tooltip]="instancesHelptext.bootPriorityHint | translate"
+          ></ix-input>
+        } @else {
+          <ix-explorer
+            formControlName="source"
+            root="/"
+            [label]="'Source' | translate"
+            [required]="true"
+            [nodeProvider]="datasetProvider"
+            [canCreateDataset]="isNew()"
+          ></ix-explorer>
+        }
 
         @if (form.controls.io_bus.enabled) {
           <ix-select

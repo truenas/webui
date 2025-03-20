@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import {
-  AbstractControl, FormControl, ValidationErrors, ValidatorFn, Validators,
+  AbstractControl, ValidationErrors, ValidatorFn, Validators,
 } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
-import * as isCidr from 'is-cidr';
 
 @Injectable({
   providedIn: 'root',
@@ -43,33 +42,7 @@ export class IxValidatorsService {
     };
   };
 
-  /**
-   * This function returns a validator
-   * @param errMessage The error message applied if the validator fails
-   * @returns a validator function that checks if the control value
-   * is valid Cidr notation ip v4 or v6
-   */
-  readonly ipCidrV4orCidrV6: { forProperty: 'ip'; validatorFn: () => ValidatorFn } = {
-    forProperty: 'ip',
-    validatorFn: (): ValidatorFn => {
-      return (control: FormControl<string>) => {
-        if (!control.parent) {
-          return null;
-        }
-
-        if (control.value === '' || control.value === undefined) {
-          return null;
-        }
-
-        if (!isCidr.v4(control.value) && !isCidr.v6(control.value)) {
-          return { ip: true };
-        }
-
-        return null;
-      };
-    },
-  };
-
+  // TODO: Move elsewhere
   confirmValidator(name: string, validationMessage: string): ValidatorFn {
     return Validators.compose([
       this.withMessage(

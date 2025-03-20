@@ -12,7 +12,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { VirtualizationStatus, VirtualizationType } from 'app/enums/virtualization.enum';
-import { containersHelptext } from 'app/helptext/instances/instances';
+import { instancesHelptext } from 'app/helptext/instances/instances';
 import {
   InstanceEnvVariablesFormGroup,
   UpdateVirtualizationInstance,
@@ -62,7 +62,7 @@ export class InstanceEditFormComponent {
   title: string;
   editingInstance: VirtualizationInstance;
 
-  protected readonly containersHelptext = containersHelptext;
+  protected readonly containersHelptext = instancesHelptext;
 
   get isVm(): boolean {
     return this.editingInstance.type === VirtualizationType.Vm;

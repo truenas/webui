@@ -23,6 +23,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
+import { zvolPath } from 'app/helpers/storage.helper';
 import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
@@ -104,7 +105,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
     $event: MouseEvent,
   ): void => {
     const path = node.path.reduce((prev, curr) => `${prev}/${curr}`);
-    if (node.isCollapsed && node.hasChildren && node.children && path.includes('/dev/zvol')) {
+    if (node.isCollapsed && node.hasChildren && node.children && path.includes(zvolPath)) {
       node.children = null;
     }
     TREE_ACTIONS.TOGGLE_EXPANDED(tree, node, $event);
