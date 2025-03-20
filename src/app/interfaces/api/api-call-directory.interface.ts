@@ -250,9 +250,18 @@ import {
   DeleteUserParams, SetPasswordParams, User, UserUpdate,
 } from 'app/interfaces/user.interface';
 import {
-  VirtualizationInstance, VirtualizationDevice, VirtualizationImageParams,
-  VirtualizationImage, AvailableGpus, AvailableUsb, VirtualizationGlobalConfig,
-  VirtualizationNetwork, VirtualizationVolume, VirtualizationVolumeUpdate, VirtualizationPciChoices,
+  VirtualizationInstance,
+  VirtualizationDevice,
+  VirtualizationImageParams,
+  VirtualizationImage,
+  AvailableGpus,
+  AvailableUsb,
+  VirtualizationGlobalConfig,
+  VirtualizationNetwork,
+  VirtualizationVolume,
+  VirtualizationVolumeUpdate,
+  VirtualizationPciChoices,
+  CreateVirtualizationVolume,
 } from 'app/interfaces/virtualization.interface';
 import {
   MatchDatastoresWithDatasets,
@@ -889,6 +898,7 @@ export interface ApiCallDirectory {
   'virt.global.get_network': { params: [name: string]; response: VirtualizationNetwork };
   'virt.global.pool_choices': { params: []; response: Choices };
 
+  'virt.volume.create': { params: [CreateVirtualizationVolume]; response: VirtualizationVolume };
   'virt.volume.query': { params: QueryParams<VirtualizationVolume>; response: VirtualizationVolume[] };
   'virt.volume.update': { params: VirtualizationVolumeUpdate; response: VirtualizationVolume };
   'virt.volume.delete': { params: [id: string]; response: true };

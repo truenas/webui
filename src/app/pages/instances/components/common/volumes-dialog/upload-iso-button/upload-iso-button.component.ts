@@ -9,6 +9,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { Role } from 'app/enums/role.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFileInputComponent } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.component';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -17,6 +18,7 @@ import { UploadService } from 'app/services/upload.service';
 @UntilDestroy()
 @Component({
   selector: 'ix-upload-iso',
+  styleUrls: ['./upload-iso-button.component.scss'],
   templateUrl: './upload-iso-button.component.html',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -25,6 +27,7 @@ import { UploadService } from 'app/services/upload.service';
     ReactiveFormsModule,
     TranslateModule,
     RequiresRolesDirective,
+    IxIconComponent,
   ],
 })
 export class UploadIsoButtonComponent implements OnInit {

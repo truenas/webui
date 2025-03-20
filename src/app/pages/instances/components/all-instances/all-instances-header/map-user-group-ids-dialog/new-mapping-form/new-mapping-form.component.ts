@@ -13,7 +13,7 @@ import { MatButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
-import { containersHelptext } from 'app/helptext/instances/instances';
+import { instancesHelptext } from 'app/helptext/instances/instances';
 import { directIdMapping } from 'app/interfaces/user.interface';
 import { GroupComboboxProvider } from 'app/modules/forms/ix-forms/classes/group-combobox-provider';
 import { UserComboboxProvider } from 'app/modules/forms/ix-forms/classes/user-combobox-provider';
@@ -112,5 +112,5 @@ export class NewMappingFormComponent implements OnChanges {
   }
 
   protected readonly ViewType = ViewType;
-  protected readonly containersHelptext = containersHelptext;
+  protected readonly containersHelptext = instancesHelptext;
 }

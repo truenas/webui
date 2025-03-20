@@ -1,6 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export const containersHelptext = {
+export const instancesHelptext = {
   cpuHint: T('Leave empty to allow all host CPUs to be used.'),
   nameHint: T('Name cannot be changed after instance is created'),
   memoryHint: T('Leave empty to not limit instance memory.'),
@@ -18,7 +18,7 @@ Ideal for scalable applications.<br /><br />\
 <b>Why choose VM?</b><br />\
 Choose a VM for full OS isolation, kernel independence, and running diverse OS types.'),
 
-  cpu_memory_tooltip: T('<b>CPU Configuration</b><br />Enter the number of cores. Use multiple values\
+  cpu_memory_tooltip: T('<b>CPU Configuration</b><br />Enter the number of cores. Alternatively, use multiple values\
  or ranges to set the CPU topology.<br />Example: 1-2, 5, 9-11.'),
 
   cpu_placeholder: T('CPU Configuration'),
@@ -88,4 +88,12 @@ Choose a VM for full OS isolation, kernel independence, and running diverse OS t
   You can use this dialog to control mapping manually.'),
 
   mapDirectlyTooltip: T('UID/GID from the host is directly mapped to the same id in a container. This means that GID 3000 will appear as GID 3000 in the container.'),
+
+  importZvol: {
+    cloneTooltip: T('Clone and promote a temporary snapshot of the zvol into a custom storage volume.'),
+    moveTooltip: T('Renames the ZFS dataset to a path in the `ix-virt` dataset in which the zvol is located.'),
+    description: T('Importing a zvol as Instances volume allows its lifecycle to be managed, including backups, restores, and snapshots. This allows portability between systems using standard tools.'),
+  },
+
+  bootPriorityHint: T('Disks with highest boot priority are booted first. Root disk by default has a priority of 1.'),
 };
