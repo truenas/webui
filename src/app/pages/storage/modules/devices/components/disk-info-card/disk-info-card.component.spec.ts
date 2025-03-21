@@ -106,7 +106,7 @@ describe('DiskInfoCardComponent', () => {
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
     await editButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(DiskFormComponent, { wide: true, data: disk });
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(DiskFormComponent, { data: disk });
   });
 
   it('opens a ReplaceDiskDialogComponent when clicks Replace button', async () => {
