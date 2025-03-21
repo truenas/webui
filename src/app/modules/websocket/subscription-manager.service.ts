@@ -1,11 +1,15 @@
 import { Injectable } from '@angular/core';
 import { UUID } from 'angular2-uuid';
 import {
-  filter, map, Observable, share, tap,
+  filter, Observable, share, tap, throwError, of, switchMap,
 } from 'rxjs';
-import { isCollectionUpdateMessage, isSuccessfulResponse } from 'app/helpers/api.helper';
-import { ApiEventMethod, ApiEventTyped, CollectionUpdateMessage } from 'app/interfaces/api-message.interface';
+import { JsonRpcErrorCode } from 'app/enums/api.enum';
+import { isCollectionUpdateMessage, isSuccessfulResponse, isNotifyUnsubscribedMessage } from 'app/helpers/api.helper';
+import {
+  ApiEventMethod, ApiEventTyped,
+} from 'app/interfaces/api-message.interface';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
+import { ApiCallError } from 'app/services/errors/error.classes';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 type Method = ApiEventMethod | `${ApiEventMethod}:${string}`;
@@ -52,9 +56,32 @@ export class SubscriptionManagerService {
 
       this.wsHandler.responses$.pipe(
         filter((message) => {
-          return isCollectionUpdateMessage(message) && message.params.collection === method;
+          if (isCollectionUpdateMessage(message)) {
+            return message.params.collection === method;
+          }
+          if (isNotifyUnsubscribedMessage(message)) {
+            return message.params.collection === method;
+          }
+          return false;
         }),
-        map((message: CollectionUpdateMessage) => message.params as ApiEventTyped<K>),
+        switchMap((message) => {
+          if (isCollectionUpdateMessage(message)) {
+            return of(message.params as ApiEventTyped<K>);
+          }
+          if (isNotifyUnsubscribedMessage(message)) {
+            if (message.params.error) {
+              return throwError(() => new ApiCallError({
+                code: JsonRpcErrorCode.CallError,
+                message: message.params.error.reason,
+                data: message.params.error,
+              }));
+            }
+            subscriber.complete();
+            return of(null);
+          }
+          return of(null);
+        }),
+        filter((event): event is ApiEventTyped<K> => event !== null),
       ).subscribe(subscriber);
 
       return () => {

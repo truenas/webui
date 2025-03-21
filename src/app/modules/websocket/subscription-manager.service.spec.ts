@@ -1,6 +1,10 @@
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { UUID } from 'angular2-uuid';
-import { of, Subject } from 'rxjs';
+import {
+  of, Subject,
+} from 'rxjs';
+import { ApiErrorName } from 'app/enums/api.enum';
+import { ApiErrorDetails } from 'app/interfaces/api-error.interface';
 import { SubscriptionManagerService } from 'app/modules/websocket/subscription-manager.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
@@ -173,5 +177,49 @@ describe('SubscriptionManagerService', () => {
     expect(wsHandler.scheduleCall).not.toHaveBeenCalledWith(expect.objectContaining({
       method: 'core.unsubscribe',
     }));
+  });
+
+  // eslint-disable-next-line jest/no-done-callback
+  it('should throw ApiCallError when receiving notify_unsubscribed with error', (done) => {
+    jest.spyOn(UUID, 'UUID').mockReturnValue('1');
+
+    spectator.service.subscribe('virt.instance.metrics').subscribe({
+      next: () => {},
+      error: (error: unknown) => {
+        expect(error).toMatchObject({
+          message: 'Invalid subscription',
+          error: {
+            data: {
+              error: 22,
+              errname: ApiErrorName.Validation,
+              reason: 'Invalid subscription',
+            },
+          },
+        });
+        done();
+      },
+      complete: () => {
+        done.fail('Observable completed when it should have errored');
+      },
+    });
+
+    responses$.next({
+      jsonrpc: '2.0',
+      id: '1',
+      result: 'backend-subscription-id',
+    });
+
+    responses$.next({
+      jsonrpc: '2.0',
+      method: 'notify_unsubscribed',
+      params: {
+        collection: 'virt.instance.metrics',
+        error: {
+          error: 22,
+          errname: ApiErrorName.Validation,
+          reason: 'Invalid subscription',
+        } as ApiErrorDetails,
+      },
+    });
   });
 });

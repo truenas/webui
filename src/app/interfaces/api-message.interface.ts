@@ -32,6 +32,14 @@ export interface CollectionUpdateMessage extends BaseJsonRpc {
   params: ApiEvent;
 }
 
+export interface NotifyUnsubscribedMessage extends BaseJsonRpc {
+  method: 'notify_unsubscribed';
+  params: {
+    collection: ApiMethod;
+    error?: ApiErrorDetails;
+  };
+}
+
 export interface JsonRpcError {
   code: JsonRpcErrorCode;
   message: string;
@@ -41,7 +49,8 @@ export interface JsonRpcError {
 export type IncomingMessage =
   | SuccessfulResponse
   | ErrorResponse
-  | CollectionUpdateMessage;
+  | CollectionUpdateMessage
+  | NotifyUnsubscribedMessage;
 
 export type ApiMethod = ApiCallMethod | ApiJobMethod | ApiEventMethod;
 
