@@ -240,7 +240,6 @@ describe('InstanceWizardComponent', () => {
         memory: GiB,
         source_type: VirtualizationSource.Image,
         storage_pool: 'poolio',
-        zvol_path: null,
         environment: {},
         enable_vnc: false,
         vnc_port: null,
@@ -407,7 +406,6 @@ describe('InstanceWizardComponent', () => {
         vnc_port: 9000,
         source_type: VirtualizationSource.Image,
         storage_pool: 'poolio',
-        zvol_path: null,
         root_disk_size: 9,
         vnc_password: 'testing',
         secure_boot: true,
@@ -504,6 +502,7 @@ describe('InstanceWizardComponent', () => {
         vnc_port: null,
         root_disk_size: 10,
         volume: 'myvolume',
+        storage_pool: 'poolio',
       }]);
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
@@ -515,43 +514,6 @@ describe('InstanceWizardComponent', () => {
 
       const proxiesList = await loader.getHarnessOrNull(IxListHarness.with({ label: 'Proxies' }));
       expect(proxiesList).toBeNull();
-    });
-
-    it('creates new instance using zvol path when form is submitted', async () => {
-      const instanceType = await loader.getHarness(IxIconGroupHarness.with({ label: 'Virtualization Method' }));
-      await instanceType.setValue('VM');
-
-      await form.fillForm({
-        Name: 'new',
-        'VM Image Options': 'Use zvol with previously installed OS',
-        'CPU Configuration': '2',
-        'Memory Size': '1 GiB',
-        Zvol: '/dev/zvol/test',
-        'Root Disk I/O Bus': 'Virtio-SCSI',
-      });
-
-      const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create' }));
-      await createButton.click();
-
-      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('virt.instance.create', [{
-        name: 'new',
-        autostart: true,
-        root_disk_io_bus: DiskIoBus.VirtioScsi,
-        cpu: '2',
-        instance_type: VirtualizationType.Vm,
-        devices: [],
-        image: null,
-        source_type: VirtualizationSource.Zvol,
-        storage_pool: 'poolio',
-        enable_vnc: false,
-        secure_boot: false,
-        memory: 1073741824,
-        vnc_port: null,
-        iso_volume: null,
-        zvol_path: '/dev/zvol/test',
-      }]);
-      expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-      expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
     });
   });
 
