@@ -7,7 +7,6 @@ import { CloudSyncTaskCardComponent } from './cloudsync/cloudsync-task-card/clou
 import { ReplicationTaskCardComponent } from './replication/replication-task-card/replication-task-card.component';
 import { RsyncTaskCardComponent } from './rsync-task/rsync-task-card/rsync-task-card.component';
 import { ScrubTaskCardComponent } from './scrub-task/scrub-task-card/scrub-task-card.component';
-import { SmartTaskCardComponent } from './smart-task/smart-task-card/smart-task-card.component';
 import { SnapshotTaskCardComponent } from './snapshot-task/snapshot-task-card/snapshot-task-card.component';
 
 @UntilDestroy()
@@ -25,7 +24,6 @@ import { SnapshotTaskCardComponent } from './snapshot-task/snapshot-task-card/sn
     SnapshotTaskCardComponent,
     RsyncTaskCardComponent,
     ReplicationTaskCardComponent,
-    SmartTaskCardComponent,
   ],
 })
 export class DataProtectionDashboardComponent {

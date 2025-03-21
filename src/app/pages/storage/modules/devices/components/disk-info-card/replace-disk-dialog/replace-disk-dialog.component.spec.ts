@@ -97,7 +97,7 @@ describe('ReplaceDiskDialogComponent', () => {
 
   it('shows additional settings to preserve disk settings and description', async () => {
     const preserveSettings = await loader.getHarness(
-      IxCheckboxHarness.with({ label: 'Preserve Power Management and S.M.A.R.T. settings' }),
+      IxCheckboxHarness.with({ label: 'Preserve Power Management settings' }),
     );
     await preserveSettings.setValue(false);
 

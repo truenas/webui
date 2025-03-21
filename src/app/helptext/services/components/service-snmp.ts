@@ -1,6 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export const helptextServiceSmart = {
+export const helptextServiceSnmp = {
   location_tooltip: T('Enter the location of the system.'),
   contact_tooltip: T('E-mail address that will receive SNMP service messages.'),
   community_tooltip: T('Change from <i>public</i> to increase system security.\
