@@ -94,7 +94,6 @@ export class DevicesListComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.devicesStore.loadDisksWithSmartTestSupport();
     this.devicesStore.loadNodes(this.poolId());
     this.listenForRouteChanges();
     this.setupTree();
