@@ -13,7 +13,7 @@ import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { CloudSyncRestoreDialogComponent } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
+import { CloudSyncRestoreDialog } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
@@ -34,7 +34,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TranslateModule,
   ],
 })
-export class AddSpnDialogComponent {
+export class AddSpnDialog {
   protected readonly requiredRoles = [Role.SharingNfsWrite];
 
   readonly form = this.formBuilder.nonNullable.group({
@@ -47,7 +47,7 @@ export class AddSpnDialogComponent {
     private errorHandler: ErrorHandlerService,
     private formBuilder: FormBuilder,
     private translate: TranslateService,
-    private dialogRef: MatDialogRef<CloudSyncRestoreDialogComponent>,
+    private dialogRef: MatDialogRef<CloudSyncRestoreDialog>,
     private snackbar: SnackbarService,
     private loader: LoaderService,
   ) { }

@@ -7,18 +7,18 @@ import { of, throwError } from 'rxjs';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import {
-  DownloadKeyDialogComponent, DownloadKeyDialogParams,
+  DownloadKeyDialog, DownloadKeyDialogParams,
 } from 'app/pages/storage/modules/pool-manager/components/download-key-dialog/download-key-dialog.component';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { ErrorParserService } from 'app/services/errors/error-parser.service';
 
 describe('DownloadKeyDialogComponent', () => {
-  let spectator: Spectator<DownloadKeyDialogComponent>;
+  let spectator: Spectator<DownloadKeyDialog>;
   let loader: HarnessLoader;
 
   const createComponent = createComponentFactory({
-    component: DownloadKeyDialogComponent,
+    component: DownloadKeyDialog,
     providers: [
       mockProvider(LoaderService, {
         open: jest.fn(),

@@ -9,7 +9,7 @@ import {
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { FirstLoginDialogComponent } from 'app/pages/credentials/users/first-login-dialog/first-login-dialog.component';
+import { FirstLoginDialog } from 'app/pages/credentials/users/first-login-dialog/first-login-dialog.component';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 @UntilDestroy()
@@ -69,7 +69,7 @@ export class TwoFactorGuardService implements CanActivateChild {
   private showFirstLoginDialog(): Observable<boolean> {
     this.matDialog.closeAll();
 
-    const dialogRef = this.matDialog.open(FirstLoginDialogComponent, {
+    const dialogRef = this.matDialog.open(FirstLoginDialog, {
       maxWidth: '100vw',
       maxHeight: '100vh',
       height: '100%',

@@ -47,7 +47,7 @@ export interface RaidzExtendDialogParams {
     FileSizePipe,
   ],
 })
-export class RaidzExtendDialogComponent {
+export class RaidzExtendDialog {
   form = this.formBuilder.group({
     newDisk: ['', Validators.required],
   });
@@ -65,7 +65,7 @@ export class RaidzExtendDialogComponent {
     private errorHandler: ErrorHandlerService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
-    private dialogRef: MatDialogRef<RaidzExtendDialogComponent>,
+    private dialogRef: MatDialogRef<RaidzExtendDialog>,
     private devicesStore: DevicesStore,
     private dialogService: DialogService,
     @Inject(MAT_DIALOG_DATA) public data: RaidzExtendDialogParams,

@@ -15,7 +15,7 @@ import { SystemUpdate, SystemUpdateChange } from 'app/interfaces/system-update.i
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { SaveConfigDialogComponent } from 'app/pages/system/general-settings/save-config-dialog/save-config-dialog.component';
+import { SaveConfigDialog } from 'app/pages/system/general-settings/save-config-dialog/save-config-dialog.component';
 import { UpdateActionsCardComponent } from 'app/pages/system/update/components/update-actions-card/update-actions-card.component';
 import { TrainService } from 'app/pages/system/update/services/train.service';
 import { UpdateService } from 'app/pages/system/update/services/update.service';
@@ -87,7 +87,7 @@ describe('UpdateActionsCardComponent', () => {
     const applyPendingButton = await loader.getHarness(MatButtonHarness.with({ text: 'Apply Pending update' }));
     await applyPendingButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(SaveConfigDialogComponent, {
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(SaveConfigDialog, {
       data: {
         cancelButton: 'Do not save',
         saveButton: 'Save Configuration',
@@ -113,7 +113,7 @@ describe('UpdateActionsCardComponent', () => {
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('update.check_available');
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(SaveConfigDialogComponent, {
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(SaveConfigDialog, {
       data: {
         cancelButton: 'Do not save',
         saveButton: 'Save Configuration',
@@ -137,7 +137,7 @@ describe('UpdateActionsCardComponent', () => {
     const installManualButton = await loader.getHarness(MatButtonHarness.with({ text: 'Install Manual Update File' }));
     await installManualButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(SaveConfigDialogComponent, {
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(SaveConfigDialog, {
       data: {
         cancelButton: 'Do not save',
         saveButton: 'Save Configuration',

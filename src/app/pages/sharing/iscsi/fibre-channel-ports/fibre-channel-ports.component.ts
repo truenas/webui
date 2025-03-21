@@ -37,7 +37,7 @@ import {
 } from 'app/pages/sharing/iscsi/fibre-channel-ports/build-ports-table-row.utils';
 import { fibreChannelPortsElements } from 'app/pages/sharing/iscsi/fibre-channel-ports/fibre-channel-ports.elements';
 import {
-  VirtualPortsNumberDialogComponent,
+  VirtualPortsNumberDialog,
 } from 'app/pages/sharing/iscsi/fibre-channel-ports/virtual-ports-number-dialog/virtual-ports-number-dialog.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
@@ -146,7 +146,7 @@ export class FibreChannelPortsComponent implements OnInit {
   }
 
   doEdit(row: FibreChannelPortRow): void {
-    this.matDialog.open(VirtualPortsNumberDialogComponent, { data: row.host })
+    this.matDialog.open(VirtualPortsNumberDialog, { data: row.host })
       .afterClosed()
       .pipe(
         filter(Boolean),

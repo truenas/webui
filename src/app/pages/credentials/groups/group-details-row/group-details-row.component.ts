@@ -16,7 +16,7 @@ import {
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
-  DeleteGroupDialogComponent,
+  DeleteGroupDialog,
 } from 'app/pages/credentials/groups/group-details-row/delete-group-dialog/delete-group-dialog.component';
 import { GroupFormComponent } from 'app/pages/credentials/groups/group-form/group-form.component';
 
@@ -59,7 +59,7 @@ export class GroupDetailsRowComponent {
   }
 
   doDelete(group: Group): void {
-    this.matDialog.open(DeleteGroupDialogComponent, { data: group })
+    this.matDialog.open(DeleteGroupDialog, { data: group })
       .afterClosed()
       .pipe(untilDestroyed(this))
       .subscribe((wasDeleted) => {

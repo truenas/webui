@@ -11,7 +11,7 @@ import { finalize } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
 import { ticketAcceptedFiles } from 'app/enums/file-ticket.enum';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
-import { FeedbackDialogComponent } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
+import { FeedbackDialog } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -50,7 +50,7 @@ export const maxFileSizeBytes = 5 * MiB;
   ],
 })
 export class FileReviewComponent {
-  readonly dialogRef = input.required<MatDialogRef<FeedbackDialogComponent>>();
+  readonly dialogRef = input.required<MatDialogRef<FeedbackDialog>>();
   readonly isLoading = input<boolean>();
 
   readonly isLoadingChange = output<boolean>();

@@ -32,7 +32,7 @@ import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { DockerImageDeleteDialogComponent } from 'app/pages/apps/components/docker-images/docker-image-delete-dialog/docker-image-delete-dialog.component';
+import { DockerImageDeleteDialog } from 'app/pages/apps/components/docker-images/docker-image-delete-dialog/docker-image-delete-dialog.component';
 import { dockerImagesListElements } from 'app/pages/apps/components/docker-images/docker-images-list/docker-images-list.elements';
 import { PullImageFormComponent } from 'app/pages/apps/components/docker-images/pull-image-form/pull-image-form.component';
 
@@ -163,7 +163,7 @@ export class DockerImagesListComponent implements OnInit {
   }
 
   doDelete(images: ContainerImageUi[]): void {
-    this.matDialog.open(DockerImageDeleteDialogComponent, { data: this.prepareImages(images) })
+    this.matDialog.open(DockerImageDeleteDialog, { data: this.prepareImages(images) })
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => this.refresh());

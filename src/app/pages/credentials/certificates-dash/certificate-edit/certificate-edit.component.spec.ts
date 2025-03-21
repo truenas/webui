@@ -27,7 +27,7 @@ import {
   ViewCertificateDialogData,
 } from 'app/pages/credentials/certificates-dash/view-certificate-dialog/view-certificate-dialog-data.interface';
 import {
-  ViewCertificateDialogComponent,
+  ViewCertificateDialog,
 } from 'app/pages/credentials/certificates-dash/view-certificate-dialog/view-certificate-dialog.component';
 import { CertificateEditComponent } from './certificate-edit.component';
 
@@ -71,7 +71,7 @@ describe('CertificateEditComponent', () => {
       mockAuth(),
     ],
     declarations: [
-      MockComponent(ViewCertificateDialogComponent),
+      MockComponent(ViewCertificateDialog),
       MockComponent(CertificateDetailsComponent),
       MockComponent(CertificateAcmeAddComponent),
     ],
@@ -125,7 +125,7 @@ describe('CertificateEditComponent', () => {
       const button = await loader.getHarness(MatButtonHarness.with({ text: 'View/Download Certificate' }));
       await button.click();
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ViewCertificateDialogComponent, {
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ViewCertificateDialog, {
         data: {
           certificate: '--BEGIN CERTIFICATE--',
           name: 'ray',
@@ -138,7 +138,7 @@ describe('CertificateEditComponent', () => {
       const button = await loader.getHarness(MatButtonHarness.with({ text: 'View/Download Key' }));
       await button.click();
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ViewCertificateDialogComponent, {
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ViewCertificateDialog, {
         data: {
           certificate: '--BEGIN RSA PRIVATE KEY--',
           name: 'ray',

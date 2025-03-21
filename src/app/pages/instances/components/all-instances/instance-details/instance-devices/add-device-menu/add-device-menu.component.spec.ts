@@ -14,7 +14,7 @@ import {
   AddDeviceMenuComponent,
 } from 'app/pages/instances/components/all-instances/instance-details/instance-devices/add-device-menu/add-device-menu.component';
 import {
-  PciPassthroughDialogComponent,
+  PciPassthroughDialog,
 } from 'app/pages/instances/components/common/pci-passthough-dialog/pci-passthrough-dialog.component';
 import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
 
@@ -201,7 +201,7 @@ describe('AddDeviceMenuComponent', () => {
 
       await menu.clickItem({ text: 'Add Device' });
 
-      expect(matDialog.open).toHaveBeenCalledWith(PciPassthroughDialogComponent, {
+      expect(matDialog.open).toHaveBeenCalledWith(PciPassthroughDialog, {
         minWidth: '90vw',
         data: {
           existingDeviceAddresses: [],

@@ -32,11 +32,11 @@ export interface SessionExpiringDialogOptions {
     TestDirective,
   ],
 })
-export class SessionExpiringDialogComponent {
+export class SessionExpiringDialog {
   options: SessionExpiringDialogOptions;
 
   constructor(
-    private dialogRef: MatDialogRef<SessionExpiringDialogComponent>,
+    private dialogRef: MatDialogRef<SessionExpiringDialog>,
     @Inject(MAT_DIALOG_DATA) options: SessionExpiringDialogOptions,
   ) {
     this.options = { ...options };

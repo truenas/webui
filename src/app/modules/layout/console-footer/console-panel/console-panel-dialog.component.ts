@@ -26,7 +26,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     TestDirective,
   ],
 })
-export class ConsolePanelDialogComponent implements OnInit {
+export class ConsolePanelDialog implements OnInit {
   private readonly messageContainer: Signal<ElementRef<HTMLElement>> = viewChild.required('messageContainer', { read: ElementRef });
 
   lines$ = this.messagesStore.lines$;

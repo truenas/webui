@@ -6,7 +6,7 @@ import { GlobalTwoFactorConfig, UserTwoFactorConfig } from 'app/interfaces/two-f
 import { AuthService } from 'app/modules/auth/auth.service';
 import { TwoFactorGuardService } from 'app/modules/auth/two-factor-guard.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { FirstLoginDialogComponent } from 'app/pages/credentials/users/first-login-dialog/first-login-dialog.component';
+import { FirstLoginDialog } from 'app/pages/credentials/users/first-login-dialog/first-login-dialog.component';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 describe('TwoFactorGuardService', () => {
@@ -106,7 +106,7 @@ describe('TwoFactorGuardService', () => {
     );
     expect(isAllowed).toBe(true);
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(FirstLoginDialogComponent, {
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(FirstLoginDialog, {
       maxWidth: '100vw',
       maxHeight: '100vh',
       height: '100%',
@@ -127,7 +127,7 @@ describe('TwoFactorGuardService', () => {
     );
     expect(isAllowed).toBe(true);
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(FirstLoginDialogComponent, {
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(FirstLoginDialog, {
       maxWidth: '100vw',
       maxHeight: '100vh',
       height: '100%',

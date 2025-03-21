@@ -39,10 +39,10 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
-  ImportZvolsDialogComponent,
+  ImportZvolsDialog,
 } from 'app/pages/instances/components/common/volumes-dialog/import-zvol-dialog/import-zvols-dialog.component';
 import {
-  NewVolumeDialogComponent,
+  NewVolumeDialog,
 } from 'app/pages/instances/components/common/volumes-dialog/new-volume-dialog/new-volume-dialog.component';
 import {
   UploadIsoButtonComponent,
@@ -77,7 +77,7 @@ export interface VolumesDialogOptions {
     MatButton,
   ],
 })
-export class VolumesDialogComponent implements OnInit {
+export class VolumesDialog implements OnInit {
   private options = signal<VolumesDialogOptions>({ selectionMode: false });
 
   protected requiredRoles = [Role.VirtImageWrite];
@@ -154,7 +154,7 @@ export class VolumesDialogComponent implements OnInit {
     private snackbar: SnackbarService,
     private translate: TranslateService,
     protected emptyService: EmptyService,
-    protected dialogRef: MatDialogRef<VolumesDialogComponent, VirtualizationVolume | null>,
+    protected dialogRef: MatDialogRef<VolumesDialog, VirtualizationVolume | null>,
     @Inject(MAT_DIALOG_DATA) options: VolumesDialogOptions,
   ) {
     this.options.set(options || { selectionMode: false });
@@ -187,7 +187,7 @@ export class VolumesDialogComponent implements OnInit {
 
   protected createVolume(): void {
     this.matDialog
-      .open(NewVolumeDialogComponent, {
+      .open(NewVolumeDialog, {
         minWidth: '300px',
       })
       .afterClosed()
@@ -197,7 +197,7 @@ export class VolumesDialogComponent implements OnInit {
 
   protected importZvols(): void {
     this.matDialog
-      .open(ImportZvolsDialogComponent, {
+      .open(ImportZvolsDialog, {
         minWidth: '500px',
       })
       .afterClosed()

@@ -27,12 +27,12 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     TranslateModule,
   ],
 })
-export class CustomTransfersDialogComponent {
+export class CustomTransfersDialog {
   readonly helptext = helptextCloudSync;
   readonly transfers = new FormControl(null as number | null, [Validators.required, Validators.min(0)]);
 
   constructor(
-    private dialogRef: MatDialogRef<CustomTransfersDialogComponent>,
+    private dialogRef: MatDialogRef<CustomTransfersDialog>,
   ) { }
 
   onSave(): void {

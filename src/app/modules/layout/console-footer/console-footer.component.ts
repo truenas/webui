@@ -5,7 +5,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ConsoleMessagesStore } from 'app/modules/layout/console-footer/console-messages.store';
-import { ConsolePanelDialogComponent } from 'app/modules/layout/console-footer/console-panel/console-panel-dialog.component';
+import { ConsolePanelDialog } from 'app/modules/layout/console-footer/console-panel/console-panel-dialog.component';
 
 @UntilDestroy()
 @Component({
@@ -32,7 +32,7 @@ export class ConsoleFooterComponent implements OnInit {
   }
 
   onShowConsolePanel(): void {
-    this.matDialog.open(ConsolePanelDialogComponent);
+    this.matDialog.open(ConsolePanelDialog);
   }
 
   private scrollToBottomOnNewMessages(): void {

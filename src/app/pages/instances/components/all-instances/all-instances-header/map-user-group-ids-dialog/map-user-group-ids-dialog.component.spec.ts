@@ -11,7 +11,7 @@ import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
-  MapUserGroupIdsDialogComponent,
+  MapUserGroupIdsDialog,
 } from 'app/pages/instances/components/all-instances/all-instances-header/map-user-group-ids-dialog/map-user-group-ids-dialog.component';
 import {
   ViewType,
@@ -21,13 +21,13 @@ import {
 } from 'app/pages/instances/components/all-instances/all-instances-header/map-user-group-ids-dialog/new-mapping-form/new-mapping-form.component';
 
 describe('MapUserGroupIdsDialogComponent', () => {
-  let spectator: Spectator<MapUserGroupIdsDialogComponent>;
+  let spectator: Spectator<MapUserGroupIdsDialog>;
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
-    component: MapUserGroupIdsDialogComponent,
+    component: MapUserGroupIdsDialog,
     overrideComponents: [
       [
-        MapUserGroupIdsDialogComponent,
+        MapUserGroupIdsDialog,
         {
           remove: { imports: [NewMappingFormComponent] },
           add: { imports: [MockComponent(NewMappingFormComponent)] },

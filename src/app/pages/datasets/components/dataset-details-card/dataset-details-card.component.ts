@@ -24,7 +24,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
-import { DeleteDatasetDialogComponent } from 'app/pages/datasets/components/delete-dataset-dialog/delete-dataset-dialog.component';
+import { DeleteDatasetDialog } from 'app/pages/datasets/components/delete-dataset-dialog/delete-dataset-dialog.component';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -88,7 +88,7 @@ export class DatasetDetailsCardComponent {
   protected readonly canBePromoted = computed(() => Boolean(this.dataset().origin?.parsed));
 
   deleteDataset(): void {
-    this.matDialog.open(DeleteDatasetDialogComponent, { data: this.dataset() })
+    this.matDialog.open(DeleteDatasetDialog, { data: this.dataset() })
       .afterClosed()
       .pipe(
         filter(Boolean),

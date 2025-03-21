@@ -24,9 +24,9 @@ import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { SnapshotCloneDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-clone-dialog/snapshot-clone-dialog.component';
+import { SnapshotCloneDialog } from 'app/pages/datasets/modules/snapshots/snapshot-clone-dialog/snapshot-clone-dialog.component';
 import { ZfsSnapshotUi } from 'app/pages/datasets/modules/snapshots/snapshot-list/snapshot-list.component';
-import { SnapshotRollbackDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
+import { SnapshotRollbackDialog } from 'app/pages/datasets/modules/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
@@ -129,11 +129,11 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
   }
 
   doClone(snapshot: ZfsSnapshot): void {
-    this.matDialog.open(SnapshotCloneDialogComponent, { data: snapshot.name });
+    this.matDialog.open(SnapshotCloneDialog, { data: snapshot.name });
   }
 
   doRollback(snapshot: ZfsSnapshot): void {
-    this.matDialog.open(SnapshotRollbackDialogComponent, { data: snapshot.name });
+    this.matDialog.open(SnapshotRollbackDialog, { data: snapshot.name });
   }
 
   doDelete(snapshot: ZfsSnapshot): void {

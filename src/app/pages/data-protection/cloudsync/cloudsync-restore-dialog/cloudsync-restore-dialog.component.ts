@@ -48,7 +48,7 @@ import { FilesystemService } from 'app/services/filesystem.service';
     TranslateModule,
   ],
 })
-export class CloudSyncRestoreDialogComponent {
+export class CloudSyncRestoreDialog {
   protected readonly requiredRoles = [Role.CloudSyncWrite];
 
   readonly form = this.formBuilder.nonNullable.group({
@@ -75,7 +75,7 @@ export class CloudSyncRestoreDialogComponent {
     private formBuilder: FormBuilder,
     private filesystem: FilesystemService,
     private translate: TranslateService,
-    private dialogRef: MatDialogRef<CloudSyncRestoreDialogComponent>,
+    private dialogRef: MatDialogRef<CloudSyncRestoreDialog>,
     private errorHandler: FormErrorHandlerService,
     private loader: LoaderService,
     @Inject(MAT_DIALOG_DATA) private parentTaskId: number,

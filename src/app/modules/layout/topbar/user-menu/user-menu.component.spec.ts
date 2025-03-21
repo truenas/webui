@@ -12,9 +12,9 @@ import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { dummyUser } from 'app/core/testing/utils/mock-auth.utils';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { AboutDialogComponent } from 'app/modules/layout/topbar/about-dialog/about-dialog.component';
+import { AboutDialog } from 'app/modules/layout/topbar/about-dialog/about-dialog.component';
 import {
-  ChangePasswordDialogComponent,
+  ChangePasswordDialog,
 } from 'app/modules/layout/topbar/change-password-dialog/change-password-dialog.component';
 import { UserMenuComponent } from 'app/modules/layout/topbar/user-menu/user-menu.component';
 
@@ -64,7 +64,7 @@ describe('UserMenuComponent', () => {
       const changePassword = await menu.getItems({ text: /Change Password$/ });
       await changePassword[0].click();
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ChangePasswordDialogComponent);
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ChangePasswordDialog);
     });
 
     it('has an API Keys menu item that takes user to list of API Keys', async () => {
@@ -86,7 +86,7 @@ describe('UserMenuComponent', () => {
       const about = await menu.getItems({ text: /About$/ });
       await about[0].click();
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(AboutDialogComponent, {
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(AboutDialog, {
         disableClose: true,
       });
     });

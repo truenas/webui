@@ -8,12 +8,12 @@ import {
   ViewCertificateDialogData,
 } from 'app/pages/credentials/certificates-dash/view-certificate-dialog/view-certificate-dialog-data.interface';
 import { DownloadService } from 'app/services/download.service';
-import { ViewCertificateDialogComponent } from './view-certificate-dialog.component';
+import { ViewCertificateDialog } from './view-certificate-dialog.component';
 
 describe('ViewCertificateDialogComponent', () => {
-  let spectator: Spectator<ViewCertificateDialogComponent>;
+  let spectator: Spectator<ViewCertificateDialog>;
   const createComponent = createComponentFactory({
-    component: ViewCertificateDialogComponent,
+    component: ViewCertificateDialog,
     declarations: [
       MockComponent(CopyButtonComponent),
     ],

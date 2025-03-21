@@ -31,12 +31,12 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     MatDialogClose,
   ],
 })
-export class ExportAllKeysDialogComponent {
+export class ExportAllKeysDialog {
   constructor(
     private errorHandler: ErrorHandlerService,
     private api: ApiService,
     private loader: LoaderService,
-    private dialogRef: MatDialogRef<ExportAllKeysDialogComponent>,
+    private dialogRef: MatDialogRef<ExportAllKeysDialog>,
     private download: DownloadService,
     @Inject(MAT_DIALOG_DATA) public dataset: Dataset,
   ) { }

@@ -32,7 +32,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     IxTextareaComponent,
   ],
 })
-export class KeyCreatedDialogComponent {
+export class KeyCreatedDialog {
   key = signal(inject<string>(MAT_DIALOG_DATA));
   apiKeyControl = new FormControl<string>(this.key());
 

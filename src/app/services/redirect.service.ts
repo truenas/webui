@@ -6,7 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { filter, take } from 'rxjs/operators';
 import { WINDOW } from 'app/helpers/window.helper';
 import { RedirectDialogData } from 'app/modules/dialog/components/redirect-dialog/redirect-dialog-data.interface';
-import { RedirectDialogComponent } from 'app/modules/dialog/components/redirect-dialog/redirect-dialog.component';
+import { RedirectDialog } from 'app/modules/dialog/components/redirect-dialog/redirect-dialog.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AppState } from 'app/store';
 import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
@@ -34,7 +34,7 @@ export class RedirectService {
         this.window.open(url, target);
         return;
       }
-      this.matDialog.open(RedirectDialogComponent, {
+      this.matDialog.open(RedirectDialog, {
         data: {
           title: this.translate.instant('Enabled HTTPS Redirect'),
           message: this.translate.instant(`You are trying to open:<br>

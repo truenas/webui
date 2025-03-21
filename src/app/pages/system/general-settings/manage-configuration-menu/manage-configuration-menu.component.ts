@@ -17,10 +17,10 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { manageConfigurationElements } from 'app/pages/system/general-settings/manage-configuration-menu/manage-configuration-menu.elements';
 import {
-  SaveConfigDialogComponent,
+  SaveConfigDialog,
 } from 'app/pages/system/general-settings/save-config-dialog/save-config-dialog.component';
 import {
-  UploadConfigDialogComponent,
+  UploadConfigDialog,
 } from 'app/pages/system/general-settings/upload-config-dialog/upload-config-dialog.component';
 
 @UntilDestroy()
@@ -55,11 +55,11 @@ export class ManageConfigurationMenuComponent {
   ) {}
 
   onDownloadConfig(): void {
-    this.matDialog.open(SaveConfigDialogComponent);
+    this.matDialog.open(SaveConfigDialog);
   }
 
   onUploadConfig(): void {
-    this.matDialog.open(UploadConfigDialogComponent);
+    this.matDialog.open(UploadConfigDialog);
   }
 
   onResetToDefaults(): void {

@@ -23,13 +23,13 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     TestDirective,
   ],
 })
-export class InfoDialogComponent {
+export class InfoDialog {
   title: string;
   info: string;
   icon = 'info';
   isHtml = false;
 
   constructor(
-    public dialogRef: MatDialogRef<InfoDialogComponent>,
+    public dialogRef: MatDialogRef<InfoDialog>,
   ) {}
 }

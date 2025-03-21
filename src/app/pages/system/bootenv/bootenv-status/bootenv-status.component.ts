@@ -33,8 +33,8 @@ import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { BootPoolAttachDialogComponent } from 'app/pages/system/bootenv/boot-pool-attach/boot-pool-attach-dialog.component';
-import { BootPoolReplaceDialogComponent } from 'app/pages/system/bootenv/boot-pool-replace/boot-pool-replace-dialog.component';
+import { BootPoolAttachDialog } from 'app/pages/system/bootenv/boot-pool-attach/boot-pool-attach-dialog.component';
+import { BootPoolReplaceDialog } from 'app/pages/system/bootenv/boot-pool-replace/boot-pool-replace-dialog.component';
 import { bootEnvStatusElements } from 'app/pages/system/bootenv/bootenv-status/bootenv-status.elements';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { BootenvNodeItemComponent } from './bootenv-node-item/bootenv-node-item.component';
@@ -137,14 +137,14 @@ export class BootStatusListComponent implements OnInit {
   }
 
   attach(): void {
-    this.matDialog.open(BootPoolAttachDialogComponent)
+    this.matDialog.open(BootPoolAttachDialog)
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => this.loadPoolInstance());
   }
 
   replace(diskPath: string): void {
-    this.matDialog.open(BootPoolReplaceDialogComponent, { data: diskPath })
+    this.matDialog.open(BootPoolReplaceDialog, { data: diskPath })
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => this.loadPoolInstance());

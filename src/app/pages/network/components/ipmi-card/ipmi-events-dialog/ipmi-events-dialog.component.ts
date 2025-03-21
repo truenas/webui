@@ -41,7 +41,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     FormatDateTimePipe,
   ],
 })
-export class IpmiEventsDialogComponent implements OnInit {
+export class IpmiEventsDialog implements OnInit {
   protected isLoading = false;
   protected events: IpmiEvent[] = [];
 

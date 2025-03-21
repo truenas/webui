@@ -12,14 +12,14 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
-  DiskWipeDialogComponent,
+  DiskWipeDialog,
 } from 'app/pages/storage/modules/disks/components/disk-wipe-dialog/disk-wipe-dialog.component';
 
 describe('DiskWipeDialogComponent', () => {
-  let spectator: Spectator<DiskWipeDialogComponent>;
+  let spectator: Spectator<DiskWipeDialog>;
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
-    component: DiskWipeDialogComponent,
+    component: DiskWipeDialog,
     imports: [
       ReactiveFormsModule,
     ],

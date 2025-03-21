@@ -11,7 +11,7 @@ import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Service } from 'app/interfaces/service.interface';
-import { StartServiceDialogComponent, StartServiceDialogResult } from 'app/modules/dialog/components/start-service-dialog/start-service-dialog.component';
+import { StartServiceDialog, StartServiceDialogResult } from 'app/modules/dialog/components/start-service-dialog/start-service-dialog.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
@@ -126,7 +126,7 @@ describe('ServicesEffects', () => {
       const dispatchedAction = await firstValueFrom(spectator.service.checkIfServiceIsEnabled$);
       expect(dispatchedAction).toEqual(serviceEnabled());
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(StartServiceDialogComponent, {
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(StartServiceDialog, {
         data: ServiceName.Cifs,
         disableClose: true,
       });
@@ -147,7 +147,7 @@ describe('ServicesEffects', () => {
       const dispatchedAction = await firstValueFrom(spectator.service.checkIfServiceIsEnabled$);
       expect(dispatchedAction).toEqual(serviceStarted());
 
-      expect(spectator.inject(MatDialog).open).not.toHaveBeenCalledWith(StartServiceDialogComponent, {
+      expect(spectator.inject(MatDialog).open).not.toHaveBeenCalledWith(StartServiceDialog, {
         data: ServiceName.Cifs,
         disableClose: true,
       });
@@ -166,7 +166,7 @@ describe('ServicesEffects', () => {
 
       expect(await firstValueFrom(spectator.service.checkIfServiceIsEnabled$)).toEqual(serviceStarted());
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(StartServiceDialogComponent, {
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(StartServiceDialog, {
         data: ServiceName.Cifs,
         disableClose: true,
       });
@@ -183,7 +183,7 @@ describe('ServicesEffects', () => {
 
       expect(await firstValueFrom(spectator.service.checkIfServiceIsEnabled$)).toEqual(serviceStarted());
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(StartServiceDialogComponent, {
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(StartServiceDialog, {
         data: ServiceName.Cifs,
         disableClose: true,
       });
@@ -204,7 +204,7 @@ describe('ServicesEffects', () => {
       const dispatchedAction = await firstValueFrom(spectator.service.checkIfServiceIsEnabled$);
       expect(dispatchedAction).toEqual(serviceEnabled());
 
-      expect(spectator.inject(MatDialog).open).not.toHaveBeenCalledWith(StartServiceDialogComponent, {
+      expect(spectator.inject(MatDialog).open).not.toHaveBeenCalledWith(StartServiceDialog, {
         data: ServiceName.Cifs,
         disableClose: true,
       });

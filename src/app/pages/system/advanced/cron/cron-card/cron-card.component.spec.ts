@@ -21,7 +21,7 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CronCardComponent } from 'app/pages/system/advanced/cron/cron-card/cron-card.component';
-import { CronDeleteDialogComponent } from 'app/pages/system/advanced/cron/cron-delete-dialog/cron-delete-dialog.component';
+import { CronDeleteDialog } from 'app/pages/system/advanced/cron/cron-delete-dialog/cron-delete-dialog.component';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { TaskService } from 'app/services/task.service';
@@ -140,7 +140,7 @@ describe('CronCardComponent', () => {
     const deleteIcon = await table.getHarnessInRow(IxIconHarness.with({ name: 'mdi-delete' }), 'root');
     await deleteIcon.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(CronDeleteDialogComponent, {
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(CronDeleteDialog, {
       data: expect.objectContaining({ id: 1 }),
     });
   });

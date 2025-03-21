@@ -32,7 +32,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
-  KeyCreatedDialogComponent,
+  KeyCreatedDialog,
 } from 'app/pages/credentials/users/user-api-keys/components/key-created-dialog/key-created-dialog.component';
 
 @UntilDestroy()
@@ -162,7 +162,7 @@ export class ApiKeyFormComponent implements OnInit {
           this.slideInRef.close({ response: true, error: null });
 
           if (key) {
-            this.matDialog.open(KeyCreatedDialogComponent, { data: key });
+            this.matDialog.open(KeyCreatedDialog, { data: key });
           }
         },
         error: (error: unknown) => {

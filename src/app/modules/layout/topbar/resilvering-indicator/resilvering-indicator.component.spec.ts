@@ -5,7 +5,7 @@ import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolScanUpdate } from 'app/interfaces/pool.interface';
 import {
-  ResilverProgressDialogComponent,
+  ResilverProgressDialog,
 } from 'app/modules/layout/topbar/resilvering-indicator/resilver-progress/resilver-progress.component';
 import {
   ResilveringIndicatorComponent,
@@ -42,6 +42,6 @@ describe('ResilveringIndicatorComponent', () => {
   it('opens resilver progress dialog when icon is pressed', () => {
     spectator.click('button');
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ResilverProgressDialogComponent);
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ResilverProgressDialog);
   });
 });

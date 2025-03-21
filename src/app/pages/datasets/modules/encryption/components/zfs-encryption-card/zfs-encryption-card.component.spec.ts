@@ -9,13 +9,13 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import {
-  EncryptionOptionsDialogComponent,
+  EncryptionOptionsDialog,
 } from 'app/pages/datasets/modules/encryption/components/encryption-options-dialog/encryption-options-dialog.component';
 import {
-  ExportDatasetKeyDialogComponent,
+  ExportDatasetKeyDialog,
 } from 'app/pages/datasets/modules/encryption/components/export-dataset-key-dialog/export-dataset-key-dialog.component';
 import {
-  LockDatasetDialogComponent,
+  LockDatasetDialog,
 } from 'app/pages/datasets/modules/encryption/components/lock-dataset-dialog/lock-dataset-dialog.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { ZfsEncryptionCardComponent } from './zfs-encryption-card.component';
@@ -196,7 +196,7 @@ describe('ZfsEncryptionCardComponent', () => {
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
     await editButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(EncryptionOptionsDialogComponent, {
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(EncryptionOptionsDialog, {
       data: {
         dataset: keyEncryptedRoot,
         parent: lockedParent,
@@ -213,7 +213,7 @@ describe('ZfsEncryptionCardComponent', () => {
     const lockButton = await loader.getHarness(MatButtonHarness.with({ text: 'Lock' }));
     await lockButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(LockDatasetDialogComponent, {
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(LockDatasetDialog, {
       data: passwordEncryptedRoot,
     });
     expect(spectator.inject(DatasetTreeStore).datasetUpdated).toHaveBeenCalled();
@@ -227,7 +227,7 @@ describe('ZfsEncryptionCardComponent', () => {
     const exportButton = await loader.getHarness(MatButtonHarness.with({ text: 'Export Key' }));
     await exportButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ExportDatasetKeyDialogComponent, {
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ExportDatasetKeyDialog, {
       data: keyEncryptedRoot,
     });
   });

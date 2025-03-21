@@ -21,16 +21,16 @@ import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
-  RaidzExtendDialogComponent, RaidzExtendDialogParams,
+  RaidzExtendDialog, RaidzExtendDialogParams,
 } from 'app/pages/storage/modules/devices/components/zfs-info-card/raidz-extend-dialog/raidz-extend-dialog.component';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
 
 describe('RaidzExtendDialogComponent', () => {
-  let spectator: Spectator<RaidzExtendDialogComponent>;
+  let spectator: Spectator<RaidzExtendDialog>;
   let loader: HarnessLoader;
 
   const createComponent = createComponentFactory({
-    component: RaidzExtendDialogComponent,
+    component: RaidzExtendDialog,
     imports: [
       ReactiveFormsModule,
       UnusedDiskSelectComponent,

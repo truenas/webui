@@ -23,7 +23,7 @@ import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import {
-  VolumeMountsDialogComponent,
+  VolumeMountsDialog,
 } from 'app/pages/apps/components/installed-apps/app-workloads-card/volume-mounts-dialog/volume-mounts-dialog.component';
 
 @UntilDestroy()
@@ -82,7 +82,7 @@ export class AppWorkloadsCardComponent {
   });
 
   volumeButtonPressed(containerDetails: AppContainerDetails): void {
-    this.matDialog.open(VolumeMountsDialogComponent, {
+    this.matDialog.open(VolumeMountsDialog, {
       minWidth: '60vw',
       data: containerDetails,
     });

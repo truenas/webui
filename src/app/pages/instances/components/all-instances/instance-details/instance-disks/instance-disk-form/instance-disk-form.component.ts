@@ -35,7 +35,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
-  VolumesDialogComponent,
+  VolumesDialog,
   VolumesDialogOptions,
 } from 'app/pages/instances/components/common/volumes-dialog/volumes-dialog.component';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -133,7 +133,7 @@ export class InstanceDiskFormComponent implements OnInit {
 
   protected onSelectVolume(): void {
     this.matDialog
-      .open<VolumesDialogComponent, VolumesDialogOptions, VirtualizationVolume>(VolumesDialogComponent, {
+      .open<VolumesDialog, VolumesDialogOptions, VirtualizationVolume>(VolumesDialog, {
         minWidth: '90vw',
         data: {
           selectionMode: true,

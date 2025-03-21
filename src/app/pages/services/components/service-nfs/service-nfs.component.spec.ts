@@ -19,7 +19,7 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
-  AddSpnDialogComponent,
+  AddSpnDialog,
 } from 'app/pages/services/components/service-nfs/add-spn-dialog/add-spn-dialog.component';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
@@ -171,7 +171,7 @@ describe('ServiceNfsComponent', () => {
     const addSpnButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add SPN' }));
     await addSpnButton.click();
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(AddSpnDialogComponent);
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(AddSpnDialog);
   });
 
   it('disables RDMA field unless it is an enterprise system with RDMA capable NIC', async () => {

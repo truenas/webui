@@ -11,10 +11,10 @@ import { BehaviorSubject } from 'rxjs';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { ChangePasswordFormComponent } from 'app/modules/layout/topbar/change-password-dialog/change-password-form/change-password-form.component';
 import { TwoFactorComponent } from 'app/pages/two-factor-auth/two-factor.component';
-import { FirstLoginDialogComponent } from './first-login-dialog.component';
+import { FirstLoginDialog } from './first-login-dialog.component';
 
 describe('FirstLoginDialogComponent', () => {
-  let spectator: Spectator<FirstLoginDialogComponent>;
+  let spectator: Spectator<FirstLoginDialog>;
   let loader: HarnessLoader;
 
   const mockTwoFactorConfig$ = new BehaviorSubject({ secret_configured: false });
@@ -22,7 +22,7 @@ describe('FirstLoginDialogComponent', () => {
   const mockIsOtpwUser$ = new BehaviorSubject(true);
 
   const createComponent = createComponentFactory({
-    component: FirstLoginDialogComponent,
+    component: FirstLoginDialog,
     declarations: [MockComponents(ChangePasswordFormComponent, TwoFactorComponent)],
     providers: [
       mockProvider(AuthService, {

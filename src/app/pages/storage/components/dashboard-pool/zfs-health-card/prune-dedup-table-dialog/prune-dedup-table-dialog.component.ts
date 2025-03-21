@@ -53,7 +53,7 @@ export const pruneByLabels = new Map<PruneBy, string>([
     IxLabelComponent,
   ],
 })
-export class PruneDedupTableDialogComponent {
+export class PruneDedupTableDialog {
   protected form = this.formBuilder.group({
     pruneBy: [PruneBy.Percentage],
     percentage: [null as number | null, [Validators.min(1), Validators.max(100)]],
@@ -67,7 +67,7 @@ export class PruneDedupTableDialogComponent {
     private snackbar: SnackbarService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
-    private dialogRef: MatDialogRef<PruneDedupTableDialogComponent>,
+    private dialogRef: MatDialogRef<PruneDedupTableDialog>,
     @Inject(MAT_DIALOG_DATA) protected pool: Pool,
   ) {}
 

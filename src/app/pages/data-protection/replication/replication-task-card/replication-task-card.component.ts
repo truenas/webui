@@ -47,7 +47,7 @@ import {
   ReplicationFormComponent,
 } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import {
-  ReplicationRestoreDialogComponent,
+  ReplicationRestoreDialog,
 } from 'app/pages/data-protection/replication/replication-restore-dialog/replication-restore-dialog.component';
 import {
   ReplicationWizardComponent,
@@ -246,7 +246,7 @@ export class ReplicationTaskCardComponent implements OnInit {
   }
 
   restore(row: ReplicationTask): void {
-    const dialog = this.matDialog.open(ReplicationRestoreDialogComponent, {
+    const dialog = this.matDialog.open(ReplicationRestoreDialog, {
       data: row.id,
     });
     dialog.afterClosed().pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getReplicationTasks());

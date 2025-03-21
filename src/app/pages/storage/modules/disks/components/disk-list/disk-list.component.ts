@@ -45,8 +45,8 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { DiskBulkEditComponent } from 'app/pages/storage/modules/disks/components/disk-bulk-edit/disk-bulk-edit.component';
 import { DiskFormComponent } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
 import { diskListElements } from 'app/pages/storage/modules/disks/components/disk-list/disk-list.elements';
-import { DiskWipeDialogComponent } from 'app/pages/storage/modules/disks/components/disk-wipe-dialog/disk-wipe-dialog.component';
-import { ManualTestDialogComponent, ManualTestDialogParams } from 'app/pages/storage/modules/disks/components/manual-test-dialog/manual-test-dialog.component';
+import { DiskWipeDialog } from 'app/pages/storage/modules/disks/components/disk-wipe-dialog/disk-wipe-dialog.component';
+import { ManualTestDialog, ManualTestDialogParams } from 'app/pages/storage/modules/disks/components/manual-test-dialog/manual-test-dialog.component';
 
 // TODO: Exclude AnythingUi when NAS-127632 is done
 interface DiskUi extends Disk {
@@ -259,7 +259,7 @@ export class DiskListComponent implements OnInit {
   }
 
   manualTest(disks: DiskUi[]): void {
-    this.matDialog.open(ManualTestDialogComponent, {
+    this.matDialog.open(ManualTestDialog, {
       data: {
         selectedDisks: this.prepareDisks(disks),
         diskIdsWithSmart: Object.keys(this.smartDiskChoices),
@@ -290,7 +290,7 @@ export class DiskListComponent implements OnInit {
 
   wipe(disk: Disk): void {
     const exportedPool = this.unusedDisks.find((dev) => dev.devname === disk.devname)?.exported_zpool;
-    const dialog = this.matDialog.open(DiskWipeDialogComponent, {
+    const dialog = this.matDialog.open(DiskWipeDialog, {
       data: {
         diskName: disk.name,
         exportedPool,

@@ -10,14 +10,14 @@ import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-chec
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
-  SetEnclosureLabelDialogComponent, SetEnclosureLabelDialogData,
+  SetEnclosureLabelDialog, SetEnclosureLabelDialogData,
 } from 'app/pages/system/enclosure/components/set-enclosure-label-dialog/set-enclosure-label-dialog.component';
 
 describe('SetEnclosureLabelDialogComponent', () => {
-  let spectator: Spectator<SetEnclosureLabelDialogComponent>;
+  let spectator: Spectator<SetEnclosureLabelDialog>;
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
-    component: SetEnclosureLabelDialogComponent,
+    component: SetEnclosureLabelDialog,
     imports: [
       ReactiveFormsModule,
     ],

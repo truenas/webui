@@ -8,16 +8,16 @@ import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DatasetAclType, DatasetCaseSensitivity } from 'app/enums/dataset.enum';
 import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
-import { CreateDatasetDialogComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/create-dataset-dialog/create-dataset-dialog.component';
+import { CreateDatasetDialog } from 'app/modules/forms/ix-forms/components/ix-explorer/create-dataset-dialog/create-dataset-dialog.component';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 
 describe('CreateDatasetDialogComponent', () => {
-  let spectator: Spectator<CreateDatasetDialogComponent>;
+  let spectator: Spectator<CreateDatasetDialog>;
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
-    component: CreateDatasetDialogComponent,
+    component: CreateDatasetDialog,
     imports: [
       ReactiveFormsModule,
     ],

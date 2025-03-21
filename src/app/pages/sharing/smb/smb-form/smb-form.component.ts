@@ -56,7 +56,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { RestartSmbDialogComponent } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
+import { RestartSmbDialog } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
 import { SmbValidationService } from 'app/pages/sharing/smb/smb-form/smb-validator.service';
 import { DatasetService } from 'app/services/dataset/dataset.service';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -556,7 +556,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
       map((service) => service.state === ServiceStatus.Running),
       switchMap((isRunning) => {
         if (isRunning && this.isRestartRequired) {
-          return this.matDialog.open(RestartSmbDialogComponent, {
+          return this.matDialog.open(RestartSmbDialog, {
             data: {
               timemachine: this.isNewTimemachineShare,
               homeshare: this.isNewHomeShare,

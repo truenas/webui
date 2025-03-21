@@ -33,7 +33,7 @@ import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-cront
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { CronDeleteDialogComponent } from 'app/pages/system/advanced/cron/cron-delete-dialog/cron-delete-dialog.component';
+import { CronDeleteDialog } from 'app/pages/system/advanced/cron/cron-delete-dialog/cron-delete-dialog.component';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { cronElements } from 'app/pages/system/advanced/cron/cron-list/cron-list.elements';
 import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row.interface';
@@ -201,7 +201,7 @@ export class CronListComponent implements OnInit {
   }
 
   doDelete(row: CronjobRow): void {
-    this.matDialog.open(CronDeleteDialogComponent, {
+    this.matDialog.open(CronDeleteDialog, {
       data: row,
     }).afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))

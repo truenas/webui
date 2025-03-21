@@ -11,15 +11,15 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Role } from 'app/enums/role.enum';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { ChangePasswordDialogComponent } from 'app/modules/layout/topbar/change-password-dialog/change-password-dialog.component';
+import { ChangePasswordDialog } from 'app/modules/layout/topbar/change-password-dialog/change-password-dialog.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 
 describe('ChangePasswordDialogComponent', () => {
-  let spectator: Spectator<ChangePasswordDialogComponent>;
+  let spectator: Spectator<ChangePasswordDialog>;
   let loader: HarnessLoader;
   let api: ApiService;
   const createComponent = createComponentFactory({
-    component: ChangePasswordDialogComponent,
+    component: ChangePasswordDialog,
     imports: [
       ReactiveFormsModule,
     ],

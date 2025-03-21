@@ -42,7 +42,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     KeyValuePipe,
   ],
 })
-export class BootPoolDeleteDialogComponent {
+export class BootPoolDeleteDialog {
   protected readonly requiredRoles = [Role.BootEnvWrite];
 
   form = this.fb.group({
@@ -65,7 +65,7 @@ export class BootPoolDeleteDialogComponent {
   constructor(
     private fb: FormBuilder,
     private api: ApiService,
-    private dialogRef: MatDialogRef<BootPoolDeleteDialogComponent>,
+    private dialogRef: MatDialogRef<BootPoolDeleteDialog>,
     private errorHandler: ErrorHandlerService,
     @Inject(MAT_DIALOG_DATA) public bootenvs: BootEnvironment[],
   ) {

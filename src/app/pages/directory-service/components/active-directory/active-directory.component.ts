@@ -30,7 +30,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
-  LeaveDomainDialogComponent,
+  LeaveDomainDialog,
 } from 'app/pages/directory-service/components/leave-domain-dialog/leave-domain-dialog.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -153,7 +153,7 @@ export class ActiveDirectoryComponent implements OnInit {
   }
 
   onLeaveDomainPressed(): void {
-    const dialog = this.matDialog.open(LeaveDomainDialogComponent);
+    const dialog = this.matDialog.open(LeaveDomainDialog);
     dialog.afterClosed().pipe(untilDestroyed(this)).subscribe((leftDomain) => {
       if (!leftDomain) {
         return;

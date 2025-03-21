@@ -11,14 +11,14 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ManageDiskSedDialogComponent } from './manage-disk-sed-dialog.component';
+import { ManageDiskSedDialog } from './manage-disk-sed-dialog.component';
 
 describe('ManageDiskSedDialogComponent', () => {
-  let spectator: Spectator<ManageDiskSedDialogComponent>;
+  let spectator: Spectator<ManageDiskSedDialog>;
   let loader: HarnessLoader;
   let passwordInput: IxInputHarness;
   const createComponent = createComponentFactory({
-    component: ManageDiskSedDialogComponent,
+    component: ManageDiskSedDialog,
     imports: [
       ReactiveFormsModule,
     ],

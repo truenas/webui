@@ -25,7 +25,7 @@ import {
   ViewCertificateDialogData,
 } from 'app/pages/credentials/certificates-dash/view-certificate-dialog/view-certificate-dialog-data.interface';
 import {
-  ViewCertificateDialogComponent,
+  ViewCertificateDialog,
 } from 'app/pages/credentials/certificates-dash/view-certificate-dialog/view-certificate-dialog.component';
 
 @UntilDestroy()
@@ -88,7 +88,7 @@ export class CertificateAuthorityEditComponent implements OnInit {
   }
 
   onViewCertificatePressed(): void {
-    this.matDialog.open(ViewCertificateDialogComponent, {
+    this.matDialog.open(ViewCertificateDialog, {
       data: {
         certificate: this.certificateAuthority.certificate,
         name: this.certificateAuthority.name,
@@ -98,7 +98,7 @@ export class CertificateAuthorityEditComponent implements OnInit {
   }
 
   onViewKeyPressed(): void {
-    this.matDialog.open(ViewCertificateDialogComponent, {
+    this.matDialog.open(ViewCertificateDialog, {
       data: {
         certificate: this.certificateAuthority.privatekey,
         name: this.certificateAuthority.name,

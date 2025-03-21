@@ -33,7 +33,7 @@ import {
     MatButton,
   ],
 })
-export class UnlockSummaryDialogComponent {
+export class UnlockSummaryDialog {
   title: string = helptextUnlock.unlock_dataset_dialog.title;
   errorsMessage: string = helptextUnlock.unlock_dataset_dialog.errors_message;
   unlockMessage: string = helptextUnlock.unlock_dataset_dialog.unlock_message;
@@ -50,7 +50,7 @@ export class UnlockSummaryDialogComponent {
   parent: DatasetUnlockComponent;
 
   constructor(
-    public dialogRef: MatDialogRef<UnlockSummaryDialogComponent>,
+    public dialogRef: MatDialogRef<UnlockSummaryDialog>,
     private dialogService: DialogService,
   ) {}
 

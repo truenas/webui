@@ -17,14 +17,14 @@ import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-chec
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ApiCallError } from 'app/services/errors/error.classes';
-import { DeleteDatasetDialogComponent } from './delete-dataset-dialog.component';
+import { DeleteDatasetDialog } from './delete-dataset-dialog.component';
 
 describe('DeleteDatasetDialogComponent', () => {
-  let spectator: Spectator<DeleteDatasetDialogComponent>;
+  let spectator: Spectator<DeleteDatasetDialog>;
   let api: ApiService;
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
-    component: DeleteDatasetDialogComponent,
+    component: DeleteDatasetDialog,
     imports: [
       ReactiveFormsModule,
     ],

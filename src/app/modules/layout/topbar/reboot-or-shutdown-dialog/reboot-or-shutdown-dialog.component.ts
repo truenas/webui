@@ -41,7 +41,7 @@ const customReasonValue = 'CUSTOM_REASON_VALUE';
     FormActionsComponent,
   ],
 })
-export class RebootOrShutdownDialogComponent {
+export class RebootOrShutdownDialog {
   form = this.fb.group({
     confirm: [false, Validators.requiredTrue],
     reason: ['', Validators.required],
@@ -118,7 +118,7 @@ export class RebootOrShutdownDialogComponent {
   }
 
   constructor(
-    public dialogRef: MatDialogRef<RebootOrShutdownDialogComponent>,
+    public dialogRef: MatDialogRef<RebootOrShutdownDialog>,
     private fb: FormBuilder,
     private translate: TranslateService,
     @Inject(MAT_DIALOG_DATA) public isShutdown = false,

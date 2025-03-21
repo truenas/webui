@@ -6,14 +6,14 @@ import { MockComponent } from 'ng-mocks';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { Job } from 'app/interfaces/job.interface';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
-import { ShowLogsDialogComponent } from 'app/modules/dialog/components/show-logs-dialog/show-logs-dialog.component';
+import { ShowLogsDialog } from 'app/modules/dialog/components/show-logs-dialog/show-logs-dialog.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DownloadService } from 'app/services/download.service';
 
 describe('ShowLogsDialogComponent', () => {
-  let spectator: Spectator<ShowLogsDialogComponent>;
+  let spectator: Spectator<ShowLogsDialog>;
   const createComponent = createComponentFactory({
-    component: ShowLogsDialogComponent,
+    component: ShowLogsDialog,
     declarations: [
       MockComponent(CopyButtonComponent),
     ],

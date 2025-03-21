@@ -40,7 +40,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TranslateModule,
   ],
 })
-export class AutotrimDialogComponent implements OnInit {
+export class AutotrimDialog implements OnInit {
   protected readonly requiredRoles = [Role.PoolWrite];
 
   autotrimControl = new FormControl(false);
@@ -51,7 +51,7 @@ export class AutotrimDialogComponent implements OnInit {
     private loader: LoaderService,
     private errorHandler: ErrorHandlerService,
     private api: ApiService,
-    private dialogRef: MatDialogRef<AutotrimDialogComponent>,
+    private dialogRef: MatDialogRef<AutotrimDialog>,
     private snackbar: SnackbarService,
     private translate: TranslateService,
     @Inject(MAT_DIALOG_DATA) public pool: Pool,

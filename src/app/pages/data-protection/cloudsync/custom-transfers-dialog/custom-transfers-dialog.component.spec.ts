@@ -5,13 +5,13 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { CustomTransfersDialogComponent } from 'app/pages/data-protection/cloudsync/custom-transfers-dialog/custom-transfers-dialog.component';
+import { CustomTransfersDialog } from 'app/pages/data-protection/cloudsync/custom-transfers-dialog/custom-transfers-dialog.component';
 
 describe('CustomTransfersDialogComponent', () => {
-  let spectator: Spectator<CustomTransfersDialogComponent>;
+  let spectator: Spectator<CustomTransfersDialog>;
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
-    component: CustomTransfersDialogComponent,
+    component: CustomTransfersDialog,
     imports: [
       ReactiveFormsModule,
     ],

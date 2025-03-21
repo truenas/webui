@@ -6,14 +6,14 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { IxTextareaHarness } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { KeyCreatedDialogComponent } from 'app/pages/credentials/users/user-api-keys/components/key-created-dialog/key-created-dialog.component';
+import { KeyCreatedDialog } from 'app/pages/credentials/users/user-api-keys/components/key-created-dialog/key-created-dialog.component';
 
 describe('KeyCreatedDialogComponent', () => {
-  let spectator: Spectator<KeyCreatedDialogComponent>;
+  let spectator: Spectator<KeyCreatedDialog>;
   let loader: HarnessLoader;
 
   const createComponent = createComponentFactory({
-    component: KeyCreatedDialogComponent,
+    component: KeyCreatedDialog,
     providers: [
       {
         provide: MAT_DIALOG_DATA,

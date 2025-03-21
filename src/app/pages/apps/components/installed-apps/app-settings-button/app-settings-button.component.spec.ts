@@ -9,7 +9,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { AppSettingsButtonComponent } from 'app/pages/apps/components/installed-apps/app-settings-button/app-settings-button.component';
-import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
+import { SelectPoolDialog } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 
@@ -60,7 +60,7 @@ describe('AppSettingsButtonComponent', () => {
     await menu.open();
     await menu.clickItem({ text: 'Choose Pool' });
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(SelectPoolDialogComponent, { viewContainerRef });
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(SelectPoolDialog, { viewContainerRef });
     expect(spectator.inject(AppsStore).loadCatalog).toHaveBeenCalled();
   });
 

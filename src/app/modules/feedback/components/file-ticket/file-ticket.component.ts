@@ -12,7 +12,7 @@ import { TicketType, ticketAcceptedFiles } from 'app/enums/file-ticket.enum';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { OauthButtonType } from 'app/modules/buttons/oauth-button/interfaces/oauth-button.interface';
 import { OauthButtonComponent } from 'app/modules/buttons/oauth-button/oauth-button.component';
-import { FeedbackDialogComponent } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
+import { FeedbackDialog } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { SimilarIssuesComponent } from 'app/modules/feedback/components/similar-issues/similar-issues.component';
 import { FeedbackType } from 'app/modules/feedback/interfaces/feedback.interface';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
@@ -48,7 +48,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 })
 export class FileTicketComponent {
   readonly type = input.required<FeedbackType.Bug | FeedbackType.Suggestion>();
-  readonly dialogRef = input.required<MatDialogRef<FeedbackDialogComponent>>();
+  readonly dialogRef = input.required<MatDialogRef<FeedbackDialog>>();
   readonly isLoading = input.required<boolean>();
 
   readonly isLoadingChange = output<boolean>();

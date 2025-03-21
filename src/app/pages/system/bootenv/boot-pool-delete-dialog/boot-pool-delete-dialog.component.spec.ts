@@ -14,7 +14,7 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { BulkListItemComponent } from 'app/modules/lists/bulk-list-item/bulk-list-item.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { BootPoolDeleteDialogComponent } from 'app/pages/system/bootenv/boot-pool-delete-dialog/boot-pool-delete-dialog.component';
+import { BootPoolDeleteDialog } from 'app/pages/system/bootenv/boot-pool-delete-dialog/boot-pool-delete-dialog.component';
 import { fakeBootEnvironmentsDataSource } from 'app/pages/system/bootenv/test/fake-boot-environments';
 
 const mockSuccessBulkResponse = [{
@@ -34,11 +34,11 @@ const mockFailedBulkResponse = [{
 }] as CoreBulkResponse[];
 
 describe('BootPoolDeleteDialogComponent', () => {
-  let spectator: Spectator<BootPoolDeleteDialogComponent>;
+  let spectator: Spectator<BootPoolDeleteDialog>;
   let loader: HarnessLoader;
 
   const createComponent = createComponentFactory({
-    component: BootPoolDeleteDialogComponent,
+    component: BootPoolDeleteDialog,
     imports: [
       ReactiveFormsModule,
       BulkListItemComponent,

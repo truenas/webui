@@ -28,7 +28,7 @@ import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-lo
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
-  ManualTestDialogComponent, ManualTestDialogParams,
+  ManualTestDialog, ManualTestDialogParams,
 } from 'app/pages/storage/modules/disks/components/manual-test-dialog/manual-test-dialog.component';
 
 @UntilDestroy()
@@ -84,7 +84,7 @@ export class SmartInfoCardComponent implements OnChanges {
 
   onManualTest(): void {
     const disk = this.disk();
-    const testDialog = this.matDialog.open(ManualTestDialogComponent, {
+    const testDialog = this.matDialog.open(ManualTestDialog, {
       data: {
         selectedDisks: [disk],
         diskIdsWithSmart: [disk.identifier],

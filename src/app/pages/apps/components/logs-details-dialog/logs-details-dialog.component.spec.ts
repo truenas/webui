@@ -5,14 +5,14 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { LogsDetailsDialogComponent } from 'app/pages/apps/components/logs-details-dialog/logs-details-dialog.component';
+import { LogsDetailsDialog } from 'app/pages/apps/components/logs-details-dialog/logs-details-dialog.component';
 
 describe('LogsDetailsDialogComponent', () => {
   let loader: HarnessLoader;
   let form: IxFormHarness;
-  let spectator: Spectator<LogsDetailsDialogComponent>;
+  let spectator: Spectator<LogsDetailsDialog>;
   const createComponent = createComponentFactory({
-    component: LogsDetailsDialogComponent,
+    component: LogsDetailsDialog,
     imports: [
       ReactiveFormsModule,
     ],

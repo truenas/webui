@@ -23,7 +23,7 @@ import { selectUpdateJob } from 'app/modules/jobs/store/job.selectors';
     JobItemComponent,
   ],
 })
-export class UpdateDialogComponent {
+export class UpdateDialog {
   selectRunningJobs$ = this.store$.select(selectUpdateJob);
   contentText: { message: string; title: string };
 

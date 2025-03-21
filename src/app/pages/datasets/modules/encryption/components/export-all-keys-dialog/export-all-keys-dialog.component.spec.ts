@@ -8,14 +8,14 @@ import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ExportAllKeysDialogComponent } from 'app/pages/datasets/modules/encryption/components/export-all-keys-dialog/export-all-keys-dialog.component';
+import { ExportAllKeysDialog } from 'app/pages/datasets/modules/encryption/components/export-all-keys-dialog/export-all-keys-dialog.component';
 import { DownloadService } from 'app/services/download.service';
 
 describe('ExportAllKeysDialogComponent', () => {
-  let spectator: Spectator<ExportAllKeysDialogComponent>;
+  let spectator: Spectator<ExportAllKeysDialog>;
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
-    component: ExportAllKeysDialogComponent,
+    component: ExportAllKeysDialog,
     imports: [
     ],
     providers: [

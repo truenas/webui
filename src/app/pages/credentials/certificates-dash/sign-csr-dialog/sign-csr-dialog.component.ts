@@ -41,7 +41,7 @@ import { SystemGeneralService } from 'app/services/system-general.service';
     TranslateModule,
   ],
 })
-export class SignCsrDialogComponent {
+export class SignCsrDialog {
   form = this.formBuilder.group({
     csr_cert_id: [null as number | null, Validators.required],
     name: ['', Validators.required],
@@ -54,7 +54,7 @@ export class SignCsrDialogComponent {
   protected readonly Role = Role;
 
   constructor(
-    private dialogRef: MatDialogRef<SignCsrDialogComponent>,
+    private dialogRef: MatDialogRef<SignCsrDialog>,
     private systemGeneralService: SystemGeneralService,
     private formBuilder: FormBuilder,
     private loader: LoaderService,

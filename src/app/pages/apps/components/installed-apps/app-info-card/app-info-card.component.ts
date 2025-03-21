@@ -35,11 +35,11 @@ import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-av
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { AppDeleteDialogComponent } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.component';
+import { AppDeleteDialog } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.component';
 import { AppDeleteDialogInputData, AppDeleteDialogOutputData } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.interface';
 import { CustomAppFormComponent } from 'app/pages/apps/components/custom-app-form/custom-app-form.component';
 import { AppRollbackModalComponent } from 'app/pages/apps/components/installed-apps/app-rollback-modal/app-rollback-modal.component';
-import { AppUpgradeDialogComponent } from 'app/pages/apps/components/installed-apps/app-upgrade-dialog/app-upgrade-dialog.component';
+import { AppUpgradeDialog } from 'app/pages/apps/components/installed-apps/app-upgrade-dialog/app-upgrade-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { AppVersionPipe } from 'app/pages/dashboard/widgets/apps/common/utils/app-version.pipe';
@@ -142,7 +142,7 @@ export class AppInfoCardComponent {
     this.appService.getAppUpgradeSummary(name).pipe(
       this.loader.withLoader(),
       switchMap(
-        (summary) => this.matDialog.open(AppUpgradeDialogComponent, {
+        (summary) => this.matDialog.open(AppUpgradeDialog, {
           width: '50vw',
           minWidth: '500px',
           maxWidth: '750px',
@@ -180,10 +180,10 @@ export class AppInfoCardComponent {
       this.loader.withLoader(),
       switchMap((ixVolumeExists) => {
         return this.matDialog.open<
-          AppDeleteDialogComponent,
+          AppDeleteDialog,
           AppDeleteDialogInputData,
           AppDeleteDialogOutputData
-        >(AppDeleteDialogComponent, {
+        >(AppDeleteDialog, {
           data: { name, showRemoveVolumes: ixVolumeExists },
         }).afterClosed();
       }),

@@ -48,7 +48,7 @@ import {
 } from 'app/pages/credentials/certificates-dash/certificate-authority-edit/certificate-authority-edit.component';
 import { certificateAuthorityListElements } from 'app/pages/credentials/certificates-dash/certificate-authority-list/certificate-authority-list.elements';
 import {
-  SignCsrDialogComponent,
+  SignCsrDialog,
 } from 'app/pages/credentials/certificates-dash/sign-csr-dialog/sign-csr-dialog.component';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -288,7 +288,7 @@ export class CertificateAuthorityListComponent implements OnInit {
   }
 
   doSignCsr(certificate: CertificateAuthority): void {
-    const dialog = this.matDialog.open(SignCsrDialogComponent, { data: certificate.id });
+    const dialog = this.matDialog.open(SignCsrDialog, { data: certificate.id });
     dialog
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))

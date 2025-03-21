@@ -19,7 +19,7 @@ import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
-import { BootenvStatsDialogComponent } from './bootenv-stats-dialog.component';
+import { BootenvStatsDialog } from './bootenv-stats-dialog.component';
 
 const poolInstance = {
   status: PoolStatus.Online,
@@ -33,11 +33,11 @@ const poolInstance = {
 } as PoolInstance;
 
 describe('BootenvStatsDialogComponent', () => {
-  let spectator: Spectator<BootenvStatsDialogComponent>;
+  let spectator: Spectator<BootenvStatsDialog>;
   let loader: HarnessLoader;
   let api: ApiService;
   const createComponent = createComponentFactory({
-    component: BootenvStatsDialogComponent,
+    component: BootenvStatsDialog,
     imports: [
       ReactiveFormsModule,
       MapValuePipe,

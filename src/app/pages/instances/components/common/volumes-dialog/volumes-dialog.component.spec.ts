@@ -17,20 +17,20 @@ import { LocaleService } from 'app/modules/language/locale.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
-  ImportZvolsDialogComponent,
+  ImportZvolsDialog,
 } from 'app/pages/instances/components/common/volumes-dialog/import-zvol-dialog/import-zvols-dialog.component';
 import {
-  NewVolumeDialogComponent,
+  NewVolumeDialog,
 } from 'app/pages/instances/components/common/volumes-dialog/new-volume-dialog/new-volume-dialog.component';
 import {
   UploadIsoButtonComponent,
 } from 'app/pages/instances/components/common/volumes-dialog/upload-iso-button/upload-iso-button.component';
 import {
-  VolumesDialogComponent,
+  VolumesDialog,
 } from 'app/pages/instances/components/common/volumes-dialog/volumes-dialog.component';
 
 describe('VolumesDialogComponent', () => {
-  let spectator: Spectator<VolumesDialogComponent>;
+  let spectator: Spectator<VolumesDialog>;
   let loader: HarnessLoader;
   const volumes = [
     {
@@ -56,7 +56,7 @@ describe('VolumesDialogComponent', () => {
   ] as VirtualizationVolume[];
 
   const createComponent = createComponentFactory({
-    component: VolumesDialogComponent,
+    component: VolumesDialog,
     imports: [
       MockComponent(UploadIsoButtonComponent),
     ],
@@ -125,14 +125,14 @@ describe('VolumesDialogComponent', () => {
       const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Volume' }));
       await createButton.click();
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(NewVolumeDialogComponent, expect.anything());
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(NewVolumeDialog, expect.anything());
     });
 
     it('opens a dialog to import zvols when Import Zvols is pressed', async () => {
       const importButton = await loader.getHarness(MatButtonHarness.with({ text: 'Import Zvols' }));
       await importButton.click();
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ImportZvolsDialogComponent, expect.anything());
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ImportZvolsDialog, expect.anything());
     });
   });
 

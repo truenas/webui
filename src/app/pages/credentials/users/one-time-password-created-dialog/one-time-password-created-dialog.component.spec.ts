@@ -6,14 +6,14 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { IxTextareaHarness } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { OneTimePasswordCreatedDialogComponent } from 'app/pages/credentials/users/one-time-password-created-dialog/one-time-password-created-dialog.component';
+import { OneTimePasswordCreatedDialog } from 'app/pages/credentials/users/one-time-password-created-dialog/one-time-password-created-dialog.component';
 
 describe('OneTimePasswordCreatedDialogComponent', () => {
-  let spectator: Spectator<OneTimePasswordCreatedDialogComponent>;
+  let spectator: Spectator<OneTimePasswordCreatedDialog>;
   let loader: HarnessLoader;
 
   const createComponent = createComponentFactory({
-    component: OneTimePasswordCreatedDialogComponent,
+    component: OneTimePasswordCreatedDialog,
     providers: [
       {
         provide: MAT_DIALOG_DATA,

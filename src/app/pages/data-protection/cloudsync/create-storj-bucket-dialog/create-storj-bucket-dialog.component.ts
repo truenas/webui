@@ -38,7 +38,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
     TranslateModule,
   ],
 })
-export class CreateStorjBucketDialogComponent {
+export class CreateStorjBucketDialog {
   protected readonly requiredRoles = [Role.CloudSyncWrite];
 
   form = this.formBuilder.group({
@@ -47,7 +47,7 @@ export class CreateStorjBucketDialogComponent {
 
   constructor(
     private formBuilder: FormBuilder,
-    private dialogRef: MatDialogRef<CreateStorjBucketDialogComponent>,
+    private dialogRef: MatDialogRef<CreateStorjBucketDialog>,
     private api: ApiService,
     private loader: LoaderService,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: { credentialsId: number },

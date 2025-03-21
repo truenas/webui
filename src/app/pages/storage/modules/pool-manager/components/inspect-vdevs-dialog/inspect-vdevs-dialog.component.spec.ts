@@ -5,7 +5,7 @@ import {
 import { MockComponent } from 'ng-mocks';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import {
-  InspectVdevsDialogComponent,
+  InspectVdevsDialog,
 } from 'app/pages/storage/modules/pool-manager/components/inspect-vdevs-dialog/inspect-vdevs-dialog.component';
 import {
   ManualSelectionVdevComponent,
@@ -13,7 +13,7 @@ import {
 import { PoolManagerTopology } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 
 describe('InspectVdevsDialogComponent', () => {
-  let spectator: Spectator<InspectVdevsDialogComponent>;
+  let spectator: Spectator<InspectVdevsDialog>;
   const topology = {
     [VdevType.Data]: {
       layout: CreateVdevLayout.Stripe,
@@ -30,7 +30,7 @@ describe('InspectVdevsDialogComponent', () => {
     },
   } as PoolManagerTopology;
   const createComponent = createComponentFactory({
-    component: InspectVdevsDialogComponent,
+    component: InspectVdevsDialog,
     declarations: [
       MockComponent(ManualSelectionVdevComponent),
     ],

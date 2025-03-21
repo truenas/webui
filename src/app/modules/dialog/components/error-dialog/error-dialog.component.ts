@@ -33,7 +33,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TestDirective,
   ],
 })
-export class ErrorDialogComponent {
+export class ErrorDialog {
   title: string;
   message: string;
   backtrace?: string;
@@ -41,7 +41,7 @@ export class ErrorDialogComponent {
   logs: Job;
 
   constructor(
-    public dialogRef: MatDialogRef<ErrorDialogComponent>,
+    public dialogRef: MatDialogRef<ErrorDialog>,
     private api: ApiService,
     private download: DownloadService,
     private errorHandler: ErrorHandlerService,

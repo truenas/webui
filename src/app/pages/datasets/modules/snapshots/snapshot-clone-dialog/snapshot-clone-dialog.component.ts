@@ -38,7 +38,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
     MatAnchor,
   ],
 })
-export class SnapshotCloneDialogComponent implements OnInit {
+export class SnapshotCloneDialog implements OnInit {
   protected readonly requiredRoles = [Role.SnapshotWrite];
 
   wasDatasetCloned = false;

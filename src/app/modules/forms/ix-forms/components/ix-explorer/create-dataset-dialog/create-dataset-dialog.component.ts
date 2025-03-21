@@ -48,7 +48,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TestDirective,
   ],
 })
-export class CreateDatasetDialogComponent implements OnInit {
+export class CreateDatasetDialog implements OnInit {
   protected readonly requiredRoles = [Role.DatasetWrite];
 
   isLoading$ = new BehaviorSubject(false);
@@ -66,7 +66,7 @@ export class CreateDatasetDialogComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
-    private dialogRef: MatDialogRef<CreateDatasetDialogComponent>,
+    private dialogRef: MatDialogRef<CreateDatasetDialog>,
     @Inject(MAT_DIALOG_DATA) private data: { parentId: string; dataset: DatasetCreate },
   ) {}
 

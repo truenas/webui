@@ -6,10 +6,10 @@ import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { ConfirmOptions, ConfirmOptionsWithSecondaryCheckbox } from 'app/interfaces/dialog.interface';
-import { ConfirmDialogComponent } from 'app/modules/dialog/components/confirm-dialog/confirm-dialog.component';
+import { ConfirmDialog } from 'app/modules/dialog/components/confirm-dialog/confirm-dialog.component';
 
 describe('ConfirmDialogComponent', () => {
-  let spectator: Spectator<ConfirmDialogComponent>;
+  let spectator: Spectator<ConfirmDialog>;
   let loader: HarnessLoader;
   const options = {
     title: 'Launch nukes?',
@@ -19,7 +19,7 @@ describe('ConfirmDialogComponent', () => {
     confirmationCheckboxText: 'Yeah whatever',
   } as ConfirmOptions;
   const createComponent = createComponentFactory({
-    component: ConfirmDialogComponent,
+    component: ConfirmDialog,
     imports: [
       FormsModule,
     ],

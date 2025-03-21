@@ -42,7 +42,7 @@ export interface SetEnclosureLabelDialogData {
     TranslateModule,
   ],
 })
-export class SetEnclosureLabelDialogComponent implements OnInit {
+export class SetEnclosureLabelDialog implements OnInit {
   enclosureLabel = 'Enclosure Label';
 
   form = this.formBuilder.nonNullable.group({
@@ -59,7 +59,7 @@ export class SetEnclosureLabelDialogComponent implements OnInit {
     private formBuilder: FormBuilder,
     private api: ApiService,
     private loader: LoaderService,
-    private dialogRef: MatDialogRef<SetEnclosureLabelDialogComponent, string>,
+    private dialogRef: MatDialogRef<SetEnclosureLabelDialog, string>,
     private errorHandler: ErrorHandlerService,
     private validatorsService: IxValidatorsService,
     private translate: TranslateService,

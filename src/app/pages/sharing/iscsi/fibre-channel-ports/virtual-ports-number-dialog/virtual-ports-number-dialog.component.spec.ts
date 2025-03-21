@@ -8,14 +8,14 @@ import { FibreChannelHost } from 'app/interfaces/fibre-channel.interface';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
-  VirtualPortsNumberDialogComponent,
+  VirtualPortsNumberDialog,
 } from 'app/pages/sharing/iscsi/fibre-channel-ports/virtual-ports-number-dialog/virtual-ports-number-dialog.component';
 
 describe('VirtualPortsNumberDialogComponent', () => {
-  let spectator: Spectator<VirtualPortsNumberDialogComponent>;
+  let spectator: Spectator<VirtualPortsNumberDialog>;
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
-    component: VirtualPortsNumberDialogComponent,
+    component: VirtualPortsNumberDialog,
     providers: [
       mockApi([
         mockCall('fc.fc_host.update'),

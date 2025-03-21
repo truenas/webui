@@ -41,7 +41,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TranslateModule,
   ],
 })
-export class DeleteGroupDialogComponent {
+export class DeleteGroupDialog {
   protected readonly requiredRoles = [Role.AccountWrite];
 
   deleteUsersCheckbox = new FormControl(false, { nonNullable: true });
@@ -53,7 +53,7 @@ export class DeleteGroupDialogComponent {
     private api: ApiService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
-    private dialogRef: MatDialogRef<DeleteGroupDialogComponent>,
+    private dialogRef: MatDialogRef<DeleteGroupDialog>,
     @Inject(MAT_DIALOG_DATA) public group: Group,
     private errorHandler: ErrorHandlerService,
   ) { }

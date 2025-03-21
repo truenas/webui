@@ -2,7 +2,7 @@ import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { SystemRebootInfo } from 'app/interfaces/reboot-info.interface';
-import { RebootRequiredDialogComponent } from 'app/modules/dialog/components/reboot-required-dialog/reboot-required-dialog.component';
+import { RebootRequiredDialog } from 'app/modules/dialog/components/reboot-required-dialog/reboot-required-dialog.component';
 import { selectCanFailover, selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import {
   selectOtherNodeRebootInfo,
@@ -26,10 +26,10 @@ const fakeOtherNodeRebootInfo: SystemRebootInfo = {
 };
 
 describe('RebootRequiredDialogComponent', () => {
-  let spectator: Spectator<RebootRequiredDialogComponent>;
+  let spectator: Spectator<RebootRequiredDialog>;
 
   const createComponent = createComponentFactory({
-    component: RebootRequiredDialogComponent,
+    component: RebootRequiredDialog,
     providers: [
       provideMockStore({
         selectors: [

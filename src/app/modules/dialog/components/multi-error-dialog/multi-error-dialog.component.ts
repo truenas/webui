@@ -26,9 +26,9 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     TestDirective,
   ],
 })
-export class MultiErrorDialogComponent {
+export class MultiErrorDialog {
   constructor(
-    public dialogRef: MatDialogRef<MultiErrorDialogComponent>,
+    public dialogRef: MatDialogRef<MultiErrorDialog>,
     @Inject(MAT_DIALOG_DATA) public errors: ErrorReport[],
   ) {}
 }

@@ -37,7 +37,7 @@ export interface DownloadKeyDialogParams {
     TranslateModule,
   ],
 })
-export class DownloadKeyDialogComponent {
+export class DownloadKeyDialog {
   protected helptext = helptextDownloadKey;
   protected wasDownloaded = signal(false);
 

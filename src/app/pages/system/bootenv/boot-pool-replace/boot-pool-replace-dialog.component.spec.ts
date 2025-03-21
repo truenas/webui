@@ -15,14 +15,14 @@ import {
 } from 'app/modules/forms/custom-selects/unused-disk-select/unused-disk-select.component';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { BootPoolReplaceDialogComponent } from './boot-pool-replace-dialog.component';
+import { BootPoolReplaceDialog } from './boot-pool-replace-dialog.component';
 
 describe('BootPoolReplaceDialogComponent', () => {
-  let spectator: Spectator<BootPoolReplaceDialogComponent>;
+  let spectator: Spectator<BootPoolReplaceDialog>;
   let loader: HarnessLoader;
 
   const createComponent = createRoutingFactory({
-    component: BootPoolReplaceDialogComponent,
+    component: BootPoolReplaceDialog,
     imports: [
       UnusedDiskSelectComponent,
       ReactiveFormsModule,

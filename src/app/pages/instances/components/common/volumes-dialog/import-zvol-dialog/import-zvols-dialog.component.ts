@@ -34,7 +34,7 @@ import { FilesystemService } from 'app/services/filesystem.service';
   templateUrl: './import-zvols-dialog.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ImportZvolsDialogComponent {
+export class ImportZvolsDialog {
   protected form = this.formBuilder.group({
     zvols: [[] as string[], Validators.required],
     clone: [false],
@@ -66,7 +66,7 @@ export class ImportZvolsDialogComponent {
     private dialogService: DialogService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
-    private dialogRef: MatDialogRef<ImportZvolsDialogComponent, boolean>,
+    private dialogRef: MatDialogRef<ImportZvolsDialog, boolean>,
     private snackbar: SnackbarService,
   ) {}
 

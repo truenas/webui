@@ -7,14 +7,14 @@ import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-chec
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import {
-  RebootOrShutdownDialogComponent,
+  RebootOrShutdownDialog,
 } from 'app/modules/layout/topbar/reboot-or-shutdown-dialog/reboot-or-shutdown-dialog.component';
 
 describe('RebootOrShutdownDialogComponent', () => {
-  let spectator: Spectator<RebootOrShutdownDialogComponent>;
+  let spectator: Spectator<RebootOrShutdownDialog>;
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
-    component: RebootOrShutdownDialogComponent,
+    component: RebootOrShutdownDialog,
     providers: [
       mockProvider(MatDialogRef),
     ],

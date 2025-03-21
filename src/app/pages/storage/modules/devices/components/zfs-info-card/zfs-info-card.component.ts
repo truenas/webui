@@ -24,10 +24,10 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
-  ExtendDialogComponent, ExtendDialogParams,
+  ExtendDialog, ExtendDialogParams,
 } from 'app/pages/storage/modules/devices/components/zfs-info-card/extend-dialog/extend-dialog.component';
 import {
-  RaidzExtendDialogComponent, RaidzExtendDialogParams,
+  RaidzExtendDialog, RaidzExtendDialogParams,
 } from 'app/pages/storage/modules/devices/components/zfs-info-card/raidz-extend-dialog/raidz-extend-dialog.component';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -215,7 +215,7 @@ export class ZfsInfoCardComponent {
   }
 
   onExtend(): void {
-    this.matDialog.open(ExtendDialogComponent, {
+    this.matDialog.open(ExtendDialog, {
       data: {
         poolId: this.poolId(),
         targetVdevGuid: this.topologyItem().guid,
@@ -232,7 +232,7 @@ export class ZfsInfoCardComponent {
   }
 
   onRaidzExtend(): void {
-    this.matDialog.open(RaidzExtendDialogComponent, {
+    this.matDialog.open(RaidzExtendDialog, {
       data: {
         poolId: this.poolId(),
         vdev: this.topologyItem() as VDev,

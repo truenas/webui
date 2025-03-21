@@ -48,7 +48,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
-  DefaultGatewayDialogComponent,
+  DefaultGatewayDialog,
 } from 'app/pages/network/components/default-gateway-dialog/default-gateway-dialog.component';
 import {
   InterfaceNameValidatorService,
@@ -283,7 +283,7 @@ export class InterfaceFormComponent implements OnInit {
 
         this.api.call('interface.default_route_will_be_removed').pipe(untilDestroyed(this)).subscribe((approved) => {
           if (approved) {
-            this.matDialog.open(DefaultGatewayDialogComponent, {
+            this.matDialog.open(DefaultGatewayDialog, {
               width: '600px',
             });
           }

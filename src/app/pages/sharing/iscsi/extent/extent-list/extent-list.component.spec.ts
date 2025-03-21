@@ -19,7 +19,7 @@ import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-pro
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ExtentFormComponent } from 'app/pages/sharing/iscsi/extent/extent-form/extent-form.component';
-import { DeleteExtentDialogComponent } from 'app/pages/sharing/iscsi/extent/extent-list/delete-extent-dialog/delete-extent-dialog.component';
+import { DeleteExtentDialog } from 'app/pages/sharing/iscsi/extent/extent-list/delete-extent-dialog/delete-extent-dialog.component';
 import { ExtentListComponent } from 'app/pages/sharing/iscsi/extent/extent-list/extent-list.component';
 
 const extents: IscsiExtent[] = [
@@ -106,7 +106,7 @@ describe('ExtentListComponent', () => {
     const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 6);
     await deleteButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(DeleteExtentDialogComponent, {
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(DeleteExtentDialog, {
       data: extents[0],
     });
   });

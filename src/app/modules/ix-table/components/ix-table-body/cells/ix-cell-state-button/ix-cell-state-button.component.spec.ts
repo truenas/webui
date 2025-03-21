@@ -8,7 +8,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
-import { ShowLogsDialogComponent } from 'app/modules/dialog/components/show-logs-dialog/show-logs-dialog.component';
+import { ShowLogsDialog } from 'app/modules/dialog/components/show-logs-dialog/show-logs-dialog.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxCellStateButtonComponent } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
@@ -91,7 +91,7 @@ describe('IxCellStateButtonComponent', () => {
     await button.click();
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
-      ShowLogsDialogComponent,
+      ShowLogsDialog,
       {
         data: expect.objectContaining({
           id: 123456,

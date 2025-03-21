@@ -15,11 +15,11 @@ import { AppUpgradeSummary } from 'app/interfaces/application.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { AppDeleteDialogComponent } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.component';
+import { AppDeleteDialog } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.component';
 import { CustomAppFormComponent } from 'app/pages/apps/components/custom-app-form/custom-app-form.component';
 import { AppInfoCardComponent } from 'app/pages/apps/components/installed-apps/app-info-card/app-info-card.component';
 import { AppRollbackModalComponent } from 'app/pages/apps/components/installed-apps/app-rollback-modal/app-rollback-modal.component';
-import { AppUpgradeDialogComponent } from 'app/pages/apps/components/installed-apps/app-upgrade-dialog/app-upgrade-dialog.component';
+import { AppUpgradeDialog } from 'app/pages/apps/components/installed-apps/app-upgrade-dialog/app-upgrade-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { RedirectService } from 'app/services/redirect.service';
@@ -62,7 +62,7 @@ describe('AppInfoCardComponent', () => {
     },
     close: jest.fn(),
     afterClosed: () => of(true),
-  } as unknown as MatDialogRef<AppUpgradeDialogComponent>;
+  } as unknown as MatDialogRef<AppUpgradeDialog>;
 
   const createComponent = createComponentFactory({
     component: AppInfoCardComponent,
@@ -190,7 +190,7 @@ describe('AppInfoCardComponent', () => {
     const menu = await loader.getHarness(MatMenuHarness.with({ selector: '[ixTest="app-info-menu"]' }));
     await menu.clickItem({ text: 'Update' });
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(AppUpgradeDialogComponent, {
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(AppUpgradeDialog, {
       maxWidth: '750px',
       minWidth: '500px',
       width: '50vw',
@@ -249,7 +249,7 @@ describe('AppInfoCardComponent', () => {
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
-      AppDeleteDialogComponent,
+      AppDeleteDialog,
       { data: { name: 'test-user-app-name', showRemoveVolumes: true } },
     );
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(

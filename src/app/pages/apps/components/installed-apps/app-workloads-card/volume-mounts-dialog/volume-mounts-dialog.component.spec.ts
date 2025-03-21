@@ -3,13 +3,13 @@ import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import {
-  VolumeMountsDialogComponent,
+  VolumeMountsDialog,
 } from 'app/pages/apps/components/installed-apps/app-workloads-card/volume-mounts-dialog/volume-mounts-dialog.component';
 
 describe('VolumeMountsDialogComponent', () => {
-  let spectator: Spectator<VolumeMountsDialogComponent>;
+  let spectator: Spectator<VolumeMountsDialog>;
   const createComponent = createComponentFactory({
-    component: VolumeMountsDialogComponent,
+    component: VolumeMountsDialog,
     imports: [
       MockComponent(
         FormActionsComponent,

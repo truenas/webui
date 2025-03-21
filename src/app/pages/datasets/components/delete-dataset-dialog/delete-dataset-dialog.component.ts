@@ -52,7 +52,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     RequiresRolesDirective,
   ],
 })
-export class DeleteDatasetDialogComponent implements OnInit {
+export class DeleteDatasetDialog implements OnInit {
   protected readonly requiredRoles = [Role.DatasetDelete];
 
   attachments: DatasetAttachment[] = [];
@@ -78,7 +78,7 @@ export class DeleteDatasetDialogComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private api: ApiService,
     private dialog: DialogService,
-    private dialogRef: MatDialogRef<DeleteDatasetDialogComponent>,
+    private dialogRef: MatDialogRef<DeleteDatasetDialog>,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
     private validators: IxValidatorsService,

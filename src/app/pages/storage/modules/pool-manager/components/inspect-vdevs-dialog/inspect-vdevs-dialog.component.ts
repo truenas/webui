@@ -48,7 +48,7 @@ import {
     ManualDiskDragToggleStore,
   ],
 })
-export class InspectVdevsDialogComponent implements OnInit {
+export class InspectVdevsDialog implements OnInit {
   protected presentTypes: VdevType[] = [];
   protected selectedType: VdevType;
   protected vdevs: ManualSelectionVdev[] = [];

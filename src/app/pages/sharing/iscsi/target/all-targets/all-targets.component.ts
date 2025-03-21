@@ -20,7 +20,7 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TargetDetailsComponent } from 'app/pages/sharing/iscsi/target/all-targets/target-details/target-details.component';
 import { TargetListComponent } from 'app/pages/sharing/iscsi/target/all-targets/target-list/target-list.component';
-import { DeleteTargetDialogComponent } from 'app/pages/sharing/iscsi/target/delete-target-dialog/delete-target-dialog.component';
+import { DeleteTargetDialog } from 'app/pages/sharing/iscsi/target/delete-target-dialog/delete-target-dialog.component';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
 import { IscsiService } from 'app/services/iscsi.service';
 
@@ -83,7 +83,7 @@ export class AllTargetsComponent implements OnInit {
 
   deleteTarget(target: IscsiTarget): void {
     this.matDialog
-      .open(DeleteTargetDialogComponent, { data: target, width: '600px' })
+      .open(DeleteTargetDialog, { data: target, width: '600px' })
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => {

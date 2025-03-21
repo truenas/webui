@@ -7,14 +7,14 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import {
-  SetProductionStatusDialogComponent,
+  SetProductionStatusDialog,
 } from 'app/pages/system/general-settings/support/set-production-status-dialog/set-production-status-dialog.component';
 
 describe('SetProductionStatusDialogComponent', () => {
-  let spectator: Spectator<SetProductionStatusDialogComponent>;
+  let spectator: Spectator<SetProductionStatusDialog>;
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
-    component: SetProductionStatusDialogComponent,
+    component: SetProductionStatusDialog,
     imports: [
       ReactiveFormsModule,
     ],

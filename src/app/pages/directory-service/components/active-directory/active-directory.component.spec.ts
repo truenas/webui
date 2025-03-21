@@ -24,7 +24,7 @@ import {
   ActiveDirectoryComponent,
 } from 'app/pages/directory-service/components/active-directory/active-directory.component';
 import {
-  LeaveDomainDialogComponent,
+  LeaveDomainDialog,
 } from 'app/pages/directory-service/components/leave-domain-dialog/leave-domain-dialog.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
 
@@ -65,7 +65,7 @@ describe('ActiveDirectoryComponent', () => {
     component: ActiveDirectoryComponent,
     imports: [
       ReactiveFormsModule,
-      LeaveDomainDialogComponent,
+      LeaveDomainDialog,
     ],
     providers: [
       mockApi([
@@ -232,7 +232,7 @@ describe('ActiveDirectoryComponent', () => {
       const leaveDomainButton = await loader.getHarness(MatButtonHarness.with({ text: 'Leave Domain' }));
       await leaveDomainButton.click();
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(LeaveDomainDialogComponent);
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(LeaveDomainDialog);
     });
   });
 });

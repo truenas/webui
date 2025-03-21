@@ -46,7 +46,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TranslateModule,
   ],
 })
-export class DefaultGatewayDialogComponent {
+export class DefaultGatewayDialog {
   protected readonly requiredRoles = [Role.NetworkInterfaceWrite];
 
   form = this.fb.nonNullable.group({
@@ -75,7 +75,7 @@ export class DefaultGatewayDialogComponent {
     private api: ApiService,
     private fb: FormBuilder,
     public cdr: ChangeDetectorRef,
-    private dialogRef: MatDialogRef<DefaultGatewayDialogComponent>,
+    private dialogRef: MatDialogRef<DefaultGatewayDialog>,
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     private validatorsService: IxValidatorsService,

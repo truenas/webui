@@ -12,13 +12,13 @@ import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { SignCsrDialogComponent } from './sign-csr-dialog.component';
+import { SignCsrDialog } from './sign-csr-dialog.component';
 
 describe('SignCsrDialogComponent', () => {
-  let spectator: Spectator<SignCsrDialogComponent>;
+  let spectator: Spectator<SignCsrDialog>;
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
-    component: SignCsrDialogComponent,
+    component: SignCsrDialog,
     imports: [
       ReactiveFormsModule,
     ],

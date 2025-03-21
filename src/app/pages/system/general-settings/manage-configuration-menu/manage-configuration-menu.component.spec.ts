@@ -11,10 +11,10 @@ import {
   ManageConfigurationMenuComponent,
 } from 'app/pages/system/general-settings/manage-configuration-menu/manage-configuration-menu.component';
 import {
-  SaveConfigDialogComponent,
+  SaveConfigDialog,
 } from 'app/pages/system/general-settings/save-config-dialog/save-config-dialog.component';
 import {
-  UploadConfigDialogComponent,
+  UploadConfigDialog,
 } from 'app/pages/system/general-settings/upload-config-dialog/upload-config-dialog.component';
 
 describe('ManageConfigurationMenuComponent', () => {
@@ -49,7 +49,7 @@ describe('ManageConfigurationMenuComponent', () => {
     await menu.open();
     await menu.clickItem({ text: 'Download File' });
 
-    expect(matDialog.open).toHaveBeenCalledWith(SaveConfigDialogComponent);
+    expect(matDialog.open).toHaveBeenCalledWith(SaveConfigDialog);
   });
 
   it('opens UploadConfigDialogComponent when Upload File is pressed', async () => {
@@ -59,7 +59,7 @@ describe('ManageConfigurationMenuComponent', () => {
     await menu.open();
     await menu.clickItem({ text: 'Upload File' });
 
-    expect(matDialog.open).toHaveBeenCalledWith(UploadConfigDialogComponent);
+    expect(matDialog.open).toHaveBeenCalledWith(UploadConfigDialog);
   });
 
   describe('if logged user is a system administrator', () => {

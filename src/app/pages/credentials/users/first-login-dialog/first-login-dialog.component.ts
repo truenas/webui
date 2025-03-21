@@ -32,7 +32,7 @@ import { TwoFactorComponent } from 'app/pages/two-factor-auth/two-factor.compone
     MatDialogClose,
   ],
 })
-export class FirstLoginDialogComponent {
+export class FirstLoginDialog {
   isOtpwUser = toSignal(this.authService.isOtpwUser$);
   wasOneTimePasswordChanged = toSignal(this.authService.wasOneTimePasswordChanged$);
   userTwoFactorAuthConfigured = toSignal(this.authService.userTwoFactorConfig$.pipe(

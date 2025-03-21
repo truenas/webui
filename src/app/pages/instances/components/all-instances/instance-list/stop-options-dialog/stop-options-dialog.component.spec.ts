@@ -5,14 +5,14 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import {
-  StopOptionsDialogComponent, StopOptionsOperation,
+  StopOptionsDialog, StopOptionsOperation,
 } from 'app/pages/instances/components/all-instances/instance-list/stop-options-dialog/stop-options-dialog.component';
 
 describe('StopOptionsDialogComponent', () => {
-  let spectator: Spectator<StopOptionsDialogComponent>;
+  let spectator: Spectator<StopOptionsDialog>;
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
-    component: StopOptionsDialogComponent,
+    component: StopOptionsDialog,
     providers: [
       mockProvider(MatDialogRef),
     ],

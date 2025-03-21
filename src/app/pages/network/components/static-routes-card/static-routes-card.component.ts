@@ -29,7 +29,7 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
-  StaticRouteDeleteDialogComponent,
+  StaticRouteDeleteDialog,
 } from 'app/pages/network/components/static-route-delete-dialog/static-route-delete-dialog.component';
 import { StaticRouteFormComponent } from 'app/pages/network/components/static-route-form/static-route-form.component';
 import { staticRoutesCardElements } from 'app/pages/network/components/static-routes-card/static-routes-card.elements';
@@ -142,7 +142,7 @@ export class StaticRoutesCardComponent implements OnInit {
   }
 
   doDelete(route: StaticRoute): void {
-    this.matDialog.open(StaticRouteDeleteDialogComponent, {
+    this.matDialog.open(StaticRouteDeleteDialog, {
       data: route,
     }).afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))

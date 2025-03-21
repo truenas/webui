@@ -80,7 +80,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     IxButtonGroupComponent,
   ],
 })
-export class MapUserGroupIdsDialogComponent implements OnInit {
+export class MapUserGroupIdsDialog implements OnInit {
   protected readonly columns = ['name', 'hostUidOrGid', 'instanceUidOrGid', 'actions'];
   protected readonly containersHelptext = instancesHelptext;
 
@@ -109,7 +109,7 @@ export class MapUserGroupIdsDialogComponent implements OnInit {
   constructor(
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
-    protected dialogRef: MatDialogRef<MapUserGroupIdsDialogComponent>,
+    protected dialogRef: MatDialogRef<MapUserGroupIdsDialog>,
     private translate: TranslateService,
     private loader: LoaderService,
     private snackbar: SnackbarService,

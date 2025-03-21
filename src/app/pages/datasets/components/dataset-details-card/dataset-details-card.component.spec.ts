@@ -17,7 +17,7 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetDetailsCardComponent } from 'app/pages/datasets/components/dataset-details-card/dataset-details-card.component';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
-import { DeleteDatasetDialogComponent } from 'app/pages/datasets/components/delete-dataset-dialog/delete-dataset-dialog.component';
+import { DeleteDatasetDialog } from 'app/pages/datasets/components/delete-dataset-dialog/delete-dataset-dialog.component';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 
@@ -133,7 +133,7 @@ describe('DatasetDetailsCardComponent', () => {
       const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
       await deleteButton.click();
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(DeleteDatasetDialogComponent, { data: dataset });
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(DeleteDatasetDialog, { data: dataset });
     });
   });
 

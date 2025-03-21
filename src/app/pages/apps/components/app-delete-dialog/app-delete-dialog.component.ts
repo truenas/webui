@@ -31,7 +31,7 @@ import { AppDeleteDialogInputData, AppDeleteDialogOutputData } from 'app/pages/a
     TranslateModule,
   ],
 })
-export class AppDeleteDialogComponent {
+export class AppDeleteDialog {
   form = this.formBuilder.nonNullable.group({
     removeVolumes: [false],
     removeImages: [true],
@@ -40,7 +40,7 @@ export class AppDeleteDialogComponent {
 
   constructor(
     private formBuilder: FormBuilder,
-    private dialogRef: MatDialogRef<AppDeleteDialogComponent, AppDeleteDialogOutputData>,
+    private dialogRef: MatDialogRef<AppDeleteDialog, AppDeleteDialogOutputData>,
     @Inject(MAT_DIALOG_DATA) protected data: AppDeleteDialogInputData,
   ) { }
 

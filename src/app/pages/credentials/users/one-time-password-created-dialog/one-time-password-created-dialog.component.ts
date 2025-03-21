@@ -32,7 +32,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     IxTextareaComponent,
   ],
 })
-export class OneTimePasswordCreatedDialogComponent {
+export class OneTimePasswordCreatedDialog {
   password = signal(inject<string>(MAT_DIALOG_DATA));
   passwordControl = new FormControl<string>(this.password());
 

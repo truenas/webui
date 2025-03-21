@@ -16,9 +16,9 @@ import { AccountAttribute } from 'app/enums/account-attribute.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { AboutDialogComponent } from 'app/modules/layout/topbar/about-dialog/about-dialog.component';
+import { AboutDialog } from 'app/modules/layout/topbar/about-dialog/about-dialog.component';
 import {
-  ChangePasswordDialogComponent,
+  ChangePasswordDialog,
 } from 'app/modules/layout/topbar/change-password-dialog/change-password-dialog.component';
 import { userMenuElements } from 'app/modules/layout/topbar/user-menu/user-menu.elements';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -58,11 +58,11 @@ export class UserMenuComponent {
   ) { }
 
   openChangePasswordDialog(): void {
-    this.matDialog.open(ChangePasswordDialogComponent);
+    this.matDialog.open(ChangePasswordDialog);
   }
 
   onShowAbout(): void {
-    this.matDialog.open(AboutDialogComponent, {
+    this.matDialog.open(AboutDialog, {
       disableClose: true,
     });
   }

@@ -36,10 +36,10 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { PoolCardIconComponent } from 'app/pages/storage/components/dashboard-pool/pool-card-icon/pool-card-icon.component';
 import {
-  AutotrimDialogComponent,
+  AutotrimDialog,
 } from 'app/pages/storage/components/dashboard-pool/zfs-health-card/autotrim-dialog/autotrim-dialog.component';
 import {
-  PruneDedupTableDialogComponent,
+  PruneDedupTableDialog,
 } from 'app/pages/storage/components/dashboard-pool/zfs-health-card/prune-dedup-table-dialog/prune-dedup-table-dialog.component';
 import {
   SetDedupQuotaComponent,
@@ -248,7 +248,7 @@ export class ZfsHealthCardComponent implements OnChanges {
 
   onEditAutotrim(): void {
     this.matDialog
-      .open(AutotrimDialogComponent, { data: this.pool() })
+      .open(AutotrimDialog, { data: this.pool() })
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => this.store.loadDashboard());
@@ -256,7 +256,7 @@ export class ZfsHealthCardComponent implements OnChanges {
 
   onPruneDedupTable(): void {
     this.matDialog
-      .open(PruneDedupTableDialogComponent, { data: this.pool() })
+      .open(PruneDedupTableDialog, { data: this.pool() })
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => this.store.loadDashboard());

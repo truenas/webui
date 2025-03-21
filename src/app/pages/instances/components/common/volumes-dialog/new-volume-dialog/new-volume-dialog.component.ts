@@ -33,7 +33,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrl: './new-volume-dialog.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NewVolumeDialogComponent {
+export class NewVolumeDialog {
   protected form = this.formBuilder.group({
     name: this.formBuilder.control('', Validators.required),
     size: this.formBuilder.control(GiB, [Validators.required, Validators.min(MiB)]),
@@ -45,7 +45,7 @@ export class NewVolumeDialogComponent {
     private loader: LoaderService,
     private errorHandler: ErrorHandlerService,
     private formBuilder: NonNullableFormBuilder,
-    private dialogRef: MatDialogRef<NewVolumeDialogComponent, boolean>,
+    private dialogRef: MatDialogRef<NewVolumeDialog, boolean>,
   ) {}
 
   protected onSubmit(): void {

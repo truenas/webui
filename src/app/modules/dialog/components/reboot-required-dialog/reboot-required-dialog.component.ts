@@ -35,7 +35,7 @@ import { selectOtherNodeRebootInfo, selectThisNodeRebootInfo } from 'app/store/r
     FormActionsComponent,
   ],
 })
-export class RebootRequiredDialogComponent {
+export class RebootRequiredDialog {
   thisNodeRebootReasons = toSignal(this.store$.select(selectThisNodeRebootInfo).pipe(
     map((info) => info?.reboot_required_reasons || []),
   ));

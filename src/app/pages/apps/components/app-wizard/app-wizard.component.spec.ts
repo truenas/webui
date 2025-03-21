@@ -20,7 +20,7 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AppWizardComponent } from 'app/pages/apps/components/app-wizard/app-wizard.component';
-import { DockerHubRateInfoDialogComponent } from 'app/pages/apps/components/dockerhub-rate-limit-info-dialog/dockerhub-rate-limit-info-dialog.component';
+import { DockerHubRateInfoDialog } from 'app/pages/apps/components/dockerhub-rate-limit-info-dialog/dockerhub-rate-limit-info-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 
@@ -279,7 +279,7 @@ describe('AppWizardComponent', () => {
     component: AppWizardComponent,
     imports: [
       ReactiveFormsModule,
-      MockComponent(DockerHubRateInfoDialogComponent),
+      MockComponent(DockerHubRateInfoDialog),
       MockComponent(PageHeaderComponent),
     ],
     componentProviders: [
@@ -519,7 +519,7 @@ describe('AppWizardComponent', () => {
     });
 
     it('shows Docker Hub Rate Limit Info Dialog when remaining_pull_limit is less then 5', () => {
-      expect(spectator.inject(MatDialog, true).open).toHaveBeenCalledWith(DockerHubRateInfoDialogComponent, {
+      expect(spectator.inject(MatDialog, true).open).toHaveBeenCalledWith(DockerHubRateInfoDialog, {
         data: {
           total_pull_limit: 13,
           total_time_limit_in_secs: 21600,

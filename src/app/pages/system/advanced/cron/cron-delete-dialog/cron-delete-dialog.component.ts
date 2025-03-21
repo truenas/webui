@@ -36,7 +36,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TranslateModule,
   ],
 })
-export class CronDeleteDialogComponent {
+export class CronDeleteDialog {
   protected readonly requiredRoles = [Role.SystemCronWrite];
 
   readonly deleteMessage = T('Are you sure you want to delete cronjob <b>"{name}"</b>?');
@@ -46,7 +46,7 @@ export class CronDeleteDialogComponent {
     private api: ApiService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
-    private dialogRef: MatDialogRef<CronDeleteDialogComponent>,
+    private dialogRef: MatDialogRef<CronDeleteDialog>,
     @Inject(MAT_DIALOG_DATA) public cronjob: CronjobRow,
     private errorHandler: ErrorHandlerService,
   ) { }

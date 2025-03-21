@@ -50,7 +50,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     MatAnchor,
   ],
 })
-export class SnapshotBatchDeleteDialogComponent implements OnInit {
+export class SnapshotBatchDeleteDialog implements OnInit {
   protected readonly requiredRoles = [Role.SnapshotDelete];
 
   isJobCompleted = false;

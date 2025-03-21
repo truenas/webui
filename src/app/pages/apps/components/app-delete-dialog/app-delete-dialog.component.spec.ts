@@ -6,15 +6,15 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { AppDeleteDialogComponent } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.component';
+import { AppDeleteDialog } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.component';
 import { AppDeleteDialogInputData } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.interface';
 
 describe('AppDeleteDialogComponent', () => {
-  let spectator: Spectator<AppDeleteDialogComponent>;
+  let spectator: Spectator<AppDeleteDialog>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
   const createComponent = createComponentFactory({
-    component: AppDeleteDialogComponent,
+    component: AppDeleteDialog,
     imports: [
       ReactiveFormsModule,
     ],

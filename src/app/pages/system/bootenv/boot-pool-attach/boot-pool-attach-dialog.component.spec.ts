@@ -16,15 +16,15 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { BootPoolAttachDialogComponent } from './boot-pool-attach-dialog.component';
+import { BootPoolAttachDialog } from './boot-pool-attach-dialog.component';
 
 describe('BootPoolAttachDialogComponent', () => {
-  let spectator: Spectator<BootPoolAttachDialogComponent>;
+  let spectator: Spectator<BootPoolAttachDialog>;
   let loader: HarnessLoader;
   let api: ApiService;
 
   const createComponent = createComponentFactory({
-    component: BootPoolAttachDialogComponent,
+    component: BootPoolAttachDialog,
     imports: [
       ReactiveFormsModule,
       UnusedDiskSelectComponent,

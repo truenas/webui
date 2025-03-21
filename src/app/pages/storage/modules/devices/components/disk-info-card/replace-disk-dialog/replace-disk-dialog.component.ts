@@ -46,7 +46,7 @@ export interface ReplaceDiskDialogData {
     TranslateModule,
   ],
 })
-export class ReplaceDiskDialogComponent {
+export class ReplaceDiskDialog {
   form = this.formBuilder.nonNullable.group({
     replacement: ['', Validators.required],
     preserve_settings: [true],
@@ -62,7 +62,7 @@ export class ReplaceDiskDialogComponent {
     private formBuilder: FormBuilder,
     private api: ApiService,
     private translate: TranslateService,
-    private dialogRef: MatDialogRef<ReplaceDiskDialogComponent>,
+    private dialogRef: MatDialogRef<ReplaceDiskDialog>,
     private snackbar: SnackbarService,
     @Inject(MAT_DIALOG_DATA) public data: ReplaceDiskDialogData,
     private dialogService: DialogService,

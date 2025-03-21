@@ -24,8 +24,8 @@ import { ChangePasswordFormComponent } from 'app/modules/layout/topbar/change-pa
     ChangePasswordFormComponent,
   ],
 })
-export class ChangePasswordDialogComponent {
+export class ChangePasswordDialog {
   constructor(
-    public dialogRef: MatDialogRef<ChangePasswordDialogComponent>,
+    public dialogRef: MatDialogRef<ChangePasswordDialog>,
   ) {}
 }

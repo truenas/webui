@@ -10,13 +10,13 @@ import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DownloadService } from 'app/services/download.service';
-import { ExportDatasetKeyDialogComponent } from './export-dataset-key-dialog.component';
+import { ExportDatasetKeyDialog } from './export-dataset-key-dialog.component';
 
 describe('ExportDatasetKeyDialogComponent', () => {
-  let spectator: Spectator<ExportDatasetKeyDialogComponent>;
+  let spectator: Spectator<ExportDatasetKeyDialog>;
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
-    component: ExportDatasetKeyDialogComponent,
+    component: ExportDatasetKeyDialog,
     providers: [
       mockApi([
         mockJob('pool.dataset.export_key', fakeSuccessfulJob('12345678')),

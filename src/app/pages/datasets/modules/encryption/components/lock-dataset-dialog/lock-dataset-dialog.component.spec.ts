@@ -12,13 +12,13 @@ import { Dataset } from 'app/interfaces/dataset.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { LockDatasetDialogComponent } from './lock-dataset-dialog.component';
+import { LockDatasetDialog } from './lock-dataset-dialog.component';
 
 describe('LockDatasetDialogComponent', () => {
-  let spectator: Spectator<LockDatasetDialogComponent>;
+  let spectator: Spectator<LockDatasetDialog>;
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
-    component: LockDatasetDialogComponent,
+    component: LockDatasetDialog,
     imports: [
       ReactiveFormsModule,
     ],

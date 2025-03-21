@@ -22,7 +22,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { InstanceStatusCellComponent } from 'app/pages/instances/components/all-instances/instance-list/instance-row/instance-status-cell/instance-status-cell.component';
 import {
-  StopOptionsDialogComponent, StopOptionsOperation,
+  StopOptionsDialog, StopOptionsOperation,
 } from 'app/pages/instances/components/all-instances/instance-list/stop-options-dialog/stop-options-dialog.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -82,7 +82,7 @@ export class InstanceRowComponent {
     const instanceId = this.instance().id;
 
     this.matDialog
-      .open(StopOptionsDialogComponent, { data: StopOptionsOperation.Stop })
+      .open(StopOptionsDialog, { data: StopOptionsOperation.Stop })
       .afterClosed()
       .pipe(
         filter(Boolean),
@@ -105,7 +105,7 @@ export class InstanceRowComponent {
     const instanceId = this.instance().id;
 
     this.matDialog
-      .open(StopOptionsDialogComponent, { data: StopOptionsOperation.Restart })
+      .open(StopOptionsDialog, { data: StopOptionsOperation.Restart })
       .afterClosed()
       .pipe(
         filter(Boolean),
