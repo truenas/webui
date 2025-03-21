@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, computed, signal,
+  ChangeDetectionStrategy, Component, computed, effect, signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
@@ -19,7 +19,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { unionBy } from 'lodash-es';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
-  filter, map, Observable, of,
+  filter, map, Observable, of, tap,
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import {
@@ -37,6 +37,7 @@ import {
   virtualizationTypeIcons,
   VolumeContentType,
 } from 'app/enums/virtualization.enum';
+import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { instancesHelptext } from 'app/helptext/instances/instances';
 import { Option } from 'app/interfaces/option.interface';
@@ -167,6 +168,19 @@ export class InstanceWizardComponent {
     }))),
   );
 
+  protected poolOptions$ = this.configStore.state$.pipe(
+    filter((state) => !state.isLoading),
+    map((state) => state.config.storage_pools),
+    singleArrayToOptions(),
+    tap((options) => {
+      if (options.length && !this.form.controls.storage_pool.value) {
+        this.form.controls.storage_pool.setValue(`${options[0].value}`);
+      }
+    }),
+  );
+
+  protected hasOnePool = computed(() => this.configStore.config().storage_pools.length === 1);
+
   protected readonly form = this.formBuilder.group({
     name: [
       '',
@@ -184,6 +198,7 @@ export class InstanceWizardComponent {
     vnc_password: [null as string | null],
     cpu: ['', [cpuValidator()]],
     memory: [null as number | null],
+    storage_pool: [null as string | null, [Validators.required]],
     tpm: [false],
     secure_boot: [false],
     root_disk_size: [10],
@@ -253,6 +268,12 @@ export class InstanceWizardComponent {
     private filesystem: FilesystemService,
   ) {
     this.configStore.initialize();
+
+    effect(() => {
+      if (!this.form.value.storage_pool && this.hasOnePool()) {
+        this.form.patchValue({ storage_pool: this.configStore.config().storage_pools[0] });
+      }
+    });
 
     this.listenForSourceTypeChanges();
     this.listenForInstanceTypeChanges();
@@ -411,6 +432,7 @@ export class InstanceWizardComponent {
       cpu: values.cpu,
       memory: values.memory || null,
       image: values.source_type === VirtualizationSource.Image ? values.image : null,
+      storage_pool: values.storage_pool,
       // TODO: Messy, clean up on API side.
       source_type: sourceType,
       iso_volume: values.volume_type === VolumeContentType.Iso ? values.volume : null,
