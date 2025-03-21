@@ -3,7 +3,7 @@ import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
 import { IfNightlyDirective } from 'app/directives/if-nightly/if-nightly.directive';
-import { FeedbackDialogComponent } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
+import { FeedbackDialog } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
@@ -25,6 +25,6 @@ export class HeaderBadgeComponent {
   constructor(private matDialog: MatDialog) {}
 
   leaveFeedbackPressed(): void {
-    this.matDialog.open(FeedbackDialogComponent);
+    this.matDialog.open(FeedbackDialog);
   }
 }

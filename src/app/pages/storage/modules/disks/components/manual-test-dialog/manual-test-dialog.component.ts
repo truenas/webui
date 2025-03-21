@@ -45,7 +45,7 @@ export interface ManualTestDialogParams {
     TestProgressRowComponent,
   ],
 })
-export class ManualTestDialogComponent {
+export class ManualTestDialog {
   form = this.formBuilder.group({
     type: [SmartTestType.Long],
   });
@@ -81,7 +81,7 @@ export class ManualTestDialogComponent {
     private formBuilder: NonNullableFormBuilder,
     private translate: TranslateService,
     @Inject(MAT_DIALOG_DATA) private params: ManualTestDialogParams,
-    public dialogRef: MatDialogRef<ManualTestDialogComponent>,
+    public dialogRef: MatDialogRef<ManualTestDialog>,
     private api: ApiService,
     private cdr: ChangeDetectorRef,
   ) {

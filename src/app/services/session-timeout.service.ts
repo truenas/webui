@@ -14,7 +14,7 @@ import { Timeout } from 'app/interfaces/timeout.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { JobProgressDialog } from 'app/modules/dialog/components/job-progress/job-progress-dialog.component';
 import {
-  SessionExpiringDialogComponent,
+  SessionExpiringDialog,
   SessionExpiringDialogOptions,
 } from 'app/modules/dialog/components/session-expiring-dialog/session-expiring-dialog.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -81,7 +81,7 @@ export class SessionTimeoutService {
           this.authService.logout().pipe(untilDestroyed(this)).subscribe();
         }, showConfirmTime);
 
-        const dialogRef = this.matDialog.open(SessionExpiringDialogComponent, {
+        const dialogRef = this.matDialog.open(SessionExpiringDialog, {
           disableClose: true,
           data: {
             title: this.translate.instant('Logout'),

@@ -22,7 +22,7 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { StopOptionsDialogComponent, StopOptionsOperation } from 'app/pages/instances/components/all-instances/instance-list/stop-options-dialog/stop-options-dialog.component';
+import { StopOptionsDialog, StopOptionsOperation } from 'app/pages/instances/components/all-instances/instance-list/stop-options-dialog/stop-options-dialog.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
@@ -92,7 +92,7 @@ export class InstanceListBulkActionsComponent {
 
   onBulkStop(): void {
     this.matDialog
-      .open(StopOptionsDialogComponent, { data: StopOptionsOperation.Stop })
+      .open(StopOptionsDialog, { data: StopOptionsOperation.Stop })
       .afterClosed()
       .pipe(
         filter(Boolean),
@@ -107,7 +107,7 @@ export class InstanceListBulkActionsComponent {
 
   onBulkRestart(): void {
     this.matDialog
-      .open(StopOptionsDialogComponent, { data: StopOptionsOperation.Restart })
+      .open(StopOptionsDialog, { data: StopOptionsOperation.Restart })
       .afterClosed()
       .pipe(
         filter(Boolean),

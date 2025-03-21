@@ -14,7 +14,7 @@ import { App, AppContainerState } from 'app/interfaces/app.interface';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { AppWorkloadsCardComponent } from 'app/pages/apps/components/installed-apps/app-workloads-card/app-workloads-card.component';
 import {
-  VolumeMountsDialogComponent,
+  VolumeMountsDialog,
 } from 'app/pages/apps/components/installed-apps/app-workloads-card/volume-mounts-dialog/volume-mounts-dialog.component';
 
 describe('AppContainersCardComponent', () => {
@@ -68,7 +68,7 @@ describe('AppContainersCardComponent', () => {
   const createComponent = createComponentFactory({
     component: AppWorkloadsCardComponent,
     declarations: [
-      MockComponent(VolumeMountsDialogComponent),
+      MockComponent(VolumeMountsDialog),
     ],
     imports: [
       MapValuePipe,
@@ -120,7 +120,7 @@ describe('AppContainersCardComponent', () => {
     const volumeButton = await loader.getHarness(MatButtonHarness.with({ selector: '[aria-label="Volume Mounts"]' }));
     await volumeButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(VolumeMountsDialogComponent, {
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(VolumeMountsDialog, {
       data: app.active_workloads.container_details[0],
       minWidth: '60vw',
     });

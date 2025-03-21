@@ -26,7 +26,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     MatDialogActions,
   ],
 })
-export class LogsDetailsDialogComponent {
+export class LogsDetailsDialog {
   form = this.fb.group({
     tail_lines: [500, [Validators.required]],
   });

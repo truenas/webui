@@ -19,8 +19,8 @@ import { JobState } from 'app/enums/job-state.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { AlertSlice, selectImportantUnreadAlertsCount } from 'app/modules/alerts/store/alert.selectors';
 import { RebootRequiredDialog } from 'app/modules/dialog/components/reboot-required-dialog/reboot-required-dialog.component';
-import { UpdateDialogComponent } from 'app/modules/dialog/components/update-dialog/update-dialog.component';
-import { FeedbackDialogComponent } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
+import { UpdateDialog } from 'app/modules/dialog/components/update-dialog/update-dialog.component';
+import { FeedbackDialog } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { GlobalSearchTriggerComponent } from 'app/modules/global-search/components/global-search-trigger/global-search-trigger.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { selectUpdateJob } from 'app/modules/jobs/store/job.selectors';
@@ -81,7 +81,7 @@ import { TruenasLogoComponent } from './truenas-logo/truenas-logo.component';
 export class TopbarComponent implements OnInit {
   updateIsDone: Subscription;
 
-  updateDialog: MatDialogRef<UpdateDialogComponent>;
+  updateDialog: MatDialogRef<UpdateDialog>;
   isFailoverLicensed = false;
   updateIsRunning = false;
   systemWillRestart = false;
@@ -193,7 +193,7 @@ export class TopbarComponent implements OnInit {
         + this.translate.instant(helptextTopbar.updateRunning_dialog.message_pt2);
     const title = helptextTopbar.updateRunning_dialog.title;
 
-    this.updateDialog = this.matDialog.open(UpdateDialogComponent, {
+    this.updateDialog = this.matDialog.open(UpdateDialog, {
       width: '400px',
       hasBackdrop: true,
       panelClass: 'topbar-panel',
@@ -209,7 +209,7 @@ export class TopbarComponent implements OnInit {
   }
 
   onFeedbackIndicatorPressed(): void {
-    this.matDialog.open(FeedbackDialogComponent);
+    this.matDialog.open(FeedbackDialog);
   }
 
   private checkRebootInfo(): Observable<unknown> {

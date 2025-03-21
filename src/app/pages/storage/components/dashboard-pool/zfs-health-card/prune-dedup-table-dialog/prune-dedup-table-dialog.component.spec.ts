@@ -13,14 +13,14 @@ import { IxRadioGroupHarness } from 'app/modules/forms/ix-forms/components/ix-ra
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
-  PruneDedupTableDialogComponent,
+  PruneDedupTableDialog,
 } from 'app/pages/storage/components/dashboard-pool/zfs-health-card/prune-dedup-table-dialog/prune-dedup-table-dialog.component';
 
 describe('PruneDedupTableDialogComponent', () => {
-  let spectator: Spectator<PruneDedupTableDialogComponent>;
+  let spectator: Spectator<PruneDedupTableDialog>;
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
-    component: PruneDedupTableDialogComponent,
+    component: PruneDedupTableDialog,
     providers: [
       mockApi([
         mockJob('pool.ddt_prune', fakeSuccessfulJob()),

@@ -19,14 +19,14 @@ import {
   EncryptionOptionsDialogData,
 } from 'app/pages/datasets/modules/encryption/components/encryption-options-dialog/encryption-options-dialog-data.interface';
 import {
-  EncryptionOptionsDialogComponent,
+  EncryptionOptionsDialog,
 } from 'app/pages/datasets/modules/encryption/components/encryption-options-dialog/encryption-options-dialog.component';
-import { ExportAllKeysDialogComponent } from 'app/pages/datasets/modules/encryption/components/export-all-keys-dialog/export-all-keys-dialog.component';
+import { ExportAllKeysDialog } from 'app/pages/datasets/modules/encryption/components/export-all-keys-dialog/export-all-keys-dialog.component';
 import {
-  ExportDatasetKeyDialogComponent,
+  ExportDatasetKeyDialog,
 } from 'app/pages/datasets/modules/encryption/components/export-dataset-key-dialog/export-dataset-key-dialog.component';
 import {
-  LockDatasetDialogComponent,
+  LockDatasetDialog,
 } from 'app/pages/datasets/modules/encryption/components/lock-dataset-dialog/lock-dataset-dialog.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { isEncryptionRoot, isPasswordEncrypted, isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
@@ -102,7 +102,7 @@ export class ZfsEncryptionCardComponent {
   });
 
   onEditPressed(): void {
-    const dialog = this.matDialog.open(EncryptionOptionsDialogComponent, {
+    const dialog = this.matDialog.open(EncryptionOptionsDialog, {
       data: {
         dataset: this.dataset(),
         parent: this.parentDataset(),
@@ -115,7 +115,7 @@ export class ZfsEncryptionCardComponent {
   }
 
   onLock(): void {
-    this.matDialog.open(LockDatasetDialogComponent, {
+    this.matDialog.open(LockDatasetDialog, {
       data: this.dataset(),
     })
       .afterClosed()
@@ -124,13 +124,13 @@ export class ZfsEncryptionCardComponent {
   }
 
   onExportKey(): void {
-    this.matDialog.open(ExportDatasetKeyDialogComponent, {
+    this.matDialog.open(ExportDatasetKeyDialog, {
       data: this.dataset(),
     });
   }
 
   onExportAllKeys(): void {
-    this.matDialog.open(ExportAllKeysDialogComponent, {
+    this.matDialog.open(ExportAllKeysDialog, {
       data: this.dataset(),
     });
   }

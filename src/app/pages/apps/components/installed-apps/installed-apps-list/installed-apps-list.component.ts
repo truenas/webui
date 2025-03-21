@@ -40,7 +40,7 @@ import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { AppDeleteDialogComponent } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.component';
+import { AppDeleteDialog } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.component';
 import { AppDeleteDialogInputData, AppDeleteDialogOutputData } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.interface';
 import { AppBulkUpgradeComponent } from 'app/pages/apps/components/installed-apps/app-bulk-upgrade/app-bulk-upgrade.component';
 import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
@@ -388,10 +388,10 @@ export class InstalledAppsListComponent implements OnInit {
         this.loader.withLoader(),
         switchMap((ixVolumesExist) => {
           return this.matDialog.open<
-            AppDeleteDialogComponent,
+            AppDeleteDialog,
             AppDeleteDialogInputData,
             AppDeleteDialogOutputData
-          >(AppDeleteDialogComponent, {
+          >(AppDeleteDialog, {
             data: {
               name: this.checkedAppsNames.join(', '),
               showRemoveVolumes: ixVolumesExist.some(Boolean),

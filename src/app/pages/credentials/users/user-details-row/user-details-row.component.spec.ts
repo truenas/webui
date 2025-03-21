@@ -18,9 +18,9 @@ import {
 } from 'app/modules/ix-table/components/ix-table-expandable-row/ix-table-expandable-row.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { OneTimePasswordCreatedDialogComponent } from 'app/pages/credentials/users/one-time-password-created-dialog/one-time-password-created-dialog.component';
+import { OneTimePasswordCreatedDialog } from 'app/pages/credentials/users/one-time-password-created-dialog/one-time-password-created-dialog.component';
 import {
-  DeleteUserDialogComponent,
+  DeleteUserDialog,
 } from 'app/pages/credentials/users/user-details-row/delete-user-dialog/delete-user-dialog.component';
 import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
@@ -132,7 +132,7 @@ describe('UserDetailsRowComponent', () => {
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: /Delete/ }));
     await deleteButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(DeleteUserDialogComponent, {
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(DeleteUserDialog, {
       data: dummyUser,
     });
   });
@@ -165,7 +165,7 @@ describe('UserDetailsRowComponent', () => {
 
     expect(api.call).toHaveBeenCalledWith('auth.generate_onetime_password', [{ username: 'test-user' }]);
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenLastCalledWith(OneTimePasswordCreatedDialogComponent, {
+    expect(spectator.inject(MatDialog).open).toHaveBeenLastCalledWith(OneTimePasswordCreatedDialog, {
       data: 'test-password',
     });
   });

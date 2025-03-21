@@ -12,7 +12,7 @@ import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { VirtualizationPciChoices, VirtualizationPciDeviceOption } from 'app/interfaces/virtualization.interface';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { PciPassthroughDialogComponent } from './pci-passthrough-dialog.component';
+import { PciPassthroughDialog } from './pci-passthrough-dialog.component';
 
 const pciChoices = {
   '0000:26:00.0': {
@@ -30,11 +30,11 @@ const pciChoices = {
 } as VirtualizationPciChoices;
 
 describe('PciPassthroughDialogComponent', () => {
-  let spectator: Spectator<PciPassthroughDialogComponent>;
+  let spectator: Spectator<PciPassthroughDialog>;
   let loader: HarnessLoader;
 
   const createComponent = createComponentFactory({
-    component: PciPassthroughDialogComponent,
+    component: PciPassthroughDialog,
     imports: [ReactiveFormsModule],
     providers: [
       mockApi([mockCall('virt.device.pci_choices', pciChoices)]),

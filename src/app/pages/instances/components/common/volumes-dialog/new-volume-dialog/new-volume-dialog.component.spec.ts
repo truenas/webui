@@ -6,13 +6,13 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { NewVolumeDialogComponent } from './new-volume-dialog.component';
+import { NewVolumeDialog } from './new-volume-dialog.component';
 
 describe('NewVolumeDialogComponent', () => {
-  let spectator: Spectator<NewVolumeDialogComponent>;
+  let spectator: Spectator<NewVolumeDialog>;
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
-    component: NewVolumeDialogComponent,
+    component: NewVolumeDialog,
     providers: [
       mockProvider(MatDialogRef),
       mockApi([

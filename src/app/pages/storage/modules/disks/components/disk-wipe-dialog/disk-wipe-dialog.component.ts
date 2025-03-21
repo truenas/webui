@@ -40,7 +40,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TranslateModule,
   ],
 })
-export class DiskWipeDialogComponent {
+export class DiskWipeDialog {
   form = this.formBuilder.nonNullable.group({
     wipe_method: [DiskWipeMethod.Quick, [Validators.required]],
   });
@@ -70,7 +70,7 @@ export class DiskWipeDialogComponent {
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
     private api: ApiService,
-    private dialogRef: MatDialogRef<DiskWipeDialogComponent>,
+    private dialogRef: MatDialogRef<DiskWipeDialog>,
     @Inject(MAT_DIALOG_DATA) public data: { diskName: string; exportedPool: string },
   ) { }
 

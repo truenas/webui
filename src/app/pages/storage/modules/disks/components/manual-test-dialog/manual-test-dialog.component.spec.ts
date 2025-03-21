@@ -16,13 +16,13 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { TestProgressRowComponent } from 'app/pages/storage/modules/disks/components/manual-test-dialog/test-progress-row/test-progress-row.component';
-import { ManualTestDialogComponent, ManualTestDialogParams } from './manual-test-dialog.component';
+import { ManualTestDialog, ManualTestDialogParams } from './manual-test-dialog.component';
 
 describe('ManualTestDialogComponent', () => {
-  let spectator: Spectator<ManualTestDialogComponent>;
+  let spectator: Spectator<ManualTestDialog>;
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
-    component: ManualTestDialogComponent,
+    component: ManualTestDialog,
     imports: [
       ReactiveFormsModule,
     ],

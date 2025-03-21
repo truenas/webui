@@ -10,15 +10,15 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { DefaultGatewayDialogComponent } from 'app/pages/network/components/default-gateway-dialog/default-gateway-dialog.component';
+import { DefaultGatewayDialog } from 'app/pages/network/components/default-gateway-dialog/default-gateway-dialog.component';
 
 describe('DefaultGatewayDialogComponent', () => {
-  let spectator: Spectator<DefaultGatewayDialogComponent>;
+  let spectator: Spectator<DefaultGatewayDialog>;
   let loader: HarnessLoader;
   let api: ApiService;
 
   const createComponent = createComponentFactory({
-    component: DefaultGatewayDialogComponent,
+    component: DefaultGatewayDialog,
     imports: [
       ReactiveFormsModule,
     ],

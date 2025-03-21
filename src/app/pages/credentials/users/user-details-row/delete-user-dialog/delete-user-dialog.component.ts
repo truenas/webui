@@ -43,7 +43,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TranslateModule,
   ],
 })
-export class DeleteUserDialogComponent implements OnInit {
+export class DeleteUserDialog implements OnInit {
   protected readonly requiredRoles = [Role.AccountWrite];
 
   deleteGroupCheckbox = new FormControl(false, { nonNullable: true });
@@ -56,7 +56,7 @@ export class DeleteUserDialogComponent implements OnInit {
     private api: ApiService,
     private loader: LoaderService,
     @Inject(MAT_DIALOG_DATA) public user: User,
-    private dialogRef: MatDialogRef<DeleteUserDialogComponent>,
+    private dialogRef: MatDialogRef<DeleteUserDialog>,
     private snackbar: SnackbarService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,

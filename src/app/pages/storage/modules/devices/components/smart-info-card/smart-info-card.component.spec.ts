@@ -14,7 +14,7 @@ import { SmartTestResults, SmartTestTask } from 'app/interfaces/smart-test.inter
 import { TopologyDisk } from 'app/interfaces/storage.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
-  ManualTestDialogComponent,
+  ManualTestDialog,
 } from 'app/pages/storage/modules/disks/components/manual-test-dialog/manual-test-dialog.component';
 import { SmartInfoCardComponent } from './smart-info-card.component';
 
@@ -110,7 +110,7 @@ describe('SmartInfoCardComponent', () => {
     await runTestButton.click();
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
-      ManualTestDialogComponent,
+      ManualTestDialog,
       {
         data: {
           selectedDisks: [disk],

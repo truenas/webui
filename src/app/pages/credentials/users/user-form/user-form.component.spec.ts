@@ -23,7 +23,7 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { OneTimePasswordCreatedDialogComponent } from 'app/pages/credentials/users/one-time-password-created-dialog/one-time-password-created-dialog.component';
+import { OneTimePasswordCreatedDialog } from 'app/pages/credentials/users/one-time-password-created-dialog/one-time-password-created-dialog.component';
 import { selectUsers } from 'app/pages/credentials/users/store/user.selectors';
 import { DownloadService } from 'app/services/download.service';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -377,7 +377,7 @@ describe('UserFormComponent', () => {
         username: 'jsmith',
       })]);
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(OneTimePasswordCreatedDialogComponent, {
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(OneTimePasswordCreatedDialog, {
         data: 'test-password',
       });
     });

@@ -34,14 +34,14 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     MatDialogClose,
   ],
 })
-export class ExportDatasetKeyDialogComponent implements OnInit {
+export class ExportDatasetKeyDialog implements OnInit {
   key: string;
 
   constructor(
     private api: ApiService,
     private loader: LoaderService,
     private errorHandler: ErrorHandlerService,
-    private dialogRef: MatDialogRef<ExportDatasetKeyDialogComponent>,
+    private dialogRef: MatDialogRef<ExportDatasetKeyDialog>,
     private download: DownloadService,
     private cdr: ChangeDetectorRef,
     @Inject(MAT_DIALOG_DATA) public dataset: Dataset,
