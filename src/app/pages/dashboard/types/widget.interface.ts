@@ -22,6 +22,7 @@ export enum WidgetType {
   CpuUsageRecent = 'cpu-usage-recent',
   CpuUsageBar = 'cpu-usage-bar',
   CpuTemperatureBar = 'cpu-temperature-bar',
+  CpuTemperatureRecent = 'cpu-temperature-recent',
   Storage = 'storage',
   SystemInfoActive = 'system-info-active',
   SystemInfoPassive = 'system-info-passive',
