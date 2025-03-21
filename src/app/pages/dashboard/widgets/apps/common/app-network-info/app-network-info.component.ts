@@ -53,7 +53,7 @@ export class AppNetworkInfoComponent {
   protected networkChartData = computed<ChartData<'line'>>(() => {
     const currentTheme = this.theme.currentTheme();
     const data = this.networkStats();
-    const labels: number[] = data.map((_, index) => (0 + index) * 1000);
+    const labels: number[] = data.map((_, index) => Date.now() - (59 - index) * 1000);
 
     return {
       datasets: [
