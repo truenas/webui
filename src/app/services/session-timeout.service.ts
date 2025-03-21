@@ -12,7 +12,7 @@ import {
 import { WINDOW } from 'app/helpers/window.helper';
 import { Timeout } from 'app/interfaces/timeout.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { JobProgressDialogComponent } from 'app/modules/dialog/components/job-progress/job-progress-dialog.component';
+import { JobProgressDialog } from 'app/modules/dialog/components/job-progress/job-progress-dialog.component';
 import {
   SessionExpiringDialogComponent,
   SessionExpiringDialogOptions,
@@ -46,7 +46,7 @@ export class SessionTimeoutService {
     this.resumeBound = this.resume.bind(this);
 
     this.matDialog.afterOpened.pipe(untilDestroyed(this)).subscribe((dialog) => {
-      if (dialog.componentInstance instanceof JobProgressDialogComponent) {
+      if (dialog.componentInstance instanceof JobProgressDialog) {
         this.stop();
         dialog.afterClosed().pipe(untilDestroyed(this)).subscribe(() => {
           this.start();

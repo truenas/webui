@@ -6,11 +6,11 @@ import {
   merge, Observable, switchMap, take, throwError,
 } from 'rxjs';
 import { Job } from 'app/interfaces/job.interface';
-import { JobProgressDialogComponent } from 'app/modules/dialog/components/job-progress/job-progress-dialog.component';
+import { JobProgressDialog } from 'app/modules/dialog/components/job-progress/job-progress-dialog.component';
 
 export class JobProgressDialogRef<T> {
   constructor(
-    private readonly matDialogRef: MatDialogRef<JobProgressDialogComponent<T>>,
+    private readonly matDialogRef: MatDialogRef<JobProgressDialog<T>>,
     private readonly translate: TranslateService,
   ) {}
 
