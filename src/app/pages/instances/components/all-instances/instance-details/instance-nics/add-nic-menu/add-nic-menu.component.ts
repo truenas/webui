@@ -19,6 +19,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
+import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
@@ -79,6 +80,7 @@ export class AddNicMenuComponent {
     private snackbar: SnackbarService,
     private translate: TranslateService,
     private deviceStore: VirtualizationDevicesStore,
+    private instancesStore: VirtualizationInstancesStore,
   ) {}
 
   protected addBridgedNic(nic: string): void {
@@ -102,7 +104,7 @@ export class AddNicMenuComponent {
   }
 
   private addDevice(payload: VirtualizationDevice): void {
-    const instanceId = this.deviceStore.selectedInstance()?.id;
+    const instanceId = this.instancesStore.selectedInstance()?.id;
     if (!instanceId) {
       return;
     }
