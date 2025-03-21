@@ -1,7 +1,10 @@
 import { ReactiveFormsModule } from '@angular/forms';
-import { byText, createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import {
+  byText, createComponentFactory, mockProvider, Spectator,
+} from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
+import { of } from 'rxjs';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
@@ -10,12 +13,14 @@ import { Pool } from 'app/interfaces/pool.interface';
 import { GaugeChartComponent } from 'app/modules/charts/gauge-chart/gauge-chart.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { ThemeService } from 'app/modules/theme/theme.service';
+import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { PoolCardIconComponent } from 'app/pages/storage/components/dashboard-pool/pool-card-icon/pool-card-icon.component';
 import { PoolUsageCardComponent } from 'app/pages/storage/components/dashboard-pool/pool-usage-card/pool-usage-card.component';
 import { selectTheme } from 'app/store/preferences/preferences.selectors';
 
 describe('PoolUsageCardComponent', () => {
   let spectator: Spectator<PoolUsageCardComponent>;
+
   const createComponent = createComponentFactory({
     component: PoolUsageCardComponent,
     imports: [
@@ -33,6 +38,22 @@ describe('PoolUsageCardComponent', () => {
           { selector: selectTheme, value: 'ix-dark' },
         ],
       }),
+      mockProvider(
+        WidgetResourcesService,
+        {
+          realtimeUpdates$: of({
+            fields: {
+              pools: {
+                dozer: {
+                  available: 899688274,
+                  used: 3384541603,
+                  total: 4284239877,
+                },
+              },
+            },
+          }),
+        },
+      ),
       mockWindow({
         sessionStorage: {
           getItem: () => 'ix-dark',

@@ -4,6 +4,11 @@ import { ApiErrorDetails } from 'app/interfaces/api-error.interface';
 
 export interface ReportingRealtimeUpdate {
   cpu: AllCpusUpdate;
+  pools: Record<string, {
+    available: number;
+    used: number;
+    total: number;
+  }>;
   disks: DisksUpdate;
   interfaces: AllNetworkInterfacesUpdate;
   memory: MemoryUpdate;
