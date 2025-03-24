@@ -7,6 +7,7 @@ const user = {
   full_name: 'Peter Gibbons',
   email: 'peter@initech.com',
   local: true,
+  builtin: false,
   group: {
     bsdgrp_group: 'developers',
   },
@@ -39,7 +40,7 @@ describe('UserProfileCardComponent', () => {
     expect(spectator.query('mat-card-header h3')).toHaveText('Profile');
   });
 
-  it('shows rows', () => {
+  it('shows user details', () => {
     const rows = getRows();
     expect(rows).toEqual({
       'Email:': 'peter@initech.com',
@@ -49,5 +50,42 @@ describe('UserProfileCardComponent', () => {
       'Type:': 'Local',
       'UID:': '2937',
     });
+  });
+
+  describe('User Type Display', () => {
+    it('shows Built-In for builtin users', () => {
+      const builtinUser = { ...user, builtin: true, local: false };
+      spectator.setInput({ user: builtinUser });
+      const rows = getRows();
+      expect(rows['Type:']).toBe('Built-In');
+    });
+
+    it('shows Local for local users', () => {
+      const localUser = { ...user, builtin: false, local: true };
+      spectator.setInput({ user: localUser });
+      const rows = getRows();
+      expect(rows['Type:']).toBe('Local');
+    });
+
+    it('shows Directory Services for non-local, non-builtin users', () => {
+      const directoryUser = { ...user, builtin: false, local: false };
+      spectator.setInput({ user: directoryUser });
+      const rows = getRows();
+      expect(rows['Type:']).toBe('Directory Services');
+    });
+  });
+
+  it('shows "None" when home directory is /nonexistent', () => {
+    spectator.setInput('user', {
+      id: 1,
+      username: 'testuser',
+      home: '/nonexistent',
+      group: {
+        bsdgrp_group: 'testgroup',
+      },
+    } as User);
+
+    const rows = getRows();
+    expect(rows['Home Directory:']).toBe('None');
   });
 });
