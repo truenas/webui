@@ -431,7 +431,7 @@
   "LBA of First Error": "",
   "LDAP server hostnames or IP addresses. Separate entries with an empty space. Multiple hostnames or IP addresses can be entered to create an LDAP failover priority list. If a host does not respond, the next host in the list is tried until a new connection is established.": "",
   "Label": "",
-  "Languages other than <i>English</i> are provided by      the community and may be incomplete.      <a href=\"https://github.com/truenas/webui/blob/master/TRANSLATING.md\" target=\"_blank\">Learn how to contribute.</a>": "",
+  "Languages other than <i>English</i> are provided by      the community and may be incomplete.      <a href=\"https://github.com/truenas/webui/blob/master/docs/contributing_translations.md\" target=\"_blank\">Learn how to contribute.</a>": "",
   "Launch Docker Image": "",
   "Leave empty for default values": "",
   "Leave empty to allow all host CPUs to be used.": "",
