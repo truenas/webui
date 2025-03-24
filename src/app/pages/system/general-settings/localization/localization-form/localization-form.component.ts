@@ -1,11 +1,12 @@
 import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  signal,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { omit, sortBy } from 'lodash-es';
@@ -29,7 +30,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
-import { localizationFormSubmitted } from 'app/store/preferences/preferences.actions';
+import { languageUpdated, localizationFormSubmitted } from 'app/store/preferences/preferences.actions';
 import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
 import { systemInfoUpdated } from 'app/store/system-info/system-info.actions';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
@@ -59,7 +60,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
 export class LocalizationFormComponent implements OnInit {
   fieldsetTitle = helptext.localeTitle;
 
-  isFormLoading = false;
+  isFormLoading = signal<boolean>(false);
 
   sortLanguagesByName = true;
   protected localizationSettings: LocalizationSettings;
@@ -153,7 +154,7 @@ export class LocalizationFormComponent implements OnInit {
 
   submit(): void {
     const values = this.formGroup.getRawValue();
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
     this.window.localStorage.setItem('language', values.language);
     this.window.localStorage.setItem('dateFormat', values.date_format);
     this.window.localStorage.setItem('timeFormat', values.time_format);
@@ -163,21 +164,12 @@ export class LocalizationFormComponent implements OnInit {
     }));
     const payload = omit(values, ['date_format', 'time_format']);
 
-    this.api.call('system.general.update', [payload]).pipe(untilDestroyed(this)).subscribe({
-      next: () => {
-        this.store$.dispatch(generalConfigUpdated());
-        this.store$.dispatch(systemInfoUpdated());
-        this.isFormLoading = false;
-        this.slideInRef.close({ response: true, error: null });
-        this.setTimeOptions(payload.timezone);
-        this.langService.setLanguage(payload.language);
-        this.cdr.markForCheck();
-      },
-      error: (error: unknown) => {
-        this.isFormLoading = false;
-        this.errorHandler.handleValidationErrors(error, this.formGroup);
-        this.cdr.markForCheck();
-      },
-    });
+    this.store$.dispatch(languageUpdated({ language: payload.language }));
+    this.store$.dispatch(generalConfigUpdated());
+    this.store$.dispatch(systemInfoUpdated());
+    this.isFormLoading.set(false);
+    this.setTimeOptions(payload.timezone);
+    this.langService.setLanguage(payload.language);
+    this.slideInRef.close({ response: true, error: null });
   }
 }
