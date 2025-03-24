@@ -468,7 +468,6 @@ describe('DevicesListComponent', () => {
     providers: [
       mockProvider(DevicesStore, {
         selectedNode$: of(selectedNode),
-        loadDisksWithSmartTestSupport: jest.fn(),
         isLoading$: of(false),
         loadNodes: jest.fn(),
         nodes$: of(nodes),
