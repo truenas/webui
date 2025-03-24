@@ -3161,7 +3161,7 @@
   "LUN ID": "ID LUN",
   "LUN RPM": "RPM LUN",
   "Language": "Langue",
-  "Languages other than <i>English</i> are provided by      the community and may be incomplete.      <a href=\"https://github.com/truenas/webui/blob/master/TRANSLATING.md\" target=\"_blank\">Learn how to contribute.</a>": "Les langues autres que l'anglais sont fournies par la communauté et peuvent être incomplètes. <a href=\"https://github.com/truenas/webui/blob/master/TRANSLATING.md\" target=\"_blank\">Découvrez comment contribuer.</a>",
+  "Languages other than <i>English</i> are provided by      the community and may be incomplete.      <a href=\"https://github.com/truenas/webui/blob/master/docs/contributing_translations.md\" target=\"_blank\">Learn how to contribute.</a>": "Les langues autres que l'anglais sont fournies par la communauté et peuvent être incomplètes. <a href=\"https://github.com/truenas/webui/blob/master/docs/contributing_translations.md\" target=\"_blank\">Découvrez comment contribuer.</a>",
   "Last 24 hours": "Les dernières 24 heures",
   "Last 3 days": "Les 3 derniers jours",
   "Last Page": "Dernière page",
