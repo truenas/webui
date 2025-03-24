@@ -22,7 +22,7 @@ import {
   VolumeContentType,
 } from 'app/enums/virtualization.enum';
 import { Job } from 'app/interfaces/job.interface';
-import { VirtualizationInstance, VirtualizationVolume } from 'app/interfaces/virtualization.interface';
+import { VirtualizationGlobalConfig, VirtualizationInstance, VirtualizationVolume } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxIconGroupHarness } from 'app/modules/forms/ix-forms/components/ix-icon-group/ix-icon-group.harness';
@@ -49,6 +49,13 @@ describe('InstanceWizardComponent', () => {
   let loader: HarnessLoader;
   let form: IxFormHarness;
 
+  const globalConfig = {
+    pool: 'poolio',
+    storage_pools: ['poolio'],
+    v4_network: 'v4_network',
+    v6_network: 'v6_network',
+  } as VirtualizationGlobalConfig;
+
   const createComponent = createRoutingFactory({
     component: InstanceWizardComponent,
     declarations: [
@@ -63,20 +70,10 @@ describe('InstanceWizardComponent', () => {
       mockProvider(FilesystemService),
       mockApi([
         mockCall('virt.instance.query', [{
-          id: 'test',
           name: 'test',
-          type: VirtualizationType.Container,
-          autostart: false,
-          cpu: 'Intel Xeon',
-          memory: 2 * GiB,
         },
         {
-          id: 'testVM',
           name: 'testVM',
-          type: VirtualizationType.Vm,
-          autostart: false,
-          cpu: 'Intel Xeon',
-          memory: 4 * GiB,
         }] as VirtualizationInstance[]),
         mockCall('interface.has_pending_changes', false),
         mockCall('virt.device.nic_choices', {
@@ -102,6 +99,7 @@ describe('InstanceWizardComponent', () => {
         }),
         mockJob('virt.volume.import_iso', fakeSuccessfulJob({ name: 'image.iso' })),
         mockJob('virt.instance.create', fakeSuccessfulJob({ id: 'new' } as VirtualizationInstance)),
+        mockCall('virt.global.pool_choices', {}),
       ]),
       mockProvider(SnackbarService),
       mockProvider(DialogService, {
@@ -119,8 +117,9 @@ describe('InstanceWizardComponent', () => {
         })),
       }),
       mockProvider(VirtualizationConfigStore, {
+        state$: of({ isLoading: false, config: globalConfig }),
         initialize: jest.fn(),
-        config: jest.fn(() => ({ v4_network: 'v4_network', v6_network: 'v6_network' })),
+        config: jest.fn(() => globalConfig),
       }),
     ],
   });
@@ -240,6 +239,7 @@ describe('InstanceWizardComponent', () => {
         image: 'almalinux/8/cloud',
         memory: GiB,
         source_type: VirtualizationSource.Image,
+        storage_pool: 'poolio',
         environment: {},
         enable_vnc: false,
         vnc_port: null,
@@ -285,6 +285,7 @@ describe('InstanceWizardComponent', () => {
         image: 'almalinux/8/cloud',
         memory: GiB,
         source_type: VirtualizationSource.Image,
+        storage_pool: 'poolio',
         enable_vnc: false,
         vnc_port: null,
         iso_volume: null,
@@ -404,6 +405,7 @@ describe('InstanceWizardComponent', () => {
         enable_vnc: true,
         vnc_port: 9000,
         source_type: VirtualizationSource.Image,
+        storage_pool: 'poolio',
         root_disk_size: 9,
         vnc_password: 'testing',
         secure_boot: true,
@@ -448,6 +450,7 @@ describe('InstanceWizardComponent', () => {
         image: null,
         iso_volume: 'myiso.iso',
         source_type: VirtualizationSource.Iso,
+        storage_pool: 'poolio',
         enable_vnc: false,
         memory: 1073741824,
         secure_boot: false,
@@ -499,6 +502,7 @@ describe('InstanceWizardComponent', () => {
         vnc_port: null,
         root_disk_size: 10,
         volume: 'myvolume',
+        storage_pool: 'poolio',
       }]);
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
