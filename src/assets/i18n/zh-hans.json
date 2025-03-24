@@ -237,6 +237,8 @@
   "Specify the container filesystem path where the disk will be mounted.": "",
   "Specify the host port to be mapped to the container's port.": "",
   "Status of TrueNAS Connect": "",
+  "Storage Pool": "",
+  "Store At": "",
   "Storj is an S3 compatible, fault tolerant, globally distributed cloud storage platform with a security first approach to backup and recovery - delivering extreme resilience and performance both sustainably and economically. <a href=\"https://truenas.com/storj\" target=\"_blank\">TrueNAS and Storj</a> have partnered to streamline delivery of Hybrid Cloud solutions globally.": "",
   "Success! One-Time Password has been created.": "",
   "System Cron Read": "",
