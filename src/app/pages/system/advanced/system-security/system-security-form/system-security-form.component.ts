@@ -8,7 +8,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatHint } from '@angular/material/form-field';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import { filter, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
@@ -99,7 +99,7 @@ export class SystemSecurityFormComponent implements OnInit {
   private initSystemSecurityForm(): void {
     this.form.patchValue(this.systemSecurityConfig());
     this.form.controls.enable_gpos_stig.valueChanges
-      .pipe(untilDestroyed(this))
+      .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe((value) => {
         this.form.patchValue({ enable_fips: value });
       });

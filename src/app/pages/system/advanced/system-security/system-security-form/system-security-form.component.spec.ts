@@ -105,6 +105,21 @@ describe('SystemSecurityFormComponent', () => {
       });
     });
 
+    it('does not disable FIPS when STIG is disabled first', async () => {
+      await form.fillForm({
+        'Enable FIPS': true,
+        'Enable General Purpose OS STIG compatibility mode': true,
+      });
+
+      await form.fillForm({
+        'Enable General Purpose OS STIG compatibility mode': false,
+      });
+
+      expect(await form.getValues()).toMatchObject({
+        'Enable FIPS': true,
+      });
+    });
+
     it('clears auth token when STIG is enabled', async () => {
       await form.fillForm({
         'Enable General Purpose OS STIG compatibility mode': true,
