@@ -303,12 +303,33 @@ export class InterfaceFormComponent implements OnInit {
     });
   }
 
+  private generateRandomNameByType(type: NetworkInterfaceType): string | null {
+    const random = Math.floor(Math.random() * 10000);
+    switch (type) {
+      case NetworkInterfaceType.LinkAggregation:
+        return `bond${random}`;
+      case NetworkInterfaceType.Bridge:
+        return `br${random}`;
+      case NetworkInterfaceType.Vlan:
+        return `vlan${random}`;
+      default:
+        return null;
+    }
+  }
+
   private validateNameOnTypeChange(): void {
-    this.form.controls.type.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
-      setTimeout(() => {
-        this.form.controls.name.updateValueAndValidity();
+    this.form.controls.type.valueChanges
+      .pipe(untilDestroyed(this))
+      .subscribe((type: NetworkInterfaceType) => {
+        const name = this.generateRandomNameByType(type);
+        if (name) {
+          this.form.controls.name.patchValue(name, { emitEvent: false });
+        }
+
+        setTimeout(() => {
+          this.form.controls.name.updateValueAndValidity();
+        });
       });
-    });
   }
 
   private setOptionsForEdit(nic: NetworkInterface): void {

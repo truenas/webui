@@ -492,5 +492,28 @@ describe('InterfaceFormComponent', () => {
         { width: '600px' },
       );
     });
+
+    it('auto-generates name when type is changed', async () => {
+      await form.fillForm({
+        Type: 'Bridge',
+      });
+
+      const values = await form.getValues();
+      expect(values.Name).toMatch(/^br\d{1,4}$/);
+
+      await form.fillForm({
+        Type: 'Link Aggregation',
+      });
+
+      const updatedValues = await form.getValues();
+      expect(updatedValues.Name).toMatch(/^bond\d{1,4}$/);
+
+      await form.fillForm({
+        Type: 'VLAN',
+      });
+
+      const vlanValues = await form.getValues();
+      expect(vlanValues.Name).toMatch(/^vlan\d{1,4}$/);
+    });
   });
 });
