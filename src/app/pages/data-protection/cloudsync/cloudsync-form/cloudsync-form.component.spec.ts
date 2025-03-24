@@ -389,7 +389,7 @@ describe('CloudSyncFormComponent', () => {
               },
               {
                 name: CloudSyncProviderName.Storj,
-                title: 'Storj iX',
+                title: 'Storj',
                 credentials_oauth: null,
                 credentials_schema: [],
                 buckets: true,

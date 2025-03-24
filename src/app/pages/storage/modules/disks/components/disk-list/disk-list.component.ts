@@ -16,9 +16,7 @@ import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
-import { SmartTestResultPageType } from 'app/enums/smart-test-results-page-type.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
-import { Choices } from 'app/interfaces/choices.interface';
 import { Disk, DetailsDisk } from 'app/interfaces/disk.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -46,7 +44,6 @@ import { DiskBulkEditComponent } from 'app/pages/storage/modules/disks/component
 import { DiskFormComponent } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
 import { diskListElements } from 'app/pages/storage/modules/disks/components/disk-list/disk-list.elements';
 import { DiskWipeDialogComponent } from 'app/pages/storage/modules/disks/components/disk-wipe-dialog/disk-wipe-dialog.component';
-import { ManualTestDialogComponent, ManualTestDialogParams } from 'app/pages/storage/modules/disks/components/manual-test-dialog/manual-test-dialog.component';
 
 // TODO: Exclude AnythingUi when NAS-127632 is done
 interface DiskUi extends Disk {
@@ -176,12 +173,6 @@ export class DiskListComponent implements OnInit {
       },
       hidden: true,
     }),
-    textColumn({
-      title: this.translate.instant('Enable S.M.A.R.T.'),
-      propertyName: 'togglesmart',
-      getValue: (row) => (row.togglesmart ? this.translate.instant('Yes') : this.translate.instant('No')),
-      hidden: true,
-    }),
   ], {
     uniqueRowTag: (row) => `disk-${row.name}`,
     ariaLabels: (row) => [row.name, this.translate.instant('Disk')],
@@ -197,7 +188,6 @@ export class DiskListComponent implements OnInit {
 
   private disks: DiskUi[] = [];
   private unusedDisks: DetailsDisk[] = [];
-  private smartDiskChoices: Choices = {};
 
   protected get emptyConfig(): EmptyConfig {
     const type = this.dataProvider.emptyType$.value;
@@ -240,12 +230,10 @@ export class DiskListComponent implements OnInit {
           ...diskDetails.used.filter((disk) => disk.exported_zpool),
         ]),
       ),
-      this.api.call('smart.test.disk_choices'),
       this.api.call('disk.query', [[], { extra: { pools: true, passwords: true } }]),
     ]).pipe(
-      map(([unusedDisks, disksThatSupportSmart, disks]) => {
+      map(([unusedDisks, disks]) => {
         this.unusedDisks = unusedDisks;
-        this.smartDiskChoices = disksThatSupportSmart;
         this.disks = disks.map((disk) => ({
           ...disk,
           pool: this.getPoolColumn(disk),
@@ -258,20 +246,6 @@ export class DiskListComponent implements OnInit {
     this.dataProvider.load();
   }
 
-  manualTest(disks: DiskUi[]): void {
-    this.matDialog.open(ManualTestDialogComponent, {
-      data: {
-        selectedDisks: this.prepareDisks(disks),
-        diskIdsWithSmart: Object.keys(this.smartDiskChoices),
-      } as ManualTestDialogParams,
-      width: '600px',
-    });
-  }
-
-  goToTestResults(disk: Disk): void {
-    this.router.navigate(['/storage', 'disks', 'smartresults', SmartTestResultPageType.Disk, disk.name]);
-  }
-
   edit(disks: DiskUi[]): void {
     const preparedDisks = this.prepareDisks(disks);
     let slideInRef$: Observable<SlideInResponse<boolean>>;
@@ -279,7 +253,7 @@ export class DiskListComponent implements OnInit {
     if (preparedDisks.length > 1) {
       slideInRef$ = this.slideIn.open(DiskBulkEditComponent, { data: preparedDisks });
     } else {
-      slideInRef$ = this.slideIn.open(DiskFormComponent, { wide: true, data: preparedDisks[0] });
+      slideInRef$ = this.slideIn.open(DiskFormComponent, { data: preparedDisks[0] });
     }
 
     slideInRef$.pipe(
@@ -299,10 +273,6 @@ export class DiskListComponent implements OnInit {
     dialog.afterClosed().pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.dataProvider.load();
     });
-  }
-
-  protected isSmartSupported(disk: Disk): boolean {
-    return Object.keys(this.smartDiskChoices).includes(disk.identifier);
   }
 
   protected isUnusedDisk(disk: Disk): boolean {

@@ -188,7 +188,7 @@ export class WidgetStorageComponent {
       });
     }
 
-    const percent = parseInt(volumes.get(pool.name).used_pct.split('%')[0]);
+    const percent = parseInt(volumes.get(pool.name).used_pct?.split('%')?.[0]);
 
     if (percent >= 90) {
       level = StatusLevel.Error;

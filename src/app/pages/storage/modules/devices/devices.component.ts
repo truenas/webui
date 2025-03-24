@@ -56,7 +56,6 @@ export class DevicesComponent implements OnInit, AfterViewInit {
   protected showMobileDetails = signal(false);
 
   protected selectedParentNode$ = this.devicesStore.selectedParentNode$;
-  protected disksWithSmartTestSupport$ = this.devicesStore.disksWithSmartTestSupport$;
   protected selectedTopologyCategory$ = this.devicesStore.selectedTopologyCategory$;
   protected selectedNode$ = this.devicesStore.selectedNode$;
   protected readonly hasTopLevelRaidz$: Observable<boolean> = this.devicesStore.nodes$.pipe(

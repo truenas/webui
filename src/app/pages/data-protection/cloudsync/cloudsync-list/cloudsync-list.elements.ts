@@ -10,7 +10,7 @@ export const cloudSyncListElements = {
       synonyms: [
         T('Data Protection'),
         T('Tasks'),
-        T('Storj iX'),
+        'Storj',
         T('Amazon S3'),
         T('Backblaze B2'),
         T('Box'),

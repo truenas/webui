@@ -24,7 +24,6 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceFtpComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
-import { ServiceSmartComponent } from 'app/pages/services/components/service-smart/service-smart.component';
 import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
 import { ServiceSnmpComponent } from 'app/pages/services/components/service-snmp/service-snmp.component';
 import { ServiceSshComponent } from 'app/pages/services/components/service-ssh/service-ssh.component';
@@ -167,14 +166,6 @@ describe('ServicesComponent', () => {
       await editButton.click();
 
       expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ServiceSmbComponent);
-    });
-
-    it('should open S.M.A.R.T. configuration when edit button is pressed', async () => {
-      const serviceIndex = fakeDataSource.findIndex((item) => item.service === ServiceName.Smart) + 1;
-      const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), serviceIndex, 3);
-      await editButton.click();
-
-      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ServiceSmartComponent);
     });
   });
 
