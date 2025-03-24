@@ -2,8 +2,16 @@
   <mat-toolbar-row>
     <div class="toolbar-row-title">
       <a [ixTest]="['iscsi-share', 'open-in-new']" [routerLink]="['/sharing', 'iscsi', 'targets']">
-        <h3 class="card-title">
-          {{ 'Block (iSCSI) Shares Targets' | translate }}
+        <h3
+          class="card-title"
+          [matTooltip]="'Block (iSCSI/Fibre Channel) Shares Targets' | translate"
+          [matTooltipDisabled]="!hasFibreChannel()"
+        >
+          @if (hasFibreChannel()) {
+            {{ 'Block (iSCSI/FC) Shares Targets' | translate }}
+          } @else {
+            {{ 'Block (iSCSI) Shares Targets' | translate }}
+          }
           <ix-icon name="open_in_new" class="title-icon"></ix-icon>
         </h3>
       </a>
