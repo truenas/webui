@@ -63,7 +63,7 @@ describe('FormErrorHandlerService', () => {
   });
 
   beforeEach(() => {
-    jest.spyOn(console, 'error').mockImplementation();
+    jest.spyOn(console, 'warn').mockImplementation();
     spectator = createService();
   });
 
@@ -118,8 +118,8 @@ describe('FormErrorHandlerService', () => {
     it('shows error dialog with original error when control is not found', () => {
       spectator.service.handleValidationErrors(callError, formGroup);
 
-      expect(console.error).not.toHaveBeenCalledWith('Could not find control test_control_1.');
-      expect(console.error).toHaveBeenCalledWith('Could not find control test_control_2.');
+      expect(console.warn).not.toHaveBeenCalledWith('Could not find control test_control_1.');
+      expect(console.warn).toHaveBeenCalledWith('Could not find control test_control_2.');
       expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalledWith(callError);
     });
 
