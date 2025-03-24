@@ -4,6 +4,7 @@ import {
   computed,
   input,
   OnChanges,
+  OnInit,
   output,
 } from '@angular/core';
 import {
@@ -49,9 +50,12 @@ import { UserService } from 'app/services/user.service';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NewMappingFormComponent implements OnChanges {
+export class NewMappingFormComponent implements OnChanges, OnInit {
   readonly type = input.required<ViewType>();
   readonly mappingAdded = output();
+
+  protected readonly ViewType = ViewType;
+  protected readonly containersHelptext = instancesHelptext;
 
   protected form = this.formBuilder.group({
     hostUidOrGid: [null as number, Validators.required],
@@ -78,12 +82,8 @@ export class NewMappingFormComponent implements OnChanges {
     this.resetFormOnTypeChanges();
   }
 
-  private resetFormOnTypeChanges(): void {
-    this.form.setValue({
-      mapDirectly: true,
-      instanceUidOrGid: null,
-      hostUidOrGid: null,
-    });
+  ngOnInit(): void {
+    this.handleMapDirectlyChanges();
   }
 
   protected submit(): void {
@@ -111,6 +111,22 @@ export class NewMappingFormComponent implements OnChanges {
       });
   }
 
-  protected readonly ViewType = ViewType;
-  protected readonly containersHelptext = instancesHelptext;
+  private resetFormOnTypeChanges(): void {
+    this.form.setValue({
+      mapDirectly: true,
+      instanceUidOrGid: null,
+      hostUidOrGid: null,
+    });
+  }
+
+  private handleMapDirectlyChanges(): void {
+    this.form.controls.mapDirectly.valueChanges.pipe(untilDestroyed(this)).subscribe((mapDirectly) => {
+      if (mapDirectly) {
+        this.form.controls.instanceUidOrGid.setValidators(null);
+      } else {
+        this.form.controls.instanceUidOrGid.setValidators(Validators.required);
+      }
+      this.form.controls.instanceUidOrGid.updateValueAndValidity();
+    });
+  }
 }
