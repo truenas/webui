@@ -5,12 +5,10 @@ import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { SmartTestResultStatus } from 'app/enums/smart-test-result-status.enum';
 import { VdevType } from 'app/enums/v-dev-type.enum';
 import { DeviceNestedDataNode } from 'app/interfaces/device-nested-data-node.interface';
 import { Disk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
-import { SmartTestResults, SmartTestTask } from 'app/interfaces/smart-test.interface';
 import { TopologyItem } from 'app/interfaces/storage.interface';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { HardwareDiskEncryptionComponent } from 'app/pages/storage/modules/devices/components/hardware-disk-encryption/hardware-disk-encryption.component';
@@ -206,42 +204,6 @@ describe('DevicesComponent', () => {
       mockApi([
         mockCall('pool.query', pools),
         mockCall('system.advanced.sed_global_password_is_set', false),
-        mockCall('smart.test.results', [
-          {
-            disk: 'sdc',
-            tests: [
-              {
-                num: 1,
-                status: SmartTestResultStatus.Running,
-                description: 'Background short',
-              },
-              {
-                num: 2,
-                status: SmartTestResultStatus.Success,
-                description: 'Background short',
-              },
-              {
-                num: 3,
-                status: SmartTestResultStatus.Failed,
-                description: 'Background long',
-              },
-              {
-                num: 4,
-                status: SmartTestResultStatus.Success,
-                description: 'Background long',
-              },
-              {
-                num: 5,
-                status: SmartTestResultStatus.Success,
-                description: 'Conveyance',
-              },
-            ],
-          } as SmartTestResults,
-        ]),
-        mockCall('smart.test.query_for_disk', [
-          { id: 1 },
-          { id: 2 },
-        ] as SmartTestTask[]),
         mockCall('disk.query', [{ passwd: '' } as unknown as Disk]),
       ]),
       mockProvider(RoutePartsService),
@@ -258,8 +220,6 @@ describe('DevicesComponent', () => {
         selectedParentNode$: of(parentNode),
         nodes$: of(nodes),
         selectedTopologyCategory$: of(VdevType.Data),
-        disksWithSmartTestSupport$: of([]),
-        loadDisksWithSmartTestSupport: jest.fn(),
         loadNodes: jest.fn(),
         selectedBranch$: of(selectedBranch),
       }),

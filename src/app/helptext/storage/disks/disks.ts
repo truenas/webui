@@ -3,10 +3,8 @@ import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 
 export const helptextDisks = {
-  fieldset_smart: 'S.M.A.R.T.',
   fieldset_disk: T('General'),
   fieldset_powermgmt: T('Power Management'),
-  fieldset_temperature: T('Temperature Alerts'),
   fieldset_sed: T('SED'),
 
   disk_form_hddstandby_tooltip: T('Minutes of inactivity before the drive enters standby mode. Temperature monitoring is disabled for standby disks.'),
@@ -34,10 +32,6 @@ export const helptextDisks = {
     { label: T('Level 192 - Intermediate power usage without Standby'), value: DiskPowerLevel.Level192 },
     { label: T('Level 254 - Maximum performance, maximum power usage'), value: DiskPowerLevel.Level254 },
   ],
-
-  disk_form_togglesmart_tooltip: T('Controls whether \
- <a href="https://www.truenas.com/docs/scale/scaleuireference/dataprotection/smarttestsscreensscale/" target="_blank">SMART monitoring and scheduled SMART tests</a> \
- are enabled.'),
 
   disk_form_critical_tooltip: T('Threshold temperature in Celsius. If the\
  drive temperature is higher than this value, a LOG_CRIT level log entry\

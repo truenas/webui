@@ -117,4 +117,10 @@ export enum VirtualizationSource {
   Image = 'IMAGE',
   Zvol = 'ZVOL',
   Iso = 'ISO',
+  Volume = 'VOLUME',
+}
+
+export enum VolumeContentType {
+  Block = 'BLOCK',
+  Iso = 'ISO',
 }

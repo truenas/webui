@@ -10,7 +10,6 @@ import { isTopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { DiskInfoCardComponent } from 'app/pages/storage/modules/devices/components/disk-info-card/disk-info-card.component';
 import { HardwareDiskEncryptionComponent } from 'app/pages/storage/modules/devices/components/hardware-disk-encryption/hardware-disk-encryption.component';
-import { SmartInfoCardComponent } from 'app/pages/storage/modules/devices/components/smart-info-card/smart-info-card.component';
 import { ZfsInfoCardComponent } from 'app/pages/storage/modules/devices/components/zfs-info-card/zfs-info-card.component';
 
 @Component({
@@ -22,7 +21,6 @@ import { ZfsInfoCardComponent } from 'app/pages/storage/modules/devices/componen
   imports: [
     ZfsInfoCardComponent,
     HardwareDiskEncryptionComponent,
-    SmartInfoCardComponent,
     DiskInfoCardComponent,
     TranslateModule,
     CastPipe,
@@ -35,7 +33,6 @@ export class DiskDetailsPanelComponent {
   readonly poolId = input<number>();
   readonly topologyCategory = input<VdevType>();
   readonly hasTopLevelRaidz = input<boolean>();
-  readonly disksWithSmartTestSupport = input<string[]>([]);
 
   readonly closeMobileDetails = output();
 
@@ -49,11 +46,6 @@ export class DiskDetailsPanelComponent {
     }
 
     return false;
-  });
-
-  protected hasSmartTestSupport = computed(() => {
-    const disk = this.disk();
-    return Boolean(disk && this.disksWithSmartTestSupport().includes(disk.devname));
   });
 
   onCloseMobileDetails(): void {

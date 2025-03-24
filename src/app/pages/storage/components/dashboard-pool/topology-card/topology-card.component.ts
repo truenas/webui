@@ -17,7 +17,6 @@ import { TopologyWarning, VdevType } from 'app/enums/v-dev-type.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { Disk, StorageDashboardDisk } from 'app/interfaces/disk.interface';
 import { Pool, PoolTopology } from 'app/interfaces/pool.interface';
-import { SmartTestResult } from 'app/interfaces/smart-test.interface';
 import {
   EnclosureAndSlot,
   TopologyDisk,
@@ -39,7 +38,7 @@ interface TopologyState {
 }
 
 export type EmptyDiskObject = Record<
-  string, string | number | boolean | string[] | SmartTestResult[] | EnclosureAndSlot
+  string, string | number | boolean | string[] | EnclosureAndSlot
 >;
 
 @UntilDestroy()

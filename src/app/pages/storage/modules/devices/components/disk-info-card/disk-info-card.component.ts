@@ -71,7 +71,7 @@ export class DiskInfoCardComponent {
   });
 
   onEdit(): void {
-    this.slideIn.open(DiskFormComponent, { wide: true, data: this.disk() }).pipe(
+    this.slideIn.open(DiskFormComponent, { data: this.disk() }).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(() => this.devicesStore.reloadList());
