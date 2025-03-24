@@ -45,7 +45,7 @@ import { DockerStore } from 'app/pages/apps/store/docker.store';
   ],
 })
 export class AppDetailsHeaderComponent {
-  readonly app = input.required<AvailableApp>();
+  readonly app = input<AvailableApp>();
   readonly isLoading = input<boolean>();
   protected readonly requiredRoles = [Role.AppsWrite];
   protected readonly dockerUpdateRequiredRoles = [Role.DockerWrite];
@@ -65,7 +65,7 @@ export class AppDetailsHeaderComponent {
   description = computed<string>(() => {
     const splitText = this.app()?.app_readme?.split('</h1>');
     const readyHtml = splitText?.[1] || splitText?.[0];
-    return readyHtml?.replace(/<[^>]*>/g, '').trim();
+    return readyHtml?.replace(/<[^>]*>/g, '').trim() || '';
   });
 
   private showAgreementWarning(): Observable<unknown> {

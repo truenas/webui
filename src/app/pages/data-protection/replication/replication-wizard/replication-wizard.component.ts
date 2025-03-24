@@ -35,7 +35,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   UseIxIconsInStepperComponent,
 } from 'app/modules/ix-icon/use-ix-icons-in-stepper/use-ix-icons-in-stepper.component';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -44,7 +44,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { ReplicationWizardData } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard-data.interface';
 import { ReplicationWhatAndWhereComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-what-and-where/replication-what-and-where.component';
 import { ReplicationWhenComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-when/replication-when.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { ReplicationService } from 'app/services/replication.service';
 
 @UntilDestroy()
@@ -69,8 +69,8 @@ import { ReplicationService } from 'app/services/replication.service';
   ],
 })
 export class ReplicationWizardComponent {
-  protected whatAndWhere = viewChild(ReplicationWhatAndWhereComponent);
-  protected when = viewChild(ReplicationWhenComponent);
+  protected whatAndWhere = viewChild.required(ReplicationWhatAndWhereComponent);
+  protected when = viewChild.required(ReplicationWhenComponent);
 
   protected readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
 
@@ -91,7 +91,7 @@ export class ReplicationWizardComponent {
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
-    private appLoader: AppLoaderService,
+    private loader: LoaderService,
     private snackbar: SnackbarService,
     public slideInRef: SlideInRef<undefined, ReplicationTask | undefined>,
     private authService: AuthService,
@@ -173,10 +173,10 @@ export class ReplicationWizardComponent {
   }
 
   private runReplicationOnce(createdReplication: ReplicationTask): Observable<boolean> {
-    this.appLoader.open(this.translate.instant('Starting task'));
+    this.loader.open(this.translate.instant('Starting task'));
     return this.api.startJob('replication.run', [createdReplication.id]).pipe(
       switchMap(() => {
-        this.appLoader.close();
+        this.loader.close();
         return this.dialogService.info(
           this.translate.instant('Task started'),
           this.translate.instant('Replication <i>{name}</i> has started.', { name: createdReplication.name }),
@@ -384,8 +384,8 @@ export class ReplicationWizardComponent {
     return values;
   }
 
-  handleError(err: unknown): void {
-    this.dialogService.error(this.errorHandler.parseError(err));
+  handleError(error: unknown): void {
+    this.errorHandler.showErrorModal(error);
     this.rollBack();
   }
 

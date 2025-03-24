@@ -35,7 +35,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -121,9 +121,9 @@ export class AppBulkUpgradeComponent {
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (summary) => {
-          const availableOptions = summary.available_versions_for_upgrade.map((item) => {
+          const availableOptions = summary.available_versions_for_upgrade?.map((item) => {
             return { value: item.version, label: item.version } as Option;
-          });
+          }) || [];
           this.upgradeSummaryMap.set(name, summary);
           this.optionsMap.set(name, of(availableOptions));
           this.form.patchValue({
@@ -155,7 +155,7 @@ export class AppBulkUpgradeComponent {
     this.api
       .job('core.bulk', ['app.upgrade', payload])
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => {

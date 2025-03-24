@@ -20,7 +20,7 @@ import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-ex
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { TransferModeExplanationComponent } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
@@ -77,7 +77,7 @@ export class CloudSyncRestoreDialogComponent {
     private translate: TranslateService,
     private dialogRef: MatDialogRef<CloudSyncRestoreDialogComponent>,
     private errorHandler: FormErrorHandlerService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     @Inject(MAT_DIALOG_DATA) private parentTaskId: number,
   ) { }
 

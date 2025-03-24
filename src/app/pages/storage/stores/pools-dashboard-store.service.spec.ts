@@ -24,15 +24,12 @@ const temperatureAgg = {
 const disk: Disk = {
   advpowermgmt: DiskPowerLevel.Disabled,
   bus: DiskBus.Spi,
-  critical: 0,
   description: '',
   devname: 'sdd',
-  difference: 0,
   duplicate_serial: [],
   expiretime: '',
   hddstandby: DiskStandby.AlwaysOn,
   identifier: '{uuid}b3ba146f-1ab6-4a45-ae6b-37ea00baf0aa',
-  informational: 0,
   model: 'VMware_Virtual_S',
   name: 'sdd',
   number: 2096,
@@ -41,7 +38,6 @@ const disk: Disk = {
   serial: '',
   size: 5368709120,
   subsystem: 'scsi',
-  togglesmart: true,
   transfermode: 'Auto',
   type: DiskType.Hdd,
   zfs_guid: '12387051346845729003',
@@ -97,8 +93,6 @@ describe('PoolsDashboardStore', () => {
           case 'disk.query':
             return cold('-a|', { a: [...disks] });
           case 'disk.temperature_alerts':
-            return cold('-a|', { a: [] });
-          case 'smart.test.results':
             return cold('-a|', { a: [] });
           case 'disk.temperature_agg':
             return cold('-a|', { a: { ...temperatureAgg } });

@@ -14,7 +14,6 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { CertificateCreate, CertificateProfile } from 'app/interfaces/certificate.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import {
   UseIxIconsInStepperComponent,
@@ -41,7 +40,7 @@ import {
 import {
   CertificateSubjectComponent,
 } from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-subject/certificate-subject.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -95,7 +94,6 @@ export class CsrAddComponent {
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
     private snackbar: SnackbarService,
-    private dialogService: DialogService,
     public slideInRef: SlideInRef<undefined, boolean>,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
@@ -137,12 +135,14 @@ export class CsrAddComponent {
         step.form.patchValue(otherFields);
       });
 
-    this.constraints().setFromProfile(extensions);
+    this.constraints()?.setFromProfile(extensions);
   }
 
   updateSummary(): void {
     const stepsWithSummary = this.isImport ? this.getImportCsrSteps() : this.getNewCsrSteps();
-    this.summary = stepsWithSummary.map((step) => step.getSummary());
+    this.summary = stepsWithSummary
+      .map((step) => step?.getSummary())
+      .filter((summary) => !!summary);
   }
 
   onSubmit(): void {
@@ -162,7 +162,7 @@ export class CsrAddComponent {
           this.isLoading = false;
           this.cdr.markForCheck();
           // TODO: Need to update error handler to open step with an error.
-          this.dialogService.error(this.errorHandler.parseError(error));
+          this.errorHandler.showErrorModal(error);
         },
       });
   }

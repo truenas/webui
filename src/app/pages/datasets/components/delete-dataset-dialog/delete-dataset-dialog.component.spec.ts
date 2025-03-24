@@ -8,6 +8,7 @@ import { of, throwError } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { JsonRpcError } from 'app/interfaces/api-message.interface';
 import { DatasetAttachment } from 'app/interfaces/pool-attachment.interface';
 import { Process } from 'app/interfaces/process.interface';
 import { VolumesListDataset } from 'app/interfaces/volumes-list-pool.interface';
@@ -15,6 +16,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { ApiCallError } from 'app/services/errors/error.classes';
 import { DeleteDatasetDialogComponent } from './delete-dataset-dialog.component';
 
 describe('DeleteDatasetDialogComponent', () => {
@@ -138,14 +140,11 @@ describe('DeleteDatasetDialogComponent', () => {
 
   it('asks to force delete a dataset if it cannot be deleted because device is busy', async () => {
     const websocketMock = spectator.inject(MockApiService);
-    jest.spyOn(websocketMock, 'call').mockImplementationOnce(() => throwError(() => ({
-      jsonrpc: '2.0',
-      error: {
-        data: {
-          reason: 'Device busy',
-        },
+    jest.spyOn(websocketMock, 'call').mockImplementationOnce(() => throwError(() => new ApiCallError({
+      data: {
+        reason: 'Device busy',
       },
-    })));
+    } as JsonRpcError)));
 
     await confirmAndDelete();
 

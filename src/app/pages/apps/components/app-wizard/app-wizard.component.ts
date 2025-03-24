@@ -59,7 +59,7 @@ import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-vali
 import { forbiddenAsyncValues, forbiddenValuesError } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -67,7 +67,7 @@ import { DockerHubRateInfoDialogComponent } from 'app/pages/apps/components/dock
 import { AppMetadataCardComponent } from 'app/pages/apps/components/installed-apps/app-metadata-card/app-metadata-card.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppSchemaService } from 'app/services/schema/app-schema.service';
 
 @UntilDestroy()
@@ -151,7 +151,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef,
     private activatedRoute: ActivatedRoute,
     private appService: ApplicationsService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private router: Router,
     private errorHandler: ErrorHandlerService,
     private dockerStore: DockerStore,
@@ -292,7 +292,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
     })
       .afterClosed()
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => this.onSuccess());

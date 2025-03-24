@@ -18,7 +18,6 @@ import { CaCreateType } from 'app/enums/ca-create-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { CertificateAuthorityUpdate } from 'app/interfaces/certificate-authority.interface';
 import { CertificateProfile } from 'app/interfaces/certificate.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import {
   UseIxIconsInStepperComponent,
@@ -48,7 +47,7 @@ import {
 import {
   CertificateSubjectComponent,
 } from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-subject/certificate-subject.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -102,7 +101,6 @@ export class CertificateAuthorityAddComponent implements AfterViewInit {
     private translate: TranslateService,
     private snackbar: SnackbarService,
     private errorHandler: ErrorHandlerService,
-    private dialogService: DialogService,
     public slideInRef: SlideInRef<undefined, boolean>,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
@@ -148,12 +146,14 @@ export class CertificateAuthorityAddComponent implements AfterViewInit {
         step.form.patchValue(otherFields);
       });
 
-    this.constraints().setFromProfile(extensions);
+    this.constraints()?.setFromProfile(extensions);
   }
 
   updateSummary(): void {
     const stepsWithSummary = this.isImport ? this.getImportCaSteps() : this.getNewCaSteps();
-    this.summary = stepsWithSummary.map((step) => step.getSummary());
+    this.summary = stepsWithSummary
+      .map((step) => step?.getSummary())
+      .filter((summary) => !!summary);
   }
 
   onSubmit(): void {
@@ -172,7 +172,7 @@ export class CertificateAuthorityAddComponent implements AfterViewInit {
         error: (error: unknown) => {
           this.isLoading = false;
           // TODO: Need to update error handler to open step with an error.
-          this.dialogService.error(this.errorHandler.parseError(error));
+          this.errorHandler.showErrorModal(error);
           this.cdr.markForCheck();
         },
       });
@@ -188,7 +188,7 @@ export class CertificateAuthorityAddComponent implements AfterViewInit {
   }
 
   private setDefaultConstraints(): void {
-    this.constraints().form.patchValue({
+    this.constraints()?.form.patchValue({
       BasicConstraints: {
         enabled: true,
         BasicConstraints: [BasicConstraint.Ca],

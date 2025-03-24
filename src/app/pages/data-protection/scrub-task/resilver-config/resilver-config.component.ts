@@ -16,7 +16,6 @@ import { Weekday } from 'app/enums/weekday.enum';
 import { helptextResilver } from 'app/helptext/storage/resilver/resilver';
 import { ResilverConfigUpdate } from 'app/interfaces/resilver-config.interface';
 import { CalendarService } from 'app/modules/dates/calendar.service';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
@@ -25,7 +24,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { resilverConfigElements } from 'app/pages/data-protection/scrub-task/resilver-config/resilver-config.elements';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { TaskService } from 'app/services/task.service';
 
 @UntilDestroy()
@@ -88,7 +87,6 @@ export class ResilverConfigComponent implements OnInit {
     private fb: FormBuilder,
     private calendarService: CalendarService,
     private taskService: TaskService,
-    private dialogService: DialogService,
     private router: Router,
     private snackbar: SnackbarService,
     private translate: TranslateService,
@@ -108,7 +106,7 @@ export class ResilverConfigComponent implements OnInit {
         error: (error: unknown) => {
           this.isFormLoading = false;
           this.cdr.markForCheck();
-          this.dialogService.error(this.errorHandler.parseError(error));
+          this.errorHandler.showErrorModal(error);
         },
       });
   }

@@ -12,7 +12,7 @@ import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { DiskIoBus, diskIoBusLabels } from 'app/enums/virtualization.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
-import { containersHelptext } from 'app/helptext/instances/instances';
+import { instancesHelptext } from 'app/helptext/instances/instances';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -22,7 +22,7 @@ import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-forma
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -50,7 +50,7 @@ export class ChangeRootDiskSetupComponent {
   });
 
   protected readonly diskIoBusOptions$ = of(mapToOptions(diskIoBusLabels, this.translate));
-  protected readonly containersHelptext = containersHelptext;
+  protected readonly containersHelptext = instancesHelptext;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) private instance: VirtualizationInstance,
@@ -96,7 +96,7 @@ export class ChangeRootDiskSetupComponent {
     )
       .afterClosed()
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => {

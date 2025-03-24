@@ -8,7 +8,7 @@ import {
 } from 'rxjs';
 import { ErrorReport } from 'app/interfaces/error-report.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorParserService } from 'app/services/errors/error-parser.service';
 
 @Injectable({
   providedIn: 'root',
@@ -17,7 +17,7 @@ export class TargetNameValidationService {
   constructor(
     private api: ApiService,
     private translate: TranslateService,
-    private errorHandler: ErrorHandlerService,
+    private errorParser: ErrorParserService,
   ) { }
 
   private errors = [
@@ -38,7 +38,7 @@ export class TargetNameValidationService {
 
           return this.api.call('iscsi.target.validate_name', [value]).pipe(
             catchError((error: unknown) => {
-              const errorReports = this.errorHandler.parseError(error) as ErrorReport;
+              const errorReports = this.errorParser.parseError(error) as ErrorReport;
               return of({
                 customValidator: {
                   message: errorReports?.message || this.translate.instant('Error validating target name'),

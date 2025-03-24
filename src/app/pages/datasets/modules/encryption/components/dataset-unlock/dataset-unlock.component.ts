@@ -31,7 +31,7 @@ import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-te
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { UnlockSummaryDialogComponent } from 'app/pages/datasets/modules/encryption/components/unlock-summary-dialog/unlock-summary-dialog.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UploadService } from 'app/services/upload.service';
 
 interface DatasetFormGroup {
@@ -142,7 +142,7 @@ export class DatasetUnlockComponent implements OnInit {
     )
       .afterClosed()
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe((job) => {
@@ -210,7 +210,7 @@ export class DatasetUnlockComponent implements OnInit {
     })
       .afterClosed()
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe((job) => {
@@ -253,7 +253,7 @@ export class DatasetUnlockComponent implements OnInit {
     })
       .afterClosed()
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe((job) => {

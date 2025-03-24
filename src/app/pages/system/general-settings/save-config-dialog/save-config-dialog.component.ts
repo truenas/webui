@@ -14,13 +14,12 @@ import { switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DownloadService } from 'app/services/download.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
@@ -58,7 +57,7 @@ export interface SaveConfigDialogMessages {
 export class SaveConfigDialogComponent {
   protected readonly requiredRoles = [Role.FullAdmin];
 
-  exportSeedCheckbox = new FormControl(false);
+  exportSeedCheckbox = new FormControl(true);
 
   helptext: SaveConfigDialogMessages;
 
@@ -73,11 +72,10 @@ export class SaveConfigDialogComponent {
   constructor(
     private store$: Store<AppState>,
     private download: DownloadService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private datePipe: DatePipe,
     private dialogRef: MatDialogRef<SaveConfigDialogComponent>,
     private errorHandler: ErrorHandlerService,
-    private dialogService: DialogService,
     private translate: TranslateService,
     @Optional() @Inject(MAT_DIALOG_DATA) messageOverrides: Partial<SaveConfigDialogMessages> = {},
   ) {
@@ -118,7 +116,7 @@ export class SaveConfigDialogComponent {
         this.dialogRef.close(true);
       },
       error: (error: unknown) => {
-        this.dialogService.error(this.errorHandler.parseError(error));
+        this.errorHandler.showErrorModal(error);
         this.dialogRef.close(false);
       },
     });

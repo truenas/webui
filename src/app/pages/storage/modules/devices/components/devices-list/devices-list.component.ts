@@ -70,6 +70,7 @@ export class DevicesListComponent implements OnInit {
   showMobileDetails = output<boolean>();
   showDetails = output<{ poolId: number; guid: string }>();
 
+  filterString = '';
   protected isLoading$ = this.devicesStore.isLoading$;
   protected selectedNode$ = this.devicesStore.selectedNode$;
 
@@ -93,7 +94,6 @@ export class DevicesListComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.devicesStore.loadDisksWithSmartTestSupport();
     this.devicesStore.loadNodes(this.poolId());
     this.listenForRouteChanges();
     this.setupTree();
@@ -108,6 +108,7 @@ export class DevicesListComponent implements OnInit {
   }
 
   protected onSearch(query: string): void {
+    this.filterString = query;
     this.dataSource.filter(query);
   }
 

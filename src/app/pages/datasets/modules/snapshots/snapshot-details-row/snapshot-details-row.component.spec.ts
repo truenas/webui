@@ -11,7 +11,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SnapshotCloneDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-clone-dialog/snapshot-clone-dialog.component';
@@ -33,7 +33,7 @@ describe('SnapshotDetailsRowComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockProvider(AppLoaderService, {
+      mockProvider(LoaderService, {
         withLoader: jest.fn(() => pipe()),
       }),
       mockProvider(DialogService, {

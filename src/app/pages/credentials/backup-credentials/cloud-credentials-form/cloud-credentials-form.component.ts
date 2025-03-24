@@ -38,7 +38,7 @@ import {
 import { CloudSyncProviderDescriptionComponent } from 'app/pages/data-protection/cloudsync/cloudsync-provider-description/cloudsync-provider-description.component';
 import { getName, getProviderFormClass } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-provider/cloudsync-provider.common';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export interface CloudCredentialFormInput {
   providers: CloudSyncProviderName[];
@@ -121,7 +121,7 @@ export class CloudCredentialsFormComponent implements OnInit {
     return !this.existingCredential;
   }
 
-  get selectedProvider(): CloudSyncProvider {
+  get selectedProvider(): CloudSyncProvider | undefined {
     return this.providers?.find((provider) => {
       return provider.name === this.commonForm.controls.type.value;
     });
@@ -264,7 +264,7 @@ export class CloudCredentialsFormComponent implements OnInit {
         error: (error: unknown) => {
           this.isLoading = false;
           this.cdr.markForCheck();
-          this.dialogService.error(this.errorHandler.parseError(error));
+          this.errorHandler.showErrorModal(error);
         },
       });
   }

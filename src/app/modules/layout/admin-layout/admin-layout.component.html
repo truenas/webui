@@ -42,6 +42,17 @@
               [matTooltip]="'Hostname: {hostname}' | translate: { hostname }"
             >{{ hostname }}</div>
           }
+
+          <p class="product-type">
+            <a
+              ixTest="navigate-to-enterprise-marketing-link"
+              target="_blank"
+              [href]="currentMessageHref()"
+            >
+              {{ productTypeText }}
+            </a>
+          </p>
+
           <ix-copyright-line class="copyright-line"></ix-copyright-line>
         </div>
       }

@@ -1,8 +1,13 @@
+@let target = dataProvider.expandedRow;
+@let showDetails = !masterList.filterString || target.name.toLowerCase().includes(masterList.filterString.toLowerCase());
+
 <ix-master-detail-view
   #masterDetailView="masterDetailViewContext"
-  [selectedItem]="dataProvider.expandedRow"
+  [selectedItem]="target"
+  [showDetails]="showDetails"
 >
   <ix-iscsi-target-list
+    #masterList
     master
     [dataProvider]="dataProvider"
     [targets]="targets()"
@@ -11,12 +16,12 @@
   ></ix-iscsi-target-list>
 
   <div detail-header class="detail-header">
-    <span>
-      {{ 'Details for' | translate }}
-      {{ dataProvider.expandedRow?.name }}
-    </span>
+    @if (target) {
+      <span>
+        {{ 'Details for' | translate }}
+        {{ target?.name }}
+      </span>
 
-    @if (dataProvider.expandedRow; as target) {
       <div class="detail-actions">
         <button
           *ixRequiresRoles="requiredRoles"
@@ -40,8 +45,8 @@
   </div>
 
   <ng-container detail>
-    @if (dataProvider.expandedRow) {
-      <ix-target-details [target]="dataProvider.expandedRow"></ix-target-details>
+    @if (target) {
+      <ix-target-details [target]="target"></ix-target-details>
     }
   </ng-container>
 </ix-master-detail-view>

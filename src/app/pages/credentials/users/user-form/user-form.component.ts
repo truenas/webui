@@ -55,7 +55,7 @@ import { OneTimePasswordCreatedDialogComponent } from 'app/pages/credentials/use
 import { userAdded, userChanged } from 'app/pages/credentials/users/store/user.actions';
 import { selectUsers } from 'app/pages/credentials/users/store/user.selectors';
 import { DownloadService } from 'app/services/download.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { StorageService } from 'app/services/storage.service';
 import { UserService } from 'app/services/user.service';
@@ -334,7 +334,7 @@ export class UserFormComponent implements OnInit {
 
     if (this.editingUser?.home && this.editingUser.home !== defaultHomePath) {
       this.storageService.filesystemStat(this.editingUser.home)
-        .pipe(this.errorHandler.catchError(), untilDestroyed(this))
+        .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
         .subscribe((stat) => {
           this.form.patchValue({ home_mode: stat.mode.toString(8).substring(2, 5) });
           this.homeModeOldValue = stat.mode.toString(8).substring(2, 5);

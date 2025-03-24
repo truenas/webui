@@ -16,7 +16,7 @@ import { helptextTopbar } from 'app/helptext/topbar';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   TruecommandConnectModalComponent,
@@ -29,7 +29,7 @@ import {
 import { TruecommandStatusModalComponent } from 'app/modules/truecommand/components/truecommand-status-modal/truecommand-status-modal.component';
 import { trueCommandElements } from 'app/modules/truecommand/truecommand-button.elements';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -76,7 +76,7 @@ export class TruecommandButtonComponent implements OnInit {
     private api: ApiService,
     private dialogService: DialogService,
     private matDialog: MatDialog,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
   ) {}
@@ -137,9 +137,9 @@ export class TruecommandButtonComponent implements OnInit {
           next: () => {
             this.loader.close();
           },
-          error: (err: unknown) => {
+          error: (error: unknown) => {
             this.loader.close();
-            this.dialogService.error(this.errorHandler.parseError(err));
+            this.errorHandler.showErrorModal(error);
           },
         });
       }

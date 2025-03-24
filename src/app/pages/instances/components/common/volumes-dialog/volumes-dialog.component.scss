@@ -21,9 +21,12 @@
   }
 }
 
-.new-volume {
+.controls {
   display: flex;
+  gap: 8px;
   justify-content: flex-end;
+  padding-bottom: 18px;
+  padding-top: 12px;
 }
 
 .content {

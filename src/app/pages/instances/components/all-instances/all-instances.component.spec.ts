@@ -11,7 +11,6 @@ import { MockMasterDetailViewComponent } from 'app/modules/master-detail-view/te
 import { AllInstancesHeaderComponent } from 'app/pages/instances/components/all-instances/all-instances-header/all-instances-header.component';
 import { AllInstancesComponent } from 'app/pages/instances/components/all-instances/all-instances.component';
 import { InstanceDetailsComponent } from 'app/pages/instances/components/all-instances/instance-details/instance-details.component';
-import { InstanceListComponent } from 'app/pages/instances/components/all-instances/instance-list/instance-list.component';
 import { VirtualizationConfigStore } from 'app/pages/instances/stores/virtualization-config.store';
 import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
@@ -32,7 +31,6 @@ describe('AllInstancesComponent', () => {
         MockMasterDetailViewComponent,
         AllInstancesHeaderComponent,
         InstanceDetailsComponent,
-        InstanceListComponent,
       ),
     ],
     providers: [
@@ -57,6 +55,8 @@ describe('AllInstancesComponent', () => {
       }),
       mockProvider(VirtualizationInstancesStore, {
         initialize: jest.fn(),
+        instances: jest.fn(() => []),
+        isLoading: jest.fn(() => false),
       }),
       mockProvider(VirtualizationDevicesStore, {
         selectedInstance: jest.fn(() => ({ id: 'instance1' } as VirtualizationInstance)),

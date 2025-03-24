@@ -15,9 +15,8 @@ import {
 import { LoginResult } from 'app/enums/login-result.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
 import { UpdateService } from 'app/services/update.service';
@@ -59,7 +58,6 @@ export class SigninStore extends ComponentStore<SigninState> {
     private api: ApiService,
     private translate: TranslateService,
     private tokenLastUsedService: TokenLastUsedService,
-    private dialogService: DialogService,
     private systemGeneralService: SystemGeneralService,
     private router: Router,
     private snackbar: MatSnackBar,
@@ -108,7 +106,7 @@ export class SigninStore extends ComponentStore<SigninState> {
     switchMap(() => from(this.router.navigateByUrl(this.getRedirectUrl()))),
     catchError((error: unknown) => {
       this.setLoadingState(false);
-      this.dialogService.error(this.errorHandler.parseError(error));
+      this.errorHandler.showErrorModal(error);
       return EMPTY;
     }),
   ));
@@ -169,7 +167,7 @@ export class SigninStore extends ComponentStore<SigninState> {
       tapResponse(
         () => {},
         (error: unknown) => {
-          this.dialogService.error(this.errorHandler.parseError(error));
+          this.errorHandler.showErrorModal(error);
         },
       ),
     );
@@ -190,7 +188,7 @@ export class SigninStore extends ComponentStore<SigninState> {
       tapResponse(
         () => {},
         (error: unknown) => {
-          this.dialogService.error(this.errorHandler.parseError(error));
+          this.errorHandler.showErrorModal(error);
         },
       ),
     );

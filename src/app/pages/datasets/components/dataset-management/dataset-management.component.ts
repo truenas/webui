@@ -40,12 +40,10 @@ import {
 import { DetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
-import { extractApiError } from 'app/helpers/api.helper';
+import { extractApiErrorDetails } from 'app/helpers/api.helper';
 import { WINDOW } from 'app/helpers/window.helper';
-import { ApiError } from 'app/interfaces/api-error.interface';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
-import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
@@ -68,7 +66,7 @@ import { datasetManagementElements } from 'app/pages/datasets/components/dataset
 import { DatasetNodeComponent } from 'app/pages/datasets/components/dataset-node/dataset-node.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { datasetNameSortComparer } from 'app/pages/datasets/utils/dataset.utils';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -120,7 +118,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   emptyConf = computed<EmptyConfig>(() => {
     const error = this.error();
 
-    const apiError = extractApiError(error);
+    const apiError = extractApiErrorDetails(error);
     if (apiError?.reason) {
       return {
         type: EmptyType.Errors,
@@ -235,10 +233,6 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     });
   }
 
-  handleError = (error: ApiError | Job): void => {
-    this.dialogService.error(this.errorHandler.parseError(error));
-  };
-
   isSystemDataset(dataset: DatasetDetails): boolean {
     return dataset.name.split('/').length === 1 && this.systemDataset() === dataset.name;
   }
@@ -285,7 +279,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
         this.expandDatasetBranch();
         this.cdr.markForCheck();
       },
-      error: this.handleError,
+      error: (error: unknown) => this.errorHandler.showErrorModal(error),
     });
 
     this.datasetStore.selectedBranch$
@@ -301,7 +295,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
             }
           });
         },
-        error: this.handleError,
+        error: (error: unknown) => this.errorHandler.showErrorModal(error),
       });
   }
 

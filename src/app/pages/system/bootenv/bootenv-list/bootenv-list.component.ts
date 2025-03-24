@@ -36,7 +36,7 @@ import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
@@ -47,7 +47,7 @@ import { BootPoolDeleteDialogComponent } from 'app/pages/system/bootenv/boot-poo
 import { BootEnvironmentFormComponent } from 'app/pages/system/bootenv/bootenv-form/bootenv-form.component';
 import { bootListElements } from 'app/pages/system/bootenv/bootenv-list/bootenv-list.elements';
 import { BootenvStatsDialogComponent } from 'app/pages/system/bootenv/bootenv-stats-dialog/bootenv-stats-dialog.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 // TODO: Exclude AnythingUi when NAS-127632 is done
 interface BootEnvironmentUi extends BootEnvironment {
@@ -200,7 +200,7 @@ export class BootEnvironmentListComponent implements OnInit {
     private matDialog: MatDialog,
     private translate: TranslateService,
     private slideIn: SlideIn,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
     private snackbar: SnackbarService,
@@ -253,7 +253,7 @@ export class BootEnvironmentListComponent implements OnInit {
       switchMap(() => {
         return this.api.startJob('boot.scrub').pipe(
           this.loader.withLoader(),
-          this.errorHandler.catchError(),
+          this.errorHandler.withErrorHandler(),
         );
       }),
       untilDestroyed(this),
@@ -281,7 +281,7 @@ export class BootEnvironmentListComponent implements OnInit {
       switchMap(() => {
         return this.api.call('boot.environment.activate', [{ id: bootenv.id }]).pipe(
           this.loader.withLoader(),
-          this.errorHandler.catchError(),
+          this.errorHandler.withErrorHandler(),
         );
       }),
       untilDestroyed(this),
@@ -299,7 +299,7 @@ export class BootEnvironmentListComponent implements OnInit {
         switchMap(() => {
           return this.api.call('boot.environment.keep', [{ id: bootenv.id, value: true }]).pipe(
             this.loader.withLoader(),
-            this.errorHandler.catchError(),
+            this.errorHandler.withErrorHandler(),
           );
         }),
         untilDestroyed(this),
@@ -314,7 +314,7 @@ export class BootEnvironmentListComponent implements OnInit {
         switchMap(() => {
           return this.api.call('boot.environment.keep', [{ id: bootenv.id, value: false }]).pipe(
             this.loader.withLoader(),
-            this.errorHandler.catchError(),
+            this.errorHandler.withErrorHandler(),
           );
         }),
         untilDestroyed(this),

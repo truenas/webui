@@ -23,7 +23,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { StopOptionsDialogComponent, StopOptionsOperation } from 'app/pages/instances/components/all-instances/instance-list/stop-options-dialog/stop-options-dialog.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -122,19 +122,19 @@ export class InstanceListBulkActionsComponent {
 
   private start(instanceId: string): void {
     this.api.job('virt.instance.start', [instanceId])
-      .pipe(this.errorHandler.catchError(), untilDestroyed(this))
+      .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
       .subscribe();
   }
 
   private stop(instanceId: string, options: VirtualizationStopParams): void {
     this.api.job('virt.instance.stop', [instanceId, options])
-      .pipe(this.errorHandler.catchError(), untilDestroyed(this))
+      .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
       .subscribe();
   }
 
   private restart(instanceId: string, options: VirtualizationStopParams): void {
     this.api.job('virt.instance.restart', [instanceId, options])
-      .pipe(this.errorHandler.catchError(), untilDestroyed(this))
+      .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
       .subscribe();
   }
 }

@@ -37,14 +37,14 @@ import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-h
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudBackupFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-form/cloud-backup-form.component';
 import { replicationListElements } from 'app/pages/data-protection/replication/replication-list/replication-list.elements';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -143,7 +143,7 @@ export class CloudBackupCardComponent implements OnInit {
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
     private snackbar: SnackbarService,
-    private appLoader: AppLoaderService,
+    private loader: LoaderService,
     private router: Router,
     protected emptyService: EmptyService,
     @Inject(WINDOW) private window: Window,
@@ -188,7 +188,7 @@ export class CloudBackupCardComponent implements OnInit {
         this.cdr.markForCheck();
       },
       error: (error: unknown) => {
-        this.dialogService.error(this.errorHandler.parseError(error));
+        this.errorHandler.showErrorModal(error);
         this.getCloudBackups();
       },
     });
@@ -216,14 +216,14 @@ export class CloudBackupCardComponent implements OnInit {
       buttonText: this.translate.instant('Delete'),
     }).pipe(
       filter(Boolean),
-      switchMap(() => this.api.call('cloud_backup.delete', [row.id]).pipe(this.appLoader.withLoader())),
+      switchMap(() => this.api.call('cloud_backup.delete', [row.id]).pipe(this.loader.withLoader())),
       untilDestroyed(this),
     ).subscribe({
       next: () => {
         this.getCloudBackups();
       },
-      error: (err: unknown) => {
-        this.dialogService.error(this.errorHandler.parseError(err));
+      error: (error: unknown) => {
+        this.errorHandler.showErrorModal(error);
       },
     });
   }
@@ -240,12 +240,12 @@ export class CloudBackupCardComponent implements OnInit {
             this.getCloudBackups();
           }
         },
-        error: (err: unknown) => {
+        error: (error: unknown) => {
           this.updatedCount.update((count) => count - 1);
           if (!this.updatedCount()) {
             this.getCloudBackups();
           }
-          this.dialogService.error(this.errorHandler.parseError(err));
+          this.errorHandler.showErrorModal(error);
         },
       });
   }

@@ -12,7 +12,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import {
   ReplicationRestoreDialogComponent,
 } from 'app/pages/data-protection/replication/replication-restore-dialog/replication-restore-dialog.component';
-import { DatasetService } from 'app/services/dataset-service/dataset.service';
+import { DatasetService } from 'app/services/dataset/dataset.service';
 
 describe('ReplicationRestoreDialogComponent', () => {
   let spectator: Spectator<ReplicationRestoreDialogComponent>;

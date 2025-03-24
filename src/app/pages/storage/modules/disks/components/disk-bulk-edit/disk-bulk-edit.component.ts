@@ -15,7 +15,6 @@ import { helptextDisks } from 'app/helptext/storage/disks/disks';
 import { Disk, DiskUpdate } from 'app/interfaces/disk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
@@ -40,7 +39,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
     IxFieldsetComponent,
     IxChipsComponent,
     IxSelectComponent,
-    IxCheckboxComponent,
     FormActionsComponent,
     RequiresRolesDirective,
     MatButton,
@@ -57,7 +55,6 @@ export class DiskBulkEditComponent {
     disknames: [[] as string[]],
     hddstandby: [null as DiskStandby | null],
     advpowermgmt: [null as DiskPowerLevel | null],
-    togglesmart: [false],
   });
 
   readonly helptext = helptextDisks;
@@ -85,7 +82,6 @@ export class DiskBulkEditComponent {
       disknames: [],
       hddstandby: '' as DiskStandby,
       advpowermgmt: '' as DiskPowerLevel,
-      togglesmart: false,
     };
     const hddStandby: DiskStandby[] = [];
     const advPowerMgt: DiskPowerLevel[] = [];
@@ -95,9 +91,6 @@ export class DiskBulkEditComponent {
       setForm.disknames.push(disk.name);
       hddStandby.push(disk.hddstandby);
       advPowerMgt.push(disk.advpowermgmt);
-      if (disk.togglesmart) {
-        setForm.togglesmart = true;
-      }
     });
 
     // If all items match in an array, this fills in the value in the form; otherwise, blank

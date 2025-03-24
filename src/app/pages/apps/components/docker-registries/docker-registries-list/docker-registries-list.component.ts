@@ -27,14 +27,14 @@ import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-h
 import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { dockerRegistriesListElements } from 'app/pages/apps/components/docker-registries/docker-registries-list/docker-registries-list.elements';
 import { DockerRegistryFormComponent } from 'app/pages/apps/components/docker-registries/docker-registry-form/docker-registry-form.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -106,7 +106,7 @@ export class DockerRegistriesListComponent implements OnInit {
     private api: ApiService,
     private slideIn: SlideIn,
     private dialogService: DialogService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
   ) {}
@@ -168,7 +168,7 @@ export class DockerRegistriesListComponent implements OnInit {
         switchMap(() => {
           return this.api.call('app.registry.delete', [row.id]).pipe(
             this.loader.withLoader(),
-            this.errorHandler.catchError(),
+            this.errorHandler.withErrorHandler(),
           );
         }),
         untilDestroyed(this),

@@ -12,7 +12,7 @@ import { CoreBulkQuery, CoreBulkResponse } from 'app/interfaces/core-bulk.interf
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { BulkListItemComponent } from 'app/modules/lists/bulk-list-item/bulk-list-item.component';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { BootPoolDeleteDialogComponent } from 'app/pages/system/bootenv/boot-pool-delete-dialog/boot-pool-delete-dialog.component';
 import { fakeBootEnvironmentsDataSource } from 'app/pages/system/bootenv/test/fake-boot-environments';
@@ -49,7 +49,7 @@ describe('BootPoolDeleteDialogComponent', () => {
         provide: MAT_DIALOG_DATA,
         useValue: fakeBootEnvironmentsDataSource,
       },
-      mockProvider(AppLoaderService),
+      mockProvider(LoaderService),
       mockProvider(MatDialogRef),
       mockProvider(DialogService),
       mockApi([
