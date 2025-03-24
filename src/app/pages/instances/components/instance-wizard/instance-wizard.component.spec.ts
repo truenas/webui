@@ -33,9 +33,9 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
-  PciPassthroughDialogComponent,
+  PciPassthroughDialog,
 } from 'app/pages/instances/components/common/pci-passthough-dialog/pci-passthrough-dialog.component';
-import { VolumesDialogComponent } from 'app/pages/instances/components/common/volumes-dialog/volumes-dialog.component';
+import { VolumesDialog } from 'app/pages/instances/components/common/volumes-dialog/volumes-dialog.component';
 import { InstanceWizardComponent } from 'app/pages/instances/components/instance-wizard/instance-wizard.component';
 import {
   VirtualizationImageWithId,
@@ -330,7 +330,7 @@ describe('InstanceWizardComponent', () => {
         afterClosed: () => of({
           id: 'my-volume',
         } as VirtualizationVolume),
-      } as MatDialogRef<VolumesDialogComponent>);
+      } as MatDialogRef<VolumesDialog>);
 
       const selectVolumeButton = await diskForm.getHarness(MatButtonHarness.with({ text: 'Select Volume' }));
       await selectVolumeButton.click();
@@ -363,7 +363,7 @@ describe('InstanceWizardComponent', () => {
           label: '0000:08:02.0 SCSI storage controller',
           value: '0000:08:02.0',
         }]),
-      } as MatDialogRef<PciPassthroughDialogComponent>);
+      } as MatDialogRef<PciPassthroughDialog>);
 
       const addPciButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add PCI Passthrough' }));
       await addPciButton.click();
@@ -421,7 +421,7 @@ describe('InstanceWizardComponent', () => {
           id: 'myiso.iso',
           content_type: VolumeContentType.Iso,
         } as VirtualizationVolume),
-      } as MatDialogRef<VolumesDialogComponent>);
+      } as MatDialogRef<VolumesDialog>);
 
       const instanceType = await loader.getHarness(IxIconGroupHarness.with({ label: 'Virtualization Method' }));
       await instanceType.setValue('VM');
@@ -468,7 +468,7 @@ describe('InstanceWizardComponent', () => {
           id: 'myvolume',
           content_type: VolumeContentType.Block,
         } as VirtualizationVolume),
-      } as MatDialogRef<VolumesDialogComponent>);
+      } as MatDialogRef<VolumesDialog>);
 
       const instanceType = await loader.getHarness(IxIconGroupHarness.with({ label: 'Virtualization Method' }));
       await instanceType.setValue('VM');

@@ -80,14 +80,14 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
-  PciPassthroughDialogComponent,
+  PciPassthroughDialog,
 } from 'app/pages/instances/components/common/pci-passthough-dialog/pci-passthrough-dialog.component';
 import {
-  VolumesDialogComponent,
+  VolumesDialog,
   VolumesDialogOptions,
 } from 'app/pages/instances/components/common/volumes-dialog/volumes-dialog.component';
 import {
-  SelectImageDialogComponent,
+  SelectImageDialog,
   VirtualizationImageWithId,
 } from 'app/pages/instances/components/instance-wizard/select-image-dialog/select-image-dialog.component';
 import { defaultVncPort } from 'app/pages/instances/instances.constants';
@@ -281,7 +281,7 @@ export class InstanceWizardComponent {
 
   protected onBrowseCatalogImages(): void {
     this.matDialog
-      .open(SelectImageDialogComponent, {
+      .open(SelectImageDialog, {
         minWidth: '90vw',
         data: {
           remote: VirtualizationRemote.LinuxContainers,
@@ -306,7 +306,7 @@ export class InstanceWizardComponent {
 
   protected onSelectRootVolume(): void {
     this.matDialog
-      .open<VolumesDialogComponent, VolumesDialogOptions, VirtualizationVolume>(VolumesDialogComponent, {
+      .open<VolumesDialog, VolumesDialogOptions, VirtualizationVolume>(VolumesDialog, {
         minWidth: '90vw',
         data: {
           selectionMode: true,
@@ -325,7 +325,7 @@ export class InstanceWizardComponent {
 
   protected onSelectVolume(targetField: FormControl<string>): void {
     this.matDialog
-      .open<VolumesDialogComponent, VolumesDialogOptions, VirtualizationVolume>(VolumesDialogComponent, {
+      .open<VolumesDialog, VolumesDialogOptions, VirtualizationVolume>(VolumesDialog, {
         minWidth: '90vw',
         data: {
           selectionMode: true,
@@ -567,7 +567,7 @@ export class InstanceWizardComponent {
 
   protected onAddPciPassthrough(): void {
     this.matDialog
-      .open(PciPassthroughDialogComponent, {
+      .open(PciPassthroughDialog, {
         minWidth: '90vw',
         data: {
           existingDeviceAddresses: this.form.getRawValue().pci_devices.map((device: Option) => device.value),

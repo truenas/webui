@@ -26,10 +26,10 @@ import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { PoolCardIconComponent } from 'app/pages/storage/components/dashboard-pool/pool-card-icon/pool-card-icon.component';
 import {
-  AutotrimDialogComponent,
+  AutotrimDialog,
 } from 'app/pages/storage/components/dashboard-pool/zfs-health-card/autotrim-dialog/autotrim-dialog.component';
 import {
-  PruneDedupTableDialogComponent,
+  PruneDedupTableDialog,
 } from 'app/pages/storage/components/dashboard-pool/zfs-health-card/prune-dedup-table-dialog/prune-dedup-table-dialog.component';
 import {
   SetDedupQuotaComponent,
@@ -221,7 +221,7 @@ describe('ZfsHealthCardComponent', () => {
     it('shows an AutotrimDialog when Edit auto Trim is pressed', () => {
       spectator.click(spectator.query(byText('Edit Auto TRIM'))!);
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(AutotrimDialogComponent, {
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(AutotrimDialog, {
         data: pool,
       });
     });
@@ -326,7 +326,7 @@ describe('ZfsHealthCardComponent', () => {
 
       spectator.click(spectator.query(byText('Prune'))!);
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(PruneDedupTableDialogComponent, {
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(PruneDedupTableDialog, {
         data: {
           ...pool,
           dedup_table_size: 100 * KiB,

@@ -10,12 +10,12 @@ import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFileInputHarness } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.harness';
 import { UploadService } from 'app/services/upload.service';
-import { UploadConfigDialogComponent } from './upload-config-dialog.component';
+import { UploadConfigDialog } from './upload-config-dialog.component';
 
 describe('UploadConfigDialogComponent', () => {
-  let spectator: Spectator<UploadConfigDialogComponent>;
+  let spectator: Spectator<UploadConfigDialog>;
   const createComponent = createComponentFactory({
-    component: UploadConfigDialogComponent,
+    component: UploadConfigDialog,
     imports: [
       ReactiveFormsModule,
     ],

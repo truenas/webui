@@ -11,7 +11,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
-import { StartServiceDialogComponent, StartServiceDialogResult } from 'app/modules/dialog/components/start-service-dialog/start-service-dialog.component';
+import { StartServiceDialog, StartServiceDialogResult } from 'app/modules/dialog/components/start-service-dialog/start-service-dialog.component';
 import { IxSlideToggleHarness } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServicesState } from 'app/store/services/services.reducer';
@@ -25,13 +25,13 @@ const cifsService = {
 } as Service;
 
 describe('StartServiceDialogComponent', () => {
-  let spectator: Spectator<StartServiceDialogComponent>;
+  let spectator: Spectator<StartServiceDialog>;
   let loader: HarnessLoader;
   let store$: MockStore<ServicesState>;
   const afterClosed$ = new Subject<StartServiceDialogResult>();
 
   const createComponent = createComponentFactory({
-    component: StartServiceDialogComponent,
+    component: StartServiceDialog,
     imports: [
       ReactiveFormsModule,
     ],

@@ -26,7 +26,7 @@ import {
 import { DiskFormComponent } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
 import { DiskListComponent } from 'app/pages/storage/modules/disks/components/disk-list/disk-list.component';
 import {
-  DiskWipeDialogComponent,
+  DiskWipeDialog,
 } from 'app/pages/storage/modules/disks/components/disk-wipe-dialog/disk-wipe-dialog.component';
 
 describe('DiskListComponent', () => {
@@ -158,7 +158,7 @@ describe('DiskListComponent', () => {
     const manualTestButton = await loader.getHarness(MatButtonHarness.with({ text: 'Wipe' }));
     await manualTestButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(DiskWipeDialogComponent, {
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(DiskWipeDialog, {
       data: {
         diskName: fakeDisk.name,
         exportedPool: fakeUnusedDisks[0].exported_zpool,

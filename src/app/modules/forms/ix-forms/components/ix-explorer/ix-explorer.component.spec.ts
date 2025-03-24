@@ -19,7 +19,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
-import { CreateDatasetDialogComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/create-dataset-dialog/create-dataset-dialog.component';
+import { CreateDatasetDialog } from 'app/modules/forms/ix-forms/components/ix-explorer/create-dataset-dialog/create-dataset-dialog.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 
@@ -339,7 +339,7 @@ describe.skip('IxExplorerComponent', () => {
 
       await createDatasetButton.click();
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(CreateDatasetDialogComponent, {
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(CreateDatasetDialog, {
         data: {
           dataset: createDatasetProps,
           parentId: 'place',

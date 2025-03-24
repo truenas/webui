@@ -43,7 +43,7 @@ export interface ExtendDialogParams {
     TranslateModule,
   ],
 })
-export class ExtendDialogComponent {
+export class ExtendDialog {
   form = this.formBuilder.group({
     newDisk: ['', Validators.required],
   });
@@ -59,7 +59,7 @@ export class ExtendDialogComponent {
     private dialogService: DialogService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
-    private dialogRef: MatDialogRef<ExtendDialogComponent>,
+    private dialogRef: MatDialogRef<ExtendDialog>,
     @Inject(MAT_DIALOG_DATA) public data: ExtendDialogParams,
   ) {}
 

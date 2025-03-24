@@ -44,7 +44,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
     TranslateModule,
   ],
 })
-export class BootPoolAttachDialogComponent implements OnInit {
+export class BootPoolAttachDialog implements OnInit {
   isFormLoading = false;
   protected helptextSystemBootenv = helptextSystemBootenv;
 
@@ -66,7 +66,7 @@ export class BootPoolAttachDialogComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private dialogService: DialogService,
-    private dialogRef: MatDialogRef<BootPoolAttachDialogComponent>,
+    private dialogRef: MatDialogRef<BootPoolAttachDialog>,
     private translate: TranslateService,
     protected api: ApiService,
     private cdr: ChangeDetectorRef,

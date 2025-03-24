@@ -66,7 +66,7 @@ enum EncryptionType {
     RequiresRolesDirective,
   ],
 })
-export class EncryptionOptionsDialogComponent implements OnInit {
+export class EncryptionOptionsDialog implements OnInit {
   form = this.fb.group({
     inherit_encryption: [false],
     encryption_type: new FormControl(null as EncryptionType | null),
@@ -111,7 +111,7 @@ export class EncryptionOptionsDialogComponent implements OnInit {
     private translate: TranslateService,
     private loader: LoaderService,
     private dialog: DialogService,
-    private dialogRef: MatDialogRef<EncryptionOptionsDialogComponent>,
+    private dialogRef: MatDialogRef<EncryptionOptionsDialog>,
     private formErrorHandler: FormErrorHandlerService,
     private errorHandler: ErrorHandlerService,
     private snackbar: SnackbarService,

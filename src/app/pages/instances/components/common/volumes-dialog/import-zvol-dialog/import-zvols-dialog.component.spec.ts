@@ -12,15 +12,15 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
-  ImportZvolsDialogComponent,
+  ImportZvolsDialog,
 } from 'app/pages/instances/components/common/volumes-dialog/import-zvol-dialog/import-zvols-dialog.component';
 import { FilesystemService } from 'app/services/filesystem.service';
 
 describe('ImportZvolsDialogComponent', () => {
-  let spectator: Spectator<ImportZvolsDialogComponent>;
+  let spectator: Spectator<ImportZvolsDialog>;
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
-    component: ImportZvolsDialogComponent,
+    component: ImportZvolsDialog,
     providers: [
       mockApi([
         mockJob('virt.volume.import_zvol', fakeSuccessfulJob()),

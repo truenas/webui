@@ -43,10 +43,10 @@ import { SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { BootPoolDeleteDialogComponent } from 'app/pages/system/bootenv/boot-pool-delete-dialog/boot-pool-delete-dialog.component';
+import { BootPoolDeleteDialog } from 'app/pages/system/bootenv/boot-pool-delete-dialog/boot-pool-delete-dialog.component';
 import { BootEnvironmentFormComponent } from 'app/pages/system/bootenv/bootenv-form/bootenv-form.component';
 import { bootListElements } from 'app/pages/system/bootenv/bootenv-list/bootenv-list.elements';
-import { BootenvStatsDialogComponent } from 'app/pages/system/bootenv/bootenv-stats-dialog/bootenv-stats-dialog.component';
+import { BootenvStatsDialog } from 'app/pages/system/bootenv/bootenv-stats-dialog/bootenv-stats-dialog.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 // TODO: Exclude AnythingUi when NAS-127632 is done
@@ -233,7 +233,7 @@ export class BootEnvironmentListComponent implements OnInit {
   }
 
   openBootenvStats(): void {
-    this.matDialog.open(BootenvStatsDialogComponent);
+    this.matDialog.open(BootenvStatsDialog);
   }
 
   doClone(bootenv: BootEnvironment): void {
@@ -265,7 +265,7 @@ export class BootEnvironmentListComponent implements OnInit {
   doDelete(bootenvs: BootEnvironmentUi[]): void {
     bootenvs.forEach((bootenv) => delete bootenv.selected);
     const data = bootenvs.filter((bootenv) => !bootenv.active && !bootenv.activated);
-    this.matDialog.open(BootPoolDeleteDialogComponent, { data })
+    this.matDialog.open(BootPoolDeleteDialog, { data })
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => this.refresh());

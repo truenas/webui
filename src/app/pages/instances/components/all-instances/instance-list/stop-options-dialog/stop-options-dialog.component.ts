@@ -48,7 +48,7 @@ enum WaitFor {
     IxSelectComponent,
   ],
 })
-export class StopOptionsDialogComponent {
+export class StopOptionsDialog {
   protected readonly operation = signal(StopOptionsOperation.Stop);
 
   protected readonly isRestart = computed(() => this.operation() === StopOptionsOperation.Restart);
@@ -85,7 +85,7 @@ export class StopOptionsDialogComponent {
   constructor(
     private formBuilder: FormBuilder,
     private translate: TranslateService,
-    private dialogRef: MatDialogRef<StopOptionsDialogComponent, VirtualizationStopParams | false>,
+    private dialogRef: MatDialogRef<StopOptionsDialog, VirtualizationStopParams | false>,
     @Inject(MAT_DIALOG_DATA) operation: StopOptionsOperation,
   ) {
     this.operation.set(operation);

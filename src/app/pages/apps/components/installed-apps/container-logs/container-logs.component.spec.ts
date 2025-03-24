@@ -12,7 +12,7 @@ import { ToolbarSliderComponent } from 'app/modules/forms/toolbar-slider/toolbar
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ContainerLogsComponent } from 'app/pages/apps/components/installed-apps/container-logs/container-logs.component';
-import { LogsDetailsDialogComponent } from 'app/pages/apps/components/logs-details-dialog/logs-details-dialog.component';
+import { LogsDetailsDialog } from 'app/pages/apps/components/logs-details-dialog/logs-details-dialog.component';
 
 describe('ContainerLogsComponent', () => {
   let spectator: Spectator<ContainerLogsComponent>;
@@ -25,7 +25,7 @@ describe('ContainerLogsComponent', () => {
     });
 
     it('subscribes to logs updates', () => {
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(LogsDetailsDialogComponent, { width: '400px' });
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(LogsDetailsDialog, { width: '400px' });
 
       expect(spectator.inject(ApiService).subscribe).toHaveBeenCalledWith(
         'app.container_log_follow: {"app_name":"ix-test-app","container_id":"ix-test-container","tail_lines":650}',
@@ -78,9 +78,9 @@ describe('ContainerLogsComponent', () => {
 
               return of({
                 tail_lines: 650,
-              } as LogsDetailsDialogComponent['form']['value']);
+              } as LogsDetailsDialog['form']['value']);
             }),
-          }) as unknown as MatDialogRef<LogsDetailsDialogComponent>),
+          }) as unknown as MatDialogRef<LogsDetailsDialog>),
         }),
         mockProvider(ApiService, {
           subscribe: jest.fn(() => of({

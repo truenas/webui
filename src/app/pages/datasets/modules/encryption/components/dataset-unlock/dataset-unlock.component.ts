@@ -30,7 +30,7 @@ import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { UnlockSummaryDialogComponent } from 'app/pages/datasets/modules/encryption/components/unlock-summary-dialog/unlock-summary-dialog.component';
+import { UnlockSummaryDialog } from 'app/pages/datasets/modules/encryption/components/unlock-summary-dialog/unlock-summary-dialog.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UploadService } from 'app/services/upload.service';
 
@@ -282,7 +282,7 @@ export class DatasetUnlockComponent implements OnInit {
     });
     if (!this.dialogOpen) {
       this.dialogOpen = true;
-      const unlockDialogRef = this.matDialog.open(UnlockSummaryDialogComponent, { disableClose: true });
+      const unlockDialogRef = this.matDialog.open(UnlockSummaryDialog, { disableClose: true });
       unlockDialogRef.componentInstance.parent = this;
       unlockDialogRef.componentInstance.showFinalResults();
       unlockDialogRef.componentInstance.unlockDatasets = unlock;
@@ -306,7 +306,7 @@ export class DatasetUnlockComponent implements OnInit {
     }
     if (!this.dialogOpen) { // prevent dialog from opening more than once
       this.dialogOpen = true;
-      const unlockDialogRef = this.matDialog.open(UnlockSummaryDialogComponent, { disableClose: true });
+      const unlockDialogRef = this.matDialog.open(UnlockSummaryDialog, { disableClose: true });
       unlockDialogRef.componentInstance.parent = this;
       unlockDialogRef.componentInstance.unlockDatasets = unlock;
       unlockDialogRef.componentInstance.errorDatasets = errors;
