@@ -2439,7 +2439,7 @@
   "Label": "Etiqueta",
   "Lan": "Lan",
   "Language": "Idioma",
-  "Languages other than <i>English</i> are provided by      the community and may be incomplete.      <a href=\"https://github.com/truenas/webui/blob/master/TRANSLATING.md\" target=\"_blank\">Learn how to contribute.</a>": "La comunidad proporciona otros idiomas además del <i>inglés</i> y es posible que estén incompletos. <a href=\"https://github.com/truenas/webui/blob/master/TRANSLATING.md\" target=\"_blank\">Aprendé cómo contribuir.</a>",
+  "Languages other than <i>English</i> are provided by      the community and may be incomplete.      <a href=\"https://github.com/truenas/webui/blob/master/docs/contributing_translations.md\" target=\"_blank\">Learn how to contribute.</a>": "La comunidad proporciona otros idiomas además del <i>inglés</i> y es posible que estén incompletos. <a href=\"https://github.com/truenas/webui/blob/master/docs/contributing_translations.md\" target=\"_blank\">Aprendé cómo contribuir.</a>",
   "Last 24 hours": "Ultimas 24 horas",
   "Last 3 days": "Últimos 3 días",
   "Last Login": "Último inicio de sesión",
