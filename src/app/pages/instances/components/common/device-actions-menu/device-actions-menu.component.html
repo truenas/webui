@@ -8,6 +8,7 @@
     [ixTest]="['actions-for', device().description]"
     [matMenuTriggerFor]="menu"
     [disabled]="!canManage()"
+    [attr.tabindex]="!canManage() ? -1 : 0"
     [attr.aria-label]="'Actions for {device}' | translate: { device: device().description }"
   >
     <ix-icon name="more_vert"></ix-icon>

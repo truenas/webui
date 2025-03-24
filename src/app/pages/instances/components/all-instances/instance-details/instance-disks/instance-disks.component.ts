@@ -8,7 +8,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter } from 'rxjs/operators';
 import { GiB } from 'app/constants/bytes.constant';
@@ -57,14 +57,22 @@ export class InstanceDisksComponent {
 
   protected readonly isLoadingDevices = this.deviceStore.isLoading;
   protected readonly diskIoBusLabels = diskIoBusLabels;
-  protected readonly instanceStatus = VirtualizationStatus;
-  protected readonly instanceType = VirtualizationType;
+
+  protected readonly disksDisabledMessage = this.translate.instant(
+    'VM disks cannot be managed while the instance is running.',
+  );
+
+  protected readonly isVmRunning = computed(() => {
+    return this.instance().status === VirtualizationStatus.Running && this.instance().type === VirtualizationType.Vm;
+  });
 
   protected readonly isVm = computed(() => this.instance().type === VirtualizationType.Vm);
+  protected readonly isContainer = computed(() => this.instance().type === VirtualizationType.Container);
 
   constructor(
     private slideIn: SlideIn,
     private matDialog: MatDialog,
+    private translate: TranslateService,
     private deviceStore: VirtualizationDevicesStore,
     private instanceStore: VirtualizationInstancesStore,
   ) {}
