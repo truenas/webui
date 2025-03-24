@@ -1,9 +1,11 @@
 import { EventEmitter, Injectable } from '@angular/core';
-import { sortBy } from 'lodash-es';
+import { find, sortBy } from 'lodash-es';
 import {
   Subject, Observable,
+  of,
 } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
+import { languages } from 'app/constants/languages.constant';
 import { ProductType } from 'app/enums/product-type.enum';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { Certificate } from 'app/interfaces/certificate.interface';
@@ -105,24 +107,20 @@ export class SystemGeneralService {
     );
   }
 
-  languageChoices(): Observable<Choices> {
-    return this.api.call('system.general.language_choices');
-  }
-
   languageOptions(sortLanguagesByName: boolean): Observable<Option[]> {
-    return this.languageChoices().pipe(map((languageList: Choices): Option[] => {
-      let options = Object.keys(languageList || {}).map((key) => ({
-        label: sortLanguagesByName
-          ? `${languageList[key]} (${key})`
-          : `${key} (${languageList[key]})`,
-        value: key,
-      }));
-      options = sortBy(
-        options,
-        sortLanguagesByName ? 'label' : 'value',
-      );
-      return options;
+    let options: Option[] = Object.keys(languages).map((code) => ({
+      label: sortLanguagesByName
+        ? `${find(languages, { code }).name} (${code})`
+        : `${code} (${find(languages, { code }).name})`,
+      value: code,
     }));
+
+    options = sortBy(
+      options,
+      sortLanguagesByName ? 'label' : 'value',
+    );
+
+    return of(options);
   }
 
   timezoneChoices(): Observable<Option[]> {
