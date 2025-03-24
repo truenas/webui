@@ -369,6 +369,7 @@
   "Bucket Name": "",
   "Bucket Policy Only": "",
   "Bug": "",
+  "Built-In": "",
   "Bulk Actions": "",
   "By clicking the share creation checkbox below, a new share will be created on form submission with the default share settings Additionally, local TrueNAS users will have access to the resulting share and some more configuration options will be available.": "",
   "By default, Samba uses a hashing algorithm for NTFS illegal  characters. Enabling this option translates NTFS illegal characters to the Unicode private range.": "",

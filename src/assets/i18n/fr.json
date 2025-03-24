@@ -103,6 +103,7 @@
   "Bridged NICs": "",
   "Browse Catalog": "",
   "Bucket Name": "",
+  "Built-In": "",
   "Bulk Actions": "",
   "Burst": "",
   "By default, accounts inside instances are mapped to a special private range of UIDs and GIDs to perform security isolation for the containers.  This range starts at 2147000001.  <br>  You can use this dialog to control mapping manually.": "",
