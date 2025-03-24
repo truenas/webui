@@ -31,13 +31,9 @@ describe('DiskFormComponent', () => {
     name: 'sdc',
     serial: 'VB9fbb6dfe-9cf26570',
     advpowermgmt: DiskPowerLevel.Level127,
-    critical: 5,
     description: 'Some disk description',
-    difference: 5,
-    informational: 5,
     hddstandby: DiskStandby.Minutes10,
     passwd: '',
-    togglesmart: false,
     devname: 'sdc',
     identifier: '{serial}VB9fbb6dfe-9cf26570',
   } as Disk;
@@ -92,12 +88,8 @@ describe('DiskFormComponent', () => {
       const formValue = await form.getValues();
       expect(formValue).toEqual({
         'Advanced Power Management': 'Level 127 - Maximum power usage with Standby',
-        Critical: '5',
         Description: 'Some disk description',
-        Difference: '5',
-        'Enable S.M.A.R.T.': false,
         'HDD Standby': '10',
-        Informational: '5',
         Name: 'sdc',
         Serial: 'VB9fbb6dfe-9cf26570',
       });
@@ -106,24 +98,16 @@ describe('DiskFormComponent', () => {
     it('saves disk settings when form is saved', async () => {
       await form.fillForm({
         'Advanced Power Management': 'Level 64 - Intermediate power usage with Standby',
-        Critical: '',
         Description: 'New disk description',
-        Difference: '',
-        Informational: '10',
         'HDD Standby': '10',
-        'Enable S.M.A.R.T.': true,
       });
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('disk.update', ['{serial}VB9fbb6dfe-9cf26570', {
         advpowermgmt: '64',
-        critical: null,
         description: 'New disk description',
-        difference: null,
-        informational: 10,
         hddstandby: '10',
-        togglesmart: true,
       }]);
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: true, error: null });
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
@@ -148,13 +132,9 @@ describe('DiskFormComponent', () => {
       const formValue = await form.getValues();
       expect(formValue).toEqual({
         'Advanced Power Management': 'Level 127 - Maximum power usage with Standby',
-        Critical: '5',
         'Clear SED Password': false,
         Description: 'Some disk description',
-        Difference: '5',
-        'Enable S.M.A.R.T.': false,
         'HDD Standby': '10',
-        Informational: '5',
         Name: 'sdc',
         'SED Password': '',
         Serial: 'VB9fbb6dfe-9cf26570',
@@ -164,12 +144,8 @@ describe('DiskFormComponent', () => {
     it('saves disk settings when form is saved', async () => {
       await form.fillForm({
         'Advanced Power Management': 'Level 64 - Intermediate power usage with Standby',
-        Critical: '',
         Description: 'New disk description',
-        Difference: '',
-        Informational: '10',
         'HDD Standby': '10',
-        'Enable S.M.A.R.T.': true,
         'SED Password': '123456',
       });
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -177,12 +153,8 @@ describe('DiskFormComponent', () => {
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('disk.update', ['{serial}VB9fbb6dfe-9cf26570', {
         advpowermgmt: '64',
-        critical: null,
         description: 'New disk description',
-        difference: null,
-        informational: 10,
         hddstandby: '10',
-        togglesmart: true,
         passwd: '123456',
       }]);
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: true, error: null });

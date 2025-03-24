@@ -14,12 +14,6 @@
       <ix-hardware-disk-encryption
         [topologyDisk]="topologyItem() | cast"
       ></ix-hardware-disk-encryption>
-
-      <ix-smart-info-card
-        [topologyDisk]="topologyItem() | cast"
-        [disk]="disk()"
-        [hasSmartTestSupport]="hasSmartTestSupport()"
-      ></ix-smart-info-card>
     }
 
     @if (isTopologyDisk()) {

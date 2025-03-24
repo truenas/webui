@@ -9,7 +9,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
-import { helptextServiceSmart } from 'app/helptext/services/components/service-snmp';
+import { helptextServiceSnmp } from 'app/helptext/services/components/service-snmp';
 import { SnmpConfigUpdate } from 'app/interfaces/snmp-config.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -80,22 +80,22 @@ export class ServiceSnmpComponent implements OnInit {
   });
 
   readonly tooltips = {
-    location: helptextServiceSmart.location_tooltip,
-    contact: helptextServiceSmart.contact_tooltip,
-    community: helptextServiceSmart.community_tooltip,
-    v3: helptextServiceSmart.v3_tooltip,
-    v3_username: helptextServiceSmart.v3_username_tooltip,
-    v3_authtype: helptextServiceSmart.v3_authtype_tooltip,
-    v3_password: helptextServiceSmart.v3_password_tooltip,
-    v3_privproto: helptextServiceSmart.v3_privproto_tooltip,
-    v3_privpassphrase: helptextServiceSmart.v3_privpassphrase_tooltip,
-    options: helptextServiceSmart.options_tooltip,
-    loglevel: helptextServiceSmart.loglevel_tooltip,
+    location: helptextServiceSnmp.location_tooltip,
+    contact: helptextServiceSnmp.contact_tooltip,
+    community: helptextServiceSnmp.community_tooltip,
+    v3: helptextServiceSnmp.v3_tooltip,
+    v3_username: helptextServiceSnmp.v3_username_tooltip,
+    v3_authtype: helptextServiceSnmp.v3_authtype_tooltip,
+    v3_password: helptextServiceSnmp.v3_password_tooltip,
+    v3_privproto: helptextServiceSnmp.v3_privproto_tooltip,
+    v3_privpassphrase: helptextServiceSnmp.v3_privpassphrase_tooltip,
+    options: helptextServiceSnmp.options_tooltip,
+    loglevel: helptextServiceSnmp.loglevel_tooltip,
   };
 
-  readonly authtypeOptions$ = of(helptextServiceSmart.v3_authtype_options);
-  readonly privprotoOptions$ = of(helptextServiceSmart.v3_privproto_options);
-  readonly logLevelOptions$ = of(helptextServiceSmart.loglevel_options);
+  readonly authtypeOptions$ = of(helptextServiceSnmp.v3_authtype_options);
+  readonly privprotoOptions$ = of(helptextServiceSnmp.v3_privproto_options);
+  readonly logLevelOptions$ = of(helptextServiceSnmp.loglevel_options);
 
   get isV3SupportEnabled(): boolean {
     return this.form?.value?.v3 || false;

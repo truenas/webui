@@ -213,10 +213,6 @@ import { ResilverConfig, ResilverConfigUpdate } from 'app/interfaces/resilver-co
 import { RsyncTask, RsyncTaskUpdate } from 'app/interfaces/rsync-task.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { ResizeShellRequest } from 'app/interfaces/shell.interface';
-import {
-  SmartManualTestParams, SmartConfig, SmartConfigUpdate, SmartTestTask, SmartTestResults, ManualSmartTest,
-  SmartTestTaskUpdate,
-} from 'app/interfaces/smart-test.interface';
 import { SmbConfig, SmbConfigUpdate } from 'app/interfaces/smb-config.interface';
 import {
   SmbPresets, SmbShare, SmbSharesec, SmbSharesecAce, SmbShareUpdate,
@@ -746,18 +742,6 @@ export interface ApiCallDirectory {
   'sharing.smb.setacl': { params: [{ share_name: string; share_acl: SmbSharesecAce[] }]; response: SmbSharesec };
   'sharing.smb.share_precheck': { params: [{ name: string }]; response: null | { reason: string } };
   'sharing.smb.update': { params: [id: number, update: SmbShareUpdate]; response: SmbShare };
-
-  // SMART
-  'smart.config': { params: void; response: SmartConfig };
-  'smart.test.create': { params: [SmartTestTaskUpdate]; response: SmartTestTask };
-  'smart.test.delete': { params: [id: number]; response: boolean };
-  'smart.test.disk_choices': { params: void; response: Choices };
-  'smart.test.manual_test': { params: [SmartManualTestParams[]]; response: ManualSmartTest[] };
-  'smart.test.query': { params: QueryParams<SmartTestTask>; response: SmartTestTask[] };
-  'smart.test.query_for_disk': { params: [disk: string]; response: SmartTestTask[] };
-  'smart.test.results': { params: QueryParams<SmartTestResults>; response: SmartTestResults[] };
-  'smart.test.update': { params: [id: number, update: SmartTestTaskUpdate]; response: SmartTestTask };
-  'smart.update': { params: [SmartConfigUpdate]; response: SmartConfig };
 
   // SMB
   'smb.bindip_choices': { params: void; response: Choices };
