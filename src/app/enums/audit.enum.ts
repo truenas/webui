@@ -24,6 +24,7 @@ export enum AuditEvent {
   MethodCall = 'METHOD_CALL',
   Accept = 'ACCEPT',
   Reject = 'REJECT',
+  Reboot = 'REBOOT',
 }
 
 export const auditServiceLabels = new Map<AuditService, string>([
@@ -50,4 +51,5 @@ export const auditEventLabels = new Map<AuditEvent, string>([
   [AuditEvent.MethodCall, T('Method Call')],
   [AuditEvent.Accept, T('Accept')],
   [AuditEvent.Reject, T('Reject')],
+  [AuditEvent.Reboot, T('Reboot')],
 ]);

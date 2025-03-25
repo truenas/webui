@@ -61,8 +61,8 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudSyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
-import { CreateStorjBucketDialogComponent } from 'app/pages/data-protection/cloudsync/create-storj-bucket-dialog/create-storj-bucket-dialog.component';
-import { CustomTransfersDialogComponent } from 'app/pages/data-protection/cloudsync/custom-transfers-dialog/custom-transfers-dialog.component';
+import { CreateStorjBucketDialog } from 'app/pages/data-protection/cloudsync/create-storj-bucket-dialog/create-storj-bucket-dialog.component';
+import { CustomTransfersDialog } from 'app/pages/data-protection/cloudsync/custom-transfers-dialog/custom-transfers-dialog.component';
 import { TransferModeExplanationComponent } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -299,7 +299,7 @@ export class CloudSyncFormComponent implements OnInit {
         this.setBucketNodeProvider();
         return;
       }
-      const dialogRef = this.matDialog.open(CreateStorjBucketDialogComponent, {
+      const dialogRef = this.matDialog.open(CreateStorjBucketDialog, {
         width: '500px',
         data: {
           credentialsId: this.form.controls.credentials.value,
@@ -395,7 +395,7 @@ export class CloudSyncFormComponent implements OnInit {
 
     this.form.controls.transfers.valueChanges.pipe(untilDestroyed(this)).subscribe((value: number) => {
       if (value === customOptionValue) {
-        const dialogRef = this.matDialog.open(CustomTransfersDialogComponent);
+        const dialogRef = this.matDialog.open(CustomTransfersDialog);
         dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe((transfers: number) => {
           if (this.isCustomTransfers(transfers)) {
             this.setTransfersOptions(true, transfers);

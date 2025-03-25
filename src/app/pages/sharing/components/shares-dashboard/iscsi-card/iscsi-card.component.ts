@@ -39,7 +39,7 @@ import { iscsiCardElements } from 'app/pages/sharing/components/shares-dashboard
 import { ServiceExtraActionsComponent } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-extra-actions.component';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
-import { DeleteTargetDialogComponent } from 'app/pages/sharing/iscsi/target/delete-target-dialog/delete-target-dialog.component';
+import { DeleteTargetDialog } from 'app/pages/sharing/iscsi/target/delete-target-dialog/delete-target-dialog.component';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectService } from 'app/store/services/services.selectors';
@@ -178,7 +178,7 @@ export class IscsiCardComponent implements OnInit {
 
   doDelete(iscsi: IscsiTarget): void {
     this.matDialog
-      .open(DeleteTargetDialogComponent, { data: iscsi, width: '600px' })
+      .open(DeleteTargetDialog, { data: iscsi, width: '600px' })
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => this.dataProvider.load());

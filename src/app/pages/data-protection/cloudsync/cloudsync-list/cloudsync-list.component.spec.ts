@@ -34,7 +34,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { CloudSyncListComponent } from 'app/pages/data-protection/cloudsync/cloudsync-list/cloudsync-list.component';
-import { CloudSyncRestoreDialogComponent } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
+import { CloudSyncRestoreDialog } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
 import { TaskService } from 'app/services/task.service';
 
 describe('CloudSyncListComponent', () => {
@@ -226,7 +226,7 @@ describe('CloudSyncListComponent', () => {
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Restore' }));
     await editButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(CloudSyncRestoreDialogComponent, {
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(CloudSyncRestoreDialog, {
       data: 1,
     });
 

@@ -19,7 +19,7 @@ import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { AppDeleteDialogComponent } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.component';
+import { AppDeleteDialog } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.component';
 import { AppBulkUpgradeComponent } from 'app/pages/apps/components/installed-apps/app-bulk-upgrade/app-bulk-upgrade.component';
 import { AppDetailsPanelComponent } from 'app/pages/apps/components/installed-apps/app-details-panel/app-details-panel.component';
 import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
@@ -200,7 +200,7 @@ describe('InstalledAppsListComponent', () => {
     await selectAll.check();
     spectator.query(InstalledAppsListBulkActionsComponent)!.bulkDelete.emit();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(AppDeleteDialogComponent, {
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(AppDeleteDialog, {
       data: {
         name: 'ix-test-app-1, ix-test-app-2',
         showRemoveVolumes: true,

@@ -7,7 +7,7 @@ import {
 } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
 import { BehaviorSubject } from 'rxjs';
-import { FeedbackDialogComponent } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
+import { FeedbackDialog } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { FileReviewComponent } from 'app/modules/feedback/components/file-review/file-review.component';
 import { FileTicketComponent } from 'app/modules/feedback/components/file-ticket/file-ticket.component';
 import {
@@ -21,7 +21,7 @@ import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { SystemGeneralService } from 'app/services/system-general.service';
 
 describe('FeedbackDialogComponent', () => {
-  let spectator: Spectator<FeedbackDialogComponent>;
+  let spectator: Spectator<FeedbackDialog>;
   let typeButtonGroup: IxButtonGroupHarness | null;
   let loader: HarnessLoader;
 
@@ -29,7 +29,7 @@ describe('FeedbackDialogComponent', () => {
   const isEnterprise$ = new BehaviorSubject(false);
 
   const createComponent = createComponentFactory({
-    component: FeedbackDialogComponent,
+    component: FeedbackDialog,
     imports: [
       ReactiveFormsModule,
       CastPipe,

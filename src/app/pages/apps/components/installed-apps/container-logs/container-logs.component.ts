@@ -17,7 +17,7 @@ import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { LogsDetailsDialogComponent } from 'app/pages/apps/components/logs-details-dialog/logs-details-dialog.component';
+import { LogsDetailsDialog } from 'app/pages/apps/components/logs-details-dialog/logs-details-dialog.component';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { ShellService } from 'app/services/shell.service';
@@ -83,8 +83,8 @@ export class ContainerLogsComponent implements OnInit {
       this.logsChangedListener.unsubscribe();
     }
 
-    this.logsChangedListener = this.matDialog.open(LogsDetailsDialogComponent, { width: '400px' }).afterClosed().pipe(
-      tap((value: LogsDetailsDialogComponent['form']['value'] | boolean) => {
+    this.logsChangedListener = this.matDialog.open(LogsDetailsDialog, { width: '400px' }).afterClosed().pipe(
+      tap((value: LogsDetailsDialog['form']['value'] | boolean) => {
         if (typeof value === 'boolean' && !value) {
           this.location.back();
           return;
@@ -93,7 +93,7 @@ export class ContainerLogsComponent implements OnInit {
         this.logs = [];
         this.isLoading = true;
       }),
-      switchMap((details: LogsDetailsDialogComponent['form']['value']) => {
+      switchMap((details: LogsDetailsDialog['form']['value']) => {
         return this.api.subscribe(`app.container_log_follow: ${JSON.stringify({
           app_name: this.appName,
           container_id: this.containerId,

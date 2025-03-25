@@ -30,7 +30,7 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { RestartSmbDialogComponent } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
+import { RestartSmbDialog } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
 import { ApiCallError } from 'app/services/errors/error.classes';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { AppState } from 'app/store';
@@ -448,7 +448,7 @@ describe('SmbFormComponent', () => {
         },
       }]);
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(RestartSmbDialogComponent, {
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(RestartSmbDialog, {
         data: {
           timemachine: true,
           homeshare: true,

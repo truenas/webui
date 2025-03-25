@@ -55,7 +55,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     MatAnchor,
   ],
 })
-export class SnapshotRollbackDialogComponent implements OnInit {
+export class SnapshotRollbackDialog implements OnInit {
   protected readonly requiredRoles = [Role.SnapshotWrite];
 
   isLoading = true;

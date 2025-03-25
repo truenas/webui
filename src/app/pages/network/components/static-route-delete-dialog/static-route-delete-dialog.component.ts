@@ -36,7 +36,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TranslateModule,
   ],
 })
-export class StaticRouteDeleteDialogComponent {
+export class StaticRouteDeleteDialog {
   protected readonly requiredRoles = [Role.NetworkInterfaceWrite];
 
   readonly deleteMessage = T('Are you sure you want to delete static route <b>"{name}"</b>?');
@@ -46,7 +46,7 @@ export class StaticRouteDeleteDialogComponent {
     private api: ApiService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
-    private dialogRef: MatDialogRef<StaticRouteDeleteDialogComponent>,
+    private dialogRef: MatDialogRef<StaticRouteDeleteDialog>,
     @Inject(MAT_DIALOG_DATA) public route: StaticRoute,
     private errorHandler: ErrorHandlerService,
   ) { }

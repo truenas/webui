@@ -16,7 +16,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { ApiService } from 'app/modules/websocket/api.service';
 import { InstanceRowComponent } from 'app/pages/instances/components/all-instances/instance-list/instance-row/instance-row.component';
 import {
-  StopOptionsDialogComponent,
+  StopOptionsDialog,
   StopOptionsOperation,
 } from 'app/pages/instances/components/all-instances/instance-list/stop-options-dialog/stop-options-dialog.component';
 import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
@@ -38,7 +38,7 @@ describe('InstanceRowComponent', () => {
       MapValuePipe,
     ],
     declarations: [
-      MockComponent(StopOptionsDialogComponent),
+      MockComponent(StopOptionsDialog),
     ],
     providers: [
       mockAuth(),
@@ -128,7 +128,7 @@ describe('InstanceRowComponent', () => {
       await stopIcon.click();
 
       expect(spectator.inject(MatDialog).open)
-        .toHaveBeenCalledWith(StopOptionsDialogComponent, { data: StopOptionsOperation.Stop });
+        .toHaveBeenCalledWith(StopOptionsDialog, { data: StopOptionsOperation.Stop });
 
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
@@ -143,7 +143,7 @@ describe('InstanceRowComponent', () => {
       await restartIcon.click();
 
       expect(spectator.inject(MatDialog).open)
-        .toHaveBeenCalledWith(StopOptionsDialogComponent, { data: StopOptionsOperation.Restart });
+        .toHaveBeenCalledWith(StopOptionsDialog, { data: StopOptionsOperation.Restart });
 
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(

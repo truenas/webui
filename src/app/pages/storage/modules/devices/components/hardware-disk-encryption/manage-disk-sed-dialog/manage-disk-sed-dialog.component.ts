@@ -39,7 +39,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TranslateModule,
   ],
 })
-export class ManageDiskSedDialogComponent implements OnInit {
+export class ManageDiskSedDialog implements OnInit {
   protected readonly requiredRoles = [Role.DiskWrite];
 
   passwordControl = new FormControl('', {
@@ -55,7 +55,7 @@ export class ManageDiskSedDialogComponent implements OnInit {
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private loader: LoaderService,
-    private dialogRef: MatDialogRef<ManageDiskSedDialogComponent>,
+    private dialogRef: MatDialogRef<ManageDiskSedDialog>,
     private snackbar: SnackbarService,
     private translate: TranslateService,
     @Inject(MAT_DIALOG_DATA) private diskName: string,

@@ -59,7 +59,7 @@ export class AlertConfigFormComponent implements OnInit {
   noResponseConfig = {
     type: EmptyType.Errors,
     large: true,
-    title: this.translate.instant('Can not retrieve response'),
+    title: this.translate.instant('Cannot retrieve response'),
   };
 
   categories: AlertCategory[] = [];

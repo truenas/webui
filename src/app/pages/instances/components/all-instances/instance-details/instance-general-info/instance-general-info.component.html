@@ -31,6 +31,10 @@
         <span class="label">{{ 'Memory' | translate }}:</span>
         {{ formatter.memorySizeFormatting(instance.memory) || ('Available Host Memory' | translate) }}
       </p>
+      <p>
+        <span class="label">{{ 'Storage Pool' | translate }}:</span>
+        {{ instance.storage_pool }}
+      </p>
 
       @if (this.isVm()) {
         <p>

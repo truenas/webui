@@ -54,6 +54,7 @@ const instance = {
   secure_boot: true,
   root_disk_io_bus: DiskIoBus.Nvme,
   vnc_port: 9000,
+  storage_pool: 'dozer',
 } as VirtualizationInstance;
 
 describe('InstanceGeneralInfoComponent', () => {
@@ -108,12 +109,13 @@ describe('InstanceGeneralInfoComponent', () => {
 
   it('renders details in card', () => {
     const chartExtra = spectator.query('mat-card-content')!.querySelectorAll('p');
-    expect(chartExtra).toHaveLength(5);
+    expect(chartExtra).toHaveLength(6);
     expect(chartExtra[0]).toHaveText('Autostart: Yes');
     expect(chartExtra[1]).toHaveText('Base Image: Almalinux 8 amd64 (20241030_23:38)');
     expect(chartExtra[2]).toHaveText('CPU: 525');
     expect(chartExtra[3]).toHaveText('Memory: 125 MiB');
-    expect(chartExtra[4]).toHaveText('Secure Boot: Yes');
+    expect(chartExtra[4]).toHaveText('Pool: dozer');
+    expect(chartExtra[5]).toHaveText('Secure Boot: Yes');
   });
 
   it('renders correct values when CPU or Memory limit is not set', () => {
