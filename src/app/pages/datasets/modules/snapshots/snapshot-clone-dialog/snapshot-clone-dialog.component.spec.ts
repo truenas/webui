@@ -28,7 +28,7 @@ describe('SnapshotCloneDialogComponent', () => {
       mockProvider(MatDialogRef),
       mockProvider(DialogService),
       mockApi([
-        mockCall('zfs.snapshot.clone'),
+        mockCall('pool.snapshot.clone'),
       ]),
     ],
   });
@@ -50,7 +50,7 @@ describe('SnapshotCloneDialogComponent', () => {
     const cloneButton = await loader.getHarness(MatButtonHarness.with({ text: 'Clone' }));
     await cloneButton.click();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('zfs.snapshot.clone', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshot.clone', [{
       dataset_dst: 'pool/dataset',
       snapshot: 'my-snapshot',
     }]);

@@ -116,7 +116,7 @@ export class SnapshotRollbackDialogComponent implements OnInit {
    * Possibly can be removed
    */
   getSnapshotCreationInfo(): void {
-    this.api.call('zfs.snapshot.query', [[['id', '=', this.snapshotName]]]).pipe(
+    this.api.call('pool.snapshot.query', [[['id', '=', this.snapshotName]]]).pipe(
       map((snapshots) => snapshots[0]),
       untilDestroyed(this),
     ).subscribe({
@@ -146,7 +146,7 @@ export class SnapshotRollbackDialogComponent implements OnInit {
       body.recursive_clones = true;
     }
 
-    this.api.call('zfs.snapshot.rollback', [this.snapshotName, body]).pipe(
+    this.api.call('pool.snapshot.rollback', [this.snapshotName, body]).pipe(
       this.loader.withLoader(),
       untilDestroyed(this),
     ).subscribe({

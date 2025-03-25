@@ -49,5 +49,5 @@ export interface ApiEventDirectory {
   'virt.instance.metrics': { response: VirtualizationInstanceMetrics };
   'virt.instance.query': { response: VirtualizationInstance };
   'zfs.pool.scan': { response: PoolScan };
-  'zfs.snapshot.query': { response: ZfsSnapshot };
+  'pool.snapshot.query': { response: ZfsSnapshot };
 }

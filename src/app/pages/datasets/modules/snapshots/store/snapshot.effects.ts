@@ -26,7 +26,7 @@ export class SnapshotEffects {
     switchMap(() => this.store$.pipe(waitForPreferences)),
     switchMap((preferences) => {
       const extraColumns = preferences.showSnapshotExtraColumns ? ['properties' as keyof ZfsSnapshot] : [];
-      return this.api.call('zfs.snapshot.query', [
+      return this.api.call('pool.snapshot.query', [
         snapshotExcludeBootQueryFilter as QueryFilters<ZfsSnapshot>,
         {
           select: ['snapshot_name', 'dataset', 'name', ...extraColumns],
@@ -48,7 +48,7 @@ export class SnapshotEffects {
   subscribeToUpdates$ = createEffect(() => this.actions$.pipe(
     ofType(snapshotsLoaded),
     switchMap(() => {
-      return this.api.subscribe('zfs.snapshot.query').pipe(
+      return this.api.subscribe('pool.snapshot.query').pipe(
         filter((event) => event.msg !== CollectionChangeType.Removed),
         switchMap((event) => {
           switch (event.msg) {
@@ -67,7 +67,7 @@ export class SnapshotEffects {
   subscribeToRemoval$ = createEffect(() => this.actions$.pipe(
     ofType(snapshotsLoaded),
     switchMap(() => {
-      return this.api.subscribe('zfs.snapshot.query').pipe(
+      return this.api.subscribe('pool.snapshot.query').pipe(
         filter((event) => event.msg === CollectionChangeType.Removed),
         map((event) => snapshotRemoved({ id: event.id.toString() })),
       );

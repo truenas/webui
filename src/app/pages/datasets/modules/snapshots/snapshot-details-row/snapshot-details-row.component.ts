@@ -87,7 +87,7 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
 
   getSnapshotInfo(): void {
     this.api.call(
-      'zfs.snapshot.query',
+      'pool.snapshot.query',
       [
         [['id', '=', this.snapshot().name]], {
           extra: {
@@ -117,7 +117,7 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
   }
 
   doHoldOrRelease(): void {
-    const holdOrRelease = this.holdControl.value ? 'zfs.snapshot.hold' : 'zfs.snapshot.release';
+    const holdOrRelease = this.holdControl.value ? 'pool.snapshot.hold' : 'pool.snapshot.release';
     this.api.call(holdOrRelease, [this.snapshotInfo.name])
       .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
@@ -145,7 +145,7 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
     }).pipe(
       filter(Boolean),
       switchMap(() => {
-        return this.api.call('zfs.snapshot.delete', [snapshot.name]).pipe(
+        return this.api.call('pool.snapshot.delete', [snapshot.name]).pipe(
           this.loader.withLoader(),
           this.errorHandler.withErrorHandler(),
           tap(() => {

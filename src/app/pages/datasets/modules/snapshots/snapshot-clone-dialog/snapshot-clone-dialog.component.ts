@@ -69,7 +69,7 @@ export class SnapshotCloneDialogComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.api.call('zfs.snapshot.clone', [{
+    this.api.call('pool.snapshot.clone', [{
       snapshot: this.snapshotName,
       dataset_dst: this.datasetName,
     }])

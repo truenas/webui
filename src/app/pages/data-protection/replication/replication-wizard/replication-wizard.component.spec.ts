@@ -92,7 +92,7 @@ describe('ReplicationWizardComponent', () => {
         mockCall('replication.target_unmatched_snapshots', {}),
         mockCall('pool.snapshottask.query', []),
         mockCall('pool.snapshottask.create', { id: 33 } as PeriodicSnapshotTask),
-        mockCall('zfs.snapshot.create'),
+        mockCall('pool.snapshot.create'),
         mockCall('replication.create', existingTask),
       ]),
       mockProvider(SlideInRef, slideInRef),
@@ -164,13 +164,13 @@ describe('ReplicationWizardComponent', () => {
       },
     }]);
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('zfs.snapshot.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshot.create', [{
       dataset: 'pool1/',
       naming_schema: 'auto-%Y-%m-%d_%H-%M',
       recursive: false,
     }]);
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('zfs.snapshot.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshot.create', [{
       dataset: 'pool2/',
       naming_schema: 'auto-%Y-%m-%d_%H-%M',
       recursive: false,

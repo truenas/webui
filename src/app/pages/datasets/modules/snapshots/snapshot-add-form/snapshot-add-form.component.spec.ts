@@ -42,7 +42,7 @@ describe('SnapshotAddFormComponent', () => {
     providers: [
       mockAuth(),
       mockApi([
-        mockCall('zfs.snapshot.create'),
+        mockCall('pool.snapshot.create'),
         mockCall('pool.dataset.query', mockDatasets),
         mockCall('replication.list_naming_schemas', mockNamingSchema),
         mockCall('pool.dataset.details'),
@@ -87,7 +87,7 @@ describe('SnapshotAddFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(api.call).toHaveBeenCalledWith('zfs.snapshot.create', [
+    expect(api.call).toHaveBeenCalledWith('pool.snapshot.create', [
       {
         dataset: 'APPS',
         name: 'test-snapshot-name',
@@ -111,7 +111,7 @@ describe('SnapshotAddFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(api.call).toHaveBeenCalledWith('zfs.snapshot.create', [
+    expect(api.call).toHaveBeenCalledWith('pool.snapshot.create', [
       {
         dataset: 'APPS',
         naming_schema: '%Y %H %d %M %m',
@@ -132,7 +132,7 @@ describe('SnapshotAddFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(api.call).not.toHaveBeenCalledWith('zfs.snapshot.create');
+    expect(api.call).not.toHaveBeenCalledWith('pool.snapshot.create');
   });
 
   it('re-checks for VMs in dataset when recursive checkbox is toggled or dataset changed', async () => {
