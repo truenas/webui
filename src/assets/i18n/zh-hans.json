@@ -2538,7 +2538,7 @@
   "Label": "标签",
   "Lan": "局域网",
   "Language": "语言",
-  "Languages other than <i>English</i> are provided by      the community and may be incomplete.      <a href=\"https://github.com/truenas/webui/blob/master/TRANSLATING.md\" target=\"_blank\">Learn how to contribute.</a>": "除了<i>英语</i>以外的语言由社区提供，可能不完整。<a href=\"https://github.com/truenas/webui/blob/master/TRANSLATING.md\" target=\"_blank\">了解如何贡献。</a>",
+  "Languages other than <i>English</i> are provided by      the community and may be incomplete.      <a href=\"https://github.com/truenas/webui/blob/master/docs/contributing_translations.md\" target=\"_blank\">Learn how to contribute.</a>": "除了<i>英语</i>以外的语言由社区提供，可能不完整。<a href=\"https://github.com/truenas/webui/blob/master/docs/contributing_translations.md\" target=\"_blank\">了解如何贡献。</a>",
   "Last 24 hours": "最近 24 小时",
   "Last 3 days": "最近 3 天",
   "Last Page": "最后一页",
