@@ -8,7 +8,7 @@ import { of } from 'rxjs';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { PowerMenuComponent } from 'app/modules/layout/topbar/power-menu/power-menu.component';
-import { RebootOrShutdownDialogComponent } from 'app/modules/layout/topbar/reboot-or-shutdown-dialog/reboot-or-shutdown-dialog.component';
+import { RebootOrShutdownDialog } from 'app/modules/layout/topbar/reboot-or-shutdown-dialog/reboot-or-shutdown-dialog.component';
 
 describe('PowerMenuComponent', () => {
   let spectator: Spectator<PowerMenuComponent>;
@@ -43,7 +43,7 @@ describe('PowerMenuComponent', () => {
     const restart = await menu.getItems({ text: /Restart$/ });
     await restart[0].click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(RebootOrShutdownDialogComponent, {
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(RebootOrShutdownDialog, {
       width: '430px',
     });
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/system-tasks/restart'], {
@@ -56,7 +56,7 @@ describe('PowerMenuComponent', () => {
     const shutdown = await menu.getItems({ text: /Shut Down$/ });
     await shutdown[0].click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(RebootOrShutdownDialogComponent, {
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(RebootOrShutdownDialog, {
       width: '430px',
       data: true,
     });

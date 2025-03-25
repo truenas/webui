@@ -56,7 +56,7 @@ type Version = Omit<AppUpgradeSummary, 'upgrade_version' | 'image_update_availab
     RequiresRolesDirective,
   ],
 })
-export class AppUpgradeDialogComponent {
+export class AppUpgradeDialog {
   dialogConfig: AppUpgradeDialogConfig;
   imagePlaceholder = appImagePlaceholder;
   helptext = helptextApps;
@@ -67,7 +67,7 @@ export class AppUpgradeDialogComponent {
   protected readonly requiredRoles = [Role.AppsWrite];
 
   constructor(
-    public dialogRef: MatDialogRef<AppUpgradeDialogComponent>,
+    public dialogRef: MatDialogRef<AppUpgradeDialog>,
     private loader: LoaderService,
     private errorHandler: ErrorHandlerService,
     private appService: ApplicationsService,
@@ -110,6 +110,9 @@ export class AppUpgradeDialogComponent {
           this.errorHandler.withErrorHandler(),
           untilDestroyed(this),
         ).subscribe((summary: AppUpgradeSummary) => {
+          if (!this.selectedVersion) {
+            return;
+          }
           this.selectedVersion.changelog = summary.changelog;
           this.selectedVersion.fetched = true;
         });

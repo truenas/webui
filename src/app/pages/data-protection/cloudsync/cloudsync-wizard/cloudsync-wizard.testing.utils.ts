@@ -3,7 +3,7 @@ import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 
 export const storjProvider = {
   name: CloudSyncProviderName.Storj,
-  title: 'Storj iX',
+  title: 'Storj',
   credentials_schema: [],
   credentials_oauth: null,
   buckets: true,

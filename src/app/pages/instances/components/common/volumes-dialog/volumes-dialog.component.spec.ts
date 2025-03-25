@@ -1,7 +1,9 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import {
+  MAT_DIALOG_DATA, MatDialog, MatDialogRef,
+} from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
@@ -15,14 +17,20 @@ import { LocaleService } from 'app/modules/language/locale.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
+  ImportZvolsDialog,
+} from 'app/pages/instances/components/common/volumes-dialog/import-zvol-dialog/import-zvols-dialog.component';
+import {
+  NewVolumeDialog,
+} from 'app/pages/instances/components/common/volumes-dialog/new-volume-dialog/new-volume-dialog.component';
+import {
   UploadIsoButtonComponent,
 } from 'app/pages/instances/components/common/volumes-dialog/upload-iso-button/upload-iso-button.component';
 import {
-  VolumesDialogComponent,
+  VolumesDialog,
 } from 'app/pages/instances/components/common/volumes-dialog/volumes-dialog.component';
 
 describe('VolumesDialogComponent', () => {
-  let spectator: Spectator<VolumesDialogComponent>;
+  let spectator: Spectator<VolumesDialog>;
   let loader: HarnessLoader;
   const volumes = [
     {
@@ -31,6 +39,9 @@ describe('VolumesDialogComponent', () => {
       content_type: 'ISO',
       created_at: '2025-01-28T15:45:47.527725382-08:00',
       used_by: [],
+      config: {
+        size: 17,
+      },
     },
     {
       id: 'windows.iso',
@@ -38,11 +49,14 @@ describe('VolumesDialogComponent', () => {
       content_type: 'ISO',
       created_at: '2025-01-29T15:45:47.527725382-08:00',
       used_by: ['my-instance', 'test'],
+      config: {
+        size: 1024,
+      },
     },
   ] as VirtualizationVolume[];
 
   const createComponent = createComponentFactory({
-    component: VolumesDialogComponent,
+    component: VolumesDialog,
     imports: [
       MockComponent(UploadIsoButtonComponent),
     ],
@@ -52,6 +66,11 @@ describe('VolumesDialogComponent', () => {
         mockCall('virt.volume.delete'),
       ]),
       mockProvider(MatDialogRef),
+      mockProvider(MatDialog, {
+        open: jest.fn(() => ({
+          afterClosed: () => of(true),
+        })),
+      }),
       mockProvider(SnackbarService),
       mockProvider(LocaleService, {
         timezone: 'UTC',
@@ -77,9 +96,9 @@ describe('VolumesDialogComponent', () => {
       const table = await loader.getHarness(IxTableHarness);
 
       expect(await table.getCellTexts()).toEqual([
-        ['Name', 'Created At', 'Used By', ''],
-        ['ubuntu.iso', '2025-01-28 23:45:47', 'N/A', ''],
-        ['windows.iso', '2025-01-29 23:45:47', 'my-instance, test', ''],
+        ['Name', 'Size', 'Created At', 'Used By', ''],
+        ['ubuntu.iso', '17 MiB', '2025-01-28 23:45:47', 'N/A', ''],
+        ['windows.iso', '1 GiB', '2025-01-29 23:45:47', 'my-instance, test', ''],
       ]);
     });
 
@@ -100,6 +119,20 @@ describe('VolumesDialogComponent', () => {
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('virt.volume.delete', ['ubuntu.iso']);
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('virt.volume.query');
+    });
+
+    it('opens a dialog to add create new volume when Create Volume is pressed', async () => {
+      const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Volume' }));
+      await createButton.click();
+
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(NewVolumeDialog, expect.anything());
+    });
+
+    it('opens a dialog to import zvols when Import Zvols is pressed', async () => {
+      const importButton = await loader.getHarness(MatButtonHarness.with({ text: 'Import Zvols' }));
+      await importButton.click();
+
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ImportZvolsDialog, expect.anything());
     });
   });
 

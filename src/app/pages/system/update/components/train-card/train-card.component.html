@@ -1,5 +1,5 @@
 <mat-card class="train-card">
-  <ix-fake-progress-bar [loading]="updateService.isLoading$ | async"></ix-fake-progress-bar>
+  <ix-fake-progress-bar [loading]="!!(updateService.isLoading$ | async)"></ix-fake-progress-bar>
   <form class="ix-form-container" [formGroup]="form">
     <div class="train-card-row">
       <ix-checkbox

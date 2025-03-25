@@ -9,13 +9,13 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { SnapshotCloneDialogComponent } from './snapshot-clone-dialog.component';
+import { SnapshotCloneDialog } from './snapshot-clone-dialog.component';
 
 describe('SnapshotCloneDialogComponent', () => {
-  let spectator: Spectator<SnapshotCloneDialogComponent>;
+  let spectator: Spectator<SnapshotCloneDialog>;
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
-    component: SnapshotCloneDialogComponent,
+    component: SnapshotCloneDialog,
     imports: [
       ReactiveFormsModule,
     ],

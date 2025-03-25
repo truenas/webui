@@ -48,7 +48,7 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
     MapValuePipe,
   ],
 })
-export class BootenvStatsDialogComponent implements OnInit {
+export class BootenvStatsDialog implements OnInit {
   form = this.fb.group({
     interval: [null as number | null, [Validators.required, Validators.min(1)]],
   });
@@ -63,7 +63,7 @@ export class BootenvStatsDialogComponent implements OnInit {
     private api: ApiService,
     private loader: LoaderService,
     private store$: Store<AppState>,
-    private dialogRef: MatDialogRef<BootenvStatsDialogComponent>,
+    private dialogRef: MatDialogRef<BootenvStatsDialog>,
     private translate: TranslateService,
     private fb: NonNullableFormBuilder,
     private errorHandler: ErrorHandlerService,

@@ -18,14 +18,14 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   ReplaceDiskDialogData,
-  ReplaceDiskDialogComponent,
+  ReplaceDiskDialog,
 } from 'app/pages/storage/modules/devices/components/disk-info-card/replace-disk-dialog/replace-disk-dialog.component';
 
 describe('ReplaceDiskDialogComponent', () => {
-  let spectator: Spectator<ReplaceDiskDialogComponent>;
+  let spectator: Spectator<ReplaceDiskDialog>;
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
-    component: ReplaceDiskDialogComponent,
+    component: ReplaceDiskDialog,
     imports: [
       ReactiveFormsModule,
       UnusedDiskSelectComponent,
@@ -97,7 +97,7 @@ describe('ReplaceDiskDialogComponent', () => {
 
   it('shows additional settings to preserve disk settings and description', async () => {
     const preserveSettings = await loader.getHarness(
-      IxCheckboxHarness.with({ label: 'Preserve Power Management and S.M.A.R.T. settings' }),
+      IxCheckboxHarness.with({ label: 'Preserve Power Management settings' }),
     );
     await preserveSettings.setValue(false);
 

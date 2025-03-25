@@ -16,7 +16,7 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { BulkListItemComponent } from 'app/modules/lists/bulk-list-item/bulk-list-item.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { DockerImageDeleteDialogComponent } from 'app/pages/apps/components/docker-images/docker-image-delete-dialog/docker-image-delete-dialog.component';
+import { DockerImageDeleteDialog } from 'app/pages/apps/components/docker-images/docker-image-delete-dialog/docker-image-delete-dialog.component';
 import { fakeDockerImagesDataSource } from 'app/pages/apps/components/docker-images/test/fake-docker-images';
 
 const mockSuccessBulkResponse = [{
@@ -36,11 +36,11 @@ const mockFailedBulkResponse = [{
 }] as CoreBulkResponse[];
 
 describe('DockerImageDeleteDialogComponent', () => {
-  let spectator: Spectator<DockerImageDeleteDialogComponent>;
+  let spectator: Spectator<DockerImageDeleteDialog>;
   let loader: HarnessLoader;
 
   const createComponent = createComponentFactory({
-    component: DockerImageDeleteDialogComponent,
+    component: DockerImageDeleteDialog,
     imports: [
       ReactiveFormsModule,
     ],

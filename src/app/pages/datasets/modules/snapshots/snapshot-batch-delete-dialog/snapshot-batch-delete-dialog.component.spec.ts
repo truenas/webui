@@ -12,7 +12,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { SnapshotBatchDeleteDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-batch-delete-dialog/snapshot-batch-delete-dialog.component';
+import { SnapshotBatchDeleteDialog } from 'app/pages/datasets/modules/snapshots/snapshot-batch-delete-dialog/snapshot-batch-delete-dialog.component';
 import { fakeZfsSnapshotDataSource } from 'app/pages/datasets/modules/snapshots/testing/snapshot-fake-datasource';
 
 const mockJobSuccessResponse = [{
@@ -22,11 +22,11 @@ const mockJobSuccessResponse = [{
 }] as CoreBulkResponse[];
 
 describe('SnapshotBatchDeleteDialogComponent', () => {
-  let spectator: Spectator<SnapshotBatchDeleteDialogComponent>;
+  let spectator: Spectator<SnapshotBatchDeleteDialog>;
   let loader: HarnessLoader;
 
   const createComponent = createComponentFactory({
-    component: SnapshotBatchDeleteDialogComponent,
+    component: SnapshotBatchDeleteDialog,
     imports: [
       ReactiveFormsModule,
     ],

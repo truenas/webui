@@ -11,14 +11,14 @@ import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
-  IpmiEventsDialogComponent,
+  IpmiEventsDialog,
 } from 'app/pages/network/components/ipmi-card/ipmi-events-dialog/ipmi-events-dialog.component';
 
 describe('IpmiEventsDialogComponent', () => {
-  let spectator: Spectator<IpmiEventsDialogComponent>;
+  let spectator: Spectator<IpmiEventsDialog>;
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
-    component: IpmiEventsDialogComponent,
+    component: IpmiEventsDialog,
     declarations: [
       FakeFormatDateTimePipe,
       EmptyComponent,

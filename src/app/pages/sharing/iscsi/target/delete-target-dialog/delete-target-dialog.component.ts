@@ -43,7 +43,7 @@ import { IscsiService } from 'app/services/iscsi.service';
     TranslateModule,
   ],
 })
-export class DeleteTargetDialogComponent implements OnInit {
+export class DeleteTargetDialog implements OnInit {
   protected readonly requiredRoles = [Role.SharingIscsiTargetWrite];
 
   readonly targetExtents = signal<IscsiTargetExtent[]>([]);
@@ -57,7 +57,7 @@ export class DeleteTargetDialogComponent implements OnInit {
   constructor(
     private api: ApiService,
     private formBuilder: FormBuilder,
-    private dialogRef: MatDialogRef<DeleteTargetDialogComponent>,
+    private dialogRef: MatDialogRef<DeleteTargetDialog>,
     private errorHandler: ErrorHandlerService,
     private loader: LoaderService,
     private iscsiService: IscsiService,

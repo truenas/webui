@@ -11,14 +11,14 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { fakeZfsSnapshot } from 'app/pages/datasets/modules/snapshots//testing/snapshot-fake-datasource';
-import { SnapshotRollbackDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
+import { SnapshotRollbackDialog } from 'app/pages/datasets/modules/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
 
 describe('SnapshotRollbackDialogComponent', () => {
-  let spectator: Spectator<SnapshotRollbackDialogComponent>;
+  let spectator: Spectator<SnapshotRollbackDialog>;
   let loader: HarnessLoader;
 
   const createComponent = createComponentFactory({
-    component: SnapshotRollbackDialogComponent,
+    component: SnapshotRollbackDialog,
     imports: [
       ReactiveFormsModule,
     ],

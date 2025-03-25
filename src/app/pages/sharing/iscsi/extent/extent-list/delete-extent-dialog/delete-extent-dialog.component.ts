@@ -40,7 +40,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TranslateModule,
   ],
 })
-export class DeleteExtentDialogComponent {
+export class DeleteExtentDialog {
   protected readonly requiredRoles = [
     Role.SharingIscsiExtentWrite,
     Role.SharingIscsiWrite,
@@ -58,7 +58,7 @@ export class DeleteExtentDialogComponent {
     private errorHandler: ErrorHandlerService,
     private formBuilder: FormBuilder,
     @Inject(MAT_DIALOG_DATA) public extent: IscsiExtent,
-    private dialogRef: MatDialogRef<DeleteExtentDialogComponent>,
+    private dialogRef: MatDialogRef<DeleteExtentDialog>,
   ) { }
 
   get isFile(): boolean {

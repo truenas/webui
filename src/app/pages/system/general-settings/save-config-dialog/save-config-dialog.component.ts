@@ -54,10 +54,10 @@ export interface SaveConfigDialogMessages {
     DatePipe,
   ],
 })
-export class SaveConfigDialogComponent {
+export class SaveConfigDialog {
   protected readonly requiredRoles = [Role.FullAdmin];
 
-  exportSeedCheckbox = new FormControl(false);
+  exportSeedCheckbox = new FormControl(true);
 
   helptext: SaveConfigDialogMessages;
 
@@ -74,7 +74,7 @@ export class SaveConfigDialogComponent {
     private download: DownloadService,
     private loader: LoaderService,
     private datePipe: DatePipe,
-    private dialogRef: MatDialogRef<SaveConfigDialogComponent>,
+    private dialogRef: MatDialogRef<SaveConfigDialog>,
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     @Optional() @Inject(MAT_DIALOG_DATA) messageOverrides: Partial<SaveConfigDialogMessages> = {},

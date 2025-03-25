@@ -45,10 +45,5 @@ export const servicesElements = {
       synonyms: [T('UPS Service')],
       anchor: 'service-ups',
     },
-    smart: {
-      hierarchy: [T('S.M.A.R.T.')],
-      synonyms: [T('Smart Service'), T('Smart')],
-      anchor: 'service-smart',
-    },
   },
 } satisfies UiSearchableElement;

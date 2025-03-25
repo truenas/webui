@@ -12,16 +12,16 @@ import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import {
-  SaveConfigDialogComponent,
+  SaveConfigDialog,
 } from 'app/pages/system/general-settings/save-config-dialog/save-config-dialog.component';
 import { DownloadService } from 'app/services/download.service';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 describe('SaveConfigDialogComponent', () => {
-  let spectator: Spectator<SaveConfigDialogComponent>;
+  let spectator: Spectator<SaveConfigDialog>;
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
-    component: SaveConfigDialogComponent,
+    component: SaveConfigDialog,
     imports: [
       ReactiveFormsModule,
     ],
@@ -56,7 +56,10 @@ describe('SaveConfigDialogComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('saves configuration when save dialog is submitted', async () => {
+  it('saves configuration when save dialog is submitted is submitted without Export checkbox', async () => {
+    const checkbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Export Password Secret Seed' }));
+    await checkbox.setValue(false);
+
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
@@ -70,9 +73,6 @@ describe('SaveConfigDialogComponent', () => {
   });
 
   it('saves configuration together with password seed when dialog is submitted with Export checkbox', async () => {
-    const checkbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Export Password Secret Seed' }));
-    await checkbox.setValue(true);
-
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 

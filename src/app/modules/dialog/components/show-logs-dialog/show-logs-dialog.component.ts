@@ -30,7 +30,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TestDirective,
   ],
 })
-export class ShowLogsDialogComponent {
+export class ShowLogsDialog {
   constructor(
     private api: ApiService,
     private errorHandler: ErrorHandlerService,

@@ -31,7 +31,7 @@ import {
   ViewCertificateDialogData,
 } from 'app/pages/credentials/certificates-dash/view-certificate-dialog/view-certificate-dialog-data.interface';
 import {
-  ViewCertificateDialogComponent,
+  ViewCertificateDialog,
 } from 'app/pages/credentials/certificates-dash/view-certificate-dialog/view-certificate-dialog.component';
 
 @UntilDestroy()
@@ -110,7 +110,7 @@ export class CertificateEditComponent implements OnInit {
   }
 
   onViewCertificatePressed(): void {
-    this.matDialog.open(ViewCertificateDialogComponent, {
+    this.matDialog.open(ViewCertificateDialog, {
       data: {
         certificate: this.isCsr ? this.certificate.CSR : this.certificate.certificate,
         name: this.certificate.name,
@@ -120,7 +120,7 @@ export class CertificateEditComponent implements OnInit {
   }
 
   onViewKeyPressed(): void {
-    this.matDialog.open(ViewCertificateDialogComponent, {
+    this.matDialog.open(ViewCertificateDialog, {
       data: {
         certificate: this.certificate.privatekey,
         name: this.certificate.name,

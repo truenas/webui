@@ -43,7 +43,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     RequiresRolesDirective,
   ],
 })
-export class SelectPoolDialogComponent implements OnInit {
+export class SelectPoolDialog implements OnInit {
   protected readonly requiredRoles = [Role.AppsWrite];
 
   form = this.formBuilder.nonNullable.group({
@@ -61,7 +61,7 @@ export class SelectPoolDialogComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private loader: LoaderService,
     private translate: TranslateService,
-    private dialogRef: MatDialogRef<SelectPoolDialogComponent>,
+    private dialogRef: MatDialogRef<SelectPoolDialog>,
     private snackbar: SnackbarService,
     private dockerStore: DockerStore,
   ) { }

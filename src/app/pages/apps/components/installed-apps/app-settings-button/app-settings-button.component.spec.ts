@@ -9,7 +9,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { AppSettingsButtonComponent } from 'app/pages/apps/components/installed-apps/app-settings-button/app-settings-button.component';
-import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
+import { SelectPoolDialog } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 
@@ -23,7 +23,11 @@ describe('AppSettingsButtonComponent', () => {
     component: AppSettingsButtonComponent,
     providers: [
       mockAuth(),
-      mockProvider(MatDialog),
+      mockProvider(MatDialog, {
+        open: jest.fn(() => ({
+          afterClosed: () => of(true),
+        })),
+      }),
       mockProvider(SlideIn, {
         open: jest.fn(() => of()),
       }),
@@ -53,22 +57,21 @@ describe('AppSettingsButtonComponent', () => {
   });
 
   it('shows Choose Pool modal once Settings button -> Choose Pool clicked', async () => {
-    const matDialog = spectator.inject(MatDialog);
-    jest.spyOn(matDialog, 'open').mockImplementation();
-
     await menu.open();
     await menu.clickItem({ text: 'Choose Pool' });
 
-    expect(matDialog.open).toHaveBeenCalledWith(SelectPoolDialogComponent, { viewContainerRef });
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(SelectPoolDialog, { viewContainerRef });
+    expect(spectator.inject(AppsStore).loadCatalog).toHaveBeenCalled();
   });
 
   it('shows Unset Pool modal once Settings button -> Unset Pool clicked', async () => {
     await menu.open();
     await menu.clickItem({ text: 'Unset Pool' });
 
-    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
-      message: 'Confirm to unset pool?',
-    }));
+    expect(spectator.inject(DialogService).confirm)
+      .toHaveBeenCalledWith(expect.objectContaining({
+        message: 'Confirm to unset pool?',
+      }));
     expect(spectator.inject(DockerStore).setDockerPool).toHaveBeenCalledWith(null);
   });
 });

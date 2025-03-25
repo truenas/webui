@@ -19,7 +19,6 @@ export interface DevicesState {
   nodes: DeviceNestedDataNode[];
   diskDictionary: Record<string, Disk>;
   selectedNodeGuid: string | null;
-  disksWithSmartTestSupport: string[];
 }
 
 const initialState: DevicesState = {
@@ -29,7 +28,6 @@ const initialState: DevicesState = {
   nodes: [],
   diskDictionary: {},
   selectedNodeGuid: null,
-  disksWithSmartTestSupport: [],
 };
 
 @Injectable({
@@ -40,7 +38,6 @@ export class DevicesStore extends ComponentStore<DevicesState> {
   readonly error$ = this.select((state) => state.error);
   readonly nodes$ = this.select((state) => state.nodes);
   readonly diskDictionary$ = this.select((state) => state.diskDictionary);
-  readonly disksWithSmartTestSupport$ = this.select((state) => state.disksWithSmartTestSupport);
   readonly selectedBranch$ = this.select((state) => {
     if (!state.selectedNodeGuid) {
       return null;
@@ -115,18 +112,6 @@ export class DevicesStore extends ComponentStore<DevicesState> {
         if (poolId) {
           this.loadNodes(poolId);
         }
-      }),
-    );
-  });
-
-  readonly loadDisksWithSmartTestSupport = this.effect((triggers$: Observable<void>) => {
-    return triggers$.pipe(
-      switchMap(() => {
-        return this.api.call('smart.test.disk_choices').pipe(
-          tap((disks) => {
-            this.patchState({ disksWithSmartTestSupport: Object.values(disks) });
-          }),
-        );
       }),
     );
   });
