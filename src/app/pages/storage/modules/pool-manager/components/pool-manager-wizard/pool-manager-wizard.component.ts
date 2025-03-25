@@ -32,7 +32,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
 import {
-  DownloadKeyDialogComponent, DownloadKeyDialogParams,
+  DownloadKeyDialog, DownloadKeyDialogParams,
 } from 'app/pages/storage/modules/pool-manager/components/download-key-dialog/download-key-dialog.component';
 import { PoolCreationWizardStep, getPoolCreationWizardStepIndex } from 'app/pages/storage/modules/pool-manager/enums/pool-creation-wizard-step.enum';
 import { PoolManagerValidationService } from 'app/pages/storage/modules/pool-manager/store/pool-manager-validation.service';
@@ -179,7 +179,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
             return of(null);
           }
 
-          return this.matDialog.open<DownloadKeyDialogComponent, DownloadKeyDialogParams>(DownloadKeyDialogComponent, {
+          return this.matDialog.open<DownloadKeyDialog, DownloadKeyDialogParams>(DownloadKeyDialog, {
             disableClose: true,
             data: job.result,
           }).afterClosed();

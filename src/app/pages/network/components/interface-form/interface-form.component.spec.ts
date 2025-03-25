@@ -30,7 +30,7 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
-  DefaultGatewayDialogComponent,
+  DefaultGatewayDialog,
 } from 'app/pages/network/components/default-gateway-dialog/default-gateway-dialog.component';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
 import { NetworkService } from 'app/services/network.service';
@@ -72,7 +72,7 @@ describe('InterfaceFormComponent', () => {
     imports: [
       ReactiveFormsModule,
       IxIpInputWithNetmaskComponent,
-      DefaultGatewayDialogComponent,
+      DefaultGatewayDialog,
       StoreModule.forRoot({ [haInfoStateKey]: haInfoReducer }, {
         initialState: {
           [haInfoStateKey]: {
@@ -195,7 +195,7 @@ describe('InterfaceFormComponent', () => {
       expect(api.call).toHaveBeenCalledWith('interface.default_route_will_be_removed');
 
       expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
-        DefaultGatewayDialogComponent,
+        DefaultGatewayDialog,
         { width: '600px' },
       );
       jest.spyOn(spectator.inject(MatDialog), 'closeAll');
@@ -242,7 +242,7 @@ describe('InterfaceFormComponent', () => {
       expect(api.call).toHaveBeenCalledWith('interface.default_route_will_be_removed');
 
       expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
-        DefaultGatewayDialogComponent,
+        DefaultGatewayDialog,
         { width: '600px' },
       );
     });
@@ -279,7 +279,7 @@ describe('InterfaceFormComponent', () => {
       expect(api.call).toHaveBeenCalledWith('interface.default_route_will_be_removed');
 
       expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
-        DefaultGatewayDialogComponent,
+        DefaultGatewayDialog,
         { width: '600px' },
       );
     });
@@ -454,7 +454,7 @@ describe('InterfaceFormComponent', () => {
       expect(api.call).toHaveBeenCalledWith('interface.default_route_will_be_removed');
 
       expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
-        DefaultGatewayDialogComponent,
+        DefaultGatewayDialog,
         { width: '600px' },
       );
     });
@@ -488,7 +488,7 @@ describe('InterfaceFormComponent', () => {
       expect(api.call).toHaveBeenCalledWith('interface.default_route_will_be_removed');
 
       expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
-        DefaultGatewayDialogComponent,
+        DefaultGatewayDialog,
         { width: '600px' },
       );
     });

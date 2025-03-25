@@ -9,7 +9,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { Role } from 'app/enums/role.enum';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
-  SetEnclosureLabelDialogComponent,
+  SetEnclosureLabelDialog,
   SetEnclosureLabelDialogData,
 } from 'app/pages/system/enclosure/components/set-enclosure-label-dialog/set-enclosure-label-dialog.component';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
@@ -50,7 +50,7 @@ export class EnclosureHeaderComponent {
       enclosureId: enclosure.id,
     };
 
-    this.matDialog.open(SetEnclosureLabelDialogComponent, { data: dialogConfig })
+    this.matDialog.open(SetEnclosureLabelDialog, { data: dialogConfig })
       .afterClosed()
       .pipe(untilDestroyed(this))
       .subscribe((newLabel: string) => {

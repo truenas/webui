@@ -9,7 +9,7 @@ import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { filterAsync } from 'app/helpers/operators/filter-async.operator';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { StartServiceDialogComponent, StartServiceDialogResult } from 'app/modules/dialog/components/start-service-dialog/start-service-dialog.component';
+import { StartServiceDialog, StartServiceDialogResult } from 'app/modules/dialog/components/start-service-dialog/start-service-dialog.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServicesService } from 'app/services/services.service';
 import { AppState } from 'app/store';
@@ -59,8 +59,8 @@ export class ServicesEffects {
     }),
     switchMap((service) => {
       if (service.state === ServiceStatus.Stopped) {
-        return this.matDialog.open<StartServiceDialogComponent, unknown, StartServiceDialogResult>(
-          StartServiceDialogComponent,
+        return this.matDialog.open<StartServiceDialog, unknown, StartServiceDialogResult>(
+          StartServiceDialog,
           {
             data: service.service,
             disableClose: true,

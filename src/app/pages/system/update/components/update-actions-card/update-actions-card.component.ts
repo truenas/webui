@@ -31,7 +31,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
-  SaveConfigDialogComponent, SaveConfigDialogMessages,
+  SaveConfigDialog, SaveConfigDialogMessages,
 } from 'app/pages/system/general-settings/save-config-dialog/save-config-dialog.component';
 import { UpdateType } from 'app/pages/system/update/enums/update-type.enum';
 import { Package } from 'app/pages/system/update/interfaces/package.interface';
@@ -362,7 +362,7 @@ export class UpdateActionsCardComponent implements OnInit {
       return of(null);
     }
 
-    return this.matDialog.open(SaveConfigDialogComponent, {
+    return this.matDialog.open(SaveConfigDialog, {
       data: {
         title: this.translate.instant('Save configuration settings from this machine before updating?'),
         saveButton: this.translate.instant('Save Configuration'),

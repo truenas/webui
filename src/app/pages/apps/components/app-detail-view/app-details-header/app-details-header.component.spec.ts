@@ -18,7 +18,7 @@ import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/ap
 import {
   AppDetailsHeaderComponent,
 } from 'app/pages/apps/components/app-detail-view/app-details-header/app-details-header.component';
-import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
+import { SelectPoolDialog } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 
@@ -88,7 +88,7 @@ describe('AppDetailsHeaderComponent', () => {
       const setupPool = await loader.getHarness(MatButtonHarness.with({ text: 'Setup Pool To Install' }));
       await setupPool.click();
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(SelectPoolDialogComponent, { viewContainerRef });
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(SelectPoolDialog, { viewContainerRef });
     });
   });
 

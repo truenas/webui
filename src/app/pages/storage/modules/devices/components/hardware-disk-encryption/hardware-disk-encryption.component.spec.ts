@@ -11,7 +11,7 @@ import { Disk } from 'app/interfaces/disk.interface';
 import { TopologyDisk } from 'app/interfaces/storage.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
-  ManageDiskSedDialogComponent,
+  ManageDiskSedDialog,
 } from 'app/pages/storage/modules/devices/components/hardware-disk-encryption/manage-disk-sed-dialog/manage-disk-sed-dialog.component';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 import { HardwareDiskEncryptionComponent } from './hardware-disk-encryption.component';
@@ -93,7 +93,7 @@ describe('HardwareDiskEncryptionComponent', () => {
     it('shows a link to manage SED password and opens dialog', () => {
       const manageSedPassword = spectator.query(byText('Manage SED Password'))!;
       spectator.click(manageSedPassword);
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ManageDiskSedDialogComponent, { data: 'sda' });
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ManageDiskSedDialog, { data: 'sda' });
     });
 
     it('shows a link to manage global SED password', () => {

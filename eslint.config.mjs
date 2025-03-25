@@ -65,9 +65,9 @@ export default tsEslint.config(
       rxjs.configs.recommended,
     ],
     rules: {
-      ...ruleOverrides,
       ...extraRules,
       ...fixLaterRules,
+      ...ruleOverrides,
     }
   },
   eslintSpec,

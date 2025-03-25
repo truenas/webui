@@ -49,7 +49,7 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/snapshot-add-form/snapshot-add-form.component';
-import { SnapshotBatchDeleteDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-batch-delete-dialog/snapshot-batch-delete-dialog.component';
+import { SnapshotBatchDeleteDialog } from 'app/pages/datasets/modules/snapshots/snapshot-batch-delete-dialog/snapshot-batch-delete-dialog.component';
 import { SnapshotDetailsRowComponent } from 'app/pages/datasets/modules/snapshots/snapshot-details-row/snapshot-details-row.component';
 import { snapshotListElements } from 'app/pages/datasets/modules/snapshots/snapshot-list/snapshot-list.elements';
 import { snapshotPageEntered } from 'app/pages/datasets/modules/snapshots/store/snapshot.actions';
@@ -295,7 +295,7 @@ export class SnapshotListComponent implements OnInit {
   }
 
   doBatchDelete(data: ZfsSnapshotUi[]): void {
-    this.matDialog.open(SnapshotBatchDeleteDialogComponent, { data, disableClose: true })
+    this.matDialog.open(SnapshotBatchDeleteDialog, { data, disableClose: true })
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => {
