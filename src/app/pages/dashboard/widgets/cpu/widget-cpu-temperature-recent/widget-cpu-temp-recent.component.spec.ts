@@ -5,14 +5,13 @@ import { BaseChartDirective } from 'ng2-charts';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
 import { LocaleService } from 'app/modules/language/locale.service';
-import { ThemeService } from 'app/modules/theme/theme.service';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { WidgetCpuTempRecentComponent } from 'app/pages/dashboard/widgets/cpu/widget-cpu-temperature-recent/widget-cpu-temp-recent.component';
 
 describe('WidgetCpuTempRecentComponent', () => {
   let spectator: Spectator<WidgetCpuTempRecentComponent>;
-  const startDate = new Date('2024-07-23'); // 1721692740000
+  const startDate = new Date('2024-07-23');
 
   const createComponent = createComponentFactory({
     component: WidgetCpuTempRecentComponent,
@@ -36,12 +35,6 @@ describe('WidgetCpuTempRecentComponent', () => {
           }),
         },
       ),
-      mockProvider(ThemeService, {
-        currentTheme: jest.fn(() => ({
-          blue: 'blue',
-          orange: 'orange',
-        })),
-      }),
       mockProvider(LocaleService),
     ],
   });
@@ -73,7 +66,7 @@ describe('WidgetCpuTempRecentComponent', () => {
           data: expect.objectContaining([
             expect.objectContaining({ x: expect.any(Number), y: expect.any(Number) }),
           ]),
-          pointBackgroundColor: 'blue',
+          pointBackgroundColor: '#c006c7d9',
         },
       ],
     });
