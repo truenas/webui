@@ -21,7 +21,6 @@ import { jobReducer, adapter, jobsInitialState } from 'app/modules/jobs/store/jo
 import { jobStateKey } from 'app/modules/jobs/store/job.selectors';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 
 const runningJob = {
@@ -174,7 +173,7 @@ describe('JobsPanelComponent', () => {
   it('shows an error report when user clicks on a failed job', () => {
     spectator.click(byText('replication.run'));
 
-    expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalledWith(failedJob);
+    expect(spectator.inject(DialogService).error).toHaveBeenCalled();
   });
 
   it('shows a job in progress dialog when user clicks on an active job', () => {

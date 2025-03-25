@@ -10,7 +10,7 @@ export class ApiCallError extends Error {
     public error: JsonRpcError,
   ) {
     let message = error.message;
-    if (error.data?.reason) {
+    if (error.data?.reason && error.data?.reason !== error.message) {
       message = `${message} - ${error.data.reason}`;
     }
 
