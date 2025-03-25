@@ -48,7 +48,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
-import { CreateStorjBucketDialogComponent } from 'app/pages/data-protection/cloudsync/create-storj-bucket-dialog/create-storj-bucket-dialog.component';
+import { CreateStorjBucketDialog } from 'app/pages/data-protection/cloudsync/create-storj-bucket-dialog/create-storj-bucket-dialog.component';
 import { TransferModeExplanationComponent } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -459,7 +459,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
       filter((selectedOption) => selectedOption === newOption),
       untilDestroyed(this),
     ).subscribe(() => {
-      const dialogRef = this.matDialog.open(CreateStorjBucketDialogComponent, {
+      const dialogRef = this.matDialog.open(CreateStorjBucketDialog, {
         width: '500px',
         data: {
           credentialsId: this.form.controls.credentials.value,

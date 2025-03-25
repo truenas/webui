@@ -14,14 +14,14 @@ import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-chec
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
-  DeleteUserDialogComponent,
+  DeleteUserDialog,
 } from 'app/pages/credentials/users/user-details-row/delete-user-dialog/delete-user-dialog.component';
 
 describe('DeleteUserDialogComponent', () => {
-  let spectator: Spectator<DeleteUserDialogComponent>;
+  let spectator: Spectator<DeleteUserDialog>;
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
-    component: DeleteUserDialogComponent,
+    component: DeleteUserDialog,
     imports: [
       ReactiveFormsModule,
     ],

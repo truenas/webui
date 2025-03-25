@@ -7,6 +7,7 @@ import { User } from 'app/interfaces/user.interface';
 import { UserAccessCardComponent } from 'app/pages/credentials/new-users/all-users/user-details/user-access-card/user-access-card.component';
 import { userDetailsElements } from 'app/pages/credentials/new-users/all-users/user-details/user-details.elements';
 import { UserGeneralInfoComponent } from 'app/pages/credentials/new-users/all-users/user-details/user-general-info/user-general-info.component';
+import { UserProfileCardComponent } from 'app/pages/credentials/new-users/all-users/user-details/user-profile-card/user-profile-card.component';
 
 @Component({
   selector: 'ix-user-details',
@@ -16,6 +17,7 @@ import { UserGeneralInfoComponent } from 'app/pages/credentials/new-users/all-us
   imports: [
     TranslateModule,
     UserGeneralInfoComponent,
+    UserProfileCardComponent,
     UserAccessCardComponent,
     UiSearchDirective,
   ],

@@ -12,7 +12,7 @@ import { EmptyService } from 'app/modules/empty/empty.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import {
-  VirtualPortsNumberDialogComponent,
+  VirtualPortsNumberDialog,
 } from 'app/pages/sharing/iscsi/fibre-channel-ports/virtual-ports-number-dialog/virtual-ports-number-dialog.component';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { FibreChannelPortsComponent } from './fibre-channel-ports.component';
@@ -151,7 +151,7 @@ describe('FibreChannelPortsComponent', () => {
     await editButton.click();
 
     expect(spectator.inject(MatDialog).open)
-      .toHaveBeenCalledWith(VirtualPortsNumberDialogComponent, { data: hosts[0] });
+      .toHaveBeenCalledWith(VirtualPortsNumberDialog, { data: hosts[0] });
   });
 
   it('should show/hide WWPN (B) column based on HA status', async () => {

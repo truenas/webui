@@ -1,14 +1,14 @@
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { ChangePasswordDialogComponent } from 'app/modules/layout/topbar/change-password-dialog/change-password-dialog.component';
+import { ChangePasswordDialog } from 'app/modules/layout/topbar/change-password-dialog/change-password-dialog.component';
 import { ChangePasswordFormComponent } from 'app/modules/layout/topbar/change-password-dialog/change-password-form/change-password-form.component';
 
 describe('ChangePasswordDialogComponent', () => {
-  let spectator: Spectator<ChangePasswordDialogComponent>;
+  let spectator: Spectator<ChangePasswordDialog>;
 
   const createComponent = createComponentFactory({
-    component: ChangePasswordDialogComponent,
+    component: ChangePasswordDialog,
     imports: [
       ReactiveFormsModule,
     ],

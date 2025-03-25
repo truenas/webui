@@ -18,7 +18,7 @@ import {
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import {
-  DeleteGroupDialogComponent,
+  DeleteGroupDialog,
 } from 'app/pages/credentials/groups/group-details-row/delete-group-dialog/delete-group-dialog.component';
 import { GroupDetailsRowComponent } from 'app/pages/credentials/groups/group-details-row/group-details-row.component';
 import { GroupFormComponent } from 'app/pages/credentials/groups/group-form/group-form.component';
@@ -110,7 +110,7 @@ describe('GroupDetailsRowComponent', () => {
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: /Delete/ }));
     await deleteButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(DeleteGroupDialogComponent, {
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(DeleteGroupDialog, {
       data: dummyGroup,
     });
   });

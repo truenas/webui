@@ -18,7 +18,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
 import {
-  DownloadKeyDialogComponent,
+  DownloadKeyDialog,
 } from 'app/pages/storage/modules/pool-manager/components/download-key-dialog/download-key-dialog.component';
 import {
   PoolManagerWizardComponent,
@@ -256,7 +256,7 @@ describe('PoolManagerWizardComponent', () => {
       await wizard.selectStep({ label: 'Review' });
       spectator.query(ReviewWizardStepComponent)!.createPool.emit();
 
-      expect(spectator.inject(MatDialog, true).open).toHaveBeenCalledWith(DownloadKeyDialogComponent, {
+      expect(spectator.inject(MatDialog, true).open).toHaveBeenCalledWith(DownloadKeyDialog, {
         disableClose: true,
         data: createdPool,
       });

@@ -51,7 +51,7 @@ export type VirtualizationImageWithId = VirtualizationImage & {
   styleUrls: ['./select-image-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SelectImageDialogComponent implements OnInit {
+export class SelectImageDialog implements OnInit {
   protected readonly columns = ['label', 'os', 'release', 'archs', 'variant', 'actions'];
   protected filterForm = this.fb.group({
     os: [''],
@@ -73,7 +73,7 @@ export class SelectImageDialogComponent implements OnInit {
 
   constructor(
     private api: ApiService,
-    private dialogRef: MatDialogRef<SelectImageDialogComponent>,
+    private dialogRef: MatDialogRef<SelectImageDialog>,
     private fb: FormBuilder,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,

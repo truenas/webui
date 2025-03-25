@@ -46,7 +46,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TranslateModule,
   ],
 })
-export class BootPoolReplaceDialogComponent implements OnInit {
+export class BootPoolReplaceDialog implements OnInit {
   unusedDisks: DetailsDisk[] = [];
   protected isFormLoading = false;
   protected helptextSystemBootenv = helptextSystemBootenv;
@@ -62,7 +62,7 @@ export class BootPoolReplaceDialogComponent implements OnInit {
     private fb: FormBuilder,
     private translate: TranslateService,
     private api: ApiService,
-    private dialogRef: MatDialogRef<BootPoolReplaceDialogComponent>,
+    private dialogRef: MatDialogRef<BootPoolReplaceDialog>,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
     private snackbar: SnackbarService,

@@ -27,7 +27,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     MatDialogClose,
   ],
 })
-export class VolumeMountsDialogComponent {
+export class VolumeMountsDialog {
   constructor(
     @Inject(MAT_DIALOG_DATA) protected containerDetails: AppContainerDetails,
   ) {}

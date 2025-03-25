@@ -41,7 +41,7 @@ import { DatasetService } from 'app/services/dataset/dataset.service';
     TranslateModule,
   ],
 })
-export class ReplicationRestoreDialogComponent {
+export class ReplicationRestoreDialog {
   protected readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
 
   form = this.formBuilder.group({
@@ -57,7 +57,7 @@ export class ReplicationRestoreDialogComponent {
     private loader: LoaderService,
     private formBuilder: FormBuilder,
     private datasetService: DatasetService,
-    private dialogRef: MatDialogRef<ReplicationRestoreDialogComponent>,
+    private dialogRef: MatDialogRef<ReplicationRestoreDialog>,
     private errorHandler: FormErrorHandlerService,
     @Inject(MAT_DIALOG_DATA) private parentTaskId: number,
   ) {}

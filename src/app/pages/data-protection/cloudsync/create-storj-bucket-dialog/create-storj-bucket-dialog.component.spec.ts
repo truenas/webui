@@ -9,14 +9,14 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
-  CreateStorjBucketDialogComponent,
+  CreateStorjBucketDialog,
 } from 'app/pages/data-protection/cloudsync/create-storj-bucket-dialog/create-storj-bucket-dialog.component';
 
 describe('CreateStorjBucketDialogComponent', () => {
-  let spectator: Spectator<CreateStorjBucketDialogComponent>;
+  let spectator: Spectator<CreateStorjBucketDialog>;
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
-    component: CreateStorjBucketDialogComponent,
+    component: CreateStorjBucketDialog,
     imports: [
       ReactiveFormsModule,
     ],

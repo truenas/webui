@@ -3,6 +3,7 @@ import {
   signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { TinyColor } from '@ctrl/tinycolor';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { ChartData, ChartOptions } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
@@ -10,7 +11,6 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { map, tap } from 'rxjs';
 import { oneMinuteMillis } from 'app/constants/time.constant';
 import { LocaleService } from 'app/modules/language/locale.service';
-import { ThemeService } from 'app/modules/theme/theme.service';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetComponent } from 'app/pages/dashboard/types/widget-component.interface';
 import {
@@ -58,26 +58,25 @@ export class WidgetCpuTempRecentComponent implements WidgetComponent {
   });
 
   constructor(
-    private theme: ThemeService,
     private resources: WidgetResourcesService,
     private translate: TranslateService,
     private localeService: LocaleService,
   ) {}
 
   chartData = computed<ChartData<'line'>>(() => {
-    const currentTheme = this.theme.currentTheme();
     const startDate = Date.now() - oneMinuteMillis;
     const values = this.cpuStats();
     const labels = values.map((_, index) => (startDate + (index * 1000)));
+    const color = new TinyColor('#C006C7').setAlpha(0.85).toHex8String();
 
     return {
       datasets: [
         {
           label: this.translate.instant('Usage'),
           data: values.map((item, index) => ({ x: labels[index], y: item[0] })),
-          borderColor: currentTheme.blue,
-          backgroundColor: currentTheme.blue,
-          pointBackgroundColor: currentTheme.blue,
+          borderColor: color,
+          backgroundColor: color,
+          pointBackgroundColor: color,
           pointRadius: 0,
           tension: 0.2,
           fill: false,

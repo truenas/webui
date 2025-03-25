@@ -10,7 +10,7 @@ import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import {
-  ResilverProgressDialogComponent,
+  ResilverProgressDialog,
 } from 'app/modules/layout/topbar/resilvering-indicator/resilver-progress/resilver-progress.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -46,6 +46,6 @@ export class ResilveringIndicatorComponent {
   ) {}
 
   showDetails(): void {
-    this.matDialog.open(ResilverProgressDialogComponent);
+    this.matDialog.open(ResilverProgressDialog);
   }
 }

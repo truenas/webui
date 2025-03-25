@@ -33,7 +33,7 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ExtentFormComponent } from 'app/pages/sharing/iscsi/extent/extent-form/extent-form.component';
 import {
-  DeleteExtentDialogComponent,
+  DeleteExtentDialog,
 } from 'app/pages/sharing/iscsi/extent/extent-list/delete-extent-dialog/delete-extent-dialog.component';
 import { extentListElements } from 'app/pages/sharing/iscsi/extent/extent-list/extent-list.elements';
 import { IscsiService } from 'app/services/iscsi.service';
@@ -166,7 +166,7 @@ export class ExtentListComponent implements OnInit {
   }
 
   showDeleteDialog(extent: IscsiExtent): void {
-    this.matDialog.open(DeleteExtentDialogComponent, { data: extent })
+    this.matDialog.open(DeleteExtentDialog, { data: extent })
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => this.refresh());

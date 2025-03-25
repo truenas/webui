@@ -17,7 +17,7 @@ import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { ReplaceDiskDialogComponent } from 'app/pages/storage/modules/devices/components/disk-info-card/replace-disk-dialog/replace-disk-dialog.component';
+import { ReplaceDiskDialog } from 'app/pages/storage/modules/devices/components/disk-info-card/replace-disk-dialog/replace-disk-dialog.component';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
 import { DiskFormComponent } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
 import { DiskInfoCardComponent } from './disk-info-card.component';
@@ -106,14 +106,14 @@ describe('DiskInfoCardComponent', () => {
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
     await editButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(DiskFormComponent, { wide: true, data: disk });
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(DiskFormComponent, { data: disk });
   });
 
   it('opens a ReplaceDiskDialogComponent when clicks Replace button', async () => {
     const replaceButton = await loader.getHarness(MatButtonHarness.with({ text: 'Replace' }));
     await replaceButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ReplaceDiskDialogComponent, {
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ReplaceDiskDialog, {
       data: {
         poolId: 1,
         guid: '11254578662959974657',

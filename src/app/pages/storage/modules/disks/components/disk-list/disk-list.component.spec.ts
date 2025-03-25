@@ -8,8 +8,6 @@ import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { SmartTestResultPageType } from 'app/enums/smart-test-results-page-type.enum';
-import { Choices } from 'app/interfaces/choices.interface';
 import { Disk, DetailsDisk } from 'app/interfaces/disk.interface';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
@@ -28,11 +26,8 @@ import {
 import { DiskFormComponent } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
 import { DiskListComponent } from 'app/pages/storage/modules/disks/components/disk-list/disk-list.component';
 import {
-  DiskWipeDialogComponent,
+  DiskWipeDialog,
 } from 'app/pages/storage/modules/disks/components/disk-wipe-dialog/disk-wipe-dialog.component';
-import {
-  ManualTestDialogComponent,
-} from 'app/pages/storage/modules/disks/components/manual-test-dialog/manual-test-dialog.component';
 
 describe('DiskListComponent', () => {
   let spectator: Spectator<DiskListComponent>;
@@ -49,7 +44,6 @@ describe('DiskListComponent', () => {
       transfermode: 'Auto',
       hddstandby: 'ALWAYS ON',
       advpowermgmt: 'DISABLED',
-      togglesmart: true,
       model: 'Virtual_Disk_1',
       rotationrate: null,
       type: 'HDD',
@@ -65,7 +59,6 @@ describe('DiskListComponent', () => {
       transfermode: 'Auto',
       hddstandby: 'ALWAYS ON',
       advpowermgmt: 'DISABLED',
-      togglesmart: false,
       model: 'Virtual_Disk_2',
       rotationrate: null,
       type: 'SSD',
@@ -85,10 +78,6 @@ describe('DiskListComponent', () => {
     exported_zpool: 'test pool',
     devname: 'sdb',
   }] as DetailsDisk[];
-
-  const fakeSmartDiskChoices: Choices = {
-    identifier1: 'sda',
-  };
 
   const createComponent = createComponentFactory({
     component: DiskListComponent,
@@ -113,7 +102,6 @@ describe('DiskListComponent', () => {
       mockApi([
         mockCall('disk.query', fakeDisks),
         mockCall('disk.details', { unused: [], used: fakeUnusedDisks }),
-        mockCall('smart.test.disk_choices', fakeSmartDiskChoices),
       ]),
     ],
   });
@@ -160,35 +148,7 @@ describe('DiskListComponent', () => {
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
     await editButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(DiskFormComponent, { wide: true, data: fakeDisk });
-  });
-
-  it('shows manual smart test dialog when Manual Test button is pressed', async () => {
-    const fakeDisk = fakeDisks[0];
-    await table.expandRow(0);
-
-    const manualTestButton = await loader.getHarness(MatButtonHarness.with({ text: 'Manual Test' }));
-    await manualTestButton.click();
-
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ManualTestDialogComponent, {
-      data: {
-        selectedDisks: [fakeDisk],
-        diskIdsWithSmart: [fakeDisk.identifier],
-      },
-      width: '600px',
-    });
-  });
-
-  it('redirects to smart results when S.M.A.R.T. Test Results button is pressed', async () => {
-    const fakeDisk = fakeDisks[0];
-    await table.expandRow(0);
-
-    const manualTestButton = await loader.getHarness(MatButtonHarness.with({ text: 'S.M.A.R.T. Test Results' }));
-    await manualTestButton.click();
-
-    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(
-      ['/storage', 'disks', 'smartresults', SmartTestResultPageType.Disk, fakeDisk.name],
-    );
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(DiskFormComponent, { data: fakeDisk });
   });
 
   it('shows wipe disk dialog when Wipe button is pressed', async () => {
@@ -198,7 +158,7 @@ describe('DiskListComponent', () => {
     const manualTestButton = await loader.getHarness(MatButtonHarness.with({ text: 'Wipe' }));
     await manualTestButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(DiskWipeDialogComponent, {
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(DiskWipeDialog, {
       data: {
         diskName: fakeDisk.name,
         exportedPool: fakeUnusedDisks[0].exported_zpool,

@@ -31,18 +31,20 @@ export class AppDiskInfoComponent {
   stats = input.required<LoadingState<AppStats>>();
   aspectRatio = input<number>(3);
 
+  private numberOfPoints = 60;
+
   isLoading = computed(() => this.stats().isLoading);
-  protected readonly initialDiskStats = Array.from({ length: 60 }, () => [0, 0]);
+  protected readonly initialDiskStats = Array.from({ length: this.numberOfPoints }, () => [0, 0]);
   protected readonly cachedDiskStats = signal<number[][]>([]);
   readonly diskStats = computed(() => {
     const cachedStats = this.cachedDiskStats();
-    return [...this.initialDiskStats, ...cachedStats].slice(-60);
+    return [...this.initialDiskStats, ...cachedStats].slice(-this.numberOfPoints);
   });
 
   protected diskChartData = computed<ChartData<'line'>>(() => {
     const currentTheme = this.theme.currentTheme();
     const data = this.diskStats();
-    const labels: number[] = data.map((_, index) => (0 + index) * 1000);
+    const labels: number[] = data.map((_, index) => Date.now() - (this.numberOfPoints - 1 - index) * 1000);
 
     return {
       datasets: [
@@ -78,7 +80,7 @@ export class AppDiskInfoComponent {
       const diskStats = this.stats()?.value?.blkio;
       if (diskStats) {
         this.cachedDiskStats.update((cachedStats) => {
-          return [...cachedStats, [diskStats.read, diskStats.write]].slice(-60);
+          return [...cachedStats, [diskStats.read, diskStats.write]].slice(-this.numberOfPoints);
         });
       }
     });
