@@ -20,8 +20,8 @@
       <mat-list-item [ixUiSearch]="searchableElements.elements.language">
         <span class="label">{{ helptext.stg_language.placeholder | translate }}:</span>
         <span *ixWithLoadingState="generalConfig$ as generalConfig" class="value">
-          <ng-container *ixWithLoadingState="languages$ as languages">
-            {{ languages[generalConfig.language] }}
+          <ng-container *ixWithLoadingState="currentLanguage$ as currentLanguage">
+            {{ currentLanguage }}
           </ng-container>
         </span>
       </mat-list-item>

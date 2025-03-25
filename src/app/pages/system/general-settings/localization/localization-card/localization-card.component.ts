@@ -8,6 +8,8 @@ import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
+import { map } from 'rxjs';
+import { languages } from 'app/constants/languages.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
@@ -23,6 +25,7 @@ import { localizationCardElements } from 'app/pages/system/general-settings/loca
 import { LocalizationFormComponent } from 'app/pages/system/general-settings/localization/localization-form/localization-form.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
+import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
 @UntilDestroy()
@@ -54,11 +57,13 @@ export class LocalizationCardComponent {
     toLoadingState(),
   );
 
-  readonly languages$ = this.sysGeneralService.languageChoices().pipe(
+  readonly mapChoices$ = this.sysGeneralService.kbdMapChoices().pipe(
     toLoadingState(),
   );
 
-  readonly mapChoices$ = this.sysGeneralService.kbdMapChoices().pipe(
+  readonly currentLanguage$ = this.store$.pipe(
+    waitForPreferences,
+    map((prefs) => languages.find((lang) => lang.code === prefs.language).name),
     toLoadingState(),
   );
 
