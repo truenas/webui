@@ -110,3 +110,7 @@ This can be expressed via:
 You would have to research ICU Message Format for your language to find out how to express plural forms.
 
 It's also helpful to test plural strings in an [online editor](http://format-message.github.io/icu-message-format-for-translators/editor.html).
+
+## Contributing Code
+By the way, we also welcome code contributions.\
+[Learn how to contribute.](https://github.com/truenas/webui/blob/master/docs/contributing_code.md)

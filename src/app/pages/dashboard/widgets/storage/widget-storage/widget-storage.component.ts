@@ -169,9 +169,10 @@ export class WidgetStorageComponent {
   private getUsedSpaceItemInfo(pool: Pool, volumes: VolumesData): ItemInfo {
     let level = StatusLevel.Safe;
     let icon = statusIcons.checkCircle;
-    let value = volumes.get(pool.name).used_pct;
+    const volumeData = volumes.get(pool.name);
+    let value = volumeData?.used_pct;
 
-    if (volumes.get(pool.name)?.used === null) {
+    if (volumeData?.used === null) {
       return {
         label: this.translate.instant('Used Space'),
         value: this.translate.instant('Unknown'),
@@ -182,13 +183,13 @@ export class WidgetStorageComponent {
 
     if (this.getColumnsInTile(pool.name) < 3) {
       value = this.translate.instant('{used} of {total} ({used_pct})', {
-        used: buildNormalizedFileSize(volumes.get(pool.name).used),
-        total: buildNormalizedFileSize(volumes.get(pool.name).used + volumes.get(pool.name).avail),
-        used_pct: volumes.get(pool.name).used_pct,
+        used: buildNormalizedFileSize(volumeData?.used),
+        total: buildNormalizedFileSize(volumeData?.used + volumeData?.avail),
+        used_pct: volumeData?.used_pct,
       });
     }
 
-    const percent = parseInt(volumes.get(pool.name).used_pct?.split('%')?.[0]);
+    const percent = parseInt(volumeData?.used_pct?.split('%')?.[0]);
 
     if (percent >= 90) {
       level = StatusLevel.Error;
