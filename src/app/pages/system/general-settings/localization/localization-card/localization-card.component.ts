@@ -63,7 +63,7 @@ export class LocalizationCardComponent {
 
   readonly currentLanguage$ = this.store$.pipe(
     waitForPreferences,
-    map((prefs) => languages.find((lang) => lang.code === prefs.language).name),
+    map((prefs) => languages.get(prefs.language)),
     toLoadingState(),
   );
 

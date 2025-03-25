@@ -1,7 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { find } from 'lodash-es';
 import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { languages } from 'app/constants/languages.constant';
@@ -53,7 +52,7 @@ export class LanguageService {
    * @return Observable that completes when translations have been loaded.
    */
   setLanguage(lang = 'en'): Observable<boolean> {
-    if (find(languages, { code: lang })) {
+    if (languages.has(lang)) {
       this.currentLanguage = lang;
     } else {
       this.currentLanguage = 'en';

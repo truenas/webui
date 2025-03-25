@@ -1,5 +1,5 @@
 import { EventEmitter, Injectable } from '@angular/core';
-import { find, sortBy } from 'lodash-es';
+import { sortBy } from 'lodash-es';
 import {
   Subject, Observable,
   of,
@@ -110,8 +110,8 @@ export class SystemGeneralService {
   languageOptions(sortLanguagesByName: boolean): Observable<Option[]> {
     let options: Option[] = Object.keys(languages).map((code) => ({
       label: sortLanguagesByName
-        ? `${find(languages, { code }).name} (${code})`
-        : `${code} (${find(languages, { code }).name})`,
+        ? `${languages.get(code)} (${code})`
+        : `${code} (${languages.get(code)})`,
       value: code,
     }));
 
