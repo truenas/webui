@@ -97,7 +97,7 @@ export class AuthorizedAccessFormComponent implements OnInit {
       doesNotEqualFgValidator(
         'peersecret',
         ['secret'],
-        this.translate.instant('Secret and Peer Secret can not be the same.'),
+        this.translate.instant('Secret and Peer Secret cannot be the same.'),
       ),
     ],
   });

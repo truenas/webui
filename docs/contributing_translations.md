@@ -87,6 +87,12 @@ You can express it in the following way:
 {n, plural, one {Usuario eliminado} other {# usuarios eliminados}}
 ```
 
+If your language has the same form of the word regadless of whether it's singular or plural, you can just replace the right part with a single form:
+
+```
+"({n, plural, =1 {# widget} other {# widgets}})": "({n} 个小部件)",
+```
+
 Russian is an example of a language that has even more complicated plural forms. 
 
 In Russian, the word for `user` has three different forms depending on the number of users:

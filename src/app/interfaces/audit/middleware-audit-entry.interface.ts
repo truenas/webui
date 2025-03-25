@@ -30,9 +30,17 @@ export interface MiddlewareMethodCallEntry extends BaseMiddlewareAuditEntry {
   event_data: MiddlewareMethodCallData;
 }
 
+export interface MiddlewareRebootEntry extends BaseMiddlewareAuditEntry {
+  event: AuditEvent.Reboot;
+  event_data: {
+    reason: string;
+  };
+}
+
 export type MiddlewareAuditEntry =
   | MiddlewareMethodCallEntry
-  | MiddlewareAuthenticationEntry;
+  | MiddlewareAuthenticationEntry
+  | MiddlewareRebootEntry;
 
 export interface AuditMiddlewareCredentials {
   credentials: CredentialType;
