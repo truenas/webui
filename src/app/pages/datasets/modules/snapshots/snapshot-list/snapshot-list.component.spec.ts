@@ -44,8 +44,8 @@ describe('SnapshotListComponent', () => {
     providers: [
       mockAuth(),
       mockApi([
-        mockCall('zfs.snapshot.query', fakeZfsSnapshotDataSource),
-        mockCall('zfs.snapshot.delete'),
+        mockCall('pool.snapshot.query', fakeZfsSnapshotDataSource),
+        mockCall('pool.snapshot.delete'),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
