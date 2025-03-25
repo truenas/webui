@@ -106,7 +106,7 @@ This should bring the yarn environment back to a usable state.
 
 # Translating UI
 
-See the [TRANSLATING.md](https://github.com/truenas/webui/blob/master/TRANSLATING.md) for more information on how to translate the UI.
+See the [TRANSLATING.md](https://github.com/truenas/webui/blob/master/docs/contributing_translations.md) for more information on how to translate the UI.
 
 # Contributing
 

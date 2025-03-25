@@ -2614,7 +2614,7 @@
   "Label": "Etichetta",
   "Lan": "Lan",
   "Language": "Lingua",
-  "Languages other than <i>English</i> are provided by      the community and may be incomplete.      <a href=\"https://github.com/truenas/webui/blob/master/TRANSLATING.md\" target=\"_blank\">Learn how to contribute.</a>": "Le lingue diverse dall'<i>inglese</i> sono fornite dalla community e potrebbero essere incomplete. <a href=\"https://github.com/truenas/webui/blob/master/TRANSLATING.md\" target=\"_blank\">Scopri come contribuire.</a>",
+  "Languages other than <i>English</i> are provided by      the community and may be incomplete.      <a href=\"https://github.com/truenas/webui/blob/master/docs/contributing_translations.md\" target=\"_blank\">Learn how to contribute.</a>": "Le lingue diverse dall'<i>inglese</i> sono fornite dalla community e potrebbero essere incomplete. <a href=\"https://github.com/truenas/webui/blob/master/docs/contributing_translations.md\" target=\"_blank\">Scopri come contribuire.</a>",
   "Last 24 hours": "Ultime 24 ore",
   "Last 3 days": "Ultimi 3 giorni",
   "Last Page": "Ultima pagina",
