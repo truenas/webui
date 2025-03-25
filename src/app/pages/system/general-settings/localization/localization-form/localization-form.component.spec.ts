@@ -31,9 +31,9 @@ describe('LocalizationFormComponent', () => {
   const settings = {
     dateFormat: 'yyyy-MM-dd',
     kbdMap: 'us',
-    language: 'en',
     timeFormat: 'HH:mm:ss',
     timezone: 'America/Los_Angeles',
+    language: 'en',
   } as LocalizationSettings;
 
   const slideInRef: SlideInRef<LocalizationSettings | undefined, unknown> = {
@@ -150,9 +150,9 @@ describe('LocalizationFormComponent', () => {
       expect(store$.dispatch).toHaveBeenCalledWith(localizationFormSubmitted({
         dateFormat: 'MMMM d, yyyy',
         timeFormat: 'hh:mm:ss aa',
+        language: 'en',
       }));
       expect(api.call).toHaveBeenCalledWith('system.general.update', [{
-        language: 'en',
         kbdmap: 'us',
         timezone: 'America/Los_Angeles',
       }]);

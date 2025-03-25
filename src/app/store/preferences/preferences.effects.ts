@@ -13,7 +13,7 @@ import { AppState } from 'app/store/index';
 import {
   autoRefreshReportsToggled,
   builtinGroupsToggled,
-  builtinUsersToggled, guiFormSubmitted, languageUpdated, lifetimeTokenUpdated, localizationFormSubmitted,
+  builtinUsersToggled, guiFormSubmitted, lifetimeTokenUpdated, localizationFormSubmitted,
   preferencesLoaded, preferredColumnsUpdated,
   shownNewIndicatorKeysUpdated,
   themeNotFound,
@@ -71,7 +71,6 @@ export class PreferencesEffects {
       guiFormSubmitted,
       updateRebootAfterManualUpdate,
       autoRefreshReportsToggled,
-      languageUpdated,
     ),
     withLatestFrom(this.store$.pipe(waitForPreferences, startWith(undefined), pairwise())),
     filter(([, [prevPrefs, newPrefs]]) => !isEqual(prevPrefs, newPrefs)),
