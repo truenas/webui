@@ -33,6 +33,7 @@ import {
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { ErrorParserService } from 'app/services/errors/error-parser.service';
 
 @UntilDestroy()
 @Component({
@@ -69,6 +70,7 @@ export class JobsPanelComponent {
     private translate: TranslateService,
     private dialog: DialogService,
     private errorHandler: ErrorHandlerService,
+    private errorParser: ErrorParserService,
     private snackbar: SnackbarService,
   ) {}
 
@@ -91,7 +93,8 @@ export class JobsPanelComponent {
   openJobDialog(job: Job): void {
     this.dialogRef.close();
     if (job.error) {
-      this.errorHandler.showErrorModal(job);
+      // Do not replace with showErrorModal, because it also reports to Sentry
+      this.dialog.error(this.errorParser.parseError(job.error));
       return;
     }
 
