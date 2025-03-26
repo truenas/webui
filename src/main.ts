@@ -36,6 +36,7 @@ import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-comp
 import { provideNgxWebstorage, withLocalStorage } from 'ngx-webstorage';
 import { AppComponent } from 'app/app.component';
 import { rootRoutes } from 'app/app.routes';
+import { defaultLanguage } from 'app/constants/languages.constant';
 import { MockEnclosureApiService } from 'app/core/testing/mock-enclosure/mock-enclosure-api.service';
 import { WINDOW, getWindow } from 'app/helpers/window.helper';
 import { IxIconRegistry } from 'app/modules/ix-icon/ix-icon-registry.service';
@@ -71,7 +72,7 @@ bootstrapApplication(AppComponent, {
     importProvidersFrom(
       BrowserModule,
       TranslateModule.forRoot({
-        defaultLanguage: 'en',
+        defaultLanguage,
         loader: {
           provide: TranslateLoader,
           useFactory: createTranslateLoader,

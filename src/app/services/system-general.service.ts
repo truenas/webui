@@ -108,7 +108,7 @@ export class SystemGeneralService {
   }
 
   languageOptions(sortLanguagesByName: boolean): Observable<Option[]> {
-    let options: Option[] = Object.keys(languages).map((code) => ({
+    let options: Option[] = [...languages.keys()].map((code) => ({
       label: sortLanguagesByName
         ? `${languages.get(code)} (${code})`
         : `${code} (${languages.get(code)})`,

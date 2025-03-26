@@ -21,7 +21,7 @@
         <span class="label">{{ helptext.stg_language.placeholder | translate }}:</span>
         <span *ixWithLoadingState="generalConfig$ as generalConfig" class="value">
           <ng-container *ixWithLoadingState="currentLanguage$ as currentLanguage">
-            {{ currentLanguage }}
+            {{ currentLanguage | mapValue: languages }}
           </ng-container>
         </span>
       </mat-list-item>

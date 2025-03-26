@@ -6,6 +6,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { Store } from '@ngrx/store';
 import { provideMockStore } from '@ngrx/store/testing';
 import { Observable, of } from 'rxjs';
+import { defaultLanguage } from 'app/constants/languages.constant';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { LocalizationSettings } from 'app/interfaces/localization-settings.interface';
@@ -33,7 +34,7 @@ describe('LocalizationFormComponent', () => {
     kbdMap: 'us',
     timeFormat: 'HH:mm:ss',
     timezone: 'America/Los_Angeles',
-    language: 'en',
+    language: defaultLanguage,
   } as LocalizationSettings;
 
   const slideInRef: SlideInRef<LocalizationSettings | undefined, unknown> = {

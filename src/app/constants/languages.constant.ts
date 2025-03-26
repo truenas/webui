@@ -1,3 +1,4 @@
+export const defaultLanguage = 'en';
 export const languages = new Map<string, string>([
   ['af', 'Afrikaans'],
   ['ar', 'Arabic'],

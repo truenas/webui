@@ -3,7 +3,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
-import { languages } from 'app/constants/languages.constant';
+import { defaultLanguage, languages } from 'app/constants/languages.constant';
 import { WINDOW } from 'app/helpers/window.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AppState } from 'app/store';
@@ -51,11 +51,11 @@ export class LanguageService {
   /**
    * @return Observable that completes when translations have been loaded.
    */
-  setLanguage(lang = 'en'): Observable<boolean> {
+  setLanguage(lang = defaultLanguage): Observable<boolean> {
     if (languages.has(lang)) {
       this.currentLanguage = lang;
     } else {
-      this.currentLanguage = 'en';
+      this.currentLanguage = defaultLanguage;
     }
 
     return this.translate.use(this.currentLanguage).pipe(

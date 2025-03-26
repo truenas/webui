@@ -163,7 +163,6 @@ export class LocalizationFormComponent implements OnInit {
       timeFormat: values.time_format,
       language: values.language,
     }));
-    this.langService.setLanguage(values.language);
 
     const payload = omit(values, ['date_format', 'time_format', 'language']);
 
@@ -173,6 +172,7 @@ export class LocalizationFormComponent implements OnInit {
         this.store$.dispatch(systemInfoUpdated());
         this.isFormLoading.set(false);
         this.slideInRef.close({ response: true, error: null });
+        this.langService.setLanguage(values.language);
         this.setTimeOptions(payload.timezone);
         this.cdr.markForCheck();
       },

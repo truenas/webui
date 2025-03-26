@@ -21,7 +21,6 @@ export class SystemConfigEffects {
         this.api.call('system.advanced.config'),
       ]).pipe(
         map(([generalConfig, advancedConfig]) => {
-          this.window.localStorage.setItem('language', generalConfig.language);
           return systemConfigLoaded({ generalConfig, advancedConfig });
         }),
         catchError((error: unknown) => {

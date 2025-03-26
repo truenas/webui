@@ -786,7 +786,6 @@ export interface ApiCallDirectory {
   'system.boot_id': { params: void; response: string };
   'system.general.config': { params: void; response: SystemGeneralConfig };
   'system.general.kbdmap_choices': { params: void; response: Choices };
-  'system.general.language_choices': { params: void; response: Choices };
   'system.general.timezone_choices': { params: void; response: Choices };
   'system.general.ui_address_choices': { params: void; response: Choices };
   'system.general.ui_certificate_choices': { params: void; response: Record<number, string> };
