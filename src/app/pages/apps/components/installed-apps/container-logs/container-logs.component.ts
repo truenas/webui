@@ -97,7 +97,7 @@ export class ContainerLogsComponent implements OnInit {
         return this.api.subscribe(`app.container_log_follow: ${JSON.stringify({
           app_name: this.appName,
           container_id: this.containerId,
-          tail_lines: details.tail_lines || this.defaultTailLines,
+          tail_lines: details?.tail_lines || this.defaultTailLines,
         })}`);
       }),
       map((apiEvent) => apiEvent.fields),
