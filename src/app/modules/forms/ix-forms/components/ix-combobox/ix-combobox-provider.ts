@@ -19,14 +19,3 @@ export interface IxComboboxProvider {
   nextPage(filterValue: string): Observable<Option[]>;
 
 }
-
-export class IxComboboxProviderManager {
-  constructor(private provider: IxComboboxProvider) { }
-  fetch(filterValue: string): Observable<Option[]> {
-    return this.provider.fetch(filterValue);
-  }
-
-  nextPage(filterValue: string): Observable<Option[]> {
-    return this.provider.nextPage(filterValue);
-  }
-}
