@@ -34,8 +34,8 @@ describe('SnapshotRollbackDialogComponent', () => {
       mockProvider(MatDialogRef),
       mockProvider(DialogService),
       mockApi([
-        mockCall('zfs.snapshot.query', [fakeZfsSnapshot]),
-        mockCall('zfs.snapshot.rollback'),
+        mockCall('pool.snapshot.query', [fakeZfsSnapshot]),
+        mockCall('pool.snapshot.rollback'),
       ]),
     ],
   });
@@ -51,7 +51,7 @@ describe('SnapshotRollbackDialogComponent', () => {
   });
 
   it('checks getting additional properties query is called', () => {
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('zfs.snapshot.query', [[['id', '=', 'test-dataset@first-snapshot']]]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshot.query', [[['id', '=', 'test-dataset@first-snapshot']]]);
   });
 
   it('rollback dataset to selected snapshot when form is submitted and shows a success message', async () => {
@@ -64,7 +64,7 @@ describe('SnapshotRollbackDialogComponent', () => {
     const rollbackButton = await loader.getHarness(MatButtonHarness.with({ text: 'Rollback' }));
     await rollbackButton.click();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('zfs.snapshot.rollback', [
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshot.rollback', [
       'test-dataset@first-snapshot',
       { force: true },
     ]);
@@ -81,7 +81,7 @@ describe('SnapshotRollbackDialogComponent', () => {
     const rollbackButton = await loader.getHarness(MatButtonHarness.with({ text: 'Rollback' }));
     await rollbackButton.click();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('zfs.snapshot.rollback', [
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshot.rollback', [
       'test-dataset@first-snapshot',
       { force: true, recursive: true },
     ]);
@@ -98,7 +98,7 @@ describe('SnapshotRollbackDialogComponent', () => {
     const rollbackButton = await loader.getHarness(MatButtonHarness.with({ text: 'Rollback' }));
     await rollbackButton.click();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('zfs.snapshot.rollback', [
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshot.rollback', [
       'test-dataset@first-snapshot',
       { force: true, recursive_clones: true },
     ]);

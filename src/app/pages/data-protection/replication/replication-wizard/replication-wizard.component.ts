@@ -112,7 +112,7 @@ export class ReplicationWizardComponent {
     const requests: Observable<unknown>[] = [];
 
     this.createdSnapshots.forEach((snapshot) => {
-      requests.push(this.api.call('zfs.snapshot.delete', [snapshot.name]));
+      requests.push(this.api.call('pool.snapshot.delete', [snapshot.name]));
     });
 
     this.createdSnapshotTasks.forEach((task) => {
@@ -219,7 +219,7 @@ export class ReplicationWizardComponent {
   }
 
   createSnapshot(payload: CreateZfsSnapshot): Observable<ZfsSnapshot> {
-    return this.api.call('zfs.snapshot.create', [payload]);
+    return this.api.call('pool.snapshot.create', [payload]);
   }
 
   createReplication(payload: ReplicationCreate): Observable<ReplicationTask> {

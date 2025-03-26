@@ -8,6 +8,7 @@
   "Are you sure you want to unlock \"{user}\" user?": "",
   "Boot Priority": "",
   "Built-In": "",
+  "CPU Recent Temperature": "",
   "Choose Files": "",
   "Clone and promote a temporary snapshot of the zvol into a custom storage volume.": "",
   "Create New Volume": "",
