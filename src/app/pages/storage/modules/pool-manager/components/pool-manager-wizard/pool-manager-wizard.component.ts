@@ -153,7 +153,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
     ).subscribe();
   }
 
-  protected isAddingVdevsInPoolWithSpareVdev(): boolean {
+  protected existingPoolHasSpares(): boolean {
     return !!this.existingPool?.topology?.spare?.length;
   }
 
