@@ -7,14 +7,14 @@ import { MatButton } from '@angular/material/button';
 import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { filter, map } from 'rxjs';
+import { filter } from 'rxjs';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { helptextManager } from 'app/helptext/storage/volumes/manager/manager';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
-import { SelectOption } from 'app/interfaces/option.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { SpareDiskComboboxProvider } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/5-spare-wizard-step/spare-disk-combobox.provider';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 
 @UntilDestroy()
@@ -31,7 +31,7 @@ import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/p
     TestDirective,
     MatStepperNext,
     TranslateModule,
-    IxSelectComponent,
+    IxComboboxComponent,
     ReactiveFormsModule,
   ],
 })
@@ -41,14 +41,10 @@ export class SpareWizardStepComponent implements OnInit {
 
   readonly goToLastStep = output();
 
-  private disks = signal<DetailsDisk[]>([]);
+  protected disks = signal<DetailsDisk[]>([]);
   protected readonly spareVdevDisk = new FormControl<string>('');
-  protected readonly spareVdevDiskOptions$ = this.store.getInventoryForStep(VdevType.Spare).pipe(
-    map((disks) => {
-      this.disks.set(disks);
-      return disks.map((disk) => ({ label: disk.name, value: disk.name } as SelectOption));
-    }),
-  );
+
+  protected readonly diskComboboxProvider = new SpareDiskComboboxProvider(this.store);
 
   protected readonly VdevType = VdevType;
   readonly helptext = helptextManager;

@@ -2,14 +2,13 @@
   {{ helptext.spare_vdev_description | translate }}
 </div>
 
-<ix-select
+<ix-combobox
   class="spare-disk"
-  [label]="'Select Disk for Spare VDEV' | translate"
   [formControl]="spareVdevDisk"
-  [emptyOptionLabel]="'None' | translate"
-  [options]="spareVdevDiskOptions$"
+  [label]="'Select Disk for Spare VDEV' | translate"
   [tooltip]="'Only one disk can be selected for the Spare Vdev' | translate"
-></ix-select>
+  [provider]="diskComboboxProvider"
+></ix-combobox>
 
 @if (stepWarning()) {
   <p class="error-warning">
