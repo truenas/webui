@@ -42,11 +42,12 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 export class DeviceActionsMenuComponent {
   readonly device = input.required<VirtualizationDevice>();
   readonly showEdit = input(true);
+  readonly isDisabled = input(false);
 
   readonly edit = output();
 
   protected readonly canManage = computed(() => {
-    return !this.manageRestrictedExplanation();
+    return !this.manageRestrictedExplanation() && !this.isDisabled();
   });
 
   protected readonly manageRestrictedExplanation = computed(() => {

@@ -119,7 +119,7 @@ export class FormErrorHandlerService {
     const controlsNames = this.formService.getControlNames();
 
     if (!control || !controlsNames.includes(field)) {
-      console.error(`Could not find control ${field}.`);
+      console.warn(`Could not find control ${field}.`);
       this.needToShowError = true;
       return;
     }
@@ -132,7 +132,7 @@ export class FormErrorHandlerService {
     }
 
     if (!control) {
-      console.error(`Could not find control ${field}.`);
+      console.warn(`Could not find control ${field}.`);
       this.needToShowError = true;
     } else {
       control.setErrors({

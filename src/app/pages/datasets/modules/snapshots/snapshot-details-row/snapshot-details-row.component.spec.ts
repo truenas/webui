@@ -40,10 +40,10 @@ describe('SnapshotDetailsRowComponent', () => {
         confirm: jest.fn(() => of(true)),
       }),
       mockApi([
-        mockCall('zfs.snapshot.query', [fakeZfsSnapshot]),
-        mockCall('zfs.snapshot.hold'),
-        mockCall('zfs.snapshot.release'),
-        mockCall('zfs.snapshot.delete'),
+        mockCall('pool.snapshot.query', [fakeZfsSnapshot]),
+        mockCall('pool.snapshot.hold'),
+        mockCall('pool.snapshot.release'),
+        mockCall('pool.snapshot.delete'),
       ]),
     ],
   });
@@ -93,11 +93,11 @@ describe('SnapshotDetailsRowComponent', () => {
     expect(await holdCheckbox.getValue()).toBeTruthy();
 
     await holdCheckbox.toggle();
-    expect(api.call).toHaveBeenCalledWith('zfs.snapshot.release', [fakeZfsSnapshot.name]);
+    expect(api.call).toHaveBeenCalledWith('pool.snapshot.release', [fakeZfsSnapshot.name]);
     expect(await holdCheckbox.getValue()).toBeFalsy();
 
     await holdCheckbox.toggle();
-    expect(api.call).toHaveBeenCalledWith('zfs.snapshot.hold', [fakeZfsSnapshot.name]);
+    expect(api.call).toHaveBeenCalledWith('pool.snapshot.hold', [fakeZfsSnapshot.name]);
   });
 
   it('should delete snapshot when `Delete` button click', async () => {
@@ -110,6 +110,6 @@ describe('SnapshotDetailsRowComponent', () => {
         message: `Delete snapshot ${fakeZfsSnapshot.name}?`,
       }),
     );
-    expect(api.call).toHaveBeenCalledWith('zfs.snapshot.delete', [fakeZfsSnapshot.name]);
+    expect(api.call).toHaveBeenCalledWith('pool.snapshot.delete', [fakeZfsSnapshot.name]);
   });
 });

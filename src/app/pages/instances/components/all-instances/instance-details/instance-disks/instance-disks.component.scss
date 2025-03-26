@@ -10,9 +10,18 @@
 
   .action {
     color: var(--primary);
-    cursor: pointer;
     margin-left: auto;
     text-decoration: underline;
+
+    a {
+      cursor: pointer;
+
+      &.disabled {
+        cursor: not-allowed;
+        opacity: var(--disabled-opacity);
+        pointer-events: none;
+      }
+    }
   }
 }
 

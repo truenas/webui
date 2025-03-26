@@ -127,7 +127,7 @@ describe('AppsFilterStore', () => {
     testScheduler.run(({ expectObservable }) => {
       spectator.service.applyFilters({
         categories: ['media'],
-        sort: AppsFiltersSort.Name,
+        sort: AppsFiltersSort.Title,
       });
       expectObservable(spectator.service.searchedApps$).toBe('a', {
         a: [
@@ -189,12 +189,12 @@ describe('AppsFilterStore', () => {
     testScheduler.run(({ expectObservable }) => {
       spectator.service.applyFilters({
         categories: ['storage'],
-        sort: AppsFiltersSort.Name,
+        sort: AppsFiltersSort.Title,
       });
       expectObservable(spectator.service.filterValues$).toBe('a', {
         a: {
           categories: ['storage'],
-          sort: AppsFiltersSort.Name,
+          sort: AppsFiltersSort.Title,
         } as AppsFiltersValues,
       });
     });
