@@ -1,4 +1,4 @@
-<ix-page-header [pageTitle]="'iSCSI' | translate">
+<ix-page-header [pageTitle]="hasFibreChannel() ? ('iSCSI / Fibre Channel' | translate) : ('iSCSI' | translate)">
   <button
     mat-button
     color="default"
@@ -19,7 +19,7 @@
 </ix-page-header>
 
 <nav mat-tab-nav-bar [tabPanel]="tabPanel">
-  @for (link of (navLinks$ | async); track link.label) {
+  @for (link of navLinks(); track link.label) {
     <a
       #rla="routerLinkActive"
       mat-tab-link

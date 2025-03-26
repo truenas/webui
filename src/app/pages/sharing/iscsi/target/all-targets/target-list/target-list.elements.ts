@@ -3,6 +3,7 @@ import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-sea
 
 export const targetListElements = {
   hierarchy: [T('Shares'), T('iSCSI'), T('Targets')],
+  synonyms: [('FC')],
   anchorRouterLink: ['/sharing', 'iscsi', 'targets'],
   elements: {
     list: {
@@ -10,7 +11,7 @@ export const targetListElements = {
     },
     add: {
       hierarchy: [T('Add Target')],
-      synonyms: [T('New Target'), T('Create Target')],
+      synonyms: [T('New Target'), T('Create Target'), T('FC Target')],
       anchor: 'add-target',
     },
   },
