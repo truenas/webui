@@ -62,7 +62,8 @@ export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChange
   readonly required = input<boolean>(false);
   readonly tooltip = input<string>();
   readonly multiple = input<boolean>();
-  readonly emptyValue = input<string | null>(null);
+  readonly emptyOptionValue = input<string | null>(null);
+  readonly emptyOptionLabel = input<string | null>(null);
   readonly hideEmpty = input(false);
   readonly showSelectAll = input(false);
   readonly compareWith = input<(val1: unknown, val2: unknown) => boolean>((val1, val2) => val1 === val2);

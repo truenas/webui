@@ -6,6 +6,7 @@
   class="spare-disk"
   [label]="'Select Disk for Spare VDEV' | translate"
   [formControl]="spareVdevDisk"
+  [emptyOptionLabel]="'None' | translate"
   [options]="spareVdevDiskOptions$"
   [tooltip]="'Only one disk can be selected for the Spare Vdev' | translate"
 ></ix-select>

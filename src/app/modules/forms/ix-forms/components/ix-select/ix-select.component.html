@@ -49,10 +49,10 @@
         }
         @if (opts.length > 0 && !multiple() && !required() && !hideEmpty()) {
           <mat-option
-            [value]="emptyValue()"
+            [value]="emptyOptionValue()"
             [ixTest]="[controlDirective.name, 'select']"
           >
-            --
+            {{ (emptyOptionLabel() | translate) || '--' }}
           </mat-option>
         }
         @for (option of opts; track option.label) {
