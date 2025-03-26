@@ -22,7 +22,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
 import { InstalledAppBadgeComponent } from 'app/pages/apps/components/installed-app-badge/installed-app-badge.component';
-import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
+import { SelectPoolDialog } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 
 @UntilDestroy()
@@ -104,7 +104,7 @@ export class AppDetailsHeaderComponent {
   }
 
   showChoosePoolModal(): void {
-    this.matDialog.open(SelectPoolDialogComponent, { viewContainerRef: this.viewContainerRef })
+    this.matDialog.open(SelectPoolDialog, { viewContainerRef: this.viewContainerRef })
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => {

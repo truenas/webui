@@ -34,7 +34,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
     TestDirective,
   ],
 })
-export class ResilverProgressDialogComponent implements OnInit {
+export class ResilverProgressDialog implements OnInit {
   tooltip: string;
   hideCancel = false;
   final = false;

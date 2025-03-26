@@ -34,7 +34,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     IxInputComponent,
   ],
 })
-export class VirtualPortsNumberDialogComponent {
+export class VirtualPortsNumberDialog {
   protected form = new FormGroup({
     virtualPorts: new FormControl(0, [Validators.required, Validators.min(0)]),
   });
@@ -42,7 +42,7 @@ export class VirtualPortsNumberDialogComponent {
   constructor(
     private api: ApiService,
     private loader: LoaderService,
-    private dialogRef: MatDialogRef<VirtualPortsNumberDialogComponent>,
+    private dialogRef: MatDialogRef<VirtualPortsNumberDialog>,
     private errorHandler: ErrorHandlerService,
     @Inject(MAT_DIALOG_DATA) private host: FibreChannelHost,
   ) {

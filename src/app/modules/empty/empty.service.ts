@@ -21,7 +21,7 @@ export class EmptyService {
         return {
           type: EmptyType.Errors,
           large: true,
-          title: this.translate.instant('Can not retrieve response'),
+          title: this.translate.instant('Cannot retrieve response'),
         };
       case EmptyType.NoSearchResults:
         return {

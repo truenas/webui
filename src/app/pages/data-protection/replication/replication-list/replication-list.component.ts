@@ -50,7 +50,7 @@ import {
 } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { replicationListElements } from 'app/pages/data-protection/replication/replication-list/replication-list.elements';
 import {
-  ReplicationRestoreDialogComponent,
+  ReplicationRestoreDialog,
 } from 'app/pages/data-protection/replication/replication-restore-dialog/replication-restore-dialog.component';
 import {
   ReplicationWizardComponent,
@@ -239,7 +239,7 @@ export class ReplicationListComponent implements OnInit {
   }
 
   restore(row: ReplicationTask): void {
-    const dialog = this.matDialog.open(ReplicationRestoreDialogComponent, {
+    const dialog = this.matDialog.open(ReplicationRestoreDialog, {
       data: row.id,
     });
     dialog.afterClosed()

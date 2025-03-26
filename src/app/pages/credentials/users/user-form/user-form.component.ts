@@ -51,7 +51,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { OneTimePasswordCreatedDialogComponent } from 'app/pages/credentials/users/one-time-password-created-dialog/one-time-password-created-dialog.component';
+import { OneTimePasswordCreatedDialog } from 'app/pages/credentials/users/one-time-password-created-dialog/one-time-password-created-dialog.component';
 import { userAdded, userChanged } from 'app/pages/credentials/users/store/user.actions';
 import { selectUsers } from 'app/pages/credentials/users/store/user.selectors';
 import { DownloadService } from 'app/services/download.service';
@@ -449,7 +449,7 @@ export class UserFormComponent implements OnInit {
     if (this.isNewUser && this.form.value.stig_password === UserStigPasswordOption.OneTimePassword) {
       return this.api.call('auth.generate_onetime_password', [{ username: this.form.value.username }]).pipe(
         switchMap((password) => {
-          this.matDialog.open(OneTimePasswordCreatedDialogComponent, { data: password });
+          this.matDialog.open(OneTimePasswordCreatedDialog, { data: password });
           return of(user);
         }),
       );

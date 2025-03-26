@@ -28,7 +28,7 @@ import {
 import {
   ServiceStateButtonComponent,
 } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
-import { DeleteTargetDialogComponent } from 'app/pages/sharing/iscsi/target/delete-target-dialog/delete-target-dialog.component';
+import { DeleteTargetDialog } from 'app/pages/sharing/iscsi/target/delete-target-dialog/delete-target-dialog.component';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
 import { IscsiService } from 'app/services/iscsi.service';
 import { selectServices } from 'app/store/services/services.selectors';
@@ -145,7 +145,7 @@ describe('IscsiCardComponent', () => {
     await deleteIcon.click();
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
-      DeleteTargetDialogComponent,
+      DeleteTargetDialog,
       { data: iscsiShares[0], width: '600px' },
     );
   });

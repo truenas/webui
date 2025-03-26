@@ -16,6 +16,9 @@ We maintain a [Help Wanted list](https://ixsystems.atlassian.net/issues/?filter=
 
 Feel free to assign any one issue from the queue, regardless of current assignee.
 
+> [!NOTE]
+> If you have discovered a new bug in TrueNAS, it's still best to create a Jira ticket first before attempting to fix it.
+
 ### Update The code
 - Fork the repo.
 

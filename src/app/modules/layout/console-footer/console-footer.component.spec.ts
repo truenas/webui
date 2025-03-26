@@ -3,7 +3,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { ConsoleFooterComponent } from 'app/modules/layout/console-footer/console-footer.component';
 import { ConsoleMessagesStore } from 'app/modules/layout/console-footer/console-messages.store';
-import { ConsolePanelDialogComponent } from 'app/modules/layout/console-footer/console-panel/console-panel-dialog.component';
+import { ConsolePanelDialog } from 'app/modules/layout/console-footer/console-panel/console-panel-dialog.component';
 
 describe('ConsoleFooterComponent', () => {
   let spectator: Spectator<ConsoleFooterComponent>;
@@ -32,6 +32,6 @@ describe('ConsoleFooterComponent', () => {
   it('opens ConsolePanelDialogComponent when footer is clicked', () => {
     spectator.click('.messages');
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ConsolePanelDialogComponent);
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ConsolePanelDialog);
   });
 });

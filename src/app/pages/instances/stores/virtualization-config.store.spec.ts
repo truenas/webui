@@ -15,6 +15,7 @@ describe('VirtualizationConfigStore', () => {
     v4_network: null,
     v6_network: null,
     id: 1,
+    storage_pools: ['poolio'],
   };
 
   const createService = createServiceFactory({

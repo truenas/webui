@@ -24,9 +24,9 @@ import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { OneTimePasswordCreatedDialogComponent } from 'app/pages/credentials/users/one-time-password-created-dialog/one-time-password-created-dialog.component';
+import { OneTimePasswordCreatedDialog } from 'app/pages/credentials/users/one-time-password-created-dialog/one-time-password-created-dialog.component';
 import {
-  DeleteUserDialogComponent,
+  DeleteUserDialog,
 } from 'app/pages/credentials/users/user-details-row/delete-user-dialog/delete-user-dialog.component';
 import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -130,7 +130,7 @@ export class UserDetailsRowComponent implements OnInit {
   }
 
   doDelete(user: User): void {
-    this.matDialog.open(DeleteUserDialogComponent, {
+    this.matDialog.open(DeleteUserDialog, {
       data: user,
     })
       .afterClosed()
@@ -167,7 +167,7 @@ export class UserDetailsRowComponent implements OnInit {
       switchMap(() => {
         return this.api.call('auth.generate_onetime_password', [{ username: user.username }]).pipe(
           switchMap((password) => {
-            this.matDialog.open(OneTimePasswordCreatedDialogComponent, { data: password });
+            this.matDialog.open(OneTimePasswordCreatedDialog, { data: password });
             return of(password);
           }),
           this.loader.withLoader(),

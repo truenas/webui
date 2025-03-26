@@ -63,7 +63,7 @@ import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { DockerHubRateInfoDialogComponent } from 'app/pages/apps/components/dockerhub-rate-limit-info-dialog/dockerhub-rate-limit-info-dialog.component';
+import { DockerHubRateInfoDialog } from 'app/pages/apps/components/dockerhub-rate-limit-info-dialog/dockerhub-rate-limit-info-dialog.component';
 import { AppMetadataCardComponent } from 'app/pages/apps/components/installed-apps/app-metadata-card/app-metadata-card.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
@@ -574,7 +574,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
   private getDockerHubRateLimitInfo(): void {
     this.api.call('app.image.dockerhub_rate_limit').pipe(untilDestroyed(this)).subscribe((info) => {
       if (Number(info.remaining_pull_limit) < 5) {
-        this.matDialog.open(DockerHubRateInfoDialogComponent, {
+        this.matDialog.open(DockerHubRateInfoDialog, {
           data: info,
         });
       }

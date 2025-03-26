@@ -43,9 +43,9 @@ export interface GeneralDialogConfig {
     TestDirective,
   ],
 })
-export class GeneralDialogComponent {
+export class GeneralDialog {
   constructor(
-    protected dialogRef: MatDialogRef<GeneralDialogComponent>,
+    protected dialogRef: MatDialogRef<GeneralDialog>,
     @Inject(MAT_DIALOG_DATA) public conf: GeneralDialogConfig,
   ) { }
 }

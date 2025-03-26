@@ -36,7 +36,7 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { ReplicationListComponent } from 'app/pages/data-protection/replication/replication-list/replication-list.component';
-import { ReplicationRestoreDialogComponent } from 'app/pages/data-protection/replication/replication-restore-dialog/replication-restore-dialog.component';
+import { ReplicationRestoreDialog } from 'app/pages/data-protection/replication/replication-restore-dialog/replication-restore-dialog.component';
 import { DownloadService } from 'app/services/download.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
@@ -237,7 +237,7 @@ describe('ReplicationListComponent', () => {
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Restore' }));
     await editButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ReplicationRestoreDialogComponent, {
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ReplicationRestoreDialog, {
       data: 1,
     });
   });
