@@ -256,6 +256,7 @@
   "User who controls the dataset. This user always has permissions to read or write the ACL and read or write attributes. Users created manually or imported from a directory service appear in the drop-down menu.": "",
   "Username associated with this API key.": "",
   "VDEV is highly discouraged and will result in data loss if it fails": "",
+  "VM disks cannot be managed while the instance is running.": "",
   "Volume size cannot be zero.": "",
   "WARNING: Adding data VDEVs with different numbers of disks is not recommended.": "",
   "Wait to stop cleanly": "",
