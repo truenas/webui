@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy, Component, input, output, OnInit,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -7,7 +8,7 @@ import { MatButton } from '@angular/material/button';
 import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { filter } from 'rxjs';
+import { filter, merge } from 'rxjs';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { helptextManager } from 'app/helptext/storage/volumes/manager/manager';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -50,10 +51,24 @@ export class SpareWizardStepComponent implements OnInit {
 
   constructor(
     private store: PoolManagerStore,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
     this.updateSpareTopologyWhenChanged();
+    this.listenForResetEvents();
+  }
+
+  private listenForResetEvents(): void {
+    merge(
+      this.store.startOver$,
+      this.store.resetStep$.pipe(filter((vdevType) => vdevType === VdevType.Spare)),
+    )
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.spareVdevDisk.setValue('');
+        this.cdr.markForCheck();
+      });
   }
 
   protected updateSpareTopologyWhenChanged(): void {
