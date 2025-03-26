@@ -1,7 +1,7 @@
 import {
-  ChangeDetectionStrategy, Component, input, output,
-  signal, OnInit,
+  ChangeDetectionStrategy, Component, input, output, OnInit,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
@@ -10,7 +10,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { helptextManager } from 'app/helptext/storage/volumes/manager/manager';
-import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -41,7 +40,7 @@ export class SpareWizardStepComponent implements OnInit {
 
   readonly goToLastStep = output();
 
-  protected disks = signal<DetailsDisk[]>([]);
+  protected disks = toSignal(this.store.getInventoryForStep(VdevType.Spare));
   protected readonly spareVdevDisk = new FormControl<string>('');
 
   protected readonly diskComboboxProvider = new SpareDiskComboboxProvider(this.store);
@@ -64,10 +63,15 @@ export class SpareWizardStepComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe({
       next: (diskName) => {
-        this.store.setManualTopologyCategory(
-          VdevType.Spare,
-          [[this.disks().find((disk) => disk.name === diskName)]],
-        );
+        const diskDetails = this.disks().find((disk) => disk.name === diskName);
+        this.store.setManualTopologyCategory(VdevType.Spare, [[diskDetails]]);
+        this.store.setAutomaticTopologyCategory(VdevType.Spare, {
+          diskSize: diskDetails.size,
+          diskType: diskDetails.type,
+          layout: CreateVdevLayout.Stripe,
+          vdevsNumber: 1,
+          width: 1,
+        });
       },
     });
   }
