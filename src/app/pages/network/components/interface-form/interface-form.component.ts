@@ -184,12 +184,15 @@ export class InterfaceFormComponent implements OnInit {
     private matDialog: MatDialog,
     private systemGeneralService: SystemGeneralService,
     private store$: Store<AppState>,
-    public slideInRef: SlideInRef<NetworkInterface | undefined, boolean>,
+    public slideInRef: SlideInRef<{
+      interfaces?: NetworkInterface[];
+      interface?: NetworkInterface;
+    } | undefined, boolean>,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
-    this.existingInterface = slideInRef.getData();
+    this.existingInterface = slideInRef.getData()?.interface;
   }
 
   get isNew(): boolean {
@@ -303,27 +306,58 @@ export class InterfaceFormComponent implements OnInit {
     });
   }
 
-  private generateRandomNameByType(type: NetworkInterfaceType): string | null {
-    const random = Math.floor(Math.random() * 10000);
+  private generateNextAvailableNameByType(type: NetworkInterfaceType): string | null {
+    const interfaces = this.slideInRef.getData()?.interfaces ?? [];
+    const prefix = this.getPrefixByType(type);
+    if (!prefix) return null;
+
+    const usedNumbers = this.getUsedNumbersForPrefix(interfaces, prefix);
+    const nextAvailableNumber = this.findNextAvailableNumber(usedNumbers);
+
+    return `${prefix}${nextAvailableNumber}`;
+  }
+
+  private getPrefixByType(type: NetworkInterfaceType): string | null {
     switch (type) {
       case NetworkInterfaceType.LinkAggregation:
-        return `bond${random}`;
+        return 'bond';
       case NetworkInterfaceType.Bridge:
-        return `br${random}`;
+        return 'br';
       case NetworkInterfaceType.Vlan:
-        return `vlan${random}`;
+        return 'vlan';
       default:
         return null;
     }
+  }
+
+  private getUsedNumbersForPrefix(interfaces: NetworkInterface[], prefix: string): Set<number> {
+    return new Set(
+      interfaces
+        .map((item) => item.name.match(new RegExp(`^${prefix}(\\d+)$`)))
+        .filter(Boolean)
+        .map((match) => Number(match[1])),
+    );
+  }
+
+  private findNextAvailableNumber(usedNumbers: Set<number>): number {
+    const sorted = Array.from(usedNumbers).sort((a, b) => a - b);
+    for (let i = 1; i <= sorted.length + 1; i++) {
+      if (!usedNumbers.has(i)) {
+        return i;
+      }
+    }
+    return sorted.length + 1;
   }
 
   private validateNameOnTypeChange(): void {
     this.form.controls.type.valueChanges
       .pipe(untilDestroyed(this))
       .subscribe((type: NetworkInterfaceType) => {
-        const name = this.generateRandomNameByType(type);
-        if (name) {
-          this.form.controls.name.patchValue(name, { emitEvent: false });
+        if (!this.existingInterface) {
+          const name = this.generateNextAvailableNameByType(type);
+          if (name) {
+            this.form.controls.name.patchValue(name, { emitEvent: false });
+          }
         }
 
         setTimeout(() => {
