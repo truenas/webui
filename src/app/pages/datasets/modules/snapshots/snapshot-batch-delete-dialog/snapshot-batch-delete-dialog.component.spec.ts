@@ -41,7 +41,7 @@ describe('SnapshotBatchDeleteDialogComponent', () => {
       mockProvider(DialogService),
       mockApi([
         mockJob('core.bulk', fakeSuccessfulJob(mockJobSuccessResponse)),
-        mockCall('zfs.snapshot.delete'),
+        mockCall('pool.snapshot.delete'),
       ]),
     ],
   });
@@ -65,7 +65,7 @@ describe('SnapshotBatchDeleteDialogComponent', () => {
     await deleteButton.click();
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('core.bulk', [
-      'zfs.snapshot.delete',
+      'pool.snapshot.delete',
       [
         ['test-dataset@first-snapshot'],
         ['test-dataset@second-snapshot'],

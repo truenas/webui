@@ -19,7 +19,6 @@ import { countDisksTotal } from 'app/helpers/count-disks-total.helper';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { Pool } from 'app/interfaces/pool.interface';
 import { isTopologyDisk } from 'app/interfaces/storage.interface';
-import { VolumesData } from 'app/interfaces/volume-data.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { MarkedIcon } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -55,23 +54,23 @@ import {
 export class WidgetStorageComponent {
   size = input.required<SlotSize>();
 
-  isLoading = computed(() => !this.pools() || !this.volumesData());
+  protected realtimeUpdates = toSignal(this.resources.realtimeUpdates$);
+  protected isLoading = computed(() => !this.pools() || !this.poolStats());
   poolsInfo = computed(() => {
-    const volumesData = this.volumesData();
     const pools = this.pools();
 
     const poolsInfo: PoolInfo[] = [];
 
-    if (pools && volumesData) {
+    if (pools && this.poolStats()) {
       pools.forEach((pool) => {
         poolsInfo.push({
           name: pool.name,
           topology: pool.topology,
           status: this.getStatusItemInfo(pool),
-          usedSpace: this.getUsedSpaceItemInfo(pool, volumesData),
+          usedSpace: this.getUsedSpaceItemInfo(pool),
           disksWithError: this.getDiskWithErrorsItemInfo(pool),
           scan: this.getScanItemInfo(pool),
-          freeSpace: this.getFreeSpace(pool, volumesData),
+          freeSpace: this.getFreeSpace(pool),
           totalDisks: this.getTotalDisks(pool),
         });
       });
@@ -80,10 +79,13 @@ export class WidgetStorageComponent {
     return poolsInfo;
   });
 
+  protected poolStats = computed(() => {
+    return this.realtimeUpdates()?.fields?.pools;
+  });
+
   protected readonly requiredRoles = [Role.PoolWrite];
 
   private pools = toSignal(this.resources.pools$);
-  private volumesData = toSignal(this.resources.volumesData$);
 
   constructor(
     private resources: WidgetResourcesService,
@@ -166,12 +168,15 @@ export class WidgetStorageComponent {
     };
   }
 
-  private getUsedSpaceItemInfo(pool: Pool, volumes: VolumesData): ItemInfo {
+  private getUsedSpaceItemInfo(pool: Pool): ItemInfo {
+    const usedSpace = this.poolStats()?.[pool.name]?.used;
+    const totalSpace = this.poolStats()?.[pool.name]?.total;
+    const usedSpacePercent = usedSpace / totalSpace;
     let level = StatusLevel.Safe;
     let icon = statusIcons.checkCircle;
-    let value = volumes.get(pool.name).used_pct;
+    let value = this.percentPipe.transform(usedSpacePercent, '1.2-2');
 
-    if (volumes.get(pool.name)?.used === null) {
+    if (!usedSpace) {
       return {
         label: this.translate.instant('Used Space'),
         value: this.translate.instant('Unknown'),
@@ -182,18 +187,16 @@ export class WidgetStorageComponent {
 
     if (this.getColumnsInTile(pool.name) < 3) {
       value = this.translate.instant('{used} of {total} ({used_pct})', {
-        used: buildNormalizedFileSize(volumes.get(pool.name).used),
-        total: buildNormalizedFileSize(volumes.get(pool.name).used + volumes.get(pool.name).avail),
-        used_pct: volumes.get(pool.name).used_pct,
+        used: buildNormalizedFileSize(usedSpace),
+        total: buildNormalizedFileSize(totalSpace),
+        used_pct: value,
       });
     }
 
-    const percent = parseInt(volumes.get(pool.name).used_pct?.split('%')?.[0]);
-
-    if (percent >= 90) {
+    if (usedSpacePercent >= 90) {
       level = StatusLevel.Error;
       icon = statusIcons.error;
-    } else if (percent >= 80) {
+    } else if (usedSpacePercent >= 80) {
       level = StatusLevel.Warn;
       icon = statusIcons.error;
     }
@@ -287,12 +290,14 @@ export class WidgetStorageComponent {
     };
   }
 
-  private getFreeSpace(pool: Pool, volumes: VolumesData): string {
-    if (volumes.get(pool.name)?.avail === null) {
+  private getFreeSpace(pool: Pool): string {
+    const availableSpace = this.poolStats()?.[pool.name]?.available;
+
+    if (!availableSpace) {
       return this.translate.instant('Unknown');
     }
 
-    return buildNormalizedFileSize(volumes.get(pool.name).avail);
+    return buildNormalizedFileSize(this.poolStats()[pool.name].available);
   }
 
   private getTotalDisks(pool: Pool): string {
