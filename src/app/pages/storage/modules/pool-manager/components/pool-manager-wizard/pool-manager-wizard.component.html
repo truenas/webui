@@ -125,12 +125,12 @@
               }
             </div>
           </ng-template>
-            <ix-spare-wizard-step
-              [isStepActive]="activeStep === PoolCreationWizardStep.Spare"
-              [stepWarning]="getTopLevelWarningForStep(PoolCreationWizardStep.Spare)"
-              (goToLastStep)="goToLastStep()"
-            ></ix-spare-wizard-step>
-          </mat-step>
+          <ix-spare-wizard-step
+            [isStepActive]="activeStep === PoolCreationWizardStep.Spare"
+            [stepWarning]="getTopLevelWarningForStep(PoolCreationWizardStep.Spare)"
+            (goToLastStep)="goToLastStep()"
+          ></ix-spare-wizard-step>
+        </mat-step>
       }
 
       <mat-step
