@@ -112,15 +112,6 @@ describe('WidgetPoolComponent', () => {
               ],
             },
           } as Pool)),
-          getDatasetById: jest.fn(() => of({
-            id: 1,
-            available: {
-              parsed: 557187072,
-            },
-            used: {
-              parsed: 2261385216,
-            },
-          })),
           getDisksByPoolId: jest.fn(() => of([
             { name: 'sda', size: 1024 ** 3 * 5 },
             { name: 'sdb', size: 1024 ** 3 * 5 },
