@@ -30,20 +30,24 @@ describe('getServerProduct', () => {
 describe('getProductImageSrc', () => {
   it('should return the correct image path for provided product', () => {
     expect(
-      getProductImageSrc('TRUENAS-M40-HA', true),
+      getProductImageSrc('TRUENAS-M40-HA'),
     ).toBe('assets/images/servers/M40.png');
     expect(
-      getProductImageSrc('TRUENAS-MINI-R', true),
+      getProductImageSrc('TRUENAS-MINI-R'),
     ).toBe('assets/images/servers/MINI-R.png');
     expect(
-      getProductImageSrc('FREENAS-MINI-XL', true),
+      getProductImageSrc('FREENAS-MINI-XL'),
     ).toBe('assets/images/freenas_mini_xl_cropped.png');
     expect(
-      getProductImageSrc('TRUENAS-MINI-R', true),
+      getProductImageSrc('TRUENAS-MINI-R'),
     ).toBe('assets/images/servers/MINI-R.png');
     expect(
-      getProductImageSrc('FREENAS-MINI-XL', true),
+      getProductImageSrc('FREENAS-MINI-XL'),
     ).toBe('assets/images/freenas_mini_xl_cropped.png');
+  });
+
+  it('returns null for missing product image', () => {
+    expect(getProductImageSrc('UNKNOWN-PRODUCT')).toBeNull();
   });
 });
 
