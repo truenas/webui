@@ -151,7 +151,7 @@ describe('InstanceDisksComponent', () => {
     });
 
     it('opens dialog to increase root disk size when Increase link is pressed', () => {
-      const link = spectator.query('.root-disk-size .action')!;
+      const link = spectator.query('.root-disk-size .action a')!;
       expect(link).toHaveText('Change');
 
       spectator.click(link);
@@ -175,7 +175,7 @@ describe('InstanceDisksComponent', () => {
       expect(await addButton.isDisabled()).toBe(true);
 
       const actionsMenu = spectator.query(DeviceActionsMenuComponent)!;
-      expect(actionsMenu).toBeNull();
+      expect(actionsMenu.isDisabled).toBe(true);
     });
   });
 });
