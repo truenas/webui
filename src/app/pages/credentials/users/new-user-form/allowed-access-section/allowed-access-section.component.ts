@@ -5,7 +5,7 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
-import { Role } from 'app/enums/role.enum';
+import { Role, roleNames } from 'app/enums/role.enum';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -34,9 +34,9 @@ export class AllowedAccessSectionComponent {
 
   protected readonly roles$ = of([
     { label: 'Select Role', value: 'prompt' },
-    { label: 'Full Admin', value: Role.FullAdmin },
-    { label: 'Sharing Admin', value: Role.SharingAdmin },
-    { label: 'Readonly Admin', value: Role.ReadonlyAdmin },
+    { label: roleNames.get(Role.FullAdmin), value: Role.FullAdmin },
+    { label: roleNames.get(Role.SharingAdmin), value: Role.SharingAdmin },
+    { label: roleNames.get(Role.ReadonlyAdmin), value: Role.ReadonlyAdmin },
   ]);
 
   form = this.fb.group({
