@@ -36,6 +36,7 @@ import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-comp
 import {
   Observable,
 } from 'rxjs';
+import { defaultLanguage } from 'app/constants/languages.constant';
 import { EmptyApiService } from 'app/core/testing/utils/empty-api.service';
 import { EmptyAuthService } from 'app/core/testing/utils/empty-auth.service';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -153,7 +154,7 @@ defineGlobalsInjections({
     TestOverrideDirective,
     WithLoadingStateDirective,
     TranslateModule.forRoot({
-      defaultLanguage: 'en',
+      defaultLanguage,
       loader: {
         provide: TranslateLoader,
         useClass: TranslateFakeLoader,

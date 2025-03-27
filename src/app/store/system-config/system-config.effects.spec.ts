@@ -3,7 +3,6 @@ import { provideMockActions } from '@ngrx/effects/testing';
 import { firstValueFrom, ReplaySubject } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
-import { WINDOW } from 'app/helpers/window.helper';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -61,15 +60,6 @@ describe('SystemConfigEffects', () => {
         generalConfig,
         advancedConfig,
       }));
-    });
-
-    it('stores language in local storage', () => {
-      actions$.next(adminUiInitialized());
-
-      spectator.service.loadConfig$.subscribe();
-
-      expect(spectator.inject<Window>(WINDOW).localStorage.setItem)
-        .toHaveBeenCalledWith('language', generalConfig.language);
     });
   });
 

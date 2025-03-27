@@ -3,6 +3,7 @@ import {
   mockProvider,
   SpectatorService,
 } from '@ngneat/spectator/jest';
+import { defaultLanguage } from 'app/constants/languages.constant';
 import { Schedule } from 'app/interfaces/schedule.interface';
 import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { LanguageService } from 'app/modules/language/language.service';
@@ -19,7 +20,7 @@ describe('ScheduleDescriptionPipe', () => {
         getPreferredTimeFormat: () => 'HH:mm:ss',
       }),
       mockProvider(LanguageService, {
-        currentLanguage: 'en',
+        currentLanguage: defaultLanguage,
       }),
     ],
   });
