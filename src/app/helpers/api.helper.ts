@@ -4,7 +4,7 @@ import {
   ErrorResponse,
   RequestMessage,
   IncomingMessage,
-  CollectionUpdateMessage, SuccessfulResponse,
+  CollectionUpdateMessage, SuccessfulResponse, NotifyUnsubscribedMessage,
 } from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { ApiCallError, FailedJobError } from 'app/services/errors/error.classes';
@@ -54,6 +54,12 @@ export function isErrorResponse(something: unknown): something is ErrorResponse 
   return isIncomingMessage(something)
     && 'error' in something
     && Boolean(something.error);
+}
+
+export function isNotifyUnsubscribedMessage(something: unknown): something is NotifyUnsubscribedMessage {
+  return isIncomingMessage(something)
+    && 'method' in something
+    && something.method === 'notify_unsubscribed';
 }
 
 /**

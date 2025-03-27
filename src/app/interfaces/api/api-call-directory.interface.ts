@@ -258,6 +258,7 @@ import {
   VirtualizationVolumeUpdate,
   VirtualizationPciChoices,
   CreateVirtualizationVolume,
+  VirtualizationImportIsoParams,
 } from 'app/interfaces/virtualization.interface';
 import {
   MatchDatastoresWithDatasets,
@@ -885,6 +886,7 @@ export interface ApiCallDirectory {
   'virt.volume.query': { params: QueryParams<VirtualizationVolume>; response: VirtualizationVolume[] };
   'virt.volume.update': { params: VirtualizationVolumeUpdate; response: VirtualizationVolume };
   'virt.volume.delete': { params: [id: string]; response: true };
+  'virt.volume.import_iso': { params: VirtualizationImportIsoParams; response: VirtualizationVolume };
 
   'system.advanced.get_gpu_pci_choices': { params: void; response: Choices };
 
@@ -907,13 +909,13 @@ export interface ApiCallDirectory {
   'webui.crypto.certificateauthority_profiles': { params: void; response: CertificateProfiles };
 
   // ZFS
-  'zfs.snapshot.clone': { params: [CloneZfsSnapshot]; response: boolean };
-  'zfs.snapshot.create': { params: [CreateZfsSnapshot]; response: ZfsSnapshot };
-  'zfs.snapshot.delete': { params: [id: string, params?: { defer?: boolean; recursive?: boolean }]; response: boolean };
-  'zfs.snapshot.hold': { params: [string]; response: void };
-  'zfs.snapshot.query': { params: QueryParams<ZfsSnapshot>; response: ZfsSnapshot[] };
-  'zfs.snapshot.release': { params: [string]; response: void };
-  'zfs.snapshot.rollback': { params: ZfsRollbackParams; response: void };
+  'pool.snapshot.clone': { params: [CloneZfsSnapshot]; response: boolean };
+  'pool.snapshot.create': { params: [CreateZfsSnapshot]; response: ZfsSnapshot };
+  'pool.snapshot.delete': { params: [id: string, params?: { defer?: boolean; recursive?: boolean }]; response: boolean };
+  'pool.snapshot.hold': { params: [string]; response: void };
+  'pool.snapshot.query': { params: QueryParams<ZfsSnapshot>; response: ZfsSnapshot[] };
+  'pool.snapshot.release': { params: [string]; response: void };
+  'pool.snapshot.rollback': { params: ZfsRollbackParams; response: void };
 }
 
 /**

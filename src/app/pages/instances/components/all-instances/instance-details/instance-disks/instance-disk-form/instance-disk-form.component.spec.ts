@@ -15,7 +15,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import {
   InstanceDiskFormComponent,
 } from 'app/pages/instances/components/all-instances/instance-details/instance-disks/instance-disk-form/instance-disk-form.component';
-import { VolumesDialogComponent } from 'app/pages/instances/components/common/volumes-dialog/volumes-dialog.component';
+import { VolumesDialog } from 'app/pages/instances/components/common/volumes-dialog/volumes-dialog.component';
 import { FilesystemService } from 'app/services/filesystem.service';
 
 describe('InstanceDiskFormComponent', () => {
@@ -165,7 +165,7 @@ describe('InstanceDiskFormComponent', () => {
       const selectVolumeButton = await loader.getHarness(MatButtonHarness.with({ text: 'Select Volume' }));
       await selectVolumeButton.click();
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(VolumesDialogComponent, expect.anything());
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(VolumesDialog, expect.anything());
     });
 
     it('creates a new disk for a VM', async () => {

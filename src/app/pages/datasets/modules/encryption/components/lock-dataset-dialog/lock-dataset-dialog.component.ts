@@ -39,7 +39,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     RequiresRolesDirective,
   ],
 })
-export class LockDatasetDialogComponent {
+export class LockDatasetDialog {
   protected readonly requiredRoles = [Role.DatasetWrite];
 
   forceCheckbox = new FormControl(false, { nonNullable: true });
@@ -49,7 +49,7 @@ export class LockDatasetDialogComponent {
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
-    private dialogRef: MatDialogRef<LockDatasetDialogComponent>,
+    private dialogRef: MatDialogRef<LockDatasetDialog>,
     private dialogService: DialogService,
     @Inject(MAT_DIALOG_DATA) public dataset: Dataset,
   ) { }

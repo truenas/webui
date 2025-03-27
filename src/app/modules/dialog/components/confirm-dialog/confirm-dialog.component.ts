@@ -32,7 +32,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     TestDirective,
   ],
 })
-export class ConfirmDialogComponent {
+export class ConfirmDialog {
   options: ConfirmOptionsWithSecondaryCheckbox;
 
   isSubmitEnabled = false;
@@ -46,7 +46,7 @@ export class ConfirmDialogComponent {
   } as ConfirmOptions;
 
   constructor(
-    private dialogRef: MatDialogRef<ConfirmDialogComponent>,
+    private dialogRef: MatDialogRef<ConfirmDialog>,
     private translate: TranslateService,
     @Inject(MAT_DIALOG_DATA) options: ConfirmOptionsWithSecondaryCheckbox,
   ) {

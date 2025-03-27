@@ -10,19 +10,19 @@ import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 import {
-  JobProgressDialogComponent,
+  JobProgressDialog,
   JobProgressDialogConfig,
 } from 'app/modules/dialog/components/job-progress/job-progress-dialog.component';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 
 describe('JobProgressDialogComponent', () => {
-  let spectator: Spectator<JobProgressDialogComponent<unknown>>;
+  let spectator: Spectator<JobProgressDialog<unknown>>;
   let loader: HarnessLoader;
   let dialogHarness: MatDialogHarness;
 
   const createComponent = createComponentFactory({
-    component: JobProgressDialogComponent<unknown>,
+    component: JobProgressDialog<unknown>,
     providers: [
       mockApi([
         mockCall('core.job_abort'),

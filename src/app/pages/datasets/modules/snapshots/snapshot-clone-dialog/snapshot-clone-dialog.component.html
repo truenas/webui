@@ -1,4 +1,5 @@
 <h1 matDialogTitle>{{ 'Clone to New Dataset' | translate }}</h1>
+<mat-dialog-content>
 @if (!wasDatasetCloned) {
   <form
     class="ix-form-container"
@@ -32,6 +33,10 @@
   <p>{{ 'Dataset {name} was created.' | translate: { name: datasetName } }}</p>
 
   <ix-form-actions>
+    <button mat-button type="button" ixTest="close" matDialogClose>
+      {{ 'Close' | translate }}
+    </button>
+
     <a
       mat-button
       type="submit"
@@ -42,9 +47,6 @@
     >
       {{ 'Go to Datasets' | translate }}
     </a>
-
-    <button mat-button type="button" ixTest="close" matDialogClose>
-      {{ 'Close' | translate }}
-    </button>
   </ix-form-actions>
 }
+</mat-dialog-content>

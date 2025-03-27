@@ -13,7 +13,7 @@ import { Role } from 'app/enums/role.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { powerMenuElements } from 'app/modules/layout/topbar/power-menu/power-menu.elements';
-import { RebootOrShutdownDialogComponent } from 'app/modules/layout/topbar/reboot-or-shutdown-dialog/reboot-or-shutdown-dialog.component';
+import { RebootOrShutdownDialog } from 'app/modules/layout/topbar/reboot-or-shutdown-dialog/reboot-or-shutdown-dialog.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @UntilDestroy()
@@ -46,7 +46,7 @@ export class PowerMenuComponent {
   ) { }
 
   onReboot(): void {
-    this.matDialog.open(RebootOrShutdownDialogComponent, {
+    this.matDialog.open(RebootOrShutdownDialog, {
       width: '430px',
     }).afterClosed().pipe(
       filter(Boolean),
@@ -60,7 +60,7 @@ export class PowerMenuComponent {
   }
 
   onShutdown(): void {
-    this.matDialog.open(RebootOrShutdownDialogComponent, {
+    this.matDialog.open(RebootOrShutdownDialog, {
       width: '430px',
       data: true,
     }).afterClosed().pipe(

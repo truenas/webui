@@ -15,15 +15,15 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
-  ExtendDialogComponent, ExtendDialogParams,
+  ExtendDialog, ExtendDialogParams,
 } from 'app/pages/storage/modules/devices/components/zfs-info-card/extend-dialog/extend-dialog.component';
 
 describe('ExtendDialogComponent', () => {
-  let spectator: Spectator<ExtendDialogComponent>;
+  let spectator: Spectator<ExtendDialog>;
   let loader: HarnessLoader;
 
   const createComponent = createComponentFactory({
-    component: ExtendDialogComponent,
+    component: ExtendDialog,
     imports: [
       ReactiveFormsModule,
       UnusedDiskSelectComponent,

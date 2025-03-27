@@ -36,7 +36,7 @@ import { UploadService } from 'app/services/upload.service';
     TranslateModule,
   ],
 })
-export class UploadConfigDialogComponent {
+export class UploadConfigDialog {
   protected readonly requiredRoles = [Role.FullAdmin];
 
   form = this.formBuilder.group({

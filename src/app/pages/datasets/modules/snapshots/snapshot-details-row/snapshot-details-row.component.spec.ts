@@ -14,9 +14,9 @@ import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-chec
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { SnapshotCloneDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-clone-dialog/snapshot-clone-dialog.component';
+import { SnapshotCloneDialog } from 'app/pages/datasets/modules/snapshots/snapshot-clone-dialog/snapshot-clone-dialog.component';
 import { SnapshotDetailsRowComponent } from 'app/pages/datasets/modules/snapshots/snapshot-details-row/snapshot-details-row.component';
-import { SnapshotRollbackDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
+import { SnapshotRollbackDialog } from 'app/pages/datasets/modules/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
 import { fakeZfsSnapshot } from 'app/pages/datasets/modules/snapshots/testing/snapshot-fake-datasource';
 
 describe('SnapshotDetailsRowComponent', () => {
@@ -40,10 +40,10 @@ describe('SnapshotDetailsRowComponent', () => {
         confirm: jest.fn(() => of(true)),
       }),
       mockApi([
-        mockCall('zfs.snapshot.query', [fakeZfsSnapshot]),
-        mockCall('zfs.snapshot.hold'),
-        mockCall('zfs.snapshot.release'),
-        mockCall('zfs.snapshot.delete'),
+        mockCall('pool.snapshot.query', [fakeZfsSnapshot]),
+        mockCall('pool.snapshot.hold'),
+        mockCall('pool.snapshot.release'),
+        mockCall('pool.snapshot.delete'),
       ]),
     ],
   });
@@ -75,7 +75,7 @@ describe('SnapshotDetailsRowComponent', () => {
     const cloneButton = await loader.getHarness(MatButtonHarness.with({ text: 'Clone To New Dataset' }));
     await cloneButton.click();
 
-    expect(matDialog.open).toHaveBeenCalledWith(SnapshotCloneDialogComponent, { data: fakeZfsSnapshot.name });
+    expect(matDialog.open).toHaveBeenCalledWith(SnapshotCloneDialog, { data: fakeZfsSnapshot.name });
   });
 
   it('should open rollback dialog when `Rollback` button click', async () => {
@@ -85,7 +85,7 @@ describe('SnapshotDetailsRowComponent', () => {
     const rollbackButton = await loader.getHarness(MatButtonHarness.with({ text: 'Rollback' }));
     await rollbackButton.click();
 
-    expect(matDialog.open).toHaveBeenCalledWith(SnapshotRollbackDialogComponent, { data: fakeZfsSnapshot.name });
+    expect(matDialog.open).toHaveBeenCalledWith(SnapshotRollbackDialog, { data: fakeZfsSnapshot.name });
   });
 
   it('should make websocket query when Hold is changed', async () => {
@@ -93,11 +93,11 @@ describe('SnapshotDetailsRowComponent', () => {
     expect(await holdCheckbox.getValue()).toBeTruthy();
 
     await holdCheckbox.toggle();
-    expect(api.call).toHaveBeenCalledWith('zfs.snapshot.release', [fakeZfsSnapshot.name]);
+    expect(api.call).toHaveBeenCalledWith('pool.snapshot.release', [fakeZfsSnapshot.name]);
     expect(await holdCheckbox.getValue()).toBeFalsy();
 
     await holdCheckbox.toggle();
-    expect(api.call).toHaveBeenCalledWith('zfs.snapshot.hold', [fakeZfsSnapshot.name]);
+    expect(api.call).toHaveBeenCalledWith('pool.snapshot.hold', [fakeZfsSnapshot.name]);
   });
 
   it('should delete snapshot when `Delete` button click', async () => {
@@ -110,6 +110,6 @@ describe('SnapshotDetailsRowComponent', () => {
         message: `Delete snapshot ${fakeZfsSnapshot.name}?`,
       }),
     );
-    expect(api.call).toHaveBeenCalledWith('zfs.snapshot.delete', [fakeZfsSnapshot.name]);
+    expect(api.call).toHaveBeenCalledWith('pool.snapshot.delete', [fakeZfsSnapshot.name]);
   });
 });

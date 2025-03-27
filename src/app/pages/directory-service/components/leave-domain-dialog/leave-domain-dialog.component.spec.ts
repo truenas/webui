@@ -11,13 +11,13 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { LeaveDomainDialogComponent } from './leave-domain-dialog.component';
+import { LeaveDomainDialog } from './leave-domain-dialog.component';
 
 describe('LeaveDomainDialogComponent', () => {
-  let spectator: Spectator<LeaveDomainDialogComponent>;
+  let spectator: Spectator<LeaveDomainDialog>;
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
-    component: LeaveDomainDialogComponent,
+    component: LeaveDomainDialog,
     imports: [
       ReactiveFormsModule,
     ],

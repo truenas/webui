@@ -8,6 +8,7 @@ import { backupTasksWidget } from 'app/pages/dashboard/widgets/backup/widget-bac
 import { cpuWidget } from 'app/pages/dashboard/widgets/cpu/widget-cpu/widget-cpu.definition';
 import { cpuModelWidget } from 'app/pages/dashboard/widgets/cpu/widget-cpu-model/widget-cpu-model.definition';
 import { cpuTemperatureBarWidget, cpuTempWidget } from 'app/pages/dashboard/widgets/cpu/widget-cpu-temperature/widget-cpu-temp.definition';
+import { cpuTemperatureRecentWidget } from 'app/pages/dashboard/widgets/cpu/widget-cpu-temperature-recent/widget-cpu-temp-recent.definition';
 import { cpuUsageBarWidget } from 'app/pages/dashboard/widgets/cpu/widget-cpu-usage-bar/widget-cpu-usage-bar.definition';
 import { cpuUsageGaugeWidget } from 'app/pages/dashboard/widgets/cpu/widget-cpu-usage-gauge/widget-cpu-usage-gauge.definition';
 import { cpuUsageRecentWidget } from 'app/pages/dashboard/widgets/cpu/widget-cpu-usage-recent/widget-cpu-usage-recent.definition';
@@ -60,6 +61,8 @@ export const widgetRegistry = {
   [WidgetType.CpuUsageRecent]: cpuUsageRecentWidget,
   [WidgetType.CpuUsageBar]: cpuUsageBarWidget,
   [WidgetType.CpuTemperatureBar]: cpuTemperatureBarWidget,
+  [WidgetType.CpuTemperatureRecent]: cpuTemperatureRecentWidget,
+  [WidgetType.CpuTempWidget]: cpuTempWidget,
   [WidgetType.Storage]: storageWidget,
   [WidgetType.SystemInfoActive]: systemInfoActiveWidget,
   [WidgetType.SystemInfoPassive]: systemInfoPassiveWidget,
@@ -72,5 +75,4 @@ export const widgetRegistry = {
   [WidgetType.SerialActive]: serialActiveWidget,
   [WidgetType.SerialPassive]: serialPassiveWidget,
   [WidgetType.CpuModelWidget]: cpuModelWidget,
-  [WidgetType.CpuTempWidget]: cpuTempWidget,
 };

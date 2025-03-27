@@ -14,13 +14,13 @@ import {
   TransferModeExplanationComponent,
 } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { CloudSyncRestoreDialogComponent } from './cloudsync-restore-dialog.component';
+import { CloudSyncRestoreDialog } from './cloudsync-restore-dialog.component';
 
 describe('CloudSyncRestoreDialogComponent', () => {
-  let spectator: Spectator<CloudSyncRestoreDialogComponent>;
+  let spectator: Spectator<CloudSyncRestoreDialog>;
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
-    component: CloudSyncRestoreDialogComponent,
+    component: CloudSyncRestoreDialog,
     imports: [
       ReactiveFormsModule,
       TransferModeExplanationComponent,

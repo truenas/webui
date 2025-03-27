@@ -26,7 +26,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ipmiCardElements } from 'app/pages/network/components/ipmi-card/ipmi-card.elements';
 import {
-  IpmiEventsDialogComponent,
+  IpmiEventsDialog,
 } from 'app/pages/network/components/ipmi-card/ipmi-events-dialog/ipmi-events-dialog.component';
 import { IpmiFormComponent } from 'app/pages/network/components/ipmi-card/ipmi-form/ipmi-form.component';
 
@@ -111,7 +111,7 @@ export class IpmiCardComponent implements OnInit {
   }
 
   onOpenEvents(): void {
-    this.matDialog.open(IpmiEventsDialogComponent);
+    this.matDialog.open(IpmiEventsDialog);
   }
 
   private loadIpmiEntries(): void {

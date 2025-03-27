@@ -1,0 +1,24 @@
+.wrapper {
+  background-color: var(--bg2);
+  border: 1px solid var(--lines);
+  color: var(--fg2);
+  height: 100%;
+  padding: 0 15px;
+  width: 100%;
+
+  .chart {
+    display: flex;
+    justify-content: center;
+  }
+
+  h3 {
+    padding: 16px 0 0;
+    width: 100%;
+  }
+}
+
+.skeleton,
+.chart {
+  height: 149px;
+  width: 100%;
+}
