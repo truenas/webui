@@ -9,7 +9,7 @@ function getFilePath(language: string): string {
   return `${translationDir}${language}.json`;
 }
 
-async function extractNewStrings(): Promise<void> {
+(async () => {
   try {
     const languages = await getLanguageFiles();
     const outputArgument = languages
@@ -54,6 +54,4 @@ async function extractNewStrings(): Promise<void> {
     console.error('Error fetching language files:', err);
     process.exit(1);
   }
-}
-
-extractNewStrings();
+})();
