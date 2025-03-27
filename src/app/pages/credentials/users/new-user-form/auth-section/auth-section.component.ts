@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, effect, input, output, OnInit,
+  ChangeDetectionStrategy, Component, effect, OnInit,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
@@ -9,7 +9,7 @@ import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-ch
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
-import { UserAuthConfig } from 'app/pages/credentials/users/new-user-form/interfaces/user-auth-config.interface';
+import { UserFormStore } from 'app/pages/credentials/users/new-user-form/new-user.store';
 
 @UntilDestroy()
 @Component({
@@ -28,9 +28,8 @@ import { UserAuthConfig } from 'app/pages/credentials/users/new-user-form/interf
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AuthSectionComponent implements OnInit {
-  sshAccessEnabled = input.required<boolean>();
-  smbAccessEnabled = input.required<boolean>();
-  authConfigUpdate = output<UserAuthConfig>();
+  sshAccessEnabled = this.userStore.sshAccess;
+  smbAccessEnabled = this.userStore.smbAccess;
   protected fakeTooltip = '';
   form = this.fb.group({
     password: [''],
@@ -41,6 +40,7 @@ export class AuthSectionComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
+    private userStore: UserFormStore,
   ) {
     effect(() => {
       const smbAccess = this.smbAccessEnabled();
@@ -54,11 +54,11 @@ export class AuthSectionComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe({
       next: () => {
-        this.authConfigUpdate.emit({
-          allowSshLoginWithPassword: this.form.value.allow_ssh_login_with_password,
-          disablePassword: this.form.value.disable_password,
+        this.userStore.updateUserConfig({
+          ssh_password_enabled: this.form.controls.allow_ssh_login_with_password.value,
+          password_disabled: this.form.value.disable_password,
           password: this.form.value.password,
-          sshKey: this.form.value.ssh_key,
+          sshpubkey: this.form.value.ssh_key,
         });
       },
     });

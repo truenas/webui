@@ -8,7 +8,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { catchError, of } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
-import { User, UserUpdate } from 'app/interfaces/user.interface';
+import { User } from 'app/interfaces/user.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -18,9 +18,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AdditionalDetailsSectionComponent } from 'app/pages/credentials/users/new-user-form/additional-details-section/additional-details-section.component';
 import { AllowedAccessSectionComponent } from 'app/pages/credentials/users/new-user-form/allowed-access-section/allowed-access-section.component';
 import { AuthSectionComponent } from 'app/pages/credentials/users/new-user-form/auth-section/auth-section.component';
-import { AdditionalDetailsConfig } from 'app/pages/credentials/users/new-user-form/interfaces/additional-details-config.interface';
-import { AllowAccessConfig } from 'app/pages/credentials/users/new-user-form/interfaces/allow-access-config.interface';
-import { UserAuthConfig } from 'app/pages/credentials/users/new-user-form/interfaces/user-auth-config.interface';
 import { UserFormStore } from 'app/pages/credentials/users/new-user-form/new-user.store';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { UserService } from 'app/services/user.service';
@@ -60,33 +57,6 @@ export class NewUserFormComponent implements OnInit {
     return !this.editingUser;
   }
 
-  protected allowedAccessConfig = signal<AllowAccessConfig>({
-    smbAccess: true,
-    truenasAccess: {
-      enabled: true,
-      role: 'prompt',
-    },
-    sshAccess: false,
-    shellAccess: false,
-  });
-
-  protected additionalDetails = signal<AdditionalDetailsConfig>({
-    createGroup: true,
-    groups: [],
-    home: '',
-    createHomeDirectory: false,
-    defaultPermissions: true,
-    fullName: '',
-    email: null as string,
-  });
-
-  protected userAuthConfig = signal<UserAuthConfig>({
-    allowSshLoginWithPassword: false,
-    password: '',
-    disablePassword: false,
-    sshKey: '',
-  });
-
   protected form = this.formBuilder.group({
     username: ['', [
       Validators.required,
@@ -97,18 +67,6 @@ export class NewUserFormComponent implements OnInit {
 
   protected readonly fakeTooltip = '';
 
-  protected setAllowAccessConfig(config: AllowAccessConfig): void {
-    this.allowedAccessConfig.set(config);
-  }
-
-  protected setAdditionalDetails(details: AdditionalDetailsConfig): void {
-    this.additionalDetails.set(details);
-  }
-
-  protected setAuthConfig(auth: UserAuthConfig): void {
-    this.userAuthConfig.set(auth);
-  }
-
   constructor(
     private formBuilder: NonNullableFormBuilder,
     public slideInRef: SlideInRef<User | undefined, boolean>,
@@ -117,6 +75,7 @@ export class NewUserFormComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.setupUsernameUpdate();
     // TODO: Handle enable/disable save button based on form sections validation status
     // TODO: Handle changes for `sshpubkey_file` input to set values on sshpubkey
     // TODO: Handle changes on `group` input to update shell options
@@ -167,6 +126,18 @@ export class NewUserFormComponent implements OnInit {
     this.editingUser = this.slideInRef.getData();
   }
 
+  private setupUsernameUpdate(): void {
+    this.form.controls.username.valueChanges.pipe(
+      untilDestroyed(this),
+    ).subscribe({
+      next: (username) => {
+        this.userFormStore.updateUserConfig({
+          username,
+        });
+      },
+    });
+  }
+
   protected onSubmit(): void {
     // TODO: password related fields are impacted if
     // UserStigPasswordOption.OneTimePassword is used as value for `stig_password`
@@ -177,37 +148,8 @@ export class NewUserFormComponent implements OnInit {
 
     // TODO: Add option to download ssh public key entered with a button next to the save button
 
-    const { username } = this.form.value;
-    const {
-      fullName,
-      email,
-      home,
-      createHomeDirectory,
-    } = this.additionalDetails();
-    const { disablePassword, password } = this.userAuthConfig();
-
-    const userCreatePayload: UserUpdate = {
-      email,
-      full_name: fullName || username,
-      groups: [] as number[],
-      home_create: createHomeDirectory,
-      home: home || '/var/empty',
-      locked: false,
-      password_disabled: disablePassword,
-      shell: '/usr/sbin/nologin',
-      smb: this.allowedAccessConfig().smbAccess,
-      ssh_password_enabled: false,
-      sshpubkey: null as string,
-      sudo_commands: [] as string[],
-      sudo_commands_nopasswd: [] as string[],
-      username,
-      group_create: true,
-      password,
-      uid: this.nextUid(),
-    };
-
     this.isFormLoading.set(true);
-    this.userFormStore.createUser(userCreatePayload).pipe(
+    this.userFormStore.createUser().pipe(
       catchError((error: unknown) => {
         this.errorHandler.showErrorModal(error);
         return of(undefined);

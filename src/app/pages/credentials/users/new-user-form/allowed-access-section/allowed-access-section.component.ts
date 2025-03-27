@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { FormBuilder } from '@ngneat/reactive-forms';
@@ -10,7 +10,7 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { AllowAccessConfig } from 'app/pages/credentials/users/new-user-form/interfaces/allow-access-config.interface';
+import { UserFormStore } from 'app/pages/credentials/users/new-user-form/new-user.store';
 
 @UntilDestroy()
 @Component({
@@ -30,7 +30,6 @@ import { AllowAccessConfig } from 'app/pages/credentials/users/new-user-form/int
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AllowedAccessSectionComponent {
-  allowAccessConfigUpdate = output<AllowAccessConfig>();
   protected readonly fakeTooltip = '';
 
   protected readonly roles$ = of([
@@ -50,6 +49,7 @@ export class AllowedAccessSectionComponent {
 
   constructor(
     private fb: FormBuilder,
+    private userStore: UserFormStore,
   ) {
     this.form.controls.ssh_access.valueChanges.pipe(
       untilDestroyed(this),
@@ -63,17 +63,21 @@ export class AllowedAccessSectionComponent {
         }
       },
     });
+
     this.form.valueChanges.pipe(untilDestroyed(this)).subscribe({
       next: () => {
-        this.allowAccessConfigUpdate.emit({
+        this.userStore.setAllowedAccessConfig({
           smbAccess: this.form.controls.smb_access.value,
-          truenasAccess: {
-            enabled: this.form.controls.truenas_access.value,
-            role: 'prompt',
-          },
+          truenasAccess: this.form.controls.truenas_access.value,
           sshAccess: this.form.controls.ssh_access.value,
           shellAccess: this.form.controls.shell_access.value,
         });
+
+        if (this.form.controls.truenas_access.value) {
+          this.userStore.updateSetupDetails({
+            role: 'prompt',
+          });
+        }
       },
     });
   }

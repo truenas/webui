@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, input, output,
+  ChangeDetectionStrategy, Component,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatCheckbox } from '@angular/material/checkbox';
@@ -17,7 +17,7 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { AdditionalDetailsConfig } from 'app/pages/credentials/users/new-user-form/interfaces/additional-details-config.interface';
+import { UserFormStore } from 'app/pages/credentials/users/new-user-form/new-user.store';
 import { FilesystemService } from 'app/services/filesystem.service';
 
 @UntilDestroy()
@@ -41,14 +41,10 @@ import { FilesystemService } from 'app/services/filesystem.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AdditionalDetailsSectionComponent {
-  shellAccessEnabled = input.required<boolean>();
-  additionalDetailsUpdate = output<AdditionalDetailsConfig>();
-
+  protected shellAccessEnabled = this.newUserStore.shellAccess;
   protected isUsingAlternativeColors = false;
 
   fakeTooltip = '';
-  truenasAccessEnabled = input.required<boolean>();
-  role = input.required<Role | 'prompt'>();
 
   protected isEditingGroups = false;
   protected isEditingHomeDirectory = false;
@@ -81,26 +77,29 @@ export class AdditionalDetailsSectionComponent {
     private filesystemService: FilesystemService,
     private fb: FormBuilder,
     private api: ApiService,
+    private newUserStore: UserFormStore,
   ) {
     this.form.valueChanges.pipe(
       untilDestroyed(this),
     ).subscribe({
       next: () => {
-        this.additionalDetailsUpdate.emit({
-          createGroup: this.form.value.create_group,
-          createHomeDirectory: this.form.value.create_home_directory,
-          defaultPermissions: this.form.value.default_permissions,
-          fullName: this.form.value.full_name,
-          groups: this.form.value.groups,
+        this.newUserStore.updateUserConfig({
+          group_create: this.form.value.create_group,
+          home_create: this.form.value.create_home_directory,
+          full_name: this.form.value.full_name,
+          groups: this.form.value.groups.map((grp) => (+grp)),
           home: this.form.value.home,
           email: this.form.value.email,
+        });
+        this.newUserStore.updateSetupDetails({
+          defaultPermissions: this.form.value.default_permissions,
         });
       },
     });
   }
 
   protected get hasSharingRole(): boolean {
-    return this.role()?.includes(Role.SharingAdmin);
+    return this.newUserStore.role()?.includes(Role.SharingAdmin);
   }
 
   protected onCloseInlineEdits(event: MouseEvent): void {
