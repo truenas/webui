@@ -23,6 +23,7 @@ import { AdditionalDetailsConfig } from 'app/pages/credentials/users/new-user-fo
 import { AllowAccessConfig } from 'app/pages/credentials/users/new-user-form/interfaces/allow-access-config.interface';
 import { UserAuthConfig } from 'app/pages/credentials/users/new-user-form/interfaces/user-auth-config.interface';
 import { UserFormStore } from 'app/pages/credentials/users/new-user-form/new-user.store';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { UserService } from 'app/services/user.service';
 
 @UntilDestroy()
@@ -114,6 +115,7 @@ export class NewUserFormComponent implements OnInit {
     public slideInRef: SlideInRef<User | undefined, boolean>,
     private userFormStore: UserFormStore,
     private dialogService: DialogService,
+    private errorHandler: ErrorHandlerService,
   ) { }
 
   ngOnInit(): void {
@@ -209,7 +211,7 @@ export class NewUserFormComponent implements OnInit {
     this.isFormLoading.set(true);
     this.userFormStore.createUser(userCreatePayload).pipe(
       catchError((error: unknown) => {
-        this.dialogService.error(error);
+        this.errorHandler.showErrorModal(error);
         return of(undefined);
       }),
       untilDestroyed(this),
