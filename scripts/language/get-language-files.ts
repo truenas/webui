@@ -21,7 +21,7 @@ export function getLanguageFiles(dir: string = translationDir): Promise<string[]
         languages.push(language);
       });
 
-      resolve(languages);
+      resolve(languages.toSorted((a, b) => a.localeCompare(b)));
     });
   });
 }

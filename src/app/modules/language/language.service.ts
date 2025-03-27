@@ -5,7 +5,6 @@ import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { defaultLanguage, languages } from 'app/constants/languages.constant';
 import { WINDOW } from 'app/helpers/window.helper';
-import { ApiService } from 'app/modules/websocket/api.service';
 import { AppState } from 'app/store';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 
@@ -15,7 +14,6 @@ export class LanguageService {
 
   constructor(
     protected translate: TranslateService,
-    protected api: ApiService,
     private store$: Store<AppState>,
     @Inject(WINDOW) private window: Window,
   ) {}

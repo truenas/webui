@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { exec } from 'child_process';
 import fs from 'fs';
-import { getLanguageFiles } from 'app/helpers/language.helper';
+import { getLanguageFiles } from './language/get-language-files';
 
 export const translationDir = 'src/assets/i18n/';
 
