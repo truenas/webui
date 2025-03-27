@@ -1,5 +1,6 @@
 {
   "": "",
+  "700 or owner – all, others – none": "",
   "<b>CPU Configuration</b><br />Enter the number of cores. Use multiple values or ranges to set the CPU topology.<br />Example: 1-2, 5, 9-11.": "",
   "API Key copied to clipboard": "",
   "Access to API can be granted after user has been created.": "",
