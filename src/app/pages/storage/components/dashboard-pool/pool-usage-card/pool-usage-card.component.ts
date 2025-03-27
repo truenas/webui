@@ -90,7 +90,8 @@ export class PoolUsageCardComponent implements OnInit {
   });
 
   protected usedPercentage = computed(() => {
-    return this.poolStats()?.used / this.capacity() * 100 || this.rootDataset().used.parsed / this.capacity() * 100;
+    return Number(this.poolStats()?.used) / this.capacity() * 100
+      || this.rootDataset().used.parsed / this.capacity() * 100;
   });
 
   protected iconType = computed(() => {

@@ -81,7 +81,7 @@ export class BootEnvironmentFormComponent implements OnInit {
   onSubmit(): void {
     this.isLoading.set(true);
     const cloneParams: BootenvCloneParams = [{
-      id: this.currentName,
+      id: String(this.currentName),
       target: this.formGroup.value.target,
     }];
 

@@ -274,7 +274,7 @@ class MockDataTransfer {
       length: this.filesArray.length,
       item: (index: number) => this.filesArray[index] || null,
       * [Symbol.iterator]() {
-        for (let i = 0; i < this.length; i++) {
+        for (let i = 0; i < Number(this.length); i++) {
           yield this.item(i);
         }
       },

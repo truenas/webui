@@ -16,7 +16,7 @@ import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextActiveDirectory } from 'app/helptext/directory-service/active-directory';
-import { NssInfoType } from 'app/interfaces/active-directory.interface';
+import { ActiveDirectoryUpdate, NssInfoType } from 'app/interfaces/active-directory.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -168,7 +168,7 @@ export class ActiveDirectoryComponent implements OnInit {
     const values = {
       ...this.form.value,
       kerberos_principal: this.form.value.kerberos_principal || '',
-    };
+    } as ActiveDirectoryUpdate;
 
     this.dialogService.jobDialog(
       this.api.job('activedirectory.update', [values]),

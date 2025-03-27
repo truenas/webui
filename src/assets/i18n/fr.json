@@ -49,6 +49,7 @@
   "Alias": "",
   "Allow accessing ZFS snapshots over the NFS protocol.": "",
   "Allows multiple  <a href=\"http://www.ntfs.com/ntfs-multiple.htm\">NTFS data streams</a>.  Disabling this option causes macOS to write streams to files on the filesystem.": "",
+  "An unknown error occurred": "",
   "Any OS": "",
   "Any part of TrueNAS that you like in particular?": "",
   "Api Keys": "",

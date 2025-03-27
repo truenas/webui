@@ -72,7 +72,7 @@ export class SubscriptionManagerService {
             if (message.params.error) {
               return throwError(() => new ApiCallError({
                 code: JsonRpcErrorCode.CallError,
-                message: message.params.error.reason,
+                message: message.params.error?.reason || '',
                 data: message.params.error,
               }));
             }

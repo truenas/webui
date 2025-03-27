@@ -76,7 +76,7 @@ export class ServiceUpsComponent implements OnInit {
     shutdowntimer: [null as number | null],
     shutdowncmd: [null as string | null],
     powerdown: [false],
-    nocommwarntime: [300],
+    nocommwarntime: [300 as number | null],
     hostsync: [15],
     description: [null as string | null],
     options: [null as string | null],

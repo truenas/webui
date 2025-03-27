@@ -133,7 +133,7 @@ export class JobProgressDialog<T> implements OnInit, AfterViewChecked {
           this.title = this.job.method;
         }
         if (!this.description) {
-          this.description = this.job.description;
+          this.description = this.job.description || '';
         }
         if (
           this.data.showRealtimeLogs

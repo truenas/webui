@@ -170,7 +170,7 @@ export class InstanceWizardComponent {
 
   protected poolOptions$ = this.configStore.state$.pipe(
     filter((state) => !state.isLoading),
-    map((state) => state.config.storage_pools),
+    map((state) => state.config?.storage_pools),
     singleArrayToOptions(),
     tap((options) => {
       if (options.length && !this.form.controls.storage_pool.value) {
@@ -179,7 +179,7 @@ export class InstanceWizardComponent {
     }),
   );
 
-  protected hasOnePool = computed(() => this.configStore.config().storage_pools.length === 1);
+  protected hasOnePool = computed(() => this.configStore.config()?.storage_pools?.length === 1);
 
   protected readonly form = this.formBuilder.group({
     name: [
@@ -216,9 +216,9 @@ export class InstanceWizardComponent {
     }>>([]),
     disks: this.formBuilder.array<FormGroup<{
       source: FormControl<string>;
-      destination: FormControl<string>;
-      io_bus: FormControl<DiskIoBus>;
-      boot_priority: FormControl<number>;
+      destination?: FormControl<string>;
+      io_bus?: FormControl<DiskIoBus>;
+      boot_priority?: FormControl<number>;
     }>>([]),
     environment_variables: new FormArray<InstanceEnvVariablesFormGroup>([]),
   });
@@ -271,7 +271,7 @@ export class InstanceWizardComponent {
 
     effect(() => {
       if (!this.form.value.storage_pool && this.hasOnePool()) {
-        this.form.patchValue({ storage_pool: this.configStore.config().storage_pools[0] });
+        this.form.patchValue({ storage_pool: this.configStore.config()?.storage_pools?.[0] });
       }
     });
 
@@ -359,7 +359,12 @@ export class InstanceWizardComponent {
       destination: ['', Validators.required],
       io_bus: [DiskIoBus.Nvme, Validators.required],
       boot_priority: [1, Validators.required],
-    });
+    }) as FormGroup<{
+      source: FormControl<string>;
+      destination?: FormControl<string>;
+      io_bus?: FormControl<DiskIoBus>;
+      boot_priority?: FormControl<number>;
+    }>;
 
     if (this.isVm()) {
       control.removeControl('destination');
