@@ -1,21 +1,14 @@
 <h1 matDialogTitle>
-  {{ 'Change Root Disk Setup' | translate }}
+  {{ 'Change Boot From Disk' | translate }}
 </h1>
 
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-  <ix-input
-    type="number"
-    formControlName="size"
-    [label]="'Root Disk Size (in GiB)' | translate"
-    [required]="true"
-  ></ix-input>
-
   <ix-select
-    formControlName="root_disk_io_bus"
-    [label]="'Root Disk I/O Bus' | translate"
-    [tooltip]="instancesHelptext.io_bus_tooltip | translate"
+    formControlName="boot_from"
+    [label]="'Boot From' | translate"
+    [tooltip]="instancesHelptext.boot_from_tooltip | translate"
     [required]="true"
-    [options]="diskIoBusOptions$"
+    [options]="bootFromOptions$"
   ></ix-select>
 
   <ix-form-actions>

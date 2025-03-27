@@ -863,6 +863,7 @@ export interface ApiCallDirectory {
 
   // Virt
   'virt.instance.query': { params: QueryParams<VirtualizationInstance>; response: VirtualizationInstance[] };
+  'virt.instance.set_bootable_disk': { params: [instanceId: string, diskId: string]; response: boolean };
   'virt.instance.device_add': { params: [instanceId: string, device: VirtualizationDevice]; response: true };
   'virt.instance.device_update': { params: [instanceId: string, device: VirtualizationDevice]; response: true };
   'virt.instance.device_delete': { params: [instanceId: string, name: string]; response: true };

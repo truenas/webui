@@ -20,6 +20,7 @@ import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ChangeBootFromDiskComponent } from 'app/pages/instances/components/all-instances/instance-details/instance-disks/change-boot-from-disk/change-boot-from-disk.component';
 import {
   ChangeRootDiskSetupComponent,
 } from 'app/pages/instances/components/all-instances/instance-details/instance-disks/change-root-disk-setup/change-root-disk-setup.component';
@@ -77,11 +78,16 @@ export class InstanceDisksComponent {
     private instanceStore: VirtualizationInstancesStore,
   ) {}
 
-  protected readonly visibleDisks = computed(() => {
-    return this.deviceStore.devices()
-      .filter((device) => device.dev_type === VirtualizationDeviceType.Disk)
-      // TODO: Second filter is due to Typescript issues.
-      .filter((disk) => disk.source);
+  protected readonly visibleDisks = computed(() => this.deviceStore.devices().filter(
+    (device): device is VirtualizationDisk => device.dev_type === VirtualizationDeviceType.Disk && !!device.source,
+  ));
+
+  protected readonly primaryBootDisk = computed<VirtualizationDisk | null>(() => {
+    const disksWithPriority = this.visibleDisks().filter((disk) => typeof disk.boot_priority === 'number');
+
+    if (!disksWithPriority.length) return null;
+
+    return disksWithPriority.reduce((highest, disk) => (disk.boot_priority > highest.boot_priority ? disk : highest));
   });
 
   protected addDisk(): void {
@@ -100,6 +106,19 @@ export class InstanceDisksComponent {
         ...this.instance(),
         root_disk_size: newRootDiskSize * GiB,
       }));
+  }
+
+  protected showChangeBootFromDiskDialog(): void {
+    this.matDialog.open(ChangeBootFromDiskComponent, {
+      data: {
+        instance: this.instance(),
+        visibleDisks: this.visibleDisks(),
+        primaryBootDisk: this.primaryBootDisk(),
+      },
+    })
+      .afterClosed()
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe(() => this.deviceStore.loadDevices());
   }
 
   private openDiskForm(disk?: VirtualizationDisk): void {
