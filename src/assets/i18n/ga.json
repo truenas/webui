@@ -285,6 +285,7 @@
   "LBA of First Error": "",
   "Label": "",
   "Languages other than <i>English</i> are provided by      the community and may be incomplete.      <a href=\"https://github.com/truenas/webui/blob/master/TRANSLATING.md\" target=\"_blank\">Learn how to contribute.</a>": "",
+  "Learn about": "",
   "Leave empty for default values": "",
   "Leave empty to allow all host CPUs to be used.": "",
   "Leave empty to not limit instance memory.": "",

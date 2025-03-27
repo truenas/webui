@@ -1825,6 +1825,7 @@
   "Last {result} Test": "",
   "Launch Docker Image": "",
   "Layout": "",
+  "Learn about": "",
   "Leave Feedback": "",
   "Leave blank to allow all or enter a list of initiator hostnames.    Separate entries by pressing <code>Enter</code>.": "",
   "Leave empty for default (<a href=\"https://docs.opsgenie.com/docs/api-overview\" target=\"_blank\">OpsGenie API</a>)": "",
