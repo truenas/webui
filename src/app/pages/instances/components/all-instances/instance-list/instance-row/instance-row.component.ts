@@ -24,7 +24,6 @@ import { InstanceStatusCellComponent } from 'app/pages/instances/components/all-
 import {
   StopOptionsDialog, StopOptionsOperation,
 } from 'app/pages/instances/components/all-instances/instance-list/stop-options-dialog/stop-options-dialog.component';
-import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -64,7 +63,6 @@ export class InstanceRowComponent {
     private errorHandler: ErrorHandlerService,
     private matDialog: MatDialog,
     private snackbar: SnackbarService,
-    private deviceStore: VirtualizationDevicesStore,
     private instancesStore: VirtualizationInstancesStore,
   ) {}
 

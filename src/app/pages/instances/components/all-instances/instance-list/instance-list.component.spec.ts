@@ -25,7 +25,7 @@ describe('InstanceListComponent', () => {
         initialize: jest.fn(),
         instances: jest.fn(() => [mockInstance]),
         isLoading: jest.fn(() => false),
-        selectedInstance: jest.fn(() => null),
+        selectedInstance: jest.fn(() => mockInstance),
         selectInstance: jest.fn(),
       }),
     ],
