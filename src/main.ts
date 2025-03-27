@@ -27,13 +27,13 @@ import {
 } from '@ngx-translate/core';
 import * as Sentry from '@sentry/angular';
 import { environment } from 'environments/environment';
-import product from 'environments/product';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 import { MarkdownModule } from 'ngx-markdown';
 import { NgxPopperjsModule } from 'ngx-popperjs';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
 import { provideNgxWebstorage, withLocalStorage } from 'ngx-webstorage';
+import { enableSentry } from 'sentry';
 import { AppComponent } from 'app/app.component';
 import { rootRoutes } from 'app/app.routes';
 import { MockEnclosureApiService } from 'app/core/testing/mock-enclosure/mock-enclosure-api.service';
@@ -51,19 +51,7 @@ import { CustomRouterStateSerializer } from 'app/store/router/custom-router-seri
 
 if (environment.production) {
   enableProdMode();
-
-  Sentry.init({
-    dsn: environment.sentryPublicDsn,
-    integrations: [
-      Sentry.browserTracingIntegration(),
-      Sentry.replayIntegration({
-        maskAllText: false,
-      }),
-      Sentry.captureConsoleIntegration({ levels: ['error'] }),
-    ],
-    release: product.product || '',
-    replaysOnErrorSampleRate: 1.0,
-  });
+  enableSentry();
 }
 
 bootstrapApplication(AppComponent, {
