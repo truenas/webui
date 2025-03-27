@@ -1,4 +1,4 @@
-import { Observable, map } from 'rxjs';
+import { Observable } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 
 export interface IxComboboxProvider {
@@ -18,34 +18,4 @@ export interface IxComboboxProvider {
     */
   nextPage(filterValue: string): Observable<Option[]>;
 
-  /**
-   * Used to map the fetch result to a new array of options for any needed changes before
-   * the options array is consumed by IxComboboxComponent
-   */
-  mapOptions?(options: Option[]): Option[];
-}
-
-export class IxComboboxProviderManager {
-  constructor(private provider: IxComboboxProvider) { }
-  fetch(filterValue: string): Observable<Option[]> {
-    return this.provider.fetch(filterValue).pipe(
-      map((result) => {
-        if (this.provider.mapOptions) {
-          return this.provider.mapOptions(result);
-        }
-        return result;
-      }),
-    );
-  }
-
-  nextPage(filterValue: string): Observable<Option[]> {
-    return this.provider.nextPage(filterValue).pipe(
-      map((result) => {
-        if (this.provider.mapOptions) {
-          return this.provider.mapOptions(result);
-        }
-        return result;
-      }),
-    );
-  }
 }

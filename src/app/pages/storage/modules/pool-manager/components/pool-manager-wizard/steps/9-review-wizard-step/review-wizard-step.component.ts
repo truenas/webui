@@ -53,6 +53,7 @@ import {
 export class ReviewWizardStepComponent implements OnInit {
   readonly isAddingVdevs = input<boolean>();
 
+  readonly VdevType = VdevType;
   readonly createPool = output();
 
   state: PoolManagerState;

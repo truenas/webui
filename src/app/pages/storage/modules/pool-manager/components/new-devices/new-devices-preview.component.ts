@@ -7,7 +7,7 @@ import {
 } from '@angular/material/card';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { vdevTypeLabels } from 'app/enums/v-dev-type.enum';
+import { VdevType, vdevTypeLabels } from 'app/enums/v-dev-type.enum';
 import { isTopologyLimitedToOneLayout } from 'app/helpers/storage.helper';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
@@ -41,6 +41,7 @@ export class NewDevicesPreviewComponent {
   protected topology$ = this.store.topology$;
   protected isLimitedToOneLayout = isTopologyLimitedToOneLayout;
 
+  readonly VdevType = VdevType;
   constructor(
     private store: PoolManagerStore,
   ) {}
