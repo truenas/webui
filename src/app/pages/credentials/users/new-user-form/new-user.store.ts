@@ -8,6 +8,8 @@ import { SystemSecurityConfig } from 'app/interfaces/system-security-config.inte
 import { User, UserUpdate } from 'app/interfaces/user.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 
+const defaultHomePath = '/var/empty';
+
 export interface UserFormSetupDetails {
   allowedAccess: AllowedAccessConfig;
   defaultPermissions: boolean;
@@ -93,7 +95,7 @@ export class UserFormStore extends ComponentStore<NewUserFormState> {
     user = {
       ...user,
       full_name: user.full_name || user.username,
-      home: user.home || '/var/empty',
+      home: user.home || defaultHomePath,
       locked: false,
       shell: '/usr/sbin/nologin',
       smb: state.setupDetails.allowedAccess.smbAccess,
