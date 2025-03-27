@@ -64,7 +64,7 @@ describe('ChangeBootFromDiskComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('shows current root disk size', async () => {
+  it('shows current primary boot disk', async () => {
     const form = await loader.getHarness(IxFormHarness);
 
     expect(await form.getValues()).toEqual({
@@ -72,7 +72,7 @@ describe('ChangeBootFromDiskComponent', () => {
     });
   });
 
-  it('changes boot from disk', async () => {
+  it('changes primary boot disk', async () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
       'Boot From': 'test2Disk',
