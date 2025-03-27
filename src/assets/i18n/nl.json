@@ -101,6 +101,7 @@
   "Volume with this name already exists.": "",
   "Volumes": "",
   "custom roles.": "",
+  "for Sharing Admin role": "",
   "{temp}°C (All Cores)": "",
   "{temp}°C (Core #{core})": "",
   "{temp}°C ({coreCount} cores at {temp}°C)": "",

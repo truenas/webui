@@ -103,6 +103,7 @@
   "Volume with this name already exists.": "",
   "custom roles.": "",
   "everyone@": "",
+  "for Sharing Admin role": "",
   "group@": "",
   "{license} Contract,": "",
   "\n              It looks like your session has been inactive for more than {lifetime} seconds.<br>\n              For security reasons we will log you out at {time}.\n            ": "\nParece que tu sesión estuvo inactiva durante más de {lifetime} segundos.<br>\nPor razones de seguridad, vamos a cerrar tu sesión a las {time}.\n",

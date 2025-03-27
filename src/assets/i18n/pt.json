@@ -3423,6 +3423,7 @@
   "disk stats": "",
   "disk writes": "",
   "expires in {n, plural, one {# day} other {# days} }": "",
+  "for Sharing Admin role": "",
   "gzip (default level, 6)": "",
   "gzip-1 (fastest)": "",
   "gzip-9 (maximum, slow)": "",

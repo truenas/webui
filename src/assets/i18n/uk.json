@@ -2268,6 +2268,7 @@
   "disk stats": "",
   "disk writes": "",
   "expires in {n, plural, one {# day} other {# days} }": "",
+  "for Sharing Admin role": "",
   "iSCSI Authorized Networks": "",
   "iSCSI Connections": "",
   "iSCSI Extent": "",
