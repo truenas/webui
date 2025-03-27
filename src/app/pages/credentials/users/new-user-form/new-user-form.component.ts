@@ -49,7 +49,7 @@ import { UserService } from 'app/services/user.service';
 export class NewUserFormComponent implements OnInit {
   protected isStigMode = this.userFormStore.isStigMode;
   protected nextUid = this.userFormStore.nextUid;
-  protected editingUser: User | undefined;
+  protected editingUser = signal(undefined);
 
   protected isFormLoading = signal<boolean>(false);
 
@@ -123,7 +123,7 @@ export class NewUserFormComponent implements OnInit {
 
     // TODO: Add controls for sudo related values
 
-    this.editingUser = this.slideInRef.getData();
+    this.editingUser.set(this.slideInRef.getData() as User);
   }
 
   private setupUsernameUpdate(): void {
