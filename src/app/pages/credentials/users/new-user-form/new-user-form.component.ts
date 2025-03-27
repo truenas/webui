@@ -9,7 +9,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { catchError, of } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { User, UserUpdate } from 'app/interfaces/user.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -114,7 +113,6 @@ export class NewUserFormComponent implements OnInit {
     private formBuilder: NonNullableFormBuilder,
     public slideInRef: SlideInRef<User | undefined, boolean>,
     private userFormStore: UserFormStore,
-    private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
   ) { }
 
