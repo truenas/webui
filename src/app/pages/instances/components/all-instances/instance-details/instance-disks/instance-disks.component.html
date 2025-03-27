@@ -61,22 +61,24 @@
           }
         </span>
 
-        <span
-          class="action"
-          [matTooltip]="disksDisabledMessage"
-          [matTooltipDisabled]="!isVmRunning()"
-        >
-          <a
+        @if (visibleDisks()?.length > 1 || !primaryBootDisk()) {
+          <span
             class="action"
-            ixTest="change-primary-boot-disk"
-            [class.disabled]="isVmRunning()"
-            [attr.tabindex]="isVmRunning() ? -1 : 0"
-            (keydown.enter)="showChangeBootFromDiskDialog()"
-            (click)="showChangeBootFromDiskDialog()"
+            [matTooltip]="disksDisabledMessage"
+            [matTooltipDisabled]="!isVmRunning()"
           >
-            {{ 'Change' | translate }}
-          </a>
-        </span>
+            <a
+              class="action"
+              ixTest="change-primary-boot-disk"
+              [class.disabled]="isVmRunning()"
+              [attr.tabindex]="isVmRunning() ? -1 : 0"
+              (keydown.enter)="showChangeBootFromDiskDialog()"
+              (click)="showChangeBootFromDiskDialog()"
+            >
+              {{ 'Change' | translate }}
+            </a>
+          </span>
+        }
       </div>
     }
 
