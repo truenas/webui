@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy, Component,
+  computed,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatCheckbox } from '@angular/material/checkbox';
@@ -45,6 +46,8 @@ export class AdditionalDetailsSectionComponent {
   protected isUsingAlternativeColors = false;
 
   fakeTooltip = '';
+
+  protected hasSharingRole = computed(() => this.newUserStore.role()?.includes(Role.SharingAdmin));
 
   protected isEditingGroups = false;
   protected isEditingHomeDirectory = false;
@@ -96,10 +99,6 @@ export class AdditionalDetailsSectionComponent {
         });
       },
     });
-  }
-
-  protected get hasSharingRole(): boolean {
-    return this.newUserStore.role()?.includes(Role.SharingAdmin);
   }
 
   protected onCloseInlineEdits(event: MouseEvent): void {
