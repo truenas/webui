@@ -1,7 +1,8 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import {
   ErrorHandler, Injectable, Injector, NgZone,
 } from '@angular/core';
-import { captureException, SentryErrorHandler } from '@sentry/angular';
+import * as Sentry from '@sentry/angular';
 import { consoleSandbox } from '@sentry/utils';
 import {
   catchError, EMPTY, MonoTypeOperatorFunction, Observable,
@@ -17,8 +18,10 @@ import { ErrorParserService } from 'app/services/errors/error-parser.service';
 @Injectable({
   providedIn: 'root',
 })
-export class ErrorHandlerService extends SentryErrorHandler implements ErrorHandler {
+export class ErrorHandlerService extends Sentry.SentryErrorHandler implements ErrorHandler {
   private dialogService: DialogService;
+
+  private isSentryAllowed = true;
 
   get dialog(): DialogService {
     if (!this.dialogService) {
@@ -37,6 +40,17 @@ export class ErrorHandlerService extends SentryErrorHandler implements ErrorHand
     });
   }
 
+  /**
+   * Sentry collects errors by default, but their sending
+   * may be delayed or cancelled based on whether error reporting is allowed.
+   *
+   * See waitForConsent$
+   */
+  disableSentry(): void {
+    this.isSentryAllowed = false;
+    Sentry.endSession();
+  }
+
   override handleError(error: unknown): void {
     this.logError(error);
   }
@@ -47,19 +61,23 @@ export class ErrorHandlerService extends SentryErrorHandler implements ErrorHand
       console.error(error);
     });
 
-    if (!this.shouldLogToSentry(error)) {
+    if (!this.isSentryAllowed || !this.shouldLogToSentry(error)) {
       return;
     }
 
     const extractedError = this._extractError(error) || `No additional data available for error: ${JSON.stringify(error)}`;
 
-    this.zone.runOutsideAngular(() => captureException(extractedError, {
+    this.zone.runOutsideAngular(() => Sentry.captureException(extractedError, {
       mechanism: { type: 'angular', handled: wasErrorHandled },
     }));
   }
 
   private shouldLogToSentry(error: unknown): boolean {
     if (String(error) === '[object CloseEvent]') {
+      return false;
+    }
+
+    if (error instanceof HttpErrorResponse) {
       return false;
     }
 
