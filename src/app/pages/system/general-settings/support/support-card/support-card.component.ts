@@ -78,7 +78,6 @@ export class SupportCardComponent implements OnInit {
   protected readonly Role = Role;
   protected readonly searchableElements = supportCardElements;
 
-  extraMargin = true;
   systemInfo: SystemInfoInSupport;
   hasLicense = false;
   productImageSrc = signal<string | null>(null);
@@ -125,9 +124,8 @@ export class SupportCardComponent implements OnInit {
   }
 
   private setupProductImage(systemInfo: SystemInfo): void {
-    const productImageUrl = getProductImageSrc(systemInfo.system_product, true);
+    const productImageUrl = getProductImageSrc(systemInfo.system_product);
     this.productImageSrc.set(productImageUrl);
-    this.extraMargin = !productImageUrl?.includes('ix-original');
   }
 
   parseLicenseInfo(licenseInfo: LicenseInfoInSupport): void {
