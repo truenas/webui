@@ -13,11 +13,11 @@ import {
   GlobalConfigFormComponent,
 } from 'app/pages/instances/components/all-instances/all-instances-header/global-config-form/global-config-form.component';
 import {
-  MapUserGroupIdsDialogComponent,
+  MapUserGroupIdsDialog,
 } from 'app/pages/instances/components/all-instances/all-instances-header/map-user-group-ids-dialog/map-user-group-ids-dialog.component';
 import { VirtualizationStateComponent } from 'app/pages/instances/components/all-instances/all-instances-header/virtualization-state/virtualization-state.component';
 import {
-  VolumesDialogComponent,
+  VolumesDialog,
 } from 'app/pages/instances/components/common/volumes-dialog/volumes-dialog.component';
 import { VirtualizationConfigStore } from 'app/pages/instances/stores/virtualization-config.store';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
@@ -149,7 +149,7 @@ describe('AllInstancesHeaderComponent', () => {
       await configurationMenu.clickItem({ text: 'Manage Volumes' });
 
       expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
-        VolumesDialogComponent,
+        VolumesDialog,
         expect.anything(),
       );
     });
@@ -163,7 +163,7 @@ describe('AllInstancesHeaderComponent', () => {
       await configurationMenu.clickItem({ text: 'Map User/Group IDs' });
 
       expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
-        MapUserGroupIdsDialogComponent,
+        MapUserGroupIdsDialog,
         expect.anything(),
       );
     });

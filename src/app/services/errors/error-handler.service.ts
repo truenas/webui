@@ -51,7 +51,7 @@ export class ErrorHandlerService extends SentryErrorHandler implements ErrorHand
       return;
     }
 
-    const extractedError = this._extractError(error) || 'Unknown error';
+    const extractedError = this._extractError(error) || `No additional data available for error: ${JSON.stringify(error)}`;
 
     this.zone.runOutsideAngular(() => captureException(extractedError, {
       mechanism: { type: 'angular', handled: wasErrorHandled },
@@ -59,7 +59,7 @@ export class ErrorHandlerService extends SentryErrorHandler implements ErrorHand
   }
 
   private shouldLogToSentry(error: unknown): boolean {
-    if (error instanceof CloseEvent) {
+    if (String(error) === '[object CloseEvent]') {
       return false;
     }
 

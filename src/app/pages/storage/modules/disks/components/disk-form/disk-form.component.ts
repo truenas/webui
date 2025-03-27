@@ -6,7 +6,7 @@ import {
   signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
+import { ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent, MatCardActions } from '@angular/material/card';
 import { MatDivider } from '@angular/material/divider';
@@ -65,12 +65,8 @@ export class DiskFormComponent implements OnInit {
     name: [''],
     serial: [''],
     description: [''],
-    critical: [null as number | null, [Validators.min(0)]],
-    difference: [null as number | null, [Validators.min(0)]],
-    informational: [null as number | null, [Validators.min(0)]],
     hddstandby: [null as DiskStandby | null],
     advpowermgmt: [null as DiskPowerLevel | null],
-    togglesmart: [false],
     passwd: [''],
     clear_pw: [false],
   });
@@ -128,12 +124,7 @@ export class DiskFormComponent implements OnInit {
   }
 
   prepareUpdate(value: DiskFormComponent['form']['value']): DiskUpdate {
-    const transformedValue = {
-      ...value,
-      critical: !value.critical ? null : Number(value.critical),
-      difference: !value.difference ? null : Number(value.difference),
-      informational: !value.informational ? null : Number(value.informational),
-    };
+    const transformedValue = { ...value };
 
     if (transformedValue.passwd === '') {
       delete transformedValue.passwd;

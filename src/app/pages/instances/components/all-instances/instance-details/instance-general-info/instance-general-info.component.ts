@@ -83,6 +83,7 @@ export class InstanceGeneralInfoComponent {
     this.dialogService.confirm({
       title: this.translate.instant('Delete'),
       message: this.translate.instant('Delete {name}?', { name: this.instance().name }),
+      buttonColor: 'warn',
     }).pipe(
       filter(Boolean),
       switchMap(() => {

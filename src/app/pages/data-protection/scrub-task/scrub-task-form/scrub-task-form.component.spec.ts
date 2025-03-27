@@ -138,7 +138,7 @@ describe('ScrubTaskFormComponent', () => {
       });
     });
 
-    it('edits existing SMART test task when form is opened for edit', async () => {
+    it('edits existing Scrub test task when form is opened for edit', async () => {
       await form.fillForm({
         Pool: 'Poolio',
         'Threshold Days': '20',

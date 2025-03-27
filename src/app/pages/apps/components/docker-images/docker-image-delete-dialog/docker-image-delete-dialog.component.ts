@@ -7,6 +7,7 @@ import { MatButton } from '@angular/material/button';
 import {
   MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogClose,
 } from '@angular/material/dialog';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
@@ -42,10 +43,10 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     MatDialogClose,
   ],
 })
-export class DockerImageDeleteDialogComponent {
+export class DockerImageDeleteDialog {
   protected readonly requiredRoles = [Role.AppsWrite];
-  protected readonly forceCheckboxTooltip = 'When set will force delete the image regardless of the state of\
-   containers and should be used cautiously.';
+  protected readonly forceCheckboxTooltip = T('Use force only if other methods fail as it can leave images in a undefined state. \
+   You cannot delete Docker Images (even with force) when the image is in use in a running Docker container.');
 
   form = this.fb.nonNullable.group({
     confirm: [false, [Validators.requiredTrue]],
@@ -75,7 +76,7 @@ export class DockerImageDeleteDialogComponent {
     private api: ApiService,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
-    private dialogRef: MatDialogRef<DockerImageDeleteDialogComponent>,
+    private dialogRef: MatDialogRef<DockerImageDeleteDialog>,
     @Inject(MAT_DIALOG_DATA) public images: ContainerImage[],
   ) {
     this.images.forEach((image) => {

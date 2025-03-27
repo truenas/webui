@@ -23,11 +23,12 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
+import { zvolPath } from 'app/helpers/storage.helper';
 import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
-import { CreateDatasetDialogComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/create-dataset-dialog/create-dataset-dialog.component';
+import { CreateDatasetDialog } from 'app/modules/forms/ix-forms/components/ix-explorer/create-dataset-dialog/create-dataset-dialog.component';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
@@ -104,7 +105,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
     $event: MouseEvent,
   ): void => {
     const path = node.path.reduce((prev, curr) => `${prev}/${curr}`);
-    if (node.isCollapsed && node.hasChildren && node.children && path.includes('/dev/zvol')) {
+    if (node.isCollapsed && node.hasChildren && node.children && path.includes(zvolPath)) {
       node.children = null;
     }
     TREE_ACTIONS.TOGGLE_EXPANDED(tree, node, $event);
@@ -253,7 +254,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   }
 
   createDataset(): void {
-    this.matDialog.open(CreateDatasetDialogComponent, {
+    this.matDialog.open(CreateDatasetDialog, {
       data: {
         parentId: this.parentDatasetName(Array.isArray(this.value) ? this.value[0] : this.value),
         dataset: this.createDatasetProps(),

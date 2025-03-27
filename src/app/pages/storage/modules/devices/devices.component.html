@@ -51,7 +51,6 @@
           [poolId]="pool"
           [hasTopLevelRaidz]="!!(hasTopLevelRaidz$ | async)"
           [topologyCategory]="selectedTopologyCategory$ | async"
-          [disksWithSmartTestSupport]="(disksWithSmartTestSupport$ | async) || []"
           (closeMobileDetails)="masterDetailView.toggleShowMobileDetails(false)"
         ></ix-disk-details-panel>
       }

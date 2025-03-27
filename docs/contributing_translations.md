@@ -87,6 +87,12 @@ You can express it in the following way:
 {n, plural, one {Usuario eliminado} other {# usuarios eliminados}}
 ```
 
+If your language has the same form of the word regadless of whether it's singular or plural, you can just replace the right part with a single form:
+
+```
+"({n, plural, =1 {# widget} other {# widgets}})": "({n} 个小部件)",
+```
+
 Russian is an example of a language that has even more complicated plural forms. 
 
 In Russian, the word for `user` has three different forms depending on the number of users:
@@ -104,3 +110,7 @@ This can be expressed via:
 You would have to research ICU Message Format for your language to find out how to express plural forms.
 
 It's also helpful to test plural strings in an [online editor](http://format-message.github.io/icu-message-format-for-translators/editor.html).
+
+## Contributing Code
+By the way, we also welcome code contributions.\
+[Learn how to contribute.](https://github.com/truenas/webui/blob/master/docs/contributing_code.md)

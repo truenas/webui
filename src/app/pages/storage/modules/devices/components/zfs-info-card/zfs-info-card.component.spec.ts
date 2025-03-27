@@ -19,7 +19,7 @@ import {
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
-  ExtendDialogComponent,
+  ExtendDialog,
 } from 'app/pages/storage/modules/devices/components/zfs-info-card/extend-dialog/extend-dialog.component';
 import { ZfsInfoCardComponent } from 'app/pages/storage/modules/devices/components/zfs-info-card/zfs-info-card.component';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
@@ -198,7 +198,7 @@ describe('ZfsInfoCardComponent', () => {
       const expandButton = await loader.getHarness(MatButtonHarness.with({ text: 'Extend' }));
       await expandButton.click();
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ExtendDialogComponent, {
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ExtendDialog, {
         data: {
           poolId: 1,
           targetVdevGuid: '1296356085009973566',

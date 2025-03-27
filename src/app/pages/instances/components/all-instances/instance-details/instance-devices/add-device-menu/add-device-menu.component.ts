@@ -28,7 +28,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
-  PciPassthroughDialogComponent,
+  PciPassthroughDialog,
 } from 'app/pages/instances/components/common/pci-passthough-dialog/pci-passthrough-dialog.component';
 import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
@@ -135,7 +135,7 @@ export class AddDeviceMenuComponent {
       .map((device) => device.address);
 
     this.matDialog
-      .open(PciPassthroughDialogComponent, {
+      .open(PciPassthroughDialog, {
         minWidth: '90vw',
         data: {
           existingDeviceAddresses: existingDevices,

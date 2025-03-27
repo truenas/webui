@@ -129,7 +129,7 @@ describe('CloudCredentialsFormComponent', () => {
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.providers');
 
       const providersSelect = await form.getControl('Provider') as IxSelectHarness;
-      expect(await providersSelect.getOptionLabels()).toEqual(['Amazon S3', 'Box', 'Storj iX']);
+      expect(await providersSelect.getOptionLabels()).toEqual(['Amazon S3', 'Box', 'Storj']);
     });
 
     it('renders dynamic provider specific form when Provider is selected', async () => {
@@ -143,7 +143,7 @@ describe('CloudCredentialsFormComponent', () => {
 
     it('checks storj provider specific form and description when Provider is selected', async () => {
       const providersSelect = await form.getControl('Provider') as IxSelectHarness;
-      await providersSelect.setValue('Storj iX');
+      await providersSelect.setValue('Storj');
 
       const providerForm = spectator.query(StorjProviderFormComponent)!;
       expect(providerForm).toBeTruthy();

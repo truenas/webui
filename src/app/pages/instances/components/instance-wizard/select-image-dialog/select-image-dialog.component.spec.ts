@@ -16,7 +16,7 @@ import { VirtualizationRemote, VirtualizationType } from 'app/enums/virtualizati
 import { VirtualizationImage } from 'app/interfaces/virtualization.interface';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { SelectImageDialogComponent } from 'app/pages/instances/components/instance-wizard/select-image-dialog/select-image-dialog.component';
+import { SelectImageDialog } from 'app/pages/instances/components/instance-wizard/select-image-dialog/select-image-dialog.component';
 
 const imageChoices: Record<string, VirtualizationImage> = {
   'almalinux/8/cloud': {
@@ -38,11 +38,11 @@ const imageChoices: Record<string, VirtualizationImage> = {
 } as Record<string, VirtualizationImage>;
 
 describe('SelectImageDialogComponent', () => {
-  let spectator: Spectator<SelectImageDialogComponent>;
+  let spectator: Spectator<SelectImageDialog>;
   let loader: HarnessLoader;
 
   const createComponent = createComponentFactory({
-    component: SelectImageDialogComponent,
+    component: SelectImageDialog,
     imports: [ReactiveFormsModule],
     providers: [
       mockApi([mockCall('virt.instance.image_choices', imageChoices)]),

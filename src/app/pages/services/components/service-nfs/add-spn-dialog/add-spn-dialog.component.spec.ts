@@ -9,13 +9,13 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { AddSpnDialogComponent } from 'app/pages/services/components/service-nfs/add-spn-dialog/add-spn-dialog.component';
+import { AddSpnDialog } from 'app/pages/services/components/service-nfs/add-spn-dialog/add-spn-dialog.component';
 
 describe('AddSpnDialogComponent', () => {
-  let spectator: Spectator<AddSpnDialogComponent>;
+  let spectator: Spectator<AddSpnDialog>;
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
-    component: AddSpnDialogComponent,
+    component: AddSpnDialog,
     imports: [
       ReactiveFormsModule,
     ],

@@ -36,7 +36,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TranslateModule,
   ],
 })
-export class LeaveDomainDialogComponent {
+export class LeaveDomainDialog {
   form = this.formBuilder.group({
     username: ['', Validators.required],
     password: ['', Validators.required],
@@ -49,7 +49,7 @@ export class LeaveDomainDialogComponent {
     private formBuilder: FormBuilder,
     private loader: LoaderService,
     private api: ApiService,
-    private dialogRef: MatDialogRef<LeaveDomainDialogComponent>,
+    private dialogRef: MatDialogRef<LeaveDomainDialog>,
     private snackbar: SnackbarService,
     private translate: TranslateService,
   ) {}

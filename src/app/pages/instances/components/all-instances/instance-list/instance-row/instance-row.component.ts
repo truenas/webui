@@ -22,8 +22,10 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { InstanceStatusCellComponent } from 'app/pages/instances/components/all-instances/instance-list/instance-row/instance-status-cell/instance-status-cell.component';
 import {
-  StopOptionsDialogComponent, StopOptionsOperation,
+  StopOptionsDialog, StopOptionsOperation,
 } from 'app/pages/instances/components/all-instances/instance-list/stop-options-dialog/stop-options-dialog.component';
+import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
+import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
@@ -62,6 +64,8 @@ export class InstanceRowComponent {
     private errorHandler: ErrorHandlerService,
     private matDialog: MatDialog,
     private snackbar: SnackbarService,
+    private deviceStore: VirtualizationDevicesStore,
+    private instancesStore: VirtualizationInstancesStore,
   ) {}
 
   start(): void {
@@ -75,6 +79,7 @@ export class InstanceRowComponent {
       .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Instance started'));
+        this.instancesStore.selectInstance(this.instance().id);
       });
   }
 
@@ -82,7 +87,7 @@ export class InstanceRowComponent {
     const instanceId = this.instance().id;
 
     this.matDialog
-      .open(StopOptionsDialogComponent, { data: StopOptionsOperation.Stop })
+      .open(StopOptionsDialog, { data: StopOptionsOperation.Stop })
       .afterClosed()
       .pipe(
         filter(Boolean),
@@ -98,6 +103,7 @@ export class InstanceRowComponent {
       )
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Instance stopped'));
+        this.instancesStore.selectInstance(this.instance().id);
       });
   }
 
@@ -105,7 +111,7 @@ export class InstanceRowComponent {
     const instanceId = this.instance().id;
 
     this.matDialog
-      .open(StopOptionsDialogComponent, { data: StopOptionsOperation.Restart })
+      .open(StopOptionsDialog, { data: StopOptionsOperation.Restart })
       .afterClosed()
       .pipe(
         filter(Boolean),
@@ -121,6 +127,7 @@ export class InstanceRowComponent {
       )
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Instance restarted'));
+        this.instancesStore.selectInstance(this.instance().id);
       });
   }
 }

@@ -2,16 +2,18 @@ import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, computed, Inject, OnInit, signal,
 } from '@angular/core';
-import { MatIconButton } from '@angular/material/button';
+import { MatButton, MatIconButton } from '@angular/material/button';
 import {
-  MAT_DIALOG_DATA, MatDialogContent, MatDialogRef, MatDialogTitle,
+  MAT_DIALOG_DATA, MatDialog, MatDialogContent, MatDialogRef, MatDialogTitle,
 } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { parseISO } from 'date-fns';
 import { filter, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import { MiB } from 'app/constants/bytes.constant';
 import { Role } from 'app/enums/role.enum';
+import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { VirtualizationVolume } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -36,6 +38,12 @@ import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import {
+  ImportZvolsDialog,
+} from 'app/pages/instances/components/common/volumes-dialog/import-zvol-dialog/import-zvols-dialog.component';
+import {
+  NewVolumeDialog,
+} from 'app/pages/instances/components/common/volumes-dialog/new-volume-dialog/new-volume-dialog.component';
 import {
   UploadIsoButtonComponent,
 } from 'app/pages/instances/components/common/volumes-dialog/upload-iso-button/upload-iso-button.component';
@@ -66,9 +74,10 @@ export interface VolumesDialogOptions {
     IxTableEmptyDirective,
     UploadIsoButtonComponent,
     FakeProgressBarComponent,
+    MatButton,
   ],
 })
-export class VolumesDialogComponent implements OnInit {
+export class VolumesDialog implements OnInit {
   private options = signal<VolumesDialogOptions>({ selectionMode: false });
 
   protected requiredRoles = [Role.VirtImageWrite];
@@ -80,6 +89,12 @@ export class VolumesDialogComponent implements OnInit {
       textColumn({
         title: this.translate.instant('Name'),
         propertyName: 'name',
+      }),
+      textColumn({
+        title: this.translate.instant('Size'),
+        getValue: (row) => {
+          return buildNormalizedFileSize(row.config.size * MiB);
+        },
       }),
       dateColumn({
         title: this.translate.instant('Created At'),
@@ -132,13 +147,14 @@ export class VolumesDialogComponent implements OnInit {
 
   constructor(
     private api: ApiService,
+    private matDialog: MatDialog,
     private dialog: DialogService,
     private errorHandler: ErrorHandlerService,
     private loader: LoaderService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
     protected emptyService: EmptyService,
-    protected dialogRef: MatDialogRef<VolumesDialogComponent, VirtualizationVolume | null>,
+    protected dialogRef: MatDialogRef<VolumesDialog, VirtualizationVolume | null>,
     @Inject(MAT_DIALOG_DATA) options: VolumesDialogOptions,
   ) {
     this.options.set(options || { selectionMode: false });
@@ -167,6 +183,26 @@ export class VolumesDialogComponent implements OnInit {
         this.snackbar.success(this.translate.instant('Volume removed'));
         this.dataProvider.load();
       });
+  }
+
+  protected createVolume(): void {
+    this.matDialog
+      .open(NewVolumeDialog, {
+        minWidth: '300px',
+      })
+      .afterClosed()
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe(() => this.dataProvider.load());
+  }
+
+  protected importZvols(): void {
+    this.matDialog
+      .open(ImportZvolsDialog, {
+        minWidth: '500px',
+      })
+      .afterClosed()
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe(() => this.dataProvider.load());
   }
 
   protected onImageUploaded(): void {

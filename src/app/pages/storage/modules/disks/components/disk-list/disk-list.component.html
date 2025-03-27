@@ -33,16 +33,6 @@
           }
         </span>
       </button>
-
-      <button
-        *ixRequiresRoles="requiredRoles"
-        mat-button
-        ixTest="manual-test-selected"
-        (click)="manualTest(selectedDisks)"
-      >
-        <ix-icon name="play_arrow"></ix-icon>
-        <span>{{ 'Manual Test' | translate }}</span>
-      </button>
     </div>
   </div>
 }
@@ -75,26 +65,6 @@
             <ix-icon name="edit"></ix-icon>
             <span>{{ 'Edit' | translate }}</span>
           </button>
-
-          @if (isSmartSupported(disk)) {
-            <button
-              *ixRequiresRoles="requiredRoles"
-              mat-button
-              [ixTest]="[disk.name, 'manual_test']"
-              (click)="manualTest([disk])"
-            >
-              <ix-icon name="play_arrow"></ix-icon>
-              <span>{{ 'Manual Test' | translate }}</span>
-            </button>
-            <button
-              mat-button
-              [ixTest]="[disk.name, 'test_results']"
-              (click)="goToTestResults(disk)"
-            >
-              <ix-icon name="format_list_bulleted"></ix-icon>
-              <span>{{ 'S.M.A.R.T. Test Results' | translate }}</span>
-            </button>
-          }
 
           @if (isUnusedDisk(disk)) {
             <button

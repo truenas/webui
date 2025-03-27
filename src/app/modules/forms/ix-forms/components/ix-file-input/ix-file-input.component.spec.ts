@@ -23,18 +23,17 @@ describe('IxFileInputComponent', () => {
       <ix-file-input
         [formControl]="formControl"
         [acceptedFiles]="acceptedFiles"
-        [buttonText]="buttonText"
         [label]="label"
         [multiple]="multiple"
         [required]="required"
         [tooltip]="tooltip"
-      ></ix-file-input>`, {
+      >{{ buttonText }}</ix-file-input>`, {
       hostProps: {
         formControl,
         acceptedFiles: '*.*',
-        buttonText: 'Choose File',
         label: 'File',
         multiple: true,
+        buttonText: 'Choose File',
         required: false,
         tooltip: '',
       },
@@ -62,6 +61,14 @@ describe('IxFileInputComponent', () => {
       expect(input).toExist();
       expect(input).toHaveAttribute('accept', '*.*');
       expect(input).toHaveAttribute('multiple');
+    });
+
+    it('shows custom button text when it is provided as ng-content', () => {
+      spectator.setHostInput('buttonText', 'Upload Files');
+
+      const button = spectator.query('.input-container label')!;
+      expect(button).toExist();
+      expect(button).toHaveText('Upload Files');
     });
 
     it('shows a list of selected files next to the input', async () => {

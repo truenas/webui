@@ -1,23 +1,5 @@
 @import 'scss-imports/variables';
 
-.two-columns {
-  display: flex;
-  margin-top: 20px;
-
-  @media (max-width: $breakpoint-tablet) {
-    display: block;
-  }
-
-  > * {
-    display: block;
-    width: 50%;
-
-    @media (max-width: $breakpoint-tablet) {
-      width: 100%;
-    }
-  }
-}
-
 .buttons {
   margin-left: 1px;
 }

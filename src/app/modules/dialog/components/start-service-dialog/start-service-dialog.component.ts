@@ -46,7 +46,7 @@ export interface StartServiceDialogResult {
     TestDirective,
   ],
 })
-export class StartServiceDialogComponent implements OnInit {
+export class StartServiceDialog implements OnInit {
   startAutomaticallyControl = new FormControl(true, { nonNullable: true });
   protected isLoading = false;
   private service: Service;
@@ -64,7 +64,7 @@ export class StartServiceDialogComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private snackbar: SnackbarService,
-    private dialogRef: MatDialogRef<StartServiceDialogComponent, StartServiceDialogResult>,
+    private dialogRef: MatDialogRef<StartServiceDialog, StartServiceDialogResult>,
     private store$: Store<ServicesState>,
     private errorHandler: ErrorHandlerService,
     @Inject(MAT_DIALOG_DATA) public serviceName: ServiceName,

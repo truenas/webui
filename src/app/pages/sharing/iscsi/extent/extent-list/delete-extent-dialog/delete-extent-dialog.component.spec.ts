@@ -12,14 +12,14 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
-  DeleteExtentDialogComponent,
+  DeleteExtentDialog,
 } from 'app/pages/sharing/iscsi/extent/extent-list/delete-extent-dialog/delete-extent-dialog.component';
 
 describe('DeleteExtentDialogComponent', () => {
-  let spectator: Spectator<DeleteExtentDialogComponent>;
+  let spectator: Spectator<DeleteExtentDialog>;
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
-    component: DeleteExtentDialogComponent,
+    component: DeleteExtentDialog,
     imports: [
       ReactiveFormsModule,
     ],

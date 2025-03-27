@@ -67,7 +67,7 @@ export interface JobProgressDialogConfig<Result> {
     TestDirective,
   ],
 })
-export class JobProgressDialogComponent<T> implements OnInit, AfterViewChecked {
+export class JobProgressDialog<T> implements OnInit, AfterViewChecked {
   readonly jobSuccess = output<Job<T>>();
   readonly jobFailure = output<unknown>();
   readonly jobAborted = output<Job<T>>();
@@ -107,7 +107,7 @@ export class JobProgressDialogComponent<T> implements OnInit, AfterViewChecked {
   }
 
   constructor(
-    private dialogRef: MatDialogRef<JobProgressDialogComponent<T>, MatDialogConfig>,
+    private dialogRef: MatDialogRef<JobProgressDialog<T>, MatDialogConfig>,
     @Inject(MAT_DIALOG_DATA) public data: JobProgressDialogConfig<T>,
     private api: ApiService,
     private cdr: ChangeDetectorRef,

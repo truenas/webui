@@ -45,12 +45,13 @@
             {{ capacity() | ixFileSize }}
           </span>
         </div>
+
         <ul class="list-caption">
           <li class="item-caption">
             <span class="used-caption">
               <b>{{ 'Used' | translate }}:</b>
               <span class="value-caption">
-                {{ (rootDataset().used.parsed | ixFileSize) || ('Unknown' | translate) }}
+                {{ ((poolStats()?.used || rootDataset().used.parsed) | ixFileSize) || ('Unknown' | translate) }}
               </span>
             </span>
           </li>
@@ -58,7 +59,7 @@
             <span class="available-caption">
               <b>{{ 'Available' | translate }}:</b>
               <span class="value-caption">
-                {{ (rootDataset().available.parsed | ixFileSize) || ('Unknown' | translate) }}
+                {{ ((poolStats()?.available || rootDataset().available.parsed) | ixFileSize) || ('Unknown' | translate) }}
               </span>
             </span>
           </li>

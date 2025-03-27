@@ -9,7 +9,13 @@ export class ApiCallError extends Error {
   constructor(
     public error: JsonRpcError,
   ) {
-    super(error.message);
+    let message = error.message;
+    if (error.data?.reason && error.data?.reason !== error.message) {
+      message = `${message} - ${error.data.reason}`;
+    }
+
+    super(message);
+
     this.name = 'ApiCallError';
   }
 }

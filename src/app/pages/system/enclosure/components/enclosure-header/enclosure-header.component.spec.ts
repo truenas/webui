@@ -10,7 +10,7 @@ import {
   EnclosureHeaderComponent,
 } from 'app/pages/system/enclosure/components/enclosure-header/enclosure-header.component';
 import {
-  SetEnclosureLabelDialogComponent,
+  SetEnclosureLabelDialog,
 } from 'app/pages/system/enclosure/components/set-enclosure-label-dialog/set-enclosure-label-dialog.component';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 
@@ -51,12 +51,12 @@ describe('EnclosureHeaderComponent', () => {
   it('opens edit dialog when Edit Label is pressed', async () => {
     jest.spyOn(spectator.inject(MatDialog), 'open').mockReturnValue({
       afterClosed: () => of('new label'),
-    } as MatDialogRef<SetEnclosureLabelDialogComponent>);
+    } as MatDialogRef<SetEnclosureLabelDialog>);
 
     const editLabel = await loader.getHarness(MatButtonHarness.with({ text: 'Edit Label' }));
     await editLabel.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(SetEnclosureLabelDialogComponent, {
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(SetEnclosureLabelDialog, {
       data: {
         currentLabel: 'My Enclosure',
         defaultLabel: 'M50',

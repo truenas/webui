@@ -904,6 +904,23 @@
     "hierarchy": [
       "Credentials",
       "Users (WIP)",
+      "Profile"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/credentials/users-new"
+    ],
+    "routerLink": null,
+    "anchor": "profile",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
+      "Users (WIP)",
       "Access Card"
     ],
     "synonyms": [],
@@ -1119,7 +1136,7 @@
     ],
     "synonyms": [
       "Tasks",
-      "Storj iX",
+      "Storj",
       "Amazon S3",
       "Backblaze B2",
       "Box",
@@ -1135,7 +1152,6 @@
       "OpenStack Swift",
       "pCloud",
       "SFTP",
-      "Storj",
       "WebDAV",
       "Yandex"
     ],
@@ -1339,61 +1355,6 @@
       "priority"
     ],
     "anchor": "adjust-scrub/resilver-priority",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Data Protection",
-      "Periodic S.M.A.R.T. Tests",
-      "Add S.M.A.R.T. Test"
-    ],
-    "synonyms": [
-      "Add Periodic S.M.A.R.T. Test",
-      "Add Smart Test",
-      "Create Periodic S.M.A.R.T. Test",
-      "Create Smart Test",
-      "New Periodic S.M.A.R.T. Test",
-      "New Smart Test",
-      "Test",
-      "Smart",
-      "Add Disk Test",
-      "New Disk Test",
-      "Create Disk Test"
-    ],
-    "requiredRoles": [
-      "DISK_WRITE"
-    ],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/data-protection",
-      "smart"
-    ],
-    "routerLink": null,
-    "anchor": "add-smart-test",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Data Protection",
-      "Periodic S.M.A.R.T. Tests"
-    ],
-    "synonyms": [
-      "Tasks",
-      "Smart",
-      "S.M.A.R.T.",
-      "Smart Tests",
-      "Disk Tests"
-    ],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/data-protection",
-      "smart"
-    ],
-    "routerLink": null,
-    "anchor": "smart-tasks",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -2853,27 +2814,6 @@
     ],
     "routerLink": null,
     "anchor": "service-ups",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "Services",
-      "S.M.A.R.T."
-    ],
-    "synonyms": [
-      "Smart Service",
-      "Smart"
-    ],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/system",
-      "services"
-    ],
-    "routerLink": null,
-    "anchor": "service-smart",
     "triggerAnchor": null,
     "section": "ui"
   },

@@ -6,7 +6,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
-import { VirtualizationDeviceType, VirtualizationType } from 'app/enums/virtualization.enum';
+import { VirtualizationDeviceType, VirtualizationStatus, VirtualizationType } from 'app/enums/virtualization.enum';
 import { VirtualizationDisk, VirtualizationInstance, VirtualizationProxy } from 'app/interfaces/virtualization.interface';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import {
@@ -153,7 +153,7 @@ describe('InstanceDisksComponent', () => {
     });
 
     it('opens dialog to increase root disk size when Increase link is pressed', () => {
-      const link = spectator.query('.root-disk-size .action')!;
+      const link = spectator.query('.root-disk-size .action a')!;
       expect(link).toHaveText('Change');
 
       spectator.click(link);
@@ -162,6 +162,22 @@ describe('InstanceDisksComponent', () => {
         data: vm,
       });
       expect(spectator.inject(VirtualizationInstancesStore).instanceUpdated).toHaveBeenCalled();
+    });
+
+    it('disables Add button & hides devices actions buttons when VM is running', async () => {
+      const runningInstance = {
+        id: 'my-instance',
+        type: VirtualizationType.Vm,
+        status: VirtualizationStatus.Running,
+      } as VirtualizationInstance;
+
+      spectator.setInput('instance', runningInstance);
+
+      const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+      expect(await addButton.isDisabled()).toBe(true);
+
+      const actionsMenu = spectator.query(DeviceActionsMenuComponent)!;
+      expect(actionsMenu.isDisabled).toBe(true);
     });
   });
 });

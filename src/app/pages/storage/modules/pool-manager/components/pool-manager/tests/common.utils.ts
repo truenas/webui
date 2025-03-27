@@ -22,7 +22,7 @@ import {
   ExistingConfigurationPreviewComponent,
 } from 'app/pages/storage/modules/pool-manager/components/existing-configuration-preview/existing-configuration-preview.component';
 import {
-  InspectVdevsDialogComponent,
+  InspectVdevsDialog,
 } from 'app/pages/storage/modules/pool-manager/components/inspect-vdevs-dialog/inspect-vdevs-dialog.component';
 import { InventoryComponent } from 'app/pages/storage/modules/pool-manager/components/inventory/inventory.component';
 import {
@@ -100,7 +100,7 @@ export const commonImports = [
   FakeProgressBarComponent,
   ConfigurationPreviewComponent,
   ExistingConfigurationPreviewComponent,
-  InspectVdevsDialogComponent,
+  InspectVdevsDialog,
   InventoryComponent,
   ManualDiskSelectionComponent,
   PoolManagerWizardComponent,

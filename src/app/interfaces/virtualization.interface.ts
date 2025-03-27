@@ -11,7 +11,7 @@ import {
   VirtualizationRemote,
   VirtualizationSource,
   VirtualizationStatus,
-  VirtualizationType,
+  VirtualizationType, VolumeContentType,
 } from 'app/enums/virtualization.enum';
 
 export interface VirtualizationInstanceMetrics {
@@ -45,6 +45,7 @@ export interface VirtualizationInstance {
   root_disk_io_bus: DiskIoBus;
   root_disk_size: number | null;
   userns_idmap: UserNsIdmap | null;
+  storage_pool: string;
 }
 
 export interface VirtualizationAlias {
@@ -83,6 +84,8 @@ export interface CreateVirtualizationInstance {
   vnc_password?: string | null;
 
   zvol_path?: string | null;
+  storage_pool: string | null;
+  volume?: string | null;
 }
 
 export interface UpdateVirtualizationInstance {
@@ -215,10 +218,11 @@ export interface VirtualizationStopParams {
 }
 
 export interface VirtualizationGlobalConfigUpdate {
-  pool: string;
+  pool?: string;
   bridge?: string | null;
   v4_network?: string | null;
   v6_network?: string | null;
+  storage_pools: string[] | null;
 }
 
 export interface VirtualizationGlobalConfig {
@@ -229,6 +233,7 @@ export interface VirtualizationGlobalConfig {
   v6_network: string | null;
   dataset: string | null;
   state: VirtualizationGlobalState;
+  storage_pools: string[];
 }
 
 export interface VirtualizationNetwork {
@@ -273,11 +278,27 @@ export type InstanceEnvVariablesFormGroup = FormGroup<{
 export interface VirtualizationVolume {
   id: string;
   name: string;
-  content_type: string;
+  content_type: VolumeContentType;
   created_at: string;
   type: string;
-  config: string;
+  config: {
+    size: number;
+  };
   used_by: string[];
+  storage_pool: string;
+}
+
+export interface VirtualizationImportIsoParams {
+  name: string;
+  iso_location?: string | null;
+  upload_iso: boolean;
+  storage_pool: string | null;
+}
+
+export interface CreateVirtualizationVolume {
+  name: string;
+  content_type?: VolumeContentType;
+  size?: number;
 }
 
 export type VirtualizationVolumeUpdate = [
@@ -309,4 +330,14 @@ export interface VirtualizationPciDeviceCapability {
   function: string;
   product: string;
   vendor: string;
+}
+
+export interface ImportZvolParams {
+  to_import: ZvolToImport[];
+  clone: boolean;
+}
+
+export interface ZvolToImport {
+  virt_volume_name: string;
+  zvol_path: string;
 }

@@ -26,11 +26,11 @@ import {
     TestDirective,
   ],
 })
-export class RedirectDialogComponent {
+export class RedirectDialog {
   readonly el = viewChild.required<ElementRef<HTMLInputElement>>('el');
 
   constructor(
-    public dialogRef: MatDialogRef<RedirectDialogComponent>,
+    public dialogRef: MatDialogRef<RedirectDialog>,
     @Inject(MAT_DIALOG_DATA) public data: RedirectDialogData,
   ) {}
 

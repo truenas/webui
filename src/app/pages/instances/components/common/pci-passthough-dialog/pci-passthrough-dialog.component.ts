@@ -70,7 +70,7 @@ const unknownType = 'UNKNOWN' as const;
     MatHeaderCellDef,
   ],
 })
-export class PciPassthroughDialogComponent implements OnInit {
+export class PciPassthroughDialog implements OnInit {
   protected readonly columns = ['type', 'device', 'actions'];
 
   protected filterForm = this.formBuilder.group({
@@ -92,7 +92,7 @@ export class PciPassthroughDialogComponent implements OnInit {
     private formBuilder: NonNullableFormBuilder,
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
-    protected dialogRef: MatDialogRef<PciPassthroughDialogComponent, Option[]>,
+    protected dialogRef: MatDialogRef<PciPassthroughDialog, Option[]>,
     @Inject(MAT_DIALOG_DATA) protected options: { existingDeviceAddresses: string[] },
   ) {
     this.filterForm.valueChanges.pipe(untilDestroyed(this)).subscribe(() => this.filterTable());

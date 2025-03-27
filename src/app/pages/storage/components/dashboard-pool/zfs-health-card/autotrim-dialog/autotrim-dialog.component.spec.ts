@@ -14,14 +14,14 @@ import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-chec
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
-  AutotrimDialogComponent,
+  AutotrimDialog,
 } from 'app/pages/storage/components/dashboard-pool/zfs-health-card/autotrim-dialog/autotrim-dialog.component';
 
 describe('AutotrimDialogComponent', () => {
-  let spectator: Spectator<AutotrimDialogComponent>;
+  let spectator: Spectator<AutotrimDialog>;
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
-    component: AutotrimDialogComponent,
+    component: AutotrimDialog,
     imports: [
       ReactiveFormsModule,
     ],

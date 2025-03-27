@@ -17,9 +17,9 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     TestDirective,
   ],
 })
-export class FullScreenDialogComponent {
+export class FullScreenDialog {
   constructor(
-    public dialogRef: MatDialogRef<FullScreenDialogComponent>,
+    public dialogRef: MatDialogRef<FullScreenDialog>,
     @Inject(MAT_DIALOG_DATA) protected data: Partial<FullScreenDialogOptions>,
   ) {}
 

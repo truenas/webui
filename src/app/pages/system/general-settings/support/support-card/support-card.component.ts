@@ -21,7 +21,7 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
-import { FeedbackDialogComponent } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
+import { FeedbackDialog } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { FeedbackType } from 'app/modules/feedback/interfaces/feedback.interface';
 import {
   IxSlideToggleComponent,
@@ -37,7 +37,7 @@ import { LicenseComponent } from 'app/pages/system/general-settings/support/lice
 import { LicenseInfoInSupport } from 'app/pages/system/general-settings/support/license-info-in-support.interface';
 import { ProactiveComponent } from 'app/pages/system/general-settings/support/proactive/proactive.component';
 import {
-  SetProductionStatusDialogComponent,
+  SetProductionStatusDialog,
   SetProductionStatusDialogResult,
 } from 'app/pages/system/general-settings/support/set-production-status-dialog/set-production-status-dialog.component';
 import { supportCardElements } from 'app/pages/system/general-settings/support/support-card/support-card.elements';
@@ -158,7 +158,7 @@ export class SupportCardComponent implements OnInit {
   }
 
   feedbackDialog(): void {
-    this.matDialog.open(FeedbackDialogComponent, { data: FeedbackType.Bug });
+    this.matDialog.open(FeedbackDialog, { data: FeedbackType.Bug });
   }
 
   openProactive(): void {
@@ -168,7 +168,7 @@ export class SupportCardComponent implements OnInit {
   updateProductionStatus(newStatus: boolean): void {
     let request$: Observable<boolean | SetProductionStatusDialogResult>;
     if (newStatus) {
-      request$ = this.matDialog.open(SetProductionStatusDialogComponent).afterClosed().pipe(
+      request$ = this.matDialog.open(SetProductionStatusDialog).afterClosed().pipe(
         filter((result: SetProductionStatusDialogResult | false) => {
           if (result) {
             return true;

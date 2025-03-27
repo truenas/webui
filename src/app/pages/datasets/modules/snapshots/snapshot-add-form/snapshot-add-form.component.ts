@@ -159,7 +159,7 @@ export class SnapshotAddFormComponent implements OnInit {
     }
 
     this.isFormLoading = true;
-    this.api.call('zfs.snapshot.create', [params]).pipe(
+    this.api.call('pool.snapshot.create', [params]).pipe(
       untilDestroyed(this),
     ).subscribe({
       next: () => {

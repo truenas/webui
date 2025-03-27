@@ -30,7 +30,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     RouterLink,
   ],
 })
-export class DockerHubRateInfoDialogComponent {
+export class DockerHubRateInfoDialog {
   helpText = helptextApps;
 
   get warningText(): string {

@@ -3,12 +3,12 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { RedirectDialogData } from 'app/modules/dialog/components/redirect-dialog/redirect-dialog-data.interface';
-import { RedirectDialogComponent } from './redirect-dialog.component';
+import { RedirectDialog } from './redirect-dialog.component';
 
 describe('RedirectDialogComponent', () => {
-  let spectator: Spectator<RedirectDialogComponent>;
+  let spectator: Spectator<RedirectDialog>;
   const createComponent = createComponentFactory({
-    component: RedirectDialogComponent,
+    component: RedirectDialog,
     providers: [
       {
         provide: MAT_DIALOG_DATA,

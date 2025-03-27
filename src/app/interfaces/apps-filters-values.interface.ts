@@ -4,6 +4,6 @@ export interface AppsFiltersValues {
 }
 
 export enum AppsFiltersSort {
-  Name = 'name',
+  Title = 'title',
   LastUpdate = '-last_update',
 }
