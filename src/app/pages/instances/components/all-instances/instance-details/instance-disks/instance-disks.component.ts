@@ -6,12 +6,15 @@ import {
   MatCard, MatCardContent, MatCardHeader, MatCardTitle,
 } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
+import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter } from 'rxjs/operators';
 import { GiB } from 'app/constants/bytes.constant';
-import { diskIoBusLabels, VirtualizationDeviceType, VirtualizationType } from 'app/enums/virtualization.enum';
+import {
+  diskIoBusLabels, VirtualizationDeviceType, VirtualizationStatus, VirtualizationType,
+} from 'app/enums/virtualization.enum';
 import { VirtualizationDisk, VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
@@ -45,6 +48,7 @@ import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtual
     TranslateModule,
     DeviceActionsMenuComponent,
     FileSizePipe,
+    MatTooltip,
     MapValuePipe,
   ],
 })
@@ -54,11 +58,21 @@ export class InstanceDisksComponent {
   protected readonly isLoadingDevices = this.deviceStore.isLoading;
   protected readonly diskIoBusLabels = diskIoBusLabels;
 
+  protected readonly disksDisabledMessage = this.translate.instant(
+    'VM disks cannot be managed while the instance is running.',
+  );
+
+  protected readonly isVmRunning = computed(() => {
+    return this.instance().status === VirtualizationStatus.Running && this.instance().type === VirtualizationType.Vm;
+  });
+
   protected readonly isVm = computed(() => this.instance().type === VirtualizationType.Vm);
+  protected readonly isContainer = computed(() => this.instance().type === VirtualizationType.Container);
 
   constructor(
     private slideIn: SlideIn,
     private matDialog: MatDialog,
+    private translate: TranslateService,
     private deviceStore: VirtualizationDevicesStore,
     private instanceStore: VirtualizationInstancesStore,
   ) {}

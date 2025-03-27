@@ -3,7 +3,9 @@ import {
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatAnchor, MatButton } from '@angular/material/button';
-import { MAT_DIALOG_DATA, MatDialogClose, MatDialogTitle } from '@angular/material/dialog';
+import {
+  MAT_DIALOG_DATA, MatDialogClose, MatDialogContent, MatDialogTitle,
+} from '@angular/material/dialog';
 import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
@@ -36,6 +38,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
     MatDialogClose,
     RouterLink,
     MatAnchor,
+    MatDialogContent,
   ],
 })
 export class SnapshotCloneDialog implements OnInit {
@@ -69,7 +72,7 @@ export class SnapshotCloneDialog implements OnInit {
   }
 
   onSubmit(): void {
-    this.api.call('zfs.snapshot.clone', [{
+    this.api.call('pool.snapshot.clone', [{
       snapshot: this.snapshotName,
       dataset_dst: this.datasetName,
     }])

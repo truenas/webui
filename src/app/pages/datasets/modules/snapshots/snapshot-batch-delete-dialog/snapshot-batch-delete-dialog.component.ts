@@ -96,7 +96,7 @@ export class SnapshotBatchDeleteDialog implements OnInit {
 
   onSubmit(): void {
     const snapshots = this.snapshots.map((item) => [item.name]);
-    const params: CoreBulkQuery = ['zfs.snapshot.delete', snapshots];
+    const params: CoreBulkQuery = ['pool.snapshot.delete', snapshots];
     this.api.job('core.bulk', params).pipe(
       filter((job: Job<CoreBulkResponse<boolean>[]>) => !!job.result),
       map((job: Job<CoreBulkResponse<boolean>[]>) => job.result),

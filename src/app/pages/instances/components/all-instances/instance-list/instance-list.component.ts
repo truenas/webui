@@ -107,7 +107,7 @@ export class InstanceListComponent {
     effect(() => {
       const instanceId = this.instanceId();
       if (instanceId && this.selectedInstance()?.id !== instanceId) {
-        this.deviceStore.selectInstance(instanceId);
+        this.deviceStore.selectInstanceById(instanceId);
         if (this.selectedInstance() === null) {
           this.router.navigate(['/instances']);
         }
@@ -138,7 +138,7 @@ export class InstanceListComponent {
   }
 
   navigateToDetails(instance: VirtualizationInstance): void {
-    this.deviceStore.selectInstance(instance.id);
+    this.deviceStore.selectInstanceById(instance.id);
     this.router.navigate(['/instances', 'view', instance.id]);
 
     if (this.isMobileView()) {
