@@ -9,6 +9,7 @@ import { PageTitleService } from 'app/modules/layout/page-title.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { BreadcrumbComponent } from 'app/modules/page-header/breadcrumb/breadcrumb.component';
 import { HeaderBadgeComponent } from 'app/modules/page-header/header-badge/header-badge.component';
+import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 
 /**
  * Usage:
@@ -27,11 +28,13 @@ import { HeaderBadgeComponent } from 'app/modules/page-header/header-badge/heade
     FakeProgressBarComponent,
     TranslateModule,
     AsyncPipe,
+    TooltipComponent,
   ],
 })
 export class PageHeaderComponent implements OnInit, OnDestroy {
   readonly pageTitle = input<string>();
   readonly customBadgeTitle = input<string>();
+  readonly tooltip = input<string>();
   readonly loading = input(false);
 
   /**
