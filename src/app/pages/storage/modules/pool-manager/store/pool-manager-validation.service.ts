@@ -262,7 +262,7 @@ export class PoolManagerValidationService {
 
   private validateDraid(topologyCategory: PoolManagerTopologyCategory): PoolCreationError[] {
     const errors: PoolCreationError[] = [];
-    const powerOfTwo = Math.log2(topologyCategory.draidDataDisks);
+    const powerOfTwo = Math.log2(Number(topologyCategory.draidDataDisks));
     if (powerOfTwo < 1 || !Number.isInteger(powerOfTwo)) {
       errors.push({
         text: this.translate.instant('Recommended number of data disks for optimal space allocation should be power of 2 (2, 4, 8, 16...).'),

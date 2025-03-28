@@ -92,7 +92,7 @@ export class StopOptionsDialog {
   }
 
   protected onSubmit(): void {
-    const waitFor = this.form.value.waitFor;
+    const waitFor = this.form.getRawValue().waitFor;
 
     const params: VirtualizationStopParams = {
       timeout: -1,

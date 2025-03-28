@@ -30,9 +30,9 @@ export interface IpmiUpdate {
   gateway: string;
   ipaddress: string;
   netmask: string;
-  vlan: number;
-  password: string;
-  apply_remote: boolean;
+  vlan: number | null;
+  password?: string;
+  apply_remote?: boolean;
 }
 
 export interface IpmiEvent {

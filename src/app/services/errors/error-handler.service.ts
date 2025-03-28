@@ -2,6 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import {
   ErrorHandler, Injectable, Injector, NgZone,
 } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import * as Sentry from '@sentry/angular';
 import { consoleSandbox } from '@sentry/utils';
 import {
@@ -32,6 +33,7 @@ export class ErrorHandlerService extends Sentry.SentryErrorHandler implements Er
 
   constructor(
     private injector: Injector,
+    private translate: TranslateService,
     private errorParser: ErrorParserService,
     private zone: NgZone,
   ) {
@@ -86,7 +88,7 @@ export class ErrorHandlerService extends Sentry.SentryErrorHandler implements Er
       ApiErrorName.Again,
       ApiErrorName.NoMemory,
       ApiErrorName.NotAuthenticated,
-    ];
+    ] as unknown[];
 
     if (isApiCallError(error) && ignoredApiErrors.includes(error.error.data?.errname)) {
       return false;
@@ -112,6 +114,10 @@ export class ErrorHandlerService extends Sentry.SentryErrorHandler implements Er
 
   showErrorModal(error: unknown): Observable<boolean> {
     this.logError(error, true);
-    return this.dialog.error(this.errorParser.parseError(error));
+    const errorReport = this.errorParser.parseError(error);
+    return this.dialog.error(errorReport || {
+      title: this.translate.instant('Error'),
+      message: this.translate.instant('An unknown error occurred'),
+    });
   }
 }

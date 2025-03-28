@@ -58,7 +58,7 @@ export class NewMappingFormComponent implements OnChanges, OnInit {
   protected readonly containersHelptext = instancesHelptext;
 
   protected form = this.formBuilder.group({
-    hostUidOrGid: [null as number, Validators.required],
+    hostUidOrGid: [null as number | null, Validators.required],
     mapDirectly: [true],
     instanceUidOrGid: [null as number | null],
   });
@@ -94,9 +94,9 @@ export class NewMappingFormComponent implements OnChanges, OnInit {
     let request$: Observable<unknown>;
 
     if (this.isUserType()) {
-      request$ = this.api.call('user.update', [values.hostUidOrGid, update]);
+      request$ = this.api.call('user.update', [Number(values.hostUidOrGid), update]);
     } else {
-      request$ = this.api.call('group.update', [values.hostUidOrGid, update]);
+      request$ = this.api.call('group.update', [Number(values.hostUidOrGid), update]);
     }
 
     request$

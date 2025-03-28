@@ -289,7 +289,7 @@ export class CloudCredentialsFormComponent implements OnInit {
       return;
     }
 
-    this.commonForm.controls.name.setValue(getName(this.selectedProvider.title, this.forbiddenNames));
+    this.commonForm.controls.name.setValue(getName(this.selectedProvider?.title || '', this.forbiddenNames));
   }
 
   private renderProviderForm(): void {

@@ -380,7 +380,7 @@ export class UpdateActionsCardComponent implements OnInit {
   }
 
   private handleUpdateError(error: Job): void {
-    if (error.error.includes(updateAgainCode)) {
+    if (error.error?.includes(updateAgainCode)) {
       this.dialogService.confirm({
         title: helptext.continueDialogTitle,
         message: error.error.replace(updateAgainCode, ''),

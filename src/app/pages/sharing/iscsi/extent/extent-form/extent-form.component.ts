@@ -18,7 +18,7 @@ import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
-import { IscsiExtent } from 'app/interfaces/iscsi.interface';
+import { IscsiExtent, IscsiExtentUpdate } from 'app/interfaces/iscsi.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -175,7 +175,7 @@ export class ExtentFormComponent implements OnInit {
   onSubmit(): void {
     const values = {
       ...this.form.value,
-    };
+    } as IscsiExtentUpdate;
 
     if (values.type === IscsiExtentType.Disk) {
       values.path = values.disk;

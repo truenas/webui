@@ -51,7 +51,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 // TODO: Exclude AnythingUi when NAS-127632 is done
 interface BootEnvironmentUi extends BootEnvironment {
-  selected: boolean;
+  selected?: boolean;
 }
 
 @UntilDestroy()

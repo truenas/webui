@@ -98,7 +98,7 @@ export class AppDetailsHeaderComponent {
   navigateToInstallPage(): void {
     this.showAgreementWarning().pipe(untilDestroyed(this)).subscribe({
       next: () => {
-        this.router.navigate(['/apps', 'available', this.app().train, this.app().name, 'install']);
+        this.router.navigate(['/apps', 'available', this.app()?.train, this.app()?.name, 'install']);
       },
     });
   }

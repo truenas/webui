@@ -94,7 +94,11 @@ export class JobsPanelComponent {
     this.dialogRef.close();
     if (job.error) {
       // Do not replace with showErrorModal, because it also reports to Sentry
-      this.dialog.error(this.errorParser.parseError(job.error));
+      const errorReport = this.errorParser.parseError(job.error);
+      this.dialog.error(errorReport || {
+        title: this.translate.instant('Error'),
+        message: this.translate.instant('An unknown error occurred'),
+      });
       return;
     }
 

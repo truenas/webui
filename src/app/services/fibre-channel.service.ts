@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {
   forkJoin, map, Observable, of, switchMap,
 } from 'rxjs';
-import { FibreChannelPort } from 'app/interfaces/fibre-channel.interface';
+import { FibreChannelPort, FibreChannelPortUpdate } from 'app/interfaces/fibre-channel.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 
 @Injectable({ providedIn: 'root' })
@@ -43,7 +43,7 @@ export class FibreChannelService {
           return this.api.call('fcport.delete', [existingPortId]);
         }
 
-        const payload = { port: desiredPort, target_id: targetId };
+        const payload = { port: desiredPort, target_id: targetId } as FibreChannelPortUpdate;
         return existingPortId
           ? this.api.call('fcport.update', [existingPortId, payload])
           : this.api.call('fcport.create', [payload]);

@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal,
 } from '@angular/core';
 import {
-  FormBuilder, FormControl, Validators, ReactiveFormsModule,
+  FormBuilder, FormControl, Validators, ReactiveFormsModule, FormGroup,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -68,7 +68,14 @@ export class GlobalTargetConfigurationComponent implements OnInit {
     listen_port: [null as number | null, Validators.required],
     alua: [false],
     iser: [false],
-  });
+  }) as FormGroup<{
+    basename: FormControl<string>;
+    isns_servers: FormControl<string[]>;
+    pool_avail_threshold: FormControl<number | null>;
+    listen_port: FormControl<number | null>;
+    alua?: FormControl<boolean>;
+    iser: FormControl<boolean>;
+  }>;
 
   readonly tooltips = {
     basename: helptextSharingIscsi.globalconf_tooltip_basename,

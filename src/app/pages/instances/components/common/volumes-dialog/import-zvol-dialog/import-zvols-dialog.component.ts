@@ -7,6 +7,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { instancesHelptext } from 'app/helptext/instances/instances';
 import { RadioOption } from 'app/interfaces/option.interface';
+import { ZvolToImport } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
@@ -71,17 +72,17 @@ export class ImportZvolsDialog {
   ) {}
 
   protected onSubmit(): void {
-    const toImport = this.form.value.zvols.map((zvol) => {
+    const toImport = this.form.getRawValue().zvols.map((zvol) => {
       const volumeName = zvol.split('/').pop();
 
       return {
         virt_volume_name: volumeName,
         zvol_path: zvol,
-      };
+      } as ZvolToImport;
     });
 
     const job$ = this.api.job('virt.volume.import_zvol', [{
-      clone: this.form.value.clone,
+      clone: this.form.getRawValue().clone,
       to_import: toImport,
     }]);
 

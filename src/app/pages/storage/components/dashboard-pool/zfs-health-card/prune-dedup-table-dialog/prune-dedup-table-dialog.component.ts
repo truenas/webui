@@ -80,9 +80,9 @@ export class PruneDedupTableDialog {
   submit(): void {
     const payload: PruneDedupTableParams = { pool_name: this.pool.name };
     if (this.form.value.pruneBy === PruneBy.Percentage) {
-      payload.percentage = this.form.value.percentage;
+      payload.percentage = Number(this.form.value.percentage);
     } else {
-      payload.days = this.form.value.days;
+      payload.days = Number(this.form.value.days);
     }
 
     const job$ = this.api.job('pool.ddt_prune', [payload]);

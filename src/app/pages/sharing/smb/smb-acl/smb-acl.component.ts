@@ -236,10 +236,10 @@ export class SmbAclComponent implements OnInit {
         if (isNumber(whoIdOrName)) {
           id = Number(whoIdOrName);
         } else if (ace.ae_who === NfsAclTag.UserGroup) {
-          id = (await firstValueFrom(this.userService.getGroupByName(whoIdOrName.toString())))
+          id = (await firstValueFrom(this.userService.getGroupByName(String(whoIdOrName))))
             .gr_gid;
         } else {
-          id = (await firstValueFrom(this.userService.getUserByName(whoIdOrName.toString())))
+          id = (await firstValueFrom(this.userService.getUserByName(String(whoIdOrName))))
             .pw_uid;
         }
 

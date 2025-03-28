@@ -62,7 +62,8 @@ export interface CloudSyncListDirectoryParams {
   filename_encryption?: boolean;
   encryption_password?: string;
   encryption_salt?: string;
-  attributes?: unknown;
+  // TODO: Add proper type for attributes
+  attributes?: Record<string, unknown>;
   args?: string;
 }
 

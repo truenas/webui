@@ -12,6 +12,6 @@ export interface IdmapBackendOption {
 }
 
 export interface IdmapBackendParameter {
-  default: string | boolean | number;
+  default: string | boolean | number | null;
   required: boolean;
 }

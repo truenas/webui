@@ -108,7 +108,7 @@ describe('UserAccessCardComponent', () => {
 
   it('should call viewLogs when Search Logs link is clicked', () => {
     const spy = jest.spyOn(spectator.component, 'viewLogs');
-    const viewLogsLink = spectator.query('.last-login a');
+    const viewLogsLink = spectator.query('.last-login a')!;
     expect(viewLogsLink).toHaveText('Search Logs');
     spectator.click(viewLogsLink);
     expect(spy).toHaveBeenCalled();
@@ -126,7 +126,7 @@ describe('UserAccessCardComponent', () => {
 
   it('should navigate to API keys page when "View API Keys" link is clicked', () => {
     const spy = jest.spyOn(spectator.inject(Router), 'navigate');
-    const addApiKeyLink = spectator.query('.content-wrapper:nth-child(7) a');
+    const addApiKeyLink = spectator.query('.content-wrapper:nth-child(7) a')!;
     spectator.click(addApiKeyLink);
 
     expect(spy).toHaveBeenCalledWith(['/credentials/users/api-keys'], {

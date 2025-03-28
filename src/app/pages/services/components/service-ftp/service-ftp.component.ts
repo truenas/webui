@@ -14,6 +14,7 @@ import { Role } from 'app/enums/role.enum';
 import { invertUmask } from 'app/helpers/mode.helper';
 import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextServiceFtp } from 'app/helptext/services/components/service-ftp';
+import { FtpConfigUpdate } from 'app/interfaces/ftp-config.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
@@ -158,7 +159,7 @@ export class ServiceFtpComponent implements OnInit {
       localuserdlbw: this.convertByteToKbyte(Number(this.form.value.localuserdlbw)),
       anonuserbw: this.convertByteToKbyte(Number(this.form.value.anonuserbw)),
       anonuserdlbw: this.convertByteToKbyte(Number(this.form.value.anonuserdlbw)),
-    };
+    } as FtpConfigUpdate;
 
     this.isFormLoading = true;
     this.api.call('ftp.update', [values])
