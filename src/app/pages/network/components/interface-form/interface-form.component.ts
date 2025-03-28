@@ -184,10 +184,7 @@ export class InterfaceFormComponent implements OnInit {
     private matDialog: MatDialog,
     private systemGeneralService: SystemGeneralService,
     private store$: Store<AppState>,
-    public slideInRef: SlideInRef<{
-      interfaces?: NetworkInterface[];
-      interface?: NetworkInterface;
-    } | undefined, boolean>,
+    public slideInRef: SlideInRef<{ interfaces?: NetworkInterface[]; interface?: NetworkInterface }, boolean>,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
