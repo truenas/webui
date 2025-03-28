@@ -14,7 +14,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 @Injectable({
   providedIn: 'root',
 })
-export class FipsService {
+export class RebootService {
   /**
    * Multiple dialogs may happen because of multiple events from failover.disabled.reasons.
    */
@@ -105,7 +105,7 @@ export class FipsService {
       .pipe(
         this.errorHandler.withErrorHandler(),
         tap(() => {
-          this.snackbar.success(this.translate.instant('System Security Settings Updated.'));
+          this.snackbar.success(this.translate.instant('Remote Node Restarted'));
         }),
       );
   }

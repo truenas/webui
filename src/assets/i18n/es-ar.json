@@ -45,6 +45,7 @@
   "Privilege Read": "",
   "Privilege Write": "",
   "Pull": "",
+  "Remote Node Restarted": "",
   "Renames the ZFS dataset to a path in the `ix-virt` dataset in which the zvol is located.": "",
   "Replication Task Write Pull": "",
   "Search Logs": "",
