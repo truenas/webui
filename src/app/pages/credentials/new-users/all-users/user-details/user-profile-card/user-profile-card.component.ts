@@ -44,6 +44,6 @@ export class UserProfileCardComponent {
   });
 
   protected hasHomeDirectory = computed(() => {
-    return isEmptyHomeDirectory(this.user().home);
+    return !isEmptyHomeDirectory(this.user().home);
   });
 }
