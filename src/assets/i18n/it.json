@@ -11,7 +11,7 @@
   "Clone and promote a temporary snapshot of the zvol into a custom storage volume.": "Clona e promuovi uno snapshot temporaneo dello zvol in un volume di archiviazione personalizzato.",
   "Create New Volume": "Crea nuovo volume",
   "Create Volume": "Crea volume",
-  "Disks with highest boot priority are booted first. Root disk by default has a priority of 1.": "I dischi con la priorità di avvio più alta vengono avviati per primi. Il disco di sistema ha per impostazione predefinita una priorità di 1."
+  "Disks with highest boot priority are booted first. Root disk by default has a priority of 1.": "I dischi con la priorità di avvio più alta vengono avviati per primi. Il disco di sistema ha per impostazione predefinita una priorità di 1.",
   "Force restart now": "Forza riavvio ora",
   "Force shutdown now": "Forza arresto ora",
   "Has Password": "Ha una password",
