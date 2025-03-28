@@ -40,7 +40,7 @@
   }
 </div>
 
-@if(thisNodeRebootReasons()?.length || otherNodeRebootReasons()?.length) {
+@if (thisNodeRebootReasons()?.length || otherNodeRebootReasons()?.length) {
   <ix-form-actions mat-dialog-actions class="form-actions">
     <ix-checkbox
       class="confirm"
@@ -65,7 +65,7 @@
       </button>
     }
 
-    @if(otherNodeRebootReasons()?.length) {
+    @if (otherNodeRebootReasons()?.length) {
       <button
         mat-button
         color="primary"

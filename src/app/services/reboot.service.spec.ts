@@ -10,12 +10,12 @@ import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { FipsService } from 'app/services/fips.service';
+import { RebootService } from 'app/services/reboot.service';
 
-describe('FipsService', () => {
-  let spectator: SpectatorService<FipsService>;
+describe('RebootService', () => {
+  let spectator: SpectatorService<RebootService>;
   const createService = createServiceFactory({
-    service: FipsService,
+    service: RebootService,
     providers: [
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),

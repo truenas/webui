@@ -34,6 +34,7 @@
   "No TrueNAS Access": "",
   "No Two-Factor Authentication": "",
   "Preserve Power Management settings": "",
+  "Remote Node Restarted": "",
   "Renames the ZFS dataset to a path in the `ix-virt` dataset in which the zvol is located.": "",
   "Search Logs": "",
   "Select Volume": "",
