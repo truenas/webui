@@ -1,3 +1,4 @@
+import { defaultLanguage } from 'app/constants/languages.constant';
 import { Preferences } from 'app/interfaces/preferences.interface';
 
 export const defaultPreferences: Preferences = {
@@ -20,4 +21,5 @@ export const defaultPreferences: Preferences = {
   rebootAfterManualUpdate: false,
   autoRefreshReports: false,
   lifetime: 300,
+  language: defaultLanguage,
 };

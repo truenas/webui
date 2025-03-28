@@ -16,7 +16,7 @@
     "clean:dist": "rimraf dist",
     "commitlint": "commitlint",
     "compile-grammar": "lezer-generator --typeScript --noTerms src/app/modules/forms/search-input/services/query-parser/query.grammar -o src/app/modules/forms/search-input/services/query-parser/query-grammar.ts",
-    "extract": "node scripts/extract_strings.js",
+    "extract": "tsx scripts/extract-strings.ts",
     "extract-ui-search-elements": "tsx scripts/ui-search/extract-ui-search-elements.ts",
     "lint": "eslint . && stylelint 'src/**/*.scss'",
     "lint:fix": "eslint . --fix && stylelint --fix 'src/**/*.scss'",

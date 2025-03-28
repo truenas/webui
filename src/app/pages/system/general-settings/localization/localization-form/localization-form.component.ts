@@ -1,6 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  signal,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -59,7 +60,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
 export class LocalizationFormComponent implements OnInit {
   fieldsetTitle = helptext.localeTitle;
 
-  isFormLoading = false;
+  isFormLoading = signal<boolean>(false);
 
   sortLanguagesByName = true;
   protected localizationSettings: LocalizationSettings;
@@ -153,28 +154,30 @@ export class LocalizationFormComponent implements OnInit {
 
   submit(): void {
     const values = this.formGroup.getRawValue();
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
     this.window.localStorage.setItem('language', values.language);
     this.window.localStorage.setItem('dateFormat', values.date_format);
     this.window.localStorage.setItem('timeFormat', values.time_format);
     this.store$.dispatch(localizationFormSubmitted({
       dateFormat: values.date_format,
       timeFormat: values.time_format,
+      language: values.language,
     }));
-    const payload = omit(values, ['date_format', 'time_format']);
+
+    const payload = omit(values, ['date_format', 'time_format', 'language']);
 
     this.api.call('system.general.update', [payload]).pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.store$.dispatch(generalConfigUpdated());
         this.store$.dispatch(systemInfoUpdated());
-        this.isFormLoading = false;
+        this.isFormLoading.set(false);
         this.slideInRef.close({ response: true, error: null });
+        this.langService.setLanguage(values.language);
         this.setTimeOptions(payload.timezone);
-        this.langService.setLanguage(payload.language);
         this.cdr.markForCheck();
       },
       error: (error: unknown) => {
-        this.isFormLoading = false;
+        this.isFormLoading.set(false);
         this.errorHandler.handleValidationErrors(error, this.formGroup);
         this.cdr.markForCheck();
       },

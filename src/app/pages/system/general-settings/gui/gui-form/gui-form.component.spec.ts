@@ -141,7 +141,7 @@ describe('GuiFormComponent', () => {
         'HTTPS Protocols': ['TLSv1.2', 'TLSv1.3'],
         'Show Console Messages': false,
         Theme: 'iX Dark',
-        'Usage collection': false,
+        'Usage collection & UI error reporting': false,
         'Web Interface HTTP -> HTTPS Redirect': false,
         'Web Interface HTTP Port': '80',
         'Web Interface HTTPS Port': '443',
@@ -155,7 +155,7 @@ describe('GuiFormComponent', () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
       'Show Console Messages': true,
-      'Usage collection': true,
+      'Usage collection & UI error reporting': true,
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
