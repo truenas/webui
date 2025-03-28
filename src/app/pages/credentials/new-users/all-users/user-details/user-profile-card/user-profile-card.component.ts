@@ -7,6 +7,7 @@ import {
 } from '@angular/material/card';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { isEmptyHomeDirectory } from 'app/helpers/user.helper';
 import { User } from 'app/interfaces/user.interface';
 
 @UntilDestroy()
@@ -43,8 +44,6 @@ export class UserProfileCardComponent {
   });
 
   protected hasHomeDirectory = computed(() => {
-    return Boolean(this.user().home)
-      && this.user().home !== '/nonexistent'
-      && this.user().home !== '/usr/empty';
+    return !isEmptyHomeDirectory(this.user().home);
   });
 }
