@@ -78,10 +78,10 @@ export class SigninStore extends ComponentStore<SigninState> {
 
   init = this.effect((trigger$: Observable<void>) => trigger$.pipe(
     tap(() => this.setLoadingState(true)),
+    switchMap(() => this.updateService.hardRefreshIfNeeded()),
     switchMap(() => forkJoin([
       this.checkIfAdminPasswordSet(),
       this.checkForLoginBanner(),
-      this.updateService.hardRefreshIfNeeded(),
     ])),
     tap(() => this.setLoadingState(false)),
     switchMap(() => {
