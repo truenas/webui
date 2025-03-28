@@ -174,7 +174,6 @@ describe('InstanceDiskFormComponent', () => {
 
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
-        'Boot Priority': 3,
         'I/O Bus': 'Virtio-BLK',
       });
 
@@ -190,7 +189,6 @@ describe('InstanceDiskFormComponent', () => {
         source: 'my-volume',
         dev_type: VirtualizationDeviceType.Disk,
         io_bus: DiskIoBus.VirtioBlk,
-        boot_priority: 3,
       }]);
     });
   });
