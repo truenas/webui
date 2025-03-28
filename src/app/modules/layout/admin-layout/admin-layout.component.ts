@@ -42,7 +42,8 @@ import { ThemeService } from 'app/modules/theme/theme.service';
 import { SentryConfigurationService } from 'app/services/errors/sentry-configuration.service';
 import { SessionTimeoutService } from 'app/services/session-timeout.service';
 import { AppState } from 'app/store';
-import { selectHasConsoleFooter, waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
+import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
+import { selectHasConsoleFooter } from 'app/store/system-config/system-config.selectors';
 import {
   selectCopyrightHtml, selectProductType, waitForSystemInfo,
 } from 'app/store/system-info/system-info.selectors';
@@ -137,7 +138,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     this.sessionTimeoutService.start();
     this.themeService.loadTheme$.next('');
     this.sentryService.init();
-    this.store$.pipe(waitForGeneralConfig, untilDestroyed(this)).subscribe((config) => {
+    this.store$.pipe(waitForPreferences, untilDestroyed(this)).subscribe((config) => {
       this.languageService.setLanguage(config.language);
     });
     this.listenForSidenavChanges();

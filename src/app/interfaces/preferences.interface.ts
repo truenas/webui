@@ -30,4 +30,6 @@ export interface Preferences {
 
   rebootAfterManualUpdate: boolean;
   lifetime: number;
+
+  language: string;
 }
