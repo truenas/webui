@@ -2,10 +2,13 @@ import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Actions } from '@ngrx/effects';
 import { select, Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
-import { filter, switchMap, take } from 'rxjs/operators';
+import {
+  filter, switchMap, take, tap,
+} from 'rxjs/operators';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
@@ -19,6 +22,7 @@ import { saveDebugElement } from 'app/pages/system/advanced/save-debug-button/sa
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
+import { systemInfoLoaded, systemInfoUpdated } from 'app/store/system-info/system-info.actions';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
@@ -43,6 +47,7 @@ export class SaveDebugButtonComponent {
   constructor(
     private api: ApiService,
     private store$: Store<AppState>,
+    private actions$: Actions,
     private datePipe: DatePipe,
     private errorHandler: ErrorHandlerService,
     private download: DownloadService,
@@ -60,6 +65,8 @@ export class SaveDebugButtonComponent {
       })
       .pipe(
         filter(Boolean),
+        tap(() => this.store$.dispatch(systemInfoLoaded({ systemInfo: null }))),
+        tap(() => this.store$.dispatch(systemInfoUpdated())),
         switchMap(() => this.saveDebug()),
         untilDestroyed(this),
       )
