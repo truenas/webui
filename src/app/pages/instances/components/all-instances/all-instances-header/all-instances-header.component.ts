@@ -26,6 +26,7 @@ import {
 import {
   VirtualizationConfigStore,
 } from 'app/pages/instances/stores/virtualization-config.store';
+import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 
 @UntilDestroy()
 @Component({
@@ -69,13 +70,18 @@ export class AllInstancesHeaderComponent {
     private slideIn: SlideIn,
     private matDialog: MatDialog,
     private configStore: VirtualizationConfigStore,
+    private instanceStore: VirtualizationInstancesStore,
   ) {}
 
   protected onGlobalConfiguration(): void {
     this.slideIn
       .open(GlobalConfigFormComponent, { data: this.config() })
       .pipe(untilDestroyed(this))
-      .subscribe();
+      .subscribe({
+        next: () => {
+          this.instanceStore.initialize();
+        },
+      });
   }
 
   protected onManageVolumes(): void {

@@ -1,5 +1,7 @@
-import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
+import { of, Subject } from 'rxjs';
+import { CollectionChangeType } from 'app/enums/api.enum';
+import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { VirtualizationDevice, VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
@@ -7,6 +9,7 @@ import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtual
 describe('VirtualizationInstancesStore', () => {
   let spectator: SpectatorService<VirtualizationInstancesStore>;
 
+  const event$ = new Subject<ApiEvent<VirtualizationInstance>>();
   const instances = [
     { id: 'instance1' },
     { id: 'instance2' },
@@ -20,10 +23,15 @@ describe('VirtualizationInstancesStore', () => {
   const createService = createServiceFactory({
     service: VirtualizationInstancesStore,
     providers: [
-      mockApi([
-        mockCall('virt.instance.query', instances),
-        mockCall('virt.instance.device_list', devices),
-      ]),
+      mockProvider(ApiService, {
+        call: jest.fn((method) => {
+          if (method === 'virt.instance.query') {
+            return of(instances);
+          }
+          return of(devices);
+        }),
+        subscribe: jest.fn(() => event$),
+      }),
     ],
   });
 
@@ -34,6 +42,8 @@ describe('VirtualizationInstancesStore', () => {
   it('should have initial state', () => {
     expect(spectator.service.stateAsSignal()).toEqual({
       isLoading: true,
+      selectedInstance: undefined,
+      selectedInstanceId: null,
       instances: undefined,
     });
   });
@@ -44,7 +54,38 @@ describe('VirtualizationInstancesStore', () => {
     expect(spectator.inject(ApiService).call).toHaveBeenCalled();
     expect(spectator.service.stateAsSignal()).toEqual({
       instances,
+      selectedInstance: undefined,
+      selectedInstanceId: null,
       isLoading: false,
+    });
+  });
+
+  it('should select instance when method is called', () => {
+    spectator.service.initialize();
+    spectator.service.selectInstance('instance1');
+    expect(spectator.service.stateAsSignal()).toEqual({
+      instances,
+      isLoading: false,
+      selectedInstance: instances[0],
+      selectedInstanceId: 'instance1',
+    });
+  });
+
+  it('resets selected instance', () => {
+    spectator.service.initialize();
+    spectator.service.selectInstance('instance1');
+    expect(spectator.service.stateAsSignal()).toEqual({
+      instances,
+      isLoading: false,
+      selectedInstance: instances[0],
+      selectedInstanceId: 'instance1',
+    });
+    spectator.service.resetInstance();
+    expect(spectator.service.stateAsSignal()).toEqual({
+      instances,
+      isLoading: false,
+      selectedInstance: null,
+      selectedInstanceId: 'instance1',
     });
   });
 
@@ -57,6 +98,48 @@ describe('VirtualizationInstancesStore', () => {
 
     it('instances - returns instances part of the state', () => {
       expect(spectator.service.instances()).toEqual(instances);
+    });
+  });
+
+  describe('handles subscribe events', () => {
+    beforeEach(() => spectator.service.initialize());
+    it('adds instance to the list if add event emitted', () => {
+      event$.next({
+        collection: 'virt.instance.query',
+        id: 'instance3',
+        msg: CollectionChangeType.Added,
+        fields: { id: 'instance3' } as VirtualizationInstance,
+      });
+
+      expect(spectator.service.instances()).toEqual([
+        ...instances,
+        { id: 'instance3' },
+      ]);
+    });
+
+    it('handles change event', () => {
+      event$.next({
+        collection: 'virt.instance.query',
+        id: 'instance2',
+        msg: CollectionChangeType.Changed,
+        fields: { id: 'instance2', name: 'instance3' } as VirtualizationInstance,
+      });
+      expect(spectator.service.instances()).toEqual([
+        { id: 'instance1' },
+        { id: 'instance2', name: 'instance3' },
+      ]);
+    });
+
+    it('handles remove event', () => {
+      event$.next({
+        collection: 'virt.instance.query',
+        id: 'instance2',
+        msg: CollectionChangeType.Removed,
+        fields: { id: 'instance2' } as VirtualizationInstance,
+      });
+      expect(spectator.service.instances()).toEqual([
+        { id: 'instance1' },
+      ]);
     });
   });
 });
