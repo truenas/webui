@@ -114,7 +114,7 @@ describe('ConfigurationPreviewComponent', () => {
       'Cache:': '2 × 5 GiB (HDD)',
       'Dedup:': 'None',
       'Log:': '2 × RAIDZ1 | 3 × 3 GiB (HDD)',
-      'Spare:': 'Manual layout | 2 VDEVs',
+      'Spare:': '3 × 3 GiB (HDD)',
       'Metadata:': 'None',
     });
   });
