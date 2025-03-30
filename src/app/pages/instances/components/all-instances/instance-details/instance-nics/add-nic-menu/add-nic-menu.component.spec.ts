@@ -9,6 +9,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AddNicMenuComponent } from 'app/pages/instances/components/all-instances/instance-details/instance-nics/add-nic-menu/add-nic-menu.component';
 import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
+import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 
 describe('AddNicMenuComponent', () => {
   let spectator: Spectator<AddNicMenuComponent>;
@@ -23,8 +24,10 @@ describe('AddNicMenuComponent', () => {
         }),
         mockCall('virt.instance.device_add'),
       ]),
-      mockProvider(VirtualizationDevicesStore, {
+      mockProvider(VirtualizationInstancesStore, {
         selectedInstance: () => ({ id: 'my-instance' }),
+      }),
+      mockProvider(VirtualizationDevicesStore, {
         devices: () => [
           {
             dev_type: VirtualizationDeviceType.Nic,
