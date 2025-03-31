@@ -76,7 +76,7 @@ export class GuiFormComponent {
     ui_httpsport: [null as number | null, [Validators.required, Validators.min(1), Validators.max(65535)]],
     ui_httpsprotocols: [[] as string[], [Validators.required]],
     ui_httpsredirect: [false],
-    usage_collection: [false, [Validators.required]],
+    usage_collection: [false],
     ui_consolemsg: [false, [Validators.required]],
   });
 
@@ -154,6 +154,7 @@ export class GuiFormComponent {
     ).subscribe({
       next: () => {
         this.store$.dispatch(guiFormSubmitted({ theme: values.theme }));
+        this.store$.dispatch(generalConfigUpdated());
         this.themeService.updateThemeInLocalStorage(this.themeService.findTheme(values.theme));
         this.isFormLoading = false;
         this.cdr.markForCheck();

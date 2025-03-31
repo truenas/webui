@@ -5,19 +5,25 @@ import { MatListItemHarness } from '@angular/material/list/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { Observable, of } from 'rxjs';
+import { defaultLanguage, languages } from 'app/constants/languages.constant';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { Choices } from 'app/interfaces/choices.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { LocalizationCardComponent } from 'app/pages/system/general-settings/localization/localization-card/localization-card.component';
 import { LocalizationFormComponent } from 'app/pages/system/general-settings/localization/localization-form/localization-form.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
+import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
 describe('LocalizationCardComponent', () => {
   let spectator: Spectator<LocalizationCardComponent>;
   let loader: HarnessLoader;
+
+  const languageOptions = Array
+    .from(languages.entries())
+    .map(([value, label]) => ({ value, label }));
+
   const createComponent = createComponentFactory({
     component: LocalizationCardComponent,
     providers: [
@@ -27,18 +33,21 @@ describe('LocalizationCardComponent', () => {
           {
             selector: selectGeneralConfig,
             value: {
-              language: 'en',
               timezone: 'America/New_York',
               kbdmap: 'us',
+            },
+          },
+          {
+            selector: selectPreferences,
+            value: {
+              language: defaultLanguage,
             },
           },
         ],
       }),
       mockProvider(SystemGeneralService, {
-        languageChoices(): Observable<Choices> {
-          return of({
-            en: 'English',
-          });
+        languageOptions(): Observable<Option[]> {
+          return of(languageOptions);
         },
         kbdMapChoices(): Observable<Option[]> {
           return of([
@@ -81,7 +90,11 @@ describe('LocalizationCardComponent', () => {
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(LocalizationFormComponent, {
       data: {
-        dateFormat: undefined, kbdMap: 'us', language: 'en', timeFormat: undefined, timezone: 'America/New_York',
+        dateFormat: undefined,
+        kbdMap: 'us',
+        language: 'en',
+        timeFormat: undefined,
+        timezone: 'America/New_York',
       },
     });
   });

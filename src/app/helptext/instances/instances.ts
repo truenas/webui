@@ -48,6 +48,8 @@ Ideal for legacy applications, full-featured desktops, or software with strict O
  <br /><br /> • Virtio-BLK – Efficient for virtualized environments, offering direct block device access with lower overhead.\
  <br /><br /> • Virtio-SCSI – Flexible and scalable, supporting advanced features like hot-swapping and multiple devices.'),
 
+  boot_from_tooltip: T('Select the disk to boot the instance from.'),
+
   instance_protocol_placeholder: T('Instance Protocol'),
   instance_protocol_tooltip: T('Select the protocol for the instance\'s network connection.'),
   instance_port_placeholder: T('Instance Port'),
@@ -86,6 +88,4 @@ Ideal for legacy applications, full-featured desktops, or software with strict O
     moveTooltip: T('Renames the ZFS dataset to a path in the `ix-virt` dataset in which the zvol is located.'),
     description: T('Importing a zvol as Instances volume allows its lifecycle to be managed, including backups, restores, and snapshots. This allows portability between systems using standard tools.'),
   },
-
-  bootPriorityHint: T('Disks with highest boot priority are booted first. Root disk by default has a priority of 1.'),
 };

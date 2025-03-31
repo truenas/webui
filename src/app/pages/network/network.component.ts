@@ -412,7 +412,11 @@ export class NetworkComponent implements OnInit {
           return;
         }
 
-        const slideInRef$ = this.slideIn.open(InterfaceFormComponent, { data: interfaces[0] });
+        const slideInRef$ = this.slideIn.open(InterfaceFormComponent, {
+          data: {
+            interface: interfaces[0],
+          },
+        });
         this.handleSlideInClosed(slideInRef$);
       });
   }

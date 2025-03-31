@@ -69,7 +69,7 @@ describe('GuiCardComponent', () => {
       'Web Interface HTTPS Port: 443',
       'HTTPS Protocols: TLSv1.2, TLSv1.3',
       'Web Interface HTTP -> HTTPS Redirect: Disabled',
-      'Usage collection: Enabled',
+      'Usage collection & UI error reporting: Enabled',
       'Show Console Messages: Disabled',
     ]);
   });

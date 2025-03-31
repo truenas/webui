@@ -96,4 +96,13 @@ describe('ErrorHandlerService', () => {
       expect(spectator.inject(NgZone).runOutsideAngular).not.toHaveBeenCalled();
     });
   });
+
+  describe('disableSentry', () => {
+    it('disables Sentry error logging', () => {
+      spectator.service.disableSentry();
+
+      spectator.service.handleError(error);
+      expect(spectator.inject(NgZone).runOutsideAngular).not.toHaveBeenCalled();
+    });
+  });
 });

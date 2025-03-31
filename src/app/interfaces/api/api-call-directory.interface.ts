@@ -787,7 +787,6 @@ export interface ApiCallDirectory {
   'system.boot_id': { params: void; response: string };
   'system.general.config': { params: void; response: SystemGeneralConfig };
   'system.general.kbdmap_choices': { params: void; response: Choices };
-  'system.general.language_choices': { params: void; response: Choices };
   'system.general.timezone_choices': { params: void; response: Choices };
   'system.general.ui_address_choices': { params: void; response: Choices };
   'system.general.ui_certificate_choices': { params: void; response: Record<number, string> };
@@ -863,6 +862,7 @@ export interface ApiCallDirectory {
 
   // Virt
   'virt.instance.query': { params: QueryParams<VirtualizationInstance>; response: VirtualizationInstance[] };
+  'virt.instance.set_bootable_disk': { params: [instanceId: string, diskId: string]; response: boolean };
   'virt.instance.device_add': { params: [instanceId: string, device: VirtualizationDevice]; response: true };
   'virt.instance.device_update': { params: [instanceId: string, device: VirtualizationDevice]; response: true };
   'virt.instance.device_delete': { params: [instanceId: string, name: string]; response: true };

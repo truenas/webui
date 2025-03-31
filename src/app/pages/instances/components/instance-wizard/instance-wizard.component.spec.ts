@@ -336,7 +336,6 @@ describe('InstanceWizardComponent', () => {
       await selectVolumeButton.click();
 
       await diskForm.fillForm({
-        'Boot Priority': 2,
         'I/O Bus': 'NVMe',
       });
 
@@ -389,7 +388,7 @@ describe('InstanceWizardComponent', () => {
           {
             dev_type: VirtualizationDeviceType.Disk,
             source: 'my-volume',
-            boot_priority: 2,
+            boot_priority: 1,
             io_bus: DiskIoBus.Nvme,
           },
           { dev_type: VirtualizationDeviceType.Nic, nic_type: VirtualizationNicType.Bridged, parent: 'nic1' },

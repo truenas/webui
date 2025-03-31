@@ -18,6 +18,7 @@ export const shownNewIndicatorKeysUpdated = createAction(
 export const localizationFormSubmitted = createAction('[Preferences] Localization Form Submitted', props<{
   dateFormat: string;
   timeFormat: string;
+  language: string;
 }>());
 export const lifetimeTokenUpdated = createAction('[Preferences] Lifetime Token Updated', props<{ lifetime: number }>());
 
