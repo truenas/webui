@@ -112,7 +112,7 @@ export class WidgetStorageComponent {
       return 1;
     }
 
-    const existingPool = this.pools().find((pool) => pool.name === poolName);
+    const existingPool = this.pools()?.find((pool) => pool.name === poolName);
     const badStatus = existingPool && [
       PoolStatus.Locked,
       PoolStatus.Unknown,
@@ -169,12 +169,12 @@ export class WidgetStorageComponent {
   }
 
   private getUsedSpaceItemInfo(pool: Pool): ItemInfo {
-    const usedSpace = this.poolStats()?.[pool.name]?.used;
-    const totalSpace = this.poolStats()?.[pool.name]?.total;
+    const usedSpace = Number(this.poolStats()?.[pool.name]?.used);
+    const totalSpace = Number(this.poolStats()?.[pool.name]?.total);
     const usedSpacePercent = usedSpace / totalSpace;
     let level = StatusLevel.Safe;
     let icon = statusIcons.checkCircle;
-    let value = this.percentPipe.transform(usedSpacePercent, '1.2-2');
+    let value = this.percentPipe.transform(usedSpacePercent, '1.2-2') || '?';
 
     if (!usedSpace) {
       return {
@@ -271,7 +271,7 @@ export class WidgetStorageComponent {
     if (endTime && isScanInProgress) {
       icon = statusIcons.arrowCircleRight;
       level = StatusLevel.Safe;
-      value = this.percentPipe.transform(pool.scan.percentage, '1.2-2');
+      value = this.percentPipe.transform(pool.scan.percentage, '1.2-2') || '?';
     } else if (endTime && !isScanInProgress) {
       icon = isScanFinished ? statusIcons.checkCircle : statusIcons.error;
       level = isScanFinished ? StatusLevel.Safe : StatusLevel.Warn;

@@ -2,7 +2,9 @@ import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
+import {
+  Validators, ReactiveFormsModule, NonNullableFormBuilder, FormControl, FormGroup,
+} from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatProgressBar } from '@angular/material/progress-bar';
@@ -78,7 +80,11 @@ export class ManualUpdateFormComponent implements OnInit {
     filelocation: ['', Validators.required],
     updateFile: [null as FileList | null],
     rebootAfterManualUpdate: [false],
-  });
+  }) as FormGroup<{
+    filelocation?: FormControl<string | null>;
+    updateFile: FormControl<FileList | null>;
+    rebootAfterManualUpdate: FormControl<boolean>;
+  }>;
 
   readonly helptext = helptext;
   currentVersion = '';
@@ -277,7 +283,7 @@ export class ManualUpdateFormComponent implements OnInit {
     this.isFormLoading$.next(false);
     this.cdr.markForCheck();
 
-    if (isFailedJobError(failure) && failure.job.error.includes(updateAgainCode)) {
+    if (isFailedJobError(failure) && failure.job.error?.includes(updateAgainCode)) {
       this.dialogService.confirm({
         title: helptext.continueDialogTitle,
         message: failure.job.error.replace(updateAgainCode, ''),

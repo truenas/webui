@@ -104,7 +104,7 @@ export class ZfsHealthCardComponent implements OnChanges {
   deduplicationStats = computed(() => {
     if (this.pool().dedup_table_quota !== 'auto' && this.pool().dedup_table_quota !== '0') {
       const value = this.fileSizePipe.transform(this.pool().dedup_table_size);
-      const quota = this.fileSizePipe.transform(parseInt(this.pool().dedup_table_quota, 10));
+      const quota = this.fileSizePipe.transform(parseInt(this.pool().dedup_table_quota || '', 10));
       return `${value} / ${quota}`;
     }
 
@@ -146,7 +146,7 @@ export class ZfsHealthCardComponent implements OnChanges {
 
   get timeLeftString(): string {
     try {
-      const duration = secondsToDuration(this.scan.total_secs_left);
+      const duration = secondsToDuration(this.scan.total_secs_left || 0);
       return this.translate.instant('{duration} remaining', { duration: formatDuration(duration) });
     } catch {
       return ' - ';

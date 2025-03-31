@@ -6,6 +6,7 @@
   "<b>Why choose Container?</b><br />Containers, powered by LXC, offer lightweight, efficient virtualization by sharing the host OS kernel, providing faster startup times and reduced resource usage compared to VMs. <br /><br />Ideal for scalable applications.<br /><br /><b>Why choose VM?</b><br />Virtual Machines (VMs), powered by QEMU, offer full OS isolation, kernel independence, and can run diverse OS types. <br /><br />Ideal for legacy applications, full-featured desktops, or software with strict OS dependencies.": "",
   "Access Card": "",
   "Achieve 99.999% Uptime with HA": "",
+  "An unknown error occurred": "",
   "Are you sure you want to lock \"{user}\" user?": "",
   "Are you sure you want to unlock \"{user}\" user?": "",
   "Boot From": "",

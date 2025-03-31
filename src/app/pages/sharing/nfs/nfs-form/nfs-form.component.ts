@@ -20,7 +20,7 @@ import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingNfs } from 'app/helptext/sharing';
 import { DatasetCreate } from 'app/interfaces/dataset.interface';
-import { NfsShare } from 'app/interfaces/nfs-share.interface';
+import { NfsShare, NfsShareUpdate } from 'app/interfaces/nfs-share.interface';
 import { GroupComboboxProvider } from 'app/modules/forms/ix-forms/classes/group-combobox-provider';
 import { UserComboboxProvider } from 'app/modules/forms/ix-forms/classes/user-combobox-provider';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -196,7 +196,7 @@ export class NfsFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const nfsShare = { ...this.form.value };
+    const nfsShare = { ...this.form.value } as NfsShareUpdate;
 
     if (!this.isEnterprise()) {
       delete nfsShare.expose_snapshots;
