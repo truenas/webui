@@ -1,6 +1,6 @@
 <ix-modal-header
   [title]="'Localization Settings' | translate"
-  [loading]="isFormLoading"
+  [loading]="isFormLoading()"
 ></ix-modal-header>
 <mat-card>
   <mat-card-content>
@@ -48,7 +48,7 @@
           type="submit"
           color="primary"
           ixTest="save"
-          [disabled]="formGroup.invalid || isFormLoading"
+          [disabled]="formGroup.invalid || isFormLoading()"
         >
           {{ 'Save' | translate }}
         </button>

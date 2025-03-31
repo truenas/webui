@@ -1,5 +1,6 @@
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import { defaultLanguage } from 'app/constants/languages.constant';
 import { Schedule } from 'app/interfaces/schedule.interface';
 import { IxCellScheduleComponent } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-schedule/ix-cell-schedule.component';
 import { LanguageService } from 'app/modules/language/language.service';
@@ -26,7 +27,7 @@ describe('IxCellScheduleComponent', () => {
         getPreferredTimeFormat: () => 'HH:mm:ss',
       }),
       mockProvider(LanguageService, {
-        currentLanguage: 'en',
+        currentLanguage: defaultLanguage,
       }),
     ],
   });

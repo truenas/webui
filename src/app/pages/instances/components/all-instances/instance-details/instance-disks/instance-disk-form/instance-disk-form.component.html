@@ -25,14 +25,6 @@
               (click)="onSelectVolume()"
             >{{ 'Select Volume' | translate }}</button>
           </div>
-
-          <ix-input
-            type="number"
-            formControlName="boot_priority"
-            [label]="'Boot Priority' | translate"
-            [required]="true"
-            [tooltip]="instancesHelptext.bootPriorityHint | translate"
-          ></ix-input>
         } @else {
           <ix-explorer
             formControlName="source"

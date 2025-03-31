@@ -31,7 +31,7 @@
         <span
           class="action"
           [matTooltip]="disksDisabledMessage"
-          [matTooltipDisabled]="!isVmRunning() || isContainer()"
+          [matTooltipDisabled]="!isVmRunning()"
         >
           <a
             ixTest="change-disk-setup"
@@ -46,6 +46,42 @@
       </div>
     }
 
+    @if (isVm() && visibleDisks()?.length > 0) {
+      <div class="root-disk-size">
+        <span class="label">{{ 'Boot From' | translate }}:</span>
+        <span class="value">
+          @if (primaryBootDisk(); as bootDisk) {
+            {{ bootDisk.source }}
+
+            @if (bootDisk.io_bus) {
+              ({{ bootDisk.io_bus | mapValue: diskIoBusLabels}})
+            }
+          } @else {
+            {{ 'No boot disk selected' | translate }}
+          }
+        </span>
+
+        @if (visibleDisks()?.length > 1 || !primaryBootDisk()) {
+          <span
+            class="action"
+            [matTooltip]="disksDisabledMessage"
+            [matTooltipDisabled]="!isVmRunning()"
+          >
+            <a
+              class="action"
+              ixTest="change-primary-boot-disk"
+              [class.disabled]="isVmRunning()"
+              [attr.tabindex]="isVmRunning() ? -1 : 0"
+              (keydown.enter)="showChangeBootFromDiskDialog()"
+              (click)="showChangeBootFromDiskDialog()"
+            >
+              {{ 'Change' | translate }}
+            </a>
+          </span>
+        }
+      </div>
+    }
+
     @if (isLoadingDevices()) {
       <ngx-skeleton-loader></ngx-skeleton-loader>
     } @else {
@@ -57,7 +93,7 @@
             <div>
               {{ disk.source }}
 
-              @if (isVm()) {
+              @if (isVm() && disk.io_bus) {
                 ({{ disk.io_bus | mapValue: diskIoBusLabels}})
               }
             </div>
