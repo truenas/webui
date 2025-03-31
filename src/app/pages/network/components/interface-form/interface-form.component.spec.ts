@@ -146,11 +146,47 @@ describe('InterfaceFormComponent', () => {
 
   describe('creation', () => {
     beforeEach(async () => {
-      spectator = createComponent();
+      spectator = createComponent({
+        providers: [
+          mockProvider(SlideInRef, {
+            ...slideInRef,
+            getData: () => ({
+              interfaces: [{
+                ...existingInterface,
+                name: 'vlan1',
+                type: NetworkInterfaceType.Vlan,
+              } as NetworkInterface],
+            }),
+          }),
+        ],
+      });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
       aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Aliases' }));
       api = spectator.inject(ApiService);
+    });
+
+    it('auto-generates name when type is changed', async () => {
+      await form.fillForm({
+        Type: 'Bridge',
+      });
+
+      const values = await form.getValues();
+      expect(values.Name).toMatch('br1');
+
+      await form.fillForm({
+        Type: 'Link Aggregation',
+      });
+
+      const updatedValues = await form.getValues();
+      expect(updatedValues.Name).toMatch('bond1');
+
+      await form.fillForm({
+        Type: 'VLAN',
+      });
+
+      const vlanValues = await form.getValues();
+      expect(vlanValues.Name).toMatch('vlan2');
     });
 
     it('saves a new bridge interface when form is submitted for bridge interface', async () => {
@@ -309,7 +345,7 @@ describe('InterfaceFormComponent', () => {
     beforeEach(async () => {
       spectator = createComponent({
         providers: [
-          mockProvider(SlideInRef, { ...slideInRef, getData: () => existingInterface }),
+          mockProvider(SlideInRef, { ...slideInRef, getData: () => ({ interface: existingInterface }) }),
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -338,10 +374,12 @@ describe('InterfaceFormComponent', () => {
           mockProvider(SlideInRef, {
             ...slideInRef,
             getData: () => ({
-              ...existingInterface,
-              id: 'vlan1',
-              type: NetworkInterfaceType.Vlan,
-            } as NetworkInterface),
+              interface: {
+                ...existingInterface,
+                id: 'vlan1',
+                type: NetworkInterfaceType.Vlan,
+              } as NetworkInterface,
+            }),
           }),
         ],
       });
@@ -364,10 +402,12 @@ describe('InterfaceFormComponent', () => {
           mockProvider(SlideInRef, {
             ...slideInRef,
             getData: () => ({
-              ...existingInterface,
-              id: 'br7',
-              enable_learning: false,
-              type: NetworkInterfaceType.Bridge,
+              interface: {
+                ...existingInterface,
+                id: 'br7',
+                enable_learning: false,
+                type: NetworkInterfaceType.Bridge,
+              },
             }),
           }),
         ],
@@ -395,9 +435,11 @@ describe('InterfaceFormComponent', () => {
           mockProvider(SlideInRef, {
             ...slideInRef,
             getData: () => ({
-              ...existingInterface,
-              id: 'bond9',
-              type: NetworkInterfaceType.LinkAggregation,
+              interface: {
+                ...existingInterface,
+                id: 'bond9',
+                type: NetworkInterfaceType.LinkAggregation,
+              },
             }),
           }),
         ],

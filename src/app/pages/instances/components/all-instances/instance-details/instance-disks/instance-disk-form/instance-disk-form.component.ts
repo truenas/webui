@@ -79,7 +79,6 @@ export class InstanceDiskFormComponent implements OnInit {
     source: ['', Validators.required],
     destination: ['', Validators.required],
     io_bus: [DiskIoBus.Nvme, Validators.required],
-    boot_priority: [1],
   });
 
   protected isNew = computed(() => !this.existingDisk());
@@ -119,14 +118,12 @@ export class InstanceDiskFormComponent implements OnInit {
         source: disk.source || '',
         destination: disk.destination || '',
         io_bus: disk.io_bus || null,
-        boot_priority: disk.boot_priority || undefined,
       });
     }
 
     if (this.isVm) {
       this.form.controls.destination.disable();
     } else {
-      this.form.controls.boot_priority.disable();
       this.form.controls.io_bus.disable();
     }
   }
