@@ -145,7 +145,7 @@ export class FileTicketLicensedComponent {
   }
 
   private onSuccess(ticketUrl: string): void {
-    this.feedbackService.showTicketSuccessMsg(ticketUrl);
+    this.feedbackService.showTicketSuccessMessage(ticketUrl);
     this.dialogRef().close();
   }
 
