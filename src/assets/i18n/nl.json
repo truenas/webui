@@ -147,6 +147,7 @@
   "Preserve Power Management settings": "",
   "Privilege Read": "",
   "Privilege Write": "",
+  "Remote Node Restarted": "",
   "Renames the ZFS dataset to a path in the `ix-virt` dataset in which the zvol is located.": "",
   "Root Disk": "",
   "Root Disk I/O Bus": "",

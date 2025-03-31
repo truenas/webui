@@ -676,6 +676,7 @@
   "Readonly Admin": "",
   "Rear": "",
   "Release": "",
+  "Remote Node Restarted": "",
   "Renames the ZFS dataset to a path in the `ix-virt` dataset in which the zvol is located.": "",
   "Replication Admin": "",
   "Replication Settings": "",

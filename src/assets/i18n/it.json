@@ -1,6 +1,7 @@
 {
   "": "",
   "An unknown error occurred": "",
+  "Remote Node Restarted": "",
   "Storj is an S3 compatible, fault tolerant, globally distributed cloud storage platform with a security first approach to backup and recovery - delivering extreme resilience and performance both sustainably and economically. <a href=\"https://truenas.com/storj\" target=\"_blank\">TrueNAS and Storj</a> have partnered to streamline delivery of Hybrid Cloud solutions globally.": "",
   "Wait to stop cleanly": "",
   "\n              It looks like your session has been inactive for more than {lifetime} seconds.<br>\n              For security reasons we will log you out at {time}.\n            ": "\nSembra che la tua sessione sia stata inattiva per più di {lifetime} secondi.<br>\nPer motivi di sicurezza, verrai disconnesso alle {time}.",

@@ -220,6 +220,7 @@
   "Registration finalization failed": "",
   "Registration finalization successful": "",
   "Registration finalization timed out": "",
+  "Remote Node Restarted": "",
   "Renames the ZFS dataset to a path in the `ix-virt` dataset in which the zvol is located.": "",
   "Restart is required after changing these settings.": "",
   "Root Disk": "",
