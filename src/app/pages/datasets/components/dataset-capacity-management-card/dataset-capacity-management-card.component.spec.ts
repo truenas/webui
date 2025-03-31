@@ -72,8 +72,8 @@ describe('DatasetCapacityManagementCardComponent', () => {
       mockAuth(),
       mockApi([
         mockCall('pool.dataset.get_quota', [
-          { id: 1 },
-          { id: 2 },
+          { id: 1, quota: 200 },
+          { id: 2, quota: 200 },
         ] as DatasetQuota[]),
       ]),
       mockProvider(DialogService),
