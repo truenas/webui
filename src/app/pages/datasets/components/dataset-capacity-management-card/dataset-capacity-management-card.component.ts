@@ -19,6 +19,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { DatasetType, DatasetQuotaType } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
+import { isQuotaSet } from 'app/helpers/storage.helper';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -128,8 +129,8 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
       untilDestroyed(this),
     ).subscribe({
       next: ([userQuotas, groupQuotas]) => {
-        this.userQuotas = userQuotas.length;
-        this.groupQuotas = groupQuotas.length;
+        this.userQuotas = userQuotas.filter(isQuotaSet).length;
+        this.groupQuotas = groupQuotas.filter(isQuotaSet).length;
         this.isLoadingQuotas = false;
         this.cdr.markForCheck();
       },
