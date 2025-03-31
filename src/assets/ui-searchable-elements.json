@@ -591,49 +591,6 @@
     "hierarchy": [
       "Credentials",
       "Certificates",
-      "Certificate Authorities"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/credentials",
-      "certificates"
-    ],
-    "routerLink": null,
-    "anchor": "certificate-authority-list",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Credentials",
-      "Certificates",
-      "Certificate Authorities",
-      "Add Certificate Authority"
-    ],
-    "synonyms": [
-      "New Certificate Authority",
-      "Create Certificate Authority",
-      "Certificate Authority"
-    ],
-    "requiredRoles": [
-      "CERTIFICATE_AUTHORITY_WRITE"
-    ],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/credentials",
-      "certificates"
-    ],
-    "routerLink": null,
-    "anchor": "add-certificate-authority",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Credentials",
-      "Certificates",
       "Add Certificate"
     ],
     "synonyms": [

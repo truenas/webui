@@ -28,3 +28,12 @@ export class FailedJobError extends Error {
     this.name = 'FailedJob';
   }
 }
+
+export class AbortedJobError extends Error {
+  constructor(
+    public job: Job,
+  ) {
+    super('Job aborted');
+    this.name = 'AbortedJob';
+  }
+}
