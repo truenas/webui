@@ -745,6 +745,7 @@
   "Rear": "",
   "Refresh Events": "",
   "Release": "",
+  "Remote Node Restarted": "",
   "Renames the ZFS dataset to a path in the `ix-virt` dataset in which the zvol is located.": "",
   "Replacing disk...": "",
   "Replication Admin": "",
