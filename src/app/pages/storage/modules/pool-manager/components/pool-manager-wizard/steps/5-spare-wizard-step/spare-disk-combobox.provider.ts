@@ -7,7 +7,7 @@ import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/p
 
 export class SpareDiskComboboxProvider implements IxComboboxProvider {
   protected page = 1;
-  protected readonly pageSize = 7;
+  protected readonly pageSize = 20;
 
   fetch(filterValue: string): Observable<Option[]> {
     this.page = 0;

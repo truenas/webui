@@ -64,14 +64,16 @@ export class SpareWizardStepComponent implements OnInit {
       this.store.startOver$,
       this.store.resetStep$.pipe(filter((vdevType) => vdevType === VdevType.Spare)),
     )
-      .pipe(untilDestroyed(this))
+      .pipe(
+        untilDestroyed(this),
+      )
       .subscribe(() => {
         this.spareVdevDisk.setValue('');
         this.cdr.markForCheck();
       });
   }
 
-  protected updateSpareTopologyWhenChanged(): void {
+  private updateSpareTopologyWhenChanged(): void {
     this.store.setTopologyCategoryLayout(VdevType.Spare, CreateVdevLayout.Stripe);
     this.spareVdevDisk.valueChanges.pipe(
       filter(Boolean),
@@ -91,11 +93,11 @@ export class SpareWizardStepComponent implements OnInit {
     });
   }
 
-  goToReviewStep(): void {
+  protected goToReviewStep(): void {
     this.goToLastStep.emit();
   }
 
-  resetStep(): void {
+  protected resetStep(): void {
     this.store.resetStep(VdevType.Spare);
   }
 }
