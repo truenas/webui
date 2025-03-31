@@ -37,7 +37,7 @@ import { Option } from 'app/interfaces/option.interface';
 import {
   SmbPresets,
   SmbPresetType,
-  SmbShare,
+  SmbShare, SmbShareUpdate,
 } from 'app/interfaces/smb-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -468,7 +468,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   }
 
   submit(): void {
-    const smbShare = this.form.value;
+    const smbShare = this.form.value as SmbShareUpdate;
 
     if (!smbShare.timemachine_quota) {
       smbShare.timemachine_quota = 0;

@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, computed, effect, signal,
+  ChangeDetectionStrategy, Component, computed, effect, OnInit, signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
@@ -19,7 +19,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { unionBy } from 'lodash-es';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
-  filter, map, Observable, of, tap,
+  filter, map, Observable, of, startWith, tap,
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import {
@@ -125,7 +125,7 @@ import { FilesystemService } from 'app/services/filesystem.service';
   styleUrls: ['./instance-wizard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class InstanceWizardComponent {
+export class InstanceWizardComponent implements OnInit {
   protected readonly isLoading = signal<boolean>(false);
   protected readonly requiredRoles = [Role.VirtGlobalWrite];
   protected readonly virtualizationTypeIcons = virtualizationTypeIcons;
@@ -133,6 +133,7 @@ export class InstanceWizardComponent {
   protected readonly hasPendingInterfaceChanges = toSignal(this.api.call('interface.has_pending_changes'));
 
   protected readonly diskIoBusOptions$ = of(mapToOptions(diskIoBusLabels, this.translate));
+
   protected readonly proxyProtocols$ = of(mapToOptions(virtualizationProxyProtocolLabels, this.translate));
   protected readonly bridgedNicTypeLabel = virtualizationNicTypeLabels.get(VirtualizationNicType.Bridged);
   protected readonly macVlanNicTypeLabel = virtualizationNicTypeLabels.get(VirtualizationNicType.Macvlan);
@@ -170,7 +171,7 @@ export class InstanceWizardComponent {
 
   protected poolOptions$ = this.configStore.state$.pipe(
     filter((state) => !state.isLoading),
-    map((state) => state.config.storage_pools),
+    map((state) => state.config?.storage_pools),
     singleArrayToOptions(),
     tap((options) => {
       if (options.length && !this.form.controls.storage_pool.value) {
@@ -179,7 +180,7 @@ export class InstanceWizardComponent {
     }),
   );
 
-  protected hasOnePool = computed(() => this.configStore.config().storage_pools.length === 1);
+  protected hasOnePool = computed(() => this.configStore.config()?.storage_pools?.length === 1);
 
   protected readonly form = this.formBuilder.group({
     name: [
@@ -189,6 +190,7 @@ export class InstanceWizardComponent {
     ],
     instance_type: [VirtualizationType.Container, Validators.required],
     source_type: [VirtualizationSource.Image, [Validators.required]],
+    boot_from: [null as string | null],
     volume_type: [null as VolumeContentType | null],
     root_disk_io_bus: [DiskIoBus.Nvme, []],
     volume: ['', [Validators.required]],
@@ -216,15 +218,30 @@ export class InstanceWizardComponent {
     }>>([]),
     disks: this.formBuilder.array<FormGroup<{
       source: FormControl<string>;
-      destination: FormControl<string>;
-      io_bus: FormControl<DiskIoBus>;
-      boot_priority: FormControl<number>;
+      destination?: FormControl<string>;
+      io_bus?: FormControl<DiskIoBus>;
     }>>([]),
     environment_variables: new FormArray<InstanceEnvVariablesFormGroup>([]),
   });
 
+  readonly bootFromOptions$: Observable<Option[]> = this.form.controls.disks.statusChanges.pipe(
+    startWith(null),
+    map(() => {
+      return this.form.controls.disks.controls
+        .filter((control) => control.controls.source?.value)
+        .map((control) => {
+          const source = control.controls.source?.value;
+          return { label: source, value: source };
+        });
+    }),
+  );
+
   get hasRequiredRoles(): Observable<boolean> {
     return this.authService.hasRole(this.requiredRoles);
+  }
+
+  get isZvolSourceType(): boolean {
+    return this.form.value.source_type === VirtualizationSource.Zvol;
   }
 
   get secureBootTooltip(): string {
@@ -271,12 +288,28 @@ export class InstanceWizardComponent {
 
     effect(() => {
       if (!this.form.value.storage_pool && this.hasOnePool()) {
-        this.form.patchValue({ storage_pool: this.configStore.config().storage_pools[0] });
+        this.form.patchValue({ storage_pool: this.configStore.config()?.storage_pools?.[0] });
       }
     });
 
     this.listenForSourceTypeChanges();
     this.listenForInstanceTypeChanges();
+  }
+
+  ngOnInit(): void {
+    this.bootFromOptions$.pipe(
+      untilDestroyed(this),
+    ).subscribe((disks) => {
+      const bootFromControl = this.form.controls.boot_from;
+
+      if (bootFromControl.value && !disks.find((disk) => disk.value === bootFromControl.value)) {
+        bootFromControl.reset();
+      }
+
+      if (disks.length === 1) {
+        bootFromControl.setValue(disks[0].value as string);
+      }
+    });
   }
 
   protected onBrowseCatalogImages(): void {
@@ -358,8 +391,12 @@ export class InstanceWizardComponent {
       source: ['', Validators.required],
       destination: ['', Validators.required],
       io_bus: [DiskIoBus.Nvme, Validators.required],
-      boot_priority: [1, Validators.required],
-    });
+    }) as FormGroup<{
+      source: FormControl<string>;
+      destination?: FormControl<string>;
+      io_bus?: FormControl<DiskIoBus>;
+      boot_priority?: FormControl<number>;
+    }>;
 
     if (this.isVm()) {
       control.removeControl('destination');
@@ -367,7 +404,6 @@ export class InstanceWizardComponent {
 
     if (this.isContainer()) {
       control.removeControl('io_bus');
-      control.removeControl('boot_priority');
     }
 
     this.form.controls.disks.push(control);
@@ -404,6 +440,7 @@ export class InstanceWizardComponent {
 
   private createInstance(): Observable<VirtualizationInstance> {
     const payload = this.getPayload();
+
     const job$ = this.api.job('virt.instance.create', [payload]);
 
     return this.dialogService
@@ -490,8 +527,8 @@ export class InstanceWizardComponent {
 
       return {
         ...diskPayload,
-        boot_priority: disk.boot_priority,
         io_bus: disk.io_bus,
+        boot_priority: this.form.controls.boot_from.value === disk.source ? 1 : 0,
       };
     });
 
@@ -608,9 +645,11 @@ export class InstanceWizardComponent {
       if (type === VirtualizationType.Container) {
         this.form.controls.cpu.setValidators(cpuValidator());
         this.form.controls.memory.clearValidators();
+        this.form.controls.boot_from.clearValidators();
       } else {
         this.form.controls.cpu.setValidators([Validators.required, cpuValidator()]);
         this.form.controls.memory.setValidators([Validators.required]);
+        this.form.controls.boot_from.setValidators([Validators.required]);
       }
     });
   }

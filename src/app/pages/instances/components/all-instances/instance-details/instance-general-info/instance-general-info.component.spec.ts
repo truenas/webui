@@ -25,7 +25,6 @@ import {
 import {
   InstanceGeneralInfoComponent,
 } from 'app/pages/instances/components/all-instances/instance-details/instance-general-info/instance-general-info.component';
-import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 
 const instance = {
@@ -75,10 +74,8 @@ describe('InstanceGeneralInfoComponent', () => {
           response: { id: 'updated_instance' },
         })),
       }),
-      mockProvider(VirtualizationDevicesStore, {
-        selectedInstance: jest.fn(),
-      }),
       mockProvider(VirtualizationInstancesStore, {
+        selectedInstance: jest.fn(),
         instanceUpdated: jest.fn(),
       }),
       mockApi([
@@ -160,7 +157,7 @@ describe('InstanceGeneralInfoComponent', () => {
     );
     expect(spectator.inject(VirtualizationInstancesStore).instanceUpdated)
       .toHaveBeenCalledWith({ id: 'updated_instance' });
-    expect(spectator.inject(VirtualizationDevicesStore).selectInstanceById)
+    expect(spectator.inject(VirtualizationInstancesStore).selectInstance)
       .toHaveBeenCalledWith('updated_instance');
   });
 });

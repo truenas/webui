@@ -17,6 +17,7 @@ import {
   PciPassthroughDialog,
 } from 'app/pages/instances/components/common/pci-passthough-dialog/pci-passthrough-dialog.component';
 import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
+import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 
 describe('AddDeviceMenuComponent', () => {
   let spectator: Spectator<AddDeviceMenuComponent>;
@@ -50,8 +51,10 @@ describe('AddDeviceMenuComponent', () => {
         }),
         mockCall('virt.instance.device_add'),
       ]),
-      mockProvider(VirtualizationDevicesStore, {
+      mockProvider(VirtualizationInstancesStore, {
         selectedInstance,
+      }),
+      mockProvider(VirtualizationDevicesStore, {
         devices: () => [
           {
             dev_type: VirtualizationDeviceType.Usb,

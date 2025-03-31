@@ -45,7 +45,7 @@ export class FormErrorHandlerService {
 
     if (
       isFailedJobError(error)
-      && error.job.exc_info.type === JobExceptionType.Validation
+      && error.job.exc_info?.type === JobExceptionType.Validation
       && error.job.exc_info.extra
     ) {
       this.handleValidationError(

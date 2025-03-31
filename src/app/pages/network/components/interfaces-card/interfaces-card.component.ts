@@ -79,6 +79,7 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
   readonly interfacesUpdated = output();
 
   protected readonly requiredRoles = [Role.NetworkInterfaceWrite];
+  protected interfaces: NetworkInterface[] = [];
 
   isHaEnabled$ = new BehaviorSubject(false);
 
@@ -157,6 +158,7 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
     this.interfacesStore$.loadInterfaces();
     this.interfacesStore$.state$.pipe(untilDestroyed(this)).subscribe((state) => {
       this.isLoading = state.isLoading;
+      this.interfaces = state.interfaces;
       this.dataProvider.setRows(state.interfaces);
       this.inOutUpdates.set({});
       for (const nic of state.interfaces) {
@@ -177,7 +179,11 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
   }
 
   onAddNew(): void {
-    this.slideIn.open(InterfaceFormComponent)
+    this.slideIn.open(InterfaceFormComponent, {
+      data: {
+        interfaces: this.interfaces,
+      },
+    })
       .pipe(
         filter((response) => !!response.response),
         untilDestroyed(this),
@@ -189,7 +195,9 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
 
   onEdit(row: NetworkInterface): void {
     this.slideIn.open(InterfaceFormComponent, {
-      data: row,
+      data: {
+        interface: row,
+      },
     }).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),

@@ -38,7 +38,7 @@ import { PullImageFormComponent } from 'app/pages/apps/components/docker-images/
 
 // TODO: Exclude AnythingUi when NAS-127632 is done
 export interface ContainerImageUi extends ContainerImage {
-  selected: boolean;
+  selected?: boolean;
 }
 
 @UntilDestroy()
@@ -146,7 +146,7 @@ export class DockerImagesListComponent implements OnInit {
 
   ngOnInit(): void {
     const containerImages$ = this.api.call('app.image.query').pipe(
-      map((images) => images.map((image) => ({ ...image, selected: false }))),
+      map((images) => images.map((image) => ({ ...image, selected: false } as ContainerImageUi))),
       tap((images) => this.containerImages = images),
     );
     this.dataProvider = new AsyncDataProvider(containerImages$);
