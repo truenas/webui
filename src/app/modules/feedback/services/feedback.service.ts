@@ -180,7 +180,7 @@ export class FeedbackService {
     this.dialogService.generalDialog({
       message: this.translate.instant('Thank you. Ticket was submitted successfully.'),
       icon: iconMarker('check'),
-      title: 'Ticket Created',
+      title: this.translate.instant('Ticket Created'),
       cancelBtnMsg: this.translate.instant('Close'),
       confirmBtnMsg: this.translate.instant('Open ticket'),
     })

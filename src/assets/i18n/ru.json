@@ -3174,6 +3174,7 @@
   "Threshold Days": "",
   "Thursday": "",
   "Ticket": "",
+  "Ticket Created": "",
   "Ticket was created, but we were unable to upload one or more attachments.": "",
   "Time": "",
   "Time in seconds after which current user session will be disconnected. Interacting with UI extends the session.": "",

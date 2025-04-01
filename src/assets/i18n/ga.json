@@ -597,6 +597,7 @@
   "This is the only time the password is shown.": "",
   "This option is experimental in rclone and we recommend you do not use it. Are you sure you want to continue?": "",
   "This password is only valid for one login within 24 hours and does not persist across reboots.": "",
+  "Ticket Created": "",
   "TNC Base Url": "",
   "Tools": "",
   "Transfer Setting": "",
