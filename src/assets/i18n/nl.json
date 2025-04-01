@@ -426,6 +426,7 @@
   "Username associated with this API key.": "",
   "VDEV is highly discouraged and will result in data loss if it fails": "",
   "VM Settings": "",
+  "VM disks cannot be managed while the instance is running.": "",
   "VMs": "",
   "VNC Password": "",
   "VNC password is not cryptographically secure. You should not rely on it as a single authentication mechanism for your VMs.": "",
