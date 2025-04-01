@@ -125,7 +125,7 @@ describe('FileTicketLicensedFormComponent', () => {
       title: 'Assassination Request',
     });
     expect(dialogRef.close).toHaveBeenCalled();
-    expect(feedbackService.showTicketSuccessMsg).toHaveBeenCalledWith('https://jira-redirect.ixsystems.com/ticket');
+    expect(feedbackService.showTicketSuccessMessage).toHaveBeenCalledWith('https://jira-redirect.ixsystems.com/ticket');
   });
 });
 

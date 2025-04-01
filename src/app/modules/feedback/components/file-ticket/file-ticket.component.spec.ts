@@ -107,8 +107,7 @@ describe('FileTicketComponent', () => {
       title: 'Cannot shutdown',
     });
     expect(dialogRef.close).toHaveBeenCalled();
-    expect(feedbackService.showTicketSuccessMsg).toHaveBeenCalledWith('https://jira-redirect.ixsystems.com/ticket');
-    // TODO: Show link to Jira ticket.
+    expect(feedbackService.showTicketSuccessMessage).toHaveBeenCalledWith('https://jira-redirect.ixsystems.com/ticket');
   });
 
   // TODO: Test case for not failing if images were not uploaded.
