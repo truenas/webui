@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatAnchor } from '@angular/material/button';
-import { RouterLink } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { allUsersHeaderElements } from 'app/pages/credentials/new-users/all-users/all-users-header/all-users-header.elements';
+import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
 
 @UntilDestroy()
 @Component({
@@ -18,10 +19,17 @@ import { allUsersHeaderElements } from 'app/pages/credentials/new-users/all-user
     TranslateModule,
     TestDirective,
     MatAnchor,
-    RouterLink,
     UiSearchDirective,
   ],
 })
 export class AllUsersHeaderComponent {
   protected readonly searchableElements = allUsersHeaderElements;
+
+  constructor(
+    private slideIn: SlideIn,
+  ) {}
+
+  doAdd(): void {
+    this.slideIn.open(UserFormComponent, { wide: true });
+  }
 }

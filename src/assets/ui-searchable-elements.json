@@ -817,9 +817,7 @@
     "anchorRouterLink": [
       "/credentials/users-new"
     ],
-    "routerLink": [
-      "/credentials/users-new"
-    ],
+    "routerLink": null,
     "anchor": "add-user",
     "triggerAnchor": null,
     "section": "ui"
@@ -837,23 +835,6 @@
     ],
     "routerLink": null,
     "anchor": "users-list",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Credentials",
-      "Users (WIP)",
-      "General Info"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/credentials/users-new"
-    ],
-    "routerLink": null,
-    "anchor": "general-info",
     "triggerAnchor": null,
     "section": "ui"
   },

@@ -6,10 +6,12 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { Role } from 'app/enums/role.enum';
 import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master-detail-view.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { AllUsersHeaderComponent } from 'app/pages/credentials/new-users/all-users/all-users-header/all-users-header.component';
 import { allUsersElements } from 'app/pages/credentials/new-users/all-users/all-users.elements';
+import { UserDetailHeaderComponent } from 'app/pages/credentials/new-users/all-users/user-details/user-detail-header/user-detail-header.component';
 import { UserDetailsComponent } from 'app/pages/credentials/new-users/all-users/user-details/user-details.component';
 import { UserListComponent } from 'app/pages/credentials/new-users/all-users/user-list/user-list.component';
 import { UsersStore } from 'app/pages/credentials/new-users/store/users.store';
@@ -28,11 +30,14 @@ import { UsersStore } from 'app/pages/credentials/new-users/store/users.store';
     UserDetailsComponent,
     UserListComponent,
     MasterDetailViewComponent,
+    UserDetailHeaderComponent,
   ],
 })
 export class AllUsersComponent implements OnInit {
   readonly selectedUser = this.usersStore.selectedUser;
   protected readonly searchableElements = allUsersElements;
+
+  protected readonly Role = Role;
 
   constructor(
     private usersStore: UsersStore,
