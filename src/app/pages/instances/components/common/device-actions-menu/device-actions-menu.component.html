@@ -1,13 +1,12 @@
-<div
-  [matTooltip]="canManage() ? '' : manageRestrictedExplanation()"
-  [class.disabled]="!canManage()"
->
+<div [matTooltip]="canManage() ? '' : manageRestrictedExplanation()">
   <button
     mat-icon-button
     type="button"
     [ixTest]="['actions-for', device().description]"
     [matMenuTriggerFor]="menu"
     [disabled]="!canManage()"
+    [class.disabled]="!canManage()"
+    [attr.tabindex]="!canManage() ? -1 : 0"
     [attr.aria-label]="'Actions for {device}' | translate: { device: device().description }"
   >
     <ix-icon name="more_vert"></ix-icon>

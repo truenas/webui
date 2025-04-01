@@ -19,6 +19,7 @@ import {
   StopOptionsDialogComponent,
   StopOptionsOperation,
 } from 'app/pages/instances/components/all-instances/instance-list/stop-options-dialog/stop-options-dialog.component';
+import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
 
 const instance = {
   id: 'my-instance',
@@ -53,6 +54,10 @@ describe('InstanceRowComponent', () => {
             timeout: -1,
           }),
         })),
+      }),
+      mockProvider(VirtualizationDevicesStore, {
+        selectedInstance: () => instance,
+        setSelectedInstance: jest.fn(),
       }),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
