@@ -4,6 +4,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
@@ -27,7 +28,6 @@ describe('IdmapListComponent', () => {
   let table: IxTableHarness;
   let api: ApiService;
 
-  let servicesState: DirectoryServicesState;
   const idmapRecords = [
     {
       id: 5,
@@ -64,7 +64,10 @@ describe('IdmapListComponent', () => {
       mockApi([
         mockCall('idmap.query', idmapRecords),
         mockCall('idmap.delete'),
-        mockCall('directoryservices.get_state', () => servicesState),
+        mockCall('directoryservices.get_state', () => ({
+          activedirectory: DirectoryServiceState.Disabled,
+          ldap: DirectoryServiceState.Disabled,
+        })),
         mockCall('activedirectory.config', {
           enable: true,
         } as ActiveDirectoryConfig),
@@ -84,11 +87,6 @@ describe('IdmapListComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     table = await loader.getHarness(IxTableHarness);
     api = spectator.inject(ApiService);
-
-    servicesState = {
-      activedirectory: DirectoryServiceState.Disabled,
-      ldap: DirectoryServiceState.Disabled,
-    };
   });
 
   describe('loading', () => {
@@ -101,13 +99,23 @@ describe('IdmapListComponent', () => {
     });
 
     it('loads LDAP entries when LDAP is on', () => {
-      servicesState.ldap = DirectoryServiceState.Healthy;
+      const mockedApi = spectator.inject(MockApiService);
+      mockedApi.mockCall('directoryservices.get_state', {
+        activedirectory: DirectoryServiceState.Disabled,
+        ldap: DirectoryServiceState.Healthy,
+      } as DirectoryServicesState);
+
       spectator.component.ngOnInit();
       expect(api.call).toHaveBeenCalledWith('idmap.query', [[['name', '=', IdmapName.DsTypeLdap]]]);
     });
 
     it('loads records other than LDAP when Active Directory is on', () => {
-      servicesState.activedirectory = DirectoryServiceState.Joining;
+      const mockedApi = spectator.inject(MockApiService);
+      mockedApi.mockCall('directoryservices.get_state', {
+        activedirectory: DirectoryServiceState.Joining,
+        ldap: DirectoryServiceState.Disabled,
+      } as DirectoryServicesState);
+
       spectator.component.ngOnInit();
       expect(api.call).toHaveBeenCalledWith('idmap.query', [[['name', '!=', IdmapName.DsTypeLdap]]]);
     });
