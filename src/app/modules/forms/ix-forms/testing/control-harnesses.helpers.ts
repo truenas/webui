@@ -17,6 +17,7 @@ import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select
 import { IxSlideToggleHarness } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.harness';
 import { IxStarRatingHarness } from 'app/modules/forms/ix-forms/components/ix-star-rating/ix-star-rating.harness';
 import { IxTextareaHarness } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.harness';
+import { IxUserPickerHarness } from 'app/modules/forms/ix-forms/components/ix-user-picker/ix-user-picker.harness';
 import { IxFormControlHarness } from 'app/modules/forms/ix-forms/interfaces/ix-form-control-harness.interface';
 import { SchedulerHarness } from 'app/modules/scheduler/components/scheduler/scheduler.harness';
 
@@ -39,6 +40,7 @@ export const supportedFormControlSelectors = [
   IxButtonGroupHarness,
   IxIconGroupHarness,
   IxDatepickerHarness,
+  IxUserPickerHarness,
 ] as const;
 
 export type SupportedFormControlHarness = InstanceType<(typeof supportedFormControlSelectors)[number]>;

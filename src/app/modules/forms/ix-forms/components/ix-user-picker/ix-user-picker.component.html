@@ -1,0 +1,86 @@
+<div class="full-width container has-tooltip">
+  @if (label() || tooltip()) {
+    <ix-label
+      [label]="label()"
+      [tooltip]="tooltip()"
+      [required]="required()"
+      [ixTestOverride]="controlDirective.name || ''"
+    ></ix-label>
+  }
+
+  <div class="input-container" [class.disabled]="isDisabled">
+    <input
+      #ixInput
+      matInput
+      [value]="selectedOption()?.label || textContent"
+      [placeholder]="allowCustomValue() ? ('Search or enter value' | translate) : ('Search' | translate)"
+      [disabled]="isDisabled"
+      [attr.aria-label]="label()"
+      [matAutocomplete]="auto"
+      [ixTest]="controlDirective.name"
+      [class.has-value]="selectedOption()?.label || textContent"
+      (input)="onChanged(ixInput.value)"
+      (blur)="inputBlurred()"
+    />
+    <span class="reset-input" [class.with-opacity]="shouldShowResetInput() && !isValueFromOptions(ixInput.value)">
+      @if (loading()) {
+        <mat-progress-spinner
+          class="loader"
+          mode="indeterminate"
+          [diameter]="15"
+        ></mat-progress-spinner>
+      }
+
+      @if (shouldShowResetInput() && !isValueFromOptions(ixInput.value)) {
+        <ix-icon
+          name="mdi-close-circle"
+          class="reset-icon"
+          (click)="resetInput()"
+        ></ix-icon>
+      } @else {
+        <span class="mat-mdc-select-arrow" (click)="ixInput.focus()">
+          <svg viewBox="0 0 24 24" width="24px" height="24px" aria-hidden="true">
+            <path d="M7 10l5 5 5-5z"></path>
+          </svg>
+        </span>
+      }
+
+    </span>
+
+    <mat-autocomplete
+      #auto="matAutocomplete"
+      [displayWith]="getDisplayWith"
+      (optionSelected)="optionSelected($event.option.value)"
+      (opened)="onOpenDropdown()"
+    >
+      @for (option of options; track option.label) {
+        <mat-option
+          class="combobox-mat-options"
+          [value]="option"
+          [attr.aria-label]="option.label"
+          [class.ix-selected]="option.value === selectedOption()?.value"
+          [class.ix-unselected]="option.value !== selectedOption()?.value"
+          [ixTest]="[controlDirective.name, option.label]"
+        >
+          {{ option.label | translate }}
+        </mat-option>
+      } @empty {
+        @if (hasErrorInOptions()) {
+          <mat-option ixTest="options-cannot-be-loaded" [disabled]="true">
+            {{ 'Options cannot be loaded' | translate }}
+          </mat-option>
+        }
+      }
+
+    </mat-autocomplete>
+  </div>
+
+  @let control = controlDirective.control;
+  @if (control) {
+    <ix-errors [control]="control" [label]="label()"></ix-errors>
+  }
+
+  @if (hint()) {
+    <mat-hint>{{ hint() }}</mat-hint>
+  }
+</div>

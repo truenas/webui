@@ -261,8 +261,7 @@ export class UserFormComponent implements OnInit {
     private store$: Store<AppState>,
     private dialog: DialogService,
     private matDialog: MatDialog,
-    private userService: UserService,
-    public slideInRef: SlideInRef<User | undefined, boolean>,
+    public slideInRef: SlideInRef<User | undefined, User>,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
@@ -397,7 +396,7 @@ export class UserFormComponent implements OnInit {
             this.store$.dispatch(userChanged({ user }));
           }
           this.isFormLoading = false;
-          this.slideInRef.close({ response: true, error: null });
+          this.slideInRef.close({ response: user, error: null });
           this.cdr.markForCheck();
         },
         error: (error: unknown) => {
