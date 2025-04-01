@@ -320,6 +320,7 @@
   "Registration finalization failed": "",
   "Registration finalization successful": "",
   "Registration finalization timed out": "",
+  "Remote Node Restarted": "",
   "Renames the ZFS dataset to a path in the `ix-virt` dataset in which the zvol is located.": "",
   "Replacing disk...": "",
   "Required unless <b>Enable password login</b> is <i>No</i>. Passwords cannot contain a <b>?</b>.": "",
