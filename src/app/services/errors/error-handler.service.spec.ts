@@ -111,6 +111,21 @@ describe('ErrorHandlerService', () => {
 
       expect(spectator.inject(DialogService).error).not.toHaveBeenCalled();
     });
+
+    it('shows generic error modal if parseError throws', () => {
+      const brokenError = new Error('Something unexpected');
+
+      (spectator.inject(ErrorParserService).parseError as jest.Mock).mockImplementation(() => {
+        throw new Error('Parse failure');
+      });
+
+      spectator.service.showErrorModal(brokenError).subscribe();
+
+      expect(spectator.inject(DialogService).error).toHaveBeenCalledWith({
+        title: 'Error',
+        message: 'Something went wrong while handling an error.',
+      });
+    });
   });
 
   describe('disableSentry', () => {

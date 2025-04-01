@@ -130,11 +130,20 @@ export class ErrorHandlerService extends Sentry.SentryErrorHandler implements Er
       return EMPTY;
     }
 
-    const errorReport = this.errorParser.parseError(error);
-    return this.dialog.error(errorReport || {
-      title: this.translate.instant('Error'),
-      message: this.translate.instant('An unknown error occurred'),
-    });
+    try {
+      const errorReport = this.errorParser.parseError(error);
+      return this.dialog.error(errorReport || {
+        title: this.translate.instant('Error'),
+        message: this.translate.instant('An unknown error occurred'),
+      });
+    } catch (handlerError) {
+      this.logError(handlerError, true);
+
+      return this.dialog.error({
+        title: this.translate.instant('Error'),
+        message: this.translate.instant('Something went wrong while handling an error.'),
+      });
+    }
   }
 
   private shouldShowErrorModal(error: unknown): boolean {
