@@ -11,7 +11,6 @@ import {
 } from 'app/pages/storage/modules/pool-manager/components/download-key-dialog/download-key-dialog.component';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
-import { ErrorParserService } from 'app/services/errors/error-parser.service';
 
 describe('DownloadKeyDialogComponent', () => {
   let spectator: Spectator<DownloadKeyDialog>;
@@ -79,9 +78,6 @@ describe('DownloadKeyDialogComponent', () => {
         providers: [
           mockProvider(DownloadService, {
             coreDownload: jest.fn(() => throwError(() => new Error(''))),
-          }),
-          mockProvider(ErrorParserService, {
-            parseHttpError: jest.fn().mockReturnValue('Parsed HTTP error'),
           }),
         ],
       });

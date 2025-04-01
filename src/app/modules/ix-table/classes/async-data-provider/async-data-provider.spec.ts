@@ -53,10 +53,15 @@ describe('AsyncDataProvider', () => {
   });
 
   it('sets EmptyType on error', async () => {
-    const dataProvider = new AsyncDataProvider<TestTableData>(throwError(() => new Error()));
+    jest.spyOn(console, 'error').mockImplementation();
+
+    const error = new Error();
+
+    const dataProvider = new AsyncDataProvider<TestTableData>(throwError(() => error));
     dataProvider.load();
 
     expect(await firstValueFrom(dataProvider.emptyType$)).toBe(EmptyType.Errors);
+    expect(console.error).toHaveBeenCalledWith(error);
   });
 
   it('filters rows based on query and columns', async () => {
