@@ -2805,6 +2805,7 @@
       "iSCSI Wizard"
     ],
     "synonyms": [
+      "FC",
       "Add iSCSI",
       "New iSCSI",
       "Create iSCSI",
@@ -3053,7 +3054,9 @@
       "iSCSI",
       "Targets"
     ],
-    "synonyms": [],
+    "synonyms": [
+      "FC"
+    ],
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -3074,8 +3077,10 @@
       "Add Target"
     ],
     "synonyms": [
+      "FC",
       "New Target",
-      "Create Target"
+      "Create Target",
+      "FC Target"
     ],
     "requiredRoles": [],
     "visibleTokens": [],

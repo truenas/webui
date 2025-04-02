@@ -30,6 +30,7 @@ import {
 } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { DeleteTargetDialogComponent } from 'app/pages/sharing/iscsi/target/delete-target-dialog/delete-target-dialog.component';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
+import { IscsiService } from 'app/services/iscsi.service';
 import { selectServices } from 'app/store/services/services.selectors';
 
 describe('IscsiCardComponent', () => {
@@ -85,6 +86,9 @@ describe('IscsiCardComponent', () => {
         open: jest.fn(() => of()),
       }),
       mockProvider(SlideInRef, slideInRef),
+      mockProvider(IscsiService, {
+        hasFibreChannel: jest.fn(() => of(true)),
+      }),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
           afterClosed: () => of(true),
@@ -110,6 +114,10 @@ describe('IscsiCardComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     table = await loader.getHarness(IxTableHarness);
+  });
+
+  it('should render title', () => {
+    expect(spectator.query('h3')).toHaveText('Block (iSCSI/FC) Shares Targets');
   });
 
   it('should show table rows', async () => {
