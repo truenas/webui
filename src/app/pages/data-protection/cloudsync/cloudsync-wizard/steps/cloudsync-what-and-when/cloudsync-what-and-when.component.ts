@@ -27,7 +27,7 @@ import { extractApiErrorDetails } from 'app/helpers/api.helper';
 import { prepareBwlimit } from 'app/helpers/bwlimit.utils';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextCloudSync } from 'app/helptext/data-protection/cloudsync/cloudsync';
-import { CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
+import { CloudSyncListDirectoryParams, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { newOption, Option } from 'app/interfaces/option.interface';
@@ -549,7 +549,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
           folder: node.data.path,
         },
         args: '',
-      };
+      } as CloudSyncListDirectoryParams;
 
       if (bucket === '') {
         delete data.attributes.bucket;
@@ -562,7 +562,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
           listing.forEach((file) => {
             if (file.IsDir) {
               nodes.push({
-                path: `${data.attributes.folder}/${file.Name}`.replace(/\/+/g, '/'),
+                path: `${String(data.attributes.folder)}/${file.Name}`.replace(/\/+/g, '/'),
                 name: file.Name,
                 type: ExplorerNodeType.Directory,
                 hasChildren: true,

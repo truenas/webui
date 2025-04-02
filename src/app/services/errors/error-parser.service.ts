@@ -1,8 +1,10 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import { isObject } from 'lodash-es';
 import { apiErrorNames } from 'app/enums/api.enum';
 import {
+  isAbortedJobError,
   isApiCallError,
   isApiErrorDetails,
   isErrorResponse,
@@ -50,14 +52,15 @@ export class ErrorParserService {
     if (isFailedJobError(error)) {
       return this.parseJobError(error);
     }
+
+    if (isAbortedJobError(error)) {
+      return {
+        title: this.translate?.instant('Aborted') || 'Aborted',
+        message: this.translate.instant('Job aborted'),
+      };
+    }
     if (this.isHttpError(error)) {
       return this.parseHttpError(error);
-    }
-    if (error instanceof Error) {
-      return {
-        title: this.translate?.instant('Error') || 'Error',
-        message: error.message,
-      };
     }
 
     // TODO: Items below should not be happening, but were kept for compatibility purposes.
@@ -78,6 +81,13 @@ export class ErrorParserService {
     if (isApiErrorDetails(error)) {
       console.error('Unexpected api error details:', error);
       return this.parseApiError(error);
+    }
+
+    if (isObject(error) && 'message' in error) {
+      return {
+        title: this.translate?.instant('Error') || 'Error',
+        message: String(error.message),
+      };
     }
 
     return null;
@@ -188,7 +198,7 @@ export class ErrorParserService {
     };
   }
 
-  parseHttpError(error: HttpErrorResponse): ErrorReport | ErrorReport[] {
+  private parseHttpError(error: HttpErrorResponse): ErrorReport | ErrorReport[] {
     switch (error.status) {
       case 401:
       case 403:

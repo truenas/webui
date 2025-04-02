@@ -61,7 +61,7 @@ interface PoolManagerDiskSettings {
 export interface PoolManagerEnclosureSettings {
   limitToSingleEnclosure: string | null;
   maximizeEnclosureDispersal: boolean;
-  dispersalStrategy: DispersalStrategy;
+  dispersalStrategy: DispersalStrategy | null;
 }
 
 export interface PoolManagerState {

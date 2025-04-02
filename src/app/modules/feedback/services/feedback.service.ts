@@ -1,6 +1,5 @@
 import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
-import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
 import { Store, select } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { environment } from 'environments/environment';
@@ -26,7 +25,8 @@ import {
   NewTicketResponse,
   SimilarIssue,
 } from 'app/modules/feedback/interfaces/file-ticket.interface';
-import { SnackbarComponent } from 'app/modules/snackbar/components/snackbar/snackbar.component';
+import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SentryConfigurationService } from 'app/services/errors/sentry-configuration.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -53,7 +53,7 @@ export class FeedbackService {
     private systemGeneralService: SystemGeneralService,
     private sentryService: SentryConfigurationService,
     private fileUpload: UploadService,
-    private matSnackBar: MatSnackBar,
+    private snackbar: SnackbarService,
     private translate: TranslateService,
     private dialogService: DialogService,
     @Inject(WINDOW) private window: Window,
@@ -176,31 +176,27 @@ export class FeedbackService {
     );
   }
 
-  showTicketSuccessMsg(ticketUrl: string): MatSnackBarRef<SnackbarComponent> {
-    return this.matSnackBar.openFromComponent(SnackbarComponent, {
-      data: {
-        message: this.translate.instant('Thank you. Ticket was submitted succesfully.'),
-        icon: 'check',
-        iconCssColor: 'var(--green)',
-        button: {
-          title: this.translate.instant('Open ticket'),
-          action: () => this.window.open(ticketUrl, '_blank'),
-        },
-      },
-      duration: 10000,
-    });
+  showTicketSuccessMessage(ticketUrl: string): void {
+    this.dialogService.generalDialog({
+      message: this.translate.instant('Thank you. Ticket was submitted successfully.'),
+      icon: iconMarker('check'),
+      title: this.translate.instant('Ticket Created'),
+      cancelBtnMsg: this.translate.instant('Close'),
+      confirmBtnMsg: this.translate.instant('Open ticket'),
+    })
+      .subscribe((openTicket) => {
+        if (openTicket) {
+          this.window.open(ticketUrl, '_blank');
+        }
+      });
   }
 
-  showFeedbackSuccessMsg(): MatSnackBarRef<SnackbarComponent> {
-    return this.matSnackBar.openFromComponent(SnackbarComponent, {
-      data: {
-        message: this.translate.instant(
-          'Thank you for sharing your feedback with us! Your insights are valuable in helping us improve our product.',
-        ),
-        icon: 'check',
-        iconCssColor: 'var(--green)',
-      },
-    });
+  showFeedbackSuccessMessage(): void {
+    this.snackbar.success(
+      this.translate.instant(
+        'Thank you for sharing your feedback with us! Your insights are valuable in helping us improve our product.',
+      ),
+    );
   }
 
   private addReview(body: AddReview): Observable<ReviewAddedResponse> {

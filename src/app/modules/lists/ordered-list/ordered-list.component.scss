@@ -33,12 +33,6 @@ mat-slide-toggle {
     display: flex;
     gap: 2px;
   }
-
-  &:not(:hover) {
-    ix-icon {
-      visibility: hidden;
-    }
-  }
 }
 
 .cdk-drag-preview {

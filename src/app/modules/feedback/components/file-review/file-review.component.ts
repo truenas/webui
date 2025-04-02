@@ -99,7 +99,7 @@ export class FileReviewComponent {
   }
 
   private onSuccess(): void {
-    this.feedbackService.showFeedbackSuccessMsg();
+    this.feedbackService.showFeedbackSuccessMessage();
     this.dialogRef().close();
   }
 }

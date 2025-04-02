@@ -1,5 +1,6 @@
 import MessageFormat from '@messageformat/core';
 import { MissingTranslationHandler, MissingTranslationHandlerParams } from '@ngx-translate/core';
+import { defaultLanguage } from 'app/constants/languages.constant';
 
 /**
  * Messages in ICU format only get compiled when they are loaded from json file.
@@ -7,7 +8,7 @@ import { MissingTranslationHandler, MissingTranslationHandlerParams } from '@ngx
  * This will assume key is in ICU format and compile on the fly.
  */
 export class IcuMissingTranslationHandler implements MissingTranslationHandler {
-  private messageFormat = new MessageFormat('en');
+  private messageFormat = new MessageFormat(defaultLanguage);
 
   handle(params: MissingTranslationHandlerParams): string {
     try {

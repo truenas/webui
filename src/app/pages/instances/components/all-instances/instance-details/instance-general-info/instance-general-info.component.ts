@@ -23,7 +23,6 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { InstanceEditFormComponent } from 'app/pages/instances/components/all-instances/instance-details/instance-general-info/instance-edit-form/instance-edit-form.component';
-import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -69,7 +68,6 @@ export class InstanceGeneralInfoComponent {
     private router: Router,
     private slideIn: SlideIn,
     private instancesStore: VirtualizationInstancesStore,
-    private deviceStore: VirtualizationDevicesStore,
   ) {}
 
   editInstance(): void {
@@ -77,7 +75,7 @@ export class InstanceGeneralInfoComponent {
       .pipe(map((response) => response.response), filter(Boolean), untilDestroyed(this))
       .subscribe((instance: VirtualizationInstance) => {
         this.instancesStore.instanceUpdated(instance);
-        this.deviceStore.selectInstance(instance.id);
+        this.instancesStore.selectInstance(instance.id);
       });
   }
 

@@ -50,7 +50,7 @@ export class ChangeRootDiskSetupComponent {
   });
 
   protected readonly diskIoBusOptions$ = of(mapToOptions(diskIoBusLabels, this.translate));
-  protected readonly containersHelptext = instancesHelptext;
+  protected readonly instancesHelptext = instancesHelptext;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) private instance: VirtualizationInstance,

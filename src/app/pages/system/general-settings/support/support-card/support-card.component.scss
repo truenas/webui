@@ -14,7 +14,9 @@
   color: var(--fg2);
 }
 
-.product-image {
+.product-image,
+.product-image-placeholder {
+  background-origin: content-box;
   background-position: 50%;
   background-repeat: no-repeat;
   background-size: contain;
@@ -22,7 +24,14 @@
   max-width: 40%;
   min-height: 170px;
   overflow: hidden;
+  padding: 1%;
   width: 100%;
+}
+
+.product-image-placeholder {
+  max-height: none;
+  opacity: 0.8;
+  padding: 5%;
 }
 
 .links-wrapper {
