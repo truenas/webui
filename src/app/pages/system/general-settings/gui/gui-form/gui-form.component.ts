@@ -154,6 +154,10 @@ export class GuiFormComponent implements OnInit {
     };
     delete params.theme;
 
+    if (this.isStigMode()) {
+      delete params.usage_collection;
+    }
+
     (
       !this.configData.ui_httpsredirect && values.ui_httpsredirect
         ? this.dialog.confirm({

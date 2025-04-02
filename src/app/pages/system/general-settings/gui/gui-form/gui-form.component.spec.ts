@@ -252,5 +252,20 @@ describe('GuiFormComponent', () => {
       const control = spectator.component.formGroup.controls.usage_collection;
       expect(control.disabled).toBe(true);
     });
+
+    it('does not include usage_collection in update payload', async () => {
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({
+        'Web Interface HTTP -> HTTPS Redirect': true,
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      const dialog = spectator.inject(DialogService);
+      expect(dialog.confirm).toHaveBeenCalledWith(expect.not.objectContaining({
+        title: 'Usage collection & UI error reporting',
+      }));
+    });
   });
 });
