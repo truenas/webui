@@ -6,6 +6,7 @@
   "iSCSI / Fibre Channel": "",
   "Longer passwords are more secure. Try using a phrase or a mix of words and numbers.": "",
   "Passwords should be at least eight characters and contain a mix of lower and upper case, numbers, and special characters.": "",
+  "This option is disabled in STIG mode.": "",
   "\n              It looks like your session has been inactive for more than {lifetime} seconds.<br>\n              For security reasons we will log you out at {time}.\n            ": "\nSembra che la tua sessione sia stata inattiva per più di {lifetime} secondi.<br>\nPer motivi di sicurezza, verrai disconnesso alle {time}.",
   " as of {dateTime}": " al {dateTime}",
   " bytes.": " byte.",

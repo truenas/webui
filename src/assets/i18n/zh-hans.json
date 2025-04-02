@@ -275,6 +275,7 @@
   "This device cannot be edited while the instance is running.": "",
   "This device is read-only and cannot be edited.": "",
   "This is the only time the password is shown.": "",
+  "This option is disabled in STIG mode.": "",
   "This password is only valid for one login within 24 hours and does not persist across reboots.": "",
   "Ticket Created": "",
   "TNC Base Url": "",

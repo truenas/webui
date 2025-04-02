@@ -2095,6 +2095,7 @@
   "This is the only time the password is shown.": "",
   "This node is currently configuring the system dataset.": "",
   "This option ensures data consistency by creating a snapshot at the start of the backup or synchronization task. The process involves the following steps:</br></br> 1. Snapshot Creation: A snapshot of the current state is taken at the moment the task is initiated.</br></br> 2. Backup/Sync Operation: The task utilizes the snapshot contents to perform the backup or synchronization, ensuring that the data remains consistent and unchanged during the operation.</br></br> 3. Snapshot Removal: Once the task is completed, the snapshot is automatically removed to save storage space.</br></br> This mechanism guarantees that the backup or synchronization task captures an exact state of your data at the start, even if changes occur during the process.": "",
+  "This option is disabled in STIG mode.": "",
   "This option is experimental in rclone and we recommend you do not use it. Are you sure you want to continue?": "",
   "This password is only valid for one login within 24 hours and does not persist across reboots.": "",
   "This pool has an encrypted root dataset which is locked. Do you want to unlock it?": "",

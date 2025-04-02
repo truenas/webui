@@ -1,6 +1,8 @@
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef, Component, Inject,
+  OnInit,
+  signal,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -63,9 +65,10 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
     TranslateModule,
   ],
 })
-export class GuiFormComponent {
+export class GuiFormComponent implements OnInit {
   isFormLoading = true;
   configData: SystemGeneralConfig;
+  protected isStigMode = signal(false);
 
   formGroup = this.fb.nonNullable.group({
     theme: ['', [Validators.required]],
@@ -90,6 +93,14 @@ export class GuiFormComponent {
 
   readonly helptext = helptext;
 
+  get usageCollectionTooltip(): string {
+    if (this.isStigMode()) {
+      return this.translate.instant(helptext.usage_collection.stigModeTooltip);
+    }
+
+    return this.translate.instant(helptext.usage_collection.tooltip);
+  }
+
   constructor(
     private fb: FormBuilder,
     private sysGeneralService: SystemGeneralService,
@@ -113,6 +124,17 @@ export class GuiFormComponent {
 
     this.loadCurrentValues();
     this.setupThemePreview();
+  }
+
+  ngOnInit(): void {
+    this.api.call('system.security.config').pipe(untilDestroyed(this)).subscribe((config) => {
+      const isStigMode = config.enable_gpos_stig;
+      this.isStigMode.set(isStigMode);
+
+      if (isStigMode) {
+        this.formGroup.controls.usage_collection.disable();
+      }
+    });
   }
 
   replaceHrefWhenWsConnected(href: string): void {
