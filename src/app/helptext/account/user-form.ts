@@ -8,10 +8,9 @@ export const helptextUsers = {
  <i>, : + & # % ^ ( ) ! @ ~ * ? < > =</i>. <i>$</i> can only be\
  used as the last character of the username.'),
   user_form_email_tooltip: T('Enter the email address of the new user.'),
-  user_form_password_tooltip: T('Required unless <b>Enable password login</b> is\
- <i>No</i>. Passwords cannot contain a <b>?</b>.'),
   user_form_password_edit_tooltip: T('Required unless <b>Enable password login</b> is\
  <i>No</i>. Passwords cannot contain a <b>?</b>.'),
+  user_form_password_tooltip: T('Longer passwords are more secure. Try using a phrase or a mix of words and numbers.'),
   user_form_uid_tooltip: T('User accounts have an ID greater than 1000 and\
  system accounts have an ID equal to the default\
  port number used by the service.'),
