@@ -60,25 +60,32 @@ export class ErrorHandlerService extends Sentry.SentryErrorHandler implements Er
   }
 
   private logError(error: unknown, wasErrorHandled = false): void {
-    consoleSandbox(() => {
-      // Prevents Sentry from logging the same error twice.
-      console.error(error);
-    });
+    try {
+      consoleSandbox(() => {
+        // Prevents Sentry from logging the same error twice.
+        console.error(error);
+      });
 
-    if (!this.isSentryAllowed || !this.shouldLogToSentry(error)) {
-      return;
+      if (!this.isSentryAllowed || !this.shouldLogToSentry(error)) {
+        return;
+      }
+
+      const extractedError = this._extractError(error);
+
+      if (!extractedError) {
+        // No point in logging unknown errors.
+        return;
+      }
+
+      this.zone.runOutsideAngular(() => Sentry.captureException(extractedError, {
+        mechanism: { type: 'angular', handled: wasErrorHandled },
+      }));
+    } catch (handlerError) {
+      this.dialog.error({
+        title: this.translate.instant('Error'),
+        message: this.translate.instant('Something went wrong while handling an error.'),
+      });
     }
-
-    const extractedError = this._extractError(error);
-
-    if (!extractedError) {
-      // No point in logging unknown errors.
-      return;
-    }
-
-    this.zone.runOutsideAngular(() => Sentry.captureException(extractedError, {
-      mechanism: { type: 'angular', handled: wasErrorHandled },
-    }));
   }
 
   private shouldLogToSentry(error: unknown): boolean {
@@ -124,13 +131,13 @@ export class ErrorHandlerService extends Sentry.SentryErrorHandler implements Er
   }
 
   showErrorModal(error: unknown): Observable<boolean> {
-    this.logError(error, true);
-
-    if (!this.shouldShowErrorModal(error)) {
-      return EMPTY;
-    }
-
     try {
+      this.logError(error, true);
+
+      if (!this.shouldShowErrorModal(error)) {
+        return EMPTY;
+      }
+
       const errorReport = this.errorParser.parseError(error);
       return this.dialog.error(errorReport || {
         title: this.translate.instant('Error'),
