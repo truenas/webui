@@ -13,7 +13,9 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { DeleteUserDialog } from 'app/pages/credentials/new-users/all-users/user-details/delete-user-dialog/delete-user-dialog.component';
+import {
+  DeleteUserDialog,
+} from 'app/pages/credentials/users/user-details-row/delete-user-dialog/delete-user-dialog.component';
 
 describe('DeleteUserDialogComponent', () => {
   let spectator: Spectator<DeleteUserDialog>;
