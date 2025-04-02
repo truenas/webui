@@ -7,7 +7,7 @@ import { ApiErrorDetails } from 'app/interfaces/api-error.interface';
 import { JsonRpcError } from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { ErrorParserService } from 'app/services/errors/error-parser.service';
-import { ApiCallError, FailedJobError } from 'app/services/errors/error.classes';
+import { AbortedJobError, ApiCallError, FailedJobError } from 'app/services/errors/error.classes';
 
 const error = new Error('Dummy Error');
 const wsError = new ApiCallError({
@@ -70,80 +70,6 @@ describe('ErrorParserService', () => {
     spectator = createService();
   });
 
-  describe('parseHttpError', () => {
-    it('returns correct error object with 409 error', () => {
-      const errorReport = spectator.service.parseHttpError(httpError);
-      expect(errorReport).toEqual([{ message: 'This error', title: 'Error' }]);
-    });
-
-    it('returns correct error object with 409 error with object', () => {
-      const errorReport = spectator.service.parseHttpError({
-        ...httpError,
-        error: { name: ['This error'] },
-      });
-      expect(errorReport).toEqual([{ message: 'This error', title: 'Error' }]);
-    });
-
-    it('returns correct object with 400 error', () => {
-      const errorReport = spectator.service.parseHttpError({
-        ...httpError,
-        status: 400,
-        statusText: 'Bad Request',
-      });
-      expect(errorReport).toEqual([{ message: 'This error', title: 'Error' }]);
-    });
-
-    it('returns correct object with 400 error without error object', () => {
-      const errorReport = spectator.service.parseHttpError({
-        ...httpError,
-        status: 400,
-        statusText: 'Bad Request',
-        error: 'That error',
-      });
-      expect(errorReport).toEqual({ message: 'That error', title: 'Error (400)' });
-    });
-
-    it('returns correct object with 404 error', () => {
-      const errorReport = spectator.service.parseHttpError({
-        ...httpError,
-        status: 404,
-        statusText: 'Not Found',
-      });
-      expect(errorReport).toEqual({ message: 'This error occurred', title: 'Not Found' });
-    });
-
-    it('returns correct object with 500 error', () => {
-      const errorReport = spectator.service.parseHttpError({
-        ...httpError,
-        status: 500,
-        statusText: 'Bad Request',
-        error: { error_message: 'Even error' },
-      });
-      expect(errorReport).toEqual({ message: 'Even error', title: 'Error (500)' });
-    });
-
-    it('returns correct object with 500 error and string', () => {
-      const errorReport = spectator.service.parseHttpError({
-        ...httpError,
-        status: 500,
-        statusText: 'Bad Request',
-        message: 'Odd error',
-      });
-      expect(errorReport).toEqual({ message: 'Server error: Odd error', title: 'Error (500)' });
-    });
-
-    it('returns proper object when unknown error', () => {
-      const errorReport = spectator.service.parseHttpError({
-        ...httpError,
-        status: 510,
-        statusText: 'Bad Request',
-        error: 'Odd error',
-      });
-
-      expect(errorReport).toEqual({ message: 'This error occurred', title: 'Error (510)' });
-    });
-  });
-
   describe('parseError', () => {
     it('parses json rpc error', () => {
       const errorReport = spectator.service.parseError(new ApiCallError({
@@ -163,6 +89,15 @@ describe('ErrorParserService', () => {
         title: 'Validation Error',
         message: wsError.error.data.reason,
         backtrace: '',
+      });
+    });
+
+    it('parses an HTTP error', () => {
+      const errorReport = spectator.service.parseError(httpError);
+
+      expect(errorReport).toEqual({
+        title: 'Error',
+        message: 'This error occurred',
       });
     });
 
@@ -195,6 +130,15 @@ describe('ErrorParserService', () => {
       expect(errorReport).toEqual({
         title: 'Error',
         message: 'Dummy Error',
+      });
+    });
+
+    it('returns a message for an aborted job', () => {
+      const errorReport = spectator.service.parseError(new AbortedJobError({} as Job));
+
+      expect(errorReport).toEqual({
+        title: 'Aborted',
+        message: 'Job aborted',
       });
     });
   });

@@ -33,6 +33,9 @@ describe('ErrorHandlerService', () => {
       mockProvider(Injector, {
         get: jest.fn(),
       }),
+      mockProvider(DialogService, {
+        error: jest.fn(() => of(true)),
+      }),
       mockProvider(ErrorParserService, {
         parseError: jest.fn(() => ({
           message: 'Dummy Error',
@@ -43,7 +46,6 @@ describe('ErrorHandlerService', () => {
   });
 
   beforeEach(() => {
-    jest.resetAllMocks();
     spectator = createService();
 
     const dialogService = spectator.inject(DialogService);
@@ -57,10 +59,6 @@ describe('ErrorHandlerService', () => {
 
     jest.spyOn(console, 'error').mockImplementation();
     jest.spyOn(spectator.inject(NgZone), 'runOutsideAngular').mockImplementation();
-  });
-
-  afterAll(() => {
-    jest.restoreAllMocks();
   });
 
   describe('handleError', () => {
@@ -94,6 +92,24 @@ describe('ErrorHandlerService', () => {
       } as Job));
 
       expect(spectator.inject(NgZone).runOutsideAngular).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('showErrorModal', () => {
+    it('shows error modal', () => {
+      spectator.service.showErrorModal(error).subscribe();
+
+      expect(spectator.inject(ErrorParserService).parseError).toHaveBeenCalledWith(error);
+      expect(spectator.inject(DialogService).error).toHaveBeenCalledWith({
+        title: 'Error',
+        message: 'Dummy Error',
+      });
+    });
+
+    it('does not show the modal for Websocket connection errors', () => {
+      spectator.service.showErrorModal(new CloseEvent('close')).subscribe();
+
+      expect(spectator.inject(DialogService).error).not.toHaveBeenCalled();
     });
   });
 

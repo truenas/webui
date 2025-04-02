@@ -127,7 +127,11 @@
           @if (checkQuotas()) {
             @if (!isLoadingQuotas) {
               <div class="value">
-                {{ 'Quotas set for {n, plural, one {# user} other {# users} }' | translate: { n: userQuotas } }}
+                @if (userQuotas) {
+                  {{ 'Quotas set for {n, plural, one {# user} other {# users} }' | translate: { n: userQuotas } }}
+                } @else {
+                  {{ 'None' | translate }}
+                }
               </div>
             } @else {
               <ngx-skeleton-loader class="value-placeholder"></ngx-skeleton-loader>
@@ -150,7 +154,11 @@
         @if (checkQuotas()) {
           @if (!isLoadingQuotas) {
             <div class="value">
-              {{ 'Quotas set for {n, plural, one {# group} other {# groups} }' | translate: { n: groupQuotas } }}
+              @if (groupQuotas) {
+                {{ 'Quotas set for {n, plural, one {# group} other {# groups} }' | translate: { n: groupQuotas } }}
+              } @else {
+                {{ 'None' | translate }}
+              }
             </div>
           } @else {
             <ngx-skeleton-loader class="value-placeholder"></ngx-skeleton-loader>
