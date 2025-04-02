@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
 import { AllUsersHeaderComponent } from './all-users-header.component';
 
 describe('AllUsersHeaderComponent', () => {
@@ -27,9 +28,14 @@ describe('AllUsersHeaderComponent', () => {
   });
 
   describe('elements visibility', () => {
-    it('shows create new user button as disable for now', async () => {
-      const createNewUserButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create New User' }));
-      expect(await createNewUserButton.isDisabled()).toBe(true);
+    it('should render Create New User button and open create user form', async () => {
+      const createNewUserButton = await loader.getHarness(MatButtonHarness.with({ text: /Create New User/ }));
+      await createNewUserButton.click();
+
+      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
+        UserFormComponent,
+        { wide: true },
+      );
     });
   });
 });

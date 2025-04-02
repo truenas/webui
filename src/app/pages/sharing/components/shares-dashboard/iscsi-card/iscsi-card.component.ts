@@ -3,15 +3,19 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, effect, OnInit,
   signal,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatToolbarRow } from '@angular/material/toolbar';
+import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { filter, Observable, tap } from 'rxjs';
+import {
+  filter, Observable, startWith, tap,
+} from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { IscsiTargetMode, iscsiTargetModeNames } from 'app/enums/iscsi.enum';
@@ -41,6 +45,7 @@ import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
 import { DeleteTargetDialog } from 'app/pages/sharing/iscsi/target/delete-target-dialog/delete-target-dialog.component';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
+import { IscsiService } from 'app/services/iscsi.service';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectService } from 'app/store/services/services.selectors';
 
@@ -69,6 +74,7 @@ import { selectService } from 'app/store/services/services.selectors';
     TranslateModule,
     AsyncPipe,
     RouterLink,
+    MatTooltip,
   ],
 })
 export class IscsiCardComponent implements OnInit {
@@ -80,6 +86,10 @@ export class IscsiCardComponent implements OnInit {
   ];
 
   targets = signal<IscsiTarget[] | null>(null);
+
+  protected readonly hasFibreChannel = toSignal(
+    this.iscsiService.hasFibreChannel().pipe(startWith(false)),
+  );
 
   protected readonly searchableElements = iscsiCardElements;
 
@@ -127,6 +137,7 @@ export class IscsiCardComponent implements OnInit {
     protected emptyService: EmptyService,
     private store$: Store<ServicesState>,
     private matDialog: MatDialog,
+    private iscsiService: IscsiService,
     private cdr: ChangeDetectorRef,
   ) {
     effect(() => {
