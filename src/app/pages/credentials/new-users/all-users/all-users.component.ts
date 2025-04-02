@@ -10,6 +10,7 @@ import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { AllUsersHeaderComponent } from 'app/pages/credentials/new-users/all-users/all-users-header/all-users-header.component';
 import { allUsersElements } from 'app/pages/credentials/new-users/all-users/all-users.elements';
+import { UserDetailHeaderComponent } from 'app/pages/credentials/new-users/all-users/user-details/user-detail-header/user-detail-header.component';
 import { UserDetailsComponent } from 'app/pages/credentials/new-users/all-users/user-details/user-details.component';
 import { UserListComponent } from 'app/pages/credentials/new-users/all-users/user-list/user-list.component';
 import { UsersStore } from 'app/pages/credentials/new-users/store/users.store';
@@ -28,6 +29,7 @@ import { UsersStore } from 'app/pages/credentials/new-users/store/users.store';
     UserDetailsComponent,
     UserListComponent,
     MasterDetailViewComponent,
+    UserDetailHeaderComponent,
   ],
 })
 export class AllUsersComponent implements OnInit {
