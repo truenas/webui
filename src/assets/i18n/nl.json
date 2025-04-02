@@ -139,6 +139,7 @@
   "Once enabled, deduplication settings cannot be reverted. Use caution and be certain that you have adequate data backups before activating this feature.": "",
   "One-Time Password": "",
   "One-Time Password copied to clipboard": "",
+  "Only users with the required privileges are shown.": "",
   "Open a port for SSH connection requests.": "",
   "Passwords cannot contain a <b>?</b>.": "",
   "PCI Passthrough": "",

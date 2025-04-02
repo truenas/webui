@@ -53,7 +53,7 @@
       (optionSelected)="optionSelected($event.option.value)"
       (opened)="onOpenDropdown()"
     >
-      @for (option of options; track option.label) {
+      @for (option of options(); track option.label) {
         <mat-option
           class="combobox-mat-options"
           [value]="option"
@@ -71,7 +71,6 @@
           </mat-option>
         }
       }
-
     </mat-autocomplete>
   </div>
 

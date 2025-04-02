@@ -86,7 +86,7 @@ export class IxUserPickerComponent implements ControlValueAccessor, OnInit {
   private readonly autoCompleteRef = viewChild.required('auto', { read: MatAutocomplete });
   private readonly autocompleteTrigger = viewChild(MatAutocompleteTrigger);
 
-  options: Option[] = [];
+  options = signal<Option[]>([]);
   getDisplayWith = this.displayWith.bind(this);
   hasErrorInOptions = signal(false);
   loading = signal(false);
@@ -117,8 +117,8 @@ export class IxUserPickerComponent implements ControlValueAccessor, OnInit {
 
   writeValue(value: string | number): void {
     this.value = value;
-    if (this.value && this.options?.length) {
-      const nextOption = this.options.find((option: Option) => option.value === this.value);
+    if (this.value && this.options()?.length) {
+      const nextOption = this.options().find((option: Option) => option.value === this.value);
       this.selectedOption.set(nextOption);
     }
     this.cdr.markForCheck();
@@ -166,19 +166,18 @@ export class IxUserPickerComponent implements ControlValueAccessor, OnInit {
       untilDestroyed(this),
     ).subscribe((options) => {
       if (this.hasErrorInOptions()) {
-        this.options = [];
+        this.options.set(options);
       } else {
-        this.options = [this.addNewUserOption, ...options];
+        this.options.set([this.addNewUserOption, ...options]);
       }
-      this.cdr.markForCheck();
 
-      const selectedOptionFromLabel = this.options.find((option) => option.label === filterValue);
+      const selectedOptionFromLabel = this.options().find((option) => option.label === filterValue);
       if (selectedOptionFromLabel) {
         this.selectedOption.set(selectedOptionFromLabel);
         this.value = selectedOptionFromLabel.value;
         this.onChange(this.value);
       } else if (this.value !== null) {
-        const selectedOptionFromValue = this.options.find((option) => option.value === this.value);
+        const selectedOptionFromValue = this.options().find((option) => option.value === this.value);
         this.selectedOption.set(selectedOptionFromValue
           ? { ...selectedOptionFromValue }
           : { label: this.value as string, value: this.value });
@@ -233,7 +232,7 @@ export class IxUserPickerComponent implements ControlValueAccessor, OnInit {
                * previously, we want to remove that option if we managed to find the correct option on the
                * page we just fetched
                */
-              const valueIndex = this.options.findIndex(
+              const valueIndex = this.options().findIndex(
                 (option) => option.label === (this.value as string) && option.value === this.value,
               );
 
@@ -241,9 +240,9 @@ export class IxUserPickerComponent implements ControlValueAccessor, OnInit {
                 options.some((option) => option.value === this.value)
                 && valueIndex >= 0
               ) {
-                this.options.splice(valueIndex, 1);
+                this.options().splice(valueIndex, 1);
               }
-              this.options.push(...options);
+              this.options().push(...options);
               this.cdr.markForCheck();
             });
         });
@@ -257,7 +256,7 @@ export class IxUserPickerComponent implements ControlValueAccessor, OnInit {
     this.textContent = changedValue;
     this.filterChanged$.next(changedValue);
 
-    if (this.allowCustomValue() && !this.options.some((option: Option) => option.value === changedValue)) {
+    if (this.allowCustomValue() && !this.options().some((option: Option) => option.value === changedValue)) {
       this.onChange(changedValue);
     }
   }
@@ -302,7 +301,7 @@ export class IxUserPickerComponent implements ControlValueAccessor, OnInit {
   }
 
   isValueFromOptions(value: string): boolean {
-    return this.options.some((option) => option.label === value);
+    return this.options().some((option) => option.label === value);
   }
 
   setDisabledState?(isDisabled: boolean): void {
@@ -317,21 +316,14 @@ export class IxUserPickerComponent implements ControlValueAccessor, OnInit {
   listenForAddNew(): void {
     this.controlDirective?.control?.valueChanges?.pipe(
       distinctUntilChanged(),
-      filter(Boolean),
       filter((selectedOption) => selectedOption === newOption),
-      switchMap(() => {
-        return this.slideIn.open(
-          UserFormComponent,
-          {
-            wide: true,
-          },
-        );
-      }),
+      switchMap(() => this.slideIn.open(UserFormComponent, { wide: true })),
       filter((response: SlideInResponse) => !response.error),
       tap((response: SlideInResponse<User>) => {
-        this.filterOptions(this.getValueFromSlideInResponse(response));
-        // TODO: Make it better.
-        setTimeout(() => this.autocompleteTrigger().closePanel(), 500);
+        // TODO: Handle it better. Show all users and select newly created.
+        this.filterChanged$.next(this.getValueFromSlideInResponse(response));
+        // TODO: Make it better. Rely on close event of slide-in.
+        setTimeout(() => this.autocompleteTrigger().closePanel(), 350);
       }),
       untilDestroyed(this),
     ).subscribe();

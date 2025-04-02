@@ -1,6 +1,7 @@
 import { inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { ComboboxQueryType } from 'app/enums/combobox.enum';
 import { Option } from 'app/interfaces/option.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
@@ -9,20 +10,23 @@ import { ApiService } from 'app/modules/websocket/api.service';
 
 interface UserPickerOptions {
   valueField?: keyof Pick<User, 'username' | 'uid' | 'id'>;
+  queryType?: ComboboxQueryType;
   queryParams?: QueryParams<User>;
 }
 
 export class UserPickerProvider implements IxComboboxProvider {
+  protected valueField: keyof Pick<User, 'username' | 'uid' | 'id'>;
+  protected queryParams: QueryParams<User>;
+  protected queryType: ComboboxQueryType;
+  protected api = inject(ApiService);
   protected page = 1;
   readonly pageSize = 50;
-  protected valueField: keyof Pick<User, 'username' | 'uid' | 'id'>;
-  protected queryParams?: QueryParams<User>;
-  protected api = inject(ApiService);
 
   constructor(
-    options: UserPickerOptions = {},
+    options?: UserPickerOptions,
   ) {
     this.valueField = options.valueField ?? 'username';
+    this.queryType = options.queryType ?? ComboboxQueryType.Default;
     this.queryParams = options.queryParams ?? [];
   }
 
@@ -37,13 +41,17 @@ export class UserPickerProvider implements IxComboboxProvider {
   }
 
   private queryUsers(search: string): Observable<Option[]> {
-    const offset = this.page * this.pageSize;
     const queryArgs: QueryParams<User> = [...this.queryParams];
+    queryArgs[1].offset = this.page * this.pageSize;
+    queryArgs[1].limit = this.pageSize;
 
     search = search?.trim();
+    if (this.queryType === ComboboxQueryType.Smb) {
+      queryArgs[0] = [['smb', '=', true], ...queryArgs[0]];
+    }
+
     if (search?.length > 0) {
       queryArgs[0] = [['username', '~', search], ...queryArgs[0]];
-      queryArgs[1].offset = offset;
     }
 
     return this.api.call('user.query', queryArgs).pipe(

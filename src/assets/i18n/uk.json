@@ -1476,6 +1476,7 @@
   "Only lowercase alphanumeric characters plus dot (.), dash (-), and colon (:) are allowed.": "",
   "Only Readonly Admin, Sharing Admin or Full Admin roles are supported in WebUI.": "",
   "Only Replicate Snapshots Matching Schedule": "",
+  "Only users with the required privileges are shown.": "",
   "Open a port for SSH connection requests.": "",
   "Open Files": "",
   "Open ticket": "",
