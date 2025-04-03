@@ -34,14 +34,14 @@ export class SpareDiskComboboxProvider implements IxComboboxProvider {
         return disks.filter(
           (disk) => {
             const cleanFilter = filterValue.toLowerCase().trim();
-            return disk.name.includes(cleanFilter)
+            return disk.devname.includes(cleanFilter)
               || disk.type.includes(cleanFilter)
               || (buildNormalizedFileSize(disk.size)).includes(cleanFilter);
           },
         ).map(
           (disk) => {
             return {
-              label: `${disk.name} - ${disk.type} (${buildNormalizedFileSize(disk.size)})`,
+              label: `${disk.devname} - ${disk.type} (${buildNormalizedFileSize(disk.size)})`,
               value: disk.name,
             } as Option;
           },
