@@ -85,7 +85,9 @@ describe('DownloadService', () => {
 
       expect(spectator.inject(ApiService).call)
         .toHaveBeenCalledWith('core.download', ['filesystem.get', ['argument'], 'test.csr']);
-      expect(spectator.inject(DownloadService).downloadUrl)
+      const downloadService = spectator.inject(DownloadService);
+      expect(downloadService.downloadUrl).toHaveBeenCalledTimes(1);
+      expect(downloadService.downloadUrl)
         .toHaveBeenCalledWith('http://localhost/download.file', 'test.csr', 'application/x-x509-user-cert');
     });
   });

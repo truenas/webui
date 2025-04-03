@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable, switchMap } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { map, take, tap } from 'rxjs/operators';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -30,6 +30,7 @@ export class DownloadService {
       switchMap(([jobId, url]) => {
         return this.store$.select(selectJob(jobId)).pipe(
           observeJob(),
+          take(1),
           switchMap(() => {
             return this.downloadUrl(url, params.fileName, params.mimeType);
           }),
