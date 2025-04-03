@@ -107,7 +107,7 @@ export class DiskWipeDialog {
         this.dialogService.generalDialog({
           title: this.title,
           message: helptextDisks.diskWipeDialogForm.infoContent,
-          hideCancel: true,
+          cancelBtnMsg: this.translate.instant('Close'),
         });
         this.dialogRef.close(true);
       });
