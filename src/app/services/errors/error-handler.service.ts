@@ -26,6 +26,16 @@ export class ErrorHandlerService extends Sentry.SentryErrorHandler implements Er
 
   private isSentryAllowed = true;
 
+  protected readonly genericError = {
+    title: this.translate.instant('Error'),
+    message: this.translate.instant('An unknown error occurred'),
+  };
+
+  protected readonly errorHandlingError = {
+    title: this.translate.instant('Error'),
+    message: this.translate.instant('Something went wrong while handling an error.'),
+  };
+
   get dialog(): DialogService {
     if (!this.dialogService) {
       this.dialogService = this.injector.get(DialogService);
@@ -57,6 +67,8 @@ export class ErrorHandlerService extends Sentry.SentryErrorHandler implements Er
 
   override handleError(error: unknown): void {
     this.logError(error);
+    const errorReport = this.errorParser.parseError(error);
+    this.dialog.error(errorReport || this.genericError);
   }
 
   private logError(error: unknown, wasErrorHandled = false): void {
@@ -81,10 +93,7 @@ export class ErrorHandlerService extends Sentry.SentryErrorHandler implements Er
         mechanism: { type: 'angular', handled: wasErrorHandled },
       }));
     } catch (handlerError) {
-      this.dialog.error({
-        title: this.translate.instant('Error'),
-        message: this.translate.instant('Something went wrong while handling an error.'),
-      });
+      this.dialog.error(this.errorHandlingError);
     }
   }
 
@@ -139,17 +148,10 @@ export class ErrorHandlerService extends Sentry.SentryErrorHandler implements Er
       }
 
       const errorReport = this.errorParser.parseError(error);
-      return this.dialog.error(errorReport || {
-        title: this.translate.instant('Error'),
-        message: this.translate.instant('An unknown error occurred'),
-      });
+      return this.dialog.error(errorReport || this.genericError);
     } catch (handlerError) {
       this.logError(handlerError, true);
-
-      return this.dialog.error({
-        title: this.translate.instant('Error'),
-        message: this.translate.instant('Something went wrong while handling an error.'),
-      });
+      return this.dialog.error(this.errorHandlingError);
     }
   }
 
