@@ -18,6 +18,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
+import { isQuotaSet } from 'app/helpers/storage.helper';
 import { helpTextQuotas } from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 import { DatasetQuota, SetDatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { ConfirmOptions } from 'app/interfaces/dialog.interface';
@@ -234,7 +235,7 @@ export class DatasetQuotasListComponent implements OnInit {
       .pipe(untilDestroyed(this)).subscribe({
         next: (quotas: DatasetQuota[]) => {
           this.isLoading = false;
-          this.quotas = quotas.filter((quota) => quota.quota > 0 || quota.obj_quota > 0);
+          this.quotas = quotas.filter(isQuotaSet);
 
           if (this.showAllQuotas) {
             this.quotas = quotas;

@@ -34,7 +34,7 @@
             <span *ixWithLoadingState="emailConfig$ as emailConfig" class="value">
               {{ emailConfig.fromname }}
               {{
-                emailConfig.outgoingserver && emailConfig.fromemail
+                emailConfig.outgoingserver && emailConfig.fromemail && !emailConfig?.oauth?.client_id
                   ? ('{email} via {server}' | translate : { email: emailConfig.fromemail, server: emailConfig.outgoingserver })
                   : emailConfig.fromemail || '-'
               }}

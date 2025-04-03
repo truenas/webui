@@ -21,9 +21,10 @@ export class AsyncDataProvider<T> extends BaseDataProvider<T> {
           this.setRows(rows);
           this.emptyType$.next(rows.length ? EmptyType.NoSearchResults : EmptyType.NoPageData);
         },
-        error: () => {
+        error: (error: unknown) => {
           this.loadedRows = [];
           this.setRows([]);
+          console.error(error);
           this.emptyType$.next(EmptyType.Errors);
         },
       }),

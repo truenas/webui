@@ -165,6 +165,6 @@ export class DialogService {
         canMinimize,
       },
     });
-    return new JobProgressDialogRef<R>(matDialogRef, this.translate);
+    return new JobProgressDialogRef<R>(matDialogRef);
   }
 }

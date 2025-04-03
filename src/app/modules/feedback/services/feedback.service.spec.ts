@@ -1,5 +1,4 @@
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import {
   createServiceFactory,
   mockProvider,
@@ -15,8 +14,9 @@ import {
   TicketCategory, TicketCriticality, TicketEnvironment, TicketType,
 } from 'app/enums/file-ticket.enum';
 import { ProductType } from 'app/enums/product-type.enum';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
-import { SnackbarComponent } from 'app/modules/snackbar/components/snackbar/snackbar.component';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SentryConfigurationService } from 'app/services/errors/sentry-configuration.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -70,12 +70,15 @@ describe('FeedbackService', () => {
       mockProvider(SentryConfigurationService, {
         sessionId$: of('testSessionId'),
       }),
+      mockProvider(SnackbarService),
       mockProvider(UploadService, {
         upload: jest.fn(() => of(new HttpResponse({ status: 200 }))),
       }),
-      mockProvider(MatSnackBar),
       mockProvider(SystemGeneralService, {
         getProductType: jest.fn(() => ProductType.Enterprise),
+      }),
+      mockProvider(DialogService, {
+        generalDialog: jest.fn(() => of(true)),
       }),
       mockWindow({
         location: {
@@ -369,33 +372,26 @@ describe('FeedbackService', () => {
     });
   });
 
-  describe('showSnackbar', () => {
-    it('opens a snackbar without a ticket url', () => {
-      spectator.service.showFeedbackSuccessMsg();
+  describe('showFeedbackSuccessMessage', () => {
+    it('opens a snackbar when feedback is submitted', () => {
+      spectator.service.showFeedbackSuccessMessage();
 
-      expect(spectator.inject(MatSnackBar).openFromComponent).toHaveBeenCalledWith(SnackbarComponent, {
-        data: {
-          message: 'Thank you for sharing your feedback with us! Your insights are valuable in helping us improve our product.',
-          icon: 'check',
-          iconCssColor: 'var(--green)',
-        },
-      });
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
+        'Thank you for sharing your feedback with us! Your insights are valuable in helping us improve our product.',
+      );
     });
+  });
 
-    it('opens a snackbar with a ticket url', () => {
-      spectator.service.showTicketSuccessMsg('https://jira-redirect.ixsystems.com/ticket');
+  describe('showTicketSuccessMessage', () => {
+    it('opens a dialog with a ticket url when ticket is submitted', () => {
+      spectator.service.showTicketSuccessMessage('https://jira-redirect.ixsystems.com/ticket');
 
-      expect(spectator.inject(MatSnackBar).openFromComponent).toHaveBeenCalledWith(SnackbarComponent, {
-        data: {
-          message: 'Thank you. Ticket was submitted succesfully.',
-          icon: 'check',
-          iconCssColor: 'var(--green)',
-          button: {
-            title: 'Open ticket',
-            action: expect.any(Function),
-          },
-        },
-        duration: 10000,
+      expect(spectator.inject(DialogService).generalDialog).toHaveBeenCalledWith({
+        message: 'Thank you. Ticket was submitted successfully.',
+        title: 'Ticket Created',
+        cancelBtnMsg: 'Close',
+        confirmBtnMsg: 'Open ticket',
+        icon: 'check',
       });
     });
   });

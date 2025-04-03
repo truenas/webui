@@ -238,7 +238,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
       });
     }
     if (isPlainObject(data)) {
-      Object.keys(data).forEach((key) => {
+      Object.keys(data as Record<string, unknown>).forEach((key) => {
         this.getFieldsHiddenOnForm((data as Record<string, unknown>)[key], deleteField$, path ? path + '.' + key : key);
       });
     }
