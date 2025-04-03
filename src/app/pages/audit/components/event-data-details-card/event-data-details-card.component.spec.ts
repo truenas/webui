@@ -60,7 +60,8 @@ const logEntry = {
   success: true,
 } as AuditEntry;
 
-const yamlContent = `Logon ID: '0'
+const yamlContent = `Success: True
+Logon ID: '0'
 Logon Type: 3
 Local Address: ipv4:10.238.238.168:445
 Remote Address: ipv4:10.220.2.21:10876
