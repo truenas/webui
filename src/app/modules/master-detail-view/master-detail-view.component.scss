@@ -24,6 +24,10 @@
 .details-container {
   flex-direction: column;
   overflow: auto;
+
+  @media (min-width: $breakpoint-md) {
+    padding-right: 8px;
+  }
 }
 
 .header-container {

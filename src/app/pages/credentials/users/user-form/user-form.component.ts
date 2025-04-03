@@ -20,6 +20,7 @@ import { allCommands } from 'app/constants/all-commands.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
+import { isEmptyHomeDirectory } from 'app/helpers/user.helper';
 import { helptextUsers } from 'app/helptext/account/user-form';
 import { Option } from 'app/interfaces/option.interface';
 import { User, UserUpdate } from 'app/interfaces/user.interface';
@@ -222,7 +223,7 @@ export class UserFormComponent implements OnInit {
     const home = this.form.value.home;
     const homeMode = this.form.value.home_mode;
     if (this.editingUser) {
-      if (this.editingUser.immutable || home === defaultHomePath) {
+      if (this.editingUser.immutable || isEmptyHomeDirectory(home)) {
         return '';
       }
       if (!homeCreate && this.editingUser.home !== home) {
@@ -261,8 +262,7 @@ export class UserFormComponent implements OnInit {
     private store$: Store<AppState>,
     private dialog: DialogService,
     private matDialog: MatDialog,
-    private userService: UserService,
-    public slideInRef: SlideInRef<User | undefined, boolean>,
+    public slideInRef: SlideInRef<User | undefined, User>,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
@@ -311,7 +311,7 @@ export class UserFormComponent implements OnInit {
     });
 
     this.form.controls.home.valueChanges.pipe(untilDestroyed(this)).subscribe((home) => {
-      if (home === defaultHomePath || this.editingUser?.immutable) {
+      if (isEmptyHomeDirectory(home) || this.editingUser?.immutable) {
         this.form.controls.home_mode.disable();
       } else {
         this.form.controls.home_mode.enable();
@@ -332,7 +332,7 @@ export class UserFormComponent implements OnInit {
       ),
     );
 
-    if (this.editingUser?.home && this.editingUser.home !== defaultHomePath) {
+    if (this.editingUser?.home && !isEmptyHomeDirectory(this.editingUser.home)) {
       this.storageService.filesystemStat(this.editingUser.home)
         .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
         .subscribe((stat) => {
@@ -397,7 +397,7 @@ export class UserFormComponent implements OnInit {
             this.store$.dispatch(userChanged({ user }));
           }
           this.isFormLoading = false;
-          this.slideInRef.close({ response: true, error: null });
+          this.slideInRef.close({ response: user, error: null });
           this.cdr.markForCheck();
         },
         error: (error: unknown) => {
