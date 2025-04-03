@@ -22,7 +22,7 @@ describe('SpareWizardStepComponent', () => {
   const fakeInventory = [
     {
       identifier: '{serial_lunid}8HG7MZJH_5000cca2700de678',
-      name: 'sdo',
+      devname: 'sdo',
       number: 2272,
       serial: '8HG7MZJH',
       size: 12000138625024,
@@ -30,7 +30,7 @@ describe('SpareWizardStepComponent', () => {
     },
     {
       identifier: '{serial_lunid}8DJ61EBH_5000cca2537bba6c',
-      name: 'sdv',
+      devname: 'sdv',
       number: 16720,
       serial: '8DJ61EBH',
       size: 12000138625024,
