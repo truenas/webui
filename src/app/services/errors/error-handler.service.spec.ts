@@ -61,6 +61,15 @@ describe('ErrorHandlerService', () => {
     jest.spyOn(spectator.inject(NgZone), 'runOutsideAngular').mockImplementation();
   });
 
+  describe('disableSentry', () => {
+    it('disables Sentry error logging', () => {
+      spectator.service.disableSentry();
+
+      spectator.service.handleError(error);
+      expect(spectator.inject(NgZone).runOutsideAngular).not.toHaveBeenCalled();
+    });
+  });
+
   describe('handleError', () => {
     it('logs an error to console and sentry', () => {
       spectator.service.handleError(error);
@@ -125,15 +134,6 @@ describe('ErrorHandlerService', () => {
         title: 'Error',
         message: 'Something went wrong while handling an error.',
       });
-    });
-  });
-
-  describe('disableSentry', () => {
-    it('disables Sentry error logging', () => {
-      spectator.service.disableSentry();
-
-      spectator.service.handleError(error);
-      expect(spectator.inject(NgZone).runOutsideAngular).not.toHaveBeenCalled();
     });
   });
 });
