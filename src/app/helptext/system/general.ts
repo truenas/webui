@@ -105,6 +105,7 @@ export const helptextSystemGeneral = {
   usage_collection: {
     label: T('Usage collection'),
     tooltip: T('Enable sending anonymous usage statistics to iXsystems.'),
+    stigModeTooltip: T('This option is disabled in STIG mode.'),
   },
 
   ui_consolemsg: {
