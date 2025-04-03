@@ -80,7 +80,7 @@ export class SpareWizardStepComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe({
       next: (diskName) => {
-        const diskDetails = this.disks().find((disk) => disk.name === diskName);
+        const diskDetails = this.disks().find((disk) => disk.devname === diskName);
         this.store.setManualTopologyCategory(VdevType.Spare, [[diskDetails]]);
         this.store.setAutomaticTopologyCategory(VdevType.Spare, {
           diskSize: diskDetails.size,
