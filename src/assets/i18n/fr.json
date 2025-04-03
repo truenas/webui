@@ -1017,6 +1017,7 @@
   "Thick": "",
   "This action will set all dataset quotas for the removed or invalid groups to 0, virtually removing any dataset quota entires for such groups. Are you sure you want to proceed?": "",
   "This feature is memory-intensive and <b>permanently affects how the data is stored</b>. It is recommended to be very familiar with the benefits and drawbacks of deduplication before activating this feature.": "",
+  "This option is disabled in STIG mode.": "",
   "Ticket": "",
   "Time": "",
   "Timestamp": "",
