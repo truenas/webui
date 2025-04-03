@@ -5,14 +5,12 @@ import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { WINDOW } from 'app/helpers/window.helper';
-import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { MockMasterDetailViewComponent } from 'app/modules/master-detail-view/testing/mock-master-detail-view.component';
 import { AllInstancesHeaderComponent } from 'app/pages/instances/components/all-instances/all-instances-header/all-instances-header.component';
 import { AllInstancesComponent } from 'app/pages/instances/components/all-instances/all-instances.component';
 import { InstanceDetailsComponent } from 'app/pages/instances/components/all-instances/instance-details/instance-details.component';
 import { VirtualizationConfigStore } from 'app/pages/instances/stores/virtualization-config.store';
-import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 import { selectAdvancedConfig, selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
@@ -54,13 +52,10 @@ describe('AllInstancesComponent', () => {
         initialize: jest.fn(),
       }),
       mockProvider(VirtualizationInstancesStore, {
+        selectedInstance: jest.fn(() => ({})),
         initialize: jest.fn(),
         instances: jest.fn(() => []),
         isLoading: jest.fn(() => false),
-      }),
-      mockProvider(VirtualizationDevicesStore, {
-        selectedInstance: jest.fn(() => ({ id: 'instance1' } as VirtualizationInstance)),
-        resetInstance: jest.fn(),
       }),
       {
         provide: WINDOW,
