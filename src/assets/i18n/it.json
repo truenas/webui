@@ -1,6 +1,7 @@
 {
   "": "",
   "Only users with the required privileges are shown.": "",
+  "Something went wrong while handling an error.": "",
   "This option is disabled in STIG mode.": "",
   "\n              It looks like your session has been inactive for more than {lifetime} seconds.<br>\n              For security reasons we will log you out at {time}.\n            ": "\nSembra che la tua sessione sia stata inattiva per più di {lifetime} secondi.<br>\nPer motivi di sicurezza, verrai disconnesso alle {time}.",
   " as of {dateTime}": " al {dateTime}",

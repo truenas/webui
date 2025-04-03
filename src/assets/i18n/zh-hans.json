@@ -252,6 +252,7 @@
   "Sign-in to a Docker registry": "",
   "Sign-in to Docker Hub": "",
   "Signing in to a registry, such as Docker Hub, is not required for Apps to function, but may help if you experience rate limiting issues.": "",
+  "Something went wrong while handling an error.": "",
   "Specify RAM allocation for the container. You can use units such as GB, MB.": "",
   "Specify the container filesystem path where the disk will be mounted.": "",
   "Specify the host port to be mapped to the container's port.": "",
