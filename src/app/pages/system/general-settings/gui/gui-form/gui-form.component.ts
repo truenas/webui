@@ -1,6 +1,8 @@
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef, Component, Inject,
+  ChangeDetectorRef, Component, computed, Inject,
+  OnInit,
+  signal,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -16,6 +18,7 @@ import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { SystemGeneralConfig, SystemGeneralConfigUpdate } from 'app/interfaces/system-config.interface';
+import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -63,9 +66,10 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
     TranslateModule,
   ],
 })
-export class GuiFormComponent {
+export class GuiFormComponent implements OnInit {
   isFormLoading = true;
   configData: SystemGeneralConfig;
+  protected isStigMode = signal(false);
 
   formGroup = this.fb.nonNullable.group({
     theme: ['', [Validators.required]],
@@ -89,6 +93,14 @@ export class GuiFormComponent {
   };
 
   readonly helptext = helptext;
+
+  protected usageCollectionTooltip = computed(() => {
+    if (this.isStigMode()) {
+      return this.translate.instant(helptext.usage_collection.stigModeTooltip);
+    }
+
+    return this.translate.instant(helptext.usage_collection.tooltip);
+  });
 
   constructor(
     private fb: FormBuilder,
@@ -115,6 +127,20 @@ export class GuiFormComponent {
     this.setupThemePreview();
   }
 
+  ngOnInit(): void {
+    this.api.call('system.security.config').pipe(
+      this.errorHandler.withErrorHandler(),
+      untilDestroyed(this),
+    ).subscribe((config: SystemSecurityConfig) => {
+      const isStigMode = config.enable_gpos_stig;
+      this.isStigMode.set(isStigMode);
+
+      if (isStigMode) {
+        this.formGroup.controls.usage_collection.disable();
+      }
+    });
+  }
+
   replaceHrefWhenWsConnected(href: string): void {
     this.wsStatus.isConnected$.pipe(untilDestroyed(this)).subscribe((isConnected) => {
       if (isConnected) {
@@ -131,6 +157,10 @@ export class GuiFormComponent {
       ui_certificate: parseInt(values.ui_certificate),
     };
     delete params.theme;
+
+    if (this.isStigMode()) {
+      delete params.usage_collection;
+    }
 
     (
       !this.configData.ui_httpsredirect && values.ui_httpsredirect
