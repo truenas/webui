@@ -26,6 +26,16 @@ export class ErrorHandlerService extends Sentry.SentryErrorHandler implements Er
 
   private isSentryAllowed = true;
 
+  protected readonly genericError = {
+    title: this.translate.instant('Error'),
+    message: this.translate.instant('An unknown error occurred'),
+  };
+
+  protected readonly errorHandlingError = {
+    title: this.translate.instant('Error'),
+    message: this.translate.instant('Something went wrong while handling an error.'),
+  };
+
   get dialog(): DialogService {
     if (!this.dialogService) {
       this.dialogService = this.injector.get(DialogService);
@@ -57,28 +67,34 @@ export class ErrorHandlerService extends Sentry.SentryErrorHandler implements Er
 
   override handleError(error: unknown): void {
     this.logError(error);
+    const errorReport = this.errorParser.parseError(error);
+    this.dialog.error(errorReport || this.genericError);
   }
 
   private logError(error: unknown, wasErrorHandled = false): void {
-    consoleSandbox(() => {
-      // Prevents Sentry from logging the same error twice.
-      console.error(error);
-    });
+    try {
+      consoleSandbox(() => {
+        // Prevents Sentry from logging the same error twice.
+        console.error(error);
+      });
 
-    if (!this.isSentryAllowed || !this.shouldLogToSentry(error)) {
-      return;
+      if (!this.isSentryAllowed || !this.shouldLogToSentry(error)) {
+        return;
+      }
+
+      const extractedError = this._extractError(error);
+
+      if (!extractedError) {
+        // No point in logging unknown errors.
+        return;
+      }
+
+      this.zone.runOutsideAngular(() => Sentry.captureException(extractedError, {
+        mechanism: { type: 'angular', handled: wasErrorHandled },
+      }));
+    } catch (handlerError) {
+      this.dialog.error(this.errorHandlingError);
     }
-
-    const extractedError = this._extractError(error);
-
-    if (!extractedError) {
-      // No point in logging unknown errors.
-      return;
-    }
-
-    this.zone.runOutsideAngular(() => Sentry.captureException(extractedError, {
-      mechanism: { type: 'angular', handled: wasErrorHandled },
-    }));
   }
 
   private shouldLogToSentry(error: unknown): boolean {
@@ -124,17 +140,18 @@ export class ErrorHandlerService extends Sentry.SentryErrorHandler implements Er
   }
 
   showErrorModal(error: unknown): Observable<boolean> {
-    this.logError(error, true);
+    try {
+      this.logError(error, true);
 
-    if (!this.shouldShowErrorModal(error)) {
-      return EMPTY;
+      if (!this.shouldShowErrorModal(error)) {
+        return EMPTY;
+      }
+
+      const errorReport = this.errorParser.parseError(error);
+      return this.dialog.error(errorReport || this.genericError);
+    } catch (handlerError) {
+      return this.dialog.error(this.errorHandlingError);
     }
-
-    const errorReport = this.errorParser.parseError(error);
-    return this.dialog.error(errorReport || {
-      title: this.translate.instant('Error'),
-      message: this.translate.instant('An unknown error occurred'),
-    });
   }
 
   private shouldShowErrorModal(error: unknown): boolean {
