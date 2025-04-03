@@ -150,7 +150,6 @@ export class ErrorHandlerService extends Sentry.SentryErrorHandler implements Er
       const errorReport = this.errorParser.parseError(error);
       return this.dialog.error(errorReport || this.genericError);
     } catch (handlerError) {
-      this.logError(handlerError, true);
       return this.dialog.error(this.errorHandlingError);
     }
   }
