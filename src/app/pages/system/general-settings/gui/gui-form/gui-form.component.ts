@@ -1,6 +1,6 @@
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef, Component, Inject,
+  ChangeDetectorRef, Component, computed, Inject,
   OnInit,
   signal,
 } from '@angular/core';
@@ -18,6 +18,7 @@ import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { SystemGeneralConfig, SystemGeneralConfigUpdate } from 'app/interfaces/system-config.interface';
+import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -93,13 +94,13 @@ export class GuiFormComponent implements OnInit {
 
   readonly helptext = helptext;
 
-  get usageCollectionTooltip(): string {
+  protected usageCollectionTooltip = computed(() => {
     if (this.isStigMode()) {
       return this.translate.instant(helptext.usage_collection.stigModeTooltip);
     }
 
     return this.translate.instant(helptext.usage_collection.tooltip);
-  }
+  });
 
   constructor(
     private fb: FormBuilder,
@@ -127,7 +128,10 @@ export class GuiFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.api.call('system.security.config').pipe(untilDestroyed(this)).subscribe((config) => {
+    this.api.call('system.security.config').pipe(
+      this.errorHandler.withErrorHandler(),
+      untilDestroyed(this),
+    ).subscribe((config: SystemSecurityConfig) => {
       const isStigMode = config.enable_gpos_stig;
       this.isStigMode.set(isStigMode);
 
