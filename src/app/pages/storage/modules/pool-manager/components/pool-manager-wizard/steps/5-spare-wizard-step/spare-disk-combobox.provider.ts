@@ -42,7 +42,7 @@ export class SpareDiskComboboxProvider implements IxComboboxProvider {
           (disk) => {
             return {
               label: `${disk.devname} - ${disk.type} (${buildNormalizedFileSize(disk.size)})`,
-              value: disk.name,
+              value: disk.devname,
             } as Option;
           },
         ).slice(offset, end);
