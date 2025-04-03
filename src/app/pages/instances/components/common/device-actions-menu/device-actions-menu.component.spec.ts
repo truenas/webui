@@ -18,6 +18,7 @@ import {
   DeviceActionsMenuComponent,
 } from 'app/pages/instances/components/common/device-actions-menu/device-actions-menu.component';
 import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
+import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 
 describe('DeviceActionsMenuComponent', () => {
   let spectator: Spectator<DeviceActionsMenuComponent>;
@@ -36,8 +37,10 @@ describe('DeviceActionsMenuComponent', () => {
       mockApi([
         mockCall('virt.instance.device_delete'),
       ]),
-      mockProvider(VirtualizationDevicesStore, {
+      mockProvider(VirtualizationInstancesStore, {
         selectedInstance,
+      }),
+      mockProvider(VirtualizationDevicesStore, {
         loadDevices: jest.fn(),
       }),
     ],

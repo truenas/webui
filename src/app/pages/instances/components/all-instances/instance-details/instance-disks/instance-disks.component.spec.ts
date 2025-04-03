@@ -50,11 +50,11 @@ describe('InstanceDisksComponent', () => {
     providers: [
       mockProvider(VirtualizationDevicesStore, {
         isLoading: () => false,
-        selectedInstance: () => ({ id: 'my-instance', type: VirtualizationType.Container }),
         devices: () => disks,
         loadDevices: jest.fn(),
       }),
       mockProvider(VirtualizationInstancesStore, {
+        selectedInstance: () => ({ id: 'my-instance', type: VirtualizationType.Container }),
         instanceUpdated: jest.fn(),
       }),
       mockProvider(SlideIn, {
