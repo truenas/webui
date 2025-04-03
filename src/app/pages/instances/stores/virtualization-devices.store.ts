@@ -1,6 +1,6 @@
 import { computed, Injectable } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import {
   switchMap, catchError, tap,
@@ -22,6 +22,7 @@ const initialState: VirtualizationInstanceDeviceState = {
   devices: [],
 };
 
+@UntilDestroy()
 @Injectable()
 export class VirtualizationDevicesStore extends ComponentStore<VirtualizationInstanceDeviceState> {
   readonly stateAsSignal = toSignal(this.state$, { initialValue: initialState });

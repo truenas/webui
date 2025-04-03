@@ -61,6 +61,7 @@ describe('VirtualizationDevicesStore', () => {
   });
 
   it('deviceDeleted – removes a device from list of devices for selected instance', () => {
+    spectator.service.loadDevices();
     spectator.service.deviceDeleted('device1');
 
     expect(spectator.service.devices()).toEqual([devices[1]]);
