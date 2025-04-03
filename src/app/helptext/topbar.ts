@@ -80,7 +80,7 @@ Login or signup is required.'),
 address. Please verify the email address before continuing.'),
   },
   changePasswordDialog: {
-    pw_new_pw_tooltip: T('Passwords cannot contain a <b>?</b>. Passwords should \
+    pw_new_pw_tooltip: T('Passwords should \
 be at least eight characters and contain a mix of lower and \
 upper case, numbers, and special characters.'),
     pw_invalid_title: T('Incorrect Password'),
