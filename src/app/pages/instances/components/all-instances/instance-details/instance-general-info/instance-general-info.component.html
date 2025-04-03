@@ -33,7 +33,7 @@
       </p>
       <p>
         <span class="label">{{ 'Storage Pool' | translate }}:</span>
-        {{ instance.storage_pool }}
+        {{ instance.storage_pool || '-' }}
       </p>
 
       @if (this.isVm()) {
