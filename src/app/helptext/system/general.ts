@@ -101,6 +101,7 @@ export const helptextSystemGeneral = {
   usage_collection: {
     label: T('Usage collection & UI error reporting'),
     tooltip: T('When enabled, anonymous usage statistics and WebUI errors are reported to TrueNAS engineering team. No personally identifiable information is collected.'),
+    stigModeTooltip: T('This option is disabled in STIG mode.'),
   },
 
   ui_consolemsg: {
