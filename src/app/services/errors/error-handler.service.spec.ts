@@ -61,6 +61,15 @@ describe('ErrorHandlerService', () => {
     jest.spyOn(spectator.inject(NgZone), 'runOutsideAngular').mockImplementation();
   });
 
+  describe('disableSentry', () => {
+    it('disables Sentry error logging', () => {
+      spectator.service.disableSentry();
+
+      spectator.service.handleError(error);
+      expect(spectator.inject(NgZone).runOutsideAngular).not.toHaveBeenCalled();
+    });
+  });
+
   describe('handleError', () => {
     it('logs an error to console and sentry', () => {
       spectator.service.handleError(error);
@@ -111,14 +120,20 @@ describe('ErrorHandlerService', () => {
 
       expect(spectator.inject(DialogService).error).not.toHaveBeenCalled();
     });
-  });
 
-  describe('disableSentry', () => {
-    it('disables Sentry error logging', () => {
-      spectator.service.disableSentry();
+    it('shows generic error modal if parseError throws', () => {
+      const brokenError = new Error('Something unexpected');
 
-      spectator.service.handleError(error);
-      expect(spectator.inject(NgZone).runOutsideAngular).not.toHaveBeenCalled();
+      (spectator.inject(ErrorParserService).parseError as jest.Mock).mockImplementation(() => {
+        throw new Error('Parse failure');
+      });
+
+      spectator.service.showErrorModal(brokenError).subscribe();
+
+      expect(spectator.inject(DialogService).error).toHaveBeenCalledWith({
+        title: 'Error',
+        message: 'Something went wrong while handling an error.',
+      });
     });
   });
 });
