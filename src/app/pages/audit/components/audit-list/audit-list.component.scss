@@ -21,3 +21,18 @@
     }
   }
 }
+
+.event-data {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  margin-top: -5px;
+
+  ix-icon {
+    width: 15px;
+
+    &.error-color {
+      color: var(--red);
+    }
+  }
+}
