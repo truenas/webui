@@ -93,7 +93,7 @@
   @if (isLoading()) {
     <ngx-skeleton-loader count="2"></ngx-skeleton-loader>
   } @else if (description()) {
-    <div class="description-wrapper">{{ description() }}</div>
+    <div class="description-wrapper" [innerHtml]="description()"></div>
   }
 </div>
 

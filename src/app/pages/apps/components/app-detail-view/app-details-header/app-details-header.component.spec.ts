@@ -34,7 +34,7 @@ describe('AppDetailsHeaderComponent', () => {
     tags: ['aliens', 'ufo'],
     train: 'stable',
     home: 'https://www.seti.org',
-    app_readme: '<h1>Seti</h1> <b>Seti is great.</b> <p>Find aliens without leaving your home.<p>',
+    app_readme: '<div><h1>Seti</h1> <b>Seti is great.</b> <p>Find aliens without leaving your home.<p></div>',
     installed: false,
   } as AvailableApp;
 
@@ -170,7 +170,8 @@ describe('AppDetailsHeaderComponent', () => {
       });
 
       it('shows app description', () => {
-        expect(spectator.query('.app-description')).toHaveText('Find aliens without leaving your home.');
+        expect(spectator.query('.app-description .description-wrapper').innerHTML)
+          .toBe('<b>Seti is great.</b> <p>Find aliens without leaving your home.</p><p></p>');
       });
     });
   });
