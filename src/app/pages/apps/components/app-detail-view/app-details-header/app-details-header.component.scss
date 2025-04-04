@@ -85,6 +85,16 @@ $app-image-size: 144px;
 .description-wrapper {
   font-size: 13px;
   white-space: pre-line;
+
+  ::ng-deep {
+    p:first-child {
+      margin-top: 0;
+    }
+
+    p:last-child {
+      margin-bottom: 0;
+    }
+  }
 }
 
 .app-info {
