@@ -124,9 +124,9 @@ describe('FibreChannelPortsComponent', () => {
       ['Port', 'Target', 'WWPN', 'WWPN (B)', 'State', ''],
       ['fc0', 'target1', 'naa.220034800d75aec4', 'naa.220034800d75aec5', 'A: Online B: Offline', ''],
       ['– fc0/1 (virtual)', 'target2', 'naa.220034800d75aec8', 'naa.220034800d75aec9', 'A: – B: –', ''],
-      ['– fc0/2 (virtual)', '', '', '', 'A: – B: –', ''],
+      ['– fc0/2 (virtual)', '-', '-', '-', 'A: – B: –', ''],
       ['fc1', 'target2', 'naa.220034800d75aec6', 'naa.220034800d75aec7', 'A: Online B: Online', ''],
-      ['– fc1/1 (virtual)', '', '', '', 'A: – B: –', ''],
+      ['– fc1/1 (virtual)', '-', '-', '-', 'A: – B: –', ''],
     ]);
   });
 
