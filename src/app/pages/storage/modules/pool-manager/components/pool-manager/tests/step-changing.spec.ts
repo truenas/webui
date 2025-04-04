@@ -195,8 +195,7 @@ describe('PoolManagerComponent – step changing', () => {
     // Spare
     await wizard.clickNext();
     await wizard.fillStep({
-      'Disk Size': '20 GiB (HDD)',
-      Width: '1',
+      'Select Disk for Spare VDEV': 'sda1 - HDD (20 GiB)',
     });
 
     expect(store.state().categorySequence).toEqual([
@@ -265,7 +264,7 @@ describe('PoolManagerComponent – step changing', () => {
     await wizard.clickBack();
     await wizard.clickBack();
     await wizard.fillStep({
-      Width: '2',
+      'Select Disk for Spare VDEV': 'sda7 - HDD (20 GiB)',
     });
 
     expect(store.state().categorySequence).toEqual([
