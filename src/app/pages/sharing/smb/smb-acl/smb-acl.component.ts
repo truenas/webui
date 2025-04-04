@@ -24,7 +24,6 @@ import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { SmbSharesecAce } from 'app/interfaces/smb-share.interface';
 import { User } from 'app/interfaces/user.interface';
 import { GroupComboboxProvider } from 'app/modules/forms/ix-forms/classes/group-combobox-provider';
-import { SmbBothComboboxProvider } from 'app/modules/forms/ix-forms/classes/smb-both-combobox-provider';
 import { UserComboboxProvider } from 'app/modules/forms/ix-forms/classes/user-combobox-provider';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
@@ -44,7 +43,7 @@ type NameOrId = string | number | null;
 
 interface FormAclEntry {
   ae_who_sid: string;
-  ae_who: NfsAclTag.Everyone | NfsAclTag.UserGroup | NfsAclTag.User | NfsAclTag.Both | null;
+  ae_who: NfsAclTag.Everyone | NfsAclTag.UserGroup | NfsAclTag.User | null;
   ae_perm: SmbSharesecPermission;
   ae_type: SmbSharesecType;
   user: NameOrId;
@@ -117,7 +116,6 @@ export class SmbAclComponent implements OnInit {
 
   readonly helptext = helptextSharingSmb;
   readonly nfsAclTag = NfsAclTag;
-  readonly bothProvider = new SmbBothComboboxProvider(this.userService, 'uid', 'gid');
   readonly userProvider = new UserComboboxProvider(
     this.userService,
     { valueField: 'uid', queryType: ComboboxQueryType.Smb },
@@ -243,8 +241,7 @@ export class SmbAclComponent implements OnInit {
             .pw_uid;
         }
 
-        // TODO: Backend does not yet support BOTH value
-        result.ae_who_id = { id_type: ace.ae_who === NfsAclTag.Both ? NfsAclTag.UserGroup : ace.ae_who, id };
+        result.ae_who_id = { id_type: ace.ae_who, id };
       }
       results.push(result);
     }
