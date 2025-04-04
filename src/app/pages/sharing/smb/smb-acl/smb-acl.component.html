@@ -57,17 +57,6 @@
                     [required]="true"
                   ></ix-combobox>
                 }
-
-                <!-- TODO: Delete after the backend has support for distinguishing user from group -->
-                @if (bothProvider && entry.controls.ae_who.value === nfsAclTag.Both) {
-                  <ix-combobox
-                    formControlName="both"
-                    [label]="'Unknown' | translate"
-                    [provider]="bothProvider"
-                    [allowCustomValue]="true"
-                    [required]="true"
-                  ></ix-combobox>
-                }
               </div>
 
               <div class="entry-row">
