@@ -67,8 +67,6 @@ export class ErrorHandlerService extends Sentry.SentryErrorHandler implements Er
 
   override handleError(error: unknown): void {
     this.logError(error);
-    const errorReport = this.errorParser.parseError(error);
-    this.dialog.error(errorReport || this.genericError);
   }
 
   private logError(error: unknown, wasErrorHandled = false): void {
@@ -93,7 +91,7 @@ export class ErrorHandlerService extends Sentry.SentryErrorHandler implements Er
         mechanism: { type: 'angular', handled: wasErrorHandled },
       }));
     } catch (handlerError) {
-      this.dialog.error(this.errorHandlingError);
+      console.error('Failed to log error to Sentry:', handlerError);
     }
   }
 
