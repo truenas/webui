@@ -20,7 +20,13 @@
   @if(thisNodeRebootReasons()?.length) {
     <div class="reasons">
       <p class="dialog-message">
-        <span>{{ 'The local node must be rebooted because' | translate }}:</span>
+        <span>
+          @if (isHaLicensed()) {
+            {{ 'Active Controller must be rebooted because' | translate }}:
+          } @else {
+            {{ 'The local node must be rebooted because' | translate }}:
+          }
+        </span>
       </p>
       @for (reason of thisNodeRebootReasons(); track reason) {
         <li> {{ reason.reason }} </li>
@@ -31,7 +37,13 @@
   @if(otherNodeRebootReasons()?.length) {
     <div class="reasons">
       <p class="dialog-message">
-        <span>{{ 'The remote node must be rebooted because' | translate }}:</span>
+        <span>
+          @if (isHaLicensed()) {
+            {{ 'Standby Controller must be rebooted because' | translate }}:
+          } @else {
+            {{ 'The remote node must be rebooted because' | translate }}:
+          }
+        </span>
       </p>
       @for (reason of otherNodeRebootReasons(); track reason) {
         <li> {{ reason.reason }} </li>
@@ -61,7 +73,11 @@
         [disabled]="form.invalid"
         (click)="rebootLocalNode()"
       >
-        {{ 'Reboot Local' | translate }}
+        @if (isHaLicensed()) {
+          {{ 'Reboot Active Controller' | translate }}
+        } @else {
+          {{ 'Reboot Local' | translate }}
+        }
       </button>
     }
 
@@ -73,7 +89,11 @@
         [disabled]="form.invalid"
         (click)="rebootRemoteNode()"
       >
-        {{ 'Reboot Remote' | translate }}
+        @if (isHaLicensed()) {
+          {{ 'Reboot Standby Controller' | translate }}
+        } @else {
+          {{ 'Reboot Remote' | translate }}
+        }
       </button>
     }
   </ix-form-actions>

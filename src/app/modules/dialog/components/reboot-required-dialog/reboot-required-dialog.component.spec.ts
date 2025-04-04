@@ -86,11 +86,11 @@ describe('RebootRequiredDialogComponent', () => {
     ]);
   });
 
-  it('reboots another node and closes dialog when Reboot Remote is pressed', async () => {
+  it('reboots another node and closes dialog when Reboot Standby Controller is pressed', async () => {
     const confirmCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Confirm' }));
     await confirmCheckbox.setValue(true);
 
-    const rebootRemoteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Reboot Remote' }));
+    const rebootRemoteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Reboot Standby Controller' }));
     await rebootRemoteButton.click();
 
     expect(spectator.inject(RebootService).restartRemote).toHaveBeenCalled();
