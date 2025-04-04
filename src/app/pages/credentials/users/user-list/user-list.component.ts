@@ -182,7 +182,13 @@ export class UserListComponent implements OnInit {
   }
 
   doNewAdd(): void {
-    this.slideIn.open(NewUserFormComponent, { wide: false });
+    this.slideIn.open(NewUserFormComponent, { wide: false }).pipe(
+      untilDestroyed(this),
+    ).subscribe({
+      next: () => {
+        this.store$.dispatch(userPageEntered());
+      },
+    });
   }
 
   navigateToApiKeys(): void {
