@@ -1,11 +1,14 @@
-<ix-layout-step
-  [description]="helptext.spare_vdev_description | translate"
-  [type]="VdevType.Spare"
-  [inventory]="(inventory$ | async) || []"
-  [canChangeLayout]="false"
-  [limitLayouts]="allowedLayouts"
-  [isStepActive]="isStepActive()"
-></ix-layout-step>
+<div class="step-description">
+  {{ helptext.spare_vdev_description | translate }}
+</div>
+
+<ix-combobox
+  class="spare-disk"
+  [formControl]="spareVdevDisk"
+  [label]="'Select Disk for Spare VDEV' | translate"
+  [tooltip]="'Only one disk can be selected for the Spare Vdev' | translate"
+  [provider]="diskComboboxProvider"
+></ix-combobox>
 
 @if (stepWarning()) {
   <p class="error-warning">

@@ -29,7 +29,6 @@ import {
 } from 'rxjs/operators';
 import { newOption, Option } from 'app/interfaces/option.interface';
 import { User } from 'app/interfaces/user.interface';
-import { IxComboboxProviderManager } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox-provider';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { UserPickerProvider } from 'app/modules/forms/ix-forms/components/ix-user-picker/ix-user-picker-provider';
@@ -79,7 +78,7 @@ export class IxUserPickerComponent implements ControlValueAccessor, OnInit {
   readonly slideIn = inject(SlideIn);
 
   private comboboxProviderHandler = computed(() => {
-    return new IxComboboxProviderManager(this.provider());
+    return this.provider();
   });
 
   private readonly inputElementRef: Signal<ElementRef<HTMLInputElement>> = viewChild.required('ixInput', { read: ElementRef });

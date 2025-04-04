@@ -12,12 +12,12 @@ export class TopologyCategoryDescriptionPipe implements PipeTransform {
     private translate: TranslateService,
   ) {}
 
-  transform(category: PoolManagerTopologyCategory, notLimitedToOneLayout = true): string {
+  transform(category: PoolManagerTopologyCategory, notLimitedToOneLayout = true, ignoreManualLayout = false): string {
     if (category.vdevs.length === 0) {
       return this.translate.instant('None');
     }
 
-    if (category.hasCustomDiskSelection) {
+    if (category.hasCustomDiskSelection && !ignoreManualLayout) {
       return `${this.translate.instant('Manual layout')} | ${category.vdevs.length} VDEVs`;
     }
 

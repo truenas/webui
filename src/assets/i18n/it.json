@@ -1,9 +1,11 @@
 {
   "": "",
   "Active Controller must be rebooted because": "",
+  "Only one disk can be selected for the Spare Vdev": "",
   "Only users with the required privileges are shown.": "",
   "Reboot Active Controller": "",
   "Reboot Standby Controller": "",
+  "Select Disk for Spare VDEV": "",
   "Something went wrong while handling an error.": "",
   "Standby Controller must be rebooted because": "",
   "This option is disabled in STIG mode.": "",
