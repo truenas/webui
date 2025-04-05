@@ -14,7 +14,7 @@ import { Role } from 'app/enums/role.enum';
 import { invertUmask } from 'app/helpers/mode.helper';
 import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextServiceFtp } from 'app/helptext/services/components/service-ftp';
-import { DialogService } from 'app/modules/dialog/dialog.service';
+import { FtpConfigUpdate } from 'app/interfaces/ftp-config.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
@@ -32,7 +32,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 
@@ -65,7 +65,7 @@ import { SystemGeneralService } from 'app/services/system-general.service';
   ],
 })
 export class ServiceFtpComponent implements OnInit {
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.SharingFtpWrite];
 
   isFormLoading = false;
   isAdvancedMode = false;
@@ -129,7 +129,6 @@ export class ServiceFtpComponent implements OnInit {
     private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
-    private dialogService: DialogService,
     private systemGeneralService: SystemGeneralService,
     private filesystemService: FilesystemService,
     private translate: TranslateService,
@@ -160,7 +159,7 @@ export class ServiceFtpComponent implements OnInit {
       localuserdlbw: this.convertByteToKbyte(Number(this.form.value.localuserdlbw)),
       anonuserbw: this.convertByteToKbyte(Number(this.form.value.anonuserbw)),
       anonuserdlbw: this.convertByteToKbyte(Number(this.form.value.anonuserdlbw)),
-    };
+    } as FtpConfigUpdate;
 
     this.isFormLoading = true;
     this.api.call('ftp.update', [values])
@@ -203,7 +202,7 @@ export class ServiceFtpComponent implements OnInit {
           this.cdr.markForCheck();
         },
         error: (error: unknown) => {
-          this.dialogService.error(this.errorHandler.parseError(error));
+          this.errorHandler.showErrorModal(error);
           this.isFormLoading = false;
           this.cdr.markForCheck();
         },

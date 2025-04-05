@@ -58,7 +58,7 @@ export interface StorageSettings {
   ],
 })
 export class StorageSettingsFormComponent implements OnInit {
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.DatasetWrite];
 
   isFormLoading = false;
 

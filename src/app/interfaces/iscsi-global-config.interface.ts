@@ -1,6 +1,7 @@
 import { Optional } from 'utility-types';
 
 export interface IscsiGlobalConfig {
+  iser?: boolean;
   alua: boolean;
   basename: string;
   id: number;

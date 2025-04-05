@@ -24,7 +24,7 @@ import { selectServices } from 'app/store/services/services.selectors';
 describe('StorageSettingsFormComponent', () => {
   let spectator: Spectator<StorageSettingsFormComponent>;
   let loader: HarnessLoader;
-  let ws: MockApiService;
+  let api: MockApiService;
   const createComponent = createComponentFactory({
     component: StorageSettingsFormComponent,
     imports: [
@@ -73,7 +73,7 @@ describe('StorageSettingsFormComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(MockApiService);
+    api = spectator.inject(MockApiService);
   });
 
   it('loads and shows current system dataset pool', async () => {
@@ -95,7 +95,7 @@ describe('StorageSettingsFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.job).toHaveBeenCalledWith('systemdataset.update', [{
+    expect(api.job).toHaveBeenCalledWith('systemdataset.update', [{
       pool: 'new-pool',
     }]);
   });

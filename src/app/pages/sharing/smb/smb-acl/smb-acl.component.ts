@@ -12,6 +12,7 @@ import {
   concatMap, firstValueFrom, forkJoin, mergeMap, Observable, of, from,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { ComboboxQueryType } from 'app/enums/combobox.enum';
 import { NfsAclTag, smbAclTagLabels } from 'app/enums/nfs-acl.enum';
 import { Role } from 'app/enums/role.enum';
 import { SmbSharesecPermission, SmbSharesecType } from 'app/enums/smb-sharesec.enum';
@@ -22,9 +23,8 @@ import { Option } from 'app/interfaces/option.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { SmbSharesecAce } from 'app/interfaces/smb-share.interface';
 import { User } from 'app/interfaces/user.interface';
-import { SmbBothComboboxProvider } from 'app/modules/forms/ix-forms/classes/smb-both-combobox-provider';
-import { SmbGroupComboboxProvider } from 'app/modules/forms/ix-forms/classes/smb-group-combobox-provider';
-import { SmbUserComboboxProvider } from 'app/modules/forms/ix-forms/classes/smb-user-combobox-provider';
+import { GroupComboboxProvider } from 'app/modules/forms/ix-forms/classes/group-combobox-provider';
+import { UserComboboxProvider } from 'app/modules/forms/ix-forms/classes/user-combobox-provider';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
@@ -43,7 +43,7 @@ type NameOrId = string | number | null;
 
 interface FormAclEntry {
   ae_who_sid: string;
-  ae_who: NfsAclTag.Everyone | NfsAclTag.UserGroup | NfsAclTag.User | NfsAclTag.Both | null;
+  ae_who: NfsAclTag.Everyone | NfsAclTag.UserGroup | NfsAclTag.User | null;
   ae_perm: SmbSharesecPermission;
   ae_type: SmbSharesecType;
   user: NameOrId;
@@ -87,7 +87,7 @@ export class SmbAclComponent implements OnInit {
   private shareAclName: string;
 
   readonly tags$ = of(mapToOptions(smbAclTagLabels, this.translate));
-  readonly requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
+  protected readonly requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
   readonly permissions$ = of([
     {
       label: 'FULL',
@@ -116,9 +116,12 @@ export class SmbAclComponent implements OnInit {
 
   readonly helptext = helptextSharingSmb;
   readonly nfsAclTag = NfsAclTag;
-  readonly bothProvider = new SmbBothComboboxProvider(this.userService, 'uid', 'gid');
-  readonly userProvider = new SmbUserComboboxProvider(this.userService, 'uid');
-  protected groupProvider: SmbGroupComboboxProvider;
+  readonly userProvider = new UserComboboxProvider(
+    this.userService,
+    { valueField: 'uid', queryType: ComboboxQueryType.Smb },
+  );
+
+  protected groupProvider: GroupComboboxProvider;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -231,15 +234,14 @@ export class SmbAclComponent implements OnInit {
         if (isNumber(whoIdOrName)) {
           id = Number(whoIdOrName);
         } else if (ace.ae_who === NfsAclTag.UserGroup) {
-          id = (await firstValueFrom(this.userService.getGroupByName(whoIdOrName.toString())))
+          id = (await firstValueFrom(this.userService.getGroupByName(String(whoIdOrName))))
             .gr_gid;
         } else {
-          id = (await firstValueFrom(this.userService.getUserByName(whoIdOrName.toString())))
+          id = (await firstValueFrom(this.userService.getUserByName(String(whoIdOrName))))
             .pw_uid;
         }
 
-        // TODO: Backend does not yet support BOTH value
-        result.ae_who_id = { id_type: ace.ae_who === NfsAclTag.Both ? NfsAclTag.UserGroup : ace.ae_who, id };
+        result.ae_who_id = { id_type: ace.ae_who, id };
       }
       results.push(result);
     }
@@ -277,21 +279,26 @@ export class SmbAclComponent implements OnInit {
         const initialOptions: Option[] = [];
 
         if (response.length) {
+          const firstItem = response[0] as Group | User;
           let option: Option;
-          if ((response as Group[])[0].gid) {
-            option = { label: (response as Group[])[0].group, value: (response as Group[])[0].gid };
-          } else if (
-            (response as User[])[0].uid
-            || (response as User[])[0].uid?.toString() === '0'
-          ) {
-            option = { label: (response as User[])[0].username, value: (response as User[])[0].uid };
+
+          if ('gid' in firstItem) {
+            option = { label: firstItem.group, value: firstItem.gid };
+          } else if ('uid' in firstItem || (firstItem as User).uid?.toString() === '0') {
+            option = { label: firstItem.username, value: firstItem.uid };
           } else {
             return;
           }
+
           initialOptions.push(option);
         }
 
-        this.groupProvider = new SmbGroupComboboxProvider(this.userService, 'gid', initialOptions);
+        this.groupProvider = new GroupComboboxProvider(this.userService, {
+          initialOptions,
+          valueField: 'gid',
+          queryType: ComboboxQueryType.Smb,
+        });
+
         this.isLoading = false;
         this.cdr.markForCheck();
       });

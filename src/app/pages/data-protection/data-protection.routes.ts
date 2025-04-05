@@ -4,7 +4,6 @@ import { AllCloudBackupsComponent } from 'app/pages/data-protection/cloud-backup
 import { DataProtectionDashboardComponent } from 'app/pages/data-protection/data-protection-dashboard.component';
 import { RsyncTaskListComponent } from 'app/pages/data-protection/rsync-task/rsync-task-list/rsync-task-list.component';
 import { ScrubListComponent } from 'app/pages/data-protection/scrub-task/scrub-list/scrub-list.component';
-import { SmartTaskListComponent } from 'app/pages/data-protection/smart-task/smart-task-list/smart-task-list.component';
 import { SnapshotTaskListComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-list/snapshot-task-list.component';
 import { VmwareSnapshotListComponent } from 'app/pages/data-protection/vmware-snapshot/vmware-snapshot-list/vmware-snapshot-list.component';
 import { CloudSyncListComponent } from './cloudsync/cloudsync-list/cloudsync-list.component';
@@ -80,15 +79,6 @@ export const dataProtectionRoutes: Routes = [{
         path: ':dataset',
         component: RsyncTaskListComponent,
         data: { title: T('Rsync Tasks'), breadcrumb: null },
-      }],
-    },
-    {
-      path: 'smart',
-      data: { title: T('Periodic S.M.A.R.T. Tests'), breadcrumb: null },
-      children: [{
-        path: '',
-        component: SmartTaskListComponent,
-        data: { title: T('Periodic S.M.A.R.T. Tests'), breadcrumb: null },
       }],
     },
     {

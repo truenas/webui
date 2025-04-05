@@ -109,7 +109,7 @@ export class JobsListComponent implements OnInit {
     }),
   ], {
     uniqueRowTag: (row) => `job-${row.id}`,
-    ariaLabels: (row) => [row.description, this.translate.instant('Job')],
+    ariaLabels: (row) => [String(row.description), this.translate.instant('Job')],
   });
 
   emptyType$: Observable<EmptyType> = combineLatest([

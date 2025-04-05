@@ -6,11 +6,7 @@ export function getServerProduct(systemProduct: string): string | undefined {
   return serverSeries.find((series) => systemProduct?.includes(series));
 }
 
-export function getProductImageSrc(
-  systemProduct: string,
-  cropDefaultImg = false,
-): string | null {
-  const defaultImg = cropDefaultImg ? 'ix-original-cropped.png' : 'ix-original.svg';
+export function getProductImageSrc(systemProduct: string): string | null {
   const getProductImageName = (productName: string): string | null => {
     if (productName?.includes('MINI')) {
       const getImage = Object.values(miniSeries).find(
@@ -24,7 +20,7 @@ export function getProductImageSrc(
 
   const imgName = getProductImageName(systemProduct);
   if (!imgName) {
-    return 'assets/images/' + defaultImg;
+    return null;
   }
   return 'assets/images' + (imgName.startsWith('/') ? imgName : ('/' + imgName));
 }
@@ -41,7 +37,7 @@ export function getProductEnclosure(systemProduct: string): ProductEnclosure | n
 
 export function getSystemVersion(version: string, codename?: Codename): string {
   if (codename) {
-    return version.replace('TrueNAS-COMMUNITY_EDITION', codename);
+    return `${version} - ${codename}`;
   }
   return version;
 }

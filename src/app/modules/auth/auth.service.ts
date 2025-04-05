@@ -25,9 +25,8 @@ import {
 } from 'app/interfaces/auth.interface';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { AppState } from 'app/store';
@@ -87,7 +86,6 @@ export class AuthService {
     private api: ApiService,
     private tokenLastUsedService: TokenLastUsedService,
     private wsStatus: WebSocketStatusService,
-    private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
     @Inject(WINDOW) private window: Window,
   ) {
@@ -155,7 +153,7 @@ export class AuthService {
     }]).pipe(
       switchMap((loginResult) => this.processLoginResult(loginResult)),
       catchError((error: unknown) => {
-        this.dialogService.error(this.errorHandler.parseError(error));
+        this.errorHandler.showErrorModal(error);
         return of(LoginResult.NoAccess);
       }),
     );
@@ -173,12 +171,9 @@ export class AuthService {
       map((user) => {
         const currentRoles = user?.privilege?.roles?.$set || [];
         const neededRoles = Array.isArray(roles) ? roles : [roles];
+
         if (!neededRoles?.length || !currentRoles.length) {
           return false;
-        }
-
-        if (currentRoles.includes(Role.FullAdmin)) {
-          return true;
         }
 
         return neededRoles.some((role) => currentRoles.includes(role));
@@ -202,6 +197,10 @@ export class AuthService {
     return this.getLoggedInUserInformation().pipe(
       map(() => undefined),
     );
+  }
+
+  getOneTimeToken(): Observable<string> {
+    return this.api.call('auth.generate_token', [300, {}, true, true]);
   }
 
   private processLoginResult(loginResult: LoginExResponse): Observable<LoginResult> {
@@ -261,7 +260,7 @@ export class AuthService {
   }
 
   private setupAuthenticationUpdate(): void {
-    this.wsStatus.isAuthenticated$.pipe().subscribe({
+    this.wsStatus.isAuthenticated$.subscribe({
       next: (isAuthenticated) => {
         if (isAuthenticated) {
           this.store$.dispatch(adminUiInitialized());

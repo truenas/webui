@@ -177,8 +177,7 @@ describe('PoolManagerComponent – start over functionality', () => {
     // SPARE step activated
     expect(await (await wizard.getActiveStep()).getLabel()).toBe('Spare (Optional)');
     await wizard.fillStep({
-      'Disk Size': '20 GiB (HDD)',
-      Width: '1',
+      'Select Disk for Spare VDEV': 'sda2 - HDD (20 GiB)',
     });
     await wizard.clickNext();
 
@@ -267,9 +266,7 @@ describe('PoolManagerComponent – start over functionality', () => {
     // SPARE step activated and reset to default
     expect(await (await wizard.getActiveStep()).getLabel()).toBe('Spare (Optional)');
     expect(await wizard.getStepValues()).toStrictEqual({
-      'Disk Size': '',
-      Width: '',
-      'Treat Disk Size as Minimum': false,
+      'Select Disk for Spare VDEV': '',
     });
     await wizard.clickNext();
 

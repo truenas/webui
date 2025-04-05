@@ -1,6 +1,5 @@
 import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
-import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
 import { Store, select } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { environment } from 'environments/environment';
@@ -26,9 +25,10 @@ import {
   NewTicketResponse,
   SimilarIssue,
 } from 'app/modules/feedback/interfaces/file-ticket.interface';
-import { SnackbarComponent } from 'app/modules/snackbar/components/snackbar/snackbar.component';
+import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { SentryService } from 'app/services/sentry.service';
+import { SentryConfigurationService } from 'app/services/errors/sentry-configuration.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { UploadService } from 'app/services/upload.service';
 import { AppState } from 'app/store';
@@ -37,7 +37,7 @@ import { selectProductType, selectSystemInfoState, waitForSystemInfo } from 'app
 
 type ReviewData = FileReviewComponent['form']['value'];
 type TicketData = FileTicketComponent['form']['value'];
-type TicketLicensedData = FileTicketLicensedComponent['form']['value'];
+type TicketLicensedData = ReturnType<FileTicketLicensedComponent['form']['getRawValue']>;
 
 @Injectable({
   providedIn: 'root',
@@ -51,9 +51,9 @@ export class FeedbackService {
     private api: ApiService,
     private store$: Store<AppState>,
     private systemGeneralService: SystemGeneralService,
-    private sentryService: SentryService,
+    private sentryService: SentryConfigurationService,
     private fileUpload: UploadService,
-    private matSnackBar: MatSnackBar,
+    private snackbar: SnackbarService,
     private translate: TranslateService,
     private dialogService: DialogService,
     @Inject(WINDOW) private window: Window,
@@ -138,7 +138,7 @@ export class FeedbackService {
     }
     return combineLatest([
       this.store$.pipe(waitForSystemInfo),
-      this.store$.select(selectProductType),
+      this.store$.select(selectProductType).pipe(filter((productType) => !!productType)),
     ]).pipe(
       first(),
       switchMap(([systemInfo, productType]) => {
@@ -176,31 +176,27 @@ export class FeedbackService {
     );
   }
 
-  showTicketSuccessMsg(ticketUrl: string): MatSnackBarRef<SnackbarComponent> {
-    return this.matSnackBar.openFromComponent(SnackbarComponent, {
-      data: {
-        message: this.translate.instant('Thank you. Ticket was submitted succesfully.'),
-        icon: 'check',
-        iconCssColor: 'var(--green)',
-        button: {
-          title: this.translate.instant('Open ticket'),
-          action: () => this.window.open(ticketUrl, '_blank'),
-        },
-      },
-      duration: 10000,
-    });
+  showTicketSuccessMessage(ticketUrl: string): void {
+    this.dialogService.generalDialog({
+      message: this.translate.instant('Thank you. Ticket was submitted successfully.'),
+      icon: iconMarker('check'),
+      title: this.translate.instant('Ticket Created'),
+      cancelBtnMsg: this.translate.instant('Close'),
+      confirmBtnMsg: this.translate.instant('Open ticket'),
+    })
+      .subscribe((openTicket) => {
+        if (openTicket) {
+          this.window.open(ticketUrl, '_blank');
+        }
+      });
   }
 
-  showFeedbackSuccessMsg(): MatSnackBarRef<SnackbarComponent> {
-    return this.matSnackBar.openFromComponent(SnackbarComponent, {
-      data: {
-        message: this.translate.instant(
-          'Thank you for sharing your feedback with us! Your insights are valuable in helping us improve our product.',
-        ),
-        icon: 'check',
-        iconCssColor: 'var(--green)',
-      },
-    });
+  showFeedbackSuccessMessage(): void {
+    this.snackbar.success(
+      this.translate.instant(
+        'Thank you for sharing your feedback with us! Your insights are valuable in helping us improve our product.',
+      ),
+    );
   }
 
   private addReview(body: AddReview): Observable<ReviewAddedResponse> {
@@ -212,8 +208,8 @@ export class FeedbackService {
       map(([{ systemInfo, isIxHardware }, systemHostId]) => {
         return {
           host_u_id: systemHostId,
-          rating: data.rating,
-          message: data.message,
+          rating: Number(data.rating),
+          message: data.message || '',
           page: this.window.location.pathname,
           user_agent: this.window.navigator.userAgent,
           environment: environment.production ? FeedbackEnvironment.Production : FeedbackEnvironment.Development,
@@ -284,9 +280,9 @@ export class FeedbackService {
       map((body) => ({
         body,
         token,
-        attach_debug: data.attach_debug,
+        attach_debug: Boolean(data.attach_debug),
         type,
-        title: data.title,
+        title: data.title || '',
       })),
     );
   }
@@ -303,7 +299,7 @@ export class FeedbackService {
         criticality: data.criticality,
         category: data.category,
         title: data.title,
-        attach_debug: data.attach_debug,
+        attach_debug: Boolean(data.attach_debug),
       })),
     );
   }

@@ -18,6 +18,8 @@ export const ruleOverrides = {
   "@typescript-eslint/no-misused-promises": ["error", {checksVoidReturn: false}],
   "@typescript-eslint/no-empty-function": ["off"],
 
+  "@angular-eslint/component-class-suffix": ["off"],
+
   "import/no-unresolved": ["off"],
   "import/named": ["off"],
 

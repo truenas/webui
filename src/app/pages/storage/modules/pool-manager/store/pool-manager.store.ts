@@ -16,7 +16,6 @@ import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk, DiskDetailsResponse } from 'app/interfaces/disk.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ManualDiskSelectionComponent, ManualDiskSelectionParams } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/manual-disk-selection.component';
 import {
@@ -33,21 +32,21 @@ import {
   topologyCategoryToDisks,
   topologyToDisks,
 } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export interface PoolManagerTopologyCategory {
-  layout: CreateVdevLayout;
+  layout: CreateVdevLayout | null;
   width: number | null;
-  diskSize: number;
-  diskType: DiskType;
-  vdevsNumber: number;
+  diskSize: number | null;
+  diskType: DiskType | null;
+  vdevsNumber: number | null;
   treatDiskSizeAsMinimum: boolean;
   vdevs: DetailsDisk[][];
   hasCustomDiskSelection: boolean;
 
   // Only used for data step when dRAID is selected.
-  draidDataDisks: number;
-  draidSpareDisks: number;
+  draidDataDisks: number | null;
+  draidSpareDisks: number | null;
 }
 
 export type PoolManagerTopology = {
@@ -62,7 +61,7 @@ interface PoolManagerDiskSettings {
 export interface PoolManagerEnclosureSettings {
   limitToSingleEnclosure: string | null;
   maximizeEnclosureDispersal: boolean;
-  dispersalStrategy: DispersalStrategy;
+  dispersalStrategy: DispersalStrategy | null;
 }
 
 export interface PoolManagerState {
@@ -83,6 +82,7 @@ const initialTopology = Object.values(VdevType).reduce((topology, value) => {
   return {
     ...topology,
     [value]: {
+      layout: null,
       width: null,
       diskSize: null,
       diskType: null,
@@ -179,7 +179,8 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
 
   isUsingDraidLayout(topology: PoolManagerTopology): boolean {
     const dataCategory = topology[VdevType.Data];
-    return [CreateVdevLayout.Draid1, CreateVdevLayout.Draid2, CreateVdevLayout.Draid3].includes(dataCategory.layout);
+    return Boolean(dataCategory.layout
+      && [CreateVdevLayout.Draid1, CreateVdevLayout.Draid2, CreateVdevLayout.Draid3].includes(dataCategory.layout));
   }
 
   getLayoutsForVdevType(vdevType: VdevType): Observable<CreateVdevLayout[]> {
@@ -229,7 +230,6 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     private diskStore: DiskStore,
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
-    private dialogService: DialogService,
     private generateVdevs: GenerateVdevsService,
     private matDialog: MatDialog,
   ) {
@@ -272,7 +272,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
         },
         (error: unknown) => {
           this.patchState({ isLoading: false });
-          this.dialogService.error(this.errorHandler.parseError(error));
+          this.errorHandler.showErrorModal(error);
         },
       ),
     );

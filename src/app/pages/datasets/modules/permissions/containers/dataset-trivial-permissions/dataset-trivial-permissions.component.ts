@@ -32,7 +32,7 @@ import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-pro
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { StorageService } from 'app/services/storage.service';
 import { UserService } from 'app/services/user.service';
 
@@ -188,7 +188,7 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
         },
         error: (error: unknown) => {
           this.isLoading.set(false);
-          this.dialog.error(this.errorHandler.parseError(error));
+          this.errorHandler.showErrorModal(error);
         },
       });
   }
@@ -207,11 +207,11 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
     } as FilesystemSetPermParams;
 
     if (values.applyUser) {
-      update.user = values.owner;
+      update.user = values.owner || undefined;
     }
 
     if (values.applyGroup) {
-      update.group = values.ownerGroup;
+      update.group = values.ownerGroup || undefined;
     }
 
     return update;

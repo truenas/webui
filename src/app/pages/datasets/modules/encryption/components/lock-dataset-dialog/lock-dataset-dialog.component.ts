@@ -18,7 +18,7 @@ import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-ch
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -39,8 +39,8 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
     RequiresRolesDirective,
   ],
 })
-export class LockDatasetDialogComponent {
-  readonly requiredRoles = [Role.DatasetWrite];
+export class LockDatasetDialog {
+  protected readonly requiredRoles = [Role.DatasetWrite];
 
   forceCheckbox = new FormControl(false, { nonNullable: true });
 
@@ -49,7 +49,7 @@ export class LockDatasetDialogComponent {
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
-    private dialogRef: MatDialogRef<LockDatasetDialogComponent>,
+    private dialogRef: MatDialogRef<LockDatasetDialog>,
     private dialogService: DialogService,
     @Inject(MAT_DIALOG_DATA) public dataset: Dataset,
   ) { }
@@ -64,7 +64,7 @@ export class LockDatasetDialogComponent {
     )
       .afterClosed()
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => {

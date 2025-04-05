@@ -3,6 +3,8 @@
 
 .actions-bar {
   display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
   justify-content: space-between;
 
   @media (max-width: $breakpoint-sm) {
@@ -12,6 +14,7 @@
   .search-container {
     column-gap: 12px;
     display: flex;
+    flex: 1;
 
     @media (max-width: $breakpoint-singlecolumn) {
       width: 100%;

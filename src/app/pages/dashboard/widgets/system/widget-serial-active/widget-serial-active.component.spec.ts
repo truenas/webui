@@ -22,7 +22,7 @@ describe('WidgetSerialActiveComponent', () => {
       },
       providers: [
         mockProvider(WidgetResourcesService, {
-          systemInfo$: of({
+          dashboardSystemInfo$: of({
             value: {
               system_serial: '123456',
             },
@@ -42,7 +42,7 @@ describe('WidgetSerialActiveComponent', () => {
     spectator = createComponent({
       providers: [
         mockProvider(WidgetResourcesService, {
-          systemInfo$: of({
+          dashboardSystemInfo$: of({
             isLoading: false,
             error: new Error('Fatal error'),
           } as LoadingState<SystemInfo>),

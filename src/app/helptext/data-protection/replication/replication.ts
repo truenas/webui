@@ -162,8 +162,6 @@ to determine snapshots creation order.'),
 
   encryption_inherit_tooltip: helptextReplicationWizard.encryption_inherit_tooltip,
 
-  encryption_key_format_tooltip: helptextReplicationWizard.encryption_key_format_tooltip,
-
   encryption_key_generate_tooltip: helptextReplicationWizard.encryption_key_generate_tooltip,
 
   encryption_key_hex_tooltip: helptextReplicationWizard.encryption_key_hex_tooltip,

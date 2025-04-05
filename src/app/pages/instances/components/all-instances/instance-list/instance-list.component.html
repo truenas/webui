@@ -27,7 +27,7 @@
       @if (instances().length) {
         <mat-checkbox
           color="primary"
-          ixTest="select-all-app"
+          ixTest="select-all-instances"
           [checked]="isAllSelected"
           [indeterminate]="!isAllSelected && !!selection.selected.length"
           [disabled]="filteredInstances().length === 0"
@@ -36,12 +36,12 @@
       }
     </div>
     <div class="cell">{{ 'Name' | translate }}</div>
-    <div class="cell">{{ 'Type' | translate }}</div>
     <div class="cell">{{ 'Status' | translate }}</div>
+    <div class="cell">{{ 'Type' | translate }}</div>
     <div class="cell actions">{{ 'Controls' | translate }}</div>
   </div>
 
-  @if (instances() !== undefined && !filteredInstances().length) {
+  @if (instances() !== undefined && !filteredInstances().length && !isLoading()) {
     <ix-empty [conf]="emptyConfig()"></ix-empty>
   }
 

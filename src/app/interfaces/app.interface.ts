@@ -7,7 +7,7 @@ import { ChartMetadata } from 'app/interfaces/catalog.interface';
 import { HierarchicalObjectMap } from 'app/interfaces/hierarhical-object-map.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 
-export type ChartFormValue = string | number | boolean | Record<string, unknown> | ChartFormValue[];
+export type ChartFormValue = string | number | boolean | Record<string, unknown> | ChartFormValue[] | null;
 
 export interface ChartFormValues extends HierarchicalObjectMap<ChartFormValue> {
   release_name: string;
@@ -250,7 +250,7 @@ export interface ChartSchema {
   values: Record<string, ChartFormValue>;
 }
 
-interface HostMount {
+export interface HostMount {
   description: string;
   hostPath: string;
 }

@@ -34,7 +34,7 @@ export class UnusedDiskCardComponent {
 
   readonly addToStorage = output();
 
-  readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.DiskWrite];
 
   onAddToStorage(): void {
     this.addToStorage.emit();

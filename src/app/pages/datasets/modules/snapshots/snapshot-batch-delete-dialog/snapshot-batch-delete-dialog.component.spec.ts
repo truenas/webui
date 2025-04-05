@@ -10,9 +10,9 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { SnapshotBatchDeleteDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-batch-delete-dialog/snapshot-batch-delete-dialog.component';
+import { SnapshotBatchDeleteDialog } from 'app/pages/datasets/modules/snapshots/snapshot-batch-delete-dialog/snapshot-batch-delete-dialog.component';
 import { fakeZfsSnapshotDataSource } from 'app/pages/datasets/modules/snapshots/testing/snapshot-fake-datasource';
 
 const mockJobSuccessResponse = [{
@@ -22,11 +22,11 @@ const mockJobSuccessResponse = [{
 }] as CoreBulkResponse[];
 
 describe('SnapshotBatchDeleteDialogComponent', () => {
-  let spectator: Spectator<SnapshotBatchDeleteDialogComponent>;
+  let spectator: Spectator<SnapshotBatchDeleteDialog>;
   let loader: HarnessLoader;
 
   const createComponent = createComponentFactory({
-    component: SnapshotBatchDeleteDialogComponent,
+    component: SnapshotBatchDeleteDialog,
     imports: [
       ReactiveFormsModule,
     ],
@@ -36,12 +36,12 @@ describe('SnapshotBatchDeleteDialogComponent', () => {
         provide: MAT_DIALOG_DATA,
         useValue: fakeZfsSnapshotDataSource,
       },
-      mockProvider(AppLoaderService),
+      mockProvider(LoaderService),
       mockProvider(MatDialogRef),
       mockProvider(DialogService),
       mockApi([
         mockJob('core.bulk', fakeSuccessfulJob(mockJobSuccessResponse)),
-        mockCall('zfs.snapshot.delete'),
+        mockCall('pool.snapshot.delete'),
       ]),
     ],
   });
@@ -65,7 +65,7 @@ describe('SnapshotBatchDeleteDialogComponent', () => {
     await deleteButton.click();
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('core.bulk', [
-      'zfs.snapshot.delete',
+      'pool.snapshot.delete',
       [
         ['test-dataset@first-snapshot'],
         ['test-dataset@second-snapshot'],

@@ -7,24 +7,78 @@
     <button
       mat-button
       ixTest="add-disk"
+      [matTooltip]="disksDisabledMessage"
+      [matTooltipDisabled]="!isVmRunning() || isContainer()"
+      [disabled]="isVmRunning()"
       (click)="addDisk()"
-    >{{ 'Add' | translate }}</button>
+    >
+      {{ 'Add' | translate }}
+    </button>
   </mat-card-header>
 
   <mat-card-content>
-    @if (instance().root_disk_size) {
+    @if (isVm() && instance().root_disk_size; as rootDiskSize) {
       <div class="root-disk-size">
         <span class="label">{{ 'Root Disk' | translate }}:</span>
         <span class="value">
-          {{ +instance().root_disk_size | ixFileSize }}
+          {{ rootDiskSize | ixFileSize }}
+
+          @if (instance().root_disk_io_bus) {
+            ({{ instance().root_disk_io_bus | mapValue: diskIoBusLabels}})
+          }
         </span>
-        <a
+
+        <span
           class="action"
-          ixTest="increase-root-disk-size"
-          (click)="showRootDiskIncreaseDialog()"
+          [matTooltip]="disksDisabledMessage"
+          [matTooltipDisabled]="!isVmRunning()"
         >
-          {{ 'Increase' | translate }}
-        </a>
+          <a
+            ixTest="change-disk-setup"
+            [class.disabled]="isVmRunning()"
+            [attr.tabindex]="isVmRunning() ? -1 : 0"
+            (keydown.enter)="showRootDiskIncreaseDialog()"
+            (click)="showRootDiskIncreaseDialog()"
+          >
+            {{ 'Change' | translate }}
+          </a>
+        </span>
+      </div>
+    }
+
+    @if (isVm() && visibleDisks()?.length > 0) {
+      <div class="root-disk-size">
+        <span class="label">{{ 'Boot From' | translate }}:</span>
+        <span class="value">
+          @if (primaryBootDisk(); as bootDisk) {
+            {{ bootDisk.source }}
+
+            @if (bootDisk.io_bus) {
+              ({{ bootDisk.io_bus | mapValue: diskIoBusLabels}})
+            }
+          } @else {
+            {{ 'No boot disk selected' | translate }}
+          }
+        </span>
+
+        @if (visibleDisks()?.length > 1 || !primaryBootDisk()) {
+          <span
+            class="action"
+            [matTooltip]="disksDisabledMessage"
+            [matTooltipDisabled]="!isVmRunning()"
+          >
+            <a
+              class="action"
+              ixTest="change-primary-boot-disk"
+              [class.disabled]="isVmRunning()"
+              [attr.tabindex]="isVmRunning() ? -1 : 0"
+              (keydown.enter)="showChangeBootFromDiskDialog()"
+              (click)="showChangeBootFromDiskDialog()"
+            >
+              {{ 'Change' | translate }}
+            </a>
+          </span>
+        }
       </div>
     }
 
@@ -36,13 +90,26 @@
           @if (disk.destination) {
             <div>{{ disk.source }} → {{ disk.destination }}</div>
           } @else {
-            <div>{{ disk.source }}</div>
+            <div>
+              {{ disk.source }}
+
+              @if (isVm() && disk.io_bus) {
+                ({{ disk.io_bus | mapValue: diskIoBusLabels}})
+              }
+            </div>
           }
 
-          <ix-device-actions-menu
-            [device]="disk"
-            (edit)="editDisk(disk)"
-          ></ix-device-actions-menu>
+          <div
+            [matTooltip]="disksDisabledMessage"
+            [matTooltipDisabled]="!isVmRunning() || isContainer()"
+          >
+            <ix-device-actions-menu
+              [isDisabled]="isVmRunning()"
+              [device]="disk"
+              (edit)="editDisk(disk)"
+            ></ix-device-actions-menu>
+          </div>
+
         </div>
       } @empty {
         @if (!instance().root_disk_size) {

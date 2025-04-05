@@ -30,7 +30,7 @@ export class NestedTreeDataSource<T extends { children?: T[] }> extends DataSour
     super();
 
     if (initialData) {
-      this.data = this.initialData;
+      this.data = initialData;
     }
 
     this.detectFilterChanges();
@@ -76,7 +76,7 @@ export class NestedTreeDataSource<T extends { children?: T[] }> extends DataSour
 
   private sort(value: T[]): T[] {
     return value.map((item) => {
-      if (item.children.length) {
+      if (item.children?.length) {
         item.children.sort(this.sortComparer);
       }
       this.sort(item.children);

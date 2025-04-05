@@ -23,10 +23,10 @@ import { ChartContainerImage } from 'app/interfaces/app.interface';
 import { AppUpgradeSummary } from 'app/interfaces/application.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 type Version = Omit<AppUpgradeSummary, 'upgrade_version' | 'image_update_available' | 'upgrade_human_version'> & { fetched?: boolean };
 
@@ -56,19 +56,19 @@ type Version = Omit<AppUpgradeSummary, 'upgrade_version' | 'image_update_availab
     RequiresRolesDirective,
   ],
 })
-export class AppUpgradeDialogComponent {
+export class AppUpgradeDialog {
   dialogConfig: AppUpgradeDialogConfig;
   imagePlaceholder = appImagePlaceholder;
   helptext = helptextApps;
   versionOptions = new Map<string, Version>();
   selectedVersionKey: string;
-  selectedVersion: Version;
+  selectedVersion: Version | undefined;
 
   protected readonly requiredRoles = [Role.AppsWrite];
 
   constructor(
-    public dialogRef: MatDialogRef<AppUpgradeDialogComponent>,
-    private loader: AppLoaderService,
+    public dialogRef: MatDialogRef<AppUpgradeDialog>,
+    private loader: LoaderService,
     private errorHandler: ErrorHandlerService,
     private appService: ApplicationsService,
     public dialogService: DialogService,
@@ -87,7 +87,7 @@ export class AppUpgradeDialogComponent {
           this.versionOptions.set(availableVersion.version, {
             latest_version: availableVersion.version,
             latest_human_version: availableVersion.human_version,
-            changelog: null,
+            changelog: '',
             available_versions_for_upgrade: null,
           });
         }
@@ -100,16 +100,19 @@ export class AppUpgradeDialogComponent {
 
   onVersionOptionChanged(): void {
     this.selectedVersion = this.versionOptions.get(this.selectedVersionKey);
-    if (!this.selectedVersion.fetched) {
+    if (!this.selectedVersion?.fetched) {
       this.appService.getAppUpgradeSummary(
         this.dialogConfig.appInfo.name,
         this.selectedVersionKey,
       )
         .pipe(
           this.loader.withLoader(),
-          this.errorHandler.catchError(),
+          this.errorHandler.withErrorHandler(),
           untilDestroyed(this),
         ).subscribe((summary: AppUpgradeSummary) => {
+          if (!this.selectedVersion) {
+            return;
+          }
           this.selectedVersion.changelog = summary.changelog;
           this.selectedVersion.fetched = true;
         });

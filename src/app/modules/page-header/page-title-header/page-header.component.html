@@ -4,6 +4,14 @@
     <div class="title-and-indicator">
       @let title = pageTitle();
       <h1>{{ title ? (title | translate) : (currentTitle$ | async) | translate }}</h1>
+
+      @if (tooltip()) {
+        <ix-tooltip
+          class="tooltip"
+          [message]="tooltip() | translate"
+        ></ix-tooltip>
+      }
+
       @if ((hasNewIndicator$ | async) || customBadgeTitle()) {
         <ix-header-badge [customBadgeTitle]="customBadgeTitle()"></ix-header-badge>
       }

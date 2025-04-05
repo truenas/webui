@@ -35,7 +35,9 @@ import {
 import { AppUpgradeSummary } from 'app/interfaces/application.interface';
 import { AuditConfig, AuditEntry, AuditQueryParams } from 'app/interfaces/audit/audit.interface';
 import { AuthSession } from 'app/interfaces/auth-session.interface';
-import { LoginExOtpTokenQuery, LoginExQuery, LoginExResponse } from 'app/interfaces/auth.interface';
+import {
+  AuthTokenParams, LoginExOtpTokenQuery, LoginExQuery, LoginExResponse,
+} from 'app/interfaces/auth.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { BootenvCloneParams, BootEnvironment, BootenvKeepParams } from 'app/interfaces/boot-environment.interface';
 import {
@@ -211,10 +213,6 @@ import { ResilverConfig, ResilverConfigUpdate } from 'app/interfaces/resilver-co
 import { RsyncTask, RsyncTaskUpdate } from 'app/interfaces/rsync-task.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { ResizeShellRequest } from 'app/interfaces/shell.interface';
-import {
-  SmartManualTestParams, SmartConfig, SmartConfigUpdate, SmartTestTask, SmartTestResults, ManualSmartTest,
-  SmartTestTaskUpdate,
-} from 'app/interfaces/smart-test.interface';
 import { SmbConfig, SmbConfigUpdate } from 'app/interfaces/smb-config.interface';
 import {
   SmbPresets, SmbShare, SmbSharesec, SmbSharesecAce, SmbShareUpdate,
@@ -248,9 +246,19 @@ import {
   DeleteUserParams, SetPasswordParams, User, UserUpdate,
 } from 'app/interfaces/user.interface';
 import {
-  VirtualizationInstance, VirtualizationDevice, VirtualizationImageParams,
-  VirtualizationImage, AvailableGpus, AvailableUsb, VirtualizationGlobalConfig,
-  VirtualizationNetwork, VirtualizationVolume, VirtualizationVolumeUpdate,
+  VirtualizationInstance,
+  VirtualizationDevice,
+  VirtualizationImageParams,
+  VirtualizationImage,
+  AvailableGpus,
+  AvailableUsb,
+  VirtualizationGlobalConfig,
+  VirtualizationNetwork,
+  VirtualizationVolume,
+  VirtualizationVolumeUpdate,
+  VirtualizationPciChoices,
+  CreateVirtualizationVolume,
+  VirtualizationImportIsoParams,
 } from 'app/interfaces/virtualization.interface';
 import {
   MatchDatastoresWithDatasets,
@@ -338,7 +346,7 @@ export interface ApiCallDirectory {
   'audit.download_report': { params: [{ report_name?: string }]; response: string[] };
 
   // Auth
-  'auth.generate_token': { params: void; response: string };
+  'auth.generate_token': { params: AuthTokenParams; response: string };
   'auth.generate_onetime_password': { params: [{ username: string }]; response: string };
   'auth.login_ex': { params: [LoginExQuery]; response: LoginExResponse };
   'auth.login_ex_continue': { params: [LoginExOtpTokenQuery]; response: LoginExResponse };
@@ -736,18 +744,6 @@ export interface ApiCallDirectory {
   'sharing.smb.share_precheck': { params: [{ name: string }]; response: null | { reason: string } };
   'sharing.smb.update': { params: [id: number, update: SmbShareUpdate]; response: SmbShare };
 
-  // SMART
-  'smart.config': { params: void; response: SmartConfig };
-  'smart.test.create': { params: [SmartTestTaskUpdate]; response: SmartTestTask };
-  'smart.test.delete': { params: [id: number]; response: boolean };
-  'smart.test.disk_choices': { params: void; response: Choices };
-  'smart.test.manual_test': { params: [SmartManualTestParams[]]; response: ManualSmartTest[] };
-  'smart.test.query': { params: QueryParams<SmartTestTask>; response: SmartTestTask[] };
-  'smart.test.query_for_disk': { params: [disk: string]; response: SmartTestTask[] };
-  'smart.test.results': { params: QueryParams<SmartTestResults>; response: SmartTestResults[] };
-  'smart.test.update': { params: [id: number, update: SmartTestTaskUpdate]; response: SmartTestTask };
-  'smart.update': { params: [SmartConfigUpdate]; response: SmartConfig };
-
   // SMB
   'smb.bindip_choices': { params: void; response: Choices };
   'smb.config': { params: void; response: SmbConfig };
@@ -791,7 +787,6 @@ export interface ApiCallDirectory {
   'system.boot_id': { params: void; response: string };
   'system.general.config': { params: void; response: SystemGeneralConfig };
   'system.general.kbdmap_choices': { params: void; response: Choices };
-  'system.general.language_choices': { params: void; response: Choices };
   'system.general.timezone_choices': { params: void; response: Choices };
   'system.general.ui_address_choices': { params: void; response: Choices };
   'system.general.ui_certificate_choices': { params: void; response: Record<number, string> };
@@ -867,6 +862,7 @@ export interface ApiCallDirectory {
 
   // Virt
   'virt.instance.query': { params: QueryParams<VirtualizationInstance>; response: VirtualizationInstance[] };
+  'virt.instance.set_bootable_disk': { params: [instanceId: string, diskId: string]; response: boolean };
   'virt.instance.device_add': { params: [instanceId: string, device: VirtualizationDevice]; response: true };
   'virt.instance.device_update': { params: [instanceId: string, device: VirtualizationDevice]; response: true };
   'virt.instance.device_delete': { params: [instanceId: string, name: string]; response: true };
@@ -880,15 +876,18 @@ export interface ApiCallDirectory {
   };
   'virt.device.usb_choices': { params: []; response: Record<string, AvailableUsb> };
   'virt.device.nic_choices': { params: [nicType: VirtualizationNicType]; response: Record<string, string> };
+  'virt.device.pci_choices': { params: []; response: VirtualizationPciChoices };
 
   'virt.global.bridge_choices': { params: []; response: Choices };
   'virt.global.config': { params: []; response: VirtualizationGlobalConfig };
   'virt.global.get_network': { params: [name: string]; response: VirtualizationNetwork };
   'virt.global.pool_choices': { params: []; response: Choices };
 
+  'virt.volume.create': { params: [CreateVirtualizationVolume]; response: VirtualizationVolume };
   'virt.volume.query': { params: QueryParams<VirtualizationVolume>; response: VirtualizationVolume[] };
   'virt.volume.update': { params: VirtualizationVolumeUpdate; response: VirtualizationVolume };
   'virt.volume.delete': { params: [id: string]; response: true };
+  'virt.volume.import_iso': { params: VirtualizationImportIsoParams; response: VirtualizationVolume };
 
   'system.advanced.get_gpu_pci_choices': { params: void; response: Choices };
 
@@ -911,13 +910,13 @@ export interface ApiCallDirectory {
   'webui.crypto.certificateauthority_profiles': { params: void; response: CertificateProfiles };
 
   // ZFS
-  'zfs.snapshot.clone': { params: [CloneZfsSnapshot]; response: boolean };
-  'zfs.snapshot.create': { params: [CreateZfsSnapshot]; response: ZfsSnapshot };
-  'zfs.snapshot.delete': { params: [id: string, params?: { defer?: boolean; recursive?: boolean }]; response: boolean };
-  'zfs.snapshot.hold': { params: [string]; response: void };
-  'zfs.snapshot.query': { params: QueryParams<ZfsSnapshot>; response: ZfsSnapshot[] };
-  'zfs.snapshot.release': { params: [string]; response: void };
-  'zfs.snapshot.rollback': { params: ZfsRollbackParams; response: void };
+  'pool.snapshot.clone': { params: [CloneZfsSnapshot]; response: boolean };
+  'pool.snapshot.create': { params: [CreateZfsSnapshot]; response: ZfsSnapshot };
+  'pool.snapshot.delete': { params: [id: string, params?: { defer?: boolean; recursive?: boolean }]; response: boolean };
+  'pool.snapshot.hold': { params: [string]; response: void };
+  'pool.snapshot.query': { params: QueryParams<ZfsSnapshot>; response: ZfsSnapshot[] };
+  'pool.snapshot.release': { params: [string]; response: void };
+  'pool.snapshot.rollback': { params: ZfsRollbackParams; response: void };
 }
 
 /**

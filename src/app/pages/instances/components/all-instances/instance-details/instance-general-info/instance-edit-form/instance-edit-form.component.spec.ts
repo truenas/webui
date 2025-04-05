@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { GiB } from 'app/constants/bytes.constant';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
+import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { VirtualizationStatus, VirtualizationType } from 'app/enums/virtualization.enum';
 import { Job } from 'app/interfaces/job.interface';
@@ -46,6 +46,10 @@ describe('InstanceEditFormComponent', () => {
       mockAuth(),
       mockApi([
         mockJob('virt.instance.update', fakeSuccessfulJob({ id: 'test' } as VirtualizationInstance)),
+        mockCall('virt.global.pool_choices', {
+          '[Disabled]': '[Disabled]',
+          poolio: 'poolio',
+        }),
       ]),
       mockProvider(SnackbarService),
       mockProvider(DialogService, {
@@ -111,7 +115,6 @@ describe('InstanceEditFormComponent', () => {
         autostart: true,
         cpu: '2-5',
         memory: GiB,
-        environment: {},
         enable_vnc: true,
         vnc_port: 9000,
         vnc_password: 'testing',

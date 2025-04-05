@@ -10,16 +10,15 @@ import { AccountAttribute } from 'app/enums/account-attribute.enum';
 import { Role } from 'app/enums/role.enum';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 export const dummyUser = {
   privilege: {
     roles: {
-      $set: [Role.FullAdmin],
+      $set: Object.values(Role),
     },
     web_shell: true,
   },
@@ -49,7 +48,6 @@ export function mockAuth(
             isConnected$: of(true),
             isAuthenticated$: of(false),
           }),
-          createSpyObject(DialogService),
           createSpyObject(ErrorHandlerService),
           createSpyObject(Window),
         );

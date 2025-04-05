@@ -47,7 +47,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
   ],
 })
 export class BootEnvironmentFormComponent implements OnInit {
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.BootEnvWrite];
   protected formGroup = this.formBuilder.group({
     source: ['', [Validators.required]],
     target: ['', [Validators.required, Validators.pattern(nameValidatorRegex)]],
@@ -81,7 +81,7 @@ export class BootEnvironmentFormComponent implements OnInit {
   onSubmit(): void {
     this.isLoading.set(true);
     const cloneParams: BootenvCloneParams = [{
-      id: this.currentName,
+      id: String(this.currentName),
       target: this.formGroup.value.target,
     }];
 

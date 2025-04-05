@@ -52,7 +52,7 @@ import { SystemGeneralService } from 'app/services/system-general.service';
     AsyncPipe,
   ],
 })
-export class FeedbackDialogComponent implements OnInit {
+export class FeedbackDialog implements OnInit {
   protected isLoading = false;
   protected isLoadingTypes = false;
   protected typeControl = new FormControl(undefined as FeedbackType | undefined);
@@ -69,7 +69,7 @@ export class FeedbackDialogComponent implements OnInit {
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
     private systemGeneralService: SystemGeneralService,
-    protected dialogRef: MatDialogRef<FeedbackDialogComponent>,
+    protected dialogRef: MatDialogRef<FeedbackDialog>,
     @Inject(MAT_DIALOG_DATA) private requestedType: FeedbackType,
   ) {}
 

@@ -8,9 +8,9 @@
       {{ 'NVMe-oF Expansion Shelves' | translate }}
     </a>
   }
-  @if (selectedEnclosure()) {
+  @if (selectedEnclosure(); as enclosure) {
     <ix-view-elements-menu
-      [enclosure]="selectedEnclosure()"
+      [enclosure]="enclosure"
     ></ix-view-elements-menu>
   }
 </ix-page-header>

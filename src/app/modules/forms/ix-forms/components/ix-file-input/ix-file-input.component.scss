@@ -11,6 +11,7 @@
   position: relative;
 
   label {
+    align-items: center;
     background-color: var(--btn-default-bg);
     border: none;
     border-radius: 0;
@@ -20,6 +21,7 @@
     font-family: var(--font-family-body);
     font-size: 13px;
     font-weight: bold;
+    gap: 3px;
     line-height: 36px;
     margin: 0;
     min-width: 64px;

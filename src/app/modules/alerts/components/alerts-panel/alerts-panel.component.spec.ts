@@ -125,12 +125,12 @@ describe('AlertsPanelComponent', () => {
     const dismissedAlertComponents = alertPanel.dismissedAlertComponents;
 
     expect(dismissedAlertComponents).toHaveLength(2);
-    expect(dismissedAlertComponents[0].alert).toEqual(dismissedAlerts[1]);
-    expect(dismissedAlertComponents[1].alert).toEqual(dismissedAlerts[0]);
+    expect(dismissedAlertComponents[0].alert).toEqual(dismissedAlerts[0]);
+    expect(dismissedAlertComponents[1].alert).toEqual(dismissedAlerts[1]);
   });
 
   it('dismisses all alerts when Dismiss All Alerts is pressed', () => {
-    spectator.click(alertPanel.dismissAllButton);
+    spectator.click(alertPanel.dismissAllButton!);
 
     expect(api.call).toHaveBeenCalledWith('alert.dismiss', ['1']);
     expect(api.call).toHaveBeenCalledWith('alert.dismiss', ['2']);
@@ -142,7 +142,7 @@ describe('AlertsPanelComponent', () => {
   });
 
   it('reopens all alerts when Reopen All Alerts is pressed', () => {
-    spectator.click(alertPanel.reopenAllButton);
+    spectator.click(alertPanel.reopenAllButton!);
 
     expect(api.call).toHaveBeenCalledWith('alert.restore', ['3']);
     expect(api.call).toHaveBeenCalledWith('alert.restore', ['4']);

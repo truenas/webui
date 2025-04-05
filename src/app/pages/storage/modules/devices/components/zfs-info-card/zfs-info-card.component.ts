@@ -19,18 +19,18 @@ import {
   isTopologyDisk, TopologyItem, VDev,
 } from 'app/interfaces/storage.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
-  ExtendDialogComponent, ExtendDialogParams,
+  ExtendDialog, ExtendDialogParams,
 } from 'app/pages/storage/modules/devices/components/zfs-info-card/extend-dialog/extend-dialog.component';
 import {
-  RaidzExtendDialogComponent, RaidzExtendDialogParams,
+  RaidzExtendDialog, RaidzExtendDialogParams,
 } from 'app/pages/storage/modules/devices/components/zfs-info-card/raidz-extend-dialog/raidz-extend-dialog.component';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 const raidzItems = [TopologyItemType.Raidz, TopologyItemType.Raidz1, TopologyItemType.Raidz2, TopologyItemType.Raidz3];
 
@@ -124,7 +124,7 @@ export class ZfsInfoCardComponent {
 
   constructor(
     private errorHandler: ErrorHandlerService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private api: ApiService,
     private dialogService: DialogService,
     private matDialog: MatDialog,
@@ -143,7 +143,7 @@ export class ZfsInfoCardComponent {
       switchMap(() => {
         return this.api.call('pool.offline', [this.poolId(), { label: this.topologyItem().guid }]).pipe(
           this.loader.withLoader(),
-          this.errorHandler.catchError(),
+          this.errorHandler.withErrorHandler(),
           tap(() => this.devicesStore.reloadList()),
           untilDestroyed(this),
         );
@@ -162,7 +162,7 @@ export class ZfsInfoCardComponent {
       switchMap(() => {
         return this.api.call('pool.online', [this.poolId(), { label: this.topologyItem().guid }]).pipe(
           this.loader.withLoader(),
-          this.errorHandler.catchError(),
+          this.errorHandler.withErrorHandler(),
           tap(() => this.devicesStore.reloadList()),
         );
       }),
@@ -180,7 +180,7 @@ export class ZfsInfoCardComponent {
       switchMap(() => {
         return this.api.call('pool.detach', [this.poolId(), { label: this.topologyItem().guid }]).pipe(
           this.loader.withLoader(),
-          this.errorHandler.catchError(),
+          this.errorHandler.withErrorHandler(),
           tap(() => this.devicesStore.reloadList()),
         );
       }),
@@ -204,7 +204,7 @@ export class ZfsInfoCardComponent {
           { title: this.translate.instant('Remove device') },
         )
           .afterClosed()
-          .pipe(this.errorHandler.catchError());
+          .pipe(this.errorHandler.withErrorHandler());
       }),
       untilDestroyed(this),
     ).subscribe(() => {
@@ -215,7 +215,7 @@ export class ZfsInfoCardComponent {
   }
 
   onExtend(): void {
-    this.matDialog.open(ExtendDialogComponent, {
+    this.matDialog.open(ExtendDialog, {
       data: {
         poolId: this.poolId(),
         targetVdevGuid: this.topologyItem().guid,
@@ -232,7 +232,7 @@ export class ZfsInfoCardComponent {
   }
 
   onRaidzExtend(): void {
-    this.matDialog.open(RaidzExtendDialogComponent, {
+    this.matDialog.open(RaidzExtendDialog, {
       data: {
         poolId: this.poolId(),
         vdev: this.topologyItem() as VDev,

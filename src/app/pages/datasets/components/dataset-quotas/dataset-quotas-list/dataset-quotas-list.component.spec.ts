@@ -15,7 +15,7 @@ import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-forma
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -61,7 +61,7 @@ describe('DatasetQuotasListComponent', () => {
       SearchInput1Component,
     ],
     providers: [
-      mockProvider(AppLoaderService),
+      mockProvider(LoaderService),
       mockProvider(FormErrorHandlerService),
       mockProvider(ApiService),
       mockProvider(IxFormatterService, {

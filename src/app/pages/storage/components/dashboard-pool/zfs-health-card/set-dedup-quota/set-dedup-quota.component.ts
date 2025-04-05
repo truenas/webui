@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogClose, MatDialogRef, MatDialogTitle,
@@ -19,7 +19,7 @@ import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-forma
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export enum QuotaType {
   Auto = 'AUTO',
@@ -60,7 +60,7 @@ export class SetDedupQuotaComponent {
   protected quotaTypeOptions$ = of(mapToOptions(quotaTypeLabels, this.translate));
 
   constructor(
-    private formBuilder: FormBuilder,
+    private formBuilder: NonNullableFormBuilder,
     private api: ApiService,
     private dialog: DialogService,
     private snackbar: SnackbarService,
@@ -84,7 +84,7 @@ export class SetDedupQuotaComponent {
 
     this.form.patchValue({
       quotaType,
-      quotaValue: parseInt(this.pool.dedup_table_quota, 10) || null,
+      quotaValue: parseInt(this.pool.dedup_table_quota || '', 10) || null,
     });
   }
 
@@ -101,7 +101,7 @@ export class SetDedupQuotaComponent {
       case QuotaType.Custom:
         payload = {
           dedup_table_quota: NewDeduplicationQuotaSetting.Custom,
-          dedup_table_quota_value: this.form.value.quotaValue,
+          dedup_table_quota_value: this.form.value.quotaValue || undefined,
         };
         break;
       case QuotaType.None:
@@ -116,7 +116,7 @@ export class SetDedupQuotaComponent {
     })
       .afterClosed()
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => {

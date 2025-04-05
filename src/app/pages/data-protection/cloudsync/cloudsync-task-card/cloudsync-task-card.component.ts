@@ -45,9 +45,9 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
-import { CloudSyncRestoreDialogComponent } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
+import { CloudSyncRestoreDialog } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
 import { CloudSyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { TaskService } from 'app/services/task.service';
 import { AppState } from 'app/store';
 
@@ -109,6 +109,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
     stateButtonColumn({
       title: this.translate.instant('State'),
       getValue: (row) => row.state.state,
+      getJob: (row) => row.job,
       cssClass: 'state-button',
     }),
     actionsColumn({
@@ -202,8 +203,8 @@ export class CloudSyncTaskCardComponent implements OnInit {
       next: () => {
         this.getCloudSyncTasks();
       },
-      error: (err: unknown) => {
-        this.dialogService.error(this.errorHandler.parseError(err));
+      error: (error: unknown) => {
+        this.errorHandler.showErrorModal(error);
       },
     });
   }
@@ -242,7 +243,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
       )),
       catchError((error: unknown) => {
         this.getCloudSyncTasks();
-        this.dialogService.error(this.errorHandler.parseError(error));
+        this.errorHandler.showErrorModal(error);
         return EMPTY;
       }),
       untilDestroyed(this),
@@ -266,7 +267,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
         filter(Boolean),
         switchMap(() => {
           return this.api.call('cloudsync.abort', [row.id]).pipe(
-            this.errorHandler.catchError(),
+            this.errorHandler.withErrorHandler(),
           );
         }),
         untilDestroyed(this),
@@ -290,7 +291,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
         this.translate.instant('Cloud Sync «{name}» has started.', { name: row.description }),
       )),
       catchError((error: unknown) => {
-        this.dialogService.error(this.errorHandler.parseError(error));
+        this.errorHandler.showErrorModal(error);
         return EMPTY;
       }),
       untilDestroyed(this),
@@ -305,7 +306,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
 
   restore(row: CloudSyncTaskUi): void {
     this.matDialog
-      .open(CloudSyncRestoreDialogComponent, { data: row.id })
+      .open(CloudSyncRestoreDialog, { data: row.id })
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => {
@@ -346,9 +347,9 @@ export class CloudSyncTaskCardComponent implements OnInit {
         next: () => {
           this.getCloudSyncTasks();
         },
-        error: (err: unknown) => {
+        error: (error: unknown) => {
           this.getCloudSyncTasks();
-          this.dialogService.error(this.errorHandler.parseError(err));
+          this.errorHandler.showErrorModal(error);
         },
       });
   }

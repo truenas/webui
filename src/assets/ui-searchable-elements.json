@@ -292,7 +292,7 @@
       "Add Docker Registry"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "APPS_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -575,7 +575,7 @@
       "Create DNS Authenticator"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "NETWORK_INTERFACE_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -591,49 +591,6 @@
     "hierarchy": [
       "Credentials",
       "Certificates",
-      "Certificate Authorities"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/credentials",
-      "certificates"
-    ],
-    "routerLink": null,
-    "anchor": "certificate-authority-list",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Credentials",
-      "Certificates",
-      "Certificate Authorities",
-      "Add Certificate Authority"
-    ],
-    "synonyms": [
-      "New Certificate Authority",
-      "Create Certificate Authority",
-      "Certificate Authority"
-    ],
-    "requiredRoles": [
-      "FULL_ADMIN"
-    ],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/credentials",
-      "certificates"
-    ],
-    "routerLink": null,
-    "anchor": "add-certificate-authority",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Credentials",
-      "Certificates",
       "Add Certificate"
     ],
     "synonyms": [
@@ -642,7 +599,7 @@
       "Generate Certificate"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "CERTIFICATE_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -708,7 +665,7 @@
       "Generate Certificate Signing Requests"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "CERTIFICATE_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -795,7 +752,7 @@
       "Privilege"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "PRIVILEGE_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -841,6 +798,77 @@
     ],
     "routerLink": null,
     "anchor": "kmip",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
+      "Users (WIP)",
+      "Create New User"
+    ],
+    "synonyms": [
+      "Add User",
+      "Create User",
+      "New User"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/credentials/users-new"
+    ],
+    "routerLink": null,
+    "anchor": "add-user",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
+      "Users (WIP)"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/credentials/users-new"
+    ],
+    "routerLink": null,
+    "anchor": "users-list",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
+      "Users (WIP)",
+      "Profile"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/credentials/users-new"
+    ],
+    "routerLink": null,
+    "anchor": "profile",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
+      "Users (WIP)",
+      "Access Card"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/credentials/users-new"
+    ],
+    "routerLink": null,
+    "anchor": "access-card",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -1069,7 +1097,7 @@
     ],
     "synonyms": [
       "Tasks",
-      "Storj iX",
+      "Storj",
       "Amazon S3",
       "Backblaze B2",
       "Box",
@@ -1085,7 +1113,6 @@
       "OpenStack Swift",
       "pCloud",
       "SFTP",
-      "Storj",
       "WebDAV",
       "Yandex"
     ],
@@ -1173,7 +1200,7 @@
       "Task"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "SNAPSHOT_TASK_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -1235,7 +1262,7 @@
       "Task"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "POOL_SCRUB_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -1277,7 +1304,7 @@
       "Adjust Resilver Priority"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "POOL_SCRUB_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -1289,61 +1316,6 @@
       "priority"
     ],
     "anchor": "adjust-scrub/resilver-priority",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Data Protection",
-      "Periodic S.M.A.R.T. Tests",
-      "Add S.M.A.R.T. Test"
-    ],
-    "synonyms": [
-      "Add Periodic S.M.A.R.T. Test",
-      "Add Smart Test",
-      "Create Periodic S.M.A.R.T. Test",
-      "Create Smart Test",
-      "New Periodic S.M.A.R.T. Test",
-      "New Smart Test",
-      "Test",
-      "Smart",
-      "Add Disk Test",
-      "New Disk Test",
-      "Create Disk Test"
-    ],
-    "requiredRoles": [
-      "FULL_ADMIN"
-    ],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/data-protection",
-      "smart"
-    ],
-    "routerLink": null,
-    "anchor": "add-smart-test",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Data Protection",
-      "Periodic S.M.A.R.T. Tests"
-    ],
-    "synonyms": [
-      "Tasks",
-      "Smart",
-      "S.M.A.R.T.",
-      "Smart Tests",
-      "Disk Tests"
-    ],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/data-protection",
-      "smart"
-    ],
-    "routerLink": null,
-    "anchor": "smart-tasks",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -1975,20 +1947,21 @@
   },
   {
     "hierarchy": [
-      "Virtualization",
-      "Containers",
+      "Instances",
       "Global Settings"
     ],
     "synonyms": [
       "VMs",
       "Virtual Machines",
+      "Virtualization",
+      "Containers",
       "VM Settings",
       "Virtual Machine Settings"
     ],
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/virtualization"
+      "/instances"
     ],
     "routerLink": null,
     "anchor": "vm-global-settings",
@@ -1997,13 +1970,14 @@
   },
   {
     "hierarchy": [
-      "Virtualization",
-      "Containers",
+      "Instances",
       "Create New Instance"
     ],
     "synonyms": [
       "VMs",
       "Virtual Machines",
+      "Virtualization",
+      "Containers",
       "Add Instance",
       "Create VM",
       "Add VM",
@@ -2014,7 +1988,7 @@
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/virtualization"
+      "/instances"
     ],
     "routerLink": [
       "/instances/new"
@@ -2025,18 +1999,19 @@
   },
   {
     "hierarchy": [
-      "Virtualization",
-      "Containers",
-      "Instances"
+      "Instances",
+      "List"
     ],
     "synonyms": [
       "VM",
-      "Virtual Machines"
+      "Virtual Machines",
+      "Incus",
+      "Containers"
     ],
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/virtualization/view/def"
+      "/instances/view/def"
     ],
     "routerLink": null,
     "anchor": "containers-list",
@@ -2045,19 +2020,19 @@
   },
   {
     "hierarchy": [
-      "Virtualization",
-      "Containers",
+      "Instances",
       "General Info"
     ],
     "synonyms": [
       "VM",
       "Virtual Machines",
-      "Instances"
+      "Virtualization",
+      "Containers"
     ],
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/virtualization/view/def"
+      "/instances/view/def"
     ],
     "routerLink": null,
     "anchor": "general-info",
@@ -2066,19 +2041,19 @@
   },
   {
     "hierarchy": [
-      "Virtualization",
-      "Containers",
+      "Instances",
       "Devices"
     ],
     "synonyms": [
       "VM",
       "Virtual Machines",
-      "Instances"
+      "Virtualization",
+      "Containers"
     ],
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/virtualization/view/def"
+      "/instances/view/def"
     ],
     "routerLink": null,
     "anchor": "devices",
@@ -2087,19 +2062,19 @@
   },
   {
     "hierarchy": [
-      "Virtualization",
-      "Containers",
+      "Instances",
       "Disks"
     ],
     "synonyms": [
       "VM",
       "Virtual Machines",
-      "Instances"
+      "Virtualization",
+      "Containers"
     ],
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/virtualization/view/def"
+      "/instances/view/def"
     ],
     "routerLink": null,
     "anchor": "disks",
@@ -2108,19 +2083,19 @@
   },
   {
     "hierarchy": [
-      "Virtualization",
-      "Containers",
+      "Instances",
       "NIC"
     ],
     "synonyms": [
       "VM",
       "Virtual Machines",
-      "Instances"
+      "Virtualization",
+      "Containers"
     ],
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/virtualization/view/def"
+      "/instances/view/def"
     ],
     "routerLink": null,
     "anchor": "nic",
@@ -2129,19 +2104,19 @@
   },
   {
     "hierarchy": [
-      "Virtualization",
-      "Containers",
+      "Instances",
       "Proxies"
     ],
     "synonyms": [
       "VM",
       "Virtual Machines",
-      "Instances"
+      "Virtualization",
+      "Containers"
     ],
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/virtualization/view/def"
+      "/instances/view/def"
     ],
     "routerLink": null,
     "anchor": "proxies",
@@ -2150,19 +2125,19 @@
   },
   {
     "hierarchy": [
-      "Virtualization",
-      "Containers",
+      "Instances",
       "Idmap"
     ],
     "synonyms": [
       "VM",
       "Virtual Machines",
-      "Instances"
+      "Virtualization",
+      "Containers"
     ],
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/virtualization/view/def"
+      "/instances/view/def"
     ],
     "routerLink": null,
     "anchor": "idmap",
@@ -2171,19 +2146,19 @@
   },
   {
     "hierarchy": [
-      "Virtualization",
-      "Containers",
+      "Instances",
       "Tools"
     ],
     "synonyms": [
       "VM",
       "Virtual Machines",
-      "Instances"
+      "Virtualization",
+      "Containers"
     ],
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/virtualization/view/def"
+      "/instances/view/def"
     ],
     "routerLink": null,
     "anchor": "tools",
@@ -2192,19 +2167,19 @@
   },
   {
     "hierarchy": [
-      "Virtualization",
-      "Containers",
+      "Instances",
       "Metrics"
     ],
     "synonyms": [
       "VM",
       "Virtual Machines",
-      "Instances"
+      "Virtualization",
+      "Containers"
     ],
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/virtualization/view/def"
+      "/instances/view/def"
     ],
     "routerLink": null,
     "anchor": "metrics",
@@ -2406,7 +2381,7 @@
       "New Static Route"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "NETWORK_INTERFACE_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -2806,27 +2781,6 @@
   {
     "hierarchy": [
       "System",
-      "Services",
-      "S.M.A.R.T."
-    ],
-    "synonyms": [
-      "Smart Service",
-      "Smart"
-    ],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/system",
-      "services"
-    ],
-    "routerLink": null,
-    "anchor": "service-smart",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
       "Services"
     ],
     "synonyms": [],
@@ -2847,6 +2801,7 @@
       "iSCSI Wizard"
     ],
     "synonyms": [
+      "FC",
       "Add iSCSI",
       "New iSCSI",
       "Create iSCSI",
@@ -3095,7 +3050,9 @@
       "iSCSI",
       "Targets"
     ],
-    "synonyms": [],
+    "synonyms": [
+      "FC"
+    ],
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -3116,8 +3073,10 @@
       "Add Target"
     ],
     "synonyms": [
+      "FC",
       "New Target",
-      "Create Target"
+      "Create Target",
+      "FC Target"
     ],
     "requiredRoles": [],
     "visibleTokens": [],
@@ -3371,7 +3330,7 @@
       "Offline"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "POOL_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -3389,7 +3348,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "POOL_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -3487,7 +3446,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "POOL_SCRUB_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -3545,7 +3504,7 @@
       "Add Pool"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "POOL_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -3568,7 +3527,7 @@
       "Pool Creation Wizard"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "POOL_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -3759,7 +3718,7 @@
       "Allowed IP Addresses Settings"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "SYSTEM_GENERAL_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -3936,7 +3895,7 @@
       "Console Settings"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "SYSTEM_ADVANCED_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -4060,7 +4019,7 @@
       "Cronjob"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "SYSTEM_CRON_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -4119,7 +4078,7 @@
       "2FA Settings"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "SYSTEM_SECURITY_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -4209,7 +4168,7 @@
       "Init/Shutdown Script"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "SYSTEM_CRON_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -4267,7 +4226,7 @@
       "Isolated GPU Devices Settings"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "SYSTEM_ADVANCED_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -4327,7 +4286,7 @@
       "Kernel Settings"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "SYSTEM_ADVANCED_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -4464,7 +4423,7 @@
       "Self-Encrypting Drive Settings"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "SYSTEM_ADVANCED_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -4548,7 +4507,7 @@
       "Storage Settings"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "DATASET_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -4619,7 +4578,7 @@
       "New Tunable"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "SYSTEM_TUNABLE_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -4677,7 +4636,7 @@
       "Syslog Settings"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "SYSTEM_ADVANCED_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -4846,7 +4805,7 @@
       "Create boot environment"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "BOOT_ENV_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -4868,7 +4827,7 @@
       "Create boot environment"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "BOOT_ENV_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -5112,7 +5071,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "SYSTEM_GENERAL_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -5350,7 +5309,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "SYSTEM_GENERAL_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -5598,7 +5557,7 @@
       "Time Server"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "NETWORK_GENERAL_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [

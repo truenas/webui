@@ -46,7 +46,7 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
 })
 export class GuiCardComponent {
   protected readonly searchableElements = guiCardElements;
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.SystemGeneralWrite];
 
   readonly generalConfig$ = this.store$.pipe(
     waitForGeneralConfig,

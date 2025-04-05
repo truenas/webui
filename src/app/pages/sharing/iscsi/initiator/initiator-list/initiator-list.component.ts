@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  filter, repeat, switchMap, tap,
+  filter, switchMap, tap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -29,12 +29,12 @@ import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-h
 import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { initiatorListElements } from 'app/pages/sharing/iscsi/initiator/initiator-list/initiator-list.elements';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
 
 @UntilDestroy()
@@ -66,7 +66,7 @@ import { IscsiService } from 'app/services/iscsi.service';
 export class InitiatorListComponent implements OnInit {
   protected readonly searchableElements = initiatorListElements;
 
-  readonly requiredRoles = [
+  protected readonly requiredRoles = [
     Role.SharingIscsiInitiatorWrite,
     Role.SharingIscsiWrite,
     Role.SharingWrite,
@@ -119,7 +119,7 @@ export class InitiatorListComponent implements OnInit {
             ).subscribe({
               next: () => this.refresh(),
               error: (error: unknown) => {
-                this.dialogService.error(this.errorHandler.parseError(error));
+                this.errorHandler.showErrorModal(error);
               },
             });
           },
@@ -134,7 +134,7 @@ export class InitiatorListComponent implements OnInit {
 
   constructor(
     public emptyService: EmptyService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private dialogService: DialogService,
     private api: ApiService,
     private translate: TranslateService,
@@ -146,9 +146,12 @@ export class InitiatorListComponent implements OnInit {
 
   ngOnInit(): void {
     const initiators$ = this.iscsiService.getInitiators().pipe(
-      repeat({ delay: () => this.iscsiService.listenForDataRefresh() }),
       tap((initiators) => this.initiators = initiators),
     );
+
+    this.iscsiService.listenForDataRefresh()
+      .pipe(untilDestroyed(this))
+      .subscribe(() => this.dataProvider.load());
 
     this.dataProvider = new AsyncDataProvider(initiators$);
     this.refresh();

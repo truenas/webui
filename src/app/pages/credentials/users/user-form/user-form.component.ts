@@ -20,6 +20,7 @@ import { allCommands } from 'app/constants/all-commands.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
+import { isEmptyHomeDirectory } from 'app/helpers/user.helper';
 import { helptextUsers } from 'app/helptext/account/user-form';
 import { Option } from 'app/interfaces/option.interface';
 import { User, UserUpdate } from 'app/interfaces/user.interface';
@@ -51,11 +52,11 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { OneTimePasswordCreatedDialogComponent } from 'app/pages/credentials/users/one-time-password-created-dialog/one-time-password-created-dialog.component';
+import { OneTimePasswordCreatedDialog } from 'app/pages/credentials/users/one-time-password-created-dialog/one-time-password-created-dialog.component';
 import { userAdded, userChanged } from 'app/pages/credentials/users/store/user.actions';
 import { selectUsers } from 'app/pages/credentials/users/store/user.selectors';
 import { DownloadService } from 'app/services/download.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { StorageService } from 'app/services/storage.service';
 import { UserService } from 'app/services/user.service';
@@ -170,19 +171,16 @@ export class UserFormComponent implements OnInit {
   });
 
   readonly tooltips = {
-    full_name: helptextUsers.user_form_full_name_tooltip,
     username: helptextUsers.user_form_username_tooltip,
-    email: helptextUsers.user_form_email_tooltip,
     password: helptextUsers.user_form_password_tooltip,
-    password_edit: helptextUsers.user_form_password_edit_tooltip,
-    password_conf_edit: helptextUsers.user_form_password_edit_tooltip,
+    password_edit: helptextUsers.user_form_password_tooltip,
+    password_conf_edit: helptextUsers.user_form_password_tooltip,
     uid: helptextUsers.user_form_uid_tooltip,
     group: helptextUsers.user_form_primary_group_tooltip,
     group_create: helptextUsers.user_form_group_create_tooltip,
     groups: helptextUsers.user_form_aux_groups_tooltip,
     home: helptextUsers.user_form_dirs_explorer_tooltip,
     home_mode: helptextUsers.user_form_home_dir_permissions_tooltip,
-    home_create: helptextUsers.user_form_home_create_tooltip,
     sshpubkey: helptextUsers.user_form_auth_sshkey_tooltip,
     password_disabled: helptextUsers.user_form_auth_pw_enable_tooltip,
     one_time_password: helptextUsers.user_form_auth_one_time_pw_tooltip,
@@ -225,7 +223,7 @@ export class UserFormComponent implements OnInit {
     const home = this.form.value.home;
     const homeMode = this.form.value.home_mode;
     if (this.editingUser) {
-      if (this.editingUser.immutable || home === defaultHomePath) {
+      if (this.editingUser.immutable || isEmptyHomeDirectory(home)) {
         return '';
       }
       if (!homeCreate && this.editingUser.home !== home) {
@@ -264,8 +262,7 @@ export class UserFormComponent implements OnInit {
     private store$: Store<AppState>,
     private dialog: DialogService,
     private matDialog: MatDialog,
-    private userService: UserService,
-    public slideInRef: SlideInRef<User | undefined, boolean>,
+    public slideInRef: SlideInRef<User | undefined, User>,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
@@ -314,7 +311,7 @@ export class UserFormComponent implements OnInit {
     });
 
     this.form.controls.home.valueChanges.pipe(untilDestroyed(this)).subscribe((home) => {
-      if (home === defaultHomePath || this.editingUser?.immutable) {
+      if (isEmptyHomeDirectory(home) || this.editingUser?.immutable) {
         this.form.controls.home_mode.disable();
       } else {
         this.form.controls.home_mode.enable();
@@ -335,9 +332,9 @@ export class UserFormComponent implements OnInit {
       ),
     );
 
-    if (this.editingUser?.home && this.editingUser.home !== defaultHomePath) {
+    if (this.editingUser?.home && !isEmptyHomeDirectory(this.editingUser.home)) {
       this.storageService.filesystemStat(this.editingUser.home)
-        .pipe(this.errorHandler.catchError(), untilDestroyed(this))
+        .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
         .subscribe((stat) => {
           this.form.patchValue({ home_mode: stat.mode.toString(8).substring(2, 5) });
           this.homeModeOldValue = stat.mode.toString(8).substring(2, 5);
@@ -400,7 +397,7 @@ export class UserFormComponent implements OnInit {
             this.store$.dispatch(userChanged({ user }));
           }
           this.isFormLoading = false;
-          this.slideInRef.close({ response: true, error: null });
+          this.slideInRef.close({ response: user, error: null });
           this.cdr.markForCheck();
         },
         error: (error: unknown) => {
@@ -452,7 +449,7 @@ export class UserFormComponent implements OnInit {
     if (this.isNewUser && this.form.value.stig_password === UserStigPasswordOption.OneTimePassword) {
       return this.api.call('auth.generate_onetime_password', [{ username: this.form.value.username }]).pipe(
         switchMap((password) => {
-          this.matDialog.open(OneTimePasswordCreatedDialogComponent, { data: password });
+          this.matDialog.open(OneTimePasswordCreatedDialog, { data: password });
           return of(user);
         }),
       );

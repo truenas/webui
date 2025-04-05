@@ -21,7 +21,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export interface RaidzExtendDialogParams {
   poolId: number;
@@ -47,7 +47,7 @@ export interface RaidzExtendDialogParams {
     FileSizePipe,
   ],
 })
-export class RaidzExtendDialogComponent {
+export class RaidzExtendDialog {
   form = this.formBuilder.group({
     newDisk: ['', Validators.required],
   });
@@ -65,7 +65,7 @@ export class RaidzExtendDialogComponent {
     private errorHandler: ErrorHandlerService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
-    private dialogRef: MatDialogRef<RaidzExtendDialogComponent>,
+    private dialogRef: MatDialogRef<RaidzExtendDialog>,
     private devicesStore: DevicesStore,
     private dialogService: DialogService,
     @Inject(MAT_DIALOG_DATA) public data: RaidzExtendDialogParams,
@@ -89,7 +89,7 @@ export class RaidzExtendDialogComponent {
     )
       .afterClosed()
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => {

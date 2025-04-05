@@ -120,7 +120,7 @@ export class QueryToApiService<T> {
     value: LiteralValue | LiteralValue[],
   ): number | number[] {
     const parseValue = (memoryValue: LiteralValue): number => {
-      return property.parseValue(memoryValue as string) as number;
+      return property.parseValue?.(memoryValue as string) as number;
     };
 
     if (Array.isArray(value)) {

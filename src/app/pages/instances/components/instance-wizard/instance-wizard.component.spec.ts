@@ -4,27 +4,25 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import {
-  createRoutingFactory,
-  mockProvider,
-  SpectatorRouting,
-} from '@ngneat/spectator/jest';
+import { createRoutingFactory, mockProvider, SpectatorRouting } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { Observable, of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
+  DiskIoBus,
   VirtualizationDeviceType,
   VirtualizationGpuType,
   VirtualizationNicType,
   VirtualizationProxyProtocol,
   VirtualizationSource,
   VirtualizationType,
+  VolumeContentType,
 } from 'app/enums/virtualization.enum';
 import { Job } from 'app/interfaces/job.interface';
-import { VirtualizationInstance, VirtualizationVolume } from 'app/interfaces/virtualization.interface';
+import { VirtualizationGlobalConfig, VirtualizationInstance, VirtualizationVolume } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxIconGroupHarness } from 'app/modules/forms/ix-forms/components/ix-icon-group/ix-icon-group.harness';
@@ -35,10 +33,13 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
-  VolumesDialogComponent,
-} from 'app/pages/instances/components/common/volumes-dialog/volumes-dialog.component';
+  PciPassthroughDialog,
+} from 'app/pages/instances/components/common/pci-passthough-dialog/pci-passthrough-dialog.component';
+import { VolumesDialog } from 'app/pages/instances/components/common/volumes-dialog/volumes-dialog.component';
 import { InstanceWizardComponent } from 'app/pages/instances/components/instance-wizard/instance-wizard.component';
-import { VirtualizationImageWithId } from 'app/pages/instances/components/instance-wizard/select-image-dialog/select-image-dialog.component';
+import {
+  VirtualizationImageWithId,
+} from 'app/pages/instances/components/instance-wizard/select-image-dialog/select-image-dialog.component';
 import { VirtualizationConfigStore } from 'app/pages/instances/stores/virtualization-config.store';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { UploadService } from 'app/services/upload.service';
@@ -47,6 +48,13 @@ describe('InstanceWizardComponent', () => {
   let spectator: SpectatorRouting<InstanceWizardComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
+
+  const globalConfig = {
+    pool: 'poolio',
+    storage_pools: ['poolio'],
+    v4_network: 'v4_network',
+    v6_network: 'v6_network',
+  } as VirtualizationGlobalConfig;
 
   const createComponent = createRoutingFactory({
     component: InstanceWizardComponent,
@@ -62,20 +70,10 @@ describe('InstanceWizardComponent', () => {
       mockProvider(FilesystemService),
       mockApi([
         mockCall('virt.instance.query', [{
-          id: 'test',
           name: 'test',
-          type: VirtualizationType.Container,
-          autostart: false,
-          cpu: 'Intel Xeon',
-          memory: 2 * GiB,
         },
         {
-          id: 'testVM',
           name: 'testVM',
-          type: VirtualizationType.Vm,
-          autostart: false,
-          cpu: 'Intel Xeon',
-          memory: 4 * GiB,
         }] as VirtualizationInstance[]),
         mockCall('interface.has_pending_changes', false),
         mockCall('virt.device.nic_choices', {
@@ -101,6 +99,7 @@ describe('InstanceWizardComponent', () => {
         }),
         mockJob('virt.volume.import_iso', fakeSuccessfulJob({ name: 'image.iso' })),
         mockJob('virt.instance.create', fakeSuccessfulJob({ id: 'new' } as VirtualizationInstance)),
+        mockCall('virt.global.pool_choices', {}),
       ]),
       mockProvider(SnackbarService),
       mockProvider(DialogService, {
@@ -118,8 +117,9 @@ describe('InstanceWizardComponent', () => {
         })),
       }),
       mockProvider(VirtualizationConfigStore, {
+        state$: of({ isLoading: false, config: globalConfig }),
         initialize: jest.fn(),
-        config: jest.fn(() => ({ v4_network: 'v4_network', v6_network: 'v6_network' })),
+        config: jest.fn(() => globalConfig),
       }),
     ],
   });
@@ -131,11 +131,11 @@ describe('InstanceWizardComponent', () => {
   });
 
   describe('name validation', () => {
-    it('shows error for invalid name', async () => {
+    it('shows error for invalid name, it could only contain alphanumeric and hyphen characters', async () => {
       const instanceNameControl = await loader.getHarness(IxInputHarness.with({ label: 'Name' }));
 
       await form.fillForm({
-        Name: 'invalid+_@name',
+        Name: 'invalid_name',
       });
 
       expect(await instanceNameControl.getErrorText()).toBe('Invalid format or character');
@@ -239,10 +239,11 @@ describe('InstanceWizardComponent', () => {
         image: 'almalinux/8/cloud',
         memory: GiB,
         source_type: VirtualizationSource.Image,
-        zvol_path: null,
+        storage_pool: 'poolio',
         environment: {},
         enable_vnc: false,
         vnc_port: null,
+        volume: null,
       }]);
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
@@ -284,12 +285,13 @@ describe('InstanceWizardComponent', () => {
         image: 'almalinux/8/cloud',
         memory: GiB,
         source_type: VirtualizationSource.Image,
+        storage_pool: 'poolio',
         enable_vnc: false,
-        zvol_path: null,
         vnc_port: null,
         iso_volume: null,
         instance_type: VirtualizationType.Container,
         environment: {},
+        volume: null,
       }]);
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
@@ -321,19 +323,20 @@ describe('InstanceWizardComponent', () => {
 
       const diskList = await loader.getHarness(IxListHarness.with({ label: 'Disks' }));
       await diskList.pressAddButton();
-      const diskForm = await diskList.getLastListItem();
-      await diskForm.fillForm({
-        Source: '/mnt/source',
-      });
 
-      const proxiesList = await loader.getHarness(IxListHarness.with({ label: 'Proxies' }));
-      await proxiesList.pressAddButton();
-      const proxyForm = await proxiesList.getLastListItem();
-      await proxyForm.fillForm({
-        'Host Port': 3000,
-        'Host Protocol': 'TCP',
-        'Instance Port': 2000,
-        'Instance Protocol': 'UDP',
+      const diskForm = await diskList.getLastListItem();
+
+      jest.spyOn(spectator.inject(MatDialog), 'open').mockReturnValue({
+        afterClosed: () => of({
+          id: 'my-volume',
+        } as VirtualizationVolume),
+      } as MatDialogRef<VolumesDialog>);
+
+      const selectVolumeButton = await diskForm.getHarness(MatButtonHarness.with({ text: 'Select Volume' }));
+      await selectVolumeButton.click();
+
+      await diskForm.fillForm({
+        'I/O Bus': 'NVMe',
       });
 
       // TODO: Fix this to use IxCheckboxHarness
@@ -353,6 +356,17 @@ describe('InstanceWizardComponent', () => {
       const gpuDeviceCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'NVIDIA GeForce GTX 1080' }));
       await gpuDeviceCheckbox.check();
 
+      const matDialog = spectator.inject(MatDialog);
+      jest.spyOn(matDialog, 'open').mockReturnValue({
+        afterClosed: () => of([{
+          label: '0000:08:02.0 SCSI storage controller',
+          value: '0000:08:02.0',
+        }]),
+      } as MatDialogRef<PciPassthroughDialog>);
+
+      const addPciButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add PCI Passthrough' }));
+      await addPciButton.click();
+
       await form.fillForm({
         'Enable VNC': true,
         'VNC Port': 9000,
@@ -363,37 +377,38 @@ describe('InstanceWizardComponent', () => {
       const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create' }));
       await createButton.click();
 
-      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('virt.instance.create', [{
+      expect(spectator.inject(ApiService).job).toHaveBeenLastCalledWith('virt.instance.create', [{
         name: 'new',
         autostart: true,
         cpu: '1-2',
+        root_disk_io_bus: DiskIoBus.Nvme,
         instance_type: VirtualizationType.Vm,
         iso_volume: null,
         devices: [
           {
             dev_type: VirtualizationDeviceType.Disk,
-            source: '/mnt/source',
-          },
-          {
-            dev_type: VirtualizationDeviceType.Proxy,
-            source_port: 3000,
-            source_proto: VirtualizationProxyProtocol.Tcp,
-            dest_port: 2000,
-            dest_proto: VirtualizationProxyProtocol.Udp,
+            source: 'my-volume',
+            boot_priority: 1,
+            io_bus: DiskIoBus.Nvme,
           },
           { dev_type: VirtualizationDeviceType.Nic, nic_type: VirtualizationNicType.Bridged, parent: 'nic1' },
           { dev_type: VirtualizationDeviceType.Usb, product_id: '0003' },
           { dev_type: VirtualizationDeviceType.Gpu, pci: 'pci_0000_01_00_0', gpu_type: VirtualizationGpuType.Physical },
+          {
+            dev_type: VirtualizationDeviceType.Pci,
+            address: '0000:08:02.0',
+          },
         ],
         image: 'almalinux/8/cloud',
         memory: GiB,
         enable_vnc: true,
         vnc_port: 9000,
         source_type: VirtualizationSource.Image,
-        zvol_path: null,
+        storage_pool: 'poolio',
         root_disk_size: 9,
         vnc_password: 'testing',
         secure_boot: true,
+        volume: null,
       }]);
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
@@ -403,20 +418,22 @@ describe('InstanceWizardComponent', () => {
       jest.spyOn(spectator.inject(MatDialog), 'open').mockReturnValue({
         afterClosed: () => of({
           id: 'myiso.iso',
+          content_type: VolumeContentType.Iso,
         } as VirtualizationVolume),
-      } as MatDialogRef<VolumesDialogComponent>);
+      } as MatDialogRef<VolumesDialog>);
 
       const instanceType = await loader.getHarness(IxIconGroupHarness.with({ label: 'Virtualization Method' }));
       await instanceType.setValue('VM');
 
       await form.fillForm({
         Name: 'new',
-        'VM Image Options': 'Use an ISO image',
+        'VM Image Options': 'Upload ISO, import a zvol or use another volume',
         'CPU Configuration': '2',
         'Memory Size': '1 GiB',
+        'Root Disk I/O Bus': 'Virtio-BLK',
       });
 
-      const selectIso = await loader.getHarness(MatButtonHarness.with({ text: 'Select ISO' }));
+      const selectIso = await loader.getHarness(MatButtonHarness.with({ text: 'Select Volume' }));
       await selectIso.click();
 
       const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create' }));
@@ -426,33 +443,44 @@ describe('InstanceWizardComponent', () => {
         name: 'new',
         autostart: true,
         cpu: '2',
+        root_disk_io_bus: DiskIoBus.VirtioBlk,
         instance_type: VirtualizationType.Vm,
         devices: [],
         image: null,
         iso_volume: 'myiso.iso',
         source_type: VirtualizationSource.Iso,
+        storage_pool: 'poolio',
         enable_vnc: false,
         secure_boot: false,
         memory: 1073741824,
         vnc_port: null,
-        zvol_path: null,
         root_disk_size: 10,
+        volume: null,
       }]);
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
     });
 
-    it('creates new instance using zvol path when form is submitted', async () => {
+    it('creates new instance with a root volume when form is submitted', async () => {
+      jest.spyOn(spectator.inject(MatDialog), 'open').mockReturnValue({
+        afterClosed: () => of({
+          id: 'myvolume',
+          content_type: VolumeContentType.Block,
+        } as VirtualizationVolume),
+      } as MatDialogRef<VolumesDialog>);
+
       const instanceType = await loader.getHarness(IxIconGroupHarness.with({ label: 'Virtualization Method' }));
       await instanceType.setValue('VM');
 
       await form.fillForm({
         Name: 'new',
-        'VM Image Options': 'Use zvol with previously installed OS',
+        'VM Image Options': 'Upload ISO, import a zvol or use another volume',
         'CPU Configuration': '2',
         'Memory Size': '1 GiB',
-        Zvol: '/dev/zvol/test',
       });
+
+      const selectIso = await loader.getHarness(MatButtonHarness.with({ text: 'Select Volume' }));
+      await selectIso.click();
 
       const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create' }));
       await createButton.click();
@@ -461,19 +489,59 @@ describe('InstanceWizardComponent', () => {
         name: 'new',
         autostart: true,
         cpu: '2',
+        root_disk_io_bus: DiskIoBus.Nvme,
         instance_type: VirtualizationType.Vm,
         devices: [],
         image: null,
-        source_type: VirtualizationSource.Zvol,
+        iso_volume: null,
+        source_type: VirtualizationSource.Volume,
         enable_vnc: false,
         secure_boot: false,
         memory: 1073741824,
         vnc_port: null,
-        iso_volume: null,
-        zvol_path: '/dev/zvol/test',
+        root_disk_size: 10,
+        volume: 'myvolume',
+        storage_pool: 'poolio',
       }]);
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
+    });
+
+    it('does not show Proxies section when instance type is VM', async () => {
+      const instanceType = await loader.getHarness(IxIconGroupHarness.with({ label: 'Virtualization Method' }));
+      await instanceType.setValue('VM');
+
+      const proxiesList = await loader.getHarnessOrNull(IxListHarness.with({ label: 'Proxies' }));
+      expect(proxiesList).toBeNull();
+    });
+  });
+
+  describe('container | vm switching', () => {
+    it('should reset image field and clear disks when "Virtualization Method" changes', async () => {
+      const diskList = await loader.getHarness(IxListHarness.with({ label: 'Disks' }));
+      await diskList.pressAddButton();
+      const diskForm = await diskList.getLastListItem();
+
+      await form.fillForm({ Image: 'container-latest' });
+      await diskForm.fillForm({ Source: '/mnt/container-disk' });
+
+      expect(await form.getValues()).toMatchObject({ Image: 'container-latest' });
+      expect((await diskList.getListItems())).toHaveLength(1);
+
+      const instanceTypeControl = await loader.getHarness(IxIconGroupHarness.with({ label: 'Virtualization Method' }));
+      await instanceTypeControl.setValue('VM');
+
+      expect(await form.getValues()).toMatchObject({ Image: '' });
+      expect((await diskList.getListItems())).toHaveLength(0);
+
+      await diskList.pressAddButton();
+      await diskForm.fillForm({ Source: '/mnt/vm-disk' });
+      await form.fillForm({ Image: 'vm-latest' });
+
+      expect(await form.getValues()).toMatchObject({ Image: 'vm-latest' });
+      expect((await diskList.getListItems())).toHaveLength(1);
+
+      await instanceTypeControl.setValue('CONTAINER');
     });
   });
 });

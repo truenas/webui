@@ -16,7 +16,7 @@ import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextActiveDirectory } from 'app/helptext/directory-service/active-directory';
-import { NssInfoType } from 'app/interfaces/active-directory.interface';
+import { ActiveDirectoryUpdate, NssInfoType } from 'app/interfaces/active-directory.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -30,9 +30,9 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
-  LeaveDomainDialogComponent,
+  LeaveDomainDialog,
 } from 'app/pages/directory-service/components/leave-domain-dialog/leave-domain-dialog.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 
 @UntilDestroy()
@@ -146,14 +146,14 @@ export class ActiveDirectoryComponent implements OnInit {
         },
         error: (error: unknown) => {
           this.isLoading = false;
-          this.dialogService.error(this.errorHandler.parseError(error));
+          this.errorHandler.showErrorModal(error);
           this.cdr.markForCheck();
         },
       });
   }
 
   onLeaveDomainPressed(): void {
-    const dialog = this.matDialog.open(LeaveDomainDialogComponent);
+    const dialog = this.matDialog.open(LeaveDomainDialog);
     dialog.afterClosed().pipe(untilDestroyed(this)).subscribe((leftDomain) => {
       if (!leftDomain) {
         return;
@@ -168,7 +168,7 @@ export class ActiveDirectoryComponent implements OnInit {
     const values = {
       ...this.form.value,
       kerberos_principal: this.form.value.kerberos_principal || '',
-    };
+    } as ActiveDirectoryUpdate;
 
     this.dialogService.jobDialog(
       this.api.job('activedirectory.update', [values]),
@@ -176,7 +176,7 @@ export class ActiveDirectoryComponent implements OnInit {
     )
       .afterClosed()
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe({
@@ -204,7 +204,7 @@ export class ActiveDirectoryComponent implements OnInit {
         error: (error: unknown) => {
           this.isLoading = false;
           this.cdr.markForCheck();
-          this.dialogService.error(this.errorHandler.parseError(error));
+          this.errorHandler.showErrorModal(error);
         },
       });
   }

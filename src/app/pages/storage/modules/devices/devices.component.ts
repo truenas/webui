@@ -47,16 +47,15 @@ const raidzItems = [TopologyItemType.Raidz, TopologyItemType.Raidz1, TopologyIte
   ],
 })
 export class DevicesComponent implements OnInit, AfterViewInit {
-  protected poolId = signal<number>(null);
-  protected poolName = signal<string>(null);
+  protected poolId = signal<number | null>(null);
+  protected poolName = signal<string>('');
 
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.PoolWrite];
 
   protected isMobileView = signal(false);
   protected showMobileDetails = signal(false);
 
   protected selectedParentNode$ = this.devicesStore.selectedParentNode$;
-  protected disksWithSmartTestSupport$ = this.devicesStore.disksWithSmartTestSupport$;
   protected selectedTopologyCategory$ = this.devicesStore.selectedTopologyCategory$;
   protected selectedNode$ = this.devicesStore.selectedNode$;
   protected readonly hasTopLevelRaidz$: Observable<boolean> = this.devicesStore.nodes$.pipe(

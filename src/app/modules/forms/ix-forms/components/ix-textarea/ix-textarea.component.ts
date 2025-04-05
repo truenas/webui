@@ -69,11 +69,6 @@ export class IxTextareaComponent implements ControlValueAccessor {
     this.onTouch = onTouched;
   }
 
-  resetInput(): void {
-    this.value = '';
-    this.onChange('');
-  }
-
   setDisabledState?(isDisabled: boolean): void {
     this.isDisabled = isDisabled;
     this.cdr.markForCheck();

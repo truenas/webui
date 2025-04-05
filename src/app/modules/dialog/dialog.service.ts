@@ -11,13 +11,13 @@ import {
 } from 'app/interfaces/dialog.interface';
 import { ErrorReport } from 'app/interfaces/error-report.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { ConfirmDialogComponent } from 'app/modules/dialog/components/confirm-dialog/confirm-dialog.component';
-import { ErrorDialogComponent } from 'app/modules/dialog/components/error-dialog/error-dialog.component';
-import { FullScreenDialogComponent } from 'app/modules/dialog/components/full-screen-dialog/full-screen-dialog.component';
-import { GeneralDialogComponent, GeneralDialogConfig } from 'app/modules/dialog/components/general-dialog/general-dialog.component';
-import { InfoDialogComponent } from 'app/modules/dialog/components/info-dialog/info-dialog.component';
-import { JobProgressDialogComponent } from 'app/modules/dialog/components/job-progress/job-progress-dialog.component';
-import { MultiErrorDialogComponent } from 'app/modules/dialog/components/multi-error-dialog/multi-error-dialog.component';
+import { ConfirmDialog } from 'app/modules/dialog/components/confirm-dialog/confirm-dialog.component';
+import { ErrorDialog } from 'app/modules/dialog/components/error-dialog/error-dialog.component';
+import { FullScreenDialog } from 'app/modules/dialog/components/full-screen-dialog/full-screen-dialog.component';
+import { GeneralDialog, GeneralDialogConfig } from 'app/modules/dialog/components/general-dialog/general-dialog.component';
+import { InfoDialog } from 'app/modules/dialog/components/info-dialog/info-dialog.component';
+import { JobProgressDialog } from 'app/modules/dialog/components/job-progress/job-progress-dialog.component';
+import { MultiErrorDialog } from 'app/modules/dialog/components/multi-error-dialog/multi-error-dialog.component';
 
 @UntilDestroy()
 @Injectable({
@@ -34,7 +34,7 @@ export class DialogService {
   confirm(
     options: ConfirmOptions | ConfirmOptionsWithSecondaryCheckbox,
   ): Observable<boolean> | Observable<DialogWithSecondaryCheckboxResult> {
-    return this.matDialog.open(ConfirmDialogComponent, {
+    return this.matDialog.open(ConfirmDialog, {
       disableClose: options.disableClose || false,
       data: options,
       autoFocus: true,
@@ -46,7 +46,7 @@ export class DialogService {
     if (Array.isArray(error)) {
       error = this.cleanErrors(error);
       if (error.length > 1) {
-        const dialogRef = this.matDialog.open(MultiErrorDialogComponent, {
+        const dialogRef = this.matDialog.open(MultiErrorDialog, {
           data: error,
         });
         return dialogRef.afterClosed();
@@ -56,7 +56,7 @@ export class DialogService {
     if (!error?.message) {
       return of(false);
     }
-    const dialogRef = this.matDialog.open(ErrorDialogComponent, {
+    const dialogRef = this.matDialog.open(ErrorDialog, {
       data: error,
     });
     dialogRef.componentInstance.title = error.title;
@@ -79,7 +79,7 @@ export class DialogService {
   }
 
   info(title: string, info: string, isHtml = false): Observable<boolean> {
-    const dialogRef = this.matDialog.open(InfoDialogComponent);
+    const dialogRef = this.matDialog.open(InfoDialog);
 
     dialogRef.componentInstance.title = title;
     dialogRef.componentInstance.info = info;
@@ -90,7 +90,7 @@ export class DialogService {
   }
 
   warn(title: string, info: string, isHtml = false): Observable<boolean> {
-    const dialogRef = this.matDialog.open(InfoDialogComponent);
+    const dialogRef = this.matDialog.open(InfoDialog);
 
     dialogRef.componentInstance.title = title;
     dialogRef.componentInstance.info = info;
@@ -101,7 +101,7 @@ export class DialogService {
   }
 
   generalDialog(conf: GeneralDialogConfig): Observable<boolean> {
-    const dialogRef = this.matDialog.open(GeneralDialogComponent, {
+    const dialogRef = this.matDialog.open(GeneralDialog, {
       data: conf,
     });
 
@@ -109,7 +109,7 @@ export class DialogService {
   }
 
   fullScreenDialog(options: Partial<FullScreenDialogOptions> = {}): Observable<void> {
-    const dialogRef = this.matDialog.open(FullScreenDialogComponent, {
+    const dialogRef = this.matDialog.open(FullScreenDialog, {
       maxWidth: '100vw',
       maxHeight: '100vh',
       height: '100%',
@@ -157,7 +157,7 @@ export class DialogService {
       canMinimize?: boolean;
     } = {},
   ): JobProgressDialogRef<R> {
-    const matDialogRef = this.matDialog.open(JobProgressDialogComponent<R>, {
+    const matDialogRef = this.matDialog.open(JobProgressDialog<R>, {
       data: {
         job$,
         title,
@@ -165,6 +165,6 @@ export class DialogService {
         canMinimize,
       },
     });
-    return new JobProgressDialogRef<R>(matDialogRef, this.translate);
+    return new JobProgressDialogRef<R>(matDialogRef);
   }
 }

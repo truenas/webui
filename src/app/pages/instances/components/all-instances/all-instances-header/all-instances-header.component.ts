@@ -15,14 +15,18 @@ import {
   GlobalConfigFormComponent,
 } from 'app/pages/instances/components/all-instances/all-instances-header/global-config-form/global-config-form.component';
 import {
+  MapUserGroupIdsDialog,
+} from 'app/pages/instances/components/all-instances/all-instances-header/map-user-group-ids-dialog/map-user-group-ids-dialog.component';
+import {
   VirtualizationStateComponent,
 } from 'app/pages/instances/components/all-instances/all-instances-header/virtualization-state/virtualization-state.component';
 import {
-  VolumesDialogComponent,
+  VolumesDialog,
 } from 'app/pages/instances/components/common/volumes-dialog/volumes-dialog.component';
 import {
   VirtualizationConfigStore,
 } from 'app/pages/instances/stores/virtualization-config.store';
+import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 
 @UntilDestroy()
 @Component({
@@ -66,17 +70,28 @@ export class AllInstancesHeaderComponent {
     private slideIn: SlideIn,
     private matDialog: MatDialog,
     private configStore: VirtualizationConfigStore,
+    private instanceStore: VirtualizationInstancesStore,
   ) {}
 
   protected onGlobalConfiguration(): void {
     this.slideIn
       .open(GlobalConfigFormComponent, { data: this.config() })
       .pipe(untilDestroyed(this))
-      .subscribe();
+      .subscribe({
+        next: () => {
+          this.instanceStore.initialize();
+        },
+      });
   }
 
   protected onManageVolumes(): void {
-    this.matDialog.open(VolumesDialogComponent, {
+    this.matDialog.open(VolumesDialog, {
+      minWidth: '80vw',
+    });
+  }
+
+  protected onMapUserGroupIds(): void {
+    this.matDialog.open(MapUserGroupIdsDialog, {
       minWidth: '80vw',
     });
   }

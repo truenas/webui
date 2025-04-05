@@ -24,10 +24,10 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
-import { DeleteDatasetDialogComponent } from 'app/pages/datasets/components/delete-dataset-dialog/delete-dataset-dialog.component';
+import { DeleteDatasetDialog } from 'app/pages/datasets/components/delete-dataset-dialog/delete-dataset-dialog.component';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -69,9 +69,13 @@ export class DatasetDetailsCardComponent {
   ) { }
 
   protected readonly datasetCompression = computed(() => {
+    const compressRatioValue = this.dataset().compressratio?.value;
+    const compressionValue = this.dataset().compression?.value;
+    const compression = compressRatioValue ? `${compressRatioValue} (${compressionValue})` : compressionValue;
+
     return this.dataset()?.compression?.source === ZfsPropertySource.Inherited
-      ? this.translate.instant('Inherit ({value})', { value: this.dataset().compression?.value })
-      : this.dataset().compression?.value;
+      ? this.translate.instant('Inherit ({value})', { value: compression })
+      : compression;
   });
 
   protected readonly isFilesystem = computed(() => this.dataset().type === DatasetType.Filesystem);
@@ -84,7 +88,7 @@ export class DatasetDetailsCardComponent {
   protected readonly canBePromoted = computed(() => Boolean(this.dataset().origin?.parsed));
 
   deleteDataset(): void {
-    this.matDialog.open(DeleteDatasetDialogComponent, { data: this.dataset() })
+    this.matDialog.open(DeleteDatasetDialog, { data: this.dataset() })
       .afterClosed()
       .pipe(
         filter(Boolean),
@@ -101,7 +105,7 @@ export class DatasetDetailsCardComponent {
 
   promoteDataset(): void {
     this.api.call('pool.dataset.promote', [this.dataset().id])
-      .pipe(this.errorHandler.catchError(), untilDestroyed(this))
+      .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Dataset promoted successfully.'));
         this.datasetStore.datasetUpdated();

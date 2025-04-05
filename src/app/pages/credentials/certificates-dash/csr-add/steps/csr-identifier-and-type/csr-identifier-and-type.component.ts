@@ -14,7 +14,6 @@ import { helptextSystemCa } from 'app/helptext/system/ca';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { CertificateProfile, CertificateProfiles } from 'app/interfaces/certificate.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
@@ -22,7 +21,7 @@ import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-vali
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -73,7 +72,6 @@ export class CsrIdentifierAndTypeComponent implements OnInit, SummaryProvider {
     private translate: TranslateService,
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
-    private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
     private validators: IxValidatorsService,
   ) {}
@@ -108,7 +106,7 @@ export class CsrIdentifierAndTypeComponent implements OnInit, SummaryProvider {
 
   private loadProfiles(): void {
     this.api.call('webui.crypto.csr_profiles')
-      .pipe(this.errorHandler.catchError(), untilDestroyed(this))
+      .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
       .subscribe((profiles) => {
         this.profiles = profiles;
         const profileOptions = Object.keys(profiles).map((name) => ({ label: name, value: name }));

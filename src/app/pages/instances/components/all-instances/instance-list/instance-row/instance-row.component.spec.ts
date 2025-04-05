@@ -16,9 +16,10 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { ApiService } from 'app/modules/websocket/api.service';
 import { InstanceRowComponent } from 'app/pages/instances/components/all-instances/instance-list/instance-row/instance-row.component';
 import {
-  StopOptionsDialogComponent,
+  StopOptionsDialog,
   StopOptionsOperation,
 } from 'app/pages/instances/components/all-instances/instance-list/stop-options-dialog/stop-options-dialog.component';
+import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 
 const instance = {
   id: 'my-instance',
@@ -37,7 +38,7 @@ describe('InstanceRowComponent', () => {
       MapValuePipe,
     ],
     declarations: [
-      MockComponent(StopOptionsDialogComponent),
+      MockComponent(StopOptionsDialog),
     ],
     providers: [
       mockAuth(),
@@ -53,6 +54,10 @@ describe('InstanceRowComponent', () => {
             timeout: -1,
           }),
         })),
+      }),
+      mockProvider(VirtualizationInstancesStore, {
+        selectedInstance: () => instance,
+        selectInstance: jest.fn(),
       }),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
@@ -76,14 +81,14 @@ describe('InstanceRowComponent', () => {
       expect(spectator.query('.cell-name')).toHaveText('agi_instance');
     });
 
-    it('shows instance type', () => {
-      const cells = spectator.queryAll('.cell');
-      expect(cells[2]).toHaveText('Container');
-    });
-
     it('shows instance status', () => {
       const cells = spectator.queryAll('.cell');
-      expect(cells[3]).toHaveText('Running');
+      expect(cells[2]).toHaveText('Running');
+    });
+
+    it('shows instance type', () => {
+      const cells = spectator.queryAll('.cell');
+      expect(cells[3]).toHaveText('Container');
     });
 
     it('shows Stop and Restart button when instance is Running', async () => {
@@ -123,7 +128,7 @@ describe('InstanceRowComponent', () => {
       await stopIcon.click();
 
       expect(spectator.inject(MatDialog).open)
-        .toHaveBeenCalledWith(StopOptionsDialogComponent, { data: StopOptionsOperation.Stop });
+        .toHaveBeenCalledWith(StopOptionsDialog, { data: StopOptionsOperation.Stop });
 
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
@@ -138,7 +143,7 @@ describe('InstanceRowComponent', () => {
       await restartIcon.click();
 
       expect(spectator.inject(MatDialog).open)
-        .toHaveBeenCalledWith(StopOptionsDialogComponent, { data: StopOptionsOperation.Restart });
+        .toHaveBeenCalledWith(StopOptionsDialog, { data: StopOptionsOperation.Restart });
 
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(

@@ -53,11 +53,8 @@ export class EditPosixAceComponent implements OnInit, OnChanges {
   readonly permissions$ = of(mapToOptions(posixPermissionLabels, this.translate));
 
   readonly tooltips = {
-    tag: helptextAcl.posix_tag.tooltip,
     user: helptextAcl.dataset_acl_user_tooltip,
     group: helptextAcl.dataset_acl_group_tooltip,
-    permissions: helptextAcl.posix_perms.tooltip,
-    default: helptextAcl.posix_default.tooltip,
   };
 
   readonly userProvider = new UserComboboxProvider(this.userService);
@@ -119,9 +116,9 @@ export class EditPosixAceComponent implements OnInit, OnChanges {
     } as PosixAclItem;
 
     if (this.isUserTag) {
-      ace.who = formValues.user;
+      ace.who = formValues.user || undefined;
     } else if (this.isGroupTag) {
-      ace.who = formValues.group;
+      ace.who = formValues.group || undefined;
     }
 
     return ace;

@@ -40,14 +40,14 @@ import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { TablePagination } from 'app/modules/ix-table/interfaces/table-pagination.interface';
 import { createTable } from 'app/modules/ix-table/utils';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ApiKeyFormComponent } from 'app/pages/credentials/users/user-api-keys/components/api-key-form/api-key-form.component';
 import { userApiKeysElements } from 'app/pages/credentials/users/user-api-keys/user-api-keys.elements';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -116,24 +116,24 @@ export class UserApiKeysComponent implements OnInit {
           requiredRoles: this.requiredRoles,
           hidden: (row) => of(row.revoked),
           onClick: (row) => this.openForm(row),
-          disabled: (row) => this.authService.hasRole([Role.FullAdmin]).pipe(
+          disabled: (row) => this.authService.hasRole([Role.ApiKeyWrite]).pipe(
             withLatestFrom(this.authService.user$.pipe(
               filter((user) => !!user),
               map((user) => user.pw_name),
             )),
-            map(([isFullAdmin, username]) => !isFullAdmin && row.username !== username),
+            map(([canWriteApiKeys, username]) => !canWriteApiKeys && row.username !== username),
           ),
         },
         {
           iconName: iconMarker('mdi-delete'),
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
-          disabled: (row) => this.authService.hasRole([Role.FullAdmin]).pipe(
+          disabled: (row) => this.authService.hasRole([Role.ApiKeyWrite]).pipe(
             withLatestFrom(this.authService.user$.pipe(
               filter((user) => !!user),
               map((user) => user.pw_name),
             )),
-            map(([isFullAdmin, username]) => !isFullAdmin && row.username !== username),
+            map(([canWriteApiKeys, username]) => !canWriteApiKeys && row.username !== username),
           ),
           requiredRoles: this.requiredRoles,
         },
@@ -164,7 +164,7 @@ export class UserApiKeysComponent implements OnInit {
     private translate: TranslateService,
     private api: ApiService,
     private dialog: DialogService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private errorHandler: ErrorHandlerService,
     private authService: AuthService,
     private slideIn: SlideIn,

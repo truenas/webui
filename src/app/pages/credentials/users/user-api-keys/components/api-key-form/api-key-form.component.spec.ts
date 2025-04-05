@@ -17,7 +17,7 @@ import { LocaleService } from 'app/modules/language/locale.service';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ApiKeyFormComponent } from 'app/pages/credentials/users/user-api-keys/components/api-key-form/api-key-form.component';
-import { KeyCreatedDialogComponent } from 'app/pages/credentials/users/user-api-keys/components/key-created-dialog/key-created-dialog.component';
+import { KeyCreatedDialog } from 'app/pages/credentials/users/user-api-keys/components/key-created-dialog/key-created-dialog.component';
 
 describe('ApiKeyFormComponent', () => {
   let spectator: Spectator<ApiKeyFormComponent>;
@@ -79,7 +79,7 @@ describe('ApiKeyFormComponent', () => {
       expires_at: null,
     }]);
     expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: true, error: null });
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(KeyCreatedDialogComponent, {
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(KeyCreatedDialog, {
       data: 'generated-key',
     });
   });
@@ -123,8 +123,22 @@ describe('ApiKeyFormComponent', () => {
       expires_at: null,
     }]);
     expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: true, error: null });
-    expect(spectator.inject(MatDialog).open).not.toHaveBeenCalledWith(KeyCreatedDialogComponent, {
+    expect(spectator.inject(MatDialog).open).not.toHaveBeenCalledWith(KeyCreatedDialog, {
       data: 'generated-key',
+    });
+  });
+
+  it('disables username on edit', async () => {
+    await setupTest({
+      id: 1,
+      name: 'existing key',
+      username: 'root',
+      expires_at: { $date: parseISO('2024-11-22T00:00:00Z').getTime() },
+    });
+
+    const disabledFields = await form.getDisabledState();
+    expect(disabledFields).toMatchObject({
+      Username: true,
     });
   });
 
@@ -155,7 +169,7 @@ describe('ApiKeyFormComponent', () => {
       },
     }]);
     expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: true, error: null });
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(KeyCreatedDialogComponent, {
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(KeyCreatedDialog, {
       data: 'generated-key',
     });
   });

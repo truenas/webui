@@ -17,7 +17,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { Job } from 'app/interfaces/job.interface';
-import { RsyncTaskUi, RsyncTaskUpdate } from 'app/interfaces/rsync-task.interface';
+import { RsyncTask, RsyncTaskUi, RsyncTaskUpdate } from 'app/interfaces/rsync-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
@@ -43,7 +43,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { TaskService } from 'app/services/task.service';
 import { AppState } from 'app/store';
 
@@ -71,7 +71,7 @@ import { AppState } from 'app/store';
   ],
 })
 export class RsyncTaskCardComponent implements OnInit {
-  readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.SnapshotTaskWrite];
 
   rsyncTasks: RsyncTaskUi[] = [];
   dataProvider: AsyncDataProvider<RsyncTaskUi>;
@@ -182,8 +182,8 @@ export class RsyncTaskCardComponent implements OnInit {
       next: () => {
         this.getRsyncTasks();
       },
-      error: (err: unknown) => {
-        this.dialogService.error(this.errorHandler.parseError(err));
+      error: (error: unknown) => {
+        this.errorHandler.showErrorModal(error);
       },
     });
   }
@@ -205,7 +205,7 @@ export class RsyncTaskCardComponent implements OnInit {
       hideCheckbox: true,
     }).pipe(
       filter(Boolean),
-      tap(() => row.state = { state: JobState.Running }),
+      tap(() => this.updateRowStateAndJob(row, JobState.Running, row.job)),
       switchMap(() => this.api.job('rsynctask.run', [row.id])),
       tapOnce(() => this.snackbar.success(
         this.translate.instant('Rsync task «{name}» has started.', {
@@ -214,13 +214,12 @@ export class RsyncTaskCardComponent implements OnInit {
       )),
       catchError((error: unknown) => {
         this.getRsyncTasks();
-        this.dialogService.error(this.errorHandler.parseError(error));
+        this.errorHandler.showErrorModal(error);
         return EMPTY;
       }),
       untilDestroyed(this),
     ).subscribe((job: Job) => {
-      row.state = { state: job.state };
-      row.job = job;
+      this.updateRowStateAndJob(row, job.state, job);
       if (this.jobStates.get(job.id) !== job.state) {
         this.getRsyncTasks();
       }
@@ -254,10 +253,24 @@ export class RsyncTaskCardComponent implements OnInit {
         next: () => {
           this.getRsyncTasks();
         },
-        error: (err: unknown) => {
+        error: (error: unknown) => {
           this.getRsyncTasks();
-          this.dialogService.error(this.errorHandler.parseError(err));
+          this.errorHandler.showErrorModal(error);
         },
       });
+  }
+
+  private updateRowStateAndJob(row: RsyncTask, state: JobState, job: Job | null): void {
+    this.rsyncTasks = this.rsyncTasks.map((task) => {
+      if (task.id === row.id) {
+        return {
+          ...task,
+          state: { state },
+          job,
+        };
+      }
+      return task;
+    });
+    this.dataProvider.setRows(this.rsyncTasks);
   }
 }

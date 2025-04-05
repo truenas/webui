@@ -24,7 +24,7 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { CronDeleteDialogComponent } from 'app/pages/system/advanced/cron/cron-delete-dialog/cron-delete-dialog.component';
+import { CronDeleteDialog } from 'app/pages/system/advanced/cron/cron-delete-dialog/cron-delete-dialog.component';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { CronListComponent } from 'app/pages/system/advanced/cron/cron-list/cron-list.component';
 import { TaskService } from 'app/services/task.service';
@@ -120,7 +120,7 @@ describe('CronListComponent', () => {
   });
 
   it('shows confirmation dialog when Run Now button is pressed', async () => {
-    await table.clickToggle(0);
+    await table.expandRow(0);
 
     const runNowButton = await loader.getHarness(MatButtonHarness.with({ text: 'Run Now' }));
     await runNowButton.click();
@@ -135,7 +135,7 @@ describe('CronListComponent', () => {
   });
 
   it('shows form to edit an existing interface when Edit button is pressed', async () => {
-    await table.clickToggle(0);
+    await table.expandRow(0);
 
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
     await editButton.click();
@@ -147,12 +147,12 @@ describe('CronListComponent', () => {
   });
 
   it('deletes a cronjob with confirmation when Delete button is pressed', async () => {
-    await table.clickToggle(0);
+    await table.expandRow(0);
 
     const deleteIcon = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
     await deleteIcon.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(CronDeleteDialogComponent, {
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(CronDeleteDialog, {
       data: expect.objectContaining({ id: 1 }),
     });
   });

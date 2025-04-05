@@ -17,7 +17,7 @@ import { Job, JobProgress } from 'app/interfaces/job.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export interface JobProgressDialogConfig<Result> {
   job$: Observable<Job<Result>>;
@@ -67,7 +67,7 @@ export interface JobProgressDialogConfig<Result> {
     TestDirective,
   ],
 })
-export class JobProgressDialogComponent<T> implements OnInit, AfterViewChecked {
+export class JobProgressDialog<T> implements OnInit, AfterViewChecked {
   readonly jobSuccess = output<Job<T>>();
   readonly jobFailure = output<unknown>();
   readonly jobAborted = output<Job<T>>();
@@ -107,7 +107,7 @@ export class JobProgressDialogComponent<T> implements OnInit, AfterViewChecked {
   }
 
   constructor(
-    private dialogRef: MatDialogRef<JobProgressDialogComponent<T>, MatDialogConfig>,
+    private dialogRef: MatDialogRef<JobProgressDialog<T>, MatDialogConfig>,
     @Inject(MAT_DIALOG_DATA) public data: JobProgressDialogConfig<T>,
     private api: ApiService,
     private cdr: ChangeDetectorRef,
@@ -133,7 +133,7 @@ export class JobProgressDialogComponent<T> implements OnInit, AfterViewChecked {
           this.title = this.job.method;
         }
         if (!this.description) {
-          this.description = this.job.description;
+          this.description = this.job.description || '';
         }
         if (
           this.data.showRealtimeLogs
@@ -200,7 +200,7 @@ export class JobProgressDialogComponent<T> implements OnInit, AfterViewChecked {
 
   abortJob(): void {
     this.api.call('core.job_abort', [this.job.id]).pipe(
-      this.errorHandler.catchError(),
+      this.errorHandler.withErrorHandler(),
       untilDestroyed(this),
     )
       .subscribe(() => {

@@ -2,6 +2,7 @@ import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatCard, MatCardContent, MatCardTitle } from '@angular/material/card';
 import { UntilDestroy } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
@@ -9,6 +10,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TrainService } from 'app/pages/system/update/services/train.service';
 import { UpdateService } from 'app/pages/system/update/services/update.service';
 import { systemUpdateElements } from 'app/pages/system/update/update.elements';
+import { AppState } from 'app/store';
+import { SystemVersionCardComponent } from './components/system-version-card/system-version-card.component';
 import { TrainCardComponent } from './components/train-card/train-card.component';
 import { TrainInfoCardComponent } from './components/train-info-card/train-info-card.component';
 import { UpdateActionsCardComponent } from './components/update-actions-card/update-actions-card.component';
@@ -31,6 +34,7 @@ import { UpdateActionsCardComponent } from './components/update-actions-card/upd
     UpdateActionsCardComponent,
     TranslateModule,
     AsyncPipe,
+    SystemVersionCardComponent,
   ],
 })
 export class UpdateComponent {
@@ -40,5 +44,6 @@ export class UpdateComponent {
   constructor(
     protected trainService: TrainService,
     protected updateService: UpdateService,
+    private store$: Store<AppState>,
   ) {}
 }

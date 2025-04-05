@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -19,7 +20,7 @@ import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingNfs } from 'app/helptext/sharing';
 import { DatasetCreate } from 'app/interfaces/dataset.interface';
-import { NfsShare } from 'app/interfaces/nfs-share.interface';
+import { NfsShare, NfsShareUpdate } from 'app/interfaces/nfs-share.interface';
 import { GroupComboboxProvider } from 'app/modules/forms/ix-forms/classes/group-combobox-provider';
 import { UserComboboxProvider } from 'app/modules/forms/ix-forms/classes/user-combobox-provider';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -39,11 +40,12 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { DatasetService } from 'app/services/dataset-service/dataset.service';
+import { DatasetService } from 'app/services/dataset/dataset.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { UserService } from 'app/services/user.service';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { ServicesState } from 'app/store/services/services.reducer';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -88,6 +90,7 @@ export class NfsFormComponent implements OnInit {
     path: ['', Validators.required],
     comment: [''],
     enabled: [true],
+    expose_snapshots: [false],
     ro: [false],
     maproot_user: [''],
     maproot_group: [''],
@@ -108,11 +111,12 @@ export class NfsFormComponent implements OnInit {
       : this.translate.instant('Edit NFS Share');
   }
 
-  readonly requiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
+  protected readonly requiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
   readonly helptext = helptextSharingNfs;
   readonly userProvider = new UserComboboxProvider(this.userService);
   readonly groupProvider = new GroupComboboxProvider(this.userService);
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
+  readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
 
   readonly securityOptions$ = of([
     {
@@ -192,7 +196,12 @@ export class NfsFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const nfsShare = this.form.value;
+    const nfsShare = { ...this.form.value } as NfsShareUpdate;
+
+    if (!this.isEnterprise()) {
+      delete nfsShare.expose_snapshots;
+    }
+
     let request$: Observable<unknown>;
     if (this.existingNfsShare) {
       request$ = this.api.call('sharing.nfs.update', [this.existingNfsShare.id, nfsShare]);

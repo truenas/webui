@@ -53,7 +53,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
   ],
 })
 export class ScrubTaskFormComponent implements OnInit {
-  readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.PoolScrubWrite];
   protected editingTask: PoolScrubTask | undefined;
 
   get isNew(): boolean {
@@ -83,10 +83,7 @@ export class ScrubTaskFormComponent implements OnInit {
   );
 
   readonly tooltips = {
-    pool: helptextScrubForm.scrub_volume_tooltip,
     threshold: helptextScrubForm.scrub_threshold_tooltip,
-    description: helptextScrubForm.scrub_description_tooltip,
-    schedule: helptextScrubForm.scrub_picker_tooltip,
     enabled: helptextScrubForm.scrub_enabled_tooltip,
   };
 

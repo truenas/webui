@@ -11,6 +11,18 @@ export const virtualizationTypeLabels = new Map<VirtualizationType, string>([
   [VirtualizationType.Vm, T('VM')],
 ]);
 
+export enum DiskIoBus {
+  Nvme = 'NVME',
+  VirtioBlk = 'VIRTIO-BLK',
+  VirtioScsi = 'VIRTIO-SCSI',
+}
+
+export const diskIoBusLabels = new Map<DiskIoBus, string>([
+  [DiskIoBus.Nvme, 'NVMe'],
+  [DiskIoBus.VirtioBlk, 'Virtio-BLK'],
+  [DiskIoBus.VirtioScsi, 'Virtio-SCSI'],
+]);
+
 export const virtualizationTypeIcons = [
   {
     value: VirtualizationType.Container,
@@ -46,6 +58,7 @@ export enum VirtualizationDeviceType {
   Usb = 'USB',
   Tpm = 'TPM',
   Disk = 'DISK',
+  Pci = 'PCI',
   Gpu = 'GPU',
   Nic = 'NIC',
   Proxy = 'PROXY',
@@ -54,6 +67,7 @@ export enum VirtualizationDeviceType {
 export const virtualizationDeviceTypeLabels = new Map<VirtualizationDeviceType, string>([
   [VirtualizationDeviceType.Usb, 'USB'],
   [VirtualizationDeviceType.Tpm, 'TPM'],
+  [VirtualizationDeviceType.Pci, 'PCI'],
   [VirtualizationDeviceType.Disk, T('Disk')],
   [VirtualizationDeviceType.Gpu, T('GPU')],
   [VirtualizationDeviceType.Nic, T('NIC')],
@@ -102,5 +116,11 @@ export const virtualizationNicTypeLabels = new Map<VirtualizationNicType, string
 export enum VirtualizationSource {
   Image = 'IMAGE',
   Zvol = 'ZVOL',
+  Iso = 'ISO',
+  Volume = 'VOLUME',
+}
+
+export enum VolumeContentType {
+  Block = 'BLOCK',
   Iso = 'ISO',
 }

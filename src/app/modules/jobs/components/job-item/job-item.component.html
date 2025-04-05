@@ -62,13 +62,13 @@
       }
     </div>
 
-    @if (job().credentials) {
+    @if (job().credentials; as credentials) {
       <div>
         <div class="job-credentials">
           {{
           'Created by: {creationSource} ({creationType})' | translate: {
-          creationSource: getCredentialsCreationSource(job().credentials),
-          creationType: (job().credentials.type | mapValue: credentialTypeLabels | translate)
+          creationSource: getCredentialsCreationSource(credentials),
+          creationType: (credentials.type | mapValue: credentialTypeLabels | translate)
         }
         }}
       </div>

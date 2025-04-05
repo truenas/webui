@@ -45,15 +45,12 @@ export const helptextSystemEmail = {
   send_mail_method: {
     smtp: {
       placeholder: 'SMTP',
-      tooltip: T('Enable SMTP configuration'),
     },
     gmail: {
       placeholder: 'GMail OAuth',
-      tooltip: T('Enable GMail OAuth authentication.'),
     },
     outlook: {
       placeholder: 'Outlook OAuth',
-      tooltip: T('Enable Outlook OAuth authentication.'),
     },
   },
 

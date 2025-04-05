@@ -30,7 +30,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { acmeDnsAuthenticatorListElements } from 'app/pages/credentials/certificates-dash/acme-dns-authenticator-list/acme-dns-authenticator-list.elements';
 import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/forms/acmedns-form/acmedns-form.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -57,7 +57,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   ],
 })
 export class AcmeDnsAuthenticatorListComponent implements OnInit {
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.NetworkInterfaceWrite];
   protected readonly searchableElements = acmeDnsAuthenticatorListElements;
 
   filterString = '';
@@ -155,7 +155,7 @@ export class AcmeDnsAuthenticatorListComponent implements OnInit {
         filter(Boolean),
         switchMap(() => {
           return this.api.call('acme.dns.authenticator.delete', [authenticator.id]).pipe(
-            this.errorHandler.catchError(),
+            this.errorHandler.withErrorHandler(),
           );
         }),
         untilDestroyed(this),

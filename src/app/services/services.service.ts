@@ -11,6 +11,8 @@ export class ServicesService {
    */
   getRolesRequiredToManage(serviceName: ServiceName): Role[] {
     switch (serviceName) {
+      case ServiceName.Ftp:
+        return [Role.SharingFtpWrite, Role.ServiceWrite];
       case ServiceName.Cifs:
         return [Role.SharingSmbWrite, Role.ServiceWrite];
       case ServiceName.Iscsi:

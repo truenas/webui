@@ -36,10 +36,10 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { cronCardElements } from 'app/pages/system/advanced/cron/cron-card/cron-card.elements';
-import { CronDeleteDialogComponent } from 'app/pages/system/advanced/cron/cron-delete-dialog/cron-delete-dialog.component';
+import { CronDeleteDialog } from 'app/pages/system/advanced/cron/cron-delete-dialog/cron-delete-dialog.component';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row.interface';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { TaskService } from 'app/services/task.service';
 
@@ -68,7 +68,7 @@ import { TaskService } from 'app/services/task.service';
   ],
 })
 export class CronCardComponent implements OnInit {
-  readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.SystemCronWrite];
   protected readonly searchableElements = cronCardElements;
 
   title = helptextSystemAdvanced.fieldset_cron;
@@ -183,12 +183,12 @@ export class CronCardComponent implements OnInit {
           message,
         );
       },
-      error: (error: unknown) => this.dialog.error(this.errorHandler.parseError(error)),
+      error: (error: unknown) => this.errorHandler.showErrorModal(error),
     });
   }
 
   doDelete(row: CronjobRow): void {
-    this.matDialog.open(CronDeleteDialogComponent, {
+    this.matDialog.open(CronDeleteDialog, {
       data: row,
     }).afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))

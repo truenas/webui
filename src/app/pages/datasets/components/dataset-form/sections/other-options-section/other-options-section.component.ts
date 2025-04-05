@@ -250,7 +250,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
       return;
     }
 
-    let specialSmallBlockSize = getFieldValue(existing.special_small_block_size, this.parent()) as (number | 'INHERIT');
+    let specialSmallBlockSize: number | null | 'INHERIT' = getFieldValue(existing.special_small_block_size, this.parent()) as (number | 'INHERIT');
     if (specialSmallBlockSize !== 'INHERIT') {
       specialSmallBlockSize = this.formatter.convertHumanStringToNum(specialSmallBlockSize.toString());
     }

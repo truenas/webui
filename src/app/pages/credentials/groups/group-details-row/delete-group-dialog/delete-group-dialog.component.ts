@@ -14,11 +14,11 @@ import { Role } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -41,19 +41,19 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
     TranslateModule,
   ],
 })
-export class DeleteGroupDialogComponent {
-  readonly requiredRoles = [Role.AccountWrite];
+export class DeleteGroupDialog {
+  protected readonly requiredRoles = [Role.AccountWrite];
 
   deleteUsersCheckbox = new FormControl(false, { nonNullable: true });
 
   readonly deleteMessage = T('Are you sure you want to delete group <b>"{name}"</b>?');
 
   constructor(
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private api: ApiService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
-    private dialogRef: MatDialogRef<DeleteGroupDialogComponent>,
+    private dialogRef: MatDialogRef<DeleteGroupDialog>,
     @Inject(MAT_DIALOG_DATA) public group: Group,
     private errorHandler: ErrorHandlerService,
   ) { }
@@ -69,7 +69,7 @@ export class DeleteGroupDialogComponent {
     this.api.call('group.delete', [this.group.id, { delete_users: this.deleteUsersCheckbox.value }])
       .pipe(
         this.loader.withLoader(),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => {

@@ -12,14 +12,14 @@ import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-chec
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
-  DeleteGroupDialogComponent,
+  DeleteGroupDialog,
 } from 'app/pages/credentials/groups/group-details-row/delete-group-dialog/delete-group-dialog.component';
 
 describe('DeleteGroupDialogComponent', () => {
-  let spectator: Spectator<DeleteGroupDialogComponent>;
+  let spectator: Spectator<DeleteGroupDialog>;
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
-    component: DeleteGroupDialogComponent,
+    component: DeleteGroupDialog,
     imports: [
       ReactiveFormsModule,
     ],

@@ -29,21 +29,21 @@ import { AppUpgradeDialogConfig } from 'app/interfaces/app-upgrade-dialog-config
 import { App } from 'app/interfaces/app.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { CleanLinkPipe } from 'app/modules/pipes/clean-link/clean-link.pipe';
 import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { AppDeleteDialogComponent } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.component';
+import { AppDeleteDialog } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.component';
 import { AppDeleteDialogInputData, AppDeleteDialogOutputData } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.interface';
 import { CustomAppFormComponent } from 'app/pages/apps/components/custom-app-form/custom-app-form.component';
 import { AppRollbackModalComponent } from 'app/pages/apps/components/installed-apps/app-rollback-modal/app-rollback-modal.component';
-import { AppUpgradeDialogComponent } from 'app/pages/apps/components/installed-apps/app-upgrade-dialog/app-upgrade-dialog.component';
+import { AppUpgradeDialog } from 'app/pages/apps/components/installed-apps/app-upgrade-dialog/app-upgrade-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { AppVersionPipe } from 'app/pages/dashboard/widgets/apps/common/utils/app-version.pipe';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { RedirectService } from 'app/services/redirect.service';
 
 @UntilDestroy()
@@ -95,12 +95,24 @@ export class AppInfoCardComponent {
 
   protected readonly appDetailsRouterUrl = computed<string[]>(() => {
     const app = this.app();
-    return ['/apps', 'available', app.metadata.train, app.id];
+    return ['/apps', 'available', app.metadata.train, app.metadata.name];
+  });
+
+  protected readonly name = computed(() => {
+    if (this.app().name === this.app().metadata.name) {
+      return this.app().name;
+    }
+
+    if (this.app().custom_app) {
+      return this.app().name;
+    }
+
+    return `${this.app().name} (${this.app().metadata.name})`;
   });
 
   constructor(
     private api: ApiService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private redirect: RedirectService,
     private errorHandler: ErrorHandlerService,
     private appService: ApplicationsService,
@@ -130,7 +142,7 @@ export class AppInfoCardComponent {
     this.appService.getAppUpgradeSummary(name).pipe(
       this.loader.withLoader(),
       switchMap(
-        (summary) => this.matDialog.open(AppUpgradeDialogComponent, {
+        (summary) => this.matDialog.open(AppUpgradeDialog, {
           width: '50vw',
           minWidth: '500px',
           maxWidth: '750px',
@@ -147,7 +159,7 @@ export class AppInfoCardComponent {
           { title: helptextApps.apps.upgrade_dialog.job },
         ).afterClosed(),
       ),
-      this.errorHandler.catchError(),
+      this.errorHandler.withErrorHandler(),
       untilDestroyed(this),
     ).subscribe();
   }
@@ -168,15 +180,15 @@ export class AppInfoCardComponent {
       this.loader.withLoader(),
       switchMap((ixVolumeExists) => {
         return this.matDialog.open<
-          AppDeleteDialogComponent,
+          AppDeleteDialog,
           AppDeleteDialogInputData,
           AppDeleteDialogOutputData
-        >(AppDeleteDialogComponent, {
+        >(AppDeleteDialog, {
           data: { name, showRemoveVolumes: ixVolumeExists },
         }).afterClosed();
       }),
       filter(Boolean),
-      this.errorHandler.catchError(),
+      this.errorHandler.withErrorHandler(),
       untilDestroyed(this),
     )
       .subscribe((options) => this.executeDelete(name, options));
@@ -194,7 +206,7 @@ export class AppInfoCardComponent {
       .afterClosed()
       .pipe(
         filter(Boolean),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => {
@@ -239,7 +251,7 @@ export class AppInfoCardComponent {
         this.api.job('app.convert_to_custom', [appName]),
         { title: this.translate.instant('Convert to custom app') },
       ).afterClosed()),
-      this.errorHandler.catchError(),
+      this.errorHandler.withErrorHandler(),
       untilDestroyed(this),
     ).subscribe();
   }

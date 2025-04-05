@@ -56,8 +56,6 @@ export class WidgetCpuComponent {
     map((update) => update.fields.cpu),
   ));
 
-  cpuTemp = computed(() => this.cpuData()?.cpu.temp);
-
   protected isLoading = computed(() => !this.cpuData() || !this.sysInfo());
   protected cpuModel = computed(() => this.sysInfo()?.model);
   protected coreCount = computed(() => this.sysInfo()?.physical_cores);

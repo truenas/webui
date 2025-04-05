@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, TrackByFunction,
   input,
@@ -64,6 +65,7 @@ interface BackupRow {
     BackupTaskEmptyComponent,
     BackupTaskActionsComponent,
     TranslateModule,
+    NgTemplateOutlet,
   ],
 })
 export class WidgetBackupComponent implements OnInit {

@@ -26,10 +26,10 @@ import { DownloadService } from 'app/services/download.service';
     TranslateModule,
   ],
 })
-export class ViewCertificateDialogComponent {
+export class ViewCertificateDialog {
   constructor(
     private download: DownloadService,
-    public dialogRef: MatDialogRef<ViewCertificateDialogComponent>,
+    public dialogRef: MatDialogRef<ViewCertificateDialog>,
     @Inject(MAT_DIALOG_DATA) public data: ViewCertificateDialogData,
   ) {}
 

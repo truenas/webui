@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import { MatDialogModule } from '@angular/material/dialog';
+import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
@@ -12,7 +12,7 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { FipsService } from 'app/services/fips.service';
+import { RebootService } from 'app/services/reboot.service';
 import { AppState } from 'app/store';
 import { selectCanFailover, selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectOtherNodeRebootInfo, selectThisNodeRebootInfo } from 'app/store/reboot-info/reboot-info.selectors';
@@ -35,7 +35,7 @@ import { selectOtherNodeRebootInfo, selectThisNodeRebootInfo } from 'app/store/r
     FormActionsComponent,
   ],
 })
-export class RebootRequiredDialogComponent {
+export class RebootRequiredDialog {
   thisNodeRebootReasons = toSignal(this.store$.select(selectThisNodeRebootInfo).pipe(
     map((info) => info?.reboot_required_reasons || []),
   ));
@@ -57,15 +57,18 @@ export class RebootRequiredDialogComponent {
 
   constructor(
     private store$: Store<AppState>,
-    private fips: FipsService,
+    private reboot: RebootService,
     private fb: NonNullableFormBuilder,
+    private dialogRef: MatDialogRef<RebootRequiredDialog>,
   ) {}
 
   rebootLocalNode(): void {
-    this.fips.restart();
+    this.reboot.restart();
   }
 
   rebootRemoteNode(): void {
-    this.fips.restartRemote().pipe(untilDestroyed(this)).subscribe();
+    this.reboot.restartRemote().pipe(untilDestroyed(this)).subscribe(() => {
+      this.dialogRef.close();
+    });
   }
 }

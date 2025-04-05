@@ -118,7 +118,9 @@ describe('InterfacesCardComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(InterfaceFormComponent);
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(InterfaceFormComponent, {
+      data: { interfaces },
+    });
     expect(spectator.component.interfacesUpdated.emit).toHaveBeenCalled();
     expect(spectator.inject(InterfacesStore).loadInterfaces).toHaveBeenCalledTimes(2);
   });
@@ -128,7 +130,7 @@ describe('InterfacesCardComponent', () => {
     await editIcon.click();
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(InterfaceFormComponent, {
-      data: interfaces[0],
+      data: { interface: interfaces[0] },
     });
     expect(spectator.component.interfacesUpdated.emit).toHaveBeenCalled();
     expect(spectator.inject(InterfacesStore).loadInterfaces).toHaveBeenCalledTimes(2);

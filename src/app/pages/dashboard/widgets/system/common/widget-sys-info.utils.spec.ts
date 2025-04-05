@@ -5,14 +5,14 @@ import {
 
 describe('getSystemVersion', () => {
   it('should return the correct system version when valid input is provided', () => {
-    expect(getSystemVersion('TrueNAS-COMMUNITY_EDITION-25.10.0-MASTER-20250126-184805', Codename.Goldeye)).toBe(
-      'Goldeye-25.10.0-MASTER-20250126-184805',
+    expect(getSystemVersion('25.10.0-MASTER-20250126-184805', Codename.Goldeye)).toBe(
+      '25.10.0-MASTER-20250126-184805 - Goldeye',
     );
   });
 
   it('should initial version if second argument is skipped', () => {
-    expect(getSystemVersion('TrueNAS-COMMUNITY_EDITION-25.10.0-MASTER-20250126-184805')).toBe(
-      'TrueNAS-COMMUNITY_EDITION-25.10.0-MASTER-20250126-184805',
+    expect(getSystemVersion('25.10.0-MASTER-20250126-184805')).toBe(
+      '25.10.0-MASTER-20250126-184805',
     );
   });
 });
@@ -30,20 +30,24 @@ describe('getServerProduct', () => {
 describe('getProductImageSrc', () => {
   it('should return the correct image path for provided product', () => {
     expect(
-      getProductImageSrc('TRUENAS-M40-HA', true),
+      getProductImageSrc('TRUENAS-M40-HA'),
     ).toBe('assets/images/servers/M40.png');
     expect(
-      getProductImageSrc('TRUENAS-MINI-R', true),
+      getProductImageSrc('TRUENAS-MINI-R'),
     ).toBe('assets/images/servers/MINI-R.png');
     expect(
-      getProductImageSrc('FREENAS-MINI-XL', true),
+      getProductImageSrc('FREENAS-MINI-XL'),
     ).toBe('assets/images/freenas_mini_xl_cropped.png');
     expect(
-      getProductImageSrc('TRUENAS-MINI-R', true),
+      getProductImageSrc('TRUENAS-MINI-R'),
     ).toBe('assets/images/servers/MINI-R.png');
     expect(
-      getProductImageSrc('FREENAS-MINI-XL', true),
+      getProductImageSrc('FREENAS-MINI-XL'),
     ).toBe('assets/images/freenas_mini_xl_cropped.png');
+  });
+
+  it('returns null for missing product image', () => {
+    expect(getProductImageSrc('UNKNOWN-PRODUCT')).toBeNull();
   });
 });
 

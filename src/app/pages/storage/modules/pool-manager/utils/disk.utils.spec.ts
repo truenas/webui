@@ -11,7 +11,7 @@ describe('hasNonUniqueSerial', () => {
   });
 
   it('return false if disk does not have a duplicate serial', () => {
-    expect(hasNonUniqueSerial({ duplicate_serial: [] } as DetailsDisk)).toBe(false);
+    expect(hasNonUniqueSerial({ duplicate_serial: [] as string[] } as DetailsDisk)).toBe(false);
   });
 });
 
@@ -26,11 +26,11 @@ describe('hasExportedPool', () => {
 });
 
 describe('filterAllowedDisks', () => {
-  const normalDisk = { duplicate_serial: [] } as DetailsDisk;
+  const normalDisk = { duplicate_serial: [] as string[] } as DetailsDisk;
   const nonUniqueSerialDisk = { duplicate_serial: ['duplicate'] } as DetailsDisk;
-  const exportedPoolDisk = { duplicate_serial: [], exported_zpool: 'exported' } as DetailsDisk;
-  const anotherExportedPoolDisk = { duplicate_serial: [], exported_zpool: 'another' } as DetailsDisk;
-  const enclosureDisk = { duplicate_serial: [], enclosure: { id: 'id1' } } as DetailsDisk;
+  const exportedPoolDisk = { duplicate_serial: [] as string[], exported_zpool: 'exported' } as DetailsDisk;
+  const anotherExportedPoolDisk = { duplicate_serial: [] as string[], exported_zpool: 'another' } as DetailsDisk;
+  const enclosureDisk = { duplicate_serial: [] as string[], enclosure: { id: 'id1' } } as DetailsDisk;
 
   const disks = [
     normalDisk,

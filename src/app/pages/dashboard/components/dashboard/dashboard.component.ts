@@ -34,7 +34,7 @@ import { DashboardStore } from 'app/pages/dashboard/services/dashboard.store';
 import { getDefaultWidgets } from 'app/pages/dashboard/services/get-default-widgets';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetGroup } from 'app/pages/dashboard/types/widget-group.interface';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { WidgetGroupControlsComponent } from './widget-group-controls/widget-group-controls.component';
@@ -178,7 +178,7 @@ export class DashboardComponent implements OnInit {
 
   protected onSave(): void {
     this.dashboardStore.save(this.renderedGroups())
-      .pipe(this.errorHandler.catchError(), untilDestroyed(this))
+      .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
       .subscribe(() => {
         this.isEditing.set(false);
         this.snackbar.success(this.translate.instant('Dashboard settings saved'));
@@ -211,7 +211,7 @@ export class DashboardComponent implements OnInit {
           return;
         }
 
-        this.renderedGroups.set(groups);
+        this.renderedGroups.set(groups || []);
       });
   }
 }

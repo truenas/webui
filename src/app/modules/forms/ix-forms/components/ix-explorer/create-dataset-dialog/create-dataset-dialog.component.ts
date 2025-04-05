@@ -17,14 +17,13 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { DatasetCaseSensitivity } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
 import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { forbiddenValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { datasetNameTooLong } from 'app/pages/datasets/components/dataset-form/utils/name-length-validation';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -49,8 +48,8 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
     TestDirective,
   ],
 })
-export class CreateDatasetDialogComponent implements OnInit {
-  readonly requiredRoles = [Role.DatasetWrite];
+export class CreateDatasetDialog implements OnInit {
+  protected readonly requiredRoles = [Role.DatasetWrite];
 
   isLoading$ = new BehaviorSubject(false);
   form = this.fb.group({
@@ -66,9 +65,8 @@ export class CreateDatasetDialogComponent implements OnInit {
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
     private api: ApiService,
-    private dialog: DialogService,
     private errorHandler: ErrorHandlerService,
-    private dialogRef: MatDialogRef<CreateDatasetDialogComponent>,
+    private dialogRef: MatDialogRef<CreateDatasetDialog>,
     @Inject(MAT_DIALOG_DATA) private data: { parentId: string; dataset: DatasetCreate },
   ) {}
 
@@ -94,7 +92,7 @@ export class CreateDatasetDialogComponent implements OnInit {
         },
         error: (error: unknown) => {
           this.isLoading$.next(false);
-          this.dialog.error(this.errorHandler.parseError(error));
+          this.errorHandler.showErrorModal(error);
         },
       });
   }
@@ -118,7 +116,7 @@ export class CreateDatasetDialogComponent implements OnInit {
       },
       error: (error: unknown) => {
         this.isLoading$.next(false);
-        this.dialog.error(this.errorHandler.parseError(error));
+        this.errorHandler.showErrorModal(error);
         this.dialogRef.close(false);
       },
     });
@@ -133,7 +131,7 @@ export class CreateDatasetDialogComponent implements OnInit {
       }
 
       return childName;
-    }) || []);
+    }) || []).filter((name): name is string => name !== undefined);
 
     this.form.controls.name.addValidators([
       datasetNameTooLong(this.parent.name),

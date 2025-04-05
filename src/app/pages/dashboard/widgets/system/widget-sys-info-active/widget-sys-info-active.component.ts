@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from '@angular/common';
 import {
   Component, ChangeDetectionStrategy, input,
   computed,
@@ -19,6 +20,7 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { selectUpdateJobForActiveNode } from 'app/modules/jobs/store/job.selectors';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { UseEnterpriseMarketingLinkComponent } from 'app/modules/use-enterprise-marketing-link/use-enterprise-marketing-link.component';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { ProductImageComponent } from 'app/pages/dashboard/widgets/system/common/product-image/product-image.component';
@@ -49,9 +51,11 @@ import {
     MatList,
     MatListItem,
     NgxSkeletonLoaderModule,
+    NgTemplateOutlet,
     CopyButtonComponent,
     TranslateModule,
     UptimePipe,
+    UseEnterpriseMarketingLinkComponent,
   ],
 })
 export class WidgetSysInfoActiveComponent {
@@ -65,7 +69,7 @@ export class WidgetSysInfoActiveComponent {
   protected readonly getLabelForContractType = getLabelForContractType;
 
   updateAvailable = toSignal(this.resources.updateAvailable$);
-  systemInfo = toSignal(this.resources.systemInfo$.pipe(
+  systemInfo = toSignal(this.resources.dashboardSystemInfo$.pipe(
     map((state) => state.value),
     filter((value) => !!value),
   ));
@@ -93,7 +97,7 @@ export class WidgetSysInfoActiveComponent {
     private store$: Store<AppState>,
     private localeService: LocaleService,
   ) {
-    this.resources.refreshSystemInfo();
+    this.resources.refreshDashboardSystemInfo();
   }
 
   isFirstRender = true;

@@ -3,7 +3,9 @@ import {
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatAnchor, MatButton } from '@angular/material/button';
-import { MAT_DIALOG_DATA, MatDialogClose, MatDialogTitle } from '@angular/material/dialog';
+import {
+  MAT_DIALOG_DATA, MatDialogClose, MatDialogContent, MatDialogTitle,
+} from '@angular/material/dialog';
 import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
@@ -13,7 +15,7 @@ import { helptextSnapshots } from 'app/helptext/storage/snapshots/snapshots';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 
@@ -36,10 +38,11 @@ import { ApiService } from 'app/modules/websocket/api.service';
     MatDialogClose,
     RouterLink,
     MatAnchor,
+    MatDialogContent,
   ],
 })
-export class SnapshotCloneDialogComponent implements OnInit {
-  readonly requiredRoles = [Role.SnapshotWrite];
+export class SnapshotCloneDialog implements OnInit {
+  protected readonly requiredRoles = [Role.SnapshotWrite];
 
   wasDatasetCloned = false;
 
@@ -53,7 +56,7 @@ export class SnapshotCloneDialogComponent implements OnInit {
 
   constructor(
     private api: ApiService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private fb: FormBuilder,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
@@ -69,7 +72,7 @@ export class SnapshotCloneDialogComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.api.call('zfs.snapshot.clone', [{
+    this.api.call('pool.snapshot.clone', [{
       snapshot: this.snapshotName,
       dataset_dst: this.datasetName,
     }])

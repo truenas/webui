@@ -35,7 +35,7 @@ export class UserService {
     let queryArgs: QueryFilter<Group>[] = [];
     search = search.trim();
     if (search.length > 0) {
-      queryArgs = [['group', '^', search]];
+      queryArgs = [['group', '~', `(?i).*${search.replaceAll('\\', '\\\\')}`]];
     }
     if (hideBuiltIn) {
       queryArgs = queryArgs.concat([['builtin', '=', false]]);

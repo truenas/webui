@@ -37,6 +37,16 @@ ix-fieldset {
   grid-template-columns: 1fr 1fr;
 }
 
+.pci-devices {
+  margin-bottom: 20px;
+
+  .device {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 7px;
+  }
+}
+
 ngx-skeleton-loader {
   ::ng-deep span {
     min-height: 25px;

@@ -15,9 +15,7 @@ import { SmbEncryption, smbEncryptionLabels } from 'app/enums/smb-encryption.enu
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextServiceSmb } from 'app/helptext/services/components/service-smb';
-import { BindIp } from 'app/interfaces/bind-ip.interface';
 import { SmbConfigUpdate } from 'app/interfaces/smb-config.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SimpleAsyncComboboxProvider } from 'app/modules/forms/ix-forms/classes/simple-async-combobox-provider';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -35,8 +33,12 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UserService } from 'app/services/user.service';
+
+interface BindIp {
+  bindIp: string;
+}
 
 @UntilDestroy({ arrayName: 'subscriptions' })
 @Component({
@@ -98,7 +100,7 @@ export class ServiceSmbComponent implements OnInit {
     encryption: [SmbEncryption.Default],
   });
 
-  readonly requiredRoles = [Role.SharingSmbWrite];
+  protected readonly requiredRoles = [Role.SharingSmbWrite];
   readonly helptext = helptextServiceSmb;
   readonly tooltips = {
     netbiosname: helptextServiceSmb.cifs_srv_netbiosname_tooltip,
@@ -138,8 +140,8 @@ export class ServiceSmbComponent implements OnInit {
     map(([options, config]) => {
       return [
         ...new Set<string>([
-          ...config.bindip.map((item) => item.$ipv4_interface),
-          ...options.map((option) => `${option.value}/32`),
+          ...config.bindip,
+          ...options.map((option) => `${option.value}`),
         ]),
       ].map((value) => ({ label: value, value }));
     }),
@@ -153,7 +155,6 @@ export class ServiceSmbComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
     private fb: FormBuilder,
-    private dialogService: DialogService,
     private translate: TranslateService,
     private userService: UserService,
     private validatorsService: IxValidatorsService,
@@ -171,13 +172,13 @@ export class ServiceSmbComponent implements OnInit {
     this.api.call('smb.config').pipe(untilDestroyed(this)).subscribe({
       next: (config) => {
         config.bindip.forEach(() => this.addBindIp());
-        this.form.patchValue(config);
+        this.form.patchValue({ ...config, bindip: config.bindip.map((ip) => ({ bindIp: ip })) });
         this.isFormLoading = false;
         this.cdr.markForCheck();
       },
       error: (error: unknown) => {
         this.isFormLoading = false;
-        this.dialogService.error(this.errorHandler.parseError(error));
+        this.errorHandler.showErrorModal(error);
         this.cdr.markForCheck();
       },
     });
@@ -185,7 +186,7 @@ export class ServiceSmbComponent implements OnInit {
 
   addBindIp(): void {
     this.form.controls.bindip.push(this.fb.group({
-      $ipv4_interface: ['', [Validators.required]],
+      bindIp: ['', [Validators.required]],
     }));
   }
 
@@ -198,7 +199,10 @@ export class ServiceSmbComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const values: SmbConfigUpdate = this.form.value;
+    const values: SmbConfigUpdate = {
+      ...this.form.value,
+      bindip: this.form.value.bindip.map((value) => value.bindIp),
+    };
 
     this.isFormLoading = true;
     this.api.call('smb.update', [values])

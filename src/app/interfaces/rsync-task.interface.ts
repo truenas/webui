@@ -26,11 +26,11 @@ export interface RsyncTask {
   remotehost: string;
   remotemodule: string;
   remotepath: string;
-  remoteport: number;
+  remoteport: number | null;
   schedule: Schedule;
   times: boolean;
   user: string;
-  ssh_credentials: KeychainSshCredentials;
+  ssh_credentials: KeychainSshCredentials | null;
 }
 
 export type RsyncTaskUpdate = {

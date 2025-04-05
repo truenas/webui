@@ -11,12 +11,12 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row.interface';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -36,17 +36,17 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
     TranslateModule,
   ],
 })
-export class CronDeleteDialogComponent {
-  readonly requiredRoles = [Role.FullAdmin];
+export class CronDeleteDialog {
+  protected readonly requiredRoles = [Role.SystemCronWrite];
 
   readonly deleteMessage = T('Are you sure you want to delete cronjob <b>"{name}"</b>?');
 
   constructor(
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private api: ApiService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
-    private dialogRef: MatDialogRef<CronDeleteDialogComponent>,
+    private dialogRef: MatDialogRef<CronDeleteDialog>,
     @Inject(MAT_DIALOG_DATA) public cronjob: CronjobRow,
     private errorHandler: ErrorHandlerService,
   ) { }
@@ -55,7 +55,7 @@ export class CronDeleteDialogComponent {
     this.api.call('cronjob.delete', [this.cronjob.id])
       .pipe(
         this.loader.withLoader(),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => {

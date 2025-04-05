@@ -10,7 +10,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   filter, Observable, Subscription, switchMap, tap,
 } from 'rxjs';
@@ -18,9 +18,9 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { AlertSlice, selectImportantUnreadAlertsCount } from 'app/modules/alerts/store/alert.selectors';
-import { RebootRequiredDialogComponent } from 'app/modules/dialog/components/reboot-required-dialog/reboot-required-dialog.component';
-import { UpdateDialogComponent } from 'app/modules/dialog/components/update-dialog/update-dialog.component';
-import { FeedbackDialogComponent } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
+import { RebootRequiredDialog } from 'app/modules/dialog/components/reboot-required-dialog/reboot-required-dialog.component';
+import { UpdateDialog } from 'app/modules/dialog/components/update-dialog/update-dialog.component';
+import { FeedbackDialog } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { GlobalSearchTriggerComponent } from 'app/modules/global-search/components/global-search-trigger/global-search-trigger.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { selectUpdateJob } from 'app/modules/jobs/store/job.selectors';
@@ -29,7 +29,6 @@ import {
   DirectoryServicesIndicatorComponent,
 } from 'app/modules/layout/topbar/directory-services-indicator/directory-services-indicator.component';
 import { HaStatusIconComponent } from 'app/modules/layout/topbar/ha-status-icon/ha-status-icon.component';
-import { IxLogoComponent } from 'app/modules/layout/topbar/ix-logo/ix-logo.component';
 import { JobsIndicatorComponent } from 'app/modules/layout/topbar/jobs-indicator/jobs-indicator.component';
 import { PowerMenuComponent } from 'app/modules/layout/topbar/power-menu/power-menu.component';
 import { ResilveringIndicatorComponent } from 'app/modules/layout/topbar/resilvering-indicator/resilvering-indicator.component';
@@ -62,7 +61,6 @@ import { TruenasLogoComponent } from './truenas-logo/truenas-logo.component';
     MatTooltip,
     IxIconComponent,
     GlobalSearchTriggerComponent,
-    IxLogoComponent,
     CheckinIndicatorComponent,
     ResilveringIndicatorComponent,
     HaStatusIconComponent,
@@ -83,7 +81,7 @@ import { TruenasLogoComponent } from './truenas-logo/truenas-logo.component';
 export class TopbarComponent implements OnInit {
   updateIsDone: Subscription;
 
-  updateDialog: MatDialogRef<UpdateDialogComponent>;
+  updateDialog: MatDialogRef<UpdateDialog>;
   isFailoverLicensed = false;
   updateIsRunning = false;
   systemWillRestart = false;
@@ -110,6 +108,7 @@ export class TopbarComponent implements OnInit {
     private store$: Store<AlertSlice>,
     private appStore$: Store<AppState>,
     private cdr: ChangeDetectorRef,
+    private translate: TranslateService,
     private tnc: TruenasConnectService,
   ) {
     this.systemGeneralService.updateRunningNoticeSent.pipe(untilDestroyed(this)).subscribe(() => {
@@ -189,10 +188,12 @@ export class TopbarComponent implements OnInit {
   showUpdateDialog(): void {
     const message = this.isFailoverLicensed || !this.systemWillRestart
       ? helptextTopbar.updateRunning_dialog.message
-      : helptextTopbar.updateRunning_dialog.message + helptextTopbar.updateRunning_dialog.message_pt2;
+      : this.translate.instant(helptextTopbar.updateRunning_dialog.message)
+        + '<br />'
+        + this.translate.instant(helptextTopbar.updateRunning_dialog.message_pt2);
     const title = helptextTopbar.updateRunning_dialog.title;
 
-    this.updateDialog = this.matDialog.open(UpdateDialogComponent, {
+    this.updateDialog = this.matDialog.open(UpdateDialog, {
       width: '400px',
       hasBackdrop: true,
       panelClass: 'topbar-panel',
@@ -208,7 +209,7 @@ export class TopbarComponent implements OnInit {
   }
 
   onFeedbackIndicatorPressed(): void {
-    this.matDialog.open(FeedbackDialogComponent);
+    this.matDialog.open(FeedbackDialog);
   }
 
   private checkRebootInfo(): Observable<unknown> {
@@ -221,7 +222,7 @@ export class TopbarComponent implements OnInit {
       tap(() => this.hasRebootRequiredReasons.set(true)),
       filter(() => !this.shownDialog()),
       tap(() => this.shownDialog.set(true)),
-      switchMap(() => this.matDialog.open(RebootRequiredDialogComponent, { minWidth: '400px' }).afterClosed()),
+      switchMap(() => this.matDialog.open(RebootRequiredDialog, { minWidth: '400px' }).afterClosed()),
     );
   }
 }

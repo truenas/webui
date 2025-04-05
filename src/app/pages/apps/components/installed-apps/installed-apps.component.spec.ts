@@ -1,7 +1,7 @@
 import { ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import {
-  Spectator, createComponentFactory, mockProvider,
+  Spectator, createRoutingFactory, mockProvider,
 } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent, MockDeclaration } from 'ng-mocks';
@@ -39,7 +39,7 @@ describe('InstalledAppsComponent', () => {
     state: AppState.Running,
   } as App;
 
-  const createComponent = createComponentFactory({
+  const createComponent = createRoutingFactory({
     component: InstalledAppsComponent,
     imports: [
       ImgFallbackDirective,
@@ -94,20 +94,11 @@ describe('InstalledAppsComponent', () => {
           fields: { arguments: ['test-app', { replica_count: 1 }], state: JobState.Success },
         })),
       }),
-      {
-        provide: ActivatedRoute,
-        useValue: {
-          snapshot: {
-            paramMap: {
-              get: () => app.id,
-            },
-          },
-        },
-      },
       mockApi([]),
       mockAuth(),
       mockProvider(AppsStatsService),
     ],
+    params: { appId: 'ix-test-app' },
   });
 
   beforeEach(() => {

@@ -11,8 +11,8 @@ import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
-import { Pool } from 'app/interfaces/pool.interface';
-import { VolumesData } from 'app/interfaces/volume-data.interface';
+import { Pool, PoolTopology } from 'app/interfaces/pool.interface';
+import { TopologyItem } from 'app/interfaces/storage.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
@@ -21,7 +21,7 @@ import { WidgetStorageComponent } from 'app/pages/dashboard/widgets/storage/widg
 const fakePools: Pool[] = [
   {
     id: 1,
-    name: 'my pool',
+    name: 'dozer',
     status: PoolStatus.Online,
     healthy: true,
     scan: {
@@ -33,10 +33,6 @@ const fakePools: Pool[] = [
       end_time: {
         $date: 1714892413000,
       },
-      percentage: 99.99293684959412,
-      bytes_to_process: 2262626304,
-      bytes_processed: 2262786048,
-      bytes_issued: 2262233088,
       pause: null,
       errors: 0,
       total_secs_left: null,
@@ -44,41 +40,34 @@ const fakePools: Pool[] = [
     topology: {
       data: [
         {
-          children: [],
+          children: [] as TopologyItem[],
           type: TopologyItemType.Disk,
           stats: {
             read_errors: 0,
             write_errors: 0,
             checksum_errors: 0,
           },
-        },
+        } as TopologyItem,
         {
-          children: [],
+          children: [] as TopologyItem[],
           type: TopologyItemType.Disk,
           stats: {
             read_errors: 1,
             write_errors: 2,
             checksum_errors: 3,
           },
-        },
-      ],
-      log: [],
-      cache: [],
-      spare: [{ children: [] }],
-      special: [],
-      dedup: [],
-    },
+        } as TopologyItem,
+      ] as TopologyItem[],
+      log: [] as TopologyItem[],
+      cache: [] as TopologyItem[],
+      spare: [{
+        children: [] as TopologyItem[],
+      }] as TopologyItem[],
+      special: [] as TopologyItem[],
+      dedup: [] as TopologyItem[],
+    } as PoolTopology,
   },
 ] as Pool[];
-
-const fakeVolumesData: VolumesData = new Map();
-fakeVolumesData.set('my pool', {
-  id: 'my pool',
-  avail: 1625071616,
-  name: 'my pool',
-  used: 2267242496,
-  used_pct: '88%',
-});
 
 describe('WidgetStorageComponent', () => {
   let spectator: Spectator<WidgetStorageComponent>;
@@ -96,7 +85,17 @@ describe('WidgetStorageComponent', () => {
         WidgetResourcesService,
         {
           pools$: of(fakePools),
-          volumesData$: of(fakeVolumesData),
+          realtimeUpdates$: of({
+            fields: {
+              pools: {
+                dozer: {
+                  available: 1625071616,
+                  used: 2267242496,
+                  total: 3892314112,
+                },
+              },
+            },
+          }),
         },
       ),
       mockProvider(FormatDateTimePipe, {
@@ -120,7 +119,7 @@ describe('WidgetStorageComponent', () => {
   it('sets poolsInfo', () => {
     expect(spectator.component.poolsInfo()).toMatchObject([
       {
-        name: 'my pool',
+        name: 'dozer',
         status: {
           icon: 'check_circle',
           label: 'Pool Status',
@@ -128,10 +127,10 @@ describe('WidgetStorageComponent', () => {
           value: 'ONLINE',
         },
         usedSpace: {
-          icon: 'error',
+          icon: 'check_circle',
           label: 'Used Space',
-          level: 'warn',
-          value: '88%',
+          level: 'safe',
+          value: '58.25%',
         },
         disksWithError: {
           icon: 'error',
@@ -156,7 +155,7 @@ describe('WidgetStorageComponent', () => {
     expect(tiles).toHaveLength(1);
 
     const headers = tiles.map((tile) => tile.querySelector('.tile-header-title')!.textContent!.trim());
-    expect(headers).toEqual(['my pool']);
+    expect(headers).toEqual(['dozer']);
 
     const contents = tiles.map((tile) => {
       const labels: (string | null)[] = [];
@@ -185,7 +184,7 @@ describe('WidgetStorageComponent', () => {
         ],
         values: [
           'ONLINE',
-          '88%',
+          '58.25%',
           '1 of 2',
           null,
           '1.51 GiB',

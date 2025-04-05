@@ -18,7 +18,7 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -40,7 +40,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
     TranslateModule,
   ],
 })
-export class DiskWipeDialogComponent {
+export class DiskWipeDialog {
   form = this.formBuilder.nonNullable.group({
     wipe_method: [DiskWipeMethod.Quick, [Validators.required]],
   });
@@ -70,7 +70,7 @@ export class DiskWipeDialogComponent {
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
     private api: ApiService,
-    private dialogRef: MatDialogRef<DiskWipeDialogComponent>,
+    private dialogRef: MatDialogRef<DiskWipeDialog>,
     @Inject(MAT_DIALOG_DATA) public data: { diskName: string; exportedPool: string },
   ) { }
 
@@ -100,14 +100,14 @@ export class DiskWipeDialogComponent {
     )
       .afterClosed()
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => {
         this.dialogService.generalDialog({
           title: this.title,
           message: helptextDisks.diskWipeDialogForm.infoContent,
-          hideCancel: true,
+          cancelBtnMsg: this.translate.instant('Close'),
         });
         this.dialogRef.close(true);
       });

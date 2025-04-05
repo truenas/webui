@@ -76,7 +76,7 @@ export class IxTableHeadComponent<T> implements AfterViewInit {
       || this.displayedColumns[columnId].getValue) as (row: T) => string | number;
 
     this.dataProvider().setSorting({
-      propertyName: this.displayedColumns[columnId].propertyName,
+      propertyName: this.displayedColumns[columnId].propertyName || null,
       sortBy,
       direction,
       active,

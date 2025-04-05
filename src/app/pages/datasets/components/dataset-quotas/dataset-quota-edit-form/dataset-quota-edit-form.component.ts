@@ -51,7 +51,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
   ],
 })
 export class DatasetQuotaEditFormComponent implements OnInit {
-  readonly requiredRoles = [Role.DatasetWrite];
+  protected readonly requiredRoles = [Role.DatasetWrite];
 
   isFormLoading = false;
   private datasetQuota: DatasetQuota;

@@ -82,8 +82,12 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
           };
         });
 
-        this.diskReports = this.allReports.filter((report) => report.name === ReportingGraphName.Disk);
-        this.otherReports = this.allReports.filter((report) => report.name !== ReportingGraphName.Disk);
+        this.diskReports = this.allReports.filter((report) => {
+          return [ReportingGraphName.Disk, ReportingGraphName.DiskTemp].includes(report.name);
+        });
+        this.otherReports = this.allReports.filter((report) => {
+          return ![ReportingGraphName.Disk, ReportingGraphName.DiskTemp].includes(report.name);
+        });
 
         this.activateTabFromUrl();
         this.cdr.markForCheck();
@@ -232,12 +236,14 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
 
     const visible: number[] = [];
     this.activeReports.forEach((item, index) => {
-      const [,, identifier] = item.identifiers[0].split(' | ');
-      const deviceMatch = devices.includes(identifier);
-      const metricMatch = metrics.includes(item.name);
-      const condition = deviceMatch && metricMatch;
-      if (condition) {
-        visible.push(index);
+      if (item.identifiers[0]) {
+        const [,, identifier] = item.identifiers[0].split(' | ');
+        const deviceMatch = devices.includes(identifier);
+        const metricMatch = metrics.includes(item.name);
+        const condition = deviceMatch && metricMatch;
+        if (condition) {
+          visible.push(index);
+        }
       }
     });
 

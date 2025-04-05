@@ -26,19 +26,19 @@ import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
-  SaveConfigDialogComponent, SaveConfigDialogMessages,
+  SaveConfigDialog, SaveConfigDialogMessages,
 } from 'app/pages/system/general-settings/save-config-dialog/save-config-dialog.component';
 import { UpdateType } from 'app/pages/system/update/enums/update-type.enum';
 import { Package } from 'app/pages/system/update/interfaces/package.interface';
 import { TrainService } from 'app/pages/system/update/services/train.service';
 import { UpdateService } from 'app/pages/system/update/services/update.service';
 import { updateAgainCode } from 'app/pages/system/update/utils/update-again-code.constant';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
@@ -80,7 +80,7 @@ export class UpdateActionsCardComponent implements OnInit {
     map((status) => status === SystemUpdateStatus.RebootRequired),
   );
 
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.SystemUpdateWrite];
 
   private wasConfigurationSaved = false;
 
@@ -90,7 +90,7 @@ export class UpdateActionsCardComponent implements OnInit {
     private matDialog: MatDialog,
     private sysGenService: SystemGeneralService,
     private errorHandler: ErrorHandlerService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private dialogService: DialogService,
     private translate: TranslateService,
     private store$: Store<AppState>,
@@ -149,7 +149,7 @@ export class UpdateActionsCardComponent implements OnInit {
     )
       .afterClosed()
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => {
@@ -159,7 +159,7 @@ export class UpdateActionsCardComponent implements OnInit {
 
   downloadUpdate(): void {
     this.api.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', JobState.Running]]])
-      .pipe(this.errorHandler.catchError(), untilDestroyed(this))
+      .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
       .subscribe((jobs) => {
         if (jobs[0]) {
           this.showRunningUpdate(jobs[0].id);
@@ -296,7 +296,7 @@ export class UpdateActionsCardComponent implements OnInit {
   private finishNonHaUpdate(): Observable<boolean> {
     return this.dialogService.confirm({
       title: helptext.ha_update.complete_title,
-      message: this.translate.instant('Update completed successfully. The system will reboot shortly'),
+      message: this.translate.instant('Update completed successfully. The system will restart shortly'),
       buttonText: helptext.ha_update.complete_action,
       hideCheckbox: true,
       hideCancel: true,
@@ -330,7 +330,7 @@ export class UpdateActionsCardComponent implements OnInit {
           this.cdr.markForCheck();
           return this.isHaLicensed ? this.finishHaUpdate() : this.finishNonHaUpdate();
         }),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe();
@@ -362,7 +362,7 @@ export class UpdateActionsCardComponent implements OnInit {
       return of(null);
     }
 
-    return this.matDialog.open(SaveConfigDialogComponent, {
+    return this.matDialog.open(SaveConfigDialog, {
       data: {
         title: this.translate.instant('Save configuration settings from this machine before updating?'),
         saveButton: this.translate.instant('Save Configuration'),
@@ -380,7 +380,7 @@ export class UpdateActionsCardComponent implements OnInit {
   }
 
   private handleUpdateError(error: Job): void {
-    if (error.error.includes(updateAgainCode)) {
+    if (error.error?.includes(updateAgainCode)) {
       this.dialogService.confirm({
         title: helptext.continueDialogTitle,
         message: error.error.replace(updateAgainCode, ''),
@@ -393,7 +393,7 @@ export class UpdateActionsCardComponent implements OnInit {
       });
       return;
     }
-    this.dialogService.error(this.errorHandler.parseError(error));
+    this.errorHandler.showErrorModal(error);
   }
 
   private downloadUpdates(): void {
@@ -403,7 +403,7 @@ export class UpdateActionsCardComponent implements OnInit {
     )
       .afterClosed()
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => {

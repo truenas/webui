@@ -30,14 +30,14 @@ import { DatasetPreset } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
-import { extractApiError } from 'app/helpers/api.helper';
+import { extractApiErrorDetails } from 'app/helpers/api.helper';
 import { helptextSharingSmb } from 'app/helptext/sharing';
 import { DatasetCreate } from 'app/interfaces/dataset.interface';
 import { Option } from 'app/interfaces/option.interface';
 import {
   SmbPresets,
   SmbPresetType,
-  SmbShare,
+  SmbShare, SmbShareUpdate,
 } from 'app/interfaces/smb-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -50,15 +50,15 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { RestartSmbDialogComponent } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
+import { RestartSmbDialog } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
 import { SmbValidationService } from 'app/pages/sharing/smb/smb-form/smb-validator.service';
-import { DatasetService } from 'app/services/dataset-service/dataset.service';
+import { DatasetService } from 'app/services/dataset/dataset.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { UserService } from 'app/services/user.service';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
@@ -97,7 +97,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   isAdvancedMode = false;
   namesInUse: string[] = [];
   readonly helptextSharingSmb = helptextSharingSmb;
-  readonly requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
+  protected readonly requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
   private wasStripAclWarningShown = false;
 
   groupProvider: ChipsProvider = (query) => {
@@ -235,7 +235,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     private translate: TranslateService,
     private router: Router,
     private userService: UserService,
-    protected loader: AppLoaderService,
+    protected loader: LoaderService,
     private formErrorHandler: FormErrorHandlerService,
     private filesystemService: FilesystemService,
     private snackbar: SnackbarService,
@@ -328,9 +328,12 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
   setupPurposeControl(): void {
     this.form.controls.purpose.valueChanges.pipe(untilDestroyed(this))
-      .subscribe((value: string) => {
+      .subscribe((value) => {
         this.clearPresets();
-        this.setValuesFromPreset(value);
+
+        if (value) {
+          this.setValuesFromPreset(value);
+        }
       });
   }
 
@@ -465,7 +468,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   }
 
   submit(): void {
-    const smbShare = this.form.value;
+    const smbShare = this.form.value as SmbShareUpdate;
 
     if (!smbShare.timemachine_quota) {
       smbShare.timemachine_quota = 0;
@@ -525,7 +528,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
         }
       },
       error: (error: unknown) => {
-        const apiError = extractApiError(error);
+        const apiError = extractApiErrorDetails(error);
         if (apiError?.reason?.includes('[ENOENT]') || apiError?.reason?.includes('[EXDEV]')) {
           this.dialogService.closeAllDialogs();
         }
@@ -553,7 +556,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
       map((service) => service.state === ServiceStatus.Running),
       switchMap((isRunning) => {
         if (isRunning && this.isRestartRequired) {
-          return this.matDialog.open(RestartSmbDialogComponent, {
+          return this.matDialog.open(RestartSmbDialog, {
             data: {
               timemachine: this.isNewTimemachineShare,
               homeshare: this.isNewHomeShare,

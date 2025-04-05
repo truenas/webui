@@ -32,21 +32,21 @@
       @if (canRemoveDisk()) {
         <ng-container [ngTemplateOutlet]="remove"></ng-container>
       }
-      <ng-container *ixRequiresRoles="[Role.FullAdmin]">
+      <ng-container *ixRequiresRoles="[Role.PoolWrite]">
         @if (canDetachDisk()) {
           <button mat-button ixTest="detach" (click)="onDetach()">
             {{ 'Detach' | translate }}
           </button>
         }
       </ng-container>
-      <ng-container *ixRequiresRoles="[Role.FullAdmin]">
+      <ng-container *ixRequiresRoles="[Role.PoolWrite]">
         @if (canOfflineDisk()) {
           <button mat-button ixTest="offline" (click)="onOffline()">
             {{ 'Offline' | translate }}
           </button>
         }
       </ng-container>
-      <ng-container *ixRequiresRoles="[Role.FullAdmin]">
+      <ng-container *ixRequiresRoles="[Role.PoolWrite]">
         @if (canOnlineDisk()) {
           <button mat-button ixTest="online" (click)="onOnline()">
             {{ 'Online' | translate }}
@@ -65,7 +65,7 @@
   }
   @if (isRaidz()) {
     <mat-card-actions>
-      <button *ixRequiresRoles="[Role.FullAdmin]" mat-button ixTest="extend" (click)="onRaidzExtend()">
+      <button *ixRequiresRoles="[Role.PoolWrite]" mat-button ixTest="extend" (click)="onRaidzExtend()">
         {{ 'Extend' | translate }}
       </button>
     </mat-card-actions>
@@ -73,13 +73,13 @@
 </mat-card>
 
 <ng-template #extend>
-  <button *ixRequiresRoles="[Role.FullAdmin]" mat-button ixTest="extend" (click)="onExtend()">
+  <button *ixRequiresRoles="[Role.PoolWrite]" mat-button ixTest="extend" (click)="onExtend()">
     {{ 'Extend' | translate }}
   </button>
 </ng-template>
 
 <ng-template #remove>
-  <button *ixRequiresRoles="[Role.FullAdmin]" mat-button ixTest="remove" (click)="onRemove()">
+  <button *ixRequiresRoles="[Role.PoolWrite]" mat-button ixTest="remove" (click)="onRemove()">
     {{ 'Remove' | translate }}
   </button>
 </ng-template>

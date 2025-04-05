@@ -8,7 +8,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatHint } from '@angular/material/form-field';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import { filter, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
@@ -20,7 +20,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -43,7 +43,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   ],
 })
 export class SystemSecurityFormComponent implements OnInit {
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.SystemSecurityWrite];
 
   form = this.formBuilder.group({
     enable_fips: [false],
@@ -83,7 +83,7 @@ export class SystemSecurityFormComponent implements OnInit {
     )
       .afterClosed()
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => {
@@ -98,10 +98,10 @@ export class SystemSecurityFormComponent implements OnInit {
 
   private initSystemSecurityForm(): void {
     this.form.patchValue(this.systemSecurityConfig());
-    this.form.controls.enable_gpos_stig.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
-      if (value && !this.form.controls.enable_fips.value) {
-        this.form.patchValue({ enable_fips: true });
-      }
-    });
+    this.form.controls.enable_gpos_stig.valueChanges
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe((value) => {
+        this.form.patchValue({ enable_fips: value });
+      });
   }
 }

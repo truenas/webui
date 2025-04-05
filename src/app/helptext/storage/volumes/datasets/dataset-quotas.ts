@@ -3,7 +3,7 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 export const helpTextQuotas = {
   field_accepts_tooltip: T('This field accepts human-readable input (Ex. 50 GiB, 500M, 2 TB).'),
   users: {
-    title: 'Show All Users',
+    title: T('Show All Users'),
     tooltip: T('You can search both for local users as well as users from Active Directory.\
 Press ENTER to separate entries.'),
     data_quota: {
@@ -39,7 +39,7 @@ Press ENTER to separate entries.'),
   },
 
   groups: {
-    title: 'Show All Groups',
+    title: T('Show All Groups'),
     tooltip: T('You can search both for local groups as well as groups from Active Directory.\
  Press ENTER to separate entries.'),
     data_quota: {
@@ -66,15 +66,11 @@ Press ENTER to separate entries.'),
     },
     remove_invalid_quotas: {
       message: T('This action will set all dataset quotas for the removed or invalid groups to 0,\
- virtually removing any dataset quota entires for such groups. Are you sure you want to proceed?'),
+ virtually removing any dataset quota entries for such groups. Are you sure you want to proceed?'),
     },
     delete_dialog: {
       title: T('Delete Group Quota'),
       message: T('Are you sure you want to delete the group quota <b>{name}</b>?'),
     },
-  },
-
-  shared: {
-    nameErr: T('Name not found'),
   },
 };

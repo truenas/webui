@@ -27,7 +27,7 @@ import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
 import { TransferMode, transferModeNames } from 'app/enums/transfer-mode.enum';
-import { extractApiError } from 'app/helpers/api.helper';
+import { extractApiErrorDetails } from 'app/helpers/api.helper';
 import { prepareBwlimit } from 'app/helpers/bwlimit.utils';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { mapToOptions } from 'app/helpers/options.helper';
@@ -61,11 +61,11 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudSyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
-import { CreateStorjBucketDialogComponent } from 'app/pages/data-protection/cloudsync/create-storj-bucket-dialog/create-storj-bucket-dialog.component';
-import { CustomTransfersDialogComponent } from 'app/pages/data-protection/cloudsync/custom-transfers-dialog/custom-transfers-dialog.component';
+import { CreateStorjBucketDialog } from 'app/pages/data-protection/cloudsync/create-storj-bucket-dialog/create-storj-bucket-dialog.component';
+import { CustomTransfersDialog } from 'app/pages/data-protection/cloudsync/custom-transfers-dialog/custom-transfers-dialog.component';
 import { TransferModeExplanationComponent } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 
 const customOptionValue = -1;
@@ -179,7 +179,7 @@ export class CloudSyncFormComponent implements OnInit {
   `;
 
   readonly helptext = helptextCloudSync;
-  readonly requiredRoles = [Role.CloudSyncWrite];
+  protected readonly requiredRoles = [Role.CloudSyncWrite];
 
   readonly directionOptions$ = of(mapToOptions(directionNames, this.translate));
   readonly transferModeOptions$ = of(mapToOptions(transferModeNames, this.translate));
@@ -299,7 +299,7 @@ export class CloudSyncFormComponent implements OnInit {
         this.setBucketNodeProvider();
         return;
       }
-      const dialogRef = this.matDialog.open(CreateStorjBucketDialogComponent, {
+      const dialogRef = this.matDialog.open(CreateStorjBucketDialog, {
         width: '500px',
         data: {
           credentialsId: this.form.controls.credentials.value,
@@ -395,7 +395,7 @@ export class CloudSyncFormComponent implements OnInit {
 
     this.form.controls.transfers.valueChanges.pipe(untilDestroyed(this)).subscribe((value: number) => {
       if (value === customOptionValue) {
-        const dialogRef = this.matDialog.open(CustomTransfersDialogComponent);
+        const dialogRef = this.matDialog.open(CustomTransfersDialog);
         dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe((transfers: number) => {
           if (this.isCustomTransfers(transfers)) {
             this.setTransfersOptions(true, transfers);
@@ -451,9 +451,9 @@ export class CloudSyncFormComponent implements OnInit {
           this.isCredentialInvalid$.next(true);
           this.dialogService.closeAllDialogs();
           this.cdr.markForCheck();
-          const apiError = extractApiError(error);
+          const apiError = extractApiErrorDetails(error);
           if (!apiError) {
-            this.errorHandler.handleError(error);
+            this.errorHandler.showErrorModal(error);
             return;
           }
 

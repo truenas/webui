@@ -32,13 +32,13 @@ import { selectIsEnterprise, selectSystemInfoState } from 'app/store/system-info
     TruenasLogoComponent,
   ],
 })
-export class AboutDialogComponent {
+export class AboutDialog {
   readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
   readonly systemVersion$ = this.store$.select(selectSystemInfoState).pipe(map((system) => system.systemInfo?.version));
   readonly helptext = helptextAbout;
 
   constructor(
-    public dialogRef: MatDialogRef<AboutDialogComponent>,
+    public dialogRef: MatDialogRef<AboutDialog>,
     private store$: Store<AppState>,
   ) {}
 }

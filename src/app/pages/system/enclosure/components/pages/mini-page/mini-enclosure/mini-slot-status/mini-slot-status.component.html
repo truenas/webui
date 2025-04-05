@@ -1,12 +1,5 @@
-@if (!slot().pool_info) {
-  <ix-icon
-    name="mdi-circle-outline"
-    class="status-icon status-empty"
-  ></ix-icon>
-
-  {{ slot().dev ? ('Unassigned' | translate) : ('Empty' | translate) }}
-} @else {
-  @switch (slot().pool_info.disk_status) {
+@if (slot().pool_info; as poolInfo) {
+  @switch (poolInfo.disk_status) {
     @case (EnclosureDiskStatus.Online) {
       <ix-icon name="check_circle" class="status-icon status-online"></ix-icon>
     }
@@ -33,5 +26,13 @@
     }
   }
 
-  {{ slot().pool_info.disk_status | mapValue: enclosureDiskStatusLabels | translate }}
+  {{ poolInfo.disk_status | mapValue: enclosureDiskStatusLabels | translate }}
+}
+@else {
+  <ix-icon
+    name="mdi-circle-outline"
+    class="status-icon status-empty"
+  ></ix-icon>
+
+  {{ slot().dev ? ('Unassigned' | translate) : ('Empty' | translate) }}
 }

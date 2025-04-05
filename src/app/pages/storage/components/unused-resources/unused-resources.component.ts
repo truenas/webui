@@ -10,8 +10,8 @@ import {
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ManageUnusedDiskDialogComponent } from 'app/pages/storage/components/unused-resources/unused-disk-card/manage-unused-disk-dialog/manage-unused-disk-dialog.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ManageUnusedDiskDialog } from 'app/pages/storage/components/unused-resources/unused-disk-card/manage-unused-disk-dialog/manage-unused-disk-dialog.component';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UnusedDiskCardComponent } from './unused-disk-card/unused-disk-card.component';
 
 @UntilDestroy()
@@ -49,7 +49,7 @@ export class UnusedResourcesComponent implements OnInit {
 
   updateUnusedDisks(): void {
     this.api.call('disk.details').pipe(
-      this.errorHandler.catchError(),
+      this.errorHandler.withErrorHandler(),
       untilDestroyed(this),
     ).subscribe((diskDetails) => {
       this.noPoolsDisks = diskDetails.unused;
@@ -80,7 +80,7 @@ export class UnusedResourcesComponent implements OnInit {
   }
 
   private addUnusedDisksToStorage(disks: DetailsDisk[]): void {
-    this.matDialog.open(ManageUnusedDiskDialogComponent, {
+    this.matDialog.open(ManageUnusedDiskDialog, {
       data: {
         pools: this.pools(),
         unusedDisks: [...disks],

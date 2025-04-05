@@ -79,32 +79,29 @@ export const helptextSystemGeneral = {
     tooltip: T('Select a language from the drop-down menu.'),
     hint: T('Languages other than <i>English</i> are provided by \
      the community and may be incomplete. \
-     <a href="https://github.com/truenas/webui/blob/master/TRANSLATING.md" target="_blank">Learn how to contribute.</a>'),
+     <a href="https://github.com/truenas/webui/blob/master/docs/contributing_translations.md" target="_blank">Learn how to contribute.</a>'),
   },
 
   stg_kbdmap: {
     placeholder: T('Console Keyboard Map'),
-    tooltip: T('Select a keyboard layout.'),
   },
 
   stg_timezone: {
     placeholder: T('Timezone'),
-    tooltip: T('Select a time zone.'),
   },
 
   date_format: {
     placeholder: T('Date Format'),
-    tooltip: T('Choose a date format.'),
   },
 
   time_format: {
     placeholder: T('Time Format'),
-    tooltip: T('Choose a time format.'),
   },
 
   usage_collection: {
-    label: T('Usage collection'),
-    tooltip: T('Enable sending anonymous usage statistics to iXsystems.'),
+    label: T('Usage collection & UI error reporting'),
+    tooltip: T('When enabled, anonymous usage statistics and WebUI errors are reported to TrueNAS engineering team. No personally identifiable information is collected.'),
+    stigModeTooltip: T('This option is disabled in STIG mode.'),
   },
 
   ui_consolemsg: {
@@ -153,13 +150,9 @@ export const helptextSystemGeneral = {
   dialog_confirm_title: T('Restart Web Service'),
   dialog_confirm_message: T('The web service must restart for the protocol changes to take effect. The UI will be temporarily unavailable. Restart the service?'),
 
-  dialog_error_title: T('Error restarting web service'),
-
   enabled: T('Enabled'),
   disabled: T('Disabled'),
   default: T('Default'),
   localeTitle: T('Localization'),
   guiTitle: T('GUI'),
-  guiPageTitle: T('GUI Settings'),
-  ntpTitle: T('NTP Servers'),
 };

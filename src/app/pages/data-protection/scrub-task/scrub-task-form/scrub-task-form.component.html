@@ -11,7 +11,6 @@
         <ix-select
           formControlName="pool"
           [label]="'Pool' | translate"
-          [tooltip]="tooltips.pool | translate"
           [required]="true"
           [options]="poolOptions$"
         ></ix-select>
@@ -27,13 +26,11 @@
         <ix-input
           formControlName="description"
           [label]="'Description' | translate"
-          [tooltip]="tooltips.description | translate"
         ></ix-input>
 
         <ix-scheduler
           formControlName="schedule"
           [label]="'Schedule' | translate"
-          [tooltip]="tooltips.schedule | translate"
           [required]="true"
         ></ix-scheduler>
 

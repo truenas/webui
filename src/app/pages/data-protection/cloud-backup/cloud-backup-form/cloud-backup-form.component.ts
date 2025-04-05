@@ -130,7 +130,7 @@ export class CloudBackupFormComponent implements OnInit {
   bucketNodeProvider: TreeNodeProvider;
 
   readonly newOption = newOption;
-  readonly requiredRoles = [Role.CloudBackupWrite];
+  protected readonly requiredRoles = [Role.CloudBackupWrite];
   protected readonly CloudSyncProviderName = CloudSyncProviderName;
 
   readonly helptext = helptextCloudBackup;

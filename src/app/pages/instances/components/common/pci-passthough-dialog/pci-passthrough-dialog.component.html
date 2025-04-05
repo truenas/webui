@@ -1,0 +1,67 @@
+<div class="header">
+  <h1 mat-dialog-title>{{ 'Add PCI Passthrough Device' | translate }}</h1>
+  <button
+    mat-icon-button
+    id="ix-close-icon"
+    [ixTest]="['close-instance-form']"
+    [attr.aria-label]="'Close Instance Form' | translate"
+    (click)="dialogRef.close([])"
+    (keydown.enter)="dialogRef.close([])"
+  >
+    <ix-icon name="cancel"></ix-icon>
+  </button>
+</div>
+
+<mat-dialog-content>
+  <form [formGroup]="filterForm">
+    <ix-fieldset [title]="'Filters' | translate">
+      <ix-input
+        formControlName="searchQuery"
+        [label]="'Search Devices' | translate"
+      ></ix-input>
+
+      <ix-select
+        formControlName="type"
+        [label]="'Type' | translate"
+        [options]="typeOptions$"
+      ></ix-select>
+    </ix-fieldset>
+
+    <div class="table-wrapper">
+      <table mat-table [dataSource]="filteredDevices()" [ixTest]="['devices-table']">
+        <ng-container matColumnDef="type">
+          <th *matHeaderCellDef mat-header-cell>{{ 'Type' | translate }}</th>
+          <td *matCellDef="let device" mat-cell>
+            {{ device.controller_type || ('Unknown' | translate) }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="device">
+          <th *matHeaderCellDef mat-header-cell>{{ 'Device' | translate }}</th>
+          <td *matCellDef="let device" mat-cell>{{ device.description }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th *matHeaderCellDef mat-header-cell></th>
+          <td *matCellDef="let device" mat-cell>
+            <button
+              mat-button
+              type="button"
+              [ixTest]="['select-device', device.description]"
+              (click)="selectDevice(device)"
+            >
+              {{ 'Select' | translate }}
+            </button>
+          </td>
+        </ng-container>
+
+        <tr *matHeaderRowDef="columns" mat-header-row [ixTest]="['image-table-header']"></tr>
+        <tr *matRowDef="let row; columns: columns" mat-row [ixTest]="['image-table-row', row]"></tr>
+      </table>
+
+      @if (!filteredDevices().length) {
+        <ix-empty [conf]="emptyConfig()"></ix-empty>
+      }
+    </div>
+  </form>
+</mat-dialog-content>

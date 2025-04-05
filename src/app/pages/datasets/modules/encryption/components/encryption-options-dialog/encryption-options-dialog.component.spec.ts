@@ -13,17 +13,17 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { EncryptionOptionsDialogComponent } from 'app/pages/datasets/modules/encryption/components/encryption-options-dialog/encryption-options-dialog.component';
+import { EncryptionOptionsDialog } from 'app/pages/datasets/modules/encryption/components/encryption-options-dialog/encryption-options-dialog.component';
 import { EncryptionOptionsDialogData } from './encryption-options-dialog-data.interface';
 
 describe('EncryptionOptionsDialogComponent', () => {
-  let spectator: Spectator<EncryptionOptionsDialogComponent>;
+  let spectator: Spectator<EncryptionOptionsDialog>;
   let api: ApiService;
   let loader: HarnessLoader;
   let form: IxFormHarness;
-  let dialogRef: MatDialogRef<EncryptionOptionsDialogComponent>;
+  let dialogRef: MatDialogRef<EncryptionOptionsDialog>;
   const createComponent = createComponentFactory({
-    component: EncryptionOptionsDialogComponent,
+    component: EncryptionOptionsDialog,
     imports: [
       ReactiveFormsModule,
     ],

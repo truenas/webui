@@ -16,7 +16,6 @@ import {
   filter, tap,
 } from 'rxjs/operators';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
-import { Role } from 'app/enums/role.enum';
 import { FibreChannelHost, FibreChannelPort, FibreChannelStatus } from 'app/interfaces/fibre-channel.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
@@ -29,7 +28,6 @@ import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-b
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
 import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
-import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -39,9 +37,9 @@ import {
 } from 'app/pages/sharing/iscsi/fibre-channel-ports/build-ports-table-row.utils';
 import { fibreChannelPortsElements } from 'app/pages/sharing/iscsi/fibre-channel-ports/fibre-channel-ports.elements';
 import {
-  VirtualPortsNumberDialogComponent,
+  VirtualPortsNumberDialog,
 } from 'app/pages/sharing/iscsi/fibre-channel-ports/virtual-ports-number-dialog/virtual-ports-number-dialog.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
@@ -70,7 +68,6 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 })
 export class FibreChannelPortsComponent implements OnInit {
   protected readonly searchableElements = fibreChannelPortsElements;
-  protected requiredRoles: Role[] = [Role.FullAdmin];
   protected searchQuery = signal<string>('');
   protected dataProvider = new ArrayDataProvider<FibreChannelPortRow>();
   protected isLoading = signal(false);
@@ -90,7 +87,7 @@ export class FibreChannelPortsComponent implements OnInit {
 
           return ` – ${this.translate.instant('{port} (virtual)', { port: row.name })}`;
         },
-        sortBy: (row) => row.name,
+        disableSorting: true,
       }),
       textColumn({
         title: this.translate.instant('Target'),
@@ -98,23 +95,28 @@ export class FibreChannelPortsComponent implements OnInit {
         getValue: (row) => {
           return row.target?.iscsi_target_name;
         },
+        disableSorting: true,
       }),
       textColumn({
         title: this.translate.instant('WWPN'),
         propertyName: 'wwpn',
+        disableSorting: true,
       }),
       textColumn({
         title: this.translate.instant('WWPN (B)'),
         propertyName: 'wwpn_b',
         hidden: !this.isHa(),
+        disableSorting: true,
       }),
       textColumn({
         title: this.translate.instant('State'),
         getValue: (row) => {
           return `A: ${row.aPortState || '–'} B: ${row.bPortState || '–'}`;
         },
+        disableSorting: true,
       }),
       actionsColumn({
+        disableSorting: true,
         actions: [
           {
             iconName: iconMarker('edit'),
@@ -141,11 +143,10 @@ export class FibreChannelPortsComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadTable();
-    this.setDefaultSort();
   }
 
   doEdit(row: FibreChannelPortRow): void {
-    this.matDialog.open(VirtualPortsNumberDialogComponent, { data: row.host })
+    this.matDialog.open(VirtualPortsNumberDialog, { data: row.host })
       .afterClosed()
       .pipe(
         filter(Boolean),
@@ -164,14 +165,6 @@ export class FibreChannelPortsComponent implements OnInit {
     });
   }
 
-  setDefaultSort(): void {
-    this.dataProvider.setSorting({
-      active: 0,
-      direction: SortDirection.Asc,
-      propertyName: 'name',
-    });
-  }
-
   private loadTable(): void {
     this.isLoading.set(true);
     forkJoin([
@@ -181,7 +174,7 @@ export class FibreChannelPortsComponent implements OnInit {
     ])
       .pipe(
         finalize(() => this.isLoading.set(false)),
-        catchError(this.errorHandler.catchError()),
+        catchError(this.errorHandler.withErrorHandler()),
         untilDestroyed(this),
       )
       .subscribe(([hosts, ports, statuses]: [FibreChannelHost[], FibreChannelPort[], FibreChannelStatus[]]) => {

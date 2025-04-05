@@ -10,7 +10,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   Observable,
-  from, of, switchMap, tap,
+  from, of, switchMap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetEncryptionType } from 'app/enums/dataset.enum';
@@ -30,8 +30,8 @@ import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { UnlockSummaryDialogComponent } from 'app/pages/datasets/modules/encryption/components/unlock-summary-dialog/unlock-summary-dialog.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { UnlockSummaryDialog } from 'app/pages/datasets/modules/encryption/components/unlock-summary-dialog/unlock-summary-dialog.component';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UploadService } from 'app/services/upload.service';
 
 interface DatasetFormGroup {
@@ -67,7 +67,7 @@ interface DatasetFormGroup {
   ],
 })
 export class DatasetUnlockComponent implements OnInit {
-  readonly requiredRoles = [Role.DatasetWrite];
+  protected readonly requiredRoles = [Role.DatasetWrite];
 
   pk: string;
   dialogOpen = false;
@@ -97,8 +97,6 @@ export class DatasetUnlockComponent implements OnInit {
     return this.form.controls.use_file.value;
   }
 
-  private apiEndPoint: string;
-
   constructor(
     private api: ApiService,
     private formBuilder: NonNullableFormBuilder,
@@ -110,14 +108,7 @@ export class DatasetUnlockComponent implements OnInit {
     private router: Router,
     private translate: TranslateService,
     private upload: UploadService,
-  ) {
-    this.authService.authToken$.pipe(
-      tap((token) => {
-        this.apiEndPoint = '/_upload?auth_token=' + token;
-      }),
-      untilDestroyed(this),
-    ).subscribe();
-  }
+  ) {}
 
   ngOnInit(): void {
     this.pk = this.aroute.snapshot.params['datasetId'] as string;
@@ -136,7 +127,7 @@ export class DatasetUnlockComponent implements OnInit {
     this.form.controls.file.valueChanges.pipe(
       switchMap((files: File[]) => (!files?.length ? of('') : from(files[0].text()))),
       untilDestroyed(this),
-    ).subscribe((key) => {
+    ).subscribe((key: string) => {
       this.form.controls.key.setValue(key);
     });
   }
@@ -151,7 +142,7 @@ export class DatasetUnlockComponent implements OnInit {
     )
       .afterClosed()
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe((job) => {
@@ -177,7 +168,7 @@ export class DatasetUnlockComponent implements OnInit {
           this.form.controls.datasets.push(this.formBuilder.group({
             name: [''],
             key: ['', [Validators.minLength(64), Validators.maxLength(64)]],
-            file: [null as File[]],
+            file: [[] as File[]],
             is_passphrase: [false],
           }) as FormGroup<DatasetFormGroup>);
         }
@@ -219,7 +210,7 @@ export class DatasetUnlockComponent implements OnInit {
     })
       .afterClosed()
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe((job) => {
@@ -262,7 +253,7 @@ export class DatasetUnlockComponent implements OnInit {
     })
       .afterClosed()
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe((job) => {
@@ -291,7 +282,7 @@ export class DatasetUnlockComponent implements OnInit {
     });
     if (!this.dialogOpen) {
       this.dialogOpen = true;
-      const unlockDialogRef = this.matDialog.open(UnlockSummaryDialogComponent, { disableClose: true });
+      const unlockDialogRef = this.matDialog.open(UnlockSummaryDialog, { disableClose: true });
       unlockDialogRef.componentInstance.parent = this;
       unlockDialogRef.componentInstance.showFinalResults();
       unlockDialogRef.componentInstance.unlockDatasets = unlock;
@@ -315,7 +306,7 @@ export class DatasetUnlockComponent implements OnInit {
     }
     if (!this.dialogOpen) { // prevent dialog from opening more than once
       this.dialogOpen = true;
-      const unlockDialogRef = this.matDialog.open(UnlockSummaryDialogComponent, { disableClose: true });
+      const unlockDialogRef = this.matDialog.open(UnlockSummaryDialog, { disableClose: true });
       unlockDialogRef.componentInstance.parent = this;
       unlockDialogRef.componentInstance.unlockDatasets = unlock;
       unlockDialogRef.componentInstance.errorDatasets = errors;

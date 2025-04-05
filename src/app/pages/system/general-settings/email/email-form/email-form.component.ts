@@ -34,7 +34,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 
 @UntilDestroy()
@@ -63,7 +63,7 @@ import { SystemGeneralService } from 'app/services/system-general.service';
   ],
 })
 export class EmailFormComponent implements OnInit {
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.AlertWrite];
 
   sendMethodControl = new FormControl(MailSendMethod.Smtp, { nonNullable: true });
 
@@ -90,17 +90,14 @@ export class EmailFormComponent implements OnInit {
   readonly sendMethodOptions$ = of([
     {
       label: helptextSystemEmail.send_mail_method.smtp.placeholder,
-      tooltip: this.translate.instant(helptextSystemEmail.send_mail_method.smtp.tooltip),
       value: MailSendMethod.Smtp,
     },
     {
       label: helptextSystemEmail.send_mail_method.gmail.placeholder,
-      tooltip: this.translate.instant(helptextSystemEmail.send_mail_method.gmail.tooltip),
       value: MailSendMethod.Gmail,
     },
     {
       label: helptextSystemEmail.send_mail_method.outlook.placeholder,
-      tooltip: this.translate.instant(helptextSystemEmail.send_mail_method.outlook.tooltip),
       value: MailSendMethod.Outlook,
     },
   ]);
@@ -185,7 +182,7 @@ export class EmailFormComponent implements OnInit {
   onSendTestEmailPressed(): void {
     this.api.call('mail.local_administrator_email')
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe((email) => {
@@ -251,7 +248,7 @@ export class EmailFormComponent implements OnInit {
     )
       .afterClosed()
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => {

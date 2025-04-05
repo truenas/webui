@@ -14,10 +14,10 @@ import { Role } from 'app/enums/role.enum';
 import { IscsiExtent } from 'app/interfaces/iscsi.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -40,8 +40,8 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
     TranslateModule,
   ],
 })
-export class DeleteExtentDialogComponent {
-  readonly requiredRoles = [
+export class DeleteExtentDialog {
+  protected readonly requiredRoles = [
     Role.SharingIscsiExtentWrite,
     Role.SharingIscsiWrite,
     Role.SharingWrite,
@@ -54,11 +54,11 @@ export class DeleteExtentDialogComponent {
 
   constructor(
     private api: ApiService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private errorHandler: ErrorHandlerService,
     private formBuilder: FormBuilder,
     @Inject(MAT_DIALOG_DATA) public extent: IscsiExtent,
-    private dialogRef: MatDialogRef<DeleteExtentDialogComponent>,
+    private dialogRef: MatDialogRef<DeleteExtentDialog>,
   ) { }
 
   get isFile(): boolean {
@@ -71,7 +71,7 @@ export class DeleteExtentDialogComponent {
     this.api.call('iscsi.extent.delete', [this.extent.id, remove, force])
       .pipe(
         this.loader.withLoader(),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => {

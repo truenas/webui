@@ -5,7 +5,7 @@ export const helptextServiceSsh = {
   ssh_bindiface_tooltip: T('Select interfaces for SSH to listen on. Leave all\
  options unselected for SSH to listen on all interfaces.'),
 
-  ssh_tcpport_tooltip: 'Open a port for SSH connection requests.',
+  ssh_tcpport_tooltip: T('Open a port for SSH connection requests.'),
 
   ssh_password_login_groups_tooltip: T('Groups that can log in using password'),
 

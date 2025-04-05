@@ -22,7 +22,7 @@ import { SystemGeneralService } from 'app/services/system-general.service';
 describe('InitShutdownFormComponent', () => {
   let spectator: Spectator<InitShutdownFormComponent>;
   let loader: HarnessLoader;
-  let ws: MockApiService;
+  let api: MockApiService;
   const createComponent = createComponentFactory({
     component: InitShutdownFormComponent,
     imports: [
@@ -60,7 +60,7 @@ describe('InitShutdownFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(MockApiService);
+      api = spectator.inject(MockApiService);
     });
 
     it('saves values for new script when form is being submitted', async () => {
@@ -77,7 +77,7 @@ describe('InitShutdownFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('initshutdownscript.create', [{
+      expect(api.call).toHaveBeenCalledWith('initshutdownscript.create', [{
         command: 'rf -rf /',
         comment: 'Clear space',
         enabled: true,
@@ -103,7 +103,7 @@ describe('InitShutdownFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('initshutdownscript.create', [{
+      expect(api.call).toHaveBeenCalledWith('initshutdownscript.create', [{
         comment: 'New 2',
         enabled: true,
         script: '/mnt/new.sh',
@@ -134,7 +134,7 @@ describe('InitShutdownFormComponent', () => {
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(MockApiService);
+      api = spectator.inject(MockApiService);
     });
 
     it('shows current group values when form is being edited', async () => {
@@ -165,7 +165,7 @@ describe('InitShutdownFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('initshutdownscript.update', [
+      expect(api.call).toHaveBeenCalledWith('initshutdownscript.update', [
         13,
         {
           comment: 'Existing script',

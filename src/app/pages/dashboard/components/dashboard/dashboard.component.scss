@@ -26,13 +26,14 @@
   z-index: 2;
 
   @media(max-width: 767px) {
+    flex-wrap: wrap;
     justify-content: flex-end;
     margin-bottom: 8px;
     margin-left: auto;
     position: sticky;
     right: 0;
     top: -17px;
-    width: max-content;
+    width: fit-content;
   }
 }
 

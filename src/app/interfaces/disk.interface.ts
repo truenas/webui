@@ -4,44 +4,34 @@ import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { DiskWipeMethod } from 'app/enums/disk-wipe-method.enum';
 import { Alert } from 'app/interfaces/alert.interface';
-import { SmartTestResult } from 'app/interfaces/smart-test.interface';
 import { EnclosureAndSlot, TemperatureAgg } from 'app/interfaces/storage.interface';
 
 export interface Disk {
   advpowermgmt: DiskPowerLevel;
   bus: DiskBus;
-  critical: number;
   description: string;
   devname: string;
-  difference: number;
   duplicate_serial: string[];
   expiretime: string;
   hddstandby: DiskStandby;
   identifier: string;
-  informational: number;
   lunid?: string;
   model: string;
   name: string;
   number: number;
   passwd?: string;
   pool: string;
-  rotationrate: number;
+  rotationrate: number | null;
   serial: string;
   size: number;
-  smartoptions: string;
   subsystem: string;
-  supports_smart?: boolean;
-  togglesmart: boolean;
   transfermode: string;
   type: DiskType;
   zfs_guid: string;
-  tests?: SmartTestResult[];
 }
 
 export interface StorageDashboardDisk extends Disk {
   alerts: Alert[];
-  smartTestsRunning: number;
-  smartTestsFailed: number;
   tempAggregates: TemperatureAgg;
 }
 
@@ -64,25 +54,14 @@ export interface ExtraDiskQueryOptions {
      * Will join pool name for each disk.
      */
     pools?: boolean;
-
-    /**
-     * Can be used for single disk query only.
-     * Prefer to use `smart.test.disk_choices` for multiple disks
-     */
-    supports_smart?: boolean;
   };
 }
 
 export interface DiskUpdate {
-  togglesmart?: boolean;
   advpowermgmt?: DiskPowerLevel;
   description?: string;
   hddstandby?: DiskStandby;
   passwd?: string;
-  smartoptions?: string;
-  critical?: number;
-  difference?: number;
-  informational?: number;
   number?: number;
   pool?: string;
 }
@@ -106,11 +85,11 @@ export interface DetailsDisk {
   type: DiskType;
   blocks: number;
   serial_lunid: string;
-  rotationrate: number;
+  rotationrate: number | null;
   stripesize: number;
   parts: unknown[];
   dif: boolean;
-  exported_zpool: string;
+  exported_zpool: string | null;
   unsupported_md_devices: unknown;
   duplicate_serial: string[];
   devname: string;

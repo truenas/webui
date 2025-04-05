@@ -68,7 +68,7 @@ export class PortalFormComponent implements OnInit {
 
   form = this.fb.group({
     comment: [''],
-    ip: this.fb.array<string>([]),
+    ip: this.fb.array<string>([], [Validators.required]),
   });
 
   readonly labels = {
@@ -87,7 +87,7 @@ export class PortalFormComponent implements OnInit {
 
   protected editingIscsiPortal: IscsiPortal | undefined;
 
-  readonly requiredRoles = [
+  protected readonly requiredRoles = [
     Role.SharingIscsiPortalWrite,
     Role.SharingIscsiWrite,
     Role.SharingWrite,

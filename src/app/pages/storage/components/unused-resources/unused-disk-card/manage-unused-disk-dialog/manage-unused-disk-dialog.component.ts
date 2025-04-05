@@ -49,8 +49,8 @@ import { AddToPoolType, ManageUnusedDiskDialogResource } from 'app/pages/storage
     TranslateModule,
   ],
 })
-export class ManageUnusedDiskDialogComponent implements OnInit {
-  readonly requiredRoles = [Role.FullAdmin];
+export class ManageUnusedDiskDialog implements OnInit {
+  protected readonly requiredRoles = [Role.DiskWrite];
 
   readonly toPoolOptions$: Observable<SelectOption<AddToPoolType>[]> = of([
     {
@@ -88,7 +88,7 @@ export class ManageUnusedDiskDialogComponent implements OnInit {
     private translate: TranslateService,
     private validatorsService: IxValidatorsService,
     public cdr: ChangeDetectorRef,
-    private dialogRef: MatDialogRef<ManageUnusedDiskDialogComponent>,
+    private dialogRef: MatDialogRef<ManageUnusedDiskDialog>,
     @Inject(MAT_DIALOG_DATA) public resource: ManageUnusedDiskDialogResource,
   ) {}
 

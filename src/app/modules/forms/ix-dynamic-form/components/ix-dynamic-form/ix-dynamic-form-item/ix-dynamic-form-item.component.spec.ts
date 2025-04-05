@@ -1,7 +1,8 @@
-import { signal } from '@angular/core';
+import { ElementRef, signal } from '@angular/core';
 import {
   FormArray, FormControl, FormGroup, ReactiveFormsModule,
 } from '@angular/forms';
+import { TreeComponent } from '@bugsplat/angular-tree-component';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockInstance } from 'ng-mocks';
 import { BehaviorSubject, of } from 'rxjs';
@@ -15,7 +16,7 @@ import {
   DynamicFormSchemaIpaddr,
   DynamicFormSchemaExplorer,
   DynamicFormSchemaDict,
-  DynamicFormSchemaText,
+  DynamicFormSchemaText, AddListItemEvent, DeleteListItemEvent,
 } from 'app/interfaces/dynamic-form-schema.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { CustomUntypedFormField } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
@@ -144,9 +145,9 @@ describe('IxDynamicFormItemComponent', () => {
 
   beforeEach(() => {
     // TODO: Workaround for https://github.com/help-me-mom/ng-mocks/issues/8634
-    MockInstance(IxInputComponent, 'inputElementRef', signal(null));
-    MockInstance(IxCodeEditorComponent, 'inputArea', signal(null));
-    MockInstance(IxExplorerComponent, 'tree', signal(null));
+    MockInstance(IxInputComponent, 'inputElementRef', signal({} as ElementRef));
+    MockInstance(IxCodeEditorComponent, 'inputArea', signal({} as ElementRef));
+    MockInstance(IxExplorerComponent, 'tree', signal({} as TreeComponent));
   });
 
   describe('Component rendering', () => {
@@ -158,9 +159,9 @@ describe('IxDynamicFormItemComponent', () => {
         },
       });
       expect(spectator.query('ix-input')).toBeVisible();
-      expect(spectator.query(IxInputComponent).required()).toBe(inputSchema.required);
-      expect(spectator.query(IxInputComponent).type()).toBe(inputSchema.inputType);
-      expect(spectator.query(IxInputComponent).tooltip()).toBe(inputSchema.tooltip);
+      expect(spectator.query(IxInputComponent)!.required()).toBe(inputSchema.required);
+      expect(spectator.query(IxInputComponent)!.type()).toBe(inputSchema.inputType);
+      expect(spectator.query(IxInputComponent)!.tooltip()).toBe(inputSchema.tooltip);
 
       expect(spectator.query('ix-input')).not.toBeHidden();
       const field = spectator.component.dynamicForm().controls.input as CustomUntypedFormField;
@@ -286,7 +287,7 @@ describe('IxDynamicFormItemComponent', () => {
       });
       expect(spectator.query('ix-list')).toBeVisible();
       expect(spectator.queryAll('ix-list-item')).toHaveLength(1);
-      expect(spectator.queryAll('ix-dynamic-form-item')).toHaveLength(listSchema.items.length);
+      expect(spectator.queryAll('ix-dynamic-form-item')).toHaveLength(listSchema.items!.length);
       expect(spectator.query(IxListComponent)!.empty()).toBe(false);
       expect(spectator.query(IxListComponent)!.label()).toBe(listSchema.title);
 
@@ -308,7 +309,7 @@ describe('IxDynamicFormItemComponent', () => {
         },
       });
       expect(spectator.query('.label')).toHaveText('Label Dict');
-      expect(spectator.queryAll('ix-dynamic-form-item')).toHaveLength(dictSchema.attrs.length);
+      expect(spectator.queryAll('ix-dynamic-form-item')).toHaveLength(dictSchema.attrs!.length);
 
       spectator.queryAll(IxListItemComponent).forEach((item) => {
         expect(item).not.toBeHidden();
@@ -379,13 +380,13 @@ describe('IxDynamicFormItemComponent', () => {
 
     it('forwarding "addListItem" event', () => {
       jest.spyOn(spectator.component.addListItem, 'emit').mockImplementation();
-      spectator.component.addControlNext(undefined);
+      spectator.component.addControlNext({} as AddListItemEvent);
       expect(spectator.component.addListItem.emit).toHaveBeenCalledTimes(1);
     });
 
     it('forwarding "deleteListItem" event', () => {
       jest.spyOn(spectator.component.deleteListItem, 'emit').mockImplementation();
-      spectator.component.removeControlNext(undefined);
+      spectator.component.removeControlNext({} as DeleteListItemEvent);
       expect(spectator.component.deleteListItem.emit).toHaveBeenCalledTimes(1);
     });
   });

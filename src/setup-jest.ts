@@ -36,6 +36,7 @@ import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-comp
 import {
   Observable,
 } from 'rxjs';
+import { defaultLanguage } from 'app/constants/languages.constant';
 import { EmptyApiService } from 'app/core/testing/utils/empty-api.service';
 import { EmptyAuthService } from 'app/core/testing/utils/empty-auth.service';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -77,17 +78,17 @@ import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-h
 import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { IcuMissingTranslationHandler } from 'app/modules/language/translations/icu-missing-translation-handler';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import {
   WithLoadingStateDirective,
 } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import {
   ModalHeaderComponent,
 } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 const silenceJsDomCssParseError: (message: string, methodName: string) => boolean = (message, methodName) => {
   return (
@@ -153,7 +154,7 @@ defineGlobalsInjections({
     TestOverrideDirective,
     WithLoadingStateDirective,
     TranslateModule.forRoot({
-      defaultLanguage: 'en',
+      defaultLanguage,
       loader: {
         provide: TranslateLoader,
         useClass: TranslateFakeLoader,
@@ -186,11 +187,11 @@ defineGlobalsInjections({
       // eslint-disable-next-line no-restricted-globals
       useValue: window,
     },
-    mockProvider(AppLoaderService, {
+    mockProvider(LoaderService, {
       withLoader: () => (source$: Observable<unknown>) => source$,
     }),
     mockProvider(ErrorHandlerService, {
-      catchError: () => (source$: Observable<unknown>) => source$,
+      withErrorHandler: () => (source$: Observable<unknown>) => source$,
     }),
     {
       provide: AuthService,
@@ -274,7 +275,7 @@ class MockDataTransfer {
       length: this.filesArray.length,
       item: (index: number) => this.filesArray[index] || null,
       * [Symbol.iterator]() {
-        for (let i = 0; i < this.length; i++) {
+        for (let i = 0; i < Number(this.length); i++) {
           yield this.item(i);
         }
       },

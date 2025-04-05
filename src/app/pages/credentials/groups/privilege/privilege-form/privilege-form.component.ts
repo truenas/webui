@@ -60,7 +60,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   ],
 })
 export class PrivilegeFormComponent implements OnInit {
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.PrivilegeWrite];
 
   protected isLoading = false;
   protected localGroups: Group[] = [];

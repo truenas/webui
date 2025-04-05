@@ -1,8 +1,8 @@
 export function flattenTreeWithFilter<T extends { children?: T[] }>(
-  items: T[],
+  items: T[] | undefined,
   filterFunction: (item: T) => boolean,
   foundItems: T[] = [],
-): T[] {
+): T[] | undefined {
   if (!items?.length) {
     return undefined;
   }

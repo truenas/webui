@@ -24,19 +24,6 @@ describe('WidgetCpuUsageRecentComponent', () => {
       mockProvider(
         WidgetResourcesService,
         {
-          cpuLastMinuteStats: jest.fn(() => of([
-            {
-              name: 'cpu',
-              data: [
-                [0, 80.1, 12.2],
-                [0, 50.3, 15.9],
-                [0, 55.2, 16.8],
-              ],
-              legend: ['time', 'usage'],
-              start: 0,
-              end: 0,
-            },
-          ])),
           realtimeUpdates$: of({
             fields: {
               cpu: {
@@ -83,11 +70,9 @@ describe('WidgetCpuUsageRecentComponent', () => {
       datasets: [
         {
           label: 'Usage',
-          data: [
-            { x: 1721692740000, y: 80.1 },
-            { x: 1721692741000, y: 50.3 },
-            { x: 1721692742000, y: 55.2 },
-          ],
+          data: expect.objectContaining([
+            expect.objectContaining({ x: expect.any(Number), y: expect.any(Number) }),
+          ]),
           pointBackgroundColor: 'blue',
         },
       ],

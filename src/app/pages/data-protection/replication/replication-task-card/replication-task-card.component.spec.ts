@@ -7,7 +7,8 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -16,7 +17,7 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
-import { ReplicationRestoreDialogComponent } from 'app/pages/data-protection/replication/replication-restore-dialog/replication-restore-dialog.component';
+import { ReplicationRestoreDialog } from 'app/pages/data-protection/replication/replication-restore-dialog/replication-restore-dialog.component';
 import { ReplicationTaskCardComponent } from 'app/pages/data-protection/replication/replication-task-card/replication-task-card.component';
 import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
 import { DownloadService } from 'app/services/download.service';
@@ -27,7 +28,6 @@ describe('ReplicationTaskCardComponent', () => {
   let spectator: Spectator<ReplicationTaskCardComponent>;
   let loader: HarnessLoader;
   let table: IxTableHarness;
-  let api: ApiService;
 
   const replicationTasks = [
     {
@@ -80,7 +80,7 @@ describe('ReplicationTaskCardComponent', () => {
         mockCall('core.get_jobs', []),
         mockCall('replication.delete'),
         mockCall('replication.update'),
-        mockCall('core.download', [9, 'http://someurl/file.json']),
+        mockJob('replication.run', fakeSuccessfulJob()),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -94,7 +94,7 @@ describe('ReplicationTaskCardComponent', () => {
         })),
       }),
       mockProvider(DownloadService, {
-        streamDownloadFile: jest.fn(() => of()),
+        coreDownload: jest.fn(() => of(undefined)),
       }),
     ],
   });
@@ -103,7 +103,6 @@ describe('ReplicationTaskCardComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     table = await loader.getHarness(IxTableHarness);
-    api = spectator.inject(ApiService);
   });
 
   it('should show table rows', async () => {
@@ -157,7 +156,7 @@ describe('ReplicationTaskCardComponent', () => {
     const restoreButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'restore' }), 1, 5);
     await restoreButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ReplicationRestoreDialogComponent, {
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ReplicationRestoreDialog, {
       data: 1,
     });
   });
@@ -167,16 +166,12 @@ describe('ReplicationTaskCardComponent', () => {
     const downloadButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-download' }), 1, 5);
     await downloadButton.click();
 
-    expect(api.call).toHaveBeenCalledWith('core.download', [
-      'pool.dataset.export_keys_for_replication',
-      [1],
-      'APPS/test2 - APPS/test3_encryption_keys.json',
-    ]);
-    expect(spectator.inject(DownloadService).streamDownloadFile).toHaveBeenCalledWith(
-      'http://someurl/file.json',
-      'APPS/test2 - APPS/test3_encryption_keys.json',
-      'application/json',
-    );
+    expect(spectator.inject(DownloadService).coreDownload).toHaveBeenCalledWith({
+      arguments: [1],
+      fileName: 'APPS/test2 - APPS/test3_encryption_keys.json',
+      method: 'pool.dataset.export_keys_for_replication',
+      mimeType: 'application/json',
+    });
   });
 
   it('deletes a Replication Task with confirmation when Delete button is pressed', async () => {

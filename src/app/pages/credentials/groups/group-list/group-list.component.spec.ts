@@ -24,9 +24,9 @@ const fakeGroupDataSource: Group[] = [{
   group: 'mock',
   gid: 1000,
   builtin: true,
-  sudo_commands: [],
-  sudo_commands_nopasswd: [],
-  roles: [],
+  sudo_commands: [] as string[],
+  sudo_commands_nopasswd: [] as string[],
+  roles: [] as Role[],
   smb: true,
   users: [1],
 }, {
@@ -125,11 +125,11 @@ describe('GroupListComponent', () => {
     store$.refreshState();
 
     const table = await loader.getHarness(IxTableHarness);
-    await table.clickToggle(0);
-    await table.clickToggle(1);
+    await table.expandRow(0);
+    await table.expandRow(1);
     expect(spectator.queryAll(GroupDetailsRowComponent)).toHaveLength(1);
 
-    await table.clickToggle(1);
+    await table.expandRow(1);
     expect(spectator.queryAll(GroupDetailsRowComponent)).toHaveLength(0);
   });
 });

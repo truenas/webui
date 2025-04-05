@@ -9,7 +9,7 @@ import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { ServiceName } from 'app/enums/service-name.enum';
+import { RdmaProtocolName, ServiceName } from 'app/enums/service-name.enum';
 import { IscsiGlobalConfig } from 'app/interfaces/iscsi-global-config.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -22,6 +22,7 @@ import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { selectServices } from 'app/store/services/services.selectors';
+import { selectIsEnterprise, selectProductType } from 'app/store/system-info/system-info.selectors';
 
 describe('TargetGlobalConfigurationComponent', () => {
   let spectator: Spectator<GlobalTargetConfigurationComponent>;
@@ -44,6 +45,7 @@ describe('TargetGlobalConfigurationComponent', () => {
     providers: [
       mockAuth(),
       mockApi([
+        mockCall('rdma.capable_protocols', [RdmaProtocolName.Iser]),
         mockCall('iscsi.global.config', {
           basename: 'iqn.2005-10.org.freenas.ctl',
           isns_servers: ['188.23.4.23', '92.233.1.1'],
@@ -67,6 +69,14 @@ describe('TargetGlobalConfigurationComponent', () => {
           {
             selector: selectServices,
             value: [],
+          },
+          {
+            selector: selectProductType,
+            value: null,
+          },
+          {
+            selector: selectIsEnterprise,
+            value: false,
           },
         ],
       }),
@@ -100,6 +110,7 @@ describe('TargetGlobalConfigurationComponent', () => {
       'Pool Available Space Threshold (%)': '20',
       'iSCSI listen port': '3260',
       'Asymmetric Logical Unit Access (ALUA)': false,
+      'Enable iSCSI Extensions for RDMA (iSER)': false,
     });
   });
 
@@ -152,5 +163,20 @@ describe('TargetGlobalConfigurationComponent', () => {
     await saveButton.click();
 
     expect(store$.dispatch).toHaveBeenCalledWith(checkIfServiceIsEnabled({ serviceName: ServiceName.Iscsi }));
+  });
+
+  it('disables iSER field unless it is an enterprise system with RDMA capable NIC', async () => {
+    const form = await loader.getHarness(IxFormHarness);
+
+    expect(await form.getDisabledState()).toMatchObject({
+      'Enable iSCSI Extensions for RDMA (iSER)': true,
+    });
+
+    mockStore$.overrideSelector(selectIsEnterprise, true);
+    spectator.component.ngOnInit();
+
+    expect(await form.getDisabledState()).toMatchObject({
+      'Enable iSCSI Extensions for RDMA (iSER)': false,
+    });
   });
 });

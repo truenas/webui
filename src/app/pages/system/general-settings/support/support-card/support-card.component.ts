@@ -21,13 +21,13 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
-import { FeedbackDialogComponent } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
+import { FeedbackDialog } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { FeedbackType } from 'app/modules/feedback/interfaces/feedback.interface';
 import {
   IxSlideToggleComponent,
 } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -37,13 +37,13 @@ import { LicenseComponent } from 'app/pages/system/general-settings/support/lice
 import { LicenseInfoInSupport } from 'app/pages/system/general-settings/support/license-info-in-support.interface';
 import { ProactiveComponent } from 'app/pages/system/general-settings/support/proactive/proactive.component';
 import {
-  SetProductionStatusDialogComponent,
+  SetProductionStatusDialog,
   SetProductionStatusDialogResult,
 } from 'app/pages/system/general-settings/support/set-production-status-dialog/set-production-status-dialog.component';
 import { supportCardElements } from 'app/pages/system/general-settings/support/support-card/support-card.elements';
 import { SysInfoComponent } from 'app/pages/system/general-settings/support/sys-info/sys-info.component';
 import { SystemInfoInSupport } from 'app/pages/system/general-settings/support/system-info-in-support.interface';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
@@ -74,10 +74,10 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   ],
 })
 export class SupportCardComponent implements OnInit {
-  readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly Role = Role;
   protected readonly searchableElements = supportCardElements;
 
-  extraMargin = true;
   systemInfo: SystemInfoInSupport;
   hasLicense = false;
   productImageSrc = signal<string | null>(null);
@@ -94,7 +94,7 @@ export class SupportCardComponent implements OnInit {
 
   constructor(
     protected api: ApiService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private matDialog: MatDialog,
     private slideIn: SlideIn,
     private store$: Store<AppState>,
@@ -124,9 +124,8 @@ export class SupportCardComponent implements OnInit {
   }
 
   private setupProductImage(systemInfo: SystemInfo): void {
-    const productImageUrl = getProductImageSrc(systemInfo.system_product, true);
+    const productImageUrl = getProductImageSrc(systemInfo.system_product);
     this.productImageSrc.set(productImageUrl);
-    this.extraMargin = !productImageUrl?.includes('ix-original');
   }
 
   parseLicenseInfo(licenseInfo: LicenseInfoInSupport): void {
@@ -157,7 +156,7 @@ export class SupportCardComponent implements OnInit {
   }
 
   feedbackDialog(): void {
-    this.matDialog.open(FeedbackDialogComponent, { data: FeedbackType.Bug });
+    this.matDialog.open(FeedbackDialog, { data: FeedbackType.Bug });
   }
 
   openProactive(): void {
@@ -167,7 +166,7 @@ export class SupportCardComponent implements OnInit {
   updateProductionStatus(newStatus: boolean): void {
     let request$: Observable<boolean | SetProductionStatusDialogResult>;
     if (newStatus) {
-      request$ = this.matDialog.open(SetProductionStatusDialogComponent).afterClosed().pipe(
+      request$ = this.matDialog.open(SetProductionStatusDialog).afterClosed().pipe(
         filter((result: SetProductionStatusDialogResult | false) => {
           if (result) {
             return true;
@@ -187,7 +186,7 @@ export class SupportCardComponent implements OnInit {
 
         return this.api.job('truenas.set_production', [newStatus, attachDebug]).pipe(
           this.loader.withLoader(),
-          this.errorHandler.catchError(),
+          this.errorHandler.withErrorHandler(),
           tap({
             complete: () => {
               this.snackbar.success(

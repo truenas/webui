@@ -16,10 +16,10 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { DatasetService } from 'app/services/dataset-service/dataset.service';
+import { DatasetService } from 'app/services/dataset/dataset.service';
 
 @UntilDestroy()
 @Component({
@@ -41,8 +41,8 @@ import { DatasetService } from 'app/services/dataset-service/dataset.service';
     TranslateModule,
   ],
 })
-export class ReplicationRestoreDialogComponent {
-  readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
+export class ReplicationRestoreDialog {
+  protected readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
 
   form = this.formBuilder.group({
     name: ['', Validators.required],
@@ -54,10 +54,10 @@ export class ReplicationRestoreDialogComponent {
 
   constructor(
     private api: ApiService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private formBuilder: FormBuilder,
     private datasetService: DatasetService,
-    private dialogRef: MatDialogRef<ReplicationRestoreDialogComponent>,
+    private dialogRef: MatDialogRef<ReplicationRestoreDialog>,
     private errorHandler: FormErrorHandlerService,
     @Inject(MAT_DIALOG_DATA) private parentTaskId: number,
   ) {}

@@ -15,13 +15,13 @@ import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/for
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
@@ -48,7 +48,7 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
     MapValuePipe,
   ],
 })
-export class BootenvStatsDialogComponent implements OnInit {
+export class BootenvStatsDialog implements OnInit {
   form = this.fb.group({
     interval: [null as number | null, [Validators.required, Validators.min(1)]],
   });
@@ -61,9 +61,9 @@ export class BootenvStatsDialogComponent implements OnInit {
 
   constructor(
     private api: ApiService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private store$: Store<AppState>,
-    private dialogRef: MatDialogRef<BootenvStatsDialogComponent>,
+    private dialogRef: MatDialogRef<BootenvStatsDialog>,
     private translate: TranslateService,
     private fb: NonNullableFormBuilder,
     private errorHandler: ErrorHandlerService,
@@ -109,7 +109,7 @@ export class BootenvStatsDialogComponent implements OnInit {
     this.api.call('boot.get_state')
       .pipe(
         this.loader.withLoader(),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe((state) => {

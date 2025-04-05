@@ -8,7 +8,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-  filter, repeat, tap,
+  filter,
+  tap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -19,7 +20,7 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TargetDetailsComponent } from 'app/pages/sharing/iscsi/target/all-targets/target-details/target-details.component';
 import { TargetListComponent } from 'app/pages/sharing/iscsi/target/all-targets/target-list/target-list.component';
-import { DeleteTargetDialogComponent } from 'app/pages/sharing/iscsi/target/delete-target-dialog/delete-target-dialog.component';
+import { DeleteTargetDialog } from 'app/pages/sharing/iscsi/target/delete-target-dialog/delete-target-dialog.component';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
 import { IscsiService } from 'app/services/iscsi.service';
 
@@ -44,7 +45,7 @@ export class AllTargetsComponent implements OnInit {
   protected dataProvider: AsyncDataProvider<IscsiTarget>;
   targets = signal<IscsiTarget[] | null>(null);
 
-  readonly requiredRoles = [
+  protected readonly requiredRoles = [
     Role.SharingIscsiTargetWrite,
     Role.SharingIscsiWrite,
     Role.SharingWrite,
@@ -58,10 +59,8 @@ export class AllTargetsComponent implements OnInit {
 
   ngOnInit(): void {
     const targets$ = this.iscsiService.getTargets().pipe(
-      repeat({ delay: () => this.iscsiService.listenForDataRefresh() }),
       tap((targets) => {
         this.targets.set(targets);
-
         const firstTarget = targets[targets.length - 1];
         if (!this.dataProvider.expandedRow && firstTarget) {
           this.dataProvider.expandedRow = firstTarget;
@@ -69,12 +68,22 @@ export class AllTargetsComponent implements OnInit {
       }),
     );
 
+    this.iscsiService.listenForDataRefresh()
+      .pipe(untilDestroyed(this))
+      .subscribe((newTarget) => {
+        if (newTarget) {
+          this.dataProvider.expandedRow = newTarget;
+        }
+
+        this.dataProvider.load();
+      });
+
     this.dataProvider = new AsyncDataProvider(targets$);
   }
 
   deleteTarget(target: IscsiTarget): void {
     this.matDialog
-      .open(DeleteTargetDialogComponent, { data: target, width: '600px' })
+      .open(DeleteTargetDialog, { data: target, width: '600px' })
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => {

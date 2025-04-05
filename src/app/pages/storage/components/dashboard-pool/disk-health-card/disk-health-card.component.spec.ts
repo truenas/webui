@@ -20,15 +20,12 @@ const disks: StorageDashboardDisk[] = [
   {
     advpowermgmt: DiskPowerLevel.Disabled,
     bus: DiskBus.Spi,
-    critical: 0,
     description: '',
     devname: 'sdd',
-    difference: 0,
     duplicate_serial: [],
     expiretime: '',
     hddstandby: DiskStandby.AlwaysOn,
     identifier: '{uuid}b3ba146f-1ab6-4a45-ae6b-37ea00baf0aa',
-    informational: 0,
     model: 'VMware_Virtual_S',
     name: 'sdd',
     number: 2096,
@@ -36,16 +33,12 @@ const disks: StorageDashboardDisk[] = [
     rotationrate: 0,
     serial: '',
     size: 5368709120,
-    smartoptions: '',
     subsystem: 'scsi',
-    togglesmart: true,
     transfermode: 'Auto',
     type: DiskType.Hdd,
     zfs_guid: '12387051346845729003',
     alerts: [],
     tempAggregates: { min: 10, max: 50, avg: 30 },
-    smartTestsRunning: 0,
-    smartTestsFailed: 0,
   },
 ];
 
@@ -101,13 +94,6 @@ describe('DiskHealthCardComponent', () => {
     it('shows average temperature', () => {
       const detailsItem = spectator.query(byText('Average Disk Temperature:'))!.parentElement!;
       expect(detailsItem.querySelector('.value')).toHaveText('30 °C');
-    });
-  });
-
-  describe('Smart Tests', () => {
-    it('shows failed smart tests', () => {
-      const detailsItem = spectator.query(byText('Failed S.M.A.R.T. Tests:'))!.parentElement!;
-      expect(detailsItem.querySelector('.value')).toHaveText('0');
     });
   });
 });

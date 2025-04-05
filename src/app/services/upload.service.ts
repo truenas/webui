@@ -36,10 +36,10 @@ export class UploadService {
    * You need to filter for `(event) => event instanceof HttpResponse` to wait for response.
    */
   upload(options: UploadOptions): Observable<HttpEvent<unknown>> {
-    return this.authService.authToken$.pipe(
+    return this.authService.getOneTimeToken().pipe(
       take(1),
       map((token) => {
-        const endPoint = '/_upload?auth_token=' + token;
+        const endPoint = `/_upload?auth_token=${token}`;
         const formData = new FormData();
         formData.append('data', JSON.stringify({
           method: options.method,

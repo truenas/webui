@@ -26,7 +26,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -54,12 +54,12 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   ],
 })
 export class AlertConfigFormComponent implements OnInit {
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.AlertWrite];
 
   noResponseConfig = {
     type: EmptyType.Errors,
     large: true,
-    title: this.translate.instant('Can not retrieve response'),
+    title: this.translate.instant('Cannot retrieve response'),
   };
 
   categories: AlertCategory[] = [];
@@ -130,7 +130,7 @@ export class AlertConfigFormComponent implements OnInit {
         error: (error: unknown) => {
           this.isFormLoading = false;
           this.cdr.markForCheck();
-          this.dialogService.error(this.errorHandler.parseError(error));
+          this.errorHandler.showErrorModal(error);
         },
       });
   }
@@ -162,7 +162,7 @@ export class AlertConfigFormComponent implements OnInit {
       });
 
     this.api.call('alertclasses.update', [payload]).pipe(
-      this.errorHandler.catchError(),
+      this.errorHandler.withErrorHandler(),
       untilDestroyed(this),
     ).subscribe(() => {
       this.snackbarService.success(this.translate.instant('Settings saved.'));

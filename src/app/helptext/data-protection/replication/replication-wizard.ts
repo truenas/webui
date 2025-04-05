@@ -1,8 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const helptextReplicationWizard = {
-  step1_label: T('What and Where'),
-
   exist_replication_placeholder: T('Load Previous Replication Task'),
   exist_replication_tooltip: T('Use settings from a saved replication.'),
 
@@ -110,9 +108,6 @@ If not checked, <i>zfs allow</i> must be used to grant non-user permissions to p
  recommended, but can be disabled for increased speed on secure networks.'),
 
   name_placeholder: T('Task Name'),
-  name_tooltip: T('Name of this replication configuration.'),
-
-  step2_label: T('When'),
 
   schedule_method_placeholder: T('Replication Schedule'),
   schedule_method_tooltip: T('Set this replication on a schedule or \

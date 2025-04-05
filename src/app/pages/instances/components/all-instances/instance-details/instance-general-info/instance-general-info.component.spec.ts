@@ -11,7 +11,7 @@ import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
-import { VirtualizationStatus, VirtualizationType } from 'app/enums/virtualization.enum';
+import { DiskIoBus, VirtualizationStatus, VirtualizationType } from 'app/enums/virtualization.enum';
 import { VirtualizationAlias, VirtualizationImage, VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
@@ -25,7 +25,6 @@ import {
 import {
   InstanceGeneralInfoComponent,
 } from 'app/pages/instances/components/all-instances/instance-details/instance-general-info/instance-general-info.component';
-import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 
 const instance = {
@@ -52,7 +51,9 @@ const instance = {
   vnc_enabled: true,
   vnc_password: '123456',
   secure_boot: true,
+  root_disk_io_bus: DiskIoBus.Nvme,
   vnc_port: 9000,
+  storage_pool: 'dozer',
 } as VirtualizationInstance;
 
 describe('InstanceGeneralInfoComponent', () => {
@@ -73,10 +74,8 @@ describe('InstanceGeneralInfoComponent', () => {
           response: { id: 'updated_instance' },
         })),
       }),
-      mockProvider(VirtualizationDevicesStore, {
-        selectedInstance: jest.fn(),
-      }),
       mockProvider(VirtualizationInstancesStore, {
+        selectedInstance: jest.fn(),
         instanceUpdated: jest.fn(),
       }),
       mockApi([
@@ -108,11 +107,11 @@ describe('InstanceGeneralInfoComponent', () => {
   it('renders details in card', () => {
     const chartExtra = spectator.query('mat-card-content')!.querySelectorAll('p');
     expect(chartExtra).toHaveLength(6);
-    expect(chartExtra[0]).toHaveText('Status: Running');
-    expect(chartExtra[1]).toHaveText('Autostart: Yes');
-    expect(chartExtra[2]).toHaveText('Base Image: Almalinux 8 amd64 (20241030_23:38)');
-    expect(chartExtra[3]).toHaveText('CPU: 525');
-    expect(chartExtra[4]).toHaveText('Memory: 125 MiB');
+    expect(chartExtra[0]).toHaveText('Autostart: Yes');
+    expect(chartExtra[1]).toHaveText('Base Image: Almalinux 8 amd64 (20241030_23:38)');
+    expect(chartExtra[2]).toHaveText('CPU: 525');
+    expect(chartExtra[3]).toHaveText('Memory: 125 MiB');
+    expect(chartExtra[4]).toHaveText('Pool: dozer');
     expect(chartExtra[5]).toHaveText('Secure Boot: Yes');
   });
 
@@ -125,8 +124,8 @@ describe('InstanceGeneralInfoComponent', () => {
 
     const chartExtra = spectator.query('mat-card-content')!.querySelectorAll('p');
 
-    expect(chartExtra[3]).toHaveText('CPU: All Host CPUs');
-    expect(chartExtra[4]).toHaveText('Memory: Available Host Memory');
+    expect(chartExtra[2]).toHaveText('CPU: All Host CPUs');
+    expect(chartExtra[3]).toHaveText('Memory: Available Host Memory');
   });
 
   it('renders environment variables a text with tooltip', async () => {
@@ -145,7 +144,7 @@ describe('InstanceGeneralInfoComponent', () => {
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(ApiService).job).toHaveBeenLastCalledWith('virt.instance.delete', ['demo']);
 
-    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/virtualization'], { state: { hideMobileDetails: true } });
+    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/instances'], { state: { hideMobileDetails: true } });
   });
 
   it('opens edit instance form when Edit is pressed', async () => {
@@ -158,7 +157,7 @@ describe('InstanceGeneralInfoComponent', () => {
     );
     expect(spectator.inject(VirtualizationInstancesStore).instanceUpdated)
       .toHaveBeenCalledWith({ id: 'updated_instance' });
-    expect(spectator.inject(VirtualizationDevicesStore).selectInstance)
+    expect(spectator.inject(VirtualizationInstancesStore).selectInstance)
       .toHaveBeenCalledWith('updated_instance');
   });
 });

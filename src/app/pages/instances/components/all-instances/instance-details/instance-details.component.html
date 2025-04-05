@@ -18,11 +18,11 @@
       [ixUiSearch]="searchableElements.elements.nic"
     ></ix-instance-nics>
 
-    <ix-instance-proxies
-      [ixUiSearch]="searchableElements.elements.proxies"
-    ></ix-instance-proxies>
+    @if (isContainer()) {
+      <ix-instance-proxies
+        [ixUiSearch]="searchableElements.elements.proxies"
+      ></ix-instance-proxies>
 
-    @if (instance().type === VirtualizationType.Container) {
       <ix-instance-idmap [instance]="instance()"
         [ixUiSearch]="searchableElements.elements.idmap"
       ></ix-instance-idmap>

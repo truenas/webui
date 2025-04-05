@@ -1,6 +1,8 @@
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef, Component, Inject,
+  ChangeDetectorRef, Component, computed, Inject,
+  OnInit,
+  signal,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -16,6 +18,7 @@ import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { SystemGeneralConfig, SystemGeneralConfigUpdate } from 'app/interfaces/system-config.interface';
+import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -25,14 +28,14 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
 import { WithManageCertificatesLinkComponent } from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ipValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ThemeService } from 'app/modules/theme/theme.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { AppState } from 'app/store';
@@ -63,9 +66,10 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
     TranslateModule,
   ],
 })
-export class GuiFormComponent {
+export class GuiFormComponent implements OnInit {
   isFormLoading = true;
   configData: SystemGeneralConfig;
+  protected isStigMode = signal(false);
 
   formGroup = this.fb.nonNullable.group({
     theme: ['', [Validators.required]],
@@ -76,7 +80,7 @@ export class GuiFormComponent {
     ui_httpsport: [null as number | null, [Validators.required, Validators.min(1), Validators.max(65535)]],
     ui_httpsprotocols: [[] as string[], [Validators.required]],
     ui_httpsredirect: [false],
-    usage_collection: [false, [Validators.required]],
+    usage_collection: [false],
     ui_consolemsg: [false, [Validators.required]],
   });
 
@@ -90,6 +94,14 @@ export class GuiFormComponent {
 
   readonly helptext = helptext;
 
+  protected usageCollectionTooltip = computed(() => {
+    if (this.isStigMode()) {
+      return this.translate.instant(helptext.usage_collection.stigModeTooltip);
+    }
+
+    return this.translate.instant(helptext.usage_collection.tooltip);
+  });
+
   constructor(
     private fb: FormBuilder,
     private sysGeneralService: SystemGeneralService,
@@ -99,7 +111,7 @@ export class GuiFormComponent {
     private wsManager: WebSocketHandlerService,
     private wsStatus: WebSocketStatusService,
     private dialog: DialogService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private translate: TranslateService,
     private formErrorHandler: FormErrorHandlerService,
     private errorHandler: ErrorHandlerService,
@@ -113,6 +125,20 @@ export class GuiFormComponent {
 
     this.loadCurrentValues();
     this.setupThemePreview();
+  }
+
+  ngOnInit(): void {
+    this.api.call('system.security.config').pipe(
+      this.errorHandler.withErrorHandler(),
+      untilDestroyed(this),
+    ).subscribe((config: SystemSecurityConfig) => {
+      const isStigMode = config.enable_gpos_stig;
+      this.isStigMode.set(isStigMode);
+
+      if (isStigMode) {
+        this.formGroup.controls.usage_collection.disable();
+      }
+    });
   }
 
   replaceHrefWhenWsConnected(href: string): void {
@@ -131,6 +157,10 @@ export class GuiFormComponent {
       ui_certificate: parseInt(values.ui_certificate),
     };
     delete params.theme;
+
+    if (this.isStigMode()) {
+      delete params.usage_collection;
+    }
 
     (
       !this.configData.ui_httpsredirect && values.ui_httpsredirect
@@ -154,6 +184,7 @@ export class GuiFormComponent {
     ).subscribe({
       next: () => {
         this.store$.dispatch(guiFormSubmitted({ theme: values.theme }));
+        this.store$.dispatch(generalConfigUpdated());
         this.themeService.updateThemeInLocalStorage(this.themeService.findTheme(values.theme));
         this.isFormLoading = false;
         this.cdr.markForCheck();

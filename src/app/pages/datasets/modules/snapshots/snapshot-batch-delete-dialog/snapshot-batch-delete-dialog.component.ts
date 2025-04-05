@@ -17,13 +17,12 @@ import { Role } from 'app/enums/role.enum';
 import { CoreBulkQuery, CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SnapshotDialogData } from 'app/pages/datasets/modules/snapshots/interfaces/snapshot-dialog-data.interface';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -51,8 +50,8 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
     MatAnchor,
   ],
 })
-export class SnapshotBatchDeleteDialogComponent implements OnInit {
-  readonly requiredRoles = [Role.SnapshotDelete];
+export class SnapshotBatchDeleteDialog implements OnInit {
+  protected readonly requiredRoles = [Role.SnapshotDelete];
 
   isJobCompleted = false;
   form = this.fb.group({
@@ -74,7 +73,6 @@ export class SnapshotBatchDeleteDialogComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
     @Inject(MAT_DIALOG_DATA) private snapshots: ZfsSnapshot[],
-    private dialogService: DialogService,
   ) { }
 
   ngOnInit(): void {
@@ -98,7 +96,7 @@ export class SnapshotBatchDeleteDialogComponent implements OnInit {
 
   onSubmit(): void {
     const snapshots = this.snapshots.map((item) => [item.name]);
-    const params: CoreBulkQuery = ['zfs.snapshot.delete', snapshots];
+    const params: CoreBulkQuery = ['pool.snapshot.delete', snapshots];
     this.api.job('core.bulk', params).pipe(
       filter((job: Job<CoreBulkResponse<boolean>[]>) => !!job.result),
       map((job: Job<CoreBulkResponse<boolean>[]>) => job.result),
@@ -116,7 +114,7 @@ export class SnapshotBatchDeleteDialogComponent implements OnInit {
         this.cdr.markForCheck();
       },
       error: (error: unknown) => {
-        this.dialogService.error(this.errorHandler.parseError(error));
+        this.errorHandler.showErrorModal(error);
       },
     });
   }

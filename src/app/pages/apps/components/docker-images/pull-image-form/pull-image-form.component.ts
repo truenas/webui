@@ -18,7 +18,7 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -55,9 +55,6 @@ export class PullImageFormComponent {
 
   readonly tooltips = {
     image: helptextApps.pullImageForm.imageName.tooltip,
-    tag: helptextApps.pullImageForm.imageTags.tooltip,
-    username: helptextApps.pullImageForm.username.tooltip,
-    password: helptextApps.pullImageForm.password.tooltip,
   };
 
   constructor(

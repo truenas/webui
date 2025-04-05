@@ -21,7 +21,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppsSettingsComponent } from 'app/pages/apps/components/catalog-settings/apps-settings.component';
 import { appSettingsButtonElements } from 'app/pages/apps/components/installed-apps/app-settings-button/app-settings-button.elements';
-import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
+import { SelectPoolDialog } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 
@@ -65,7 +65,11 @@ export class AppSettingsButtonComponent {
   ) { }
 
   onChoosePool(): void {
-    this.matDialog.open(SelectPoolDialogComponent, { viewContainerRef: this.viewContainerRef });
+    this.matDialog
+      .open(SelectPoolDialog, { viewContainerRef: this.viewContainerRef })
+      .afterClosed()
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe(() => this.appsStore.loadCatalog());
   }
 
   onUnsetPool(): void {

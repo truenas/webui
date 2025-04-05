@@ -52,7 +52,7 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
 export class SelfEncryptingDriveCardComponent {
   private readonly reloadConfig$ = new Subject<void>();
   protected readonly searchableElements = sedCardElements;
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.SystemAdvancedWrite];
 
   private sedConfig: { sedUser: SedUser; sedPassword: string };
   readonly sedConfig$ = this.reloadConfig$.pipe(

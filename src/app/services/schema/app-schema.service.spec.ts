@@ -2,7 +2,7 @@ import { FormArray, FormControl, UntypedFormGroup } from '@angular/forms';
 import { FormGroup } from '@ngneat/reactive-forms';
 import { Observable } from 'rxjs';
 import { ChartSchemaType } from 'app/enums/chart-schema-type.enum';
-import { ChartSchemaNode } from 'app/interfaces/app.interface';
+import { ChartFormValue, ChartSchemaNode } from 'app/interfaces/app.interface';
 import {
   DynamicFormSchemaCheckbox,
   DynamicFormSchemaDict,
@@ -14,6 +14,7 @@ import {
   DynamicWizardSchema,
   DynamicFormSchemaEnum,
 } from 'app/interfaces/dynamic-form-schema.interface';
+import { HierarchicalObjectMap } from 'app/interfaces/hierarhical-object-map.interface';
 import { UrlValidationService } from 'app/modules/forms/ix-forms/validators/url-validation.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { AppSchemaService } from 'app/services/schema/app-schema.service';
@@ -411,7 +412,7 @@ describe('AppSchemaService', () => {
       service.getNewFormControlChangesSubscription({
         chartSchemaNode: item,
         formGroup: dynamicForm,
-        config: null,
+        config: {} as HierarchicalObjectMap<ChartFormValue>,
         isNew: true,
         isParentImmutable: false,
       });
@@ -440,7 +441,7 @@ describe('AppSchemaService', () => {
       service.getNewFormControlChangesSubscription({
         chartSchemaNode: item,
         formGroup: dynamicForm,
-        config: null,
+        config: {} as HierarchicalObjectMap<ChartFormValue>,
         isNew: true,
         isParentImmutable: false,
       });
@@ -454,7 +455,7 @@ describe('AppSchemaService', () => {
       service.getNewFormControlChangesSubscription({
         chartSchemaNode: item,
         formGroup: dynamicForm,
-        config: null,
+        config: {} as HierarchicalObjectMap<ChartFormValue>,
         isNew: true,
         isParentImmutable: false,
       });
@@ -468,7 +469,7 @@ describe('AppSchemaService', () => {
       service.getNewFormControlChangesSubscription({
         chartSchemaNode: item,
         formGroup: dynamicForm,
-        config: null,
+        config: {} as HierarchicalObjectMap<ChartFormValue>,
         isNew: true,
         isParentImmutable: false,
       });
@@ -483,7 +484,7 @@ describe('AppSchemaService', () => {
       service.getNewFormControlChangesSubscription({
         chartSchemaNode: item,
         formGroup: dynamicForm,
-        config: null,
+        config: {} as HierarchicalObjectMap<ChartFormValue>,
         isNew: true,
         isParentImmutable: false,
       });
@@ -497,7 +498,7 @@ describe('AppSchemaService', () => {
       service.getNewFormControlChangesSubscription({
         chartSchemaNode: item,
         formGroup: dynamicForm,
-        config: null,
+        config: {} as HierarchicalObjectMap<ChartFormValue>,
         isNew: true,
         isParentImmutable: false,
       });

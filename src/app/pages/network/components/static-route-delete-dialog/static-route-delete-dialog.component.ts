@@ -12,11 +12,11 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { Role } from 'app/enums/role.enum';
 import { StaticRoute } from 'app/interfaces/static-route.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -36,17 +36,17 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
     TranslateModule,
   ],
 })
-export class StaticRouteDeleteDialogComponent {
-  readonly requiredRoles = [Role.FullAdmin];
+export class StaticRouteDeleteDialog {
+  protected readonly requiredRoles = [Role.NetworkInterfaceWrite];
 
   readonly deleteMessage = T('Are you sure you want to delete static route <b>"{name}"</b>?');
 
   constructor(
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private api: ApiService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
-    private dialogRef: MatDialogRef<StaticRouteDeleteDialogComponent>,
+    private dialogRef: MatDialogRef<StaticRouteDeleteDialog>,
     @Inject(MAT_DIALOG_DATA) public route: StaticRoute,
     private errorHandler: ErrorHandlerService,
   ) { }
@@ -55,7 +55,7 @@ export class StaticRouteDeleteDialogComponent {
     this.api.call('staticroute.delete', [this.route.id])
       .pipe(
         this.loader.withLoader(),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => {

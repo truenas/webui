@@ -17,23 +17,24 @@ import { helptextApiKeys } from 'app/helptext/api-keys';
 import { ApiKey } from 'app/interfaces/api-key.interface';
 import { User } from 'app/interfaces/user.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { SimpleAsyncComboboxProvider } from 'app/modules/forms/ix-forms/classes/simple-async-combobox-provider';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
 import { IxDatepickerComponent } from 'app/modules/forms/ix-forms/components/ix-date-picker/ix-date-picker.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { UserPickerProvider } from 'app/modules/forms/ix-forms/components/ix-user-picker/ix-user-picker-provider';
+import { IxUserPickerComponent } from 'app/modules/forms/ix-forms/components/ix-user-picker/ix-user-picker.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { forbiddenAsyncValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
-  KeyCreatedDialogComponent,
+  KeyCreatedDialog,
 } from 'app/pages/credentials/users/user-api-keys/components/key-created-dialog/key-created-dialog.component';
+import { UserService } from 'app/services/user.service';
 
 @UntilDestroy()
 @Component({
@@ -45,7 +46,6 @@ import {
   imports: [
     FormActionsComponent,
     IxCheckboxComponent,
-    IxComboboxComponent,
     IxDatepickerComponent,
     IxFieldsetComponent,
     IxInputComponent,
@@ -57,6 +57,7 @@ import {
     RequiresRolesDirective,
     TestDirective,
     TranslateModule,
+    IxUserPickerComponent,
   ],
 })
 export class ApiKeyFormComponent implements OnInit {
@@ -77,9 +78,6 @@ export class ApiKeyFormComponent implements OnInit {
 
   protected readonly username = toSignal(this.currentUsername$);
   protected readonly tooltips = {
-    name: helptextApiKeys.name.tooltip,
-    expires: helptextApiKeys.expires.tooltip,
-    username: helptextApiKeys.username.tooltip,
     reset: helptextApiKeys.reset.tooltip,
     nonExpiring: helptextApiKeys.nonExpiring.tooltip,
   };
@@ -102,7 +100,9 @@ export class ApiKeyFormComponent implements OnInit {
     map((users) => users.map((user) => ({ label: user.username, value: user.username }))),
   );
 
-  protected readonly userProvider = new SimpleAsyncComboboxProvider(this.usernames$);
+  protected readonly userPickerProvider = new UserPickerProvider({
+    queryParams: this.userQueryParams,
+  });
 
   protected readonly forbiddenNames$ = this.api.call('api_key.query', [
     [], { select: ['name'], order_by: ['name'] },
@@ -112,9 +112,10 @@ export class ApiKeyFormComponent implements OnInit {
     private fb: NonNullableFormBuilder,
     private matDialog: MatDialog,
     private api: ApiService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private errorHandler: FormErrorHandlerService,
     private authService: AuthService,
+    private userService: UserService,
     public slideInRef: SlideInRef<ApiKey | undefined, boolean>,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
@@ -133,6 +134,7 @@ export class ApiKeyFormComponent implements OnInit {
           : null,
         nonExpiring: !editingRow.expires_at?.$date,
       });
+      this.form.controls.username.disable();
     } else {
       this.addForbiddenNamesValidator();
       this.setCurrentUsername();
@@ -164,7 +166,7 @@ export class ApiKeyFormComponent implements OnInit {
           this.slideInRef.close({ response: true, error: null });
 
           if (key) {
-            this.matDialog.open(KeyCreatedDialogComponent, { data: key });
+            this.matDialog.open(KeyCreatedDialog, { data: key });
           }
         },
         error: (error: unknown) => {

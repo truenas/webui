@@ -189,7 +189,7 @@ export class SlideInComponent implements OnInit, OnDestroy {
                 },
               });
             },
-            getData: (): D => {
+            getData: (): D | undefined => {
               return cloneDeep(data);
             },
             requireConfirmationWhen: (needConfirmation: () => Observable<boolean>): void => {

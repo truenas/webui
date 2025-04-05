@@ -6,7 +6,7 @@ import { ExtendedKeyUsageFlag } from 'app/enums/extended-key-usage-flag.enum';
 export interface BasicConstraints {
   ca: boolean;
   enabled: boolean;
-  path_length: number;
+  path_length: number | null;
   extension_critical: boolean;
 }
 

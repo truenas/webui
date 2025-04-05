@@ -18,7 +18,7 @@ import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
-  InspectVdevsDialogComponent,
+  InspectVdevsDialog,
 } from 'app/pages/storage/modules/pool-manager/components/inspect-vdevs-dialog/inspect-vdevs-dialog.component';
 import { PoolCreationSeverity } from 'app/pages/storage/modules/pool-manager/enums/pool-creation-severity';
 import { PoolCreationError } from 'app/pages/storage/modules/pool-manager/interfaces/pool-creation-error';
@@ -53,6 +53,7 @@ import {
 export class ReviewWizardStepComponent implements OnInit {
   readonly isAddingVdevs = input<boolean>();
 
+  readonly VdevType = VdevType;
   readonly createPool = output();
 
   state: PoolManagerState;
@@ -110,7 +111,7 @@ export class ReviewWizardStepComponent implements OnInit {
   }
 
   onInspectVdevsPressed(): void {
-    this.matDialog.open(InspectVdevsDialogComponent, {
+    this.matDialog.open(InspectVdevsDialog, {
       data: {
         topology: this.state.topology,
         enclosures: this.state.enclosures,

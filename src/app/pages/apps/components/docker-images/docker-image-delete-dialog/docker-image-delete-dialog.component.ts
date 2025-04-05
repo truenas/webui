@@ -7,6 +7,7 @@ import { MatButton } from '@angular/material/button';
 import {
   MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogClose,
 } from '@angular/material/dialog';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
@@ -20,7 +21,7 @@ import { BulkListItemComponent } from 'app/modules/lists/bulk-list-item/bulk-lis
 import { BulkListItem, BulkListItemState } from 'app/modules/lists/bulk-list-item/bulk-list-item.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -42,10 +43,10 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
     MatDialogClose,
   ],
 })
-export class DockerImageDeleteDialogComponent {
-  readonly requiredRoles = [Role.AppsWrite];
-  protected readonly forceCheckboxTooltip = 'When set will force delete the image regardless of the state of\
-   containers and should be used cautiously.';
+export class DockerImageDeleteDialog {
+  protected readonly requiredRoles = [Role.AppsWrite];
+  protected readonly forceCheckboxTooltip = T('Use force only if other methods fail as it can leave images in a undefined state. \
+   You cannot delete Docker Images (even with force) when the image is in use in a running Docker container.');
 
   form = this.fb.nonNullable.group({
     confirm: [false, [Validators.requiredTrue]],
@@ -75,7 +76,7 @@ export class DockerImageDeleteDialogComponent {
     private api: ApiService,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
-    private dialogRef: MatDialogRef<DockerImageDeleteDialogComponent>,
+    private dialogRef: MatDialogRef<DockerImageDeleteDialog>,
     @Inject(MAT_DIALOG_DATA) public images: ContainerImage[],
   ) {
     this.images.forEach((image) => {
@@ -94,7 +95,7 @@ export class DockerImageDeleteDialogComponent {
 
     this.api.job('core.bulk', ['app.image.delete', deleteParams]).pipe(
       filter((job: Job<CoreBulkResponse<void>[], DeleteContainerImageParams[]>) => !!job.result),
-      this.errorHandler.catchError(),
+      this.errorHandler.withErrorHandler(),
       untilDestroyed(this),
     ).subscribe((response) => {
       response.arguments[1].forEach((params, index: number) => {

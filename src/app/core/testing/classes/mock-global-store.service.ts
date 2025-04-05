@@ -68,7 +68,7 @@ function mockGlobalStoreService<
 
     invalidate(): void { /* Not needed */ }
 
-    private getResponse<R>(mockResponse: R): Observable<R> {
+    private getResponse<R>(mockResponse: R | undefined): Observable<R> {
       if (mockResponse === undefined) {
         throw Error('Unmocked global store response');
       }

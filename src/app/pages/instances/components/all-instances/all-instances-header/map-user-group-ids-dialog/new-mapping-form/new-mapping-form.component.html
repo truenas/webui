@@ -1,0 +1,45 @@
+<ix-fieldset [title]="'Add New Mapping' | translate">
+  <form class="form" [formGroup]="form" (submit)="submit()">
+    @if (isUserType()) {
+      <ix-combobox
+        formControlName="hostUidOrGid"
+        [label]="'User' | translate"
+        [provider]="userProvider"
+        [required]="true"
+      ></ix-combobox>
+    } @else {
+      <ix-combobox
+        formControlName="hostUidOrGid"
+        [label]="'Group' | translate"
+        [provider]="groupProvider"
+        [required]="true"
+      ></ix-combobox>
+    }
+
+    <ix-checkbox
+      formControlName="mapDirectly"
+      class="default-checkbox"
+      [label]="isUserType() ? ('Map to the same UID in the instance' | translate) : ('Map to the same GID in the instance' | translate)"
+      [tooltip]="containersHelptext.mapDirectlyTooltip | translate"
+    ></ix-checkbox>
+
+    @if (!form.value.mapDirectly) {
+      <ix-input
+        formControlName="instanceUidOrGid"
+        type="number"
+        [label]="isUserType() ? ('Instance UID' | translate) : ('Instance GID' | translate)"
+        [required]="true"
+      ></ix-input>
+    }
+
+    <button
+      class="set-button"
+      mat-button
+      type="submit"
+      [disabled]="form.invalid"
+      [ixTest]="['set-mapping']"
+    >
+      {{ 'Set' | translate }}
+    </button>
+  </form>
+</ix-fieldset>

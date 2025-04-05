@@ -13,6 +13,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { helptextSharingSmb } from 'app/helptext/sharing';
+import { JsonRpcError } from 'app/interfaces/api-message.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { Group } from 'app/interfaces/group.interface';
 import { Service } from 'app/interfaces/service.interface';
@@ -24,12 +25,13 @@ import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/i
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { RestartSmbDialogComponent } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
+import { RestartSmbDialog } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
+import { ApiCallError } from 'app/services/errors/error.classes';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { AppState } from 'app/store';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
@@ -167,7 +169,7 @@ describe('SmbFormComponent', () => {
         components$: of([]),
       }),
       mockProvider(Router),
-      mockProvider(AppLoaderService),
+      mockProvider(LoaderService),
       mockProvider(FilesystemService),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
@@ -446,7 +448,7 @@ describe('SmbFormComponent', () => {
         },
       }]);
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(RestartSmbDialogComponent, {
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(RestartSmbDialog, {
         data: {
           timemachine: true,
           homeshare: true,
@@ -570,14 +572,11 @@ describe('SmbFormComponent', () => {
       api = spectator.inject(ApiService);
       jest.spyOn(api, 'call').mockImplementation((method) => {
         if (method === 'sharing.smb.share_precheck') {
-          return throwError(() => ({
-            jsonrpc: '2.0',
-            error: {
-              data: { reason: '[EEXIST] sharing.smb.share_precheck.name: Share with this name already exists.' },
-            },
-          }));
+          return throwError(() => new ApiCallError({
+            data: { reason: '[EEXIST] sharing.smb.share_precheck.name: Share with this name already exists.' },
+          } as JsonRpcError));
         }
-        return null;
+        return of(null);
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
@@ -610,13 +609,11 @@ describe('SmbFormComponent', () => {
           case 'sharing.smb.presets':
             return of({ ...presets });
           case 'sharing.smb.create':
-            return throwError(() => ({
-              error: {
-                data: {
-                  reason: '[EINVAL] sharingsmb_create.afp: Apple SMB2/3 protocol extension support is required by this parameter.',
-                },
+            return throwError(() => new ApiCallError({
+              data: {
+                reason: '[EINVAL] sharingsmb_create.afp: Apple SMB2/3 protocol extension support is required by this parameter.',
               },
-            }));
+            } as JsonRpcError));
           default:
             return of(null);
         }
@@ -648,13 +645,11 @@ describe('SmbFormComponent', () => {
       await saveButton.click();
 
       expect(spectator.inject(FormErrorHandlerService).handleValidationErrors).toHaveBeenCalledWith(
-        {
-          error: {
-            data: {
-              reason: '[EINVAL] sharingsmb_create.afp: Apple SMB2/3 protocol extension support is required by this parameter.',
-            },
+        new ApiCallError({
+          data: {
+            reason: '[EINVAL] sharingsmb_create.afp: Apple SMB2/3 protocol extension support is required by this parameter.',
           },
-        },
+        } as JsonRpcError),
         spectator.component.form,
         {},
         'smb-form-toggle-advanced-options',

@@ -4,11 +4,6 @@ export const helptextLdap = {
   ldap_custactions_clearcache_dialog_message: T('The cache is being rebuilt.'),
   ldap_hostname_tooltip: T('The hostname or IP address of the LDAP server. \
  Separate entries by pressing <code>Enter</code>.'),
-  ldap_hostname_noreq_tooltip: T('LDAP server hostnames or IP addresses.\
- Separate entries with an empty space. Multiple hostnames or IP\
- addresses can be entered to create an LDAP failover priority list. If a\
- host does not respond, the next host in the list is tried until a new\
- connection is established.'),
   ldap_basedn_tooltip: T('Top level of the LDAP directory tree to be used when\
  searching for resources. Example: <i>dc=test,dc=org</i>.'),
   ldap_binddn_tooltip: T('Administrative account name on the LDAP server.\
@@ -40,9 +35,6 @@ export const helptextLdap = {
   ldap_timeout_tooltip: T('LDAP timeout in seconds. Increase this value if a\
  Kerberos ticket timeout occurs.'),
   ldap_dns_timeout_tooltip: T('DNS timeout in seconds. Increase this value if DNS queries timeout.'),
-  ldap_idmap_backend_tooltip: T('Backend used to map Windows security \
- identifiers (SIDs) to UNIX UIDs and GIDs. To configure the selected \
- backend, click <i>EDIT IDMAP</i>.'),
   ldap_auxiliary_parameters_tooltip: T('Additional options for <a\
  href="https://arthurdejong.org/nss-pam-ldapd/nslcd.conf.5"\
  target="_blank">nslcd.conf</a>.'),

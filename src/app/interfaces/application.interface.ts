@@ -7,5 +7,5 @@ export interface AppUpgradeSummary {
   available_versions_for_upgrade: {
     version: string;
     human_version: string;
-  }[];
+  }[] | null;
 }

@@ -9,7 +9,7 @@ import {
 
 export interface SystemInfoState {
   systemInfo: SystemInfo | null;
-  productType: ProductType;
+  productType: ProductType | null;
   isIxHardware: boolean;
   buildYear: number;
 }

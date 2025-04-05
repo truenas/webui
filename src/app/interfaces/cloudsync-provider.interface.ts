@@ -4,7 +4,7 @@ import { TransferMode } from 'app/enums/transfer-mode.enum';
 export interface CloudSyncProvider {
   bucket_title: string;
   buckets: boolean;
-  credentials_oauth: string;
+  credentials_oauth: string | null;
   credentials_schema: unknown[];
   name: CloudSyncProviderName;
   task_schema: unknown[]; // Not really used

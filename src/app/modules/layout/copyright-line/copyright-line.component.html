@@ -1,17 +1,12 @@
-{{ copyrightText() }}
-@if (!withIxLogo()) {
-  -
-}
+<span [innerHtml]="copyrightText()"></span>
+
+iXsystems, Inc. dba
+
 <a
   target="_blank"
-  title="iXsystems, Inc."
+  title="iXsystems, Inc. dba TrueNAS."
   ixTest="copyright"
   [href]="targetHref()"
 >
-  @if (withIxLogo()) {
-    <img class="ix-logo" src="assets/images/ix_logo_full.png" alt="iXsystems, Inc.">
-  } @else {
-    iXsystems, Inc.
-  }
+  TrueNAS
 </a>
-

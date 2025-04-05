@@ -12,10 +12,10 @@ import { TranslateModule } from '@ngx-translate/core';
 import { FibreChannelHost } from 'app/interfaces/fibre-channel.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -34,15 +34,15 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
     IxInputComponent,
   ],
 })
-export class VirtualPortsNumberDialogComponent {
+export class VirtualPortsNumberDialog {
   protected form = new FormGroup({
     virtualPorts: new FormControl(0, [Validators.required, Validators.min(0)]),
   });
 
   constructor(
     private api: ApiService,
-    private loader: AppLoaderService,
-    private dialogRef: MatDialogRef<VirtualPortsNumberDialogComponent>,
+    private loader: LoaderService,
+    private dialogRef: MatDialogRef<VirtualPortsNumberDialog>,
     private errorHandler: ErrorHandlerService,
     @Inject(MAT_DIALOG_DATA) private host: FibreChannelHost,
   ) {
@@ -56,7 +56,7 @@ export class VirtualPortsNumberDialogComponent {
       .call('fc.fc_host.update', [this.host.id, { npiv: this.form.value.virtualPorts }])
       .pipe(
         this.loader.withLoader(),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => this.dialogRef.close(true));

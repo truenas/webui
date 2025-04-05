@@ -2,11 +2,13 @@ import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatAnchor, MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { filter, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -23,6 +25,7 @@ import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-ta
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { toggleColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
+import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
 import { IxTableColumnsSelectorComponent } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
@@ -30,14 +33,16 @@ import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { nfsListElements } from 'app/pages/sharing/nfs/nfs-list/nfs-list.elements';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { AppState } from 'app/store';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -74,6 +79,7 @@ export class NfsListComponent implements OnInit {
 
   filterString = '';
   dataProvider: AsyncDataProvider<NfsShare>;
+  readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
 
   nfsShares: NfsShare[] = [];
   columns = createTable<NfsShare>([
@@ -109,6 +115,11 @@ export class NfsListComponent implements OnInit {
       onRowToggle: (row: NfsShare) => this.onChangeEnabledState(row),
       requiredRoles: this.requiredRoles,
     }),
+    yesNoColumn({
+      title: this.translate.instant('Expose Snapshots'),
+      propertyName: 'expose_snapshots',
+      hidden: !this.isEnterprise(),
+    }),
     actionsColumn({
       actions: [
         {
@@ -136,7 +147,7 @@ export class NfsListComponent implements OnInit {
             ).subscribe({
               next: () => {
                 this.api.call('sharing.nfs.delete', [row.id]).pipe(
-                  this.appLoader.withLoader(),
+                  this.loader.withLoader(),
                   untilDestroyed(this),
                 ).subscribe({
                   next: () => this.refresh(),
@@ -154,13 +165,14 @@ export class NfsListComponent implements OnInit {
   });
 
   constructor(
-    private appLoader: AppLoaderService,
+    private loader: LoaderService,
     private api: ApiService,
     private translate: TranslateService,
     private dialog: DialogService,
     private errorHandler: ErrorHandlerService,
     private slideIn: SlideIn,
     private cdr: ChangeDetectorRef,
+    private store$: Store<AppState>,
     protected emptyService: EmptyService,
   ) {}
 
@@ -224,7 +236,7 @@ export class NfsListComponent implements OnInit {
       },
       error: (error: unknown) => {
         this.dataProvider.load();
-        this.errorHandler.showErrorModal(this.errorHandler.parseError(error));
+        this.errorHandler.showErrorModal(error);
       },
     });
   }

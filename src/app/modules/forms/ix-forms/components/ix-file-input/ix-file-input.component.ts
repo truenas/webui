@@ -39,7 +39,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 })
 export class IxFileInputComponent implements ControlValueAccessor {
   readonly label = input<string>();
-  readonly buttonText = input<string>(this.translate.instant('Choose File'));
   readonly tooltip = input<string>();
   readonly acceptedFiles = input('*.*');
   readonly multiple = input<boolean>();
@@ -70,7 +69,7 @@ export class IxFileInputComponent implements ControlValueAccessor {
   writeValue(value: File[] | null): void {
     this.value = this.transformFiles(value || []);
     if (!value?.length) {
-      this.fileInput().nativeElement.value = null;
+      this.fileInput().nativeElement.value = '';
     }
 
     this.cdr.markForCheck();

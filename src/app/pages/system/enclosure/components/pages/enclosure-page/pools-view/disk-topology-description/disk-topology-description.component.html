@@ -1,17 +1,15 @@
 @if (selectedSlot().dev) {
   <h1>{{ selectedSlot().dev }}</h1>
 }
-@if (selectedSlot().pool_info) {
+@if (selectedSlot().pool_info; as poolInfo) {
   <div>
     <span class="title">{{ 'Topology' | translate }}:</span>
-    <span class="value">{{ selectedSlot().pool_info.vdev_name }}</span>
+    <span class="value">{{ poolInfo.vdev_name }}</span>
   </div>
-}
-@if (selectedSlot().pool_info) {
   <div>
     <span class="title">{{ 'Category' | translate }}:</span>
     <span class="value">
-      {{ selectedSlot().pool_info.vdev_type | mapValue: vdevTypeLabels | translate }}
+      {{ poolInfo.vdev_type | mapValue: vdevTypeLabels | translate }}
     </span>
   </div>
 }

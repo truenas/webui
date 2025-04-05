@@ -1,6 +1,5 @@
 import {
   ChangeDetectionStrategy, Component, Inject, signal, OnInit,
-  computed,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
@@ -23,7 +22,7 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export type VirtualizationImageWithId = VirtualizationImage & {
   id: string;
@@ -52,7 +51,7 @@ export type VirtualizationImageWithId = VirtualizationImage & {
   styleUrls: ['./select-image-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SelectImageDialogComponent implements OnInit {
+export class SelectImageDialog implements OnInit {
   protected readonly columns = ['label', 'os', 'release', 'archs', 'variant', 'actions'];
   protected filterForm = this.fb.group({
     os: [''],
@@ -72,13 +71,9 @@ export class SelectImageDialogComponent implements OnInit {
     large: true,
   } as EmptyConfig);
 
-  protected isContainer = computed(() => {
-    return this.data.type === VirtualizationType.Container;
-  });
-
   constructor(
     private api: ApiService,
-    private dialogRef: MatDialogRef<SelectImageDialogComponent>,
+    private dialogRef: MatDialogRef<SelectImageDialog>,
     private fb: FormBuilder,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,

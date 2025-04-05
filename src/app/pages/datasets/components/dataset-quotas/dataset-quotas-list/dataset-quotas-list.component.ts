@@ -18,6 +18,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
+import { isQuotaSet } from 'app/helpers/storage.helper';
 import { helpTextQuotas } from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 import { DatasetQuota, SetDatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { ConfirmOptions } from 'app/interfaces/dialog.interface';
@@ -37,7 +38,7 @@ import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -48,7 +49,7 @@ import {
 import {
   DatasetQuotaEditFormComponent,
 } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-edit-form/dataset-quota-edit-form.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 interface QuotaData {
   quotaType: DatasetQuotaType.User | DatasetQuotaType.Group;
@@ -196,7 +197,7 @@ export class DatasetQuotasListComponent implements OnInit {
     protected formatter: IxFormatterService,
     protected dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
-    protected loader: AppLoaderService,
+    protected loader: LoaderService,
     protected route: ActivatedRoute,
     private translate: TranslateService,
     private slideIn: SlideIn,
@@ -234,7 +235,7 @@ export class DatasetQuotasListComponent implements OnInit {
       .pipe(untilDestroyed(this)).subscribe({
         next: (quotas: DatasetQuota[]) => {
           this.isLoading = false;
-          this.quotas = quotas.filter((quota) => quota.quota > 0 || quota.obj_quota > 0);
+          this.quotas = quotas.filter(isQuotaSet);
 
           if (this.showAllQuotas) {
             this.quotas = quotas;
@@ -252,7 +253,7 @@ export class DatasetQuotasListComponent implements OnInit {
 
   handleError = (error: unknown): void => {
     this.isLoading = false;
-    this.dialogService.error(this.errorHandler.parseError(error));
+    this.errorHandler.showErrorModal(error);
     this.cdr.markForCheck();
   };
 

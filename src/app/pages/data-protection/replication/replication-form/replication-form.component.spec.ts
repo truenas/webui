@@ -43,7 +43,7 @@ import {
 import {
   ReplicationWizardComponent,
 } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
-import { DatasetService } from 'app/services/dataset-service/dataset.service';
+import { DatasetService } from 'app/services/dataset/dataset.service';
 import { ReplicationService } from 'app/services/replication.service';
 
 const existingTask: ReplicationTask = {
@@ -84,7 +84,7 @@ describe('ReplicationFormComponent', () => {
   let loader: HarnessLoader;
   const remoteNodeProvider = jest.fn();
   const localNodeProvider = jest.fn();
-  const slideInRef: SlideInRef<ReplicationTask, unknown> = {
+  const slideInRef: SlideInRef<ReplicationTask | undefined, unknown> = {
     close: jest.fn(),
     requireConfirmationWhen: jest.fn(),
     swap: jest.fn(),

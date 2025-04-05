@@ -66,7 +66,7 @@ html .ix-dark {
   --mdc-chip-label-text-color: #000000de;
   --mdc-chip-container-height: 23px;
   --mdc-snackbar-container-color: var(--bg1);
-  --mdc-snackbar-supporting-text-color: var(--primary-txt);
+  --mdc-snackbar-supporting-text-color: var(--fg1);
   --mdc-snackbar-supporting-text-font: var(--mdc-dialog-supporting-text-font);
   --mdc-snackbar-supporting-text-size: 1rem;
   --mat-option-selected-state-layer-color: var(--bg2);
@@ -178,6 +178,7 @@ html .ix-dark {
   .mat-mdc-radio-button {
     --mdc-form-field-label-text-color: var(--fg2);
     --mdc-form-field-label-text-size: 12px;
+    --mat-radio-label-text-line-height: 1rem;
 
     &.mat-primary {
       --mdc-radio-disabled-selected-icon-color: var(--primary);
@@ -211,7 +212,8 @@ html .ix-dark {
     --mat-text-button-ripple-color: var(--alt-bg1);
   }
 
-  .mat-mdc-tab-nav-bar {
+  .mat-mdc-tab-nav-bar,
+  .mat-mdc-tab-list {
     --mat-tab-header-inactive-label-text-color: var(--fg2);
     --mat-tab-header-inactive-hover-label-text-color: var(--fg1);
     --mat-tab-header-active-ripple-color: var(--focus-bg);

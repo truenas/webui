@@ -15,7 +15,7 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -41,7 +41,7 @@ import { SystemGeneralService } from 'app/services/system-general.service';
     TranslateModule,
   ],
 })
-export class SignCsrDialogComponent {
+export class SignCsrDialog {
   form = this.formBuilder.group({
     csr_cert_id: [null as number | null, Validators.required],
     name: ['', Validators.required],
@@ -54,10 +54,10 @@ export class SignCsrDialogComponent {
   protected readonly Role = Role;
 
   constructor(
-    private dialogRef: MatDialogRef<SignCsrDialogComponent>,
+    private dialogRef: MatDialogRef<SignCsrDialog>,
     private systemGeneralService: SystemGeneralService,
     private formBuilder: FormBuilder,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
     private api: ApiService,

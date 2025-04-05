@@ -17,7 +17,6 @@ import { TopologyWarning, VdevType } from 'app/enums/v-dev-type.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { Disk, StorageDashboardDisk } from 'app/interfaces/disk.interface';
 import { Pool, PoolTopology } from 'app/interfaces/pool.interface';
-import { SmartTestResult } from 'app/interfaces/smart-test.interface';
 import {
   EnclosureAndSlot,
   TopologyDisk,
@@ -39,7 +38,7 @@ interface TopologyState {
 }
 
 export type EmptyDiskObject = Record<
-  string, string | number | boolean | string[] | SmartTestResult[] | EnclosureAndSlot
+  string, string | number | boolean | string[] | EnclosureAndSlot
 >;
 
 @UntilDestroy()
@@ -64,8 +63,8 @@ export type EmptyDiskObject = Record<
   ],
 })
 export class TopologyCardComponent implements OnInit, OnChanges {
-  readonly poolState = input<Pool>();
-  readonly disks = input<StorageDashboardDisk[]>();
+  readonly poolState = input.required<Pool>();
+  readonly disks = input<StorageDashboardDisk[]>([]);
 
   protected readonly searchableElements = topologyCardElements;
   notAssignedDev = this.translate.instant('VDEVs not assigned');
@@ -229,8 +228,6 @@ export class TopologyCardComponent implements OnInit, OnChanges {
     keys.forEach((key: keyof StorageDashboardDisk) => {
       if (
         key === 'alerts'
-        || key === 'smartTestsRunning'
-        || key === 'smartTestsFailed'
         || key === 'tempAggregates'
       ) {
         return;

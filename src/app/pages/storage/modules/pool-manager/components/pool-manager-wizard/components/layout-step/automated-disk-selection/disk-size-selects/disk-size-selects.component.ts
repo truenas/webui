@@ -64,7 +64,7 @@ export class DiskSizeSelectsComponent implements OnChanges {
     this.listenForResetEvents();
   }
 
-  get selectedDiskSize(): number {
+  get selectedDiskSize(): number | undefined {
     return this.form.controls.sizeAndType.value?.[0];
   }
 
@@ -149,14 +149,15 @@ export class DiskSizeSelectsComponent implements OnChanges {
   }
 
   private getSuitableDisks(): DetailsDisk[] {
-    if (!this.selectedDiskSize) {
+    const selectedDiskSize = this.selectedDiskSize;
+    if (!selectedDiskSize) {
       return [];
     }
 
     if (!this.form.controls.treatDiskSizeAsMinimum.value) {
-      return this.sizeDisksMap[this.selectedDiskType][this.selectedDiskSize];
+      return this.sizeDisksMap[this.selectedDiskType][selectedDiskSize];
     }
 
-    return this.inventory().filter((disk) => disk.size >= this.selectedDiskSize);
+    return this.inventory().filter((disk) => disk.size >= selectedDiskSize);
   }
 }

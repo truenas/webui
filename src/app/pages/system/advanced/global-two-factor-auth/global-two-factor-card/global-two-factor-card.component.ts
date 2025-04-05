@@ -49,7 +49,7 @@ import { FirstTimeWarningService } from 'app/services/first-time-warning.service
 export class GlobalTwoFactorAuthCardComponent {
   readonly helpText = helptext2fa;
   protected readonly searchableElements = globalTwoFactorCardElements;
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.SystemSecurityWrite];
 
   private readonly reloadConfig$ = new Subject<void>();
   readonly twoFactorConfig$ = this.reloadConfig$.pipe(

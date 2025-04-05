@@ -2,7 +2,9 @@ import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
+import {
+  Validators, ReactiveFormsModule, NonNullableFormBuilder, FormControl, FormGroup,
+} from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatProgressBar } from '@angular/material/progress-bar';
@@ -20,13 +22,12 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
-import { isFailedJob } from 'app/helpers/api.helper';
+import { isFailedJobError } from 'app/helpers/api.helper';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
 import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -37,7 +38,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { systemManualUpdateFormElements } from 'app/pages/system/update/components/manual-update-form/manual-update-form.elements';
 import { updateAgainCode } from 'app/pages/system/update/utils/update-again-code.constant';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { UploadOptions, UploadService } from 'app/services/upload.service';
 import { AppState } from 'app/store';
@@ -71,7 +72,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   ],
 })
 export class ManualUpdateFormComponent implements OnInit {
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.SystemUpdateWrite];
   protected readonly searchableElements = systemManualUpdateFormElements;
 
   isFormLoading$ = new BehaviorSubject(false);
@@ -79,9 +80,11 @@ export class ManualUpdateFormComponent implements OnInit {
     filelocation: ['', Validators.required],
     updateFile: [null as FileList | null],
     rebootAfterManualUpdate: [false],
-  });
-
-  private apiEndPoint: string;
+  }) as FormGroup<{
+    filelocation?: FormControl<string | null>;
+    updateFile: FormControl<FileList | null>;
+    rebootAfterManualUpdate: FormControl<boolean>;
+  }>;
 
   readonly helptext = helptext;
   currentVersion = '';
@@ -96,19 +99,11 @@ export class ManualUpdateFormComponent implements OnInit {
     private formBuilder: NonNullableFormBuilder,
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
-    private authService: AuthService,
     private translate: TranslateService,
     private store$: Store<AppState>,
     private cdr: ChangeDetectorRef,
     private upload: UploadService,
-  ) {
-    this.authService.authToken$.pipe(
-      tap((token) => {
-        this.apiEndPoint = '/_upload?auth_token=' + token;
-      }),
-      untilDestroyed(this),
-    ).subscribe();
-  }
+  ) {}
 
   ngOnInit(): void {
     this.checkHaLicenseAndUpdateStatus();
@@ -195,7 +190,7 @@ export class ManualUpdateFormComponent implements OnInit {
     )
       .afterClosed()
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => {
@@ -288,10 +283,10 @@ export class ManualUpdateFormComponent implements OnInit {
     this.isFormLoading$.next(false);
     this.cdr.markForCheck();
 
-    if (isFailedJob(failure) && failure.error.includes(updateAgainCode)) {
+    if (isFailedJobError(failure) && failure.job.error?.includes(updateAgainCode)) {
       this.dialogService.confirm({
         title: helptext.continueDialogTitle,
-        message: failure.error.replace(updateAgainCode, ''),
+        message: failure.job.error.replace(updateAgainCode, ''),
         buttonText: helptext.continueDialogAction,
       }).pipe(
         filter(Boolean),
@@ -301,7 +296,7 @@ export class ManualUpdateFormComponent implements OnInit {
       });
       return;
     }
-    this.dialogService.error(this.errorHandler.parseError(failure));
+    this.errorHandler.showErrorModal(failure);
   };
 
   private resumeUpdateAfterFailure(): void {

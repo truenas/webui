@@ -13,6 +13,7 @@ import {
   DeviceActionsMenuComponent,
 } from 'app/pages/instances/components/common/device-actions-menu/device-actions-menu.component';
 import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
+import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 
 describe('InstanceDevicesComponent', () => {
   let spectator: Spectator<InstanceDevicesComponent>;
@@ -29,6 +30,10 @@ describe('InstanceDevicesComponent', () => {
       dev_type: VirtualizationDeviceType.Tpm,
     },
     {
+      dev_type: VirtualizationDeviceType.Pci,
+      description: '0000:00:00.0 Host bridge: 82G33/G31/P35/P31 Express DRAM Controller',
+    },
+    {
       name: 'gpu1',
     } as VirtualizationProxy,
   ];
@@ -43,9 +48,11 @@ describe('InstanceDevicesComponent', () => {
       ),
     ],
     providers: [
+      mockProvider(VirtualizationInstancesStore, {
+        selectedInstance: () => ({ id: 'my-instance' }),
+      }),
       mockProvider(VirtualizationDevicesStore, {
         isLoading: () => false,
-        selectedInstance: () => ({ id: 'my-instance' }),
         devices: () => devices,
         loadDevices: jest.fn(),
       }),
@@ -59,15 +66,16 @@ describe('InstanceDevicesComponent', () => {
   it('shows a list of USB or GPU devices', () => {
     const deviceRows = spectator.queryAll('.device');
 
-    expect(deviceRows).toHaveLength(3);
+    expect(deviceRows).toHaveLength(4);
     expect(deviceRows[0]).toHaveText('USB Microphone');
     expect(deviceRows[1]).toHaveText('Matrox G200eW');
     expect(deviceRows[2]).toHaveText('Trusted Platform Module');
+    expect(deviceRows[3]).toHaveText('PCI: 0000:00:00.0 Host bridge: 82G33/G31/P35/P31 Express DRAM Controller');
   });
 
   it('renders a menu to delete the device', () => {
     const actionsMenu = spectator.queryAll(DeviceActionsMenuComponent);
-    expect(actionsMenu).toHaveLength(3);
+    expect(actionsMenu).toHaveLength(4);
     expect(actionsMenu[0].device).toBe(devices[0]);
   });
 

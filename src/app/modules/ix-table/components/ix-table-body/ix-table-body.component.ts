@@ -47,8 +47,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class IxTableBodyComponent<T> implements AfterViewInit {
-  readonly columns = input<Column<T, ColumnComponent<T>>[]>();
-  readonly dataProvider = input<DataProvider<T>>();
+  readonly columns = input<Column<T, ColumnComponent<T>>[]>([]);
+  readonly dataProvider = input.required<DataProvider<T>>();
   readonly isLoading = input(false);
   readonly detailsRowIdentifier = input<keyof T>('id' as keyof T);
 
@@ -86,7 +86,7 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
   }
 
   getRowTag(row: T): string {
-    return this.columns()[0]?.uniqueRowTag(row) ?? '';
+    return this.columns()[0]?.uniqueRowTag?.(row) ?? '';
   }
 
   getTemplateByColumnIndex(idx: number): TemplateRef<{ $implicit: T }> | undefined {
@@ -94,8 +94,12 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
   }
 
   onToggle(row: T): void {
-    this.dataProvider().expandedRow = this.isExpanded(row) ? null : row;
-    this.expanded.emit(this.dataProvider().expandedRow);
+    const expandedRow = this.isExpanded(row) ? null : row;
+    this.dataProvider().expandedRow = expandedRow;
+
+    if (expandedRow) {
+      this.expanded.emit(expandedRow);
+    }
   }
 
   isExpanded(row: T): boolean {

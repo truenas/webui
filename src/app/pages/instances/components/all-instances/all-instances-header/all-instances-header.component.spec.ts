@@ -12,11 +12,15 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import {
   GlobalConfigFormComponent,
 } from 'app/pages/instances/components/all-instances/all-instances-header/global-config-form/global-config-form.component';
+import {
+  MapUserGroupIdsDialog,
+} from 'app/pages/instances/components/all-instances/all-instances-header/map-user-group-ids-dialog/map-user-group-ids-dialog.component';
 import { VirtualizationStateComponent } from 'app/pages/instances/components/all-instances/all-instances-header/virtualization-state/virtualization-state.component';
 import {
-  VolumesDialogComponent,
+  VolumesDialog,
 } from 'app/pages/instances/components/common/volumes-dialog/volumes-dialog.component';
 import { VirtualizationConfigStore } from 'app/pages/instances/stores/virtualization-config.store';
+import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 import { AllInstancesHeaderComponent } from './all-instances-header.component';
 
 describe('AllInstancesHeaderComponent', () => {
@@ -34,6 +38,9 @@ describe('AllInstancesHeaderComponent', () => {
       MockComponent(VirtualizationStateComponent),
     ],
     providers: [
+      mockProvider(VirtualizationInstancesStore, {
+        initialize: jest.fn(),
+      }),
       mockProvider(VirtualizationConfigStore, storeMock),
       mockProvider(SlideIn, {
         open: jest.fn(() => of(undefined)),
@@ -130,6 +137,7 @@ describe('AllInstancesHeaderComponent', () => {
         GlobalConfigFormComponent,
         { data: { dataset: 'pool1/dataset1' } },
       );
+      expect(spectator.inject(VirtualizationInstancesStore).initialize).toHaveBeenCalled();
     });
 
     it('opens VolumesDialogComponent when Manage Volumes in Configuration menu is pressed', async () => {
@@ -141,7 +149,21 @@ describe('AllInstancesHeaderComponent', () => {
       await configurationMenu.clickItem({ text: 'Manage Volumes' });
 
       expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
-        VolumesDialogComponent,
+        VolumesDialog,
+        expect.anything(),
+      );
+    });
+
+    it('opens MapUserGroupIdsDialog when Map User/Group IDs is pressed', async () => {
+      storeMock.virtualizationState.set(VirtualizationGlobalState.Initialized);
+      spectator.detectChanges();
+
+      const configurationMenu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Configuration' }));
+      await configurationMenu.open();
+      await configurationMenu.clickItem({ text: 'Map User/Group IDs' });
+
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
+        MapUserGroupIdsDialog,
         expect.anything(),
       );
     });

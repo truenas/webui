@@ -158,9 +158,9 @@ export class EditNfsAceComponent implements OnChanges, OnInit {
     } as NfsAclItem;
 
     if (this.isUserTag) {
-      ace.who = formValues.user;
+      ace.who = formValues.user || undefined;
     } else if (this.isGroupTag) {
-      ace.who = formValues.group;
+      ace.who = formValues.group || undefined;
     }
 
     if (formValues.permissionType === NfsFormPermsType.Basic) {

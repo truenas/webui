@@ -50,7 +50,7 @@ import { isPropertyInherited, isRootDataset } from 'app/pages/datasets/utils/dat
   ],
 })
 export class DatasetCapacitySettingsComponent implements OnInit {
-  readonly requiredRoles = [Role.DatasetWrite];
+  protected readonly requiredRoles = [Role.DatasetWrite];
 
   readonly defaultQuotaWarning = 80;
   readonly defaultQuotaCritical = 95;

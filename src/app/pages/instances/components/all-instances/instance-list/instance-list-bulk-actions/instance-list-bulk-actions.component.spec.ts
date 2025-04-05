@@ -8,8 +8,8 @@ import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { StopOptionsDialogComponent, StopOptionsOperation } from 'app/pages/instances/components/all-instances/instance-list/stop-options-dialog/stop-options-dialog.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { StopOptionsDialog, StopOptionsOperation } from 'app/pages/instances/components/all-instances/instance-list/stop-options-dialog/stop-options-dialog.component';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { InstanceListBulkActionsComponent } from './instance-list-bulk-actions.component';
 
 describe('InstanceListBulkActionsComponent', () => {
@@ -69,7 +69,7 @@ describe('InstanceListBulkActionsComponent', () => {
     await menu.open();
     await menu.clickItem({ text: 'Stop All Selected' });
 
-    expect(matDialog.open).toHaveBeenCalledWith(StopOptionsDialogComponent, { data: StopOptionsOperation.Stop });
+    expect(matDialog.open).toHaveBeenCalledWith(StopOptionsDialog, { data: StopOptionsOperation.Stop });
   });
 
   it('opens the Restart Options dialog when Restart All Selected is clicked', async () => {
@@ -78,7 +78,7 @@ describe('InstanceListBulkActionsComponent', () => {
     await menu.open();
     await menu.clickItem({ text: 'Restart All Selected' });
 
-    expect(matDialog.open).toHaveBeenCalledWith(StopOptionsDialogComponent, { data: StopOptionsOperation.Restart });
+    expect(matDialog.open).toHaveBeenCalledWith(StopOptionsDialog, { data: StopOptionsOperation.Restart });
   });
 
   it('emits resetBulkSelection after actions', () => {

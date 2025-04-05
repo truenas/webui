@@ -33,7 +33,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { KerberosKeytabsFormComponent } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-form/kerberos-keytabs-form.component';
 import { kerberosKeytabsListElements } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-list/kerberos-keytabs-list.elements';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -65,7 +65,7 @@ export class KerberosKeytabsListComponent implements OnInit {
   readonly paginator = input(true);
   readonly inCard = input(false);
 
-  readonly requiredRoles = [Role.DirectoryServiceWrite];
+  protected readonly requiredRoles = [Role.DirectoryServiceWrite];
   protected readonly searchableElements = kerberosKeytabsListElements;
 
   filterString = '';
@@ -102,7 +102,7 @@ export class KerberosKeytabsListComponent implements OnInit {
               untilDestroyed(this),
             ).subscribe({
               error: (error: unknown) => {
-                this.dialogService.error(this.errorHandler.parseError(error));
+                this.errorHandler.showErrorModal(error);
               },
               complete: () => {
                 this.getKerberosKeytabs();

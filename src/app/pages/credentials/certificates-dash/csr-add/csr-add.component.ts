@@ -14,7 +14,6 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { CertificateCreate, CertificateProfile } from 'app/interfaces/certificate.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import {
   UseIxIconsInStepperComponent,
@@ -41,7 +40,7 @@ import {
 import {
   CertificateSubjectComponent,
 } from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-subject/certificate-subject.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -84,7 +83,7 @@ export class CsrAddComponent {
   // Importing
   protected readonly import = viewChild(CsrImportComponent);
 
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.CertificateWrite];
 
   isLoading = false;
   summary: SummarySection[];
@@ -95,7 +94,6 @@ export class CsrAddComponent {
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
     private snackbar: SnackbarService,
-    private dialogService: DialogService,
     public slideInRef: SlideInRef<undefined, boolean>,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
@@ -109,16 +107,16 @@ export class CsrAddComponent {
 
   getNewCsrSteps(): [
     CsrIdentifierAndTypeComponent,
-    CertificateOptionsComponent,
-    CertificateSubjectComponent,
-    CertificateConstraintsComponent,
+    CertificateOptionsComponent?,
+    CertificateSubjectComponent?,
+    CertificateConstraintsComponent?,
   ] {
     return [this.identifierAndType(), this.options(), this.subject(), this.constraints()];
   }
 
   getImportCsrSteps(): [
     CsrIdentifierAndTypeComponent,
-    CsrImportComponent,
+    CsrImportComponent?,
   ] {
     return [this.identifierAndType(), this.import()];
   }
@@ -131,16 +129,20 @@ export class CsrAddComponent {
 
     const { cert_extensions: extensions, ...otherFields } = profile;
 
-    this.getNewCsrSteps().forEach((step) => {
-      step.form.patchValue(otherFields);
-    });
+    this.getNewCsrSteps()
+      .filter((step) => !!step)
+      .forEach((step) => {
+        step.form.patchValue(otherFields);
+      });
 
-    this.constraints().setFromProfile(extensions);
+    this.constraints()?.setFromProfile(extensions);
   }
 
   updateSummary(): void {
     const stepsWithSummary = this.isImport ? this.getImportCsrSteps() : this.getNewCsrSteps();
-    this.summary = stepsWithSummary.map((step) => step.getSummary());
+    this.summary = stepsWithSummary
+      .map((step) => step?.getSummary())
+      .filter((summary) => !!summary);
   }
 
   onSubmit(): void {
@@ -160,7 +162,7 @@ export class CsrAddComponent {
           this.isLoading = false;
           this.cdr.markForCheck();
           // TODO: Need to update error handler to open step with an error.
-          this.dialogService.error(this.errorHandler.parseError(error));
+          this.errorHandler.showErrorModal(error);
         },
       });
   }
@@ -168,7 +170,9 @@ export class CsrAddComponent {
   private preparePayload(): CertificateCreate {
     const steps = this.isImport ? this.getImportCsrSteps() : this.getNewCsrSteps();
 
-    const values = steps.map((step) => step.getPayload());
+    const values = steps
+      .filter((step) => !!step)
+      .map((step) => step.getPayload());
     return merge({}, ...values);
   }
 }

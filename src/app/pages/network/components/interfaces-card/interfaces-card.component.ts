@@ -33,7 +33,7 @@ import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-b
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
 import { createTable } from 'app/modules/ix-table/utils';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -43,7 +43,7 @@ import {
   ipAddressesColumn,
 } from 'app/pages/network/components/interfaces-card/ip-addresses-cell/ip-addresses-cell.component';
 import { InterfacesStore } from 'app/pages/network/stores/interfaces.store';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { NetworkService } from 'app/services/network.service';
 import { AppState } from 'app/store';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
@@ -78,7 +78,8 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
 
   readonly interfacesUpdated = output();
 
-  readonly requiredRoles = [Role.NetworkInterfaceWrite];
+  protected readonly requiredRoles = [Role.NetworkInterfaceWrite];
+  protected interfaces: NetworkInterface[] = [];
 
   isHaEnabled$ = new BehaviorSubject(false);
 
@@ -140,7 +141,7 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
     private slideIn: SlideIn,
     private dialogService: DialogService,
     private api: ApiService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private errorHandler: ErrorHandlerService,
     private networkService: NetworkService,
   ) {}
@@ -157,6 +158,7 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
     this.interfacesStore$.loadInterfaces();
     this.interfacesStore$.state$.pipe(untilDestroyed(this)).subscribe((state) => {
       this.isLoading = state.isLoading;
+      this.interfaces = state.interfaces;
       this.dataProvider.setRows(state.interfaces);
       this.inOutUpdates.set({});
       for (const nic of state.interfaces) {
@@ -177,7 +179,11 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
   }
 
   onAddNew(): void {
-    this.slideIn.open(InterfaceFormComponent)
+    this.slideIn.open(InterfaceFormComponent, {
+      data: {
+        interfaces: this.interfaces,
+      },
+    })
       .pipe(
         filter((response) => !!response.response),
         untilDestroyed(this),
@@ -189,7 +195,9 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
 
   onEdit(row: NetworkInterface): void {
     this.slideIn.open(InterfaceFormComponent, {
-      data: row,
+      data: {
+        interface: row,
+      },
     }).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
@@ -223,7 +231,7 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
     this.api.call('interface.delete', [row.id])
       .pipe(
         this.loader.withLoader(),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => {

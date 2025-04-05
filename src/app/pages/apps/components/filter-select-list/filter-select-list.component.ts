@@ -9,7 +9,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 
-type SelectListValue = string | number | (string | number)[];
+type SelectListValue = string | number | null | (string | number | null)[];
 
 @UntilDestroy()
 @Component({
@@ -64,7 +64,7 @@ export class FilterSelectListComponent implements ControlValueAccessor {
     if (!this.multiple()) {
       return this.value === value;
     }
-    return (this.value as (number | string)[]).includes(value);
+    return (this.value as (number | string | null)[]).includes(value);
   }
 
   onItemChanged(value: Option['value']): void {

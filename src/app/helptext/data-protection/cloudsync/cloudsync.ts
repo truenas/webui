@@ -18,7 +18,6 @@ export const helptextCloudSync = {
   credentials_placeholder: T('Credential'),
   credentials_tooltip: T('Select the cloud storage provider credentials from the\
  list of available Cloud Credentials.'),
-  credentials_add_option: T('+ Add a backup credential'),
 
   bucket_placeholder: T('Bucket'),
   bucket_tooltip: T('Select the pre-defined S3 bucket to use.'),
@@ -42,22 +41,12 @@ export const helptextCloudSync = {
  href="https://docs.aws.amazon.com/AmazonS3/latest/dev/storage-class-intro.html"\
  target="_blank">Amazon S3 Storage Classes</a> for more information.'),
 
-  b2_chunk_size_placeholder: T('Upload Chunk Size (MiB)'),
-  b2_chunk_size_tooltip: T('Files are split into chunks of this size \
- before upload. The number of chunks that can be simultaneously \
- transferred is set by the <b>Transfers</b> number. The single \
- largest file being transferred must fit into no more than 10,000 \
- chunks.'),
-
   acknowledge_abuse_placeholder: T('Allow files which return cannotDownloadAbusiveFile to be downloaded.'),
   acknowledge_abuse_tooltip: T('If downloading a file returns the error "This file has been identified as malware or spam and cannot be downloaded" with the error code "cannotDownloadAbusiveFile" then enable this flag to indicate you acknowledge the risks of downloading the file and TrueNAS will download it anyway.'),
 
   fast_list_placeholder: T('Use --fast-list'),
   fast_list_tooltip: T('[Use fewer transactions in exchange for more RAM.](https://rclone.org/docs/#fast-list)\
  This can also speed up or slow down the transfer.'),
-
-  source_placeholder: T('Source'),
-  destination_placeholder: T('Destination'),
 
   path_placeholder: T('Directory/Files'),
   path_tooltip: T('Select the directories or files to be sent to the cloud\
@@ -134,12 +123,7 @@ export const helptextCloudSync = {
  Always securely back up the encryption salt value! Losing the salt \
  value will result in data loss.'),
 
-  args_placeholder: T('Auxiliary Arguments'),
-  args_tooltip: T('These arguments are passed to <a href="https://rclone.org/docs/" target="_blank">rclone</a>.'),
-
   cloudsync_picker_placeholder: T('Schedule'),
-  cloudsync_picker_tooltip: T('Select a schedule preset or choose <i>Custom</i> to open\
- the advanced scheduler.'),
 
   follow_symlinks_placeholder: T('Follow Symlinks'),
   follow_symlinks_tooltip: T('Follow symlinks and copy the items to which they link.'),
@@ -177,9 +161,6 @@ export const helptextCloudSync = {
 
   action_button_dry_run: T('Dry Run'),
   job_dialog_title_dry_run: T('Dry Run Cloud Sync Task'),
-
-  cloudsync_task_add: T('Add Cloud Sync Task'),
-  cloudsync_task_edit: T('Edit Cloud Sync Task'),
 
   empty_src_dirs_placeholder: T('Create empty source dirs on destination after sync'),
 };

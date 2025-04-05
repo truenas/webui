@@ -9,16 +9,17 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { Role } from 'app/enums/role.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFileInputComponent } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.component';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UploadService } from 'app/services/upload.service';
 
 @UntilDestroy()
 @Component({
   selector: 'ix-upload-iso',
+  styleUrls: ['./upload-iso-button.component.scss'],
   templateUrl: './upload-iso-button.component.html',
-  styleUrls: ['./upload-iso.component.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
@@ -26,12 +27,13 @@ import { UploadService } from 'app/services/upload.service';
     ReactiveFormsModule,
     TranslateModule,
     RequiresRolesDirective,
+    IxIconComponent,
   ],
 })
 export class UploadIsoButtonComponent implements OnInit {
   readonly uploaded = output();
 
-  protected readonly imageFileControl = new FormControl<File[]>([]);
+  protected readonly imageFileControl = new FormControl<File[]>([], { nonNullable: true });
   protected readonly requiredRoles = [Role.VirtImageWrite];
 
   constructor(
@@ -78,7 +80,7 @@ export class UploadIsoButtonComponent implements OnInit {
       .jobDialog(job$, { title: this.translate.instant('Uploading Image') })
       .afterClosed()
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => {

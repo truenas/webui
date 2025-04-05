@@ -37,13 +37,13 @@ export interface SetProductionStatusDialogResult {
     TranslateModule,
   ],
 })
-export class SetProductionStatusDialogComponent {
-  readonly requiredRoles = [Role.FullAdmin];
+export class SetProductionStatusDialog {
+  protected readonly requiredRoles = [Role.FullAdmin];
 
   sendInitialDebugCheckbox = new FormControl(false, { nonNullable: true });
 
   constructor(
-    private dialogRef: MatDialogRef<SetProductionStatusDialogComponent, SetProductionStatusDialogResult>,
+    private dialogRef: MatDialogRef<SetProductionStatusDialog, SetProductionStatusDialogResult>,
   ) { }
 
   onSubmit(): void {

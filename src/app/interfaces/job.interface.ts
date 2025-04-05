@@ -8,14 +8,14 @@ export interface Job<R = unknown, A = unknown[]> {
   abortable: boolean;
   arguments: A;
   transient: boolean;
-  description: string;
-  error: string;
+  description: string | null;
+  error: string | null;
   extra?: Record<string, unknown>;
   exc_info: {
     type?: JobExceptionType | null;
     extra: string | number | boolean | unknown[] | Record<string, unknown>;
     repr?: string;
-  };
+  } | null;
   exception: string;
   id: number;
   logs_excerpt: string;

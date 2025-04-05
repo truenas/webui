@@ -16,7 +16,7 @@ import { EnclosureView } from 'app/pages/system/enclosure/types/enclosure-view.e
 import { getDefaultSide } from 'app/pages/system/enclosure/utils/get-default-side.utils';
 import { getEnclosureLabel } from 'app/pages/system/enclosure/utils/get-enclosure-label.utils';
 import { EnclosureSide } from 'app/pages/system/enclosure/utils/supported-enclosures';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export interface EnclosureState {
   enclosures: DashboardEnclosure[];
@@ -80,7 +80,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
       extractedEnclosuresObjects,
       (slot) => Boolean(slot.pool_info?.pool_name),
     );
-    const poolNames = map(enclosuresWithPools, (slot) => slot.pool_info.pool_name);
+    const poolNames = map(enclosuresWithPools, (slot) => slot.pool_info?.pool_name);
     const uniqPoolNames = uniq(poolNames);
     const poolNamesWithColorsByIndex = map(uniqPoolNames, (poolName, index) => {
       return [poolName, this.theme.getRgbBackgroundColorByIndex(index)];
@@ -89,7 +89,14 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
     return fromPairs(poolNamesWithColorsByIndex);
   });
 
-  readonly enclosureLabel = computed(() => getEnclosureLabel(this.selectedEnclosure()));
+  readonly enclosureLabel = computed(() => {
+    const enclosure = this.selectedEnclosure();
+    if (!enclosure) {
+      return '';
+    }
+
+    return getEnclosureLabel(enclosure);
+  });
 
   readonly hasMoreThanOneSide = computed(() => {
     return [
@@ -121,7 +128,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
               };
             });
           }),
-          this.errorHandler.catchError(),
+          this.errorHandler.withErrorHandler(),
           finalize(() => {
             this.patchState({ isLoading: false });
           }),
@@ -137,7 +144,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
           tap((enclosures: DashboardEnclosure[]) => {
             this.patchState({ enclosures });
           }),
-          this.errorHandler.catchError(),
+          this.errorHandler.withErrorHandler(),
         );
       }),
     );

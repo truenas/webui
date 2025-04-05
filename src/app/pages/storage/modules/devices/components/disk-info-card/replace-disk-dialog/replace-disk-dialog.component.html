@@ -12,7 +12,7 @@
 
   <ix-checkbox
     formControlName="preserve_settings"
-    [label]="'Preserve Power Management and S.M.A.R.T. settings' | translate"
+    [label]="'Preserve Power Management settings' | translate"
   ></ix-checkbox>
 
   <ix-checkbox
@@ -32,7 +32,7 @@
     </button>
 
     <button
-      *ixRequiresRoles="[Role.FullAdmin]"
+      *ixRequiresRoles="[Role.PoolWrite]"
       mat-button
       type="submit"
       color="primary"

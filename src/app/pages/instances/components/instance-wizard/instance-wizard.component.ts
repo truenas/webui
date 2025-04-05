@@ -1,24 +1,30 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, computed, signal,
+  ChangeDetectionStrategy, Component, computed, effect, OnInit, signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
-  FormArray, FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule, Validators,
+  FormArray,
+  FormControl,
+  FormGroup,
+  NonNullableFormBuilder,
+  ReactiveFormsModule,
+  Validators,
 } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
+import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { unionBy } from 'lodash-es';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
-  filter,
-  map, Observable, of,
+  filter, map, Observable, of, startWith, tap,
 } from 'rxjs';
-import { nameValidatorRegex } from 'app/constants/name-validator.constant';
 import { Role } from 'app/enums/role.enum';
 import {
+  DiskIoBus,
+  diskIoBusLabels,
   VirtualizationDeviceType,
   VirtualizationGpuType,
   VirtualizationNicType,
@@ -29,23 +35,32 @@ import {
   VirtualizationSource,
   VirtualizationType,
   virtualizationTypeIcons,
+  VolumeContentType,
 } from 'app/enums/virtualization.enum';
+import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
-import { containersHelptext } from 'app/helptext/virtualization/containers';
+import { instancesHelptext } from 'app/helptext/instances/instances';
 import { Option } from 'app/interfaces/option.interface';
 import {
   CreateVirtualizationInstance,
   InstanceEnvVariablesFormGroup,
   VirtualizationDevice,
-  VirtualizationInstance, VirtualizationVolume,
+  VirtualizationInstance,
+  VirtualizationVolume,
 } from 'app/interfaces/virtualization.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxCheckboxListComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.component';
+import {
+  IxCheckboxListComponent,
+} from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
-import { IxFormGlossaryComponent } from 'app/modules/forms/ix-forms/components/ix-form-glossary/ix-form-glossary.component';
-import { IxFormSectionComponent } from 'app/modules/forms/ix-forms/components/ix-form-section/ix-form-section.component';
+import {
+  IxFormGlossaryComponent,
+} from 'app/modules/forms/ix-forms/components/ix-form-glossary/ix-form-glossary.component';
+import {
+  IxFormSectionComponent,
+} from 'app/modules/forms/ix-forms/components/ix-form-section/ix-form-section.component';
 import { IxIconGroupComponent } from 'app/modules/forms/ix-forms/components/ix-icon-group/ix-icon-group.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
@@ -56,16 +71,24 @@ import { ReadOnlyComponent } from 'app/modules/forms/ix-forms/components/readonl
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { cpuValidator } from 'app/modules/forms/ix-forms/validators/cpu-validation/cpu-validation';
-import { forbiddenAsyncValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
+import {
+  forbiddenAsyncValues,
+} from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
-  VolumesDialogComponent, VolumesDialogOptions,
+  PciPassthroughDialog,
+} from 'app/pages/instances/components/common/pci-passthough-dialog/pci-passthrough-dialog.component';
+import {
+  VolumesDialog,
+  VolumesDialogOptions,
 } from 'app/pages/instances/components/common/volumes-dialog/volumes-dialog.component';
 import {
-  SelectImageDialogComponent, VirtualizationImageWithId,
+  SelectImageDialog,
+  VirtualizationImageWithId,
 } from 'app/pages/instances/components/instance-wizard/select-image-dialog/select-image-dialog.component';
 import { defaultVncPort } from 'app/pages/instances/instances.constants';
 import { VirtualizationConfigStore } from 'app/pages/instances/stores/virtualization-config.store';
@@ -95,17 +118,21 @@ import { FilesystemService } from 'app/services/filesystem.service';
     TestDirective,
     TranslateModule,
     IxIconGroupComponent,
+    MatIconButton,
+    IxIconComponent,
   ],
   templateUrl: './instance-wizard.component.html',
   styleUrls: ['./instance-wizard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class InstanceWizardComponent {
+export class InstanceWizardComponent implements OnInit {
   protected readonly isLoading = signal<boolean>(false);
   protected readonly requiredRoles = [Role.VirtGlobalWrite];
   protected readonly virtualizationTypeIcons = virtualizationTypeIcons;
 
   protected readonly hasPendingInterfaceChanges = toSignal(this.api.call('interface.has_pending_changes'));
+
+  protected readonly diskIoBusOptions$ = of(mapToOptions(diskIoBusLabels, this.translate));
 
   protected readonly proxyProtocols$ = of(mapToOptions(virtualizationProxyProtocolLabels, this.translate));
   protected readonly bridgedNicTypeLabel = virtualizationNicTypeLabels.get(VirtualizationNicType.Bridged);
@@ -128,9 +155,8 @@ export class InstanceWizardComponent {
   );
 
   imageSourceTypeOptions$: Observable<Option<VirtualizationSource>[]> = of([
-    { label: this.translate.instant('Use a Linux image (linuxcontainer.org)'), value: VirtualizationSource.Image },
-    { label: this.translate.instant('Use an ISO image'), value: VirtualizationSource.Iso },
-    { label: this.translate.instant('Use zvol with previously installed OS'), value: VirtualizationSource.Zvol },
+    { label: this.translate.instant('Use a Linux image (linuxcontainers.org)'), value: VirtualizationSource.Image },
+    { label: this.translate.instant('Upload ISO, import a zvol or use another volume'), value: VirtualizationSource.Zvol },
   ]);
 
   gpuDevices$ = this.api.call(
@@ -143,28 +169,45 @@ export class InstanceWizardComponent {
     }))),
   );
 
+  protected poolOptions$ = this.configStore.state$.pipe(
+    filter((state) => !state.isLoading),
+    map((state) => state.config?.storage_pools),
+    singleArrayToOptions(),
+    tap((options) => {
+      if (options.length && !this.form.controls.storage_pool.value) {
+        this.form.controls.storage_pool.setValue(`${options[0].value}`);
+      }
+    }),
+  );
+
+  protected hasOnePool = computed(() => this.configStore.config()?.storage_pools?.length === 1);
+
   protected readonly form = this.formBuilder.group({
     name: [
       '',
-      [Validators.required, Validators.minLength(1), Validators.maxLength(200), Validators.pattern(nameValidatorRegex)],
+      [Validators.required, Validators.minLength(1), Validators.maxLength(200), Validators.pattern(/^[a-zA-Z0-9-]+$/)],
       [forbiddenAsyncValues(this.forbiddenNames$)],
     ],
     instance_type: [VirtualizationType.Container, Validators.required],
     source_type: [VirtualizationSource.Image, [Validators.required]],
-    iso_volume: ['', [Validators.required]],
-    zvol_path: ['', [Validators.required]],
+    boot_from: [null as string | null],
+    volume_type: [null as VolumeContentType | null],
+    root_disk_io_bus: [DiskIoBus.Nvme, []],
+    volume: ['', [Validators.required]],
     image: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(200)]],
     enable_vnc: [false],
     vnc_port: [defaultVncPort, [Validators.min(5900), Validators.max(65535)]],
     vnc_password: [null as string | null],
     cpu: ['', [cpuValidator()]],
     memory: [null as number | null],
+    storage_pool: [null as string | null, [Validators.required]],
     tpm: [false],
     secure_boot: [false],
     root_disk_size: [10],
     use_default_network: [true],
     usb_devices: [[] as string[]],
     gpu_devices: [[] as string[]],
+    pci_devices: [[] as Option<string>[]],
     bridged_nics: [[] as string[]],
     mac_vlan_nics: [[] as string[]],
     proxies: this.formBuilder.array<FormGroup<{
@@ -175,44 +218,57 @@ export class InstanceWizardComponent {
     }>>([]),
     disks: this.formBuilder.array<FormGroup<{
       source: FormControl<string>;
-      destination: FormControl<string>;
+      destination?: FormControl<string>;
+      io_bus?: FormControl<DiskIoBus>;
     }>>([]),
     environment_variables: new FormArray<InstanceEnvVariablesFormGroup>([]),
   });
+
+  readonly bootFromOptions$: Observable<Option[]> = this.form.controls.disks.statusChanges.pipe(
+    startWith(null),
+    map(() => {
+      return this.form.controls.disks.controls
+        .filter((control) => control.controls.source?.value)
+        .map((control) => {
+          const source = control.controls.source?.value;
+          return { label: source, value: source };
+        });
+    }),
+  );
 
   get hasRequiredRoles(): Observable<boolean> {
     return this.authService.hasRole(this.requiredRoles);
   }
 
+  get isZvolSourceType(): boolean {
+    return this.form.value.source_type === VirtualizationSource.Zvol;
+  }
+
   get secureBootTooltip(): string {
     if (this.form.controls.secure_boot.disabled) {
       return this.form.controls.secure_boot.value
-        ? this.translate.instant(containersHelptext.secure_boot_on_required_tooltip)
-        : this.translate.instant(containersHelptext.secure_boot_off_required_tooltip);
+        ? this.translate.instant(instancesHelptext.secure_boot_on_required_tooltip)
+        : this.translate.instant(instancesHelptext.secure_boot_off_required_tooltip);
     }
 
-    return this.translate.instant(containersHelptext.secure_boot_tooltip);
+    return this.translate.instant(instancesHelptext.secure_boot_tooltip);
   }
 
-  protected readonly instanceType = signal<VirtualizationType>(this.form.value.instance_type);
+  protected readonly instanceType = signal<VirtualizationType>(this.form.getRawValue().instance_type);
   protected readonly isContainer = computed(() => this.instanceType() === VirtualizationType.Container);
   protected readonly isVm = computed(() => this.instanceType() === VirtualizationType.Vm);
 
-  readonly directoryNodeProvider = computed(() => {
-    const providerOptions = this.isVm()
-      ? { zvolsOnly: true }
-      : { datasetsAndZvols: true };
-
-    return this.filesystem.getFilesystemNodeProvider(providerOptions);
-  });
+  readonly datasetProvider = this.filesystem.getFilesystemNodeProvider({ datasetsOnly: true });
 
   protected defaultIpv4Network = computed(() => {
-    return this.configStore.config()?.v4_network || 'N/A';
+    return this.configStore.config()?.v4_network || this.translate.instant('N/A');
   });
 
   protected defaultIpv6Network = computed(() => {
-    return this.configStore.config()?.v6_network || 'N/A';
+    return this.configStore.config()?.v6_network || this.translate.instant('N/A');
   });
+
+  protected readonly of = of;
 
   constructor(
     private api: ApiService,
@@ -230,13 +286,35 @@ export class InstanceWizardComponent {
   ) {
     this.configStore.initialize();
 
+    effect(() => {
+      if (!this.form.value.storage_pool && this.hasOnePool()) {
+        this.form.patchValue({ storage_pool: this.configStore.config()?.storage_pools?.[0] });
+      }
+    });
+
     this.listenForSourceTypeChanges();
     this.listenForInstanceTypeChanges();
   }
 
+  ngOnInit(): void {
+    this.bootFromOptions$.pipe(
+      untilDestroyed(this),
+    ).subscribe((disks) => {
+      const bootFromControl = this.form.controls.boot_from;
+
+      if (bootFromControl.value && !disks.find((disk) => disk.value === bootFromControl.value)) {
+        bootFromControl.reset();
+      }
+
+      if (disks.length === 1) {
+        bootFromControl.setValue(disks[0].value as string);
+      }
+    });
+  }
+
   protected onBrowseCatalogImages(): void {
     this.matDialog
-      .open(SelectImageDialogComponent, {
+      .open(SelectImageDialog, {
         minWidth: '90vw',
         data: {
           remote: VirtualizationRemote.LinuxContainers,
@@ -259,9 +337,9 @@ export class InstanceWizardComponent {
       });
   }
 
-  protected onBrowseIsos(): void {
+  protected onSelectRootVolume(): void {
     this.matDialog
-      .open<VolumesDialogComponent, VolumesDialogOptions, VirtualizationVolume>(VolumesDialogComponent, {
+      .open<VolumesDialog, VolumesDialogOptions, VirtualizationVolume>(VolumesDialog, {
         minWidth: '90vw',
         data: {
           selectionMode: true,
@@ -270,7 +348,26 @@ export class InstanceWizardComponent {
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe((volume) => {
-        this.form.controls.iso_volume.setValue(volume.id);
+        this.form.patchValue({
+          volume_type: volume.content_type,
+        });
+
+        this.form.patchValue({ volume: volume.id });
+      });
+  }
+
+  protected onSelectVolume(targetField: FormControl<string>): void {
+    this.matDialog
+      .open<VolumesDialog, VolumesDialogOptions, VirtualizationVolume>(VolumesDialog, {
+        minWidth: '90vw',
+        data: {
+          selectionMode: true,
+        },
+      })
+      .afterClosed()
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe((volume) => {
+        targetField.setValue(volume.id);
       });
   }
 
@@ -293,10 +390,20 @@ export class InstanceWizardComponent {
     const control = this.formBuilder.group({
       source: ['', Validators.required],
       destination: ['', Validators.required],
-    });
+      io_bus: [DiskIoBus.Nvme, Validators.required],
+    }) as FormGroup<{
+      source: FormControl<string>;
+      destination?: FormControl<string>;
+      io_bus?: FormControl<DiskIoBus>;
+      boot_priority?: FormControl<number>;
+    }>;
 
     if (this.isVm()) {
       control.removeControl('destination');
+    }
+
+    if (this.isContainer()) {
+      control.removeControl('io_bus');
     }
 
     this.form.controls.disks.push(control);
@@ -333,6 +440,7 @@ export class InstanceWizardComponent {
 
   private createInstance(): Observable<VirtualizationInstance> {
     const payload = this.getPayload();
+
     const job$ = this.api.job('virt.instance.create', [payload]);
 
     return this.dialogService
@@ -344,6 +452,13 @@ export class InstanceWizardComponent {
     const devices = this.getDevicesPayload();
     const values = this.form.getRawValue();
 
+    let sourceType = VirtualizationSource.Image;
+    if (values.volume_type === VolumeContentType.Iso) {
+      sourceType = VirtualizationSource.Iso;
+    } else if (values.volume_type === VolumeContentType.Block) {
+      sourceType = VirtualizationSource.Volume;
+    }
+
     const payload = {
       devices,
       autostart: true,
@@ -352,20 +467,20 @@ export class InstanceWizardComponent {
       vnc_port: this.isVm() && values.enable_vnc ? values.vnc_port || defaultVncPort : null,
       name: values.name,
       cpu: values.cpu,
-      memory: values.memory,
+      memory: values.memory || null,
       image: values.source_type === VirtualizationSource.Image ? values.image : null,
-      source_type: values.source_type,
-      iso_volume: values.source_type === VirtualizationSource.Iso ? values.iso_volume : null,
-      zvol_path: values.source_type === VirtualizationSource.Zvol ? values.zvol_path : null,
+      storage_pool: values.storage_pool,
+      // TODO: Messy, clean up on API side.
+      source_type: sourceType,
+      iso_volume: values.volume_type === VolumeContentType.Iso ? values.volume : null,
+      volume: values.volume_type === VolumeContentType.Block ? values.volume : null,
       ...(this.isContainer() ? { environment: this.environmentVariablesPayload } : null),
     } as CreateVirtualizationInstance;
 
     if (this.isVm()) {
       payload.secure_boot = values.secure_boot;
-
-      if (values.source_type !== VirtualizationSource.Zvol) {
-        payload.root_disk_size = values.root_disk_size;
-      }
+      payload.root_disk_io_bus = values.root_disk_io_bus;
+      payload.root_disk_size = values.root_disk_size;
 
       if (values.enable_vnc) {
         payload.vnc_password = values.vnc_password;
@@ -397,11 +512,25 @@ export class InstanceWizardComponent {
   }
 
   private getDevicesPayload(): VirtualizationDevice[] {
-    const disks = this.form.controls.disks.value.map((proxy) => ({
-      dev_type: VirtualizationDeviceType.Disk,
-      source: proxy.source,
-      ...(this.isContainer() ? { destination: proxy.destination } : null),
-    }));
+    const disks = this.form.controls.disks.value.map((disk) => {
+      const diskPayload = {
+        dev_type: VirtualizationDeviceType.Disk,
+        source: disk.source,
+      };
+
+      if (this.isContainer()) {
+        return {
+          ...diskPayload,
+          destination: disk.destination,
+        };
+      }
+
+      return {
+        ...diskPayload,
+        io_bus: disk.io_bus,
+        boot_priority: this.form.controls.boot_from.value === disk.source ? 1 : 0,
+      };
+    });
 
     const usbDevices: { dev_type: VirtualizationDeviceType; product_id: string }[] = [];
     for (const productId of this.form.controls.usb_devices.value) {
@@ -449,6 +578,11 @@ export class InstanceWizardComponent {
       dest_port: proxy.dest_port,
     }));
 
+    const pciDevices = this.form.controls.pci_devices.value.map((pci) => ({
+      dev_type: VirtualizationDeviceType.Pci,
+      address: pci.value,
+    }));
+
     const tpmDevice = [];
     if (this.isVm() && this.form.value.tpm) {
       tpmDevice.push({
@@ -464,10 +598,38 @@ export class InstanceWizardComponent {
       ...usbDevices,
       ...gpuDevices,
       ...tpmDevice,
+      ...pciDevices,
     ] as VirtualizationDevice[];
   }
 
-  protected readonly containersHelptext = containersHelptext;
+  protected onAddPciPassthrough(): void {
+    this.matDialog
+      .open(PciPassthroughDialog, {
+        minWidth: '90vw',
+        data: {
+          existingDeviceAddresses: this.form.getRawValue().pci_devices.map((device: Option) => device.value),
+        },
+      })
+      .afterClosed()
+      .pipe(untilDestroyed(this))
+      .subscribe((addedDevices: Option<string>[] | undefined) => {
+        if (!addedDevices?.length) {
+          return;
+        }
+
+        this.form.patchValue({
+          pci_devices: unionBy(this.form.controls.pci_devices.value, addedDevices, 'value'),
+        });
+      });
+  }
+
+  protected removePciDevice(address: string): void {
+    this.form.patchValue({
+      pci_devices: this.form.controls.pci_devices.value.filter((device: Option) => device.value !== address),
+    });
+  }
+
+  protected readonly instancesHelptext = instancesHelptext;
 
   private listenForInstanceTypeChanges(): void {
     this.form.controls.instance_type.valueChanges.pipe(untilDestroyed(this)).subscribe((type) => {
@@ -475,31 +637,34 @@ export class InstanceWizardComponent {
         this.form.controls.source_type.setValue(VirtualizationSource.Image);
       }
       this.instanceType.set(type);
+
+      this.form.controls.image.reset();
+      this.form.controls.disks.clear();
+      this.form.controls.proxies.clear();
+
       if (type === VirtualizationType.Container) {
         this.form.controls.cpu.setValidators(cpuValidator());
         this.form.controls.memory.clearValidators();
+        this.form.controls.boot_from.clearValidators();
       } else {
         this.form.controls.cpu.setValidators([Validators.required, cpuValidator()]);
         this.form.controls.memory.setValidators([Validators.required]);
+        this.form.controls.boot_from.setValidators([Validators.required]);
       }
     });
   }
 
   private listenForSourceTypeChanges(): void {
-    this.form.controls.iso_volume.disable();
-    this.form.controls.zvol_path.disable();
+    this.form.controls.volume.disable();
 
     this.form.controls.source_type.valueChanges.pipe(untilDestroyed(this)).subscribe((type) => {
       this.form.controls.image.disable();
-      this.form.controls.iso_volume.disable();
-      this.form.controls.zvol_path.disable();
+      this.form.controls.volume.disable();
 
       if (type === VirtualizationSource.Image) {
         this.form.controls.image.enable();
       } else if (type === VirtualizationSource.Iso) {
-        this.form.controls.iso_volume.enable();
-      } else if (type === VirtualizationSource.Zvol) {
-        this.form.controls.zvol_path.enable();
+        this.form.controls.volume.enable();
       }
     });
   }

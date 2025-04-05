@@ -35,6 +35,7 @@ import { UserService } from 'app/services/user.service';
 import { AppState } from 'app/store';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { selectServices } from 'app/store/services/services.selectors';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 describe('NfsFormComponent', () => {
   const existingShare = {
@@ -110,6 +111,10 @@ describe('NfsFormComponent', () => {
             selector: selectServices,
             value: [],
           },
+          {
+            selector: selectIsEnterprise,
+            value: false,
+          },
         ],
       }),
     ],
@@ -176,6 +181,15 @@ describe('NfsFormComponent', () => {
         'Authorized Hosts and IP addresses': 'truenas.com',
       });
 
+      expect(await form.getControl('Expose Snapshots')).not.toBeTruthy();
+
+      mockStore$.overrideSelector(selectIsEnterprise, true);
+      mockStore$.refreshState();
+
+      await form.fillForm({
+        'Expose Snapshots': true,
+      });
+
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
@@ -191,6 +205,7 @@ describe('NfsFormComponent', () => {
         maproot_group: 'sys',
         networks: ['192.168.1.189/24'],
         hosts: ['truenas.com'],
+        expose_snapshots: true,
       }]);
       expect(store$.dispatch).toHaveBeenCalledWith(checkIfServiceIsEnabled({ serviceName: ServiceName.Nfs }));
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();

@@ -49,7 +49,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
   ],
 })
 export class TunableFormComponent implements OnInit {
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.SystemTunableWrite];
 
   get isNew(): boolean {
     return !this.editingTunable;
@@ -72,7 +72,6 @@ export class TunableFormComponent implements OnInit {
   readonly tooltips = {
     var: helptext.var.tooltip,
     value: helptext.value.tooltip,
-    comment: helptext.description.tooltip,
     enabled: helptext.enabled.tooltip,
   };
 

@@ -47,10 +47,9 @@ describe('TruenasLogoComponent', () => {
   });
 
   it('community-edition: shows a logotype', async () => {
-    const [mark, text, badge] = icons;
+    const [mark, text] = icons;
     expect(await mark.getName()).toBe('ix-truenas-logo-mark-color');
     expect(await text.getName()).toBe('ix-truenas-logo-type-color');
-    expect(await badge.getName()).toBe('ix-truenas-ce-badge-color');
   });
 
   it('community-edition: shows full logo in color', async () => {
@@ -73,10 +72,9 @@ describe('TruenasLogoComponent', () => {
     });
     store$.refreshState();
 
-    const [mark, text, badge] = icons;
+    const [mark, text] = icons;
     expect(await mark.getName()).toBe('ix-truenas-logo-mark-color');
     expect(await text.getName()).toBe('ix-truenas-logo-type-color');
-    expect(await badge.getName()).toBe('ix-truenas-enterprise-badge-color');
   });
 
   it('enterprise: shows full logo in color', async () => {
@@ -106,11 +104,10 @@ describe('TruenasLogoComponent', () => {
 
   it('checks white color', async () => {
     spectator.setInput('color', 'white');
-    const [mark, text, badge] = icons;
-    expect(icons).toHaveLength(3);
+    const [mark, text] = icons;
+    expect(icons).toHaveLength(2);
     expect(await mark.getName()).toBe('ix-truenas-logo-mark');
     expect(await text.getName()).toBe('ix-truenas-logo-type');
-    expect(await badge.getName()).toBe('ix-truenas-ce-badge');
   });
 
   it('checks when logo text is hidden', async () => {
@@ -118,13 +115,5 @@ describe('TruenasLogoComponent', () => {
     icons = await loader.getAllHarnesses(IxIconHarness);
     expect(icons).toHaveLength(1);
     expect(await icons[0].getName()).toBe('ix-truenas-logo-mark-color');
-  });
-
-  it('checks when badge is hidden', async () => {
-    spectator.setInput('hideBadge', true);
-    icons = await loader.getAllHarnesses(IxIconHarness);
-    expect(icons).toHaveLength(2);
-    expect(await icons[0].getName()).toBe('ix-truenas-logo-mark-color');
-    expect(await icons[1].getName()).toBe('ix-truenas-logo-type-color');
   });
 });

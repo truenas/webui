@@ -1,0 +1,84 @@
+<ix-fake-progress-bar
+  [loading]="isLoading()"
+></ix-fake-progress-bar>
+
+<div class="header">
+  <h1 mat-dialog-title>
+    {{ 'Map User And Group IDs' | translate }}
+
+    <ix-tooltip class="tooltip" [message]="containersHelptext.idMapHint | translate"></ix-tooltip>
+  </h1>
+
+  <button
+    mat-icon-button
+    [ixTest]="['close-dialog']"
+    [attr.aria-label]="'Close Dialog' | translate"
+    (click)="dialogRef.close()"
+  >
+    <ix-icon name="cancel"></ix-icon>
+  </button>
+</div>
+
+<mat-dialog-content class="dialog-content">
+  <ix-button-group
+    class="type-selector"
+    [formControl]="typeControl"
+    [options]="typeOptions$"
+  ></ix-button-group>
+
+  <div class="table-wrapper">
+    <table mat-table [dataSource]="mappings()" [ixTest]="['mapping-table']">
+      <ng-container matColumnDef="name">
+        <th *matHeaderCellDef mat-header-cell>{{ 'Name' | translate }}</th>
+        <td *matCellDef="let mapping" mat-cell>{{ mapping.name }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="hostUidOrGid">
+        <th *matHeaderCellDef mat-header-cell>
+          {{ typeControl.value === ViewType.Users ? ('Host UID' | translate) : ('Host GID' | translate) }}
+        </th>
+        <td *matCellDef="let mapping" mat-cell>{{ mapping.hostUidOrGid }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="instanceUidOrGid">
+        <th *matHeaderCellDef mat-header-cell>
+          {{ typeControl.value === ViewType.Users ? ('Instance UID' | translate) : ('Instance GID' | translate) }}</th>
+        <td *matCellDef="let mapping" mat-cell>
+          @if (mapping.instanceUidOrGid === directIdMapping) {
+            {{ 'Same' | translate }}
+          } @else {
+            {{ mapping.instanceUidOrGid }}
+          }
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th *matHeaderCellDef mat-header-cell></th>
+        <td *matCellDef="let mapping" mat-cell>
+          <button
+            mat-icon-button
+            type="button"
+            [ixTest]="['clear-mapping', mapping.description]"
+            [matTooltip]="'Clear mapping' | translate"
+            (click)="onClearMapping(mapping)"
+          >
+            <ix-icon name="mdi-delete"></ix-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr *matHeaderRowDef="columns" mat-header-row [ixTest]="['image-table-header']"></tr>
+      <tr *matRowDef="let row; columns: columns" mat-row [ixTest]="['image-table-row', row]"></tr>
+    </table>
+
+    @if (!mappings().length) {
+      <ix-empty [conf]="noEntries"></ix-empty>
+    }
+  </div>
+
+  <ix-new-mapping-form
+    [type]="typeControl.value"
+    (mappingAdded)="loadMappings()"
+  ></ix-new-mapping-form>
+</mat-dialog-content>
+

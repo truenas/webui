@@ -315,16 +315,6 @@ certificate still approved.'),
     },
   },
 
-  list: {
-    download_error_dialog: {
-      title: T('Error'),
-      cert_message: T('Error exporting the certificate'),
-      key_message: T('Error exporting the Private Key'),
-    },
-
-    action_delete: T('Delete'),
-  },
-
   acme: {
     identifier: {
       tooltip: T('Internal identifier of the certificate. Only\
@@ -347,9 +337,5 @@ certificate still approved.'),
       tooltip: T('Authenticator to validate the Domain. Choose a\
  previously configured ACME DNS authenticator.'),
     },
-    error_dialog: {
-      title: T('Error'),
-    },
-
   },
 };

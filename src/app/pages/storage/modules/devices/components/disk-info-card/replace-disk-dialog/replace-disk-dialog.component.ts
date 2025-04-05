@@ -18,7 +18,7 @@ import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-ch
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export interface ReplaceDiskDialogData {
   diskName: string;
@@ -46,7 +46,7 @@ export interface ReplaceDiskDialogData {
     TranslateModule,
   ],
 })
-export class ReplaceDiskDialogComponent {
+export class ReplaceDiskDialog {
   form = this.formBuilder.nonNullable.group({
     replacement: ['', Validators.required],
     preserve_settings: [true],
@@ -62,7 +62,7 @@ export class ReplaceDiskDialogComponent {
     private formBuilder: FormBuilder,
     private api: ApiService,
     private translate: TranslateService,
-    private dialogRef: MatDialogRef<ReplaceDiskDialogComponent>,
+    private dialogRef: MatDialogRef<ReplaceDiskDialog>,
     private snackbar: SnackbarService,
     @Inject(MAT_DIALOG_DATA) public data: ReplaceDiskDialogData,
     private dialogService: DialogService,
@@ -83,7 +83,7 @@ export class ReplaceDiskDialogComponent {
     )
       .afterClosed()
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => {

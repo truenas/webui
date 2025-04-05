@@ -19,9 +19,9 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { DatasetType, DatasetQuotaType } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
+import { isQuotaSet } from 'app/helpers/storage.helper';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -30,7 +30,7 @@ import { datasetCapacityManagementElements } from 'app/pages/datasets/components
 import { DatasetCapacitySettingsComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-settings/dataset-capacity-settings.component';
 import { SpaceManagementChartComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/space-management-chart/space-management-chart.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -97,7 +97,6 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
     private cdr: ChangeDetectorRef,
     private datasetStore: DatasetTreeStore,
     private slideIn: SlideIn,
-    private dialogService: DialogService,
   ) {}
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
@@ -128,14 +127,14 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
       untilDestroyed(this),
     ).subscribe({
       next: ([userQuotas, groupQuotas]) => {
-        this.userQuotas = userQuotas.length;
-        this.groupQuotas = groupQuotas.length;
+        this.userQuotas = userQuotas.filter(isQuotaSet).length;
+        this.groupQuotas = groupQuotas.filter(isQuotaSet).length;
         this.isLoadingQuotas = false;
         this.cdr.markForCheck();
       },
       error: (error: unknown) => {
         this.isLoadingQuotas = false;
-        this.dialogService.error(this.errorHandler.parseError(error));
+        this.errorHandler.showErrorModal(error);
         this.cdr.markForCheck();
       },
     });
@@ -143,6 +142,7 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
 
   getInheritedQuotas(): void {
     this.datasetStore.selectedBranch$.pipe(
+      filter((branch): branch is DatasetDetails[] => !!(branch)),
       map((datasets) => {
         const datasetWithQuotas = datasets.filter((dataset) => Boolean(dataset?.quota?.parsed));
         return maxBy(datasetWithQuotas, (dataset) => dataset.quota.parsed);
@@ -155,7 +155,7 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
         this.cdr.markForCheck();
       },
       error: (error: unknown) => {
-        this.dialogService.error(this.errorHandler.parseError(error));
+        this.errorHandler.showErrorModal(error);
       },
     });
   }

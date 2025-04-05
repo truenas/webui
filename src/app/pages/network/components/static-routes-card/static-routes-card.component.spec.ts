@@ -14,7 +14,7 @@ import {
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { StaticRouteDeleteDialogComponent } from 'app/pages/network/components/static-route-delete-dialog/static-route-delete-dialog.component';
+import { StaticRouteDeleteDialog } from 'app/pages/network/components/static-route-delete-dialog/static-route-delete-dialog.component';
 import { StaticRouteFormComponent } from 'app/pages/network/components/static-route-form/static-route-form.component';
 import { StaticRoutesCardComponent } from 'app/pages/network/components/static-routes-card/static-routes-card.component';
 
@@ -98,7 +98,7 @@ describe('StaticRoutesCardComponent', () => {
     const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 2);
     await deleteButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(StaticRouteDeleteDialogComponent, {
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(StaticRouteDeleteDialog, {
       data: {
         description: 'Test description for route 0',
         destination: '192.168.1.1',

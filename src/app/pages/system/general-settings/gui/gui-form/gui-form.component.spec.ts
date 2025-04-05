@@ -11,6 +11,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
+import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   WithManageCertificatesLinkComponent,
@@ -71,6 +72,9 @@ describe('GuiFormComponent', () => {
       mockApi([
         mockCall('system.general.update', mockSystemGeneralConfig),
         mockCall('system.general.ui_restart'),
+        mockCall('system.security.config', {
+          enable_gpos_stig: false,
+        } as SystemSecurityConfig),
       ]),
       mockProvider(SlideInRef, slideInRef),
       mockProvider(WebSocketHandlerService),
@@ -125,102 +129,143 @@ describe('GuiFormComponent', () => {
     ],
   });
 
-  beforeEach(() => {
-    spectator = createComponent();
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(ApiService);
+  describe('is STIG mode OFF', () => {
+    beforeEach(() => {
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      api = spectator.inject(ApiService);
+    });
+
+    it('shows current values when form is being edited', async () => {
+      const form = await loader.getHarness(IxFormHarness);
+      const values = await form.getValues();
+
+      expect(values).toEqual(
+        {
+          'GUI SSL Certificate': 'freenas_default',
+          'HTTPS Protocols': ['TLSv1.2', 'TLSv1.3'],
+          'Show Console Messages': false,
+          Theme: 'iX Dark',
+          'Usage collection & UI error reporting': false,
+          'Web Interface HTTP -> HTTPS Redirect': false,
+          'Web Interface HTTP Port': '80',
+          'Web Interface HTTPS Port': '443',
+          'Web Interface IPv4 Address': ['0.0.0.0'],
+          'Web Interface IPv6 Address': ['::'],
+        },
+      );
+    });
+
+    it('sends an update payload to websocket and closes modal when save is pressed', async () => {
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({
+        'Show Console Messages': true,
+        'Usage collection & UI error reporting': true,
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(api.call).toHaveBeenCalledWith('system.general.update', [
+        {
+          ...mockSystemGeneralConfig,
+          ui_certificate: 1,
+          ui_consolemsg: true,
+          usage_collection: true,
+        },
+      ]);
+    });
+
+    it('shows confirm dialog if HTTPS redirect is enabled', async () => {
+      const wsStatus = spectator.inject(WebSocketStatusService);
+      Object.defineProperty(wsStatus, 'isConnected$', {
+        get: jest.fn(() => new BehaviorSubject(true)),
+      });
+
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({
+        'Web Interface HTTP -> HTTPS Redirect': true,
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      const dialog = spectator.inject(DialogService);
+      expect(dialog.confirm).toHaveBeenCalledWith(expect.objectContaining({
+        title: 'Enable HTTPS Redirect',
+      }));
+    });
+
+    it('shows confirm dialog if service restart is needed and restarts it', async () => {
+      const wsStatus = spectator.inject(WebSocketStatusService);
+      Object.defineProperty(wsStatus, 'isConnected$', {
+        get: jest.fn(() => new BehaviorSubject(true)),
+      });
+
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({
+        'Web Interface HTTP -> HTTPS Redirect': true,
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      const dialog = spectator.inject(DialogService);
+      expect(dialog.confirm).toHaveBeenCalledWith(expect.objectContaining({
+        title: 'Restart Web Service',
+      }));
+      expect(api.call).toHaveBeenCalledWith('system.general.ui_restart');
+    });
+
+    it('dispatches themeChangedInGuiForm when theme is changed', async () => {
+      const store$ = spectator.inject(Store);
+      jest.spyOn(store$, 'dispatch');
+
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({
+        Theme: 'Dracula',
+      });
+
+      expect(store$.dispatch).toHaveBeenCalledWith(themeChangedInGuiForm({ theme: 'dracula' }));
+    });
   });
 
-  it('shows current values when form is being edited', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    const values = await form.getValues();
-
-    expect(values).toEqual(
-      {
-        'GUI SSL Certificate': 'freenas_default',
-        'HTTPS Protocols': ['TLSv1.2', 'TLSv1.3'],
-        'Show Console Messages': false,
-        Theme: 'iX Dark',
-        'Usage collection': false,
-        'Web Interface HTTP -> HTTPS Redirect': false,
-        'Web Interface HTTP Port': '80',
-        'Web Interface HTTPS Port': '443',
-        'Web Interface IPv4 Address': ['0.0.0.0'],
-        'Web Interface IPv6 Address': ['::'],
-      },
-    );
-  });
-
-  it('sends an update payload to websocket and closes modal when save is pressed', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      'Show Console Messages': true,
-      'Usage collection': true,
+  describe('is STIG mode ON', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        providers: [
+          mockProvider(ApiService, {
+            call: jest.fn((method: string) => {
+              if (method === 'system.security.config') {
+                return of({ enable_gpos_stig: true });
+              }
+              return of(null);
+            }),
+          }),
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      api = spectator.inject(ApiService);
     });
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await saveButton.click();
-
-    expect(api.call).toHaveBeenCalledWith('system.general.update', [
-      {
-        ...mockSystemGeneralConfig,
-        ui_certificate: 1,
-        ui_consolemsg: true,
-        usage_collection: true,
-      },
-    ]);
-  });
-
-  it('shows confirm dialog if HTTPS redirect is enabled', async () => {
-    const wsStatus = spectator.inject(WebSocketStatusService);
-    Object.defineProperty(wsStatus, 'isConnected$', {
-      get: jest.fn(() => new BehaviorSubject(true)),
+    it('disables usage_collection control when GPOS STIG is enabled', () => {
+      const control = spectator.component.formGroup.controls.usage_collection;
+      expect(control.disabled).toBe(true);
     });
 
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      'Web Interface HTTP -> HTTPS Redirect': true,
+    it('does not include usage_collection in update payload', async () => {
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({
+        'Web Interface HTTP -> HTTPS Redirect': true,
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      const dialog = spectator.inject(DialogService);
+      expect(dialog.confirm).toHaveBeenCalledWith(expect.not.objectContaining({
+        title: 'Usage collection & UI error reporting',
+      }));
     });
-
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await saveButton.click();
-
-    const dialog = spectator.inject(DialogService);
-    expect(dialog.confirm).toHaveBeenCalledWith(expect.objectContaining({
-      title: 'Enable HTTPS Redirect',
-    }));
-  });
-
-  it('shows confirm dialog if service restart is needed and restarts it', async () => {
-    const wsStatus = spectator.inject(WebSocketStatusService);
-    Object.defineProperty(wsStatus, 'isConnected$', {
-      get: jest.fn(() => new BehaviorSubject(true)),
-    });
-
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      'Web Interface HTTP -> HTTPS Redirect': true,
-    });
-
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await saveButton.click();
-
-    const dialog = spectator.inject(DialogService);
-    expect(dialog.confirm).toHaveBeenCalledWith(expect.objectContaining({
-      title: 'Restart Web Service',
-    }));
-    expect(api.call).toHaveBeenCalledWith('system.general.ui_restart');
-  });
-
-  it('dispatches themeChangedInGuiForm when theme is changed', async () => {
-    const store$ = spectator.inject(Store);
-    jest.spyOn(store$, 'dispatch');
-
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      Theme: 'Dracula',
-    });
-
-    expect(store$.dispatch).toHaveBeenCalledWith(themeChangedInGuiForm({ theme: 'dracula' }));
   });
 });

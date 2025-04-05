@@ -13,7 +13,6 @@ import { UpsMode } from 'app/enums/ups-mode.enum';
 import { choicesToOptions, singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextServiceUps } from 'app/helptext/services/components/service-ups';
 import { UpsConfigUpdate } from 'app/interfaces/ups-config.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SimpleAsyncComboboxProvider } from 'app/modules/forms/ix-forms/classes/simple-async-combobox-provider';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -29,7 +28,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -57,7 +56,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   ],
 })
 export class ServiceUpsComponent implements OnInit {
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.SystemGeneralWrite];
 
   isFormLoading = false;
   isMasterMode = true;
@@ -77,7 +76,7 @@ export class ServiceUpsComponent implements OnInit {
     shutdowntimer: [null as number | null],
     shutdowncmd: [null as string | null],
     powerdown: [false],
-    nocommwarntime: [300],
+    nocommwarntime: [300 as number | null],
     hostsync: [15],
     description: [null as string | null],
     options: [null as string | null],
@@ -151,7 +150,6 @@ export class ServiceUpsComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
     private fb: NonNullableFormBuilder,
-    private dialogService: DialogService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
     public slideInRef: SlideInRef<undefined, boolean>,
@@ -195,7 +193,7 @@ export class ServiceUpsComponent implements OnInit {
         },
         error: (error: unknown) => {
           this.isFormLoading = false;
-          this.dialogService.error(this.errorHandler.parseError(error));
+          this.errorHandler.showErrorModal(error);
           this.cdr.markForCheck();
         },
       });

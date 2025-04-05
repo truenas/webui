@@ -5,7 +5,7 @@ import {
 
 export interface LoadingState<T> {
   isLoading: boolean;
-  value?: T;
+  value?: T | null;
   error?: unknown;
 }
 

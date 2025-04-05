@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, computed, effect, input,
 } from '@angular/core';
@@ -58,6 +59,7 @@ import {
     CopyButtonComponent,
     TranslateModule,
     UptimePipe,
+    NgTemplateOutlet,
   ],
 })
 export class WidgetSysInfoPassiveComponent {
@@ -75,7 +77,7 @@ export class WidgetSysInfoPassiveComponent {
   protected readonly getLabelForContractType = getLabelForContractType;
 
   updateAvailable = toSignal(this.resources.updateAvailable$);
-  systemInfo = toSignal(this.resources.systemInfo$.pipe(
+  systemInfo = toSignal(this.resources.dashboardSystemInfo$.pipe(
     map((state) => state.value?.remote_info),
     filter((value) => !!value),
   ));
@@ -108,7 +110,7 @@ export class WidgetSysInfoPassiveComponent {
   ) {
     effect(() => {
       if (!this.systemInfo() && this.canFailover()) {
-        this.resources.refreshSystemInfo();
+        this.resources.refreshDashboardSystemInfo();
       }
     });
   }

@@ -96,19 +96,6 @@ describe('DiskDetailsPanel', () => {
     unavail_disk: null,
     isRoot: true,
   } as TopologyItem;
-  const disksWithSmartTestSupport = [
-    'sda',
-    'sdb',
-    'sdc',
-    'sdd',
-    'sde',
-    'sdf',
-    'sdg',
-    'sdh',
-    'sdi',
-    'sdj',
-    'sdk',
-  ] as string[];
   const props = {
     topologyItem: { ...sdc } as TopologyItem,
     topologyParentItem: { ...mirror } as TopologyItem,
@@ -124,8 +111,6 @@ describe('DiskDetailsPanel', () => {
       transfermode: 'Auto',
       hddstandby: 'ALWAYS ON',
       advpowermgmt: 'DISABLED',
-      togglesmart: true,
-      smartoptions: '',
       model: 'ha001_d001',
       type: 'HDD',
       zfs_guid: '7184309631055131820',
@@ -136,7 +121,6 @@ describe('DiskDetailsPanel', () => {
     poolId: 2,
     topologyCategory: VdevType.Data,
     hasTopLevelRaidz: false,
-    disksWithSmartTestSupport,
   };
 
   const createComponent = createComponentFactory({
@@ -144,8 +128,6 @@ describe('DiskDetailsPanel', () => {
     providers: [
       mockApi([
         mockCall('system.advanced.sed_global_password_is_set', false),
-        mockCall('smart.test.results', []),
-        mockCall('smart.test.query_for_disk', []),
         mockCall('disk.query', [{ passwd: '' } as unknown as Disk]),
       ]),
       mockAuth(),
@@ -168,9 +150,6 @@ describe('DiskDetailsPanel', () => {
     expect(zfsInfoCard).toBeTruthy();
     const hardwareDiskEncryptionCard = spectator.query('ix-hardware-disk-encryption');
     expect(hardwareDiskEncryptionCard).toBeTruthy();
-
-    const smartInfoCard = spectator.query('ix-smart-info-card');
-    expect(smartInfoCard).toBeTruthy();
 
     const diskInfo = spectator.query('ix-disk-info-card');
     expect(diskInfo).toBeTruthy();
@@ -268,8 +247,6 @@ describe('DiskDetailsPanel', () => {
           transfermode: 'Auto',
           hddstandby: DiskStandby.AlwaysOn,
           advpowermgmt: DiskPowerLevel.Disabled,
-          togglesmart: true,
-          smartoptions: '',
           model: 'ha001_d001',
           type: DiskType.Hdd,
           zfs_guid: '7184309631055131820',
@@ -280,7 +257,6 @@ describe('DiskDetailsPanel', () => {
         poolId: 2,
         topologyCategory: VdevType.Data,
         hasTopLevelRaidz: false,
-        disksWithSmartTestSupport,
       },
     });
 
@@ -288,9 +264,6 @@ describe('DiskDetailsPanel', () => {
     expect(zfsInfoCard).toBeTruthy();
     const hardwareDiskEncryptionCard = spectator.query('ix-hardware-disk-encryption');
     expect(hardwareDiskEncryptionCard).toBeFalsy();
-
-    const smartInfoCard = spectator.query('ix-smart-info-card');
-    expect(smartInfoCard).toBeFalsy();
 
     const diskInfo = spectator.query('ix-disk-info-card');
     expect(diskInfo).toBeFalsy();

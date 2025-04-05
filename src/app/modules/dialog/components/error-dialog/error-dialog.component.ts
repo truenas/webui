@@ -9,12 +9,11 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { Job } from 'app/interfaces/job.interface';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DownloadService } from 'app/services/download.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -34,7 +33,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
     TestDirective,
   ],
 })
-export class ErrorDialogComponent {
+export class ErrorDialog {
   title: string;
   message: string;
   backtrace?: string;
@@ -42,11 +41,10 @@ export class ErrorDialogComponent {
   logs: Job;
 
   constructor(
-    public dialogRef: MatDialogRef<ErrorDialogComponent>,
+    public dialogRef: MatDialogRef<ErrorDialog>,
     private api: ApiService,
     private download: DownloadService,
     private errorHandler: ErrorHandlerService,
-    private dialogService: DialogService,
   ) {}
 
   toggleOpen(): void {
@@ -64,16 +62,16 @@ export class ErrorDialogComponent {
               this.dialogRef.close();
             }
           },
-          error: (err: unknown) => {
+          error: (error: unknown) => {
             if (this.dialogRef) {
               this.dialogRef.close();
             }
-            this.dialogService.error(this.errorHandler.parseError(err));
+            this.errorHandler.showErrorModal(error);
           },
         });
       },
-      error: (err: unknown) => {
-        this.dialogService.error(this.errorHandler.parseError(err));
+      error: (error: unknown) => {
+        this.errorHandler.showErrorModal(error);
       },
     });
   }

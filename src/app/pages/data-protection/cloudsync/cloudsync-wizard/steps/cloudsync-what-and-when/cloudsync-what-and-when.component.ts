@@ -23,11 +23,11 @@ import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
 import { TransferMode, transferModeNames } from 'app/enums/transfer-mode.enum';
-import { extractApiError } from 'app/helpers/api.helper';
+import { extractApiErrorDetails } from 'app/helpers/api.helper';
 import { prepareBwlimit } from 'app/helpers/bwlimit.utils';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextCloudSync } from 'app/helptext/data-protection/cloudsync/cloudsync';
-import { CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
+import { CloudSyncListDirectoryParams, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { newOption, Option } from 'app/interfaces/option.interface';
@@ -48,10 +48,10 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
-import { CreateStorjBucketDialogComponent } from 'app/pages/data-protection/cloudsync/create-storj-bucket-dialog/create-storj-bucket-dialog.component';
+import { CreateStorjBucketDialog } from 'app/pages/data-protection/cloudsync/create-storj-bucket-dialog/create-storj-bucket-dialog.component';
 import { TransferModeExplanationComponent } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 
 type FormValue = CloudSyncWhatAndWhenComponent['form']['value'];
@@ -136,7 +136,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
   readonly directionOptions$ = of(mapToOptions(directionNames, this.translate));
   readonly transferModeOptions$ = of(mapToOptions(transferModeNames, this.translate));
   readonly helptext = helptextCloudSync;
-  readonly requiredRoles = [Role.CloudSyncWrite];
+  protected readonly requiredRoles = [Role.CloudSyncWrite];
   readonly transferModeTooltip = `
     ${helptextCloudSync.transfer_mode_warning_sync}<br><br>
     ${helptextCloudSync.transfer_mode_warning_copy}<br><br>
@@ -302,7 +302,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
       filter(Boolean),
       untilDestroyed(this),
     ).subscribe(() => {
-      this.slideInRef.swap(CloudSyncFormComponent, { wide: true });
+      this.slideInRef.swap?.(CloudSyncFormComponent, { wide: true });
     });
   }
 
@@ -459,7 +459,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
       filter((selectedOption) => selectedOption === newOption),
       untilDestroyed(this),
     ).subscribe(() => {
-      const dialogRef = this.matDialog.open(CreateStorjBucketDialogComponent, {
+      const dialogRef = this.matDialog.open(CreateStorjBucketDialog, {
         width: '500px',
         data: {
           credentialsId: this.form.controls.credentials.value,
@@ -509,9 +509,9 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
         error: (error: unknown) => {
           this.isCredentialInvalid$.next(true);
           this.dialog.closeAllDialogs();
-          const apiError = extractApiError(error);
+          const apiError = extractApiErrorDetails(error);
           if (!apiError) {
-            this.errorHandler.handleError(error);
+            this.errorHandler.showErrorModal(error);
             return;
           }
 
@@ -549,7 +549,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
           folder: node.data.path,
         },
         args: '',
-      };
+      } as CloudSyncListDirectoryParams;
 
       if (bucket === '') {
         delete data.attributes.bucket;
@@ -562,7 +562,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
           listing.forEach((file) => {
             if (file.IsDir) {
               nodes.push({
-                path: `${data.attributes.folder}/${file.Name}`.replace(/\/+/g, '/'),
+                path: `${String(data.attributes.folder)}/${file.Name}`.replace(/\/+/g, '/'),
                 name: file.Name,
                 type: ExplorerNodeType.Directory,
                 hasChildren: true,

@@ -140,7 +140,7 @@ export class TargetSectionComponent implements OnInit, OnChanges {
   getPayload(): Partial<ReplicationCreate> {
     const values = this.form.value;
     const payload: Partial<ReplicationCreate> = {
-      target_dataset: values.target_dataset,
+      target_dataset: values.target_dataset || undefined,
       readonly: values.readonly,
       encryption: values.encryption,
       allow_from_scratch: values.allow_from_scratch,

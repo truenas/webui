@@ -3,7 +3,7 @@ import {
   Component, Inject, input, output,
 } from '@angular/core';
 import {
-  AbstractControl, FormBuilder, Validators, ReactiveFormsModule,
+  AbstractControl, Validators, ReactiveFormsModule, NonNullableFormBuilder,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialogRef, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
@@ -22,7 +22,7 @@ import {
 import { mapToOptions } from 'app/helpers/options.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
-import { FeedbackDialogComponent } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
+import { FeedbackDialog } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -62,7 +62,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
   ],
 })
 export class FileTicketLicensedComponent {
-  readonly dialogRef = input.required<MatDialogRef<FeedbackDialogComponent>>();
+  readonly dialogRef = input.required<MatDialogRef<FeedbackDialog>>();
   readonly isLoading = input<boolean>();
 
   readonly isLoadingChange = output<boolean>();
@@ -104,14 +104,12 @@ export class FileTicketLicensedComponent {
     cc: helptext.cc.tooltip,
     phone: helptext.phone.tooltip,
     category: helptext.type.tooltip,
-    environment: helptext.environment.tooltip,
-    criticality: helptext.criticality.tooltip,
-    title: helptext.title.tooltip,
+    title: helptext.title.placeholder,
     attach_debug: helptext.attach_debug.tooltip,
   };
 
   constructor(
-    private formBuilder: FormBuilder,
+    private formBuilder: NonNullableFormBuilder,
     private translate: TranslateService,
     private validatorsService: IxValidatorsService,
     private feedbackService: FeedbackService,
@@ -137,7 +135,7 @@ export class FileTicketLicensedComponent {
   onSubmit(): void {
     this.isLoadingChange.emit(true);
 
-    this.feedbackService.createTicketLicensed(this.form.value).pipe(
+    this.feedbackService.createTicketLicensed(this.form.getRawValue()).pipe(
       finalize(() => this.isLoadingChange.emit(false)),
       untilDestroyed(this),
     ).subscribe({
@@ -147,7 +145,7 @@ export class FileTicketLicensedComponent {
   }
 
   private onSuccess(ticketUrl: string): void {
-    this.feedbackService.showTicketSuccessMsg(ticketUrl);
+    this.feedbackService.showTicketSuccessMessage(ticketUrl);
     this.dialogRef().close();
   }
 

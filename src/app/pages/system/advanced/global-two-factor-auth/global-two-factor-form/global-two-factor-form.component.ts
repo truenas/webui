@@ -26,7 +26,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -50,7 +50,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   ],
 })
 export class GlobalTwoFactorAuthFormComponent implements OnInit {
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.SystemSecurityWrite];
 
   isFormLoading = false;
   form = this.fb.nonNullable.group({
@@ -132,7 +132,7 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
       }),
       catchError((error: unknown) => {
         this.isFormLoading = false;
-        this.dialogService.error(this.errorHandler.parseError(error));
+        this.errorHandler.showErrorModal(error);
         this.cdr.markForCheck();
         return EMPTY;
       }),

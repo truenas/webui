@@ -66,7 +66,7 @@ import { FilesystemService } from 'app/services/filesystem.service';
   ],
 })
 export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
-  readonly requiredRoles = [Role.CloudBackupWrite];
+  protected readonly requiredRoles = [Role.CloudBackupWrite];
   readonly mntPath = mntPath;
   readonly helptext = helptextTruecloudBackup;
 

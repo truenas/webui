@@ -16,13 +16,13 @@ import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { helptextGlobal } from 'app/helptext/global-helptext';
 import { ApiJobMethod, ApiJobResponse } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { ShowLogsDialogComponent } from 'app/modules/dialog/components/show-logs-dialog/show-logs-dialog.component';
+import { ShowLogsDialog } from 'app/modules/dialog/components/show-logs-dialog/show-logs-dialog.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { ColumnComponent, Column } from 'app/modules/ix-table/interfaces/column-component.class';
 import { JobSlice, selectJob } from 'app/modules/jobs/store/job.selectors';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 interface RowState {
   state: {
@@ -56,14 +56,7 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> implements
   errorHandler: ErrorHandlerService = inject(ErrorHandlerService);
 
   private readonly rowUpdateEffect = effect(() => {
-    const row = this.row();
-    const job = !row || !this.getJob ? undefined : this.getJob(row);
-
-    if (!job) {
-      return;
-    }
-
-    this.state.set(job.state);
+    this.setupRow();
   });
 
   getJob: (row: T) => Job | null;
@@ -73,6 +66,10 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> implements
   state = signal<JobState | null>(null);
 
   ngOnInit(): void {
+    this.setupRow();
+  }
+
+  setupRow(): void {
     if (this.getJob) {
       const job = this.getJob(this.row());
       this.job.set(job);
@@ -148,7 +145,7 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> implements
     }
 
     if (this.job()?.logs_excerpt) {
-      this.matDialog.open(ShowLogsDialogComponent, { data: this.job() });
+      this.matDialog.open(ShowLogsDialog, { data: this.job() });
       return;
     }
 

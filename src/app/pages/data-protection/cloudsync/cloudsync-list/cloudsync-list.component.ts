@@ -49,9 +49,9 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { cloudSyncListElements } from 'app/pages/data-protection/cloudsync/cloudsync-list/cloudsync-list.elements';
-import { CloudSyncRestoreDialogComponent } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
+import { CloudSyncRestoreDialog } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
 import { CloudSyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { TaskService } from 'app/services/task.service';
 import { AppState } from 'app/store';
 
@@ -89,7 +89,7 @@ export class CloudSyncListComponent implements OnInit {
   filterString = '';
   dataProvider: AsyncDataProvider<CloudSyncTaskUi>;
   readonly jobState = JobState;
-  readonly requiredRoles = [Role.CloudSyncWrite];
+  protected readonly requiredRoles = [Role.CloudSyncWrite];
 
   columns = createTable<CloudSyncTaskUi>([
     textColumn({
@@ -204,7 +204,7 @@ export class CloudSyncListComponent implements OnInit {
       )),
       catchError((error: unknown) => {
         this.getCloudSyncTasks();
-        this.dialogService.error(this.errorHandler.parseError(error));
+        this.errorHandler.showErrorModal(error);
         return EMPTY;
       }),
       untilDestroyed(this),
@@ -225,7 +225,7 @@ export class CloudSyncListComponent implements OnInit {
         filter(Boolean),
         switchMap(() => {
           return this.api.call('cloudsync.abort', [row.id]).pipe(
-            this.errorHandler.catchError(),
+            this.errorHandler.withErrorHandler(),
           );
         }),
         untilDestroyed(this),
@@ -250,7 +250,7 @@ export class CloudSyncListComponent implements OnInit {
       )),
       catchError((error: unknown) => {
         this.getCloudSyncTasks();
-        this.dialogService.error(this.errorHandler.parseError(error));
+        this.errorHandler.showErrorModal(error);
         return EMPTY;
       }),
       untilDestroyed(this),
@@ -261,7 +261,7 @@ export class CloudSyncListComponent implements OnInit {
   }
 
   restore(row: CloudSyncTaskUi): void {
-    this.matDialog.open(CloudSyncRestoreDialogComponent, { data: row.id })
+    this.matDialog.open(CloudSyncRestoreDialog, { data: row.id })
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => {
@@ -313,8 +313,8 @@ export class CloudSyncListComponent implements OnInit {
         );
         this.getCloudSyncTasks();
       },
-      error: (err: unknown) => {
-        this.dialogService.error(this.errorHandler.parseError(err));
+      error: (error: unknown) => {
+        this.errorHandler.showErrorModal(error);
       },
     });
   }

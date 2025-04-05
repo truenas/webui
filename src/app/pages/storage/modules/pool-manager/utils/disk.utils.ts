@@ -4,7 +4,7 @@ export function hasNonUniqueSerial(disk: DetailsDisk): boolean {
   return Boolean(disk.duplicate_serial?.length);
 }
 
-export function hasExportedPool(disk: DetailsDisk): boolean {
+export function hasExportedPool(disk: DetailsDisk): disk is DetailsDisk & { exported_zpool: string } {
   return Boolean(disk.exported_zpool);
 }
 

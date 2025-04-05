@@ -61,11 +61,11 @@ export interface PoolScanUpdate {
   end_time: ApiTimestamp;
   errors: number;
   function: PoolScanFunction;
-  pause: ApiTimestamp;
+  pause: ApiTimestamp | null;
   percentage: number;
   start_time: ApiTimestamp;
   state: PoolScanState;
-  total_secs_left: number;
+  total_secs_left: number | null;
 }
 
 export interface CreatePool {
@@ -140,7 +140,7 @@ export interface PoolInstance {
   is_decrypted: boolean;
   status: PoolStatus;
   path: string;
-  scan: PoolScanUpdate;
+  scan: PoolScanUpdate | null;
   is_upgraded: boolean;
   healthy: boolean;
   warning: boolean;

@@ -1,9 +1,14 @@
 import { LinkState } from 'app/enums/network-interface.enum';
 import { ReportingQueryUnit } from 'app/enums/reporting.enum';
-import { ApiError } from 'app/interfaces/api-error.interface';
+import { ApiErrorDetails } from 'app/interfaces/api-error.interface';
 
 export interface ReportingRealtimeUpdate {
   cpu: AllCpusUpdate;
+  pools: Record<string, {
+    available: number;
+    used: number;
+    total: number;
+  }>;
   disks: DisksUpdate;
   interfaces: AllNetworkInterfacesUpdate;
   memory: MemoryUpdate;
@@ -86,7 +91,7 @@ export interface ReportingData {
   legend: string[];
   name: string;
   start: number;
-  data: number[][] | ApiError;
+  data: number[][] | ApiErrorDetails;
   aggregations: ReportingAggregations;
 }
 

@@ -57,7 +57,6 @@
           formControlName="environment"
           [label]="'Environment' | translate"
           [options]="environmentOptions$"
-          [tooltip]="tooltips.environment | translate"
           [required]="true"
         ></ix-select>
       </div>
@@ -67,7 +66,6 @@
           formControlName="criticality"
           [label]="'Criticality' | translate"
           [options]="criticalityOptions$"
-          [tooltip]="tooltips.criticality | translate"
           [required]="true"
         ></ix-select>
       </div>
@@ -76,7 +74,6 @@
     <ix-input
       formControlName="title"
       [label]="'Subject' | translate"
-      [tooltip]="tooltips.title | translate"
       [placeholder]="tooltips.title | translate"
       [required]="true"
     ></ix-input>

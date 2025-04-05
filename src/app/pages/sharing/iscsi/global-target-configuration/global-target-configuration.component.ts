@@ -2,20 +2,21 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal,
 } from '@angular/core';
 import {
-  FormBuilder, FormControl, Validators, ReactiveFormsModule,
+  FormBuilder, FormControl, Validators, ReactiveFormsModule, FormGroup,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import {
+  forkJoin, of, take,
+} from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
-import { ServiceName } from 'app/enums/service-name.enum';
+import { RdmaProtocolName, ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { IscsiGlobalConfigUpdate } from 'app/interfaces/iscsi-global-config.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
@@ -27,10 +28,11 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -65,16 +67,25 @@ export class GlobalTargetConfigurationComponent implements OnInit {
     pool_avail_threshold: [null as number | null],
     listen_port: [null as number | null, Validators.required],
     alua: [false],
-  });
+    iser: [false],
+  }) as FormGroup<{
+    basename: FormControl<string>;
+    isns_servers: FormControl<string[]>;
+    pool_avail_threshold: FormControl<number | null>;
+    listen_port: FormControl<number | null>;
+    alua?: FormControl<boolean>;
+    iser: FormControl<boolean>;
+  }>;
 
   readonly tooltips = {
     basename: helptextSharingIscsi.globalconf_tooltip_basename,
     isns_servers: helptextSharingIscsi.globalconf_tooltip_isns_servers,
     pool_avail_threshold: helptextSharingIscsi.globalconf_tooltip_pool_avail_threshold,
     alua: helptextSharingIscsi.globalconf_tooltip_alua,
+    iser: helptextSharingIscsi.globalconf_tooltip_iser,
   };
 
-  readonly requiredRoles = [Role.SharingIscsiGlobalWrite];
+  protected readonly requiredRoles = [Role.SharingIscsiGlobalWrite];
 
   constructor(
     private api: ApiService,
@@ -83,7 +94,6 @@ export class GlobalTargetConfigurationComponent implements OnInit {
     private store$: Store<AppState>,
     private errorHandler: ErrorHandlerService,
     private formErrorHandler: FormErrorHandlerService,
-    private dialogService: DialogService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
     public slideInRef: SlideInRef<undefined, boolean>,
@@ -96,11 +106,12 @@ export class GlobalTargetConfigurationComponent implements OnInit {
   ngOnInit(): void {
     this.loadFormValues();
     this.listenForHaStatus();
+    this.checkForRdmaSupport();
   }
 
   onSubmit(): void {
     this.isLoading.set(true);
-    const values = this.form.value as IscsiGlobalConfigUpdate;
+    const values = { ...this.form.value } as IscsiGlobalConfigUpdate;
 
     this.api.call('iscsi.global.update', [values])
       .pipe(untilDestroyed(this))
@@ -129,7 +140,7 @@ export class GlobalTargetConfigurationComponent implements OnInit {
         this.isLoading.set(false);
       },
       error: (error: unknown) => {
-        this.dialogService.error(this.errorHandler.parseError(error));
+        this.errorHandler.showErrorModal(error);
         this.isLoading.set(false);
       },
     });
@@ -148,6 +159,22 @@ export class GlobalTargetConfigurationComponent implements OnInit {
       }
 
       this.cdr.markForCheck();
+    });
+  }
+
+  private checkForRdmaSupport(): void {
+    forkJoin([
+      this.api.call('rdma.capable_protocols'),
+      this.store$.select(selectIsEnterprise).pipe(take(1)),
+    ]).pipe(
+      untilDestroyed(this),
+    ).subscribe(([capableProtocols, isEnterprise]) => {
+      const hasRdmaSupport = capableProtocols.includes(RdmaProtocolName.Iser) && isEnterprise;
+      if (hasRdmaSupport) {
+        this.form.controls.iser.enable();
+      } else {
+        this.form.controls.iser.disable();
+      }
     });
   }
 }

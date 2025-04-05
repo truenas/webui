@@ -2,6 +2,7 @@ import { KeyValuePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -12,20 +13,26 @@ import {
   VirtualizationDeviceType,
   VirtualizationGpuType,
   VirtualizationStatus,
+  VirtualizationType,
 } from 'app/enums/virtualization.enum';
+import { Option } from 'app/interfaces/option.interface';
 import {
   AvailableUsb,
   VirtualizationDevice,
-  VirtualizationGpu,
+  VirtualizationGpu, VirtualizationPciDevice,
   VirtualizationTpm,
   VirtualizationUsb,
 } from 'app/interfaces/virtualization.interface';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import {
+  PciPassthroughDialog,
+} from 'app/pages/instances/components/common/pci-passthough-dialog/pci-passthrough-dialog.component';
 import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -77,8 +84,8 @@ export class AddDeviceMenuComponent {
     return !this.deviceStore.devices().some((device) => device.dev_type === VirtualizationDeviceType.Tpm);
   });
 
-  protected canAddTpmNow = computed(() => {
-    return this.canAddTpm() && this.deviceStore.selectedInstance()?.status === VirtualizationStatus.Stopped;
+  protected isInstanceStopped = computed(() => {
+    return this.instancesStore.selectedInstance()?.status === VirtualizationStatus.Stopped;
   });
 
   protected readonly hasDevicesToAdd = computed(() => {
@@ -87,13 +94,19 @@ export class AddDeviceMenuComponent {
       || this.canAddTpm();
   });
 
+  protected readonly isVm = computed(() => {
+    return this.instancesStore.selectedInstance()?.type === VirtualizationType.Vm;
+  });
+
   constructor(
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
     private deviceStore: VirtualizationDevicesStore,
+    private instancesStore: VirtualizationInstancesStore,
+    private matDialog: MatDialog,
   ) {}
 
   protected addUsb(usb: AvailableUsb): void {
@@ -116,8 +129,34 @@ export class AddDeviceMenuComponent {
     } as VirtualizationTpm);
   }
 
+  protected addPciPassthrough(): void {
+    const existingDevices = this.deviceStore.devices()
+      .filter((device) => device.dev_type === VirtualizationDeviceType.Pci)
+      .map((device) => device.address);
+
+    this.matDialog
+      .open(PciPassthroughDialog, {
+        minWidth: '90vw',
+        data: {
+          existingDeviceAddresses: existingDevices,
+        },
+      })
+      .afterClosed()
+      .pipe(untilDestroyed(this))
+      .subscribe((addedDevices: Option<string>[] | undefined) => {
+        if (!addedDevices?.length) {
+          return;
+        }
+
+        this.addDevice({
+          dev_type: VirtualizationDeviceType.Pci,
+          address: addedDevices[0].value,
+        } as VirtualizationPciDevice);
+      });
+  }
+
   private addDevice(payload: VirtualizationDevice): void {
-    const instanceId = this.deviceStore.selectedInstance()?.id;
+    const instanceId = this.instancesStore.selectedInstance()?.id;
     if (!instanceId) {
       return;
     }
@@ -125,7 +164,7 @@ export class AddDeviceMenuComponent {
     this.api.call('virt.instance.device_add', [instanceId, payload])
       .pipe(
         this.loader.withLoader(),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => {

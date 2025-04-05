@@ -1,11 +1,13 @@
 import {
-  ChangeDetectionStrategy, Component, computed, input,
+  ChangeDetectionStrategy, Component, computed,
+  input,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
+import { getCopyrightHtml } from 'app/helpers/copyright-text.helper';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppState } from 'app/store';
-import { selectCopyrightText, selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
+import { selectCopyrightHtml, selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @Component({
   selector: 'ix-copyright-line',
@@ -16,8 +18,10 @@ import { selectCopyrightText, selectIsEnterprise } from 'app/store/system-info/s
   imports: [TestDirective],
 })
 export class CopyrightLineComponent {
-  readonly withIxLogo = input(false);
-  readonly copyrightText = toSignal(this.store$.select(selectCopyrightText));
+  skipType = input(false);
+
+  readonly copyrightHtml = toSignal(this.store$.select(selectCopyrightHtml));
+  readonly copyrightText = computed(() => (this.skipType() ? getCopyrightHtml() : this.copyrightHtml()));
 
   readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
   readonly targetHref = computed(() => {

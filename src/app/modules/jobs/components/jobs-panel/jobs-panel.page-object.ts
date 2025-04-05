@@ -7,6 +7,9 @@ export class JobsPanelPageObject {
   constructor(private spectator: Spectator<JobsPanelComponent>) {}
 
   get getJobItemComponents(): JobItemComponent[] {
+    if (!this.jobsListSection) {
+      throw new Error('Jobs list section is not available');
+    }
     return queryAllNestedDirectives(this.spectator.debugElement, this.jobsListSection, JobItemComponent);
   }
 

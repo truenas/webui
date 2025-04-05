@@ -390,13 +390,18 @@ body .mdc-card__actions,
   justify-content: space-between;
   padding: 8px 16px;
 
+  @media(max-width: $breakpoint-sm) {
+    h3 {
+      white-space: normal !important;
+    }
+  }
+
   .toolbar-row-title {
     align-items: center;
     display: flex;
 
     > a {
       @include line-clamp(2);
-      max-width: 75%;
     }
   }
 
@@ -617,7 +622,6 @@ ix-tooltip {
   flex-grow: initial !important;
 
   .mdc-tab__content {
-    font-family: var(--mdc-dialog-subhead-font);
     font-size: 14px;
     font-weight: 500;
   }

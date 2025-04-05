@@ -36,17 +36,17 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { PoolCardIconComponent } from 'app/pages/storage/components/dashboard-pool/pool-card-icon/pool-card-icon.component';
 import {
-  AutotrimDialogComponent,
+  AutotrimDialog,
 } from 'app/pages/storage/components/dashboard-pool/zfs-health-card/autotrim-dialog/autotrim-dialog.component';
 import {
-  PruneDedupTableDialogComponent,
+  PruneDedupTableDialog,
 } from 'app/pages/storage/components/dashboard-pool/zfs-health-card/prune-dedup-table-dialog/prune-dedup-table-dialog.component';
 import {
   SetDedupQuotaComponent,
 } from 'app/pages/storage/components/dashboard-pool/zfs-health-card/set-dedup-quota/set-dedup-quota.component';
 import { zfsHealthCardElements } from 'app/pages/storage/components/dashboard-pool/zfs-health-card/zfs-health-card.elements';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -88,8 +88,7 @@ export class ZfsHealthCardComponent implements OnChanges {
   hasScrubTask$: Observable<LoadingState<boolean>>;
 
   readonly poolStatusLabels = poolStatusLabels;
-
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly Role = Role;
 
   constructor(
     private api: ApiService,
@@ -105,7 +104,7 @@ export class ZfsHealthCardComponent implements OnChanges {
   deduplicationStats = computed(() => {
     if (this.pool().dedup_table_quota !== 'auto' && this.pool().dedup_table_quota !== '0') {
       const value = this.fileSizePipe.transform(this.pool().dedup_table_size);
-      const quota = this.fileSizePipe.transform(parseInt(this.pool().dedup_table_quota, 10));
+      const quota = this.fileSizePipe.transform(parseInt(this.pool().dedup_table_quota || '', 10));
       return `${value} / ${quota}`;
     }
 
@@ -147,7 +146,7 @@ export class ZfsHealthCardComponent implements OnChanges {
 
   get timeLeftString(): string {
     try {
-      const duration = secondsToDuration(this.scan.total_secs_left);
+      const duration = secondsToDuration(this.scan.total_secs_left || 0);
       return this.translate.instant('{duration} remaining', { duration: formatDuration(duration) });
     } catch {
       return ' - ';
@@ -215,7 +214,7 @@ export class ZfsHealthCardComponent implements OnChanges {
       .pipe(
         filter(Boolean),
         switchMap(() => this.api.startJob('pool.scrub', [this.pool().id, PoolScrubAction.Start])),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe();
@@ -230,7 +229,7 @@ export class ZfsHealthCardComponent implements OnChanges {
     }).pipe(
       filter(Boolean),
       switchMap(() => this.api.startJob('pool.scrub', [this.pool().id, PoolScrubAction.Stop])),
-      this.errorHandler.catchError(),
+      this.errorHandler.withErrorHandler(),
       untilDestroyed(this),
     ).subscribe();
   }
@@ -249,7 +248,7 @@ export class ZfsHealthCardComponent implements OnChanges {
 
   onEditAutotrim(): void {
     this.matDialog
-      .open(AutotrimDialogComponent, { data: this.pool() })
+      .open(AutotrimDialog, { data: this.pool() })
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => this.store.loadDashboard());
@@ -257,7 +256,7 @@ export class ZfsHealthCardComponent implements OnChanges {
 
   onPruneDedupTable(): void {
     this.matDialog
-      .open(PruneDedupTableDialogComponent, { data: this.pool() })
+      .open(PruneDedupTableDialog, { data: this.pool() })
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => this.store.loadDashboard());
@@ -279,7 +278,7 @@ export class ZfsHealthCardComponent implements OnChanges {
       .pipe(
         map((apiEvent) => apiEvent.fields),
         filter((scan) => scan.name === this.pool().name),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe((scan) => {

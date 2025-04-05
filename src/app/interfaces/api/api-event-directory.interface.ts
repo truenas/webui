@@ -14,7 +14,6 @@ import { FailoverRebootInfo, SystemRebootInfo } from 'app/interfaces/reboot-info
 import { ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
 import { PoolScan } from 'app/interfaces/resilver-job.interface';
 import { Service } from 'app/interfaces/service.interface';
-import { SmartTestProgressUpdate } from 'app/interfaces/smart-test-progress.interface';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { User } from 'app/interfaces/user.interface';
@@ -40,7 +39,6 @@ export interface ApiEventDirectory {
   'pool.query': { response: Pool };
   'reporting.realtime': { response: ReportingRealtimeUpdate };
   'service.query': { response: Service };
-  'smart.test.progress': { response: SmartTestProgressUpdate };
   'system.reboot.info': { response: SystemRebootInfo };
   'tn_connect.config': { response: TruenasConnectConfig };
   'truecommand.config': { response: TrueCommandConfig };
@@ -49,5 +47,5 @@ export interface ApiEventDirectory {
   'virt.instance.metrics': { response: VirtualizationInstanceMetrics };
   'virt.instance.query': { response: VirtualizationInstance };
   'zfs.pool.scan': { response: PoolScan };
-  'zfs.snapshot.query': { response: ZfsSnapshot };
+  'pool.snapshot.query': { response: ZfsSnapshot };
 }

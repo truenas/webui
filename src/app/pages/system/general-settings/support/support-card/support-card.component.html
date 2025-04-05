@@ -8,15 +8,19 @@
 
   <mat-card-content>
     <div class="container">
-      <div
-        class="product-image"
-        [style.background-image]="'url(' + productImageSrc() + ')'"
-      ></div>
+      @if (productImageSrc()) {
+        <div
+          class="product-image"
+          [style.background-image]="'url(' + productImageSrc() + ')'"
+        ></div>
+      } @else {
+        <div class="product-image-placeholder">
+          <ix-icon name="ix-truenas-logo-mark" [fullSize]="true"></ix-icon>
+        </div>
+      }
 
       @if (systemInfo) {
-        <div
-          [class]="extraMargin ? 'extra-margin' : 'regular-margin'"
-        >
+        <div>
           <ix-sys-info
             [hasLicense]="hasLicense"
             [systemInfo]="systemInfo"
@@ -26,7 +30,7 @@
           <div class="links-wrapper">
             @for (link of links; track link) {
               <div class="links">
-                <div [innerHTML]="link"></div>
+                <div [innerHTML]="link | translate"></div>
               </div>
             }
           </div>
@@ -74,7 +78,7 @@
                   <span>{{ ticketText | translate }}</span>
                 </button>
                 <button
-                  *ixRequiresRoles="requiredRoles"
+                  *ixRequiresRoles="[Role.SupportWrite]"
                   id="proactiveSupport"
                   mat-menu-item
                   ixTest="proactive-support"
@@ -93,7 +97,7 @@
               >
                 {{ ticketText | translate }}
               </button>
-              <ng-container *ixRequiresRoles="requiredRoles">
+              <ng-container *ixRequiresRoles="[Role.SupportWrite]">
                 @if (hasLicense) {
                   <button
                     id="proactive-btn"

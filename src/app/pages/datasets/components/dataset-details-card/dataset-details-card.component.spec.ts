@@ -17,7 +17,7 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetDetailsCardComponent } from 'app/pages/datasets/components/dataset-details-card/dataset-details-card.component';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
-import { DeleteDatasetDialogComponent } from 'app/pages/datasets/components/delete-dataset-dialog/delete-dataset-dialog.component';
+import { DeleteDatasetDialog } from 'app/pages/datasets/components/delete-dataset-dialog/delete-dataset-dialog.component';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 
@@ -28,6 +28,7 @@ const dataset = {
   type: DatasetType.Filesystem,
   sync: { value: 'STANDARD' },
   compression: { source: ZfsPropertySource.Inherited, value: 'LZ4' },
+  compressratio: { value: '3.81x' },
   atime: true,
   deduplication: { value: 'OFF' },
   casesensitive: false,
@@ -94,13 +95,18 @@ describe('DatasetDetailsCardComponent', () => {
 
   describe('filesystem dataset', () => {
     it('shows filesystem details', () => {
-      setupTest({ dataset });
+      setupTest({
+        dataset: {
+          ...dataset,
+          compression: { source: ZfsPropertySource.Default, value: 'LZ3' },
+        } as DatasetDetails,
+      });
 
       const details = getDetails();
       expect(details).toEqual({
         'Type:': 'FILESYSTEM',
         'Sync:': 'STANDARD',
-        'Compression Level:': 'Inherit (LZ4)',
+        'Compression:': '3.81x (LZ3)',
         'Enable Atime:': 'ON',
         'ZFS Deduplication:': 'OFF',
         'Case Sensitivity:': 'OFF',
@@ -127,7 +133,7 @@ describe('DatasetDetailsCardComponent', () => {
       const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
       await deleteButton.click();
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(DeleteDatasetDialogComponent, { data: dataset });
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(DeleteDatasetDialog, { data: dataset });
     });
   });
 
@@ -139,7 +145,7 @@ describe('DatasetDetailsCardComponent', () => {
       expect(details).toEqual({
         'Type:': 'VOLUME',
         'Sync:': 'STANDARD',
-        'Compression Level:': 'Inherit (LZ4)',
+        'Compression:': 'Inherit (3.81x (LZ4))',
         'ZFS Deduplication:': 'OFF',
         'Case Sensitivity:': 'OFF',
         'Path:': 'pool/child',

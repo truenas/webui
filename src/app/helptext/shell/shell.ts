@@ -11,11 +11,4 @@ export const helptextShell = {
     systems, use <i>Ctrl+Insert</i> to copy and \
     <i>Shift+Insert</i> to paste.',
   ),
-
-  podConsole: {
-    nopod: {
-      title: T('No Pods Found'),
-      message: T('Invalid Pod name'),
-    },
-  },
 };

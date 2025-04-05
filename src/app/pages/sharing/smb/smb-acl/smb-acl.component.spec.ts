@@ -10,7 +10,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { NfsAclTag } from 'app/enums/nfs-acl.enum';
 import { SmbSharesecPermission, SmbSharesecType } from 'app/enums/smb-sharesec.enum';
 import { Group } from 'app/interfaces/group.interface';
-import { SmbSharesec } from 'app/interfaces/smb-share.interface';
+import { SmbSharesec, SmbSharesecAce } from 'app/interfaces/smb-share.interface';
 import { User as TnUser } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxComboboxHarness } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.harness';
@@ -34,10 +34,9 @@ describe('SmbAclComponent', () => {
         ae_type: SmbSharesecType.Allowed,
         ae_who_id: {
           id_type: NfsAclTag.Everyone,
-          id: null,
         },
         ae_perm: SmbSharesecPermission.Read,
-      },
+      } as SmbSharesecAce,
       {
         ae_who_sid: 'S-1-1-1',
         ae_type: SmbSharesecType.Denied,

@@ -23,7 +23,7 @@ import { helptextInterfaces } from 'app/helptext/network/interfaces/interfaces-l
 import { Interval } from 'app/interfaces/timeout.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -32,7 +32,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
 import { networkElements } from 'app/pages/network/network.elements';
 import { InterfacesStore } from 'app/pages/network/stores/interfaces.store';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
@@ -98,7 +98,7 @@ export class NetworkComponent implements OnInit {
     private api: ApiService,
     private router: Router,
     private dialogService: DialogService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private translate: TranslateService,
     private slideIn: SlideIn,
     private snackbar: SnackbarService,
@@ -247,7 +247,7 @@ export class NetworkComponent implements OnInit {
     this.api
       .call('interface.services_restarted_on_sync')
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe((services) => {
@@ -290,7 +290,7 @@ export class NetworkComponent implements OnInit {
               .call('interface.commit', [{ checkin_timeout: this.checkinTimeout }])
               .pipe(
                 this.loader.withLoader(),
-                this.errorHandler.catchError(),
+                this.errorHandler.withErrorHandler(),
                 switchMap(() => this.getCheckInWaitingSeconds()),
                 untilDestroyed(this),
               )
@@ -340,7 +340,7 @@ export class NetworkComponent implements OnInit {
       .call('interface.checkin')
       .pipe(
         this.loader.withLoader(),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => {
@@ -375,7 +375,7 @@ export class NetworkComponent implements OnInit {
           .call('interface.rollback')
           .pipe(
             this.loader.withLoader(),
-            this.errorHandler.catchError(),
+            this.errorHandler.withErrorHandler(),
             untilDestroyed(this),
           )
           .subscribe(() => {
@@ -404,7 +404,7 @@ export class NetworkComponent implements OnInit {
     this.api.call('interface.query', [[['id', '=', state.editInterface]]])
       .pipe(
         this.loader.withLoader(),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe((interfaces) => {
@@ -412,7 +412,11 @@ export class NetworkComponent implements OnInit {
           return;
         }
 
-        const slideInRef$ = this.slideIn.open(InterfaceFormComponent, { data: interfaces[0] });
+        const slideInRef$ = this.slideIn.open(InterfaceFormComponent, {
+          data: {
+            interface: interfaces[0],
+          },
+        });
         this.handleSlideInClosed(slideInRef$);
       });
   }

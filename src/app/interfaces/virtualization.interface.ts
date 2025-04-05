@@ -1,6 +1,7 @@
 import { FormControl, FormGroup } from '@angular/forms';
 import { NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
 import {
+  DiskIoBus,
   VirtualizationDeviceType,
   VirtualizationGlobalState,
   VirtualizationGpuType,
@@ -10,7 +11,7 @@ import {
   VirtualizationRemote,
   VirtualizationSource,
   VirtualizationStatus,
-  VirtualizationType,
+  VirtualizationType, VolumeContentType,
 } from 'app/enums/virtualization.enum';
 
 export interface VirtualizationInstanceMetrics {
@@ -41,8 +42,10 @@ export interface VirtualizationInstance {
   vnc_port: number | null;
   vnc_password: string | null;
   secure_boot: boolean;
+  root_disk_io_bus: DiskIoBus;
   root_disk_size: number | null;
   userns_idmap: UserNsIdmap | null;
+  storage_pool: string;
 }
 
 export interface VirtualizationAlias {
@@ -61,6 +64,7 @@ export interface CreateVirtualizationInstance {
    * Value in GBs.
    */
   root_disk_size?: number;
+  root_disk_io_bus?: DiskIoBus;
   source_type?: VirtualizationSource;
   environment?: Record<string, string>;
   autostart?: boolean;
@@ -80,6 +84,8 @@ export interface CreateVirtualizationInstance {
   vnc_password?: string | null;
 
   zvol_path?: string | null;
+  storage_pool: string | null;
+  volume?: string | null;
 }
 
 export interface UpdateVirtualizationInstance {
@@ -90,6 +96,7 @@ export interface UpdateVirtualizationInstance {
   enable_vnc?: boolean;
   vnc_port?: number | null;
   secure_boot?: boolean;
+  root_disk_io_bus?: DiskIoBus;
   vnc_password?: string | null;
   root_disk_size?: number;
 }
@@ -100,7 +107,8 @@ export type VirtualizationDevice =
   | VirtualizationProxy
   | VirtualizationTpm
   | VirtualizationUsb
-  | VirtualizationNic;
+  | VirtualizationNic
+  | VirtualizationPciDevice;
 
 export interface VirtualizationDisk {
   name: string;
@@ -110,7 +118,16 @@ export interface VirtualizationDisk {
   source: string | null;
   destination: string | null;
   product_id: string;
+  io_bus: DiskIoBus;
   boot_priority?: number;
+}
+
+export interface VirtualizationPciDevice {
+  name: string;
+  description: string;
+  dev_type: VirtualizationDeviceType.Pci;
+  readonly: boolean;
+  address: string;
 }
 
 export interface VirtualizationGpu {
@@ -201,10 +218,11 @@ export interface VirtualizationStopParams {
 }
 
 export interface VirtualizationGlobalConfigUpdate {
-  pool: string;
+  pool?: string;
   bridge?: string | null;
   v4_network?: string | null;
   v6_network?: string | null;
+  storage_pools: string[] | null;
 }
 
 export interface VirtualizationGlobalConfig {
@@ -215,6 +233,7 @@ export interface VirtualizationGlobalConfig {
   v6_network: string | null;
   dataset: string | null;
   state: VirtualizationGlobalState;
+  storage_pools: string[];
 }
 
 export interface VirtualizationNetwork {
@@ -259,11 +278,27 @@ export type InstanceEnvVariablesFormGroup = FormGroup<{
 export interface VirtualizationVolume {
   id: string;
   name: string;
-  content_type: string;
+  content_type: VolumeContentType;
   created_at: string;
   type: string;
-  config: string;
+  config: {
+    size: number;
+  };
   used_by: string[];
+  storage_pool: string;
+}
+
+export interface VirtualizationImportIsoParams {
+  name: string;
+  iso_location?: string | null;
+  upload_iso: boolean;
+  storage_pool: string | null;
+}
+
+export interface CreateVirtualizationVolume {
+  name: string;
+  content_type?: VolumeContentType;
+  size?: number;
 }
 
 export type VirtualizationVolumeUpdate = [
@@ -272,3 +307,37 @@ export type VirtualizationVolumeUpdate = [
     size: number;
   },
 ];
+
+export type VirtualizationPciChoices = Record<string, VirtualizationPciDeviceOption>;
+
+export interface VirtualizationPciDeviceOption {
+  capability: VirtualizationPciDeviceCapability;
+  controller_type: string | null;
+  critical: boolean;
+  iommu_group: unknown;
+  drivers: string[];
+  error: string;
+  device_path: string;
+  reset_mechanism_defined: boolean;
+  description: string;
+}
+
+export interface VirtualizationPciDeviceCapability {
+  class: string;
+  domain: string;
+  bus: string;
+  slot: string;
+  function: string;
+  product: string;
+  vendor: string;
+}
+
+export interface ImportZvolParams {
+  to_import: ZvolToImport[];
+  clone: boolean;
+}
+
+export interface ZvolToImport {
+  virt_volume_name: string;
+  zvol_path: string;
+}

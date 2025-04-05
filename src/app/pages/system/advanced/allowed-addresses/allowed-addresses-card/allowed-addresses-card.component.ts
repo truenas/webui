@@ -32,7 +32,7 @@ import { allowedAddressesCardElements } from 'app/pages/system/advanced/allowed-
 import {
   AllowedAddressesFormComponent,
 } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-form/allowed-addresses-form.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { AppState } from 'app/store';
 import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
@@ -66,7 +66,7 @@ interface AllowedAddressRow {
 })
 export class AllowedAddressesCardComponent implements OnInit {
   protected readonly searchableElements = allowedAddressesCardElements;
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.SystemGeneralWrite];
   dataProvider: AsyncDataProvider<AllowedAddressRow>;
 
   columns = createTable<AllowedAddressRow>([
@@ -80,7 +80,7 @@ export class AllowedAddressesCardComponent implements OnInit {
           iconName: iconMarker('mdi-delete'),
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.promptDeleteAllowedAddress(row),
-          requiredRoles: [Role.FullAdmin],
+          requiredRoles: [Role.SystemGeneralWrite],
         },
       ],
     }),
@@ -131,7 +131,7 @@ export class AllowedAddressesCardComponent implements OnInit {
         untilDestroyed(this),
       ).subscribe({
         next: () => this.deleteAllowedAddress(row),
-        error: (err: unknown) => this.dialog.error(this.errorHandler.parseError(err)),
+        error: (error: unknown) => this.errorHandler.showErrorModal(error),
       });
   }
 
@@ -147,7 +147,7 @@ export class AllowedAddressesCardComponent implements OnInit {
         this.store$.dispatch(generalConfigUpdated());
         this.getAllowedAddresses();
       },
-      error: (err: unknown) => this.dialog.error(this.errorHandler.parseError(err)),
+      error: (error: unknown) => this.errorHandler.showErrorModal(error),
     });
   }
 

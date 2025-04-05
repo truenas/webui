@@ -4,20 +4,17 @@ import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 
 export const helptextTopbar = {
   ha_status: T('HA Status'),
-  ha_status_text_enabled: T('HA Enabled'),
-  ha_is_enabled: T('HA is enabled'),
-  ha_status_text_disabled: T('HA Disabled'),
   updateRunning_dialog: {
     title: T('Update in Progress'),
     message: helptextGlobal.sysUpdateMessage,
-    message_pt2: `<b>${helptextGlobal.sysUpdateMessagePt2}</b>`,
+    message_pt2: helptextGlobal.sysUpdateMessagePt2,
   },
 
   mat_tooltips: {
     toggle_collapse: T('Toggle Collapse'),
     tc_connect: T('Connecting to TrueCommand'),
     tc_status: T('Status of TrueCommand'),
-    tnc_status: T('Status of Truenas Connect'),
+    tnc_status: T('Status of TrueNAS Connect'),
     update: T('Update in Progress'),
     reboot_info: T('Reboot Required'),
     pending_network_changes: T('Pending Network Changes'),
@@ -80,10 +77,9 @@ Login or signup is required.'),
 address. Please verify the email address before continuing.'),
   },
   changePasswordDialog: {
-    pw_new_pw_tooltip: T('Passwords cannot contain a <b>?</b>. Passwords should \
+    pw_new_pw_tooltip: T('Passwords should \
 be at least eight characters and contain a mix of lower and \
 upper case, numbers, and special characters.'),
-    pw_invalid_title: T('Incorrect Password'),
     pw_updated: T('Password updated.'),
   },
 };

@@ -70,7 +70,7 @@ export class TargetListComponent implements OnInit {
 
   protected readonly searchableElements = targetListElements;
 
-  readonly requiredRoles = [
+  protected readonly requiredRoles = [
     Role.SharingIscsiTargetWrite,
     Role.SharingIscsiWrite,
     Role.SharingWrite,

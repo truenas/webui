@@ -15,10 +15,8 @@ import {
 import { LoginResult } from 'app/enums/login-result.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
 import { UpdateService } from 'app/services/update.service';
@@ -36,6 +34,8 @@ const initialState: SigninState = {
   wasAdminSet: true,
   loginBanner: null,
 };
+
+const tokenParam = 'token' as const;
 
 @UntilDestroy()
 @Injectable()
@@ -58,11 +58,9 @@ export class SigninStore extends ComponentStore<SigninState> {
     private api: ApiService,
     private translate: TranslateService,
     private tokenLastUsedService: TokenLastUsedService,
-    private dialogService: DialogService,
     private systemGeneralService: SystemGeneralService,
     private router: Router,
     private snackbar: MatSnackBar,
-    private wsManager: WebSocketHandlerService,
     private errorHandler: ErrorHandlerService,
     private authService: AuthService,
     private updateService: UpdateService,
@@ -78,14 +76,14 @@ export class SigninStore extends ComponentStore<SigninState> {
 
   init = this.effect((trigger$: Observable<void>) => trigger$.pipe(
     tap(() => this.setLoadingState(true)),
+    switchMap(() => this.updateService.hardRefreshIfNeeded()),
     switchMap(() => forkJoin([
       this.checkIfAdminPasswordSet(),
       this.checkForLoginBanner(),
-      this.updateService.hardRefreshIfNeeded(),
     ])),
     tap(() => this.setLoadingState(false)),
     switchMap(() => {
-      const queryToken = this.activatedRoute.snapshot.queryParamMap.get('token');
+      const queryToken = this.activatedRoute.snapshot.queryParamMap.get(tokenParam);
       if (queryToken) {
         return this.handleLoginWithQueryToken(queryToken);
       }
@@ -108,7 +106,7 @@ export class SigninStore extends ComponentStore<SigninState> {
     switchMap(() => from(this.router.navigateByUrl(this.getRedirectUrl()))),
     catchError((error: unknown) => {
       this.setLoadingState(false);
-      this.dialogService.error(this.errorHandler.parseError(error));
+      this.errorHandler.showErrorModal(error);
       return EMPTY;
     }),
   ));
@@ -124,7 +122,13 @@ export class SigninStore extends ComponentStore<SigninState> {
   getRedirectUrl(): string {
     const redirectUrl = this.window.sessionStorage.getItem('redirectUrl');
     if (redirectUrl) {
-      return redirectUrl;
+      try {
+        const url = new URL(redirectUrl, this.window.location.origin);
+        url.searchParams.delete(tokenParam);
+        return url.pathname + url.search;
+      } catch (error) {
+        console.error('Invalid redirect URL:', redirectUrl);
+      }
     }
 
     return '/dashboard';
@@ -163,7 +167,7 @@ export class SigninStore extends ComponentStore<SigninState> {
       tapResponse(
         () => {},
         (error: unknown) => {
-          this.dialogService.error(this.errorHandler.parseError(error));
+          this.errorHandler.showErrorModal(error);
         },
       ),
     );
@@ -184,7 +188,7 @@ export class SigninStore extends ComponentStore<SigninState> {
       tapResponse(
         () => {},
         (error: unknown) => {
-          this.dialogService.error(this.errorHandler.parseError(error));
+          this.errorHandler.showErrorModal(error);
         },
       ),
     );

@@ -1,7 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { ActivatedRoute } from '@angular/router';
 import { SpectatorRouting } from '@ngneat/spectator';
 import { createRoutingFactory, mockProvider } from '@ngneat/spectator/jest';
 import { LazyLoadImageDirective } from 'ng-lazyload-image';
@@ -32,9 +31,6 @@ describe('CategoryViewComponent', () => {
       MockComponent(CustomAppButtonComponent),
     ],
     providers: [
-      mockProvider(ActivatedRoute, {
-        snapshot: { params: { category: 'new-and-updated' } },
-      }),
       mockProvider(AppsFilterStore, {
         filterValues$: of({
           sort: null,

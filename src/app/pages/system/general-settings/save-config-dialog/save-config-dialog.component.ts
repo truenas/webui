@@ -14,14 +14,12 @@ import { switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/modules/websocket/api.service';
 import { DownloadService } from 'app/services/download.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
@@ -56,10 +54,10 @@ export interface SaveConfigDialogMessages {
     DatePipe,
   ],
 })
-export class SaveConfigDialogComponent {
-  readonly requiredRoles = [Role.FullAdmin];
+export class SaveConfigDialog {
+  protected readonly requiredRoles = [Role.FullAdmin];
 
-  exportSeedCheckbox = new FormControl(false);
+  exportSeedCheckbox = new FormControl(true);
 
   helptext: SaveConfigDialogMessages;
 
@@ -72,14 +70,12 @@ export class SaveConfigDialogComponent {
   };
 
   constructor(
-    private api: ApiService,
     private store$: Store<AppState>,
     private download: DownloadService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private datePipe: DatePipe,
-    private dialogRef: MatDialogRef<SaveConfigDialogComponent>,
+    private dialogRef: MatDialogRef<SaveConfigDialog>,
     private errorHandler: ErrorHandlerService,
-    private dialogService: DialogService,
     private translate: TranslateService,
     @Optional() @Inject(MAT_DIALOG_DATA) messageOverrides: Partial<SaveConfigDialogMessages> = {},
   ) {
@@ -92,6 +88,7 @@ export class SaveConfigDialogComponent {
   onSubmit(): void {
     this.store$.pipe(
       waitForSystemInfo,
+      this.loader.withLoader(),
       switchMap((systemInfo) => {
         const hostname = systemInfo.hostname.split('.')[0];
         const date = this.datePipe.transform(new Date(), 'yyyyMMddHHmmss');
@@ -106,10 +103,12 @@ export class SaveConfigDialogComponent {
           fileName += '.db';
         }
 
-        return this.api.call('core.download', ['config.save', [{ secretseed: this.exportSeedCheckbox.value }], fileName]).pipe(
-          this.loader.withLoader(),
-          switchMap(([, url]) => this.download.downloadUrl(url, fileName, mimeType)),
-        );
+        return this.download.coreDownload({
+          fileName,
+          mimeType,
+          method: 'config.save',
+          arguments: [{ secretseed: this.exportSeedCheckbox.value }],
+        });
       }),
       untilDestroyed(this),
     ).subscribe({
@@ -117,7 +116,7 @@ export class SaveConfigDialogComponent {
         this.dialogRef.close(true);
       },
       error: (error: unknown) => {
-        this.dialogService.error(this.errorHandler.parseError(error));
+        this.errorHandler.showErrorModal(error);
         this.dialogRef.close(false);
       },
     });

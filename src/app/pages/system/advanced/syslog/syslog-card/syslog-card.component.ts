@@ -62,7 +62,7 @@ export interface SyslogConfig {
 export class SyslogCardComponent {
   private readonly reloadConfig$ = new Subject<void>();
   protected readonly searchableElements = syslogCardElements;
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.SystemAdvancedWrite];
 
   private syslogConfig: SyslogConfig;
   readonly advancedConfig$ = this.reloadConfig$.pipe(

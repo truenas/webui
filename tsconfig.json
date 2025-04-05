@@ -17,12 +17,9 @@
     "useUnknownInCatchVariables": true,
     "module": "es2020",
     "target": "ES2022",
-    "lib": [
-      "es2023",
-      "dom",
-      "dom.Iterable"
-    ],
-    "useDefineForClassFields": false
+    "lib": ["es2023", "dom", "dom.Iterable"],
+    "useDefineForClassFields": false,
+    "skipLibCheck": true
   },
   "angularCompilerOptions": {
     "allowEmptyCodegenFiles": true,

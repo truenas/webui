@@ -31,6 +31,14 @@
           [label]="'Enabled' | translate"
           [tooltip]="helptext.tooltip_enabled | translate"
         ></ix-checkbox>
+
+        @if (isEnterprise()) {
+          <ix-checkbox
+            formControlName="expose_snapshots"
+            [label]="'Expose Snapshots' | translate"
+            [tooltip]="helptext.tooltip_expose_snapshots | translate"
+          ></ix-checkbox>
+        }
       </ix-fieldset>
 
       @if (isAdvancedMode) {

@@ -38,33 +38,32 @@ const maxPct = 80;
   ],
 })
 export class PoolUsageGaugeComponent implements OnInit {
-  readonly pool = input.required<Pool>();
+  readonly pool = input<Pool>();
   readonly size = input<number>(150);
 
   protected chartLowCapacityColor: string;
   protected chartFillColor: string;
   protected chartBlankColor: string;
 
-  protected isDatasetLoading = computed(() => !this.rootDataset());
+  protected isDatasetLoading = computed(() => !this.poolStats());
   protected isDisksLoading = computed(() => !this.disks());
-  protected isPoolLoading = computed(() => !this.pool());
+  protected realtimeUpdates = toSignal(this.resources.realtimeUpdates$);
 
   protected disks = toSignal(toObservable(this.pool).pipe(
     filter(Boolean),
     switchMap((pool) => this.resources.getDisksByPoolId(pool.name)),
   ), { initialValue: [] });
 
-  protected rootDataset = toSignal(toObservable(this.pool).pipe(
-    filter(Boolean),
-    switchMap((pool) => this.resources.getDatasetById(pool.name)),
-  ));
+  protected poolStats = computed(() => {
+    return this.realtimeUpdates()?.fields?.pools?.[this.pool()?.name];
+  });
 
   protected capacity = computed(() => {
-    return this.rootDataset().available.parsed + this.rootDataset().used.parsed;
+    return this.poolStats()?.total;
   });
 
   protected usedPercentage = computed(() => {
-    return this.rootDataset().used.parsed / this.capacity() * 100;
+    return this.poolStats()?.used / this.capacity() * 100;
   });
 
   protected isLowCapacity = computed(() => {

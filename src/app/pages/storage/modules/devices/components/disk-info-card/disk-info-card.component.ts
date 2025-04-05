@@ -21,7 +21,7 @@ import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-av
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
-  ReplaceDiskDialogComponent,
+  ReplaceDiskDialog,
   ReplaceDiskDialogData,
 } from 'app/pages/storage/modules/devices/components/disk-info-card/replace-disk-dialog/replace-disk-dialog.component';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
@@ -53,7 +53,7 @@ export class DiskInfoCardComponent {
   readonly topologyDisk = input.required<TopologyDisk>();
   readonly disk = input<Disk>();
 
-  readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.PoolWrite];
 
   constructor(
     private matDialog: MatDialog,
@@ -71,7 +71,7 @@ export class DiskInfoCardComponent {
   });
 
   onEdit(): void {
-    this.slideIn.open(DiskFormComponent, { wide: true, data: this.disk() }).pipe(
+    this.slideIn.open(DiskFormComponent, { data: this.disk() }).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(() => this.devicesStore.reloadList());
@@ -80,7 +80,7 @@ export class DiskInfoCardComponent {
   onReplace(): void {
     const poolId = this.route.snapshot.params.poolId as string;
     this.matDialog
-      .open(ReplaceDiskDialogComponent, {
+      .open(ReplaceDiskDialog, {
         data: {
           poolId: Number(poolId),
           guid: this.topologyDisk().guid,

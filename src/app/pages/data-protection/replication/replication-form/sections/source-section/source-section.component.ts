@@ -137,7 +137,7 @@ export class SourceSectionComponent implements OnChanges {
       schema_or_regex: replication.name_regex ? SnapshotNamingOption.NameRegex : SnapshotNamingOption.NamingSchema,
     });
 
-    if (this.replication().restrict_schedule) {
+    if (this.replication()?.restrict_schedule) {
       this.form.patchValue({
         restrict_schedule_picker: replication.restrict_schedule
           ? scheduleToCrontab(replication.restrict_schedule)
@@ -200,7 +200,7 @@ export class SourceSectionComponent implements OnChanges {
   }
 
   private getPropertiesOverride(): ReplicationCreate['properties_override'] {
-    return this.form.value.properties_override.reduce((overrides, property) => {
+    return this.form.getRawValue().properties_override.reduce((overrides, property) => {
       const [key, value] = property.split('=');
       overrides[key] = value;
       return overrides;

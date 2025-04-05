@@ -55,7 +55,7 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
   ],
 })
 export class AlertsPanelComponent implements OnInit {
-  readonly requiredRoles = [Role.AlertListWrite];
+  protected readonly requiredRoles = [Role.AlertListWrite];
 
   error$ = this.store$.select(selectAlertState).pipe(map((state) => state.error));
   isLoading$ = this.store$.select(selectAlertState).pipe(map((state) => state.isLoading));

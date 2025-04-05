@@ -27,7 +27,7 @@ export class WidgetHostnameActiveComponent implements WidgetComponent {
   size = input.required<SlotSize>();
   readonly name = hostnameActiveWidget.name;
 
-  systemInfo$ = this.resources.systemInfo$;
+  systemInfo$ = this.resources.dashboardSystemInfo$;
 
   constructor(
     private resources: WidgetResourcesService,

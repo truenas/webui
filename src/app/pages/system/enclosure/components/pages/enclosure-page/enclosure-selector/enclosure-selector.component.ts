@@ -22,7 +22,7 @@ import { diskStatusTint } from 'app/pages/system/enclosure/utils/disk-status-tin
 export class EnclosureSelectorComponent {
   readonly enclosures = this.store.enclosures;
 
-  readonly selectedEnclosure = computed(() => this.store.selectedEnclosure().id);
+  readonly selectedEnclosure = computed(() => this.store.selectedEnclosure()?.id);
 
   readonly diskStatusTint = diskStatusTint;
 

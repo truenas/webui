@@ -32,7 +32,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { sysctlCardElements } from 'app/pages/system/advanced/sysctl/sysctl-card/sysctl-card.elements';
 import { TunableFormComponent } from 'app/pages/system/advanced/sysctl/tunable-form/tunable-form.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 
 @UntilDestroy()
@@ -60,7 +60,7 @@ import { FirstTimeWarningService } from 'app/services/first-time-warning.service
   ],
 })
 export class SysctlCardComponent implements OnInit {
-  readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.SystemTunableWrite];
   protected readonly searchableElements = sysctlCardElements;
 
   dataProvider: AsyncDataProvider<Tunable>;
@@ -138,7 +138,7 @@ export class SysctlCardComponent implements OnInit {
       .pipe(
         filter(Boolean),
         switchMap(() => this.api.job('tunable.delete', [row.id])),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe({

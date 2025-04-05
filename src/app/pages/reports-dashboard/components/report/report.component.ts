@@ -32,7 +32,7 @@ import { oneDayMillis, oneHourMillis } from 'app/constants/time.constant';
 import { toggleMenuDuration } from 'app/constants/toggle-menu-duration';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { ReportingGraphName } from 'app/enums/reporting.enum';
-import { extractApiError } from 'app/helpers/api.helper';
+import { extractApiErrorDetails } from 'app/helpers/api.helper';
 import { ReportingData, ReportingDatabaseError } from 'app/interfaces/reporting.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
@@ -100,7 +100,6 @@ export class ReportComponent implements OnInit, OnChanges {
   chartColors: string[];
   legendData: LegendDataWithStackedTotalHtml = {} as LegendDataWithStackedTotalHtml;
   subtitle: string = this.translate.instant('% of all cores');
-  isActive = true;
   stepForwardDisabled = true;
   stepBackDisabled = false;
   timezone: string;
@@ -274,7 +273,7 @@ export class ReportComponent implements OnInit, OnChanges {
 
   formatTime(stamp: number): string {
     const result = this.formatDateTimePipe.transform(new Date(stamp));
-    return result.toLowerCase() !== invalidDate.toLowerCase() ? result : '';
+    return result.toLowerCase() !== this.translate.instant(invalidDate).toLowerCase() ? result : '';
   }
 
   onZoomChange(interval: number[]): void {
@@ -502,7 +501,7 @@ export class ReportComponent implements OnInit, OnChanges {
   }
 
   handleError(err: unknown): void {
-    const apiError = extractApiError(err);
+    const apiError = extractApiErrorDetails(err);
     if (apiError?.error === (ReportingDatabaseError.FailedExport as number)) {
       this.report().errorConf = {
         type: EmptyType.Errors,

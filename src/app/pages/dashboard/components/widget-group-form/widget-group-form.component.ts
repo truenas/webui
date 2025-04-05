@@ -70,7 +70,11 @@ export class WidgetGroupFormComponent {
     {} as ValidationErrors,
   ]);
 
-  protected layoutControl = new FormControl(WidgetGroupLayout.Full, [Validators.required]);
+  protected layoutControl = new FormControl(
+    WidgetGroupLayout.Full,
+    { nonNullable: true, validators: [Validators.required] },
+  );
+
   protected readonly layoutOptions = widgetGroupIcons;
 
   protected settingsHasErrors = computed<boolean>(() => {

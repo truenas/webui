@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import {
-  combineLatest, map, Observable,
-  Subject,
+  BehaviorSubject,
+  combineLatest, distinctUntilChanged, filter, map, Observable,
 } from 'rxjs';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { Choices } from 'app/interfaces/choices.interface';
@@ -23,7 +23,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   providedIn: 'root',
 })
 export class IscsiService {
-  private refreshData$ = new Subject<void>();
+  private refreshData$ = new BehaviorSubject<IscsiTarget | null>(null);
 
   constructor(
     protected api: ApiService,
@@ -31,12 +31,12 @@ export class IscsiService {
     private store$: Store<AppState>,
   ) {}
 
-  listenForDataRefresh(): Observable<void> {
-    return this.refreshData$;
+  listenForDataRefresh(): Observable<IscsiTarget | null> {
+    return this.refreshData$.pipe(distinctUntilChanged(), filter(Boolean));
   }
 
-  refreshData(): void {
-    this.refreshData$.next();
+  refreshData(target?: IscsiTarget): void {
+    this.refreshData$.next(target || null);
   }
 
   getIpChoices(): Observable<Choices> {

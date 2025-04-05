@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogClose, MatDialogRef, MatDialogTitle,
@@ -19,7 +19,7 @@ import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export enum PruneBy {
   Percentage = 'percentage',
@@ -53,7 +53,7 @@ export const pruneByLabels = new Map<PruneBy, string>([
     IxLabelComponent,
   ],
 })
-export class PruneDedupTableDialogComponent {
+export class PruneDedupTableDialog {
   protected form = this.formBuilder.group({
     pruneBy: [PruneBy.Percentage],
     percentage: [null as number | null, [Validators.min(1), Validators.max(100)]],
@@ -61,13 +61,13 @@ export class PruneDedupTableDialogComponent {
   });
 
   constructor(
-    private formBuilder: FormBuilder,
+    private formBuilder: NonNullableFormBuilder,
     private api: ApiService,
     private dialog: DialogService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
-    private dialogRef: MatDialogRef<PruneDedupTableDialogComponent>,
+    private dialogRef: MatDialogRef<PruneDedupTableDialog>,
     @Inject(MAT_DIALOG_DATA) protected pool: Pool,
   ) {}
 
@@ -80,9 +80,9 @@ export class PruneDedupTableDialogComponent {
   submit(): void {
     const payload: PruneDedupTableParams = { pool_name: this.pool.name };
     if (this.form.value.pruneBy === PruneBy.Percentage) {
-      payload.percentage = this.form.value.percentage;
+      payload.percentage = Number(this.form.value.percentage);
     } else {
-      payload.days = this.form.value.days;
+      payload.days = Number(this.form.value.days);
     }
 
     const job$ = this.api.job('pool.ddt_prune', [payload]);
@@ -92,7 +92,7 @@ export class PruneDedupTableDialogComponent {
     })
       .afterClosed()
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => {

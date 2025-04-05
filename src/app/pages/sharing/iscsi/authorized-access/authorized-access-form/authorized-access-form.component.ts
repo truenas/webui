@@ -13,7 +13,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { IscsiAuthMethod } from 'app/enums/iscsi.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
-import { IscsiAuthAccess } from 'app/interfaces/iscsi.interface';
+import { IscsiAuthAccess, IscsiAuthAccessUpdate } from 'app/interfaces/iscsi.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -97,7 +97,7 @@ export class AuthorizedAccessFormComponent implements OnInit {
       doesNotEqualFgValidator(
         'peersecret',
         ['secret'],
-        this.translate.instant('Secret and Peer Secret can not be the same.'),
+        this.translate.instant('Secret and Peer Secret cannot be the same.'),
       ),
     ],
   });
@@ -126,7 +126,7 @@ export class AuthorizedAccessFormComponent implements OnInit {
     discovery_auth: helptextSharingIscsi.portal_form_tooltip_discovery_authmethod,
   };
 
-  readonly requiredRoles = [
+  protected readonly requiredRoles = [
     Role.SharingIscsiAuthWrite,
     Role.SharingIscsiWrite,
     Role.SharingWrite,
@@ -199,7 +199,7 @@ export class AuthorizedAccessFormComponent implements OnInit {
       peeruser: values.peeruser,
       peersecret: values.peersecret,
       discovery_auth: values.discovery_auth,
-    };
+    } as IscsiAuthAccessUpdate;
 
     this.isLoading = true;
     const request$ = this.editingAccess

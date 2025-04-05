@@ -21,10 +21,10 @@ import {
 } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AssociatedTargetFormComponent } from 'app/pages/sharing/iscsi/target/all-targets/target-details/associated-extents-card/associated-target-form/associated-target-form.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
 
 @UntilDestroy()
@@ -71,7 +71,7 @@ export class AssociatedExtentsCardComponent {
     }).filter((extent) => extent.target === this.target().id);
   });
 
-  readonly requiredRoles = [
+  protected readonly requiredRoles = [
     Role.SharingIscsiTargetExtentWrite,
     Role.SharingIscsiWrite,
     Role.SharingWrite,
@@ -80,7 +80,7 @@ export class AssociatedExtentsCardComponent {
   constructor(
     private matDialog: MatDialog,
     private iscsiService: IscsiService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
     private translate: TranslateService,
@@ -117,7 +117,7 @@ export class AssociatedExtentsCardComponent {
     }).pipe(
       filter(Boolean),
       switchMap(() => this.iscsiService.deleteTargetExtent(extent.id).pipe(this.loader.withLoader())),
-      this.errorHandler.catchError(),
+      this.errorHandler.withErrorHandler(),
       untilDestroyed(this),
     ).subscribe(() => this.getTargetExtents());
   }

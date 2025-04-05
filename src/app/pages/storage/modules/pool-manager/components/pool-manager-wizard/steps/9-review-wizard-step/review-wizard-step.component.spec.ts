@@ -15,7 +15,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import {
-  InspectVdevsDialogComponent,
+  InspectVdevsDialog,
 } from 'app/pages/storage/modules/pool-manager/components/inspect-vdevs-dialog/inspect-vdevs-dialog.component';
 import { DispersalStrategy } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/2-enclosure-wizard-step/enclosure-wizard-step.component';
 import {
@@ -110,7 +110,7 @@ describe('ReviewWizardStepComponent', () => {
       const inspectButton = await loader.getHarness(MatButtonHarness.with({ text: 'Inspect VDEVs' }));
       await inspectButton.click();
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(InspectVdevsDialogComponent, {
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(InspectVdevsDialog, {
         data: {
           topology: state.topology,
           enclosures: state.enclosures,

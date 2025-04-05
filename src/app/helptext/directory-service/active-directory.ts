@@ -50,8 +50,6 @@ export const helptextActiveDirectory = {
  connection status, open the interface <i>Task Manager</i>.'),
   activedirectory_dns_timeout_tooltip: T('Number of seconds before a timeout. Increase this\
  value if AD DNS queries time out.'),
-  activedirectory_idmap_backend_tooltip: T('Choose the backend to map Windows security\
- identifiers (SIDs) to UNIX UIDs and GIDs. Click Edit to configure that backend.'),
   activedirectory_nss_info_tooltip: T('Choose the schema to use when querying AD for\
  user/group info. <i>rfc2307</i> uses the schema support included in Windows 2003 R2, <i>sfu</i> is for\
  Service For Unix 3.0 or 3.5, and <i>sfu20</i> is for Service For Unix 2.0.'),

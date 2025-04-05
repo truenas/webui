@@ -37,8 +37,8 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { AddSpnDialogComponent } from 'app/pages/services/components/service-nfs/add-spn-dialog/add-spn-dialog.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { AddSpnDialog } from 'app/pages/services/components/service-nfs/add-spn-dialog/add-spn-dialog.component';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
@@ -120,7 +120,7 @@ export class ServiceNfsComponent implements OnInit {
   );
 
   readonly protocolOptions$ = of(mapToOptions(nfsProtocolLabels, this.translate));
-  readonly requiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
+  protected readonly requiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
 
   private readonly v4SpecificFields = ['v4_domain', 'v4_krb'] as const;
 
@@ -150,7 +150,7 @@ export class ServiceNfsComponent implements OnInit {
       this.loadActiveDirectoryState(),
     ])
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         finalize(() => this.isFormLoading.set(false)),
         untilDestroyed(this),
       )
@@ -260,7 +260,7 @@ export class ServiceNfsComponent implements OnInit {
       if (!confirmed) {
         return;
       }
-      this.matDialog.open(AddSpnDialogComponent);
+      this.matDialog.open(AddSpnDialog);
     });
   }
 }

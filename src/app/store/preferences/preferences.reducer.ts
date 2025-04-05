@@ -46,9 +46,10 @@ export const preferencesReducer = createReducer(
   on(shownNewIndicatorKeysUpdated, (state, { keys }) => updatePreferences(state, {
     shownNewFeatureIndicatorKeys: keys,
   })),
-  on(localizationFormSubmitted, (state, { dateFormat, timeFormat }) => updatePreferences(state, {
+  on(localizationFormSubmitted, (state, { dateFormat, timeFormat, language }) => updatePreferences(state, {
     dateFormat,
     timeFormat,
+    language,
   })),
   on(lifetimeTokenUpdated, (state, { lifetime }) => updatePreferences(state, { lifetime })),
 

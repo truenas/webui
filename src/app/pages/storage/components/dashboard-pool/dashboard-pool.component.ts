@@ -21,7 +21,7 @@ import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -30,7 +30,7 @@ import {
   ExportDisconnectModalComponent,
 } from 'app/pages/storage/components/dashboard-pool/export-disconnect-modal/export-disconnect-modal.component';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { DiskHealthCardComponent } from './disk-health-card/disk-health-card.component';
 import { PoolUsageCardComponent } from './pool-usage-card/pool-usage-card.component';
 import { TopologyCardComponent } from './topology-card/topology-card.component';
@@ -64,7 +64,7 @@ export class DashboardPoolComponent implements OnChanges {
   readonly isLoading = input<boolean>();
   readonly disks = input<StorageDashboardDisk[]>([]);
 
-  readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.PoolWrite];
   protected readonly searchableElements = dashboardPoolElements;
 
   constructor(
@@ -72,7 +72,7 @@ export class DashboardPoolComponent implements OnChanges {
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private api: ApiService,
     private snackbar: SnackbarService,
     private store: PoolsDashboardStore,
@@ -118,7 +118,7 @@ export class DashboardPoolComponent implements OnChanges {
           );
           this.store.loadDashboard();
         }),
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe();
@@ -139,7 +139,7 @@ export class DashboardPoolComponent implements OnChanges {
         );
         this.store.loadDashboard();
       }),
-      this.errorHandler.catchError(),
+      this.errorHandler.withErrorHandler(),
       untilDestroyed(this),
     ).subscribe();
   }

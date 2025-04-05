@@ -31,7 +31,7 @@ import { FilterSelectListComponent } from 'app/pages/apps/components/filter-sele
 import { AppsFilterStore } from 'app/pages/apps/store/apps-filter-store.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -73,7 +73,7 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
   appsCategories: string[] = [];
   sortOptions$: Observable<Option[]> = of([
     { label: this.translate.instant('Category'), value: null },
-    { label: this.translate.instant('App Name'), value: AppsFiltersSort.Name },
+    { label: this.translate.instant('App Name'), value: AppsFiltersSort.Title },
     { label: this.translate.instant('Updated Date'), value: AppsFiltersSort.LastUpdate },
   ]);
 
@@ -104,7 +104,7 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
       distinctUntilChanged(),
       untilDestroyed(this),
     ).subscribe((searchQuery) => {
-      this.appsFilterStore.applySearchQuery(searchQuery);
+      this.appsFilterStore.applySearchQuery(searchQuery || '');
     });
     this.appsFilterStore.filterValues$.pipe(take(1), untilDestroyed(this)).subscribe({
       next: (filterValues) => {
@@ -155,7 +155,7 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
     )
       .afterClosed()
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => {

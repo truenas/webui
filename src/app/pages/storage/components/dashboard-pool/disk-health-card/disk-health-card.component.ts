@@ -11,7 +11,6 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
-import { SmartTestResultPageType } from 'app/enums/smart-test-results-page-type.enum';
 import { TemperatureUnit } from 'app/enums/temperature.enum';
 import { StorageDashboardDisk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
@@ -25,7 +24,6 @@ interface DiskState {
   lowestTemperature: number | null;
   averageTemperature: number | null;
   alerts: number;
-  smartTests: number;
   unit: TemperatureUnit;
 }
 
@@ -56,8 +54,6 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
 
   protected readonly searchableElements = diskHealthCardElements;
 
-  SmartTestResultPageType = SmartTestResultPageType;
-
   get disksNames(): string[] {
     return getPoolDisks(this.poolState());
   }
@@ -67,7 +63,6 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
     lowestTemperature: null,
     averageTemperature: null,
     alerts: 0,
-    smartTests: 0,
     unit: TemperatureUnit.Celsius,
   };
 
@@ -81,7 +76,6 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     if (this.disks()) {
-      this.diskState.smartTests = this.disks().reduce((total, disk) => total + disk.smartTestsFailed, 0);
       this.diskState.alerts = this.disks().reduce((total, current) => total + current.alerts.length, 0);
       this.loadTemperatures();
     }
@@ -100,17 +94,16 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
   }
 
   get iconType(): PoolCardIconType {
-    if (this.diskState.alerts || this.diskState.smartTests) {
+    if (this.diskState.alerts) {
       return PoolCardIconType.Warn;
     }
     return PoolCardIconType.Safe;
   }
 
   get iconTooltip(): string {
-    if (this.diskState.alerts || this.diskState.smartTests) {
-      return this.translate.instant('Pool Disks have {alerts} alerts and {smartTests} failed S.M.A.R.T. tests', {
+    if (this.diskState.alerts) {
+      return this.translate.instant('Pool Disks have {alerts} alerts.', {
         alerts: this.diskState.alerts,
-        smartTests: this.diskState.smartTests,
       });
     }
     return this.translate.instant('Everything is fine');

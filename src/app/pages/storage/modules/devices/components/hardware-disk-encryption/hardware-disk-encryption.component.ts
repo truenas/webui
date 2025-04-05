@@ -17,7 +17,7 @@ import { TopologyDisk } from 'app/interfaces/storage.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
-  ManageDiskSedDialogComponent,
+  ManageDiskSedDialog,
 } from 'app/pages/storage/modules/devices/components/hardware-disk-encryption/manage-disk-sed-dialog/manage-disk-sed-dialog.component';
 import { AppState } from 'app/store';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
@@ -45,7 +45,7 @@ export class HardwareDiskEncryptionComponent {
 
   protected readonly hasGlobalEncryption = toSignal(this.api.call('system.advanced.sed_global_password_is_set'));
   protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.DiskWrite];
 
   hasSedSupport = computed(() => {
     return this.isEnterprise() || (this.hasDiskEncryption() || this.hasGlobalEncryption());
@@ -70,7 +70,7 @@ export class HardwareDiskEncryptionComponent {
   ) {}
 
   onManageSedPassword(): void {
-    this.matDialog.open(ManageDiskSedDialogComponent, {
+    this.matDialog.open(ManageDiskSedDialog, {
       data: this.topologyDisk().disk,
     }).afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))

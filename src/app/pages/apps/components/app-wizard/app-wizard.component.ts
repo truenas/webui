@@ -59,15 +59,15 @@ import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-vali
 import { forbiddenAsyncValues, forbiddenValuesError } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { DockerHubRateInfoDialogComponent } from 'app/pages/apps/components/dockerhub-rate-limit-info-dialog/dockerhub-rate-limit-info-dialog.component';
+import { DockerHubRateInfoDialog } from 'app/pages/apps/components/dockerhub-rate-limit-info-dialog/dockerhub-rate-limit-info-dialog.component';
 import { AppMetadataCardComponent } from 'app/pages/apps/components/installed-apps/app-metadata-card/app-metadata-card.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppSchemaService } from 'app/services/schema/app-schema.service';
 
 @UntilDestroy()
@@ -151,7 +151,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef,
     private activatedRoute: ActivatedRoute,
     private appService: ApplicationsService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
     private router: Router,
     private errorHandler: ErrorHandlerService,
     private dockerStore: DockerStore,
@@ -200,7 +200,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
         next: (app) => {
           this.setAppForCreation({
             ...app,
-            schema: app.versions[app.latest_version].schema,
+            schema: app.versions?.[app.latest_version]?.schema,
           });
           this.afterAppLoaded();
         },
@@ -238,7 +238,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
       });
     }
     if (isPlainObject(data)) {
-      Object.keys(data).forEach((key) => {
+      Object.keys(data as Record<string, unknown>).forEach((key) => {
         this.getFieldsHiddenOnForm((data as Record<string, unknown>)[key], deleteField$, path ? path + '.' + key : key);
       });
     }
@@ -292,7 +292,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
     })
       .afterClosed()
       .pipe(
-        this.errorHandler.catchError(),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => this.onSuccess());
@@ -349,7 +349,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
       hideVersion = true;
     }
     const versionKeys: string[] = [];
-    Object.keys(this.catalogApp?.versions).forEach((versionKey) => {
+    Object.keys(this.catalogApp?.versions || {}).forEach((versionKey) => {
       if (this.catalogApp.versions[versionKey].healthy) {
         versionKeys.push(versionKey);
       }
@@ -574,7 +574,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
   private getDockerHubRateLimitInfo(): void {
     this.api.call('app.image.dockerhub_rate_limit').pipe(untilDestroyed(this)).subscribe((info) => {
       if (Number(info.remaining_pull_limit) < 5) {
-        this.matDialog.open(DockerHubRateInfoDialogComponent, {
+        this.matDialog.open(DockerHubRateInfoDialog, {
           data: info,
         });
       }

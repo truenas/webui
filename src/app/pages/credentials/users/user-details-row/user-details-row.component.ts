@@ -19,17 +19,17 @@ import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { IxTableExpandableRowComponent } from 'app/modules/ix-table/components/ix-table-expandable-row/ix-table-expandable-row.component';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { OneTimePasswordCreatedDialogComponent } from 'app/pages/credentials/users/one-time-password-created-dialog/one-time-password-created-dialog.component';
+import { OneTimePasswordCreatedDialog } from 'app/pages/credentials/users/one-time-password-created-dialog/one-time-password-created-dialog.component';
 import {
-  DeleteUserDialogComponent,
+  DeleteUserDialog,
 } from 'app/pages/credentials/users/user-details-row/delete-user-dialog/delete-user-dialog.component';
 import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UrlOptionsService } from 'app/services/url-options.service';
 
 @UntilDestroy()
@@ -68,7 +68,7 @@ export class UserDetailsRowComponent implements OnInit {
     private dialogService: DialogService,
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
-    private loader: AppLoaderService,
+    private loader: LoaderService,
   ) {}
 
   ngOnInit(): void {
@@ -130,7 +130,7 @@ export class UserDetailsRowComponent implements OnInit {
   }
 
   doDelete(user: User): void {
-    this.matDialog.open(DeleteUserDialogComponent, {
+    this.matDialog.open(DeleteUserDialog, {
       data: user,
     })
       .afterClosed()
@@ -167,13 +167,13 @@ export class UserDetailsRowComponent implements OnInit {
       switchMap(() => {
         return this.api.call('auth.generate_onetime_password', [{ username: user.username }]).pipe(
           switchMap((password) => {
-            this.matDialog.open(OneTimePasswordCreatedDialogComponent, { data: password });
+            this.matDialog.open(OneTimePasswordCreatedDialog, { data: password });
             return of(password);
           }),
           this.loader.withLoader(),
         );
       }),
-      this.errorHandler.catchError(),
+      this.errorHandler.withErrorHandler(),
       untilDestroyed(this),
     )
       .subscribe();

@@ -65,7 +65,7 @@ import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service
   ],
 })
 export class SnapshotAddFormComponent implements OnInit {
-  readonly requiredRoles = [Role.SnapshotWrite];
+  protected readonly requiredRoles = [Role.SnapshotWrite];
 
   isFormLoading = true;
   protected datasetId: string | undefined;
@@ -159,7 +159,7 @@ export class SnapshotAddFormComponent implements OnInit {
     }
 
     this.isFormLoading = true;
-    this.api.call('zfs.snapshot.create', [params]).pipe(
+    this.api.call('pool.snapshot.create', [params]).pipe(
       untilDestroyed(this),
     ).subscribe({
       next: () => {

@@ -103,10 +103,16 @@ describe('SaveAsPresetModalComponent', () => {
   });
 
   it('creates new preset after \'Save\' button click', async () => {
-    jest.spyOn(spectator.component, 'loadIds').mockImplementation(() => of({ acl: [], acltype: AclType.Posix1e } as Acl));
+    jest.spyOn(spectator.component, 'loadIds').mockImplementation(() => of({
+      acl: [] as PosixAclItem[],
+      acltype: AclType.Posix1e,
+    } as Acl));
     const actionsInput = await loader.getHarness(IxInputHarness);
     await actionsInput.setValue('New Preset');
-    spectator.component.acl = { acl: [], acltype: AclType.Posix1e } as Acl;
+    spectator.component.acl = {
+      acl: [] as PosixAclItem[],
+      acltype: AclType.Posix1e,
+    } as Acl;
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
@@ -122,7 +128,7 @@ describe('SaveAsPresetModalComponent', () => {
 
   it('removes a non-builtin preset when Remove icon is pressed', () => {
     const preset = spectator.queryAll('.preset');
-    const removeButton = preset[2].querySelector('.preset-remove');
+    const removeButton = preset[2].querySelector('.preset-remove')!;
     spectator.click(removeButton);
 
     expect(removeButton).toHaveAttribute('aria-label', 'Remove preset');

@@ -113,6 +113,7 @@ $scrollbar-offset: 20px;
 
     ::ng-deep .cards .scroll-window {
       display: inline-table;
+      width: 100%;
     }
 
     ix-dataset-details-panel {

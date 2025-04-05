@@ -5,7 +5,8 @@ import {
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { FileAttribute } from 'app/enums/file-attribute.enum';
 import { FileType } from 'app/enums/file-type.enum';
-import { extractApiError } from 'app/helpers/api.helper';
+import { extractApiErrorDetails } from 'app/helpers/api.helper';
+import { zvolPath } from 'app/helpers/storage.helper';
 import { FileRecord } from 'app/interfaces/file-record.interface';
 import { QueryFilter, QueryOptions } from 'app/interfaces/query-api.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
@@ -18,11 +19,12 @@ export interface ProviderOptions {
   includeSnapshots?: boolean;
   datasetsAndZvols?: boolean;
   zvolsOnly?: boolean;
+  datasetsOnly?: boolean;
 }
 
 const roolZvolNode = {
-  path: '/dev/zvol',
-  name: '/dev/zvol',
+  path: zvolPath,
+  name: zvolPath,
   hasChildren: true,
   type: ExplorerNodeType.Directory,
 } as ExplorerNodeData;
@@ -50,6 +52,7 @@ export class FilesystemService {
       includeSnapshots: true,
       datasetsAndZvols: false,
       zvolsOnly: false,
+      datasetsOnly: false,
       ...providerOptions,
     };
 
@@ -59,6 +62,9 @@ export class FilesystemService {
       }
       if (options.zvolsOnly && node.data.path.trim() === '/') {
         return of([roolZvolNode]);
+      }
+      if (options.datasetsOnly && node.data.path.trim() === '/') {
+        return of([roolDatasetNode]);
       }
       const typeFilter: [QueryFilter<FileRecord>?] = [];
       if (options.directoriesOnly) {
@@ -112,7 +118,7 @@ export class FilesystemService {
           return children;
         }),
         catchError((error: unknown) => {
-          const apiError = extractApiError(error);
+          const apiError = extractApiErrorDetails(error);
           if (apiError?.reason === '[ENOENT] Directory /dev/zvol does not exist') {
             return of([]);
           }

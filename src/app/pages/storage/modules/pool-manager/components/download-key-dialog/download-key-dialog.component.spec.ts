@@ -4,30 +4,22 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of, throwError } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import {
-  DownloadKeyDialogComponent, DownloadKeyDialogParams,
+  DownloadKeyDialog, DownloadKeyDialogParams,
 } from 'app/pages/storage/modules/pool-manager/components/download-key-dialog/download-key-dialog.component';
 import { DownloadService } from 'app/services/download.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 describe('DownloadKeyDialogComponent', () => {
-  let spectator: Spectator<DownloadKeyDialogComponent>;
+  let spectator: Spectator<DownloadKeyDialog>;
   let loader: HarnessLoader;
-  const fakeBlob = {};
 
   const createComponent = createComponentFactory({
-    component: DownloadKeyDialogComponent,
-    imports: [
-    ],
+    component: DownloadKeyDialog,
     providers: [
-      mockApi([
-        mockCall('core.download', [null, 'http://localhost:8000/key.json']),
-      ]),
-      mockProvider(AppLoaderService, {
+      mockProvider(LoaderService, {
         open: jest.fn(),
         close: jest.fn(),
       }),
@@ -49,8 +41,7 @@ describe('DownloadKeyDialogComponent', () => {
       spectator = createComponent({
         providers: [
           mockProvider(DownloadService, {
-            streamDownloadFile: jest.fn(() => of(fakeBlob)),
-            downloadBlob: jest.fn(),
+            coreDownload: jest.fn(() => of(undefined)),
           }),
         ],
       });
@@ -61,9 +52,12 @@ describe('DownloadKeyDialogComponent', () => {
       const downloadButton = await loader.getHarness(MatButtonHarness.with({ text: 'Download Encryption Key' }));
       await downloadButton.click();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('core.download', ['pool.dataset.export_keys', ['my-pool'], 'dataset_my-pool_keys.json']);
-      expect(spectator.inject(DownloadService).streamDownloadFile).toHaveBeenCalledWith('http://localhost:8000/key.json', 'dataset_my-pool_keys.json', 'application/json');
-      expect(spectator.inject(DownloadService).downloadBlob).toHaveBeenCalledWith(fakeBlob, 'dataset_my-pool_keys.json');
+      expect(spectator.inject(DownloadService).coreDownload).toHaveBeenCalledWith({
+        arguments: ['my-pool'],
+        fileName: 'dataset_my-pool_keys.json',
+        method: 'pool.dataset.export_keys',
+        mimeType: 'application/json',
+      });
 
       const doneButton = await loader.getHarness(MatButtonHarness.with({ text: 'Done' }));
       expect(await doneButton.isDisabled()).toBe(false);
@@ -73,8 +67,8 @@ describe('DownloadKeyDialogComponent', () => {
       const downloadButton = await loader.getHarness(MatButtonHarness.with({ text: 'Download Encryption Key' }));
       await downloadButton.click();
 
-      expect(spectator.inject(AppLoaderService).open).toHaveBeenCalled();
-      expect(spectator.inject(AppLoaderService).close).toHaveBeenCalled();
+      expect(spectator.inject(LoaderService).open).toHaveBeenCalled();
+      expect(spectator.inject(LoaderService).close).toHaveBeenCalled();
     });
   });
 
@@ -83,11 +77,7 @@ describe('DownloadKeyDialogComponent', () => {
       spectator = createComponent({
         providers: [
           mockProvider(DownloadService, {
-            streamDownloadFile: jest.fn(() => throwError(() => new Error(''))),
-            downloadBlob: jest.fn(),
-          }),
-          mockProvider(ErrorHandlerService, {
-            parseHttpError: jest.fn().mockReturnValue('Parsed HTTP error'),
+            coreDownload: jest.fn(() => throwError(() => new Error(''))),
           }),
         ],
       });
@@ -98,8 +88,8 @@ describe('DownloadKeyDialogComponent', () => {
       const downloadButton = await loader.getHarness(MatButtonHarness.with({ text: 'Download Encryption Key' }));
       await downloadButton.click();
 
-      expect(spectator.inject(AppLoaderService).close).toHaveBeenCalled();
-      expect(spectator.inject(ErrorHandlerService).parseError).toHaveBeenCalled();
+      expect(spectator.inject(LoaderService).close).toHaveBeenCalled();
+      expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalled();
 
       const doneButton = await loader.getHarness(MatButtonHarness.with({ text: 'Done' }));
       expect(await doneButton.isDisabled()).toBe(false);

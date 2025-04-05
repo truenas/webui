@@ -20,7 +20,7 @@ import { BulkListItemComponent } from 'app/modules/lists/bulk-list-item/bulk-lis
 import { BulkListItem, BulkListItemState } from 'app/modules/lists/bulk-list-item/bulk-list-item.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -42,8 +42,8 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
     KeyValuePipe,
   ],
 })
-export class BootPoolDeleteDialogComponent {
-  readonly requiredRoles = [Role.FullAdmin];
+export class BootPoolDeleteDialog {
+  protected readonly requiredRoles = [Role.BootEnvWrite];
 
   form = this.fb.group({
     confirm: [false, [Validators.requiredTrue]],
@@ -65,7 +65,7 @@ export class BootPoolDeleteDialogComponent {
   constructor(
     private fb: FormBuilder,
     private api: ApiService,
-    private dialogRef: MatDialogRef<BootPoolDeleteDialogComponent>,
+    private dialogRef: MatDialogRef<BootPoolDeleteDialog>,
     private errorHandler: ErrorHandlerService,
     @Inject(MAT_DIALOG_DATA) public bootenvs: BootEnvironment[],
   ) {
@@ -87,7 +87,7 @@ export class BootPoolDeleteDialogComponent {
 
     this.api.job('core.bulk', ['boot.environment.destroy', bootenvsToDelete]).pipe(
       filter((job: Job<CoreBulkResponse<void>[], { id: string }[][]>) => !!job.result?.length),
-      this.errorHandler.catchError(),
+      this.errorHandler.withErrorHandler(),
       untilDestroyed(this),
     ).subscribe((response) => {
       response.arguments[1].flat().forEach((params, index: number) => {
@@ -107,7 +107,7 @@ export class BootPoolDeleteDialogComponent {
             this.bulkItems.set(bootenvId, {
               ...bulkItem,
               state: BulkListItemState.Success,
-              message: null,
+              message: undefined,
             });
             if (this.bulkItems.size === 1) {
               this.dialogRef.close(true);

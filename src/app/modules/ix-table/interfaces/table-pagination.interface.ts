@@ -1,4 +1,4 @@
 export interface TablePagination {
-  pageNumber: number;
-  pageSize: number;
+  pageNumber: number | null;
+  pageSize: number | null;
 }

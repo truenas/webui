@@ -44,7 +44,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
   ],
 })
 export class NtpServerFormComponent implements OnInit {
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.NetworkGeneralWrite];
 
   isFormLoading = false;
   protected editingServer: NtpServer | undefined;

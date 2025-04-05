@@ -5,14 +5,14 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import {
-  StopOptionsDialogComponent, StopOptionsOperation,
+  StopOptionsDialog, StopOptionsOperation,
 } from 'app/pages/instances/components/all-instances/instance-list/stop-options-dialog/stop-options-dialog.component';
 
 describe('StopOptionsDialogComponent', () => {
-  let spectator: Spectator<StopOptionsDialogComponent>;
+  let spectator: Spectator<StopOptionsDialog>;
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
-    component: StopOptionsDialogComponent,
+    component: StopOptionsDialog,
     providers: [
       mockProvider(MatDialogRef),
     ],
@@ -43,13 +43,29 @@ describe('StopOptionsDialogComponent', () => {
     expect(await loader.getHarness(MatButtonHarness.with({ text: 'Restart' }))).toBeTruthy();
   });
 
-  it('closes the form with stop parameters when form is submitted', async () => {
+  it('closes the form with parameters when Wait for 30 seconds is selected', async () => {
     setupTest(StopOptionsOperation.Stop);
 
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
-      Timeout: 'Wait for 5 minutes',
-      Force: true,
+      'Wait to stop cleanly': 'Wait for 30 seconds',
+    });
+
+    const stopButton = await loader.getHarness(MatButtonHarness.with({ text: 'Stop' }));
+    await stopButton.click();
+
+    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({
+      timeout: 30,
+      force: false,
+    });
+  });
+
+  it('closes the form with parameters when Wait for 5 minutes is selected', async () => {
+    setupTest(StopOptionsOperation.Stop);
+
+    const form = await loader.getHarness(IxFormHarness);
+    await form.fillForm({
+      'Wait to stop cleanly': 'Wait for 5 minutes',
     });
 
     const stopButton = await loader.getHarness(MatButtonHarness.with({ text: 'Stop' }));
@@ -57,6 +73,23 @@ describe('StopOptionsDialogComponent', () => {
 
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({
       timeout: 5 * 60,
+      force: false,
+    });
+  });
+
+  it('closes the form with parameters when Shutdown now is selected', async () => {
+    setupTest(StopOptionsOperation.Stop);
+
+    const form = await loader.getHarness(IxFormHarness);
+    await form.fillForm({
+      'Wait to stop cleanly': 'Force shutdown now',
+    });
+
+    const stopButton = await loader.getHarness(MatButtonHarness.with({ text: 'Stop' }));
+    await stopButton.click();
+
+    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({
+      timeout: -1,
       force: true,
     });
   });

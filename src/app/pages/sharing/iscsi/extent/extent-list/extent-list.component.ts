@@ -8,7 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { filter, repeat, tap } from 'rxjs';
+import { filter, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { IscsiExtentType } from 'app/enums/iscsi.enum';
@@ -33,7 +33,7 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ExtentFormComponent } from 'app/pages/sharing/iscsi/extent/extent-form/extent-form.component';
 import {
-  DeleteExtentDialogComponent,
+  DeleteExtentDialog,
 } from 'app/pages/sharing/iscsi/extent/extent-list/delete-extent-dialog/delete-extent-dialog.component';
 import { extentListElements } from 'app/pages/sharing/iscsi/extent/extent-list/extent-list.elements';
 import { IscsiService } from 'app/services/iscsi.service';
@@ -67,7 +67,7 @@ import { IscsiService } from 'app/services/iscsi.service';
 export class ExtentListComponent implements OnInit {
   protected readonly searchableElements = extentListElements;
 
-  readonly requiredRoles = [
+  protected readonly requiredRoles = [
     Role.SharingIscsiExtentWrite,
     Role.SharingIscsiWrite,
     Role.SharingWrite,
@@ -143,10 +143,14 @@ export class ExtentListComponent implements OnInit {
 
   ngOnInit(): void {
     const extents$ = this.iscsiService.getExtents().pipe(
-      repeat({ delay: () => this.iscsiService.listenForDataRefresh() }),
       tap((extents) => this.extents = extents),
       untilDestroyed(this),
     );
+
+    this.iscsiService.listenForDataRefresh()
+      .pipe(untilDestroyed(this))
+      .subscribe(() => this.dataProvider.load());
+
     this.dataProvider = new AsyncDataProvider(extents$);
     this.refresh();
     this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
@@ -162,7 +166,7 @@ export class ExtentListComponent implements OnInit {
   }
 
   showDeleteDialog(extent: IscsiExtent): void {
-    this.matDialog.open(DeleteExtentDialogComponent, { data: extent })
+    this.matDialog.open(DeleteExtentDialog, { data: extent })
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => this.refresh());

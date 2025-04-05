@@ -133,7 +133,7 @@ export class ManualSelectionDisksComponent implements OnInit {
       return {
         group: enclosure.label || enclosure.name,
         identifier: enclosure.id,
-        children: [],
+        children: [] as EnclosureDisk[],
       };
     });
 

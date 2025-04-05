@@ -1,21 +1,19 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { subHours, subMinutes } from 'date-fns';
+import { subHours } from 'date-fns';
 import {
-  Observable, Subject, catchError, combineLatestWith, debounceTime,
+  Observable, Subject, catchError, debounceTime,
   filter,
-  forkJoin, map, of, repeat, shareReplay, startWith, switchMap, take, throttleTime, timer,
+  forkJoin, map, of, repeat, shareReplay, startWith, throttleTime, timer,
 } from 'rxjs';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { LoadingState, toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { App, AppStartQueryParams, AppStats } from 'app/interfaces/app.interface';
-import { Dataset } from 'app/interfaces/dataset.interface';
 import { Disk } from 'app/interfaces/disk.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { ReportingData } from 'app/interfaces/reporting.interface';
-import { VolumesData, VolumeData } from 'app/interfaces/volume-data.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { processNetworkInterfaces } from 'app/pages/dashboard/widgets/network/widget-interface/widget-interface.utils';
 import { AppState } from 'app/store';
@@ -36,7 +34,7 @@ export class WidgetResourcesService {
   readonly realtimeUpdates$ = this.api.subscribe('reporting.realtime');
 
   readonly refreshInterval$ = timer(0, 5000).pipe(startWith(0));
-  private readonly triggerRefreshSystemInfo$ = new Subject<void>();
+  private readonly triggerRefreshDashboardSystemInfo$ = new Subject<void>();
 
   readonly backups$ = forkJoin([
     this.api.call('replication.query'),
@@ -46,8 +44,8 @@ export class WidgetResourcesService {
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
-  readonly systemInfo$ = this.api.call('webui.main.dashboard.sys_info').pipe(
-    repeat({ delay: () => this.triggerRefreshSystemInfo$ }),
+  readonly dashboardSystemInfo$ = this.api.call('webui.main.dashboard.sys_info').pipe(
+    repeat({ delay: () => this.triggerRefreshDashboardSystemInfo$ }),
     debounceTime(300),
     toLoadingState(),
     shareReplay({ bufferSize: 1, refCount: true }),
@@ -74,51 +72,23 @@ export class WidgetResourcesService {
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
-  readonly volumesData$ = this.pools$.pipe(
-    switchMap(() => this.api.call('pool.dataset.query', [[], { extra: { retrieve_children: false } }])),
-    map((datasets) => this.parseVolumeData(datasets)),
-  );
-
   readonly updateAvailable$ = this.api.call('update.check_available').pipe(
     map((update) => update.status === SystemUpdateStatus.Available),
     catchError(() => of(false)),
     shareReplay({ refCount: false, bufferSize: 1 }),
   );
 
-  readonly serverTime$ = this.store$.pipe(
-    waitForSystemInfo,
-    map((systemInfo) => new Date(systemInfo.datetime.$date)),
-    combineLatestWith(this.refreshInterval$),
-    map(([serverTime]) => {
-      serverTime.setSeconds(serverTime.getSeconds() + 5);
-      return serverTime;
-    }),
-  );
-
-  cpuLastMinuteStats(minutes = 1): Observable<ReportingData[]> {
-    return this.serverTime$.pipe(
-      take(1),
-      switchMap((serverTime) => {
-        const end = Math.floor(serverTime.getTime() / 1000);
-        const start = Math.floor(subMinutes(serverTime, minutes).getTime() / 1000);
-
-        return this.api.call('reporting.netdata_get_data', [[{ name: 'cpu' }], { end, start }]);
-      }),
-      shareReplay({ bufferSize: 1, refCount: true }),
-    );
-  }
-
   networkInterfaceLastHourStats(interfaceName: string): Observable<ReportingData[]> {
-    return this.serverTime$.pipe(
-      take(1),
-      switchMap((serverTime) => {
-        const end = Math.floor(serverTime.getTime() / 1000);
-        const start = Math.floor(subHours(serverTime, 1).getTime() / 1000);
-        return this.api.call('reporting.netdata_get_data', [[{
-          identifier: interfaceName,
-          name: 'interface',
-        }], { end, start }]);
-      }),
+    const now = new Date();
+    now.setSeconds(now.getSeconds() + 5);
+
+    const end = Math.floor(now.getTime() / 1000);
+    const start = Math.floor(subHours(now, 1).getTime() / 1000);
+
+    return this.api.call('reporting.netdata_get_data', [[{
+      identifier: interfaceName,
+      name: 'interface',
+    }], { end, start }]).pipe(
       shareReplay({ bufferSize: 1, refCount: true }),
     );
   }
@@ -133,13 +103,6 @@ export class WidgetResourcesService {
   getPoolByName(poolName: string): Observable<Pool> {
     return this.api.call('pool.query', [[['name', '=', poolName]]]).pipe(
       map((pools) => pools[0]),
-      shareReplay({ bufferSize: 1, refCount: true }),
-    );
-  }
-
-  getDatasetById(datasetId: string): Observable<Dataset> {
-    return this.api.call('pool.dataset.query', [[['id', '=', datasetId]]]).pipe(
-      map((response) => response[0]),
       shareReplay({ bufferSize: 1, refCount: true }),
     );
   }
@@ -189,26 +152,7 @@ export class WidgetResourcesService {
     private store$: Store<AppState>,
   ) {}
 
-  private parseVolumeData(datasets: Dataset[]): VolumesData {
-    const volumesData = new Map<string, VolumeData>();
-
-    datasets.forEach((dataset) => {
-      if (typeof dataset === 'undefined' || !dataset) {
-        return;
-      }
-
-      volumesData.set(dataset.id, {
-        id: dataset.id,
-        avail: dataset.available.parsed,
-        name: dataset.name,
-        used: dataset.used.parsed,
-        used_pct: (dataset.used.parsed / (dataset.used.parsed + dataset.available.parsed) * 100).toFixed(0) + '%',
-      });
-    });
-    return volumesData;
-  }
-
-  refreshSystemInfo(): void {
-    this.triggerRefreshSystemInfo$.next();
+  refreshDashboardSystemInfo(): void {
+    this.triggerRefreshDashboardSystemInfo$.next();
   }
 }
