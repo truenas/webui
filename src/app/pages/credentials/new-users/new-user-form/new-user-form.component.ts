@@ -15,11 +15,11 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { AdditionalDetailsSectionComponent } from 'app/pages/credentials/users/new-user-form/additional-details-section/additional-details-section.component';
-import { AllowedAccessSectionComponent } from 'app/pages/credentials/users/new-user-form/allowed-access-section/allowed-access-section.component';
-import { AuthSectionComponent } from 'app/pages/credentials/users/new-user-form/auth-section/auth-section.component';
-import { UserFormStore } from 'app/pages/credentials/users/new-user-form/new-user.store';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { AdditionalDetailsSectionComponent } from 'app/pages/credentials/new-users/new-user-form/additional-details-section/additional-details-section.component';
+import { AllowedAccessSectionComponent } from 'app/pages/credentials/new-users/new-user-form/allowed-access-section/allowed-access-section.component';
+import { AuthSectionComponent } from 'app/pages/credentials/new-users/new-user-form/auth-section/auth-section.component';
+import { UserFormStore } from 'app/pages/credentials/new-users/new-user-form/new-user.store';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UserService } from 'app/services/user.service';
 
 @UntilDestroy()
