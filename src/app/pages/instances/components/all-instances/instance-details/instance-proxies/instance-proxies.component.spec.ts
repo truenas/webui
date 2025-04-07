@@ -19,6 +19,7 @@ import {
   DeviceActionsMenuComponent,
 } from 'app/pages/instances/components/common/device-actions-menu/device-actions-menu.component';
 import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
+import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 
 describe('InstanceProxiesComponent', () => {
   let spectator: Spectator<InstanceProxiesComponent>;
@@ -58,9 +59,11 @@ describe('InstanceProxiesComponent', () => {
           error: false,
         })),
       }),
+      mockProvider(VirtualizationInstancesStore, {
+        selectedInstance: () => ({ id: 'my-instance' }),
+      }),
       mockProvider(VirtualizationDevicesStore, {
         isLoading: () => false,
-        selectedInstance: () => ({ id: 'my-instance' }),
         devices: () => devices,
         loadDevices: jest.fn(),
       }),
