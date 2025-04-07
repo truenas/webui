@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit, signal,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -75,7 +75,7 @@ export class CronFormComponent implements OnInit {
     enabled: [true],
   });
 
-  isLoading = false;
+  protected isLoading = signal(false);
 
   readonly tooltips = {
     command: helptextCron.cron_command_tooltip,
@@ -95,7 +95,6 @@ export class CronFormComponent implements OnInit {
     private api: ApiService,
     private translate: TranslateService,
     private errorHandler: FormErrorHandlerService,
-    private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
     private userService: UserService,
     public slideInRef: SlideInRef<Cronjob | undefined, boolean>,
@@ -121,7 +120,7 @@ export class CronFormComponent implements OnInit {
       schedule: crontabToSchedule(this.form.getRawValue().schedule),
     } as CronjobUpdate;
 
-    this.isLoading = true;
+    this.isLoading.set(true);
     let request$: Observable<unknown>;
     if (this.editingCron) {
       request$ = this.api.call('cronjob.update', [
@@ -139,13 +138,12 @@ export class CronFormComponent implements OnInit {
         } else {
           this.snackbar.success(this.translate.instant('Cron job updated'));
         }
-        this.isLoading = false;
+        this.isLoading.set(false);
         this.slideInRef.close({ response: true, error: null });
       },
       error: (error: unknown) => {
-        this.isLoading = false;
+        this.isLoading.set(false);
         this.errorHandler.handleValidationErrors(error, this.form);
-        this.cdr.markForCheck();
       },
     });
   }
