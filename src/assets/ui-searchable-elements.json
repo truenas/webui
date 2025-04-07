@@ -591,12 +591,10 @@
     "hierarchy": [
       "Credentials",
       "Certificates",
-      "Add Certificate"
+      "Import Certificate"
     ],
     "synonyms": [
-      "Create Certificate",
-      "New Certificate",
-      "Generate Certificate"
+      "Add Certificate"
     ],
     "requiredRoles": [
       "CERTIFICATE_WRITE"
@@ -607,7 +605,7 @@
       "certificates"
     ],
     "routerLink": null,
-    "anchor": "add-certificate",
+    "anchor": "import-certificate",
     "triggerAnchor": null,
     "section": "ui"
   },

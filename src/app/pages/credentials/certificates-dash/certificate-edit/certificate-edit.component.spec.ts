@@ -102,7 +102,6 @@ describe('CertificateEditComponent', () => {
       const certificateDetails = spectator.query(CertificateDetailsComponent)!;
       expect(certificateDetails).toBeTruthy();
       expect(certificateDetails.certificate).toEqual(certificate);
-      expect(certificateDetails.showSignedBy).toBe(true);
     });
 
     it('saves certificate name when it is changed and Save is pressed', async () => {
@@ -157,11 +156,6 @@ describe('CertificateEditComponent', () => {
       });
       spectator.detectChanges();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    });
-
-    it('shows the renew_days input for acme certificate', async () => {
-      const renewDaysInput = await loader.getHarness(IxInputHarness.with({ label: 'Renew Certificate Days Before Expiry' }));
-      expect(await renewDaysInput.getValue()).toBe('');
     });
 
     it('shows add to trusted store checkbox for ACME certificate', async () => {

@@ -26,20 +26,20 @@ import { SummarySection } from 'app/modules/summary/summary.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
+  CsrConstraintsComponent,
+} from 'app/pages/credentials/certificates-dash/csr-add/steps/csr-constraints/csr-constraints.component';
+import {
   CsrIdentifierAndTypeComponent,
 } from 'app/pages/credentials/certificates-dash/csr-add/steps/csr-identifier-and-type/csr-identifier-and-type.component';
 import {
   CsrImportComponent,
 } from 'app/pages/credentials/certificates-dash/csr-add/steps/csr-import/csr-import.component';
 import {
-  CertificateConstraintsComponent,
-} from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-constraints/certificate-constraints.component';
+  CsrOptionsComponent,
+} from 'app/pages/credentials/certificates-dash/csr-add/steps/csr-options/csr-options.component';
 import {
-  CertificateOptionsComponent,
-} from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-options/certificate-options.component';
-import {
-  CertificateSubjectComponent,
-} from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-subject/certificate-subject.component';
+  CsrSubjectComponent,
+} from 'app/pages/credentials/certificates-dash/csr-add/steps/csr-subject/csr-subject.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
@@ -58,9 +58,9 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     MatStepLabel,
     CsrIdentifierAndTypeComponent,
     CsrImportComponent,
-    CertificateOptionsComponent,
-    CertificateSubjectComponent,
-    CertificateConstraintsComponent,
+    CsrOptionsComponent,
+    CsrSubjectComponent,
+    CsrConstraintsComponent,
     SummaryComponent,
     FormActionsComponent,
     MatButton,
@@ -76,9 +76,9 @@ export class CsrAddComponent {
   protected readonly identifierAndType = viewChild.required(CsrIdentifierAndTypeComponent);
 
   // Adding new
-  protected readonly options = viewChild(CertificateOptionsComponent);
-  protected readonly subject = viewChild(CertificateSubjectComponent);
-  protected readonly constraints = viewChild(CertificateConstraintsComponent);
+  protected readonly options = viewChild(CsrOptionsComponent);
+  protected readonly subject = viewChild(CsrSubjectComponent);
+  protected readonly constraints = viewChild(CsrConstraintsComponent);
 
   // Importing
   protected readonly import = viewChild(CsrImportComponent);
@@ -107,9 +107,9 @@ export class CsrAddComponent {
 
   getNewCsrSteps(): [
     CsrIdentifierAndTypeComponent,
-    CertificateOptionsComponent?,
-    CertificateSubjectComponent?,
-    CertificateConstraintsComponent?,
+    CsrOptionsComponent?,
+    CsrSubjectComponent?,
+    CsrConstraintsComponent?,
   ] {
     return [this.identifierAndType(), this.options(), this.subject(), this.constraints()];
   }

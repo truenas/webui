@@ -33,9 +33,6 @@ const certificates = Array.from({ length: 10 }).map((_, index) => ({
   CSR: '--BEGIN CERTIFICATE REQUEST--',
   cert_type_CSR: true,
   cert_type: 'CERTIFICATE',
-  revoked: false,
-  can_be_revoked: false,
-  issuer: 'external',
   common: 'localhost',
   san: [
     'DNS:localhost',
@@ -130,10 +127,10 @@ describe('CertificateSigningRequestsListComponent', () => {
   it('should show table rows', async () => {
     const expectedRows = [
       ['Name', 'CN', ''],
-      ['Name:cert_default_0Issuer:external', 'CN:localhostSAN:DNS:localhost', ''],
-      ['Name:cert_default_1Issuer:external', 'CN:localhostSAN:DNS:localhost', ''],
-      ['Name:cert_default_2Issuer:external', 'CN:localhostSAN:DNS:localhost', ''],
-      ['Name:cert_default_3Issuer:external', 'CN:localhostSAN:DNS:localhost', ''],
+      ['cert_default_0', 'CN:localhostSAN:DNS:localhost', ''],
+      ['cert_default_1', 'CN:localhostSAN:DNS:localhost', ''],
+      ['cert_default_2', 'CN:localhostSAN:DNS:localhost', ''],
+      ['cert_default_3', 'CN:localhostSAN:DNS:localhost', ''],
     ];
 
     const cells = await table.getCellTexts();

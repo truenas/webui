@@ -1,5 +1,3 @@
-import { CaCreateType } from 'app/enums/ca-create-type.enum';
-import { CertificateDigestAlgorithm } from 'app/enums/certificate-digest-algorithm.enum';
 import { CertificateKeyType } from 'app/enums/certificate-key-type.enum';
 import { ExtendedKeyUsageFlag } from 'app/enums/extended-key-usage-flag.enum';
 
@@ -7,12 +5,6 @@ export interface BasicConstraints {
   ca: boolean;
   enabled: boolean;
   path_length: number | null;
-  extension_critical: boolean;
-}
-
-export interface AuthorityKeyIdentifiers {
-  authority_cert_issuer: boolean;
-  enabled: boolean;
   extension_critical: boolean;
 }
 
@@ -38,41 +30,8 @@ export interface KeyUsages {
 
 export interface CertificateExtensions {
   BasicConstraints: BasicConstraints;
-  AuthorityKeyIdentifier: AuthorityKeyIdentifiers;
   ExtendedKeyUsage: ExtendedKeyUsage;
   KeyUsage: KeyUsages;
-}
-
-export interface CertificateAuthorityUpdate {
-  add_to_trusted_store: boolean;
-  tos: boolean;
-  csr_id: number;
-  signedby: number;
-  key_length: number;
-  renew_days: number;
-  type: number;
-  lifetime: number;
-  serial: number;
-  acme_directory_uri: string;
-  certificate: string;
-  city: string;
-  common: string;
-  country: string;
-  CSR: string;
-  ec_curve: string;
-  email: string;
-  key_type: CertificateKeyType;
-  name: string;
-  organization: string;
-  organizational_unit: string;
-  passphrase: string;
-  privatekey: string;
-  state: string;
-  create_type: CaCreateType;
-  digest_algorithm: CertificateDigestAlgorithm;
-  san: string[];
-  cert_extensions: CertificateExtensions;
-  revoked?: boolean;
 }
 
 export interface CertificateAuthority {
@@ -98,7 +57,6 @@ export interface CertificateAuthority {
   digest_algorithm: string;
   email: string;
   extensions: {
-    AuthorityKeyIdentifier: string;
     BasicConstraints: string;
     ExtendedKeyUsage: string;
     KeyUsage: string;

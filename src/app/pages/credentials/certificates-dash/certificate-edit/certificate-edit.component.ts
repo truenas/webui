@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import {
-  FormBuilder, FormControl, FormGroup, Validators, ReactiveFormsModule,
+  FormBuilder, Validators, ReactiveFormsModule,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -65,11 +65,7 @@ export class CertificateEditComponent implements OnInit {
   form = this.formBuilder.nonNullable.group({
     name: ['', Validators.required],
     add_to_trusted_store: [false],
-  }) as FormGroup<{
-    name: FormControl<string | null>;
-    add_to_trusted_store: FormControl<boolean>;
-    renew_days?: FormControl<number | null>;
-  }>;
+  });
 
   certificate: Certificate;
 
@@ -95,18 +91,11 @@ export class CertificateEditComponent implements OnInit {
 
   ngOnInit(): void {
     this.setCertificate();
-    this.setRenewDaysForEditIfAvailable();
   }
 
   setCertificate(): void {
     this.form.patchValue(this.certificate);
     this.cdr.markForCheck();
-  }
-
-  setRenewDaysForEditIfAvailable(): void {
-    if (this.certificate?.acme) {
-      this.form.addControl('renew_days', new FormControl(this.certificate?.renew_days || null));
-    }
   }
 
   onViewCertificatePressed(): void {
