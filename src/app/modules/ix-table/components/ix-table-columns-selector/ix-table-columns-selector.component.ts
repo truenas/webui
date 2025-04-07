@@ -73,7 +73,7 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges, 
     this.store$.pipe(
       waitForPreferences,
       map((config) => config.tableDisplayedColumns?.find((column) => column.title === this.columnPreferencesKey())),
-      filter((config) => !!config.columns?.length),
+      filter((config) => !!config?.columns?.length),
       untilDestroyed(this),
     ).subscribe((displayedColumns) => {
       this.columns().forEach((column) => {
