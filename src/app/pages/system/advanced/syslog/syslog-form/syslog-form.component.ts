@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit, signal,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -62,7 +62,7 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
 export class SyslogFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.SystemAdvancedWrite];
 
-  isFormLoading = false;
+  protected isFormLoading = signal(false);
   subscriptions: Subscription[] = [];
 
   readonly form = this.fb.group({
@@ -101,7 +101,6 @@ export class SyslogFormComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private api: ApiService,
-    private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,
     private snackbar: SnackbarService,
     private translate: TranslateService,
@@ -140,19 +139,17 @@ export class SyslogFormComponent implements OnInit {
       };
     }
 
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
     this.api.call('system.advanced.update', [configUpdate]).pipe(
       tap(() => {
         this.snackbar.success(this.translate.instant('Settings saved'));
         this.store$.dispatch(advancedConfigUpdated());
-        this.isFormLoading = false;
-        this.cdr.markForCheck();
+        this.isFormLoading.set(false);
         this.slideInRef.close({ response: true, error: null });
       }),
       catchError((error: unknown) => {
-        this.isFormLoading = false;
+        this.isFormLoading.set(false);
         this.formErrorHandler.handleValidationErrors(error, this.form);
-        this.cdr.markForCheck();
         return EMPTY;
       }),
       untilDestroyed(this),
