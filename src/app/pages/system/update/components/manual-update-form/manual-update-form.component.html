@@ -1,6 +1,6 @@
 <mat-card class="card" [ixUiSearch]="searchableElements.elements.manualUpdate">
   <mat-card-content>
-    @if (isFormLoading$ | async) {
+    @if (isFormLoading()) {
       <mat-progress-bar
         mode="indeterminate"
       ></mat-progress-bar>
@@ -47,7 +47,7 @@
           type="submit"
           color="primary"
           ixTest="apply-update"
-          [disabled]="form.invalid || (isFormLoading$ | async)"
+          [disabled]="form.invalid || isFormLoading()"
         >
           {{ 'Apply Update' | translate }}
         </button>

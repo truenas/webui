@@ -3,13 +3,13 @@
     <h3>{{ 'Set Up Two-Factor Authentication' | translate }}</h3>
   </mat-toolbar-row>
 
-  @if (isFormLoading || isDataLoading) {
+  @if (isFormLoading() || isDataLoading()) {
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   }
 
   <mat-card-actions>
     <div class="status-content">
-      @if (isDataLoading) {
+      @if (isDataLoading()) {
         <ngx-skeleton-loader class="skeleton-loader"></ngx-skeleton-loader>
       } @else {
         <ix-warning
@@ -27,7 +27,7 @@
         color="primary"
         type="button"
         ixTest="renew-secret"
-        [disabled]="isFormLoading"
+        [disabled]="isFormLoading()"
         [ixUiSearch]="searchableElements.elements.configure2FaSecret"
         (click)="renewSecretOrEnable2Fa()"
       >
