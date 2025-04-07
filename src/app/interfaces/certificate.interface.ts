@@ -1,9 +1,7 @@
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { CertificateDigestAlgorithm } from 'app/enums/certificate-digest-algorithm.enum';
 import { CertificateKeyType } from 'app/enums/certificate-key-type.enum';
-import {
-  CertificateExtensions,
-} from 'app/interfaces/certificate-authority.interface';
+import { ExtendedKeyUsageFlag } from 'app/enums/extended-key-usage-flag.enum';
 
 export interface Certificate {
   id: number;
@@ -50,6 +48,39 @@ export interface Certificate {
 }
 
 export type CertificateProfiles = Record<string, CertificateProfile>;
+
+export interface BasicConstraints {
+  ca: boolean;
+  enabled: boolean;
+  path_length: number | null;
+  extension_critical: boolean;
+}
+
+export interface ExtendedKeyUsage {
+  usages: ExtendedKeyUsageFlag[];
+  enabled: boolean;
+  extension_critical: boolean;
+}
+
+export interface KeyUsages {
+  enabled: boolean;
+  digital_signature: boolean;
+  content_commitment: boolean;
+  key_encipherment: boolean;
+  data_encipherment: boolean;
+  key_agreement: boolean;
+  key_cert_sign: boolean;
+  crl_sign: boolean;
+  encipher_only: boolean;
+  decipher_only: boolean;
+  extension_critical: boolean;
+}
+
+export interface CertificateExtensions {
+  BasicConstraints: BasicConstraints;
+  ExtendedKeyUsage: ExtendedKeyUsage;
+  KeyUsage: KeyUsages;
+}
 
 export interface CertificateProfile {
   cert_extensions: CertificateExtensions;

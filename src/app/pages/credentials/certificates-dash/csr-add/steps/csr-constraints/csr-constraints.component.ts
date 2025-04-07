@@ -14,10 +14,11 @@ import { findLabelsByValue } from 'app/helpers/options.helper';
 import { translateOptions } from 'app/helpers/translate.helper';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import {
+  CertificateCreate,
+  CertificateExtension,
   CertificateExtensions,
   KeyUsages,
-} from 'app/interfaces/certificate-authority.interface';
-import { CertificateCreate, CertificateExtension } from 'app/interfaces/certificate.interface';
+} from 'app/interfaces/certificate.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';

@@ -7,7 +7,6 @@ import {
 import { map, shareReplay } from 'rxjs/operators';
 import { languages } from 'app/constants/languages.constant';
 import { ProductType } from 'app/enums/product-type.enum';
-import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { Choices } from 'app/interfaces/choices.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -66,11 +65,6 @@ export class SystemGeneralService {
   constructor(
     protected api: ApiService,
   ) {}
-
-  // TODO:
-  getCertificateAuthorities(): Observable<CertificateAuthority[]> {
-    return of([]);
-  }
 
   getCertificates(): Observable<Certificate[]> {
     return this.api.call(this.certificateList);

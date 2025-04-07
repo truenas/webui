@@ -256,7 +256,6 @@
     "./src/app/interfaces/audit/smb-audit-entry.interface.ts",
     "./src/app/interfaces/auth-session.interface.ts",
     "./src/app/interfaces/auth.interface.ts",
-    "./src/app/interfaces/certificate-authority.interface.ts",
     "./src/app/interfaces/certificate.interface.ts",
     "./src/app/interfaces/choices.interface.ts",
     "./src/app/interfaces/cloudsync-credential.interface.ts",
