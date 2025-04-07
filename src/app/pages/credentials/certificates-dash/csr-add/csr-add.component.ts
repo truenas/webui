@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, viewChild,
+  ChangeDetectionStrategy, Component, signal, viewChild,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -85,12 +85,11 @@ export class CsrAddComponent {
 
   protected readonly requiredRoles = [Role.CertificateWrite];
 
-  isLoading = false;
+  protected isLoading = signal(false);
   summary: SummarySection[];
 
   constructor(
     private api: ApiService,
-    private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
     private snackbar: SnackbarService,
@@ -146,21 +145,19 @@ export class CsrAddComponent {
   }
 
   onSubmit(): void {
-    this.isLoading = true;
-    this.cdr.markForCheck();
+    this.isLoading.set(true);
 
     const payload = this.preparePayload();
     this.api.job('certificate.create', [payload])
       .pipe(untilDestroyed(this))
       .subscribe({
         complete: () => {
-          this.isLoading = false;
+          this.isLoading.set(false);
           this.snackbar.success(this.translate.instant('Certificate signing request created'));
           this.slideInRef.close({ response: true, error: null });
         },
         error: (error: unknown) => {
-          this.isLoading = false;
-          this.cdr.markForCheck();
+          this.isLoading.set(false);
           // TODO: Need to update error handler to open step with an error.
           this.errorHandler.showErrorModal(error);
         },

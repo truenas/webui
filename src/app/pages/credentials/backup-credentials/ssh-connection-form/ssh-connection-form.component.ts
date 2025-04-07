@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal,
 } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -123,7 +123,7 @@ export class SshConnectionFormComponent implements OnInit {
     return this.form.controls.setup_method.value === SshConnectionsSetupMethod.Manual;
   }
 
-  isLoading = false;
+  protected isLoading = signal(false);
 
   readonly setupMethods$ = of([
     {
@@ -224,7 +224,7 @@ export class SshConnectionFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
 
     const request$: Observable<KeychainCredential> = this.isNew
       ? this.prepareSetupRequest()
@@ -234,13 +234,12 @@ export class SshConnectionFormComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe({
       next: (newCredential) => {
-        this.isLoading = false;
+        this.isLoading.set(false);
         this.snackbar.success(this.translate.instant('SSH Connection saved'));
         this.slideInRef.close({ response: newCredential, error: null });
       },
       error: (error: unknown) => {
-        this.isLoading = false;
-        this.cdr.markForCheck();
+        this.isLoading.set(false);
         this.formErrorHandler.handleValidationErrors(error, this.form);
       },
     });

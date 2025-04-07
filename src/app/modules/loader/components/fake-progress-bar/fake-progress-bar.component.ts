@@ -6,7 +6,7 @@ import {
   ChangeDetectorRef,
   Component, input,
   OnChanges,
-  OnDestroy,
+  OnDestroy, signal,
 } from '@angular/core';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { interval, Subject } from 'rxjs';
@@ -46,8 +46,8 @@ export class FakeProgressBarComponent implements OnChanges, OnDestroy {
    */
   readonly hideOnComplete = input(true);
 
-  progress: number;
-  isAnimating = false;
+  protected progress = signal(0);
+  protected isAnimating = signal(false);
 
   private stop = new Subject<void>();
   private readonly redrawTime = 200;
@@ -73,23 +73,19 @@ export class FakeProgressBarComponent implements OnChanges, OnDestroy {
   }
 
   private start(): void {
-    this.isAnimating = true;
-    this.cdr.markForCheck();
+    this.isAnimating.set(true);
     interval(this.redrawTime).pipe(
       map((sequence) => this.getPercentage(sequence)),
       takeUntil(this.stop),
     ).subscribe({
       next: (progress) => {
-        this.progress = progress;
-        this.cdr.markForCheck();
+        this.progress.set(progress);
       },
       complete: () => {
-        this.progress = 100;
+        this.progress.set(100);
         setTimeout(() => {
-          this.isAnimating = false;
-          this.cdr.markForCheck();
+          this.isAnimating.set(false);
         });
-        this.cdr.markForCheck();
       },
     });
   }
