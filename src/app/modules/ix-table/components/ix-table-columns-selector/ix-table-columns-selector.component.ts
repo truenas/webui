@@ -73,7 +73,7 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges, 
     this.store$.pipe(
       waitForPreferences,
       map((config) => config.tableDisplayedColumns?.find((column) => column.title === this.columnPreferencesKey())),
-      filter((config) => !!config.columns),
+      filter((config) => !!config.columns?.length),
       untilDestroyed(this),
     ).subscribe((displayedColumns) => {
       this.columns().forEach((column) => {
@@ -82,6 +82,10 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges, 
           this.hiddenColumns.select(column);
         }
       });
+
+      if (displayedColumns.columns.every((column) => !this.columns().some((col) => col.title === column))) {
+        this.hiddenColumns.clear();
+      }
     });
   }
 
