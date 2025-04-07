@@ -177,8 +177,9 @@ export class ImportCertificateComponent implements OnInit {
       payload.privatekey = this.selectedCsr.privatekey;
     } else {
       payload.privatekey = this.form.controls.privatekey.value;
-      payload.passphrase = this.form.controls.passphrase.value || null;
     }
+
+    payload.passphrase = this.form.controls.passphrase.value || null;
 
     return payload;
   }

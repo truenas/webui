@@ -24,7 +24,6 @@ describe('ImportCertificateComponent', () => {
       name: 'csr1',
       certificate: 'CSR_CERT_1',
       privatekey: 'CSR_KEY_1',
-      passphrase: 'csr_passphrase',
     },
   ] as Certificate[];
 
@@ -120,7 +119,7 @@ describe('ImportCertificateComponent', () => {
       add_to_trusted_store: true,
       certificate: 'CSR_CERT_1',
       privatekey: 'CSR_KEY_1',
-      passphrase: 'csr_passphrase',
+      passphrase: null,
       create_type: CertificateCreateType.Import,
     }]);
 
