@@ -702,6 +702,7 @@
   "Release": "",
   "Remote Node Restarted": "",
   "Renames the ZFS dataset to a path in the `ix-virt` dataset in which the zvol is located.": "",
+  "Renew Certificate Days Before Expiry": "",
   "Replication Admin": "",
   "Replication Settings": "",
   "Replication Task": "",

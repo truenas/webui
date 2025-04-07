@@ -20,6 +20,7 @@
   "Public SSH Keys": "",
   "Reboot Active Controller": "",
   "Reboot Standby Controller": "",
+  "Renew Certificate Days Before Expiry": "",
   "Select Disk for Spare VDEV": "",
   "SMB Access": "",
   "Something went wrong while handling an error.": "",

@@ -18,6 +18,7 @@
   "Public SSH Keys": "",
   "Reboot Active Controller": "",
   "Reboot Standby Controller": "",
+  "Renew Certificate Days Before Expiry": "",
   "SMB Access": "",
   "SSH Access": "",
   "Standby Controller must be rebooted because": "",

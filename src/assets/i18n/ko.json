@@ -4,6 +4,7 @@
   "Paste the certificate.": "",
   "Reboot Active Controller": "",
   "Reboot Standby Controller": "",
+  "Renew Certificate Days Before Expiry": "",
   "Standby Controller must be rebooted because": "",
   "\n              It looks like your session has been inactive for more than {lifetime} seconds.<br>\n              For security reasons we will log you out at {time}.\n            ": "세션의 비활성화 시간이 {lifetime}초를 넘었습니다.<br />보안을 위해 {time}에 로그아웃 되었습니다.",
   " as of {dateTime}": " ({dateTime} 기준)",

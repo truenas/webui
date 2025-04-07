@@ -33,6 +33,7 @@
   "Pull": "",
   "Reboot Active Controller": "",
   "Reboot Standby Controller": "",
+  "Renew Certificate Days Before Expiry": "",
   "Replication Task Write Pull": "",
   "Select Disk for Spare VDEV": "",
   "Sharing iSCSI Auth Read": "",

@@ -248,6 +248,7 @@
   "Registration finalization timed out": "",
   "Remote Node Restarted": "",
   "Renames the ZFS dataset to a path in the `ix-virt` dataset in which the zvol is located.": "",
+  "Renew Certificate Days Before Expiry": "",
   "Restart is required after changing these settings.": "",
   "Root Disk": "",
   "Root Disk I/O Bus": "",

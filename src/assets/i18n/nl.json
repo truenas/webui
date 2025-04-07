@@ -175,6 +175,7 @@
   "Reboot Standby Controller": "",
   "Remote Node Restarted": "",
   "Renames the ZFS dataset to a path in the `ix-virt` dataset in which the zvol is located.": "",
+  "Renew Certificate Days Before Expiry": "",
   "Root Disk": "",
   "Root Disk I/O Bus": "",
   "Root Disk Size (in GiB)": "",

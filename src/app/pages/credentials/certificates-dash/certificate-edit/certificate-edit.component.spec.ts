@@ -158,6 +158,11 @@ describe('CertificateEditComponent', () => {
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
+    it('shows the renew_days input for acme certificate', async () => {
+      const renewDaysInput = await loader.getHarness(IxInputHarness.with({ label: 'Renew Certificate Days Before Expiry' }));
+      expect(await renewDaysInput.getValue()).toBe('');
+    });
+
     it('shows add to trusted store checkbox for ACME certificate', async () => {
       const addToTrustedStoreCheckbox = await loader.getHarnessOrNull(IxCheckboxHarness.with({ label: 'Add to trusted store' }));
       expect(addToTrustedStoreCheckbox).toExist();

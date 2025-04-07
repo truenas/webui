@@ -2624,6 +2624,7 @@
   "Removes the ACL and permissions recursively  from all child datasets of the current dataset, including all directories and files contained within those child datasets. This can make data inaccessible until new permissions are created.": "",
   "Renames the ZFS dataset to a path in the `ix-virt` dataset in which the zvol is located.": "",
   "Renew 2FA Secret": "",
+  "Renew Certificate Days Before Expiry": "",
   "Renew Secret": "",
   "Replace existing dataset properties with these new defined properties in the replicated files.": "",
   "Replacing Boot Pool Disk": "",

@@ -1657,6 +1657,7 @@
   "Remove this error to try again": "",
   "Renames the ZFS dataset to a path in the `ix-virt` dataset in which the zvol is located.": "",
   "Renew 2FA Secret": "",
+  "Renew Certificate Days Before Expiry": "",
   "Replication <i>{name}</i> has started.": "",
   "Replication Admin": "",
   "Replication Settings": "",
