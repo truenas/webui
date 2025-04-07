@@ -1,6 +1,6 @@
 import { Location } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, signal, Signal, viewChild,
+  ChangeDetectionStrategy, Component, ElementRef, OnInit, signal, Signal, viewChild,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -59,7 +59,6 @@ export class ContainerLogsComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private matDialog: MatDialog,
     private location: Location,
-    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
@@ -110,8 +109,6 @@ export class ContainerLogsComponent implements OnInit {
           this.logs.push(log);
           this.scrollToBottom();
         }
-
-        this.cdr.markForCheck();
       },
       error: (error: unknown) => {
         this.isLoading.set(false);
