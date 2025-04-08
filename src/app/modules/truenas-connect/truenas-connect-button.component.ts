@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect } from '@angular/core';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule, MatIconButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -6,7 +6,6 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
-import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TruenasConnectStatusModalComponent } from 'app/modules/truenas-connect/components/truenas-connect-status-modal/truenas-connect-status-modal.component';
@@ -30,10 +29,15 @@ import { TruenasConnectService } from 'app/modules/truenas-connect/services/true
 })
 export class TruenasConnectButtonComponent {
   readonly TruenasConnectStatus = TruenasConnectStatus;
-  config: TruenasConnectConfig;
   tooltips = helptextTopbar.mat_tooltips;
 
-  constructor(private matDialog: MatDialog, public tnc: TruenasConnectService) {}
+  constructor(private matDialog: MatDialog, public tnc: TruenasConnectService) {
+    effect(() => {
+      if (this.tnc.config()?.status === TruenasConnectStatus.ClaimTokenMissing) {
+        this.tnc.generateToken();
+      }
+    });
+  }
 
   protected showStatus(): void {
     this.matDialog.open(TruenasConnectStatusModalComponent, {
