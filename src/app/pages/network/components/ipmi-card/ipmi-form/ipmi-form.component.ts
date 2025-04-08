@@ -71,8 +71,9 @@ export class IpmiFormComponent implements OnInit {
   defaultControllerData: Ipmi;
   isManageButtonDisabled = false;
   remoteControllerOptions: Observable<RadioOption[]>;
-  protected isLoading = signal(false);
   managementIp: string;
+
+  protected isLoading = signal(false);
   protected isFlashing = signal(false);
 
   queryParams: IpmiQueryParams;
