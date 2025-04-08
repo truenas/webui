@@ -7,6 +7,7 @@
         color="default"
         [ixTest]="['email', 'settings']"
         [ixUiSearch]="searchableElements.elements.settings"
+        [disabled]="!hasLoadedConfig()"
         (click)="openEmailSettings()"
       >
         {{ 'Settings' | translate }}
@@ -18,7 +19,7 @@
     <mat-list>
       <mat-list-item [ixUiSearch]="searchableElements.elements.sendMethod">
         <span class="label">{{ 'Send Mail Method' | translate }}:</span>
-        <span *ixWithLoadingState="emailConfig$ as emailConfig" class="value">
+        <span *ixWithLoadingState="emailConfigState() as emailConfig" class="value">
           {{
             !emailConfig?.oauth?.client_id
               ? helptext.send_mail_method.smtp.placeholder
@@ -27,11 +28,11 @@
         </span>
       </mat-list-item>
 
-      <ng-container *ixWithLoadingState="emailConfig$ as emailConfig">
+      <ng-container *ixWithLoadingState="emailConfigState() as emailConfig">
         @if (emailConfig?.fromemail || emailConfig?.fromname) {
           <mat-list-item>
             <span class="label">{{ 'From' | translate }}:</span>
-            <span *ixWithLoadingState="emailConfig$ as emailConfig" class="value">
+            <span class="value">
               {{ emailConfig.fromname }}
               {{
                 emailConfig.outgoingserver && emailConfig.fromemail && !emailConfig?.oauth?.client_id
