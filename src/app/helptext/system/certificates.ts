@@ -41,24 +41,6 @@ matches your certificate usage scenario.'),
       ),
     },
 
-    isCSRonSystem: {
-      tooltip: T(
-        'Check this box if importing a certificate for which a CSR exists on this system',
-      ),
-    },
-
-    csrlist: {
-      tooltip: T(
-        'Select an existing CSR.',
-      ),
-    },
-
-    signedby: {
-      tooltip: T(
-        'Select a previously imported or created CA.',
-      ),
-    },
-
     key_length: {
       tooltip: T(
         'The number of bits in the key used by the\
