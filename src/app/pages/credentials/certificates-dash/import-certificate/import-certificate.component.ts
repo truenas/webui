@@ -9,7 +9,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { omit } from 'lodash-es';
-import { finalize, of } from 'rxjs';
+import { of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { Role } from 'app/enums/role.enum';
@@ -155,14 +155,17 @@ export class ImportCertificateComponent implements OnInit {
     const payload = this.getPayload();
 
     this.api.job('certificate.create', [payload])
-      .pipe(
-        finalize(() => this.isLoading.set(false)),
-        this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
-      )
-      .subscribe(() => {
-        this.snackbar.success(this.translate.instant('Certificate has been created.'));
-        this.slideInRef.close({ response: true, error: null });
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        complete: () => {
+          this.isLoading.set(false);
+          this.snackbar.success(this.translate.instant('Certificate has been created.'));
+          this.slideInRef.close({ response: true, error: null });
+        },
+        error: (error: unknown) => {
+          this.isLoading.set(false);
+          this.errorHandler.showErrorModal(error);
+        },
       });
   }
 
