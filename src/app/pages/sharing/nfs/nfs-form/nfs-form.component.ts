@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit, signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
@@ -79,7 +79,7 @@ export class NfsFormComponent implements OnInit {
   existingNfsShare: NfsShare | undefined;
   defaultNfsShare: NfsShare | undefined;
 
-  isLoading = false;
+  protected isLoading = signal(false);
   isAdvancedMode = false;
   hasNfsSecurityField = false;
   createDatasetProps: Omit<DatasetCreate, 'name'> = {
@@ -144,7 +144,6 @@ export class NfsFormComponent implements OnInit {
     private translate: TranslateService,
     private filesystemService: FilesystemService,
     private formErrorHandler: FormErrorHandlerService,
-    private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
     private datasetService: DatasetService,
     private store$: Store<ServicesState>,
@@ -217,8 +216,7 @@ export class NfsFormComponent implements OnInit {
       .pipe(
         filter(Boolean),
         tap(() => {
-          this.isLoading = true;
-          this.cdr.markForCheck();
+          this.isLoading.set(true);
         }),
         switchMap(() => request$),
         untilDestroyed(this),
@@ -230,14 +228,12 @@ export class NfsFormComponent implements OnInit {
             this.snackbar.success(this.translate.instant('NFS share updated'));
           }
           this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Nfs }));
-          this.isLoading = false;
-          this.cdr.markForCheck();
+          this.isLoading.set(false);
           this.slideInRef.close({ response: true, error: null });
         },
         error: (error: unknown) => {
-          this.isLoading = false;
+          this.isLoading.set(false);
           this.formErrorHandler.handleValidationErrors(error, this.form);
-          this.cdr.markForCheck();
         },
       });
   }

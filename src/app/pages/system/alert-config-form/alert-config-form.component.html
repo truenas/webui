@@ -1,9 +1,9 @@
 <mat-card class="form-card">
-  @if (isFormLoading) {
+  @if (isFormLoading()) {
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   }
 
-  @if (!isFormLoading && !categories.length) {
+  @if (!isFormLoading() && !categories.length) {
     <ix-empty [conf]="noResponseConfig"></ix-empty>
   }
 
@@ -60,7 +60,7 @@
             type="submit"
             color="primary"
             ixTest="save"
-            [disabled]="form.invalid || isFormLoading || !selectedCategory"
+            [disabled]="form.invalid || isFormLoading() || !selectedCategory"
           >{{ 'Save' | translate }}</button>
         </div>
       </form>

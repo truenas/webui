@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
@@ -134,7 +134,7 @@ export class TargetFormComponent implements OnInit {
     Role.SharingWrite,
   ];
 
-  isLoading = false;
+  protected isLoading = signal(false);
   protected editingTarget: IscsiTarget | undefined = undefined;
   protected editingTargetPort: string | undefined = undefined;
 
@@ -198,8 +198,7 @@ export class TargetFormComponent implements OnInit {
   onSubmit(): void {
     const values = this.form.getRawValue();
 
-    this.isLoading = true;
-    this.cdr.markForCheck();
+    this.isLoading.set(true);
     let request$: Observable<IscsiTarget>;
     if (this.editingTarget) {
       request$ = this.api.call('iscsi.target.update', [this.editingTarget.id, values]);
@@ -222,13 +221,12 @@ export class TargetFormComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe({
       next: (response) => {
-        this.isLoading = false;
+        this.isLoading.set(false);
         this.slideInRef.close({ response, error: null });
       },
       error: (error: unknown) => {
-        this.isLoading = false;
+        this.isLoading.set(false);
         this.errorHandler.handleValidationErrors(error, this.form);
-        this.cdr.markForCheck();
       },
     });
   }

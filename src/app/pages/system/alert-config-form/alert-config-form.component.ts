@@ -1,5 +1,6 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit,
+  signal,
 } from '@angular/core';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -65,7 +66,7 @@ export class AlertConfigFormComponent implements OnInit {
   categories: AlertCategory[] = [];
   selectedCategory: AlertCategory | undefined = undefined;
   form = this.formBuilder.group({});
-  isFormLoading = false;
+  protected isFormLoading = signal(false);
   readonly helptext = helptextAlertSettings;
 
   readonly levelOptions$ = of([
@@ -91,11 +92,10 @@ export class AlertConfigFormComponent implements OnInit {
     protected translate: TranslateService,
     private snackbarService: SnackbarService,
     private formBuilder: FormBuilder,
-    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
 
     forkJoin([
       this.api.call('alert.list_categories'),
@@ -124,12 +124,10 @@ export class AlertConfigFormComponent implements OnInit {
           });
 
           this.form.patchValue(alertConfig.classes);
-          this.isFormLoading = false;
-          this.cdr.markForCheck();
+          this.isFormLoading.set(false);
         },
         error: (error: unknown) => {
-          this.isFormLoading = false;
-          this.cdr.markForCheck();
+          this.isFormLoading.set(false);
           this.errorHandler.showErrorModal(error);
         },
       });
@@ -140,7 +138,7 @@ export class AlertConfigFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
     const payload: AlertClassesUpdate = { classes: {} };
     Object.entries(this.form.controls)
       .forEach(([className, classControl]: [string, FormGroup<ControlsOf<AlertClassSettings>>]) => {
@@ -166,10 +164,8 @@ export class AlertConfigFormComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe(() => {
       this.snackbarService.success(this.translate.instant('Settings saved.'));
-      this.cdr.markForCheck();
     }).add(() => {
-      this.isFormLoading = false;
-      this.cdr.markForCheck();
+      this.isFormLoading.set(false);
     });
   }
 }

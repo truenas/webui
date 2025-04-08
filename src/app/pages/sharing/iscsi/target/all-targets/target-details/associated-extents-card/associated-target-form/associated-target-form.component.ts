@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject,
+  ChangeDetectionStrategy, Component, Inject,
   signal,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
@@ -76,7 +76,6 @@ export class AssociatedTargetFormComponent {
     private formBuilder: FormBuilder,
     private api: ApiService,
     private errorHandler: FormErrorHandlerService,
-    private cdr: ChangeDetectorRef,
     private loader: LoaderService,
     @Inject(MAT_DIALOG_DATA) public data: AssociatedTargetDialogData,
     public dialogRef: MatDialogRef<AssociatedTargetFormComponent>,
@@ -101,7 +100,6 @@ export class AssociatedTargetFormComponent {
       error: (error: unknown) => {
         this.isLoading.set(false);
         this.errorHandler.handleValidationErrors(error, this.form);
-        this.cdr.markForCheck();
       },
     });
   }

@@ -1,5 +1,6 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit,
+  signal,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -50,7 +51,7 @@ export class KerberosRealmsFormComponent implements OnInit {
     return !this.editingRealm;
   }
 
-  isFormLoading = false;
+  protected isFormLoading = signal(false);
 
   form = this.fb.group({
     realm: ['', Validators.required],
@@ -75,7 +76,6 @@ export class KerberosRealmsFormComponent implements OnInit {
   constructor(
     private api: ApiService,
     private errorHandler: FormErrorHandlerService,
-    private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
     private translate: TranslateService,
     public slideInRef: SlideInRef<KerberosRealm | undefined, boolean>,
@@ -95,7 +95,7 @@ export class KerberosRealmsFormComponent implements OnInit {
   onSubmit(): void {
     const values = this.form.value;
 
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
     let request$: Observable<unknown>;
     if (this.editingRealm) {
       request$ = this.api.call('kerberos.realm.update', [
@@ -108,14 +108,12 @@ export class KerberosRealmsFormComponent implements OnInit {
 
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
-        this.isFormLoading = false;
-        this.cdr.markForCheck();
+        this.isFormLoading.set(false);
         this.slideInRef.close({ response: true, error: null });
       },
       error: (error: unknown) => {
-        this.isFormLoading = false;
+        this.isFormLoading.set(false);
         this.errorHandler.handleValidationErrors(error, this.form);
-        this.cdr.markForCheck();
       },
     });
   }

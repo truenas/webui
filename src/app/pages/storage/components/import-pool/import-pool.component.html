@@ -1,7 +1,7 @@
 <ix-modal-header
   [requiredRoles]="requiredRoles"
   [title]="helptext.import_title | translate"
-  [loading]="isLoading"
+  [loading]="isLoading()"
 ></ix-modal-header>
 
 <mat-card>
@@ -26,7 +26,7 @@
           type="submit"
           color="primary"
           ixTest="import"
-          [disabled]="formGroup.invalid || isLoading"
+          [disabled]="formGroup.invalid || isLoading()"
         >
           {{ 'Import' | translate }}
         </button>

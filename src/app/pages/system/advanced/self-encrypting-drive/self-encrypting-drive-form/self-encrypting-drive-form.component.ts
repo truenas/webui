@@ -1,5 +1,6 @@
 import {
-  Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit,
+  Component, ChangeDetectionStrategy, OnInit,
+  signal,
 } from '@angular/core';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -54,7 +55,7 @@ export interface SedConfig {
 export class SelfEncryptingDriveFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.SystemAdvancedWrite];
 
-  isFormLoading = false;
+  protected isFormLoading = signal(false);
   title = helptextSystemAdvanced.fieldset_sed;
   form = this.fb.group({
     sed_user: ['' as SedUser, Validators.required],
@@ -93,7 +94,6 @@ export class SelfEncryptingDriveFormComponent implements OnInit {
     private api: ApiService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
-    private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,
     private snackbar: SnackbarService,
     public slideInRef: SlideInRef<SedConfig, boolean>,
@@ -109,23 +109,21 @@ export class SelfEncryptingDriveFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
 
     const values = this.form.value;
     delete values.sed_passwd2;
 
     this.api.call('system.advanced.update', [values]).pipe(untilDestroyed(this)).subscribe({
       next: () => {
-        this.isFormLoading = false;
+        this.isFormLoading.set(false);
         this.snackbar.success(this.translate.instant('Settings saved'));
-        this.cdr.markForCheck();
         this.slideInRef.close({ response: true, error: null });
         this.store$.dispatch(advancedConfigUpdated());
       },
       error: (error: unknown) => {
-        this.isFormLoading = false;
+        this.isFormLoading.set(false);
         this.errorHandler.showErrorModal(error);
-        this.cdr.markForCheck();
       },
     });
   }
@@ -135,7 +133,6 @@ export class SelfEncryptingDriveFormComponent implements OnInit {
       sed_user: this.sedConfig.sedUser,
       sed_passwd: this.sedConfig.sedPassword,
     });
-    this.isFormLoading = false;
-    this.cdr.markForCheck();
+    this.isFormLoading.set(false);
   }
 }

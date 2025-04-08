@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal,
+  ChangeDetectionStrategy, Component, OnInit, signal,
 } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -164,7 +164,6 @@ export class SshConnectionFormComponent implements OnInit {
     private formBuilder: FormBuilder,
     private translate: TranslateService,
     private api: ApiService,
-    private cdr: ChangeDetectorRef,
     private formErrorHandler: FormErrorHandlerService,
     private errorHandler: ErrorHandlerService,
     private keychainCredentialService: KeychainCredentialService,
@@ -199,7 +198,6 @@ export class SshConnectionFormComponent implements OnInit {
       connection_name: this.existingConnection.name,
       setup_method: SshConnectionsSetupMethod.Manual,
     });
-    this.cdr.markForCheck();
   }
 
   onDiscoverRemoteHostKeyPressed(): void {

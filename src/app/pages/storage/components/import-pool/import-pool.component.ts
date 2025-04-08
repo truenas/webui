@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit, signal,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -55,7 +55,7 @@ export class ImportPoolComponent implements OnInit {
   protected readonly requiredRoles = [Role.PoolWrite];
 
   readonly helptext = helptextImport;
-  isLoading = false;
+  protected isLoading = signal(false);
   importablePools: {
     name: string;
     guid: string;
@@ -77,7 +77,6 @@ export class ImportPoolComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private translate: TranslateService,
-    private cdr: ChangeDetectorRef,
     private router: Router,
     private snackbar: SnackbarService,
     private loader: LoaderService,
@@ -89,14 +88,14 @@ export class ImportPoolComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
     this.api.job('pool.import_find').pipe(untilDestroyed(this)).subscribe({
       next: (importablePoolFindJob) => {
         if (importablePoolFindJob.state !== JobState.Success) {
           return;
         }
 
-        this.isLoading = false;
+        this.isLoading.set(false);
         const result: PoolFindResult[] = importablePoolFindJob.result;
         this.importablePools = result.map((pool) => ({
           name: pool.name,
@@ -107,11 +106,9 @@ export class ImportPoolComponent implements OnInit {
           value: pool.guid,
         } as Option));
         this.pool.options = of(opts);
-        this.cdr.markForCheck();
       },
       error: (error: unknown) => {
-        this.isLoading = false;
-        this.cdr.markForCheck();
+        this.isLoading.set(false);
 
         this.errorHandler.showErrorModal(error);
       },

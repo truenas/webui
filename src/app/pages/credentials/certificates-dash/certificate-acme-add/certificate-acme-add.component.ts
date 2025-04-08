@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component,
+  ChangeDetectionStrategy, Component,
   OnInit, signal,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
@@ -90,7 +90,6 @@ export class CertificateAcmeAddComponent implements OnInit {
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
     private api: ApiService,
-    private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
     private formErrorHandler: FormErrorHandlerService,
     private snackbar: SnackbarService,
@@ -163,7 +162,6 @@ export class CertificateAcmeAddComponent implements OnInit {
           this.domains = domains;
           domains.forEach((domain) => this.addDomainControls(domain));
           this.isLoading.set(false);
-          this.cdr.markForCheck();
         },
         error: (error: unknown) => {
           this.isLoading.set(false);

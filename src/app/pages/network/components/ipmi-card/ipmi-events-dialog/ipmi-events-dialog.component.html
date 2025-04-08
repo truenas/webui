@@ -1,7 +1,7 @@
-<ix-fake-progress-bar [loading]="isLoading"></ix-fake-progress-bar>
+<ix-fake-progress-bar [loading]="isLoading()"></ix-fake-progress-bar>
 <h1 mat-dialog-title>{{ 'IPMI Events' | translate }}</h1>
 <div mat-dialog-content class="events-container">
-  @if ((events.length || isLoading)) {
+  @if ((events.length || isLoading())) {
     @for (event of events; track event.id) {
       <div class="event">
         <div class="event-header">

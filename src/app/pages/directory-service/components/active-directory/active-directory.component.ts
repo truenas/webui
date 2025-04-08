@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit, signal,
 } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -63,7 +63,7 @@ import { SystemGeneralService } from 'app/services/system-general.service';
 export class ActiveDirectoryComponent implements OnInit {
   protected readonly requiredRoles = [Role.DirectoryServiceWrite];
 
-  isLoading = false;
+  protected isLoading = signal(false);
   isAdvancedMode = false;
   canLeaveDomain = false;
 
@@ -106,7 +106,6 @@ export class ActiveDirectoryComponent implements OnInit {
 
   constructor(
     private api: ApiService,
-    private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
     private formBuilder: FormBuilder,
     private systemGeneralService: SystemGeneralService,
@@ -130,24 +129,22 @@ export class ActiveDirectoryComponent implements OnInit {
   }
 
   onRebuildCachePressed(): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
     this.dialogService
       .jobDialog(this.systemGeneralService.refreshDirServicesCache())
       .afterClosed()
       .pipe(untilDestroyed(this)).subscribe({
         next: ({ description }) => {
-          this.isLoading = false;
+          this.isLoading.set(false);
           this.snackbarService.success(
             this.translate.instant(
               description || helptextActiveDirectory.activedirectory_custactions_clearcache_dialog_message,
             ),
           );
-          this.cdr.markForCheck();
         },
         error: (error: unknown) => {
-          this.isLoading = false;
+          this.isLoading.set(false);
           this.errorHandler.showErrorModal(error);
-          this.cdr.markForCheck();
         },
       });
   }
@@ -164,7 +161,7 @@ export class ActiveDirectoryComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
     const values = {
       ...this.form.value,
       kerberos_principal: this.form.value.kerberos_principal || '',
@@ -182,14 +179,13 @@ export class ActiveDirectoryComponent implements OnInit {
       .subscribe({
         next: () => this.slideInRef.close({ response: true, error: null }),
         complete: () => {
-          this.isLoading = false;
-          this.cdr.markForCheck();
+          this.isLoading.set(false);
         },
       });
   }
 
   private loadFormValues(): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
 
     forkJoin([
       this.loadDirectoryState(),
@@ -198,12 +194,10 @@ export class ActiveDirectoryComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
-          this.isLoading = false;
-          this.cdr.markForCheck();
+          this.isLoading.set(false);
         },
         error: (error: unknown) => {
-          this.isLoading = false;
-          this.cdr.markForCheck();
+          this.isLoading.set(false);
           this.errorHandler.showErrorModal(error);
         },
       });
