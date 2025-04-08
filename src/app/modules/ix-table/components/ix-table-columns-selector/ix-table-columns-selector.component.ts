@@ -1,6 +1,7 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, input, model, OnChanges, OnInit, output,
+  signal,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
@@ -8,7 +9,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { cloneDeep } from 'lodash-es';
-import { filter, map } from 'rxjs';
+import { filter, map, take } from 'rxjs';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
@@ -39,6 +40,7 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges, 
   readonly columnPreferencesKey = input<string>();
 
   readonly columnsChange = output<Column<T, ColumnComponent<T>>[]>();
+  readonly isResetToDefaultDisabled = signal(true);
 
   hiddenColumns = new SelectionModel<Column<T, ColumnComponent<T>>>(true, []);
   private defaultColumns: Column<T, ColumnComponent<T>>[];
@@ -74,6 +76,7 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges, 
       waitForPreferences,
       map((config) => config.tableDisplayedColumns?.find((column) => column.title === this.columnPreferencesKey())),
       filter((config) => !!config?.columns?.length),
+      take(1),
       untilDestroyed(this),
     ).subscribe((displayedColumns) => {
       this.columns().forEach((column) => {
@@ -82,6 +85,8 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges, 
           this.hiddenColumns.select(column);
         }
       });
+
+      this.defaultColumns = cloneDeep(this.columns());
 
       if (displayedColumns.columns.every((column) => !this.columns().some((col) => col.title === column))) {
         this.hiddenColumns.clear();
@@ -98,7 +103,6 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges, 
     }
 
     this.columns().forEach((_cell, index) => this.toggle(this.columns()[index]));
-
     this.emitColumnsChange();
   }
 
@@ -116,7 +120,21 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges, 
     }
     this.hiddenColumns.toggle(column);
     this.emitColumnsChange();
-    this.cdr.markForCheck();
+  }
+
+  saveColumnPreferences(): void {
+    if (this.columnPreferencesKey()) {
+      this.store$.dispatch(preferredColumnsUpdated({
+        tableDisplayedColumns: [{
+          title: this.columnPreferencesKey(),
+          columns: this.columns().filter((col) => !col.hidden).map((col) => col.title),
+        }],
+      }));
+    }
+  }
+
+  enableResetButton(): void {
+    this.isResetToDefaultDisabled.set(false);
   }
 
   private setInitialState(): void {
@@ -129,8 +147,8 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges, 
       }
     });
 
+    this.isResetToDefaultDisabled.set(true);
     this.emitColumnsChange();
-    this.cdr.markForCheck();
   }
 
   private subscribeToColumnsChange(): void {
@@ -140,21 +158,11 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges, 
       });
 
       this.emitColumnsChange();
-
-      if (this.columnPreferencesKey()) {
-        this.store$.dispatch(preferredColumnsUpdated({
-          tableDisplayedColumns: [{
-            title: this.columnPreferencesKey(),
-            columns: this.columns().filter((col) => !col.hidden).map((col) => col.title),
-          }],
-        }));
-      }
-
-      this.cdr.markForCheck();
     });
   }
 
   private emitColumnsChange(): void {
     this.columnsChange.emit([...this.columns()]);
+    this.cdr.markForCheck();
   }
 }

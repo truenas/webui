@@ -81,11 +81,19 @@ describe('IxTableColumnsSelectorComponent', () => {
     expect(columnsChangeSpy).toHaveBeenCalled();
   });
 
+  it('"Reset to Defaults" is disabled initially', async () => {
+    jest.spyOn(spectator.component, 'resetToDefaults').mockImplementation();
+    await menu.clickItem({ text: 'Reset to Defaults' });
+    expect(spectator.component.resetToDefaults).not.toHaveBeenCalled();
+  });
+
   it('checks when "Reset to Defaults" is pressed', async () => {
+    await menu.clickItem({ text: 'Users' });
+
     jest.spyOn(spectator.component, 'resetToDefaults').mockImplementation();
     await menu.clickItem({ text: 'Reset to Defaults' });
 
-    expect(spectator.component.hiddenColumns.selected).toHaveLength(2);
+    expect(spectator.component.hiddenColumns.selected).toHaveLength(3);
     expect(spectator.component.resetToDefaults).toHaveBeenCalled();
   });
 
