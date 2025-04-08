@@ -3,6 +3,7 @@ import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule, MatIconButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
@@ -11,6 +12,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TruenasConnectStatusModalComponent } from 'app/modules/truenas-connect/components/truenas-connect-status-modal/truenas-connect-status-modal.component';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 
+@UntilDestroy()
 @Component({
   selector: 'ix-truenas-connect-button',
   standalone: true,
@@ -34,7 +36,9 @@ export class TruenasConnectButtonComponent {
   constructor(private matDialog: MatDialog, public tnc: TruenasConnectService) {
     effect(() => {
       if (this.tnc.config()?.status === TruenasConnectStatus.ClaimTokenMissing) {
-        this.tnc.generateToken();
+        this.tnc.generateToken()
+          .pipe(untilDestroyed(this))
+          .subscribe();
       }
     });
   }

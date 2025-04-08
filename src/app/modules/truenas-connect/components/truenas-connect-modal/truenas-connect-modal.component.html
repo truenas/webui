@@ -54,11 +54,6 @@
   </div>
 
   <div>
-    @if(tnc.config()?.status === TruenasConnectStatus.ClaimTokenMissing) {
-    <button ixTest="tnc-generate-token" mat-button (click)="generateToken()">
-      {{ 'Generate Token' | translate }}
-    </button>
-    }
     <button mat-button ixTest="tnc-form-cancel" (click)="cancel()">
       {{ 'Cancel' | translate }}
     </button>
