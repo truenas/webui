@@ -12,7 +12,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { select, Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { combineLatest, Observable, of } from 'rxjs';
-import { filter, map, switchMap } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -34,7 +34,6 @@ import { createTable } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { UserFormComponent } from 'app/pages/credentials/new-users/user-form/user-form.component';
 import { userPageEntered, userRemoved } from 'app/pages/credentials/users/store/user.actions';
 import { selectUsers, selectUserState, selectUsersTotal } from 'app/pages/credentials/users/store/user.selectors';
 import { UserDetailsRowComponent } from 'app/pages/credentials/users/user-details-row/user-details-row.component';
@@ -179,17 +178,6 @@ export class OldUserListComponent implements OnInit {
 
   doAdd(): void {
     this.slideIn.open(OldUserFormComponent, { wide: true });
-  }
-
-  doNewAdd(): void {
-    this.slideIn.open(UserFormComponent, { wide: false }).pipe(
-      filter(({ response }) => response),
-      untilDestroyed(this),
-    ).subscribe({
-      next: () => {
-        this.store$.dispatch(userPageEntered());
-      },
-    });
   }
 
   navigateToApiKeys(): void {

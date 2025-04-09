@@ -2,7 +2,7 @@ import { DatePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef, Component,
-  OnInit,
+  OnInit, signal,
 } from '@angular/core';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -90,7 +90,7 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
     includedPaths: [[] as string[]],
   });
 
-  isLoading = false;
+  protected isLoading = signal(false);
 
   createDatasetProps: Omit<DatasetCreate, 'name'> = {
     share_type: DatasetPreset.Generic,
@@ -142,7 +142,7 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
 
     const params = this.prepareParams();
 
@@ -158,13 +158,12 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
       .subscribe({
         complete: () => {
           this.snackbar.success(this.translate.instant('Cloud Backup Restored Successfully'));
-          this.isLoading = false;
+          this.isLoading.set(false);
           this.slideInRef.close({ response: true, error: null });
         },
         error: (error: unknown) => {
-          this.isLoading = false;
+          this.isLoading.set(false);
           this.errorHandler.handleValidationErrors(error, this.form);
-          this.cdr.markForCheck();
         },
       });
   }

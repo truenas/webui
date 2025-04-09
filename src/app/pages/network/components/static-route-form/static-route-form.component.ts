@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit, signal,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -53,7 +53,7 @@ export class StaticRouteFormComponent implements OnInit {
     return this.isNew ? this.translate.instant('Add Static Route') : this.translate.instant('Edit Static Route');
   }
 
-  isFormLoading = false;
+  protected isFormLoading = signal(false);
   protected editingRoute: StaticRoute | undefined;
 
   form = this.fb.group({
@@ -71,7 +71,6 @@ export class StaticRouteFormComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private api: ApiService,
-    private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
     private errorHandler: FormErrorHandlerService,
     private translate: TranslateService,
@@ -90,7 +89,7 @@ export class StaticRouteFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
     const values = this.form.value as UpdateStaticRoute;
 
     let request$: Observable<unknown>;
@@ -110,13 +109,11 @@ export class StaticRouteFormComponent implements OnInit {
         } else {
           this.snackbar.success(this.translate.instant('Static route updated'));
         }
-        this.isFormLoading = false;
-        this.cdr.markForCheck();
+        this.isFormLoading.set(false);
         this.slideInRef.close({ response: true, error: null });
       },
       error: (error: unknown) => {
-        this.isFormLoading = false;
-        this.cdr.markForCheck();
+        this.isFormLoading.set(false);
         this.errorHandler.handleValidationErrors(error, this.form);
       },
     });

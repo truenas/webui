@@ -1,5 +1,6 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit,
+  signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
@@ -70,9 +71,10 @@ export class IpmiFormComponent implements OnInit {
   defaultControllerData: Ipmi;
   isManageButtonDisabled = false;
   remoteControllerOptions: Observable<RadioOption[]>;
-  isLoading = false;
   managementIp: string;
-  isFlashing = false;
+
+  protected isLoading = signal(false);
+  protected isFlashing = signal(false);
 
   queryParams: IpmiQueryParams;
   protected ipmiId: number;
@@ -117,7 +119,6 @@ export class IpmiFormComponent implements OnInit {
     private translate: TranslateService,
     private redirect: RedirectService,
     private fb: FormBuilder,
-    private cdr: ChangeDetectorRef,
     private validatorsService: IxValidatorsService,
     private errorHandler: ErrorHandlerService,
     private formErrorHandler: FormErrorHandlerService,
@@ -148,16 +149,15 @@ export class IpmiFormComponent implements OnInit {
   }
 
   toggleFlashing(): void {
-    this.api.call('ipmi.chassis.identify', [this.isFlashing ? OnOff.Off : OnOff.On])
+    this.api.call('ipmi.chassis.identify', [this.isFlashing() ? OnOff.Off : OnOff.On])
       .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
       .subscribe(() => {
         this.snackbar.success(
-          this.isFlashing
+          this.isFlashing()
             ? this.translate.instant('Identify light is now off.')
             : this.translate.instant('Identify light is now flashing.'),
         );
-        this.isFlashing = !this.isFlashing;
-        this.cdr.markForCheck();
+        this.isFlashing.set(!this.isFlashing());
       });
   }
 
@@ -166,8 +166,7 @@ export class IpmiFormComponent implements OnInit {
   }
 
   loadFormData(): void {
-    this.isLoading = true;
-    this.cdr.markForCheck();
+    this.isLoading.set(true);
 
     forkJoin([
       this.api.call('ipmi.lan.query', this.queryParams),
@@ -181,13 +180,11 @@ export class IpmiFormComponent implements OnInit {
         untilDestroyed(this),
       ).subscribe({
         next: () => {
-          this.isLoading = false;
-          this.cdr.markForCheck();
+          this.isLoading.set(false);
         },
         error: (error: unknown) => {
           this.errorHandler.showErrorModal(error);
-          this.isLoading = false;
-          this.cdr.markForCheck();
+          this.isLoading.set(false);
         },
       });
   }
@@ -224,7 +221,7 @@ export class IpmiFormComponent implements OnInit {
     this.form.controls.apply_remote.valueChanges
       .pipe(
         switchMap((controlState) => {
-          this.isLoading = true;
+          this.isLoading.set(true);
           isUsingRemote = !!controlState;
           if (this.queryParams?.length && controlState) {
             this.queryParams[0]['ipmi-options'] = { 'query-remote': controlState };
@@ -250,13 +247,12 @@ export class IpmiFormComponent implements OnInit {
         }
 
         this.setFormValues(dataIpma[0]);
-        this.isLoading = false;
-        this.cdr.markForCheck();
+        this.isLoading.set(false);
       });
   }
 
   onSubmit(): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
 
     const updateParams: IpmiUpdate = {
       dhcp: this.form.value.dhcp,
@@ -279,16 +275,15 @@ export class IpmiFormComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
-          this.isLoading = false;
+          this.isLoading.set(false);
           this.slideInRef.close({ response: true, error: null });
           this.snackbar.success(
             this.translate.instant('Successfully saved IPMI settings.'),
           );
         },
         error: (error: unknown) => {
-          this.isLoading = false;
+          this.isLoading.set(false);
           this.formErrorHandler.handleValidationErrors(error, this.form);
-          this.cdr.markForCheck();
         },
       });
   }
@@ -310,8 +305,7 @@ export class IpmiFormComponent implements OnInit {
   private loadFlashingStatus(): Observable<unknown> {
     return this.api.call('ipmi.chassis.info').pipe(
       tap((ipmiStatus) => {
-        this.isFlashing = ipmiStatus.chassis_identify_state !== IpmiChassisIdentifyState.Off;
-        this.cdr.markForCheck();
+        this.isFlashing.set(ipmiStatus.chassis_identify_state !== IpmiChassisIdentifyState.Off);
       }),
       untilDestroyed(this),
     );

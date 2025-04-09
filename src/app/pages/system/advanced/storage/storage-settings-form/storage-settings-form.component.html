@@ -1,7 +1,7 @@
 <ix-modal-header
   [requiredRoles]="requiredRoles"
   [title]="'Storage Settings' | translate"
-  [loading]="isFormLoading"
+  [loading]="isFormLoading()"
 ></ix-modal-header>
 <mat-card>
   <mat-card-content>
@@ -22,7 +22,7 @@
           type="submit"
           color="primary"
           ixTest="save"
-          [disabled]="form.invalid || isFormLoading || !(poolOptions$ | async)"
+          [disabled]="form.invalid || isFormLoading() || !(poolOptions$ | async)"
         >
           {{ 'Save' | translate }}
         </button>

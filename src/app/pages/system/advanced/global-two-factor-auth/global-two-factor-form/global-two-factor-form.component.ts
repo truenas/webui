@@ -1,5 +1,5 @@
 import {
-  Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, Inject,
+  Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, Inject, signal,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -52,7 +52,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 export class GlobalTwoFactorAuthFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.SystemSecurityWrite];
 
-  isFormLoading = false;
+  protected isFormLoading = signal(false);
   form = this.fb.nonNullable.group({
     enabled: [false],
     window: [null as number | null, Validators.required],
@@ -92,7 +92,6 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
       window: this.twoFactorConfig.window,
       ssh: this.twoFactorConfig.services.ssh,
     });
-    this.cdr.markForCheck();
   }
 
   onSubmit(): void {
@@ -116,24 +115,22 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
     confirmation$.pipe(
       filter(Boolean),
       switchMap(() => {
-        this.isFormLoading = true;
+        this.isFormLoading.set(true);
         return this.api.call('auth.twofactor.update', [payload]);
       }),
       tap(() => {
         this.window.localStorage.setItem('showQr2FaWarning', `${this.form.value.enabled}`);
-        this.isFormLoading = false;
+        this.isFormLoading.set(false);
         this.snackbar.success(this.translate.instant('Settings saved'));
         this.authService.globalTwoFactorConfigUpdated();
         if (!isEqual(this.twoFactorConfig, payload) && payload.enabled) {
           this.router.navigate(['/two-factor-auth']);
         }
-        this.cdr.markForCheck();
         this.slideInRef.close({ response: true, error: null });
       }),
       catchError((error: unknown) => {
-        this.isFormLoading = false;
+        this.isFormLoading.set(false);
         this.errorHandler.showErrorModal(error);
-        this.cdr.markForCheck();
         return EMPTY;
       }),
     ).pipe(untilDestroyed(this)).subscribe();

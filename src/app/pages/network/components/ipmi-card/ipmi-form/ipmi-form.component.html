@@ -1,7 +1,7 @@
 <ix-modal-header
   [requiredRoles]="requiredRoles"
   [title]="'IPMI' | translate"
-  [loading]="isLoading"
+  [loading]="isLoading()"
 ></ix-modal-header>
 
 <mat-card>
@@ -78,7 +78,7 @@
           type="submit"
           color="primary"
           ixTest="save"
-          [disabled]="form.invalid || isLoading"
+          [disabled]="form.invalid || isLoading()"
         >
           {{ 'Save' | translate }}
         </button>
@@ -87,7 +87,7 @@
           mat-button
           type="button"
           ixTest="manage-ipmi"
-          [disabled]="isManageButtonDisabled || isLoading"
+          [disabled]="isManageButtonDisabled || isLoading()"
           (click)="openManageWindow()"
         >
           {{ 'Manage' | translate }}
@@ -100,7 +100,7 @@
           ixTest="toggle-identify-light"
           (click)="toggleFlashing()"
         >
-          @if (isFlashing) {
+          @if (isFlashing()) {
             <ix-icon name="highlight"></ix-icon>
             {{ 'Stop Flashing' | translate }}
           } @else {

@@ -1,7 +1,7 @@
 <ix-modal-header
   [requiredRoles]="requiredRoles"
   [title]="helptext.title | translate"
-  [loading]="isFormLoading"
+  [loading]="isFormLoading()"
 ></ix-modal-header>
 
 <mat-card class="card">
@@ -164,7 +164,7 @@
           type="submit"
           color="primary"
           ixTest="save"
-          [disabled]="form.invalid || isFormLoading"
+          [disabled]="form.invalid || isFormLoading()"
         >
           {{ 'Save' | translate }}
         </button>

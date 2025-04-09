@@ -9,7 +9,6 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { allUsersHeaderElements } from 'app/pages/credentials/new-users/all-users/all-users-header/all-users-header.elements';
 import { UserFormComponent } from 'app/pages/credentials/new-users/user-form/user-form.component';
-import { userPageEntered } from 'app/pages/credentials/users/store/user.actions';
 import { AppState } from 'app/store';
 
 @UntilDestroy()
@@ -40,7 +39,7 @@ export class AllUsersHeaderComponent {
       untilDestroyed(this),
     ).subscribe({
       next: () => {
-        this.store$.dispatch(userPageEntered());
+        // TODO: Refresh user list
       },
     });
   }

@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit, signal,
 } from '@angular/core';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -102,7 +102,7 @@ export class AuthorizedAccessFormComponent implements OnInit {
     ],
   });
 
-  isLoading = false;
+  protected isLoading = signal(false);
   discoveryAuthOptions$: Observable<Option<IscsiAuthMethod>[]>;
   protected editingAccess: IscsiAuthAccess | undefined;
 
@@ -136,7 +136,6 @@ export class AuthorizedAccessFormComponent implements OnInit {
     private translate: TranslateService,
     private formBuilder: NonNullableFormBuilder,
     private errorHandler: FormErrorHandlerService,
-    private cdr: ChangeDetectorRef,
     private api: ApiService,
     private validatorService: IxValidatorsService,
     public slideInRef: SlideInRef<IscsiAuthAccess | undefined, boolean>,
@@ -201,20 +200,19 @@ export class AuthorizedAccessFormComponent implements OnInit {
       discovery_auth: values.discovery_auth,
     } as IscsiAuthAccessUpdate;
 
-    this.isLoading = true;
+    this.isLoading.set(true);
     const request$ = this.editingAccess
       ? this.api.call('iscsi.auth.update', [this.editingAccess.id, payload])
       : this.api.call('iscsi.auth.create', [payload]);
 
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
-        this.isLoading = false;
+        this.isLoading.set(false);
         this.slideInRef.close({ response: true, error: null });
       },
       error: (error: unknown) => {
-        this.isLoading = false;
+        this.isLoading.set(false);
         this.errorHandler.handleValidationErrors(error, this.form);
-        this.cdr.markForCheck();
       },
     });
   }
