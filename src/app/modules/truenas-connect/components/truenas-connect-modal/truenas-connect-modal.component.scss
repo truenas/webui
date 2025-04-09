@@ -3,6 +3,10 @@
     display: flex;
     justify-content: space-between !important;
   }
+
+  .mat-expansion-panel-body {
+    padding: 0;
+  }
 }
 
 .title {

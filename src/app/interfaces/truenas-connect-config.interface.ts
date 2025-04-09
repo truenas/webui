@@ -22,4 +22,5 @@ export interface TruenasConnectUpdate {
   tnc_base_url: string;
   account_service_base_url: string;
   leca_service_base_url: string;
+  heartbeat_url: string;
 }
