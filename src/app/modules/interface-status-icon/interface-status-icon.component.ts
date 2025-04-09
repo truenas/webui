@@ -49,12 +49,12 @@ export class InterfaceStatusIconComponent {
 
   statusIcon = computed<MarkedIcon>(() => {
     const update = this.update();
-    const hasSent = update
-      ? update.sent_bytes_rate > this.minRate
-      : false;
-    const hasReceived = update
-      ? update.received_bytes_rate > this.minRate
-      : false;
+    const hasSent = update ? update.sent_bytes_rate > this.minRate : false;
+    const hasReceived = update ? update.received_bytes_rate > this.minRate : false;
+
+    if (!this.isLinkUp()) {
+      return iconMarker('ix-network-upload-download-disabled');
+    }
 
     switch (true) {
       case hasSent && hasReceived: return iconMarker('ix-network-upload-download-both');

@@ -1,11 +1,7 @@
-@if (isLinkUp()) {
-  <ix-icon
-    [id]="elementId"
-    [name]="statusIcon()"
-    [matTooltip]="tooltipText()"
-  ></ix-icon>
-} @else {
-  <ix-icon name="ix-network-upload-download-disabled"></ix-icon>
-}
-
+<ix-icon
+  [id]="elementId"
+  [name]="statusIcon()"
+  [matTooltip]="isLinkUp() ? tooltipText() : null"
+  [class.link-up]="isLinkUp()"
+></ix-icon>
 
