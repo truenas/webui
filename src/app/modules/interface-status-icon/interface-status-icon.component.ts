@@ -1,3 +1,4 @@
+import { NgClass } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component,
   computed,
@@ -24,6 +25,7 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
   imports: [
     MatTooltipModule,
     IxIconComponent,
+    NgClass,
   ],
 })
 export class InterfaceStatusIconComponent {
