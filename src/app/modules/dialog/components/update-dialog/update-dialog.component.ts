@@ -1,6 +1,10 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { MatDialogContent, MatDialogTitle } from '@angular/material/dialog';
+import {
+  ChangeDetectionStrategy, Component, inject,
+} from '@angular/core';
+import {
+  MAT_DIALOG_DATA, MatDialogContent, MatDialogTitle,
+} from '@angular/material/dialog';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
@@ -25,11 +29,9 @@ import { selectUpdateJob } from 'app/modules/jobs/store/job.selectors';
 })
 export class UpdateDialog {
   selectRunningJobs$ = this.store$.select(selectUpdateJob);
-  contentText: { message: string; title: string };
+  contentText = inject<{ message: string; title: string }>(MAT_DIALOG_DATA);
 
-  constructor(private store$: Store<JobsState>) {}
-
-  setMessage(confText: { message: string; title: string }): void {
-    this.contentText = confText;
-  }
+  constructor(
+    private store$: Store<JobsState>,
+  ) {}
 }
