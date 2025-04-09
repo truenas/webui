@@ -152,6 +152,7 @@ describe('UpdateActionsCardComponent', () => {
   it('checks when update is running and shows the correct text', () => {
     updateRunningStatus$.next('true');
     spectator.detectChanges();
-    expect(spectator.query('.update-running-msg')).toHaveText('A system update is in progress. It might have been launched in another window or by an external source like TrueCommand. This system will restart when the update completes.');
+    expect(spectator.query('.update-running-message'))
+      .toHaveText('A system update is in progress. It might have been launched in another window or by an external source like TrueCommand. This system will restart when the update completes.');
   });
 });
