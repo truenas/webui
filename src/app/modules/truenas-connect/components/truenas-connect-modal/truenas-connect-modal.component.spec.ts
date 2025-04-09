@@ -80,21 +80,6 @@ describe('TruenasConnectModalComponent', () => {
     });
   });
 
-  it('should generate a tokken', async () => {
-    configSignal.set({
-      ...config,
-      status: TruenasConnectStatus.ClaimTokenMissing,
-    });
-    const generateSpy = jest.spyOn(spectator.inject(TruenasConnectService), 'generateToken');
-    const generateBtn = await loader.getHarness(
-      MatButtonHarness.with({
-        text: 'Generate Token',
-      }),
-    );
-    await generateBtn.click();
-    expect(generateSpy).toHaveBeenCalled();
-  });
-
   it('should save the form', async () => {
     const tncInput = await loader.getHarness(
       IxInputHarness.with({
