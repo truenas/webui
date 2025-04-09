@@ -1,12 +1,16 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatAnchor } from '@angular/material/button';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
+import { filter } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { allUsersHeaderElements } from 'app/pages/credentials/new-users/all-users/all-users-header/all-users-header.elements';
-import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
+import { UserFormComponent } from 'app/pages/credentials/new-users/user-form/user-form.component';
+import { userPageEntered } from 'app/pages/credentials/users/store/user.actions';
+import { AppState } from 'app/store';
 
 @UntilDestroy()
 @Component({
@@ -27,9 +31,17 @@ export class AllUsersHeaderComponent {
 
   constructor(
     private slideIn: SlideIn,
+    private store$: Store<AppState>,
   ) {}
 
   doAdd(): void {
-    this.slideIn.open(UserFormComponent, { wide: true });
+    this.slideIn.open(UserFormComponent, { wide: false }).pipe(
+      filter(({ response }) => response),
+      untilDestroyed(this),
+    ).subscribe({
+      next: () => {
+        this.store$.dispatch(userPageEntered());
+      },
+    });
   }
 }

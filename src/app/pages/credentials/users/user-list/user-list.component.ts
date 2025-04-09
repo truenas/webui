@@ -12,7 +12,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { select, Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { combineLatest, Observable, of } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { filter, map, switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -34,11 +34,11 @@ import { createTable } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { NewUserFormComponent } from 'app/pages/credentials/new-users/new-user-form/new-user-form.component';
+import { UserFormComponent } from 'app/pages/credentials/new-users/user-form/user-form.component';
 import { userPageEntered, userRemoved } from 'app/pages/credentials/users/store/user.actions';
 import { selectUsers, selectUserState, selectUsersTotal } from 'app/pages/credentials/users/store/user.selectors';
 import { UserDetailsRowComponent } from 'app/pages/credentials/users/user-details-row/user-details-row.component';
-import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
+import { OldUserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
 import { userListElements } from 'app/pages/credentials/users/user-list/user-list.elements';
 import { AppState } from 'app/store';
 import { builtinUsersToggled } from 'app/store/preferences/preferences.actions';
@@ -46,7 +46,7 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-user-list',
+  selector: 'ix-old-user-list',
   templateUrl: './user-list.component.html',
   styleUrls: ['./user-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -70,7 +70,7 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
     PageHeaderComponent,
   ],
 })
-export class UserListComponent implements OnInit {
+export class OldUserListComponent implements OnInit {
   protected readonly requiredRoles = [Role.AccountWrite];
   protected readonly searchableElements = userListElements;
 
@@ -178,11 +178,12 @@ export class UserListComponent implements OnInit {
   }
 
   doAdd(): void {
-    this.slideIn.open(UserFormComponent, { wide: true });
+    this.slideIn.open(OldUserFormComponent, { wide: true });
   }
 
   doNewAdd(): void {
-    this.slideIn.open(NewUserFormComponent, { wide: false }).pipe(
+    this.slideIn.open(UserFormComponent, { wide: false }).pipe(
+      filter(({ response }) => response),
       untilDestroyed(this),
     ).subscribe({
       next: () => {

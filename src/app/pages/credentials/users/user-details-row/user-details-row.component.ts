@@ -26,9 +26,9 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { OneTimePasswordCreatedDialog } from 'app/pages/credentials/users/one-time-password-created-dialog/one-time-password-created-dialog.component';
 import {
-  DeleteUserDialog,
+  OldDeleteUserDialog,
 } from 'app/pages/credentials/users/user-details-row/delete-user-dialog/delete-user-dialog.component';
-import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
+import { OldUserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UrlOptionsService } from 'app/services/url-options.service';
 
@@ -126,11 +126,11 @@ export class UserDetailsRowComponent implements OnInit {
   }
 
   doEdit(user: User): void {
-    this.slideIn.open(UserFormComponent, { wide: true, data: user });
+    this.slideIn.open(OldUserFormComponent, { wide: true, data: user });
   }
 
   doDelete(user: User): void {
-    this.matDialog.open(DeleteUserDialog, {
+    this.matDialog.open(OldDeleteUserDialog, {
       data: user,
     })
       .afterClosed()
