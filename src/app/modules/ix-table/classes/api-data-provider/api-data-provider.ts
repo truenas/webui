@@ -61,7 +61,7 @@ export class ApiDataProvider<T extends QueryMethods> extends BaseDataProvider<Ap
     this.emptyType$.pipe(take(1), filter((value) => value !== EmptyType.Loading)).subscribe(() => {
       this.sortingStrategy.handleCurrentPage(this.load.bind(this));
     });
-    this.controlsStateUpdated.emit();
+    this.sortingOrPaginationUpdate.emit();
   }
 
   override setPagination(pagination: TablePagination): void {
@@ -70,7 +70,7 @@ export class ApiDataProvider<T extends QueryMethods> extends BaseDataProvider<Ap
     this.emptyType$.pipe(take(1), filter((value) => value !== EmptyType.Loading)).subscribe(() => {
       this.paginationStrategy.handleCurrentPage(this.load.bind(this));
     });
-    this.controlsStateUpdated.emit();
+    this.sortingOrPaginationUpdate.emit();
   }
 
   protected countRows(): Observable<number> {

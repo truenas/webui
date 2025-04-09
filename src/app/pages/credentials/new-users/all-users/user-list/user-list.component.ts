@@ -1,26 +1,30 @@
-import { SelectionModel } from '@angular/cdk/collections';
+import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
 import {
   Component, ChangeDetectionStrategy,
-  signal, computed, inject,
   output,
   input,
   effect,
 } from '@angular/core';
-import { MatCheckbox } from '@angular/material/checkbox';
-import { Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { injectParams } from 'ngxtension/inject-params';
-import { EmptyType } from 'app/enums/empty-type.enum';
-import { WINDOW } from 'app/helpers/window.helper';
-import { EmptyConfig } from 'app/interfaces/empty-config.interface';
+import { of } from 'rxjs';
+import { roleNames } from 'app/enums/role.enum';
 import { User } from 'app/interfaces/user.interface';
-import { EmptyComponent } from 'app/modules/empty/empty.component';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { EmptyService } from 'app/modules/empty/empty.service';
+import { SearchQuery } from 'app/modules/forms/search-input/types/search-query.interface';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
-import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
-import { UserRowComponent } from 'app/pages/credentials/new-users/all-users/user-list/user-row/user-row.component';
+import { QueryFiltersAndOptionsApiDataProvider } from 'app/modules/ix-table/classes/api-data-provider/query-filters-and-options-data-provider';
+import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
+import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
+import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
+import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
+import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
+import { createTable } from 'app/modules/ix-table/utils';
+import { UsersSearchComponent } from 'app/pages/credentials/new-users/all-users/users-search/users-search.component';
 import { UsersStore } from 'app/pages/credentials/new-users/store/users.store';
+import { UrlOptionsService } from 'app/services/url-options.service';
 
 @UntilDestroy()
 @Component({
@@ -31,66 +35,72 @@ import { UsersStore } from 'app/pages/credentials/new-users/store/users.store';
   standalone: true,
   imports: [
     TranslateModule,
-    EmptyComponent,
-    UserRowComponent,
-    SearchInput1Component,
-    MatCheckbox,
-    FakeProgressBarComponent,
+    AsyncPipe,
+    IxTableBodyComponent,
+    IxTableComponent,
+    IxTableEmptyDirective,
+    IxTableHeadComponent,
+    IxTablePagerComponent,
+    NgTemplateOutlet,
+    UsersSearchComponent,
   ],
 })
 export class UserListComponent {
   readonly userName = injectParams('id');
+  readonly searchQuery = injectParams<SearchQuery<User>>((params) => {
+    return params.searchQuery;
+  });
+
   readonly isMobileView = input<boolean>();
   readonly toggleShowMobileDetails = output<boolean>();
-  protected readonly searchQuery = signal<string>('');
-  protected readonly window = inject<Window>(WINDOW);
-  protected readonly selection = new SelectionModel<string>(true, []);
   protected readonly users = this.usersStore.users;
   protected readonly isLoading = this.usersStore.isLoading;
   protected readonly selectedUser = this.usersStore.selectedUser;
 
-  readonly isSelectedUserVisible = computed(() => {
-    return this.filteredUsers()?.some((user) => user.id === this.selectedUser()?.id);
+  readonly dataProvider = input.required<QueryFiltersAndOptionsApiDataProvider<'user.query'>>();
+
+  protected columns = createTable<User>([
+    textColumn({
+      title: this.translate.instant('Username'),
+      propertyName: 'username',
+    }),
+    textColumn({
+      title: this.translate.instant('UID'),
+      propertyName: 'uid',
+    }),
+    textColumn({
+      title: this.translate.instant('Builtin'),
+      propertyName: 'builtin',
+      getValue: (row) => (row.builtin ? this.translate.instant('Yes') : this.translate.instant('No')),
+    }),
+    textColumn({
+      title: this.translate.instant('Full Name'),
+      propertyName: 'full_name',
+    }),
+    textColumn({
+      title: this.translate.instant('Roles'),
+      getValue: (row) => row.roles
+        .map((role) => this.translate.instant(roleNames.get(role) || role))
+        .join(', ') || this.translate.instant('N/A'),
+    }),
+  ], {
+    uniqueRowTag: (row) => 'user-' + row.username,
+    ariaLabels: (row) => [row.username, this.translate.instant('User')],
   });
 
-  protected readonly filteredUsers = computed(() => {
-    return (this.users() || []).filter((user) => {
-      return user?.username?.toLocaleLowerCase().includes(this.searchQuery().toLocaleLowerCase());
-    });
-  });
-
-  protected readonly emptyConfig = computed<EmptyConfig>(() => {
-    if (this.searchQuery()?.length && !this.filteredUsers()?.length) {
-      return {
-        type: EmptyType.NoSearchResults,
-        title: this.translate.instant('No Search Results.'),
-        message: this.translate.instant('No matching results found'),
-        large: false,
-      };
-    }
-    return {
-      type: EmptyType.NoPageData,
-      title: this.translate.instant('No users found'),
-      message: this.translate.instant('Users will appear here once created.'),
-      large: true,
-    };
-  });
-
-  get isAllSelected(): boolean {
-    return this.selection.selected.length === this.filteredUsers().length;
-  }
-
-  get checkedInstances(): User[] {
-    return this.selection.selected
-      .map((username) => {
-        return this.users().find((user) => user.username === username);
-      })
-      .filter((user) => !!user);
-  }
+  readonly isSelectedUserVisible$ = of(true);
+  // this.dataProvider().currentPage$.pipe(
+  //   filter((users) => {
+  //     const selectedUser = this.selectedUser();
+  //     return users.some((user) => user.username === selectedUser.username);
+  //   }),
+  //   map((users) => Boolean(users.length))
+  // );
 
   constructor(
     private usersStore: UsersStore,
-    private router: Router,
+    protected emptyService: EmptyService,
+    private urlOptionsService: UrlOptionsService,
     private translate: TranslateService,
     private searchDirectives: UiSearchDirectivesService,
   ) {
@@ -112,23 +122,15 @@ export class UserListComponent {
 
   navigateToDetails(user: User): void {
     this.usersStore.selectUser(user.username);
-    this.router.navigate(['/credentials/users-new', 'view', user.username]);
+    this.urlOptionsService.setUrlOptions(`/credentials/users-new/view/${user.username}`, {
+      searchQuery: this.searchQuery(),
+      sorting: this.dataProvider().sorting,
+      pagination: this.dataProvider().pagination,
+    });
 
     if (this.isMobileView()) {
       this.toggleShowMobileDetails.emit(true);
     }
-  }
-
-  toggleAllChecked(checked: boolean): void {
-    if (checked) {
-      this.users().forEach((user) => this.selection.select(user.username));
-    } else {
-      this.selection.clear();
-    }
-  }
-
-  onSearch(query: string): void {
-    this.searchQuery.set(query);
   }
 
   private handlePendingGlobalSearchElement(): void {
@@ -137,5 +139,10 @@ export class UserListComponent {
     if (pendingHighlightElement) {
       this.searchDirectives.get(pendingHighlightElement)?.highlight(pendingHighlightElement);
     }
+  }
+
+  expanded(row: User): void {
+    if (!row || !this.isMobileView()) return;
+    this.toggleShowMobileDetails.emit(true);
   }
 }
