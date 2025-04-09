@@ -100,12 +100,6 @@ export class TruenasConnectModalComponent {
       .subscribe();
   }
 
-  protected generateToken(): void {
-    this.tnc.generateToken()
-      .pipe(untilDestroyed(this))
-      .subscribe();
-  }
-
   protected connect(): void {
     this.tnc.connect()
       .pipe(untilDestroyed(this))
