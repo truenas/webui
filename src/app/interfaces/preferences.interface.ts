@@ -1,16 +1,8 @@
 import { SidenavStatusData } from 'app/interfaces/events/sidenav-status-event.interface';
 
-interface Column {
-  name: string;
-  prop: string;
-  hidden: boolean;
-  maxWidth: number;
-  minWidth: number;
-}
-
 export interface TableDisplayedColumns {
   title: string;
-  cols: Column[];
+  columns: string[];
 }
 
 /**

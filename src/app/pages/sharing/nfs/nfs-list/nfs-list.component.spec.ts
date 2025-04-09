@@ -21,6 +21,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { NfsListComponent } from 'app/pages/sharing/nfs/nfs-list/nfs-list.component';
+import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 const shares: Partial<NfsShare>[] = [
@@ -72,6 +73,10 @@ describe('NfsListComponent', () => {
           {
             selector: selectIsEnterprise,
             value: true,
+          },
+          {
+            selector: selectPreferences,
+            value: {},
           },
         ],
       }),

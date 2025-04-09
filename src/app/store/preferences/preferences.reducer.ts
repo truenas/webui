@@ -40,9 +40,19 @@ export const preferencesReducer = createReducer(
   on(preferencesLoaded, (state, { preferences }) => ({ ...state, preferences, areLoaded: true })),
   on(noPreferencesFound, (state) => ({ ...state, preferences: defaultPreferences, areLoaded: true })),
   on(sidenavUpdated, (state, sidenavStatus) => updatePreferences(state, { sidenavStatus })),
-  on(preferredColumnsUpdated, (state, { columns }) => updatePreferences(state, {
-    tableDisplayedColumns: columns,
-  })),
+  on(preferredColumnsUpdated, (state, { tableDisplayedColumns: newPreferences }) => {
+    const existingPreferences = state.preferences?.tableDisplayedColumns || [];
+    const combinedPreferences = [...existingPreferences, ...newPreferences];
+    const preferencesMap = combinedPreferences.reduce((map, preference) => {
+      map.set(preference.title, preference.columns?.filter(Boolean));
+      return map;
+    }, new Map<string, string[]>());
+    const mergedPreferences = Array.from(preferencesMap.entries()).map(([title, columns]) => ({ title, columns }));
+
+    return updatePreferences(state, {
+      tableDisplayedColumns: mergedPreferences,
+    });
+  }),
   on(shownNewIndicatorKeysUpdated, (state, { keys }) => updatePreferences(state, {
     shownNewFeatureIndicatorKeys: keys,
   })),
