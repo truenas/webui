@@ -1,6 +1,6 @@
 <ix-modal-header
   [title]="'GUI Settings' | translate"
-  [loading]="isFormLoading"
+  [loading]="isFormLoading()"
 ></ix-modal-header>
 
 <mat-card>
@@ -95,7 +95,7 @@
           type="submit"
           color="primary"
           ixTest="save"
-          [disabled]="formGroup.invalid || isFormLoading"
+          [disabled]="formGroup.invalid || isFormLoading()"
         >
           {{ 'Save' | translate }}
         </button>

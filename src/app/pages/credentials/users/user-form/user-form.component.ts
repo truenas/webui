@@ -100,7 +100,7 @@ export enum UserStigPasswordOption {
   ],
 })
 export class UserFormComponent implements OnInit {
-  isFormLoading = false;
+  protected isFormLoading = signal(false);
   subscriptions: Subscription[] = [];
   homeModeOldValue = '';
   protected readonly requiredRoles = [Role.AccountWrite];
@@ -396,14 +396,12 @@ export class UserFormComponent implements OnInit {
             this.snackbar.success(this.translate.instant('User updated'));
             this.store$.dispatch(userChanged({ user }));
           }
-          this.isFormLoading = false;
+          this.isFormLoading.set(false);
           this.slideInRef.close({ response: user, error: null });
-          this.cdr.markForCheck();
         },
         error: (error: unknown) => {
-          this.isFormLoading = false;
+          this.isFormLoading.set(false);
           this.formErrorHandler.handleValidationErrors(error, this.form);
-          this.cdr.markForCheck();
         },
       });
   }
@@ -458,8 +456,7 @@ export class UserFormComponent implements OnInit {
   }
 
   private submitUserRequest(payload: UserUpdate): Observable<User> {
-    this.isFormLoading = true;
-    this.cdr.markForCheck();
+    this.isFormLoading.set(true);
 
     return this.editingUser ? this.getUpdateUserRequest(payload) : this.getCreateUserRequest(payload);
   }

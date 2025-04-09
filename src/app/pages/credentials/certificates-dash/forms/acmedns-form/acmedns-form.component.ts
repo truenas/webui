@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit, signal,
 } from '@angular/core';
 import { UntypedFormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -83,8 +83,9 @@ export class AcmednsFormComponent implements OnInit {
     return this.form.controls.attributes as UntypedFormGroup;
   }
 
-  isLoading = false;
-  isLoadingSchemas = true;
+  protected isLoading = signal(false);
+  protected isLoadingSchemas = signal(true);
+
   dynamicSection: DynamicFormSchema[] = [];
   dnsAuthenticatorList: DnsAuthenticatorList[] = [];
 
@@ -102,9 +103,7 @@ export class AcmednsFormComponent implements OnInit {
     private formBuilder: FormBuilder,
     private errorHandler: ErrorHandlerService,
     private formErrorHandlerService: FormErrorHandlerService,
-    private cdr: ChangeDetectorRef,
     private api: ApiService,
-    private changeDetectorRef: ChangeDetectorRef,
     public slideInRef: SlideInRef<DnsAuthenticator | undefined, boolean>,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
@@ -118,7 +117,7 @@ export class AcmednsFormComponent implements OnInit {
   }
 
   private loadSchemas(): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
     this.getAuthenticatorSchemas()
       .pipe(
         this.errorHandler.withErrorHandler(),
@@ -132,9 +131,8 @@ export class AcmednsFormComponent implements OnInit {
           this.form.patchValue(this.editingAcmedns);
         }
 
-        this.isLoading = false;
-        this.isLoadingSchemas = false;
-        this.changeDetectorRef.detectChanges();
+        this.isLoading.set(false);
+        this.isLoadingSchemas.set(false);
       });
   }
 
@@ -213,7 +211,7 @@ export class AcmednsFormComponent implements OnInit {
       }
     }
 
-    this.isLoading = true;
+    this.isLoading.set(true);
     let request$: Observable<unknown>;
 
     if (this.editingAcmedns) {
@@ -227,13 +225,12 @@ export class AcmednsFormComponent implements OnInit {
 
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
-        this.isLoading = false;
+        this.isLoading.set(false);
         this.slideInRef.close({ response: true, error: null });
       },
       error: (error: unknown) => {
-        this.isLoading = false;
+        this.isLoading.set(false);
         this.formErrorHandlerService.handleValidationErrors(error, this.form);
-        this.cdr.markForCheck();
       },
     });
   }

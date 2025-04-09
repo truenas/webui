@@ -1,5 +1,5 @@
 import {
-  Component, ChangeDetectionStrategy, OnInit, ChangeDetectorRef,
+  Component, ChangeDetectionStrategy, OnInit, ChangeDetectorRef, signal,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -43,7 +43,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 export class JbofFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.JbofWrite];
 
-  isFormLoading = false;
+  protected isFormLoading = signal(false);
   protected editingJbof: Jbof | undefined;
 
   form = this.fb.group({
@@ -87,7 +87,7 @@ export class JbofFormComponent implements OnInit {
   onSubmit(): void {
     const values = this.form.value as JbofUpdate;
 
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
     let request$: Observable<unknown>;
     if (this.editingJbof) {
       request$ = this.api.call('jbof.update', [this.editingJbof.id, values]);
@@ -97,14 +97,12 @@ export class JbofFormComponent implements OnInit {
 
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
-        this.isFormLoading = false;
-        this.cdr.markForCheck();
+        this.isFormLoading.set(false);
         this.slideInRef.close({ response: true, error: null });
       },
       error: (error: unknown) => {
-        this.isFormLoading = false;
+        this.isFormLoading.set(false);
         this.errorHandler.handleValidationErrors(error, this.form);
-        this.cdr.markForCheck();
       },
     });
   }

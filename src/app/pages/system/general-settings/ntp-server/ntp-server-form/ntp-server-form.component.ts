@@ -1,5 +1,6 @@
 import {
   Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit,
+  signal,
 } from '@angular/core';
 import { Validators, FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -46,7 +47,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 export class NtpServerFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.NetworkGeneralWrite];
 
-  isFormLoading = false;
+  protected isFormLoading = signal(false);
   protected editingServer: NtpServer | undefined;
 
   formGroup = this.fb.nonNullable.group({
@@ -123,7 +124,7 @@ export class NtpServerFormComponent implements OnInit {
       force: values.force,
     };
 
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
     let request$: Observable<unknown>;
     if (this.editingServer) {
       request$ = this.api.call('system.ntpserver.update', [this.editingServer.id, body]);
@@ -133,13 +134,11 @@ export class NtpServerFormComponent implements OnInit {
 
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
-        this.isFormLoading = false;
-        this.cdr.markForCheck();
+        this.isFormLoading.set(false);
         this.slideInRef.close({ response: true, error: null });
       },
       error: (error: unknown) => {
-        this.isFormLoading = false;
-        this.cdr.markForCheck();
+        this.isFormLoading.set(false);
         this.errorHandler.handleValidationErrors(error, this.formGroup);
       },
     });

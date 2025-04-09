@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -74,7 +74,7 @@ export class ScrubTaskFormComponent implements OnInit {
     enabled: [true],
   });
 
-  isLoading = false;
+  protected isLoading = signal(false);
 
   poolOptions$ = this.api.call('pool.query').pipe(
     map((pools) => {
@@ -121,7 +121,7 @@ export class ScrubTaskFormComponent implements OnInit {
       schedule: crontabToSchedule(this.form.getRawValue().schedule),
     };
 
-    this.isLoading = true;
+    this.isLoading.set(true);
     let request$: Observable<unknown>;
     if (this.editingTask) {
       request$ = this.api.call('pool.scrub.update', [
@@ -139,13 +139,12 @@ export class ScrubTaskFormComponent implements OnInit {
         } else {
           this.snackbar.success(this.translate.instant('Task updated'));
         }
-        this.isLoading = false;
+        this.isLoading.set(false);
         this.slideInRef.close({ response: true, error: null });
       },
       error: (error: unknown) => {
-        this.isLoading = false;
+        this.isLoading.set(false);
         this.errorHandler.handleValidationErrors(error, this.form);
-        this.cdr.markForCheck();
       },
     });
   }

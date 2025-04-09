@@ -1,6 +1,6 @@
 <mat-card class="card" [ixUiSearch]="searchableElements.elements.failover">
   <mat-card-content>
-    @if (isLoading) {
+    @if (isLoading()) {
       <mat-progress-bar mode="indeterminate"></mat-progress-bar>
     }
 
@@ -33,7 +33,7 @@
           type="submit"
           color="primary"
           ixTest="save"
-          [disabled]="form.invalid || isLoading"
+          [disabled]="form.invalid || isLoading()"
         >
           {{ submitButtonText$ | async }}
         </button>
@@ -43,7 +43,7 @@
           mat-button
           type="button"
           ixTest="sync-to-peer"
-          [disabled]="isLoading"
+          [disabled]="isLoading()"
           [ixUiSearch]="searchableElements.elements.syncToPeer"
           (click)="onSyncToPeerPressed()"
         >
@@ -55,7 +55,7 @@
           mat-button
           type="button"
           ixTest="sync-from-peer"
-          [disabled]="isLoading"
+          [disabled]="isLoading()"
           [ixUiSearch]="searchableElements.elements.syncFromPeer"
           (click)="onSyncFromPeerPressed()"
         >
