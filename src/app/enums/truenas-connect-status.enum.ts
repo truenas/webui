@@ -32,5 +32,5 @@ export const TruenasConnectStatusReason: Record<TruenasConnectStatus, string> = 
   [TruenasConnectStatus.CertRenewalInProgress]: T('Certificate renewal is in progress'),
   [TruenasConnectStatus.CertRenewalFailure]: T('Failed to renew certificate'),
   [TruenasConnectStatus.CertRenewalSuccess]: T('Certificate renewal was successful'),
-  [TruenasConnectStatus.Configured]: T('TrueNAS Connect is configured'),
+  [TruenasConnectStatus.Configured]: T('TrueNAS Connect is active'),
 };

@@ -12,7 +12,7 @@
     } @else {
     <ix-icon class="status-pending" name="pending"></ix-icon>
     }
-    <span>{{ tnc.config()?.status }}</span>
+    <span>{{ tnc.config()?.status === TruenasConnectStatus.Configured ?  'ACTIVE' : tnc.config()?.status }}</span>
   </div>
   <div id="error">
     {{ tnc.config()?.status_reason }}
