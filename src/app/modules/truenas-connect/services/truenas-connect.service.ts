@@ -1,8 +1,9 @@
 import { Inject, Injectable, signal } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import {
-  filter, map, merge, Observable, tap,
+  filter, map, merge, Observable, switchMap, tap,
 } from 'rxjs';
+import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { TruenasConnectConfig, TruenasConnectUpdate } from 'app/interfaces/truenas-connect-config.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
@@ -77,11 +78,16 @@ export class TruenasConnectService {
       );
   }
 
-  connect(): Observable<string> {
+  connect(): Observable<TruenasConnectConfig> {
     return this.api.call('tn_connect.get_registration_uri')
       .pipe(
         tap((url) => {
           this.window.open(url);
+        }),
+        switchMap(() => {
+          return this.config$.pipe(
+            filter((config: TruenasConnectConfig) => config.status === TruenasConnectStatus.Configured),
+          );
         }),
         this.loader.withLoader(),
         this.errorHandler.withErrorHandler(),

@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Inject,
+  ChangeDetectionStrategy, Component, computed, Inject,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
@@ -9,7 +9,7 @@ import {
 import { MatDivider } from '@angular/material/divider';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { TruenasConnectStatus, TruenasConnectStatusReason } from 'app/enums/truenas-connect-status.enum';
+import { TncStatus, TruenasConnectStatus, TruenasConnectStatusReason } from 'app/enums/truenas-connect-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -37,6 +37,31 @@ import { TruenasConnectService } from 'app/modules/truenas-connect/services/true
 export class TruenasConnectStatusModalComponent {
   readonly TruenasConnectStatus = TruenasConnectStatus;
   readonly TruenasConnectStatusReason = TruenasConnectStatusReason;
+  readonly TncStatus = TncStatus;
+
+  protected status = computed(() => {
+    switch (this.tnc.config()?.status) {
+      case TruenasConnectStatus.Configured:
+        return TncStatus.Active;
+      case TruenasConnectStatus.ClaimTokenMissing:
+      case TruenasConnectStatus.RegistrationFinalizationWaiting:
+        return TncStatus.Waiting;
+      case TruenasConnectStatus.RegistrationFinalizationSuccess:
+      case TruenasConnectStatus.CertGenerationInProgress:
+      case TruenasConnectStatus.CertGenerationSuccess:
+      case TruenasConnectStatus.CertRenewalInProgress:
+      case TruenasConnectStatus.CertRenewalSuccess:
+        return TncStatus.Connecting;
+      case TruenasConnectStatus.RegistrationFinalizationFailed:
+      case TruenasConnectStatus.RegistrationFinalizationTimeout:
+      case TruenasConnectStatus.CertGenerationFailed:
+      case TruenasConnectStatus.CertConfigurationFailure:
+      case TruenasConnectStatus.CertRenewalFailure:
+        return TncStatus.Failed;
+      default:
+        return TncStatus.Disabled;
+    }
+  });
 
   constructor(
     @Inject(WINDOW) private window: Window,
