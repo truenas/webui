@@ -9,7 +9,7 @@ import {
 import { MatDivider } from '@angular/material/divider';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
+import { TruenasConnectStatus, TruenasConnectStatusReason } from 'app/enums/truenas-connect-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -36,6 +36,7 @@ import { TruenasConnectService } from 'app/modules/truenas-connect/services/true
 })
 export class TruenasConnectStatusModalComponent {
   readonly TruenasConnectStatus = TruenasConnectStatus;
+  readonly TruenasConnectStatusReason = TruenasConnectStatusReason;
 
   constructor(
     @Inject(WINDOW) private window: Window,

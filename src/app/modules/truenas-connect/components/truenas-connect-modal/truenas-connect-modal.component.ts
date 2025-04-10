@@ -71,16 +71,6 @@ export class TruenasConnectModalComponent {
         this.form.disable();
       }
     });
-
-    const generateTokenEffect = effect(() => {
-      if (this.tnc.config()?.status === TruenasConnectStatus.ClaimTokenMissing) {
-        this.tnc.generateToken()
-          .pipe(untilDestroyed(this))
-          .subscribe(() => {
-            generateTokenEffect.destroy();
-          });
-      }
-    });
   }
 
   protected save(): void {

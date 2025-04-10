@@ -1,4 +1,4 @@
-import { TruenasConnectStatus, TruenasConnectStatusReason } from 'app/enums/truenas-connect-status.enum';
+import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 
 export interface TruenasConnectConfig extends TruenasConnectUpdate {
   id: number;
@@ -12,7 +12,7 @@ export interface TruenasConnectConfig extends TruenasConnectUpdate {
     iss: string;
   };
   status: TruenasConnectStatus;
-  status_reason: typeof TruenasConnectStatusReason;
+  status_reason: string;
   certificate: number;
 }
 

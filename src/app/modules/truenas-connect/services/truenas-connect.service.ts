@@ -1,9 +1,8 @@
 import { Inject, Injectable, signal } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import {
-  filter, map, merge, Observable, switchMap, tap,
+  filter, map, merge, Observable, tap,
 } from 'rxjs';
-import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { TruenasConnectConfig, TruenasConnectUpdate } from 'app/interfaces/truenas-connect-config.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
@@ -54,11 +53,6 @@ export class TruenasConnectService {
     return this.api.call('tn_connect.update', [payload])
       .pipe(
         this.loader.withLoader(),
-        switchMap(() => {
-          return this.config$.pipe(
-            filter((configRes: TruenasConnectConfig) => configRes.status === TruenasConnectStatus.Disabled),
-          );
-        }),
         this.errorHandler.withErrorHandler(),
       );
   }
@@ -79,33 +73,15 @@ export class TruenasConnectService {
     }])
       .pipe(
         this.loader.withLoader(),
-        filter((configRes) => {
-          return configRes.status === TruenasConnectStatus.ClaimTokenMissing;
-        }),
-        switchMap(() => {
-          return this.api.call('tn_connect.generate_claim_token');
-        }),
-        switchMap(() => {
-          return this.config$.pipe(
-            filter((configRes: TruenasConnectConfig) => {
-              return configRes.status === TruenasConnectStatus.RegistrationFinalizationWaiting;
-            }),
-          );
-        }),
         this.errorHandler.withErrorHandler(),
       );
   }
 
-  connect(): Observable<TruenasConnectConfig> {
+  connect(): Observable<string> {
     return this.api.call('tn_connect.get_registration_uri')
       .pipe(
         tap((url) => {
           this.window.open(url);
-        }),
-        switchMap(() => {
-          return this.config$.pipe(
-            filter((config: TruenasConnectConfig) => config.status === TruenasConnectStatus.Configured),
-          );
         }),
         this.loader.withLoader(),
         this.errorHandler.withErrorHandler(),
