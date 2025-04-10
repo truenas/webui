@@ -23,14 +23,14 @@ export interface AllowedAccessConfig {
   shellAccess: boolean;
 }
 
-export interface NewUserFormState {
+export interface UserFormState {
   isStigMode: boolean;
   nextUid: number;
   userConfig: UserUpdate;
   setupDetails: UserFormSetupDetails;
 }
 
-const initialState: NewUserFormState = {
+const initialState: UserFormState = {
   isStigMode: false,
   nextUid: null as number,
   userConfig: null,
@@ -47,7 +47,7 @@ const initialState: NewUserFormState = {
 };
 
 @Injectable()
-export class UserFormStore extends ComponentStore<NewUserFormState> {
+export class UserFormStore extends ComponentStore<UserFormState> {
   readonly isStigMode = computed(() => this.state().isStigMode);
   readonly nextUid = computed(() => this.state().nextUid);
 

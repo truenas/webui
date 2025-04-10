@@ -10,7 +10,7 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { UserFormStore } from 'app/pages/credentials/new-users/new-user-form/new-user.store';
+import { UserFormStore } from 'app/pages/credentials/new-users/user-form/user.store';
 
 @UntilDestroy()
 @Component({
