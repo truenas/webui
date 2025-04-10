@@ -5,6 +5,7 @@ import { ComponentStore } from '@ngrx/component-store';
 import { of, switchMap, tap } from 'rxjs';
 import { catchError, map, startWith } from 'rxjs/operators';
 import { CollectionChangeType } from 'app/enums/api.enum';
+import { QueryParams } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -41,8 +42,11 @@ export class UsersStore extends ComponentStore<UsersState> {
   readonly initialize = this.effect((trigger$) => {
     return trigger$.pipe(
       switchMap(() => {
+        const params = [[['OR', [['builtin', '=', false], ['username', '=', 'root']]]]] as QueryParams<User>;
+
         this.patchState({ isLoading: true });
-        return this.api.call('user.query').pipe(
+
+        return this.api.call('user.query', params).pipe(
           switchMap((users: User[]) => this.api.subscribe('user.query').pipe(
             startWith(null),
             map((event) => {
@@ -93,6 +97,13 @@ export class UsersStore extends ComponentStore<UsersState> {
     }
 
     this.patchState({ selectedUser });
+  }
+
+  userCreated(user: User): void {
+    const users = this.users();
+    if (!users.find((existingUser) => existingUser.username === user.username)) {
+      this.patchState({ users: [...users, user] });
+    }
   }
 
   resetSelectedUser(): void {
