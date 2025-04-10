@@ -19,6 +19,7 @@ const dummyUser = {
   uid: 0,
   username: 'test-user',
   smbhash: '',
+  local: true,
   home: '/test-user',
   shell: '/usr/bin/zsh',
   full_name: 'test-user',
@@ -85,6 +86,13 @@ describe('UserDetailHeaderComponent', () => {
       OldUserFormComponent,
       { wide: true, data: dummyUser },
     );
+  });
+
+  it('does not show Edit button for local users', async () => {
+    spectator.setInput('user', { ...dummyUser, local: false });
+
+    const editButton = await loader.getHarnessOrNull(MatButtonHarness.with({ text: 'Edit' }));
+    expect(editButton).toBeNull();
   });
 
   it('does not show Delete button for an immutable user', async () => {
