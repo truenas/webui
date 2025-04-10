@@ -63,7 +63,7 @@ describe('TruenasConnectStatusModalComponent', () => {
     const openSpy = jest.spyOn(spectator.inject<Window>(WINDOW), 'open');
     const openBtn = await loader.getHarness(
       MatButtonHarness.with({
-        text: 'Open',
+        text: 'Open TrueNAS Connect',
       }),
     );
     await openBtn.click();
