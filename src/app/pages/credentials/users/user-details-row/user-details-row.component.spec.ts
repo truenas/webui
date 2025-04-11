@@ -32,6 +32,7 @@ const dummyUser = {
   home: '/test-user',
   shell: '/usr/bin/zsh',
   full_name: 'test-user',
+  local: true,
   builtin: false,
   smb: false,
   password_disabled: false,
