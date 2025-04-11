@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonToggleChange, MatButtonToggleModule } from '@angular/material/button-toggle';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { Nfs3Session, Nfs4Session, NfsType } from 'app/interfaces/nfs-share.interface';
@@ -12,6 +13,7 @@ import {
   IxTableColumnsSelectorComponent,
 } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { NfsSessionListComponent } from './nfs-session-list.component';
 
 describe('NfsSessionListComponent', () => {
@@ -57,6 +59,14 @@ describe('NfsSessionListComponent', () => {
         mockCall('nfs.get_nfs3_clients', nfs3Sessions),
         mockCall('nfs.get_nfs4_clients', nfs4Sessions),
       ]),
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectPreferences,
+            value: {},
+          },
+        ],
+      }),
     ],
   });
 
