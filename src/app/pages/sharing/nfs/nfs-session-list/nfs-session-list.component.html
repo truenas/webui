@@ -40,6 +40,7 @@
 
 <ng-template #nfsColumnsSelector let-dataProvider="dataProvider" let-columns="columns">
   <ix-table-columns-selector
+    [columnPreferencesKey]="'nfsSessionList'"
     [columns]="columns"
     (columnsChange)="columnsChange($event)"
   ></ix-table-columns-selector>

@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { SmbNotificationInfo } from 'app/interfaces/smb-status.interface';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
@@ -11,6 +12,7 @@ import {
   IxTableColumnsSelectorComponent,
 } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
 import { SmbNotificationListComponent } from 'app/pages/sharing/smb/smb-status/components/smb-notification-list/smb-notification-list.component';
+import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 
 describe('SmbNotificationListComponent', () => {
   let spectator: Spectator<SmbNotificationListComponent>;
@@ -36,7 +38,17 @@ describe('SmbNotificationListComponent', () => {
       SearchInput1Component,
       IxTableColumnsSelectorComponent,
     ],
-    providers: [mockApi([mockCall('smb.status', notifications)])],
+    providers: [
+      mockApi([mockCall('smb.status', notifications)]),
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectPreferences,
+            value: {},
+          },
+        ],
+      }),
+    ],
   });
 
   beforeEach(async () => {

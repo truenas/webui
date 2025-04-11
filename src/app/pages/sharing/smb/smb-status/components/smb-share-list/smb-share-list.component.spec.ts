@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { SmbShareInfo } from 'app/interfaces/smb-status.interface';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
@@ -10,6 +11,7 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import {
   IxTableColumnsSelectorComponent,
 } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
+import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { SmbShareListComponent } from './smb-share-list.component';
 
 describe('SmbShareListComponent', () => {
@@ -41,7 +43,17 @@ describe('SmbShareListComponent', () => {
       SearchInput1Component,
       IxTableColumnsSelectorComponent,
     ],
-    providers: [mockApi([mockCall('smb.status', shares)])],
+    providers: [
+      mockApi([mockCall('smb.status', shares)]),
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectPreferences,
+            value: {},
+          },
+        ],
+      }),
+    ],
   });
 
   beforeEach(async () => {
