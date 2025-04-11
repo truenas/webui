@@ -13,9 +13,9 @@
     } @else if (status() === TncStatus.Connecting) {
       <ix-icon class="status-connecting" name="pending"></ix-icon>
     }
-    <span>{{ status() }}</span>
+    <span ixTest="tnc-status">{{ status() }}</span>
   </div>
-  <div id="error">
+  <div ixTest="tnc-status-reason">
     {{ TruenasConnectStatusReason[tnc.config().status] | translate }}
   </div>
 </mat-dialog-content>
