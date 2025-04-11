@@ -17,4 +17,8 @@
   &.status-disabled {
     color: var(--grey);
   }
+
+  &.status-connecting {
+    color: var(--blue);
+  }
 }

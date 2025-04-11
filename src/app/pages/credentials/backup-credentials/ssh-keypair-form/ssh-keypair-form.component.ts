@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal,
 } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
@@ -67,7 +67,7 @@ export class SshKeypairFormComponent implements OnInit {
     return !this.editingKeypair;
   }
 
-  isFormLoading = false;
+  protected isFormLoading = signal(false);
 
   protected editingKeypair: KeychainSshKeyPair | undefined;
 
@@ -154,7 +154,7 @@ export class SshKeypairFormComponent implements OnInit {
       },
     };
 
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
     let request$: Observable<unknown>;
     if (this.editingKeypair) {
       request$ = this.api.call('keychaincredential.update', [
@@ -176,14 +176,12 @@ export class SshKeypairFormComponent implements OnInit {
           this.snackbar.success(this.translate.instant('SSH Keypair updated'));
         }
 
-        this.isFormLoading = false;
-        this.cdr.markForCheck();
+        this.isFormLoading.set(false);
         this.slideInRef.close({ response: true, error: null });
       },
       error: (error: unknown) => {
-        this.isFormLoading = false;
+        this.isFormLoading.set(false);
         this.formErrorHandler.handleValidationErrors(error, this.form);
-        this.cdr.markForCheck();
       },
     });
   }

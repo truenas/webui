@@ -1,5 +1,6 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit,
+  signal,
 } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -96,7 +97,7 @@ export class ExtentFormComponent implements OnInit {
     ro: [false],
   });
 
-  isLoading = false;
+  protected isLoading = signal(false);
   protected editingExtent: IscsiExtent | undefined;
 
   private extentDiskBeingEdited$ = new BehaviorSubject<Option | undefined>(undefined);
@@ -134,7 +135,6 @@ export class ExtentFormComponent implements OnInit {
     private translate: TranslateService,
     private formBuilder: FormBuilder,
     private errorHandler: FormErrorHandlerService,
-    private cdr: ChangeDetectorRef,
     private api: ApiService,
     private filesystemService: FilesystemService,
     public slideInRef: SlideInRef<IscsiExtent | undefined, boolean>,
@@ -185,7 +185,7 @@ export class ExtentFormComponent implements OnInit {
       values.filesize = Number(values.filesize) + (values.blocksize - Number(values.filesize) % values.blocksize);
     }
 
-    this.isLoading = true;
+    this.isLoading.set(true);
     let request$: Observable<unknown>;
     if (this.editingExtent) {
       request$ = this.api.call('iscsi.extent.update', [
@@ -198,13 +198,12 @@ export class ExtentFormComponent implements OnInit {
 
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
-        this.isLoading = false;
+        this.isLoading.set(false);
         this.slideInRef.close({ response: true, error: null });
       },
       error: (error: unknown) => {
-        this.isLoading = false;
+        this.isLoading.set(false);
         this.errorHandler.handleValidationErrors(error, this.form);
-        this.cdr.markForCheck();
       },
     });
   }

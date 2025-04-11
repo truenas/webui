@@ -18,7 +18,7 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { UserFormStore } from 'app/pages/credentials/new-users/new-user-form/new-user.store';
+import { UserFormStore } from 'app/pages/credentials/new-users/user-form/user.store';
 import { FilesystemService } from 'app/services/filesystem.service';
 
 @UntilDestroy()

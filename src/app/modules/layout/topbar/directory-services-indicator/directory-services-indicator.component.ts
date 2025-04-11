@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit,
+  ChangeDetectionStrategy, Component, OnDestroy, OnInit, signal,
 } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatDialog, MatDialogRef, MatDialogState } from '@angular/material/dialog';
@@ -35,9 +35,9 @@ import { ApiService } from 'app/modules/websocket/api.service';
   ],
 })
 export class DirectoryServicesIndicatorComponent implements OnInit, OnDestroy {
-  tooltips = helptextTopbar.mat_tooltips;
+  protected tooltips = helptextTopbar.mat_tooltips;
 
-  isIconShown = false;
+  protected isIconShown = signal(false);
 
   private servicesMonitorRef: MatDialogRef<DirectoryServicesMonitorComponent>;
   private statusSubscription: Subscription;
@@ -45,7 +45,6 @@ export class DirectoryServicesIndicatorComponent implements OnInit, OnDestroy {
   constructor(
     private api: ApiService,
     private matDialog: MatDialog,
-    private cdr: ChangeDetectorRef,
     private auth: AuthService,
   ) { }
 
@@ -92,9 +91,9 @@ export class DirectoryServicesIndicatorComponent implements OnInit, OnDestroy {
   }
 
   updateIconVisibility(servicesState: DirectoryServicesState): void {
-    this.isIconShown = Object.values(servicesState).some((service: DirectoryServiceState) => {
+    const anyServiceEnabled = Object.values(servicesState).some((service: DirectoryServiceState) => {
       return service !== DirectoryServiceState.Disabled;
     });
-    this.cdr.markForCheck();
+    this.isIconShown.set(anyServiceEnabled);
   }
 }

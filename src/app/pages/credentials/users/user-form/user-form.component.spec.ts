@@ -25,13 +25,13 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { OneTimePasswordCreatedDialog } from 'app/pages/credentials/users/one-time-password-created-dialog/one-time-password-created-dialog.component';
 import { selectUsers } from 'app/pages/credentials/users/store/user.selectors';
+import { OldUserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
 import { DownloadService } from 'app/services/download.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { StorageService } from 'app/services/storage.service';
 import { UserService } from 'app/services/user.service';
-import { UserFormComponent } from './user-form.component';
 
-describe('UserFormComponent', () => {
+describe('OldUserFormComponent', () => {
   const mockGroups = [{
     id: 101,
     group: 'test-group',
@@ -63,7 +63,7 @@ describe('UserFormComponent', () => {
     immutable: false,
   } as User;
   const builtinUser = { ...mockUser, builtin: true, immutable: true };
-  let spectator: Spectator<UserFormComponent>;
+  let spectator: Spectator<OldUserFormComponent>;
   let loader: HarnessLoader;
   let api: ApiService;
 
@@ -74,7 +74,7 @@ describe('UserFormComponent', () => {
   };
 
   const createComponent = createComponentFactory({
-    component: UserFormComponent,
+    component: OldUserFormComponent,
     imports: [
       ReactiveFormsModule,
       IxPermissionsComponent,

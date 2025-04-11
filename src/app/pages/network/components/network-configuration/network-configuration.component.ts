@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal,
 } from '@angular/core';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -38,8 +38,8 @@ import { systemInfoUpdated } from 'app/store/system-info/system-info.actions';
 @UntilDestroy()
 @Component({
   selector: 'ix-network-configuration',
-  templateUrl: './configuration.component.html',
-  styleUrls: ['./configuration.component.scss'],
+  templateUrl: './network-configuration.component.html',
+  styleUrls: ['./network-configuration.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
@@ -62,7 +62,7 @@ import { systemInfoUpdated } from 'app/store/system-info/system-info.actions';
 export class NetworkConfigurationComponent implements OnInit {
   protected readonly requiredRoles = [Role.NetworkGeneralWrite];
 
-  isFormLoading = false;
+  protected isFormLoading = signal(false);
 
   form = this.fb.group({
     hostname: ['', Validators.required],
@@ -235,7 +235,7 @@ export class NetworkConfigurationComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
     this.loadConfig();
 
     this.form.controls.outbound_network_activity.valueChanges.pipe(untilDestroyed(this)).subscribe(
@@ -302,13 +302,11 @@ export class NetworkConfigurationComponent implements OnInit {
           }
 
           this.form.patchValue(transformed);
-          this.isFormLoading = false;
-          this.cdr.markForCheck();
+          this.isFormLoading.set(false);
         },
         error: (error: unknown) => {
           this.errorHandler.showErrorModal(error);
-          this.isFormLoading = false;
-          this.cdr.markForCheck();
+          this.isFormLoading.set(false);
         },
       });
   }
@@ -349,20 +347,18 @@ export class NetworkConfigurationComponent implements OnInit {
       service_announcement: serviceAnnouncement,
     };
 
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
     this.api.call('network.configuration.update', [params] as [NetworkConfigurationUpdate])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
-          this.isFormLoading = false;
+          this.isFormLoading.set(false);
           this.store$.dispatch(systemInfoUpdated());
-          this.cdr.markForCheck();
           this.slideInRef.close({ response: true, error: null });
         },
         error: (error: unknown) => {
-          this.isFormLoading = false;
+          this.isFormLoading.set(false);
           this.formErrorHandler.handleValidationErrors(error, this.form);
-          this.cdr.markForCheck();
         },
       });
   }

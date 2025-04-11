@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit, signal,
 } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -52,6 +52,7 @@ import { isPropertyInherited, isRootDataset } from 'app/pages/datasets/utils/dat
 export class DatasetCapacitySettingsComponent implements OnInit {
   protected readonly requiredRoles = [Role.DatasetWrite];
 
+  readonly isLoading = signal(false);
   readonly defaultQuotaWarning = 80;
   readonly defaultQuotaCritical = 95;
 
@@ -90,7 +91,6 @@ export class DatasetCapacitySettingsComponent implements OnInit {
     reservation: [null as number | null],
   });
 
-  isLoading = false;
   protected dataset: DatasetDetails | undefined;
 
   readonly helptext = helptextDatasetForm;
@@ -107,7 +107,6 @@ export class DatasetCapacitySettingsComponent implements OnInit {
     private api: ApiService,
     private formBuilder: NonNullableFormBuilder,
     public formatter: IxFormatterService,
-    private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
     private snackbarService: SnackbarService,
     private translate: TranslateService,
@@ -161,29 +160,25 @@ export class DatasetCapacitySettingsComponent implements OnInit {
       reservation: dataset.reservation.parsed,
     };
     this.form.patchValue(this.oldValues);
-    this.cdr.markForCheck();
   }
 
   onSubmit(): void {
-    this.isLoading = true;
-    this.cdr.markForCheck();
+    this.isLoading.set(true);
     const payload = this.getChangedFormValues();
 
     this.api.call('pool.dataset.update', [this.dataset.id, payload])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
-          this.isLoading = false;
+          this.isLoading.set(false);
           this.snackbarService.success(
             this.translate.instant('Dataset settings updated.'),
           );
           this.slideInRef.close({ response: true, error: null });
-          this.cdr.markForCheck();
         },
         error: (error: unknown) => {
           this.errorHandler.handleValidationErrors(error, this.form);
-          this.isLoading = false;
-          this.cdr.markForCheck();
+          this.isLoading.set(false);
         },
       });
   }

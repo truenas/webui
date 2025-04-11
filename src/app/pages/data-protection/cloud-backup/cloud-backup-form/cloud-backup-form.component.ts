@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit, signal,
 } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -115,7 +115,7 @@ export class CloudBackupFormComponent implements OnInit {
     bucket_input: ['', [Validators.required]],
   });
 
-  isLoading = false;
+  protected isLoading = signal(false);
   editingTask: CloudBackup | undefined;
 
   bucketOptions$ = of<SelectOption[]>([]);
@@ -139,7 +139,6 @@ export class CloudBackupFormComponent implements OnInit {
     private translate: TranslateService,
     private fb: FormBuilder,
     private api: ApiService,
-    private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
     private snackbar: SnackbarService,
     private filesystemService: FilesystemService,
@@ -169,7 +168,7 @@ export class CloudBackupFormComponent implements OnInit {
   }
 
   loadBucketOptions(credentialId: number): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
     this.cloudCredentialService.getBuckets(credentialId)
       .pipe(untilDestroyed(this))
       .subscribe({
@@ -181,14 +180,12 @@ export class CloudBackupFormComponent implements OnInit {
           }));
           bucketOptions.unshift(this.newBucketOption);
           this.bucketOptions$ = of(bucketOptions);
-          this.isLoading = false;
+          this.isLoading.set(false);
           this.form.controls.bucket.enable();
           this.form.controls.bucket_input.disable();
-          this.cdr.markForCheck();
         },
         error: (error: unknown) => {
           console.error(error);
-          this.isLoading = false;
           this.bucketOptions$ = of([this.newBucketOption]);
           this.bucketOptions$ = of([
             {
@@ -196,7 +193,7 @@ export class CloudBackupFormComponent implements OnInit {
               value: 'whatever',
               disabled: false,
             }]);
-          this.cdr.markForCheck();
+          this.isLoading.set(false);
         },
       });
   }
@@ -259,7 +256,7 @@ export class CloudBackupFormComponent implements OnInit {
     const payload = this.prepareData(this.form.value);
     let request$ = this.api.call('cloud_backup.create', [payload]);
 
-    this.isLoading = true;
+    this.isLoading.set(true);
 
     if (this.editingTask) {
       request$ = this.api.call('cloud_backup.update', [this.editingTask.id, payload]);
@@ -272,14 +269,12 @@ export class CloudBackupFormComponent implements OnInit {
         } else {
           this.snackbar.success(this.translate.instant('Task updated'));
         }
-        this.isLoading = false;
-        this.cdr.markForCheck();
+        this.isLoading.set(false);
         this.slideInRef.close({ response, error: null });
       },
       error: (error: unknown) => {
-        this.isLoading = false;
+        this.isLoading.set(false);
         this.errorHandler.handleValidationErrors(error, this.form);
-        this.cdr.markForCheck();
       },
     });
   }

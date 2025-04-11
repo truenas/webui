@@ -1,7 +1,6 @@
 import { NestedTreeControl } from '@angular/cdk/tree';
-import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, OnInit, ChangeDetectorRef,
+  ChangeDetectionStrategy, Component, OnInit, signal,
 } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -12,7 +11,6 @@ import { MatList, MatListItem } from '@angular/material/list';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { BehaviorSubject } from 'rxjs';
 import { filter, tap } from 'rxjs/operators';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
@@ -71,7 +69,6 @@ export interface BootPoolActionEvent {
     IxIconComponent,
     TranslateModule,
     FormatDateTimePipe,
-    AsyncPipe,
     TreeViewComponent,
     TreeNodeComponent,
     TreeNodeDefDirective,
@@ -83,7 +80,7 @@ export interface BootPoolActionEvent {
 export class BootStatusListComponent implements OnInit {
   protected readonly searchableElements = bootEnvStatusElements;
 
-  isLoading$ = new BehaviorSubject(false);
+  protected isLoading = signal(false);
   dataSource: NestedTreeDataSource<DeviceNestedDataNode>;
   treeControl = new NestedTreeControl<DeviceNestedDataNode, string>((vdev) => vdev.children, {
     trackBy: (vdev) => vdev.guid,
@@ -109,7 +106,6 @@ export class BootStatusListComponent implements OnInit {
     private loader: LoaderService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
-    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
@@ -118,19 +114,17 @@ export class BootStatusListComponent implements OnInit {
 
   loadPoolInstance(): void {
     this.api.call('boot.get_state').pipe(
-      tap(() => this.isLoading$.next(true)),
+      tap(() => this.isLoading.set(true)),
       untilDestroyed(this),
     ).subscribe({
       next: (poolInstance) => {
         this.poolInstance = poolInstance;
         this.createDataSource(poolInstance);
         this.openGroupNodes();
-        this.isLoading$.next(false);
-        this.cdr.markForCheck();
+        this.isLoading.set(false);
       },
       error: (error: unknown) => {
-        this.isLoading$.next(false);
-        this.cdr.markForCheck();
+        this.isLoading.set(false);
         this.errorHandler.showErrorModal(error);
       },
     });

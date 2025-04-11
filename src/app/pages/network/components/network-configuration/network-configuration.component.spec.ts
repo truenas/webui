@@ -17,7 +17,7 @@ import { LanguageService } from 'app/modules/language/language.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { NetworkConfigurationComponent } from 'app/pages/network/components/configuration/configuration.component';
+import { NetworkConfigurationComponent } from 'app/pages/network/components/network-configuration/network-configuration.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
 
 describe('NetworkConfigurationComponent', () => {

@@ -18,6 +18,15 @@ export enum TruenasConnectStatus {
 }
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
+export const TncStatus = {
+  Disabled: T('DISABLED'),
+  Waiting: T('WAITING'),
+  Connecting: T('CONNECTING'),
+  Active: T('ACTIVE'),
+  Failed: T('FAILED'),
+};
+
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export const TruenasConnectStatusReason: Record<TruenasConnectStatus, string> = {
   [TruenasConnectStatus.Disabled]: T('TrueNAS Connect is disabled'),
   [TruenasConnectStatus.ClaimTokenMissing]: T('Waiting for claim token to be generated'),
@@ -32,5 +41,5 @@ export const TruenasConnectStatusReason: Record<TruenasConnectStatus, string> = 
   [TruenasConnectStatus.CertRenewalInProgress]: T('Certificate renewal is in progress'),
   [TruenasConnectStatus.CertRenewalFailure]: T('Failed to renew certificate'),
   [TruenasConnectStatus.CertRenewalSuccess]: T('Certificate renewal was successful'),
-  [TruenasConnectStatus.Configured]: T('TrueNAS Connect is configured'),
+  [TruenasConnectStatus.Configured]: T('TrueNAS Connect is active'),
 };

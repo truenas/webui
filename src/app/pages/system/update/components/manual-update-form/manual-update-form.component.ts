@@ -1,6 +1,5 @@
-import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit, signal,
 } from '@angular/core';
 import {
   Validators, ReactiveFormsModule, NonNullableFormBuilder, FormControl, FormGroup,
@@ -13,7 +12,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { select, Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  BehaviorSubject, finalize, noop, Observable, of,
+  finalize, noop, Observable, of,
 } from 'rxjs';
 import {
   filter, tap,
@@ -68,14 +67,14 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
     MatButton,
     TestDirective,
     TranslateModule,
-    AsyncPipe,
   ],
 })
 export class ManualUpdateFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.SystemUpdateWrite];
   protected readonly searchableElements = systemManualUpdateFormElements;
 
-  isFormLoading$ = new BehaviorSubject(false);
+  protected isFormLoading = signal(false);
+
   form = this.formBuilder.group({
     filelocation: ['', Validators.required],
     updateFile: [null as FileList | null],
@@ -101,7 +100,6 @@ export class ManualUpdateFormComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     private store$: Store<AppState>,
-    private cdr: ChangeDetectorRef,
     private upload: UploadService,
   ) {}
 
@@ -127,7 +125,6 @@ export class ManualUpdateFormComponent implements OnInit {
   getVersionNoFromSysInfo(): void {
     this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((sysInfo) => {
       this.currentVersion = sysInfo.version;
-      this.cdr.markForCheck();
     });
   }
 
@@ -151,7 +148,6 @@ export class ManualUpdateFormComponent implements OnInit {
       this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)).subscribe((isHaLicensed) => {
         this.isHaLicensed = isHaLicensed;
         this.checkForUpdateRunning();
-        this.cdr.markForCheck();
 
         if (this.isHaLicensed) {
           this.form.removeControl('filelocation');
@@ -199,14 +195,13 @@ export class ManualUpdateFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.isFormLoading$.next(true);
+    this.isFormLoading.set(true);
     const value = this.form.getRawValue();
     value.filelocation = value.filelocation === ':temp:' ? null : value.filelocation;
     this.store$.dispatch(updateRebootAfterManualUpdate({
       rebootAfterManualUpdate: value.rebootAfterManualUpdate,
     }));
     this.systemService.updateRunningNoticeSent.emit();
-    this.cdr.markForCheck();
     this.setupAndOpenUpdateJobDialog(value.updateFile, value.filelocation);
   }
 
@@ -232,8 +227,7 @@ export class ManualUpdateFormComponent implements OnInit {
       .afterClosed()
       .pipe(
         finalize(() => {
-          this.isFormLoading$.next(false);
-          this.cdr.markForCheck();
+          this.isFormLoading.set(false);
         }),
         untilDestroyed(this),
       )
@@ -260,7 +254,6 @@ export class ManualUpdateFormComponent implements OnInit {
   finishHaUpdate(): void {
     this.dialogService.closeAllDialogs();
     this.systemService.updateDone(); // Send 'finished' signal to topbar
-    this.cdr.markForCheck();
     this.router.navigate(['/']);
     this.dialogService.confirm({
       title: helptext.ha_update.complete_title,
@@ -280,8 +273,7 @@ export class ManualUpdateFormComponent implements OnInit {
   }
 
   handleUpdateFailure = (failure: unknown): void => {
-    this.isFormLoading$.next(false);
-    this.cdr.markForCheck();
+    this.isFormLoading.set(false);
 
     if (isFailedJobError(failure) && failure.job.error?.includes(updateAgainCode)) {
       this.dialogService.confirm({

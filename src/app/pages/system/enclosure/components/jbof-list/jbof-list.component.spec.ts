@@ -1,5 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
@@ -106,21 +107,27 @@ describe('JbofListComponent', () => {
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('jbof.delete', [2, false]);
   });
 
-  it('enables Add button when existing are less than licensed', () => {
+  it('enables Add button when existing are less than licensed', async () => {
     spectator.inject(MockApiService).mockCall('jbof.licensed', 3);
     spectator.component.updateAvailableJbof();
-    expect(spectator.component.canAddJbof).toBeTruthy();
+
+    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+    expect(await addButton.isDisabled()).toBe(false);
   });
 
-  it('disables Add button when existing are equal to licensed', () => {
+  it('disables Add button when existing are equal to licensed', async () => {
     spectator.inject(MockApiService).mockCall('jbof.licensed', 2);
     spectator.component.updateAvailableJbof();
-    expect(spectator.component.canAddJbof).toBeFalsy();
+
+    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+    expect(await addButton.isDisabled()).toBe(true);
   });
 
-  it('disables Add button when existing are more than licensed', () => {
+  it('disables Add button when existing are more than licensed', async () => {
     spectator.inject(MockApiService).mockCall('jbof.licensed', 1);
     spectator.component.updateAvailableJbof();
-    expect(spectator.component.canAddJbof).toBeFalsy();
+
+    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+    expect(await addButton.isDisabled()).toBe(true);
   });
 });

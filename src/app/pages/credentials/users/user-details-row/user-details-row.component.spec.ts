@@ -19,10 +19,8 @@ import {
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { OneTimePasswordCreatedDialog } from 'app/pages/credentials/users/one-time-password-created-dialog/one-time-password-created-dialog.component';
-import {
-  DeleteUserDialog,
-} from 'app/pages/credentials/users/user-details-row/delete-user-dialog/delete-user-dialog.component';
-import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
+import { OldDeleteUserDialog } from 'app/pages/credentials/users/user-details-row/delete-user-dialog/delete-user-dialog.component';
+import { OldUserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { UserDetailsRowComponent } from './user-details-row.component';
 
@@ -58,7 +56,7 @@ describe('UserDetailsRowComponent', () => {
     component: UserDetailsRowComponent,
     imports: [
       IxTableExpandableRowComponent,
-      UserFormComponent,
+      OldUserFormComponent,
     ],
     providers: [
       mockProvider(SlideIn, {
@@ -109,7 +107,7 @@ describe('UserDetailsRowComponent', () => {
     await editButton.click();
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
-      UserFormComponent,
+      OldUserFormComponent,
       { wide: true, data: dummyUser },
     );
   });
@@ -132,7 +130,7 @@ describe('UserDetailsRowComponent', () => {
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: /Delete/ }));
     await deleteButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(DeleteUserDialog, {
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(OldDeleteUserDialog, {
       data: dummyUser,
     });
   });

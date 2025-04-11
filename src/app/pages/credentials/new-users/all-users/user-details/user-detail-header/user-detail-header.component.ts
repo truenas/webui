@@ -15,7 +15,7 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DeleteUserDialog } from 'app/pages/credentials/new-users/all-users/user-details/delete-user-dialog/delete-user-dialog.component';
 import { UsersStore } from 'app/pages/credentials/new-users/store/users.store';
-import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
+import { OldUserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
 
 @UntilDestroy()
 @Component({
@@ -45,7 +45,7 @@ export class UserDetailHeaderComponent {
   ) {}
 
   doEdit(): void {
-    this.slideIn.open(UserFormComponent, { wide: true, data: this.user() }).pipe(
+    this.slideIn.open(OldUserFormComponent, { wide: true, data: this.user() }).pipe(
       filter((result) => !!result.response),
       untilDestroyed(this),
     ).subscribe(({ response }) => {

@@ -1,10 +1,9 @@
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   OnInit,
   ViewContainerRef,
-  viewChild,
+  viewChild, signal,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -76,7 +75,7 @@ export class CloudCredentialsFormComponent implements OnInit {
     type: [CloudSyncProviderName.Storj],
   });
 
-  isLoading = false;
+  protected isLoading = signal(false);
   existingCredential: CloudSyncCredential;
   limitProviders: CloudSyncProviderName[];
   providers: CloudSyncProvider[] = [];
@@ -92,7 +91,6 @@ export class CloudCredentialsFormComponent implements OnInit {
   constructor(
     private api: ApiService,
     private formBuilder: FormBuilder,
-    private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private formErrorHandler: FormErrorHandlerService,
@@ -128,7 +126,7 @@ export class CloudCredentialsFormComponent implements OnInit {
   }
 
   get areActionsDisabled(): boolean {
-    return this.isLoading
+    return this.isLoading()
       || this.commonForm.invalid
       || this.providerForm?.form?.invalid;
   }
@@ -153,7 +151,7 @@ export class CloudCredentialsFormComponent implements OnInit {
   }
 
   onSubmit(): boolean {
-    this.isLoading = true;
+    this.isLoading.set(true);
 
     this.providerForm.beforeSubmit()
       .pipe(
@@ -167,20 +165,18 @@ export class CloudCredentialsFormComponent implements OnInit {
       )
       .subscribe({
         next: (response) => {
-          this.isLoading = false;
+          this.isLoading.set(false);
           this.snackbarService.success(
             this.isNew
               ? this.translate.instant('Cloud credential added.')
               : this.translate.instant('Cloud credential updated.'),
           );
           this.slideInRef.close({ response, error: null });
-          this.cdr.markForCheck();
         },
         error: (error: unknown) => {
           // TODO: Errors for nested provider form will be shown in a modal. Can be improved.
-          this.isLoading = false;
+          this.isLoading.set(false);
           this.formErrorHandler.handleValidationErrors(error, this.commonForm);
-          this.cdr.markForCheck();
         },
       });
 
@@ -188,7 +184,7 @@ export class CloudCredentialsFormComponent implements OnInit {
   }
 
   onVerify(): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
 
     this.providerForm.beforeSubmit()
       .pipe(
@@ -211,13 +207,11 @@ export class CloudCredentialsFormComponent implements OnInit {
             });
           }
 
-          this.isLoading = false;
-          this.cdr.markForCheck();
+          this.isLoading.set(false);
         },
         error: (error: unknown) => {
-          this.isLoading = false;
+          this.isLoading.set(false);
           this.formErrorHandler.handleValidationErrors(error, this.commonForm);
-          this.cdr.markForCheck();
         },
       });
   }
@@ -234,7 +228,7 @@ export class CloudCredentialsFormComponent implements OnInit {
   }
 
   private loadProviders(): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
     combineLatest([
       this.cloudCredentialService.getProviders(),
       this.cloudCredentialService.getCloudSyncCredentials(),
@@ -258,12 +252,10 @@ export class CloudCredentialsFormComponent implements OnInit {
           if (this.existingCredential) {
             this.providerForm.getFormSetter$().next(this.existingCredential.provider);
           }
-          this.isLoading = false;
-          this.cdr.markForCheck();
+          this.isLoading.set(false);
         },
         error: (error: unknown) => {
-          this.isLoading = false;
-          this.cdr.markForCheck();
+          this.isLoading.set(false);
           this.errorHandler.showErrorModal(error);
         },
       });
