@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit, signal,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -66,7 +66,7 @@ export class KerberosKeytabsFormComponent implements OnInit {
     ])],
   });
 
-  isLoading = false;
+  protected isLoading = signal(false);
 
   readonly helptext = helptextKerberosKeytabs;
 
@@ -74,7 +74,6 @@ export class KerberosKeytabsFormComponent implements OnInit {
     private translate: TranslateService,
     private formBuilder: FormBuilder,
     private errorHandler: FormErrorHandlerService,
-    private cdr: ChangeDetectorRef,
     private api: ApiService,
     public slideInRef: SlideInRef<KerberosKeytab | undefined, boolean>,
     private fileValidator: FileValidatorService,
@@ -107,7 +106,7 @@ export class KerberosKeytabsFormComponent implements OnInit {
         name: values.name,
         file,
       };
-      this.isLoading = true;
+      this.isLoading.set(true);
       let request$: Observable<unknown>;
       if (this.editingKerberosKeytab) {
         request$ = this.api.call('kerberos.keytab.update', [
@@ -120,13 +119,12 @@ export class KerberosKeytabsFormComponent implements OnInit {
 
       request$.pipe(untilDestroyed(this)).subscribe({
         next: () => {
-          this.isLoading = false;
+          this.isLoading.set(false);
           this.slideInRef.close({ response: true, error: null });
         },
         error: (error: unknown) => {
-          this.isLoading = false;
+          this.isLoading.set(false);
           this.errorHandler.handleValidationErrors(error, this.form);
-          this.cdr.markForCheck();
         },
       });
     };

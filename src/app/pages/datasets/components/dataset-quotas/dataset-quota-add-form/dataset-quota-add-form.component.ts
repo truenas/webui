@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, signal,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -50,10 +50,10 @@ import { UserService } from 'app/services/user.service';
     TestDirective,
   ],
 })
-export class DatasetQuotaAddFormComponent implements OnInit {
+export class DatasetQuotaAddFormComponent {
   protected readonly requiredRoles = [Role.DatasetWrite];
 
-  isLoading = false;
+  protected isLoading = signal(false);
   quotaType: DatasetQuotaType;
   readonly DatasetQuotaType = DatasetQuotaType;
 
@@ -146,16 +146,8 @@ export class DatasetQuotaAddFormComponent implements OnInit {
     this.datasetId = slideInRef.getData().datasetId;
   }
 
-  ngOnInit(): void {
-    this.setupAddQuotaForm();
-  }
-
-  setupAddQuotaForm(): void {
-    this.cdr.markForCheck();
-  }
-
   onSubmit(): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
 
     const quotas = this.getQuotas();
     this.api.call('pool.dataset.set_quota', [this.datasetId, quotas])
@@ -163,13 +155,11 @@ export class DatasetQuotaAddFormComponent implements OnInit {
       .subscribe({
         next: () => {
           this.snackbar.success(this.translate.instant('Quotas added'));
-          this.isLoading = false;
+          this.isLoading.set(false);
           this.slideInRef.close({ response: true, error: null });
-          this.cdr.markForCheck();
         },
         error: (error: unknown) => {
-          this.isLoading = false;
-          this.cdr.markForCheck();
+          this.isLoading.set(false);
           this.errorHandler.handleValidationErrors(error, this.form);
         },
       });

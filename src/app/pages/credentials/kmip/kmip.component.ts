@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, OnInit,
+  ChangeDetectionStrategy, Component, computed, OnInit, signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
@@ -58,16 +58,15 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   ],
 })
 export class KmipComponent implements OnInit {
-  isKmipEnabled = false;
-  isSyncPending = false;
-  isLoading = false;
+  protected isKmipEnabled = signal(false);
+  protected isSyncPending = signal(false);
+  protected isLoading = signal(false);
   protected readonly searchableElements = kmipElements;
 
   form = this.formBuilder.group({
     server: [''],
     port: [null as number | null],
     certificate: [null as number | null],
-    certificate_authority: [null as number | null],
     manage_sed_disks: [false],
     manage_zfs_keys: [false],
     enabled: [false],
@@ -80,7 +79,6 @@ export class KmipComponent implements OnInit {
 
   readonly helptext = helptextSystemKmip;
   readonly certificates$ = this.systemGeneralService.getCertificates().pipe(idNameArrayToOptions());
-  readonly certificateAuthorities$ = this.systemGeneralService.getCertificateAuthorities().pipe(idNameArrayToOptions());
 
   protected readonly hasGlobalEncryption = toSignal(this.api.call('system.advanced.sed_global_password_is_set'));
   protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
@@ -89,7 +87,6 @@ export class KmipComponent implements OnInit {
   constructor(
     private api: ApiService,
     private formBuilder: FormBuilder,
-    private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     private dialogService: DialogService,
@@ -103,39 +100,35 @@ export class KmipComponent implements OnInit {
   }
 
   onSyncKeysPressed(): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
     this.api.call('kmip.sync_keys').pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.dialogService.info(
           helptextSystemKmip.syncInfoDialog.title,
           helptextSystemKmip.syncInfoDialog.info,
         );
-        this.isLoading = false;
-        this.cdr.markForCheck();
+        this.isLoading.set(false);
       },
       error: (error: unknown) => {
         this.errorHandler.showErrorModal(error);
-        this.isLoading = false;
-        this.cdr.markForCheck();
+        this.isLoading.set(false);
       },
     });
   }
 
   onClearSyncKeysPressed(): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
     this.api.call('kmip.clear_sync_pending_keys').pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.dialogService.info(
           helptextSystemKmip.clearSyncKeyInfoDialog.title,
           helptextSystemKmip.clearSyncKeyInfoDialog.info,
         );
-        this.isLoading = false;
-        this.cdr.markForCheck();
+        this.isLoading.set(false);
       },
       error: (error: unknown) => {
         this.errorHandler.showErrorModal(error);
-        this.isLoading = false;
-        this.cdr.markForCheck();
+        this.isLoading.set(false);
       },
     });
   }
@@ -156,7 +149,7 @@ export class KmipComponent implements OnInit {
   }
 
   private loadKmipConfig(): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
     forkJoin([
       this.api.call('kmip.config'),
       this.api.call('kmip.kmip_sync_pending'),
@@ -165,15 +158,13 @@ export class KmipComponent implements OnInit {
       .subscribe({
         next: ([config, isSyncPending]) => {
           this.form.patchValue(config);
-          this.isKmipEnabled = config.enabled;
-          this.isSyncPending = isSyncPending;
-          this.isLoading = false;
-          this.cdr.markForCheck();
+          this.isKmipEnabled.set(config.enabled);
+          this.isSyncPending.set(isSyncPending);
+          this.isLoading.set(false);
         },
         error: (error: unknown) => {
-          this.isLoading = false;
+          this.isLoading.set(false);
           this.errorHandler.showErrorModal(error);
-          this.cdr.markForCheck();
         },
       });
   }

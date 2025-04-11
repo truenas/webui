@@ -1,5 +1,6 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit,
+  signal,
 } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -58,7 +59,7 @@ import { UserService } from 'app/services/user.service';
 export class ServiceSshComponent implements OnInit {
   protected readonly requiredRoles = [Role.SshWrite];
 
-  isFormLoading = false;
+  protected isFormLoading = signal(false);
   isBasicMode = true;
 
   groupProvider: ChipsProvider = (query) => {
@@ -103,7 +104,6 @@ export class ServiceSshComponent implements OnInit {
   constructor(
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
-    private cdr: ChangeDetectorRef,
     private formErrorHandler: FormErrorHandlerService,
     private fb: NonNullableFormBuilder,
     private userService: UserService,
@@ -117,17 +117,15 @@ export class ServiceSshComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
     this.api.call('ssh.config').pipe(untilDestroyed(this)).subscribe({
       next: (config) => {
         this.form.patchValue(config);
-        this.isFormLoading = false;
-        this.cdr.markForCheck();
+        this.isFormLoading.set(false);
       },
       error: (error: unknown) => {
-        this.isFormLoading = false;
+        this.isFormLoading.set(false);
         this.errorHandler.showErrorModal(error);
-        this.cdr.markForCheck();
       },
     });
   }
@@ -139,20 +137,18 @@ export class ServiceSshComponent implements OnInit {
   onSubmit(): void {
     const values = this.form.value;
 
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
     this.api.call('ssh.update', [values as SshConfigUpdate])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
-          this.isFormLoading = false;
+          this.isFormLoading.set(false);
           this.snackbar.success(this.translate.instant('Service configuration saved'));
           this.slideInRef.close({ response: true, error: null });
-          this.cdr.markForCheck();
         },
         error: (error: unknown) => {
-          this.isFormLoading = false;
+          this.isFormLoading.set(false);
           this.formErrorHandler.handleValidationErrors(error, this.form);
-          this.cdr.markForCheck();
         },
       });
   }

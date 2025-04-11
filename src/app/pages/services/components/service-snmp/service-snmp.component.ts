@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit, signal,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -54,7 +54,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 export class ServiceSnmpComponent implements OnInit {
   protected readonly requiredRoles = [Role.SystemGeneralWrite];
 
-  isFormLoading = false;
+  protected isFormLoading = signal(false);
 
   form = this.fb.group({
     location: [''],
@@ -105,7 +105,6 @@ export class ServiceSnmpComponent implements OnInit {
     private fb: FormBuilder,
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
-    private cdr: ChangeDetectorRef,
     private formErrorHandler: FormErrorHandlerService,
     private validation: IxValidatorsService,
     private snackbar: SnackbarService,
@@ -122,7 +121,7 @@ export class ServiceSnmpComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
     const values = this.form.value;
     if (!values.v3) {
       values.v3_username = '';
@@ -134,31 +133,27 @@ export class ServiceSnmpComponent implements OnInit {
 
     this.api.call('snmp.update', [values as SnmpConfigUpdate]).pipe(untilDestroyed(this)).subscribe({
       next: () => {
-        this.isFormLoading = false;
+        this.isFormLoading.set(false);
         this.snackbar.success(this.translate.instant('Service configuration saved'));
         this.slideInRef.close({ response: true, error: null });
-        this.cdr.markForCheck();
       },
       error: (error: unknown) => {
-        this.isFormLoading = false;
+        this.isFormLoading.set(false);
         this.formErrorHandler.handleValidationErrors(error, this.form);
-        this.cdr.markForCheck();
       },
     });
   }
 
   private loadCurrentSettings(): void {
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
     this.api.call('snmp.config').pipe(untilDestroyed(this)).subscribe({
       next: (config) => {
-        this.isFormLoading = false;
+        this.isFormLoading.set(false);
         this.form.patchValue(config);
-        this.cdr.markForCheck();
       },
       error: (error: unknown) => {
         this.errorHandler.showErrorModal(error);
-        this.isFormLoading = false;
-        this.cdr.markForCheck();
+        this.isFormLoading.set(false);
       },
     });
   }

@@ -45,10 +45,6 @@ import {
   CatalogUpdate, GetItemDetailsParams,
 } from 'app/interfaces/catalog.interface';
 import {
-  CertificateAuthority, CertificateAuthoritySignRequest,
-  CertificateAuthorityUpdate,
-} from 'app/interfaces/certificate-authority.interface';
-import {
   Certificate,
   CertificateProfiles,
   ExtendedKeyUsageChoices,
@@ -383,16 +379,6 @@ export interface ApiCallDirectory {
   'certificate.ec_curve_choices': { params: void; response: Choices };
   'certificate.extended_key_usage_choices': { params: void; response: ExtendedKeyUsageChoices };
   'certificate.query': { params: QueryParams<Certificate>; response: Certificate[] };
-
-  // Certificate Authority
-  'certificateauthority.ca_sign_csr': { params: [CertificateAuthoritySignRequest]; response: CertificateAuthority };
-  'certificateauthority.create': { params: [CertificateAuthorityUpdate]; response: CertificateAuthority };
-  'certificateauthority.delete': { params: [id: number]; response: boolean };
-  'certificateauthority.query': { params: QueryParams<CertificateAuthority>; response: CertificateAuthority[] };
-  'certificateauthority.update': {
-    params: [number, Partial<CertificateAuthorityUpdate>];
-    response: CertificateAuthority;
-  };
 
   // CloudBackup
   'cloud_backup.create': { params: [CloudBackupUpdate]; response: CloudBackup };
@@ -816,7 +802,6 @@ export interface ApiCallDirectory {
 
   // Truenas Connect
   'tn_connect.config': { params: void; response: TruenasConnectConfig };
-  'tn_connect.ip_choices': { params: void; response: Record<string, string> };
   'tn_connect.update': { params: [TruenasConnectUpdate]; response: TruenasConnectConfig };
   'tn_connect.generate_claim_token': { params: void; response: string };
   'tn_connect.get_registration_uri': { params: void; response: string };
@@ -904,10 +889,8 @@ export interface ApiCallDirectory {
   'webui.main.dashboard.sys_info': { params: void; response: SystemInfo };
 
   // WebUI Crypto
-  'webui.crypto.certificate_profiles': { params: void; response: CertificateProfiles };
   'webui.crypto.csr_profiles': { params: void; response: CertificateProfiles };
   'webui.crypto.get_certificate_domain_names': { params: [number]; response: string[] };
-  'webui.crypto.certificateauthority_profiles': { params: void; response: CertificateProfiles };
 
   // ZFS
   'pool.snapshot.clone': { params: [CloneZfsSnapshot]; response: boolean };

@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit, signal,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -53,7 +53,7 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
 export class ConsoleFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.SystemAdvancedWrite];
 
-  isFormLoading = false;
+  protected isFormLoading = signal(false);
 
   form = this.fb.group({
     consolemenu: [true],
@@ -88,7 +88,6 @@ export class ConsoleFormComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private api: ApiService,
-    private cdr: ChangeDetectorRef,
     private formErrorHandler: FormErrorHandlerService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
@@ -117,21 +116,19 @@ export class ConsoleFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
     const values = this.form.value;
 
     this.api.call('system.advanced.update', [values]).pipe(untilDestroyed(this)).subscribe({
       next: () => {
-        this.isFormLoading = false;
+        this.isFormLoading.set(false);
         this.snackbar.success(this.translate.instant('Settings saved'));
         this.store$.dispatch(advancedConfigUpdated());
-        this.cdr.markForCheck();
         this.slideInRef.close({ response: true, error: null });
       },
       error: (error: unknown) => {
-        this.isFormLoading = false;
+        this.isFormLoading.set(false);
         this.formErrorHandler.handleValidationErrors(error, this.form);
-        this.cdr.markForCheck();
       },
     });
   }

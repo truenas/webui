@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, OnInit,
+  ChangeDetectionStrategy, Component, computed, OnInit,
   signal,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -57,7 +57,7 @@ interface InitiatorItem {
 export class InitiatorFormComponent implements OnInit {
   protected readonly searchableElements = initiatorFormElements;
 
-  isFormLoading = false;
+  protected isFormLoading = signal(false);
   pk: number;
 
   form = this.fb.nonNullable.group({
@@ -94,17 +94,16 @@ export class InitiatorFormComponent implements OnInit {
     private router: Router,
     private errorHandler: ErrorHandlerService,
     private fb: FormBuilder,
-    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
     this.activatedRoute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       if (params.pk) {
         this.pk = parseInt(params.pk as string, 10);
         this.setForm();
       } else {
-        this.isFormLoading = false;
+        this.isFormLoading.set(false);
       }
     });
 
@@ -128,16 +127,14 @@ export class InitiatorFormComponent implements OnInit {
       request = this.api.call('iscsi.initiator.update', [this.pk, payload]);
     }
 
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
     request.pipe(untilDestroyed(this)).subscribe({
       next: () => {
-        this.isFormLoading = false;
-        this.cdr.markForCheck();
+        this.isFormLoading.set(false);
         this.onCancel();
       },
       error: (error: unknown) => {
-        this.isFormLoading = false;
-        this.cdr.markForCheck();
+        this.isFormLoading.set(false);
         this.errorHandler.showErrorModal(error);
       },
     });
@@ -147,7 +144,6 @@ export class InitiatorFormComponent implements OnInit {
     this.api.call('iscsi.global.sessions').pipe(untilDestroyed(this)).subscribe({
       next: (sessions) => {
         this.connectedInitiators.set(unionBy(sessions, (item) => item.initiator && item.initiator_addr));
-        this.cdr.markForCheck();
       },
       error: (error: unknown) => {
         this.errorHandler.showErrorModal(error);
@@ -178,12 +174,10 @@ export class InitiatorFormComponent implements OnInit {
             this.customInitiators.set(initiator.initiators.map((item) => ({ id: item, name: item })));
             this.selectedInitiators.set(initiator.initiators.map((item) => ({ id: item, name: item })));
           }
-          this.isFormLoading = false;
-          this.cdr.markForCheck();
+          this.isFormLoading.set(false);
         },
         error: (error: unknown) => {
-          this.isFormLoading = false;
-          this.cdr.markForCheck();
+          this.isFormLoading.set(false);
           this.errorHandler.showErrorModal(error);
         },
       });

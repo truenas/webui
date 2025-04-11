@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef,
+  Component, OnInit, ChangeDetectionStrategy, signal,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -65,7 +65,7 @@ export class JbofListComponent implements OnInit {
 
   filterString = '';
   jbofs: Jbof[] = [];
-  canAddJbof = false;
+  protected canAddJbof = signal(false);
 
   dataProvider: AsyncDataProvider<Jbof>;
   columns = createTable<Jbof>([
@@ -113,7 +113,6 @@ export class JbofListComponent implements OnInit {
     private translate: TranslateService,
     private emptyService: EmptyService,
     private loader: LoaderService,
-    private cdr: ChangeDetectorRef,
   ) { }
 
   ngOnInit(): void {
@@ -170,8 +169,7 @@ export class JbofListComponent implements OnInit {
       this.api.call('jbof.query').pipe(map((jbofs) => jbofs.length)),
       this.api.call('jbof.licensed'),
     ]).pipe(untilDestroyed(this)).subscribe(([jbofsLength, licensedLength]) => {
-      this.canAddJbof = licensedLength > jbofsLength;
-      this.cdr.markForCheck();
+      this.canAddJbof.set(licensedLength > jbofsLength);
     });
   }
 

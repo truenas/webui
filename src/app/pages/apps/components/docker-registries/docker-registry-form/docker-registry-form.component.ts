@@ -1,5 +1,6 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit,
+  signal,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -47,7 +48,7 @@ export class DockerRegistryFormComponent implements OnInit {
 
   protected existingDockerRegistry: DockerRegistry | undefined;
   protected isLoggedInToDockerHub = false;
-  protected isFormLoading = false;
+  protected isFormLoading = signal(false);
   protected readonly dockerHubRegistry = dockerHubRegistry;
 
   protected registriesOptions$ = of([
@@ -75,7 +76,6 @@ export class DockerRegistryFormComponent implements OnInit {
   constructor(
     private api: ApiService,
     public slideInRef: SlideInRef<{ isLoggedInToDockerHub?: boolean; registry?: DockerRegistry } | undefined, boolean>,
-    private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
     private fb: FormBuilder,
     private urlValidationService: UrlValidationService,
@@ -120,18 +120,16 @@ export class DockerRegistryFormComponent implements OnInit {
       request$ = this.api.call('app.registry.create', [payload]);
     }
 
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
 
     request$.pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
-          this.isFormLoading = false;
-          this.cdr.markForCheck();
+          this.isFormLoading.set(false);
           this.slideInRef.close({ response: true, error: null });
         },
         error: (error: unknown) => {
-          this.isFormLoading = false;
-          this.cdr.markForCheck();
+          this.isFormLoading.set(false);
           this.errorHandler.showErrorModal(error);
         },
       });

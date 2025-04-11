@@ -1,6 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit,
+  signal,
 } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -67,7 +68,7 @@ import { SystemGeneralService } from 'app/services/system-general.service';
 export class ServiceFtpComponent implements OnInit {
   protected readonly requiredRoles = [Role.SharingFtpWrite];
 
-  isFormLoading = false;
+  protected isFormLoading = signal(false);
   isAdvancedMode = false;
 
   kibParser = (value: string): number | null => this.iecFormatter.memorySizeParsing(value, 'KiB');
@@ -127,7 +128,6 @@ export class ServiceFtpComponent implements OnInit {
     private formBuilder: FormBuilder,
     private api: ApiService,
     private formErrorHandler: FormErrorHandlerService,
-    private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
     private systemGeneralService: SystemGeneralService,
     private filesystemService: FilesystemService,
@@ -161,20 +161,18 @@ export class ServiceFtpComponent implements OnInit {
       anonuserdlbw: this.convertByteToKbyte(Number(this.form.value.anonuserdlbw)),
     } as FtpConfigUpdate;
 
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
     this.api.call('ftp.update', [values])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
-          this.isFormLoading = false;
+          this.isFormLoading.set(false);
           this.snackbar.success(this.translate.instant('Service configuration saved'));
           this.slideInRef.close({ response: true, error: null });
-          this.cdr.markForCheck();
         },
         error: (error: unknown) => {
-          this.isFormLoading = false;
+          this.isFormLoading.set(false);
           this.formErrorHandler.handleValidationErrors(error, this.form);
-          this.cdr.markForCheck();
         },
       });
   }
@@ -184,7 +182,7 @@ export class ServiceFtpComponent implements OnInit {
   }
 
   private loadConfig(): void {
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
     this.api.call('ftp.config')
       .pipe(untilDestroyed(this))
       .subscribe({
@@ -198,13 +196,11 @@ export class ServiceFtpComponent implements OnInit {
             anonuserbw: this.convertKbyteToByte(config.anonuserbw),
             anonuserdlbw: this.convertKbyteToByte(config.anonuserdlbw),
           });
-          this.isFormLoading = false;
-          this.cdr.markForCheck();
+          this.isFormLoading.set(false);
         },
         error: (error: unknown) => {
           this.errorHandler.showErrorModal(error);
-          this.isFormLoading = false;
-          this.cdr.markForCheck();
+          this.isFormLoading.set(false);
         },
       });
   }

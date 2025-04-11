@@ -23,7 +23,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-delete-user-dialog',
+  selector: 'ix-old-delete-user-dialog',
   templateUrl: './delete-user-dialog.component.html',
   styleUrls: ['./delete-user-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -43,7 +43,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TranslateModule,
   ],
 })
-export class DeleteUserDialog implements OnInit {
+export class OldDeleteUserDialog implements OnInit {
   protected readonly requiredRoles = [Role.AccountWrite];
 
   deleteGroupCheckbox = new FormControl(false, { nonNullable: true });
@@ -56,7 +56,7 @@ export class DeleteUserDialog implements OnInit {
     private api: ApiService,
     private loader: LoaderService,
     @Inject(MAT_DIALOG_DATA) public user: User,
-    private dialogRef: MatDialogRef<DeleteUserDialog>,
+    private dialogRef: MatDialogRef<OldDeleteUserDialog>,
     private snackbar: SnackbarService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,

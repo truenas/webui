@@ -1,6 +1,6 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component,
-  OnInit,
+  ChangeDetectionStrategy, Component,
+  OnInit, signal,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -76,7 +76,7 @@ export class CertificateAcmeAddComponent implements OnInit {
 
   protected csr: Certificate;
 
-  isLoading = false;
+  protected isLoading = signal(false);
   domains: string[] = [];
 
   readonly acmeDirectoryUris$ = this.api.call('certificate.acme_server_choices').pipe(choicesToOptions());
@@ -90,7 +90,6 @@ export class CertificateAcmeAddComponent implements OnInit {
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
     private api: ApiService,
-    private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
     private formErrorHandler: FormErrorHandlerService,
     private snackbar: SnackbarService,
@@ -128,8 +127,7 @@ export class CertificateAcmeAddComponent implements OnInit {
       dns_mapping: dnsMapping,
     };
 
-    this.isLoading = true;
-    this.cdr.markForCheck();
+    this.isLoading.set(true);
 
     this.dialogService.jobDialog(
       this.api.job('certificate.create', [payload]),
@@ -145,20 +143,17 @@ export class CertificateAcmeAddComponent implements OnInit {
           this.snackbar.success(this.translate.instant('ACME Certificate Created'));
         },
         complete: () => {
-          this.isLoading = false;
-          this.cdr.markForCheck();
+          this.isLoading.set(false);
         },
         error: (error: unknown) => {
           this.formErrorHandler.handleValidationErrors(error, this.form);
-          this.isLoading = false;
-          this.cdr.markForCheck();
+          this.isLoading.set(false);
         },
       });
   }
 
   private loadDomains(): void {
-    this.isLoading = true;
-    this.cdr.markForCheck();
+    this.isLoading.set(true);
 
     this.api.call('webui.crypto.get_certificate_domain_names', [this.csr.id])
       .pipe(untilDestroyed(this))
@@ -166,12 +161,10 @@ export class CertificateAcmeAddComponent implements OnInit {
         next: (domains) => {
           this.domains = domains;
           domains.forEach((domain) => this.addDomainControls(domain));
-          this.isLoading = false;
-          this.cdr.markForCheck();
+          this.isLoading.set(false);
         },
         error: (error: unknown) => {
-          this.isLoading = false;
-          this.cdr.markForCheck();
+          this.isLoading.set(false);
           this.errorHandler.showErrorModal(error);
         },
       });
