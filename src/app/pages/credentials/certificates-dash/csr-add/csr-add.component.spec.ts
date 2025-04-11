@@ -14,12 +14,14 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { CertificateDigestAlgorithm } from 'app/enums/certificate-digest-algorithm.enum';
 import { CertificateKeyType } from 'app/enums/certificate-key-type.enum';
-import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { CertificateProfile } from 'app/interfaces/certificate.interface';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SummaryComponent } from 'app/modules/summary/summary.component';
 import { ApiService } from 'app/modules/websocket/api.service';
+import {
+  CsrConstraintsComponent,
+} from 'app/pages/credentials/certificates-dash/csr-add/steps/csr-constraints/csr-constraints.component';
 import {
   CsrIdentifierAndTypeComponent,
 } from 'app/pages/credentials/certificates-dash/csr-add/steps/csr-identifier-and-type/csr-identifier-and-type.component';
@@ -27,14 +29,11 @@ import {
   CsrImportComponent,
 } from 'app/pages/credentials/certificates-dash/csr-add/steps/csr-import/csr-import.component';
 import {
-  CertificateConstraintsComponent,
-} from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-constraints/certificate-constraints.component';
+  CsrOptionsComponent,
+} from 'app/pages/credentials/certificates-dash/csr-add/steps/csr-options/csr-options.component';
 import {
-  CertificateOptionsComponent,
-} from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-options/certificate-options.component';
-import {
-  CertificateSubjectComponent,
-} from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-subject/certificate-subject.component';
+  CsrSubjectComponent,
+} from 'app/pages/credentials/certificates-dash/csr-add/steps/csr-subject/csr-subject.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { CsrAddComponent } from './csr-add.component';
 
@@ -57,7 +56,6 @@ describe('CsrAddComponent', () => {
       BasicConstraints: {
         enabled: true,
       },
-      AuthorityKeyIdentifier: {},
       ExtendedKeyUsage: {},
       KeyUsage: {},
     },
@@ -70,9 +68,9 @@ describe('CsrAddComponent', () => {
     ],
     declarations: [
       CsrIdentifierAndTypeComponent,
-      CertificateOptionsComponent,
-      CertificateSubjectComponent,
-      CertificateConstraintsComponent,
+      CsrOptionsComponent,
+      CsrSubjectComponent,
+      CsrConstraintsComponent,
       CsrImportComponent,
       MockComponent(SummaryComponent),
     ],
@@ -92,9 +90,6 @@ describe('CsrAddComponent', () => {
       mockProvider(SlideInRef, slideInRef),
       mockProvider(MatSnackBar),
       mockProvider(SystemGeneralService, {
-        getUnsignedCas: () => of([
-          { id: 1, name: 'Test CA' },
-        ] as CertificateAuthority[]),
         getCertificateCountryChoices: () => of({
           US: 'United States',
         }),
@@ -179,7 +174,6 @@ describe('CsrAddComponent', () => {
             ca: true,
             extension_critical: true,
           },
-          AuthorityKeyIdentifier: {},
           ExtendedKeyUsage: {
             enabled: true,
             extension_critical: true,
@@ -257,13 +251,13 @@ describe('CsrAddComponent', () => {
   });
 
   it('updates form fields and sets constrains when Profile is emitted by CertificateIdentifierAndTypeComponent', async () => {
-    const optionsForm = spectator.query(CertificateOptionsComponent)!;
-    const subjectForm = spectator.query(CertificateSubjectComponent)!;
+    const optionsForm = spectator.query(CsrOptionsComponent)!;
+    const subjectForm = spectator.query(CsrSubjectComponent)!;
 
     jest.spyOn(optionsForm.form, 'patchValue');
     jest.spyOn(subjectForm.form, 'patchValue');
 
-    const constraintsForm = spectator.query(CertificateConstraintsComponent)!;
+    const constraintsForm = spectator.query(CsrConstraintsComponent)!;
     jest.spyOn(constraintsForm, 'setFromProfile');
 
     await form.fillForm({
