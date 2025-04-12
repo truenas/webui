@@ -39,6 +39,7 @@ export class AuthService {
   @LocalStorage() private token: string | undefined | null;
   protected loggedInUser$ = new BehaviorSubject<LoggedInUser | null>(null);
   wasOneTimePasswordChanged$ = new BehaviorSubject<boolean>(false);
+  wasRequiredPasswordChanged$ = new BehaviorSubject<boolean>(false);
 
   /**
    * This is 10 seconds less than 300 seconds which is the default life
@@ -191,6 +192,7 @@ export class AuthService {
       tap(() => {
         this.clearAuthToken();
         this.wasOneTimePasswordChanged$.next(false);
+        this.wasRequiredPasswordChanged$.next(false);
         this.wsStatus.setLoginStatus(false);
         this.api.clearSubscriptions();
       }),

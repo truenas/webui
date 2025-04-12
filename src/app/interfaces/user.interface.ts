@@ -32,7 +32,7 @@ export interface User {
   password_history: unknown[] | null;
   password_change_required: boolean;
   password_age: number | null;
-  last_password_change: string | null;
+  last_password_change: { $date: number } | null;
 }
 
 export interface UserGroup {

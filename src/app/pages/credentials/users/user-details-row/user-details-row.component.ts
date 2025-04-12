@@ -16,6 +16,7 @@ import { Role } from 'app/enums/role.enum';
 import { ActionOption } from 'app/interfaces/option.interface';
 import { User } from 'app/interfaces/user.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
+import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { IxTableExpandableRowComponent } from 'app/modules/ix-table/components/ix-table-expandable-row/ix-table-expandable-row.component';
@@ -46,6 +47,9 @@ import { UrlOptionsService } from 'app/services/url-options.service';
     RequiresRolesDirective,
     TranslateModule,
   ],
+  providers: [
+    FormatDateTimePipe,
+  ],
 })
 export class UserDetailsRowComponent implements OnInit {
   readonly user = input.required<User>();
@@ -62,6 +66,7 @@ export class UserDetailsRowComponent implements OnInit {
     private slideIn: SlideIn,
     private matDialog: MatDialog,
     private yesNoPipe: YesNoPipe,
+    private formatDateTime: FormatDateTimePipe,
     private urlOptions: UrlOptionsService,
     private authService: AuthService,
     private router: Router,
@@ -105,6 +110,32 @@ export class UserDetailsRowComponent implements OnInit {
       {
         label: 'SSH',
         value: this.getSshStatus(user),
+      },
+      {
+        label: this.translate.instant('Password History'),
+        value: user.password_history?.length >= 0
+          ? this.translate.instant('{n, plural, =0 {No History} one {# entry} other {# entries}}', {
+            n: user.password_history.length,
+          })
+          : '–',
+      },
+      {
+        label: this.translate.instant('Password Age'),
+        value: !user.password_age && user.password_age !== 0
+          ? '–'
+          : this.translate.instant('{n, plural, =0 {Less than a day} one {# day} other {# days} }', {
+            n: user.password_age,
+          }),
+      },
+      {
+        label: this.translate.instant('Last Password Change'),
+        value: user.last_password_change?.$date
+          ? this.formatDateTime.transform(user.last_password_change.$date)
+          : '–',
+      },
+      {
+        label: this.translate.instant('Password Change Required'),
+        value: this.yesNoPipe.transform(user.password_change_required),
       },
     ];
 

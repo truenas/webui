@@ -60,11 +60,11 @@ describe('SystemSecurityCardComponent', () => {
     expect(texts).toEqual([
       'Enable FIPS: No',
       'Enable General Purpose OS STIG compatibility mode: No',
-      'Min Password Age: 5',
-      'Max Password Age: 30',
+      'Min Password Age: 5 days',
+      'Max Password Age: 30 days',
       'Password Complexity Ruleset: Upper, Number',
-      'Min Password Length: 10',
-      'Password History Length: 5',
+      'Min Password Length: 10 characters',
+      'Password History Length: 5 entries',
     ]);
   });
 

@@ -45,8 +45,17 @@ export class TwoFactorGuardService implements CanActivateChild {
       this.authService.hasRole([Role.FullAdmin]).pipe(take(1)),
       this.authService.isOtpwUser$.pipe(take(1)),
       this.authService.wasOneTimePasswordChanged$.asObservable().pipe(take(1)),
+      this.authService.wasRequiredPasswordChanged$.asObservable().pipe(take(1)),
     ]).pipe(
-      switchMap(([isPasswordChangeRequired, userConfig, globalConfig, isFullAdmin, isOtpwUser, wasOtpChanged]) => {
+      switchMap(([
+        isPasswordChangeRequired,
+        userConfig,
+        globalConfig,
+        isFullAdmin,
+        isOtpwUser,
+        wasOtpChanged,
+        wasRequiredPasswordChanged,
+      ]) => {
         const shouldShowFirstLoginDialog = (
           (isOtpwUser && !wasOtpChanged)
           || (isOtpwUser && !userConfig.secret_configured)
@@ -57,7 +66,7 @@ export class TwoFactorGuardService implements CanActivateChild {
           return this.openFullScreenDialog(FirstLoginDialog);
         }
 
-        if (isPasswordChangeRequired) {
+        if (isPasswordChangeRequired && !wasRequiredPasswordChanged) {
           return this.openFullScreenDialog(PasswordChangeRequiredDialog);
         }
 

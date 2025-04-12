@@ -20,6 +20,7 @@ describe('TwoFactorGuardService', () => {
   const isOtpwUser$ = new BehaviorSubject(false);
   const isPasswordChangeRequired$ = new BehaviorSubject(false);
   const wasOneTimePasswordChanged$ = new BehaviorSubject(false);
+  const wasRequiredPasswordChanged$ = new BehaviorSubject(false);
 
   const createService = createServiceFactory({
     service: TwoFactorGuardService,
@@ -35,6 +36,7 @@ describe('TwoFactorGuardService', () => {
         isOtpwUser$,
         isPasswordChangeRequired$,
         wasOneTimePasswordChanged$,
+        wasRequiredPasswordChanged$,
       }),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
