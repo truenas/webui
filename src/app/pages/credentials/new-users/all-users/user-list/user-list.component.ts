@@ -17,6 +17,7 @@ import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui
 import { QueryFiltersAndOptionsApiDataProvider } from 'app/modules/ix-table/classes/api-data-provider/query-filters-and-options-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
 import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
@@ -68,10 +69,9 @@ export class UserListComponent {
       title: this.translate.instant('UID'),
       propertyName: 'uid',
     }),
-    textColumn({
+    yesNoColumn({
       title: this.translate.instant('Builtin'),
       propertyName: 'builtin',
-      getValue: (row) => (row.builtin ? this.translate.instant('Yes') : this.translate.instant('No')),
     }),
     textColumn({
       title: this.translate.instant('Full Name'),
