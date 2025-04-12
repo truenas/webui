@@ -182,6 +182,7 @@
   "Only users with the required privileges are shown.": "",
   "Open a port for SSH connection requests.": "",
   "Open TrueNAS Connect": "",
+  "Password Change Required:": "",
   "Password Complexity Ruleset": "",
   "Password complexity ruleset. Choose between Upper, Lower, Number and Special complexity levels.": "",
   "Password History Length": "",

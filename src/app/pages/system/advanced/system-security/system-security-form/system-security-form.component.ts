@@ -54,7 +54,7 @@ export class SystemSecurityFormComponent implements OnInit {
   form = this.formBuilder.group({
     enable_fips: [false],
     enable_gpos_stig: [false],
-    min_password_age: [null as number | null],
+    min_password_age: [null as number | null, [Validators.min(1), Validators.max(365)]],
     max_password_age: [null as number | null, [Validators.min(7), Validators.max(365)]],
     password_complexity_ruleset: [null as PasswordComplexityRuleset[] | null],
     min_password_length: [null as number | null, [Validators.min(8), Validators.max(128)]],

@@ -22,6 +22,7 @@
   "Number": "",
   "Number of previous passwords to remember. Must be between 1 and 10.": "",
   "Open TrueNAS Connect": "",
+  "Password Change Required:": "",
   "Password Complexity Ruleset": "",
   "Password complexity ruleset. Choose between Upper, Lower, Number and Special complexity levels.": "",
   "Password History Length": "",

@@ -242,6 +242,7 @@
   "Open a port for SSH connection requests.": "",
   "Open TrueNAS Connect": "",
   "Other Registry": "",
+  "Password Change Required:": "",
   "Password Complexity Ruleset": "",
   "Password complexity ruleset. Choose between Upper, Lower, Number and Special complexity levels.": "",
   "Password History Length": "",

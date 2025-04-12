@@ -66,6 +66,11 @@ export class AuthService {
     map((user) => user.account_attributes.includes(AccountAttribute.Otpw)),
   );
 
+  isPasswordChangeRequired$: Observable<boolean> = this.user$.pipe(
+    filter(Boolean),
+    map((user) => user.account_attributes.includes(AccountAttribute.PasswordChangeRequired)),
+  );
+
   /**
    * Special case that only matches root and admin users.
    */
