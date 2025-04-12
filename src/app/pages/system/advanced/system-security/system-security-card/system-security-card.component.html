@@ -30,6 +30,47 @@
           {{ systemSecurityConfig?.enable_gpos_stig ? ('Yes' | translate) : ('No' | translate) }}
         </span>
       </mat-list-item>
+
+      <mat-list-item>
+        <span class="label">{{ 'Min Password Age' | translate }}:</span>
+        <span *ixWithLoadingState="systemSecurityConfig$ as systemSecurityConfig" class="value">
+          {{ systemSecurityConfig?.min_password_age || '–' }}
+        </span>
+      </mat-list-item>
+
+      <mat-list-item>
+        <span class="label">{{ 'Max Password Age' | translate }}:</span>
+        <span *ixWithLoadingState="systemSecurityConfig$ as systemSecurityConfig" class="value">
+          {{ systemSecurityConfig?.max_password_age || '–' }}
+        </span>
+      </mat-list-item>
+
+      <mat-list-item>
+        <span class="label">{{ 'Password Complexity Ruleset' | translate }}:</span>
+        <span *ixWithLoadingState="systemSecurityConfig$ as systemSecurityConfig" class="value">
+          @if (systemSecurityConfig?.password_complexity_ruleset?.$set?.length) {
+            @for (rule of systemSecurityConfig.password_complexity_ruleset?.$set; let isLast = $last; track rule) {
+              {{ rulesetLabels.get(rule) | translate }}@if (!isLast) {,}
+            }
+          } @else {
+            –
+          }
+        </span>
+      </mat-list-item>
+
+      <mat-list-item>
+        <span class="label">{{ 'Min Password Length' | translate }}:</span>
+        <span *ixWithLoadingState="systemSecurityConfig$ as systemSecurityConfig" class="value">
+          {{ systemSecurityConfig?.min_password_length || '–' }}
+        </span>
+      </mat-list-item>
+
+      <mat-list-item>
+        <span class="label">{{ 'Password History Length' | translate }}:</span>
+        <span *ixWithLoadingState="systemSecurityConfig$ as systemSecurityConfig" class="value">
+          {{ systemSecurityConfig?.password_history_length || '–' }}
+        </span>
+      </mat-list-item>
     </mat-list>
   </mat-card-content>
 </mat-card>

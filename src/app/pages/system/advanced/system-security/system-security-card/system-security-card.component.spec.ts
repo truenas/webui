@@ -7,6 +7,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { PasswordComplexityRuleset } from 'app/enums/password-complexity-ruleset.enum';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SystemSecurityCardComponent } from 'app/pages/system/advanced/system-security/system-security-card/system-security-card.component';
@@ -16,11 +17,19 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 const fakeSystemSecurityConfig: SystemSecurityConfig = {
   enable_fips: false,
   enable_gpos_stig: false,
+  min_password_age: 5,
+  max_password_age: 30,
+  password_complexity_ruleset: {
+    $set: [PasswordComplexityRuleset.Upper, PasswordComplexityRuleset.Number],
+  },
+  min_password_length: 10,
+  password_history_length: 5,
 };
 
 describe('SystemSecurityCardComponent', () => {
   let spectator: Spectator<SystemSecurityCardComponent>;
   let loader: HarnessLoader;
+
   const createComponent = createComponentFactory({
     component: SystemSecurityCardComponent,
     providers: [
@@ -44,19 +53,24 @@ describe('SystemSecurityCardComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('shows System Security related settings', async () => {
+  it('shows all System Security settings in card', async () => {
     const items = await loader.getAllHarnesses(MatListItemHarness);
-    const itemTexts = await parallel(() => items.map((item) => item.getFullText()));
+    const texts = await parallel(() => items.map((item) => item.getFullText()));
 
-    expect(itemTexts).toEqual([
+    expect(texts).toEqual([
       'Enable FIPS: No',
       'Enable General Purpose OS STIG compatibility mode: No',
+      'Min Password Age: 5',
+      'Max Password Age: 30',
+      'Password Complexity Ruleset: Upper, Number',
+      'Min Password Length: 10',
+      'Password History Length: 5',
     ]);
   });
 
-  it('opens System Security form when Settings button is pressed', async () => {
-    const configureButton = await loader.getHarness(MatButtonHarness.with({ text: 'Settings' }));
-    await configureButton.click();
+  it('opens System Security form when Settings button is clicked', async () => {
+    const button = await loader.getHarness(MatButtonHarness.with({ text: 'Settings' }));
+    await button.click();
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
       SystemSecurityFormComponent,
