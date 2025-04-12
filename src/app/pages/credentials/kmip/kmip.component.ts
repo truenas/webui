@@ -67,7 +67,6 @@ export class KmipComponent implements OnInit {
     server: [''],
     port: [null as number | null],
     certificate: [null as number | null],
-    certificate_authority: [null as number | null],
     manage_sed_disks: [false],
     manage_zfs_keys: [false],
     enabled: [false],
@@ -80,7 +79,6 @@ export class KmipComponent implements OnInit {
 
   readonly helptext = helptextSystemKmip;
   readonly certificates$ = this.systemGeneralService.getCertificates().pipe(idNameArrayToOptions());
-  readonly certificateAuthorities$ = this.systemGeneralService.getCertificateAuthorities().pipe(idNameArrayToOptions());
 
   protected readonly hasGlobalEncryption = toSignal(this.api.call('system.advanced.sed_global_password_is_set'));
   protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));

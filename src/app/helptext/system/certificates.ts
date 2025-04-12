@@ -1,6 +1,5 @@
 import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { helptextSystemCa } from 'app/helptext/system/ca';
 
 export const helptextSystemCertificates = {
   add: {
@@ -25,30 +24,21 @@ export const helptextSystemCertificates = {
 matches your certificate usage scenario.'),
     },
 
-    isCSRonSystem: {
-      tooltip: T(
-        'Check this box if importing a certificate for which a CSR exists on this system',
-      ),
-    },
-
-    csrlist: {
-      tooltip: T(
-        'Select an existing CSR.',
-      ),
-    },
-
-    signedby: {
-      tooltip: T(
-        'Select a previously imported or created CA.',
-      ),
-    },
-
     key_type: {
-      tooltip: helptextSystemCa.add.key_type.tooltip,
+      tooltip: T(
+        'See <a href="https://crypto.stackexchange.com/questions/1190/why-is-elliptic-curve-cryptography-not-widely-used-compared-to-rsa" target="blank">\
+ Why is elliptic curve cryptography not widely used, compared to RSA?</a>\
+ for more information about key types.',
+      ),
     },
 
     ec_curve: {
-      tooltip: helptextSystemCa.add.ec_curve.tooltip,
+      tooltip: T(
+        'Brainpool curves can be more secure, while secp curves can be faster. See\
+ <a href="https://tls.mbed.org/kb/cryptography/elliptic-curve-performance-nist-vs-brainpool" target="blank">\
+ Elliptic Curve performance: NIST vs Brainpool\
+ </a> for more information.',
+      ),
     },
 
     key_length: {
@@ -122,7 +112,7 @@ matches your certificate usage scenario.'),
     },
 
     certificate: {
-      tooltip: T('Paste the certificate for the CA.'),
+      tooltip: T('Paste the certificate.'),
     },
 
     cert_csr: {
@@ -161,37 +151,6 @@ matches your certificate usage scenario.'),
         tooltip: T('How many non-self-issued intermediate certificates that can follow \
 this certificate in a valid certification path. Entering <i>0</i> allows a single \
 additional certificate to follow in the certificate path. Cannot be less than <i>0</i>.'),
-      },
-      extension_critical: {
-        placeholder: T('Critical Extension'),
-        tooltip: T('Identify this extension as critical for the certificate. Critical extensions must \
-be recognized by the certificate-using system or this certificate will be rejected. Extensions \
-identified as <i>not</i> critical can be ignored by the certificate-using system and the \
-certificate still approved.'),
-      },
-    },
-
-    authority_key_identifier: {
-      config: {
-        tooltip: T('Specify whether the issued certificate should include Authority Key Identifier information,\
-          and whether the extension is critical. Critical extensions must be recognized by the client or be rejected.'),
-      },
-      authority_cert_issuer: {
-        placeholder: T('Authority Cert Issuer'),
-        tooltip: T('Pair this certificate\'s public key with the Certificate Authority private \
-key used to sign this certificate.'),
-      },
-      enabled: {
-        tooltip: T('Activate this extension.\
- The authority key identifier extension provides a means of \
- identifying the public key corresponding to the private key used to \
- sign a certificate. This extension is used where an issuer has \
- multiple signing keys (either due to multiple concurrent key pairs or \
- due to changeover). The identification MAY be based on either the \
- key identifier (the subject key identifier in the issuer\'s \
- certificate) or on the issuer name and serial number.<br> \
- See <a href="https://www.ietf.org/rfc/rfc3280.txt">RFC 3280, section 4.2.1.1</a> \
- for more information.'),
       },
       extension_critical: {
         placeholder: T('Critical Extension'),

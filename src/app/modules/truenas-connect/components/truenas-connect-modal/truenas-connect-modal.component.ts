@@ -7,11 +7,11 @@ import { MatButton } from '@angular/material/button';
 import {
   MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle,
 } from '@angular/material/dialog';
+import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
 import { tooltips } from '@codemirror/view';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { Omit } from 'utility-types';
-import { Role } from 'app/enums/role.enum';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { TruenasConnectUpdate } from 'app/interfaces/truenas-connect-config.interface';
@@ -26,8 +26,11 @@ import { TruenasConnectService } from 'app/modules/truenas-connect/services/true
   standalone: true,
   imports: [
     MatDialogTitle,
-    MatDialogContent,
     MatDialogActions,
+    MatDialogContent,
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
+    MatExpansionPanelTitle,
     IxIconComponent,
     IxInputComponent,
     MatButton,
@@ -42,11 +45,11 @@ import { TruenasConnectService } from 'app/modules/truenas-connect/services/true
 export class TruenasConnectModalComponent {
   readonly helptext = helptextTopbar;
   readonly TruenasConnectStatus = TruenasConnectStatus;
-  protected readonly requiredRoles = [Role.TrueCommandWrite];
   protected form = this.formBuilder.group({
-    tnc_base_url: [this.tnc.config()?.tnc_base_url || '', [Validators.required]],
-    account_service_base_url: [this.tnc.config()?.account_service_base_url || '', [Validators.required]],
-    leca_service_base_url: [this.tnc.config()?.leca_service_base_url || '', [Validators.required]],
+    tnc_base_url: [this.tnc.config().tnc_base_url || '', [Validators.required]],
+    account_service_base_url: [this.tnc.config().account_service_base_url || '', [Validators.required]],
+    leca_service_base_url: [this.tnc.config().leca_service_base_url || '', [Validators.required]],
+    heartbeat_url: [this.tnc.config().heartbeat_url, Validators.required],
   });
 
   private formChanges = toSignal(this.form.valueChanges);
@@ -76,20 +79,13 @@ export class TruenasConnectModalComponent {
       tnc_base_url: formValue.tnc_base_url,
       account_service_base_url: formValue.account_service_base_url,
       leca_service_base_url: formValue.leca_service_base_url,
+      heartbeat_url: formValue.heartbeat_url,
     };
     this.enableService(payload);
   }
 
   protected enableService(data?: Omit<TruenasConnectUpdate, 'enabled' | 'ips'>): void {
-    const config = { ...this.tnc.config(), ...data };
-    const payload = {
-      enabled: true,
-      ips: config.ips,
-      tnc_base_url: config.tnc_base_url,
-      account_service_base_url: config.account_service_base_url,
-      leca_service_base_url: config.leca_service_base_url,
-    };
-    this.tnc.enableService(payload as TruenasConnectUpdate)
+    this.tnc.enableService(data as TruenasConnectUpdate)
       .pipe(untilDestroyed(this))
       .subscribe();
   }

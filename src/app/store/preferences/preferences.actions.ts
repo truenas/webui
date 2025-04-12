@@ -9,7 +9,7 @@ export const noPreferencesFound = createAction('[Preferences API] No Preferences
 export const themeNotFound = createAction('[Preferences] Theme Not Found');
 export const preferredColumnsUpdated = createAction(
   '[Preferences] Preferred Columns Updated',
-  props<{ columns: TableDisplayedColumns[] }>(),
+  props<{ tableDisplayedColumns: TableDisplayedColumns[] }>(),
 );
 export const shownNewIndicatorKeysUpdated = createAction(
   '[Preferences] Shown New Indicator Keys Updated',
