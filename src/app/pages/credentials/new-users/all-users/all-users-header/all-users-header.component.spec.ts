@@ -1,10 +1,10 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { UsersStore } from 'app/pages/credentials/new-users/store/users.store';
 import { UserFormComponent } from 'app/pages/credentials/new-users/user-form/user-form.component';
 import { AllUsersHeaderComponent } from './all-users-header.component';
 
@@ -18,7 +18,7 @@ describe('AllUsersHeaderComponent', () => {
       mockProvider(SlideIn, {
         open: jest.fn(() => of(undefined)),
       }),
-      mockProvider(MatDialog),
+      mockProvider(UsersStore),
     ],
   });
 

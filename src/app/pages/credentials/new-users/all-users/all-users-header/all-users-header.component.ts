@@ -40,7 +40,6 @@ export class AllUsersHeaderComponent {
       untilDestroyed(this),
     ).subscribe({
       next: ({ response }) => {
-        this.usersStore.userCreated(response);
         this.router.navigate(['/credentials', 'users-new', 'view', response.username]);
       },
     });

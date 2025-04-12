@@ -47,9 +47,11 @@ export class UsersStore extends ComponentStore<UsersState> {
         this.patchState({ isLoading: true });
 
         return this.api.call('user.query', params).pipe(
-          switchMap((users: User[]) => this.api.subscribe('user.query').pipe(
+          switchMap((userList: User[]) => this.api.subscribe('user.query').pipe(
             startWith(null),
             map((event) => {
+              const users = this.users()?.length > 0 ? this.users() : userList;
+
               switch (event?.msg) {
                 case CollectionChangeType.Added:
                   return [...users, event.fields];
@@ -97,13 +99,6 @@ export class UsersStore extends ComponentStore<UsersState> {
     }
 
     this.patchState({ selectedUser });
-  }
-
-  userCreated(user: User): void {
-    const users = this.users();
-    if (!users.find((existingUser) => existingUser.username === user.username)) {
-      this.patchState({ users: [...users, user] });
-    }
   }
 
   resetSelectedUser(): void {
