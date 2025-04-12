@@ -48,7 +48,7 @@ export class AllUsersComponent implements OnInit, OnDestroy {
 
   constructor(
     private usersStore: UsersStore,
-    private apiService: ApiService,
+    private api: ApiService,
     private router: Router,
   ) {
     this.router.events
@@ -70,7 +70,7 @@ export class AllUsersComponent implements OnInit, OnDestroy {
   }
 
   private createDataProvider(): void {
-    this.dataProvider = new QueryFiltersAndOptionsApiDataProvider(this.apiService, 'user.query');
+    this.dataProvider = new QueryFiltersAndOptionsApiDataProvider(this.api, 'user.query');
     this.dataProvider.paginationStrategy = new PaginationServerSide();
     this.dataProvider.sortingStrategy = new SortingServerSide();
     this.dataProvider.setSorting({
