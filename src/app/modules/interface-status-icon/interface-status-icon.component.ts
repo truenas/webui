@@ -39,6 +39,10 @@ export class InterfaceStatusIconComponent {
   });
 
   tooltipText = computed(() => {
+    if (!this.isLinkUp()) {
+      return this.translate.instant('The network link is currently down.');
+    }
+
     const sent = this.formatBytes(this.update()?.sent_bytes_rate || 0);
     const received = this.formatBytes(this.update()?.received_bytes_rate || 0);
 

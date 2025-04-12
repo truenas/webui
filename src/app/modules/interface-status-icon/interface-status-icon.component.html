@@ -1,7 +1,7 @@
 <ix-icon
   [id]="elementId"
   [name]="statusIcon()"
-  [matTooltip]="isLinkUp() ? tooltipText() : null"
+  [matTooltip]="tooltipText()"
   [ngClass]="{ 'link-up': isLinkUp(), 'link-down': !isLinkUp() }"
 ></ix-icon>
 
