@@ -78,8 +78,8 @@ export class AllUsersComponent implements OnInit, OnDestroy {
       direction: SortDirection.Asc,
       active: 1,
     });
-    this.dataProvider.currentPage$.pipe(filter(Boolean), untilDestroyed(this)).subscribe((auditEntries) => {
-      this.dataProvider.expandedRow = this.masterDetailView().isMobileView() ? null : auditEntries[0];
+    this.dataProvider.currentPage$.pipe(filter(Boolean), untilDestroyed(this)).subscribe((users) => {
+      this.dataProvider.expandedRow = this.masterDetailView().isMobileView() ? null : users[0];
     });
     this.dataProvider.load();
   }
