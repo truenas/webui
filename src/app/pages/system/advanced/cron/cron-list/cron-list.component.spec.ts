@@ -28,6 +28,7 @@ import { CronDeleteDialog } from 'app/pages/system/advanced/cron/cron-delete-dia
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { CronListComponent } from 'app/pages/system/advanced/cron/cron-list/cron-list.component';
 import { TaskService } from 'app/services/task.service';
+import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
 describe('CronListComponent', () => {
@@ -68,6 +69,10 @@ describe('CronListComponent', () => {
         selectors: [
           {
             selector: selectSystemConfigState,
+            value: {},
+          },
+          {
+            selector: selectPreferences,
             value: {},
           },
         ],
