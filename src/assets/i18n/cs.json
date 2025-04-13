@@ -3903,6 +3903,7 @@
   "The message to show when a user logs in with SSH.": "",
   "The minimum polling interval, in seconds, as a power of 2. For example, <i>6</i> means 2^6, or 64 seconds. The default is 6, minimum value is 4.": "",
   "The name \"{value}\" is already in use.": "",
+  "The network link is currently down.": "",
   "The number of bits in the key used by the cryptographic algorithm. For security reasons, a minimum key length of <i>2048</i> is recommended.": "",
   "The number of children must at the minimum accomodate the total number of disks required for the previous configuration options including parity drives.": "",
   "The operation timed out. The requested resource might be offline. Check the network connection.": "",

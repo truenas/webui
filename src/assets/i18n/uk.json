@@ -2218,6 +2218,7 @@
   "The imported pool contains encrypted datasets, unlock them now?": "",
   "The list is empty.": "",
   "The local node must be rebooted because": "",
+  "The network link is currently down.": "",
   "The number of children must at the minimum accomodate the total number of disks required for the previous configuration options including parity drives.": "",
   "The pasted string ends with a space": "",
   "The pasted string starts with a space": "",

@@ -292,6 +292,7 @@
   "The domain for local users is the NetBIOS name of the TrueNAS server.": "",
   "The group which controls the dataset. This group has the same permissions as granted to the <i>group@</i> <i>Who</i>. Groups created manually or imported from a directory service appear in the drop-down menu.": "",
   "The imported pool contains encrypted datasets, unlock them now?": "",
+  "The network link is currently down.": "",
   "The pasted string ends with a space": "",
   "The pasted string starts with a space": "",
   "The ticket was created successfully (see link below), but the debug file   failed to attach. Please download the debug manually    (System → Advanced → Save Debug), upload it to a third-party storage service and provide    a link in the JIRA issue comment.": "",
