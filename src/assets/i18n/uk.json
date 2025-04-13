@@ -2091,6 +2091,7 @@
   "The following issues were already reported.": "",
   "The list is empty.": "",
   "The local node must be rebooted because": "",
+  "The network link is currently down.": "",
   "The number of children must at the minimum accomodate the total number of disks required for the previous configuration options including parity drives.": "",
   "The remote node must be rebooted because": "",
   "The SMB share ACL defines access rights for users of this SMB share up to, but not beyond, the access granted by filesystem ACLs.": "",

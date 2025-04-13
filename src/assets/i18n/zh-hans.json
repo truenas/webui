@@ -301,6 +301,7 @@
   "System Update Write": "",
   "Temporary password will be generated and shown to you once form is saved.  <br><br>This password is only valid for one login within 24 hours and does not persist across reboots.  <br><br>User will be encouraged to choose their own password after they login for the first time.": "",
   "Thank you. Ticket was submitted successfully.": "",
+  "The network link is currently down.": "",
   "This action will set all dataset quotas for the removed or invalid groups to 0, virtually removing any dataset quota entries for such groups. Are you sure you want to proceed?": "",
   "This device cannot be edited while the instance is running.": "",
   "This device is read-only and cannot be edited.": "",
