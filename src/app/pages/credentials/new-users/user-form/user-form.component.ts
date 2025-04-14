@@ -49,7 +49,7 @@ import { UserService } from 'app/services/user.service';
 export class UserFormComponent implements OnInit {
   protected isStigMode = this.userFormStore.isStigMode;
   protected nextUid = this.userFormStore.nextUid;
-  protected editingUser = signal(undefined);
+  protected editingUser = signal<User>(undefined);
 
   protected isFormLoading = signal<boolean>(false);
 
