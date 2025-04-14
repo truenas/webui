@@ -782,6 +782,7 @@
   "The group which controls the dataset. This group has the same permissions as granted to the <i>group@</i> <i>Who</i>. Groups created manually or imported from a directory service appear in the drop-down menu.": "",
   "The imported pool contains encrypted datasets, unlock them now?": "",
   "The local node must be rebooted because": "",
+  "The network link is currently down.": "",
   "The pasted string ends with a space": "",
   "The pasted string starts with a space": "",
   "The remote node must be rebooted because": "",

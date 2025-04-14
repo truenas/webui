@@ -3226,6 +3226,7 @@
   "The maximum number of simultaneous clients.": "",
   "The message to show when a user logs in with SSH.": "",
   "The name \"{value}\" is already in use.": "",
+  "The network link is currently down.": "",
   "The number of bits in the key used by the cryptographic algorithm. For security reasons, a minimum key length of <i>2048</i> is recommended.": "",
   "The number of children must at the minimum accomodate the total number of disks required for the previous configuration options including parity drives.": "",
   "The operation timed out. The requested resource might be offline. Check the network connection.": "",
