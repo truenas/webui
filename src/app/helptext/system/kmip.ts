@@ -15,12 +15,6 @@ export const helptextSystemKmip = {
  the Certificate used for key server authentication.'),
   },
 
-  certificate_authority: {
-    tooltip: T('Certificate Authority (CA) to use for connecting to the key server. A valid\
- CA public certificate is required to authenticate the connection. WARNING: for security reasons,\
- please protect the Certificate Authority used for key server authentication.'),
-  },
-
   manage_sed_disks: {
     tooltip: T('Self-Encrypting Drive (SED) passwords can be managed with KMIP. Enabling this\
  option allows the key server to manage creating or updating the global SED password, creating or\

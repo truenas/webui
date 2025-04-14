@@ -4,6 +4,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -28,6 +29,7 @@ import { DiskListComponent } from 'app/pages/storage/modules/disks/components/di
 import {
   DiskWipeDialog,
 } from 'app/pages/storage/modules/disks/components/disk-wipe-dialog/disk-wipe-dialog.component';
+import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 
 describe('DiskListComponent', () => {
   let spectator: Spectator<DiskListComponent>;
@@ -98,6 +100,14 @@ describe('DiskListComponent', () => {
         open: jest.fn(() => ({
           afterClosed: jest.fn(() => of(true)),
         })),
+      }),
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectPreferences,
+            value: {},
+          },
+        ],
       }),
       mockApi([
         mockCall('disk.query', fakeDisks),
