@@ -14,7 +14,7 @@ import { User } from 'app/interfaces/user.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { SearchQuery } from 'app/modules/forms/search-input/types/search-query.interface';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
-import { QueryFiltersAndOptionsApiDataProvider } from 'app/modules/ix-table/classes/api-data-provider/query-filters-and-options-data-provider';
+import { ApiDataProvider } from 'app/modules/ix-table/classes/api-data-provider/api-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
@@ -58,7 +58,7 @@ export class UserListComponent {
   protected readonly isLoading = this.usersStore.isLoading;
   protected readonly selectedUser = this.usersStore.selectedUser;
 
-  readonly dataProvider = input.required<QueryFiltersAndOptionsApiDataProvider<'user.query'>>();
+  readonly dataProvider = input.required<ApiDataProvider<'user.query'>>();
 
   protected columns = createTable<User>([
     textColumn({

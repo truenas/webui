@@ -8,8 +8,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { ApiDataProvider } from 'app/modules/ix-table/classes/api-data-provider/api-data-provider';
 import { PaginationServerSide } from 'app/modules/ix-table/classes/api-data-provider/pagination-server-side.class';
-import { QueryFiltersAndOptionsApiDataProvider } from 'app/modules/ix-table/classes/api-data-provider/query-filters-and-options-data-provider';
 import { SortingServerSide } from 'app/modules/ix-table/classes/api-data-provider/sorting-server-side.class';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master-detail-view.component';
@@ -42,7 +42,7 @@ import { UsersStore } from 'app/pages/credentials/new-users/store/users.store';
 })
 export class AllUsersComponent implements OnInit, OnDestroy {
   readonly selectedUser = this.usersStore.selectedUser;
-  protected dataProvider: QueryFiltersAndOptionsApiDataProvider<'user.query'>;
+  protected dataProvider: ApiDataProvider<'user.query'>;
   protected readonly searchableElements = allUsersElements;
   protected readonly masterDetailView = viewChild.required(MasterDetailViewComponent);
 
@@ -70,7 +70,7 @@ export class AllUsersComponent implements OnInit, OnDestroy {
   }
 
   private createDataProvider(): void {
-    this.dataProvider = new QueryFiltersAndOptionsApiDataProvider(this.api, 'user.query');
+    this.dataProvider = new ApiDataProvider(this.api, 'user.query');
     this.dataProvider.paginationStrategy = new PaginationServerSide();
     this.dataProvider.sortingStrategy = new SortingServerSide();
     this.dataProvider.setSorting({

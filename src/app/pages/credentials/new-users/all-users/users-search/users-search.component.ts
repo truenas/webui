@@ -15,7 +15,7 @@ import { SearchInputComponent } from 'app/modules/forms/search-input/components/
 import { SearchProperty } from 'app/modules/forms/search-input/types/search-property.interface';
 import { AdvancedSearchQuery, SearchQuery } from 'app/modules/forms/search-input/types/search-query.interface';
 import { booleanProperty, searchProperties, textProperty } from 'app/modules/forms/search-input/utils/search-properties.utils';
-import { QueryFiltersAndOptionsApiDataProvider } from 'app/modules/ix-table/classes/api-data-provider/query-filters-and-options-data-provider';
+import { ApiDataProvider } from 'app/modules/ix-table/classes/api-data-provider/api-data-provider';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { UsersStore } from 'app/pages/credentials/new-users/store/users.store';
@@ -40,7 +40,7 @@ export class UsersSearchComponent implements OnInit {
   readonly userName = injectParams('id');
   protected readonly advancedSearchPlaceholder = this.translate.instant('Username = "root" AND Builtin = "Yes"');
 
-  dataProvider = input.required<QueryFiltersAndOptionsApiDataProvider<'user.query'>>();
+  dataProvider = input.required<ApiDataProvider<'user.query'>>();
   protected searchQuery = signal<SearchQuery<User>>({
     query: '',
     isBasicQuery: true,
@@ -198,10 +198,7 @@ export class UsersSearchComponent implements OnInit {
       const term = `(?i)${query.query || ''}`;
       const params = new ParamsBuilder<User>()
         .filter('username', '~', term)
-        .orFilter('email', '~', term)
         .orFilter('full_name', '~', term)
-        .orFilter('group', '~', term)
-        .orFilter('home', '~', term)
         .getParams();
 
       // TODO: Incorrect cast, because of incorrect typing inside of DataProvider
