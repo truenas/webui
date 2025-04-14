@@ -4,7 +4,7 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef, input,
-  OnInit, output, Signal, viewChild,
+  OnInit, output, signal, Signal, viewChild,
 } from '@angular/core';
 import { MatCard } from '@angular/material/card';
 import { MatCalendar } from '@angular/material/datepicker';
@@ -19,7 +19,8 @@ import {
 } from '@codemirror/view';
 import { TranslateModule } from '@ngx-translate/core';
 import { format } from 'date-fns';
-import { QueryFilters } from 'app/interfaces/query-api.interface';
+import { FilterPreset, QueryFilters } from 'app/interfaces/query-api.interface';
+import { FilterPresetsComponent } from 'app/modules/forms/search-input/components/filter-presets/filter-presets.component';
 import { AdvancedSearchAutocompleteService } from 'app/modules/forms/search-input/services/advanced-search-autocomplete.service';
 import { QueryParserService } from 'app/modules/forms/search-input/services/query-parser/query-parser.service';
 import { QueryParsingError } from 'app/modules/forms/search-input/services/query-parser/query-parsing-result.interface';
@@ -44,10 +45,12 @@ const setDiagnostics = StateEffect.define<unknown[] | null>();
     TestDirective,
     TranslateModule,
     AsyncPipe,
+    FilterPresetsComponent,
   ],
 })
 export class AdvancedSearchComponent<T> implements OnInit {
   readonly query = input<QueryFilters<T>>([]);
+  readonly filterPresets = input<FilterPreset<T>[]>([]);
   readonly properties = input<SearchProperty<T>[]>([]);
   readonly placeholder = input('');
 
@@ -67,6 +70,8 @@ export class AdvancedSearchComponent<T> implements OnInit {
   get editorHasValue(): boolean {
     return this.editorView?.state?.doc?.length > 0;
   }
+
+  readonly selectedPresetLabels = signal<Set<string>>(new Set());
 
   constructor(
     private queryParser: QueryParserService<T>,
@@ -158,11 +163,36 @@ export class AdvancedSearchComponent<T> implements OnInit {
     this.hideDatePicker();
   }
 
+  applyPreset(filters: QueryFilters<T>[], presetLabels: Set<string>): void {
+    this.selectedPresetLabels.set(new Set(presetLabels));
+
+    const presetQuery = this.queryParser.formatFiltersToQuery(filters.flat(), this.properties());
+    const currentQuery = this.editorView.state.doc.toString().trim();
+
+    const normalize = (str: string): string => str.replace(/["']/g, '').replace(/\s+/g, ' ').trim().toLowerCase();
+
+    const currentNormalized = normalize(currentQuery);
+    const presetChunks = presetQuery
+      .split(/(?:\s+AND\s+|\s+OR\s+)/)
+      .map((chunk) => chunk.trim())
+      .filter((chunk) => chunk.length > 0)
+      .filter((chunk) => !currentNormalized.includes(normalize(chunk)));
+
+    if (presetChunks.length === 0) return;
+
+    const mergedQuery = currentQuery
+      ? `${currentQuery} AND ${presetChunks.join(' AND ')}`
+      : presetChunks.join(' AND ');
+
+    this.replaceEditorContents(mergedQuery);
+  }
+
   protected onResetInput(): void {
     this.replaceEditorContents('');
     this.focusInput();
     this.hideDatePicker();
     this.paramsChange.emit([]);
+    this.selectedPresetLabels.set(new Set());
     this.runSearch.emit();
   }
 
@@ -195,6 +225,23 @@ export class AdvancedSearchComponent<T> implements OnInit {
 
     const filters = this.queryToApi.buildFilters(parsedQuery, this.properties());
     this.paramsChange.emit(filters);
+
+    this.recalculateActivePresets(filters);
+  }
+
+  private recalculateActivePresets(currentFilters: QueryFilters<T>): void {
+    const activeLabels = new Set<string>();
+
+    for (const preset of this.filterPresets() || []) {
+      const presetQuery = this.queryParser.formatFiltersToQuery(preset.query, this.properties());
+      const currentQuery = this.queryParser.formatFiltersToQuery(currentFilters, this.properties());
+
+      if (currentQuery.includes(presetQuery)) {
+        activeLabels.add(preset.label);
+      }
+    }
+
+    this.selectedPresetLabels.set(activeLabels);
   }
 
   private replaceEditorContents(contents: string): void {

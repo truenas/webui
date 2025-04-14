@@ -3,7 +3,7 @@ import {
   Component, input, model,
   OnChanges, output, viewChild,
 } from '@angular/core';
-import { QueryFilters } from 'app/interfaces/query-api.interface';
+import { FilterPreset, QueryFilters } from 'app/interfaces/query-api.interface';
 import { AdvancedSearchComponent } from 'app/modules/forms/search-input/components/advanced-search/advanced-search.component';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { SearchProperty } from 'app/modules/forms/search-input/types/search-property.interface';
@@ -23,6 +23,7 @@ import {
 export class SearchInputComponent<T> implements OnChanges {
   readonly allowAdvanced = input(true);
   readonly properties = input<SearchProperty<T>[]>([]);
+  readonly filterPresets = input<FilterPreset<T>[]>([]);
   readonly query = model.required<SearchQuery<T>>();
   readonly advancedSearchPlaceholder = input<string>('');
 

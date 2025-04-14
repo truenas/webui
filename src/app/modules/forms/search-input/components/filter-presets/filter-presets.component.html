@@ -1,0 +1,13 @@
+<span class="label">{{ 'Add Filter' | translate }}:</span>
+
+@for (preset of visiblePresets(); track preset.label) {
+  <button
+    type="button"
+    mat-button
+    color="default"
+    [ixTest]="['Add', preset.label]"
+    (click)="togglePreset(preset)"
+  >
+    + {{ preset.label | translate }}
+  </button>
+}

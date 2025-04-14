@@ -9,6 +9,11 @@ export type QueryParams<T, ExtraOptions = Record<string, unknown>> = [
   (QueryOptions<T> & ExtraOptions)?,
 ];
 
+export interface FilterPreset<T> {
+  label: string;
+  query: QueryFilters<T>;
+}
+
 export type QueryFilters<T> = (QueryFilters<T> | QueryFilter<T> | OrQueryFilter<T>)[];
 
 export type OrQueryFilter<T> = ['OR', QueryFilters<T>[]];
