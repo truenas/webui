@@ -80,6 +80,8 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges, 
       untilDestroyed(this),
     ).subscribe((displayedColumns) => {
       this.columns().forEach((column) => {
+        if ('actions' in column) return;
+
         column.hidden = !displayedColumns.columns.includes(column.title);
         if (column.hidden) {
           this.hiddenColumns.select(column);
@@ -127,7 +129,7 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges, 
       this.store$.dispatch(preferredColumnsUpdated({
         tableDisplayedColumns: [{
           title: this.columnPreferencesKey(),
-          columns: this.columns().filter((col) => !col.hidden).map((col) => col.title),
+          columns: this.columns().filter((column) => !column.hidden).map((column) => column.title),
         }],
       }));
     }
@@ -153,8 +155,8 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges, 
 
   private subscribeToColumnsChange(): void {
     this.hiddenColumns.changed.pipe(untilDestroyed(this)).subscribe(() => {
-      this.columns().forEach((col) => {
-        col.hidden = this.hiddenColumns.isSelected(col);
+      this.columns().forEach((column) => {
+        column.hidden = this.hiddenColumns.isSelected(column);
       });
 
       this.emitColumnsChange();
