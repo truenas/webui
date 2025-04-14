@@ -8,7 +8,6 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { allUsersHeaderElements } from 'app/pages/credentials/new-users/all-users/all-users-header/all-users-header.elements';
-import { UsersStore } from 'app/pages/credentials/new-users/store/users.store';
 import { UserFormComponent } from 'app/pages/credentials/new-users/user-form/user-form.component';
 
 @UntilDestroy()
@@ -30,7 +29,6 @@ export class AllUsersHeaderComponent {
 
   constructor(
     private slideIn: SlideIn,
-    private usersStore: UsersStore,
     private router: Router,
   ) {}
 
