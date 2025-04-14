@@ -39,6 +39,7 @@
   "The network link is currently down.": "",
   "TrueNAS Connect is active": "",
   "TrueNAS Connect is disabled": "",
+  "TrueNAS connection was dropped or timed out.": "",
   "WAITING": "",
   "Waiting for claim token to be generated": "",
   "Waiting for registration with TrueNAS Connect to complete": "",
