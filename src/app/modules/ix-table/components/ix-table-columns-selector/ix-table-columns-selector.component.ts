@@ -12,6 +12,7 @@ import { cloneDeep } from 'lodash-es';
 import { filter, map, take } from 'rxjs';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { IxCellActionsComponent } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppState } from 'app/store';
@@ -80,7 +81,10 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges, 
       untilDestroyed(this),
     ).subscribe((displayedColumns) => {
       this.columns().forEach((column) => {
+        if (column instanceof IxCellActionsComponent) return;
+
         column.hidden = !displayedColumns.columns.includes(column.title);
+
         if (column.hidden) {
           this.hiddenColumns.select(column);
         }
@@ -127,7 +131,7 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges, 
       this.store$.dispatch(preferredColumnsUpdated({
         tableDisplayedColumns: [{
           title: this.columnPreferencesKey(),
-          columns: this.columns().filter((col) => !col.hidden).map((col) => col.title),
+          columns: this.columns().filter((column) => !column.hidden).map((column) => column.title),
         }],
       }));
     }
@@ -153,8 +157,8 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges, 
 
   private subscribeToColumnsChange(): void {
     this.hiddenColumns.changed.pipe(untilDestroyed(this)).subscribe(() => {
-      this.columns().forEach((col) => {
-        col.hidden = this.hiddenColumns.isSelected(col);
+      this.columns().forEach((column) => {
+        column.hidden = this.hiddenColumns.isSelected(column);
       });
 
       this.emitColumnsChange();
