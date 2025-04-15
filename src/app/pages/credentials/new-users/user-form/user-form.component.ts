@@ -1,12 +1,16 @@
 import {
   ChangeDetectionStrategy, Component, OnInit, signal,
+  viewChild,
 } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { tooltips } from '@codemirror/view';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { catchError, of } from 'rxjs';
+import {
+  catchError, combineLatest, distinctUntilChanged, map, of,
+  startWith,
+} from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { User } from 'app/interfaces/user.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -49,13 +53,19 @@ import { UserService } from 'app/services/user.service';
 export class UserFormComponent implements OnInit {
   protected isStigMode = this.userFormStore.isStigMode;
   protected nextUid = this.userFormStore.nextUid;
-  protected editingUser = signal(undefined);
+  protected editingUser = signal<User>(undefined);
 
   protected isFormLoading = signal<boolean>(false);
 
-  get isNewUser(): boolean {
-    return !this.editingUser;
-  }
+  protected allowedAccessSection = viewChild.required(AllowedAccessSectionComponent);
+  protected authSection = viewChild.required(AuthSectionComponent);
+  protected additionalDetailsSection = viewChild.required(AdditionalDetailsSectionComponent);
+
+  protected isFormInvalid = signal<boolean>(false);
+
+  protected readonly tooltips = tooltips;
+  protected readonly Role = Role;
+  protected readonly fakeTooltip = '';
 
   protected form = this.formBuilder.group({
     username: ['', [
@@ -65,17 +75,21 @@ export class UserFormComponent implements OnInit {
     ]],
   });
 
-  protected readonly fakeTooltip = '';
+  get isNewUser(): boolean {
+    return !this.editingUser;
+  }
 
   constructor(
     private formBuilder: NonNullableFormBuilder,
-    public slideInRef: SlideInRef<User | undefined, boolean>,
+    public slideInRef: SlideInRef<User | undefined, User>,
     private userFormStore: UserFormStore,
     private errorHandler: ErrorHandlerService,
   ) { }
 
   ngOnInit(): void {
     this.setupUsernameUpdate();
+    this.listenForAllFormsValidity();
+
     // TODO: Handle enable/disable save button based on form sections validation status
     // TODO: Handle changes for `sshpubkey_file` input to set values on sshpubkey
     // TODO: Handle changes on `group` input to update shell options
@@ -159,7 +173,7 @@ export class UserFormComponent implements OnInit {
       next: (user) => {
         this.isFormLoading.set(false);
         if (user) {
-          this.slideInRef.close({ error: undefined, response: true });
+          this.slideInRef.close({ error: undefined, response: user });
         }
       },
     });
@@ -168,6 +182,23 @@ export class UserFormComponent implements OnInit {
     // after the user create request is submitted
   }
 
-  protected readonly tooltips = tooltips;
-  protected readonly Role = Role;
+  private listenForAllFormsValidity(): void {
+    const forms = [
+      this.form,
+      this.allowedAccessSection().form,
+      this.authSection().form,
+      this.additionalDetailsSection().form,
+    ];
+
+    const statusObservables = forms.map((formGroup) => formGroup.statusChanges.pipe(
+      startWith(formGroup.status),
+      distinctUntilChanged(),
+      map((status) => status !== 'VALID'),
+    ));
+
+    combineLatest(statusObservables).pipe(
+      map((invalidArray) => invalidArray.some(Boolean)),
+      untilDestroyed(this),
+    ).subscribe((isInvalid) => this.isFormInvalid.set(isInvalid));
+  }
 }

@@ -3401,6 +3401,7 @@
   "The local node must be rebooted because": "",
   "The minimum polling interval, in seconds, as a power of 2. For example, <i>6</i> means 2^6, or 64 seconds. The default is 6, minimum value is 4.": "",
   "The name \"{value}\" is already in use.": "",
+  "The network link is currently down.": "",
   "The number of bits in the key used by the cryptographic algorithm. For security reasons, a minimum key length of <i>2048</i> is recommended.": "",
   "The number of children must at the minimum accomodate the total number of disks required for the previous configuration options including parity drives.": "",
   "The parent of this dataset has an Access Control List (ACL). Do you want to set an ACL for this dataset using the ACL Manager? ": "",

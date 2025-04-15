@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatAnchor } from '@angular/material/button';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -9,7 +9,6 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { allUsersHeaderElements } from 'app/pages/credentials/new-users/all-users/all-users-header/all-users-header.elements';
 import { UserFormComponent } from 'app/pages/credentials/new-users/user-form/user-form.component';
-import { AppState } from 'app/store';
 
 @UntilDestroy()
 @Component({
@@ -30,16 +29,16 @@ export class AllUsersHeaderComponent {
 
   constructor(
     private slideIn: SlideIn,
-    private store$: Store<AppState>,
+    private router: Router,
   ) {}
 
   doAdd(): void {
     this.slideIn.open(UserFormComponent, { wide: false }).pipe(
-      filter(({ response }) => response),
+      filter(({ response }) => !!response),
       untilDestroyed(this),
     ).subscribe({
-      next: () => {
-        // TODO: Refresh user list
+      next: ({ response }) => {
+        this.router.navigate(['/credentials', 'users-new', 'view', response.username]);
       },
     });
   }
