@@ -1,6 +1,5 @@
 import {
   ChangeDetectionStrategy, Component,
-  signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
@@ -31,8 +30,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class PasswordChangeRequiredDialog {
-  protected wasPasswordChanged = signal(false);
-
   wasRequiredPasswordChanged = toSignal(this.authService.wasRequiredPasswordChanged$);
 
   constructor(
