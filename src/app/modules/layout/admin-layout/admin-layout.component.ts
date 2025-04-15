@@ -45,7 +45,7 @@ import { AppState } from 'app/store';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectHasConsoleFooter } from 'app/store/system-config/system-config.selectors';
 import {
-  selectCopyrightHtml, selectProductType, waitForSystemInfo,
+  selectCopyrightHtml, selectIsEnterprise, selectProductType, waitForSystemInfo,
 } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
@@ -84,6 +84,8 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly hasConsoleFooter$ = this.store$.select(selectHasConsoleFooter);
   readonly copyrightHtml = toSignal(this.store$.select(selectCopyrightHtml));
   readonly productType = toSignal(this.store$.select(selectProductType));
+  readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
+
   protected currentMessageHref = computed(() => `${exploreNasEnterpriseLink}?m=${hashMessage(this.productType())}`);
 
   get sidenavWidth(): string {
