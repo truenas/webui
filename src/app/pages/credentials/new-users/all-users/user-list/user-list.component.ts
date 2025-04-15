@@ -8,7 +8,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { injectParams } from 'ngxtension/inject-params';
-import { filter, of, take } from 'rxjs';
+import { filter, take } from 'rxjs';
 import { roleNames } from 'app/enums/role.enum';
 import { User } from 'app/interfaces/user.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -83,15 +83,6 @@ export class UserListComponent {
     uniqueRowTag: (row) => 'user-' + row.username,
     ariaLabels: (row) => [row.username, this.translate.instant('User')],
   });
-
-  readonly isSelectedUserVisible$ = of(true);
-  // this.dataProvider().currentPage$.pipe(
-  //   filter((users) => {
-  //     const selectedUser = this.selectedUser();
-  //     return users.some((user) => user.username === selectedUser.username);
-  //   }),
-  //   map((users) => Boolean(users.length))
-  // );
 
   constructor(
     protected emptyService: EmptyService,

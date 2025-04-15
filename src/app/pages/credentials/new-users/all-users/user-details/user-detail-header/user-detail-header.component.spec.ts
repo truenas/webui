@@ -11,7 +11,7 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { DeleteUserDialog } from 'app/pages/credentials/new-users/all-users/user-details/delete-user-dialog/delete-user-dialog.component';
 import { UserDetailHeaderComponent } from 'app/pages/credentials/new-users/all-users/user-details/user-detail-header/user-detail-header.component';
-import { OldUserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
+import { UserFormComponent } from 'app/pages/credentials/new-users/user-form/user-form.component';
 
 const dummyUser = {
   id: 1,
@@ -81,7 +81,7 @@ describe('UserDetailHeaderComponent', () => {
     await editButton.click();
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
-      OldUserFormComponent,
+      UserFormComponent,
       { wide: true, data: dummyUser },
     );
   });
