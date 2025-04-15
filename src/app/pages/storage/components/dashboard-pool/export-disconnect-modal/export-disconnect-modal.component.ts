@@ -17,6 +17,7 @@ import { filter } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { Role } from 'app/enums/role.enum';
+import { isFailedJobError } from 'app/helpers/api.helper';
 import { helptextVolumes } from 'app/helptext/storage/volumes/volume-list';
 import { Job } from 'app/interfaces/job.interface';
 import { PoolAttachment } from 'app/interfaces/pool-attachment.interface';
@@ -161,7 +162,7 @@ export class ExportDisconnectModalComponent implements OnInit {
           this.handleDisconnectJobSuccess(value);
         },
         error: (error: unknown) => {
-          this.handleDisconnectJobFailure(error as Job);
+          this.handleDisconnectJobFailure(error);
         },
         complete: () => {
           this.isFormLoading = false;
@@ -172,30 +173,23 @@ export class ExportDisconnectModalComponent implements OnInit {
     this.datasetStore.resetDatasets();
   }
 
-  showExportErrorDialog(failureData: Job): void {
-    this.dialogService.error({
-      title: helptextVolumes.exportError,
-      message: failureData.error,
-      backtrace: failureData.exception,
-    });
-  }
-
-  handleDisconnectJobFailure(failureData: Job): void {
-    if (failureData.error) {
+  private handleDisconnectJobFailure(error: unknown): void {
+    if (isFailedJobError(error) && error.job.error) {
       if (
-        isObject(failureData.exc_info.extra)
-        && !Array.isArray(failureData.exc_info.extra)
-        && failureData.exc_info.extra.code === 'control_services'
+        isObject(error.job.exc_info.extra)
+        && !Array.isArray(error.job.exc_info.extra)
+        && error.job.exc_info.extra.code === 'control_services'
       ) {
-        this.showServicesErrorsDialog(failureData);
+        this.showServicesErrorsDialog(error.job);
         return;
       }
-      if (failureData.extra && failureData.extra.code === 'unstoppable_processes') {
-        this.showUnstoppableErrorDialog(failureData);
+      if (error.job.extra && error.job.extra.code === 'unstoppable_processes') {
+        this.showUnstoppableErrorDialog(error.job);
         return;
       }
     }
-    this.showExportErrorDialog(failureData);
+
+    this.errorHandler.showErrorModal(error);
   }
 
   showUnstoppableErrorDialog(failureData: Job): void {
