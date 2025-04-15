@@ -8,7 +8,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { injectParams } from 'ngxtension/inject-params';
-import { filter, take } from 'rxjs';
+import { filter, of, take } from 'rxjs';
 import { roleNames } from 'app/enums/role.enum';
 import { User } from 'app/interfaces/user.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -53,7 +53,8 @@ export class UserListComponent {
   readonly isMobileView = input<boolean>();
   readonly toggleShowMobileDetails = output<boolean>();
   readonly userSelected = output<User>();
-
+  // TODO: NAS-135333 - Handle case after url linking is implemented to decide when no to show selected user
+  readonly isSelectedUserVisible$ = of(true);
   readonly dataProvider = input.required<ApiDataProvider<'user.query'>>();
 
   protected columns = createTable<User>([
