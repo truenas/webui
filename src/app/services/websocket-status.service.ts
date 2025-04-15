@@ -24,12 +24,19 @@ export class WebSocketStatusService {
     return this.authStatus$.getValue();
   }
 
+  readonly hasEstablishedInitialConnection$ = new BehaviorSubject<boolean>(false);
+
   constructor() {
     combineLatest([
       this.isConnected$,
       this.isLoggedIn$.asObservable(),
     ]).pipe(
-      tap(([isConnected, isLoggedIn]) => this.authStatus$.next(isConnected && isLoggedIn)),
+      tap(([isConnected, isLoggedIn]) => {
+        this.authStatus$.next(isConnected && isLoggedIn);
+        if (isConnected && isLoggedIn) {
+          this.hasEstablishedInitialConnection$.next(true);
+        }
+      }),
       untilDestroyed(this),
     ).subscribe();
   }

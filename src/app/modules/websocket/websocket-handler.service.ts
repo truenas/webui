@@ -11,10 +11,8 @@ import {
   Observable,
   of,
   Subject,
-  Subscription,
   take,
   tap,
-  timer,
 } from 'rxjs';
 import { webSocket as rxjsWebSocket } from 'rxjs/webSocket';
 import { makeRequestMessage } from 'app/helpers/api.helper';
@@ -36,9 +34,6 @@ type ApiCall = Required<Pick<RequestMessage, 'id' | 'method' | 'params'>>;
 export class WebSocketHandlerService {
   private readonly wsConnection: WebSocketConnection = new WebSocketConnection(this.webSocket);
   private connectionUrl = (this.window.location.protocol === 'https:' ? 'wss://' : 'ws://') + environment.remote + '/api/current';
-
-  private readonly reconnectTimeoutMillis = 5 * 1000;
-  private reconnectTimerSubscription: Subscription | undefined;
   private readonly maxConcurrentCalls = 20;
 
   private shutDownInProgress = false;
@@ -179,28 +174,14 @@ export class WebSocketHandlerService {
   private onClose(event: CloseEvent): void {
     this.wsStatus.setConnectionStatus(false);
     this.isConnectionLive$.next(false);
-    if (this.reconnectTimerSubscription) {
-      return;
-    }
 
     // TODO: Extract code in some constant.
     if (event.code === 1008) {
       this.isAccessRestricted$ = true;
-    } else {
-      this.initiateReconnect();
     }
-  }
-
-  private unsubscribeReconnectSubscription(): void {
-    this.reconnectTimerSubscription?.unsubscribe();
-    this.reconnectTimerSubscription = undefined;
   }
 
   private onOpen(): void {
-    if (this.reconnectTimerSubscription) {
-      this.wsConnection.close();
-      return;
-    }
     this.shutDownInProgress = false;
     this.wsStatus.setConnectionStatus(true);
 
@@ -220,23 +201,10 @@ export class WebSocketHandlerService {
 
   reconnect(): void {
     if (this.wsConnection.closed) {
-      this.initiateReconnect();
+      this.setupWebSocket();
     } else {
       this.wsConnection.close();
     }
-  }
-
-  private initiateReconnect(): void {
-    if (this.reconnectTimerSubscription) {
-      this.unsubscribeReconnectSubscription();
-    }
-
-    this.reconnectTimerSubscription = timer(this.reconnectTimeoutMillis).subscribe({
-      next: () => {
-        this.unsubscribeReconnectSubscription();
-        this.setupWebSocket();
-      },
-    });
   }
 
   setupConnectionUrl(protocol: string, remote: string): void {

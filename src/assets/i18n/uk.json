@@ -2083,6 +2083,7 @@
   "The {service} service is running and will auto-start after a system restart.": "",
   "The {service} service is running.": "",
   "The <i><b>{name}</b></i> zvol and all snapshots stored with it <b>will be permanently deleted</b>.": "",
+  "The connection to TrueNAS was lost due to a timeout or network interruption. To continue, please reconnect manually.": "",
   "The expanded vdev uses the pre-expanded parity ratio, which reduces the total vdev capacity. To reset the vdev parity ratio and fully use the new capacity, manually rewrite all data in the vdev. This process takes time and is irreversible.": "",
   "The following { n, plural, one {boot environment} other {# boot environments} } will be deleted. Are you sure you want to proceed?": "",
   "The following { n, plural, one {docker image} other {# docker images} } will be deleted. Are you sure you want to proceed?": "",

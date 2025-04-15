@@ -17,6 +17,7 @@
   "Registration finalization failed": "",
   "Registration finalization successful": "",
   "Registration finalization timed out": "",
+  "The connection to TrueNAS was lost due to a timeout or network interruption. To continue, please reconnect manually.": "",
   "The network link is currently down.": "",
   "TrueNAS Connect is active": "",
   "TrueNAS Connect is disabled": "",
