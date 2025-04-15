@@ -3,7 +3,6 @@ import {
   Component, ChangeDetectionStrategy,
   output,
   input,
-  effect,
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -24,8 +23,6 @@ import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
 import { UsersSearchComponent } from 'app/pages/credentials/new-users/all-users/users-search/users-search.component';
-import { UsersStore } from 'app/pages/credentials/new-users/store/users.store';
-import { UrlOptionsService } from 'app/services/url-options.service';
 
 @UntilDestroy()
 @Component({
@@ -54,9 +51,7 @@ export class UserListComponent {
 
   readonly isMobileView = input<boolean>();
   readonly toggleShowMobileDetails = output<boolean>();
-  protected readonly users = this.usersStore.users;
-  protected readonly isLoading = this.usersStore.isLoading;
-  protected readonly selectedUser = this.usersStore.selectedUser;
+  readonly userSelected = output<User>();
 
   readonly dataProvider = input.required<ApiDataProvider<'user.query'>>();
 
@@ -98,35 +93,17 @@ export class UserListComponent {
   // );
 
   constructor(
-    private usersStore: UsersStore,
     protected emptyService: EmptyService,
-    private urlOptionsService: UrlOptionsService,
     private translate: TranslateService,
     private searchDirectives: UiSearchDirectivesService,
   ) {
-    effect(() => {
-      const userName = this.userName();
-      const users = this.users();
-
-      if (users?.length > 0) {
-        if (userName && users.some((user) => user.username === userName)) {
-          this.usersStore.selectUser(userName);
-        } else {
-          this.navigateToDetails(users[0]);
-        }
-
-        setTimeout(() => this.handlePendingGlobalSearchElement());
-      }
+    setTimeout(() => {
+      this.handlePendingGlobalSearchElement();
     });
   }
 
   navigateToDetails(user: User): void {
-    this.usersStore.selectUser(user.username);
-    this.urlOptionsService.setUrlOptions(`/credentials/users-new/view/${user.username}`, {
-      searchQuery: this.searchQuery(),
-      sorting: this.dataProvider().sorting,
-      pagination: this.dataProvider().pagination,
-    });
+    this.userSelected.emit(user);
 
     if (this.isMobileView()) {
       this.toggleShowMobileDetails.emit(true);
@@ -142,6 +119,7 @@ export class UserListComponent {
   }
 
   expanded(row: User): void {
+    this.navigateToDetails(row);
     if (!row || !this.isMobileView()) return;
     this.toggleShowMobileDetails.emit(true);
   }

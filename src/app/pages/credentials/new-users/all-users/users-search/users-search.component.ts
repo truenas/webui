@@ -1,3 +1,4 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, input, signal, OnInit,
 } from '@angular/core';
@@ -18,7 +19,6 @@ import { booleanProperty, searchProperties, textProperty } from 'app/modules/for
 import { ApiDataProvider } from 'app/modules/ix-table/classes/api-data-provider/api-data-provider';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { UsersStore } from 'app/pages/credentials/new-users/store/users.store';
 import { UrlOptionsService } from 'app/services/url-options.service';
 
 @UntilDestroy()
@@ -31,6 +31,7 @@ import { UrlOptionsService } from 'app/services/url-options.service';
   imports: [
     FakeProgressBarComponent,
     MatButton,
+    AsyncPipe,
     SearchInputComponent,
     TranslateModule,
     TestDirective,
@@ -41,6 +42,7 @@ export class UsersSearchComponent implements OnInit {
   protected readonly advancedSearchPlaceholder = this.translate.instant('Username = "root" AND Builtin = "Yes"');
 
   dataProvider = input.required<ApiDataProvider<'user.query'>>();
+
   protected searchQuery = signal<SearchQuery<User>>({
     query: '',
     isBasicQuery: true,
@@ -48,13 +50,11 @@ export class UsersSearchComponent implements OnInit {
 
   protected readonly searchProperties = signal<SearchProperty<User>[]>([]);
 
-  isLoading = this.usersStore.isLoading;
   constructor(
-    private usersStore: UsersStore,
     private urlOptionsService: UrlOptionsService,
     private translate: TranslateService,
     private activatedRoute: ActivatedRoute,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loadParamsFromRoute();
