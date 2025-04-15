@@ -119,14 +119,12 @@ export class GlobalTargetConfigurationComponent implements OnInit {
         complete: () => {
           this.isLoading.set(false);
           this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Iscsi }));
-          this.cdr.markForCheck();
           this.slideInRef.close({ response: true, error: null });
           this.snackbar.success(this.translate.instant('Settings saved.'));
         },
         error: (error: unknown) => {
           this.isLoading.set(false);
           this.formErrorHandler.handleValidationErrors(error, this.form);
-          this.cdr.markForCheck();
         },
       });
   }

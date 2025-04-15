@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, viewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, viewChild,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -81,7 +81,7 @@ export class ReplicationFormComponent implements OnInit {
   protected readonly targetSection = viewChild.required(TargetSectionComponent);
   protected readonly scheduleSection = viewChild.required(ScheduleSectionComponent);
 
-  isLoading = false;
+  protected isLoading = signal(false);
 
   sourceNodeProvider: TreeNodeProvider;
   targetNodeProvider: TreeNodeProvider;
@@ -180,7 +180,7 @@ export class ReplicationFormComponent implements OnInit {
       ? this.api.call('replication.update', [this.existingReplication.id, payload])
       : this.api.call('replication.create', [payload]);
 
-    this.isLoading = true;
+    this.isLoading.set(true);
     operation$
       .pipe(untilDestroyed(this))
       .subscribe(
@@ -191,13 +191,11 @@ export class ReplicationFormComponent implements OnInit {
                 ? this.translate.instant('Replication task created.')
                 : this.translate.instant('Replication task saved.'),
             );
-            this.isLoading = false;
-            this.cdr.markForCheck();
+            this.isLoading.set(false);
             this.slideInRef.close({ response, error: null });
           },
           error: (error: unknown) => {
-            this.isLoading = false;
-            this.cdr.markForCheck();
+            this.isLoading.set(false);
             this.errorHandler.showErrorModal(error);
           },
         },
@@ -261,8 +259,7 @@ export class ReplicationFormComponent implements OnInit {
       payload.naming_schema = formValues.also_include_naming_schema;
     }
 
-    this.isLoading = true;
-    this.cdr.markForCheck();
+    this.isLoading.set(true);
 
     this.authService.hasRole(this.requiredRoles).pipe(
       switchMap((hasRole) => {
@@ -283,8 +280,7 @@ export class ReplicationFormComponent implements OnInit {
             dataset: String(formValues.source_datasets),
           },
         );
-        this.isLoading = false;
-        this.cdr.markForCheck();
+        this.isLoading.set(false);
       },
       error: (error: unknown) => {
         this.isEligibleSnapshotsMessageRed = true;
@@ -294,8 +290,7 @@ export class ReplicationFormComponent implements OnInit {
           this.eligibleSnapshotsMessage = `${this.eligibleSnapshotsMessage} ${firstError}`;
         }
 
-        this.isLoading = false;
-        this.cdr.markForCheck();
+        this.isLoading.set(false);
       },
     });
   }

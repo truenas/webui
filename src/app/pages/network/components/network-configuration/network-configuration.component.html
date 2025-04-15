@@ -1,0 +1,174 @@
+<ix-modal-header
+  [requiredRoles]="requiredRoles"
+  [title]="helptext.title | translate"
+  [loading]="isFormLoading()"
+></ix-modal-header>
+
+<mat-card class="card">
+  <mat-card-content>
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+      <div class="two-columns">
+        <ix-fieldset
+          [title]="helptext.hostname_and_domain | translate"
+        >
+          <ix-input
+            [formControlName]="hostname.fcName"
+            [label]="hostname.label | translate"
+            [tooltip]="hostname.tooltip | translate"
+          ></ix-input>
+
+          @if (!hostnameB.hidden) {
+            <ix-input
+              [formControlName]="hostnameB.fcName"
+              [label]="hostnameB.label | translate"
+              [tooltip]="hostnameB.tooltip | translate"
+            ></ix-input>
+          }
+
+          @if (!hostnameVirtual.hidden) {
+            <ix-input
+              [formControlName]="hostnameVirtual.fcName"
+              [label]="hostnameVirtual.label | translate"
+              [tooltip]="hostnameVirtual.tooltip | translate"
+            ></ix-input>
+          }
+
+          <ix-checkbox
+            [formControlName]="inheritDhcp.fcName"
+            [label]="inheritDhcp.label | translate"
+            [tooltip]="inheritDhcp.tooltip | translate"
+          ></ix-checkbox>
+
+          <ix-input
+            [formControlName]="domain.fcName"
+            [label]="domain.label | translate"
+            [tooltip]="domain.tooltip | translate"
+          ></ix-input>
+
+          <ix-chips
+            [formControlName]="domains.fcName"
+            [label]="domains.label | translate"
+            [placeholder]="domains.label | translate"
+            [tooltip]="domains.tooltip | translate"
+          ></ix-chips>
+        </ix-fieldset>
+        <ix-fieldset
+          [title]="helptext.service_announcement | translate"
+        >
+          <ix-checkbox
+            class="mt-field"
+            [formControlName]="netbios.fcName"
+            [label]="netbios.label | translate"
+            [tooltip]="netbios.tooltip | translate"
+          ></ix-checkbox>
+
+          <ix-checkbox
+            [formControlName]="mdns.fcName"
+            [label]="mdns.label | translate"
+            [tooltip]="mdns.tooltip | translate"
+          ></ix-checkbox>
+
+          <ix-checkbox
+            [formControlName]="wsd.fcName"
+            [label]="wsd.label | translate"
+            [tooltip]="wsd.tooltip | translate"
+          ></ix-checkbox>
+        </ix-fieldset>
+      </div>
+
+      <div class="two-columns">
+        <ix-fieldset
+          [title]="helptext.nameservers | translate"
+        >
+          <ix-input
+            [formControlName]="nameserver1.fcName"
+            [label]="nameserver1.label | translate"
+            [tooltip]="nameserver1.tooltip | translate"
+          ></ix-input>
+
+          <ix-input
+            [formControlName]="nameserver2.fcName"
+            [label]="nameserver2.label | translate"
+            [tooltip]="nameserver2.tooltip | translate"
+          ></ix-input>
+
+          <ix-input
+            [formControlName]="nameserver3.fcName"
+            [label]="nameserver3.label | translate"
+            [tooltip]="nameserver3.tooltip | translate"
+          ></ix-input>
+        </ix-fieldset>
+        <ix-fieldset
+          [title]="helptext.gateway | translate"
+        >
+          <ix-input
+            [formControlName]="ipv4gateway.fcName"
+            [label]="ipv4gateway.label | translate"
+            [tooltip]="ipv4gateway.tooltip | translate"
+          ></ix-input>
+
+          <ix-input
+            [formControlName]="ipv6gateway.fcName"
+            [label]="ipv6gateway.label | translate"
+            [tooltip]="ipv6gateway.tooltip | translate"
+          ></ix-input>
+        </ix-fieldset>
+      </div>
+
+      <div class="two-columns">
+        <ix-fieldset
+          [title]="helptext.outbound_network | translate"
+        >
+          <ix-radio-group
+            class="mt-field outbound-network-radio"
+            [formControlName]="outboundNetworkActivity.fcName"
+            [label]="outboundNetworkActivity.label | translate"
+            [tooltip]="outboundNetworkActivity.tooltip | translate"
+            [options]="outboundNetworkActivity.options"
+          ></ix-radio-group>
+
+          @if (!outboundNetworkValue.hidden) {
+            <ix-select
+              class="outbound-network-value"
+              [formControlName]="outboundNetworkValue.fcName"
+              [label]="outboundNetworkValue.label | translate"
+              [tooltip]="outboundNetworkValue.tooltip | translate"
+              [options]="outboundNetworkValue.options"
+              [multiple]="true"
+            ></ix-select>
+          }
+        </ix-fieldset>
+
+        <ix-fieldset
+          [title]="helptext.other | translate"
+        >
+          <ix-input
+            [formControlName]="httpproxy.fcName"
+            [label]="httpproxy.label | translate"
+            [tooltip]="httpproxy.tooltip | translate"
+          ></ix-input>
+
+          <ix-chips
+            [formControlName]="hosts.fcName"
+            [label]="hosts.label | translate"
+            [placeholder]="hosts.label | translate"
+            [tooltip]="hosts.tooltip | translate"
+          ></ix-chips>
+        </ix-fieldset>
+      </div>
+
+      <div class="form-actions">
+        <button
+          *ixRequiresRoles="requiredRoles"
+          mat-button
+          type="submit"
+          color="primary"
+          ixTest="save"
+          [disabled]="form.invalid || isFormLoading()"
+        >
+          {{ 'Save' | translate }}
+        </button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

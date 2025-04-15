@@ -43,7 +43,7 @@
       color="primary"
       type="submit"
       ixTest="save"
-      [disabled]="form.invalid || isFormLoading"
+      [disabled]="form.invalid || isFormLoading()"
     >
       {{ 'Save' | translate }}
     </button>

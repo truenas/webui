@@ -1,7 +1,7 @@
 <ix-modal-header
   [requiredRoles]="requiredRoles"
   [title]="title"
-  [loading]="isLoading"
+  [loading]="isLoading()"
 ></ix-modal-header>
 
 <mat-card>
@@ -122,7 +122,7 @@
           type="submit"
           color="primary"
           ixTest="save"
-          [disabled]="form.invalid || (showPortControls && fcForm.invalid) || isLoading || isAsyncValidatorPending"
+          [disabled]="form.invalid || (showPortControls && fcForm.invalid) || isLoading() || isAsyncValidatorPending"
         >
           {{ 'Save' | translate }}
         </button>

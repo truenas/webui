@@ -24,7 +24,7 @@
     class="logs"
     [style.font-size]="fontSize + 'px'"
   >
-    @if (isLoading) {
+    @if (isLoading()) {
       <mat-spinner class="spinner" [diameter]="40"></mat-spinner>
     } @else if (!logs.length) {
       <div class="log-row">

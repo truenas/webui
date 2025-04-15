@@ -10,7 +10,6 @@ import { pick } from 'lodash-es';
 import { Observable, of } from 'rxjs';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
-import { helptextSystemCa } from 'app/helptext/system/ca';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { CertificateProfile, CertificateProfiles } from 'app/interfaces/certificate.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -48,7 +47,7 @@ export class CsrIdentifierAndTypeComponent implements OnInit, SummaryProvider {
       Validators.required,
       this.validators.withMessage(
         Validators.pattern('[A-Za-z0-9_-]+$'),
-        this.translate.instant(helptextSystemCa.add.name.errors),
+        this.translate.instant(helptextSystemCertificates.add.name.errors),
       ),
     ]],
     create_type: [CertificateCreateType.CreateCsr],

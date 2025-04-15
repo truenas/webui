@@ -1,7 +1,7 @@
 <ix-modal-header
   [requiredRoles]="requiredRoles"
   [title]="isNew ? ('Add Dataset' | translate) : ('Edit Dataset' | translate)"
-  [loading]="isLoading"
+  [loading]="isLoading()"
 ></ix-modal-header>
 
 <mat-card>
@@ -40,7 +40,7 @@
           type="submit"
           color="primary"
           ixTest="save"
-          [disabled]="form.invalid || isLoading || !areSubFormsValid"
+          [disabled]="form.invalid || isLoading() || !areSubFormsValid"
         >
           {{ 'Save' | translate }}
         </button>

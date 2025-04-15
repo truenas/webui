@@ -3,6 +3,7 @@ import {
   ChangeDetectorRef,
   Component,
   OnInit,
+  signal,
 } from '@angular/core';
 import {
   FormBuilder, FormControl, Validators, ReactiveFormsModule,
@@ -53,7 +54,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 export class ProactiveComponent implements OnInit {
   protected readonly requiredRoles = [Role.SupportWrite];
 
-  isLoading = false;
+  protected isLoading = signal(false);
   title = helptext.proactive.title;
   isFormDisabled = false;
   form = this.formBuilder.group({
@@ -92,14 +93,13 @@ export class ProactiveComponent implements OnInit {
 
   onSubmit(): void {
     const values = this.form.value as SupportConfigUpdate;
-    this.isLoading = true;
+    this.isLoading.set(true);
 
     this.api.call('support.update', [values])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
-          this.isLoading = false;
-          this.cdr.markForCheck();
+          this.isLoading.set(false);
           this.slideInRef.close({ response: true, error: null });
 
           this.snackbar.success(
@@ -107,7 +107,7 @@ export class ProactiveComponent implements OnInit {
           );
         },
         error: (error: unknown) => {
-          this.isLoading = false;
+          this.isLoading.set(false);
           this.formErrorHandler.handleValidationErrors(error, this.form);
           this.cdr.markForCheck();
         },
@@ -115,7 +115,7 @@ export class ProactiveComponent implements OnInit {
   }
 
   private loadConfig(): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
 
     forkJoin([
       this.api.call('support.config'),
@@ -125,8 +125,7 @@ export class ProactiveComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe({
         next: ([config, isAvailable, isEnabled]) => {
-          this.isLoading = false;
-          this.cdr.markForCheck();
+          this.isLoading.set(false);
 
           if (!isAvailable) {
             this.supportUnavailable();

@@ -25,6 +25,7 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 describe('UpdateActionsCardComponent', () => {
   let spectator: Spectator<UpdateActionsCardComponent>;
   let loader: HarnessLoader;
+  const updateRunningStatus$ = new BehaviorSubject('false');
 
   const mockDialogRef = {
     close: jest.fn(),
@@ -54,7 +55,7 @@ describe('UpdateActionsCardComponent', () => {
         packages$: new BehaviorSubject([]),
       }),
       mockProvider(SystemGeneralService, {
-        updateRunning: of('false'),
+        updateRunning: updateRunningStatus$,
         updateRunningNoticeSent: new EventEmitter<string>(),
       }),
       mockProvider(MatDialog, {
@@ -146,5 +147,12 @@ describe('UpdateActionsCardComponent', () => {
     });
 
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/system/update/manualupdate']);
+  });
+
+  it('checks when update is running and shows the correct text', () => {
+    updateRunningStatus$.next('true');
+    spectator.detectChanges();
+    expect(spectator.query('.update-running-message'))
+      .toHaveText('A system update is in progress. It might have been launched in another window or by an external source like TrueCommand. This system will restart when the update completes.');
   });
 });

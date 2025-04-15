@@ -67,7 +67,7 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
   ],
 })
 export class GuiFormComponent implements OnInit {
-  isFormLoading = true;
+  protected isFormLoading = signal(true);
   configData: SystemGeneralConfig;
   protected isStigMode = signal(false);
 
@@ -177,7 +177,7 @@ export class GuiFormComponent implements OnInit {
         this.formGroup.controls.ui_httpsredirect.setValue(values.ui_httpsredirect);
       }),
       switchMap(() => {
-        this.isFormLoading = true;
+        this.isFormLoading.set(true);
         return this.api.call('system.general.update', [params as SystemGeneralConfigUpdate]);
       }),
       untilDestroyed(this),
@@ -186,14 +186,12 @@ export class GuiFormComponent implements OnInit {
         this.store$.dispatch(guiFormSubmitted({ theme: values.theme }));
         this.store$.dispatch(generalConfigUpdated());
         this.themeService.updateThemeInLocalStorage(this.themeService.findTheme(values.theme));
-        this.isFormLoading = false;
-        this.cdr.markForCheck();
+        this.isFormLoading.set(false);
         this.handleServiceRestart(params as SystemGeneralConfigUpdate);
       },
       error: (error: unknown) => {
-        this.isFormLoading = false;
+        this.isFormLoading.set(false);
         this.formErrorHandler.handleValidationErrors(error, this.formGroup);
-        this.cdr.markForCheck();
       },
     });
   }
@@ -289,8 +287,7 @@ export class GuiFormComponent implements OnInit {
         usage_collection: config.usage_collection,
         ui_consolemsg: config.ui_consolemsg,
       });
-      this.isFormLoading = false;
-      this.cdr.markForCheck();
+      this.isFormLoading.set(false);
     });
   }
 

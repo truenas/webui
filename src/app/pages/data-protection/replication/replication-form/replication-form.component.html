@@ -1,7 +1,7 @@
 <ix-modal-header
   [requiredRoles]="requiredRoles"
   [title]="isNew ? ('Add Replication Task' | translate) : ('Edit Replication Task' | translate)"
-  [loading]="isLoading"
+  [loading]="isLoading()"
 ></ix-modal-header>
 <mat-card>
   <mat-card-content>

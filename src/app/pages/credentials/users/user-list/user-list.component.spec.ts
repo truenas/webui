@@ -16,8 +16,8 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { usersInitialState, UsersState } from 'app/pages/credentials/users/store/user.reducer';
 import { selectUsers, selectUserState, selectUsersTotal } from 'app/pages/credentials/users/store/user.selectors';
 import { UserDetailsRowComponent } from 'app/pages/credentials/users/user-details-row/user-details-row.component';
+import { OldUserListComponent } from 'app/pages/credentials/users/user-list/user-list.component';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
-import { UserListComponent } from './user-list.component';
 
 const fakeUserDataSource: User[] = [
   {
@@ -66,13 +66,13 @@ const fakeUserDataSource: User[] = [
   } as User,
 ] as User[];
 
-describe('UserListComponent', () => {
-  let spectator: Spectator<UserListComponent>;
+describe('OldUserListComponent', () => {
+  let spectator: Spectator<OldUserListComponent>;
   let loader: HarnessLoader;
   let store$: MockStore<UsersState>;
 
   const createComponent = createComponentFactory({
-    component: UserListComponent,
+    component: OldUserListComponent,
     imports: [
       MockComponent(PageHeaderComponent),
       SearchInput1Component,

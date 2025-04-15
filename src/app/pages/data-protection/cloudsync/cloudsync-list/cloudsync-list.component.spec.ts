@@ -36,6 +36,7 @@ import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/clou
 import { CloudSyncListComponent } from 'app/pages/data-protection/cloudsync/cloudsync-list/cloudsync-list.component';
 import { CloudSyncRestoreDialog } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
 import { TaskService } from 'app/services/task.service';
+import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 
 describe('CloudSyncListComponent', () => {
   let spectator: Spectator<CloudSyncListComponent>;
@@ -140,6 +141,10 @@ describe('CloudSyncListComponent', () => {
           {
             selector: selectJob(1),
             value: fakeSuccessfulJob(),
+          },
+          {
+            selector: selectPreferences,
+            value: {},
           },
         ],
       }),

@@ -2,20 +2,21 @@
 <mat-divider></mat-divider>
 <mat-dialog-content>
   <div>
-    @if (tnc.config()?.status === TruenasConnectStatus.Configured) {
-    <ix-icon class="status-connected" name="check_circle"></ix-icon>
-    } @else if (tnc.config()?.status === TruenasConnectStatus.Disabled) {
-    <ix-icon class="status-disabled" name="pause_circle_filled"></ix-icon>
-    } @else if (tnc.config()?.status === TruenasConnectStatus.RegistrationFinalizationFailed
-      || tnc.config()?.status === TruenasConnectStatus.CertGenerationFailed){
+    @if (status() === TncStatus.Active) {
+      <ix-icon class="status-connected" name="check_circle"></ix-icon>
+    } @else if (status() === TncStatus.Disabled) {
+      <ix-icon class="status-disabled" name="pause_circle_filled"></ix-icon>
+    } @else if (status() === TncStatus.Failed){
       <ix-icon class="status-failed" name="cancel"></ix-icon>
-    } @else {
-    <ix-icon class="status-pending" name="pending"></ix-icon>
+    } @else if (status() === TncStatus.Waiting) {
+      <ix-icon class="status-pending" name="pending"></ix-icon>
+    } @else if (status() === TncStatus.Connecting) {
+      <ix-icon class="status-connecting" name="pending"></ix-icon>
     }
-    <span>{{ tnc.config()?.status }}</span>
+    <span ixTest="tnc-status">{{ status() }}</span>
   </div>
-  <div id="error">
-    {{ tnc.config()?.status_reason }}
+  <div ixTest="tnc-status-reason">
+    {{ TruenasConnectStatusReason[tnc.config().status] | translate }}
   </div>
 </mat-dialog-content>
 <div mat-dialog-actions>
@@ -26,9 +27,9 @@
     color="primary"
     mat-button
     ixTest="tnc-open"
-    [disabled]="tnc.config()?.status !== TruenasConnectStatus.Configured"
+    [disabled]="tnc.config().status !== TruenasConnectStatus.Configured"
     (click)="open()"
   >
-    {{ "Open" | translate }}
+    {{ "Open TrueNAS Connect" | translate }}
   </button>
 </div>

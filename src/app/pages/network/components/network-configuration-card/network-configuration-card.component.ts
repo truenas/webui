@@ -22,7 +22,7 @@ import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { NetworkConfigurationComponent } from 'app/pages/network/components/configuration/configuration.component';
+import { NetworkConfigurationComponent } from 'app/pages/network/components/network-configuration/network-configuration.component';
 import {
   networkConfigurationCardElements,
 } from 'app/pages/network/components/network-configuration-card/network-configuration-card.elements';

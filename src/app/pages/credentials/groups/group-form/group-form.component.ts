@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  signal,
 } from '@angular/core';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -68,7 +69,7 @@ export class GroupFormComponent implements OnInit {
     return this.isNew ? this.translate.instant('Add Group') : this.translate.instant('Edit Group');
   }
 
-  isFormLoading = false;
+  protected isFormLoading = signal(false);
 
   privilegesList: Privilege[];
   initialGroupRelatedPrivilegesList: Privilege[] = [];
@@ -165,7 +166,7 @@ export class GroupFormComponent implements OnInit {
       sudo_commands_nopasswd: values.sudo_commands_nopasswd_all ? [allCommands] : values.sudo_commands_nopasswd,
     };
 
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
     let request$: Observable<unknown>;
     if (this.editingGroup) {
       request$ = this.api.call('group.update', [
@@ -198,14 +199,12 @@ export class GroupFormComponent implements OnInit {
           this.store$.dispatch(groupChanged({ group: { ...group, roles } }));
         }
 
-        this.isFormLoading = false;
+        this.isFormLoading.set(false);
         this.slideInRef.close({ response: true, error: null });
-        this.cdr.markForCheck();
       },
       error: (error: unknown) => {
-        this.isFormLoading = false;
+        this.isFormLoading.set(false);
         this.formErrorHandler.handleValidationErrors(error, this.form);
-        this.cdr.markForCheck();
       },
     });
   }

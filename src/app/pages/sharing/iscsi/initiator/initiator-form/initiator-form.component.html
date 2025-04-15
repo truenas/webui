@@ -1,5 +1,5 @@
 <mat-card class="form-card" [ixUiSearch]="searchableElements.elements.addInitiator">
-  @if (isFormLoading) {
+  @if (isFormLoading()) {
     <mat-progress-bar
       mode="indeterminate"
     ></mat-progress-bar>
@@ -24,7 +24,7 @@
                 mat-flat-button
                 ixTest="add-initiator"
                 type="button"
-                [disabled]="isFormLoading"
+                [disabled]="isFormLoading()"
                 (click)="onAddInitiator()"
               >
                 <ix-icon name="add"></ix-icon>
@@ -50,7 +50,7 @@
             type="button"
             class="refresh-button"
             ixTest="refresh"
-            [disabled]="isFormLoading"
+            [disabled]="isFormLoading()"
             (click)="getConnectedInitiators()"
           >
             <ix-icon name="refresh"></ix-icon>
@@ -72,7 +72,7 @@
         color="primary"
         ixTest="save"
         type="submit"
-        [disabled]="isFormLoading || form.invalid"
+        [disabled]="isFormLoading() || form.invalid"
       >
         {{ 'Save' | translate }}
       </button>

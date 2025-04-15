@@ -14,7 +14,7 @@ import { AuthService } from 'app/modules/auth/auth.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DeleteUserDialog } from 'app/pages/credentials/new-users/all-users/user-details/delete-user-dialog/delete-user-dialog.component';
-import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
+import { UserFormComponent } from 'app/pages/credentials/new-users/user-form/user-form.component';
 
 @UntilDestroy()
 @Component({

@@ -3,7 +3,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  OnInit,
+  OnInit, signal,
 } from '@angular/core';
 import {
   Validators, ReactiveFormsModule, NonNullableFormBuilder,
@@ -93,7 +93,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   private existingSmbShare: SmbShare | undefined;
   defaultSmbShare: SmbShare | undefined;
 
-  isLoading = false;
+  protected isLoading = signal(false);
   isAdvancedMode = false;
   namesInUse: string[] = [];
   readonly helptextSharingSmb = helptextSharingSmb;
@@ -489,8 +489,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     ).pipe(
       filter(Boolean),
       tap(() => {
-        this.isLoading = true;
-        this.cdr.markForCheck();
+        this.isLoading.set(true);
       }),
       switchMap(() => request$),
       switchMap((smbShareResponse) => this.restartCifsServiceIfNecessary().pipe(
@@ -502,8 +501,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
       untilDestroyed(this),
     ).subscribe({
       next: ({ smbShareResponse, shouldRedirect }) => {
-        this.isLoading = false;
-        this.cdr.markForCheck();
+        this.isLoading.set(false);
         if (shouldRedirect) {
           this.dialogService.confirm({
             title: this.translate.instant('Configure ACL'),
@@ -532,8 +530,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
         if (apiError?.reason?.includes('[ENOENT]') || apiError?.reason?.includes('[EXDEV]')) {
           this.dialogService.closeAllDialogs();
         }
-        this.isLoading = false;
-        this.cdr.markForCheck();
+        this.isLoading.set(false);
         this.formErrorHandler.handleValidationErrors(error, this.form, {}, 'smb-form-toggle-advanced-options');
       },
     });
