@@ -31,6 +31,7 @@ import { UserListComponent } from 'app/pages/credentials/new-users/all-users/use
 @Component({
   selector: 'ix-all-users',
   templateUrl: './all-users.component.html',
+  styleUrl: './all-users.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [

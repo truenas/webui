@@ -3,11 +3,12 @@ import {
   Component, ChangeDetectionStrategy,
   output,
   input,
+  effect,
 } from '@angular/core';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { injectParams } from 'ngxtension/inject-params';
-import { of } from 'rxjs';
+import { filter, of, take } from 'rxjs';
 import { roleNames } from 'app/enums/role.enum';
 import { User } from 'app/interfaces/user.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -97,6 +98,22 @@ export class UserListComponent {
     private translate: TranslateService,
     private searchDirectives: UiSearchDirectivesService,
   ) {
+    effect(() => {
+      const dataProvider = this.dataProvider();
+      if (!dataProvider) {
+        return;
+      }
+
+      dataProvider.currentPage$.pipe(
+        filter((users) => Boolean(users.length)),
+        take(1),
+        untilDestroyed(this),
+      ).subscribe({
+        next: (users) => {
+          this.userSelected.emit(users[0]);
+        },
+      });
+    });
     setTimeout(() => {
       this.handlePendingGlobalSearchElement();
     });
