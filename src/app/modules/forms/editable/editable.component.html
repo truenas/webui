@@ -1,0 +1,41 @@
+@if (!isOpen()) {
+  <button
+    class="edit-trigger"
+    [ixTest]="[valueAsText(), 'edit']"
+    [class.edit-trigger-empty]="isEmpty()"
+    (click)="open()"
+  >
+    <div #triggerValue>
+      <ng-content select="[view]"></ng-content>
+    </div>
+
+    @if (isEmpty()) {
+      {{ emptyValue() }}
+    }
+
+    <ix-icon class="edit-trigger-icon" name="mdi-pencil"></ix-icon>
+  </button>
+} @else {
+  <div class="edit-mode">
+    <div class="content">
+      <ng-content select="[edit]"></ng-content>
+    </div>
+    <div class="controls">
+      <button
+        mat-icon-button
+        ixTest="save-edits"
+        (click)="save()"
+      >
+        <ix-icon name="mdi-check"></ix-icon>
+      </button>
+
+      <button
+        mat-icon-button
+        ixTest="cancel-edits"
+        (click)="cancel()"
+      >
+        <ix-icon name="mdi-close"></ix-icon>
+      </button>
+    </div>
+  </div>
+}

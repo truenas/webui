@@ -8,6 +8,7 @@ import {
 } from 'app/helpers/api.helper';
 import { ApiErrorDetails } from 'app/interfaces/api-error.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { EditableService } from 'app/modules/forms/editable/services/editable.service';
 import { IxFormService } from 'app/modules/forms/ix-forms/services/ix-form.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -19,6 +20,7 @@ export class FormErrorHandlerService {
   constructor(
     private errorHandler: ErrorHandlerService,
     private formService: IxFormService,
+    private editableService: EditableService,
     @Inject(DOCUMENT) private document: Document,
   ) {}
 
@@ -34,6 +36,7 @@ export class FormErrorHandlerService {
     fieldsMap: Record<string, string> = {},
     triggerAnchor: string | undefined = undefined,
   ): void {
+    this.needToShowError = false;
     const isValidationError = isApiCallError(error)
       && isApiErrorDetails(error.error.data)
       && error.error.data.errname === ApiErrorName.Validation
@@ -119,7 +122,7 @@ export class FormErrorHandlerService {
     const controlsNames = this.formService.getControlNames();
 
     if (!control || !controlsNames.includes(field)) {
-      console.warn(`Could not find control ${field}.`);
+      console.warn(`getControlNames Could not find control ${field}.`);
       this.needToShowError = true;
       return;
     }
@@ -143,7 +146,26 @@ export class FormErrorHandlerService {
       control.markAsTouched();
 
       const element = this.formService.getElementByControlName(field);
-      if (element && !this.isFocusedOnError) {
+      if (!element) {
+        console.warn(`getElementByControlName Could not find element for ${field}.`);
+        this.needToShowError = true;
+        return;
+      }
+
+      const isElementWithinDom = this.document.body.contains(element);
+      if (!isElementWithinDom) {
+        // Is it part of an editable field?
+        const editables = this.editableService.findEditablesWithControl(control);
+        if (!editables.length) {
+          console.warn(`getElementByControlName Element for ${field} is not within DOM.`);
+          this.needToShowError = true;
+          return;
+        }
+
+        editables.forEach((editable) => editable.open());
+      }
+
+      if (!this.isFocusedOnError) {
         setTimeout(() => {
           element.scrollIntoView({ behavior: 'smooth', block: 'center' });
           element.focus();
