@@ -6,12 +6,14 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import {
   createComponentFactory, mockProvider, Spectator, SpectatorFactory,
 } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
+import { JobProgressDialogRef } from 'app/classes/job-progress-dialog-ref.class';
 import {
   mockCall, mockJob, mockApi,
 } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { PoolStatus } from 'app/enums/pool-status.enum';
+import { Job } from 'app/interfaces/job.interface';
 import { DatasetAttachment, PoolAttachment } from 'app/interfaces/pool-attachment.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { Process } from 'app/interfaces/process.interface';
@@ -20,6 +22,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { FailedJobError } from 'app/services/errors/error.classes';
 import { ExportDisconnectModalComponent } from './export-disconnect-modal.component';
 
 const fakeData = {
@@ -157,6 +160,18 @@ describe('ExportDisconnectModalComponent', () => {
     });
   });
 
+  async function submitForm(): Promise<void> {
+    const form = await loader.getHarness(IxFormHarness);
+    await form.fillForm({
+      'Confirm Export/Disconnect': true,
+      'Delete saved configurations from TrueNAS?': true,
+      'Destroy data on this pool?': false,
+    });
+
+    const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Export/Disconnect' }));
+    await submitButton.click();
+  }
+
   describe('form', () => {
     const createComponent = createComponentWithData(fakeData);
 
@@ -184,15 +199,7 @@ describe('ExportDisconnectModalComponent', () => {
 
     describe('when filled and submitted', () => {
       it('sends an update payload to websocket', async () => {
-        const form = await loader.getHarness(IxFormHarness);
-        await form.fillForm({
-          'Confirm Export/Disconnect': true,
-          'Delete saved configurations from TrueNAS?': true,
-          'Destroy data on this pool?': false,
-        });
-
-        const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Export/Disconnect' }));
-        await submitButton.click();
+        await submitForm();
 
         expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Pool «fakePool» has been exported/disconnected successfully.');
         expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('pool.export', [
@@ -201,6 +208,77 @@ describe('ExportDisconnectModalComponent', () => {
             cascade: true,
             destroy: false,
             restart_services: false,
+          },
+        ]);
+      });
+    });
+
+    describe('unstoppable processes', () => {
+      it('shows an error dialog when there are unstoppable processes', async () => {
+        const dialog = spectator.inject(DialogService);
+        jest.spyOn(dialog, 'jobDialog').mockReturnValue({
+          afterClosed: () => throwError(() => {
+            return new FailedJobError({
+              error: 'Unstoppable processes',
+              exc_info: {},
+              extra: {
+                code: 'unstoppable_processes',
+                processes: 'docker',
+              } as Record<string, unknown>,
+            } as Job);
+          }) as Observable<Job>,
+        } as JobProgressDialogRef<unknown>);
+
+        await submitForm();
+
+        expect(spectator.inject(DialogService).error).toHaveBeenCalledWith(expect.objectContaining({
+          title: 'Error exporting/disconnecting pool.',
+          message: 'Unable to terminate processes which are using this pool: docker',
+        }));
+      });
+    });
+
+    describe('services to be restarted', () => {
+      beforeEach(() => {
+        const dialog = spectator.inject(DialogService);
+        jest.spyOn(dialog, 'jobDialog').mockReturnValueOnce({
+          afterClosed: () => throwError(() => {
+            return new FailedJobError({
+              error: 'Unstoppable processes',
+              exc_info: {
+                extra: {
+                  code: 'control_services',
+                  restart_services: ['cifs', 'iscsi'],
+                  stop_services: ['docker'],
+                } as Record<string, unknown>,
+              },
+            } as Job);
+          }) as Observable<Job>,
+        } as JobProgressDialogRef<unknown>);
+        jest.spyOn(dialog, 'confirm').mockImplementation((() => of(false)) as typeof dialog.confirm);
+      });
+
+      it('shows a warning when there are processes that can be stopped', async () => {
+        await submitForm();
+
+        expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
+          buttonText: 'Manage Services and Continue',
+          message: '<div class="warning-box">These services must be stopped to export the pool:<br>- docker<br><br><div class="warning-box">These services must be restarted to export the pool:<br>- cifs<br>- iscsi<br><br>Exporting/disconnecting will continue after services have been managed.</div><br />',
+        }));
+      });
+
+      it('calls pool.export with `restart_services` = true when warning dialog is shown and user confirms', async () => {
+        const dialog = spectator.inject(DialogService);
+        jest.spyOn(dialog, 'confirm').mockImplementation((() => of(true)) as typeof dialog.confirm);
+
+        await submitForm();
+
+        expect(spectator.inject(ApiService).job).toHaveBeenLastCalledWith('pool.export', [
+          fakeData.pool.id,
+          {
+            cascade: true,
+            destroy: false,
+            restart_services: true,
           },
         ]);
       });
