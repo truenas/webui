@@ -38,6 +38,7 @@ import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { IxImportIsoDialogComponent } from 'app/pages/instances/components/common/volumes-dialog/import-iso-dialog/import-iso-dialog.component';
 import {
   ImportZvolsDialog,
 } from 'app/pages/instances/components/common/volumes-dialog/import-zvol-dialog/import-zvols-dialog.component';
@@ -207,5 +208,24 @@ export class VolumesDialog implements OnInit {
 
   protected onImageUploaded(): void {
     this.dataProvider.load();
+  }
+
+  protected importIso(): void {
+    this.matDialog.open(IxImportIsoDialogComponent, {
+      minWidth: '500px',
+    }).afterClosed().pipe(
+      filter(Boolean),
+      switchMap((path: string) => {
+        return this.dialog.jobDialog(this.api.job('virt.volume.import_iso', [{ name: path }]), {
+          title: this.translate.instant('Importing ISO'),
+          canMinimize: false,
+        }).afterClosed();
+      }),
+      untilDestroyed(this),
+    ).subscribe({
+      next: () => {
+        this.dataProvider.load();
+      },
+    });
   }
 }

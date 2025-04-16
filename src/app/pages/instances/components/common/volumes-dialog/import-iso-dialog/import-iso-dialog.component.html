@@ -1,0 +1,29 @@
+<h1 matDialogTitle>{{ 'Import ISO' | translate }}</h1>
+
+<mat-dialog-content>
+  <ix-explorer
+    [label]="'ISO Path' | translate"
+    [tooltip]="'Select the ISO file path to import' | translate"
+    [formControl]="importIsoPath"
+    [required]="true"
+    [nodeProvider]="treeNodeProvider"
+  ></ix-explorer>
+  <div mat-dialog-actions>
+    <button
+      mat-button
+      mat-dialog-close
+      [ixTest]="['cancel-select-iso']"
+    >
+      {{ 'Cancel' | translate }} 
+    </button>
+    <button
+      mat-button
+      color="primary"
+      [ixTest]="['select-iso']"
+      [disabled]="importIsoPath.invalid"
+      (click)="submit()"
+    >
+      {{ 'Select ISO' | translate }} 
+    </button>
+  </div>
+</mat-dialog-content>
