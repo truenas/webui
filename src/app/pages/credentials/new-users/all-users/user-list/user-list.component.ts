@@ -4,15 +4,15 @@ import {
   output,
   input,
   effect,
+  signal,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { injectParams } from 'ngxtension/inject-params';
-import { filter, of, take } from 'rxjs';
+import { of } from 'rxjs';
 import { roleNames } from 'app/enums/role.enum';
 import { User } from 'app/interfaces/user.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { SearchQuery } from 'app/modules/forms/search-input/types/search-query.interface';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
 import { ApiDataProvider } from 'app/modules/ix-table/classes/api-data-provider/api-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
@@ -46,13 +46,11 @@ import { UsersSearchComponent } from 'app/pages/credentials/new-users/all-users/
 })
 export class UserListComponent {
   readonly userName = injectParams('id');
-  readonly searchQuery = injectParams<SearchQuery<User>>((params) => {
-    return params.searchQuery;
-  });
 
   readonly isMobileView = input<boolean>();
   readonly toggleShowMobileDetails = output<boolean>();
   readonly userSelected = output<User>();
+  protected readonly currentBatch = signal<User[]>([]);
   // TODO: NAS-135333 - Handle case after url linking is implemented to decide when no to show selected user
   readonly isSelectedUserVisible$ = of(true);
   readonly dataProvider = input.required<ApiDataProvider<'user.query'>>();
@@ -97,11 +95,10 @@ export class UserListComponent {
       }
 
       dataProvider.currentPage$.pipe(
-        filter((users) => Boolean(users.length)),
-        take(1),
         untilDestroyed(this),
       ).subscribe({
         next: (users) => {
+          this.currentBatch.set(users);
           this.userSelected.emit(users[0]);
         },
       });

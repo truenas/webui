@@ -41,9 +41,9 @@ export class UsersSearchComponent implements OnInit {
   readonly userName = injectParams('id');
   protected readonly advancedSearchPlaceholder = this.translate.instant('Username = "root" AND Builtin = "Yes"');
 
-  dataProvider = input.required<ApiDataProvider<'user.query'>>();
+  readonly dataProvider = input.required<ApiDataProvider<'user.query'>>();
 
-  protected searchQuery = signal<SearchQuery<User>>({
+  protected readonly searchQuery = signal<SearchQuery<User>>({
     query: '',
     isBasicQuery: true,
   });

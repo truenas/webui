@@ -1,3 +1,4 @@
+import { isEmpty } from 'lodash-es';
 import {
   Observable, filter, switchMap, take,
 } from 'rxjs';
@@ -43,7 +44,12 @@ export class ApiDataProvider<T extends QueryMethods> extends BaseDataProvider<Ap
         next: (rows: ApiCallResponseType<T>[]) => {
           this.rows = rows;
           this.currentPage$.next(this.rows);
-          this.emptyType$.next(rows.length ? EmptyType.NoSearchResults : EmptyType.NoPageData);
+          const isSearchApplied = !isEmpty((this.params as QueryFilters<ApiCallResponseType<T>>)[0]);
+          if (!rows.length) {
+            this.emptyType$.next(isSearchApplied ? EmptyType.NoSearchResults : EmptyType.NoPageData);
+          } else {
+            this.emptyType$.next(EmptyType.None);
+          }
         },
         error: (error: unknown) => {
           console.error(this.method, error);
