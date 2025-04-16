@@ -4,7 +4,13 @@
 
     <div>
       <ix-search-input1 [value]="filterString" (search)="onListFiltered($event)"></ix-search-input1>
-      <ix-table-columns-selector [columns]="columns" (columnsChange)="columnsChange($event)"></ix-table-columns-selector>
+
+      <ix-table-columns-selector
+        [columnPreferencesKey]="'alertServiceList'"
+        [columns]="columns"
+        (columnsChange)="columnsChange($event)"
+      ></ix-table-columns-selector>
+
       <button
         *ixRequiresRoles="requiredRoles"
         mat-button

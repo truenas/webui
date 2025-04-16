@@ -71,7 +71,7 @@ export enum UserStigPasswordOption {
 
 @UntilDestroy({ arrayName: 'subscriptions' })
 @Component({
-  selector: 'ix-user-form',
+  selector: 'ix-old-user-form',
   templateUrl: './user-form.component.html',
   styleUrls: ['./user-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -99,7 +99,7 @@ export enum UserStigPasswordOption {
     TranslateModule,
   ],
 })
-export class UserFormComponent implements OnInit {
+export class OldUserFormComponent implements OnInit {
   protected isFormLoading = signal(false);
   subscriptions: Subscription[] = [];
   homeModeOldValue = '';

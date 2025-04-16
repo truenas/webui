@@ -12,13 +12,14 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { DeleteUserDialog } from 'app/pages/credentials/new-users/all-users/user-details/delete-user-dialog/delete-user-dialog.component';
 import { UserDetailHeaderComponent } from 'app/pages/credentials/new-users/all-users/user-details/user-detail-header/user-detail-header.component';
 import { UsersStore } from 'app/pages/credentials/new-users/store/users.store';
-import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
+import { OldUserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
 
 const dummyUser = {
   id: 1,
   uid: 0,
   username: 'test-user',
   smbhash: '',
+  local: true,
   home: '/test-user',
   shell: '/usr/bin/zsh',
   full_name: 'test-user',
@@ -82,9 +83,16 @@ describe('UserDetailHeaderComponent', () => {
     await editButton.click();
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
-      UserFormComponent,
+      OldUserFormComponent,
       { wide: true, data: dummyUser },
     );
+  });
+
+  it('does not show Edit button for local users', async () => {
+    spectator.setInput('user', { ...dummyUser, local: false });
+
+    const editButton = await loader.getHarnessOrNull(MatButtonHarness.with({ text: 'Edit' }));
+    expect(editButton).toBeNull();
   });
 
   it('does not show Delete button for an immutable user', async () => {

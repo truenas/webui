@@ -1,6 +1,6 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { CertificateKeyType } from 'app/enums/certificate-key-type.enum';
-import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
+import { Certificate } from 'app/interfaces/certificate.interface';
 import { CertificateDetailsComponent } from './certificate-details.component';
 
 describe('CertificateDetailsComponent', () => {
@@ -30,16 +30,10 @@ describe('CertificateDetailsComponent', () => {
           key_length: 2048,
           key_type: CertificateKeyType.Rsa,
           until: 'Sun Apr  4 14:17:59 2032',
-          issuer: 'self-signed',
-          revoked: false,
-          signed_certificates: 1,
           lifetime: 3650,
           certificate: '--BEGIN CERTIFICATE--',
           privatekey: '--BEGIN RSA PRIVATE KEY--',
-          signedby: {
-            name: 'Signed By',
-          },
-        } as CertificateAuthority,
+        } as Certificate,
       },
     });
   });
@@ -75,19 +69,7 @@ describe('CertificateDetailsComponent', () => {
       'Key Length:': '2048',
       'Key Type:': 'RSA',
       'Until:': 'Sun Apr  4 14:17:59 2032',
-      'Issuer:': 'self-signed',
-      'Revoked:': 'false',
-      'Signed Certificates:': '1',
       'Lifetime:': '3650',
-    });
-  });
-
-  it('shows Signed By field when showSignedBy is true', () => {
-    spectator.setInput('showSignedBy', true);
-
-    const details = getDetails();
-    expect(details).toMatchObject({
-      'Signed By:': 'Signed By',
     });
   });
 });

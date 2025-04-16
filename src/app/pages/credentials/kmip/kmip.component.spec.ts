@@ -62,10 +62,6 @@ describe('KmipComponent', () => {
           { id: 1, name: 'Main Certificate' },
           { id: 2, name: 'Secondary Certificate' },
         ]),
-        getCertificateAuthorities: () => of([
-          { id: 1, name: 'Main Authority' },
-          { id: 2, name: 'Secondary Authority' },
-        ]),
       }),
       mockAuth(),
       provideMockStore({
@@ -91,7 +87,6 @@ describe('KmipComponent', () => {
       Server: 'kmip.truenas.com',
       Port: '5696',
       Certificate: 'Main Certificate',
-      'Certificate Authority': 'Main Authority',
 
       'Manage SED Passwords': true,
       'Manage ZFS Keys': false,
@@ -107,7 +102,6 @@ describe('KmipComponent', () => {
       Server: 'newkmip.truenas.com',
       Port: 5697,
       Certificate: 'Secondary Certificate',
-      'Certificate Authority': 'Secondary Authority',
       'Manage ZFS Keys': true,
       'Validate Connection': true,
     });
@@ -122,7 +116,6 @@ describe('KmipComponent', () => {
         port: 5697,
         server: 'newkmip.truenas.com',
         certificate: 2,
-        certificate_authority: 2,
 
         manage_sed_disks: true,
         manage_zfs_keys: true,

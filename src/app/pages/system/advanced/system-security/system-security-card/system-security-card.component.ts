@@ -11,6 +11,7 @@ import {
   Subject, filter, shareReplay, startWith, switchMap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { passwordComplexityRulesetLabels } from 'app/enums/password-complexity-ruleset.enum';
 import { Role } from 'app/enums/role.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
@@ -50,6 +51,8 @@ export class SystemSecurityCardComponent {
       bufferSize: 1,
     }),
   );
+
+  protected readonly rulesetLabels = passwordComplexityRulesetLabels;
 
   constructor(
     private slideIn: SlideIn,

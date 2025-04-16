@@ -1,15 +1,8 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { helptextGlobal } from 'app/helptext/global-helptext';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 
 export const helptextTopbar = {
   ha_status: T('HA Status'),
-  updateRunning_dialog: {
-    title: T('Update in Progress'),
-    message: helptextGlobal.sysUpdateMessage,
-    message_pt2: helptextGlobal.sysUpdateMessagePt2,
-  },
-
   mat_tooltips: {
     toggle_collapse: T('Toggle Collapse'),
     tc_connect: T('Connecting to TrueCommand'),

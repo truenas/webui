@@ -39,50 +39,41 @@ export class TruenasConnectService {
   }
 
   disableService(): Observable<TruenasConnectConfig> {
-    const config = this.config();
-    if (!config) {
+    if (!this.config()) {
       throw new Error('Truenas Connect config is not available');
     }
 
     const payload = {
-      ips: config.ips,
+      ips: this.config().ips,
       enabled: false,
-      tnc_base_url: config.tnc_base_url,
-      account_service_base_url: config.account_service_base_url,
-      leca_service_base_url: config.leca_service_base_url,
+      tnc_base_url: this.config().tnc_base_url,
+      account_service_base_url: this.config().account_service_base_url,
+      leca_service_base_url: this.config().leca_service_base_url,
+      heartbeat_url: this.config().heartbeat_url,
     };
     return this.api.call('tn_connect.update', [payload])
       .pipe(
         this.loader.withLoader(),
-        switchMap(() => {
-          return this.config$.pipe(
-            filter((configRes: TruenasConnectConfig) => configRes.status === TruenasConnectStatus.Disabled),
-          );
-        }),
         this.errorHandler.withErrorHandler(),
       );
   }
 
-  enableService(payload: TruenasConnectUpdate): Observable<TruenasConnectConfig> {
+  enableService(config?: TruenasConnectUpdate): Observable<TruenasConnectConfig> {
+    const payload = {
+      ips: this.config().ips,
+      enabled: true,
+      tnc_base_url: this.config().tnc_base_url,
+      account_service_base_url: this.config().account_service_base_url,
+      leca_service_base_url: this.config().leca_service_base_url,
+      heartbeat_url: this.config().heartbeat_url,
+      ...(config || {}),
+    };
     return this.api.call('tn_connect.update', [{
       ...payload,
       enabled: true,
     }])
       .pipe(
         this.loader.withLoader(),
-        filter((config) => {
-          return config.status === TruenasConnectStatus.ClaimTokenMissing;
-        }),
-        switchMap(() => {
-          return this.api.call('tn_connect.generate_claim_token');
-        }),
-        switchMap(() => {
-          return this.config$.pipe(
-            filter((configRes: TruenasConnectConfig) => {
-              return configRes.status === TruenasConnectStatus.RegistrationFinalizationWaiting;
-            }),
-          );
-        }),
         this.errorHandler.withErrorHandler(),
       );
   }

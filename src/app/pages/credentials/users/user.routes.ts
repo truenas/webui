@@ -1,12 +1,12 @@
 import { Routes } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UserApiKeysComponent } from 'app/pages/credentials/users/user-api-keys/user-api-keys.component';
-import { UserListComponent } from 'app/pages/credentials/users/user-list/user-list.component';
+import { OldUserListComponent } from 'app/pages/credentials/users/user-list/user-list.component';
 
 export const userRoutes: Routes = [
   {
     path: '',
-    component: UserListComponent,
+    component: OldUserListComponent,
     data: { title: T('Users'), breadcrumb: T('Users') },
   },
   {

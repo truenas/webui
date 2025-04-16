@@ -6,6 +6,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { BehaviorSubject, of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { SystemUpdateTrains } from 'app/interfaces/system-update.interface';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { TrainCardComponent } from 'app/pages/system/update/components/train-card/train-card.component';
@@ -25,7 +26,7 @@ describe('TrainCardComponent', () => {
     providers: [
       mockAuth(),
       mockApi([
-        mockCall('system.security.config', { enable_gpos_stig: false, enable_fips: false }),
+        mockCall('system.security.config', { enable_gpos_stig: false, enable_fips: false } as SystemSecurityConfig),
       ]),
       mockProvider(TrainService, {
         getAutoDownload: jest.fn(() => of(false)),
