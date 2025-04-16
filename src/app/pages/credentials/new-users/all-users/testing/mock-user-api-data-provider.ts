@@ -38,5 +38,5 @@ export const mockUserApiDataProvider = {
     pageSize: 10,
     pageNumber: 1,
   },
-  controlsStateUpdated: of(true),
+  sortingOrPaginationUpdate: of(true),
 } as unknown as ApiDataProvider<'user.query'>;
