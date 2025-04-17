@@ -3,7 +3,7 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { BehaviorSubject, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { MenuItem, MenuItemType } from 'app/interfaces/menu-item.interface';
@@ -23,6 +23,8 @@ export class NavigationService {
   readonly hasEnclosure$ = this.store$.select(selectHasEnclosureSupport);
   readonly hasVms$ = new BehaviorSubject(false);
   readonly hasApps$ = new BehaviorSubject(false);
+  readonly hasFibreChannel$ = new BehaviorSubject(false);
+  readonly hasDedup$ = new BehaviorSubject(false);
 
   readonly menuItems: MenuItem[] = [
     {
@@ -149,13 +151,22 @@ export class NavigationService {
       return;
     }
 
-    this.store$.pipe(waitForSystemInfo, untilDestroyed(this))
-      .subscribe((systemInfo) => {
-        const hasVms = systemInfo.license && Boolean(systemInfo.license.features.includes(LicenseFeature.Vm));
-        this.hasVms$.next(hasVms);
+    this.store$.pipe(
+      waitForSystemInfo,
+      filter((systemInfo) => Boolean(systemInfo.license)),
+      untilDestroyed(this),
+    ).subscribe((systemInfo) => {
+      const hasVms = systemInfo.license.features.includes(LicenseFeature.Vm);
+      this.hasVms$.next(hasVms);
 
-        const hasApps = systemInfo.license && Boolean(systemInfo.license.features.includes(LicenseFeature.Jails));
-        this.hasApps$.next(hasApps);
-      });
+      const hasApps = systemInfo.license.features.includes(LicenseFeature.Jails);
+      this.hasApps$.next(hasApps);
+
+      const hasDedup = systemInfo.license.features.includes(LicenseFeature.Dedup);
+      this.hasDedup$.next(hasDedup);
+
+      const hasFibreChannel = systemInfo.license.features.includes(LicenseFeature.FibreChannel);
+      this.hasFibreChannel$.next(hasFibreChannel);
+    });
   }
 }

@@ -2933,7 +2933,9 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "FIBRECHANNEL"
+    ],
     "anchorRouterLink": [
       "/sharing",
       "iscsi",
