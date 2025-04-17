@@ -137,41 +137,43 @@ export class FormErrorHandlerService {
     if (!control) {
       console.warn(`Could not find control ${field}.`);
       this.needToShowError = true;
-    } else {
-      control.setErrors({
-        manualValidateError: true,
-        manualValidateErrorMsg: errorMessage,
-        ixManualValidateError: { message: errorMessage },
-      });
-      control.markAsTouched();
 
-      const element = this.formService.getElementByControlName(field);
-      if (!element) {
-        console.warn(`getElementByControlName Could not find element for ${field}.`);
+      return;
+    }
+
+    control.setErrors({
+      manualValidateError: true,
+      manualValidateErrorMsg: errorMessage,
+      ixManualValidateError: { message: errorMessage },
+    });
+    control.markAsTouched();
+
+    const element = this.formService.getElementByControlName(field);
+    if (!element) {
+      console.warn(`getElementByControlName Could not find element for ${field}.`);
+      this.needToShowError = true;
+      return;
+    }
+
+    const isElementWithinDom = this.document.body.contains(element);
+    if (!isElementWithinDom) {
+      // Is it part of an editable field?
+      const editables = this.editableService.findEditablesWithControl(control);
+      if (!editables.length) {
+        console.warn(`getElementByControlName Element for ${field} is not within DOM.`);
         this.needToShowError = true;
         return;
       }
 
-      const isElementWithinDom = this.document.body.contains(element);
-      if (!isElementWithinDom) {
-        // Is it part of an editable field?
-        const editables = this.editableService.findEditablesWithControl(control);
-        if (!editables.length) {
-          console.warn(`getElementByControlName Element for ${field} is not within DOM.`);
-          this.needToShowError = true;
-          return;
-        }
+      editables.forEach((editable) => editable.open());
+    }
 
-        editables.forEach((editable) => editable.open());
-      }
-
-      if (!this.isFocusedOnError) {
-        setTimeout(() => {
-          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          element.focus();
-          this.isFocusedOnError = true;
-        });
-      }
+    if (!this.isFocusedOnError) {
+      setTimeout(() => {
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        element.focus();
+        this.isFocusedOnError = true;
+      });
     }
   }
 

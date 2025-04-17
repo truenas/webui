@@ -8,6 +8,7 @@
   "{n, plural, one {# entry} other {# entries} }": "",
   "Block (iSCSI/FC) Shares Targets": "",
   "Block (iSCSI/Fibre Channel) Shares Targets": "",
+  "Current value is {value}. Click to edit.": "",
   "Heartbeat Url": "",
   "Last Password Change": "",
   "Lower": "",

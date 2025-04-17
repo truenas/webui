@@ -1,18 +1,35 @@
+import { CdkObserveContent } from '@angular/cdk/observers';
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
-  Component, computed,
-  ElementRef, HostListener,
+  Component, computed, contentChildren,
+  ElementRef,
   input, OnDestroy, OnInit, output,
   signal, viewChild,
 } from '@angular/core';
-import { AbstractControl } from '@angular/forms';
-import { MatIconButton } from '@angular/material/button';
-import { TranslateService } from '@ngx-translate/core';
+import { AbstractControl, NgControl } from '@angular/forms';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { focusableElements } from 'app/directives/autofocus/focusable-elements.const';
 import { EditableService } from 'app/modules/forms/editable/services/editable.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
+/**
+ * Editable component that allows inline editing of a value.
+ *
+ * @example
+ * ```html
+ * <ix-editable>
+ *    <div view>
+ *      {{ form.value.name }}
+ *    </div>
+ *
+ *    <div edit>
+ *      <ix-textarea formControlName="name"></ix-textarea>
+ *    </div>
+ *  </ix-editable>
+ * ```
+ */
 @Component({
   selector: 'ix-editable',
   templateUrl: './editable.component.html',
@@ -21,21 +38,21 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     IxIconComponent,
-    MatIconButton,
     TestDirective,
+    TranslateModule,
+    CdkObserveContent,
   ],
 })
-export class EditableComponent implements OnInit, OnDestroy {
+export class EditableComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly emptyValue = input(this.translate.instant('Not Set'));
-  readonly controls = input<AbstractControl[]>([]);
 
   readonly closed = output();
 
   isOpen = signal(false);
 
   private triggerValue = viewChild<ElementRef<HTMLElement>>('triggerValue');
-
-  private oldValues = new Map<AbstractControl, unknown>([]);
+  private ngControls = contentChildren(NgControl, { descendants: true });
+  private controls = computed(() => this.ngControls().map((control) => control.control));
 
   constructor(
     private translate: TranslateService,
@@ -43,59 +60,42 @@ export class EditableComponent implements OnInit, OnDestroy {
     private editableService: EditableService,
   ) {}
 
+  protected valueAsText = signal('');
+
   protected isEmpty = computed(() => {
     return !this.valueAsText();
   });
 
-  protected valueAsText = computed(() => {
-    return this.triggerValue()?.nativeElement?.textContent?.trim();
+  protected checkVisibleValue(): void {
+    const newValue = this.triggerValue()?.nativeElement?.textContent?.trim();
+    this.valueAsText.set(newValue);
+  }
+
+  protected ariaLabel = computed(() => {
+    return this.translate.instant('Current value is {value}. Click to edit.', {
+      value: this.valueAsText(),
+    });
   });
 
   ngOnInit(): void {
     this.editableService.register(this);
   }
 
+  ngAfterViewInit(): void {
+    this.checkVisibleValue();
+  }
+
   ngOnDestroy(): void {
     this.editableService.deregister(this);
   }
 
-  @HostListener('document:mousedown', ['$event'])
-  onDocumentClick(event: MouseEvent): void {
-    const isInsideClick = this.elementRef.nativeElement.contains(event.target as HTMLElement);
-    if (isInsideClick || !this.isOpen()) {
-      return;
-    }
-
-    // TODO: Do something better?
-    setTimeout(() => {
-      this.toggleMode();
-    }, 100);
-  }
-
-  // Close on Escape
-  @HostListener('document:keydown', ['$event'])
-  onDocumentKeydown(event: KeyboardEvent): void {
-    if (event.key === 'Escape' && this.isOpen()) {
-      this.tryToClose();
-    }
-  }
-
-  protected onClick(): void {
-    this.toggleMode();
-  }
-
-  toggleMode(): void {
-    if (this.isOpen()) {
-      this.tryToClose();
-    } else {
-      this.open();
-    }
+  isElementWithin(target: HTMLElement): boolean {
+    return this.elementRef.nativeElement.contains(target);
   }
 
   open(): void {
+    this.editableService.tryToCloseAll();
     this.isOpen.set(true);
-
-    this.rememberControlValues();
 
     setTimeout(() => {
       // Find next focusable element and focus it
@@ -109,33 +109,12 @@ export class EditableComponent implements OnInit, OnDestroy {
 
   tryToClose(): void {
     // Prevent editable from getting closed if there are validation errors.
-    if (!this.canClose()) {
+    if (!this.isOpen() || !this.canClose()) {
       return;
     }
 
     this.isOpen.set(false);
     this.closed.emit();
-  }
-
-  cancel(): void {
-    this.controls().forEach((control) => {
-      const oldValue = this.oldValues.get(control);
-      control.setValue(oldValue);
-    });
-
-    this.tryToClose();
-  }
-
-  save(): void {
-    console.error('not implemented');
-  }
-
-  private rememberControlValues(): void {
-    this.oldValues.clear();
-
-    this.controls().forEach((control) => {
-      this.oldValues.set(control, control.value);
-    });
   }
 
   private canClose(): boolean {

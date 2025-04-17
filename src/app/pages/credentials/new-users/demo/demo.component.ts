@@ -77,6 +77,12 @@ export class DemoComponent {
     });
   }
 
+  makeExternalChange(): void {
+    this.form.patchValue({
+      motd: 'External change',
+    });
+  }
+
   private makeRequest(payload: AdvancedConfigUpdate): void {
     this.api.call('system.advanced.update', [payload]).pipe(
       this.loader.withLoader(),
