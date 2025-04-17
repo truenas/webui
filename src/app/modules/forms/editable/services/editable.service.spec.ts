@@ -152,7 +152,7 @@ describe('EditableService', () => {
         listener(event);
       }
 
-      tick(100);
+      tick(150);
 
       expect(component1.tryToClose).toHaveBeenCalled();
       expect(component2.tryToClose).not.toHaveBeenCalled();
