@@ -39,7 +39,7 @@ import { UrlOptionsService } from 'app/services/url-options.service';
 })
 export class UsersSearchComponent implements OnInit {
   readonly userName = injectParams('id');
-  protected readonly advancedSearchPlaceholder = this.translate.instant('Username = "root" AND Builtin = "Yes"');
+  protected readonly advancedSearchPlaceholder = this.translate.instant('Username = "root" AND "Built in" = "Yes"');
 
   readonly dataProvider = input.required<ApiDataProvider<'user.query'>>();
 
@@ -119,7 +119,7 @@ export class UsersSearchComponent implements OnInit {
         ),
       ),
       booleanProperty('smb', this.translate.instant('SMB Enabled')),
-      booleanProperty('builtin', this.translate.instant('Built-in')),
+      booleanProperty('builtin', this.translate.instant('Built in')),
       booleanProperty('immutable', this.translate.instant('Immutable')),
       booleanProperty('password_disabled', this.translate.instant('Password Disabled')),
       booleanProperty('locked', this.translate.instant('Locked')),

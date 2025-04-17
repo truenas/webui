@@ -65,7 +65,7 @@ export class UserListComponent {
       propertyName: 'uid',
     }),
     yesNoColumn({
-      title: this.translate.instant('Built-in'),
+      title: this.translate.instant('Built in'),
       propertyName: 'builtin',
     }),
     textColumn({
