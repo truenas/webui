@@ -294,7 +294,9 @@
     "requiredRoles": [
       "APPS_WRITE"
     ],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "APPS"
+    ],
     "anchorRouterLink": [
       "/apps",
       "docker-registries"
@@ -311,7 +313,9 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "APPS"
+    ],
     "anchorRouterLink": [
       "/apps",
       "docker-registries"
@@ -1934,7 +1938,9 @@
       "Virtual Machine Settings"
     ],
     "requiredRoles": [],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "VMS"
+    ],
     "anchorRouterLink": [
       "/instances"
     ],
@@ -1961,7 +1967,9 @@
       "Add Container"
     ],
     "requiredRoles": [],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "VMS"
+    ],
     "anchorRouterLink": [
       "/instances"
     ],
@@ -1984,7 +1992,9 @@
       "Containers"
     ],
     "requiredRoles": [],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "VMS"
+    ],
     "anchorRouterLink": [
       "/instances/view/def"
     ],
@@ -2005,7 +2015,9 @@
       "Containers"
     ],
     "requiredRoles": [],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "VMS"
+    ],
     "anchorRouterLink": [
       "/instances/view/def"
     ],
@@ -2026,7 +2038,9 @@
       "Containers"
     ],
     "requiredRoles": [],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "VMS"
+    ],
     "anchorRouterLink": [
       "/instances/view/def"
     ],
@@ -2047,7 +2061,9 @@
       "Containers"
     ],
     "requiredRoles": [],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "VMS"
+    ],
     "anchorRouterLink": [
       "/instances/view/def"
     ],
@@ -2068,7 +2084,9 @@
       "Containers"
     ],
     "requiredRoles": [],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "VMS"
+    ],
     "anchorRouterLink": [
       "/instances/view/def"
     ],
@@ -2089,7 +2107,9 @@
       "Containers"
     ],
     "requiredRoles": [],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "VMS"
+    ],
     "anchorRouterLink": [
       "/instances/view/def"
     ],
@@ -2110,7 +2130,9 @@
       "Containers"
     ],
     "requiredRoles": [],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "VMS"
+    ],
     "anchorRouterLink": [
       "/instances/view/def"
     ],
@@ -2131,7 +2153,9 @@
       "Containers"
     ],
     "requiredRoles": [],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "VMS"
+    ],
     "anchorRouterLink": [
       "/instances/view/def"
     ],
@@ -2152,7 +2176,9 @@
       "Containers"
     ],
     "requiredRoles": [],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "VMS"
+    ],
     "anchorRouterLink": [
       "/instances/view/def"
     ],
