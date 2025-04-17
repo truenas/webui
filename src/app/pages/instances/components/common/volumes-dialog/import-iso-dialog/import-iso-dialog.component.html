@@ -1,13 +1,29 @@
 <h1 matDialogTitle>{{ 'Import ISO' | translate }}</h1>
 
 <mat-dialog-content>
-  <ix-explorer
-    [label]="'ISO Path' | translate"
-    [tooltip]="'Select the ISO file path to import' | translate"
-    [formControl]="importIsoPath"
-    [required]="true"
-    [nodeProvider]="treeNodeProvider"
-  ></ix-explorer>
+  <form [formGroup]="form">
+    <ix-input
+      formControlName="name"
+      [label]="'Name' | translate"
+      [required]="true"
+      [tooltip]="'Name of volume to create from the ISO.' | translate"
+    ></ix-input>
+    <ix-select
+      formControlName="storage_pool"
+      [label]="'Storage Pool' | translate"
+      [tooltip]="'Pool where the volume will be created.' | translate"
+      [options]="poolOptions$"
+      [required]="true"
+    ></ix-select>
+    <ix-explorer
+      formControlName="iso_location"
+      [label]="'ISO Path' | translate"
+      [tooltip]="'Select the ISO file path to import' | translate"
+      [required]="true"
+      [nodeProvider]="treeNodeProvider"
+    ></ix-explorer>
+  </form>
+  
   <div mat-dialog-actions>
     <button
       mat-button
@@ -20,7 +36,7 @@
       mat-button
       color="primary"
       [ixTest]="['select-iso']"
-      [disabled]="importIsoPath.invalid"
+      [disabled]="form.invalid"
       (click)="submit()"
     >
       {{ 'Select ISO' | translate }} 

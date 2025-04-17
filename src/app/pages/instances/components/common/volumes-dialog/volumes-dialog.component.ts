@@ -14,7 +14,7 @@ import { switchMap } from 'rxjs/operators';
 import { MiB } from 'app/constants/bytes.constant';
 import { Role } from 'app/enums/role.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
-import { VirtualizationVolume } from 'app/interfaces/virtualization.interface';
+import { VirtualizationGlobalConfig, VirtualizationVolume } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
@@ -52,6 +52,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export interface VolumesDialogOptions {
   selectionMode: boolean;
+  config: VirtualizationGlobalConfig | null;
 }
 
 @UntilDestroy()
@@ -79,7 +80,7 @@ export interface VolumesDialogOptions {
   ],
 })
 export class VolumesDialog implements OnInit {
-  private options = signal<VolumesDialogOptions>({ selectionMode: false });
+  private options = signal<VolumesDialogOptions>({ selectionMode: false, config: null });
 
   protected requiredRoles = [Role.VirtImageWrite];
 
@@ -158,7 +159,7 @@ export class VolumesDialog implements OnInit {
     protected dialogRef: MatDialogRef<VolumesDialog, VirtualizationVolume | null>,
     @Inject(MAT_DIALOG_DATA) options: VolumesDialogOptions,
   ) {
-    this.options.set(options || { selectionMode: false });
+    this.options.set(options || { selectionMode: false, config: null });
   }
 
   ngOnInit(): void {
@@ -213,14 +214,11 @@ export class VolumesDialog implements OnInit {
   protected importIso(): void {
     this.matDialog.open(IxImportIsoDialogComponent, {
       minWidth: '500px',
+      data: {
+        config: this.options().config,
+      },
     }).afterClosed().pipe(
       filter(Boolean),
-      switchMap((path: string) => {
-        return this.dialog.jobDialog(this.api.job('virt.volume.import_iso', [{ name: path }]), {
-          title: this.translate.instant('Importing ISO'),
-          canMinimize: false,
-        }).afterClosed();
-      }),
       untilDestroyed(this),
     ).subscribe({
       next: () => {

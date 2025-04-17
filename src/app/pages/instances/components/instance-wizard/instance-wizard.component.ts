@@ -343,6 +343,7 @@ export class InstanceWizardComponent implements OnInit {
         minWidth: '90vw',
         data: {
           selectionMode: true,
+          config: this.configStore.config(),
         },
       })
       .afterClosed()
@@ -361,6 +362,7 @@ export class InstanceWizardComponent implements OnInit {
       .open<VolumesDialog, VolumesDialogOptions, VirtualizationVolume>(VolumesDialog, {
         minWidth: '90vw',
         data: {
+          config: this.configStore.config(),
           selectionMode: true,
         },
       })
