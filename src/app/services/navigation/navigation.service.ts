@@ -154,19 +154,13 @@ export class NavigationService {
     this.store$.pipe(
       waitForSystemInfo,
       filter((systemInfo) => Boolean(systemInfo.license)),
+      map((systemInfo) => systemInfo.license.features),
       untilDestroyed(this),
-    ).subscribe((systemInfo) => {
-      const hasVms = systemInfo.license.features.includes(LicenseFeature.Vm);
-      this.hasVms$.next(hasVms);
-
-      const hasApps = systemInfo.license.features.includes(LicenseFeature.Jails);
-      this.hasApps$.next(hasApps);
-
-      const hasDedup = systemInfo.license.features.includes(LicenseFeature.Dedup);
-      this.hasDedup$.next(hasDedup);
-
-      const hasFibreChannel = systemInfo.license.features.includes(LicenseFeature.FibreChannel);
-      this.hasFibreChannel$.next(hasFibreChannel);
+    ).subscribe((features) => {
+      this.hasVms$.next(features.includes(LicenseFeature.Vm));
+      this.hasApps$.next(features.includes(LicenseFeature.Jails));
+      this.hasDedup$.next(features.includes(LicenseFeature.Dedup));
+      this.hasFibreChannel$.next(features.includes(LicenseFeature.FibreChannel));
     });
   }
 }
