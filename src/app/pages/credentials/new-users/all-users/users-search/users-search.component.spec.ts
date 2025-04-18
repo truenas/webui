@@ -60,5 +60,6 @@ describe('UsersSearchComponent', () => {
     await advancedModeHarness.setValue('"Built in" = false');
     await button.click();
     expect(mockUserApiDataProvider.setParams).toHaveBeenCalledWith([[['builtin', '=', false]]]);
+    expect(mockUserApiDataProvider.load).toHaveBeenCalled();
   });
 });
