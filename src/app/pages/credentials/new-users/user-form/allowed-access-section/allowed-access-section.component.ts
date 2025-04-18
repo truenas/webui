@@ -17,7 +17,6 @@ import { UserFormStore } from 'app/pages/credentials/new-users/user-form/user.st
   selector: 'ix-allowed-access-section',
   templateUrl: './allowed-access-section.component.html',
   styleUrl: './allowed-access-section.component.scss',
-  standalone: true,
   imports: [
     IxIconComponent,
     IxSelectComponent,

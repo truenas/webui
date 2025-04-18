@@ -15,7 +15,6 @@ import { User } from 'app/interfaces/user.interface';
   selector: 'ix-user-profile-card',
   templateUrl: './user-profile-card.component.html',
   styleUrls: ['./user-profile-card.component.scss'],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatCard,

@@ -31,7 +31,6 @@ import { UsersSearchComponent } from 'app/pages/credentials/new-users/all-users/
   templateUrl: './user-list.component.html',
   styleUrls: ['./user-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     TranslateModule,
     AsyncPipe,

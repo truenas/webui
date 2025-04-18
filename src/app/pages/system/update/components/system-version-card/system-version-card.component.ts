@@ -15,7 +15,6 @@ import { getSystemVersion } from 'app/pages/dashboard/widgets/system/common/widg
   templateUrl: './system-version-card.component.html',
   styleUrls: ['./system-version-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     TranslateModule,

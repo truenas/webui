@@ -63,7 +63,6 @@ interface QuotaData {
   templateUrl: './dataset-quotas-list.component.html',
   styleUrls: ['./dataset-quotas-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     PageHeaderComponent,
     SearchInput1Component,

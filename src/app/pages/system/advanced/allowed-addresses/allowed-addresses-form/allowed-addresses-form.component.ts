@@ -36,7 +36,6 @@ import { generalConfigUpdated } from 'app/store/system-config/system-config.acti
   templateUrl: 'allowed-addresses-form.component.html',
   styleUrls: ['./allowed-addresses-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

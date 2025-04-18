@@ -21,7 +21,6 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
   templateUrl: './page-header.component.html',
   styleUrls: ['./page-header.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     BreadcrumbComponent,
     HeaderBadgeComponent,

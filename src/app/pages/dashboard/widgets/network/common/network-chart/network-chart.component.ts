@@ -13,7 +13,6 @@ import { fullSizeNetworkWidgetAspectRatio } from 'app/pages/dashboard/widgets/ne
   templateUrl: './network-chart.component.html',
   styleUrls: ['./network-chart.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [ViewChartAreaComponent],
 })
 export class NetworkChartComponent {

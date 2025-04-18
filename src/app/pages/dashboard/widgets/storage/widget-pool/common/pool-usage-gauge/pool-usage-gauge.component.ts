@@ -27,7 +27,6 @@ const maxPct = 80;
   templateUrl: './pool-usage-gauge.component.html',
   styleUrl: './pool-usage-gauge.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     NgxSkeletonLoaderModule,
     GaugeChartComponent,

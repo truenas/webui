@@ -21,7 +21,6 @@ import { IscsiConnectionsCardComponent } from 'app/pages/sharing/iscsi/target/al
 @Component({
   selector: 'ix-target-details',
   templateUrl: './target-details.component.html',
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     AuthorizedNetworksCardComponent,

@@ -43,7 +43,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './app-bulk-upgrade.component.html',
   styleUrls: ['./app-bulk-upgrade.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     TranslateModule,

@@ -32,7 +32,6 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
   templateUrl: './ix-form-glossary.component.html',
   styleUrls: ['./ix-form-glossary.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxInputComponent,
     TranslateModule,

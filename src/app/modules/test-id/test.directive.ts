@@ -21,7 +21,6 @@ type SupportedTestId = number | string | null | undefined | (string | number | n
  */
 @Directive({
   selector: '[ixTest]',
-  standalone: true,
 })
 export class TestDirective {
   readonly description = input.required<SupportedTestId>({

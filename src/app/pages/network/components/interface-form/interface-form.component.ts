@@ -71,7 +71,6 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
   styleUrls: ['./interface-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [InterfaceNameValidatorService],
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

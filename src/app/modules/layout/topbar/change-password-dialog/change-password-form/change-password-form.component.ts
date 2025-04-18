@@ -27,7 +27,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
   templateUrl: './change-password-form.component.html',
   styleUrls: ['./change-password-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxInputComponent,

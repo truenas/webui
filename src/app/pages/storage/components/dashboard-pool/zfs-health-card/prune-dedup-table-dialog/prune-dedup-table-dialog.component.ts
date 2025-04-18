@@ -37,7 +37,6 @@ export const pruneByLabels = new Map<PruneBy, string>([
   styleUrls: ['prune-dedup-table-dialog.component.scss'],
   templateUrl: './prune-dedup-table-dialog.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     FormActionsComponent,
     IxInputComponent,

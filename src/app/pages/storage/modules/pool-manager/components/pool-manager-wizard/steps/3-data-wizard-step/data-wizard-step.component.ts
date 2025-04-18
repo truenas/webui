@@ -26,7 +26,6 @@ import { parseDraidVdevName } from 'app/pages/storage/modules/pool-manager/utils
   selector: 'ix-data-wizard-step',
   templateUrl: './data-wizard-step.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     LayoutStepComponent,
     FormActionsComponent,

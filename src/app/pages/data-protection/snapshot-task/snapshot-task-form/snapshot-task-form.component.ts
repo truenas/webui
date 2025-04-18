@@ -40,7 +40,6 @@ import { TaskService } from 'app/services/task.service';
   templateUrl: './snapshot-task-form.component.html',
   styleUrls: ['./snapshot-task-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

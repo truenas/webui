@@ -30,7 +30,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
   selector: 'ix-tunable-form',
   templateUrl: './tunable-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

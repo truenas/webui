@@ -14,7 +14,6 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 @UntilDestroy()
 @Directive({
   selector: '[ixStepActivation]',
-  standalone: true,
 })
 export class StepActivationDirective implements OnInit {
   readonly activate = output();

@@ -9,7 +9,6 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
   templateUrl: './ix-fieldset.component.html',
   styleUrls: ['./ix-fieldset.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     TooltipComponent,
     TranslateModule,

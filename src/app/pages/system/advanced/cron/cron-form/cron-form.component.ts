@@ -34,7 +34,6 @@ import { UserService } from 'app/services/user.service';
   selector: 'ix-cron-form',
   templateUrl: './cron-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

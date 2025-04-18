@@ -25,7 +25,6 @@ import { EnclosureSide, supportedEnclosures } from 'app/pages/system/enclosure/u
 @Component({
   selector: 'ix-enclosure-svg',
   template: '',
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 class EnclosureSvgStubComponent {

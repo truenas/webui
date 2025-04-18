@@ -51,7 +51,6 @@ type FormValue = CloudBackupFormComponent['form']['value'];
   templateUrl: './cloud-backup-form.component.html',
   styleUrls: ['./cloud-backup-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
@@ -96,6 +95,7 @@ export class CloudBackupFormComponent implements OnInit {
 
   protected form = this.fb.group({
     path: ['', [Validators.required]],
+    cache_path: [null as string | null],
     credentials: new FormControl(null as number | null, [Validators.required]),
     schedule: [CronPresetValue.Daily, [Validators.required]],
     exclude: [[] as string[]],
@@ -127,6 +127,7 @@ export class CloudBackupFormComponent implements OnInit {
   );
 
   fileNodeProvider: TreeNodeProvider;
+  directoriesNodeProvider: TreeNodeProvider;
   bucketNodeProvider: TreeNodeProvider;
 
   readonly newOption = newOption;
@@ -153,6 +154,7 @@ export class CloudBackupFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.setFileNodeProvider();
+    this.setDirectoriesNodeProvider();
     this.setBucketNodeProvider();
 
     this.listenForCredentialsChanges();
@@ -246,6 +248,7 @@ export class CloudBackupFormComponent implements OnInit {
       ...editingTask,
       schedule: scheduleToCrontab(editingTask.schedule) as CronPresetValue,
       path: editingTask.path,
+      cache_path: editingTask.cache_path,
       credentials: editingTask.credentials.id,
       folder: editingTask.attributes.folder as string,
       bucket: editingTask.attributes.bucket === newOption ? '' : editingTask.attributes.bucket as string || '',
@@ -365,6 +368,12 @@ export class CloudBackupFormComponent implements OnInit {
   private setFileNodeProvider(): void {
     this.fileNodeProvider = this.filesystemService.getFilesystemNodeProvider({
       datasetsAndZvols: true,
+    });
+  }
+
+  private setDirectoriesNodeProvider(): void {
+    this.directoriesNodeProvider = this.filesystemService.getFilesystemNodeProvider({
+      directoriesOnly: true,
     });
   }
 

@@ -38,7 +38,6 @@ import { VmwareStatusCellComponent } from './vmware-status-cell/vmware-status-ce
   templateUrl: './vmware-snapshot-list.component.html',
   styleUrls: ['./vmware-snapshot-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     PageHeaderComponent,
     SearchInput1Component,

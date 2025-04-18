@@ -70,7 +70,6 @@ import { ExtentWizardStepComponent } from './steps/extent-wizard-step/extent-wiz
   templateUrl: './iscsi-wizard.component.html',
   styleUrls: ['./iscsi-wizard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

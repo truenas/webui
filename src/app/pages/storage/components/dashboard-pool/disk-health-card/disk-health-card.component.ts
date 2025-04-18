@@ -33,7 +33,6 @@ interface DiskState {
   templateUrl: './disk-health-card.component.html',
   styleUrls: ['./disk-health-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     UiSearchDirective,

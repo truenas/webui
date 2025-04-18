@@ -42,7 +42,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './tunable-list.component.html',
   styleUrls: ['./tunable-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     PageHeaderComponent,
     SearchInput1Component,

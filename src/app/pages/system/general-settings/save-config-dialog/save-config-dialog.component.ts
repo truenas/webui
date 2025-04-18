@@ -37,7 +37,6 @@ export interface SaveConfigDialogMessages {
   templateUrl: './save-config-dialog.component.html',
   styleUrls: ['./save-config-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogTitle,
     ReactiveFormsModule,

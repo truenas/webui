@@ -26,7 +26,6 @@ import { UrlOptionsService } from 'app/services/url-options.service';
   selector: 'ix-user-access-card',
   templateUrl: './user-access-card.component.html',
   styleUrls: ['./user-access-card.component.scss'],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatButton,

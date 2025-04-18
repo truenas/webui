@@ -11,7 +11,6 @@ import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
   styleUrl: './disk-topology-description.component.scss',
   templateUrl: './disk-topology-description.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [TranslateModule, MapValuePipe],
 })
 export class DiskTopologyDescriptionComponent {
