@@ -1,18 +1,15 @@
 import { Injectable } from '@angular/core';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { BehaviorSubject, of } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
-import { ProductType } from 'app/enums/product-type.enum';
 import { MenuItem, MenuItemType } from 'app/interfaces/menu-item.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
-import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
-import { selectHasEnclosureSupport, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
+import { selectHasEnclosureSupport, selectIsEnterprise, selectLicenseFeatures } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Injectable({
@@ -21,10 +18,6 @@ import { selectHasEnclosureSupport, waitForSystemInfo } from 'app/store/system-i
 export class NavigationService {
   readonly hasFailover$ = this.store$.select(selectIsHaLicensed);
   readonly hasEnclosure$ = this.store$.select(selectHasEnclosureSupport);
-  readonly hasVms$ = new BehaviorSubject(false);
-  readonly hasApps$ = new BehaviorSubject(false);
-  readonly hasFibreChannel$ = new BehaviorSubject(false);
-  readonly hasDedup$ = new BehaviorSubject(false);
 
   readonly menuItems: MenuItem[] = [
     {
@@ -85,7 +78,7 @@ export class NavigationService {
         {
           name: 'KMIP',
           state: 'kmip',
-          isVisible$: of(this.systemGeneralService.getProductType() === ProductType.Enterprise),
+          isVisible$: this.store$.select(selectIsEnterprise),
         },
       ],
     },
@@ -95,6 +88,9 @@ export class NavigationService {
       tooltip: T('Instances'),
       icon: iconMarker('mdi-laptop'),
       state: 'instances',
+      isVisible$: this.store$.select(selectLicenseFeatures).pipe(
+        map((features) => features?.includes(LicenseFeature.Vm)),
+      ),
     },
     {
       name: T('Apps'),
@@ -102,7 +98,9 @@ export class NavigationService {
       tooltip: T('Apps'),
       icon: iconMarker('apps'),
       state: 'apps',
-      isVisible$: this.hasApps$,
+      isVisible$: this.store$.select(selectLicenseFeatures).pipe(
+        map((features) => features?.includes(LicenseFeature.Jails)),
+      ),
     },
     {
       name: T('Reporting'),
@@ -138,29 +136,6 @@ export class NavigationService {
 
   constructor(
     private store$: Store<AppState>,
-    private systemGeneralService: SystemGeneralService,
     private authService: AuthService,
-  ) {
-    this.checkForEnterpriseLicenses();
-  }
-
-  private checkForEnterpriseLicenses(): void {
-    if (this.systemGeneralService.getProductType() !== ProductType.Enterprise) {
-      this.hasVms$.next(true);
-      this.hasApps$.next(true);
-      return;
-    }
-
-    this.store$.pipe(
-      waitForSystemInfo,
-      filter((systemInfo) => Boolean(systemInfo.license)),
-      map((systemInfo) => systemInfo.license.features),
-      untilDestroyed(this),
-    ).subscribe((features) => {
-      this.hasVms$.next(features.includes(LicenseFeature.Vm));
-      this.hasApps$.next(features.includes(LicenseFeature.Jails));
-      this.hasDedup$.next(features.includes(LicenseFeature.Dedup));
-      this.hasFibreChannel$.next(features.includes(LicenseFeature.FibreChannel));
-    });
-  }
+  ) {}
 }

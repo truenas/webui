@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import UiElementsJson from 'app/../assets/ui-searchable-elements.json';
 import Fuse from 'fuse.js';
@@ -6,12 +7,15 @@ import {
   BehaviorSubject,
   Observable, combineLatest, filter, first, from, map, mergeMap, of, tap, toArray,
 } from 'rxjs';
+import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { GlobalSearchVisibleToken } from 'app/modules/global-search/enums/global-search-visible-token.enum';
 import { GlobalSearchProvider } from 'app/modules/global-search/interfaces/global-search-provider.interface';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 import { sortSearchResults } from 'app/modules/global-search/services/utils/sort-search-results';
 import { NavigationService } from 'app/services/navigation/navigation.service';
+import { AppState } from 'app/store';
+import { selectLicenseFeatures } from 'app/store/system-info/system-info.selectors';
 
 @Injectable({
   providedIn: 'root',
@@ -31,6 +35,7 @@ export class UiSearchProvider implements GlobalSearchProvider {
     private authService: AuthService,
     private translate: TranslateService,
     private navService: NavigationService,
+    private store$: Store<AppState>,
   ) {
     this.translate.onLangChange.subscribe(() => this.fuseSearch = this.generateFuseSearch());
   }
@@ -45,21 +50,22 @@ export class UiSearchProvider implements GlobalSearchProvider {
           item.requiredRoles?.length ? this.authService.hasRole(item.requiredRoles) : of(true),
           this.navService.hasFailover$,
           this.navService.hasEnclosure$,
-          this.navService.hasVms$,
-          this.navService.hasApps$,
-          this.navService.hasFibreChannel$,
-          this.navService.hasDedup$,
+          this.store$.select(selectLicenseFeatures),
         ]).pipe(
           first(),
-          filter(([hasRole, hasFailover, hasEnclosure, hasVms, hasApps, hasFibreChannel, hasDedup]) => {
+          filter(([hasRole, hasFailover, hasEnclosure, features]) => {
             switch (true) {
               case !hasRole:
               case item.visibleTokens?.includes(GlobalSearchVisibleToken.Failover) && !hasFailover:
               case item.visibleTokens?.includes(GlobalSearchVisibleToken.Enclosure) && !hasEnclosure:
-              case item.visibleTokens?.includes(GlobalSearchVisibleToken.Vms) && !hasVms:
-              case item.visibleTokens?.includes(GlobalSearchVisibleToken.Apps) && !hasApps:
-              case item.visibleTokens?.includes(GlobalSearchVisibleToken.FibreChannel) && !hasFibreChannel:
-              case item.visibleTokens?.includes(GlobalSearchVisibleToken.Dedup) && !hasDedup:
+              case item.visibleTokens?.includes(GlobalSearchVisibleToken.Vms)
+                && !features.includes(LicenseFeature.Vm):
+              case item.visibleTokens?.includes(GlobalSearchVisibleToken.Apps)
+                && !features.includes(LicenseFeature.Jails):
+              case item.visibleTokens?.includes(GlobalSearchVisibleToken.FibreChannel)
+                && !features.includes(LicenseFeature.FibreChannel):
+              case item.visibleTokens?.includes(GlobalSearchVisibleToken.Dedup)
+                && !features.includes(LicenseFeature.Dedup):
                 return false;
               default:
                 return true;

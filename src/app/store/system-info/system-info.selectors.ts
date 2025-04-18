@@ -43,4 +43,9 @@ export const selectCopyrightHtml = createSelector(
   (productType) => getCopyrightHtml(productType || undefined),
 );
 
+export const selectLicenseFeatures = createSelector(
+  selectSystemInfoState,
+  (state) => state?.systemInfo?.license?.features,
+);
+
 export const waitForSystemInfo = selectNotNull(selectSystemInfo);
