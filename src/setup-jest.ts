@@ -70,6 +70,7 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
+import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxIconRegistry } from 'app/modules/ix-icon/ix-icon-registry.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
@@ -193,6 +194,7 @@ defineGlobalsInjections({
     mockProvider(ErrorHandlerService, {
       withErrorHandler: () => (source$: Observable<unknown>) => source$,
     }),
+    mockProvider(FormErrorHandlerService),
     {
       provide: AuthService,
       useClass: EmptyAuthService,

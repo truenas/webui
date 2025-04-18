@@ -391,7 +391,7 @@ describe('FeedbackService', () => {
         title: 'Ticket Created',
         cancelBtnMsg: 'Close',
         confirmBtnMsg: 'Open ticket',
-        icon: 'check',
+        icon: 'mdi-check',
       });
     });
   });

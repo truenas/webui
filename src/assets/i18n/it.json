@@ -6,6 +6,7 @@
   "{n, plural, one {# day} other {# days} }": "",
   "{n, plural, one {# entry} other {# entries} }": "",
   "Cache Path": "",
+  "Current value is {value}. Click to edit.": "",
   "Last Password Change": "",
   "Lower": "",
   "Max Password Age": "",

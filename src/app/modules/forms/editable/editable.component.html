@@ -1,0 +1,23 @@
+@if (!isOpen()) {
+  <button
+    class="edit-trigger"
+    [ixTest]="[valueAsText(), 'edit']"
+    [attr.aria-label]="ariaLabel()"
+    [class.edit-trigger-empty]="isEmpty()"
+    (click)="open()"
+  >
+    <div #triggerValue (cdkObserveContent)="checkVisibleValue()">
+      <ng-content select="[view]"></ng-content>
+    </div>
+
+    @if (isEmpty()) {
+      {{ emptyValue() }}
+    }
+
+    <ix-icon class="edit-trigger-icon" name="mdi-pencil"></ix-icon>
+  </button>
+} @else {
+  <div class="edit-slot">
+    <ng-content select="[edit]"></ng-content>
+  </div>
+}

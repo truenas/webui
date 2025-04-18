@@ -30,4 +30,6 @@ export const ruleOverrides = {
   "sonarjs/no-hardcoded-credentials": ["off"],
   "sonarjs/pseudo-random": ["off"],
   "sonarjs/new-cap": ["off"],
+
+  "@smarttools/rxjs/no-ignored-takewhile-value": ["off"],
 };

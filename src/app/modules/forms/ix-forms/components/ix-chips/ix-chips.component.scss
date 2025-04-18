@@ -6,6 +6,11 @@
   margin-top: 12px;
   padding: 8px 0;
 
+  :host-context(ix-editable) & {
+    margin-bottom: 0;
+    margin-top: 0;
+  }
+
   .mat-mdc-chip-grid {
     display: block;
     min-height: 23px;

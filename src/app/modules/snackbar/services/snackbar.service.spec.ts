@@ -25,7 +25,7 @@ describe('SnackbarService', () => {
         politeness: 'assertive',
         data: {
           message: 'All good',
-          icon: 'check',
+          icon: 'mdi-check',
           iconCssColor: 'var(--green)',
         },
       });
