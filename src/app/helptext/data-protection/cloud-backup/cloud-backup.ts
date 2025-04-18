@@ -11,6 +11,10 @@ export const helptextCloudBackup = {
   source_path_placeholder: T('Source Path'),
   source_path_tooltip: T('Select the directories or files to be sent to the cloud for backup.'),
 
+  cache_path_placeholder: T('Cache Path'),
+  cache_path_tooltip: T('Select the directory to store the cache files. This is used to\
+ speed up the backup process. If not set, performance may degrade.'),
+
   credentials_placeholder: T('Credentials'),
   credentials_tooltip: T('Select the cloud storage provider credentials from the list of available Cloud Credentials.'),
 
