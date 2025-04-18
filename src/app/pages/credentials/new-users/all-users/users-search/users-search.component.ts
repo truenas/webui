@@ -3,10 +3,8 @@ import {
   ChangeDetectionStrategy, Component, input, signal, OnInit,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
-import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { injectParams } from 'ngxtension/inject-params';
 import { filter, of } from 'rxjs';
 import { Role, roleNames } from 'app/enums/role.enum';
 import { ParamsBuilder } from 'app/helpers/params-builder/params-builder.class';
@@ -19,7 +17,6 @@ import { booleanProperty, searchProperties, textProperty } from 'app/modules/for
 import { ApiDataProvider } from 'app/modules/ix-table/classes/api-data-provider/api-data-provider';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { UrlOptionsService } from 'app/services/url-options.service';
 
 @UntilDestroy()
 @Component({
@@ -38,7 +35,6 @@ import { UrlOptionsService } from 'app/services/url-options.service';
   ],
 })
 export class UsersSearchComponent implements OnInit {
-  readonly userName = injectParams('id');
   protected readonly advancedSearchPlaceholder = this.translate.instant('Username = "root" AND "Built in" = "Yes"');
 
   readonly dataProvider = input.required<ApiDataProvider<'user.query'>>();
@@ -51,20 +47,10 @@ export class UsersSearchComponent implements OnInit {
   protected readonly searchProperties = signal<SearchProperty<User>[]>([]);
 
   constructor(
-    private urlOptionsService: UrlOptionsService,
     private translate: TranslateService,
-    private activatedRoute: ActivatedRoute,
   ) { }
 
   ngOnInit(): void {
-    this.loadParamsFromRoute();
-
-    this.dataProvider().sortingOrPaginationUpdate
-      .pipe(untilDestroyed(this))
-      .subscribe(() => {
-        this.updateUrlOptions();
-      });
-
     this.dataProvider().currentPage$.pipe(
       filter(Boolean),
       untilDestroyed(this),
@@ -78,7 +64,7 @@ export class UsersSearchComponent implements OnInit {
   private setSearchProperties(users: User[]): void {
     const groups = new Set<string>();
     for (const user of users) {
-      groups.add(user.group.id.toString());
+      groups.add(user.group?.id.toString());
       if (!user.groups) {
         continue;
       }
@@ -160,34 +146,7 @@ export class UsersSearchComponent implements OnInit {
     ]));
   }
 
-  updateUrlOptions(): void {
-    const username = this.userName();
-    const usernameUrlPostfix = username ? `/view/${username}` : '';
-    this.urlOptionsService.setUrlOptions(`/credentials/users-new${usernameUrlPostfix}`, {
-      searchQuery: this.searchQuery(),
-      sorting: this.dataProvider().sorting,
-      pagination: this.dataProvider().pagination,
-    });
-  }
-
-  private loadParamsFromRoute(): void {
-    this.activatedRoute.params.pipe(untilDestroyed(this)).subscribe((params) => {
-      const options = this.urlOptionsService.parseUrlOptions(params.options as string);
-
-      this.dataProvider().setPagination({
-        pageSize: options.pagination?.pageSize || 50,
-        pageNumber: options.pagination?.pageNumber || 1,
-      });
-
-      if (options.sorting) this.dataProvider().setSorting(options.sorting);
-
-      if (options.searchQuery) this.searchQuery.set(options.searchQuery as SearchQuery<User>);
-
-      this.onSearch(this.searchQuery());
-    });
-  }
-
-  onSearch(query: SearchQuery<User>): void {
+  protected onSearch(query: SearchQuery<User>): void {
     if (!query) {
       return;
     }
