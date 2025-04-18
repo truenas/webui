@@ -23,7 +23,6 @@ import { TruenasConnectService } from 'app/modules/truenas-connect/services/true
 @UntilDestroy()
 @Component({
   selector: 'ix-truenas-connect-modal',
-  standalone: true,
   imports: [
     MatDialogTitle,
     MatDialogActions,

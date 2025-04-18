@@ -47,7 +47,6 @@ import { FirstTimeWarningService } from 'app/services/first-time-warning.service
   templateUrl: './init-shutdown-card.component.html',
   styleUrls: ['./init-shutdown-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatToolbarRow,

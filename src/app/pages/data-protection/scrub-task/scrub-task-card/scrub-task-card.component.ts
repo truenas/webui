@@ -43,7 +43,6 @@ import { TaskService } from 'app/services/task.service';
   templateUrl: './scrub-task-card.component.html',
   styleUrls: ['./scrub-task-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatToolbarRow,

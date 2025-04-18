@@ -27,7 +27,6 @@ import { IscsiService } from 'app/services/iscsi.service';
   templateUrl: './iscsi.component.html',
   styleUrls: ['./iscsi.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     PageHeaderComponent,
     RequiresRolesDirective,

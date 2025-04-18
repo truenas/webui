@@ -10,7 +10,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './summary.component.html',
   styleUrls: ['./summary.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     TranslateModule,
     TestDirective,

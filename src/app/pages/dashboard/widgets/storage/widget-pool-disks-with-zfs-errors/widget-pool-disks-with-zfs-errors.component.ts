@@ -19,7 +19,6 @@ import { poolDisksWithZfsErrorsWidget } from 'app/pages/dashboard/widgets/storag
   templateUrl: './widget-pool-disks-with-zfs-errors.component.html',
   styleUrls: ['./widget-pool-disks-with-zfs-errors.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatCardContent,

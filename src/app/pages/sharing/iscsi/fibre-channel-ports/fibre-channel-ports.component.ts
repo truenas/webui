@@ -49,7 +49,6 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
   templateUrl: './fibre-channel-ports.component.html',
   styleUrl: './fibre-channel-ports.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     FakeProgressBarComponent,
     IxTableBodyComponent,

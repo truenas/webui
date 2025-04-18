@@ -26,7 +26,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './lock-dataset-dialog.component.html',
   styleUrls: ['./lock-dataset-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogTitle,
     TranslateModule,

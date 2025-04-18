@@ -7,7 +7,6 @@ import { NavigateAndHighlightService } from 'app/directives/navigate-and-interac
 @UntilDestroy()
 @Directive({
   selector: '[ixNavigateAndHighlight]',
-  standalone: true,
 })
 export class NavigateAndHighlightDirective {
   readonly navigateRoute = input.required<string[]>();

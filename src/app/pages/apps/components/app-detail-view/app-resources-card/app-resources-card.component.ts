@@ -19,7 +19,6 @@ import { DockerStore } from 'app/pages/apps/store/docker.store';
   templateUrl: './app-resources-card.component.html',
   styleUrls: ['./app-resources-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     TranslateModule,
     NgxSkeletonLoaderModule,

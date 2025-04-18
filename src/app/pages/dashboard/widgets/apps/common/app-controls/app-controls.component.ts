@@ -24,7 +24,6 @@ import { RedirectService } from 'app/services/redirect.service';
   templateUrl: './app-controls.component.html',
   styleUrls: ['./app-controls.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     WithLoadingStateDirective,
     MatIconButton,

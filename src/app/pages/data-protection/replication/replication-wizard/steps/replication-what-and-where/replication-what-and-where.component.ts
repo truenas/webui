@@ -55,7 +55,6 @@ import { ReplicationService } from 'app/services/replication.service';
   styleUrls: ['./replication-what-and-where.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [ReplicationService, DatePipe, KeychainCredentialService],
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxSelectComponent,

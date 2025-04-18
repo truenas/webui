@@ -41,7 +41,6 @@ import { ErrorParserService } from 'app/services/errors/error-parser.service';
   templateUrl: './jobs-panel.component.html',
   styleUrls: ['./jobs-panel.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogContent,
     MatTooltip,

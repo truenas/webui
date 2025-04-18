@@ -10,7 +10,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   selector: 'ix-cell-button',
   templateUrl: './ix-cell-button.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     TranslateModule,
     MatButton,

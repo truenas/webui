@@ -29,7 +29,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   selector: 'ix-change-root-disk-setup',
   templateUrl: './change-root-disk-setup.component.html',
   styleUrls: ['./change-root-disk-setup.component.scss'],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     IxInputComponent,

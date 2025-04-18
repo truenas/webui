@@ -26,7 +26,6 @@ export interface GaugeConfig {
   selector: 'ix-view-chart-gauge',
   templateUrl: './view-chart-gauge.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [NgClass],
 })
 export class ViewChartGaugeComponent implements AfterViewInit, OnChanges {

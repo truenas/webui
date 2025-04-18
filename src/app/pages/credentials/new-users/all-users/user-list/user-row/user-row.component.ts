@@ -22,7 +22,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './user-row.component.html',
   styleUrls: ['./user-row.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxIconComponent,
     TestDirective,

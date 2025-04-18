@@ -10,7 +10,6 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
   templateUrl: './widget-error.component.html',
   styleUrls: ['./widget-error.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [MatCard, IxIconComponent],
 })
 export class WidgetErrorComponent {

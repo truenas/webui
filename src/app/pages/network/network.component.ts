@@ -48,7 +48,6 @@ import { StaticRoutesCardComponent } from './components/static-routes-card/stati
   templateUrl: './network.component.html',
   styleUrls: ['./network.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     UiSearchDirective,
     MatCard,

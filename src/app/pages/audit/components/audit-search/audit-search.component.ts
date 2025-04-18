@@ -39,7 +39,6 @@ import { UrlOptionsService } from 'app/services/url-options.service';
   templateUrl: './audit-search.component.html',
   styleUrls: ['./audit-search.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     AsyncPipe,
     FakeProgressBarComponent,

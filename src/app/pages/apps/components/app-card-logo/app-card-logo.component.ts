@@ -13,7 +13,6 @@ import { LayoutService } from 'app/modules/layout/layout.service';
   templateUrl: './app-card-logo.component.html',
   styleUrls: ['./app-card-logo.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [LazyLoadImageModule],
 })
 export class AppCardLogoComponent {

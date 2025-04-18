@@ -14,7 +14,6 @@ export const ixControlLabelTag = 'ix-label';
  * This directive is used to the be able to locate the template of the control programmatically via IxFormService.
  */
 @Directive({
-  standalone: true,
   selector: '[ixRegisteredControl]',
 })
 export class RegisteredControlDirective implements AfterViewInit, OnDestroy {

@@ -3,7 +3,6 @@ import { TranslateService } from '@ngx-translate/core';
 
 @Pipe({
   name: 'uptime',
-  standalone: true,
 })
 export class UptimePipe implements PipeTransform {
   constructor(private translate: TranslateService) {}

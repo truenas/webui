@@ -32,7 +32,6 @@ import { SmbOpenFilesComponent } from 'app/pages/sharing/smb/smb-status/componen
   templateUrl: './smb-lock-list.component.html',
   styleUrls: ['./smb-lock-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatToolbarRow,

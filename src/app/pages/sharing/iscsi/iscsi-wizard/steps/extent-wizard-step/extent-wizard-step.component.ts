@@ -23,7 +23,6 @@ import { IscsiService } from 'app/services/iscsi.service';
   selector: 'ix-extent-wizard-step',
   templateUrl: './extent-wizard-step.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxInputComponent,

@@ -20,7 +20,6 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
   styleUrls: ['./ix-checkbox.component.scss'],
   templateUrl: './ix-checkbox.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCheckbox,
     TooltipComponent,

@@ -53,7 +53,6 @@ import { selectService } from 'app/store/services/services.selectors';
   templateUrl: './smb-card.component.html',
   styleUrls: ['./smb-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatToolbarRow,

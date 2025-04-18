@@ -33,7 +33,6 @@ import { DiskFormComponent } from 'app/pages/storage/modules/disks/components/di
   templateUrl: './disk-info-card.component.html',
   styleUrls: ['./disk-info-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatCardHeader,

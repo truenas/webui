@@ -7,7 +7,6 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
   templateUrl: './readonly-badge.component.html',
   styleUrls: ['./readonly-badge.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [IxIconComponent, TranslateModule],
 })
 export class ReadOnlyComponent {

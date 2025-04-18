@@ -38,7 +38,6 @@ export const quotaTypeLabels = new Map<QuotaType, string>([
   selector: 'ix-set-dedup-quota',
   templateUrl: './set-dedup-quota.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     FormActionsComponent,
     MatButton,

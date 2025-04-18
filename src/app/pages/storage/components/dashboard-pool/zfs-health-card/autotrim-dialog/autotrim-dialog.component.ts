@@ -27,7 +27,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './autotrim-dialog.component.html',
   styleUrls: ['./autotrim-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogTitle,
     ReactiveFormsModule,

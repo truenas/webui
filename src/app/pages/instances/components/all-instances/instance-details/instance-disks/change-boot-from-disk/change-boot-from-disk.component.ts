@@ -26,7 +26,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   selector: 'ix-change-boot-from-disk',
   templateUrl: './change-boot-from-disk.component.html',
   styleUrls: ['./change-boot-from-disk.component.scss'],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatButton,

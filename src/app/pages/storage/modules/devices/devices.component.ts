@@ -29,7 +29,6 @@ const raidzItems = [TopologyItemType.Raidz, TopologyItemType.Raidz1, TopologyIte
   selector: 'ix-devices',
   templateUrl: './devices.component.html',
   styleUrls: ['./devices.component.scss'],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     DevicesListComponent,
