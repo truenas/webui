@@ -133,6 +133,7 @@ export class InstanceDiskFormComponent implements OnInit {
         minWidth: '90vw',
         data: {
           selectionMode: true,
+          config: null,
         },
       })
       .afterClosed()
