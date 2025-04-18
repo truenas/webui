@@ -45,7 +45,7 @@ describe('UserListComponent', () => {
   describe('Rendering users', () => {
     it('should show a list of users', async () => {
       expect(await table.getCellTexts()).toEqual([
-        ['Username', 'UID', 'Builtin', 'Full Name', 'Roles'],
+        ['Username', 'UID', 'Built in', 'Full Name', 'Roles'],
         [
           mockUsers[0].username,
           mockUsers[0].uid.toString(),
