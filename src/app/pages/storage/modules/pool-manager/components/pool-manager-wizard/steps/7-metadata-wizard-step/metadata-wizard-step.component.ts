@@ -7,7 +7,7 @@ import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { map } from 'rxjs';
-import { CreateVdevLayout, TopologyItemType, VdevType } from 'app/enums/v-dev-type.enum';
+import { CreateVdevLayout, TopologyItemType, VDevType } from 'app/enums/v-dev-type.enum';
 import { helptextManager } from 'app/helptext/storage/volumes/manager/manager';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -40,10 +40,10 @@ export class MetadataWizardStepComponent implements OnInit {
 
   canChangeLayout = true;
 
-  protected readonly VdevType = VdevType;
+  protected readonly vDevType = VDevType;
   readonly helptext = helptextManager;
 
-  protected readonly inventory$ = this.store.getInventoryForStep(VdevType.Special);
+  protected readonly inventory$ = this.store.getInventoryForStep(VDevType.Special);
   protected allowedLayouts = [CreateVdevLayout.Mirror, CreateVdevLayout.Stripe];
 
   constructor(
@@ -57,12 +57,12 @@ export class MetadataWizardStepComponent implements OnInit {
   }
 
   resetStep(): void {
-    this.store.resetStep(VdevType.Special);
+    this.store.resetStep(VDevType.Special);
   }
 
   ngOnInit(): void {
     this.addVdevsStore.pool$.pipe(
-      map((pool) => pool?.topology[VdevType.Special]),
+      map((pool) => pool?.topology[VDevType.Special]),
       untilDestroyed(this),
     ).subscribe((metadataTopology) => {
       if (!metadataTopology?.length) {

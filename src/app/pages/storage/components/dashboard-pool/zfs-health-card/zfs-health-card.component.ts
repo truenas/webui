@@ -26,7 +26,7 @@ import { Role } from 'app/enums/role.enum';
 import { LoadingState, toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { secondsToDuration } from 'app/helpers/time.helpers';
 import { Pool, PoolScanUpdate } from 'app/interfaces/pool.interface';
-import { TopologyItem } from 'app/interfaces/storage.interface';
+import { VDevItem } from 'app/interfaces/storage.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
@@ -298,7 +298,7 @@ export class ZfsHealthCardComponent implements OnChanges {
     if (!this.pool().topology) {
       return;
     }
-    this.totalZfsErrors = Object.values(this.pool().topology).reduce((totalErrors: number, vdevs: TopologyItem[]) => {
+    this.totalZfsErrors = Object.values(this.pool().topology).reduce((totalErrors: number, vdevs: VDevItem[]) => {
       return totalErrors + vdevs.reduce((vdevCategoryErrors, vdev) => {
         return vdevCategoryErrors
           + (vdev.stats?.read_errors || 0)

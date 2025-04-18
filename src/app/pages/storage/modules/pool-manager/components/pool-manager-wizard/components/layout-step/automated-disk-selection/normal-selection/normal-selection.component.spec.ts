@@ -6,7 +6,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of, Subject } from 'rxjs';
 import { TiB } from 'app/constants/bytes.constant';
 import { DiskType } from 'app/enums/disk-type.enum';
-import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
+import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import {
@@ -89,17 +89,17 @@ describe('NormalSelectionComponent', () => {
     providers: [
       mockProvider(PoolManagerStore, {
         openManualSelectionDialog: jest.fn(),
-        getLayoutsForVdevType: jest.fn((vdevType: VdevType) => {
+        getLayoutsForVdevType: jest.fn((vdevType: VDevType) => {
           switch (vdevType) {
-            case VdevType.Cache:
+            case VDevType.Cache:
               return of([CreateVdevLayout.Stripe]);
-            case VdevType.Dedup:
+            case VDevType.Dedup:
               return of([CreateVdevLayout.Mirror]);
-            case VdevType.Log:
+            case VDevType.Log:
               return of([CreateVdevLayout.Mirror, CreateVdevLayout.Stripe]);
-            case VdevType.Spare:
+            case VDevType.Spare:
               return of([CreateVdevLayout.Stripe]);
-            case VdevType.Special:
+            case VDevType.Special:
               return of([CreateVdevLayout.Mirror]);
             default:
               return of([...Object.values(CreateVdevLayout)]);
@@ -115,7 +115,7 @@ describe('NormalSelectionComponent', () => {
     spectator = createComponent({
       props: {
         layout: CreateVdevLayout.Stripe,
-        type: VdevType.Data,
+        type: VDevType.Data,
         inventory: [...unusedDisks],
       },
     });
@@ -211,13 +211,13 @@ describe('NormalSelectionComponent', () => {
     await sizeSelect.setValue('12 TiB (HDD)');
 
     await widthSelect.setValue('2');
-    expect(poolManagerStore.setAutomaticTopologyCategory).toHaveBeenLastCalledWith(VdevType.Data, {
+    expect(poolManagerStore.setAutomaticTopologyCategory).toHaveBeenLastCalledWith(VDevType.Data, {
       width: 2,
       vdevsNumber: null,
     });
 
     await vdevsSelect.setValue('2');
-    expect(poolManagerStore.setAutomaticTopologyCategory).toHaveBeenLastCalledWith(VdevType.Data, {
+    expect(poolManagerStore.setAutomaticTopologyCategory).toHaveBeenLastCalledWith(VDevType.Data, {
       width: 2,
       vdevsNumber: 2,
     });

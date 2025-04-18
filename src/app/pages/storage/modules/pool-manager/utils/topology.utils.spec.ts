@@ -1,4 +1,4 @@
-import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
+import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import {
   PoolManagerTopology,
@@ -36,13 +36,13 @@ describe('topologyToDisks', () => {
     const disk5 = {} as DetailsDisk;
 
     const topology = {
-      [VdevType.Data]: {
+      [VDevType.Data]: {
         vdevs: [
           [disk1, disk2],
           [disk3],
         ],
       },
-      [VdevType.Log]: {
+      [VDevType.Log]: {
         vdevs: [
           [disk4],
           [disk5],
@@ -65,21 +65,21 @@ describe('topologyToPayload', () => {
     const disk7 = { devname: 'ada7' } as DetailsDisk;
 
     const topology = {
-      [VdevType.Data]: {
+      [VDevType.Data]: {
         layout: CreateVdevLayout.Mirror,
         vdevs: [
           [disk1, disk2],
           [disk3, disk4],
         ],
       },
-      [VdevType.Log]: {
+      [VDevType.Log]: {
         layout: CreateVdevLayout.Stripe,
         vdevs: [
           [disk5],
           [disk6],
         ],
       },
-      [VdevType.Spare]: {
+      [VDevType.Spare]: {
         vdevs: [
           [disk7],
         ],
@@ -106,7 +106,7 @@ describe('topologyToPayload', () => {
     const disk4 = { devname: 'ada4' } as DetailsDisk;
 
     const topology = {
-      [VdevType.Data]: {
+      [VDevType.Data]: {
         layout: CreateVdevLayout.Draid1,
         vdevs: [
           [disk1, disk2],

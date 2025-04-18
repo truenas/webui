@@ -2,7 +2,7 @@ import { CdkStepper } from '@angular/cdk/stepper';
 import { mockProvider, Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
+import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { helptextManager } from 'app/helptext/storage/volumes/manager/manager';
 import { LayoutStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/layout-step/layout-step.component';
 import { CacheWizardStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/6-cache-wizard-step/cache-wizard-step.component';
@@ -53,6 +53,6 @@ describe('CacheWizardStepComponent', () => {
     expect(layoutComponent.canChangeLayout).toBeFalsy();
     expect(layoutComponent.inventory).toStrictEqual([...fakeInventory]);
     expect(layoutComponent.limitLayouts).toStrictEqual([CreateVdevLayout.Stripe]);
-    expect(layoutComponent.type).toStrictEqual(VdevType.Cache);
+    expect(layoutComponent.type).toStrictEqual(VDevType.Cache);
   });
 });

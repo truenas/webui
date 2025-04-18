@@ -14,9 +14,9 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { filter, tap } from 'rxjs/operators';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
-import { DeviceNestedDataNode } from 'app/interfaces/device-nested-data-node.interface';
+import { VDevNestedDataNode } from 'app/interfaces/device-nested-data-node.interface';
 import { PoolInstance } from 'app/interfaces/pool.interface';
-import { TopologyItem } from 'app/interfaces/storage.interface';
+import { VDevItem } from 'app/interfaces/storage.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { NestedTreeNodeComponent } from 'app/modules/ix-tree/components/nested-tree-node/nested-tree-node.component';
@@ -44,7 +44,7 @@ export enum BootPoolActionType {
 }
 export interface BootPoolActionEvent {
   action: BootPoolActionType;
-  node: TopologyItem;
+  node: VDevItem;
 }
 
 @UntilDestroy()
@@ -81,13 +81,13 @@ export class BootStatusListComponent implements OnInit {
   protected readonly searchableElements = bootEnvStatusElements;
 
   protected isLoading = signal(false);
-  dataSource: NestedTreeDataSource<DeviceNestedDataNode>;
-  treeControl = new NestedTreeControl<DeviceNestedDataNode, string>((vdev) => vdev.children, {
+  dataSource: NestedTreeDataSource<VDevNestedDataNode>;
+  treeControl = new NestedTreeControl<VDevNestedDataNode, string>((vdev) => vdev.children, {
     trackBy: (vdev) => vdev.guid,
   });
 
   poolInstance: PoolInstance;
-  readonly hasNestedChild = (_: number, node: DeviceNestedDataNode): boolean => {
+  readonly hasNestedChild = (_: number, node: VDevNestedDataNode): boolean => {
     return Boolean(node?.children?.length);
   };
 
@@ -180,9 +180,9 @@ export class BootStatusListComponent implements OnInit {
       guid: poolInstance.guid,
       group: poolInstance.name,
       children: poolInstance.topology.data,
-    } as DeviceNestedDataNode];
+    } as VDevNestedDataNode];
 
-    this.dataSource = new NestedTreeDataSource<DeviceNestedDataNode>(dataNodes);
+    this.dataSource = new NestedTreeDataSource<VDevNestedDataNode>(dataNodes);
     this.treeControl.dataNodes = dataNodes;
   }
 

@@ -9,7 +9,7 @@ import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter, merge } from 'rxjs';
-import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
+import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { helptextManager } from 'app/helptext/storage/volumes/manager/manager';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
@@ -41,12 +41,12 @@ export class SpareWizardStepComponent implements OnInit {
 
   readonly goToLastStep = output();
 
-  protected disks = toSignal(this.store.getInventoryForStep(VdevType.Spare));
+  protected disks = toSignal(this.store.getInventoryForStep(VDevType.Spare));
   protected readonly spareVdevDisk = new FormControl<string>('');
 
   protected readonly diskComboboxProvider = new SpareDiskComboboxProvider(this.store);
 
-  protected readonly VdevType = VdevType;
+  protected readonly vDevType = VDevType;
   readonly helptext = helptextManager;
 
   constructor(
@@ -62,7 +62,7 @@ export class SpareWizardStepComponent implements OnInit {
   private listenForResetEvents(): void {
     merge(
       this.store.startOver$,
-      this.store.resetStep$.pipe(filter((vdevType) => vdevType === VdevType.Spare)),
+      this.store.resetStep$.pipe(filter((vdevType) => vdevType === VDevType.Spare)),
     )
       .pipe(
         untilDestroyed(this),
@@ -74,15 +74,15 @@ export class SpareWizardStepComponent implements OnInit {
   }
 
   private updateSpareTopologyWhenChanged(): void {
-    this.store.setTopologyCategoryLayout(VdevType.Spare, CreateVdevLayout.Stripe);
+    this.store.setTopologyCategoryLayout(VDevType.Spare, CreateVdevLayout.Stripe);
     this.spareVdevDisk.valueChanges.pipe(
       filter(Boolean),
       untilDestroyed(this),
     ).subscribe({
       next: (diskName) => {
         const diskDetails = this.disks().find((disk) => disk.devname === diskName);
-        this.store.setManualTopologyCategory(VdevType.Spare, [[diskDetails]]);
-        this.store.setAutomaticTopologyCategory(VdevType.Spare, {
+        this.store.setManualTopologyCategory(VDevType.Spare, [[diskDetails]]);
+        this.store.setAutomaticTopologyCategory(VDevType.Spare, {
           diskSize: diskDetails.size,
           diskType: diskDetails.type,
           layout: CreateVdevLayout.Stripe,
@@ -98,6 +98,6 @@ export class SpareWizardStepComponent implements OnInit {
   }
 
   protected resetStep(): void {
-    this.store.resetStep(VdevType.Spare);
+    this.store.resetStep(VDevType.Spare);
   }
 }

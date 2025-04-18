@@ -13,14 +13,14 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
-import { TopologyWarning, VdevType } from 'app/enums/v-dev-type.enum';
+import { TopologyWarning, VDevType } from 'app/enums/v-dev-type.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { Disk, StorageDashboardDisk } from 'app/interfaces/disk.interface';
 import { Pool, PoolTopology } from 'app/interfaces/pool.interface';
 import {
   EnclosureAndSlot,
   TopologyDisk,
-  TopologyItem,
+  VDevItem,
 } from 'app/interfaces/storage.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -123,26 +123,26 @@ export class TopologyCardComponent implements OnInit, OnChanges {
       return;
     }
 
-    this.topologyWarningsState.data = this.parseDevsWarnings(topology.data, VdevType.Data);
-    this.topologyWarningsState.log = this.parseDevsWarnings(topology.log, VdevType.Log);
-    this.topologyWarningsState.cache = this.parseDevsWarnings(topology.cache, VdevType.Cache);
-    this.topologyWarningsState.spare = this.parseDevsWarnings(topology.spare, VdevType.Spare);
-    this.topologyWarningsState.metadata = this.parseDevsWarnings(topology.special, VdevType.Special);
-    this.topologyWarningsState.dedup = this.parseDevsWarnings(topology.dedup, VdevType.Dedup);
+    this.topologyWarningsState.data = this.parseDevsWarnings(topology.data, VDevType.Data);
+    this.topologyWarningsState.log = this.parseDevsWarnings(topology.log, VDevType.Log);
+    this.topologyWarningsState.cache = this.parseDevsWarnings(topology.cache, VDevType.Cache);
+    this.topologyWarningsState.spare = this.parseDevsWarnings(topology.spare, VDevType.Spare);
+    this.topologyWarningsState.metadata = this.parseDevsWarnings(topology.special, VDevType.Special);
+    this.topologyWarningsState.dedup = this.parseDevsWarnings(topology.dedup, VDevType.Dedup);
 
-    this.topologyState.data = this.parseDevs(topology.data, VdevType.Data, this.topologyWarningsState.data);
-    this.topologyState.log = this.parseDevs(topology.log, VdevType.Log, this.topologyWarningsState.log);
-    this.topologyState.cache = this.parseDevs(topology.cache, VdevType.Cache, this.topologyWarningsState.cache);
-    this.topologyState.spare = this.parseDevs(topology.spare, VdevType.Spare, this.topologyWarningsState.spare);
+    this.topologyState.data = this.parseDevs(topology.data, VDevType.Data, this.topologyWarningsState.data);
+    this.topologyState.log = this.parseDevs(topology.log, VDevType.Log, this.topologyWarningsState.log);
+    this.topologyState.cache = this.parseDevs(topology.cache, VDevType.Cache, this.topologyWarningsState.cache);
+    this.topologyState.spare = this.parseDevs(topology.spare, VDevType.Spare, this.topologyWarningsState.spare);
     this.topologyState.metadata = this.parseDevs(
       topology.special,
-      VdevType.Special,
+      VDevType.Special,
       this.topologyWarningsState.metadata,
     );
-    this.topologyState.dedup = this.parseDevs(topology.dedup, VdevType.Dedup, this.topologyWarningsState.dedup);
+    this.topologyState.dedup = this.parseDevs(topology.dedup, VDevType.Dedup, this.topologyWarningsState.dedup);
   }
 
-  private parseDevs(vdevs: TopologyItem[], category: VdevType, warning?: string): string {
+  private parseDevs(vdevs: VDevItem[], category: VDevType, warning?: string): string {
     let outputString = vdevs.length ? '' : this.notAssignedDev;
 
     // Check VDEV Widths
@@ -151,7 +151,7 @@ export class TopologyCardComponent implements OnInit, OnChanges {
     // There should only be one value
     const allVdevWidths: Set<number> = this.storageService.getVdevWidths(vdevs);
     const isMixedWidth = this.storageService.isMixedWidth(allVdevWidths);
-    const isSingleDeviceCategory = [VdevType.Spare, VdevType.Cache].includes(category);
+    const isSingleDeviceCategory = [VDevType.Spare, VDevType.Cache].includes(category);
 
     if (!isMixedWidth && !isSingleDeviceCategory) {
       vdevWidth = Array.from(allVdevWidths.values())[0];
@@ -185,7 +185,7 @@ export class TopologyCardComponent implements OnInit, OnChanges {
     return outputString;
   }
 
-  private parseDevsWarnings(vdevs: TopologyItem[], category: VdevType): string {
+  private parseDevsWarnings(vdevs: VDevItem[], category: VDevType): string {
     let outputString = '';
     const disks: Disk[] = this.disks().map((disk: StorageDashboardDisk) => {
       return this.dashboardDiskToDisk(disk);

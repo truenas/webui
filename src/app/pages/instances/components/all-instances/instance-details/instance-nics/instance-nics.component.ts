@@ -17,7 +17,7 @@ import {
   DeviceActionsMenuComponent,
 } from 'app/pages/instances/components/common/device-actions-menu/device-actions-menu.component';
 import { getDeviceDescription } from 'app/pages/instances/components/common/utils/get-device-description.utils';
-import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
+import { VirtualizationVdevsStore } from 'app/pages/instances/stores/virtualization-devices.store';
 
 @UntilDestroy()
 @Component({
@@ -48,7 +48,7 @@ export class InstanceNicsComponent {
   });
 
   constructor(
-    private deviceStore: VirtualizationDevicesStore,
+    private deviceStore: VirtualizationVdevsStore,
     private translate: TranslateService,
     private api: ApiService,
   ) {}

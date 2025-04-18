@@ -18,7 +18,7 @@ import {
 import {
   DeviceActionsMenuComponent,
 } from 'app/pages/instances/components/common/device-actions-menu/device-actions-menu.component';
-import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
+import { VirtualizationVdevsStore } from 'app/pages/instances/stores/virtualization-devices.store';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 
 describe('InstanceProxiesComponent', () => {
@@ -62,7 +62,7 @@ describe('InstanceProxiesComponent', () => {
       mockProvider(VirtualizationInstancesStore, {
         selectedInstance: () => ({ id: 'my-instance' }),
       }),
-      mockProvider(VirtualizationDevicesStore, {
+      mockProvider(VirtualizationVdevsStore, {
         isLoading: () => false,
         devices: () => devices,
         loadDevices: jest.fn(),
@@ -91,7 +91,7 @@ describe('InstanceProxiesComponent', () => {
       InstanceProxyFormComponent,
       { data: { instanceId: 'my-instance', proxy: undefined } },
     );
-    expect(spectator.inject(VirtualizationDevicesStore).loadDevices).toHaveBeenCalled();
+    expect(spectator.inject(VirtualizationVdevsStore).loadDevices).toHaveBeenCalled();
   });
 
   it('opens proxy for for edit when actions menu emits (edit)', () => {

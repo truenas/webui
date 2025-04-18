@@ -11,7 +11,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
-import { VdevType, vdevTypeLabels } from 'app/enums/v-dev-type.enum';
+import { VDevType, vdevTypeLabels } from 'app/enums/v-dev-type.enum';
 import { isTopologyLimitedToOneLayout } from 'app/helpers/storage.helper';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
@@ -53,11 +53,11 @@ import {
 export class ReviewWizardStepComponent implements OnInit {
   readonly isAddingVdevs = input<boolean>();
 
-  readonly VdevType = VdevType;
+  readonly vDevType = VDevType;
   readonly createPool = output();
 
   state: PoolManagerState;
-  nonEmptyTopologyCategories: [VdevType, PoolManagerTopologyCategory][] = [];
+  nonEmptyTopologyCategories: [VDevType, PoolManagerTopologyCategory][] = [];
   poolCreationErrors: PoolCreationError[];
   isCreateDisabled = false;
 
@@ -82,7 +82,7 @@ export class ReviewWizardStepComponent implements OnInit {
 
   get hasVdevs(): boolean {
     return Object.keys(this.state.topology).some((type) => {
-      return this.state.topology[type as VdevType].vdevs.length > 0;
+      return this.state.topology[type as VDevType].vdevs.length > 0;
     });
   }
 
@@ -120,14 +120,14 @@ export class ReviewWizardStepComponent implements OnInit {
     });
   }
 
-  private filterNonEmptyCategories(topology: PoolManagerTopology): [VdevType, PoolManagerTopologyCategory][] {
+  private filterNonEmptyCategories(topology: PoolManagerTopology): [VDevType, PoolManagerTopologyCategory][] {
     return Object.keys(topology).reduce((acc, type) => {
-      const category = topology[type as VdevType];
+      const category = topology[type as VDevType];
       if (category.vdevs.length > 0) {
-        acc.push([type as VdevType, category]);
+        acc.push([type as VDevType, category]);
       }
       return acc;
-    }, [] as [VdevType, PoolManagerTopologyCategory][]);
+    }, [] as [VDevType, PoolManagerTopologyCategory][]);
   }
 
   startOver(): void {

@@ -17,7 +17,7 @@ import {
 import {
   DeviceActionsMenuComponent,
 } from 'app/pages/instances/components/common/device-actions-menu/device-actions-menu.component';
-import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
+import { VirtualizationVdevsStore } from 'app/pages/instances/stores/virtualization-devices.store';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 
 @UntilDestroy()
@@ -44,7 +44,7 @@ export class InstanceProxiesComponent {
 
   constructor(
     private slideIn: SlideIn,
-    private deviceStore: VirtualizationDevicesStore,
+    private deviceStore: VirtualizationVdevsStore,
     private instancesStore: VirtualizationInstancesStore,
   ) {}
 

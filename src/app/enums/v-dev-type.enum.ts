@@ -84,7 +84,7 @@ export enum TopologyWarning {
   RedundancyMismatch = 'Redundancy Mismatch',
 }
 
-export enum VdevType {
+export enum VDevType {
   Cache = 'cache',
   Data = 'data',
   Dedup = 'dedup',
@@ -93,11 +93,11 @@ export enum VdevType {
   Special = 'special',
 }
 
-export const vdevTypeLabels = new Map<VdevType, string>([
-  [VdevType.Data, T('Data')],
-  [VdevType.Log, T('Log')],
-  [VdevType.Special, T('Metadata')],
-  [VdevType.Spare, T('Spare')],
-  [VdevType.Dedup, T('Dedup')],
-  [VdevType.Cache, T('Cache')],
+export const vdevTypeLabels = new Map<VDevType, string>([
+  [VDevType.Data, T('Data')],
+  [VDevType.Log, T('Log')],
+  [VDevType.Special, T('Metadata')],
+  [VDevType.Spare, T('Spare')],
+  [VDevType.Dedup, T('Dedup')],
+  [VDevType.Cache, T('Cache')],
 ]);

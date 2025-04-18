@@ -4,7 +4,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { uniqBy } from 'lodash-es';
 import { combineLatest, map, Observable } from 'rxjs';
-import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
+import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { helptextManager } from 'app/helptext/storage/volumes/manager/manager';
 import { Pool } from 'app/interfaces/pool.interface';
 import {
@@ -99,7 +99,7 @@ export class PoolManagerValidationService {
     const nonEmptyTopologyCategories = this.filterNonEmptyCategories(topology);
 
     nonEmptyTopologyCategories.forEach(([topologyCategoryType, topologyCategory]) => {
-      if (topologyCategoryType === VdevType.Data && isDraidLayout(topologyCategory.layout)) {
+      if (topologyCategoryType === VDevType.Data && isDraidLayout(topologyCategory.layout)) {
         errors.push(...this.validateDraid(topologyCategory));
       }
       errors.push(...this.validateStripeVdevsWarning(topologyCategory, topologyCategoryType));
@@ -135,7 +135,7 @@ export class PoolManagerValidationService {
   ): PoolCreationError[] {
     const errors: PoolCreationError[] = [];
     if (existingPool) {
-      const hasAtleastOneVdev = Object.values(VdevType).some((vdevType) => topology[vdevType]?.vdevs.length > 0);
+      const hasAtleastOneVdev = Object.values(VDevType).some((vdevType) => topology[vdevType]?.vdevs.length > 0);
       if (!hasAtleastOneVdev) {
         errors.push({
           text: this.translate.instant('At least 1 vdev is required to make an update to the pool.'),
@@ -143,7 +143,7 @@ export class PoolManagerValidationService {
           step: PoolCreationWizardStep.Review,
         });
       }
-    } else if (topology[VdevType.Data].vdevs.length === 0) {
+    } else if (topology[VDevType.Data].vdevs.length === 0) {
       errors.push({
         text: this.translate.instant('At least 1 data VDEV is required.'),
         severity: PoolCreationSeverity.Error,
@@ -169,13 +169,13 @@ export class PoolManagerValidationService {
 
   private validateStripeVdevsWarning(
     topologyCategory: PoolManagerTopologyCategory,
-    topologyCategoryType: VdevType,
+    topologyCategoryType: VDevType,
   ): PoolCreationError[] {
     const errors: PoolCreationError[] = [];
     const hasVdevs = topologyCategory.vdevs.length >= 1;
     const hasStripeLayout = topologyCategory.layout === CreateVdevLayout.Stripe;
     if (hasVdevs && hasStripeLayout) {
-      if (topologyCategoryType === VdevType.Log) {
+      if (topologyCategoryType === VDevType.Log) {
         errors.push({
           text: this.translate.instant(
             'A stripe log VDEV may result in data loss if it fails combined with a power outage.',
@@ -184,8 +184,8 @@ export class PoolManagerValidationService {
           step: PoolCreationWizardStep.Log,
         });
       }
-      if ([VdevType.Dedup, VdevType.Special, VdevType.Data].includes(topologyCategoryType)) {
-        const vdevType = topologyCategoryType === VdevType.Special ? 'metadata' : topologyCategoryType;
+      if ([VDevType.Dedup, VDevType.Special, VDevType.Data].includes(topologyCategoryType)) {
+        const vdevType = topologyCategoryType === VDevType.Special ? 'metadata' : topologyCategoryType;
         errors.push({
           text: this.translate.instant('A stripe {vdevType} VDEV is highly discouraged and will result in data loss if it fails', { vdevType }),
           severity: PoolCreationSeverity.ErrorWarning,
@@ -250,14 +250,14 @@ export class PoolManagerValidationService {
     return errors.filter((error) => error.severity === PoolCreationSeverity.Error && error.step === step);
   }
 
-  private filterNonEmptyCategories(topology: PoolManagerTopology): [VdevType, PoolManagerTopologyCategory][] {
+  private filterNonEmptyCategories(topology: PoolManagerTopology): [VDevType, PoolManagerTopologyCategory][] {
     return Object.keys(topology).reduce((acc, type) => {
-      const category = topology[type as VdevType];
+      const category = topology[type as VDevType];
       if (category.vdevs.length > 0) {
-        acc.push([type as VdevType, category]);
+        acc.push([type as VDevType, category]);
       }
       return acc;
-    }, [] as [VdevType, PoolManagerTopologyCategory][]);
+    }, [] as [VDevType, PoolManagerTopologyCategory][]);
   }
 
   private validateDraid(topologyCategory: PoolManagerTopologyCategory): PoolCreationError[] {

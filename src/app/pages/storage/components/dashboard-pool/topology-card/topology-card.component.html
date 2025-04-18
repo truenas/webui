@@ -1,17 +1,20 @@
 <mat-card class="card" [ixUiSearch]="searchableElements.elements.topology">
   <mat-card-header>
     <h3 mat-card-title>
-      {{ 'Topology' | translate }}
+      <span [matTooltip]="'A pool is made of VDEVs (virtual devices). Each VDEV is a group of drives working together' | translate">
+        {{ 'VDEVs' | translate }}
+      </span>
+
       <ix-pool-card-icon [type]="iconType()" [tooltip]="iconTooltip()"></ix-pool-card-icon>
     </h3>
 
     <button
       mat-button
-      ixTest="manage-devices"
-      [ixUiSearch]="searchableElements.elements.manageDevices"
-      (click)="router.navigate(['/storage', this.poolState().id, 'devices'])"
+      ixTest="manage-vdevs"
+      [ixUiSearch]="searchableElements.elements.viewVdevs"
+      (click)="router.navigate(['/storage', this.poolState().id, 'vdevs'])"
     >
-      {{ 'Manage Devices' | translate }}
+      {{ 'View VDEVs' | translate }}
     </button>
   </mat-card-header>
 

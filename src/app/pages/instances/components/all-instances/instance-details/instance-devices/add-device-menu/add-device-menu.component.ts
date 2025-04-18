@@ -30,7 +30,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import {
   PciPassthroughDialog,
 } from 'app/pages/instances/components/common/pci-passthough-dialog/pci-passthrough-dialog.component';
-import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
+import { VirtualizationVdevsStore } from 'app/pages/instances/stores/virtualization-devices.store';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -104,7 +104,7 @@ export class AddDeviceMenuComponent {
     private loader: LoaderService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
-    private deviceStore: VirtualizationDevicesStore,
+    private deviceStore: VirtualizationVdevsStore,
     private instancesStore: VirtualizationInstancesStore,
     private matDialog: MatDialog,
   ) {}

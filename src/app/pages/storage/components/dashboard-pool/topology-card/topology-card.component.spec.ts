@@ -7,7 +7,7 @@ import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { Disk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
-import { TopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
+import { TopologyDisk, VDevItem } from 'app/interfaces/storage.interface';
 import {
   PoolCardIconComponent,
 } from 'app/pages/storage/components/dashboard-pool/pool-card-icon/pool-card-icon.component';
@@ -940,10 +940,10 @@ describe('TopologyCardComponent', () => {
               name: 'RAIDZ2-2',
             },
           ],
-          log: [] as TopologyItem[],
-          spare: [] as TopologyItem[],
-          cache: [] as TopologyItem[],
-          dedup: [] as TopologyItem[],
+          log: [] as VDevItem[],
+          spare: [] as VDevItem[],
+          cache: [] as VDevItem[],
+          dedup: [] as VDevItem[],
         },
         autotrim: {
           value: 'off',
@@ -1598,7 +1598,7 @@ describe('TopologyCardComponent', () => {
               },
               guid: '12345',
             },
-          ] as TopologyItem[],
+          ] as VDevItem[],
           cache: [
             {
               type: 'DISK',
@@ -1620,7 +1620,7 @@ describe('TopologyCardComponent', () => {
               },
               guid: '12345',
             },
-          ] as TopologyItem[],
+          ] as VDevItem[],
           dedup: [
             {
               type: 'DISK',
@@ -1662,7 +1662,7 @@ describe('TopologyCardComponent', () => {
               },
               guid: '12345',
             },
-          ] as TopologyItem[],
+          ] as VDevItem[],
         },
         autotrim: {
           value: 'off',
@@ -2165,7 +2165,7 @@ describe('TopologyCardComponent', () => {
               guid: '12345',
             },
           ],
-          dedup: [] as TopologyItem[],
+          dedup: [] as VDevItem[],
         },
         autotrim: {
           value: 'off',

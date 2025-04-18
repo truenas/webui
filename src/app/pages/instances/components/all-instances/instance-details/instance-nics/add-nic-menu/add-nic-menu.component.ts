@@ -18,7 +18,7 @@ import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
+import { VirtualizationVdevsStore } from 'app/pages/instances/stores/virtualization-devices.store';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -79,7 +79,7 @@ export class AddNicMenuComponent {
     private loader: LoaderService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
-    private deviceStore: VirtualizationDevicesStore,
+    private deviceStore: VirtualizationVdevsStore,
     private instancesStore: VirtualizationInstancesStore,
   ) {}
 

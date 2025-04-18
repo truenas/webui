@@ -2,11 +2,11 @@ import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/sp
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { VirtualizationDevice, VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
+import { VirtualizationVdevsStore } from 'app/pages/instances/stores/virtualization-devices.store';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 
-describe('VirtualizationDevicesStore', () => {
-  let spectator: SpectatorService<VirtualizationDevicesStore>;
+describe('VirtualizationVdevsStore', () => {
+  let spectator: SpectatorService<VirtualizationVdevsStore>;
 
   const instances = [
     { id: 'instance1' },
@@ -19,7 +19,7 @@ describe('VirtualizationDevicesStore', () => {
   ] as VirtualizationDevice[];
 
   const createService = createServiceFactory({
-    service: VirtualizationDevicesStore,
+    service: VirtualizationVdevsStore,
     providers: [
       mockApi([
         mockCall('virt.instance.device_list', devices),

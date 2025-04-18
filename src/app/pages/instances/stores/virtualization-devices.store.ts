@@ -24,7 +24,7 @@ const initialState: VirtualizationInstanceDeviceState = {
 
 @UntilDestroy()
 @Injectable()
-export class VirtualizationDevicesStore extends ComponentStore<VirtualizationInstanceDeviceState> {
+export class VirtualizationVdevsStore extends ComponentStore<VirtualizationInstanceDeviceState> {
   readonly stateAsSignal = toSignal(this.state$, { initialValue: initialState });
   readonly isLoading = computed(() => this.stateAsSignal().isLoading);
   readonly devices = computed(() => this.stateAsSignal().devices);

@@ -6,10 +6,11 @@ export const topologyCardElements = {
   anchorRouterLink: ['/storage'],
   elements: {
     topology: {
-      hierarchy: [T('Topology')],
+      hierarchy: [T('VDEVs')],
+      synonyms: [T('Topology')],
     },
-    manageDevices: {
-      hierarchy: [T('Manage Devices')],
+    viewVdevs: {
+      hierarchy: [T('View VDEVs')],
     },
   },
 } satisfies UiSearchableElement;

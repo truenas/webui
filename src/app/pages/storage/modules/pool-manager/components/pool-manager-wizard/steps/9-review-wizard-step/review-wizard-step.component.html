@@ -25,7 +25,7 @@
           {{ category[0] | mapValue: vdevTypeLabels | translate }}
         </div>
         <div class="value">
-          {{ category[1] | ixTopologyCategoryDescription: !isLimitedToOneLayout(category[0]) : category[0] === VdevType.Spare }}
+          {{ category[1] | ixTopologyCategoryDescription: !isLimitedToOneLayout(category[0]) : category[0] === VDevType.Spare }}
         </div>
       </div>
     } @empty {

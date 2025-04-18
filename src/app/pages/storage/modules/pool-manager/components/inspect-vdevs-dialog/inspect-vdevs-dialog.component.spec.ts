@@ -3,7 +3,7 @@ import {
   byTextContent, createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
-import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
+import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import {
   InspectVdevsDialog,
 } from 'app/pages/storage/modules/pool-manager/components/inspect-vdevs-dialog/inspect-vdevs-dialog.component';
@@ -15,13 +15,13 @@ import { PoolManagerTopology } from 'app/pages/storage/modules/pool-manager/stor
 describe('InspectVdevsDialogComponent', () => {
   let spectator: Spectator<InspectVdevsDialog>;
   const topology = {
-    [VdevType.Data]: {
+    [VDevType.Data]: {
       layout: CreateVdevLayout.Stripe,
       vdevs: [
         [{ devname: 'ada0' }, { devname: 'ada1' }, { devname: 'ada2' }],
       ],
     },
-    [VdevType.Log]: {
+    [VDevType.Log]: {
       layout: CreateVdevLayout.Mirror,
       vdevs: [
         [{ devname: 'ada3' }, { devname: 'ada4' }],

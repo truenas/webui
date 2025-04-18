@@ -6,7 +6,7 @@ import { MatButton } from '@angular/material/button';
 import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
+import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { helptextManager } from 'app/helptext/storage/volumes/manager/manager';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -38,10 +38,10 @@ export class DedupWizardStepComponent {
 
   canChangeLayout = true;
 
-  protected readonly VdevType = VdevType;
+  protected readonly vDevType = VDevType;
   readonly helptext = helptextManager;
 
-  protected readonly inventory$ = this.store.getInventoryForStep(VdevType.Dedup);
+  protected readonly inventory$ = this.store.getInventoryForStep(VDevType.Dedup);
   protected allowedLayouts = [CreateVdevLayout.Mirror, CreateVdevLayout.Stripe];
 
   constructor(
@@ -53,6 +53,6 @@ export class DedupWizardStepComponent {
   }
 
   resetStep(): void {
-    this.store.resetStep(VdevType.Dedup);
+    this.store.resetStep(VDevType.Dedup);
   }
 }

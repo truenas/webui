@@ -7,7 +7,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { range } from 'lodash-es';
 import { merge, of } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
+import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { generateOptionsRange } from 'app/helpers/options.helper';
 import { helptextManager } from 'app/helptext/storage/volumes/manager/manager';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
@@ -47,7 +47,7 @@ const maxDisksInDraidGroup = 255;
   ],
 })
 export class DraidSelectionComponent implements OnInit, OnChanges {
-  readonly type = input.required<VdevType>();
+  readonly type = input.required<VDevType>();
   readonly layout = input.required<CreateVdevLayout.Draid1 | CreateVdevLayout.Draid2 | CreateVdevLayout.Draid3>();
   readonly inventory = input<DetailsDisk[]>();
   readonly isStepActive = input<boolean>(false);
