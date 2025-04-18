@@ -10,7 +10,7 @@ import { AdvancedConfigUpdate } from 'app/interfaces/advanced-config.interface';
 import { DetailsItemComponent } from 'app/modules/details-table/details-item/details-item.component';
 import { DetailsTableComponent } from 'app/modules/details-table/details-table.component';
 import {
-  EditableOnEnterDirective,
+  EditableSaveOnEnterDirective,
 } from 'app/modules/forms/editable/editable-save-on-enter/editable-save-on-enter.directive';
 import { EditableComponent } from 'app/modules/forms/editable/editable.component';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -46,7 +46,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
     DetailsItemComponent,
     TranslateModule,
     IxCheckboxComponent,
-    EditableOnEnterDirective,
+    EditableSaveOnEnterDirective,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

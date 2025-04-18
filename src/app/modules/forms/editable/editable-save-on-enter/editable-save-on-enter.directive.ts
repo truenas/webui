@@ -5,7 +5,7 @@ import { EditableComponent } from 'app/modules/forms/editable/editable.component
   selector: '[editableSaveOnEnter]',
   standalone: true,
 })
-export class EditableOnEnterDirective {
+export class EditableSaveOnEnterDirective {
   constructor(
     private editable: EditableComponent,
   ) {}
