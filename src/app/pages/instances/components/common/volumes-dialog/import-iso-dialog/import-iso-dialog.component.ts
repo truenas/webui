@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, Component, Inject, OnInit,
 } from '@angular/core';
 import {
-  FormBuilder, FormControl, ReactiveFormsModule, Validators,
+  FormBuilder, ReactiveFormsModule, Validators,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -43,17 +43,6 @@ import { FilesystemService } from 'app/services/filesystem.service';
   ],
 })
 export class IxImportIsoDialogComponent implements OnInit {
-  protected importIsoPath = new FormControl(
-    '',
-    [
-      Validators.required,
-      this.validatorsService.withMessage(
-        Validators.pattern('.*\\.iso$'),
-        this.translate.instant('Must select an ISO file'),
-      ),
-    ],
-  );
-
   protected form = this.fb.group({
     iso_location: ['', [
       Validators.required,
