@@ -18,7 +18,7 @@
       <div class="tree-header">
         <div>
           <span class="name-header">
-            {{ 'Device Name' | translate }}
+            {{ 'VDEV Name' | translate }}
           </span>
         </div>
         <div class="disk-status-header">{{ 'Status' | translate }}</div>
@@ -46,7 +46,7 @@
             <span class="spacer" treeNodeToggle [class.spacer-root]="topologyItem.isRoot"></span>
             <ix-topology-item-node
               [topologyItem]="topologyItem | cast"
-              [disk]="VDevsStore.getDisk(topologyItem)"
+              [disk]="vDevsStore.getDisk(topologyItem)"
             ></ix-topology-item-node>
             <ix-icon
               name="mdi-chevron-right"
@@ -110,7 +110,7 @@
 
               <ix-topology-item-node
                 [topologyItem]="vdev | cast"
-                [disk]="VDevsStore.getDisk(vdev.children[0])"
+                [disk]="vDevsStore.getDisk(vdev.children[0])"
               ></ix-topology-item-node>
 
               <ix-icon

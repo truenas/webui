@@ -3369,25 +3369,7 @@
   {
     "hierarchy": [
       "Storage",
-      "VDEVs"
-    ],
-    "synonyms": [
-      "Topology"
-    ],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/storage"
-    ],
-    "routerLink": null,
-    "anchor": "vdevs",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Storage",
-      "View VDEVs"
+      "Storage Health"
     ],
     "synonyms": [],
     "requiredRoles": [],
@@ -3396,23 +3378,7 @@
       "/storage"
     ],
     "routerLink": null,
-    "anchor": "view-vdevs",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Storage",
-      "ZFS Health"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/storage"
-    ],
-    "routerLink": null,
-    "anchor": "zfs-health",
+    "anchor": "storage-health",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -3456,10 +3422,44 @@
   {
     "hierarchy": [
       "Storage",
+      "VDEVs"
+    ],
+    "synonyms": [
+      "Topology"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/storage"
+    ],
+    "routerLink": null,
+    "anchor": "vdevs",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Storage",
+      "View VDEVs"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/storage"
+    ],
+    "routerLink": null,
+    "anchor": "view-vdevs",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Storage",
       "Disks"
     ],
     "synonyms": [
-      "Manage Disks"
+      "View Disks"
     ],
     "requiredRoles": [],
     "visibleTokens": [],

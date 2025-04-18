@@ -41,7 +41,7 @@ describe('TopologyItemNodeComponent', () => {
     });
   });
 
-  it('shows "Device Name"', () => {
+  it('shows "VDEV Name"', () => {
     expect(spectator.query('.name')).toHaveText(topologyDisk.disk);
     expect(spectator.query(TopologyItemIconComponent)!.disk).toBe(disk);
     expect(spectator.query(TopologyItemIconComponent)!.topologyItem).toBe(topologyDisk);

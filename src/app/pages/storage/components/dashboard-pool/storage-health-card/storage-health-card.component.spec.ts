@@ -27,18 +27,18 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { PoolCardIconComponent } from 'app/pages/storage/components/dashboard-pool/pool-card-icon/pool-card-icon.component';
 import {
   AutotrimDialog,
-} from 'app/pages/storage/components/dashboard-pool/zfs-health-card/autotrim-dialog/autotrim-dialog.component';
+} from 'app/pages/storage/components/dashboard-pool/storage-health-card/autotrim-dialog/autotrim-dialog.component';
 import {
   PruneDedupTableDialog,
-} from 'app/pages/storage/components/dashboard-pool/zfs-health-card/prune-dedup-table-dialog/prune-dedup-table-dialog.component';
+} from 'app/pages/storage/components/dashboard-pool/storage-health-card/prune-dedup-table-dialog/prune-dedup-table-dialog.component';
 import {
   SetDedupQuotaComponent,
-} from 'app/pages/storage/components/dashboard-pool/zfs-health-card/set-dedup-quota/set-dedup-quota.component';
-import { ZfsHealthCardComponent } from 'app/pages/storage/components/dashboard-pool/zfs-health-card/zfs-health-card.component';
+} from 'app/pages/storage/components/dashboard-pool/storage-health-card/set-dedup-quota/set-dedup-quota.component';
+import { StorageHealthCardComponent } from 'app/pages/storage/components/dashboard-pool/storage-health-card/storage-health-card.component';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
 
-describe('ZfsHealthCardComponent', () => {
-  let spectator: Spectator<ZfsHealthCardComponent>;
+describe('StorageHealthCardComponent', () => {
+  let spectator: Spectator<StorageHealthCardComponent>;
   let loader: HarnessLoader;
   const pool = {
     id: 45,
@@ -72,7 +72,7 @@ describe('ZfsHealthCardComponent', () => {
   const websocketSubscription$ = new Subject<ApiEvent<PoolScan>>();
 
   const createComponent = createComponentFactory({
-    component: ZfsHealthCardComponent,
+    component: StorageHealthCardComponent,
     imports: [
       MapValuePipe,
     ],
@@ -123,12 +123,7 @@ describe('ZfsHealthCardComponent', () => {
 
     it('shows pool status string', () => {
       const detailsItem = spectator.query(byText('Pool Status:'))!.parentElement!;
-      expect(detailsItem.querySelector('.value')).toHaveText('Online');
-    });
-
-    it('shows total ZFS error count', () => {
-      const detailsItem = spectator.query(byText('Total ZFS Errors:'))!.parentElement!;
-      expect(detailsItem.querySelector('.value')).toHaveText('3');
+      expect(detailsItem.querySelector('.value')).toHaveText('Online.  Total ZFS Errors: 3');
     });
   });
 

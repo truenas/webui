@@ -33,8 +33,8 @@ import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-st
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { DiskHealthCardComponent } from './disk-health-card/disk-health-card.component';
 import { PoolUsageCardComponent } from './pool-usage-card/pool-usage-card.component';
+import { StorageHealthCardComponent } from './storage-health-card/storage-health-card.component';
 import { TopologyCardComponent } from './topology-card/topology-card.component';
-import { ZfsHealthCardComponent } from './zfs-health-card/zfs-health-card.component';
 
 @UntilDestroy()
 @Component({
@@ -50,7 +50,7 @@ import { ZfsHealthCardComponent } from './zfs-health-card/zfs-health-card.compon
     UiSearchDirective,
     TopologyCardComponent,
     PoolUsageCardComponent,
-    ZfsHealthCardComponent,
+    StorageHealthCardComponent,
     DiskHealthCardComponent,
     NgxSkeletonLoaderModule,
     MatCard,

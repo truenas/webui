@@ -1,7 +1,7 @@
 <mat-card class="card" [ixUiSearch]="searchableElements.elements.zfsHealth">
   <mat-card-header>
     <h3 mat-card-title>
-      {{ 'ZFS Health' | translate }}
+      {{ 'Storage Health' | translate }}
       <ix-pool-card-icon [type]="iconType()" [tooltip]="iconTooltip()"></ix-pool-card-icon>
     </h3>
 
@@ -55,12 +55,15 @@
   <mat-card-content class="card-content">
     <div class="details-item">
       <div class="label">{{ 'Pool Status' | translate }}:</div>
-      <div class="value">{{ pool().status | mapValue: poolStatusLabels | translate }}</div>
-    </div>
+      <div class="value font-bold">
+        {{ pool().status | mapValue: poolStatusLabels | translate }}.
 
-    <div class="details-item">
-      <div class="label">{{ 'Total ZFS Errors' | translate }}:</div>
-      <div class="value">{{ totalZfsErrors | number }}</div>
+        @if (totalZfsErrors > 0) {
+          {{ 'Total ZFS Errors: {number}' | translate: { number: totalZfsErrors | number } }}
+        } @else {
+          {{ 'No errors' | translate }}
+        }
+      </div>
     </div>
 
     <div class="details-item">

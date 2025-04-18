@@ -37,22 +37,22 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { PoolCardIconComponent } from 'app/pages/storage/components/dashboard-pool/pool-card-icon/pool-card-icon.component';
 import {
   AutotrimDialog,
-} from 'app/pages/storage/components/dashboard-pool/zfs-health-card/autotrim-dialog/autotrim-dialog.component';
+} from 'app/pages/storage/components/dashboard-pool/storage-health-card/autotrim-dialog/autotrim-dialog.component';
 import {
   PruneDedupTableDialog,
-} from 'app/pages/storage/components/dashboard-pool/zfs-health-card/prune-dedup-table-dialog/prune-dedup-table-dialog.component';
+} from 'app/pages/storage/components/dashboard-pool/storage-health-card/prune-dedup-table-dialog/prune-dedup-table-dialog.component';
 import {
   SetDedupQuotaComponent,
-} from 'app/pages/storage/components/dashboard-pool/zfs-health-card/set-dedup-quota/set-dedup-quota.component';
-import { zfsHealthCardElements } from 'app/pages/storage/components/dashboard-pool/zfs-health-card/zfs-health-card.elements';
+} from 'app/pages/storage/components/dashboard-pool/storage-health-card/set-dedup-quota/set-dedup-quota.component';
+import { storageHealthCardElements } from 'app/pages/storage/components/dashboard-pool/storage-health-card/storage-health-card.elements';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-zfs-health-card',
-  templateUrl: './zfs-health-card.component.html',
-  styleUrls: ['./zfs-health-card.component.scss'],
+  selector: 'ix-storage-health-card',
+  templateUrl: './storage-health-card.component.html',
+  styleUrls: ['./storage-health-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
@@ -76,10 +76,10 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
   providers: [FileSizePipe],
 })
-export class ZfsHealthCardComponent implements OnChanges {
+export class StorageHealthCardComponent implements OnChanges {
   readonly pool = input.required<Pool>();
 
-  protected readonly searchableElements = zfsHealthCardElements;
+  protected readonly searchableElements = storageHealthCardElements;
 
   scan: PoolScanUpdate;
   totalZfsErrors = 0;
