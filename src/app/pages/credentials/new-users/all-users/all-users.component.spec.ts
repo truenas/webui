@@ -1,11 +1,11 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
-import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master-detail-view.component';
 import { MockMasterDetailViewComponent } from 'app/modules/master-detail-view/testing/mock-master-detail-view.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { mockUsers } from 'app/pages/credentials/new-users/all-users/testing/mock-user-api-data-provider';
+import { UserListComponent } from 'app/pages/credentials/new-users/all-users/user-list/user-list.component';
 import { AllUsersComponent } from './all-users.component';
 
 describe('AllUsersComponent', () => {
@@ -15,9 +15,9 @@ describe('AllUsersComponent', () => {
     component: AllUsersComponent,
     imports: [
       MockComponent(MockMasterDetailViewComponent),
+      MockComponent(UserListComponent),
     ],
     providers: [
-      mockAuth(),
       mockApi([
         mockCall('user.query', mockUsers),
       ]),
