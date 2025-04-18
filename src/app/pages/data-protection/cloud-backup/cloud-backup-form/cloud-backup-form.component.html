@@ -16,6 +16,14 @@
             [root]="'/'"
             [nodeProvider]="fileNodeProvider"
           ></ix-explorer>
+
+          <ix-explorer
+            formControlName="cache_path"
+            [label]="helptext.cache_path_placeholder | translate"
+            [tooltip]="helptext.cache_path_tooltip | translate"
+            [multiple]="false"
+            [nodeProvider]="directoriesNodeProvider"
+          ></ix-explorer>
         </ix-fieldset>
 
         <ix-fieldset
