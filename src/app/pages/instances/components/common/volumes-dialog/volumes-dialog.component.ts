@@ -58,7 +58,6 @@ export interface VolumesDialogOptions {
   selector: 'ix-volumes-dialog',
   templateUrl: './volumes-dialog.component.html',
   styleUrls: ['./volumes-dialog.component.scss'],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatDialogTitle,

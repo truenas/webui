@@ -41,7 +41,6 @@ import { SystemGeneralService } from 'app/services/system-general.service';
   templateUrl: './active-directory.component.html',
   styleUrls: ['./active-directory.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

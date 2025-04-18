@@ -28,7 +28,6 @@ import { UsersStore } from 'app/pages/credentials/new-users/store/users.store';
   templateUrl: './user-list.component.html',
   styleUrls: ['./user-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     TranslateModule,
     EmptyComponent,

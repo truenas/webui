@@ -14,7 +14,6 @@ import { localizationFormSubmitted } from 'app/store/preferences/preferences.act
 @Pipe({
   name: 'formatDateTime',
   pure: false,
-  standalone: true,
 })
 export class FormatDateTimePipe implements PipeTransform {
   dateFormat = 'yyyy-MM-dd';

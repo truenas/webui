@@ -43,7 +43,6 @@ import { SystemGeneralService } from 'app/services/system-general.service';
   templateUrl: './service-ftp.component.html',
   styleUrls: ['./service-ftp.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

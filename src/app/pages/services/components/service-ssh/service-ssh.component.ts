@@ -37,7 +37,6 @@ import { UserService } from 'app/services/user.service';
   templateUrl: './service-ssh.component.html',
   styleUrls: ['./service-ssh.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

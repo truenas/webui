@@ -18,7 +18,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   selector: 'ix-instance-tools',
   templateUrl: './instance-tools.component.html',
   styleUrls: ['./instance-tools.component.scss'],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatCardTitle,

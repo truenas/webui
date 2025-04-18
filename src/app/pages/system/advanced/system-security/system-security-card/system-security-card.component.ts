@@ -26,7 +26,6 @@ import { SystemSecurityFormComponent } from 'app/pages/system/advanced/system-se
   selector: 'ix-system-security-card',
   templateUrl: './system-security-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatToolbarRow,

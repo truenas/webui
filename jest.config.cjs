@@ -28,6 +28,9 @@ module.exports = {
   moduleDirectories: ['node_modules', 'src'],
   cacheDirectory: "<rootDir>/.jest/cache",
   moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths || {}),
+  testPathIgnorePatterns: [
+    '<rootDir>/dist/',
+  ],
   transformIgnorePatterns: [
     `node_modules/(?!(${esmPatterns.join('|')}))`
   ],

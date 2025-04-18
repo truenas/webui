@@ -14,7 +14,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   selector: 'ix-cell-relative-date',
   templateUrl: './ix-cell-relative-date.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [MatTooltip, TestDirective],
   providers: [FormatDateTimePipe],
 })

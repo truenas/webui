@@ -12,7 +12,6 @@ import {
   selector: 'ix-bulk-list-item',
   templateUrl: './bulk-list-item.component.html',
   styleUrls: ['./bulk-list-item.component.scss'],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     IxIconComponent,

@@ -38,7 +38,6 @@ export type TintingFunction = (slot: DashboardEnclosureSlot) => string | null;
       ]),
     ]),
   ],
-  standalone: true,
   imports: [NgxSkeletonLoaderModule],
 })
 export class EnclosureSvgComponent implements OnDestroy {

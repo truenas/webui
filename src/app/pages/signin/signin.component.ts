@@ -31,7 +31,6 @@ import { WebSocketStatusService } from 'app/services/websocket-status.service';
   templateUrl: './signin.component.html',
   styleUrls: ['./signin.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatProgressBar,
     MatCard,

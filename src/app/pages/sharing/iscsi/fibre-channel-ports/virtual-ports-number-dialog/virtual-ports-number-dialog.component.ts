@@ -21,7 +21,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 @Component({
   selector: 'ix-virtual-ports-number-dialog',
   templateUrl: './virtual-ports-number-dialog.component.html',
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormActionsComponent,

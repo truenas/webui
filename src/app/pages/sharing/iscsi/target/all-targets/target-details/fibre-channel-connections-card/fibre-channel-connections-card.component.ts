@@ -10,7 +10,6 @@ import { FibreChannelStatus } from 'app/interfaces/fibre-channel.interface';
 import { CardExpandCollapseComponent } from 'app/modules/card-expand-collapse/card-expand-collapse.component';
 
 @Component({
-  standalone: true,
   selector: 'ix-fibre-channel-connections-card',
   templateUrl: './fibre-channel-connections-card.component.html',
   styleUrls: ['./fibre-channel-connections-card.component.scss'],

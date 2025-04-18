@@ -34,7 +34,6 @@ import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-st
   templateUrl: './pools-dashboard.component.html',
   styleUrls: ['./pools-dashboard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     PageHeaderComponent,
     RequiresRolesDirective,

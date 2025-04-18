@@ -61,7 +61,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './replication-task-card.component.html',
   styleUrls: ['./replication-task-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatToolbarRow,

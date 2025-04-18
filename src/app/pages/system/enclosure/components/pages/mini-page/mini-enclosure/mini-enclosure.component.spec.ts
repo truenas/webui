@@ -25,7 +25,6 @@ import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.st
 @Component({
   selector: 'ix-enclosure-side',
   template: '',
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 class EnclosureSideStubComponent {

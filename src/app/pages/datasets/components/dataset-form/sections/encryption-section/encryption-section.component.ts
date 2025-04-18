@@ -24,7 +24,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
   selector: 'ix-encryption-section',
   templateUrl: './encryption-section.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxFieldsetComponent,
     ReactiveFormsModule,

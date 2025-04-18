@@ -22,7 +22,6 @@ import { OldUserFormComponent } from 'app/pages/credentials/users/user-form/user
   selector: 'ix-user-detail-header',
   templateUrl: './user-detail-header.component.html',
   styleUrls: ['./user-detail-header.component.scss'],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatButton,

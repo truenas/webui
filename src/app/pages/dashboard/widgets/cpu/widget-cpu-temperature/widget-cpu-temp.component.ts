@@ -16,7 +16,6 @@ import { cpuTempWidget } from 'app/pages/dashboard/widgets/cpu/widget-cpu-temper
   templateUrl: './widget-cpu-temp.component.html',
   styleUrls: ['./widget-cpu-temp.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     WithLoadingStateDirective,
     WidgetDatapointComponent,
