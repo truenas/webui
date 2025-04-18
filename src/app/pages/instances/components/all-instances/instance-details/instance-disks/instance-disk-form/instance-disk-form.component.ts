@@ -50,7 +50,6 @@ interface InstanceDiskFormOptions {
   selector: 'ix-instance-disk-form',
   styleUrls: ['./instance-disk-form.component.scss'],
   templateUrl: './instance-disk-form.component.html',
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     IxExplorerComponent,

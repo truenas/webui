@@ -26,7 +26,6 @@ const adminUsername = 'truenas_admin';
   templateUrl: './set-admin-password-form.component.html',
   styleUrls: ['./set-admin-password-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     FormsModule,
     ReactiveFormsModule,

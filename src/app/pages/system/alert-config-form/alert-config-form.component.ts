@@ -35,7 +35,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './alert-config-form.component.html',
   styleUrls: ['./alert-config-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatProgressBar,

@@ -16,7 +16,6 @@ import { UserFormStore } from 'app/pages/credentials/new-users/user-form/user.st
   selector: 'ix-auth-section',
   templateUrl: './auth-section.component.html',
   styleUrl: './auth-section.component.scss',
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxInputComponent,

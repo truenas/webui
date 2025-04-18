@@ -64,7 +64,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './replication-list.component.html',
   styleUrls: ['./replication-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     PageHeaderComponent,
     SearchInput1Component,

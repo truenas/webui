@@ -21,7 +21,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './installed-apps-list-bulk-actions.component.html',
   styleUrls: ['./installed-apps-list-bulk-actions.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatMenuTrigger,
     MatMenu,

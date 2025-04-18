@@ -97,7 +97,6 @@ import { FilesystemService } from 'app/services/filesystem.service';
 @UntilDestroy()
 @Component({
   selector: 'ix-instance-wizard',
-  standalone: true,
   imports: [
     AsyncPipe,
     IxCheckboxComponent,

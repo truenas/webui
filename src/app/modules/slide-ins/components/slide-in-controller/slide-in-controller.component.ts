@@ -17,7 +17,6 @@ import { ComponentSerialized } from 'app/modules/slide-ins/slide-in.interface';
   templateUrl: './slide-in-controller.component.html',
   styleUrls: ['./slide-in-controller.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [SlideInComponent, AsyncPipe],
 })
 export class SlideInControllerComponent implements OnInit, OnDestroy {

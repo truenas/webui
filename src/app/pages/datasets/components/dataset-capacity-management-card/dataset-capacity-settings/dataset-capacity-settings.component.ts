@@ -33,7 +33,6 @@ import { isPropertyInherited, isRootDataset } from 'app/pages/datasets/utils/dat
   templateUrl: './dataset-capacity-settings.component.html',
   styleUrls: ['./dataset-capacity-settings.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     RequiresRolesDirective,

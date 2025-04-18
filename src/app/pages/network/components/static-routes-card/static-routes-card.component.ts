@@ -40,7 +40,6 @@ import { staticRoutesCardElements } from 'app/pages/network/components/static-ro
   templateUrl: './static-routes-card.component.html',
   styleUrls: ['./static-routes-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     UiSearchDirective,

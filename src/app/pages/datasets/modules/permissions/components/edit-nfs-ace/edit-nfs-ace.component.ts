@@ -46,7 +46,6 @@ import {
   templateUrl: './edit-nfs-ace.component.html',
   styleUrls: ['./edit-nfs-ace.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxFieldsetComponent,

@@ -31,7 +31,6 @@ import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtual
   templateUrl: './instance-list.component.html',
   styleUrls: ['./instance-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     TranslateModule,
     SearchInput1Component,

@@ -79,7 +79,6 @@ type FormValue = CloudSyncFormComponent['form']['value'];
   styleUrls: ['./cloudsync-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CloudCredentialService],
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

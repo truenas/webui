@@ -19,7 +19,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './identify-light.component.html',
   styleUrls: ['./identify-light.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxIconComponent,
     MatButton,

@@ -47,7 +47,6 @@ import { UserService } from 'app/services/user.service';
   templateUrl: './rsync-task-form.component.html',
   styleUrls: ['./rsync-task-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

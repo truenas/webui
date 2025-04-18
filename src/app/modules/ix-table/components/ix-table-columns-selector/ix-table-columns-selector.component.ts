@@ -25,7 +25,6 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
   templateUrl: './ix-table-columns-selector.component.html',
   styleUrls: ['./ix-table-columns-selector.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatButton,
     MatMenuTrigger,

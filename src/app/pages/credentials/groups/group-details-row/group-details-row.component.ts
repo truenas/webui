@@ -26,7 +26,6 @@ import { GroupFormComponent } from 'app/pages/credentials/groups/group-form/grou
   templateUrl: './group-details-row.component.html',
   styleUrls: ['./group-details-row.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxTableExpandableRowComponent,
     MatButton,

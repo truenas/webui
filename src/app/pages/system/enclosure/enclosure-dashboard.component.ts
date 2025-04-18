@@ -24,7 +24,6 @@ import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.st
   providers: [
     EnclosureStore,
   ],
-  standalone: true,
   imports: [
     PageHeaderComponent,
     MatAnchor,

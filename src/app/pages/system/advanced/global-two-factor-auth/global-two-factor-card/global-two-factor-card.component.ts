@@ -30,7 +30,6 @@ import { FirstTimeWarningService } from 'app/services/first-time-warning.service
   selector: 'ix-global-two-factor-card',
   templateUrl: './global-two-factor-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     UiSearchDirective,

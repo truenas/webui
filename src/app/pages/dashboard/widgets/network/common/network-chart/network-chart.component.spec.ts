@@ -11,7 +11,6 @@ import { NetworkChartComponent } from 'app/pages/dashboard/widgets/network/commo
 @Component({
   selector: 'ix-view-chart-area-mock',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
 })
 class ViewChartAreaMockComponent {
   data = input();

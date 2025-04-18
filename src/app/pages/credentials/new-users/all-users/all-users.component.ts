@@ -19,7 +19,6 @@ import { UsersStore } from 'app/pages/credentials/new-users/store/users.store';
 @Component({
   selector: 'ix-all-users',
   templateUrl: './all-users.component.html',
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TranslateModule,

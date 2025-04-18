@@ -32,7 +32,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './system-security-form.component.html',
   styleUrls: ['./system-security-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

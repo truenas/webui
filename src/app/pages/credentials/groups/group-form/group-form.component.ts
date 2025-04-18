@@ -41,7 +41,6 @@ import { UserService } from 'app/services/user.service';
   selector: 'ix-group-form',
   templateUrl: './group-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

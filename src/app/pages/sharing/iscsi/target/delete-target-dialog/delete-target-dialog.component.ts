@@ -28,7 +28,6 @@ import { IscsiService } from 'app/services/iscsi.service';
   templateUrl: './delete-target-dialog.component.html',
   styleUrls: ['./delete-target-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogTitle,
     MatDialogContent,

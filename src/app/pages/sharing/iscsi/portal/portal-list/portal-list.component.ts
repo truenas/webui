@@ -43,7 +43,6 @@ import { IscsiService } from 'app/services/iscsi.service';
   selector: 'ix-iscsi-portal-list',
   templateUrl: './portal-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     FakeProgressBarComponent,

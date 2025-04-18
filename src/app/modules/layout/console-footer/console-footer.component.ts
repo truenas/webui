@@ -13,7 +13,6 @@ import { ConsolePanelDialog } from 'app/modules/layout/console-footer/console-pa
   templateUrl: './console-footer.component.html',
   styleUrls: ['./console-footer.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [AsyncPipe],
 })
 export class ConsoleFooterComponent implements OnInit {

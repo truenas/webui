@@ -42,7 +42,6 @@ import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-s
   templateUrl: './devices-list.component.html',
   styleUrls: ['./devices-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     TestDirective,
     RouterLink,

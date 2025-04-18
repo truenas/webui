@@ -32,7 +32,6 @@ import { DockerStore } from 'app/pages/apps/store/docker.store';
   templateUrl: './app-details-header.component.html',
   styleUrls: ['./app-details-header.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     TranslateModule,
     AppCardLogoComponent,

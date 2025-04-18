@@ -35,7 +35,6 @@ enum WaitFor {
   selector: 'ix-stop-dialog',
   templateUrl: './stop-options-dialog.component.html',
   styleUrls: ['./stop-options-dialog.component.scss'],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormActionsComponent,

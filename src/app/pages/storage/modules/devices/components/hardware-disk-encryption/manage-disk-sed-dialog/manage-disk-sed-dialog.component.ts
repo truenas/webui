@@ -26,7 +26,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './manage-disk-sed-dialog.component.html',
   styleUrls: ['./manage-disk-sed-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogTitle,
     ReactiveFormsModule,

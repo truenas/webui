@@ -29,7 +29,6 @@ import { IscsiService } from 'app/services/iscsi.service';
   selector: 'ix-all-targets',
   styleUrls: ['./all-targets.component.scss'],
   templateUrl: './all-targets.component.html',
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TranslateModule,
