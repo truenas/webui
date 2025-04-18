@@ -203,8 +203,12 @@ export class WebSocketHandlerService {
     if (this.wsConnection.closed) {
       this.setupWebSocket();
     } else {
-      this.wsConnection.close();
+      this.close();
     }
+  }
+
+  close(): void {
+    this.wsConnection.close();
   }
 
   setupConnectionUrl(protocol: string, remote: string): void {

@@ -49,7 +49,7 @@ export class SigninStore extends ComponentStore<SigninState> {
   private handleLoginResult = (loginResult: LoginResult): void => {
     if (loginResult !== LoginResult.Success) {
       this.authService.clearAuthToken();
-      this.wsStatus.hasEstablishedInitialConnection$.next(false);
+      this.wsStatus.resetReconnect();
     } else {
       this.handleSuccessfulLogin();
     }
@@ -84,6 +84,7 @@ export class SigninStore extends ComponentStore<SigninState> {
     ])),
     tap(() => this.setLoadingState(false)),
     switchMap(() => {
+      this.wsStatus.resetReconnect();
       const queryToken = this.activatedRoute.snapshot.queryParamMap.get(tokenParam);
       if (queryToken) {
         return this.handleLoginWithQueryToken(queryToken);

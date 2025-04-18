@@ -7,7 +7,9 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { combineLatest, Observable, of } from 'rxjs';
+import {
+  combineLatest, Observable, of,
+} from 'rxjs';
 import {
   delay,
   filter, map, switchMap, take,
@@ -17,6 +19,7 @@ import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
+import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { DisconnectedMessageComponent } from 'app/pages/signin/disconnected-message/disconnected-message.component';
 import { ReconnectMessage } from 'app/pages/signin/reconnect-message/reconnect-message.component';
 import { SetAdminPasswordFormComponent } from 'app/pages/signin/set-admin-password-form/set-admin-password-form.component';
@@ -56,7 +59,7 @@ export class SigninComponent implements OnInit {
   readonly wasAdminSet$ = this.signinStore.wasAdminSet$;
   readonly canLogin$ = this.signinStore.canLogin$;
   readonly isConnected$ = this.wsStatus.isConnected$;
-  readonly hasEstablishedInitialConnection$ = this.wsStatus.hasEstablishedInitialConnection$;
+  readonly allowReconnect$ = this.wsStatus.allowReconnect$;
 
   isConnectedDelayed$: Observable<boolean> = of(null).pipe(
     delay(1000),
@@ -75,6 +78,8 @@ export class SigninComponent implements OnInit {
 
   constructor(
     private wsStatus: WebSocketStatusService,
+    private wsManager: WebSocketHandlerService,
+
     private signinStore: SigninStore,
     private dialog: DialogService,
     private authService: AuthService,
@@ -84,7 +89,10 @@ export class SigninComponent implements OnInit {
 
   ngOnInit(): void {
     this.isConnected$
-      .pipe(filter(Boolean), untilDestroyed(this))
+      .pipe(
+        filter((status) => status),
+        untilDestroyed(this),
+      )
       .subscribe(() => {
         this.signinStore.init();
       });

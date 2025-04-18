@@ -8,13 +8,15 @@
       ></mat-progress-bar>
     }
 
-    @if ((hasEstablishedInitialConnection$ | async) && !(hasLoadingIndicator$ | async)) {
+
+    @if ((allowReconnect$ | async) && !(hasLoadingIndicator$ | async)) {
       <mat-card>
         <mat-card-content>
           <ix-reconnect-message></ix-reconnect-message>
         </mat-card-content>
       </mat-card>
-    } @else if (!(isConnected$ | async) && (isConnectedDelayed$ | async) !== null) {
+    }
+    @if (!(isConnected$ | async) && (isConnectedDelayed$ | async) !== null) {
       <mat-card>
         <mat-card-content>
           <ix-disconnected-message></ix-disconnected-message>

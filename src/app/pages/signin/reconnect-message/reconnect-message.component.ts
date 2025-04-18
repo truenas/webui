@@ -15,7 +15,9 @@ import { SigninStore } from 'app/pages/signin/store/signin.store';
   ],
 })
 export class ReconnectMessage {
-  constructor(private signinStore: SigninStore) {}
+  constructor(
+    private signinStore: SigninStore,
+  ) {}
 
   protected onReconnectClick(): void {
     this.signinStore.init();
