@@ -26,7 +26,6 @@ import { ServicesService } from 'app/services/services.service';
   selector: 'ix-service-state-column',
   templateUrl: './service-state-column.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     RequiresRolesDirective,
     MatSlideToggle,

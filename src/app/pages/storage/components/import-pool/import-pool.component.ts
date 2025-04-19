@@ -36,7 +36,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   selector: 'ix-import-pool',
   templateUrl: './import-pool.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

@@ -23,7 +23,6 @@ export enum FibrePortOption {
   selector: 'ix-fc-ports-controls',
   templateUrl: './fc-ports-controls.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxSelectComponent,

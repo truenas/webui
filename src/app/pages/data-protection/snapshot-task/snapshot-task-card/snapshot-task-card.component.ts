@@ -46,7 +46,6 @@ import { TaskService } from 'app/services/task.service';
   templateUrl: './snapshot-task-card.component.html',
   styleUrls: ['./snapshot-task-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatToolbarRow,

@@ -54,7 +54,6 @@ import { ReplicationService } from 'app/services/replication.service';
   styleUrls: ['./replication-wizard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [ReplicationService],
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

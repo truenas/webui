@@ -25,7 +25,6 @@ import { KeychainCredentialService } from 'app/services/keychain-credential.serv
     },
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [IxSelectComponent],
 })
 export class SshCredentialsSelectComponent extends IxSelectWithNewOption {

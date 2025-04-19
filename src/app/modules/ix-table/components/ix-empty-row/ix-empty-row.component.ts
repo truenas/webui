@@ -24,7 +24,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './ix-empty-row.component.html',
   styleUrls: ['./ix-empty-row.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     CdkPortalOutlet,
     MatProgressSpinner,
@@ -89,6 +88,9 @@ export class IxTableEmptyRowComponent implements AfterViewInit {
           break;
         case EmptyType.NoSearchResults:
           icon = iconMarker('mdi-magnify-scan');
+          break;
+        case EmptyType.None:
+          icon = iconMarker('');
           break;
         default:
           assertUnreachable(type);

@@ -51,7 +51,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './certificate-list.component.html',
   styleUrls: ['./certificate-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatToolbarRow,

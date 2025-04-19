@@ -3,12 +3,10 @@ import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { MiddlewareAuditEntry } from 'app/interfaces/audit/middleware-audit-entry.interface';
 import { SmbAuditEntry } from 'app/interfaces/audit/smb-audit-entry.interface';
 import { SudoAuditEntry } from 'app/interfaces/audit/sudo-audit-entry.interface';
-import { QueryFilters, QueryOptions } from 'app/interfaces/query-api.interface';
+import { ApiQueryParams } from 'app/modules/ix-table/classes/api-data-provider/query-params';
 
-export interface AuditQueryParams {
+export interface AuditQueryParams extends ApiQueryParams<AuditEntry> {
   services?: AuditService[];
-  'query-filters'?: QueryFilters<AuditEntry>;
-  'query-options'?: QueryOptions<AuditEntry>;
   remote_controller?: boolean;
 }
 

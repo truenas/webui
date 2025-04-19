@@ -28,7 +28,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
   selector: 'ix-csr-options',
   templateUrl: './csr-options.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxSelectComponent,

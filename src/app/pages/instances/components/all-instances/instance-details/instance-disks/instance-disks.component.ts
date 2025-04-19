@@ -36,7 +36,6 @@ import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtual
   selector: 'ix-instance-disks',
   templateUrl: './instance-disks.component.html',
   styleUrls: ['./instance-disks.component.scss'],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatButton,

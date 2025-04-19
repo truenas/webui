@@ -3,7 +3,6 @@ import { TranslateService } from '@ngx-translate/core';
 
 @Pipe({
   name: 'orNotAvailable',
-  standalone: true,
 })
 export class OrNotAvailablePipe implements PipeTransform {
   transform<T>(value: T): T | string {

@@ -29,7 +29,6 @@ import { ShellService } from 'app/services/shell.service';
   styleUrls: ['./container-logs.component.scss'],
   providers: [ShellService],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     PageHeaderComponent,
     ToolbarSliderComponent,

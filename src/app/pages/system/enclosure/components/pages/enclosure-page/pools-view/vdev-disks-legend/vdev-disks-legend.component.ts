@@ -10,7 +10,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   styleUrl: './vdev-disks-legend.component.scss',
   templateUrl: './vdev-disks-legend.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [TestDirective, TranslateModule],
 })
 export class VdevDisksLegendComponent {

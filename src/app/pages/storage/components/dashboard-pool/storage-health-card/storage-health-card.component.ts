@@ -54,7 +54,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './storage-health-card.component.html',
   styleUrls: ['./storage-health-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     UiSearchDirective,

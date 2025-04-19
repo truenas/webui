@@ -33,7 +33,6 @@ import { VDevsStore } from 'app/pages/storage/modules/vdevs/stores/vdevs-store.s
   templateUrl: './disk-info-card.component.html',
   styleUrls: ['./disk-info-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatCardHeader,

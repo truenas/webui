@@ -12,7 +12,6 @@ import { AppWorkloadsCardComponent } from 'app/pages/apps/components/installed-a
   selector: 'ix-app-details-panel',
   templateUrl: './app-details-panel.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     TranslateModule,
     AppInfoCardComponent,

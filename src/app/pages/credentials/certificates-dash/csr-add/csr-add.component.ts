@@ -48,7 +48,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './csr-add.component.html',
   styleUrls: ['./csr-add.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

@@ -31,7 +31,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './create-dataset-dialog.component.html',
   styleUrls: ['./create-dataset-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogTitle,
     MatProgressBar,

@@ -27,7 +27,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   selector: 'ix-add-nic-menu',
   templateUrl: './add-nic-menu.component.html',
   styleUrls: ['./add-nic-menu.component.scss'],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatButton,

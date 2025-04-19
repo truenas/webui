@@ -42,7 +42,6 @@ import { VDevsStore } from 'app/pages/storage/modules/vdevs/stores/vdevs-store.s
   templateUrl: './vdevs-list.component.html',
   styleUrls: ['./vdevs-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     TestDirective,
     RouterLink,

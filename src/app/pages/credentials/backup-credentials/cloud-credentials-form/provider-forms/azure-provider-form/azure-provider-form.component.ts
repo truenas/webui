@@ -15,7 +15,6 @@ import {
   selector: 'ix-azure-provider-form',
   templateUrl: './azure-provider-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxFieldsetComponent,
     ReactiveFormsModule,

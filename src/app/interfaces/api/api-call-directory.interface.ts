@@ -872,7 +872,7 @@ export interface ApiCallDirectory {
   'virt.volume.query': { params: QueryParams<VirtualizationVolume>; response: VirtualizationVolume[] };
   'virt.volume.update': { params: VirtualizationVolumeUpdate; response: VirtualizationVolume };
   'virt.volume.delete': { params: [id: string]; response: true };
-  'virt.volume.import_iso': { params: VirtualizationImportIsoParams; response: VirtualizationVolume };
+  'virt.volume.import_iso': { params: [VirtualizationImportIsoParams]; response: VirtualizationVolume };
 
   'system.advanced.get_gpu_pci_choices': { params: void; response: Choices };
 

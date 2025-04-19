@@ -36,7 +36,6 @@ import {
   templateUrl: './review-wizard-step.component.html',
   styleUrls: ['./review-wizard-step.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatButton,
     MatStepperPrevious,

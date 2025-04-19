@@ -18,7 +18,6 @@ import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-reso
   selector: 'ix-cpu-core-bar',
   templateUrl: './cpu-core-bar.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [NgxSkeletonLoaderModule, BaseChartDirective],
 })
 export class CpuCoreBarComponent {

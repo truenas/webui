@@ -29,7 +29,6 @@ const raidzItems = [TopologyItemType.Raidz, TopologyItemType.Raidz1, TopologyIte
   selector: 'ix-vdevs',
   templateUrl: './vdevs.component.html',
   styleUrls: ['./vdevs.component.scss'],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     VDevsListComponent,

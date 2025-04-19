@@ -42,7 +42,6 @@ import { TopologyCardComponent } from './topology-card/topology-card.component';
   templateUrl: './dashboard-pool.component.html',
   styleUrls: ['./dashboard-pool.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     RequiresRolesDirective,
     MatButton,

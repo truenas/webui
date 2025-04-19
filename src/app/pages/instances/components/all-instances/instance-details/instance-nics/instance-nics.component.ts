@@ -24,7 +24,6 @@ import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualiz
   selector: 'ix-instance-nics',
   templateUrl: './instance-nics.component.html',
   styleUrls: ['./instance-nics.component.scss'],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatCard,

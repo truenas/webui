@@ -36,7 +36,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: 'permissions-card.component.html',
   styleUrls: ['./permissions-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatCardHeader,

@@ -43,7 +43,6 @@ import { ErrorParserService } from 'app/services/errors/error-parser.service';
   templateUrl: './ix-explorer.component.html',
   styleUrls: ['./ix-explorer.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxLabelComponent,
     MatInput,

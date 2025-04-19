@@ -4,7 +4,6 @@ import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 
 @Pipe({
   name: 'ixNetworkSpeed',
-  standalone: true,
 })
 export class NetworkSpeedPipe implements PipeTransform {
   transform(value: number): string {

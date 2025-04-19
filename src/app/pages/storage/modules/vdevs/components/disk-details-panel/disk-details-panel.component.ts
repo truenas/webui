@@ -17,7 +17,6 @@ import { ZfsInfoCardComponent } from 'app/pages/storage/modules/vdevs/components
   templateUrl: './disk-details-panel.component.html',
   styleUrls: ['./disk-details-panel.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ZfsInfoCardComponent,
     HardwareDiskEncryptionComponent,

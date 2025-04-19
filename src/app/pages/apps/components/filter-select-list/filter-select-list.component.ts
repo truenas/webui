@@ -17,7 +17,6 @@ type SelectListValue = string | number | null | (string | number | null)[];
   styleUrls: ['./filter-select-list.component.scss'],
   templateUrl: './filter-select-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxIconComponent,
     IxErrorsComponent,

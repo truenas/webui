@@ -22,7 +22,6 @@ import {
   templateUrl: './new-devices-preview.component.html',
   styleUrls: ['./new-devices-preview.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatCardHeader,
