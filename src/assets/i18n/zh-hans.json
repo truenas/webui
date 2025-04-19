@@ -1373,7 +1373,7 @@
   "Controller A WWPN": "控制器A WWPN",
   "Controller B WWPN": "控制器B WWPN",
   "Controller Type": "控制器类型",
-  "Controls": "控件",
+  "Controls": "操作",
   "Controls whether audit messages will be generated for the share. <br><br> <b>Note</b>: Auditing may not be enabled if SMB1 support is enabled for the server.": "控制是否为共享生成审计消息。<br><br> <b>注意</b>：如果服务器启用了 SMB1 支持，则可能无法启用审计。",
   "Controls whether the user used for SSH/SSH+NETCAT replication will have passwordless sudo enabled to execute zfs commands on the remote host.    If not checked, <i>zfs allow</i> must be used to grant non-user permissions to perform ZFS tasks. Mounting ZFS filesystems by non-root still would not be possible due to Linux restrictions.": "勾选该选项，将允许通过 SSH/SSH+NETCAT 远程连接的用户使用 sudo 命令执行 zfs 相关命令且不需要密码鉴权，若未勾选则必须使用 <i>zfs allow</i> 命令授权非用户权限以执行 ZFS 相关任务。由于 Linux 系统限制，非 root 或无相关权限的用户不能挂载 ZFS 文件系统。",
   "Controls whether the volume snapshot devices under /dev/zvol/⟨pool⟩  are hidden or visible. The default value is hidden.": "控制 /dev/zvol/⟨pool⟩ 下的卷快照设备是隐藏还是可见。默认是隐藏的。",
