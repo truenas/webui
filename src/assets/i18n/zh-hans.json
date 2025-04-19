@@ -1069,7 +1069,7 @@
   "Bind Interfaces": "绑定接口",
   "Bind IP Addresses": "绑定 IP 地址",
   "Bind Password": "绑定密码",
-  "Block (iSCSI) Shares Targets": "块 (iSCSI) 共享 Target",
+  "Block (iSCSI) Shares Targets": "块 (iSCSI) 共享目标",
   "Block I/O": "块 I/O",
   "Block I/O read and writes": "块 I/O 读写",
   "Block size": "块大小",
