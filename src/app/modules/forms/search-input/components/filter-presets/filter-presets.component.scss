@@ -1,6 +1,6 @@
 @import 'scss-imports/variables';
 
-:host {
+.filter-presets {
   align-items: center;
   color: var(--fg2);
   display: flex;
@@ -8,23 +8,23 @@
   font-size: 12px;
   gap: 8px;
   margin-top: 15px;
-}
 
-button {
-  align-items: center;
-  border-radius: 16px !important;
-  display: flex;
-  font-size: 12px;
-  height: max-content;
-  padding: 2px 4px;
+  button {
+    align-items: center;
+    border-radius: 16px !important;
+    display: flex;
+    font-size: 12px;
+    height: max-content;
+    padding: 2px 4px;
 
-  &:hover {
-    cursor: pointer !important;
-  }
+    &:hover {
+      cursor: pointer !important;
+    }
 
-  &::ng-deep {
-    span {
-      height: 100%;
+    &::ng-deep {
+      span {
+        height: 100%;
+      }
     }
   }
 }
