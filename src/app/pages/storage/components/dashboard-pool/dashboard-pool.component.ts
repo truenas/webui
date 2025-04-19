@@ -29,12 +29,12 @@ import { dashboardPoolElements } from 'app/pages/storage/components/dashboard-po
 import {
   ExportDisconnectModalComponent,
 } from 'app/pages/storage/components/dashboard-pool/export-disconnect-modal/export-disconnect-modal.component';
+import { VDevsCardComponent } from 'app/pages/storage/components/dashboard-pool/vdevs-card/vdevs-card.component';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { DiskHealthCardComponent } from './disk-health-card/disk-health-card.component';
 import { PoolUsageCardComponent } from './pool-usage-card/pool-usage-card.component';
 import { StorageHealthCardComponent } from './storage-health-card/storage-health-card.component';
-import { TopologyCardComponent } from './topology-card/topology-card.component';
 
 @UntilDestroy()
 @Component({
@@ -47,7 +47,7 @@ import { TopologyCardComponent } from './topology-card/topology-card.component';
     MatButton,
     TestDirective,
     UiSearchDirective,
-    TopologyCardComponent,
+    VDevsCardComponent,
     PoolUsageCardComponent,
     StorageHealthCardComponent,
     DiskHealthCardComponent,

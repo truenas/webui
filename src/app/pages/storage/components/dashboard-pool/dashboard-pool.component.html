@@ -38,10 +38,10 @@
     </div>
 
     <div class="cards">
-      <ix-topology-card
+      <ix-vdevs-card
         [poolState]="pool()"
         [disks]="disks()"
-      ></ix-topology-card>
+      ></ix-vdevs-card>
 
       @if (rootDataset()) {
         <ix-pool-usage-card

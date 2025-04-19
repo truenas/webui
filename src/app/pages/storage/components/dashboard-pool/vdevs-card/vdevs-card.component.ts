@@ -25,7 +25,7 @@ import {
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { PoolCardIconComponent } from 'app/pages/storage/components/dashboard-pool/pool-card-icon/pool-card-icon.component';
-import { topologyCardElements } from 'app/pages/storage/components/dashboard-pool/topology-card/topology-card.elements';
+import { vDevsCardElements } from 'app/pages/storage/components/dashboard-pool/vdevs-card/vdevs-card.elements';
 import { StorageService } from 'app/services/storage.service';
 
 interface TopologyState {
@@ -43,9 +43,9 @@ export type EmptyDiskObject = Record<
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-topology-card',
-  templateUrl: './topology-card.component.html',
-  styleUrls: ['./topology-card.component.scss'],
+  selector: 'ix-vdevs-card',
+  templateUrl: './vdevs-card.component.html',
+  styleUrls: ['./vdevs-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatCard,
@@ -61,11 +61,11 @@ export type EmptyDiskObject = Record<
     TranslateModule,
   ],
 })
-export class TopologyCardComponent implements OnInit, OnChanges {
+export class VDevsCardComponent implements OnInit, OnChanges {
   readonly poolState = input.required<Pool>();
   readonly disks = input<StorageDashboardDisk[]>([]);
 
-  protected readonly searchableElements = topologyCardElements;
+  protected readonly searchableElements = vDevsCardElements;
   notAssignedDev = this.translate.instant('VDEVs not assigned');
 
   topologyState: TopologyState = {

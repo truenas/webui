@@ -24,8 +24,8 @@ import {
 } from 'app/pages/storage/components/dashboard-pool/pool-usage-card/pool-usage-card.component';
 import { StorageHealthCardComponent } from 'app/pages/storage/components/dashboard-pool/storage-health-card/storage-health-card.component';
 import {
-  TopologyCardComponent,
-} from 'app/pages/storage/components/dashboard-pool/topology-card/topology-card.component';
+  VDevsCardComponent,
+} from 'app/pages/storage/components/dashboard-pool/vdevs-card/vdevs-card.component';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
 
 describe('DashboardPoolComponent', () => {
@@ -42,7 +42,7 @@ describe('DashboardPoolComponent', () => {
       MockComponent(ExportDisconnectModalComponent),
       MockComponent(PoolUsageCardComponent),
       MockComponent(DiskHealthCardComponent),
-      MockComponent(TopologyCardComponent),
+      MockComponent(VDevsCardComponent),
     ],
     providers: [
       mockProvider(MatDialog, {

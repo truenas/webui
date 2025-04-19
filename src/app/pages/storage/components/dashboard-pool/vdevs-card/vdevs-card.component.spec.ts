@@ -13,16 +13,14 @@ import {
 } from 'app/pages/storage/components/dashboard-pool/pool-card-icon/pool-card-icon.component';
 import {
   diskToDashboardDisk,
-} from 'app/pages/storage/components/dashboard-pool/topology-card/mock-storage-dashboard.utils';
-import {
-  TopologyCardComponent,
-} from 'app/pages/storage/components/dashboard-pool/topology-card/topology-card.component';
+} from 'app/pages/storage/components/dashboard-pool/vdevs-card/mock-storage-dashboard.utils';
+import { VDevsCardComponent } from 'app/pages/storage/components/dashboard-pool/vdevs-card/vdevs-card.component';
 
-describe('TopologyCardComponent', () => {
-  let spectator: Spectator<TopologyCardComponent>;
+describe('VDevsCardComponent', () => {
+  let spectator: Spectator<VDevsCardComponent>;
 
   const createComponent = createComponentFactory({
-    component: TopologyCardComponent,
+    component: VDevsCardComponent,
     imports: [
       ReactiveFormsModule,
     ],
