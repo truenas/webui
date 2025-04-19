@@ -332,7 +332,7 @@
   "Standby Controller must be rebooted because": "",
   "Status of TrueNAS Connect": "",
   "Storage Configuration": "存储配置",
-  "Storage Health": "存储健康度",
+  "Storage Health": "存储健康",
   "Storage Pool": "存储池",
   "Store At": "",
   "Storj is an S3 compatible, fault tolerant, globally distributed cloud storage platform with a security first approach to backup and recovery - delivering extreme resilience and performance both sustainably and economically. <a href=\"https://truenas.com/storj\" target=\"_blank\">TrueNAS and Storj</a> have partnered to streamline delivery of Hybrid Cloud solutions globally.": "",
