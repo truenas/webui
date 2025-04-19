@@ -127,7 +127,7 @@
   "Enter number of cores or multiple values or ranges to set CPU topology. Example: 1-2,5,9-11": "",
   "Enterprise": "",
   "Expert Support When You Need It": "",
-  "Expires On": "",
+  "Expires On": "过期",
   "Expires on {date}": "{date} 过期",
   "Explore TrueNAS Enterprise": "探索 TrueNAS 企业版",
   "Expose Snapshots": "",
