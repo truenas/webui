@@ -44,13 +44,19 @@
           }
 
           <p class="product-type">
-            <a
-              ixTest="navigate-to-enterprise-marketing-link"
-              target="_blank"
-              [href]="currentMessageHref()"
-            >
-              {{ productTypeText }}
-            </a>
+            @if (!isEnterprise()) {
+              <a
+                ixTest="navigate-to-enterprise-marketing-link"
+                target="_blank"
+                [href]="currentMessageHref()"
+              >
+                {{ productTypeText }}
+              </a>
+            } @else {
+              <span>
+                {{ productTypeText }}
+              </span>
+            }
           </p>
 
           <ix-copyright-line class="copyright-line"></ix-copyright-line>
