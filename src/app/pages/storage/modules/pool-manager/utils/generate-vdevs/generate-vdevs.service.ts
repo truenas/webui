@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { differenceWith, isEmpty } from 'lodash-es';
-import { VdevType } from 'app/enums/v-dev-type.enum';
+import { VDevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import {
   PoolManagerTopology,
@@ -13,10 +13,10 @@ import {
 } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
 
 export type GeneratedVdevs = {
-  [type in VdevType]: DetailsDisk[][];
+  [type in VDevType]: DetailsDisk[][];
 };
 
-export type TypeAndCategory = [VdevType, PoolManagerTopologyCategory];
+export type TypeAndCategory = [VDevType, PoolManagerTopologyCategory];
 
 @Injectable()
 export class GenerateVdevsService {
@@ -32,7 +32,7 @@ export class GenerateVdevsService {
     allowedDisks: DetailsDisk[];
     topology: PoolManagerTopology;
     maximizeDispersal: boolean;
-    categorySequence: VdevType[];
+    categorySequence: VDevType[];
   }): GeneratedVdevs {
     let disks = this.excludeManualSelectionDisks([...allowedDisks], topology);
     disks = this.sortDisksByEnclosure(disks);
@@ -97,7 +97,7 @@ export class GenerateVdevsService {
     });
   }
 
-  private generateCategories(topology: PoolManagerTopology, categorySequence: VdevType[]): TypeAndCategory[] {
+  private generateCategories(topology: PoolManagerTopology, categorySequence: VDevType[]): TypeAndCategory[] {
     return categorySequence
       .filter((category) => topology[category] && !topology[category].hasCustomDiskSelection)
       .map((category) => [category, topology[category]]);

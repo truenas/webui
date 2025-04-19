@@ -6,7 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { merge, of } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
-import { CreateVdevLayout, vdevLayoutOptions, VdevType } from 'app/enums/v-dev-type.enum';
+import { CreateVdevLayout, vdevLayoutOptions, VDevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { SelectOption } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
@@ -39,7 +39,7 @@ import { NormalSelectionComponent } from './normal-selection/normal-selection.co
 })
 export class AutomatedDiskSelectionComponent implements OnChanges {
   readonly isStepActive = input<boolean>(false);
-  readonly type = input<VdevType>();
+  readonly type = input<VDevType>();
   readonly inventory = input<DetailsDisk[]>([]);
   readonly canChangeLayout = input(false);
   readonly limitLayouts = input<CreateVdevLayout[]>([]);
@@ -47,7 +47,7 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
   readonly layoutControl = new FormControl(null as CreateVdevLayout | null, Validators.required);
 
   protected isDataVdev = computed(() => {
-    return this.type() === VdevType.Data;
+    return this.type() === VDevType.Data;
   });
 
   protected dataLayoutTooltip = computed(() => {
@@ -78,7 +78,7 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
   }
 
   protected isMetadataVdev = computed(() => {
-    return this.type() === VdevType.Special;
+    return this.type() === VDevType.Special;
   });
 
   private updateStoreOnChanges(): void {

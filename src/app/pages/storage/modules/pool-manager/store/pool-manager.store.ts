@@ -13,7 +13,7 @@ import {
   filter, switchMap, take, tap,
 } from 'rxjs/operators';
 import { DiskType } from 'app/enums/disk-type.enum';
-import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
+import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk, DiskDetailsResponse } from 'app/interfaces/disk.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -50,7 +50,7 @@ export interface PoolManagerTopologyCategory {
 }
 
 export type PoolManagerTopology = {
-  [category in VdevType]: PoolManagerTopologyCategory;
+  [category in VDevType]: PoolManagerTopologyCategory;
 };
 
 interface PoolManagerDiskSettings {
@@ -73,12 +73,12 @@ export interface PoolManagerState {
   diskSettings: PoolManagerDiskSettings;
   enclosureSettings: PoolManagerEnclosureSettings;
   topology: PoolManagerTopology;
-  categorySequence: VdevType[];
+  categorySequence: VDevType[];
 }
 
 type TopologyCategoryUpdate = Partial<Omit<PoolManagerTopologyCategory, 'vdevs' | 'hasCustomDiskSelection'>>;
 
-const initialTopology = Object.values(VdevType).reduce((topology, value) => {
+const initialTopology = Object.values(VDevType).reduce((topology, value) => {
   return {
     ...topology,
     [value]: {
@@ -117,12 +117,12 @@ export const initialState: PoolManagerState = {
   topology: initialTopology,
 
   categorySequence: [
-    VdevType.Data,
-    VdevType.Log,
-    VdevType.Spare,
-    VdevType.Cache,
-    VdevType.Special,
-    VdevType.Dedup,
+    VDevType.Data,
+    VDevType.Log,
+    VDevType.Spare,
+    VDevType.Cache,
+    VDevType.Special,
+    VDevType.Dedup,
   ],
 };
 
@@ -130,7 +130,7 @@ export const initialState: PoolManagerState = {
 @Injectable()
 export class PoolManagerStore extends ComponentStore<PoolManagerState> {
   readonly startOver$ = new Subject<void>();
-  readonly resetStep$ = new Subject<VdevType>();
+  readonly resetStep$ = new Subject<VDevType>();
   readonly isLoading$ = this.select((state) => state.isLoading);
   readonly name$ = this.select((state) => state.name);
   readonly nameErrors$ = this.select((state) => state.nameErrors);
@@ -141,7 +141,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
   readonly enclosureSettings$ = this.select((state) => state.enclosureSettings);
   readonly totalUsableCapacity$ = this.select(
     this.topology$,
-    (topology) => categoryCapacity(topology[VdevType.Data]),
+    (topology) => categoryCapacity(topology[VDevType.Data]),
   );
 
   readonly allowedDisks$ = this.select(
@@ -178,23 +178,23 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
   );
 
   isUsingDraidLayout(topology: PoolManagerTopology): boolean {
-    const dataCategory = topology[VdevType.Data];
+    const dataCategory = topology[VDevType.Data];
     return Boolean(dataCategory.layout
       && [CreateVdevLayout.Draid1, CreateVdevLayout.Draid2, CreateVdevLayout.Draid3].includes(dataCategory.layout));
   }
 
-  getLayoutsForVdevType(vdevType: VdevType): Observable<CreateVdevLayout[]> {
+  getLayoutsForVdevType(vdevType: VDevType): Observable<CreateVdevLayout[]> {
     switch (vdevType) {
-      case VdevType.Cache:
+      case VDevType.Cache:
         return of([CreateVdevLayout.Stripe]);
-      case VdevType.Dedup:
-        return this.select((state) => [state.topology[VdevType.Data].layout]);
-      case VdevType.Log:
+      case VDevType.Dedup:
+        return this.select((state) => [state.topology[VDevType.Data].layout]);
+      case VDevType.Log:
         return of([CreateVdevLayout.Mirror, CreateVdevLayout.Stripe]);
-      case VdevType.Spare:
+      case VDevType.Spare:
         return of([CreateVdevLayout.Stripe]);
-      case VdevType.Special:
-        return this.select((state) => [state.topology[VdevType.Data].layout]);
+      case VDevType.Special:
+        return this.select((state) => [state.topology[VDevType.Data].layout]);
       default:
         return of([...Object.values(CreateVdevLayout)]);
     }
@@ -210,7 +210,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
   );
 
   // TODO: Check if this needs to be optimized
-  getInventoryForStep(type: VdevType): Observable<DetailsDisk[]> {
+  getInventoryForStep(type: VDevType): Observable<DetailsDisk[]> {
     return this.select(
       this.allowedDisks$,
       this.topology$,
@@ -246,7 +246,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     this.loadStateInitialData().pipe(take(1)).subscribe();
   }
 
-  resetStep(vdevType: VdevType): void {
+  resetStep(vdevType: VDevType): void {
     this.resetTopologyCategory(vdevType);
     this.resetStep$.next(vdevType);
   }
@@ -278,9 +278,9 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     );
   }
 
-  readonly resetTopologyCategory = this.updater((state, category: VdevType) => {
+  readonly resetTopologyCategory = this.updater((state, category: VDevType) => {
     const newCategory = { ...initialTopology[category] };
-    if (category === VdevType.Spare || category === VdevType.Cache) {
+    if (category === VDevType.Spare || category === VDevType.Cache) {
       newCategory.layout = CreateVdevLayout.Stripe;
     }
     return {
@@ -323,7 +323,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
   }
 
   setTopologyCategoryDiskSizes(
-    type: VdevType,
+    type: VDevType,
     updates: Pick<TopologyCategoryUpdate, 'diskSize' | 'treatDiskSizeAsMinimum' | 'diskType'>,
   ): void {
     this.updateTopologyCategory(type, updates);
@@ -331,7 +331,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
   }
 
   setTopologyCategoryLayout(
-    type: VdevType,
+    type: VDevType,
     newLayout: CreateVdevLayout,
   ): void {
     const isNewLayoutDraid = isDraidLayout(newLayout);
@@ -343,17 +343,17 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     this.updateTopologyCategory(type, { layout: newLayout });
 
     if (isDraidLayout(newLayout)) {
-      this.resetTopologyCategory(VdevType.Spare);
+      this.resetTopologyCategory(VDevType.Spare);
     }
   }
 
-  setAutomaticTopologyCategory(type: VdevType, updates: TopologyCategoryUpdate): void {
+  setAutomaticTopologyCategory(type: VDevType, updates: TopologyCategoryUpdate): void {
     this.updateTopologyCategory(type, updates);
 
     this.regenerateVdevs();
   }
 
-  setManualTopologyCategory(type: VdevType, vdevs: DetailsDisk[][]): void {
+  setManualTopologyCategory(type: VDevType, vdevs: DetailsDisk[][]): void {
     this.updateTopologyCategory(type, {
       vdevs,
       hasCustomDiskSelection: true,
@@ -362,7 +362,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     this.regenerateVdevs();
   }
 
-  private updateTopologyCategory(type: VdevType, update: Partial<PoolManagerTopologyCategory>): void {
+  private updateTopologyCategory(type: VDevType, update: Partial<PoolManagerTopologyCategory>): void {
     this.patchState((state) => {
       const topology = state.topology[type];
       const wasCategoryChanged = !Object.entries(update)
@@ -390,7 +390,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
       Object.entries(this.get().topology).forEach(([type, category]) => {
         const usedDisks = topologyCategoryToDisks(category);
         if (usedDisks.some((disk) => !allowedDisks.includes(disk))) {
-          this.resetStep(type as VdevType);
+          this.resetStep(type as VDevType);
         }
       });
     });
@@ -413,12 +413,12 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
           categorySequence: this.get().categorySequence,
         });
         Object.entries(newVdevs).forEach(([type, vdevs]) => {
-          this.updateTopologyCategory(type as VdevType, { vdevs });
+          this.updateTopologyCategory(type as VDevType, { vdevs });
         });
       });
   }
 
-  openManualSelectionDialog(type: VdevType): void {
+  openManualSelectionDialog(type: VDevType): void {
     this.state$.pipe(
       take(1),
       switchMap((state: PoolManagerState) => combineLatest([
@@ -428,7 +428,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
       switchMap(([state, inventoryForStep]: [PoolManagerState, DetailsDisk[]]) => {
         const usedDisks = topologyCategoryToDisks(state.topology[type]);
         const inventory = differenceBy(inventoryForStep, usedDisks, (disk: DetailsDisk) => disk.devname);
-        const isVdevsLimitedToOne = type === VdevType.Spare || type === VdevType.Cache || type === VdevType.Log;
+        const isVdevsLimitedToOne = type === VDevType.Spare || type === VDevType.Cache || type === VDevType.Log;
         return this.matDialog.open(ManualDiskSelectionComponent, {
           data: {
             inventory,

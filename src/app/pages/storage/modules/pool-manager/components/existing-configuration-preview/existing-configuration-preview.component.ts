@@ -9,7 +9,7 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { cloneDeep } from 'lodash-es';
 import {
-  CreateVdevLayout, TopologyItemType, VdevType, vdevTypeLabels,
+  CreateVdevLayout, TopologyItemType, VDevType, vdevTypeLabels,
 } from 'app/enums/v-dev-type.enum';
 import { isTopologyLimitedToOneLayout } from 'app/helpers/storage.helper';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
@@ -58,7 +58,7 @@ export class ExistingConfigurationPreviewComponent implements OnChanges {
   readonly size = input<number>();
   readonly disks = input.required<DetailsDisk[]>();
 
-  VdevType = VdevType;
+  protected readonly vDevType = VDevType;
 
   protected readonly vdevTypeLabels = vdevTypeLabels;
   protected poolTopology: PoolManagerTopology;
@@ -90,9 +90,9 @@ export class ExistingConfigurationPreviewComponent implements OnChanges {
       special: cloneDeep(defaultCategory),
     };
 
-    let vdevTypes = Object.entries(VdevType);
+    let vdevTypes = Object.entries(VDevType);
     if (this.topology().data[0].type === TopologyItemType.Draid) {
-      vdevTypes = vdevTypes.filter(([, type]) => type !== VdevType.Spare);
+      vdevTypes = vdevTypes.filter(([, type]) => type !== VDevType.Spare);
     }
     for (const [, value] of vdevTypes) {
       if (!topology[value]?.length) {

@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnInit,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
+import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import {
   PoolManagerStore,
@@ -21,7 +21,7 @@ import { CustomLayoutAppliedComponent } from './custom-layout-applied/custom-lay
 })
 export class LayoutStepComponent implements OnInit {
   readonly isStepActive = input<boolean>(false);
-  readonly type = input.required<VdevType>();
+  readonly type = input.required<VDevType>();
   readonly description = input<string>();
 
   readonly canChangeLayout = input(false);

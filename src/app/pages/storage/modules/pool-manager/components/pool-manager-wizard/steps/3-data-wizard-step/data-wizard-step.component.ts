@@ -10,7 +10,7 @@ import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { map } from 'rxjs';
-import { CreateVdevLayout, TopologyItemType, VdevType } from 'app/enums/v-dev-type.enum';
+import { CreateVdevLayout, TopologyItemType, VDevType } from 'app/enums/v-dev-type.enum';
 import { helptextManager } from 'app/helptext/storage/volumes/manager/manager';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -43,8 +43,8 @@ export class DataWizardStepComponent implements OnInit {
 
   readonly goToLastStep = output();
 
-  protected readonly VdevType = VdevType;
-  protected readonly inventory$ = this.store.getInventoryForStep(VdevType.Data);
+  protected readonly vDevType = VDevType;
+  protected readonly inventory$ = this.store.getInventoryForStep(VDevType.Data);
   protected allowedLayouts = Object.values(CreateVdevLayout) as CreateVdevLayout[];
   readonly helptext = helptextManager;
   canChangeLayout = true;
@@ -57,7 +57,7 @@ export class DataWizardStepComponent implements OnInit {
 
   ngOnInit(): void {
     this.addVdevsStore.pool$.pipe(
-      map((pool) => pool?.topology[VdevType.Data]),
+      map((pool) => pool?.topology[VDevType.Data]),
       untilDestroyed(this),
     ).subscribe((dataTopology) => {
       if (!dataTopology?.length) {
@@ -82,6 +82,6 @@ export class DataWizardStepComponent implements OnInit {
   }
 
   resetStep(): void {
-    this.store.resetStep(VdevType.Data);
+    this.store.resetStep(VDevType.Data);
   }
 }

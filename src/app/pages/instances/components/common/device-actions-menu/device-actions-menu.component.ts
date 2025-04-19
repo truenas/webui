@@ -69,7 +69,7 @@ export class DeviceActionsMenuComponent {
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
-    private deviceStore: VirtualizationDevicesStore,
+    private devicesStore: VirtualizationDevicesStore,
     private instancesStore: VirtualizationInstancesStore,
     private loader: LoaderService,
   ) {}
@@ -106,7 +106,7 @@ export class DeviceActionsMenuComponent {
         this.errorHandler.withErrorHandler(),
         tap(() => {
           this.snackbar.success(this.translate.instant('Device deleted'));
-          this.deviceStore.deviceDeleted(this.device().name);
+          this.devicesStore.deviceDeleted(this.device().name);
         }),
       );
   }

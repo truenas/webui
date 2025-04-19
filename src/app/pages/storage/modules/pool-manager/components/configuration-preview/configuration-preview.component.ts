@@ -8,7 +8,7 @@ import {
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { map } from 'rxjs';
-import { VdevType, vdevTypeLabels } from 'app/enums/v-dev-type.enum';
+import { VDevType, vdevTypeLabels } from 'app/enums/v-dev-type.enum';
 import { isTopologyLimitedToOneLayout } from 'app/helpers/storage.helper';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
@@ -40,7 +40,7 @@ import {
 })
 export class ConfigurationPreviewComponent {
   protected readonly vdevTypeLabels = vdevTypeLabels;
-  readonly VdevType = VdevType;
+  readonly vDevType = VDevType;
 
   protected name$ = this.store.name$;
   protected encryption$ = this.store.encryption$;

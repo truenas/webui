@@ -57,6 +57,12 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
     return getPoolDisks(this.poolState());
   }
 
+  get isTemperatureDataAvailable(): boolean {
+    return Boolean(
+      this.diskState.highestTemperature && this.diskState.lowestTemperature && this.diskState.averageTemperature,
+    );
+  }
+
   diskState: DiskState = {
     highestTemperature: null,
     lowestTemperature: null,

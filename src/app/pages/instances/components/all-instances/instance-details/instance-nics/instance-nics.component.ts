@@ -38,16 +38,16 @@ import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualiz
 })
 export class InstanceNicsComponent {
   protected readonly hasPendingInterfaceChanges = toSignal(this.api.call('interface.has_pending_changes'));
-  protected readonly isLoadingDevices = this.deviceStore.isLoading;
+  protected readonly isLoadingDevices = this.devicesStore.isLoading;
 
   protected readonly shownDevices = computed(() => {
-    return this.deviceStore.devices().filter((device) => {
+    return this.devicesStore.devices().filter((device) => {
       return device.dev_type === VirtualizationDeviceType.Nic && !!device.nic_type;
     });
   });
 
   constructor(
-    private deviceStore: VirtualizationDevicesStore,
+    private devicesStore: VirtualizationDevicesStore,
     private translate: TranslateService,
     private api: ApiService,
   ) {}

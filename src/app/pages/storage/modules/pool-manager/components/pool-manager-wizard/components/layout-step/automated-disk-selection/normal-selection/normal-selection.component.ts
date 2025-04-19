@@ -7,7 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { merge, of } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
+import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { generateOptionsRange } from 'app/helpers/options.helper';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Option, SelectOption } from 'app/interfaces/option.interface';
@@ -41,7 +41,7 @@ import { minDisksPerLayout } from 'app/pages/storage/modules/pool-manager/utils/
   ],
 })
 export class NormalSelectionComponent implements OnInit, OnChanges {
-  readonly type = input.required<VdevType>();
+  readonly type = input.required<VDevType>();
   readonly layout = input.required<CreateVdevLayout>();
   readonly isStepActive = input<boolean>();
   readonly inventory = input.required<DetailsDisk[]>();
@@ -74,7 +74,7 @@ export class NormalSelectionComponent implements OnInit, OnChanges {
   }
 
   protected isNumberOfVdevsLimitedToOne = computed(() => {
-    return this.type() === VdevType.Spare || this.type() === VdevType.Cache || this.type() === VdevType.Log;
+    return this.type() === VDevType.Spare || this.type() === VDevType.Cache || this.type() === VDevType.Log;
   });
 
   protected onDisksSelected(disks: DetailsDisk[]): void {

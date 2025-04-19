@@ -11,9 +11,9 @@ import { PoolStatus } from 'app/enums/pool-status.enum';
 import { Role } from 'app/enums/role.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
-import { DeviceNestedDataNode } from 'app/interfaces/device-nested-data-node.interface';
+import { VDevNestedDataNode } from 'app/interfaces/device-nested-data-node.interface';
 import { PoolInstance } from 'app/interfaces/pool.interface';
-import { TopologyItem } from 'app/interfaces/storage.interface';
+import { VDevItem } from 'app/interfaces/storage.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { BootPoolActionEvent, BootPoolActionType } from 'app/pages/system/bootenv/bootenv-status/bootenv-status.component';
@@ -36,7 +36,7 @@ import { BootPoolActionEvent, BootPoolActionType } from 'app/pages/system/booten
   ],
 })
 export class BootenvNodeItemComponent {
-  readonly node = input.required<DeviceNestedDataNode>();
+  readonly node = input.required<VDevNestedDataNode>();
   readonly poolInstance = input.required<PoolInstance>();
   readonly oneDisk = input<boolean>();
 
@@ -44,7 +44,7 @@ export class BootenvNodeItemComponent {
 
   protected readonly requiredRoles = [Role.BootEnvWrite];
 
-  protected readonly topologyItem = computed(() => this.node() as TopologyItem);
+  protected readonly topologyItem = computed(() => this.node() as VDevItem);
 
   protected readonly ownName = computed(() => {
     if (!this.topologyItem()) {

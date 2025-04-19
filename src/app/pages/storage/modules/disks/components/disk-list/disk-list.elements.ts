@@ -7,7 +7,7 @@ export const diskListElements = {
   elements: {
     disks: {
       anchor: 'disk-list',
-      synonyms: [T('Manage Disks')],
+      synonyms: [T('View Disks')],
     },
   },
 } satisfies UiSearchableElement;
