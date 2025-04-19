@@ -84,6 +84,7 @@
   "CONNECTING": "",
   "CPU Recent Temperature": "",
   "CPU Temp": "CPU 温度",
+  "CPU Temperature": "CPU 温度",
   "CPU Temperature Per Core": "每核 CPU 温度",
   "Create Authorized Access": "",
   "Create Docker Registry": "",
