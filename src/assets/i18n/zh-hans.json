@@ -890,6 +890,7 @@
   "Application Key": "应用程序密钥",
   "Application Memory": "内存",
   "Application Metadata": "应用程序元数据",
+  "Application name": "应用名称",
   "Application Name": "应用名称",
   "Application name must have the following:  1) Lowercase alphanumeric characters can be specified  2) Name must start with an alphabetic character and can end with alphanumeric character  3) Hyphen '-' is allowed but not as the first or last character e.g abc123, abc, abcd-1232": "应用程序名称必须满足以下要求： 1) 可以使用小写字母和数字字符  2) 名称必须以字母字符开头，可以以字母或数字字符结尾  3) 允许使用连字符 '-'，但不能作为第一个或最后一个字符，例如 abc123、abc、abcd-1232",
   "Application Network": "网络",
