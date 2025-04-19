@@ -28,7 +28,6 @@ import { cloudBackupListElements } from 'app/pages/data-protection/cloud-backup/
   templateUrl: './all-cloud-backups.component.html',
   styleUrls: ['./all-cloud-backups.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MasterDetailViewComponent,
     CloudBackupListComponent,

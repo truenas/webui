@@ -33,7 +33,6 @@ interface DiskState {
   templateUrl: './disk-health-card.component.html',
   styleUrls: ['./disk-health-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     UiSearchDirective,
@@ -56,6 +55,12 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
 
   get disksNames(): string[] {
     return getPoolDisks(this.poolState());
+  }
+
+  get isTemperatureDataAvailable(): boolean {
+    return Boolean(
+      this.diskState.highestTemperature && this.diskState.lowestTemperature && this.diskState.averageTemperature,
+    );
   }
 
   diskState: DiskState = {

@@ -1,26 +1,22 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, input, signal, OnInit,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
-import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { injectParams } from 'ngxtension/inject-params';
 import { filter, of } from 'rxjs';
 import { Role, roleNames } from 'app/enums/role.enum';
 import { ParamsBuilder } from 'app/helpers/params-builder/params-builder.class';
 import { Option } from 'app/interfaces/option.interface';
-import { FilterPreset } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
 import { SearchInputComponent } from 'app/modules/forms/search-input/components/search-input/search-input.component';
 import { SearchProperty } from 'app/modules/forms/search-input/types/search-property.interface';
 import { AdvancedSearchQuery, SearchQuery } from 'app/modules/forms/search-input/types/search-query.interface';
 import { booleanProperty, searchProperties, textProperty } from 'app/modules/forms/search-input/utils/search-properties.utils';
-import { QueryFiltersAndOptionsApiDataProvider } from 'app/modules/ix-table/classes/api-data-provider/query-filters-and-options-data-provider';
+import { ApiDataProvider } from 'app/modules/ix-table/classes/api-data-provider/api-data-provider';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { UsersStore } from 'app/pages/credentials/new-users/store/users.store';
-import { UrlOptionsService } from 'app/services/url-options.service';
 
 @UntilDestroy()
 @Component({
@@ -32,67 +28,29 @@ import { UrlOptionsService } from 'app/services/url-options.service';
   imports: [
     FakeProgressBarComponent,
     MatButton,
+    AsyncPipe,
     SearchInputComponent,
     TranslateModule,
     TestDirective,
   ],
 })
 export class UsersSearchComponent implements OnInit {
-  readonly userName = injectParams('id');
-  protected readonly advancedSearchPlaceholder = this.translate.instant('Username = "root" AND Builtin = "Yes"');
+  protected readonly advancedSearchPlaceholder = this.translate.instant('Username = "root" AND "Built in" = "Yes"');
 
-  dataProvider = input.required<QueryFiltersAndOptionsApiDataProvider<'user.query'>>();
-  protected searchQuery = signal<SearchQuery<User>>({
+  readonly dataProvider = input.required<ApiDataProvider<'user.query'>>();
+
+  protected readonly searchQuery = signal<SearchQuery<User>>({
     query: '',
     isBasicQuery: true,
   });
 
   protected readonly searchProperties = signal<SearchProperty<User>[]>([]);
 
-  protected userPresets: FilterPreset<User>[] = [
-    {
-      label: this.translate.instant('Show Builtin Users'),
-      query: [['builtin', '=', true]],
-    },
-    {
-      label: this.translate.instant('Has API Access'),
-      query: [['api_keys', '!=', null]],
-    },
-    {
-      label: this.translate.instant('Has SMB Access'),
-      query: [['smb', '=', true]],
-    },
-    {
-      label: this.translate.instant('Has Shell Access'),
-      query: [['shell', '!=', 'nologin']],
-    },
-    {
-      label: this.translate.instant('Has SSH Access'),
-      query: [['sshpubkey', '!=', null]],
-    },
-    {
-      label: this.translate.instant('From Active Directory'),
-      query: [['id', '~', 'ad']],
-    },
-  ];
-
-  isLoading = this.usersStore.isLoading;
   constructor(
-    private usersStore: UsersStore,
-    private urlOptionsService: UrlOptionsService,
     private translate: TranslateService,
-    private activatedRoute: ActivatedRoute,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
-    this.loadParamsFromRoute();
-
-    this.dataProvider().sortingOrPaginationUpdate
-      .pipe(untilDestroyed(this))
-      .subscribe(() => {
-        this.updateUrlOptions();
-      });
-
     this.dataProvider().currentPage$.pipe(
       filter(Boolean),
       untilDestroyed(this),
@@ -106,7 +64,7 @@ export class UsersSearchComponent implements OnInit {
   private setSearchProperties(users: User[]): void {
     const groups = new Set<string>();
     for (const user of users) {
-      groups.add(user.group.id.toString());
+      groups.add(user.group?.id.toString());
       if (!user.groups) {
         continue;
       }
@@ -147,7 +105,7 @@ export class UsersSearchComponent implements OnInit {
         ),
       ),
       booleanProperty('smb', this.translate.instant('SMB Enabled')),
-      booleanProperty('builtin', this.translate.instant('Built-in')),
+      booleanProperty('builtin', this.translate.instant('Built in')),
       booleanProperty('immutable', this.translate.instant('Immutable')),
       booleanProperty('password_disabled', this.translate.instant('Password Disabled')),
       booleanProperty('locked', this.translate.instant('Locked')),
@@ -188,34 +146,7 @@ export class UsersSearchComponent implements OnInit {
     ]));
   }
 
-  updateUrlOptions(): void {
-    const username = this.userName();
-    const usernameUrlPostfix = username ? `/view/${username}` : '';
-    this.urlOptionsService.setUrlOptions(`/credentials/users-new${usernameUrlPostfix}`, {
-      searchQuery: this.searchQuery(),
-      sorting: this.dataProvider().sorting,
-      pagination: this.dataProvider().pagination,
-    });
-  }
-
-  private loadParamsFromRoute(): void {
-    this.activatedRoute.params.pipe(untilDestroyed(this)).subscribe((params) => {
-      const options = this.urlOptionsService.parseUrlOptions(params.options as string);
-
-      this.dataProvider().setPagination({
-        pageSize: options.pagination?.pageSize || 50,
-        pageNumber: options.pagination?.pageNumber || 1,
-      });
-
-      if (options.sorting) this.dataProvider().setSorting(options.sorting);
-
-      if (options.searchQuery) this.searchQuery.set(options.searchQuery as SearchQuery<User>);
-
-      this.onSearch(this.searchQuery());
-    });
-  }
-
-  onSearch(query: SearchQuery<User>): void {
+  protected onSearch(query: SearchQuery<User>): void {
     if (!query) {
       return;
     }
@@ -226,10 +157,7 @@ export class UsersSearchComponent implements OnInit {
       const term = `(?i)${query.query || ''}`;
       const params = new ParamsBuilder<User>()
         .filter('username', '~', term)
-        .orFilter('email', '~', term)
         .orFilter('full_name', '~', term)
-        .orFilter('group', '~', term)
-        .orFilter('home', '~', term)
         .getParams();
 
       // TODO: Incorrect cast, because of incorrect typing inside of DataProvider

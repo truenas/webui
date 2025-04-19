@@ -29,6 +29,7 @@ import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares
 import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
 import { SmbListComponent } from 'app/pages/sharing/smb/smb-list/smb-list.component';
+import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectServices } from 'app/store/services/services.selectors';
 
 const shares: Partial<SmbShare>[] = [
@@ -94,6 +95,10 @@ describe('SmbListComponent', () => {
               state: ServiceStatus.Stopped,
               enable: false,
             } as Service],
+          },
+          {
+            selector: selectPreferences,
+            value: {},
           },
         ],
       }),

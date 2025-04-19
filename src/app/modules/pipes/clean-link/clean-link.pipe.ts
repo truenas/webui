@@ -2,7 +2,6 @@ import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
   name: 'cleanLink',
-  standalone: true,
 })
 export class CleanLinkPipe implements PipeTransform {
   transform(value: string): string {

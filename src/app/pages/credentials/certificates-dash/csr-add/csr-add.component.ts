@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, viewChild,
+  ChangeDetectionStrategy, Component, signal, viewChild,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -26,20 +26,20 @@ import { SummarySection } from 'app/modules/summary/summary.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
+  CsrConstraintsComponent,
+} from 'app/pages/credentials/certificates-dash/csr-add/steps/csr-constraints/csr-constraints.component';
+import {
   CsrIdentifierAndTypeComponent,
 } from 'app/pages/credentials/certificates-dash/csr-add/steps/csr-identifier-and-type/csr-identifier-and-type.component';
 import {
   CsrImportComponent,
 } from 'app/pages/credentials/certificates-dash/csr-add/steps/csr-import/csr-import.component';
 import {
-  CertificateConstraintsComponent,
-} from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-constraints/certificate-constraints.component';
+  CsrOptionsComponent,
+} from 'app/pages/credentials/certificates-dash/csr-add/steps/csr-options/csr-options.component';
 import {
-  CertificateOptionsComponent,
-} from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-options/certificate-options.component';
-import {
-  CertificateSubjectComponent,
-} from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-subject/certificate-subject.component';
+  CsrSubjectComponent,
+} from 'app/pages/credentials/certificates-dash/csr-add/steps/csr-subject/csr-subject.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
@@ -48,7 +48,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './csr-add.component.html',
   styleUrls: ['./csr-add.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
@@ -58,9 +57,9 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     MatStepLabel,
     CsrIdentifierAndTypeComponent,
     CsrImportComponent,
-    CertificateOptionsComponent,
-    CertificateSubjectComponent,
-    CertificateConstraintsComponent,
+    CsrOptionsComponent,
+    CsrSubjectComponent,
+    CsrConstraintsComponent,
     SummaryComponent,
     FormActionsComponent,
     MatButton,
@@ -76,21 +75,20 @@ export class CsrAddComponent {
   protected readonly identifierAndType = viewChild.required(CsrIdentifierAndTypeComponent);
 
   // Adding new
-  protected readonly options = viewChild(CertificateOptionsComponent);
-  protected readonly subject = viewChild(CertificateSubjectComponent);
-  protected readonly constraints = viewChild(CertificateConstraintsComponent);
+  protected readonly options = viewChild(CsrOptionsComponent);
+  protected readonly subject = viewChild(CsrSubjectComponent);
+  protected readonly constraints = viewChild(CsrConstraintsComponent);
 
   // Importing
   protected readonly import = viewChild(CsrImportComponent);
 
   protected readonly requiredRoles = [Role.CertificateWrite];
 
-  isLoading = false;
+  protected isLoading = signal(false);
   summary: SummarySection[];
 
   constructor(
     private api: ApiService,
-    private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
     private snackbar: SnackbarService,
@@ -107,9 +105,9 @@ export class CsrAddComponent {
 
   getNewCsrSteps(): [
     CsrIdentifierAndTypeComponent,
-    CertificateOptionsComponent?,
-    CertificateSubjectComponent?,
-    CertificateConstraintsComponent?,
+    CsrOptionsComponent?,
+    CsrSubjectComponent?,
+    CsrConstraintsComponent?,
   ] {
     return [this.identifierAndType(), this.options(), this.subject(), this.constraints()];
   }
@@ -146,21 +144,19 @@ export class CsrAddComponent {
   }
 
   onSubmit(): void {
-    this.isLoading = true;
-    this.cdr.markForCheck();
+    this.isLoading.set(true);
 
     const payload = this.preparePayload();
     this.api.job('certificate.create', [payload])
       .pipe(untilDestroyed(this))
       .subscribe({
         complete: () => {
-          this.isLoading = false;
+          this.isLoading.set(false);
           this.snackbar.success(this.translate.instant('Certificate signing request created'));
           this.slideInRef.close({ response: true, error: null });
         },
         error: (error: unknown) => {
-          this.isLoading = false;
-          this.cdr.markForCheck();
+          this.isLoading.set(false);
           // TODO: Need to update error handler to open step with an error.
           this.errorHandler.showErrorModal(error);
         },

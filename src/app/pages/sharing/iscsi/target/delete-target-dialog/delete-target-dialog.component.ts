@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, Component, Inject, OnInit,
   signal,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -28,7 +28,6 @@ import { IscsiService } from 'app/services/iscsi.service';
   templateUrl: './delete-target-dialog.component.html',
   styleUrls: ['./delete-target-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogTitle,
     MatDialogContent,
@@ -62,7 +61,6 @@ export class DeleteTargetDialog implements OnInit {
     private loader: LoaderService,
     private iscsiService: IscsiService,
     private translate: TranslateService,
-    private cdr: ChangeDetectorRef,
     @Inject(MAT_DIALOG_DATA) public target: IscsiTarget,
   ) { }
 
@@ -100,7 +98,6 @@ export class DeleteTargetDialog implements OnInit {
       untilDestroyed(this),
     ).subscribe((extents) => {
       this.targetExtents.set(extents.filter((extent) => extent.target === this.target.id));
-      this.cdr.markForCheck();
     });
   }
 }

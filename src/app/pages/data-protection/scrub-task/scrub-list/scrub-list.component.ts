@@ -50,7 +50,6 @@ import { TaskService } from 'app/services/task.service';
   templateUrl: './scrub-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CrontabExplanationPipe],
-  standalone: true,
   imports: [
     PageHeaderComponent,
     IxTableColumnsSelectorComponent,

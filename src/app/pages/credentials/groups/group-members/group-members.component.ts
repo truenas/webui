@@ -30,7 +30,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './group-members.component.html',
   styleUrls: ['./group-members.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     DualListBoxComponent,
     MatCard,

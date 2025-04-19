@@ -28,7 +28,6 @@ import {
 @Component({
   selector: 'ix-instance-details',
   templateUrl: './instance-details.component.html',
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TranslateModule,

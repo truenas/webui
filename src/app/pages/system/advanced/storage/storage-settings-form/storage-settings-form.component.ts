@@ -1,6 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit,
+  signal,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -41,7 +42,6 @@ export interface StorageSettings {
   selector: 'ix-storage-settings-form',
   templateUrl: './storage-settings-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
@@ -60,7 +60,7 @@ export interface StorageSettings {
 export class StorageSettingsFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.DatasetWrite];
 
-  isFormLoading = false;
+  protected isFormLoading = signal(false);
 
   form = this.fb.nonNullable.group({
     pool: ['', Validators.required],
@@ -73,7 +73,6 @@ export class StorageSettingsFormComponent implements OnInit {
   constructor(
     private api: ApiService,
     private formErrorHandler: FormErrorHandlerService,
-    private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
     private dialogService: DialogService,
     private translate: TranslateService,
@@ -88,7 +87,7 @@ export class StorageSettingsFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadFormData();
+    this.setFormData();
   }
 
   onSubmit(): void {
@@ -97,24 +96,21 @@ export class StorageSettingsFormComponent implements OnInit {
     this.confirmSmbRestartIfNeeded().pipe(
       filter(Boolean),
       switchMap(() => {
-        this.isFormLoading = true;
-        this.cdr.markForCheck();
+        this.isFormLoading.set(true);
         return this.api.job('systemdataset.update', [{ pool }])
           .pipe(
             tap((job) => {
               if (job.state !== JobState.Success) {
                 return;
               }
-              this.isFormLoading = false;
+              this.isFormLoading.set(false);
               this.store$.dispatch(advancedConfigUpdated());
-              this.cdr.markForCheck();
               this.snackbar.success(this.translate.instant('System dataset updated.'));
               this.slideInRef.close({ response: true, error: null });
             }),
             catchError((error: unknown) => {
-              this.isFormLoading = false;
+              this.isFormLoading.set(false);
               this.formErrorHandler.handleValidationErrors(error, this.form);
-              this.cdr.markForCheck();
               return EMPTY;
             }),
           );
@@ -123,24 +119,21 @@ export class StorageSettingsFormComponent implements OnInit {
     ).subscribe();
   }
 
-  private loadFormData(): void {
+  private setFormData(): void {
     this.form.patchValue({
       pool: this.storageSettings.systemDsPool,
     });
-    this.cdr.markForCheck();
   }
 
   /**
    * @return boolean True when saving can continue.
    */
   private confirmSmbRestartIfNeeded(): Observable<boolean> {
-    this.isFormLoading = true;
-    this.cdr.markForCheck();
+    this.isFormLoading.set(true);
     return this.store$.select(selectService(ServiceName.Cifs)).pipe(
       filter((service) => !!service),
       switchMap((smbService) => {
-        this.isFormLoading = false;
-        this.cdr.markForCheck();
+        this.isFormLoading.set(false);
 
         if (smbService.state === ServiceStatus.Running) {
           return this.dialogService.confirm({

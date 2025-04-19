@@ -36,7 +36,6 @@ const setDiagnostics = StateEffect.define<unknown[] | null>();
   templateUrl: './advanced-search.component.html',
   styleUrls: ['./advanced-search.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatTooltip,
     IxIconComponent,

@@ -1,5 +1,6 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit,
+  signal,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
@@ -26,7 +27,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './ipmi-events-dialog.component.html',
   styleUrls: ['./ipmi-events-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     FakeProgressBarComponent,
     MatDialogTitle,
@@ -42,7 +42,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class IpmiEventsDialog implements OnInit {
-  protected isLoading = false;
+  protected readonly isLoading = signal(false);
   protected events: IpmiEvent[] = [];
 
   protected emptyConfig: EmptyConfig = {
@@ -52,18 +52,16 @@ export class IpmiEventsDialog implements OnInit {
 
   constructor(
     private api: ApiService,
-    private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
   ) {}
 
   get canClear(): boolean {
-    return this.events.length > 0 && !this.isLoading;
+    return this.events.length > 0 && !this.isLoading();
   }
 
   onClear(): void {
-    this.isLoading = true;
-    this.cdr.markForCheck();
+    this.isLoading.set(true);
     this.api.job('ipmi.sel.clear').pipe(untilDestroyed(this)).subscribe({
       next: (job) => {
         if (job.state !== JobState.Success) {
@@ -73,8 +71,7 @@ export class IpmiEventsDialog implements OnInit {
         this.events = [];
       },
       complete: () => {
-        this.isLoading = false;
-        this.cdr.markForCheck();
+        this.isLoading.set(false);
       },
       error: (error: unknown) => {
         this.errorHandler.showErrorModal(error);
@@ -91,8 +88,7 @@ export class IpmiEventsDialog implements OnInit {
   }
 
   private loadEvents(): void {
-    this.isLoading = true;
-    this.cdr.markForCheck();
+    this.isLoading.set(true);
     this.api.job('ipmi.sel.elist').pipe(untilDestroyed(this)).subscribe({
       next: (job) => {
         if (job.state !== JobState.Success) {
@@ -102,13 +98,10 @@ export class IpmiEventsDialog implements OnInit {
         this.events = this.sortEvents(job.result);
       },
       complete: () => {
-        this.isLoading = false;
-        this.cdr.markForCheck();
+        this.isLoading.set(false);
       },
       error: (error: unknown) => {
         this.errorHandler.showErrorModal(error);
-        this.isLoading = false;
-        this.cdr.markForCheck();
       },
     });
   }

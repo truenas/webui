@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, Inject, OnInit,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
@@ -49,7 +49,6 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
   styleUrls: ['update-actions-card.component.scss'],
   templateUrl: './update-actions-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     IxIconComponent,
@@ -65,9 +64,16 @@ export class UpdateActionsCardComponent implements OnInit {
   updateMethod: ApiJobMethod = 'update.update';
   isHaLicensed = false;
   updateType: UpdateType;
-  sysUpdateMessage = helptextGlobal.sysUpdateMessage;
-  sysUpdateMsgPt2 = helptextGlobal.sysUpdateMessagePt2;
   updateTitle = this.translate.instant('Update');
+  updateText = computed(() => {
+    if (this.isHaLicensed) {
+      return this.translate.instant(helptextGlobal.sysUpdateMessage);
+    }
+    return [
+      this.translate.instant(helptextGlobal.sysUpdateMessage),
+      this.translate.instant(helptextGlobal.sysUpdateMessagePt2),
+    ].join(' ');
+  });
 
   showApplyPendingButton$ = combineLatest([
     this.updateService.updateDownloaded$,

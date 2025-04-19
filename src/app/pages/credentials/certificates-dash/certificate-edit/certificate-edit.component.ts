@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import {
-  FormBuilder, FormControl, FormGroup, Validators, ReactiveFormsModule,
+  FormBuilder, Validators, ReactiveFormsModule, FormGroup, FormControl,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -40,7 +40,6 @@ import {
   templateUrl: './certificate-edit.component.html',
   styleUrls: ['./certificate-edit.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

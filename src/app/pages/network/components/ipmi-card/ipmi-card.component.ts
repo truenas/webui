@@ -36,7 +36,6 @@ import { IpmiFormComponent } from 'app/pages/network/components/ipmi-card/ipmi-f
   templateUrl: './ipmi-card.component.html',
   styleUrls: ['./ipmi-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     UiSearchDirective,

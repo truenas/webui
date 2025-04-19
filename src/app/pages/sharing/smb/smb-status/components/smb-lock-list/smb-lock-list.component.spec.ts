@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { SmbLockInfo, SmbOpenInfo } from 'app/interfaces/smb-status.interface';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
@@ -12,6 +13,7 @@ import {
 } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { SmbLockListComponent } from 'app/pages/sharing/smb/smb-status/components/smb-lock-list/smb-lock-list.component';
+import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 
 describe('SmbLockListComponent', () => {
   let spectator: Spectator<SmbLockListComponent>;
@@ -72,6 +74,14 @@ describe('SmbLockListComponent', () => {
       mockApi([
         mockCall('smb.status', locks),
       ]),
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectPreferences,
+            value: {},
+          },
+        ],
+      }),
     ],
   });
 

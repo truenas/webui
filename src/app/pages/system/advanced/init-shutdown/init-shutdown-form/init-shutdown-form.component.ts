@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit, signal,
 } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -35,7 +35,6 @@ import { FilesystemService } from 'app/services/filesystem.service';
   selector: 'ix-init-shutdown-form',
   templateUrl: './init-shutdown-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
@@ -67,7 +66,7 @@ export class InitShutdownFormComponent implements OnInit {
       : this.translate.instant('Edit Init/Shutdown Script');
   }
 
-  isFormLoading = false;
+  protected isFormLoading = signal(false);
 
   subscriptions: Subscription[] = [];
 
@@ -102,7 +101,6 @@ export class InitShutdownFormComponent implements OnInit {
   constructor(
     private api: ApiService,
     private errorHandler: FormErrorHandlerService,
-    private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
     private translate: TranslateService,
     private snackbar: SnackbarService,
@@ -129,7 +127,7 @@ export class InitShutdownFormComponent implements OnInit {
   onSubmit(): void {
     const values = this.form.value;
 
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
     let request$: Observable<unknown>;
     if (this.editingScript) {
       request$ = this.api.call('initshutdownscript.update', [
@@ -147,13 +145,12 @@ export class InitShutdownFormComponent implements OnInit {
         } else {
           this.snackbar.success(this.translate.instant('Init/Shutdown Script updated'));
         }
-        this.isFormLoading = false;
+        this.isFormLoading.set(false);
         this.slideInRef.close({ response: true, error: null });
       },
       error: (error: unknown) => {
-        this.isFormLoading = false;
+        this.isFormLoading.set(false);
         this.errorHandler.handleValidationErrors(error, this.form);
-        this.cdr.markForCheck();
       },
     });
   }

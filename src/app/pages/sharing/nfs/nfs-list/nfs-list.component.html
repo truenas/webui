@@ -9,7 +9,11 @@
         {{ 'NFS Sessions' | translate }}
       </a>
 
-      <ix-table-columns-selector [columns]="columns" (columnsChange)="columnsChange($event)"></ix-table-columns-selector>
+      <ix-table-columns-selector
+        [columnPreferencesKey]="'nfsList'"
+        [columns]="columns"
+        (columnsChange)="columnsChange($event)"
+      ></ix-table-columns-selector>
 
       <button
         *ixRequiresRoles="requiredRoles"

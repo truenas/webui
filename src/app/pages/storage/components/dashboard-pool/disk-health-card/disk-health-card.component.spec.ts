@@ -69,7 +69,7 @@ describe('DiskHealthCardComponent', () => {
   });
 
   it('shows a button to manage all disks', async () => {
-    const manageDisksButton = await loader.getHarness(MatButtonHarness.with({ text: 'Manage Disks' }));
+    const manageDisksButton = await loader.getHarness(MatButtonHarness.with({ text: 'View Disks' }));
 
     expect(manageDisksButton).toBeTruthy();
     expect(await (await manageDisksButton.host()).getAttribute('href')).toBe('/storage/disks');

@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit, signal,
 } from '@angular/core';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -36,7 +36,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './service-ups.component.html',
   styleUrls: ['./service-ups.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
@@ -58,7 +57,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 export class ServiceUpsComponent implements OnInit {
   protected readonly requiredRoles = [Role.SystemGeneralWrite];
 
-  isFormLoading = false;
+  protected isFormLoading = signal(false);
   isMasterMode = true;
 
   form = this.fb.group({
@@ -147,7 +146,6 @@ export class ServiceUpsComponent implements OnInit {
   constructor(
     private api: ApiService,
     private formErrorHandler: FormErrorHandlerService,
-    private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
     private fb: NonNullableFormBuilder,
     private translate: TranslateService,
@@ -160,7 +158,7 @@ export class ServiceUpsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
     this.loadConfig();
     this.form.controls.remotehost.disable();
     this.form.controls.remoteport.disable();
@@ -188,13 +186,11 @@ export class ServiceUpsComponent implements OnInit {
       .subscribe({
         next: (config) => {
           this.form.patchValue(config);
-          this.isFormLoading = false;
-          this.cdr.markForCheck();
+          this.isFormLoading.set(false);
         },
         error: (error: unknown) => {
-          this.isFormLoading = false;
+          this.isFormLoading.set(false);
           this.errorHandler.showErrorModal(error);
-          this.cdr.markForCheck();
         },
       });
   }
@@ -209,20 +205,18 @@ export class ServiceUpsComponent implements OnInit {
       delete params.driver;
     }
 
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
     this.api.call('ups.update', [params as UpsConfigUpdate])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
-          this.isFormLoading = false;
+          this.isFormLoading.set(false);
           this.snackbar.success(this.translate.instant('Service configuration saved'));
           this.slideInRef.close({ response: true, error: null });
-          this.cdr.markForCheck();
         },
         error: (error: unknown) => {
-          this.isFormLoading = false;
+          this.isFormLoading.set(false);
           this.formErrorHandler.handleValidationErrors(error, this.form);
-          this.cdr.markForCheck();
         },
       });
   }

@@ -1,5 +1,5 @@
 import {
-  Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit,
+  Component, ChangeDetectionStrategy, OnInit, signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
@@ -41,7 +41,6 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   selector: 'ix-privilege-form',
   templateUrl: './privilege-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
@@ -62,7 +61,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
 export class PrivilegeFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.PrivilegeWrite];
 
-  protected isLoading = false;
+  protected isLoading = signal(false);
   protected localGroups: Group[] = [];
 
   protected form = this.formBuilder.group({
@@ -128,7 +127,6 @@ export class PrivilegeFormComponent implements OnInit {
     private formBuilder: FormBuilder,
     private translate: TranslateService,
     private api: ApiService,
-    private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
     private store$: Store<AppState>,
     private dialog: DialogService,
@@ -159,11 +157,10 @@ export class PrivilegeFormComponent implements OnInit {
       ),
       ds_groups: existingPrivilege.ds_groups.map((group) => group.group),
     });
-    this.cdr.markForCheck();
   }
 
   onSubmit(): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
 
     this.dsGroupsUids$.pipe(
       switchMap((dsGroups) => {
@@ -187,14 +184,12 @@ export class PrivilegeFormComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe({
       next: () => {
-        this.isLoading = false;
+        this.isLoading.set(false);
         this.slideInRef.close({ response: true, error: null });
-        this.cdr.markForCheck();
       },
       error: (error: unknown) => {
-        this.isLoading = false;
+        this.isLoading.set(false);
         this.errorHandler.handleValidationErrors(error, this.form);
-        this.cdr.markForCheck();
       },
     });
   }

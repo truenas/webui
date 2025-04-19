@@ -18,7 +18,6 @@ import {
   templateUrl: './widget-hostname-passive.component.html',
   styleUrls: ['./widget-hostname-passive.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     WithLoadingStateDirective,
     WidgetDatapointComponent,

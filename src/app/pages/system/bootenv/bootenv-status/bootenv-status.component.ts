@@ -1,7 +1,6 @@
 import { NestedTreeControl } from '@angular/cdk/tree';
-import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, OnInit, ChangeDetectorRef,
+  ChangeDetectionStrategy, Component, OnInit, signal,
 } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -12,13 +11,12 @@ import { MatList, MatListItem } from '@angular/material/list';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { BehaviorSubject } from 'rxjs';
 import { filter, tap } from 'rxjs/operators';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
-import { DeviceNestedDataNode } from 'app/interfaces/device-nested-data-node.interface';
+import { VDevNestedDataNode } from 'app/interfaces/device-nested-data-node.interface';
 import { PoolInstance } from 'app/interfaces/pool.interface';
-import { TopologyItem } from 'app/interfaces/storage.interface';
+import { VDevItem } from 'app/interfaces/storage.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { NestedTreeNodeComponent } from 'app/modules/ix-tree/components/nested-tree-node/nested-tree-node.component';
@@ -46,7 +44,7 @@ export enum BootPoolActionType {
 }
 export interface BootPoolActionEvent {
   action: BootPoolActionType;
-  node: TopologyItem;
+  node: VDevItem;
 }
 
 @UntilDestroy()
@@ -55,7 +53,6 @@ export interface BootPoolActionEvent {
   templateUrl: './bootenv-status.component.html',
   styleUrls: ['./bootenv-status.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     FakeProgressBarComponent,
     UiSearchDirective,
@@ -71,7 +68,6 @@ export interface BootPoolActionEvent {
     IxIconComponent,
     TranslateModule,
     FormatDateTimePipe,
-    AsyncPipe,
     TreeViewComponent,
     TreeNodeComponent,
     TreeNodeDefDirective,
@@ -83,14 +79,14 @@ export interface BootPoolActionEvent {
 export class BootStatusListComponent implements OnInit {
   protected readonly searchableElements = bootEnvStatusElements;
 
-  isLoading$ = new BehaviorSubject(false);
-  dataSource: NestedTreeDataSource<DeviceNestedDataNode>;
-  treeControl = new NestedTreeControl<DeviceNestedDataNode, string>((vdev) => vdev.children, {
+  protected isLoading = signal(false);
+  dataSource: NestedTreeDataSource<VDevNestedDataNode>;
+  treeControl = new NestedTreeControl<VDevNestedDataNode, string>((vdev) => vdev.children, {
     trackBy: (vdev) => vdev.guid,
   });
 
   poolInstance: PoolInstance;
-  readonly hasNestedChild = (_: number, node: DeviceNestedDataNode): boolean => {
+  readonly hasNestedChild = (_: number, node: VDevNestedDataNode): boolean => {
     return Boolean(node?.children?.length);
   };
 
@@ -109,7 +105,6 @@ export class BootStatusListComponent implements OnInit {
     private loader: LoaderService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
-    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
@@ -118,19 +113,17 @@ export class BootStatusListComponent implements OnInit {
 
   loadPoolInstance(): void {
     this.api.call('boot.get_state').pipe(
-      tap(() => this.isLoading$.next(true)),
+      tap(() => this.isLoading.set(true)),
       untilDestroyed(this),
     ).subscribe({
       next: (poolInstance) => {
         this.poolInstance = poolInstance;
         this.createDataSource(poolInstance);
         this.openGroupNodes();
-        this.isLoading$.next(false);
-        this.cdr.markForCheck();
+        this.isLoading.set(false);
       },
       error: (error: unknown) => {
-        this.isLoading$.next(false);
-        this.cdr.markForCheck();
+        this.isLoading.set(false);
         this.errorHandler.showErrorModal(error);
       },
     });
@@ -186,9 +179,9 @@ export class BootStatusListComponent implements OnInit {
       guid: poolInstance.guid,
       group: poolInstance.name,
       children: poolInstance.topology.data,
-    } as DeviceNestedDataNode];
+    } as VDevNestedDataNode];
 
-    this.dataSource = new NestedTreeDataSource<DeviceNestedDataNode>(dataNodes);
+    this.dataSource = new NestedTreeDataSource<VDevNestedDataNode>(dataNodes);
     this.treeControl.dataNodes = dataNodes;
   }
 

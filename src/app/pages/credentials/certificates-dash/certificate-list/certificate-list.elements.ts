@@ -5,13 +5,11 @@ export const certificateListElements = {
   hierarchy: [T('Credentials'), T('Certificates')],
   anchorRouterLink: ['/credentials', 'certificates'],
   elements: {
-    add: {
-      hierarchy: [T('Add Certificate')],
-      anchor: 'add-certificate',
+    import: {
+      hierarchy: [T('Import Certificate')],
+      anchor: 'import-certificate',
       synonyms: [
-        T('Create Certificate'),
-        T('New Certificate'),
-        T('Generate Certificate'),
+        T('Add Certificate'),
       ],
     },
   },

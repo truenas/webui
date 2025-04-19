@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, signal,
+} from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -26,7 +28,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './pull-image-form.component.html',
   styleUrls: ['./pull-image-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     TranslateModule,
@@ -44,7 +45,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 export class PullImageFormComponent {
   protected readonly requiredRoles = [Role.AppsWrite];
 
-  isFormLoading = false;
+  protected isFormLoading = signal(false);
 
   form = this.fb.group({
     image: ['', Validators.required],
@@ -60,7 +61,6 @@ export class PullImageFormComponent {
   constructor(
     private api: ApiService,
     public slideInRef: SlideInRef<undefined, boolean>,
-    private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
     private fb: NonNullableFormBuilder,
     private translate: TranslateService,
@@ -88,7 +88,7 @@ export class PullImageFormComponent {
       };
     }
 
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
     this.dialogService.jobDialog(
       this.api.job('app.image.pull', [params]),
       { title: this.translate.instant('Pulling...') },
@@ -97,13 +97,11 @@ export class PullImageFormComponent {
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
-          this.isFormLoading = false;
-          this.cdr.markForCheck();
+          this.isFormLoading.set(false);
           this.slideInRef.close({ response: true, error: null });
         },
         error: (error: unknown) => {
-          this.isFormLoading = false;
-          this.cdr.markForCheck();
+          this.isFormLoading.set(false);
           this.errorHandler.showErrorModal(error);
         },
       });

@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal,
 } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -71,7 +71,6 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
   styleUrls: ['./interface-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [InterfaceNameValidatorService],
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
@@ -99,7 +98,7 @@ export class InterfaceFormComponent implements OnInit {
 
   readonly defaultMtu = 1500;
 
-  isLoading = false;
+  protected isLoading = signal(false);
   isHaLicensed = false;
   ipLabelSuffix = '';
   failoverLabelSuffix = '';
@@ -270,7 +269,7 @@ export class InterfaceFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
     const params = this.prepareSubmitParams();
 
     const request$ = this.existingInterface
@@ -289,15 +288,12 @@ export class InterfaceFormComponent implements OnInit {
           }
 
           this.slideInRef.close({ response: true, error: null });
-          this.isLoading = false;
+          this.isLoading.set(false);
           this.snackbar.success(this.translate.instant('Network interface updated'));
         });
-
-        this.cdr.markForCheck();
       },
       error: (error: unknown) => {
-        this.isLoading = false;
-        this.cdr.markForCheck();
+        this.isLoading.set(false);
         this.formErrorHandler.handleValidationErrors(error, this.form);
       },
     });

@@ -25,7 +25,6 @@ import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtual
   selector: 'ix-instance-proxies',
   templateUrl: './instance-proxies.component.html',
   styleUrls: ['./instance-proxies.component.scss'],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatCard,
@@ -40,16 +39,16 @@ import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtual
   ],
 })
 export class InstanceProxiesComponent {
-  protected readonly isLoadingDevices = this.deviceStore.isLoading;
+  protected readonly isLoadingDevices = this.devicesStore.isLoading;
 
   constructor(
     private slideIn: SlideIn,
-    private deviceStore: VirtualizationDevicesStore,
+    private devicesStore: VirtualizationDevicesStore,
     private instancesStore: VirtualizationInstancesStore,
   ) {}
 
   protected readonly proxies = computed(() => {
-    return this.deviceStore.devices().filter((device) => {
+    return this.devicesStore.devices().filter((device) => {
       return device.dev_type === VirtualizationDeviceType.Proxy;
     });
   });
@@ -71,6 +70,6 @@ export class InstanceProxiesComponent {
     this.slideIn
       .open(InstanceProxyFormComponent, { data: { proxy, instanceId } })
       .pipe(filter((result) => !!result.response), untilDestroyed(this))
-      .subscribe(() => this.deviceStore.loadDevices());
+      .subscribe(() => this.devicesStore.loadDevices());
   }
 }

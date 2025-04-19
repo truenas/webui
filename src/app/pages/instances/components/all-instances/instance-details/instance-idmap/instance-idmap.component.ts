@@ -16,7 +16,6 @@ import { CardExpandCollapseComponent } from 'app/modules/card-expand-collapse/ca
   selector: 'ix-instance-idmap',
   templateUrl: './instance-idmap.component.html',
   styleUrls: ['./instance-idmap.component.scss'],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatCard,

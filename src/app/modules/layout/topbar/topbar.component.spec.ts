@@ -3,7 +3,9 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { EventEmitter } from '@angular/core';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
-import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import {
+  createComponentFactory, mockProvider, Spectator,
+} from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
@@ -11,6 +13,7 @@ import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { selectImportantUnreadAlertsCount } from 'app/modules/alerts/store/alert.selectors';
+import { UpdateDialog } from 'app/modules/dialog/components/update-dialog/update-dialog.component';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { selectUpdateJob } from 'app/modules/jobs/store/job.selectors';
@@ -46,6 +49,7 @@ const fakeRebootInfo: RebootInfoState = {
 describe('TopbarComponent', () => {
   let spectator: Spectator<TopbarComponent>;
   let loader: HarnessLoader;
+  const updateRunningStatus$ = new EventEmitter<'true' | 'false'>();
 
   const createComponent = createComponentFactory({
     component: TopbarComponent,
@@ -64,7 +68,7 @@ describe('TopbarComponent', () => {
     providers: [
       mockProvider(ThemeService),
       mockProvider(SystemGeneralService, {
-        updateRunning: new EventEmitter<unknown>(),
+        updateRunning: updateRunningStatus$,
         updateRunningNoticeSent: new EventEmitter<string>(),
       }),
       mockProvider(UiSearchProvider),
@@ -124,6 +128,25 @@ describe('TopbarComponent', () => {
     it('shows an icon when there is an active update job', async () => {
       const icon = await loader.getHarness(IxIconHarness.with({ name: 'system_update_alt' }));
       expect(icon).toExist();
+    });
+  });
+
+  it('checks when update is running and shows the correct text', () => {
+    updateRunningStatus$.emit('true');
+    spectator.detectChanges();
+
+    expect(spectator.inject(MatDialog).open).toHaveBeenNthCalledWith(1, UpdateDialog, {
+      hasBackdrop: true,
+      panelClass: 'topbar-panel',
+      position: {
+        right: '16px',
+        top: '48px',
+      },
+      width: '400px',
+      data: {
+        title: 'Update in Progress',
+        message: 'A system update is in progress. It might have been launched in another window or by an external source like TrueCommand.',
+      },
     });
   });
 });

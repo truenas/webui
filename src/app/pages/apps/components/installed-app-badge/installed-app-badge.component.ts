@@ -17,7 +17,6 @@ import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.se
   styleUrls: ['./installed-app-badge.component.scss'],
   templateUrl: './installed-app-badge.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     TranslateModule,
     TestDirective,

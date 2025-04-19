@@ -10,7 +10,6 @@ import { AuthService } from 'app/modules/auth/auth.service';
 @UntilDestroy()
 @Directive({
   selector: '[ixHasRole]',
-  standalone: true,
 })
 export class HasRoleDirective {
   readonly roles = input.required<Role[]>({

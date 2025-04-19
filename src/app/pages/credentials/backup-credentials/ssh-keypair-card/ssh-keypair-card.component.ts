@@ -42,7 +42,6 @@ import { KeychainCredentialService } from 'app/services/keychain-credential.serv
   templateUrl: './ssh-keypair-card.component.html',
   styleUrls: ['./ssh-keypair-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     UiSearchDirective,

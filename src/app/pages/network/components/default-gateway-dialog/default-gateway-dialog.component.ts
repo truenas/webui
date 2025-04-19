@@ -29,7 +29,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './default-gateway-dialog.component.html',
   styleUrls: ['./default-gateway-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogTitle,
     MatDialogContent,

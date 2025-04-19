@@ -43,7 +43,6 @@ import { IscsiService } from 'app/services/iscsi.service';
   selector: 'ix-iscsi-extent-list',
   templateUrl: './extent-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     FakeProgressBarComponent,

@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit, signal,
 } from '@angular/core';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -40,7 +40,6 @@ import { TaskService } from 'app/services/task.service';
   templateUrl: './snapshot-task-form.component.html',
   styleUrls: ['./snapshot-task-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
@@ -85,7 +84,7 @@ export class SnapshotTaskFormComponent implements OnInit {
     enabled: [true],
   });
 
-  isLoading = false;
+  protected isLoading = signal(false);
   protected editingTask: PeriodicSnapshotTask | undefined;
 
   readonly labels = {
@@ -125,7 +124,6 @@ export class SnapshotTaskFormComponent implements OnInit {
     private api: ApiService,
     private translate: TranslateService,
     private errorHandler: FormErrorHandlerService,
-    private cdr: ChangeDetectorRef,
     private taskService: TaskService,
     private snackbar: SnackbarService,
     protected storageService: StorageService,
@@ -172,7 +170,7 @@ export class SnapshotTaskFormComponent implements OnInit {
     delete params.begin;
     delete params.end;
 
-    this.isLoading = true;
+    this.isLoading.set(true);
     let request$: Observable<unknown>;
     if (this.editingTask) {
       request$ = this.api.call('pool.snapshottask.update', [
@@ -190,13 +188,12 @@ export class SnapshotTaskFormComponent implements OnInit {
         } else {
           this.snackbar.success(this.translate.instant('Task updated'));
         }
-        this.isLoading = false;
+        this.isLoading.set(false);
         this.slideInRef.close({ response: true, error: null });
       },
       error: (error: unknown) => {
-        this.isLoading = false;
+        this.isLoading.set(false);
         this.errorHandler.handleValidationErrors(error, this.form);
-        this.cdr.markForCheck();
       },
     });
   }

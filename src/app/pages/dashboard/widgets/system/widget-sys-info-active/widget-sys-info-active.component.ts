@@ -37,7 +37,6 @@ import {
   templateUrl: './widget-sys-info-active.component.html',
   styleUrls: ['../common/widget-sys-info.scss', './widget-sys-info-active.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatCardContent,

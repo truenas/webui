@@ -1,6 +1,6 @@
 import { mapSlots } from 'app/core/testing/mock-enclosure/enclosure-templates/utils/slots.utils';
 import { EnclosureDiskStatus, EnclosureElementType } from 'app/enums/enclosure-slot-status.enum';
-import { VdevType } from 'app/enums/v-dev-type.enum';
+import { VDevType } from 'app/enums/v-dev-type.enum';
 import {
   DashboardEnclosure, DashboardEnclosureSlot,
   Enclosure,
@@ -76,7 +76,7 @@ describe('pool.utils', () => {
         disk_write_errors: 0,
         disk_checksum_errors: 0,
         vdev_name: 'stripe',
-        vdev_type: VdevType.Data,
+        vdev_type: VDevType.Data,
         vdev_disks: [
           { enclosure_id: '1', slot: 1, dev: 'sd1' },
           { enclosure_id: '1', slot: 2, dev: 'sd2' },

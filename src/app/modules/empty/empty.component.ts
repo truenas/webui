@@ -19,7 +19,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './empty.component.html',
   styleUrls: ['./empty.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatButtonModule,
     TranslateModule,
@@ -70,6 +69,9 @@ export class EmptyComponent {
           break;
         case EmptyType.NoSearchResults:
           icon = iconMarker('mdi-magnify-scan');
+          break;
+        case EmptyType.None:
+          icon = iconMarker('');
           break;
         default:
           assertUnreachable(type);

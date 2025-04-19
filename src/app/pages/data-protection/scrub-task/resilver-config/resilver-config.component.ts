@@ -33,7 +33,6 @@ import { TaskService } from 'app/services/task.service';
   templateUrl: './resilver-config.component.html',
   styleUrls: ['./resilver-config.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     UiSearchDirective,

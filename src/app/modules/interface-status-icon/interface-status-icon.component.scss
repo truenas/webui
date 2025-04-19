@@ -1,4 +1,12 @@
 :host {
-  cursor: help;
   display: block;
+
+  .link-up {
+    cursor: help;
+  }
+
+  .link-down {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
 }

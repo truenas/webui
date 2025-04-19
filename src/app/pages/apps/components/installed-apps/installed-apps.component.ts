@@ -25,7 +25,6 @@ import { InstalledAppsListComponent } from 'app/pages/apps/components/installed-
   templateUrl: './installed-apps.component.html',
   styleUrls: ['./installed-apps.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     TranslateModule,
     PageHeaderComponent,

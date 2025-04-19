@@ -49,7 +49,6 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
   templateUrl: './fibre-channel-ports.component.html',
   styleUrl: './fibre-channel-ports.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     FakeProgressBarComponent,
     IxTableBodyComponent,
@@ -93,18 +92,20 @@ export class FibreChannelPortsComponent implements OnInit {
         title: this.translate.instant('Target'),
         propertyName: 'target',
         getValue: (row) => {
-          return row.target?.iscsi_target_name;
+          return row.target?.iscsi_target_name || '-';
         },
         disableSorting: true,
       }),
       textColumn({
         title: this.translate.instant('WWPN'),
         propertyName: 'wwpn',
+        getValue: (row) => this.resolveWwpn(row, 'wwpn'),
         disableSorting: true,
       }),
       textColumn({
         title: this.translate.instant('WWPN (B)'),
         propertyName: 'wwpn_b',
+        getValue: (row) => this.resolveWwpn(row, 'wwpn_b'),
         hidden: !this.isHa(),
         disableSorting: true,
       }),
@@ -181,5 +182,20 @@ export class FibreChannelPortsComponent implements OnInit {
         this.rows.set(buildPortsTableRow(hosts, ports, statuses));
         this.dataProvider.setRows(this.rows());
       });
+  }
+
+  private resolveWwpn(row: FibreChannelPortRow, key: 'wwpn' | 'wwpn_b'): string {
+    if (row?.[key]) {
+      return row[key];
+    }
+
+    const aliasPrefix = row?.host?.alias?.split?.('/')?.[0];
+    const isPhysical = row?.name === aliasPrefix;
+
+    if (isPhysical && row?.host?.[key]) {
+      return row.host[key];
+    }
+
+    return '-';
   }
 }

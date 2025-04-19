@@ -28,7 +28,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './app-rollback-modal.component.html',
   styleUrls: ['./app-rollback-modal.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     MatDialogTitle,

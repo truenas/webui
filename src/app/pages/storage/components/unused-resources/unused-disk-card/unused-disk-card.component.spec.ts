@@ -30,14 +30,14 @@ describe('UnusedDiskCardComponent', () => {
           { devname: 'sdb', identifier: '{serial_lunid}BBBBB1', size: 123456789 },
           { devname: 'sdc', identifier: '{uuid}7ad07324-f0e9-49a4-a7a4-92edd82a4929', size: 123456789 },
         ] as DetailsDisk[],
-        title: 'Unused Disks',
+        title: 'Unassigned Disks',
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
   it('shows a title', () => {
-    expect(spectator.query('.mat-mdc-card-title')).toHaveText('Unused Disks');
+    expect(spectator.query('.mat-mdc-card-title')).toHaveText('Unassigned Disks');
   });
 
   it('shows a value', () => {

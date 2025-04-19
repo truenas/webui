@@ -7,7 +7,6 @@ import {
 import { map, shareReplay } from 'rxjs/operators';
 import { languages } from 'app/constants/languages.constant';
 import { ProductType } from 'app/enums/product-type.enum';
-import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { Choices } from 'app/interfaces/choices.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -18,7 +17,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
 export class SystemGeneralService {
   private productType: ProductType;
   protected certificateList = 'certificate.query' as const;
-  protected caList = 'certificateauthority.query' as const;
 
   updateRunning = new EventEmitter<string>();
   updateRunningNoticeSent = new EventEmitter<string>();
@@ -68,20 +66,8 @@ export class SystemGeneralService {
     protected api: ApiService,
   ) {}
 
-  getCertificateAuthorities(): Observable<CertificateAuthority[]> {
-    return this.api.call(this.caList, []);
-  }
-
   getCertificates(): Observable<Certificate[]> {
     return this.api.call(this.certificateList);
-  }
-
-  getUnsignedCertificates(): Observable<Certificate[]> {
-    return this.api.call(this.certificateList, [[['CSR', '!=', null]]]);
-  }
-
-  getUnsignedCas(): Observable<CertificateAuthority[]> {
-    return this.api.call(this.caList, [[['privatekey', '!=', null]]]);
   }
 
   getCertificateCountryChoices(): Observable<Choices> {

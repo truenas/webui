@@ -41,7 +41,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './kerberos-keytabs-list.component.html',
   styleUrls: ['./kerberos-keytabs-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     SearchInput1Component,
     RequiresRolesDirective,

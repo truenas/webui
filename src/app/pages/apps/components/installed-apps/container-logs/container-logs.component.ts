@@ -1,6 +1,6 @@
 import { Location } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, Signal, viewChild,
+  ChangeDetectionStrategy, Component, ElementRef, OnInit, signal, Signal, viewChild,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -29,7 +29,6 @@ import { ShellService } from 'app/services/shell.service';
   styleUrls: ['./container-logs.component.scss'],
   providers: [ShellService],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     PageHeaderComponent,
     ToolbarSliderComponent,
@@ -45,7 +44,7 @@ export class ContainerLogsComponent implements OnInit {
   fontSize = 14;
   appName: string;
   containerId: string;
-  isLoading = false;
+  protected isLoading = signal(false);
   defaultTailLines = 500;
 
   private logsChangedListener: Subscription;
@@ -59,7 +58,6 @@ export class ContainerLogsComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private matDialog: MatDialog,
     private location: Location,
-    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
@@ -91,7 +89,7 @@ export class ContainerLogsComponent implements OnInit {
         }
 
         this.logs = [];
-        this.isLoading = true;
+        this.isLoading.set(true);
       }),
       switchMap((details: LogsDetailsDialog['form']['value']) => {
         return this.api.subscribe(`app.container_log_follow: ${JSON.stringify({
@@ -104,19 +102,16 @@ export class ContainerLogsComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe({
       next: (log: AppContainerLog) => {
-        this.isLoading = false;
+        this.isLoading.set(false);
 
         if (log && log.msg !== 'nosub') {
           this.logs.push(log);
           this.scrollToBottom();
         }
-
-        this.cdr.markForCheck();
       },
       error: (error: unknown) => {
-        this.isLoading = false;
+        this.isLoading.set(false);
         this.errorHandler.showErrorModal(error);
-        this.cdr.markForCheck();
       },
     });
   }

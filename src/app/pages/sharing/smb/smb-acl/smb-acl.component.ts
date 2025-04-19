@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit, signal,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -37,6 +37,7 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UserService } from 'app/services/user.service';
 
 type NameOrId = string | number | null;
@@ -57,7 +58,6 @@ interface FormAclEntry {
   templateUrl: './smb-acl.component.html',
   styleUrls: ['./smb-acl.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
@@ -81,7 +81,7 @@ export class SmbAclComponent implements OnInit {
     entries: this.formBuilder.array<FormAclEntry>([]),
   });
 
-  isLoading = false;
+  protected isLoading = signal(false);
   protected shareName: string;
 
   private shareAclName: string;
@@ -125,9 +125,9 @@ export class SmbAclComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private cdr: ChangeDetectorRef,
     private api: ApiService,
-    private errorHandler: FormErrorHandlerService,
+    private formErrorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     private userService: UserService,
     public slideInRef: SlideInRef<string, boolean>,
@@ -167,7 +167,7 @@ export class SmbAclComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
 
     of(undefined)
       .pipe(mergeMap(() => this.getAclEntriesFromForm()))
@@ -175,19 +175,18 @@ export class SmbAclComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
-          this.isLoading = false;
+          this.isLoading.set(false);
           this.slideInRef.close({ response: true, error: null });
         },
         error: (error: unknown) => {
-          this.isLoading = false;
-          this.errorHandler.handleValidationErrors(error, this.form);
-          this.cdr.markForCheck();
+          this.isLoading.set(false);
+          this.formErrorHandler.handleValidationErrors(error, this.form);
         },
       });
   }
 
   private loadSmbAcl(shareName: string): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
     this.api.call('sharing.smb.getacl', [{ share_name: shareName }])
       .pipe(untilDestroyed(this))
       .subscribe({
@@ -208,9 +207,9 @@ export class SmbAclComponent implements OnInit {
           });
           this.extractOptionFromAcl(shareAcl.share_acl);
         },
-        error: () => {
-          this.isLoading = false;
-          this.cdr.markForCheck();
+        error: (error: unknown) => {
+          this.errorHandler.showErrorModal(error);
+          this.isLoading.set(false);
         },
       });
   }
@@ -299,8 +298,7 @@ export class SmbAclComponent implements OnInit {
           queryType: ComboboxQueryType.Smb,
         });
 
-        this.isLoading = false;
-        this.cdr.markForCheck();
+        this.isLoading.set(false);
       });
   }
 }

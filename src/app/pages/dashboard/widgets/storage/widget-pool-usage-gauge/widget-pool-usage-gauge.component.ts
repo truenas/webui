@@ -19,7 +19,6 @@ import { poolUsageGaugeWidget } from 'app/pages/dashboard/widgets/storage/widget
   templateUrl: './widget-pool-usage-gauge.component.html',
   styleUrls: ['./widget-pool-usage-gauge.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatCardContent,

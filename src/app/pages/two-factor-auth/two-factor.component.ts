@@ -1,7 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef, Component, Inject, OnDestroy, OnInit,
+  Component, Inject, OnDestroy, OnInit, signal,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardActions } from '@angular/material/card';
@@ -37,7 +37,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './two-factor.component.html',
   styleUrls: ['./two-factor.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     UiSearchDirective,
@@ -58,8 +57,8 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
   protected readonly searchableElements = twoFactorElements;
 
   userTwoFactorAuthConfigured = false;
-  isDataLoading = false;
-  isFormLoading = false;
+  protected isDataLoading = signal(false);
+  protected isFormLoading = signal(false);
   globalTwoFactorEnabled: boolean;
   showQrCodeWarning = false;
 
@@ -87,7 +86,6 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
 
   constructor(
     public authService: AuthService,
-    private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
     private translate: TranslateService,
     protected matDialog: MatDialog,
@@ -107,8 +105,7 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
   }
 
   loadTwoFactorConfigs(): void {
-    this.isDataLoading = true;
-    this.cdr.markForCheck();
+    this.isDataLoading.set(true);
     forkJoin([
       this.authService.userTwoFactorConfig$.pipe(take(1)),
       this.authService.getGlobalTwoFactorConfig(),
@@ -116,10 +113,9 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
       .pipe(untilDestroyed(this))
       .subscribe({
         next: ([userConfig, globalConfig]) => {
-          this.isDataLoading = false;
+          this.isDataLoading.set(false);
           this.userTwoFactorAuthConfigured = userConfig.secret_configured;
           this.globalTwoFactorEnabled = globalConfig.enabled;
-          this.cdr.markForCheck();
         },
       });
   }
@@ -128,7 +124,7 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
     this.getConfirmation().pipe(
       filter(Boolean),
       switchMap(() => this.renewSecretForUser()),
-      tap(() => this.toggleLoading(false)),
+      tap(() => this.isFormLoading.set(false)),
       catchError((error: unknown) => this.handleError(error)),
       untilDestroyed(this),
     ).subscribe();
@@ -142,14 +138,14 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
   }
 
   private handleError(error: unknown): Observable<boolean> {
-    this.toggleLoading(false);
+    this.isFormLoading.set(false);
     this.errorHandler.showErrorModal(error);
 
     return EMPTY;
   }
 
   private renewSecretForUser(): Observable<void> {
-    this.toggleLoading(true);
+    this.isFormLoading.set(true);
 
     this.window.localStorage.setItem('showQr2FaWarning', 'true');
 
@@ -176,10 +172,5 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
       });
     }
     return of(true);
-  }
-
-  private toggleLoading(isLoading: boolean): void {
-    this.isFormLoading = isLoading;
-    this.cdr.markForCheck();
   }
 }

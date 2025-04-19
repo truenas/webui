@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit, signal,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -41,7 +41,6 @@ import { haSettingsUpdated } from 'app/store/ha-info/ha-info.actions';
   templateUrl: './failover-settings.component.html',
   styleUrls: ['./failover-settings.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     UiSearchDirective,
@@ -61,7 +60,7 @@ import { haSettingsUpdated } from 'app/store/ha-info/ha-info.actions';
 export class FailoverSettingsComponent implements OnInit {
   protected readonly searchableElements = failoverElements;
 
-  isLoading = false;
+  protected isLoading = signal(false);
   form = this.formBuilder.group({
     disabled: [false],
     master: [true],
@@ -84,7 +83,6 @@ export class FailoverSettingsComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private api: ApiService,
-    private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
     private authService: AuthService,
     private errorHandler: ErrorHandlerService,
@@ -100,7 +98,7 @@ export class FailoverSettingsComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
     const values = this.form.getRawValue();
 
     this.api.call('failover.update', [values])
@@ -111,8 +109,7 @@ export class FailoverSettingsComponent implements OnInit {
       .subscribe({
         next: () => {
           this.snackbar.success(this.translate.instant('Settings saved.'));
-          this.isLoading = false;
-          this.cdr.markForCheck();
+          this.isLoading.set(false);
 
           if (values.disabled && !values.master) {
             this.authService.logout().pipe(untilDestroyed(this)).subscribe({
@@ -125,8 +122,7 @@ export class FailoverSettingsComponent implements OnInit {
         },
         error: (error: unknown) => {
           this.formErrorHandler.handleValidationErrors(error, this.form);
-          this.isLoading = false;
-          this.cdr.markForCheck();
+          this.isLoading.set(false);
         },
       });
   }
@@ -142,23 +138,20 @@ export class FailoverSettingsComponent implements OnInit {
       .pipe(
         filter((result) => result.confirmed),
         switchMap((result) => {
-          this.isLoading = true;
-          this.cdr.markForCheck();
+          this.isLoading.set(true);
           return this.api.call('failover.sync_to_peer', [{ reboot: result.secondaryCheckbox }]);
         }),
         untilDestroyed(this),
       )
       .subscribe({
         next: () => {
-          this.isLoading = false;
-          this.cdr.markForCheck();
+          this.isLoading.set(false);
           this.snackbar.success(
             helptextSystemFailover.confirm_dialogs.sync_to_message,
           );
         },
         error: (error: unknown) => {
-          this.isLoading = false;
-          this.cdr.markForCheck();
+          this.isLoading.set(false);
           this.errorHandler.showErrorModal(error);
         },
       });
@@ -173,37 +166,33 @@ export class FailoverSettingsComponent implements OnInit {
       .pipe(
         filter(Boolean),
         switchMap(() => {
-          this.isLoading = true;
-          this.cdr.markForCheck();
+          this.isLoading.set(true);
           return this.api.call('failover.sync_from_peer');
         }),
         untilDestroyed(this),
       )
       .subscribe({
         next: () => {
-          this.isLoading = false;
-          this.cdr.markForCheck();
+          this.isLoading.set(false);
           this.snackbar.success(
             this.translate.instant(helptextSystemFailover.confirm_dialogs.sync_from_message),
           );
         },
         error: (error: unknown) => {
-          this.isLoading = false;
-          this.cdr.markForCheck();
+          this.isLoading.set(false);
           this.errorHandler.showErrorModal(error);
         },
       });
   }
 
   private loadFormValues(): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
 
     this.api.call('failover.config')
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (config) => {
-          this.isLoading = false;
-          this.cdr.markForCheck();
+          this.isLoading.set(false);
           this.form.patchValue({
             ...config,
             master: true,
@@ -212,9 +201,8 @@ export class FailoverSettingsComponent implements OnInit {
           this.setFormRelations();
         },
         error: (error: unknown) => {
-          this.isLoading = false;
+          this.isLoading.set(false);
           this.errorHandler.showErrorModal(error);
-          this.cdr.markForCheck();
         },
       });
   }

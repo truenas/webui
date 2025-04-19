@@ -4,17 +4,17 @@ import {
   output,
   input,
   effect,
+  signal,
 } from '@angular/core';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { injectParams } from 'ngxtension/inject-params';
 import { of } from 'rxjs';
 import { roleNames } from 'app/enums/role.enum';
 import { User } from 'app/interfaces/user.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { SearchQuery } from 'app/modules/forms/search-input/types/search-query.interface';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
-import { QueryFiltersAndOptionsApiDataProvider } from 'app/modules/ix-table/classes/api-data-provider/query-filters-and-options-data-provider';
+import { ApiDataProvider } from 'app/modules/ix-table/classes/api-data-provider/api-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
@@ -24,8 +24,6 @@ import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
 import { UsersSearchComponent } from 'app/pages/credentials/new-users/all-users/users-search/users-search.component';
-import { UsersStore } from 'app/pages/credentials/new-users/store/users.store';
-import { UrlOptionsService } from 'app/services/url-options.service';
 
 @UntilDestroy()
 @Component({
@@ -33,7 +31,6 @@ import { UrlOptionsService } from 'app/services/url-options.service';
   templateUrl: './user-list.component.html',
   styleUrls: ['./user-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     TranslateModule,
     AsyncPipe,
@@ -48,17 +45,14 @@ import { UrlOptionsService } from 'app/services/url-options.service';
 })
 export class UserListComponent {
   readonly userName = injectParams('id');
-  readonly searchQuery = injectParams<SearchQuery<User>>((params) => {
-    return params.searchQuery;
-  });
 
   readonly isMobileView = input<boolean>();
   readonly toggleShowMobileDetails = output<boolean>();
-  protected readonly users = this.usersStore.users;
-  protected readonly isLoading = this.usersStore.isLoading;
-  protected readonly selectedUser = this.usersStore.selectedUser;
-
-  readonly dataProvider = input.required<QueryFiltersAndOptionsApiDataProvider<'user.query'>>();
+  readonly userSelected = output<User>();
+  protected readonly currentBatch = signal<User[]>([]);
+  // TODO: NAS-135333 - Handle case after url linking is implemented to decide when no to show selected user
+  readonly isSelectedUserVisible$ = of(true);
+  readonly dataProvider = input.required<ApiDataProvider<'user.query'>>();
 
   protected columns = createTable<User>([
     textColumn({
@@ -70,7 +64,7 @@ export class UserListComponent {
       propertyName: 'uid',
     }),
     yesNoColumn({
-      title: this.translate.instant('Builtin'),
+      title: this.translate.instant('Built in'),
       propertyName: 'builtin',
     }),
     textColumn({
@@ -88,45 +82,33 @@ export class UserListComponent {
     ariaLabels: (row) => [row.username, this.translate.instant('User')],
   });
 
-  readonly isSelectedUserVisible$ = of(true);
-  // this.dataProvider().currentPage$.pipe(
-  //   filter((users) => {
-  //     const selectedUser = this.selectedUser();
-  //     return users.some((user) => user.username === selectedUser.username);
-  //   }),
-  //   map((users) => Boolean(users.length))
-  // );
-
   constructor(
-    private usersStore: UsersStore,
     protected emptyService: EmptyService,
-    private urlOptionsService: UrlOptionsService,
     private translate: TranslateService,
     private searchDirectives: UiSearchDirectivesService,
   ) {
     effect(() => {
-      const userName = this.userName();
-      const users = this.users();
-
-      if (users?.length > 0) {
-        if (userName && users.some((user) => user.username === userName)) {
-          this.usersStore.selectUser(userName);
-        } else {
-          this.navigateToDetails(users[0]);
-        }
-
-        setTimeout(() => this.handlePendingGlobalSearchElement());
+      const dataProvider = this.dataProvider();
+      if (!dataProvider) {
+        return;
       }
+
+      dataProvider.currentPage$.pipe(
+        untilDestroyed(this),
+      ).subscribe({
+        next: (users) => {
+          this.currentBatch.set(users);
+          this.userSelected.emit(users[0]);
+        },
+      });
+    });
+    setTimeout(() => {
+      this.handlePendingGlobalSearchElement();
     });
   }
 
   navigateToDetails(user: User): void {
-    this.usersStore.selectUser(user.username);
-    this.urlOptionsService.setUrlOptions(`/credentials/users-new/view/${user.username}`, {
-      searchQuery: this.searchQuery(),
-      sorting: this.dataProvider().sorting,
-      pagination: this.dataProvider().pagination,
-    });
+    this.userSelected.emit(user);
 
     if (this.isMobileView()) {
       this.toggleShowMobileDetails.emit(true);
@@ -142,6 +124,7 @@ export class UserListComponent {
   }
 
   expanded(row: User): void {
+    this.navigateToDetails(row);
     if (!row || !this.isMobileView()) return;
     this.toggleShowMobileDetails.emit(true);
   }

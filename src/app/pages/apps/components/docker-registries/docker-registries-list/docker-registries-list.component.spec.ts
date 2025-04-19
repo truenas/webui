@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -16,6 +17,7 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DockerRegistriesListComponent } from 'app/pages/apps/components/docker-registries/docker-registries-list/docker-registries-list.component';
 import { DockerRegistryFormComponent } from 'app/pages/apps/components/docker-registries/docker-registry-form/docker-registry-form.component';
+import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 
 describe('DockerRegistriesListComponent', () => {
   let spectator: Spectator<DockerRegistriesListComponent>;
@@ -52,6 +54,14 @@ describe('DockerRegistriesListComponent', () => {
       }),
       mockProvider(SlideIn, {
         open: jest.fn(() => of()),
+      }),
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectPreferences,
+            value: {},
+          },
+        ],
       }),
     ],
   });

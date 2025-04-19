@@ -38,7 +38,7 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
+import { OldUserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
 
 @UntilDestroy()
 @Component({
@@ -46,7 +46,6 @@ import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-fo
   templateUrl: './ix-user-picker.component.html',
   styleUrls: ['./ix-user-picker.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxLabelComponent,
     MatInput,
@@ -316,7 +315,7 @@ export class IxUserPickerComponent implements ControlValueAccessor, OnInit {
     this.controlDirective?.control?.valueChanges?.pipe(
       distinctUntilChanged(),
       filter((selectedOption) => selectedOption === newOption),
-      switchMap(() => this.slideIn.open(UserFormComponent, { wide: true })),
+      switchMap(() => this.slideIn.open(OldUserFormComponent, { wide: true })),
       filter((response: SlideInResponse) => !response.error),
       tap((response: SlideInResponse<User>) => {
         // TODO: Handle it better. Show all users and select newly created.

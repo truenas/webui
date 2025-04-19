@@ -21,7 +21,6 @@ export interface OauthProviderData {
   templateUrl: './oauth-provider.component.html',
   styleUrls: ['./oauth-provider.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxFieldsetComponent,
     ReactiveFormsModule,

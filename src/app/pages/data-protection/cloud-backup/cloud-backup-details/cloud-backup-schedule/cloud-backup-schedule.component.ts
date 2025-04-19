@@ -14,7 +14,6 @@ import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-cront
   templateUrl: './cloud-backup-schedule.component.html',
   styleUrl: './cloud-backup-schedule.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatCardHeader,

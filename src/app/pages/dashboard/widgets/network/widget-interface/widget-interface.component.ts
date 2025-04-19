@@ -44,7 +44,6 @@ import { WidgetInterfaceIpSettings } from 'app/pages/dashboard/widgets/network/w
   templateUrl: './widget-interface.component.html',
   styleUrls: ['./widget-interface.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatCardContent,

@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, OnInit, ChangeDetectorRef,
+  ChangeDetectionStrategy, Component, OnInit, ChangeDetectorRef, signal,
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -29,7 +29,6 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
   selector: 'ix-isolated-gpus-form',
   templateUrl: './isolated-gpus-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
@@ -47,7 +46,7 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
 export class IsolatedGpusFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.SystemAdvancedWrite];
 
-  isFormLoading = false;
+  protected isFormLoading = signal(false);
 
   formGroup = new FormGroup({
     isolated_gpu_pci_ids: new FormControl<string[]>([], {
@@ -89,23 +88,21 @@ export class IsolatedGpusFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
     const isolatedGpuPciIds = this.formGroup.controls.isolated_gpu_pci_ids.value;
 
     this.api.call('system.advanced.update_gpu_pci_ids', [isolatedGpuPciIds]).pipe(
       untilDestroyed(this),
     ).subscribe({
       next: () => {
-        this.isFormLoading = false;
-        this.cdr.markForCheck();
+        this.isFormLoading.set(false);
         this.snackbar.success(this.translate.instant('Settings saved'));
         this.store$.dispatch(advancedConfigUpdated());
         this.slideInRef.close({ response: true, error: null });
       },
       error: (error: unknown) => {
-        this.isFormLoading = false;
+        this.isFormLoading.set(false);
         this.errorHandler.handleValidationErrors(error, this.formGroup);
-        this.cdr.markForCheck();
       },
     });
   }

@@ -44,7 +44,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   selector: 'ix-init-shutdown-list',
   templateUrl: './init-shutdown-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     PageHeaderComponent,
     RequiresRolesDirective,

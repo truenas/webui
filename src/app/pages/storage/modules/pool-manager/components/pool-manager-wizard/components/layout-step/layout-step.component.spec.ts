@@ -1,7 +1,7 @@
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
 import { BehaviorSubject } from 'rxjs';
-import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
+import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import {
@@ -39,7 +39,7 @@ describe('LayoutStepComponent', () => {
 
   const state = {
     topology: {
-      [VdevType.Data]: topologyCategory,
+      [VDevType.Data]: topologyCategory,
     },
     enclosures,
   } as PoolManagerState;
@@ -66,7 +66,7 @@ describe('LayoutStepComponent', () => {
     spectator = createComponent({
       props: {
         limitLayouts,
-        type: VdevType.Data,
+        type: VDevType.Data,
         canChangeLayout: true,
         inventory,
       },
@@ -77,7 +77,7 @@ describe('LayoutStepComponent', () => {
     const automatedSelection = spectator.query(AutomatedDiskSelectionComponent)!;
     expect(automatedSelection).toBeTruthy();
     expect(automatedSelection.limitLayouts).toBe(limitLayouts);
-    expect(automatedSelection.type).toBe(VdevType.Data);
+    expect(automatedSelection.type).toBe(VDevType.Data);
     expect(automatedSelection.canChangeLayout).toBe(true);
     expect(automatedSelection.inventory).toBe(inventory);
   });
@@ -87,8 +87,8 @@ describe('LayoutStepComponent', () => {
       ...state,
       topology: {
         ...state.topology,
-        [VdevType.Data]: {
-          ...state.topology[VdevType.Data],
+        [VDevType.Data]: {
+          ...state.topology[VDevType.Data],
           hasCustomDiskSelection: true,
         },
       },
@@ -98,7 +98,7 @@ describe('LayoutStepComponent', () => {
     expect(spectator.query(AutomatedDiskSelectionComponent)).toBeFalsy();
     const customLayout = spectator.query(CustomLayoutAppliedComponent)!;
     expect(customLayout).toBeTruthy();
-    expect(customLayout.type).toBe(VdevType.Data);
+    expect(customLayout.type).toBe(VDevType.Data);
     expect(customLayout.vdevs).toBe(topologyCategory.vdevs);
   });
 });

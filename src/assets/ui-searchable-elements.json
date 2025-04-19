@@ -591,12 +591,10 @@
     "hierarchy": [
       "Credentials",
       "Certificates",
-      "Add Certificate"
+      "Import Certificate"
     ],
     "synonyms": [
-      "Create Certificate",
-      "New Certificate",
-      "Generate Certificate"
+      "Add Certificate"
     ],
     "requiredRoles": [
       "CERTIFICATE_WRITE"
@@ -607,7 +605,7 @@
       "certificates"
     ],
     "routerLink": null,
-    "anchor": "add-certificate",
+    "anchor": "import-certificate",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -951,29 +949,6 @@
     "requiredRoles": [
       "ACCOUNT_WRITE"
     ],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/credentials",
-      "users"
-    ],
-    "routerLink": null,
-    "anchor": "add-user",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Credentials",
-      "Users",
-      "Add User"
-    ],
-    "synonyms": [
-      "New User",
-      "Create User",
-      "User",
-      "Add Local User"
-    ],
-    "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
       "/credentials",
@@ -1411,7 +1386,7 @@
       "Create Snapshot"
     ],
     "synonyms": [
-      "Manage Datasets",
+      "View Datasets",
       "Take Snapshot"
     ],
     "requiredRoles": [
@@ -1432,7 +1407,7 @@
       "Manage Snapshots"
     ],
     "synonyms": [
-      "Manage Datasets",
+      "View Datasets",
       "Snapshot Manager"
     ],
     "requiredRoles": [],
@@ -1454,7 +1429,7 @@
       "Manage Snapshots Tasks"
     ],
     "synonyms": [
-      "Manage Datasets",
+      "View Datasets",
       "Snapshot Task Manager"
     ],
     "requiredRoles": [],
@@ -1476,7 +1451,7 @@
       "Manage Replication Tasks"
     ],
     "synonyms": [
-      "Manage Datasets",
+      "View Datasets",
       "Replication Task Manager"
     ],
     "requiredRoles": [],
@@ -1498,7 +1473,7 @@
       "Manage Rsync Tasks"
     ],
     "synonyms": [
-      "Manage Datasets",
+      "View Datasets",
       "Rsync Task Manager"
     ],
     "requiredRoles": [],
@@ -1520,7 +1495,7 @@
       "Manage User Quotas"
     ],
     "synonyms": [
-      "Manage Datasets",
+      "View Datasets",
       "User Quota Manager"
     ],
     "requiredRoles": [],
@@ -1544,7 +1519,7 @@
       "Manage Group Quotas"
     ],
     "synonyms": [
-      "Manage Datasets",
+      "View Datasets",
       "Group Quota Manager"
     ],
     "requiredRoles": [],
@@ -1568,7 +1543,7 @@
       "Add Zvol"
     ],
     "synonyms": [
-      "Manage Datasets",
+      "View Datasets",
       "Add Volume",
       "Create Zvol",
       "New Zvol"
@@ -1591,7 +1566,7 @@
       "Add Dataset"
     ],
     "synonyms": [
-      "Manage Datasets",
+      "View Datasets",
       "Add Filesystem",
       "Create Dataset",
       "New Dataset"
@@ -1614,7 +1589,7 @@
       "Dataset Details"
     ],
     "synonyms": [
-      "Manage Datasets",
+      "View Datasets",
       "Dataset Information"
     ],
     "requiredRoles": [],
@@ -1633,7 +1608,7 @@
       "Dataset Space Management"
     ],
     "synonyms": [
-      "Manage Datasets",
+      "View Datasets",
       "Dataset Capacity Management"
     ],
     "requiredRoles": [],
@@ -1652,7 +1627,7 @@
       "ZFS Encryption"
     ],
     "synonyms": [
-      "Manage Datasets",
+      "View Datasets",
       "Dataset ZFS Encryption"
     ],
     "requiredRoles": [],
@@ -1671,7 +1646,7 @@
       "Data Protection"
     ],
     "synonyms": [
-      "Manage Datasets",
+      "View Datasets",
       "Dataset Data Protection"
     ],
     "requiredRoles": [],
@@ -1690,7 +1665,7 @@
       "Roles"
     ],
     "synonyms": [
-      "Manage Datasets",
+      "View Datasets",
       "Dataset Roles"
     ],
     "requiredRoles": [],
@@ -1709,7 +1684,7 @@
       "Permissions"
     ],
     "synonyms": [
-      "Manage Datasets",
+      "View Datasets",
       "Dataset Permissions",
       "ACL"
     ],
@@ -3394,7 +3369,7 @@
   {
     "hierarchy": [
       "Storage",
-      "Topology"
+      "Storage Health"
     ],
     "synonyms": [],
     "requiredRoles": [],
@@ -3403,39 +3378,7 @@
       "/storage"
     ],
     "routerLink": null,
-    "anchor": "topology",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Storage",
-      "Manage Devices"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/storage"
-    ],
-    "routerLink": null,
-    "anchor": "manage-devices",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Storage",
-      "ZFS Health"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/storage"
-    ],
-    "routerLink": null,
-    "anchor": "zfs-health",
+    "anchor": "storage-health",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -3479,10 +3422,44 @@
   {
     "hierarchy": [
       "Storage",
+      "VDEVs"
+    ],
+    "synonyms": [
+      "Topology"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/storage"
+    ],
+    "routerLink": null,
+    "anchor": "vdevs",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Storage",
+      "View VDEVs"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/storage"
+    ],
+    "routerLink": null,
+    "anchor": "view-vdevs",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Storage",
       "Disks"
     ],
     "synonyms": [
-      "Manage Disks"
+      "View Disks"
     ],
     "requiredRoles": [],
     "visibleTokens": [],
