@@ -13,7 +13,7 @@ import { filterTableRows } from 'app/modules/ix-table/utils';
 
 export class BaseDataProvider<T> implements DataProvider<T> {
   readonly emptyType$ = new BehaviorSubject<EmptyType>(EmptyType.Loading);
-  readonly controlsStateUpdated = new EventEmitter<void>();
+  readonly sortingOrPaginationUpdate = new EventEmitter<void>();
 
   get isLoading$(): Observable<boolean> {
     return this.emptyType$.pipe(map((emptyType) => emptyType === EmptyType.Loading));
@@ -61,7 +61,7 @@ export class BaseDataProvider<T> implements DataProvider<T> {
   setSorting(sorting: TableSort<T>): void {
     this.sorting = sorting;
     this.updateCurrentPage(this.allRows);
-    this.controlsStateUpdated.emit();
+    this.sortingOrPaginationUpdate.emit();
   }
 
   setFilter(filter: TableFilter<T>): void {
@@ -73,7 +73,7 @@ export class BaseDataProvider<T> implements DataProvider<T> {
   setPagination(pagination: TablePagination): void {
     this.pagination = pagination;
     this.updateCurrentPage(this.allRows);
-    this.controlsStateUpdated.emit();
+    this.sortingOrPaginationUpdate.emit();
   }
 
   protected updateCurrentPage(rows: T[]): void {

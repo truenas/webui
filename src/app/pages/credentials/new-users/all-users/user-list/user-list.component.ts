@@ -1,26 +1,29 @@
-import { SelectionModel } from '@angular/cdk/collections';
+import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
 import {
   Component, ChangeDetectionStrategy,
-  signal, computed, inject,
   output,
   input,
   effect,
+  signal,
 } from '@angular/core';
-import { MatCheckbox } from '@angular/material/checkbox';
-import { Router } from '@angular/router';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { injectParams } from 'ngxtension/inject-params';
-import { EmptyType } from 'app/enums/empty-type.enum';
-import { WINDOW } from 'app/helpers/window.helper';
-import { EmptyConfig } from 'app/interfaces/empty-config.interface';
+import { of } from 'rxjs';
+import { roleNames } from 'app/enums/role.enum';
 import { User } from 'app/interfaces/user.interface';
-import { EmptyComponent } from 'app/modules/empty/empty.component';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { EmptyService } from 'app/modules/empty/empty.service';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
-import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
-import { UserRowComponent } from 'app/pages/credentials/new-users/all-users/user-list/user-row/user-row.component';
-import { UsersStore } from 'app/pages/credentials/new-users/store/users.store';
+import { ApiDataProvider } from 'app/modules/ix-table/classes/api-data-provider/api-data-provider';
+import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
+import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
+import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
+import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
+import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
+import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
+import { createTable } from 'app/modules/ix-table/utils';
+import { UsersSearchComponent } from 'app/pages/credentials/new-users/all-users/users-search/users-search.component';
 
 @UntilDestroy()
 @Component({
@@ -30,104 +33,86 @@ import { UsersStore } from 'app/pages/credentials/new-users/store/users.store';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TranslateModule,
-    EmptyComponent,
-    UserRowComponent,
-    SearchInput1Component,
-    MatCheckbox,
-    FakeProgressBarComponent,
+    AsyncPipe,
+    IxTableBodyComponent,
+    IxTableComponent,
+    IxTableEmptyDirective,
+    IxTableHeadComponent,
+    IxTablePagerComponent,
+    NgTemplateOutlet,
+    UsersSearchComponent,
   ],
 })
 export class UserListComponent {
   readonly userName = injectParams('id');
+
   readonly isMobileView = input<boolean>();
   readonly toggleShowMobileDetails = output<boolean>();
-  protected readonly searchQuery = signal<string>('');
-  protected readonly window = inject<Window>(WINDOW);
-  protected readonly selection = new SelectionModel<string>(true, []);
-  protected readonly users = this.usersStore.users;
-  protected readonly isLoading = this.usersStore.isLoading;
-  protected readonly selectedUser = this.usersStore.selectedUser;
+  readonly userSelected = output<User>();
+  protected readonly currentBatch = signal<User[]>([]);
+  // TODO: NAS-135333 - Handle case after url linking is implemented to decide when no to show selected user
+  readonly isSelectedUserVisible$ = of(true);
+  readonly dataProvider = input.required<ApiDataProvider<'user.query'>>();
 
-  readonly isSelectedUserVisible = computed(() => {
-    return this.filteredUsers()?.some((user) => user.id === this.selectedUser()?.id);
+  protected columns = createTable<User>([
+    textColumn({
+      title: this.translate.instant('Username'),
+      propertyName: 'username',
+    }),
+    textColumn({
+      title: this.translate.instant('UID'),
+      propertyName: 'uid',
+    }),
+    yesNoColumn({
+      title: this.translate.instant('Built in'),
+      propertyName: 'builtin',
+    }),
+    textColumn({
+      title: this.translate.instant('Full Name'),
+      propertyName: 'full_name',
+    }),
+    textColumn({
+      title: this.translate.instant('Roles'),
+      getValue: (row) => row.roles
+        .map((role) => this.translate.instant(roleNames.get(role) || role))
+        .join(', ') || this.translate.instant('N/A'),
+    }),
+  ], {
+    uniqueRowTag: (row) => 'user-' + row.username,
+    ariaLabels: (row) => [row.username, this.translate.instant('User')],
   });
-
-  protected readonly filteredUsers = computed(() => {
-    return (this.users() || []).filter((user) => {
-      return user?.username?.toLocaleLowerCase().includes(this.searchQuery().toLocaleLowerCase());
-    });
-  });
-
-  protected readonly emptyConfig = computed<EmptyConfig>(() => {
-    if (this.searchQuery()?.length && !this.filteredUsers()?.length) {
-      return {
-        type: EmptyType.NoSearchResults,
-        title: this.translate.instant('No Search Results.'),
-        message: this.translate.instant('No matching results found'),
-        large: false,
-      };
-    }
-    return {
-      type: EmptyType.NoPageData,
-      title: this.translate.instant('No users found'),
-      message: this.translate.instant('Users will appear here once created.'),
-      large: true,
-    };
-  });
-
-  get isAllSelected(): boolean {
-    return this.selection.selected.length === this.filteredUsers().length;
-  }
-
-  get checkedInstances(): User[] {
-    return this.selection.selected
-      .map((username) => {
-        return this.users().find((user) => user.username === username);
-      })
-      .filter((user) => !!user);
-  }
 
   constructor(
-    private usersStore: UsersStore,
-    private router: Router,
+    protected emptyService: EmptyService,
     private translate: TranslateService,
     private searchDirectives: UiSearchDirectivesService,
   ) {
     effect(() => {
-      const userName = this.userName();
-      const users = this.users();
-
-      if (users?.length > 0) {
-        if (userName && users.some((user) => user.username === userName)) {
-          this.usersStore.selectUser(userName);
-        } else {
-          this.navigateToDetails(users[0]);
-        }
-
-        setTimeout(() => this.handlePendingGlobalSearchElement());
+      const dataProvider = this.dataProvider();
+      if (!dataProvider) {
+        return;
       }
+
+      dataProvider.currentPage$.pipe(
+        untilDestroyed(this),
+      ).subscribe({
+        next: (users) => {
+          this.currentBatch.set(users);
+          this.userSelected.emit(users[0]);
+        },
+      });
+    });
+    setTimeout(() => {
+      this.handlePendingGlobalSearchElement();
     });
   }
 
   navigateToDetails(user: User): void {
-    this.usersStore.selectUser(user.username);
-    this.router.navigate(['/credentials/users-new', 'view', user.username]);
+    this.userSelected.emit(user);
 
     if (this.isMobileView()) {
       this.toggleShowMobileDetails.emit(true);
     }
-  }
-
-  toggleAllChecked(checked: boolean): void {
-    if (checked) {
-      this.users().forEach((user) => this.selection.select(user.username));
-    } else {
-      this.selection.clear();
-    }
-  }
-
-  onSearch(query: string): void {
-    this.searchQuery.set(query);
   }
 
   private handlePendingGlobalSearchElement(): void {
@@ -136,5 +121,11 @@ export class UserListComponent {
     if (pendingHighlightElement) {
       this.searchDirectives.get(pendingHighlightElement)?.highlight(pendingHighlightElement);
     }
+  }
+
+  expanded(row: User): void {
+    this.navigateToDetails(row);
+    if (!row || !this.isMobileView()) return;
+    this.toggleShowMobileDetails.emit(true);
   }
 }

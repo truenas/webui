@@ -87,7 +87,7 @@ export class AuditSearchComponent implements OnInit {
   ngOnInit(): void {
     this.loadParamsFromRoute();
 
-    this.dataProvider().controlsStateUpdated
+    this.dataProvider().sortingOrPaginationUpdate
       .pipe(untilDestroyed(this))
       .subscribe(() => {
         this.updateUrlOptions();

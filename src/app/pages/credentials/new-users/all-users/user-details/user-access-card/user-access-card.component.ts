@@ -19,7 +19,6 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { UsersStore } from 'app/pages/credentials/new-users/store/users.store';
 import { UrlOptionsService } from 'app/services/url-options.service';
 
 @UntilDestroy()
@@ -79,7 +78,6 @@ export class UserAccessCardComponent {
     private api: ApiService,
     private loader: LoaderService,
     private dialogService: DialogService,
-    private usersStore: UsersStore,
   ) {}
 
   viewApiKeys(): void {
@@ -116,7 +114,6 @@ export class UserAccessCardComponent {
       switchMap(() => this.api.call('user.update', [id, { locked: !locked }])),
       untilDestroyed(this),
     ).subscribe({
-      next: (updatedUser) => this.usersStore.userUpdated(updatedUser),
       complete: () => this.loader.close(),
     });
   }

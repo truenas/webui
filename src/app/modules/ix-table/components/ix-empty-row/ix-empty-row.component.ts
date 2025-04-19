@@ -89,6 +89,9 @@ export class IxTableEmptyRowComponent implements AfterViewInit {
         case EmptyType.NoSearchResults:
           icon = iconMarker('mdi-magnify-scan');
           break;
+        case EmptyType.None:
+          icon = iconMarker('');
+          break;
         default:
           assertUnreachable(type);
       }
