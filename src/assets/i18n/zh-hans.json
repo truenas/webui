@@ -2538,6 +2538,7 @@
   "Initiators": "启动器",
   "Initiators allowed access to this system. Enter an <a href=\"https://tools.ietf.org/html/rfc3720#section-3.2.6\" target=\"_blank\">iSCSI Qualified Name (IQN)</a> and click <i>+</i> to add it to the list. Example: <i>iqn.1994-09.org.freebsd:freenas.local</i>": "启动程序允许访问此系统。输入<a href=\"https://tools.ietf.org/html/rfc3720\\#section-3.2.6\" target=\"_blank\"> iSCSI 合格名称（IQN）</a>，然后单击<i>+</i>将其添加到列表中。例如：<i> iqn.1994-09.org.freebsd：freenas.local </i>",
   "Initiators Groups": "发起人组",
+  "Input": "输入",
   "Input the pre-defined container to use.": "输入要使用的预定义容器。",
   "Inquiry": "询问",
   "Insensitive": "不敏感",
