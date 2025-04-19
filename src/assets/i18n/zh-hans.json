@@ -4001,7 +4001,7 @@
   "Service = \"SMB\" AND Event = \"CLOSE\"": "服务 = \"SMB\" AND 事件 = \"关闭\"",
   "Service Account Key": "服务账号密钥",
   "Service Announcement": "服务公告",
-  "Service Announcement:": "服务公告",
+  "Service Announcement:": "服务公告：",
   "Service configuration saved": "服务配置已保存",
   "Service Key": "服务密钥",
   "Service Name": "服务名称",
