@@ -1917,7 +1917,7 @@
   "Enable iXsystems Proactive Support": "启用 iXsystems 主动支持",
   "Enable Kernel Debug": "启用内核调试",
   "Enable Learning": "启用学习",
-  "Enable NFS over RDMA": "启用基于RDMA的NFS",
+  "Enable NFS over RDMA": "启用基于 RDMA 的 NFS",
   "Enable passwordless sudo for zfs commands": "为 zfs 命令启用无密码 sudo 权限",
   "Enable server support for NFSv3 or NFSv4 or both NFSv3 and NFSv4 clients.": "启用服务器支持 NFSv3 或 NFSv4，或同时支持 NFSv3 和 NFSv4 客户端。",
   "Enable server-side management of group memberships.  This option allows the server to determine group IDs based on server-side lookups rather than relying solely on the information provided by the NFS client.  This can support more than 16 groups and provide more accurate group memberships.": "启用服务器端的组成员管理。该选项允许服务器根据服务器端查找来确定组 ID，而不仅仅依赖于 NFS 客户端提供的信息。这可以支持超过 16 个组，并提供更准确的组成员资格。",
