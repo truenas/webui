@@ -4719,7 +4719,7 @@
   "To enable disable LDAP first.": "首先禁用 LDAP。",
   "Today": "今天",
   "Toggle {row}": "切换 {row}",
-  "Toggle Collapse": "切换折叠",
+  "Toggle Collapse": "折叠/展开",
   "Toggle off to defer interface learning until runtime, preventing premature state transitions and potential issues during system startup.": "关闭此选项以推迟接口学习，直到运行时，从而防止过早的状态转换和在系统启动期间可能出现的问题。",
   "Toggle Sidenav": "切换侧边栏",
   "Token": "令牌（Token）",
