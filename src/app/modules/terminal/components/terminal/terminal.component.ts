@@ -15,12 +15,10 @@ import { filter, take, tap } from 'rxjs/operators';
 import { ShellConnectedEvent } from 'app/interfaces/shell.interface';
 import { TerminalConfiguration } from 'app/interfaces/terminal.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { ToolbarSliderComponent } from 'app/modules/forms/toolbar-slider/toolbar-slider.component';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { CopyPasteMessageComponent } from 'app/modules/terminal/components/copy-paste-message/copy-paste-message.component';
 import { XtermAttachAddon } from 'app/modules/terminal/xterm-attach-addon';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ShellService } from 'app/services/shell.service';
 import { AppState } from 'app/store';
@@ -34,11 +32,10 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
   providers: [ShellService],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ToolbarSliderComponent,
     MatButton,
     TestDirective,
-    TooltipComponent,
     NgStyle,
+    IxIconComponent,
     TranslateModule,
     PageHeaderComponent,
   ],
@@ -49,6 +46,8 @@ export class TerminalComponent implements OnInit, OnDestroy {
   private readonly container: Signal<ElementRef<HTMLElement>> = viewChild.required('terminal', { read: ElementRef });
 
   waitParentChanges = 300;
+  minFontSize = 10;
+  maxFontSize = 25;
   fontSize = 14;
   fontName = 'Inconsolata';
   defaultFontName = 'monospace';
@@ -69,11 +68,6 @@ export class TerminalComponent implements OnInit, OnDestroy {
   private fitAddon: FitAddon;
   private attachAddon: XtermAttachAddon;
   private token: string;
-
-  readonly toolbarTooltip = this.translate.instant(`<b>Copy & Paste</b> <br/>
-                  Context menu copy and paste operations are disabled in the Shell. Copy and paste shortcuts for Mac are <i>Command+C</i> and <i>Command+V</i>. For most operating systems, use <i>Ctrl+Insert</i> to copy and <i>Shift+Insert</i> to paste.<br/><br/>
-                  <b>Kill Process</b> <br/>
-                  Kill process shortcut is <i>Ctrl+C</i>.`);
 
   constructor(
     private api: ApiService,
@@ -143,11 +137,6 @@ export class TerminalComponent implements OnInit, OnDestroy {
     this.resizeTerm();
   }
 
-  onRightClick(): false {
-    this.matDialog.open(CopyPasteMessageComponent);
-    return false;
-  }
-
   initializeTerminal(): void {
     this.xterm = new Terminal(this.terminalSettings);
 
@@ -196,6 +185,14 @@ export class TerminalComponent implements OnInit, OnDestroy {
     return true;
   }
 
+  changeFontSize(step: number): void {
+    const newSize = this.fontSize + step;
+    if (newSize >= this.minFontSize && newSize <= this.maxFontSize) {
+      this.fontSize = newSize;
+      this.resizeTerm();
+    }
+  }
+
   initializeWebShell(): void {
     this.shellService.connect(this.token, this.conf().connectionData);
 
@@ -209,17 +206,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
       });
   }
 
-  resetDefault(): void {
-    this.fontSize = 14;
-    this.resizeTerm();
-  }
-
   reconnect(): void {
     this.shellService.connect(this.token, this.conf().connectionData);
-  }
-
-  onFontSizeChanged(newSize: number): void {
-    this.fontSize = newSize;
-    this.resizeTerm();
   }
 }

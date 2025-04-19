@@ -13,3 +13,15 @@
 #terminal {
   height: 100%;
 }
+
+.font-size-controls {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+
+  button {
+    height: 24px;
+    min-width: 24px;
+    width: 24px;
+  }
+}
