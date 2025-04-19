@@ -263,6 +263,7 @@
   "Open a port for SSH connection requests.": "",
   "Open TrueNAS Connect": "",
   "Other Registry": "",
+  "Physical memory available": "可用物理内存",
   "Password Age": "",
   "Password Change Required": "",
   "Password Complexity Ruleset": "",
