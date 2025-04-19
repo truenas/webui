@@ -3904,7 +3904,7 @@
   "Select a subfolder from which to restore content.": "选择一个子文件夹以恢复内容。",
   "Select a user account to run the command. The                user must have permissions allowing them to run                the command or script.": "选择一个用户帐户以运行命令。用户必须具有允许他们运行命令或脚本的权限。",
   "Select action": "选择操作",
-  "Select All": "选择所有",
+  "Select All": "全选",
   "Select an existing extent.": "选择现有区块。",
   "Select an existing portal or choose <i>Create New</i> to configure a new portal.": "选择一个现有入口或选择<i>新建</i>来配置一个新 portal。",
   "Select an existing realm that was added  in <b>Directory Services > Kerberos Realms</b>.": "选择在<b>目录服务 -> Kerberos 领域</b>中添加的现有领域。",
