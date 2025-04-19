@@ -2400,7 +2400,7 @@
   "Host name of second TrueNAS controller.": "第二个 TrueNAS 控制器的主机名。",
   "Host name or IP address of the central key server.": "中央密钥服务器的主机名或 IP 地址。",
   "Host Port": "宿主端口",
-  "Host ports are listed on the left and associated container ports are on the right.    0.0.0.0 on the host side represents binding to any IP address on the host.": "主机端口列在左侧，关联的容器端口列在右侧。主机侧的 0.0.0.0 表示绑定到主机上的任何IP地址。",
+  "Host ports are listed on the left and associated container ports are on the right.    0.0.0.0 on the host side represents binding to any IP address on the host.": "主机端口列在左侧，关联的容器端口列在右侧。主机侧的 0.0.0.0 表示绑定到主机上的任何 IP 地址。",
   "Host Protocol": "宿主协议",
   "Host Sync": "同步主机",
   "Host: {host}": "主机：{host}",
