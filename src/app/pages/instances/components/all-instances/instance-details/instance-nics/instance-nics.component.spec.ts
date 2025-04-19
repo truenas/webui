@@ -12,7 +12,7 @@ import {
 import {
   DeviceActionsMenuComponent,
 } from 'app/pages/instances/components/common/device-actions-menu/device-actions-menu.component';
-import { VirtualizationVdevsStore } from 'app/pages/instances/stores/virtualization-devices.store';
+import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
 
 describe('InstanceNicsComponent', () => {
   let spectator: Spectator<InstanceNicsComponent>;
@@ -37,7 +37,7 @@ describe('InstanceNicsComponent', () => {
       MockComponent(DeviceActionsMenuComponent),
     ],
     providers: [
-      mockProvider(VirtualizationVdevsStore, {
+      mockProvider(VirtualizationDevicesStore, {
         isLoading: () => false,
         devices: () => devices,
       }),

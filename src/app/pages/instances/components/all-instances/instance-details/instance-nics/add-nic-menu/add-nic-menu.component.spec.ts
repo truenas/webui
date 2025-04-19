@@ -8,7 +8,7 @@ import { VirtualizationDevice } from 'app/interfaces/virtualization.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AddNicMenuComponent } from 'app/pages/instances/components/all-instances/instance-details/instance-nics/add-nic-menu/add-nic-menu.component';
-import { VirtualizationVdevsStore } from 'app/pages/instances/stores/virtualization-devices.store';
+import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 
 describe('AddNicMenuComponent', () => {
@@ -27,7 +27,7 @@ describe('AddNicMenuComponent', () => {
       mockProvider(VirtualizationInstancesStore, {
         selectedInstance: () => ({ id: 'my-instance' }),
       }),
-      mockProvider(VirtualizationVdevsStore, {
+      mockProvider(VirtualizationDevicesStore, {
         devices: () => [
           {
             dev_type: VirtualizationDeviceType.Nic,
@@ -68,7 +68,7 @@ describe('AddNicMenuComponent', () => {
       nic_type: VirtualizationNicType.Bridged,
       parent: 'Intel E1000',
     } as VirtualizationDevice]);
-    expect(spectator.inject(VirtualizationVdevsStore).loadDevices).toHaveBeenCalled();
+    expect(spectator.inject(VirtualizationDevicesStore).loadDevices).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('NIC was added');
   });
 });

@@ -18,7 +18,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { getDeviceDescription } from 'app/pages/instances/components/common/utils/get-device-description.utils';
-import { VirtualizationVdevsStore } from 'app/pages/instances/stores/virtualization-devices.store';
+import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -70,7 +70,7 @@ export class DeviceActionsMenuComponent {
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
-    private deviceStore: VirtualizationVdevsStore,
+    private devicesStore: VirtualizationDevicesStore,
     private instancesStore: VirtualizationInstancesStore,
     private loader: LoaderService,
   ) {}
@@ -107,7 +107,7 @@ export class DeviceActionsMenuComponent {
         this.errorHandler.withErrorHandler(),
         tap(() => {
           this.snackbar.success(this.translate.instant('Device deleted'));
-          this.deviceStore.deviceDeleted(this.device().name);
+          this.devicesStore.deviceDeleted(this.device().name);
         }),
       );
   }

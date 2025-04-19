@@ -122,8 +122,8 @@ describe('StorageHealthCardComponent', () => {
     });
 
     it('shows pool status string', () => {
-      const detailsItem = spectator.query(byText('Pool Status:'))!.parentElement!;
-      expect(detailsItem.querySelector('.value')).toHaveText('Online.  Total ZFS Errors: 3');
+      const statusEl = spectator.query('.status');
+      expect(statusEl).toHaveText('Online, 3 errors.');
     });
   });
 

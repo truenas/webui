@@ -28,7 +28,7 @@ import {
   InstanceDiskFormComponent,
 } from 'app/pages/instances/components/all-instances/instance-details/instance-disks/instance-disk-form/instance-disk-form.component';
 import { DeviceActionsMenuComponent } from 'app/pages/instances/components/common/device-actions-menu/device-actions-menu.component';
-import { VirtualizationVdevsStore } from 'app/pages/instances/stores/virtualization-devices.store';
+import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 
 @UntilDestroy()
@@ -56,7 +56,7 @@ import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtual
 export class InstanceDisksComponent {
   readonly instance = input.required<VirtualizationInstance>();
 
-  protected readonly isLoadingDevices = this.deviceStore.isLoading;
+  protected readonly isLoadingDevices = this.devicesStore.isLoading;
   protected readonly diskIoBusLabels = diskIoBusLabels;
 
   protected readonly disksDisabledMessage = this.translate.instant(
@@ -74,11 +74,11 @@ export class InstanceDisksComponent {
     private slideIn: SlideIn,
     private matDialog: MatDialog,
     private translate: TranslateService,
-    private deviceStore: VirtualizationVdevsStore,
+    private devicesStore: VirtualizationDevicesStore,
     private instanceStore: VirtualizationInstancesStore,
   ) {}
 
-  protected readonly visibleDisks = computed(() => this.deviceStore.devices().filter(
+  protected readonly visibleDisks = computed(() => this.devicesStore.devices().filter(
     (device): device is VirtualizationDisk => device.dev_type === VirtualizationDeviceType.Disk && !!device.source,
   ));
 
@@ -118,12 +118,12 @@ export class InstanceDisksComponent {
     })
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe(() => this.deviceStore.loadDevices());
+      .subscribe(() => this.devicesStore.loadDevices());
   }
 
   private openDiskForm(disk?: VirtualizationDisk): void {
     this.slideIn.open(InstanceDiskFormComponent, { data: { disk, instance: this.instance() } })
       .pipe(filter((result) => !!result.response), untilDestroyed(this))
-      .subscribe(() => this.deviceStore.loadDevices());
+      .subscribe(() => this.devicesStore.loadDevices());
   }
 }

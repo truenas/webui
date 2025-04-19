@@ -7,7 +7,7 @@ import {
 import { InstanceShellComponent } from 'app/pages/instances/components/instance-shell/instance-shell.component';
 import { InstanceWizardComponent } from 'app/pages/instances/components/instance-wizard/instance-wizard.component';
 import { VirtualizationConfigStore } from 'app/pages/instances/stores/virtualization-config.store';
-import { VirtualizationVdevsStore } from 'app/pages/instances/stores/virtualization-devices.store';
+import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 
 export const instancesRoutes: Routes = [{
@@ -16,7 +16,7 @@ export const instancesRoutes: Routes = [{
   providers: [
     VirtualizationConfigStore,
     VirtualizationInstancesStore,
-    VirtualizationVdevsStore,
+    VirtualizationDevicesStore,
   ],
   children: [
     {

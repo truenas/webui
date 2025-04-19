@@ -17,7 +17,7 @@ import {
 import {
   DeviceActionsMenuComponent,
 } from 'app/pages/instances/components/common/device-actions-menu/device-actions-menu.component';
-import { VirtualizationVdevsStore } from 'app/pages/instances/stores/virtualization-devices.store';
+import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 
 @UntilDestroy()
@@ -40,16 +40,16 @@ import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtual
   ],
 })
 export class InstanceProxiesComponent {
-  protected readonly isLoadingDevices = this.deviceStore.isLoading;
+  protected readonly isLoadingDevices = this.devicesStore.isLoading;
 
   constructor(
     private slideIn: SlideIn,
-    private deviceStore: VirtualizationVdevsStore,
+    private devicesStore: VirtualizationDevicesStore,
     private instancesStore: VirtualizationInstancesStore,
   ) {}
 
   protected readonly proxies = computed(() => {
-    return this.deviceStore.devices().filter((device) => {
+    return this.devicesStore.devices().filter((device) => {
       return device.dev_type === VirtualizationDeviceType.Proxy;
     });
   });
@@ -71,6 +71,6 @@ export class InstanceProxiesComponent {
     this.slideIn
       .open(InstanceProxyFormComponent, { data: { proxy, instanceId } })
       .pipe(filter((result) => !!result.response), untilDestroyed(this))
-      .subscribe(() => this.deviceStore.loadDevices());
+      .subscribe(() => this.devicesStore.loadDevices());
   }
 }

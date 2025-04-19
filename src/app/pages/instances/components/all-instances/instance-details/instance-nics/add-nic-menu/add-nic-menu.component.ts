@@ -18,7 +18,7 @@ import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { VirtualizationVdevsStore } from 'app/pages/instances/stores/virtualization-devices.store';
+import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -49,11 +49,11 @@ export class AddNicMenuComponent {
   protected readonly macVlanNicTypeLabel = virtualizationNicTypeLabels.get(VirtualizationNicType.Macvlan)
     || VirtualizationNicType.Macvlan;
 
-  protected readonly isLoadingDevices = this.deviceStore.isLoading;
+  protected readonly isLoadingDevices = this.devicesStore.isLoading;
 
   protected readonly availableBridgedNics = computed(() => {
     const choices = Object.values(this.bridgedChoices());
-    const existingItems = this.deviceStore.devices()
+    const existingItems = this.devicesStore.devices()
       .filter((device) => device.dev_type === VirtualizationDeviceType.Nic
         && device.nic_type === VirtualizationNicType.Bridged) as VirtualizationNic[];
 
@@ -62,7 +62,7 @@ export class AddNicMenuComponent {
 
   protected readonly availableMacVlanNics = computed(() => {
     const choices = Object.values(this.macVlanChoices());
-    const existingItems = this.deviceStore.devices()
+    const existingItems = this.devicesStore.devices()
       .filter((device) => device.dev_type === VirtualizationDeviceType.Nic
         && device.nic_type === VirtualizationNicType.Macvlan) as VirtualizationNic[];
 
@@ -79,7 +79,7 @@ export class AddNicMenuComponent {
     private loader: LoaderService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
-    private deviceStore: VirtualizationVdevsStore,
+    private devicesStore: VirtualizationDevicesStore,
     private instancesStore: VirtualizationInstancesStore,
   ) {}
 
@@ -117,7 +117,7 @@ export class AddNicMenuComponent {
       )
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('NIC was added'));
-        this.deviceStore.loadDevices();
+        this.devicesStore.loadDevices();
       });
   }
 }

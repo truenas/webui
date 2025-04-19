@@ -1,11 +1,17 @@
 <mat-card class="card" [ixUiSearch]="searchableElements.elements.topology">
   <mat-card-header>
     <h3 mat-card-title>
-      <span [matTooltip]="'A pool is made of VDEVs (virtual devices). Each VDEV is a group of drives working together' | translate">
+      <span>
         {{ 'VDEVs' | translate }}
       </span>
 
       <ix-pool-card-icon [type]="iconType()" [tooltip]="iconTooltip()"></ix-pool-card-icon>
+
+      <ix-icon
+        name="help"
+        class="pool-icon"
+        [matTooltip]="'A pool is made of VDEVs (virtual devices). Each VDEV is a group of drives working together' | translate"
+      ></ix-icon>
     </h3>
 
     <button

@@ -54,15 +54,8 @@
 
   <mat-card-content class="card-content">
     <div class="details-item">
-      <div class="label">{{ 'Pool Status' | translate }}:</div>
-      <div class="value font-bold">
-        {{ pool().status | mapValue: poolStatusLabels | translate }}.
-
-        @if (totalZfsErrors > 0) {
-          {{ 'Total ZFS Errors: {number}' | translate: { number: totalZfsErrors | number } }}
-        } @else {
-          {{ 'No errors' | translate }}
-        }
+      <div class="label status">
+        {{ '{status}, {errorCount, plural, =0 {no errors} other {# errors}}.' | translate:{ status: (pool().status | mapValue: poolStatusLabels | translate), errorCount: totalZfsErrors } }}
       </div>
     </div>
 

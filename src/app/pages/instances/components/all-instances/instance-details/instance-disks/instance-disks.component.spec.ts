@@ -21,7 +21,7 @@ import {
 import {
   DeviceActionsMenuComponent,
 } from 'app/pages/instances/components/common/device-actions-menu/device-actions-menu.component';
-import { VirtualizationVdevsStore } from 'app/pages/instances/stores/virtualization-devices.store';
+import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 
 describe('InstanceDisksComponent', () => {
@@ -51,7 +51,7 @@ describe('InstanceDisksComponent', () => {
       mockProvider(VirtualizationInstancesStore, {
         selectedInstance: () => ({ id: 'my-instance', type: VirtualizationType.Container }),
       }),
-      mockProvider(VirtualizationVdevsStore, {
+      mockProvider(VirtualizationDevicesStore, {
         isLoading: () => false,
         devices: () => disks,
         loadDevices: jest.fn(),

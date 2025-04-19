@@ -4,6 +4,13 @@
   display: flex;
 }
 
+.pool-icon {
+  cursor: help;
+  height: 16px;
+  margin-top: 2px;
+  width: 16px;
+}
+
 .card {
   @include details-card();
   flex: 1;

@@ -16,7 +16,7 @@ import {
 import {
   PciPassthroughDialog,
 } from 'app/pages/instances/components/common/pci-passthough-dialog/pci-passthrough-dialog.component';
-import { VirtualizationVdevsStore } from 'app/pages/instances/stores/virtualization-devices.store';
+import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 
 describe('AddDeviceMenuComponent', () => {
@@ -54,7 +54,7 @@ describe('AddDeviceMenuComponent', () => {
       mockProvider(VirtualizationInstancesStore, {
         selectedInstance,
       }),
-      mockProvider(VirtualizationVdevsStore, {
+      mockProvider(VirtualizationDevicesStore, {
         devices: () => [
           {
             dev_type: VirtualizationDeviceType.Usb,
@@ -104,7 +104,7 @@ describe('AddDeviceMenuComponent', () => {
       dev_type: VirtualizationDeviceType.Usb,
       product_id: 'new',
     } as VirtualizationDevice]);
-    expect(spectator.inject(VirtualizationVdevsStore).loadDevices).toHaveBeenCalled();
+    expect(spectator.inject(VirtualizationDevicesStore).loadDevices).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Device was added');
   });
 
@@ -118,7 +118,7 @@ describe('AddDeviceMenuComponent', () => {
       dev_type: VirtualizationDeviceType.Gpu,
       pci: 'pci_0000_01_00_1',
     } as VirtualizationDevice]);
-    expect(spectator.inject(VirtualizationVdevsStore).loadDevices).toHaveBeenCalled();
+    expect(spectator.inject(VirtualizationDevicesStore).loadDevices).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Device was added');
   });
 

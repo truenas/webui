@@ -17,7 +17,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import {
   DeviceActionsMenuComponent,
 } from 'app/pages/instances/components/common/device-actions-menu/device-actions-menu.component';
-import { VirtualizationVdevsStore } from 'app/pages/instances/stores/virtualization-devices.store';
+import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 
 describe('DeviceActionsMenuComponent', () => {
@@ -40,7 +40,7 @@ describe('DeviceActionsMenuComponent', () => {
       mockProvider(VirtualizationInstancesStore, {
         selectedInstance,
       }),
-      mockProvider(VirtualizationVdevsStore, {
+      mockProvider(VirtualizationDevicesStore, {
         loadDevices: jest.fn(),
       }),
     ],
@@ -94,7 +94,7 @@ describe('DeviceActionsMenuComponent', () => {
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('virt.instance.device_delete', ['my-instance', 'my-device']);
-      expect(spectator.inject(VirtualizationVdevsStore).deviceDeleted).toHaveBeenCalledWith('my-device');
+      expect(spectator.inject(VirtualizationDevicesStore).deviceDeleted).toHaveBeenCalledWith('my-device');
     });
   });
 
