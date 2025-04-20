@@ -25,7 +25,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './delete-extent-dialog.component.html',
   styleUrls: ['./delete-extent-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogTitle,
     MatDialogContent,

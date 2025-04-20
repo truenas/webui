@@ -39,7 +39,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   selector: 'ix-add-device-menu',
   templateUrl: './add-device-menu.component.html',
   styleUrls: ['./add-device-menu.component.scss'],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatButton,
@@ -58,11 +57,11 @@ export class AddDeviceMenuComponent {
   // TODO: Stop hardcoding params
   private readonly gpuChoices = toSignal(this.api.call('virt.device.gpu_choices', [VirtualizationGpuType.Physical]), { initialValue: {} });
 
-  protected readonly isLoadingDevices = this.deviceStore.isLoading;
+  protected readonly isLoadingDevices = this.devicesStore.isLoading;
 
   protected readonly availableUsbDevices = computed(() => {
     const usbChoices = Object.values(this.usbChoices());
-    const existingUsbDevices = this.deviceStore.devices()
+    const existingUsbDevices = this.devicesStore.devices()
       .filter((device) => device.dev_type === VirtualizationDeviceType.Usb);
 
     return usbChoices.filter((usb) => {
@@ -72,7 +71,7 @@ export class AddDeviceMenuComponent {
 
   protected readonly availableGpuDevices = computed(() => {
     const gpuChoices = this.gpuChoices();
-    const usedGpus = this.deviceStore.devices()
+    const usedGpus = this.devicesStore.devices()
       .filter((device) => device.dev_type === VirtualizationDeviceType.Gpu);
 
     return pickBy(gpuChoices, (_, pci) => {
@@ -81,7 +80,7 @@ export class AddDeviceMenuComponent {
   });
 
   protected canAddTpm = computed(() => {
-    return !this.deviceStore.devices().some((device) => device.dev_type === VirtualizationDeviceType.Tpm);
+    return !this.devicesStore.devices().some((device) => device.dev_type === VirtualizationDeviceType.Tpm);
   });
 
   protected isInstanceStopped = computed(() => {
@@ -104,7 +103,7 @@ export class AddDeviceMenuComponent {
     private loader: LoaderService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
-    private deviceStore: VirtualizationDevicesStore,
+    private devicesStore: VirtualizationDevicesStore,
     private instancesStore: VirtualizationInstancesStore,
     private matDialog: MatDialog,
   ) {}
@@ -130,7 +129,7 @@ export class AddDeviceMenuComponent {
   }
 
   protected addPciPassthrough(): void {
-    const existingDevices = this.deviceStore.devices()
+    const existingDevices = this.devicesStore.devices()
       .filter((device) => device.dev_type === VirtualizationDeviceType.Pci)
       .map((device) => device.address);
 
@@ -169,7 +168,7 @@ export class AddDeviceMenuComponent {
       )
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Device was added'));
-        this.deviceStore.loadDevices();
+        this.devicesStore.loadDevices();
       });
   }
 }

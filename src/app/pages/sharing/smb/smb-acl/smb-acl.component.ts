@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit, signal,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -24,7 +24,6 @@ import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { SmbSharesecAce } from 'app/interfaces/smb-share.interface';
 import { User } from 'app/interfaces/user.interface';
 import { GroupComboboxProvider } from 'app/modules/forms/ix-forms/classes/group-combobox-provider';
-import { SmbBothComboboxProvider } from 'app/modules/forms/ix-forms/classes/smb-both-combobox-provider';
 import { UserComboboxProvider } from 'app/modules/forms/ix-forms/classes/user-combobox-provider';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
@@ -38,13 +37,14 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UserService } from 'app/services/user.service';
 
 type NameOrId = string | number | null;
 
 interface FormAclEntry {
   ae_who_sid: string;
-  ae_who: NfsAclTag.Everyone | NfsAclTag.UserGroup | NfsAclTag.User | NfsAclTag.Both | null;
+  ae_who: NfsAclTag.Everyone | NfsAclTag.UserGroup | NfsAclTag.User | null;
   ae_perm: SmbSharesecPermission;
   ae_type: SmbSharesecType;
   user: NameOrId;
@@ -58,7 +58,6 @@ interface FormAclEntry {
   templateUrl: './smb-acl.component.html',
   styleUrls: ['./smb-acl.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
@@ -82,7 +81,7 @@ export class SmbAclComponent implements OnInit {
     entries: this.formBuilder.array<FormAclEntry>([]),
   });
 
-  isLoading = false;
+  protected isLoading = signal(false);
   protected shareName: string;
 
   private shareAclName: string;
@@ -117,7 +116,6 @@ export class SmbAclComponent implements OnInit {
 
   readonly helptext = helptextSharingSmb;
   readonly nfsAclTag = NfsAclTag;
-  readonly bothProvider = new SmbBothComboboxProvider(this.userService, 'uid', 'gid');
   readonly userProvider = new UserComboboxProvider(
     this.userService,
     { valueField: 'uid', queryType: ComboboxQueryType.Smb },
@@ -127,9 +125,9 @@ export class SmbAclComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private cdr: ChangeDetectorRef,
     private api: ApiService,
-    private errorHandler: FormErrorHandlerService,
+    private formErrorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     private userService: UserService,
     public slideInRef: SlideInRef<string, boolean>,
@@ -169,7 +167,7 @@ export class SmbAclComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
 
     of(undefined)
       .pipe(mergeMap(() => this.getAclEntriesFromForm()))
@@ -177,19 +175,18 @@ export class SmbAclComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
-          this.isLoading = false;
+          this.isLoading.set(false);
           this.slideInRef.close({ response: true, error: null });
         },
         error: (error: unknown) => {
-          this.isLoading = false;
-          this.errorHandler.handleValidationErrors(error, this.form);
-          this.cdr.markForCheck();
+          this.isLoading.set(false);
+          this.formErrorHandler.handleValidationErrors(error, this.form);
         },
       });
   }
 
   private loadSmbAcl(shareName: string): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
     this.api.call('sharing.smb.getacl', [{ share_name: shareName }])
       .pipe(untilDestroyed(this))
       .subscribe({
@@ -210,9 +207,9 @@ export class SmbAclComponent implements OnInit {
           });
           this.extractOptionFromAcl(shareAcl.share_acl);
         },
-        error: () => {
-          this.isLoading = false;
-          this.cdr.markForCheck();
+        error: (error: unknown) => {
+          this.errorHandler.showErrorModal(error);
+          this.isLoading.set(false);
         },
       });
   }
@@ -243,8 +240,7 @@ export class SmbAclComponent implements OnInit {
             .pw_uid;
         }
 
-        // TODO: Backend does not yet support BOTH value
-        result.ae_who_id = { id_type: ace.ae_who === NfsAclTag.Both ? NfsAclTag.UserGroup : ace.ae_who, id };
+        result.ae_who_id = { id_type: ace.ae_who, id };
       }
       results.push(result);
     }
@@ -302,8 +298,7 @@ export class SmbAclComponent implements OnInit {
           queryType: ComboboxQueryType.Smb,
         });
 
-        this.isLoading = false;
-        this.cdr.markForCheck();
+        this.isLoading.set(false);
       });
   }
 }

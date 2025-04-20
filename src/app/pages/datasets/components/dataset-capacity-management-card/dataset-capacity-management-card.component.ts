@@ -38,7 +38,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './dataset-capacity-management-card.component.html',
   styleUrls: ['./dataset-capacity-management-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatCardTitle,

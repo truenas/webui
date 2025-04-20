@@ -1,6 +1,7 @@
 import { NgClass } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  signal,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatIconButton, MatButton } from '@angular/material/button';
@@ -37,7 +38,6 @@ import { UserService } from 'app/services/user.service';
   templateUrl: './save-as-preset-modal.component.html',
   styleUrls: ['./save-as-preset-modal.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogTitle,
     ReactiveFormsModule,
@@ -60,7 +60,7 @@ export class SaveAsPresetModalComponent implements OnInit {
   });
 
   presets: AclTemplateByPath[] = [];
-  isFormLoading = false;
+  protected isFormLoading = signal(false);
   acl: Acl;
 
   constructor(
@@ -81,7 +81,7 @@ export class SaveAsPresetModalComponent implements OnInit {
     this.store.state$
       .pipe(untilDestroyed(this))
       .subscribe((state) => {
-        this.isFormLoading = state.isLoading;
+        this.isFormLoading.set(state.isLoading);
         this.acl = state.acl;
         this.cdr.markForCheck();
       });

@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef, Component, OnInit,
+  signal,
 } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -34,7 +35,6 @@ import { IscsiService } from 'app/services/iscsi.service';
   templateUrl: './portal-form.component.html',
   styleUrls: ['./portal-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
@@ -53,7 +53,7 @@ import { IscsiService } from 'app/services/iscsi.service';
   ],
 })
 export class PortalFormComponent implements OnInit {
-  isLoading = false;
+  protected isLoading = signal(false);
   listen: IscsiInterface[] = [];
 
   get isNew(): boolean {
@@ -125,7 +125,6 @@ export class PortalFormComponent implements OnInit {
     this.form.patchValue({
       ...portal,
     });
-    this.cdr.markForCheck();
   }
 
   onAdd(): void {
@@ -145,7 +144,7 @@ export class PortalFormComponent implements OnInit {
       listen: values.ip.map((ip) => ({ ip })) as IscsiInterface[],
     };
 
-    this.isLoading = true;
+    this.isLoading.set(true);
     let request$: Observable<unknown>;
     if (this.editingIscsiPortal) {
       request$ = this.api.call('iscsi.portal.update', [this.editingIscsiPortal.id, params]);
@@ -155,14 +154,12 @@ export class PortalFormComponent implements OnInit {
 
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
-        this.isLoading = false;
-        this.cdr.markForCheck();
+        this.isLoading.set(false);
         this.slideInRef.close({ response: true, error: null });
       },
       error: (error: unknown) => {
-        this.isLoading = false;
+        this.isLoading.set(false);
         this.errorHandler.handleValidationErrors(error, this.form);
-        this.cdr.markForCheck();
       },
     });
   }

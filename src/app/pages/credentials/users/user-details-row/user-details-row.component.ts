@@ -16,6 +16,7 @@ import { Role } from 'app/enums/role.enum';
 import { ActionOption } from 'app/interfaces/option.interface';
 import { User } from 'app/interfaces/user.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
+import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { IxTableExpandableRowComponent } from 'app/modules/ix-table/components/ix-table-expandable-row/ix-table-expandable-row.component';
@@ -26,9 +27,9 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { OneTimePasswordCreatedDialog } from 'app/pages/credentials/users/one-time-password-created-dialog/one-time-password-created-dialog.component';
 import {
-  DeleteUserDialog,
+  OldDeleteUserDialog,
 } from 'app/pages/credentials/users/user-details-row/delete-user-dialog/delete-user-dialog.component';
-import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
+import { OldUserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UrlOptionsService } from 'app/services/url-options.service';
 
@@ -37,7 +38,6 @@ import { UrlOptionsService } from 'app/services/url-options.service';
   selector: 'ix-user-details-row',
   templateUrl: './user-details-row.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxTableExpandableRowComponent,
     MatButton,
@@ -45,6 +45,9 @@ import { UrlOptionsService } from 'app/services/url-options.service';
     IxIconComponent,
     RequiresRolesDirective,
     TranslateModule,
+  ],
+  providers: [
+    FormatDateTimePipe,
   ],
 })
 export class UserDetailsRowComponent implements OnInit {
@@ -62,6 +65,7 @@ export class UserDetailsRowComponent implements OnInit {
     private slideIn: SlideIn,
     private matDialog: MatDialog,
     private yesNoPipe: YesNoPipe,
+    private formatDateTime: FormatDateTimePipe,
     private urlOptions: UrlOptionsService,
     private authService: AuthService,
     private router: Router,
@@ -106,6 +110,32 @@ export class UserDetailsRowComponent implements OnInit {
         label: 'SSH',
         value: this.getSshStatus(user),
       },
+      {
+        label: this.translate.instant('Password History'),
+        value: user.password_history?.length >= 0
+          ? this.translate.instant('{n, plural, =0 {No History} one {# entry} other {# entries}}', {
+            n: user.password_history.length,
+          })
+          : '–',
+      },
+      {
+        label: this.translate.instant('Password Age'),
+        value: !user.password_age && user.password_age !== 0
+          ? '–'
+          : this.translate.instant('{n, plural, =0 {Less than a day} one {# day} other {# days} }', {
+            n: user.password_age,
+          }),
+      },
+      {
+        label: this.translate.instant('Last Password Change'),
+        value: user.last_password_change?.$date
+          ? this.formatDateTime.transform(user.last_password_change.$date)
+          : '–',
+      },
+      {
+        label: this.translate.instant('Password Change Required'),
+        value: this.yesNoPipe.transform(user.password_change_required),
+      },
     ];
 
     if (user.sudo_commands?.length > 0) {
@@ -126,11 +156,11 @@ export class UserDetailsRowComponent implements OnInit {
   }
 
   doEdit(user: User): void {
-    this.slideIn.open(UserFormComponent, { wide: true, data: user });
+    this.slideIn.open(OldUserFormComponent, { wide: true, data: user });
   }
 
   doDelete(user: User): void {
-    this.matDialog.open(DeleteUserDialog, {
+    this.matDialog.open(OldDeleteUserDialog, {
       data: user,
     })
       .afterClosed()

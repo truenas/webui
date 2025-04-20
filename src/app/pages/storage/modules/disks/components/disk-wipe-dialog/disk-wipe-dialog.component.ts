@@ -26,7 +26,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './disk-wipe-dialog.component.html',
   styleUrls: ['./disk-wipe-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogTitle,
     WarningComponent,
@@ -107,7 +106,7 @@ export class DiskWipeDialog {
         this.dialogService.generalDialog({
           title: this.title,
           message: helptextDisks.diskWipeDialogForm.infoContent,
-          hideCancel: true,
+          cancelBtnMsg: this.translate.instant('Close'),
         });
         this.dialogRef.close(true);
       });

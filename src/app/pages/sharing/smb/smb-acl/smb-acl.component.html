@@ -1,7 +1,7 @@
 <ix-modal-header
   [requiredRoles]="requiredRoles"
   [title]="'Share ACL for {share}' | translate: { share: shareName }"
-  [loading]="isLoading"
+  [loading]="isLoading()"
 ></ix-modal-header>
 
 <mat-card>
@@ -13,7 +13,7 @@
         <ix-list
           formArrayName="entries"
           [formArray]="form.get('entries')"
-          [empty]="form.controls.entries.length === 0 && !isLoading"
+          [empty]="form.controls.entries.length === 0 && !isLoading()"
           [label]="'Add entry' | translate"
           (add)="addAce()"
         >
@@ -57,17 +57,6 @@
                     [required]="true"
                   ></ix-combobox>
                 }
-
-                <!-- TODO: Delete after the backend has support for distinguishing user from group -->
-                @if (bothProvider && entry.controls.ae_who.value === nfsAclTag.Both) {
-                  <ix-combobox
-                    formControlName="both"
-                    [label]="'Unknown' | translate"
-                    [provider]="bothProvider"
-                    [allowCustomValue]="true"
-                    [required]="true"
-                  ></ix-combobox>
-                }
               </div>
 
               <div class="entry-row">
@@ -103,7 +92,7 @@
           type="submit"
           color="primary"
           ixTest="save"
-          [disabled]="form.invalid || isLoading"
+          [disabled]="form.invalid || isLoading()"
         >
           {{ 'Save' | translate }}
         </button>

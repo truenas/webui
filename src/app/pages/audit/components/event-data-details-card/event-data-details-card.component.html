@@ -4,7 +4,7 @@
       {{ 'Event Data' | translate }}
     </h3>
 
-    <ix-copy-button [text]="yamlContent()" [jsonText]="log().event_data"></ix-copy-button>
+    <ix-copy-button [text]="yamlContent()" [jsonText]="eventData()"></ix-copy-button>
   </mat-card-header>
   <mat-card-content>
     <pre>{{ yamlContent() }}</pre>

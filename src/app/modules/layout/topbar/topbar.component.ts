@@ -16,6 +16,7 @@ import {
 } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { JobState } from 'app/enums/job-state.enum';
+import { helptextGlobal } from 'app/helptext/global-helptext';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { AlertSlice, selectImportantUnreadAlertsCount } from 'app/modules/alerts/store/alert.selectors';
 import { RebootRequiredDialog } from 'app/modules/dialog/components/reboot-required-dialog/reboot-required-dialog.component';
@@ -53,7 +54,6 @@ import { TruenasLogoComponent } from './truenas-logo/truenas-logo.component';
   templateUrl: './topbar.component.html',
   styleUrls: ['./topbar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatToolbar,
     MatToolbarRow,
@@ -82,7 +82,7 @@ export class TopbarComponent implements OnInit {
   updateIsDone: Subscription;
 
   updateDialog: MatDialogRef<UpdateDialog>;
-  isFailoverLicensed = false;
+  isHaLicensed = false;
   updateIsRunning = false;
   systemWillRestart = false;
   updateNotificationSent = false;
@@ -100,6 +100,16 @@ export class TopbarComponent implements OnInit {
 
   readonly alertBadgeCount$ = this.store$.select(selectImportantUnreadAlertsCount);
   readonly hasConsoleFooter$ = this.store$.select(selectHasConsoleFooter);
+
+  updateText = computed(() => {
+    if (this.isHaLicensed || !this.systemWillRestart) {
+      return this.translate.instant(helptextGlobal.sysUpdateMessage);
+    }
+    return [
+      this.translate.instant(helptextGlobal.sysUpdateMessage),
+      this.translate.instant(helptextGlobal.sysUpdateMessagePt2),
+    ].join(' ');
+  });
 
   constructor(
     private router: Router,
@@ -120,7 +130,7 @@ export class TopbarComponent implements OnInit {
   ngOnInit(): void {
     if (this.systemGeneralService.isEnterprise) {
       this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)).subscribe((isHaLicensed) => {
-        this.isFailoverLicensed = isHaLicensed;
+        this.isHaLicensed = isHaLicensed;
         this.cdr.markForCheck();
       });
     }
@@ -141,14 +151,14 @@ export class TopbarComponent implements OnInit {
       }
 
       // When update starts on HA system, listen for 'finish', then quit listening
-      if (this.isFailoverLicensed) {
+      if (this.isHaLicensed) {
         this.updateIsDone = this.systemGeneralService.updateIsDone$.pipe(untilDestroyed(this)).subscribe(() => {
           this.updateIsRunning = false;
           this.updateIsDone.unsubscribe();
         });
       }
       if (
-        !this.isFailoverLicensed
+        !this.isHaLicensed
         && job?.arguments[0]
         && (job.arguments[0] as { reboot: boolean }).reboot
       ) {
@@ -186,20 +196,19 @@ export class TopbarComponent implements OnInit {
   }
 
   showUpdateDialog(): void {
-    const message = this.isFailoverLicensed || !this.systemWillRestart
-      ? helptextTopbar.updateRunning_dialog.message
-      : this.translate.instant(helptextTopbar.updateRunning_dialog.message)
-        + '<br />'
-        + this.translate.instant(helptextTopbar.updateRunning_dialog.message_pt2);
-    const title = helptextTopbar.updateRunning_dialog.title;
+    const title = this.translate.instant('Update in Progress');
+    const message = this.updateText();
 
     this.updateDialog = this.matDialog.open(UpdateDialog, {
       width: '400px',
       hasBackdrop: true,
       panelClass: 'topbar-panel',
       position: topbarDialogPosition,
+      data: {
+        title,
+        message,
+      },
     });
-    this.updateDialog.componentInstance.setMessage({ title, message });
   }
 
   showRebootInfoDialog(): void {

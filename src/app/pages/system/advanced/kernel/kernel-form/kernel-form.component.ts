@@ -1,5 +1,5 @@
 import {
-  Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit,
+  Component, ChangeDetectionStrategy, OnInit, signal,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -28,7 +28,6 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
   selector: 'ix-kernel-form',
   templateUrl: 'kernel-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
@@ -46,7 +45,7 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
 export class KernelFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.SystemAdvancedWrite];
 
-  isFormLoading = false;
+  protected isFormLoading = signal(false);
   form = this.fb.nonNullable.group({
     debugkernel: [false],
   });
@@ -61,7 +60,6 @@ export class KernelFormComponent implements OnInit {
     private fb: FormBuilder,
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
-    private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private snackbar: SnackbarService,
     private store$: Store<AppState>,
@@ -84,7 +82,6 @@ export class KernelFormComponent implements OnInit {
     this.form.patchValue({
       debugkernel: this.debugkernel,
     });
-    this.cdr.markForCheck();
   }
 
   onSubmit(): void {
@@ -92,19 +89,17 @@ export class KernelFormComponent implements OnInit {
     const commonBody = {
       debugkernel: values.debugkernel,
     };
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
     this.api.call('system.advanced.update', [commonBody]).pipe(untilDestroyed(this)).subscribe({
       next: () => {
-        this.isFormLoading = false;
+        this.isFormLoading.set(false);
         this.snackbar.success(this.translate.instant('Settings saved'));
-        this.cdr.markForCheck();
         this.slideInRef.close({ response: true, error: null });
         this.store$.dispatch(advancedConfigUpdated());
       },
       error: (error: unknown) => {
-        this.isFormLoading = false;
+        this.isFormLoading.set(false);
         this.errorHandler.showErrorModal(error);
-        this.cdr.markForCheck();
       },
     });
   }

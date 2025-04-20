@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit, signal,
 } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -51,7 +51,6 @@ type FormValue = CloudBackupFormComponent['form']['value'];
   templateUrl: './cloud-backup-form.component.html',
   styleUrls: ['./cloud-backup-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
@@ -96,6 +95,7 @@ export class CloudBackupFormComponent implements OnInit {
 
   protected form = this.fb.group({
     path: ['', [Validators.required]],
+    cache_path: [null as string | null],
     credentials: new FormControl(null as number | null, [Validators.required]),
     schedule: [CronPresetValue.Daily, [Validators.required]],
     exclude: [[] as string[]],
@@ -115,7 +115,7 @@ export class CloudBackupFormComponent implements OnInit {
     bucket_input: ['', [Validators.required]],
   });
 
-  isLoading = false;
+  protected isLoading = signal(false);
   editingTask: CloudBackup | undefined;
 
   bucketOptions$ = of<SelectOption[]>([]);
@@ -127,6 +127,7 @@ export class CloudBackupFormComponent implements OnInit {
   );
 
   fileNodeProvider: TreeNodeProvider;
+  directoriesNodeProvider: TreeNodeProvider;
   bucketNodeProvider: TreeNodeProvider;
 
   readonly newOption = newOption;
@@ -139,7 +140,6 @@ export class CloudBackupFormComponent implements OnInit {
     private translate: TranslateService,
     private fb: FormBuilder,
     private api: ApiService,
-    private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
     private snackbar: SnackbarService,
     private filesystemService: FilesystemService,
@@ -154,6 +154,7 @@ export class CloudBackupFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.setFileNodeProvider();
+    this.setDirectoriesNodeProvider();
     this.setBucketNodeProvider();
 
     this.listenForCredentialsChanges();
@@ -169,7 +170,7 @@ export class CloudBackupFormComponent implements OnInit {
   }
 
   loadBucketOptions(credentialId: number): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
     this.cloudCredentialService.getBuckets(credentialId)
       .pipe(untilDestroyed(this))
       .subscribe({
@@ -181,14 +182,12 @@ export class CloudBackupFormComponent implements OnInit {
           }));
           bucketOptions.unshift(this.newBucketOption);
           this.bucketOptions$ = of(bucketOptions);
-          this.isLoading = false;
+          this.isLoading.set(false);
           this.form.controls.bucket.enable();
           this.form.controls.bucket_input.disable();
-          this.cdr.markForCheck();
         },
         error: (error: unknown) => {
           console.error(error);
-          this.isLoading = false;
           this.bucketOptions$ = of([this.newBucketOption]);
           this.bucketOptions$ = of([
             {
@@ -196,7 +195,7 @@ export class CloudBackupFormComponent implements OnInit {
               value: 'whatever',
               disabled: false,
             }]);
-          this.cdr.markForCheck();
+          this.isLoading.set(false);
         },
       });
   }
@@ -249,6 +248,7 @@ export class CloudBackupFormComponent implements OnInit {
       ...editingTask,
       schedule: scheduleToCrontab(editingTask.schedule) as CronPresetValue,
       path: editingTask.path,
+      cache_path: editingTask.cache_path,
       credentials: editingTask.credentials.id,
       folder: editingTask.attributes.folder as string,
       bucket: editingTask.attributes.bucket === newOption ? '' : editingTask.attributes.bucket as string || '',
@@ -259,7 +259,7 @@ export class CloudBackupFormComponent implements OnInit {
     const payload = this.prepareData(this.form.value);
     let request$ = this.api.call('cloud_backup.create', [payload]);
 
-    this.isLoading = true;
+    this.isLoading.set(true);
 
     if (this.editingTask) {
       request$ = this.api.call('cloud_backup.update', [this.editingTask.id, payload]);
@@ -272,14 +272,12 @@ export class CloudBackupFormComponent implements OnInit {
         } else {
           this.snackbar.success(this.translate.instant('Task updated'));
         }
-        this.isLoading = false;
-        this.cdr.markForCheck();
+        this.isLoading.set(false);
         this.slideInRef.close({ response, error: null });
       },
       error: (error: unknown) => {
-        this.isLoading = false;
+        this.isLoading.set(false);
         this.errorHandler.handleValidationErrors(error, this.form);
-        this.cdr.markForCheck();
       },
     });
   }
@@ -370,6 +368,12 @@ export class CloudBackupFormComponent implements OnInit {
   private setFileNodeProvider(): void {
     this.fileNodeProvider = this.filesystemService.getFilesystemNodeProvider({
       datasetsAndZvols: true,
+    });
+  }
+
+  private setDirectoriesNodeProvider(): void {
+    this.directoriesNodeProvider = this.filesystemService.getFilesystemNodeProvider({
+      directoriesOnly: true,
     });
   }
 

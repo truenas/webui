@@ -33,7 +33,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './instance-row.component.html',
   styleUrls: ['./instance-row.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxIconComponent,
     TestDirective,

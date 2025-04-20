@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject,
+  ChangeDetectionStrategy, Component, Inject,
   signal,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
@@ -31,7 +31,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
   styleUrls: ['./associated-target-form.component.scss'],
   templateUrl: './associated-target-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogContent,
     MatDialogTitle,
@@ -76,7 +75,6 @@ export class AssociatedTargetFormComponent {
     private formBuilder: FormBuilder,
     private api: ApiService,
     private errorHandler: FormErrorHandlerService,
-    private cdr: ChangeDetectorRef,
     private loader: LoaderService,
     @Inject(MAT_DIALOG_DATA) public data: AssociatedTargetDialogData,
     public dialogRef: MatDialogRef<AssociatedTargetFormComponent>,
@@ -101,7 +99,6 @@ export class AssociatedTargetFormComponent {
       error: (error: unknown) => {
         this.isLoading.set(false);
         this.errorHandler.handleValidationErrors(error, this.form);
-        this.cdr.markForCheck();
       },
     });
   }

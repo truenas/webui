@@ -7,6 +7,7 @@ import { AuthService } from 'app/modules/auth/auth.service';
 import { TwoFactorGuardService } from 'app/modules/auth/two-factor-guard.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FirstLoginDialog } from 'app/pages/credentials/users/first-login-dialog/first-login-dialog.component';
+import { PasswordChangeRequiredDialog } from 'app/pages/credentials/users/password-change-required-dialog/password-change-required-dialog.component';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 describe('TwoFactorGuardService', () => {
@@ -17,7 +18,9 @@ describe('TwoFactorGuardService', () => {
   const getGlobalTwoFactorConfig = jest.fn(() => of(null as GlobalTwoFactorConfig | null));
   const hasRole$ = new BehaviorSubject(false);
   const isOtpwUser$ = new BehaviorSubject(false);
+  const isPasswordChangeRequired$ = new BehaviorSubject(false);
   const wasOneTimePasswordChanged$ = new BehaviorSubject(false);
+  const wasRequiredPasswordChanged$ = new BehaviorSubject(false);
 
   const createService = createServiceFactory({
     service: TwoFactorGuardService,
@@ -31,7 +34,9 @@ describe('TwoFactorGuardService', () => {
         getGlobalTwoFactorConfig,
         hasRole: jest.fn(() => hasRole$),
         isOtpwUser$,
+        isPasswordChangeRequired$,
         wasOneTimePasswordChanged$,
+        wasRequiredPasswordChanged$,
       }),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
@@ -128,6 +133,29 @@ describe('TwoFactorGuardService', () => {
     expect(isAllowed).toBe(true);
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(FirstLoginDialog, {
+      maxWidth: '100vw',
+      maxHeight: '100vh',
+      height: '100%',
+      width: '100%',
+      panelClass: 'full-screen-modal',
+      disableClose: true,
+    });
+  });
+
+  it('shows password change required dialog when user must change password', async () => {
+    isAuthenticated$.next(true);
+    isOtpwUser$.next(false);
+    getGlobalTwoFactorConfig.mockReturnValue(of({ enabled: true } as GlobalTwoFactorConfig));
+    userTwoFactorConfig$.next({ secret_configured: true } as UserTwoFactorConfig);
+    hasRole$.next(true);
+    isPasswordChangeRequired$.next(true);
+
+    const isAllowed = await firstValueFrom(
+      spectator.service.canActivateChild({} as ActivatedRouteSnapshot, { url: '/dashboard' } as RouterStateSnapshot),
+    );
+
+    expect(isAllowed).toBe(true);
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(PasswordChangeRequiredDialog, {
       maxWidth: '100vw',
       maxHeight: '100vh',
       height: '100%',

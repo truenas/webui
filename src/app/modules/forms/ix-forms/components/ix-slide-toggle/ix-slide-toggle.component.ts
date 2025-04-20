@@ -18,7 +18,6 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
   styleUrls: ['./ix-slide-toggle.component.scss'],
   templateUrl: './ix-slide-toggle.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     MatSlideToggle,

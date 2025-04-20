@@ -4,7 +4,7 @@ import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-sea
 export const datasetManagementElements = {
   hierarchy: [T('Datasets')],
   anchorRouterLink: ['/datasets'],
-  synonyms: [T('Manage Datasets')],
+  synonyms: [T('View Datasets')],
   elements: {
     datasets: {
       anchor: 'datasets',

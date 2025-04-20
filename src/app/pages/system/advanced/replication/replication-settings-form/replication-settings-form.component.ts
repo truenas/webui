@@ -1,5 +1,6 @@
 import {
   Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit,
+  signal,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -26,7 +27,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   selector: 'ix-replication-settings-form',
   templateUrl: 'replication-settings-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
@@ -44,7 +44,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 export class ReplicationSettingsFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.ReplicationTaskConfigWrite];
 
-  isFormLoading = false;
+  protected isFormLoading = signal(false);
   form = this.fb.group({
     max_parallel_replication_tasks: [null as number | null],
   });
@@ -78,7 +78,6 @@ export class ReplicationSettingsFormComponent implements OnInit {
     this.form.patchValue({
       max_parallel_replication_tasks: group?.max_parallel_replication_tasks,
     });
-    this.cdr.markForCheck();
   }
 
   onSubmit(): void {
@@ -86,18 +85,16 @@ export class ReplicationSettingsFormComponent implements OnInit {
     const replicationConfigUpdate = {
       max_parallel_replication_tasks: maxTasks && maxTasks > 0 ? maxTasks : null,
     };
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
     this.api.call('replication.config.update', [replicationConfigUpdate]).pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.snackbar.success(this.translate.instant('Settings saved'));
-        this.isFormLoading = false;
-        this.cdr.markForCheck();
+        this.isFormLoading.set(false);
         this.slideInRef.close({ response: true, error: null });
       },
       error: (error: unknown) => {
-        this.isFormLoading = false;
+        this.isFormLoading.set(false);
         this.errorHandler.showErrorModal(error);
-        this.cdr.markForCheck();
       },
     });
   }

@@ -38,6 +38,7 @@ describe('PoolManagerComponent – create pool', () => {
           used: [
             {
               devname: 'ada0',
+              name: 'ada0',
               size: 10 * GiB,
               type: DiskType.Hdd,
               enclosure: {
@@ -48,6 +49,7 @@ describe('PoolManagerComponent – create pool', () => {
             },
             {
               devname: 'ada2',
+              name: 'ada2',
               size: 10 * GiB,
               type: DiskType.Hdd,
               enclosure: {
@@ -58,6 +60,7 @@ describe('PoolManagerComponent – create pool', () => {
             },
             {
               devname: 'ada3',
+              name: 'ada3',
               size: 10 * GiB,
               type: DiskType.Hdd,
               enclosure: {
@@ -68,6 +71,7 @@ describe('PoolManagerComponent – create pool', () => {
             },
             {
               devname: 'sda0',
+              name: 'sda0',
               size: 20 * GiB,
               type: DiskType.Hdd,
               enclosure: {
@@ -77,6 +81,7 @@ describe('PoolManagerComponent – create pool', () => {
             },
             {
               devname: 'sda3',
+              name: 'sda3',
               size: 20 * GiB,
               type: DiskType.Hdd,
               enclosure: {
@@ -86,6 +91,7 @@ describe('PoolManagerComponent – create pool', () => {
             },
             {
               devname: 'sda4',
+              name: 'sda4',
               size: 10 * GiB,
               type: DiskType.Hdd,
               enclosure: {
@@ -98,27 +104,32 @@ describe('PoolManagerComponent – create pool', () => {
           unused: [
             {
               devname: 'sda1',
+              name: 'sda1',
               size: 20 * GiB,
               type: DiskType.Hdd,
             },
             {
               devname: 'sda2',
+              name: 'sda2',
               size: 20 * GiB,
               type: DiskType.Hdd,
             },
             {
               devname: 'sda5',
+              name: 'sda5',
               size: 20 * GiB,
               type: DiskType.Hdd,
             },
             {
               devname: 'sda6',
+              name: 'sda6',
               size: 20 * GiB,
               type: DiskType.Hdd,
             },
             {
               devname: 'sda7',
               size: 20 * GiB,
+              name: 'sda7',
               type: DiskType.Hdd,
             },
           ] as DetailsDisk[],
@@ -166,8 +177,7 @@ describe('PoolManagerComponent – create pool', () => {
     // Spare
     await wizard.clickNext();
     await wizard.fillStep({
-      'Disk Size': '20 GiB (HDD)',
-      Width: '1',
+      'Select Disk for Spare VDEV': 'sda1 - HDD (20 GiB)',
     });
 
     // Cache

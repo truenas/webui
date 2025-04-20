@@ -3,7 +3,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { firstValueFrom, of } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.utils';
-import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
+import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { Pool } from 'app/interfaces/pool.interface';
 import {
   AddVdevsStore,
@@ -29,8 +29,8 @@ describe('PoolManagerValidationService', () => {
 
     const mockName$ = of('');
     const mockTopology$ = of({
-      [VdevType.Data]: { vdevs: [] },
-      [VdevType.Log]: { vdevs: [] },
+      [VDevType.Data]: { vdevs: [] },
+      [VDevType.Log]: { vdevs: [] },
     });
     const mockEnclosureSettings$ = of({
       limitToSingleEnclosure: null,
@@ -119,7 +119,7 @@ describe('PoolManagerValidationService', () => {
     const mockName$ = of('No error for name');
     const mockNameErrors$ = of(null);
     const mockTopology$ = of({
-      [VdevType.Data]: {
+      [VDevType.Data]: {
         hasCustomDiskSelection: false,
         layout: 'STRIPE',
         vdevs: [
@@ -142,7 +142,7 @@ describe('PoolManagerValidationService', () => {
           ],
         ],
       },
-      [VdevType.Log]: {
+      [VDevType.Log]: {
         hasCustomDiskSelection: false,
         layout: 'STRIPE',
         vdevs: [
@@ -253,7 +253,7 @@ describe('PoolManagerValidationService', () => {
 
     const mockName$ = of('No error for name');
     const mockTopology$ = of({
-      [VdevType.Data]: {
+      [VDevType.Data]: {
         hasCustomDiskSelection: false,
         layout: 'STRIPE',
         vdevs: [],
@@ -315,7 +315,7 @@ describe('PoolManagerValidationService', () => {
 
     const mockName$ = of('Pool');
     const mockTopology$ = of({
-      [VdevType.Data]: {
+      [VDevType.Data]: {
         hasCustomDiskSelection: false,
         layout: CreateVdevLayout.Draid1,
         vdevs: [[{}]],

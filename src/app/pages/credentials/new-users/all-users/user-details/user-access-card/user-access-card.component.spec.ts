@@ -12,7 +12,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { UsersStore } from 'app/pages/credentials/new-users/store/users.store';
 import { UrlOptionsService } from 'app/services/url-options.service';
 import { UserAccessCardComponent } from './user-access-card.component';
 
@@ -44,7 +43,6 @@ describe('UserAccessCardComponent', () => {
       mockProvider(Router),
       mockProvider(ApiService),
       mockProvider(LoaderService),
-      mockProvider(UsersStore),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),

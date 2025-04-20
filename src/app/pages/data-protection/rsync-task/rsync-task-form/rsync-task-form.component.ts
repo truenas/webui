@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  signal,
 } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -46,7 +47,6 @@ import { UserService } from 'app/services/user.service';
   templateUrl: './rsync-task-form.component.html',
   styleUrls: ['./rsync-task-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
@@ -115,7 +115,7 @@ export class RsyncTaskFormComponent implements OnInit {
     ssh_credentials: new FormControl(null as number | typeof newOption | null),
   });
 
-  isLoading = false;
+  protected isLoading = signal(false);
 
   readonly helptext = helptextRsyncForm;
 
@@ -208,7 +208,7 @@ export class RsyncTaskFormComponent implements OnInit {
     }
     delete values.sshconnectmode;
 
-    this.isLoading = true;
+    this.isLoading.set(true);
     let request$: Observable<RsyncTask>;
     if (this.editingTask) {
       request$ = this.api.call('rsynctask.update', [
@@ -226,15 +226,14 @@ export class RsyncTaskFormComponent implements OnInit {
         } else {
           this.snackbar.success(this.translate.instant('Task updated'));
         }
-        this.isLoading = false;
+        this.isLoading.set(false);
         this.slideInRef.close({ response: task, error: null });
       },
       error: (error: unknown) => {
-        this.isLoading = false;
+        this.isLoading.set(false);
         this.errorHandler.handleValidationErrors(error, this.form, {
           remotehost: 'remotepath',
         });
-        this.cdr.markForCheck();
       },
     });
   }

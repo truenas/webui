@@ -37,7 +37,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { userPageEntered, userRemoved } from 'app/pages/credentials/users/store/user.actions';
 import { selectUsers, selectUserState, selectUsersTotal } from 'app/pages/credentials/users/store/user.selectors';
 import { UserDetailsRowComponent } from 'app/pages/credentials/users/user-details-row/user-details-row.component';
-import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
+import { OldUserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
 import { userListElements } from 'app/pages/credentials/users/user-list/user-list.elements';
 import { AppState } from 'app/store';
 import { builtinUsersToggled } from 'app/store/preferences/preferences.actions';
@@ -45,11 +45,10 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-user-list',
+  selector: 'ix-old-user-list',
   templateUrl: './user-list.component.html',
   styleUrls: ['./user-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     SearchInput1Component,
     MatSlideToggle,
@@ -69,7 +68,7 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
     PageHeaderComponent,
   ],
 })
-export class UserListComponent implements OnInit {
+export class OldUserListComponent implements OnInit {
   protected readonly requiredRoles = [Role.AccountWrite];
   protected readonly searchableElements = userListElements;
 
@@ -177,7 +176,7 @@ export class UserListComponent implements OnInit {
   }
 
   doAdd(): void {
-    this.slideIn.open(UserFormComponent, { wide: true });
+    this.slideIn.open(OldUserFormComponent, { wide: true });
   }
 
   navigateToApiKeys(): void {

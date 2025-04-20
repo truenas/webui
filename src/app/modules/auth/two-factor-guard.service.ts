@@ -1,3 +1,4 @@
+import { ComponentType } from '@angular/cdk/portal';
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import {
@@ -10,6 +11,7 @@ import {
 import { Role } from 'app/enums/role.enum';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { FirstLoginDialog } from 'app/pages/credentials/users/first-login-dialog/first-login-dialog.component';
+import { PasswordChangeRequiredDialog } from 'app/pages/credentials/users/password-change-required-dialog/password-change-required-dialog.component';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 @UntilDestroy()
@@ -37,19 +39,35 @@ export class TwoFactorGuardService implements CanActivateChild {
 
   private checkTwoFactorAuth(state: RouterStateSnapshot): Observable<boolean> {
     return forkJoin([
+      this.authService.isPasswordChangeRequired$.pipe(take(1)),
       this.authService.userTwoFactorConfig$.pipe(take(1)),
       this.authService.getGlobalTwoFactorConfig(),
       this.authService.hasRole([Role.FullAdmin]).pipe(take(1)),
       this.authService.isOtpwUser$.pipe(take(1)),
       this.authService.wasOneTimePasswordChanged$.asObservable().pipe(take(1)),
+      this.authService.wasRequiredPasswordChanged$.asObservable().pipe(take(1)),
     ]).pipe(
-      switchMap(([userConfig, globalConfig, isFullAdmin, isOtpwUser, wasOneTimePasswordChanged]) => {
-        const shouldShowFirstLoginDialog = ((isOtpwUser && !wasOneTimePasswordChanged)
+      switchMap(([
+        isPasswordChangeRequired,
+        userConfig,
+        globalConfig,
+        isFullAdmin,
+        isOtpwUser,
+        wasOtpChanged,
+        wasRequiredPasswordChanged,
+      ]) => {
+        const shouldShowFirstLoginDialog = (
+          (isOtpwUser && !wasOtpChanged)
           || (isOtpwUser && !userConfig.secret_configured)
-          || (!isOtpwUser && globalConfig.enabled && !userConfig.secret_configured));
+          || (!isOtpwUser && globalConfig.enabled && !userConfig.secret_configured)
+        );
 
         if (shouldShowFirstLoginDialog) {
-          return this.showFirstLoginDialog();
+          return this.openFullScreenDialog(FirstLoginDialog);
+        }
+
+        if (isPasswordChangeRequired && !wasRequiredPasswordChanged) {
+          return this.openFullScreenDialog(PasswordChangeRequiredDialog);
         }
 
         // Allow admins to access system settings regardless of 2FA status
@@ -66,10 +84,10 @@ export class TwoFactorGuardService implements CanActivateChild {
     );
   }
 
-  private showFirstLoginDialog(): Observable<boolean> {
+  private openFullScreenDialog<T>(component: ComponentType<T>): Observable<boolean> {
     this.matDialog.closeAll();
 
-    const dialogRef = this.matDialog.open(FirstLoginDialog, {
+    const dialogRef = this.matDialog.open(component, {
       maxWidth: '100vw',
       maxHeight: '100vh',
       height: '100%',

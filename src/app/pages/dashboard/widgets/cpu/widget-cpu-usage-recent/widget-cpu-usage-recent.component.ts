@@ -23,7 +23,6 @@ import { cpuUsageRecentWidget } from 'app/pages/dashboard/widgets/cpu/widget-cpu
   templateUrl: './widget-cpu-usage-recent.component.html',
   styleUrls: ['./widget-cpu-usage-recent.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     NgxSkeletonLoaderModule,
     BaseChartDirective,

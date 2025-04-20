@@ -34,7 +34,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './snapshot-rollback-dialog.component.html',
   styleUrls: ['./snapshot-rollback-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogTitle,
     TranslateModule,

@@ -7,6 +7,7 @@ import {
 } from '@angular/material/card';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { isEmptyHomeDirectory } from 'app/helpers/user.helper';
 import { User } from 'app/interfaces/user.interface';
 
 @UntilDestroy()
@@ -14,7 +15,6 @@ import { User } from 'app/interfaces/user.interface';
   selector: 'ix-user-profile-card',
   templateUrl: './user-profile-card.component.html',
   styleUrls: ['./user-profile-card.component.scss'],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatCard,
@@ -43,8 +43,6 @@ export class UserProfileCardComponent {
   });
 
   protected hasHomeDirectory = computed(() => {
-    return Boolean(this.user().home)
-      && this.user().home !== '/nonexistent'
-      && this.user().home !== '/usr/empty';
+    return !isEmptyHomeDirectory(this.user().home);
   });
 }

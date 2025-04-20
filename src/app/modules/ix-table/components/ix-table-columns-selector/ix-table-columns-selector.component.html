@@ -12,7 +12,7 @@
     <button
       mat-menu-item
       [ixTest]="['toggle-all-columns']"
-      (click)="toggleAll()"
+      (click)="toggleAll(); saveColumnPreferences(); enableResetButton();"
     >
       <ix-icon [name]="!isAllSelected ? 'remove' : 'check_circle'"></ix-icon>
       @if (isAllSelected) {
@@ -29,7 +29,7 @@
         <button
           mat-menu-item
           [ixTest]="['toggle-column', column.title]"
-          (click)="toggle(column)"
+          (click)="toggle(column); saveColumnPreferences(); enableResetButton();"
         >
           <ix-icon [name]="isSelected(column) ? 'remove' : 'check_circle'"></ix-icon>
           <span>{{ column.title | translate }}</span>
@@ -42,7 +42,8 @@
     <button
       mat-menu-item
       [ixTest]="['reset-columns-to-defaults']"
-      (click)="resetToDefaults()"
+      [disabled]="isResetToDefaultDisabled()"
+      (click)="resetToDefaults(); saveColumnPreferences()"
     >
       <ix-icon name="mdi-undo"></ix-icon>
       <span>{{ 'Reset to Defaults' | translate }}</span>

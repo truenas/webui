@@ -8,7 +8,6 @@ import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.st
   templateUrl: './mini-pools.component.html',
   styleUrl: './mini-pools.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [PoolsLegendComponent, TranslateModule],
 })
 export class MiniPoolsComponent {

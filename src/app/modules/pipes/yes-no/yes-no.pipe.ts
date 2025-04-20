@@ -3,7 +3,6 @@ import { TranslateService } from '@ngx-translate/core';
 
 @Pipe({
   name: 'yesNo',
-  standalone: true,
 })
 @Injectable({
   providedIn: 'root',

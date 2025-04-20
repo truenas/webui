@@ -19,7 +19,6 @@ import { NetworkChartComponent } from 'app/pages/dashboard/widgets/network/commo
   templateUrl: './app-network-info.component.html',
   styleUrls: ['./app-network-info.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     WithLoadingStateDirective,
     NgxSkeletonLoaderModule,

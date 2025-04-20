@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit, signal,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -30,7 +30,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
   selector: 'ix-tunable-form',
   templateUrl: './tunable-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
@@ -59,7 +58,7 @@ export class TunableFormComponent implements OnInit {
     return this.isNew ? this.translate.instant('Add Sysctl') : this.translate.instant('Edit Sysctl');
   }
 
-  isFormLoading = false;
+  protected isFormLoading = signal(false);
 
   form = this.fb.nonNullable.group({
     type: [''],
@@ -84,7 +83,6 @@ export class TunableFormComponent implements OnInit {
   constructor(
     private api: ApiService,
     private errorHandler: FormErrorHandlerService,
-    private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
     private translate: TranslateService,
     public slideInRef: SlideInRef<Tunable | undefined, boolean>,
@@ -112,19 +110,17 @@ export class TunableFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
 
     const request$ = this.isNew ? this.createTunable() : this.updateTunable();
     request$.pipe(untilDestroyed(this)).subscribe({
       complete: () => {
-        this.isFormLoading = false;
-        this.cdr.markForCheck();
+        this.isFormLoading.set(false);
         this.slideInRef.close({ response: true, error: null });
       },
       error: (error: unknown) => {
-        this.isFormLoading = false;
+        this.isFormLoading.set(false);
         this.errorHandler.handleValidationErrors(error, this.form);
-        this.cdr.markForCheck();
       },
     });
   }

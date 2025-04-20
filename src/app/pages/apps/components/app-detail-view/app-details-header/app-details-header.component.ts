@@ -11,6 +11,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
   filter, Observable, of, switchMap, take,
 } from 'rxjs';
+import sanitizeHtml from 'sanitize-html';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
@@ -31,7 +32,6 @@ import { DockerStore } from 'app/pages/apps/store/docker.store';
   templateUrl: './app-details-header.component.html',
   styleUrls: ['./app-details-header.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     TranslateModule,
     AppCardLogoComponent,
@@ -64,8 +64,14 @@ export class AppDetailsHeaderComponent {
 
   description = computed<string>(() => {
     const splitText = this.app()?.app_readme?.split('</h1>');
-    const readyHtml = splitText?.[1] || splitText?.[0];
-    return readyHtml?.replace(/<[^>]*>/g, '').trim() || '';
+    const html = splitText?.[1] || splitText?.[0];
+    const sanitizedHtml = sanitizeHtml(html, {
+      allowedTags: ['b', 'i', 'em', 'strong', 'a', 'br', 'p'],
+      allowedAttributes: {
+        a: ['href'],
+      },
+    });
+    return sanitizedHtml.trim() || '';
   });
 
   private showAgreementWarning(): Observable<unknown> {

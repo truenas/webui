@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, Component, Inject, OnInit,
   signal,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
@@ -41,7 +41,6 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   templateUrl: './localization-form.component.html',
   styleUrls: ['./localization-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
@@ -116,7 +115,6 @@ export class LocalizationFormComponent implements OnInit {
     protected api: ApiService,
     protected langService: LanguageService,
     private errorHandler: FormErrorHandlerService,
-    private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,
     public slideInRef: SlideInRef<LocalizationSettings, boolean>,
     @Inject(WINDOW) private window: Window,
@@ -174,12 +172,10 @@ export class LocalizationFormComponent implements OnInit {
         this.slideInRef.close({ response: true, error: null });
         this.langService.setLanguage(values.language);
         this.setTimeOptions(payload.timezone);
-        this.cdr.markForCheck();
       },
       error: (error: unknown) => {
         this.isFormLoading.set(false);
         this.errorHandler.handleValidationErrors(error, this.formGroup);
-        this.cdr.markForCheck();
       },
     });
   }

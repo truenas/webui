@@ -3,7 +3,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { DiskType } from 'app/enums/disk-type.enum';
-import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
+import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
@@ -40,7 +40,7 @@ describe('ConfigurationPreviewComponent', () => {
         encryption$: of('AES-256'),
         totalUsableCapacity$: of(10 * GiB),
         topology$: of({
-          [VdevType.Data]: {
+          [VDevType.Data]: {
             diskSize: 2 * GiB,
             vdevsNumber: 2,
             layout: CreateVdevLayout.Stripe,
@@ -48,7 +48,7 @@ describe('ConfigurationPreviewComponent', () => {
             diskType: DiskType.Hdd,
             vdevs: [[{} as DetailsDisk], [{} as DetailsDisk]],
           },
-          [VdevType.Log]: {
+          [VDevType.Log]: {
             diskSize: 3 * GiB,
             vdevsNumber: 2,
             layout: CreateVdevLayout.Raidz1,
@@ -56,7 +56,7 @@ describe('ConfigurationPreviewComponent', () => {
             diskType: DiskType.Hdd,
             vdevs: [[{} as DetailsDisk], [{} as DetailsDisk]],
           },
-          [VdevType.Spare]: {
+          [VDevType.Spare]: {
             diskSize: 3 * GiB,
             vdevsNumber: 2,
             layout: CreateVdevLayout.Raidz1,
@@ -65,7 +65,7 @@ describe('ConfigurationPreviewComponent', () => {
             hasCustomDiskSelection: true,
             vdevs: [[{} as DetailsDisk], [{} as DetailsDisk]],
           },
-          [VdevType.Cache]: {
+          [VDevType.Cache]: {
             diskSize: 5 * GiB,
             vdevsNumber: 5,
             layout: CreateVdevLayout.Raidz1,
@@ -73,7 +73,7 @@ describe('ConfigurationPreviewComponent', () => {
             diskType: DiskType.Hdd,
             vdevs: [[{} as DetailsDisk], [{} as DetailsDisk]],
           },
-          [VdevType.Dedup]: {
+          [VDevType.Dedup]: {
             diskSize: 5 * GiB,
             vdevsNumber: 0,
             layout: CreateVdevLayout.Raidz1,
@@ -81,7 +81,7 @@ describe('ConfigurationPreviewComponent', () => {
             diskType: DiskType.Hdd,
             vdevs: [] as DetailsDisk[][],
           },
-          [VdevType.Special]: {
+          [VDevType.Special]: {
             diskSize: 5 * GiB,
             vdevsNumber: 0,
             layout: CreateVdevLayout.Raidz1,
@@ -114,7 +114,7 @@ describe('ConfigurationPreviewComponent', () => {
       'Cache:': '2 × 5 GiB (HDD)',
       'Dedup:': 'None',
       'Log:': '2 × RAIDZ1 | 3 × 3 GiB (HDD)',
-      'Spare:': 'Manual layout | 2 VDEVs',
+      'Spare:': '3 × 3 GiB (HDD)',
       'Metadata:': 'None',
     });
   });

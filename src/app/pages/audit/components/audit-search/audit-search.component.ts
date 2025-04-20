@@ -39,7 +39,6 @@ import { UrlOptionsService } from 'app/services/url-options.service';
   templateUrl: './audit-search.component.html',
   styleUrls: ['./audit-search.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     AsyncPipe,
     FakeProgressBarComponent,
@@ -88,7 +87,7 @@ export class AuditSearchComponent implements OnInit {
   ngOnInit(): void {
     this.loadParamsFromRoute();
 
-    this.dataProvider().controlsStateUpdated
+    this.dataProvider().sortingOrPaginationUpdate
       .pipe(untilDestroyed(this))
       .subscribe(() => {
         this.updateUrlOptions();

@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit, signal,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -35,7 +35,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
   selector: 'ix-dataset-quota-edit-form',
   templateUrl: './dataset-quota-edit-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
@@ -53,7 +52,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 export class DatasetQuotaEditFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.DatasetWrite];
 
-  isFormLoading = false;
+  protected isFormLoading = signal(false);
   private datasetQuota: DatasetQuota;
   private datasetId: string;
   private quotaType: DatasetQuotaType;
@@ -128,7 +127,6 @@ export class DatasetQuotaEditFormComponent implements OnInit {
     private api: ApiService,
     private translate: TranslateService,
     public formatter: IxFormatterService,
-    private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
     private snackbar: SnackbarService,
     protected dialogService: DialogService,
@@ -152,22 +150,20 @@ export class DatasetQuotaEditFormComponent implements OnInit {
   }
 
   private updateForm(): void {
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
     this.getQuota(this.id).pipe(
       tap((quotas) => {
         this.datasetQuota = quotas[0];
-        this.isFormLoading = false;
+        this.isFormLoading.set(false);
         this.form.patchValue({
           name: this.datasetQuota.name || '',
           data_quota: this.datasetQuota.quota || null,
           obj_quota: this.datasetQuota.obj_quota,
         });
-        this.cdr.markForCheck();
       }),
       catchError((error: unknown) => {
-        this.isFormLoading = false;
+        this.isFormLoading.set(false);
         this.errorHandler.handleValidationErrors(error, this.form);
-        this.cdr.markForCheck();
         return EMPTY;
       }),
       untilDestroyed(this),
@@ -207,20 +203,18 @@ export class DatasetQuotaEditFormComponent implements OnInit {
     canSubmit$.pipe(
       filter(Boolean),
       switchMap(() => {
-        this.isFormLoading = true;
+        this.isFormLoading.set(true);
         return this.api.call('pool.dataset.set_quota', [this.datasetId, payload]);
       }),
       untilDestroyed(this),
     ).subscribe({
       next: () => {
         this.snackbar.success(this.translate.instant('Quotas updated'));
-        this.isFormLoading = false;
+        this.isFormLoading.set(false);
         this.slideInRef.close({ response: true, error: null });
-        this.cdr.markForCheck();
       },
       error: (error: unknown) => {
-        this.isFormLoading = false;
-        this.cdr.markForCheck();
+        this.isFormLoading.set(false);
         this.errorHandler.handleValidationErrors(error, this.form);
       },
     });

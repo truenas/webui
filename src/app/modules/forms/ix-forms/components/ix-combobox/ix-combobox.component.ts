@@ -1,6 +1,6 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef,
-  Component, computed,
+  Component,
   ElementRef,
   input,
   OnInit, Signal, viewChild,
@@ -26,7 +26,7 @@ import {
   debounceTime, distinctUntilChanged, map, takeUntil,
 } from 'rxjs/operators';
 import { Option } from 'app/interfaces/option.interface';
-import { IxComboboxProvider, IxComboboxProviderManager } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox-provider';
+import { IxComboboxProvider } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox-provider';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
@@ -40,7 +40,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './ix-combobox.component.html',
   styleUrls: ['./ix-combobox.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxLabelComponent,
     MatInput,
@@ -68,10 +67,6 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
   readonly allowCustomValue = input(false);
 
   readonly provider = input.required<IxComboboxProvider>();
-
-  private comboboxProviderHandler = computed(() => {
-    return new IxComboboxProviderManager(this.provider());
-  });
 
   private readonly inputElementRef: Signal<ElementRef<HTMLInputElement>> = viewChild.required('ixInput', { read: ElementRef });
   private readonly autoCompleteRef = viewChild.required('auto', { read: MatAutocomplete });
@@ -102,6 +97,9 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
 
   writeValue(value: string | number): void {
     this.value = value;
+    if (!this.value) {
+      this.selectedOption = null;
+    }
     if (this.value && this.options?.length) {
       this.selectedOption = { ...(this.options.find((option: Option) => option.value === this.value)) };
     }
@@ -140,7 +138,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
     this.loading = true;
     this.cdr.markForCheck();
 
-    this.comboboxProviderHandler()?.fetch(filterValue).pipe(
+    this.provider()?.fetch(filterValue).pipe(
       catchError(() => {
         this.hasErrorInOptions = true;
         return EMPTY;
@@ -198,7 +196,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
 
           this.loading = true;
           this.cdr.markForCheck();
-          this.comboboxProviderHandler()?.nextPage(this.filterValue !== null && this.filterValue !== undefined ? this.filterValue : '')
+          this.provider()?.nextPage(this.filterValue !== null && this.filterValue !== undefined ? this.filterValue : '')
             .pipe(untilDestroyed(this)).subscribe((options: Option[]) => {
               this.loading = false;
               this.cdr.markForCheck();

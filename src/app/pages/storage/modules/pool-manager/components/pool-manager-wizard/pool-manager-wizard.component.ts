@@ -57,7 +57,6 @@ import { ReviewWizardStepComponent } from './steps/9-review-wizard-step/review-w
   templateUrl: './pool-manager-wizard.component.html',
   styleUrls: ['./pool-manager-wizard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     FakeProgressBarComponent,
@@ -151,6 +150,10 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
       }),
       untilDestroyed(this),
     ).subscribe();
+  }
+
+  protected existingPoolHasSpares(): boolean {
+    return !!this.existingPool?.topology?.spare?.length;
   }
 
   getTopLevelWarningForStep(step: PoolCreationWizardStep): string | null | undefined {

@@ -10,7 +10,6 @@ import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui
 
 @Directive({
   selector: '[ixUiSearch]',
-  standalone: true,
 })
 export class UiSearchDirective implements OnInit, OnDestroy {
   readonly config = input.required<UiSearchableElement>({

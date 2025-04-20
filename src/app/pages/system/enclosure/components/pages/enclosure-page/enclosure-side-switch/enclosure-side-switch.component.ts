@@ -13,7 +13,6 @@ import { EnclosureSide } from 'app/pages/system/enclosure/utils/supported-enclos
   templateUrl: './enclosure-side-switch.component.html',
   styleUrl: './enclosure-side-switch.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatButton,
     TestDirective,

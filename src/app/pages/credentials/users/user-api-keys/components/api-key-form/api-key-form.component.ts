@@ -17,13 +17,13 @@ import { helptextApiKeys } from 'app/helptext/api-keys';
 import { ApiKey } from 'app/interfaces/api-key.interface';
 import { User } from 'app/interfaces/user.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { SimpleAsyncComboboxProvider } from 'app/modules/forms/ix-forms/classes/simple-async-combobox-provider';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
 import { IxDatepickerComponent } from 'app/modules/forms/ix-forms/components/ix-date-picker/ix-date-picker.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { UserPickerProvider } from 'app/modules/forms/ix-forms/components/ix-user-picker/ix-user-picker-provider';
+import { IxUserPickerComponent } from 'app/modules/forms/ix-forms/components/ix-user-picker/ix-user-picker.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { forbiddenAsyncValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { LoaderService } from 'app/modules/loader/loader.service';
@@ -34,6 +34,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import {
   KeyCreatedDialog,
 } from 'app/pages/credentials/users/user-api-keys/components/key-created-dialog/key-created-dialog.component';
+import { UserService } from 'app/services/user.service';
 
 @UntilDestroy()
 @Component({
@@ -41,11 +42,9 @@ import {
   templateUrl: './api-key-form.component.html',
   styleUrls: ['./api-key-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     FormActionsComponent,
     IxCheckboxComponent,
-    IxComboboxComponent,
     IxDatepickerComponent,
     IxFieldsetComponent,
     IxInputComponent,
@@ -57,6 +56,7 @@ import {
     RequiresRolesDirective,
     TestDirective,
     TranslateModule,
+    IxUserPickerComponent,
   ],
 })
 export class ApiKeyFormComponent implements OnInit {
@@ -99,7 +99,9 @@ export class ApiKeyFormComponent implements OnInit {
     map((users) => users.map((user) => ({ label: user.username, value: user.username }))),
   );
 
-  protected readonly userProvider = new SimpleAsyncComboboxProvider(this.usernames$);
+  protected readonly userPickerProvider = new UserPickerProvider({
+    queryParams: this.userQueryParams,
+  });
 
   protected readonly forbiddenNames$ = this.api.call('api_key.query', [
     [], { select: ['name'], order_by: ['name'] },
@@ -112,6 +114,7 @@ export class ApiKeyFormComponent implements OnInit {
     private loader: LoaderService,
     private errorHandler: FormErrorHandlerService,
     private authService: AuthService,
+    private userService: UserService,
     public slideInRef: SlideInRef<ApiKey | undefined, boolean>,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {

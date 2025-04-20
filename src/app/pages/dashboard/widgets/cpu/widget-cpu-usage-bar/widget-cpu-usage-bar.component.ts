@@ -14,7 +14,6 @@ import { cpuUsageBarWidget } from 'app/pages/dashboard/widgets/cpu/widget-cpu-us
   templateUrl: './widget-cpu-usage-bar.component.html',
   styleUrls: ['./widget-cpu-usage-bar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [CpuCoreBarComponent, TranslateModule],
 })
 export class WidgetCpuUsageBarComponent implements WidgetComponent {

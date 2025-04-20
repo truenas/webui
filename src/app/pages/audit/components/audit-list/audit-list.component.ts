@@ -6,12 +6,13 @@ import {
 import { MatTooltip } from '@angular/material/tooltip';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { toSvg } from 'jdenticon';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { auditServiceLabels, auditEventLabels } from 'app/enums/audit.enum';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { dateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-date/ix-cell-date.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
@@ -32,7 +33,6 @@ import { getLogImportantData } from 'app/pages/audit/utils/get-log-important-dat
   templateUrl: './audit-list.component.html',
   styleUrls: ['./audit-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     AsyncPipe,
     IxTableBodyComponent,
@@ -45,6 +45,8 @@ import { getLogImportantData } from 'app/pages/audit/utils/get-log-important-dat
     NgTemplateOutlet,
     UiSearchDirective,
     AuditSearchComponent,
+    TranslateModule,
+    IxIconComponent,
   ],
 })
 export class AuditListComponent {
@@ -84,7 +86,6 @@ export class AuditListComponent {
     textColumn({
       title: this.translate.instant('Event Data'),
       disableSorting: true,
-      getValue: (row) => this.translate.instant(this.getEventDataForLog(row)),
     }),
   ], {
     uniqueRowTag: (row) => `audit-${row.service}-${row.username}-${row.event}-${row.audit_id}`,
@@ -97,7 +98,7 @@ export class AuditListComponent {
     private translate: TranslateService,
   ) { }
 
-  private getEventDataForLog(row: AuditEntry): string {
+  getEventDataForLog(row: AuditEntry): string {
     return getLogImportantData(row, this.translate);
   }
 

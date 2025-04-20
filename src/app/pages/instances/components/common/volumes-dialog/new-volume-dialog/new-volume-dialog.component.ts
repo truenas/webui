@@ -30,7 +30,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     FormActionsComponent,
   ],
   templateUrl: './new-volume-dialog.component.html',
-  styleUrl: './new-volume-dialog.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NewVolumeDialog {

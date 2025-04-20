@@ -18,7 +18,6 @@ import {
   selector: 'ix-openstack-swift-provider-form',
   templateUrl: './openstack-swift-provider-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxFieldsetComponent,
@@ -37,7 +36,7 @@ export class OpenstackSwiftProviderFormComponent extends BaseProviderFormCompone
     user_id: [''],
     domain: [''],
     tenant: [''],
-    tenant_id: ['', Validators.required],
+    tenant_id: [''],
     tenant_domain: [''],
     auth_token: [''],
     region: [''],

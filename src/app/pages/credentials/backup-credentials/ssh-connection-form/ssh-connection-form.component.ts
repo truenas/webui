@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit, signal,
 } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -55,7 +55,6 @@ const sslCertificationError = 'ESSLCERTVERIFICATIONERROR';
   templateUrl: './ssh-connection-form.component.html',
   styleUrls: ['./ssh-connection-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
@@ -123,7 +122,7 @@ export class SshConnectionFormComponent implements OnInit {
     return this.form.controls.setup_method.value === SshConnectionsSetupMethod.Manual;
   }
 
-  isLoading = false;
+  protected isLoading = signal(false);
 
   readonly setupMethods$ = of([
     {
@@ -164,7 +163,6 @@ export class SshConnectionFormComponent implements OnInit {
     private formBuilder: FormBuilder,
     private translate: TranslateService,
     private api: ApiService,
-    private cdr: ChangeDetectorRef,
     private formErrorHandler: FormErrorHandlerService,
     private errorHandler: ErrorHandlerService,
     private keychainCredentialService: KeychainCredentialService,
@@ -199,7 +197,6 @@ export class SshConnectionFormComponent implements OnInit {
       connection_name: this.existingConnection.name,
       setup_method: SshConnectionsSetupMethod.Manual,
     });
-    this.cdr.markForCheck();
   }
 
   onDiscoverRemoteHostKeyPressed(): void {
@@ -224,7 +221,7 @@ export class SshConnectionFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
 
     const request$: Observable<KeychainCredential> = this.isNew
       ? this.prepareSetupRequest()
@@ -234,13 +231,12 @@ export class SshConnectionFormComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe({
       next: (newCredential) => {
-        this.isLoading = false;
+        this.isLoading.set(false);
         this.snackbar.success(this.translate.instant('SSH Connection saved'));
         this.slideInRef.close({ response: newCredential, error: null });
       },
       error: (error: unknown) => {
-        this.isLoading = false;
-        this.cdr.markForCheck();
+        this.isLoading.set(false);
         this.formErrorHandler.handleValidationErrors(error, this.form);
       },
     });

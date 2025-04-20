@@ -9,7 +9,6 @@ import { DataProvider } from 'app/modules/ix-table/interfaces/data-provider.inte
 
 @Directive({
   selector: '[ix-header-cell]',
-  standalone: true,
 })
 export class IxTableHeaderCellDirective<T> implements AfterViewInit {
   readonly dataProvider = input<DataProvider<T>>();
