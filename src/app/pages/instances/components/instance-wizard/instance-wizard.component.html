@@ -153,12 +153,14 @@
           [options]="diskIoBusOptions$"
         ></ix-select>
 
-        <ix-input
-          formControlName="root_disk_size"
-          type="number"
-          [required]="true"
-          [label]="'Root Disk Size (in GiB)' | translate"
-        ></ix-input>
+        @if (!isZvolSourceType) {
+          <ix-input
+            formControlName="root_disk_size"
+            type="number"
+            [required]="true"
+            [label]="'Root Disk Size (in GiB)' | translate"
+          ></ix-input>
+        }
       }
 
       <ix-list
