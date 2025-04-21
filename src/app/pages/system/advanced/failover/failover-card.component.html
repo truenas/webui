@@ -1,0 +1,47 @@
+<mat-card>
+  <mat-toolbar-row>
+    <h3>{{ 'Failover' | translate }}</h3>
+    <div class="actions action-icon">
+      <button
+        *ixRequiresRoles="requiredRoles"
+        mat-button
+        [ixUiSearch]="searchableElements.elements.settings"
+        [ixTest]="['console', 'configure']"
+        (click)="onConfigurePressed()"
+      >
+        {{ 'Configure' | translate }}
+      </button>
+    </div>
+  </mat-toolbar-row>
+
+  <mat-card-content [ixUiSearch]="searchableElements.elements.card">
+    <mat-list>
+      <mat-list-item>
+        <span class="label">{{ 'Enabled' | translate }}:</span>
+        <span class="value">
+          @if (isLoading()) {
+            <ngx-skeleton-loader></ngx-skeleton-loader>
+          } @else {
+            {{ !(config().disabled) | yesNo }}
+          }
+        </span>
+      </mat-list-item>
+
+      @if (!isLoading() && !config()?.disabled) {
+        <mat-list-item>
+          <span class="label">{{ 'Default Controller' | translate }}:</span>
+          <span class="value">
+            {{ config().master | yesNo }}
+          </span>
+        </mat-list-item>
+
+        <mat-list-item>
+          <span class="label">{{ 'Network Timeout Before Initiating Failover' | translate }}:</span>
+          <span class="value">
+            {{ '{seconds}s' | translate: { seconds: config().timeout } }}
+          </span>
+        </mat-list-item>
+      }
+    </mat-list>
+  </mat-card-content>
+</mat-card>
