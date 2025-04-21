@@ -27,7 +27,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   selector: 'ix-csr-identifier-and-type',
   templateUrl: './csr-identifier-and-type.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxInputComponent,

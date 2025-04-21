@@ -53,7 +53,6 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   templateUrl: './nfs-form.component.html',
   styleUrls: ['./nfs-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

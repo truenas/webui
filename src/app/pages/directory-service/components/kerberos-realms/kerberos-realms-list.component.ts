@@ -44,7 +44,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './kerberos-realms-list.component.html',
   styleUrls: ['./kerberos-realms-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     SearchInput1Component,
     RequiresRolesDirective,

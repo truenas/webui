@@ -31,7 +31,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './instance-list-bulk-actions.component.html',
   styleUrls: ['./instance-list-bulk-actions.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatButton,
     IxIconComponent,

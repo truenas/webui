@@ -45,7 +45,6 @@ import { IscsiService } from 'app/services/iscsi.service';
   selector: 'ix-iscsi-authorized-access-list',
   templateUrl: './authorized-access-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     FakeProgressBarComponent,

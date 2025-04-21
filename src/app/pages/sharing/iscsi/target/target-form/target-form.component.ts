@@ -46,7 +46,6 @@ import { IscsiService } from 'app/services/iscsi.service';
   templateUrl: './target-form.component.html',
   styleUrls: ['./target-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

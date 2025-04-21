@@ -28,7 +28,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './scheduler.component.html',
   styleUrls: ['./scheduler.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxLabelComponent,
     MatSelect,

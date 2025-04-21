@@ -22,7 +22,6 @@ Chart.register(...registerables);
   templateUrl: './view-chart-area.component.html',
   styleUrls: ['./view-chart-area.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
 })
 export class ViewChartAreaComponent implements OnDestroy {
   // TODO: Replace when ng-mocks get viewChild support

@@ -41,7 +41,6 @@ import { systemInfoUpdated } from 'app/store/system-info/system-info.actions';
   templateUrl: './network-configuration.component.html',
   styleUrls: ['./network-configuration.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

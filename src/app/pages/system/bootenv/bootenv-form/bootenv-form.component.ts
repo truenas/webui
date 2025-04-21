@@ -31,7 +31,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
   templateUrl: './bootenv-form.component.html',
   styleUrls: ['./bootenv-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

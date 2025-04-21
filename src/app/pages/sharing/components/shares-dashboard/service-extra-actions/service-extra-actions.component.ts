@@ -31,7 +31,6 @@ import { UrlOptionsService } from 'app/services/url-options.service';
   selector: 'ix-service-extra-actions',
   templateUrl: './service-extra-actions.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatIconButton,
     TestDirective,

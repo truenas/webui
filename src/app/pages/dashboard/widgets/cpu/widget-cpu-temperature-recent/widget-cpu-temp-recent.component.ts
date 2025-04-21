@@ -23,7 +23,6 @@ import { cpuTemperatureRecentWidget } from 'app/pages/dashboard/widgets/cpu/widg
   templateUrl: './widget-cpu-temp-recent.component.html',
   styleUrls: ['./widget-cpu-temp-recent.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     NgxSkeletonLoaderModule,
     BaseChartDirective,

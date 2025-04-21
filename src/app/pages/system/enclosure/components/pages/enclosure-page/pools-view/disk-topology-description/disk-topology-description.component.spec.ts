@@ -1,6 +1,6 @@
 import { byText } from '@ngneat/spectator';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { VdevType } from 'app/enums/v-dev-type.enum';
+import { VDevType } from 'app/enums/v-dev-type.enum';
 import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import {
@@ -30,7 +30,7 @@ describe('DiskTopologyDescriptionComponent', () => {
             dev: 'sda',
             pool_info: {
               vdev_name: 'stripe',
-              vdev_type: VdevType.Data,
+              vdev_type: VDevType.Data,
             },
           } as DashboardEnclosureSlot,
         },

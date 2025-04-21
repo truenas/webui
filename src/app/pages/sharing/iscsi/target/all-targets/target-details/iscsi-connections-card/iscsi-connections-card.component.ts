@@ -22,7 +22,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
   selector: 'ix-iscsi-connections-card',
   styleUrls: ['./iscsi-connections-card.component.scss'],
   templateUrl: './iscsi-connections-card.component.html',
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CardExpandCollapseComponent,

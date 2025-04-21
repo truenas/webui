@@ -37,7 +37,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './certificate-acme-add.component.html',
   styleUrls: ['./certificate-acme-add.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

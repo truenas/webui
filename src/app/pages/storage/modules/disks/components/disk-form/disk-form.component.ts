@@ -40,7 +40,6 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   templateUrl: 'disk-form.component.html',
   styleUrls: ['disk-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

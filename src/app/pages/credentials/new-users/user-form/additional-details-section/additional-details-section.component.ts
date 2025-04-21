@@ -26,7 +26,6 @@ import { FilesystemService } from 'app/services/filesystem.service';
   selector: 'ix-additional-details-section',
   templateUrl: './additional-details-section.component.html',
   styleUrl: './additional-details-section.component.scss',
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxFieldsetComponent,

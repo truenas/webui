@@ -31,7 +31,6 @@ import { FirstTimeWarningService } from 'app/services/first-time-warning.service
   styleUrls: ['../../common-card.scss'],
   templateUrl: './replication-settings-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     UiSearchDirective,

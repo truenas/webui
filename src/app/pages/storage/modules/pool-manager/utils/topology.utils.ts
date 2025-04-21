@@ -1,5 +1,5 @@
 import { DiskType } from 'app/enums/disk-type.enum';
-import { CreateVdevLayout, TopologyItemType, VdevType } from 'app/enums/v-dev-type.enum';
+import { CreateVdevLayout, TopologyItemType, VDevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { DataPoolTopologyUpdate, PoolTopology, UpdatePoolTopology } from 'app/interfaces/pool.interface';
 import {
@@ -18,8 +18,8 @@ export function topologyCategoryToDisks(topologyCategory: PoolManagerTopologyCat
 export function topologyToPayload(topology: PoolManagerTopology): UpdatePoolTopology {
   const payload: UpdatePoolTopology = {};
 
-  Object.entries(topology).forEach(([vdevType, category]: [VdevType, PoolManagerTopologyCategory]) => {
-    if (vdevType === VdevType.Spare) {
+  Object.entries(topology).forEach(([vdevType, category]: [VDevType, PoolManagerTopologyCategory]) => {
+    if (vdevType === VDevType.Spare) {
       payload.spares = category.vdevs.flatMap((vdev) => {
         return vdev.map((disk) => disk.devname);
       });
@@ -48,9 +48,9 @@ export function topologyToPayload(topology: PoolManagerTopology): UpdatePoolTopo
 }
 
 export function poolTopologyToStoreTopology(topology: PoolTopology, disks: DetailsDisk[]): PoolManagerTopology {
-  const categories = Object.values(VdevType);
+  const categories = Object.values(VDevType);
 
-  const poolManagerTopology: PoolManagerTopology = Object.values(VdevType).reduce((topologySoFar, value) => {
+  const poolManagerTopology: PoolManagerTopology = Object.values(VDevType).reduce((topologySoFar, value) => {
     return {
       ...topologySoFar,
       [value]: {
@@ -65,7 +65,7 @@ export function poolTopologyToStoreTopology(topology: PoolTopology, disks: Detai
     };
   }, {} as PoolManagerTopology);
   for (const category of categories) {
-    const vdevs = topology[category as VdevType];
+    const vdevs = topology[category as VDevType];
 
     if (!vdevs?.length) {
       continue;
@@ -89,14 +89,14 @@ export function poolTopologyToStoreTopology(topology: PoolTopology, disks: Detai
       layoutType = parsedDraidInfo.layout as unknown as TopologyItemType;
     }
 
-    poolManagerTopology[category as VdevType] = {
+    poolManagerTopology[category as VDevType] = {
       diskType: disks[0].type,
       diskSize: minSize,
       layout: layoutType as unknown as CreateVdevLayout,
       vdevsNumber: vdevs.length,
       width,
       hasCustomDiskSelection: vdevs.some((vdev) => vdevs[0].children.length !== vdev.children.length),
-      vdevs: topology[category as VdevType].map(
+      vdevs: topology[category as VDevType].map(
         (topologyItem) => {
           if (topologyItem.children.length) {
             return topologyItem.children.map(

@@ -19,19 +19,19 @@ export const storageRoutes: Routes = [
         data: { title: T('Pool Creation Wizard'), breadcrumb: T('Pool Creation Wizard') },
       },
       {
-        path: ':poolId/devices',
-        redirectTo: ':poolId/devices/',
+        path: ':poolId/vdevs',
+        redirectTo: ':poolId/vdevs/',
         pathMatch: 'full',
       },
       {
-        path: ':poolId/devices',
-        data: { title: T('Devices'), breadcrumb: T('Devices') },
-        loadChildren: () => import('./modules/devices/devices.routes').then((module) => module.devicesRoutes),
+        path: ':poolId/vdevs',
+        data: { title: T('VDEVs'), breadcrumb: T('VDEVs') },
+        loadChildren: () => import('./modules/vdevs/vdevs.routes').then((module) => module.vDevsRoutes),
       },
       {
         path: ':poolId/add-vdevs',
         component: AddVdevsComponent,
-        data: { title: T('Add Vdevs to Pool'), breadcrumb: T('Add Vdevs to Pool') },
+        data: { title: T('Add VDEVs to Pool'), breadcrumb: T('Add VDEVs to Pool') },
       },
       {
         path: 'disks',

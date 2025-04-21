@@ -6,7 +6,7 @@ import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DiskType } from 'app/enums/disk-type.enum';
-import { VdevType } from 'app/enums/v-dev-type.enum';
+import { VDevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import {
@@ -144,12 +144,12 @@ describe('PoolManagerComponent – step changing', () => {
 
   it('changes the sequence of categories', async () => {
     expect(store.state().categorySequence).toEqual([
-      VdevType.Data,
-      VdevType.Log,
-      VdevType.Special,
-      VdevType.Dedup,
-      VdevType.Spare,
-      VdevType.Cache,
+      VDevType.Data,
+      VDevType.Log,
+      VDevType.Special,
+      VDevType.Dedup,
+      VDevType.Spare,
+      VDevType.Cache,
     ]);
 
     await wizard.fillStep({
@@ -167,12 +167,12 @@ describe('PoolManagerComponent – step changing', () => {
     });
 
     expect(store.state().categorySequence).toEqual([
-      VdevType.Log,
-      VdevType.Special,
-      VdevType.Dedup,
-      VdevType.Spare,
-      VdevType.Cache,
-      VdevType.Data,
+      VDevType.Log,
+      VDevType.Special,
+      VDevType.Dedup,
+      VDevType.Spare,
+      VDevType.Cache,
+      VDevType.Data,
     ]);
 
     // Log
@@ -184,12 +184,12 @@ describe('PoolManagerComponent – step changing', () => {
     });
 
     expect(store.state().categorySequence).toEqual([
-      VdevType.Special,
-      VdevType.Dedup,
-      VdevType.Spare,
-      VdevType.Cache,
-      VdevType.Data,
-      VdevType.Log,
+      VDevType.Special,
+      VDevType.Dedup,
+      VDevType.Spare,
+      VDevType.Cache,
+      VDevType.Data,
+      VDevType.Log,
     ]);
 
     // Spare
@@ -199,12 +199,12 @@ describe('PoolManagerComponent – step changing', () => {
     });
 
     expect(store.state().categorySequence).toEqual([
-      VdevType.Special,
-      VdevType.Dedup,
-      VdevType.Cache,
-      VdevType.Data,
-      VdevType.Log,
-      VdevType.Spare,
+      VDevType.Special,
+      VDevType.Dedup,
+      VDevType.Cache,
+      VDevType.Data,
+      VDevType.Log,
+      VDevType.Spare,
     ]);
 
     // Cache
@@ -215,12 +215,12 @@ describe('PoolManagerComponent – step changing', () => {
     });
 
     expect(store.state().categorySequence).toEqual([
-      VdevType.Special,
-      VdevType.Dedup,
-      VdevType.Data,
-      VdevType.Log,
-      VdevType.Spare,
-      VdevType.Cache,
+      VDevType.Special,
+      VDevType.Dedup,
+      VDevType.Data,
+      VDevType.Log,
+      VDevType.Spare,
+      VDevType.Cache,
     ]);
 
     // Metadata
@@ -233,12 +233,12 @@ describe('PoolManagerComponent – step changing', () => {
     });
 
     expect(store.state().categorySequence).toEqual([
-      VdevType.Dedup,
-      VdevType.Data,
-      VdevType.Log,
-      VdevType.Spare,
-      VdevType.Cache,
-      VdevType.Special,
+      VDevType.Dedup,
+      VDevType.Data,
+      VDevType.Log,
+      VDevType.Spare,
+      VDevType.Cache,
+      VDevType.Special,
     ]);
 
     // Dedup
@@ -251,12 +251,12 @@ describe('PoolManagerComponent – step changing', () => {
     });
 
     expect(store.state().categorySequence).toEqual([
-      VdevType.Data,
-      VdevType.Log,
-      VdevType.Spare,
-      VdevType.Cache,
-      VdevType.Special,
-      VdevType.Dedup,
+      VDevType.Data,
+      VDevType.Log,
+      VDevType.Spare,
+      VDevType.Cache,
+      VDevType.Special,
+      VDevType.Dedup,
     ]);
 
     // Spare again
@@ -268,12 +268,12 @@ describe('PoolManagerComponent – step changing', () => {
     });
 
     expect(store.state().categorySequence).toEqual([
-      VdevType.Data,
-      VdevType.Log,
-      VdevType.Cache,
-      VdevType.Special,
-      VdevType.Dedup,
-      VdevType.Spare,
+      VDevType.Data,
+      VDevType.Log,
+      VDevType.Cache,
+      VDevType.Special,
+      VDevType.Dedup,
+      VDevType.Spare,
     ]);
 
     // Data again
@@ -284,12 +284,12 @@ describe('PoolManagerComponent – step changing', () => {
     });
 
     expect(store.state().categorySequence).toEqual([
-      VdevType.Log,
-      VdevType.Cache,
-      VdevType.Special,
-      VdevType.Dedup,
-      VdevType.Spare,
-      VdevType.Data,
+      VDevType.Log,
+      VDevType.Cache,
+      VDevType.Special,
+      VDevType.Dedup,
+      VDevType.Spare,
+      VDevType.Data,
     ]);
   });
 });
