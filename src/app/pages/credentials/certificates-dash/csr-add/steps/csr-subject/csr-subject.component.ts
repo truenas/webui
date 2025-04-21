@@ -19,7 +19,6 @@ import { SystemGeneralService } from 'app/services/system-general.service';
   selector: 'ix-csr-subject',
   templateUrl: './csr-subject.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxSelectComponent,

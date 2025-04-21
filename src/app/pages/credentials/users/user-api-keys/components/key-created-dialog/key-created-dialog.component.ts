@@ -18,7 +18,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './key-created-dialog.component.html',
   styleUrls: ['./key-created-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     MatDialogTitle,

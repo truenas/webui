@@ -49,7 +49,6 @@ import { IdmapService } from 'app/services/idmap.service';
   templateUrl: './idmap-list.component.html',
   styleUrls: ['./idmap-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     SearchInput1Component,
     RequiresRolesDirective,

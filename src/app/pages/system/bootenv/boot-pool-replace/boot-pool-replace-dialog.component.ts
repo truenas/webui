@@ -31,7 +31,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './boot-pool-replace-dialog.component.html',
   styleUrls: ['./boot-pool-replace-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogTitle,
     ReactiveFormsModule,

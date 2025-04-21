@@ -46,7 +46,6 @@ import { TaskService } from 'app/services/task.service';
   templateUrl: './cron-list.component.html',
   styleUrls: ['./cron-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     PageHeaderComponent,
     SearchInput1Component,

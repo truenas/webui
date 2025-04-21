@@ -29,7 +29,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './user-menu.component.html',
   styleUrls: ['./user-menu.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatIconButton,
     MatTooltip,

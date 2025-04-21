@@ -1,6 +1,6 @@
 import { mapSlots } from 'app/core/testing/mock-enclosure/enclosure-templates/utils/slots.utils';
 import { EnclosureDiskStatus, EnclosureElementType } from 'app/enums/enclosure-slot-status.enum';
-import { VdevType } from 'app/enums/v-dev-type.enum';
+import { VDevType } from 'app/enums/v-dev-type.enum';
 import { DashboardEnclosure, DashboardEnclosureSlot, EnclosureSlotPoolInfo } from 'app/interfaces/enclosure.interface';
 
 const disksPerVdev = 3;
@@ -96,7 +96,7 @@ function createPoolInfo(
     disk_write_errors: 0,
     disk_checksum_errors: 0,
     vdev_name: 'stripe',
-    vdev_type: VdevType.Data,
+    vdev_type: VDevType.Data,
     vdev_disks: vdev.map((disk) => ({
       // TODO: Bug. Enclosure id should come from the disk.
       enclosure_id: enclosure.id,

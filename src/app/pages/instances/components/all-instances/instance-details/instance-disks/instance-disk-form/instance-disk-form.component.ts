@@ -50,7 +50,6 @@ interface InstanceDiskFormOptions {
   selector: 'ix-instance-disk-form',
   styleUrls: ['./instance-disk-form.component.scss'],
   templateUrl: './instance-disk-form.component.html',
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     IxExplorerComponent,
@@ -134,6 +133,7 @@ export class InstanceDiskFormComponent implements OnInit {
         minWidth: '90vw',
         data: {
           selectionMode: true,
+          config: null,
         },
       })
       .afterClosed()

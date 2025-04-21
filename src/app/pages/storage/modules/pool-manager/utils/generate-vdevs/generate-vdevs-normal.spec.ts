@@ -1,7 +1,7 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { GiB } from 'app/constants/bytes.constant';
 import { DiskType } from 'app/enums/disk-type.enum';
-import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
+import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { PoolManagerTopology } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import {
   GenerateVdevsService,
@@ -18,7 +18,7 @@ describe('GenerateVdevsService - normal cases', () => {
     const vdevs = spectator.service.generateVdevs({
       allowedDisks: generateVdevDisks,
       topology: {
-        [VdevType.Data]: {
+        [VDevType.Data]: {
           diskSize: 5 * GiB,
           width: 2,
           vdevsNumber: 3,
@@ -31,7 +31,7 @@ describe('GenerateVdevsService - normal cases', () => {
     });
 
     expect(vdevs).toEqual({
-      [VdevType.Data]: expectDisks([
+      [VDevType.Data]: expectDisks([
         ['enclosure1-disk1', 'enclosure1-disk2'],
         ['enclosure1-disk3', 'enclosure2-disk1'],
         ['enclosure2-disk2', 'enclosure3-disk1'],
@@ -43,21 +43,21 @@ describe('GenerateVdevsService - normal cases', () => {
     const vdevs = spectator.service.generateVdevs({
       allowedDisks: generateVdevDisks,
       topology: {
-        [VdevType.Data]: {
+        [VDevType.Data]: {
           diskSize: 5 * GiB,
           width: 2,
           vdevsNumber: 2,
           diskType: DiskType.Hdd,
           layout: CreateVdevLayout.Stripe,
         },
-        [VdevType.Log]: {
+        [VDevType.Log]: {
           diskSize: 5 * GiB,
           width: 1,
           vdevsNumber: 3,
           diskType: DiskType.Hdd,
           layout: CreateVdevLayout.Stripe,
         },
-        [VdevType.Spare]: {
+        [VDevType.Spare]: {
           diskSize: 5 * GiB,
           width: 4,
           vdevsNumber: 1,
@@ -70,16 +70,16 @@ describe('GenerateVdevsService - normal cases', () => {
     });
 
     expect(vdevs).toEqual({
-      [VdevType.Data]: expectDisks([
+      [VDevType.Data]: expectDisks([
         ['enclosure1-disk1', 'enclosure1-disk2'],
         ['enclosure1-disk3', 'enclosure2-disk1'],
       ]),
-      [VdevType.Log]: expectDisks([
+      [VDevType.Log]: expectDisks([
         ['enclosure2-disk2'],
         ['enclosure3-disk1'],
         ['enclosure3-disk2'],
       ]),
-      [VdevType.Spare]: expectDisks([
+      [VDevType.Spare]: expectDisks([
         ['enclosure3-disk3', 'enclosure3-disk4', 'enclosure3-disk5', 'no-enclosure-disk1'],
       ]),
     });
@@ -89,21 +89,21 @@ describe('GenerateVdevsService - normal cases', () => {
     const vdevs = spectator.service.generateVdevs({
       allowedDisks: generateVdevDisks,
       topology: {
-        [VdevType.Cache]: {
+        [VDevType.Cache]: {
           diskSize: 2 * GiB,
           width: 2,
           vdevsNumber: 1,
           diskType: DiskType.Ssd,
           layout: CreateVdevLayout.Stripe,
         },
-        [VdevType.Data]: {
+        [VDevType.Data]: {
           diskSize: 10 * GiB,
           width: 3,
           vdevsNumber: 1,
           diskType: DiskType.Hdd,
           layout: CreateVdevLayout.Stripe,
         },
-        [VdevType.Spare]: {
+        [VDevType.Spare]: {
           diskSize: 5 * GiB,
           width: 3,
           vdevsNumber: 1,
@@ -116,13 +116,13 @@ describe('GenerateVdevsService - normal cases', () => {
     });
 
     expect(vdevs).toEqual({
-      [VdevType.Data]: expectDisks([
+      [VDevType.Data]: expectDisks([
         ['larger1', 'larger2', 'larger3'],
       ]),
-      [VdevType.Spare]: expectDisks([
+      [VDevType.Spare]: expectDisks([
         ['enclosure1-disk1', 'enclosure1-disk2', 'enclosure1-disk3'],
       ]),
-      [VdevType.Cache]: expectDisks([
+      [VDevType.Cache]: expectDisks([
         ['small-ssd1', 'small-ssd2'],
       ]),
     });

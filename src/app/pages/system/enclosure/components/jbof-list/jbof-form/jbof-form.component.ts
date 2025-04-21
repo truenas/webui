@@ -25,7 +25,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
   selector: 'ix-jbof-form',
   templateUrl: 'jbof-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

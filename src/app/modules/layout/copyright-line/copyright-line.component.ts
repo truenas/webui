@@ -14,7 +14,6 @@ import { selectCopyrightHtml, selectIsEnterprise } from 'app/store/system-info/s
   templateUrl: './copyright-line.component.html',
   styleUrls: ['./copyright-line.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [TestDirective],
 })
 export class CopyrightLineComponent {

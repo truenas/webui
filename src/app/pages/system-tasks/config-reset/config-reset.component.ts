@@ -23,7 +23,6 @@ import { WebSocketStatusService } from 'app/services/websocket-status.service';
   templateUrl: './config-reset.component.html',
   styleUrls: ['./config-reset.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatCardContent,

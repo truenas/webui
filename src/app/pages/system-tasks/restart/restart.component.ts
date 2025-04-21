@@ -18,7 +18,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './restart.component.html',
   styleUrls: ['./restart.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatCardContent,

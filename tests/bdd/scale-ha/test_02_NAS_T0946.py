@@ -345,9 +345,9 @@ def enter_tank_for_pool_name_click_the_checkbox_beside_the_first_disk(driver):
     pass
 
 
-@then('click the arrow pointing to Data Vdevs, click Create, check confirm, click CREATE POOL')
+@then('click the arrow pointing to Data VDEVs, click Create, check confirm, click CREATE POOL')
 def click_the_arrow_pointing_to_data_vdevs_click_create_check_confirm_click_create_pool(nas_vip):
-    """click the arrow pointing to Data Vdevs, click Create, check confirm, click CREATE POOL."""
+    """click the arrow pointing to Data VDEVs, click Create, check confirm, click CREATE POOL."""
     # assert wait_on_element(driver, 7, '//button[@id="vdev__add-button"]', 'clickable')
     # driver.find_element_by_xpath('//button[@id="vdev__add-button"]').click()
     # assert wait_on_element(driver, 7, '//mat-checkbox[@id="pool-manager__force-submit-checkbox"]', 'clickable')

@@ -1,7 +1,7 @@
 
 <ix-layout-step
   [description]="helptext.cache_vdev_description | translate"
-  [type]="VdevType.Cache"
+  [type]="vDevType.Cache"
   [inventory]="(inventory$ | async) || []"
   [canChangeLayout]="false"
   [limitLayouts]="allowedLayouts"

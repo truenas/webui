@@ -11,7 +11,6 @@ import { isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
   templateUrl: './dataset-icon.component.html',
   styleUrls: ['./dataset-icon.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxIconComponent,
   ],

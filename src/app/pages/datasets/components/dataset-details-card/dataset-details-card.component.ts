@@ -35,7 +35,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './dataset-details-card.component.html',
   styleUrls: ['./dataset-details-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatCardHeader,

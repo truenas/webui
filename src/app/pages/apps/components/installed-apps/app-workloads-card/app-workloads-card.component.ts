@@ -32,7 +32,6 @@ import {
   templateUrl: './app-workloads-card.component.html',
   styleUrls: ['./app-workloads-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatCardHeader,

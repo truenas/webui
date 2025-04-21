@@ -24,7 +24,6 @@ import { EmailFormComponent } from 'app/pages/system/general-settings/email/emai
   selector: 'ix-email-card',
   templateUrl: './email-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     UiSearchDirective,

@@ -76,7 +76,6 @@ import { AppSchemaService } from 'app/services/schema/app-schema.service';
   templateUrl: './app-wizard.component.html',
   styleUrls: ['./app-wizard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     PageHeaderComponent,
     ReadOnlyComponent,

@@ -6,7 +6,6 @@ import { focusableElements } from 'app/directives/autofocus/focusable-elements.c
  */
 @Directive({
   selector: '[ixAutofocus]',
-  standalone: true,
 })
 export class AutofocusDirective implements AfterViewInit {
   constructor(private host: ElementRef<HTMLElement>) {}

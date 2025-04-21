@@ -7,7 +7,7 @@ import {
 } from '@angular/material/card';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { VdevType, vdevTypeLabels } from 'app/enums/v-dev-type.enum';
+import { VDevType, vdevTypeLabels } from 'app/enums/v-dev-type.enum';
 import { isTopologyLimitedToOneLayout } from 'app/helpers/storage.helper';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
@@ -22,7 +22,6 @@ import {
   templateUrl: './new-devices-preview.component.html',
   styleUrls: ['./new-devices-preview.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatCardHeader,
@@ -41,7 +40,7 @@ export class NewDevicesPreviewComponent {
   protected topology$ = this.store.topology$;
   protected isLimitedToOneLayout = isTopologyLimitedToOneLayout;
 
-  readonly VdevType = VdevType;
+  readonly vDevType = VDevType;
   constructor(
     private store: PoolManagerStore,
   ) {}

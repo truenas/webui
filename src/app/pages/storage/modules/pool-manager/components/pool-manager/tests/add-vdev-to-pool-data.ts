@@ -3,7 +3,7 @@ import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { Disk } from 'app/interfaces/disk.interface';
 import { Pool, PoolTopology } from 'app/interfaces/pool.interface';
-import { TopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
+import { TopologyDisk, VDevItem } from 'app/interfaces/storage.interface';
 
 export const existingPool = {
   id: 1,
@@ -50,7 +50,7 @@ export const existingPool = {
           },
         ] as TopologyDisk[],
         unavail_disk: null,
-      } as TopologyItem,
+      } as VDevItem,
       {
         name: 'mirror-1',
         type: TopologyItemType.Mirror,
@@ -87,7 +87,7 @@ export const existingPool = {
           },
         ] as TopologyDisk[],
         unavail_disk: null,
-      } as TopologyItem,
+      } as VDevItem,
       {
         name: 'mirror-2',
         type: TopologyItemType.Mirror,
@@ -124,7 +124,7 @@ export const existingPool = {
           },
         ] as TopologyDisk[],
         unavail_disk: null,
-      } as TopologyItem,
+      } as VDevItem,
     ],
     log: [],
     cache: [],

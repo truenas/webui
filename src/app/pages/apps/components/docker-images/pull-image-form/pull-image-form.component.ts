@@ -28,7 +28,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './pull-image-form.component.html',
   styleUrls: ['./pull-image-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     TranslateModule,

@@ -47,7 +47,6 @@ import { FilesystemService } from 'app/services/filesystem.service';
   selector: 'ix-cloud-backup-restore-from-snapshot-form',
   templateUrl: './cloud-backup-restore-from-snapshot-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
