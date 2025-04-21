@@ -769,7 +769,12 @@
       "Groups",
       "Privileges"
     ],
-    "synonyms": [],
+    "synonyms": [
+      "Privileges List",
+      "RBAC",
+      "Roles",
+      "Permissions"
+    ],
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [

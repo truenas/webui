@@ -53,7 +53,7 @@ describe('FormErrorHandlerService', () => {
         parseError: jest.fn((error: ApiErrorDetails) => ({
           title: 'Error',
           message: error.reason,
-          backtrace: error.trace?.formatted,
+          stackTrace: error.trace?.formatted,
         } as ErrorReport)),
       }),
       mockProvider(IxFormService, {

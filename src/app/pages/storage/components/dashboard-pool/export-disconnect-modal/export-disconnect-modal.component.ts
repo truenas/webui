@@ -199,7 +199,7 @@ export class ExportDisconnectModalComponent implements OnInit {
     this.dialogService.error({
       title: helptextVolumes.exportError,
       message: conditionalErrMessage,
-      backtrace: failureData.exception,
+      stackTrace: failureData.exception,
     });
   }
 
