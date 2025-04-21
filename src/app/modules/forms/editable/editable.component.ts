@@ -115,6 +115,10 @@ export class EditableComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.isOpen.set(false);
     this.closed.emit();
+
+    setTimeout(() => {
+      this.checkVisibleValue();
+    });
   }
 
   private canClose(): boolean {

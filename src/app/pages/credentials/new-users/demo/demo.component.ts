@@ -53,6 +53,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 export class DemoComponent {
   form = this.formBuilder.group({
     motd: [''],
+    motd2: [''],
     serialconsole: [false],
     serialport: ['', this.validators.withMessage(Validators.pattern(/tty.*/), 'Correct value is ttyS0')],
     boot_scrub: [5],
