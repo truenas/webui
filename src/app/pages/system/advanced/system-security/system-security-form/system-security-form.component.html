@@ -23,6 +23,43 @@
       <mat-hint>{{ 'Global Two-Factor Authentication must be enabled to activate this feature.' | translate }}</mat-hint>
       <mat-hint>{{ 'Restart is required after changing these settings.' | translate }}</mat-hint>
 
+      <ix-input
+        formControlName="min_password_age"
+        type="number"
+        [label]="'Min Password Age' | translate"
+        [tooltip]="'Minimum number of days a password must be used before it can be changed.' | translate"
+      ></ix-input>
+
+      <ix-input
+        formControlName="max_password_age"
+        type="number"
+        [label]="'Max Password Age' | translate"
+        [tooltip]="'Maximum number of days a password can be used before it must be changed.' | translate"
+      ></ix-input>
+
+      <ix-select
+        formControlName="password_complexity_ruleset"
+        [options]="complexityRulesetLabels$"
+        [multiple]="true"
+        [label]="'Password Complexity Ruleset' | translate"
+        [tooltip]="'Password complexity ruleset. Choose between Upper, Lower, Number and Special complexity levels.' | translate"
+      ></ix-select>
+
+      <ix-input
+        formControlName="min_password_length"
+        type="number"
+        [label]="'Min Password Length' | translate"
+        [tooltip]="'Minimum number of characters in a password. Must be at least 8 characters.' | translate"
+      ></ix-input>
+
+      <ix-input
+        formControlName="password_history_length"
+        type="number"
+        [label]="'Password History Length' | translate"
+        [tooltip]="'Number of previous passwords to remember. Must be between 1 and 10.' | translate"
+        [required]="true"
+      ></ix-input>
+
       <div class="form-actions">
         <button
           *ixRequiresRoles="requiredRoles"
