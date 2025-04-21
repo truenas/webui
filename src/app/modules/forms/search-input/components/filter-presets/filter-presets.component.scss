@@ -9,6 +9,10 @@
   gap: 8px;
   margin-top: 15px;
 
+  span {
+    margin: 0;
+  }
+
   button {
     align-items: center;
     border-radius: 16px !important;
@@ -16,10 +20,6 @@
     font-size: 12px;
     height: max-content;
     padding: 2px 4px;
-
-    &:hover {
-      cursor: pointer !important;
-    }
 
     &::ng-deep {
       span {

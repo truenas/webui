@@ -62,7 +62,7 @@ export class UsersSearchComponent implements OnInit {
     },
     {
       label: this.translate.instant('Has Shell Access'),
-      query: [['shell', '!=', 'nologin']],
+      query: [['shell', '!=', null]],
     },
     {
       label: this.translate.instant('Has SSH Access'),
@@ -70,7 +70,7 @@ export class UsersSearchComponent implements OnInit {
     },
     {
       label: this.translate.instant('From Active Directory'),
-      query: [['id', '~', 'ad']],
+      query: [['local', '=', false]],
     },
   ];
 
