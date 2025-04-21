@@ -49,7 +49,6 @@ import { TaskService } from 'app/services/task.service';
   templateUrl: './cron-card.component.html',
   styleUrls: ['./cron-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatToolbarRow,

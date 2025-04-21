@@ -14,7 +14,6 @@ import { CardExpandCollapseComponent } from 'app/modules/card-expand-collapse/ca
   templateUrl: './app-notes-card.component.html',
   styleUrls: ['./app-notes-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatCardHeader,

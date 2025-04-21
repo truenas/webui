@@ -10,7 +10,6 @@ import { TerminalComponent } from 'app/modules/terminal/components/terminal/term
   selector: 'ix-instance-shell',
   template: '<ix-terminal [conf]="this"></ix-terminal>',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [TerminalComponent],
 })
 export class InstanceShellComponent implements TerminalConfiguration {

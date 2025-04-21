@@ -35,7 +35,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './import-certificate.component.html',
   styleUrls: ['./import-certificate.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

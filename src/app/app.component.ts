@@ -16,7 +16,6 @@ import { WebSocketStatusService } from 'app/services/websocket-status.service';
   selector: 'ix-root',
   templateUrl: './app.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [RouterOutlet],
 })
 export class AppComponent implements OnInit {

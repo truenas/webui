@@ -33,7 +33,6 @@ import { nfsSessionListElements } from 'app/pages/sharing/nfs/nfs-session-list/n
   selector: 'ix-nfs-session-list',
   templateUrl: './nfs-session-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     PageHeaderComponent,
     MatButtonToggleGroup,

@@ -19,7 +19,6 @@ import { IscsiService } from 'app/services/iscsi.service';
   selector: 'ix-target-wizard-step',
   templateUrl: './target-wizard-step.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     TranslateModule,

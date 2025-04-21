@@ -37,7 +37,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./truecommand-button.component.scss'],
   templateUrl: './truecommand-button.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatIconButton,
     TestDirective,

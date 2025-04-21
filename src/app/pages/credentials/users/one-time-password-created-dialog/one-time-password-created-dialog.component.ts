@@ -18,7 +18,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './one-time-password-created-dialog.component.html',
   styleUrls: ['./one-time-password-created-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     MatDialogTitle,

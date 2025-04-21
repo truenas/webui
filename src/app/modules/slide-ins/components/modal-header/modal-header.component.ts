@@ -23,7 +23,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './modal-header.component.html',
   styleUrls: ['./modal-header.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatIconButton,
     MatTooltip,

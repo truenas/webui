@@ -25,7 +25,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './global-search-results.component.html',
   styleUrls: ['./global-search-results.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     TestDirective,

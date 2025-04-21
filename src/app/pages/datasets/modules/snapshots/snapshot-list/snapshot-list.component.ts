@@ -69,7 +69,6 @@ export interface ZfsSnapshotUi extends ZfsSnapshot {
   templateUrl: './snapshot-list.component.html',
   styleUrls: ['./snapshot-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     PageHeaderComponent,
     MatProgressSpinner,

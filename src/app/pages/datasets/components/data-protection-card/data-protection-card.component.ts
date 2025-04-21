@@ -23,7 +23,6 @@ import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/s
   templateUrl: './data-protection-card.component.html',
   styleUrls: ['./data-protection-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatCardHeader,

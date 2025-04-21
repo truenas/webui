@@ -36,7 +36,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './proactive.component.html',
   styleUrls: ['./proactive.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

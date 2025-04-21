@@ -39,7 +39,6 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
   templateUrl: './audit.component.html',
   styleUrls: ['./audit.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     PageHeaderComponent,
     TestDirective,

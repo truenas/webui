@@ -23,7 +23,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './error-dialog.component.html',
   styleUrls: ['./error-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogTitle,
     IxIconComponent,

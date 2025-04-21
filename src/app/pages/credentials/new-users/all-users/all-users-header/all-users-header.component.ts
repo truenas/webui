@@ -15,7 +15,6 @@ import { UserFormComponent } from 'app/pages/credentials/new-users/user-form/use
   selector: 'ix-all-users-header',
   templateUrl: './all-users-header.component.html',
   styleUrls: ['./all-users-header.component.scss'],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TranslateModule,

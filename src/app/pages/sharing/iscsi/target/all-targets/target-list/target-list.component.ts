@@ -40,7 +40,6 @@ import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/
   templateUrl: './target-list.component.html',
   styleUrls: ['./target-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     FakeProgressBarComponent,

@@ -1,7 +1,7 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { GiB } from 'app/constants/bytes.constant';
 import { DiskType } from 'app/enums/disk-type.enum';
-import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
+import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { PoolManagerTopology } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import {
   GenerateVdevsService,
@@ -19,7 +19,7 @@ describe('GenerateVdevsService - treat disk size as minimum', () => {
       const vdevs = spectator.service.generateVdevs({
         allowedDisks: generateVdevDisks,
         topology: {
-          [VdevType.Data]: {
+          [VDevType.Data]: {
             diskSize: 5 * GiB,
             width: 2,
             vdevsNumber: 3,
@@ -27,7 +27,7 @@ describe('GenerateVdevsService - treat disk size as minimum', () => {
             layout: CreateVdevLayout.Stripe,
             treatDiskSizeAsMinimum: true,
           },
-          [VdevType.Log]: {
+          [VDevType.Log]: {
             diskSize: 5 * GiB,
             width: 3,
             vdevsNumber: 2,
@@ -35,7 +35,7 @@ describe('GenerateVdevsService - treat disk size as minimum', () => {
             layout: CreateVdevLayout.Stripe,
             treatDiskSizeAsMinimum: true,
           },
-          [VdevType.Spare]: {
+          [VDevType.Spare]: {
             diskSize: 5 * GiB,
             width: 1,
             vdevsNumber: 2,
@@ -49,16 +49,16 @@ describe('GenerateVdevsService - treat disk size as minimum', () => {
       });
 
       expect(vdevs).toEqual({
-        [VdevType.Data]: expectDisks([
+        [VDevType.Data]: expectDisks([
           ['enclosure1-disk1', 'enclosure1-disk2'],
           ['enclosure1-disk3', 'enclosure2-disk1'],
           ['enclosure2-disk2', 'enclosure3-disk1'],
         ]),
-        [VdevType.Log]: expectDisks([
+        [VDevType.Log]: expectDisks([
           ['enclosure3-disk2', 'enclosure3-disk3', 'enclosure3-disk4'],
           ['enclosure3-disk5', 'no-enclosure-disk1', 'larger1'],
         ]),
-        [VdevType.Spare]: expectDisks([['larger2'], ['larger3']]),
+        [VDevType.Spare]: expectDisks([['larger2'], ['larger3']]),
       });
     });
 
@@ -66,7 +66,7 @@ describe('GenerateVdevsService - treat disk size as minimum', () => {
       const vdevs = spectator.service.generateVdevs({
         allowedDisks: generateVdevDisks,
         topology: {
-          [VdevType.Data]: {
+          [VDevType.Data]: {
             diskSize: 3 * GiB,
             width: 3,
             vdevsNumber: 1,
@@ -74,7 +74,7 @@ describe('GenerateVdevsService - treat disk size as minimum', () => {
             layout: CreateVdevLayout.Stripe,
             treatDiskSizeAsMinimum: true,
           },
-          [VdevType.Log]: {
+          [VDevType.Log]: {
             diskSize: GiB,
             width: 1,
             vdevsNumber: 1,
@@ -82,7 +82,7 @@ describe('GenerateVdevsService - treat disk size as minimum', () => {
             layout: CreateVdevLayout.Stripe,
             treatDiskSizeAsMinimum: true,
           },
-          [VdevType.Spare]: {
+          [VDevType.Spare]: {
             diskSize: 2 * GiB,
             width: 1,
             vdevsNumber: 1,
@@ -96,9 +96,9 @@ describe('GenerateVdevsService - treat disk size as minimum', () => {
       });
 
       expect(vdevs).toEqual({
-        [VdevType.Data]: expectDisks([['enclosure1-disk1', 'enclosure1-disk2', 'enclosure1-disk3']]),
-        [VdevType.Log]: expectDisks([['small-ssd1']]),
-        [VdevType.Spare]: expectDisks([['small-ssd2']]),
+        [VDevType.Data]: expectDisks([['enclosure1-disk1', 'enclosure1-disk2', 'enclosure1-disk3']]),
+        [VDevType.Log]: expectDisks([['small-ssd1']]),
+        [VDevType.Spare]: expectDisks([['small-ssd2']]),
       });
     });
   });
@@ -108,7 +108,7 @@ describe('GenerateVdevsService - treat disk size as minimum', () => {
       const vdevs = spectator.service.generateVdevs({
         allowedDisks: generateVdevDisks,
         topology: {
-          [VdevType.Data]: {
+          [VDevType.Data]: {
             diskSize: 5 * GiB,
             width: 2,
             vdevsNumber: 3,
@@ -116,7 +116,7 @@ describe('GenerateVdevsService - treat disk size as minimum', () => {
             layout: CreateVdevLayout.Stripe,
             treatDiskSizeAsMinimum: true,
           },
-          [VdevType.Log]: {
+          [VDevType.Log]: {
             diskSize: 5 * GiB,
             width: 3,
             vdevsNumber: 2,
@@ -124,7 +124,7 @@ describe('GenerateVdevsService - treat disk size as minimum', () => {
             layout: CreateVdevLayout.Stripe,
             treatDiskSizeAsMinimum: true,
           },
-          [VdevType.Spare]: {
+          [VDevType.Spare]: {
             diskSize: 5 * GiB,
             width: 1,
             vdevsNumber: 2,
@@ -138,16 +138,16 @@ describe('GenerateVdevsService - treat disk size as minimum', () => {
       });
 
       expect(vdevs).toEqual({
-        [VdevType.Data]: expectDisks([
+        [VDevType.Data]: expectDisks([
           ['enclosure1-disk1', 'enclosure2-disk1'],
           ['enclosure3-disk1', 'larger1'],
           ['no-enclosure-disk1', 'enclosure1-disk2'],
         ]),
-        [VdevType.Log]: expectDisks([
+        [VDevType.Log]: expectDisks([
           ['enclosure2-disk2', 'enclosure3-disk2', 'larger2'],
           ['enclosure1-disk3', 'enclosure3-disk3', 'larger3'],
         ]),
-        [VdevType.Spare]: expectDisks([['enclosure3-disk4'], ['enclosure3-disk5']]),
+        [VDevType.Spare]: expectDisks([['enclosure3-disk4'], ['enclosure3-disk5']]),
       });
     });
   });

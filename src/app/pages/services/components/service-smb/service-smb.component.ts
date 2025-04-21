@@ -46,7 +46,6 @@ interface BindIp {
   templateUrl: './service-smb.component.html',
   styleUrls: ['./service-smb.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

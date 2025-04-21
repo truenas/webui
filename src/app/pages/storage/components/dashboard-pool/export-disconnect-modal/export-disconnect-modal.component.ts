@@ -43,7 +43,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./export-disconnect-modal.component.scss'],
   templateUrl: './export-disconnect-modal.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogTitle,
     MatProgressBar,

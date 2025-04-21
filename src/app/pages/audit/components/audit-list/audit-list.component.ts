@@ -33,7 +33,6 @@ import { getLogImportantData } from 'app/pages/audit/utils/get-log-important-dat
   templateUrl: './audit-list.component.html',
   styleUrls: ['./audit-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     AsyncPipe,
     IxTableBodyComponent,

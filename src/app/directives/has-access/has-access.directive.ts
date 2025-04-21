@@ -7,7 +7,6 @@ import { MissingAccessWrapperComponent } from 'app/directives/has-access/missing
 @UntilDestroy()
 @Directive({
   selector: '[ixHasAccess]',
-  standalone: true,
 })
 export class HasAccessDirective {
   private wrapperContainer: ComponentRef<MissingAccessWrapperComponent>;

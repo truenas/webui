@@ -40,7 +40,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./cloud-credentials-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CloudCredentialService],
-  standalone: true,
   imports: [
     MatCard,
     UiSearchDirective,

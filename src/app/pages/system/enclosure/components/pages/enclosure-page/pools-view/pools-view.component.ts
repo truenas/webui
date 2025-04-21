@@ -16,7 +16,6 @@ import { VdevDisksLegendComponent } from './vdev-disks-legend/vdev-disks-legend.
   templateUrl: './pools-view.component.html',
   styleUrl: '../_enclosure-view.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     DiskTopologyDescriptionComponent,
     EnclosureSideComponent,

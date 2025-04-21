@@ -40,7 +40,6 @@ import {
   templateUrl: './certificate-edit.component.html',
   styleUrls: ['./certificate-edit.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

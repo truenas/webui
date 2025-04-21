@@ -18,7 +18,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './error-template.component.html',
   styleUrls: ['./error-template.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogTitle,
     IxIconComponent,

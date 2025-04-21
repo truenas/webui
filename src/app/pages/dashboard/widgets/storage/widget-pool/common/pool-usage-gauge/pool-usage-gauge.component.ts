@@ -9,7 +9,7 @@ import { formatDuration } from 'date-fns';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter, switchMap } from 'rxjs';
 import { PoolStatus } from 'app/enums/pool-status.enum';
-import { TopologyWarning, VdevType } from 'app/enums/v-dev-type.enum';
+import { TopologyWarning, VDevType } from 'app/enums/v-dev-type.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { secondsToDuration } from 'app/helpers/time.helpers';
 import { Pool } from 'app/interfaces/pool.interface';
@@ -27,7 +27,6 @@ const maxPct = 80;
   templateUrl: './pool-usage-gauge.component.html',
   styleUrl: './pool-usage-gauge.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     NgxSkeletonLoaderModule,
     GaugeChartComponent,
@@ -130,7 +129,7 @@ export class PoolUsageGaugeComponent implements OnInit {
       outputString += this.translate.instant('{type} | {vdevWidth} wide | ', { type, vdevWidth });
     }
 
-    const warnings = this.storageService.validateVdevs(VdevType.Data, vdevs, disks);
+    const warnings = this.storageService.validateVdevs(VDevType.Data, vdevs, disks);
     const isMixedVdevCapacity = warnings.includes(TopologyWarning.MixedVdevCapacity)
       || warnings.includes(TopologyWarning.MixedDiskCapacity);
 

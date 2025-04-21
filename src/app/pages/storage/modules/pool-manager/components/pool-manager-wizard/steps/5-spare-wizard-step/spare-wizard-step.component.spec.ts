@@ -6,7 +6,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { mockProvider, Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
-import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
+import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { helptextManager } from 'app/helptext/storage/volumes/manager/manager';
 import { IxComboboxHarness } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.harness';
 import { LayoutStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/layout-step/layout-step.component';
@@ -16,7 +16,7 @@ import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/p
 describe('SpareWizardStepComponent', () => {
   let spectator: Spectator<SpareWizardStepComponent>;
   let loader: HarnessLoader;
-  const resetStep$ = new Subject<VdevType>();
+  const resetStep$ = new Subject<VDevType>();
   const startOver$ = new Subject<void>();
 
   const fakeInventory = [
@@ -55,7 +55,7 @@ describe('SpareWizardStepComponent', () => {
         setManualTopologyCategory: jest.fn(),
         setAutomaticTopologyCategory: jest.fn(),
         setTopologyCategoryLayout: jest.fn(),
-        resetStep: jest.fn(() => resetStep$.next(VdevType.Spare)),
+        resetStep: jest.fn(() => resetStep$.next(VDevType.Spare)),
       }),
     ],
   });
@@ -85,15 +85,15 @@ describe('SpareWizardStepComponent', () => {
     await ixCombobox.setValue('sdo - HDD (10.91 TiB)');
     expect(
       spectator.inject(PoolManagerStore).setTopologyCategoryLayout,
-    ).toHaveBeenCalledWith(VdevType.Spare, CreateVdevLayout.Stripe);
+    ).toHaveBeenCalledWith(VDevType.Spare, CreateVdevLayout.Stripe);
 
     expect(spectator.inject(PoolManagerStore).setManualTopologyCategory).toHaveBeenCalledWith(
-      VdevType.Spare,
+      VDevType.Spare,
       [[fakeInventory[0]]],
     );
 
     expect(spectator.inject(PoolManagerStore).setAutomaticTopologyCategory).toHaveBeenCalledWith(
-      VdevType.Spare,
+      VDevType.Spare,
       {
         diskSize: fakeInventory[0].size,
         diskType: fakeInventory[0].type,
@@ -109,7 +109,7 @@ describe('SpareWizardStepComponent', () => {
     await ixCombobox.setValue('sdo - HDD (10.91 TiB)');
     const resetButton = await loader.getHarness(MatButtonHarness.with({ text: 'Reset Step' }));
     await resetButton.click();
-    expect(spectator.inject(PoolManagerStore).resetStep).toHaveBeenCalledWith(VdevType.Spare);
+    expect(spectator.inject(PoolManagerStore).resetStep).toHaveBeenCalledWith(VDevType.Spare);
     expect(await ixCombobox.getValue()).toBe('');
   });
 

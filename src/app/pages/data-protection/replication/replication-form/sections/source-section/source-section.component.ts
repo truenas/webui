@@ -35,7 +35,6 @@ import { TaskService } from 'app/services/task.service';
   providers: [
     PropertiesOverrideValidatorService,
   ],
-  standalone: true,
   imports: [
     IxFieldsetComponent,
     ReactiveFormsModule,

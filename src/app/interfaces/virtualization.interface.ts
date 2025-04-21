@@ -291,7 +291,7 @@ export interface VirtualizationVolume {
 export interface VirtualizationImportIsoParams {
   name: string;
   iso_location?: string | null;
-  upload_iso: boolean;
+  upload_iso?: boolean;
   storage_pool: string | null;
 }
 

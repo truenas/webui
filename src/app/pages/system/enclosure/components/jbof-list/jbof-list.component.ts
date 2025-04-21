@@ -41,7 +41,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   selector: 'ix-jbof-list',
   templateUrl: './jbof-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     PageHeaderComponent,
     SearchInput1Component,

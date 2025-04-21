@@ -35,7 +35,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './snapshot-details-row.component.html',
   styleUrls: ['./snapshot-details-row.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     NgxSkeletonLoaderModule,
     TranslateModule,
