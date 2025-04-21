@@ -11,6 +11,7 @@
   "A pool is made of VDEVs (virtual devices). Each VDEV is a group of drives working together": "",
   "Built in": "",
   "Cache Path": "",
+  "Current value is {value}. Click to edit.": "",
   "Default Controller": "",
   "Enable Automatic Failover": "",
   "Failover Settings": "",
