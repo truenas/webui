@@ -40,7 +40,7 @@ describe('VirtualizationStateComponent', () => {
     });
 
     const icon = spectator.query(IxIconComponent)!;
-    expect(icon.name).toBe('check');
+    expect(icon.name).toBe('mdi-check');
     expect(spectator.query('.status-text')).toHaveText('Initialized');
   });
 

@@ -17,6 +17,7 @@
   "Certificate renewal is in progress": "",
   "Certificate renewal was successful": "",
   "CONNECTING": "",
+  "Current value is {value}. Click to edit.": "",
   "DISABLED": "",
   "FAILED": "",
   "Failed to configure certificate in system UI": "",
