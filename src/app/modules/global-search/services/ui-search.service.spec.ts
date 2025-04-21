@@ -5,7 +5,7 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
-import { NavigationService } from 'app/services/navigation/navigation.service';
+import { LicenseService } from 'app/services/license.service';
 
 jest.mock('app/../assets/ui-searchable-elements.json', () => [
   { hierarchy: ['Technology', 'Programming'], synonyms: ['Coding'], requiredRoles: [] },
@@ -26,7 +26,7 @@ describe('UiSearchProvider with mocked uiElements', () => {
         providers: [
           mockProvider(AuthService, { hasRole: () => of(true) }),
           mockProvider(UiSearchDirectivesService),
-          mockProvider(NavigationService, {
+          mockProvider(LicenseService, {
             hasFailover$: of(true),
             hasEnclosure$: of(true),
             hasVms$: of(true),
@@ -68,7 +68,7 @@ describe('UiSearchProvider with mocked uiElements', () => {
         providers: [
           mockProvider(AuthService, { hasRole: () => of(false) }),
           mockProvider(UiSearchDirectivesService),
-          mockProvider(NavigationService, {
+          mockProvider(LicenseService, {
             hasFailover$: of(true),
             hasEnclosure$: of(true),
             hasVms$: of(true),
@@ -100,7 +100,7 @@ describe('UiSearchProvider with mocked uiElements', () => {
         providers: [
           mockProvider(AuthService, { hasRole: () => of(true) }),
           mockProvider(UiSearchDirectivesService),
-          mockProvider(NavigationService, {
+          mockProvider(LicenseService, {
             hasFailover$: of(true),
             hasEnclosure$: of(true),
             hasVms$: of(true),

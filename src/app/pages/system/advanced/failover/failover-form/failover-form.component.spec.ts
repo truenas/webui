@@ -33,6 +33,7 @@ describe('FailoverFormComponent', () => {
         mockCall('failover.sync_from_peer'),
       ]),
       mockProvider(SlideInRef, {
+        close: jest.fn(),
         getData: jest.fn(() => ({
           id: 3,
           master: true,
