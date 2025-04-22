@@ -32,6 +32,7 @@ describe('UiSearchProvider with mocked uiElements', () => {
             hasVms$: of(true),
             hasApps$: of(true),
             hasFibreChannel$: of(true),
+            hasKmip$: of(true),
           }),
         ],
       });
@@ -75,6 +76,7 @@ describe('UiSearchProvider with mocked uiElements', () => {
             hasVms$: of(true),
             hasApps$: of(true),
             hasFibreChannel$: of(true),
+            hasKmip$: of(true),
           }),
         ],
       });
@@ -107,8 +109,8 @@ describe('UiSearchProvider with mocked uiElements', () => {
             hasEnclosure$: of(true),
             hasVms$: of(true),
             hasApps$: of(true),
-
             hasFibreChannel$: of(true),
+            hasKmip$: of(true),
           }),
         ],
       });
