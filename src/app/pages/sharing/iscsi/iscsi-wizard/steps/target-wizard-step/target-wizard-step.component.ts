@@ -13,6 +13,7 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
 import { IscsiService } from 'app/services/iscsi.service';
+import { LicenseService } from 'app/services/license.service';
 
 @UntilDestroy()
 @Component({
@@ -44,7 +45,7 @@ export class TargetWizardStepComponent {
     { label: this.translate.instant('Fibre Channel'), value: IscsiTargetMode.Fc },
   ]);
 
-  readonly hasFibreChannel = toSignal(this.iscsiService.hasFibreChannel());
+  readonly hasFibreChannel = toSignal(this.license.hasFibreChannel$);
 
   get isNewTarget(): boolean {
     return this.form().enabled && this.form().value.target === newOption;
@@ -53,6 +54,7 @@ export class TargetWizardStepComponent {
   constructor(
     private iscsiService: IscsiService,
     private translate: TranslateService,
+    private license: LicenseService,
     public formatter: IxFormatterService,
   ) {}
 }
