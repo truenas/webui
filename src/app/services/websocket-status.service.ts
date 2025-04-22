@@ -33,9 +33,7 @@ export class WebSocketStatusService {
     map(([isConnected, isLoggedIn]) => isConnected && isLoggedIn),
     tap((status) => {
       this.authStatus$.next(status);
-      if (status) {
-        this.allowReconnect();
-      }
+      if (status) this.setReconnectStatus(true);
     }),
   );
 
@@ -51,11 +49,7 @@ export class WebSocketStatusService {
     this.connectionEstablished$.next(connected);
   }
 
-  allowReconnect(): void {
-    this.allowReconnect$.next(true);
-  }
-
-  resetReconnect(): void {
-    this.allowReconnect$.next(false);
+  setReconnectStatus(status: boolean): void {
+    this.allowReconnect$.next(status);
   }
 }

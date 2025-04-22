@@ -1,6 +1,6 @@
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { ReconnectMessage } from 'app/pages/signin/reconnect-message/reconnect-message.component';
-import { SigninStore } from 'app/pages/signin/store/signin.store';
 
 describe('ReconnectMessage', () => {
   let spectator: Spectator<ReconnectMessage>;
@@ -8,8 +8,8 @@ describe('ReconnectMessage', () => {
   const createComponent = createComponentFactory({
     component: ReconnectMessage,
     providers: [
-      mockProvider(SigninStore, {
-        init: jest.fn(),
+      mockProvider(WebSocketHandlerService, {
+        reconnect: jest.fn(),
       }),
     ],
   });
@@ -25,6 +25,6 @@ describe('ReconnectMessage', () => {
 
   it('checks reconnect button click', () => {
     spectator.click('button');
-    expect(spectator.inject(SigninStore).init).toHaveBeenCalled();
+    expect(spectator.inject(WebSocketHandlerService).reconnect).toHaveBeenCalled();
   });
 });

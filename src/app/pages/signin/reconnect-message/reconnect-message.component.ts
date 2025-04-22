@@ -1,7 +1,8 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
-import { SigninStore } from 'app/pages/signin/store/signin.store';
+import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
+import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 @Component({
   selector: 'ix-reconnect-message',
@@ -16,10 +17,12 @@ import { SigninStore } from 'app/pages/signin/store/signin.store';
 })
 export class ReconnectMessage {
   constructor(
-    private signinStore: SigninStore,
+    private wsStatus: WebSocketStatusService,
+    private wsHandler: WebSocketHandlerService,
   ) {}
 
-  protected onReconnectClick(): void {
-    this.signinStore.init();
+  protected reconnectPressed(): void {
+    this.wsHandler.reconnect();
+    this.wsStatus.setReconnectStatus(false);
   }
 }

@@ -79,7 +79,6 @@ export class SigninComponent implements OnInit {
   constructor(
     private wsStatus: WebSocketStatusService,
     private wsManager: WebSocketHandlerService,
-
     private signinStore: SigninStore,
     private dialog: DialogService,
     private authService: AuthService,
@@ -88,14 +87,10 @@ export class SigninComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.isConnected$
-      .pipe(
-        filter((status) => status),
-        untilDestroyed(this),
-      )
-      .subscribe(() => {
-        this.signinStore.init();
-      });
+    this.isConnected$.pipe(
+      filter(Boolean),
+      untilDestroyed(this),
+    ).subscribe(() => this.signinStore.init());
 
     this.signinStore.loginBanner$.pipe(
       filter(Boolean),

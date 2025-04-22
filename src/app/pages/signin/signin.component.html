@@ -4,19 +4,19 @@
       <mat-progress-bar
         value="0"
         class="session-progress"
-        [mode]="(hasLoadingIndicator$ | async) ? 'indeterminate' : 'determinate'"
+        [mode]="(hasLoadingIndicator$ | async) && !(allowReconnect$ | async)
+          ? 'indeterminate'
+          : 'determinate'"
       ></mat-progress-bar>
     }
 
-
-    @if ((allowReconnect$ | async) && !(hasLoadingIndicator$ | async)) {
+    @if ((!(isConnected$ | async) && (isConnectedDelayed$ | async) !== null) && (allowReconnect$ | async)) {
       <mat-card>
         <mat-card-content>
           <ix-reconnect-message></ix-reconnect-message>
         </mat-card-content>
       </mat-card>
-    }
-    @if (!(isConnected$ | async) && (isConnectedDelayed$ | async) !== null) {
+    } @else if (!(isConnected$ | async) && (isConnectedDelayed$ | async) !== null) {
       <mat-card>
         <mat-card-content>
           <ix-disconnected-message></ix-disconnected-message>

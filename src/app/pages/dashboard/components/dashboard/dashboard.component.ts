@@ -37,6 +37,7 @@ import { getDefaultWidgets } from 'app/pages/dashboard/services/get-default-widg
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetGroup } from 'app/pages/dashboard/types/widget-group.interface';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { WidgetGroupControlsComponent } from './widget-group-controls/widget-group-controls.component';
@@ -108,6 +109,7 @@ export class DashboardComponent implements OnInit {
     private dialogService: DialogService,
     private store$: Store<AppState>,
     private wsManager: WebSocketHandlerService,
+    private wsStatus: WebSocketStatusService,
   ) {}
 
   ngOnInit(): void {
@@ -116,10 +118,9 @@ export class DashboardComponent implements OnInit {
     this.dashboardStore.entered();
     this.loadGroups();
 
-    timer(15000, 20000).pipe(untilDestroyed(this)).subscribe(() => {
-      this.wsManager.close();
-      console.info('timer fired, connection closed');
-      this.wsManager.reconnect();
+    timer(10000, 10000).pipe(untilDestroyed(this)).subscribe(() => {
+      this.wsManager.disconnect();
+      console.info('connection closed');
     });
   }
 

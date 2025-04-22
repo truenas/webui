@@ -7,6 +7,7 @@ import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyri
 import {
   DisconnectedMessageComponent,
 } from 'app/pages/signin/disconnected-message/disconnected-message.component';
+import { ReconnectMessage } from 'app/pages/signin/reconnect-message/reconnect-message.component';
 import {
   SetAdminPasswordFormComponent,
 } from 'app/pages/signin/set-admin-password-form/set-admin-password-form.component';
@@ -27,6 +28,7 @@ describe('SigninComponent', () => {
   const loginBanner$ = new BehaviorSubject<string>('');
   const isTokenWithinTimeline$ = new BehaviorSubject<boolean>(true);
   const isConnectedDelayed$ = new BehaviorSubject<boolean>(false);
+  const allowReconnect$ = new BehaviorSubject<boolean>(false);
 
   const createComponent = createComponentFactory({
     component: SigninComponent,
@@ -37,6 +39,7 @@ describe('SigninComponent', () => {
         SetAdminPasswordFormComponent,
         TrueCommandStatusComponent,
         CopyrightLineComponent,
+        ReconnectMessage,
       ),
     ],
     componentProviders: [
@@ -60,6 +63,7 @@ describe('SigninComponent', () => {
       }),
       mockProvider(WebSocketStatusService, {
         isConnected$,
+        allowReconnect$,
       }),
     ],
   });
@@ -86,6 +90,16 @@ describe('SigninComponent', () => {
       spectator.detectChanges();
 
       expect(spectator.query(DisconnectedMessageComponent)).toExist();
+    });
+
+    it('shows ReconnectMessage when has established initial connection', () => {
+      allowReconnect$.next(true);
+      isConnected$.next(false);
+      isConnectedDelayed$.next(false);
+
+      spectator.detectChanges();
+
+      expect(spectator.query(ReconnectMessage)).toExist();
     });
   });
 
