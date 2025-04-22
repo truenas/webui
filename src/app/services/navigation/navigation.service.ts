@@ -61,13 +61,6 @@ export class NavigationService {
       state: 'data-protection',
     },
     {
-      name: T('Network'),
-      type: MenuItemType.Link,
-      tooltip: T('Network'),
-      icon: iconMarker('device_hub'),
-      state: 'network',
-    },
-    {
       name: T('Credentials'),
       type: MenuItemType.SlideOut,
       tooltip: T('Credentials'),
@@ -119,6 +112,7 @@ export class NavigationService {
         { name: T('Update'), state: 'update' },
         { name: T('General Settings'), state: 'general' },
         { name: T('Advanced Settings'), state: 'advanced' },
+        { name: T('Network'), state: 'network' },
         { name: T('Boot'), state: 'boot' },
         { name: T('Failover'), state: 'failover', isVisible$: this.hasFailover$ },
         { name: T('Services'), state: 'services' },

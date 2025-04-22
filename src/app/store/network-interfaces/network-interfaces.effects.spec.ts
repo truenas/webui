@@ -68,7 +68,7 @@ describe('NetworkInterfacesEffects', () => {
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
         message: helptextInterfaces.pending_checkin_dialog_text,
       }));
-      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/network']);
+      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/system', 'network']);
     });
 
     it('shows confirmation dialog when networkInterfacesCheckinLoaded is dispatched with true values', () => {
@@ -81,7 +81,7 @@ describe('NetworkInterfacesEffects', () => {
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
         message: helptextInterfaces.pending_checkin_dialog_text,
       }));
-      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/network']);
+      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/system', 'network']);
     });
   });
 });
