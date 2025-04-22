@@ -12,10 +12,10 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { NtpServerFormComponent } from './ntp-server-form.component';
+import { NtpServersFormComponent } from 'app/pages/system/advanced/ntp-servers/ntp-servers-form/ntp-servers-form.component';
 
 describe('NtpServerFormComponent', () => {
-  let spectator: Spectator<NtpServerFormComponent>;
+  let spectator: Spectator<NtpServersFormComponent>;
   let loader: HarnessLoader;
   let api: ApiService;
 
@@ -36,7 +36,7 @@ describe('NtpServerFormComponent', () => {
   };
 
   const createComponent = createComponentFactory({
-    component: NtpServerFormComponent,
+    component: NtpServersFormComponent,
     imports: [
       ReactiveFormsModule,
     ],

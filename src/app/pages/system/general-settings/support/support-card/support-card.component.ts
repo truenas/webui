@@ -37,6 +37,9 @@ import { LicenseComponent } from 'app/pages/system/general-settings/support/lice
 import { LicenseInfoInSupport } from 'app/pages/system/general-settings/support/license-info-in-support.interface';
 import { ProactiveComponent } from 'app/pages/system/general-settings/support/proactive/proactive.component';
 import {
+  SaveDebugButtonComponent,
+} from 'app/pages/system/general-settings/support/save-debug-button/save-debug-button.component';
+import {
   SetProductionStatusDialog,
   SetProductionStatusDialogResult,
 } from 'app/pages/system/general-settings/support/set-production-status-dialog/set-production-status-dialog.component';
@@ -70,6 +73,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
     MatMenuItem,
     TranslateModule,
     IxSlideToggleComponent,
+    SaveDebugButtonComponent,
   ],
 })
 export class SupportCardComponent implements OnInit {

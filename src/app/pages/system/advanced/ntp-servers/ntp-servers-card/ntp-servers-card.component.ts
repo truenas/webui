@@ -27,14 +27,14 @@ import { createTable } from 'app/modules/ix-table/utils';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ntpServerElements } from 'app/pages/system/general-settings/ntp-server/ntp-server-card/ntp-server-card.elements';
-import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-server/ntp-server-form/ntp-server-form.component';
+import { ntpServersElements } from 'app/pages/system/advanced/ntp-servers/ntp-servers-card/ntp-servers-card.elements';
+import { NtpServersFormComponent } from 'app/pages/system/advanced/ntp-servers/ntp-servers-form/ntp-servers-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-ntp-server-card',
-  templateUrl: './ntp-server-card.component.html',
+  selector: 'ix-ntp-servers-card',
+  templateUrl: './ntp-servers-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatCard,
@@ -51,9 +51,9 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     AsyncPipe,
   ],
 })
-export class NtpServerCardComponent implements OnInit {
+export class NtpServersCardComponent implements OnInit {
   protected readonly requiredRoles = [Role.NetworkGeneralWrite];
-  protected readonly searchableElements = ntpServerElements;
+  protected readonly searchableElements = ntpServersElements;
 
   dataProvider: AsyncDataProvider<NtpServer>;
 
@@ -142,14 +142,14 @@ export class NtpServerCardComponent implements OnInit {
   }
 
   doAdd(): void {
-    this.slideIn.open(NtpServerFormComponent).pipe(
+    this.slideIn.open(NtpServersFormComponent).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(() => this.loadItems());
   }
 
   doEdit(server: NtpServer): void {
-    this.slideIn.open(NtpServerFormComponent, { data: server }).pipe(
+    this.slideIn.open(NtpServersFormComponent, { data: server }).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(() => this.loadItems());

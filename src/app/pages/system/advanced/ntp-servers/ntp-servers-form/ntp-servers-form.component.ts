@@ -25,8 +25,8 @@ import { ApiService } from 'app/modules/websocket/api.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-ntp-server-form',
-  templateUrl: './ntp-server-form.component.html',
+  selector: 'ix-ntp-servers-form',
+  templateUrl: './ntp-servers-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ModalHeaderComponent,
@@ -43,7 +43,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
     TranslateModule,
   ],
 })
-export class NtpServerFormComponent implements OnInit {
+export class NtpServersFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.NetworkGeneralWrite];
 
   protected isFormLoading = signal(false);

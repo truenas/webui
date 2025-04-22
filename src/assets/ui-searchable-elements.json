@@ -4182,6 +4182,157 @@
     "hierarchy": [
       "System",
       "Advanced Settings",
+      "Manage Configuration"
+    ],
+    "synonyms": [],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "manage-configuration",
+    "triggerAnchor": "manage-configuration",
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced Settings",
+      "Manage Configuration",
+      "Download File"
+    ],
+    "synonyms": [
+      "Export File",
+      "Export Configuration",
+      "Download Configuration",
+      "Export Config",
+      "Save Config",
+      "Download Config",
+      "Backup Config"
+    ],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "download-file",
+    "triggerAnchor": "manage-configuration",
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced Settings",
+      "Manage Configuration",
+      "Upload File"
+    ],
+    "synonyms": [
+      "Import File",
+      "Import Configuration",
+      "Upload Configuration",
+      "Import Config",
+      "Upload Config",
+      "Restore Config"
+    ],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "upload-file",
+    "triggerAnchor": "manage-configuration",
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced Settings",
+      "Manage Configuration",
+      "Reset to Defaults"
+    ],
+    "synonyms": [
+      "Restore Defaults",
+      "Reset Defaults",
+      "Restore Default Config",
+      "Reset Default Config",
+      "Reset Config",
+      "Restore Config Defaults",
+      "Restore Default Configuration"
+    ],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "reset-to-defaults",
+    "triggerAnchor": "manage-configuration",
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "General Settings",
+      "NTP Server"
+    ],
+    "synonyms": [
+      "Add NTP Server"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "routerLink": null,
+    "anchor": "ntp-card",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "General Settings",
+      "NTP Server",
+      "Add NTP Server"
+    ],
+    "synonyms": [
+      "Create NTP Server",
+      "New NTP Server",
+      "Time Server"
+    ],
+    "requiredRoles": [
+      "NETWORK_GENERAL_WRITE"
+    ],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "routerLink": null,
+    "anchor": "add-ntp-server",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced Settings",
       "Replication"
     ],
     "synonyms": [],
@@ -4235,23 +4386,6 @@
     ],
     "routerLink": null,
     "anchor": "replication-tasks-limit",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "Advanced Settings",
-      "Save Debug"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/system/advanced"
-    ],
-    "routerLink": null,
-    "anchor": "save-debug",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -5219,157 +5353,6 @@
   {
     "hierarchy": [
       "System",
-      "General Settings",
-      "Manage Configuration"
-    ],
-    "synonyms": [],
-    "requiredRoles": [
-      "FULL_ADMIN"
-    ],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/system",
-      "general"
-    ],
-    "routerLink": null,
-    "anchor": "manage-configuration",
-    "triggerAnchor": "manage-configuration",
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "General Settings",
-      "Manage Configuration",
-      "Download File"
-    ],
-    "synonyms": [
-      "Export File",
-      "Export Configuration",
-      "Download Configuration",
-      "Export Config",
-      "Save Config",
-      "Download Config",
-      "Backup Config"
-    ],
-    "requiredRoles": [
-      "FULL_ADMIN"
-    ],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/system",
-      "general"
-    ],
-    "routerLink": null,
-    "anchor": "download-file",
-    "triggerAnchor": "manage-configuration",
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "General Settings",
-      "Manage Configuration",
-      "Upload File"
-    ],
-    "synonyms": [
-      "Import File",
-      "Import Configuration",
-      "Upload Configuration",
-      "Import Config",
-      "Upload Config",
-      "Restore Config"
-    ],
-    "requiredRoles": [
-      "FULL_ADMIN"
-    ],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/system",
-      "general"
-    ],
-    "routerLink": null,
-    "anchor": "upload-file",
-    "triggerAnchor": "manage-configuration",
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "General Settings",
-      "Manage Configuration",
-      "Reset to Defaults"
-    ],
-    "synonyms": [
-      "Restore Defaults",
-      "Reset Defaults",
-      "Restore Default Config",
-      "Reset Default Config",
-      "Reset Config",
-      "Restore Config Defaults",
-      "Restore Default Configuration"
-    ],
-    "requiredRoles": [
-      "FULL_ADMIN"
-    ],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/system",
-      "general"
-    ],
-    "routerLink": null,
-    "anchor": "reset-to-defaults",
-    "triggerAnchor": "manage-configuration",
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "General Settings",
-      "NTP Server"
-    ],
-    "synonyms": [
-      "Add NTP Server"
-    ],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/system",
-      "general"
-    ],
-    "routerLink": null,
-    "anchor": "ntp-card",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "General Settings",
-      "NTP Server",
-      "Add NTP Server"
-    ],
-    "synonyms": [
-      "Create NTP Server",
-      "New NTP Server",
-      "Time Server"
-    ],
-    "requiredRoles": [
-      "NETWORK_GENERAL_WRITE"
-    ],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/system",
-      "general"
-    ],
-    "routerLink": null,
-    "anchor": "add-ntp-server",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
       "Support",
       "Eula"
     ],
@@ -5389,6 +5372,24 @@
   {
     "hierarchy": [
       "System",
+      "General Settings",
+      "Save Debug"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/system/general"
+    ],
+    "routerLink": null,
+    "anchor": "save-debug",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "General Settings",
       "Support"
     ],
     "synonyms": [],
@@ -5396,7 +5397,7 @@
     "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
-      "support"
+      "general"
     ],
     "routerLink": null,
     "anchor": "support",
@@ -5406,6 +5407,7 @@
   {
     "hierarchy": [
       "System",
+      "General Settings",
       "Support",
       "License"
     ],
@@ -5420,7 +5422,7 @@
     "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
-      "support"
+      "general"
     ],
     "routerLink": null,
     "anchor": "license",
@@ -5430,6 +5432,7 @@
   {
     "hierarchy": [
       "System",
+      "General Settings",
       "Support",
       "File Ticket"
     ],
@@ -5440,7 +5443,7 @@
     "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
-      "support"
+      "general"
     ],
     "routerLink": null,
     "anchor": "file-ticket",

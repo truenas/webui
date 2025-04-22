@@ -12,9 +12,9 @@ import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { SaveDebugButtonComponent } from 'app/pages/system/general-settings/support/save-debug-button/save-debug-button.component';
 import { DownloadService } from 'app/services/download.service';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
-import { SaveDebugButtonComponent } from './save-debug-button.component';
 
 describe('SaveDebugButtonComponent', () => {
   let spectator: Spectator<SaveDebugButtonComponent>;
