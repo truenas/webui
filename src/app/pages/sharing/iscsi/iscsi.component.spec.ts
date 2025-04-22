@@ -12,7 +12,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { GlobalTargetConfigurationComponent } from 'app/pages/sharing/iscsi/global-target-configuration/global-target-configuration.component';
-import { IscsiService } from 'app/services/iscsi.service';
+import { LicenseService } from 'app/services/license.service';
 import { IscsiComponent } from './iscsi.component';
 
 describe('IscsiComponent', () => {
@@ -30,8 +30,8 @@ describe('IscsiComponent', () => {
       MockComponent(PageHeaderComponent),
     ],
     providers: [
-      mockProvider(IscsiService, {
-        hasFibreChannel: () => hasFibreChannel$,
+      mockProvider(LicenseService, {
+        hasFibreChannel$,
       }),
       mockAuth(),
       mockApi(),

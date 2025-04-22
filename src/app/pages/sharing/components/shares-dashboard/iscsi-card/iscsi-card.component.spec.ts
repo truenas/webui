@@ -30,7 +30,7 @@ import {
 } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { DeleteTargetDialog } from 'app/pages/sharing/iscsi/target/delete-target-dialog/delete-target-dialog.component';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
-import { IscsiService } from 'app/services/iscsi.service';
+import { LicenseService } from 'app/services/license.service';
 import { selectServices } from 'app/store/services/services.selectors';
 
 describe('IscsiCardComponent', () => {
@@ -86,8 +86,8 @@ describe('IscsiCardComponent', () => {
         open: jest.fn(() => of()),
       }),
       mockProvider(SlideInRef, slideInRef),
-      mockProvider(IscsiService, {
-        hasFibreChannel: jest.fn(() => of(true)),
+      mockProvider(LicenseService, {
+        hasFibreChannel$: of(true),
       }),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({

@@ -21,7 +21,7 @@ export class SnackbarService {
       politeness: 'assertive',
       data: {
         message,
-        icon: iconMarker('check'),
+        icon: iconMarker('mdi-check'),
         iconCssColor: 'var(--green)',
       },
     });
