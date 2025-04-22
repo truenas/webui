@@ -21,9 +21,9 @@ import { smbListElements } from 'app/pages/sharing/smb/smb-list/smb-list.element
 import { smbStatusElements } from 'app/pages/sharing/smb/smb-status/smb-status.elements';
 import { diskListElements } from 'app/pages/storage/modules/disks/components/disk-list/disk-list.elements';
 import { storageElements } from 'app/pages/storage/pools-dashboard.elements';
+import { failoverCardElements } from 'app/pages/system/advanced/failover/failover-card.elements';
 import { bootListElements } from 'app/pages/system/bootenv/bootenv-list/bootenv-list.elements';
 import { jbofListElements } from 'app/pages/system/enclosure/components/jbof-list/jbof-list.elements';
-import { failoverElements } from 'app/pages/system/failover-settings/failover-settings.elements';
 import { guiCardElements } from 'app/pages/system/general-settings/gui/gui-card/gui-card.elements';
 import { supportCardElements } from 'app/pages/system/general-settings/support/support-card/support-card.elements';
 import { interfacesCardElements } from 'app/pages/system/network/components/interfaces-card/interfaces-card.elements';
@@ -106,7 +106,8 @@ export const supportedLinks: SupportedLink[] = [
   {
     link: {
       label: T('Go to Failover Settings'),
-      route: failoverElements.anchorRouterLink,
+      route: failoverCardElements.anchorRouterLink,
+      hash: failoverCardElements.elements.card.anchor,
     },
     classes: [
       AlertClassName.FailoverSyncFailed,

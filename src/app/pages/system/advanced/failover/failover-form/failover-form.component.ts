@@ -1,124 +1,126 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, OnInit, signal,
-} from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatProgressBar } from '@angular/material/progress-bar';
-import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { Subscription } from 'rxjs';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { startWith } from 'rxjs';
 import {
   filter, map, switchMap, take,
 } from 'rxjs/operators';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
-import { UiSearchDirective } from 'app/directives/ui-search.directive';
-import { Role } from 'app/enums/role.enum';
 import { helptextSystemFailover } from 'app/helptext/system/failover';
+import { FailoverConfig } from 'app/interfaces/failover.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
-import { failoverElements } from 'app/pages/system/failover-settings/failover-settings.elements';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
-import { AppState } from 'app/store';
 import { haSettingsUpdated } from 'app/store/ha-info/ha-info.actions';
 
-@UntilDestroy({
-  arrayName: 'subscriptions',
-})
+@UntilDestroy()
 @Component({
-  selector: 'ix-failover-settings',
-  templateUrl: './failover-settings.component.html',
-  styleUrls: ['./failover-settings.component.scss'],
+  selector: 'ix-failover-form',
+  templateUrl: './failover-form.component.html',
+  styleUrls: ['./failover-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    UiSearchDirective,
-    MatCardContent,
-    MatProgressBar,
-    ReactiveFormsModule,
     IxFieldsetComponent,
+    MatCard,
+    MatCardContent,
+    ModalHeaderComponent,
+    ReactiveFormsModule,
+    TranslateModule,
     IxCheckboxComponent,
     IxInputComponent,
-    RequiresRolesDirective,
+    FormActionsComponent,
+    AsyncPipe,
     MatButton,
     TestDirective,
-    TranslateModule,
-    AsyncPipe,
   ],
 })
-export class FailoverSettingsComponent implements OnInit {
-  protected readonly searchableElements = failoverElements;
+export class FailoverFormComponent {
+  protected form = this.formBuilder.group({
+    enabled: [false],
+    master: [true],
+    timeout: [null as number | null],
+  });
 
   protected isLoading = signal(false);
-  form = this.formBuilder.group({
-    disabled: [false],
-    master: [true],
-    timeout: new FormControl(null as number | null),
-  });
+  protected readonly helptext = helptextSystemFailover;
 
-  subscriptions: Subscription[] = [];
-
-  protected readonly requiredRoles = [Role.FailoverWrite];
-
-  submitButtonText$ = this.form.select((values) => {
-    if (!values.master) {
-      return this.translate.instant('Save And Failover');
-    }
-    return this.translate.instant('Save');
-  });
-
-  readonly helptext = helptextSystemFailover;
+  submitButtonText$ = this.form.controls.master.valueChanges.pipe(
+    startWith(true),
+    map((isMaster) => {
+      return isMaster
+        ? this.translate.instant('Save')
+        : this.translate.instant('Save And Failover');
+    }),
+  );
 
   constructor(
+    public slideInRef: SlideInRef<FailoverConfig, boolean>,
     private formBuilder: FormBuilder,
     private api: ApiService,
     private dialogService: DialogService,
-    private authService: AuthService,
     private errorHandler: ErrorHandlerService,
     private formErrorHandler: FormErrorHandlerService,
-    private translate: TranslateService,
     private snackbar: SnackbarService,
-    private store$: Store<AppState>,
-    private wsManager: WebSocketHandlerService,
-  ) {}
+    private translate: TranslateService,
+    private store$: Store,
+    private authService: AuthService,
+    private wsHandler: WebSocketHandlerService,
+    private router: Router,
+  ) {
+    const config = this.slideInRef.getData();
 
-  ngOnInit(): void {
-    this.loadFormValues();
+    this.form.patchValue({
+      enabled: !config.disabled,
+      master: config.master,
+      timeout: config.timeout,
+    });
+
+    this.setFormRelations();
+    this.warnOnMasterChange();
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     this.isLoading.set(true);
     const values = this.form.getRawValue();
+    const payload = {
+      master: values.master,
+      timeout: values.timeout,
+      disabled: !values.enabled,
+    };
 
-    this.api.call('failover.update', [values])
-      .pipe(
-        map(() => { this.store$.dispatch(haSettingsUpdated()); }),
-        untilDestroyed(this),
-      )
+    this.api.call('failover.update', [payload]).pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
+          this.store$.dispatch(haSettingsUpdated());
           this.snackbar.success(this.translate.instant('Settings saved.'));
           this.isLoading.set(false);
 
-          if (values.disabled && !values.master) {
-            this.authService.logout().pipe(untilDestroyed(this)).subscribe({
-              next: () => {
-                this.authService.clearAuthToken();
-                this.wsManager.reconnect();
-              },
-            });
+          const shouldReLogin = payload.disabled && !values.master;
+          if (shouldReLogin) {
+            this.redirectToLoginPage();
+            return;
           }
+
+          this.slideInRef.close({
+            response: true,
+            error: null,
+          });
         },
         error: (error: unknown) => {
           this.formErrorHandler.handleValidationErrors(error, this.form);
@@ -127,13 +129,13 @@ export class FailoverSettingsComponent implements OnInit {
       });
   }
 
-  onSyncToPeerPressed(): void {
+  protected onSyncToPeerPressed(): void {
     this.dialogService.confirm({
-      title: helptextSystemFailover.dialog_sync_to_peer_title,
-      message: helptextSystemFailover.dialog_sync_to_peer_message,
-      buttonText: helptextSystemFailover.dialog_button_ok,
+      title: this.translate.instant(helptextSystemFailover.dialog_sync_to_peer_title),
+      message: this.translate.instant(helptextSystemFailover.dialog_sync_to_peer_message),
+      buttonText: this.translate.instant(helptextSystemFailover.dialog_button_ok),
       secondaryCheckbox: true,
-      secondaryCheckboxText: helptextSystemFailover.dialog_sync_to_peer_checkbox,
+      secondaryCheckboxText: this.translate.instant(helptextSystemFailover.dialog_sync_to_peer_checkbox),
     })
       .pipe(
         filter((result) => result.confirmed),
@@ -147,7 +149,7 @@ export class FailoverSettingsComponent implements OnInit {
         next: () => {
           this.isLoading.set(false);
           this.snackbar.success(
-            helptextSystemFailover.confirm_dialogs.sync_to_message,
+            this.translate.instant(helptextSystemFailover.confirm_dialogs.sync_to_message),
           );
         },
         error: (error: unknown) => {
@@ -157,11 +159,11 @@ export class FailoverSettingsComponent implements OnInit {
       });
   }
 
-  onSyncFromPeerPressed(): void {
+  protected onSyncFromPeerPressed(): void {
     this.dialogService.confirm({
-      title: helptextSystemFailover.dialog_sync_from_peer_title,
-      message: helptextSystemFailover.dialog_sync_from_peer_message,
-      buttonText: helptextSystemFailover.dialog_button_ok,
+      title: this.translate.instant(helptextSystemFailover.dialog_sync_from_peer_title),
+      message: this.translate.instant(helptextSystemFailover.dialog_sync_from_peer_message),
+      buttonText: this.translate.instant(helptextSystemFailover.dialog_button_ok),
     })
       .pipe(
         filter(Boolean),
@@ -185,36 +187,14 @@ export class FailoverSettingsComponent implements OnInit {
       });
   }
 
-  private loadFormValues(): void {
-    this.isLoading.set(true);
-
-    this.api.call('failover.config')
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: (config) => {
-          this.isLoading.set(false);
-          this.form.patchValue({
-            ...config,
-            master: true,
-          });
-          this.setFailoverConfirmation();
-          this.setFormRelations();
-        },
-        error: (error: unknown) => {
-          this.isLoading.set(false);
-          this.errorHandler.showErrorModal(error);
-        },
-      });
-  }
-
-  private setFailoverConfirmation(): void {
+  private warnOnMasterChange(): void {
     this.form.controls.master.valueChanges
       .pipe(
         filter((isMaster) => !isMaster),
         switchMap(() => {
           return this.dialogService.confirm({
-            title: helptextSystemFailover.master_dialog_title,
-            message: helptextSystemFailover.master_dialog_warning,
+            title: this.translate.instant(helptextSystemFailover.master_dialog_title),
+            message: this.translate.instant(helptextSystemFailover.master_dialog_warning),
             buttonText: this.translate.instant('Continue'),
             cancelText: this.translate.instant('Cancel'),
             disableClose: true,
@@ -230,10 +210,26 @@ export class FailoverSettingsComponent implements OnInit {
   }
 
   private setFormRelations(): void {
-    this.subscriptions.push(
-      this.form.controls.master.disabledWhile(
-        this.form.select((values) => !values.disabled),
-      ),
-    );
+    this.form.controls.enabled.valueChanges
+      .pipe(
+        startWith(this.form.value.enabled),
+        untilDestroyed(this),
+      )
+      .subscribe((enabled) => {
+        if (enabled) {
+          this.form.controls.master.disable({ emitEvent: false });
+        } else {
+          this.form.controls.master.enable({ emitEvent: false });
+        }
+      });
+  }
+
+  private redirectToLoginPage(): void {
+    this.authService.logout().pipe(untilDestroyed(this)).subscribe({
+      next: () => {
+        this.wsHandler.reconnect();
+        this.router.navigate(['/signin']);
+      },
+    });
   }
 }

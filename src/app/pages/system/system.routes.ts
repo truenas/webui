@@ -7,7 +7,6 @@ import {
 } from 'app/pages/system/advanced/init-shutdown/init-shutdown-list/init-shutdown-list.component';
 import { AlertServiceListComponent } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.component';
 import { AlertSettingsComponent } from 'app/pages/system/alert-settings/alert-settings.component';
-import { FailoverSettingsComponent } from 'app/pages/system/failover-settings/failover-settings.component';
 import { GeneralSettingsComponent } from 'app/pages/system/general-settings/general-settings.component';
 import { SupportCardComponent } from 'app/pages/system/general-settings/support/support-card/support-card.component';
 import { ManualUpdateFormComponent } from 'app/pages/system/update/components/manual-update-form/manual-update-form.component';
@@ -81,8 +80,7 @@ export const systemRoutes: Routes = [
           component: TunableListComponent,
           data: { title: T('Tunables'), breadcrumb: null },
         }],
-      },
-      {
+      }, {
         path: 'sysctl',
         data: { title: T('Sysctl'), breadcrumb: null },
         children: [{
@@ -127,11 +125,6 @@ export const systemRoutes: Routes = [
             component: AlertSettingsComponent,
           },
         ],
-      },
-      {
-        path: 'failover',
-        component: FailoverSettingsComponent,
-        data: { title: T('Failover'), breadcrumb: null },
       },
       {
         path: 'support',
