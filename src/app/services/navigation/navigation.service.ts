@@ -101,6 +101,7 @@ export class NavigationService {
         { name: T('Update'), state: 'update' },
         { name: T('General Settings'), state: 'general' },
         { name: T('Advanced Settings'), state: 'advanced' },
+        { name: T('Network'), state: 'network' },
         { name: T('Boot'), state: 'boot' },
         { name: T('Services'), state: 'services' },
         {
