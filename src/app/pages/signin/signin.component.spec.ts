@@ -75,6 +75,7 @@ describe('SigninComponent', () => {
     isConnected$.next(true);
     loginBanner$.next('');
     isTokenWithinTimeline$.next(false);
+    allowReconnect$.next(false);
     spectator.component.isConnectedDelayed$ = isConnectedDelayed$;
   });
 
