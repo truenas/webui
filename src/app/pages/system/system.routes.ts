@@ -43,6 +43,14 @@ export const systemRoutes: Routes = [
         data: { title: T('Advanced Settings'), breadcrumb: null },
       },
       {
+        path: 'network',
+        data: {
+          title: T('Network'),
+          breadcrumb: null,
+        },
+        loadComponent: () => import('./network/network.component').then((module) => module.NetworkComponent),
+      },
+      {
         path: 'viewenclosure',
         data: {
           title: T('View Enclosure'),

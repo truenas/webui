@@ -16,7 +16,6 @@ import {
 } from 'app/pages/datasets/components/dataset-management/dataset-management.elements';
 import { snapshotListElements } from 'app/pages/datasets/modules/snapshots/snapshot-list/snapshot-list.elements';
 import { directoryServicesElements } from 'app/pages/directory-service/directory-services.elements';
-import { interfacesCardElements } from 'app/pages/network/components/interfaces-card/interfaces-card.elements';
 import { servicesElements } from 'app/pages/services/services.elements';
 import { smbListElements } from 'app/pages/sharing/smb/smb-list/smb-list.elements';
 import { smbStatusElements } from 'app/pages/sharing/smb/smb-status/smb-status.elements';
@@ -27,6 +26,7 @@ import { bootListElements } from 'app/pages/system/bootenv/bootenv-list/bootenv-
 import { jbofListElements } from 'app/pages/system/enclosure/components/jbof-list/jbof-list.elements';
 import { guiCardElements } from 'app/pages/system/general-settings/gui/gui-card/gui-card.elements';
 import { supportCardElements } from 'app/pages/system/general-settings/support/support-card/support-card.elements';
+import { interfacesCardElements } from 'app/pages/system/network/components/interfaces-card/interfaces-card.elements';
 import { systemUpdateElements } from 'app/pages/system/update/update.elements';
 
 interface SupportedLink {
