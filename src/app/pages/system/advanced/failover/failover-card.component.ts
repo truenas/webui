@@ -28,7 +28,10 @@ import { FirstTimeWarningService } from 'app/services/first-time-warning.service
 @Component({
   selector: 'ix-failover-card',
   templateUrl: './failover-card.component.html',
-  styleUrls: ['./failover-card.component.scss'],
+  styleUrls: [
+    '../../general-settings/common-settings-card.scss',
+    './failover-card.component.scss',
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatButton,
