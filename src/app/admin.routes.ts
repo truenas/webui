@@ -31,11 +31,6 @@ export const adminRoutes: Routes = [
         pathMatch: 'prefix',
       },
       {
-        path: 'network',
-        loadComponent: () => import('./pages/network/network.component').then((module) => module.NetworkComponent),
-        data: { title: T('Network'), breadcrumb: T('Network') },
-      },
-      {
         path: 'services',
         loadComponent: () => import('./pages/services/services.component').then((module) => module.ServicesComponent),
         data: { title: T('Services'), breadcrumb: T('Services') },

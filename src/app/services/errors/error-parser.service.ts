@@ -101,7 +101,7 @@ export class ErrorParserService {
     return {
       title,
       message: error.reason || error?.error?.toString(),
-      backtrace: error.trace?.formatted || '',
+      stackTrace: error.trace?.formatted || '',
     };
   }
 
@@ -118,7 +118,7 @@ export class ErrorParserService {
     return {
       title: job.state,
       message: job.error || job.exception || this.translate.instant('Unknown error'),
-      backtrace: job.logs_excerpt || job.exception,
+      stackTrace: job.logs_excerpt || job.exception,
     };
   }
 
@@ -164,7 +164,7 @@ export class ErrorParserService {
       parsedError = {
         title: (this.translate?.instant('Error') || 'Error'),
         message: extractedError,
-        backtrace: errorJob.logs_path || errorJob.exception,
+        stackTrace: errorJob.logs_path || errorJob.exception,
       };
     }
     return parsedError;
