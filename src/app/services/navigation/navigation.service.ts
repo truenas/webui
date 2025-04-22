@@ -1,29 +1,17 @@
 import { Injectable } from '@angular/core';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Store } from '@ngrx/store';
-import { BehaviorSubject, of } from 'rxjs';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { map } from 'rxjs/operators';
-import { LicenseFeature } from 'app/enums/license-feature.enum';
-import { ProductType } from 'app/enums/product-type.enum';
 import { MenuItem, MenuItemType } from 'app/interfaces/menu-item.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
-import { SystemGeneralService } from 'app/services/system-general.service';
-import { AppState } from 'app/store';
-import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
-import { selectHasEnclosureSupport, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
+import { LicenseService } from 'app/services/license.service';
 
 @UntilDestroy()
 @Injectable({
   providedIn: 'root',
 })
 export class NavigationService {
-  readonly hasFailover$ = this.store$.select(selectIsHaLicensed);
-  readonly hasEnclosure$ = this.store$.select(selectHasEnclosureSupport);
-  readonly hasVms$ = new BehaviorSubject(false);
-  readonly hasApps$ = new BehaviorSubject(false);
-
   readonly menuItems: MenuItem[] = [
     {
       name: T('Dashboard'),
@@ -61,13 +49,6 @@ export class NavigationService {
       state: 'data-protection',
     },
     {
-      name: T('Network'),
-      type: MenuItemType.Link,
-      tooltip: T('Network'),
-      icon: iconMarker('device_hub'),
-      state: 'network',
-    },
-    {
       name: T('Credentials'),
       type: MenuItemType.SlideOut,
       tooltip: T('Credentials'),
@@ -83,7 +64,7 @@ export class NavigationService {
         {
           name: 'KMIP',
           state: 'kmip',
-          isVisible$: of(this.systemGeneralService.getProductType() === ProductType.Enterprise),
+          isVisible$: this.license.hasKmip$,
         },
       ],
     },
@@ -93,6 +74,7 @@ export class NavigationService {
       tooltip: T('Instances'),
       icon: iconMarker('mdi-laptop'),
       state: 'instances',
+      isVisible$: this.license.hasVms$,
     },
     {
       name: T('Apps'),
@@ -100,7 +82,7 @@ export class NavigationService {
       tooltip: T('Apps'),
       icon: iconMarker('apps'),
       state: 'apps',
-      isVisible$: this.hasApps$,
+      isVisible$: this.license.hasApps$,
     },
     {
       name: T('Reporting'),
@@ -120,7 +102,6 @@ export class NavigationService {
         { name: T('General Settings'), state: 'general' },
         { name: T('Advanced Settings'), state: 'advanced' },
         { name: T('Boot'), state: 'boot' },
-        { name: T('Failover'), state: 'failover', isVisible$: this.hasFailover$ },
         { name: T('Services'), state: 'services' },
         {
           name: T('Shell'),
@@ -129,33 +110,13 @@ export class NavigationService {
         },
         { name: T('Alert Settings'), state: 'alert-settings' },
         { name: T('Audit'), state: 'audit' },
-        { name: T('Enclosure'), state: 'viewenclosure', isVisible$: this.hasEnclosure$ },
+        { name: T('Enclosure'), state: 'viewenclosure', isVisible$: this.license.hasEnclosure$ },
       ],
     },
   ];
 
   constructor(
-    private store$: Store<AppState>,
-    private systemGeneralService: SystemGeneralService,
+    private license: LicenseService,
     private authService: AuthService,
-  ) {
-    this.checkForEnterpriseLicenses();
-  }
-
-  private checkForEnterpriseLicenses(): void {
-    if (this.systemGeneralService.getProductType() !== ProductType.Enterprise) {
-      this.hasVms$.next(true);
-      this.hasApps$.next(true);
-      return;
-    }
-
-    this.store$.pipe(waitForSystemInfo, untilDestroyed(this))
-      .subscribe((systemInfo) => {
-        const hasVms = systemInfo.license && Boolean(systemInfo.license.features.includes(LicenseFeature.Vm));
-        this.hasVms$.next(hasVms);
-
-        const hasApps = systemInfo.license && Boolean(systemInfo.license.features.includes(LicenseFeature.Jails));
-        this.hasApps$.next(hasApps);
-      });
-  }
+  ) {}
 }

@@ -2,30 +2,28 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { helptextSystemFailover } from 'app/helptext/system/failover';
+import { DialogWithSecondaryCheckboxResult } from 'app/interfaces/dialog.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { FailoverSettingsComponent } from 'app/pages/system/failover-settings/failover-settings.component';
+import { FailoverFormComponent } from 'app/pages/system/advanced/failover/failover-form/failover-form.component';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
-describe('FailoverComponent', () => {
-  let spectator: Spectator<FailoverSettingsComponent>;
+describe('FailoverFormComponent', () => {
+  let spectator: Spectator<FailoverFormComponent>;
   let loader: HarnessLoader;
-  let rootLoader: HarnessLoader;
   let form: IxFormHarness;
   const createComponent = createComponentFactory({
-    component: FailoverSettingsComponent,
+    component: FailoverFormComponent,
     imports: [
       ReactiveFormsModule,
-      SearchInput1Component,
     ],
     providers: [
       mockAuth(),
@@ -33,32 +31,33 @@ describe('FailoverComponent', () => {
         mockCall('failover.update'),
         mockCall('failover.sync_to_peer'),
         mockCall('failover.sync_from_peer'),
-        mockCall('failover.config', {
+      ]),
+      mockProvider(SlideInRef, {
+        close: jest.fn(),
+        getData: jest.fn(() => ({
           id: 3,
           master: true,
           disabled: false,
           timeout: 0,
-        }),
-      ]),
+        })),
+      }),
       mockProvider(SnackbarService),
       mockProvider(WebSocketStatusService, {
         isConnected$: of(true),
       }),
+      mockProvider(DialogService),
     ],
   });
 
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    rootLoader = TestbedHarnessEnvironment.documentRootLoader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
-    jest.spyOn(spectator.inject(DialogService), 'confirm');
   });
 
-  it('loads and shows current failover settings', async () => {
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('failover.config');
+  it('shows current failover settings', async () => {
     expect(await form.getValues()).toEqual({
-      'Disable Failover': false,
+      'Enable Automatic Failover': true,
       'Default TrueNAS controller': true,
       'Network Timeout Before Initiating Failover': '0',
     });
@@ -80,16 +79,13 @@ describe('FailoverComponent', () => {
   });
 
   it('syncs to peer when Sync To Peer is pressed and confirmed', async () => {
+    jest.spyOn(spectator.inject(DialogService), 'confirm').mockReturnValue(of({
+      confirmed: true,
+      secondaryCheckbox: true,
+    } as DialogWithSecondaryCheckboxResult));
+
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Sync To Peer' }));
     await saveButton.click();
-
-    const rebootCheckbox = await rootLoader.getHarness(MatCheckboxHarness.with({ label: 'Restart standby TrueNAS controller' }));
-    await rebootCheckbox.check();
-    const confirmCheckbox = await rootLoader.getHarness(MatCheckboxHarness.with({ label: 'Confirm' }));
-    await confirmCheckbox.check();
-
-    const proceedButton = await rootLoader.getHarness(MatButtonHarness.with({ text: 'Proceed' }));
-    await proceedButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('failover.sync_to_peer', [{ reboot: true }]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
@@ -98,14 +94,13 @@ describe('FailoverComponent', () => {
   });
 
   it('syncs from peer when Sync From Peer is pressed and confirmed', async () => {
+    jest.spyOn(spectator.inject(DialogService), 'confirm').mockReturnValue(of({
+      confirmed: true,
+      secondaryCheckbox: true,
+    } as DialogWithSecondaryCheckboxResult));
+
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Sync From Peer' }));
     await saveButton.click();
-
-    const confirmCheckbox = await rootLoader.getHarness(MatCheckboxHarness.with({ label: 'Confirm' }));
-    await confirmCheckbox.check();
-
-    const proceedButton = await rootLoader.getHarness(MatButtonHarness.with({ text: 'Proceed' }));
-    await proceedButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('failover.sync_from_peer');
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
@@ -113,10 +108,9 @@ describe('FailoverComponent', () => {
     );
   });
 
-  it(`warns when Default TrueNAS controller checkbox is ticked off
-    and changes Save button to Save And Failover`, async () => {
+  it('warns when Default TrueNAS controller checkbox is ticked off and changes Save button to Save And Failover', async () => {
     await form.fillForm({
-      'Disable Failover': true,
+      'Enable Automatic Failover': false,
       'Default TrueNAS controller': false,
     });
 
@@ -126,12 +120,6 @@ describe('FailoverComponent', () => {
         message: helptextSystemFailover.master_dialog_warning,
       }),
     );
-
-    const confirmCheckbox = await rootLoader.getHarness(MatCheckboxHarness.with({ label: 'Confirm' }));
-    await confirmCheckbox.check();
-
-    const proceedButton = await rootLoader.getHarness(MatButtonHarness.with({ text: 'Continue' }));
-    await proceedButton.click();
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save And Failover' }));
     expect(saveButton).toExist();

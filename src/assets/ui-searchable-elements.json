@@ -294,7 +294,9 @@
     "requiredRoles": [
       "APPS_WRITE"
     ],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "APPS"
+    ],
     "anchorRouterLink": [
       "/apps",
       "docker-registries"
@@ -311,7 +313,9 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "APPS"
+    ],
     "anchorRouterLink": [
       "/apps",
       "docker-registries"
@@ -1939,7 +1943,9 @@
       "Virtual Machine Settings"
     ],
     "requiredRoles": [],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "VMS"
+    ],
     "anchorRouterLink": [
       "/instances"
     ],
@@ -1966,7 +1972,9 @@
       "Add Container"
     ],
     "requiredRoles": [],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "VMS"
+    ],
     "anchorRouterLink": [
       "/instances"
     ],
@@ -1989,7 +1997,9 @@
       "Containers"
     ],
     "requiredRoles": [],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "VMS"
+    ],
     "anchorRouterLink": [
       "/instances/view/def"
     ],
@@ -2010,7 +2020,9 @@
       "Containers"
     ],
     "requiredRoles": [],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "VMS"
+    ],
     "anchorRouterLink": [
       "/instances/view/def"
     ],
@@ -2031,7 +2043,9 @@
       "Containers"
     ],
     "requiredRoles": [],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "VMS"
+    ],
     "anchorRouterLink": [
       "/instances/view/def"
     ],
@@ -2052,7 +2066,9 @@
       "Containers"
     ],
     "requiredRoles": [],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "VMS"
+    ],
     "anchorRouterLink": [
       "/instances/view/def"
     ],
@@ -2073,7 +2089,9 @@
       "Containers"
     ],
     "requiredRoles": [],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "VMS"
+    ],
     "anchorRouterLink": [
       "/instances/view/def"
     ],
@@ -2094,7 +2112,9 @@
       "Containers"
     ],
     "requiredRoles": [],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "VMS"
+    ],
     "anchorRouterLink": [
       "/instances/view/def"
     ],
@@ -2115,7 +2135,9 @@
       "Containers"
     ],
     "requiredRoles": [],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "VMS"
+    ],
     "anchorRouterLink": [
       "/instances/view/def"
     ],
@@ -2136,7 +2158,9 @@
       "Containers"
     ],
     "requiredRoles": [],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "VMS"
+    ],
     "anchorRouterLink": [
       "/instances/view/def"
     ],
@@ -2157,7 +2181,9 @@
       "Containers"
     ],
     "requiredRoles": [],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "VMS"
+    ],
     "anchorRouterLink": [
       "/instances/view/def"
     ],
@@ -2912,7 +2938,9 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "FIBRECHANNEL"
+    ],
     "anchorRouterLink": [
       "/sharing",
       "iscsi",
@@ -4034,6 +4062,57 @@
     "hierarchy": [
       "System",
       "Advanced Settings",
+      "Failover",
+      "Failover Settings"
+    ],
+    "synonyms": [
+      "HA",
+      "High Availability",
+      "Sync To Peer",
+      "Sync From Peer"
+    ],
+    "requiredRoles": [
+      "FAILOVER_WRITE"
+    ],
+    "visibleTokens": [
+      "FAILOVER"
+    ],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "failover-settings",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced Settings",
+      "Failover"
+    ],
+    "synonyms": [
+      "HA",
+      "High Availability"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [
+      "FAILOVER"
+    ],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "failover-card",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced Settings",
       "Global Two Factor Authentication"
     ],
     "synonyms": [],
@@ -4877,69 +4956,6 @@
     ],
     "routerLink": null,
     "anchor": "jbof",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "Failover"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [
-      "FAILOVER"
-    ],
-    "anchorRouterLink": [
-      "/system",
-      "failover"
-    ],
-    "routerLink": null,
-    "anchor": "failover",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "Failover",
-      "Sync To Peer"
-    ],
-    "synonyms": [],
-    "requiredRoles": [
-      "FAILOVER_WRITE"
-    ],
-    "visibleTokens": [
-      "FAILOVER"
-    ],
-    "anchorRouterLink": [
-      "/system",
-      "failover"
-    ],
-    "routerLink": null,
-    "anchor": "sync-to-peer",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "Failover",
-      "Sync From Peer"
-    ],
-    "synonyms": [],
-    "requiredRoles": [
-      "FAILOVER_WRITE"
-    ],
-    "visibleTokens": [
-      "FAILOVER"
-    ],
-    "anchorRouterLink": [
-      "/system",
-      "failover"
-    ],
-    "routerLink": null,
-    "anchor": "sync-from-peer",
     "triggerAnchor": null,
     "section": "ui"
   },
