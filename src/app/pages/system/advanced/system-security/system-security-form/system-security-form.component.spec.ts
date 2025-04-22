@@ -9,6 +9,7 @@ import { MockAuthService } from 'app/core/testing/classes/mock-auth.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { PasswordComplexityRuleset } from 'app/enums/password-complexity-ruleset.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -24,6 +25,11 @@ import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 const fakeSystemSecurityConfig: SystemSecurityConfig = {
   enable_fips: false,
   enable_gpos_stig: false,
+  min_password_age: 10,
+  max_password_age: 90,
+  password_complexity_ruleset: { $set: [PasswordComplexityRuleset.Upper, PasswordComplexityRuleset.Lower] },
+  min_password_length: 12,
+  password_history_length: 5,
 };
 
 describe('SystemSecurityFormComponent', () => {
@@ -33,9 +39,7 @@ describe('SystemSecurityFormComponent', () => {
 
   const createComponent = createComponentFactory({
     component: SystemSecurityFormComponent,
-    imports: [
-      ReactiveFormsModule,
-    ],
+    imports: [ReactiveFormsModule],
     providers: [
       provideMockStore({
         selectors: [
@@ -45,6 +49,7 @@ describe('SystemSecurityFormComponent', () => {
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of()),
+        jobDialog: jest.fn(() => ({ afterClosed: () => of(undefined) })),
       }),
       mockProvider(SnackbarService),
       mockProvider(SystemGeneralService, {
@@ -56,11 +61,6 @@ describe('SystemSecurityFormComponent', () => {
         requireConfirmationWhen: jest.fn(),
       }),
       mockAuth(),
-      mockProvider(DialogService, {
-        jobDialog: jest.fn(() => ({
-          afterClosed: () => of(undefined),
-        })),
-      }),
       mockApi([
         mockJob('system.security.update', fakeSuccessfulJob()),
       ]),
@@ -77,10 +77,15 @@ describe('SystemSecurityFormComponent', () => {
       jest.spyOn(mockAuthService, 'clearAuthToken').mockImplementation();
     });
 
-    it('saves FIPS config when form is filled and Save is pressed', async () => {
+    it('saves full system security config when Save is clicked', async () => {
       await form.fillForm({
         'Enable FIPS': true,
         'Enable General Purpose OS STIG compatibility mode': true,
+        'Min Password Age': 15,
+        'Max Password Age': 120,
+        'Min Password Length': 10,
+        'Password History Length': 4,
+        'Password Complexity Ruleset': ['Upper', 'Lower'],
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -89,10 +94,30 @@ describe('SystemSecurityFormComponent', () => {
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('system.security.update', [{
         enable_fips: true,
         enable_gpos_stig: true,
+        min_password_age: 15,
+        max_password_age: 120,
+        password_complexity_ruleset: { $set: ['UPPER', 'LOWER'] },
+        min_password_length: 10,
+        password_history_length: 4,
       }]);
+
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
         'System Security Settings Updated.',
       );
+    });
+
+    it('loads and displays current values from config', async () => {
+      const values = await form.getValues();
+
+      expect(values).toEqual({
+        'Enable FIPS': false,
+        'Enable General Purpose OS STIG compatibility mode': false,
+        'Min Password Age': '10',
+        'Max Password Age': '90',
+        'Password Complexity Ruleset': ['Upper', 'Lower'],
+        'Min Password Length': '12',
+        'Password History Length': '5',
+      });
     });
 
     it('enables FIPS when STIG is enabled first', async () => {
@@ -129,15 +154,6 @@ describe('SystemSecurityFormComponent', () => {
       await saveButton.click();
 
       expect(spectator.inject(MockAuthService).clearAuthToken).toHaveBeenCalled();
-    });
-
-    it('loads and shows current System Security config', async () => {
-      const values = await form.getValues();
-
-      expect(values).toEqual({
-        'Enable FIPS': false,
-        'Enable General Purpose OS STIG compatibility mode': false,
-      });
     });
   });
 });

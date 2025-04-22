@@ -38,7 +38,6 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   templateUrl: './kmip.component.html',
   styleUrls: ['./kmip.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     UiSearchDirective,

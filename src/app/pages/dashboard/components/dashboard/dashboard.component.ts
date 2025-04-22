@@ -58,7 +58,6 @@ import { WidgetGroupControlsComponent } from './widget-group-controls/widget-gro
       ]),
     ]),
   ],
-  standalone: true,
   imports: [
     PageHeaderComponent,
     MatButton,

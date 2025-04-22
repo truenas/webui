@@ -38,7 +38,6 @@ import { hasNonUniqueSerial } from 'app/pages/storage/modules/pool-manager/utils
 @Component({
   selector: 'ix-unused-disk-select',
   templateUrl: './unused-disk-select.component.html',
-  standalone: true,
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,

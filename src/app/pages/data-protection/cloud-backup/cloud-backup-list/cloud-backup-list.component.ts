@@ -48,7 +48,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './cloud-backup-list.component.html',
   styleUrl: './cloud-backup-list.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     UiSearchDirective,
     IxTableComponent,

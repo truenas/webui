@@ -7,7 +7,6 @@ import { TreeVirtualNodeData } from 'app/modules/ix-tree/interfaces/tree-virtual
 
 @Directive({
   selector: '[ixTreeVirtualScrollNodeOutlet]',
-  standalone: true,
 })
 export class TreeVirtualScrollNodeOutletDirective<T> implements OnChanges {
   private _viewRef: EmbeddedViewRef<unknown> | null = null;

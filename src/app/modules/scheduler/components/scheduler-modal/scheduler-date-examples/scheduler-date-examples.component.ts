@@ -13,7 +13,6 @@ import { CronSchedulePreview } from 'app/modules/scheduler/classes/cron-schedule
   templateUrl: './scheduler-date-examples.component.html',
   styleUrls: ['./scheduler-date-examples.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxDateComponent,
     TranslateModule,

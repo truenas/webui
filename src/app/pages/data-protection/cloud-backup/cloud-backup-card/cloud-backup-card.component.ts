@@ -52,7 +52,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './cloud-backup-card.component.html',
   styleUrl: './cloud-backup-card.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatToolbarRow,

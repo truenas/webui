@@ -1,16 +1,16 @@
-import { VdevType } from 'app/enums/v-dev-type.enum';
-import { TopologyItem } from 'app/interfaces/storage.interface';
+import { VDevType } from 'app/enums/v-dev-type.enum';
+import { VDevItem } from 'app/interfaces/storage.interface';
 
 export interface VDevGroup {
   group: string;
-  guid: VdevType;
-  children: TopologyItem[];
+  guid: VDevType;
+  children: VDevItem[];
   isRoot?: boolean;
   disk?: string;
 }
 
-export type DeviceNestedDataNode = TopologyItem | VDevGroup;
+export type VDevNestedDataNode = VDevItem | VDevGroup;
 
-export function isVdevGroup(node: DeviceNestedDataNode): node is VDevGroup {
+export function isVdevGroup(node: VDevNestedDataNode): node is VDevGroup {
   return 'group' in node;
 }

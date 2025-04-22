@@ -12,7 +12,6 @@ import { getDiskStatusColor } from 'app/pages/system/enclosure/utils/disk-status
   templateUrl: './statuses-legend.component.html',
   styleUrls: ['./statuses-legend.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
 })
 export class StatusesLegendComponent {
   readonly slots = input.required<DashboardEnclosureSlot[]>();

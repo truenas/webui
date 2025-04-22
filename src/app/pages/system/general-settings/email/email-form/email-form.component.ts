@@ -43,7 +43,6 @@ import { SystemGeneralService } from 'app/services/system-general.service';
   templateUrl: './email-form.component.html',
   styleUrls: ['./email-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

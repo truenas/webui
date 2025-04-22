@@ -23,10 +23,16 @@
 
 .controls {
   display: flex;
-  gap: 8px;
+  gap: 48px;
   justify-content: flex-end;
   padding-bottom: 18px;
   padding-top: 12px;
+  width: 100%;
+
+  div {
+    display: flex;
+    gap: 8px;
+  }
 }
 
 .content {

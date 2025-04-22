@@ -45,7 +45,6 @@ import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service
   selector: 'ix-snapshot-add-form',
   templateUrl: './snapshot-add-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     RequiresRolesDirective,

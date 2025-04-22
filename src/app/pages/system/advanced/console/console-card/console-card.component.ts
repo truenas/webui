@@ -37,7 +37,6 @@ export interface ConsoleConfig {
   styleUrls: ['../../common-card.scss'],
   templateUrl: './console-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     UiSearchDirective,

@@ -18,7 +18,6 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
 @UntilDestroy()
 @Directive({
   selector: '[ixDetailsHeight]',
-  standalone: true,
 })
 export class DetailsHeightDirective implements OnInit, OnDestroy, OnChanges {
   private hasConsoleFooter = false;

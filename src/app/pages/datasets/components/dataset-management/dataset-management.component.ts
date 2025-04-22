@@ -74,7 +74,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './dataset-management.component.html',
   styleUrls: ['./dataset-management.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     EmptyComponent,
     FakeProgressBarComponent,

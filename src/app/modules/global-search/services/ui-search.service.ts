@@ -11,7 +11,7 @@ import { GlobalSearchVisibleToken } from 'app/modules/global-search/enums/global
 import { GlobalSearchProvider } from 'app/modules/global-search/interfaces/global-search-provider.interface';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 import { sortSearchResults } from 'app/modules/global-search/services/utils/sort-search-results';
-import { NavigationService } from 'app/services/navigation/navigation.service';
+import { LicenseService } from 'app/services/license.service';
 
 @Injectable({
   providedIn: 'root',
@@ -30,7 +30,7 @@ export class UiSearchProvider implements GlobalSearchProvider {
   constructor(
     private authService: AuthService,
     private translate: TranslateService,
-    private navService: NavigationService,
+    private license: LicenseService,
   ) {
     this.translate.onLangChange.subscribe(() => this.fuseSearch = this.generateFuseSearch());
   }
@@ -43,10 +43,10 @@ export class UiSearchProvider implements GlobalSearchProvider {
       mergeMap((item) => {
         return combineLatest([
           item.requiredRoles?.length ? this.authService.hasRole(item.requiredRoles) : of(true),
-          this.navService.hasFailover$,
-          this.navService.hasEnclosure$,
-          this.navService.hasVms$,
-          this.navService.hasApps$,
+          this.license.hasFailover$,
+          this.license.hasEnclosure$,
+          this.license.hasVms$,
+          this.license.hasApps$,
         ]).pipe(
           first(),
           filter(([hasRole, hasFailover, hasEnclosure, hasVms, hasApps]) => {

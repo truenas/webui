@@ -27,7 +27,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   selector: 'ix-add-nic-menu',
   templateUrl: './add-nic-menu.component.html',
   styleUrls: ['./add-nic-menu.component.scss'],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatButton,
@@ -49,11 +48,11 @@ export class AddNicMenuComponent {
   protected readonly macVlanNicTypeLabel = virtualizationNicTypeLabels.get(VirtualizationNicType.Macvlan)
     || VirtualizationNicType.Macvlan;
 
-  protected readonly isLoadingDevices = this.deviceStore.isLoading;
+  protected readonly isLoadingDevices = this.devicesStore.isLoading;
 
   protected readonly availableBridgedNics = computed(() => {
     const choices = Object.values(this.bridgedChoices());
-    const existingItems = this.deviceStore.devices()
+    const existingItems = this.devicesStore.devices()
       .filter((device) => device.dev_type === VirtualizationDeviceType.Nic
         && device.nic_type === VirtualizationNicType.Bridged) as VirtualizationNic[];
 
@@ -62,7 +61,7 @@ export class AddNicMenuComponent {
 
   protected readonly availableMacVlanNics = computed(() => {
     const choices = Object.values(this.macVlanChoices());
-    const existingItems = this.deviceStore.devices()
+    const existingItems = this.devicesStore.devices()
       .filter((device) => device.dev_type === VirtualizationDeviceType.Nic
         && device.nic_type === VirtualizationNicType.Macvlan) as VirtualizationNic[];
 
@@ -79,7 +78,7 @@ export class AddNicMenuComponent {
     private loader: LoaderService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
-    private deviceStore: VirtualizationDevicesStore,
+    private devicesStore: VirtualizationDevicesStore,
     private instancesStore: VirtualizationInstancesStore,
   ) {}
 
@@ -117,7 +116,7 @@ export class AddNicMenuComponent {
       )
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('NIC was added'));
-        this.deviceStore.loadDevices();
+        this.devicesStore.loadDevices();
       });
   }
 }

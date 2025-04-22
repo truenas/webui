@@ -42,7 +42,6 @@ const unknownType = 'UNKNOWN' as const;
   selector: 'ix-pci-passthrough-dialog',
   templateUrl: './pci-passthrough-dialog.component.html',
   styleUrls: ['./pci-passthrough-dialog.component.scss'],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     IxIconComponent,

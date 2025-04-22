@@ -2,18 +2,22 @@ import {
   ChangeDetectionStrategy, Component, OnInit,
   signal,
 } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatHint } from '@angular/material/form-field';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { filter, of } from 'rxjs';
+import { filter, map, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { PasswordComplexityRuleset, passwordComplexityRulesetLabels } from 'app/enums/password-complexity-ruleset.enum';
 import { Role } from 'app/enums/role.enum';
+import { mapToOptions } from 'app/helpers/options.helper';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxSlideToggleComponent } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -28,7 +32,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './system-security-form.component.html',
   styleUrls: ['./system-security-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
@@ -40,6 +43,8 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TestDirective,
     TranslateModule,
     MatHint,
+    IxInputComponent,
+    IxSelectComponent,
   ],
 })
 export class SystemSecurityFormComponent implements OnInit {
@@ -48,7 +53,16 @@ export class SystemSecurityFormComponent implements OnInit {
   form = this.formBuilder.group({
     enable_fips: [false],
     enable_gpos_stig: [false],
+    min_password_age: [null as number | null, [Validators.min(1), Validators.max(365)]],
+    max_password_age: [null as number | null, [Validators.min(7), Validators.max(365)]],
+    password_complexity_ruleset: [null as PasswordComplexityRuleset[] | null],
+    min_password_length: [null as number | null, [Validators.min(8), Validators.max(128)]],
+    password_history_length: [null as number | null, [Validators.required, Validators.min(1), Validators.max(10)]],
   });
+
+  complexityRulesetLabels$ = of(passwordComplexityRulesetLabels).pipe(
+    map((rulesets) => mapToOptions(rulesets, this.translate)),
+  );
 
   private systemSecurityConfig = signal<SystemSecurityConfig>(this.slideInRef.getData());
 
@@ -74,7 +88,14 @@ export class SystemSecurityFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const values = this.form.value as SystemSecurityConfig;
+    const values = this.form.value as unknown as SystemSecurityConfig;
+
+    if (values.password_complexity_ruleset) {
+      values.password_complexity_ruleset = {
+        $set: values.password_complexity_ruleset as unknown as PasswordComplexityRuleset[],
+      };
+    }
+
     this.dialogService.jobDialog(
       this.api.job('system.security.update', [values]),
       {
@@ -97,7 +118,10 @@ export class SystemSecurityFormComponent implements OnInit {
   }
 
   private initSystemSecurityForm(): void {
-    this.form.patchValue(this.systemSecurityConfig());
+    this.form.patchValue({
+      ...this.systemSecurityConfig(),
+      password_complexity_ruleset: this.systemSecurityConfig().password_complexity_ruleset?.$set,
+    });
     this.form.controls.enable_gpos_stig.valueChanges
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe((value) => {

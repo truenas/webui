@@ -32,7 +32,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 @Component({
   selector: 'ix-global-config-form',
   templateUrl: './global-config-form.component.html',
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormActionsComponent,

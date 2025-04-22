@@ -6,7 +6,6 @@ import { TreeDataSource } from 'app/modules/ix-tree/tree-datasource';
 @Directive({
   selector: '[treeNodeDef]',
   providers: [{ provide: CdkTreeNodeDef, useExisting: TreeNodeDefDirective }],
-  standalone: true,
 })
 export class TreeNodeDefDirective<T, K = T> extends CdkTreeNodeDef<T> {
   readonly treeNodeDefDataSource = input<DataSource<T> | TreeDataSource<T, K>>();

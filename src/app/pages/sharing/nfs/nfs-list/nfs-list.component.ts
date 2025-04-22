@@ -50,7 +50,6 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   templateUrl: './nfs-list.component.html',
   styleUrls: ['./nfs-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     FakeProgressBarComponent,

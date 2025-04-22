@@ -15,7 +15,6 @@ import { IxFormService } from 'app/modules/forms/ix-forms/services/ix-form.servi
   styleUrls: ['./ix-form-section.component.scss'],
   templateUrl: './ix-form-section.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxFieldsetComponent,
     MatDivider,

@@ -1,18 +1,19 @@
 import { Routes } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { AllUsersComponent } from 'app/pages/credentials/new-users/all-users/all-users.component';
-import { UsersStore } from 'app/pages/credentials/new-users/store/users.store';
+import { DemoComponent } from 'app/pages/credentials/new-users/demo/demo.component';
 
 export const userRoutes: Routes = [{
   path: '',
   data: { title: T('Users (WIP)'), breadcrumb: null },
-  providers: [
-    UsersStore,
-  ],
   children: [
     {
       path: '',
       component: AllUsersComponent,
+    },
+    {
+      path: 'demo',
+      component: DemoComponent,
     },
     {
       path: 'view/:id',

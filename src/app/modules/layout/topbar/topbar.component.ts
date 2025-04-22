@@ -54,7 +54,6 @@ import { TruenasLogoComponent } from './truenas-logo/truenas-logo.component';
   templateUrl: './topbar.component.html',
   styleUrls: ['./topbar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatToolbar,
     MatToolbarRow,

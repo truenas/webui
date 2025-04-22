@@ -37,7 +37,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './two-factor.component.html',
   styleUrls: ['./two-factor.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     UiSearchDirective,

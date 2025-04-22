@@ -29,7 +29,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './docker-image-delete-dialog.component.html',
   styleUrls: ['./docker-image-delete-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     BulkListItemComponent,

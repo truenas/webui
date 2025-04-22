@@ -31,7 +31,6 @@ import { UserService } from 'app/services/user.service';
   selector: 'ix-user-form',
   templateUrl: './user-form.component.html',
   styleUrls: ['./user-form.component.scss'],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     IxFieldsetComponent,
