@@ -74,6 +74,7 @@ export class NavigationService {
       tooltip: T('Instances'),
       icon: iconMarker('mdi-laptop'),
       state: 'instances',
+      isVisible$: this.license.hasVms$,
     },
     {
       name: T('Apps'),
