@@ -34,7 +34,7 @@ export class ErrorTemplateComponent {
 
   readonly title = input.required<string>();
   readonly message = input<string>();
-  readonly backtrace = input<string>();
+  readonly stackTrace = input<string>();
   readonly logs = input<Job>();
 
   isCloseMoreInfo = true;

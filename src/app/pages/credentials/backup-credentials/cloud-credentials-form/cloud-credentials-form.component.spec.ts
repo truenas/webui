@@ -208,7 +208,7 @@ describe('CloudCredentialsFormComponent', () => {
         expect(spectator.inject(DialogService).error).toHaveBeenCalledWith({
           title: 'Error',
           message: 'Missing some important field',
-          backtrace: expect.anything(),
+          stackTrace: expect.anything(),
         });
       });
     });
