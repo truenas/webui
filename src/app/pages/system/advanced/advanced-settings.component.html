@@ -23,4 +23,8 @@
   @if (isSystemLicensed()) {
     <ix-system-security-card></ix-system-security-card>
   }
+
+  @if (hasFailover$ | async) {
+    <ix-failover-card></ix-failover-card>
+  }
 </div>

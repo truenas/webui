@@ -1,3 +1,4 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component,
   computed,
@@ -10,12 +11,14 @@ import { Role } from 'app/enums/role.enum';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { advancedSettingsElements } from 'app/pages/system/advanced/advanced-settings.elements';
+import { FailoverCardComponent } from 'app/pages/system/advanced/failover/failover-card.component';
 import {
   ManageConfigurationMenuComponent,
 } from 'app/pages/system/advanced/manage-configuration-menu/manage-configuration-menu.component';
 import {
   NtpServersCardComponent,
 } from 'app/pages/system/advanced/ntp-servers/ntp-servers-card/ntp-servers-card.component';
+import { LicenseService } from 'app/services/license.service';
 import { AppState } from 'app/store';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 import { AccessCardComponent } from './access/access-card/access-card.component';
@@ -58,6 +61,8 @@ import { SystemSecurityCardComponent } from './system-security/system-security-c
     IsolatedGpusCardComponent,
     GlobalTwoFactorAuthCardComponent,
     SystemSecurityCardComponent,
+    AsyncPipe,
+    FailoverCardComponent,
     NtpServersCardComponent,
     ManageConfigurationMenuComponent,
   ],
@@ -69,9 +74,11 @@ export class AdvancedSettingsComponent {
   protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
   protected readonly hasGlobalEncryption = toSignal(this.api.call('system.advanced.sed_global_password_is_set'));
   protected readonly showSedCard = computed(() => this.isEnterprise() || this.hasGlobalEncryption());
+  protected readonly hasFailover$ = this.license.hasFailover$;
 
   constructor(
     private api: ApiService,
     private store$: Store<AppState>,
+    private license: LicenseService,
   ) {}
 }
