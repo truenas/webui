@@ -1,24 +1,17 @@
 import { Injectable } from '@angular/core';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { Store } from '@ngrx/store';
 import { map } from 'rxjs/operators';
-import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { MenuItem, MenuItemType } from 'app/interfaces/menu-item.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
-import { AppState } from 'app/store';
-import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
-import { selectHasEnclosureSupport, selectIsEnterprise, selectLicenseFeatures } from 'app/store/system-info/system-info.selectors';
+import { LicenseService } from 'app/services/license.service';
 
 @UntilDestroy()
 @Injectable({
   providedIn: 'root',
 })
 export class NavigationService {
-  readonly hasFailover$ = this.store$.select(selectIsHaLicensed);
-  readonly hasEnclosure$ = this.store$.select(selectHasEnclosureSupport);
-
   readonly menuItems: MenuItem[] = [
     {
       name: T('Dashboard'),
@@ -56,13 +49,6 @@ export class NavigationService {
       state: 'data-protection',
     },
     {
-      name: T('Network'),
-      type: MenuItemType.Link,
-      tooltip: T('Network'),
-      icon: iconMarker('device_hub'),
-      state: 'network',
-    },
-    {
       name: T('Credentials'),
       type: MenuItemType.SlideOut,
       tooltip: T('Credentials'),
@@ -78,7 +64,7 @@ export class NavigationService {
         {
           name: 'KMIP',
           state: 'kmip',
-          isVisible$: this.store$.select(selectIsEnterprise),
+          isVisible$: this.license.hasKmip$,
         },
       ],
     },
@@ -88,9 +74,7 @@ export class NavigationService {
       tooltip: T('Instances'),
       icon: iconMarker('mdi-laptop'),
       state: 'instances',
-      isVisible$: this.store$.select(selectLicenseFeatures).pipe(
-        map((features) => features?.includes(LicenseFeature.Vm)),
-      ),
+      isVisible$: this.license.hasVms$,
     },
     {
       name: T('Apps'),
@@ -98,9 +82,7 @@ export class NavigationService {
       tooltip: T('Apps'),
       icon: iconMarker('apps'),
       state: 'apps',
-      isVisible$: this.store$.select(selectLicenseFeatures).pipe(
-        map((features) => features?.includes(LicenseFeature.Jails)),
-      ),
+      isVisible$: this.license.hasApps$,
     },
     {
       name: T('Reporting'),
@@ -120,7 +102,6 @@ export class NavigationService {
         { name: T('General Settings'), state: 'general' },
         { name: T('Advanced Settings'), state: 'advanced' },
         { name: T('Boot'), state: 'boot' },
-        { name: T('Failover'), state: 'failover', isVisible$: this.hasFailover$ },
         { name: T('Services'), state: 'services' },
         {
           name: T('Shell'),
@@ -129,13 +110,13 @@ export class NavigationService {
         },
         { name: T('Alert Settings'), state: 'alert-settings' },
         { name: T('Audit'), state: 'audit' },
-        { name: T('Enclosure'), state: 'viewenclosure', isVisible$: this.hasEnclosure$ },
+        { name: T('Enclosure'), state: 'viewenclosure', isVisible$: this.license.hasEnclosure$ },
       ],
     },
   ];
 
   constructor(
-    private store$: Store<AppState>,
+    private license: LicenseService,
     private authService: AuthService,
   ) {}
 }

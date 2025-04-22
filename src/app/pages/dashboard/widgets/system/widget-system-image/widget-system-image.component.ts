@@ -22,7 +22,6 @@ import { selectHasEnclosureSupport, selectIsEnterprise, selectIsIxHardware } fro
   templateUrl: './widget-system-image.component.html',
   styleUrls: ['./widget-system-image.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatCardContent,

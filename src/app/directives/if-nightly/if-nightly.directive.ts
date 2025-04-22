@@ -10,7 +10,6 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 @UntilDestroy()
 @Directive({
   selector: '[ixIfNightly]',
-  standalone: true,
 })
 export class IfNightlyDirective implements OnInit {
   private isNightly = false;

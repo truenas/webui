@@ -19,7 +19,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './show-logs-dialog.component.html',
   styleUrls: ['./show-logs-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogTitle,
     CopyButtonComponent,

@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
-import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
+import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
@@ -24,7 +24,7 @@ describe('AutomatedDiskSelection', () => {
   let loader: HarnessLoader;
 
   const startOver$ = new Subject<void>();
-  const resetStep$ = new Subject<VdevType>();
+  const resetStep$ = new Subject<VDevType>();
 
   let layoutSelect: IxSelectHarness | null;
 
@@ -56,7 +56,7 @@ describe('AutomatedDiskSelection', () => {
       props: {
         inventory,
         canChangeLayout: true,
-        type: VdevType.Data,
+        type: VDevType.Data,
         limitLayouts: Object.values(CreateVdevLayout),
         isStepActive: false,
       },
@@ -68,7 +68,7 @@ describe('AutomatedDiskSelection', () => {
   it('shows NormalSelectionComponent for non-dRAID layouts', async () => {
     let normalSelection = spectator.query(NormalSelectionComponent)!;
     expect(normalSelection).not.toBeNull();
-    expect(normalSelection.type).toBe(VdevType.Data);
+    expect(normalSelection.type).toBe(VDevType.Data);
     expect(normalSelection.inventory).toBe(inventory);
     expect(normalSelection.isStepActive).toBe(false);
 
@@ -88,7 +88,7 @@ describe('AutomatedDiskSelection', () => {
     expect(draidSelection).not.toBeNull();
     expect(draidSelection.layout).toBe(CreateVdevLayout.Draid2);
     expect(draidSelection.inventory).toBe(inventory);
-    expect(draidSelection.type).toBe(VdevType.Data);
+    expect(draidSelection.type).toBe(VDevType.Data);
     expect(draidSelection.isStepActive).toBe(false);
 
     expect(spectator.query(NormalSelectionComponent)).toBeNull();
@@ -113,7 +113,7 @@ describe('AutomatedDiskSelection', () => {
     await layoutSelect!.setValue('Mirror');
 
     expect(spectator.inject(PoolManagerStore).setTopologyCategoryLayout).toHaveBeenCalledWith(
-      VdevType.Data,
+      VDevType.Data,
       CreateVdevLayout.Mirror,
     );
   });

@@ -1,7 +1,7 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { GiB } from 'app/constants/bytes.constant';
 import { DiskType } from 'app/enums/disk-type.enum';
-import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
+import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { PoolManagerTopology } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import {
   GenerateVdevsService,
@@ -18,7 +18,7 @@ describe('GenerateVdevsService - maximize dispersal', () => {
     const vdevs = spectator.service.generateVdevs({
       allowedDisks: generateVdevDisks,
       topology: {
-        [VdevType.Data]: {
+        [VDevType.Data]: {
           diskSize: 5 * GiB,
           width: 5,
           vdevsNumber: 1,
@@ -31,7 +31,7 @@ describe('GenerateVdevsService - maximize dispersal', () => {
     });
 
     expect(vdevs).toEqual({
-      [VdevType.Data]: expectDisks([
+      [VDevType.Data]: expectDisks([
         ['enclosure1-disk1', 'enclosure2-disk1', 'enclosure3-disk1', 'no-enclosure-disk1', 'enclosure1-disk2'],
       ]),
     });
@@ -41,7 +41,7 @@ describe('GenerateVdevsService - maximize dispersal', () => {
     const vdevs = spectator.service.generateVdevs({
       allowedDisks: generateVdevDisks,
       topology: {
-        [VdevType.Data]: {
+        [VDevType.Data]: {
           diskSize: 5 * GiB,
           width: 2,
           vdevsNumber: 5,
@@ -54,7 +54,7 @@ describe('GenerateVdevsService - maximize dispersal', () => {
     });
 
     expect(vdevs).toEqual({
-      [VdevType.Data]: expectDisks([
+      [VDevType.Data]: expectDisks([
         ['enclosure1-disk1', 'enclosure2-disk1'],
         ['enclosure3-disk1', 'no-enclosure-disk1'],
         ['enclosure1-disk2', 'enclosure2-disk2'],
@@ -68,14 +68,14 @@ describe('GenerateVdevsService - maximize dispersal', () => {
     const vdevs = spectator.service.generateVdevs({
       allowedDisks: generateVdevDisks,
       topology: {
-        [VdevType.Data]: {
+        [VDevType.Data]: {
           diskSize: 5 * GiB,
           width: 3,
           vdevsNumber: 1,
           diskType: DiskType.Hdd,
           layout: CreateVdevLayout.Stripe,
         },
-        [VdevType.Special]: {
+        [VDevType.Special]: {
           diskSize: 5 * GiB,
           width: 2,
           vdevsNumber: 2,
@@ -88,10 +88,10 @@ describe('GenerateVdevsService - maximize dispersal', () => {
     });
 
     expect(vdevs).toEqual({
-      [VdevType.Data]: expectDisks([
+      [VDevType.Data]: expectDisks([
         ['enclosure1-disk1', 'enclosure2-disk1', 'enclosure3-disk1'],
       ]),
-      [VdevType.Special]: expectDisks([
+      [VDevType.Special]: expectDisks([
         ['no-enclosure-disk1', 'enclosure1-disk2'],
         ['enclosure2-disk2', 'enclosure3-disk2'],
       ]),
@@ -102,21 +102,21 @@ describe('GenerateVdevsService - maximize dispersal', () => {
     const vdevs = spectator.service.generateVdevs({
       allowedDisks: generateVdevDisks,
       topology: {
-        [VdevType.Data]: {
+        [VDevType.Data]: {
           diskSize: 5 * GiB,
           width: 3,
           vdevsNumber: 1,
           diskType: DiskType.Hdd,
           layout: CreateVdevLayout.Stripe,
         },
-        [VdevType.Log]: {
+        [VDevType.Log]: {
           diskSize: 2 * GiB,
           width: 1,
           vdevsNumber: 2,
           diskType: DiskType.Ssd,
           layout: CreateVdevLayout.Stripe,
         },
-        [VdevType.Special]: {
+        [VDevType.Special]: {
           diskSize: 5 * GiB,
           width: 2,
           vdevsNumber: 2,
@@ -129,14 +129,14 @@ describe('GenerateVdevsService - maximize dispersal', () => {
     });
 
     expect(vdevs).toEqual({
-      [VdevType.Data]: expectDisks([
+      [VDevType.Data]: expectDisks([
         ['enclosure1-disk1', 'enclosure2-disk1', 'enclosure3-disk1'],
       ]),
-      [VdevType.Log]: expectDisks([
+      [VDevType.Log]: expectDisks([
         ['small-ssd1'],
         ['small-ssd2'],
       ]),
-      [VdevType.Special]: expectDisks([
+      [VDevType.Special]: expectDisks([
         ['no-enclosure-disk1', 'enclosure1-disk2'],
         ['enclosure2-disk2', 'enclosure3-disk2'],
       ]),

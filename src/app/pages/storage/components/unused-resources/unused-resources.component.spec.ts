@@ -41,11 +41,11 @@ describe('UnusedResourcesComponent', () => {
     });
   });
 
-  it('shows an \'Unused Disks\' card when exists unused disks', () => {
+  it('shows an \'Unassigned Disks\' card when exists Unassigned Disks', () => {
     expect(spectator.queryAll('ix-unused-disk-card')).toHaveLength(2);
   });
 
-  it('hides an \'Unassigned Disks\' card when does not exist unused disks', () => {
+  it('hides an \'Unassigned Disks\' card when does not exist Unassigned Disks', () => {
     spectator.inject(MockApiService).mockCall('disk.details', { used: [], unused: [] });
     spectator.setInput('pools', []);
     spectator.detectChanges();

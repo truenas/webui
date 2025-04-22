@@ -3,9 +3,9 @@ import { OnOff } from 'app/enums/on-off.enum';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
-import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
+import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
-import { TopologyItem } from 'app/interfaces/storage.interface';
+import { VDevItem } from 'app/interfaces/storage.interface';
 import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 
 export interface Pool {
@@ -51,7 +51,7 @@ export interface Pool {
 }
 
 export type PoolTopology = {
-  [category in VdevType]: TopologyItem[];
+  [category in VDevType]: VDevItem[];
 };
 
 export interface PoolScanUpdate {
@@ -91,7 +91,7 @@ export interface UpdatePool {
   dedup_table_quota_value?: number;
 }
 
-// TODO: Maybe replace first 5 keys with VdevType enum once old pool manager is removed.
+// TODO: Maybe replace first 5 keys with VDevType enum once old pool manager is removed.
 export interface UpdatePoolTopology {
   data?: DataPoolTopologyUpdate[];
   special?: { type: CreateVdevLayout; disks: string[] }[];

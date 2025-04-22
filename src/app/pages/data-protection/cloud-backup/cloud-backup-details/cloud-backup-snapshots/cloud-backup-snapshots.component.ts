@@ -43,7 +43,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './cloud-backup-snapshots.component.html',
   styleUrls: ['./cloud-backup-snapshots.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatCardHeader,

@@ -40,7 +40,6 @@ import {
   selector: 'ix-access-form',
   templateUrl: 'access-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

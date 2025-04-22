@@ -39,7 +39,6 @@ import { SystemGeneralService } from 'app/services/system-general.service';
   templateUrl: './ldap.component.html',
   styleUrls: ['./ldap.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

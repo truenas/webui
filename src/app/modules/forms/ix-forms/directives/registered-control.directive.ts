@@ -14,7 +14,6 @@ export const ixControlLabelTag = 'ix-label';
  * This directive is used to the be able to locate the template of the control programmatically via IxFormService.
  */
 @Directive({
-  standalone: true,
   selector: '[ixRegisteredControl]',
 })
 export class RegisteredControlDirective implements AfterViewInit, OnDestroy {
@@ -24,7 +23,6 @@ export class RegisteredControlDirective implements AfterViewInit, OnDestroy {
   formGroupName = input<string | number>();
 
   private controlReady = false;
-  private labelReady = false;
   private controlRegistered = false;
   private registeredName: string;
   private control = inject(NgControl, { optional: true });
@@ -32,11 +30,6 @@ export class RegisteredControlDirective implements AfterViewInit, OnDestroy {
   updatesEffect = effect(() => {
     if (this.controlRegistered) {
       return;
-    }
-
-    if (this.label()) {
-      this.labelReady = true;
-      this.tryRegisterControl();
     }
 
     const formArrayName = this.formArrayName();
@@ -64,7 +57,7 @@ export class RegisteredControlDirective implements AfterViewInit, OnDestroy {
   }
 
   private tryRegisterControl(): void {
-    if (!this.controlReady || !this.labelReady) {
+    if (!this.controlReady) {
       return;
     }
     this.controlRegistered = true;

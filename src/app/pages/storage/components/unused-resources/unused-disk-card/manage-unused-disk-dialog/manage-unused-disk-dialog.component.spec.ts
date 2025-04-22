@@ -67,7 +67,7 @@ describe('ManageUnusedDiskDialogComponent', () => {
     expect(spectator.query('.mat-mdc-dialog-title')).toHaveText('Add To Pool');
   });
 
-  it('shows the list of unused disks', () => {
+  it('shows the list of Unassigned Disks', () => {
     const unusedDiskItems = spectator.queryAll('.unused-disks li');
     expect(unusedDiskItems).toHaveLength(2);
   });

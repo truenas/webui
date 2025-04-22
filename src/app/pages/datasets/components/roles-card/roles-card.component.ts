@@ -28,7 +28,6 @@ import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.compon
   templateUrl: './roles-card.component.html',
   styleUrls: ['./roles-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatCardHeader,

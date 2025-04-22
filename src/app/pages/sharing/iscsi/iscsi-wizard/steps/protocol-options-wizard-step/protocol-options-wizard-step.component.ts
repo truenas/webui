@@ -23,7 +23,6 @@ import { IscsiService } from 'app/services/iscsi.service';
   selector: 'ix-protocol-options-wizard-step',
   templateUrl: './protocol-options-wizard-step.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxSelectComponent,

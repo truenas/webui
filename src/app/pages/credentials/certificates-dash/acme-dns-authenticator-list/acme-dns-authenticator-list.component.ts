@@ -38,7 +38,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './acme-dns-authenticator-list.component.html',
   styleUrls: ['./acme-dns-authenticator-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     UiSearchDirective,

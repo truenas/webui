@@ -14,7 +14,6 @@ import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
   templateUrl: './instance-status-cell.component.html',
   styleUrls: ['./instance-status-cell.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [TranslateModule, MapValuePipe],
 })
 export class InstanceStatusCellComponent {

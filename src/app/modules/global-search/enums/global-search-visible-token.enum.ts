@@ -5,4 +5,5 @@ export enum GlobalSearchVisibleToken {
   Apps = 'APPS',
   FibreChannel = 'FIBRECHANNEL',
   Dedup = 'DEDUP',
+  Kmip = 'KMIP',
 }

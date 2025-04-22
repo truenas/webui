@@ -36,7 +36,6 @@ import { SystemGeneralService } from 'app/services/system-general.service';
   styleUrls: ['train-card.component.scss'],
   templateUrl: './train-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     ReactiveFormsModule,

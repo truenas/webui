@@ -22,7 +22,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './directory-services-monitor.component.html',
   styleUrls: ['./directory-services-monitor.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogContent,
     MatIconButton,

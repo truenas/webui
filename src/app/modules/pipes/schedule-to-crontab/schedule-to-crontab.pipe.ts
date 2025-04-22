@@ -4,7 +4,6 @@ import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-cront
 
 @Pipe({
   name: 'scheduleToCrontab',
-  standalone: true,
 })
 export class ScheduleToCrontabPipe implements PipeTransform {
   transform(value: Schedule): string {

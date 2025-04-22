@@ -49,7 +49,6 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
   templateUrl: './user-list.component.html',
   styleUrls: ['./user-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     SearchInput1Component,
     MatSlideToggle,

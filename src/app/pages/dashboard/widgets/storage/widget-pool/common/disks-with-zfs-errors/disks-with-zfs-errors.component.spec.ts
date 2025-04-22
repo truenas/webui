@@ -2,7 +2,7 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { Pool } from 'app/interfaces/pool.interface';
-import { TopologyItem } from 'app/interfaces/storage.interface';
+import { VDevItem } from 'app/interfaces/storage.interface';
 import { DisksWithZfsErrorsComponent } from './disks-with-zfs-errors.component';
 
 describe('DisksWithZfsErrorsComponent', () => {
@@ -30,11 +30,11 @@ describe('DisksWithZfsErrorsComponent', () => {
         data: [
           { stats: { read_errors: 1, write_errors: 2, checksum_errors: 3 } },
           { stats: { read_errors: 0, write_errors: 0, checksum_errors: 0 } },
-        ] as TopologyItem[],
-        cache: [] as TopologyItem[],
-        log: [] as TopologyItem[],
-        spare: [] as TopologyItem[],
-        special: [] as TopologyItem[],
+        ] as VDevItem[],
+        cache: [] as VDevItem[],
+        log: [] as VDevItem[],
+        spare: [] as VDevItem[],
+        special: [] as VDevItem[],
       },
     } as Pool;
 

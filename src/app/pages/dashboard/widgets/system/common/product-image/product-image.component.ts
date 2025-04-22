@@ -16,7 +16,6 @@ import { getProductEnclosure, getProductImageSrc, getServerProduct } from 'app/p
   templateUrl: './product-image.component.html',
   styleUrls: ['./product-image.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     NgClass,
     MatTooltip,

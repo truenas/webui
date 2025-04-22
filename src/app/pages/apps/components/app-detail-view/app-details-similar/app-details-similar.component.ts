@@ -17,7 +17,6 @@ import { ApplicationsService } from 'app/pages/apps/services/applications.servic
   templateUrl: './app-details-similar.component.html',
   styleUrls: ['./app-details-similar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     TranslateModule,
     NgxSkeletonLoaderModule,

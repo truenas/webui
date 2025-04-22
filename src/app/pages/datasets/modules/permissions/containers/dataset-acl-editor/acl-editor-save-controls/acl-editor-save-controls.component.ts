@@ -23,7 +23,6 @@ import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/st
   templateUrl: './acl-editor-save-controls.component.html',
   styleUrls: ['./acl-editor-save-controls.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxCheckboxComponent,

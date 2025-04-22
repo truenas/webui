@@ -18,7 +18,6 @@ import { NetworkChartComponent } from 'app/pages/dashboard/widgets/network/commo
   templateUrl: './app-disk-info.component.html',
   styleUrls: ['./app-disk-info.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     WithLoadingStateDirective,
     NgxSkeletonLoaderModule,

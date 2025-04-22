@@ -3,7 +3,7 @@
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   <div mat-dialog-content>
     @if (noPoolsDisks.length) {
-      <h4>{{ 'Unused Disks' | translate }}</h4>
+      <h4>{{ 'Unassigned Disks' | translate }}</h4>
       <ul class="unused-disks">
         @for (disk of noPoolsDisks; track disk.formattedDisk) {
           <li>

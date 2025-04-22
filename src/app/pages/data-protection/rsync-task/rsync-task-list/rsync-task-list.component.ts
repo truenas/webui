@@ -59,7 +59,6 @@ import { TaskService } from 'app/services/task.service';
   templateUrl: './rsync-task-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CrontabExplanationPipe],
-  standalone: true,
   imports: [
     PageHeaderComponent,
     SearchInput1Component,

@@ -12,7 +12,7 @@ import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { Pool, PoolTopology } from 'app/interfaces/pool.interface';
-import { TopologyItem } from 'app/interfaces/storage.interface';
+import { VDevItem } from 'app/interfaces/storage.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
@@ -40,31 +40,31 @@ const fakePools: Pool[] = [
     topology: {
       data: [
         {
-          children: [] as TopologyItem[],
+          children: [] as VDevItem[],
           type: TopologyItemType.Disk,
           stats: {
             read_errors: 0,
             write_errors: 0,
             checksum_errors: 0,
           },
-        } as TopologyItem,
+        } as VDevItem,
         {
-          children: [] as TopologyItem[],
+          children: [] as VDevItem[],
           type: TopologyItemType.Disk,
           stats: {
             read_errors: 1,
             write_errors: 2,
             checksum_errors: 3,
           },
-        } as TopologyItem,
-      ] as TopologyItem[],
-      log: [] as TopologyItem[],
-      cache: [] as TopologyItem[],
+        } as VDevItem,
+      ] as VDevItem[],
+      log: [] as VDevItem[],
+      cache: [] as VDevItem[],
       spare: [{
-        children: [] as TopologyItem[],
-      }] as TopologyItem[],
-      special: [] as TopologyItem[],
-      dedup: [] as TopologyItem[],
+        children: [] as VDevItem[],
+      }] as VDevItem[],
+      special: [] as VDevItem[],
+      dedup: [] as VDevItem[],
     } as PoolTopology,
   },
 ] as Pool[];

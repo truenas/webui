@@ -147,7 +147,7 @@ describe('AddVdevsComponent – Add Vdev to existing pool', () => {
     jest.spyOn(spectator.inject(Router), 'navigate').mockImplementation();
   });
 
-  it('adds Vdevs to existing Pool', async () => {
+  it('adds VDEVs to existing Pool', async () => {
     // General Info Step
     expect(await (await wizard.getActiveStep()).getLabel()).toBe('General Info');
 

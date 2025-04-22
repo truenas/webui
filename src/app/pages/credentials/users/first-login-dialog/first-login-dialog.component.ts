@@ -20,7 +20,6 @@ import { TwoFactorComponent } from 'app/pages/two-factor-auth/two-factor.compone
   templateUrl: './first-login-dialog.component.html',
   styleUrls: ['./first-login-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     TranslateModule,
     ChangePasswordFormComponent,

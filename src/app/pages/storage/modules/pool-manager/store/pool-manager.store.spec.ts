@@ -6,7 +6,7 @@ import {
 import { TiB } from 'app/constants/bytes.constant';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { DiskType } from 'app/enums/disk-type.enum';
-import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
+import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -102,23 +102,23 @@ describe('PoolManagerStore', () => {
       expect(await firstValueFrom(spectator.service.allowedDisks$)).toEqual([disks[0], disks[1]]);
     });
 
-    it('inventory$ – returns all remaining unused disks', async () => {
+    it('inventory$ – returns all remaining Unassigned Disks', async () => {
       spectator.service.initialize();
       spectator.service.setEnclosureOptions({
         limitToSingleEnclosure: 'id1',
         maximizeEnclosureDispersal: false,
         dispersalStrategy: DispersalStrategy.None,
       });
-      spectator.service.setManualTopologyCategory(VdevType.Data, [[disks[0]]]);
+      spectator.service.setManualTopologyCategory(VDevType.Data, [[disks[0]]]);
 
       expect(await firstValueFrom(spectator.service.inventory$)).toEqual([disks[1]]);
     });
 
     it('getInventoryForStep – returns disks usable in a step (including disks already used in the step)', async () => {
       spectator.service.initialize();
-      spectator.service.setManualTopologyCategory(VdevType.Data, [[disks[0]]]);
+      spectator.service.setManualTopologyCategory(VDevType.Data, [[disks[0]]]);
 
-      const inventory = await firstValueFrom(spectator.service.getInventoryForStep(VdevType.Data));
+      const inventory = await firstValueFrom(spectator.service.getInventoryForStep(VDevType.Data));
       expect(inventory).toHaveLength(2);
       const diskNames = inventory.map((disk) => disk.devname).sort((a, b) => a.localeCompare(b));
       expect(diskNames).toEqual(['sdb', 'sdc']);
@@ -199,24 +199,24 @@ describe('PoolManagerStore', () => {
   describe('methods - working with topology categories', () => {
     it('setManualTopologyCategory – sets manually configured vdevs for a category', async () => {
       const manuallyConfiguredVdevs = [{}] as DetailsDisk[][];
-      spectator.service.setManualTopologyCategory(VdevType.Data, manuallyConfiguredVdevs);
+      spectator.service.setManualTopologyCategory(VDevType.Data, manuallyConfiguredVdevs);
 
       expect(await firstValueFrom(spectator.service.state$)).toMatchObject({
         ...initialState,
         topology: {
           ...initialState.topology,
-          [VdevType.Data]: {
+          [VDevType.Data]: {
             hasCustomDiskSelection: true,
             vdevs: manuallyConfiguredVdevs,
           },
         },
         categorySequence: [
-          VdevType.Log,
-          VdevType.Spare,
-          VdevType.Cache,
-          VdevType.Special,
-          VdevType.Dedup,
-          VdevType.Data,
+          VDevType.Log,
+          VDevType.Spare,
+          VDevType.Cache,
+          VDevType.Special,
+          VDevType.Dedup,
+          VDevType.Data,
         ],
       });
     });
@@ -224,7 +224,7 @@ describe('PoolManagerStore', () => {
     it('setAutomaticTopologyCategory – sets settings for topology category and generates vdevs for it', async () => {
       jest.spyOn(spectator.inject(GenerateVdevsService), 'generateVdevs');
       spectator.service.initialize();
-      spectator.service.setAutomaticTopologyCategory(VdevType.Data, {
+      spectator.service.setAutomaticTopologyCategory(VDevType.Data, {
         diskSize: 2 * TiB,
         width: 1,
         layout: CreateVdevLayout.Stripe,
@@ -236,7 +236,7 @@ describe('PoolManagerStore', () => {
       expect(spectator.inject(GenerateVdevsService).generateVdevs).toHaveBeenCalled();
 
       const state = await firstValueFrom(spectator.service.state$);
-      expect(state.topology[VdevType.Data]).toEqual({
+      expect(state.topology[VDevType.Data]).toEqual({
         diskSize: 2 * TiB,
         diskType: DiskType.Hdd,
         hasCustomDiskSelection: false,
@@ -251,15 +251,15 @@ describe('PoolManagerStore', () => {
     });
 
     it('resetTopologyCategory – resets topology category', async () => {
-      spectator.service.setManualTopologyCategory(VdevType.Data, [{}] as DetailsDisk[][]);
-      spectator.service.resetTopologyCategory(VdevType.Data);
+      spectator.service.setManualTopologyCategory(VDevType.Data, [{}] as DetailsDisk[][]);
+      spectator.service.resetTopologyCategory(VDevType.Data);
 
       expect(await firstValueFrom(spectator.service.state$)).toMatchObject({ topology: initialState.topology });
     });
 
     it('resetTopology – completely resets pool topology', async () => {
-      spectator.service.setManualTopologyCategory(VdevType.Data, [{}] as DetailsDisk[][]);
-      spectator.service.setManualTopologyCategory(VdevType.Log, [{}] as DetailsDisk[][]);
+      spectator.service.setManualTopologyCategory(VDevType.Data, [{}] as DetailsDisk[][]);
+      spectator.service.setManualTopologyCategory(VDevType.Log, [{}] as DetailsDisk[][]);
       spectator.service.resetTopology();
 
       expect(await firstValueFrom(spectator.service.state$)).toMatchObject({ topology: initialState.topology });
@@ -277,7 +277,7 @@ describe('PoolManagerStore', () => {
 
     const state = {
       topology: {
-        [VdevType.Data]: topologyCategory,
+        [VDevType.Data]: topologyCategory,
       },
       enclosures,
     } as PoolManagerState;
@@ -290,7 +290,7 @@ describe('PoolManagerStore', () => {
       Object.defineProperty(spectator.service, 'state$', { value: state$ });
       jest.spyOn(spectator.service, 'getInventoryForStep').mockReturnValue(of(inventory));
       jest.spyOn(spectator.service, 'setManualTopologyCategory');
-      spectator.service.openManualSelectionDialog(VdevType.Data);
+      spectator.service.openManualSelectionDialog(VDevType.Data);
 
       expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ManualDiskSelectionComponent, {
         data: {
@@ -304,7 +304,7 @@ describe('PoolManagerStore', () => {
       });
 
       expect(spectator.service.setManualTopologyCategory)
-        .toHaveBeenCalledWith(VdevType.Data, dialogReturnValue);
+        .toHaveBeenCalledWith(VDevType.Data, dialogReturnValue);
     });
 
     it('resets layout when manual selection dialog results in no vdevs', () => {
@@ -316,8 +316,8 @@ describe('PoolManagerStore', () => {
           afterClosed: () => of([]),
         } as MatDialogRef<unknown>;
       });
-      spectator.service.openManualSelectionDialog(VdevType.Data);
-      expect(spectator.service.resetTopologyCategory).toHaveBeenCalledWith(VdevType.Data);
+      spectator.service.openManualSelectionDialog(VDevType.Data);
+      expect(spectator.service.resetTopologyCategory).toHaveBeenCalledWith(VDevType.Data);
     });
   });
 });

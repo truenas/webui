@@ -11,7 +11,6 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
     }
     `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [PageHeaderComponent, AsyncPipe],
 })
 export class DefaultPageHeaderComponent {

@@ -11,7 +11,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './use-enterprise-marketing-link.component.html',
   styleUrls: ['./use-enterprise-marketing-link.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     TestDirective,
     TranslateModule,

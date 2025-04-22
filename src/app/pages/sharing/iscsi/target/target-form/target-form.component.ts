@@ -39,6 +39,7 @@ import {
 import { TargetNameValidationService } from 'app/pages/sharing/iscsi/target/target-name-validation.service';
 import { FibreChannelService } from 'app/services/fibre-channel.service';
 import { IscsiService } from 'app/services/iscsi.service';
+import { LicenseService } from 'app/services/license.service';
 
 @UntilDestroy()
 @Component({
@@ -46,7 +47,6 @@ import { IscsiService } from 'app/services/iscsi.service';
   templateUrl: './target-form.component.html',
   styleUrls: ['./target-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
@@ -86,7 +86,7 @@ export class TargetFormComponent implements OnInit {
       : this.translate.instant('Edit ISCSI Target');
   }
 
-  hasFibreChannel = toSignal(this.iscsiService.hasFibreChannel());
+  hasFibreChannel = toSignal(this.license.hasFibreChannel$);
 
   readonly helptext = helptextSharingIscsi;
   readonly portals$ = this.iscsiService.listPortals().pipe(
@@ -162,6 +162,7 @@ export class TargetFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private api: ApiService,
     private fcService: FibreChannelService,
+    private license: LicenseService,
     private targetNameValidationService: TargetNameValidationService,
     public slideInRef: SlideInRef<IscsiTarget | undefined, IscsiTarget>,
   ) {
