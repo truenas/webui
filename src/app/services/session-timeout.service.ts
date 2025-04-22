@@ -19,6 +19,7 @@ import {
 } from 'app/modules/dialog/components/session-expiring-dialog/session-expiring-dialog.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
+import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { AppState } from 'app/store';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 
@@ -41,6 +42,7 @@ export class SessionTimeoutService {
     private snackbar: MatSnackBar,
     private appStore$: Store<AppState>,
     private tokenLastUsedService: TokenLastUsedService,
+    private wsStatus: WebSocketStatusService,
     @Inject(WINDOW) private window: Window,
   ) {
     this.resumeBound = this.resume.bind(this);
@@ -71,6 +73,7 @@ export class SessionTimeoutService {
 
         this.terminateCancelTimeout = setTimeout(() => {
           this.authService.clearAuthToken();
+          this.wsStatus.setReconnectStatus(false);
           this.router.navigate(['/signin']);
           this.dialogService.closeAllDialogs();
           this.snackbar.open(

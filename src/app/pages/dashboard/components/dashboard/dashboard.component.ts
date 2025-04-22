@@ -15,7 +15,6 @@ import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { isEqual } from 'lodash-es';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { timer } from 'rxjs';
 import { DisableFocusableElementsDirective } from 'app/directives/disable-focusable-elements/disable-focusable-elements.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -28,7 +27,6 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { dashboardElements } from 'app/pages/dashboard/components/dashboard/dashboard.elements';
 import { WidgetGroupComponent } from 'app/pages/dashboard/components/widget-group/widget-group.component';
 import { WidgetGroupFormComponent } from 'app/pages/dashboard/components/widget-group-form/widget-group-form.component';
@@ -37,7 +35,6 @@ import { getDefaultWidgets } from 'app/pages/dashboard/services/get-default-widg
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetGroup } from 'app/pages/dashboard/types/widget-group.interface';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
-import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { WidgetGroupControlsComponent } from './widget-group-controls/widget-group-controls.component';
@@ -107,8 +104,6 @@ export class DashboardComponent implements OnInit {
     private snackbar: SnackbarService,
     private dialogService: DialogService,
     private store$: Store<AppState>,
-    private wsManager: WebSocketHandlerService,
-    private wsStatus: WebSocketStatusService,
   ) {}
 
   ngOnInit(): void {
@@ -116,11 +111,6 @@ export class DashboardComponent implements OnInit {
     performance.measure('Admin Init', 'Admin Init', 'Dashboard Start');
     this.dashboardStore.entered();
     this.loadGroups();
-
-    timer(10000, 10000).pipe(untilDestroyed(this)).subscribe(() => {
-      this.wsManager.disconnect();
-      console.info('connection closed');
-    });
   }
 
   protected onConfigure(): void {
