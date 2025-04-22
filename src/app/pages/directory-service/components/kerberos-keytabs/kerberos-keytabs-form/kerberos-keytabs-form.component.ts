@@ -53,8 +53,8 @@ export class KerberosKeytabsFormComponent implements OnInit {
 
   get title(): string {
     return this.isNew
-      ? this.translate.instant(helptextKerberosKeytabs.title_add)
-      : this.translate.instant(helptextKerberosKeytabs.title_edit);
+      ? this.translate.instant(helptextKerberosKeytabs.titleAdd)
+      : this.translate.instant(helptextKerberosKeytabs.titleEdit);
   }
 
   form = this.formBuilder.nonNullable.group({

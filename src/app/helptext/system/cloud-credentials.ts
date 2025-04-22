@@ -5,13 +5,13 @@ export const helptextSystemCloudcredentials = {
     tooltip: T('Third-party Cloud service providers. Choose a provider \
  to configure connection credentials.'),
   },
-  exist_provider: {
+  existProvider: {
     tooltip: T('Load an existing provider configuration.'),
   },
-  client_id: {
+  clientId: {
     placeholder: T('OAuth Client ID'),
   },
-  client_secret: {
+  clientSecret: {
     placeholder: T('OAuth Client Secret'),
   },
   access_key_id_s3: {

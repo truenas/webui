@@ -170,7 +170,7 @@ describe('ActiveDirectoryComponent', () => {
 
     expect(spectator.inject(SystemGeneralService).refreshDirServicesCache).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
-      helptextActiveDirectory.activedirectory_custactions_clearcache_dialog_message,
+      helptextActiveDirectory.cacheRebuilt,
     );
   });
 

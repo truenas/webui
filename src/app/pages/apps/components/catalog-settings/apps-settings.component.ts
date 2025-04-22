@@ -87,8 +87,8 @@ export class AppsSettingsComponent implements OnInit {
   );
 
   readonly tooltips = {
-    preferred_trains: helptextApps.catalogForm.preferredTrains.tooltip,
-    install_nvidia_driver: helptextApps.catalogForm.installNvidiaDriver.tooltip,
+    preferred_trains: helptextApps.settingsForm.preferredTrains.tooltip,
+    install_nvidia_driver: helptextApps.settingsForm.installNvidiaDriver.tooltip,
   };
 
   constructor(

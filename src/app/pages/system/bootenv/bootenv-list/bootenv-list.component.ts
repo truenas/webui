@@ -274,7 +274,7 @@ export class BootEnvironmentListComponent implements OnInit {
     this.dialogService.confirm({
       title: this.translate.instant('Activate'),
       message: this.translate.instant('Activate this Boot Environment?'),
-      buttonText: helptextSystemBootenv.list_dialog_activate_action,
+      buttonText: helptextSystemBootenv.activateButton,
     }).pipe(
       filter(Boolean),
       switchMap(() => {
