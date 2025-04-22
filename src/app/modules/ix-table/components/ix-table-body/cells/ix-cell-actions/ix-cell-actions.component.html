@@ -22,15 +22,26 @@
         [matTooltip]="action.dynamicTooltip ? (action.dynamicTooltip(row()) | async) : action.tooltip || ''"
       >
         @if (action.hidden ? !(action.hidden(row()) | async) : true) {
-          <button
-            mat-icon-button
-            [ixTest]="[uniqueRowTag(row()), action.iconName, 'row-action']"
-            [attr.aria-label]="(action.dynamicTooltip ? (action.dynamicTooltip(row()) | async) : action.tooltip || '') + ' ' + getAriaLabel(row())"
-            [disabled]="action.disabled ? (action.disabled(row()) | async) : false"
-            (click)="$event.stopPropagation(); action.onClick(row())"
-          >
-            <ix-icon [name]="action.iconName"></ix-icon>
-          </button>
+          @if (action?.dynamicText && (action.dynamicText(row()) | async); as dynamicText) {
+            <a
+              [tabIndex]="0"
+              [ixTest]="[uniqueRowTag(row()), action.iconName, 'row-action']"
+              (click)="$event.stopPropagation(); action.onClick(row())"
+              (keydown.enter)="$event.stopPropagation(); action.onClick(row())"
+            >
+              {{ dynamicText }}
+            </a>
+          } @else {
+            <button
+              mat-icon-button
+              [ixTest]="[uniqueRowTag(row()), action.iconName, 'row-action']"
+              [attr.aria-label]="(action.dynamicTooltip ? (action.dynamicTooltip(row()) | async) : action.tooltip || '') + ' ' + getAriaLabel(row())"
+              [disabled]="action.disabled ? (action.disabled(row()) | async) : false"
+              (click)="$event.stopPropagation(); action.onClick(row())"
+            >
+              <ix-icon [name]="action.iconName"></ix-icon>
+            </button>
+          }
         }
       </div>
     }

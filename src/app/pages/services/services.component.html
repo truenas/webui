@@ -22,6 +22,15 @@
       [columns]="columns"
       [dataProvider]="dataProvider"
       [isLoading]="loading"
-    ></tbody>
+    >
+      <ng-template
+        let-service
+        ix-table-cell
+        [columnIndex]="1"
+        [dataProvider]="dataProvider"
+      >
+        <ix-service-status-cell [service]="service"></ix-service-status-cell>
+      </ng-template>
+    </tbody>
   </ix-table>
 </mat-card>

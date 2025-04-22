@@ -6,46 +6,51 @@ import { MatCard } from '@angular/material/card';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { TranslateService } from '@ngx-translate/core';
-import { EMPTY, of } from 'rxjs';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { EMPTY, Observable, of } from 'rxjs';
 import {
-  catchError, map, take,
+  catchError, filter, map, switchMap, take,
 } from 'rxjs/operators';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { AuditService } from 'app/enums/audit.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
+import { Role } from 'app/enums/role.enum';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
+import { ServiceStatus, serviceStatusLabels } from 'app/enums/service-status.enum';
 import { Service, ServiceRow } from 'app/interfaces/service.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
+import { templateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { toggleColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
+import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceFtpComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
 import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
 import { ServiceSnmpComponent } from 'app/pages/services/components/service-snmp/service-snmp.component';
 import { ServiceSshComponent } from 'app/pages/services/components/service-ssh/service-ssh.component';
-import {
-  ServiceStateColumnComponent,
-} from 'app/pages/services/components/service-state-column/service-state-column.component';
+import { ServiceStatusCellComponent } from 'app/pages/services/components/service-status-cell/service-status-cell.component';
 import { ServiceUpsComponent } from 'app/pages/services/components/service-ups/service-ups.component';
 import { servicesElements } from 'app/pages/services/services.elements';
 import {
   GlobalTargetConfigurationComponent,
 } from 'app/pages/sharing/iscsi/global-target-configuration/global-target-configuration.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { IscsiService } from 'app/services/iscsi.service';
 import { ServicesService } from 'app/services/services.service';
 import { UrlOptionsService } from 'app/services/url-options.service';
 import { serviceChanged } from 'app/store/services/services.actions';
@@ -65,22 +70,27 @@ import { waitForServices } from 'app/store/services/services.selectors';
     IxTableEmptyDirective,
     IxTableHeadComponent,
     IxTableBodyComponent,
-    AsyncPipe,
+    IxTableCellDirective,
     PageHeaderComponent,
+    ServiceStatusCellComponent,
+    TranslateModule,
+    AsyncPipe,
   ],
 })
 export class ServicesComponent implements OnInit {
   protected readonly searchableElements = servicesElements;
+  protected readonly requiredRoles = [Role.ServiceWrite];
 
   columns = createTable<ServiceRow>([
     textColumn({
       title: this.translate.instant('Name'),
       propertyName: 'name',
     }),
-    {
-      type: ServiceStateColumnComponent,
-      title: this.translate.instant('Running'),
-    },
+    templateColumn({
+      title: this.translate.instant('Status'),
+      sortBy: (row) => row.state,
+      propertyName: 'state',
+    }),
     toggleColumn({
       title: this.translate.instant('Start Automatically'),
       propertyName: 'enable',
@@ -90,14 +100,12 @@ export class ServicesComponent implements OnInit {
     actionsColumn({
       actions: [
         {
-          iconName: iconMarker('receipt_long'),
-          tooltip: this.translate.instant('Audit Logs'),
+          dynamicText: () => of(this.translate.instant('Audit Logs')),
           hidden: (row) => of(!this.hasLogs(row.service)),
           onClick: () => this.router.navigate([this.auditLogsUrl()]),
         },
         {
-          iconName: iconMarker('list'),
-          dynamicTooltip: (row) => of(this.translate.instant('{name} Sessions', { name: serviceNames.get(row.service) })),
+          dynamicText: (row) => of(this.translate.instant('{name} Sessions', { name: serviceNames.get(row.service) })),
           hidden: (row) => of(!this.hasSessions(row.service)),
           onClick: (row) => this.router.navigate(this.sessionsUrl(row.service)),
         },
@@ -105,6 +113,24 @@ export class ServicesComponent implements OnInit {
           iconName: iconMarker('edit'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.configureService(row),
+        },
+        {
+          iconName: iconMarker('mdi-play-circle'),
+          tooltip: this.translate.instant('Start Service'),
+          hidden: (row) => of(row.state === ServiceStatus.Running),
+          onClick: (row) => this.startService(row.service),
+          requiredRoles: this.requiredRoles,
+        },
+        {
+          iconName: iconMarker('mdi-stop-circle'),
+          tooltip: this.translate.instant('Stop Service'),
+          hidden: (row) => of(row.state === ServiceStatus.Stopped),
+          onClick: (row) => this.confirmStop(row.service).pipe(
+            filter(Boolean),
+            take(1),
+            untilDestroyed(this),
+          ).subscribe(() => this.stopService(row.service)),
+          requiredRoles: this.requiredRoles,
         },
       ],
     }),
@@ -116,6 +142,7 @@ export class ServicesComponent implements OnInit {
   dataProvider = new ArrayDataProvider<ServiceRow>();
   filterString = '';
   services: ServiceRow[];
+  protected readonly serviceStatusLabels = serviceStatusLabels;
 
   error = false;
   loading = true;
@@ -145,6 +172,9 @@ export class ServicesComponent implements OnInit {
     private urlOptions: UrlOptionsService,
     private errorHandler: ErrorHandlerService,
     private loader: LoaderService,
+    private snackbar: SnackbarService,
+    private iscsiService: IscsiService,
+    private dialogService: DialogService,
   ) {}
 
   ngOnInit(): void {
@@ -260,5 +290,63 @@ export class ServicesComponent implements OnInit {
 
   private hasLogs(serviceName: ServiceName): boolean {
     return serviceName === ServiceName.Cifs;
+  }
+
+  private confirmStop(serviceName: ServiceName): Observable<boolean> {
+    if (serviceName === ServiceName.Iscsi) {
+      return this.confirmStopIscsiService(serviceName);
+    }
+
+    return this.dialogService.confirm({
+      title: this.translate.instant('Alert'),
+      message: this.translate.instant('Stop {serviceName}?', { serviceName }),
+      hideCheckbox: true,
+      buttonText: this.translate.instant('Stop'),
+    });
+  }
+
+  private stopService(serviceName: ServiceName): void {
+    this.api.call('service.stop', [serviceName, { silent: false }]).pipe(
+      this.loader.withLoader(),
+      untilDestroyed(this),
+    ).subscribe({
+      next: () => this.snackbar.success(this.translate.instant('Service stopped')),
+      error: (error: unknown) => {
+        this.errorHandler.showErrorModal(error);
+      },
+    });
+  }
+
+  private startService(serviceName: ServiceName): void {
+    this.api.call('service.start', [serviceName, { silent: false }]).pipe(
+      this.loader.withLoader(),
+      untilDestroyed(this),
+    ).subscribe({
+      next: () => this.snackbar.success(this.translate.instant('Service started')),
+      error: (error: unknown) => {
+        this.errorHandler.showErrorModal(error);
+      },
+    });
+  }
+
+  private confirmStopIscsiService(serviceName: ServiceName): Observable<boolean> {
+    return this.iscsiService.getGlobalSessions().pipe(
+      switchMap((sessions) => {
+        let message = this.translate.instant('Stop {serviceName}?', { serviceName });
+        if (sessions.length) {
+          const connectionsMessage = this.translate.instant('{n, plural, one {There is an active iSCSI connection.} other {There are # active iSCSI connections}}', { n: sessions.length });
+          const stopMessage = this.translate.instant('Stop the {serviceName} service and close these connections?', { serviceName });
+          message = `<font color="red">${connectionsMessage}</font><br>${stopMessage}`;
+        }
+
+        return this.dialogService.confirm({
+          title: this.translate.instant('Alert'),
+          message,
+          hideCheckbox: true,
+          buttonText: this.translate.instant('Stop'),
+        });
+      }),
+      untilDestroyed(this),
+    );
   }
 }
