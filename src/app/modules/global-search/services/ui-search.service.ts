@@ -47,15 +47,22 @@ export class UiSearchProvider implements GlobalSearchProvider {
           this.license.hasEnclosure$,
           this.license.hasVms$,
           this.license.hasApps$,
+          this.license.hasKmip$,
+          this.license.hasFibreChannel$,
         ]).pipe(
           first(),
-          filter(([hasRole, hasFailover, hasEnclosure, hasVms, hasApps]) => {
+          filter(([
+            hasRole, hasFailover, hasEnclosure,
+            hasVms, hasApps, hasKmip, hasFibreChannel,
+          ]) => {
             switch (true) {
               case !hasRole:
               case item.visibleTokens?.includes(GlobalSearchVisibleToken.Failover) && !hasFailover:
               case item.visibleTokens?.includes(GlobalSearchVisibleToken.Enclosure) && !hasEnclosure:
               case item.visibleTokens?.includes(GlobalSearchVisibleToken.Vms) && !hasVms:
               case item.visibleTokens?.includes(GlobalSearchVisibleToken.Apps) && !hasApps:
+              case item.visibleTokens?.includes(GlobalSearchVisibleToken.FibreChannel) && !hasFibreChannel:
+              case item.visibleTokens?.includes(GlobalSearchVisibleToken.Kmip) && !hasKmip:
                 return false;
               default:
                 return true;
