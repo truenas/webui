@@ -23,6 +23,5 @@ export class ReconnectMessage {
 
   protected reconnectPressed(): void {
     this.wsHandler.reconnect();
-    this.wsStatus.setReconnectStatus(false);
   }
 }

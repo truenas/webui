@@ -73,7 +73,7 @@ export class SessionTimeoutService {
 
         this.terminateCancelTimeout = setTimeout(() => {
           this.authService.clearAuthToken();
-          this.wsStatus.setReconnectStatus(false);
+          this.wsStatus.setReconnectAllowed(false);
           this.router.navigate(['/signin']);
           this.dialogService.closeAllDialogs();
           this.snackbar.open(

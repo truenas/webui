@@ -15,7 +15,6 @@ import {
   delay,
   filter, map, switchMap, take,
 } from 'rxjs/operators';
-import { filterAsync } from 'app/helpers/operators/filter-async.operator';
 import { WINDOW } from 'app/helpers/window.helper';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -91,11 +90,14 @@ export class SigninComponent implements OnInit {
     this.isConnected$.pipe(
       filter(Boolean),
       untilDestroyed(this),
-    ).subscribe(() => this.signinStore.init());
+    ).subscribe(() => {
+      this.signinStore.init();
+      this.wsStatus.setReconnectAllowed(true);
+    });
 
     // TODO: Remove after code review.
     timer(10000, 10000)
-      .pipe(filterAsync(() => this.allowReconnect$), untilDestroyed(this))
+      .pipe(untilDestroyed(this))
       .subscribe(() => {
         this.wsManager.disconnect();
         console.info('connection closed');
