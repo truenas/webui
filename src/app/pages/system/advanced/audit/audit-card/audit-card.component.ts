@@ -23,7 +23,7 @@ import { FirstTimeWarningService } from 'app/services/first-time-warning.service
 @UntilDestroy(this)
 @Component({
   selector: 'ix-audit-card',
-  styleUrls: ['../../common-card.scss'],
+  styleUrls: ['../../../general-settings/common-settings-card.scss'],
   templateUrl: './audit-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [

@@ -15,13 +15,13 @@ import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { manageConfigurationElements } from 'app/pages/system/general-settings/manage-configuration-menu/manage-configuration-menu.elements';
+import { manageConfigurationElements } from 'app/pages/system/advanced/manage-configuration-menu/manage-configuration-menu.elements';
 import {
   SaveConfigDialog,
-} from 'app/pages/system/general-settings/save-config-dialog/save-config-dialog.component';
+} from 'app/pages/system/advanced/manage-configuration-menu/save-config-dialog/save-config-dialog.component';
 import {
   UploadConfigDialog,
-} from 'app/pages/system/general-settings/upload-config-dialog/upload-config-dialog.component';
+} from 'app/pages/system/advanced/manage-configuration-menu/upload-config-dialog/upload-config-dialog.component';
 
 @UntilDestroy()
 @Component({

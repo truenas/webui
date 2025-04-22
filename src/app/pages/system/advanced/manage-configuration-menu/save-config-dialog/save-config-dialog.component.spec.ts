@@ -13,7 +13,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import {
   SaveConfigDialog,
-} from 'app/pages/system/general-settings/save-config-dialog/save-config-dialog.component';
+} from 'app/pages/system/advanced/manage-configuration-menu/save-config-dialog/save-config-dialog.component';
 import { DownloadService } from 'app/services/download.service';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 

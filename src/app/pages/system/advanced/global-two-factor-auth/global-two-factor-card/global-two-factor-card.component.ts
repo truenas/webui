@@ -28,6 +28,7 @@ import { FirstTimeWarningService } from 'app/services/first-time-warning.service
 @UntilDestroy()
 @Component({
   selector: 'ix-global-two-factor-card',
+  styleUrls: ['../../../general-settings/common-settings-card.scss'],
   templateUrl: './global-two-factor-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [

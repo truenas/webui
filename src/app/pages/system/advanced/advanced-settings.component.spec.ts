@@ -20,9 +20,11 @@ import {
 } from 'app/pages/system/advanced/isolated-gpus/isolated-gpus-card/isolated-gpus-card.component';
 import { KernelCardComponent } from 'app/pages/system/advanced/kernel/kernel-card/kernel-card.component';
 import {
+  NtpServersCardComponent,
+} from 'app/pages/system/advanced/ntp-servers/ntp-servers-card/ntp-servers-card.component';
+import {
   ReplicationSettingsCardComponent,
 } from 'app/pages/system/advanced/replication/replication-settings-card/replication-settings-card.component';
-import { SaveDebugButtonComponent } from 'app/pages/system/advanced/save-debug-button/save-debug-button.component';
 import {
   SelfEncryptingDriveCardComponent,
 } from 'app/pages/system/advanced/self-encrypting-drive/self-encrypting-drive-card/self-encrypting-drive-card.component';
@@ -30,6 +32,7 @@ import { StorageCardComponent } from 'app/pages/system/advanced/storage/storage-
 import { SysctlCardComponent } from 'app/pages/system/advanced/sysctl/sysctl-card/sysctl-card.component';
 import { SyslogCardComponent } from 'app/pages/system/advanced/syslog/syslog-card/syslog-card.component';
 import { SystemSecurityCardComponent } from 'app/pages/system/advanced/system-security/system-security-card/system-security-card.component';
+import { SaveDebugButtonComponent } from 'app/pages/system/general-settings/support/save-debug-button/save-debug-button.component';
 import { selectProductType } from 'app/store/system-info/system-info.selectors';
 import { InitShutdownCardComponent } from './init-shutdown/init-shutdown-card/init-shutdown-card.component';
 
@@ -58,6 +61,7 @@ describe('AdvancedSettingsComponent', () => {
         IsolatedGpusCardComponent,
         GlobalTwoFactorAuthCardComponent,
         SystemSecurityCardComponent,
+        NtpServersCardComponent,
         SaveDebugButtonComponent,
       ),
     ],
@@ -91,6 +95,7 @@ describe('AdvancedSettingsComponent', () => {
     expect(spectator.query(ReplicationSettingsCardComponent)).toExist();
     expect(spectator.query(AccessCardComponent)).toExist();
     expect(spectator.query(AuditCardComponent)).toExist();
+    expect(spectator.query(NtpServersCardComponent)).toExist();
     expect(spectator.query(AllowedAddressesCardComponent)).toExist();
     expect(spectator.query(SelfEncryptingDriveCardComponent)).not.toExist();
     expect(spectator.query(IsolatedGpusCardComponent)).toExist();
