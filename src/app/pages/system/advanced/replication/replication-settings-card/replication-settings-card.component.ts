@@ -28,7 +28,7 @@ import { FirstTimeWarningService } from 'app/services/first-time-warning.service
 @UntilDestroy()
 @Component({
   selector: 'ix-replication-settings-card',
-  styleUrls: ['../../common-card.scss'],
+  styleUrls: ['../../../general-settings/common-settings-card.scss'],
   templateUrl: './replication-settings-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [

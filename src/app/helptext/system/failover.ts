@@ -20,8 +20,6 @@ export const helptextSystemFailover = {
     sync_to_message: T('Sync to peer succeeded.'),
   },
 
-  disabled_tooltip: T('Disable automatic failover.'),
-
   master_tooltip: T('Make the currently active TrueNAS controller the default when both TrueNAS controllers are online and HA is enabled. To change the default TrueNAS controller, unset this option on the default TrueNAS controller and allow the system to fail over. This briefly interrupts system services.'),
 
   timeout_tooltip: T('Number of seconds to wait after a network failure \
@@ -32,6 +30,5 @@ export const helptextSystemFailover = {
   master_dialog_title: T('Confirm Failover'),
   master_dialog_warning: T('Forcing the other TrueNAS controller to \
  become active requires a failover. This will temporarily interrupt \
- system services. After confirmation, <b>SAVE AND FAILOVER</b> must \
- be clicked on the previous screen.'),
+ system services.'),
 };

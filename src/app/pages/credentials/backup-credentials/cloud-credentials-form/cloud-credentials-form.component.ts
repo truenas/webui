@@ -202,7 +202,7 @@ export class CloudCredentialsFormComponent implements OnInit {
             this.dialogService.error({
               title: this.translate.instant('Error'),
               message: response.excerpt || '',
-              backtrace: response.error,
+              stackTrace: response.error,
             });
           }
 

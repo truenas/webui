@@ -88,7 +88,7 @@ describe('ErrorParserService', () => {
       expect(errorReport).toEqual({
         title: 'Validation Error',
         message: wsError.error.data.reason,
-        backtrace: '',
+        stackTrace: '',
       });
     });
 
@@ -107,7 +107,7 @@ describe('ErrorParserService', () => {
       expect(errorReport).toEqual({
         title: 'FAILED',
         message: 'DUMMY_ERROR',
-        backtrace: 'LOGS',
+        stackTrace: 'LOGS',
       });
     });
 
@@ -120,7 +120,7 @@ describe('ErrorParserService', () => {
       expect(errorReport).toEqual([{
         title: 'Error: path',
         message: 'DUMMY_ERROR',
-        backtrace: 'EXCEPTION',
+        stackTrace: 'EXCEPTION',
       }]);
     });
 

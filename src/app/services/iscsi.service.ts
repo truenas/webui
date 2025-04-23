@@ -1,10 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import {
-  BehaviorSubject,
-  combineLatest, distinctUntilChanged, filter, map, Observable,
+  BehaviorSubject, distinctUntilChanged, filter, Observable,
 } from 'rxjs';
-import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { Choices } from 'app/interfaces/choices.interface';
 import { IscsiGlobalSession } from 'app/interfaces/iscsi-global-config.interface';
 import {
@@ -17,7 +15,6 @@ import {
 import { AuthService } from 'app/modules/auth/auth.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AppState } from 'app/store';
-import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @Injectable({
   providedIn: 'root',
@@ -77,17 +74,5 @@ export class IscsiService {
 
   getGlobalSessions(): Observable<IscsiGlobalSession[]> {
     return this.api.call('iscsi.global.sessions');
-  }
-
-  hasFibreChannel(): Observable<boolean> {
-    return combineLatest([
-      this.store$.pipe(
-        waitForSystemInfo,
-        map((systemInfo) => systemInfo.license?.features?.includes(LicenseFeature.FibreChannel)),
-      ),
-      this.api.call('fc.capable'),
-    ]).pipe(
-      map(([hasFibreChannel, isFcCapable]) => hasFibreChannel && isFcCapable),
-    );
   }
 }
