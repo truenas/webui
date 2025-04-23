@@ -9,13 +9,13 @@ import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   ManageConfigurationMenuComponent,
-} from 'app/pages/system/general-settings/manage-configuration-menu/manage-configuration-menu.component';
+} from 'app/pages/system/advanced/manage-configuration-menu/manage-configuration-menu.component';
 import {
   SaveConfigDialog,
-} from 'app/pages/system/general-settings/save-config-dialog/save-config-dialog.component';
+} from 'app/pages/system/advanced/manage-configuration-menu/save-config-dialog/save-config-dialog.component';
 import {
   UploadConfigDialog,
-} from 'app/pages/system/general-settings/upload-config-dialog/upload-config-dialog.component';
+} from 'app/pages/system/advanced/manage-configuration-menu/upload-config-dialog/upload-config-dialog.component';
 
 describe('ManageConfigurationMenuComponent', () => {
   let spectator: Spectator<ManageConfigurationMenuComponent>;

@@ -15,7 +15,7 @@ import { SystemUpdate, SystemUpdateChange } from 'app/interfaces/system-update.i
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { SaveConfigDialog } from 'app/pages/system/general-settings/save-config-dialog/save-config-dialog.component';
+import { SaveConfigDialog } from 'app/pages/system/advanced/manage-configuration-menu/save-config-dialog/save-config-dialog.component';
 import { UpdateActionsCardComponent } from 'app/pages/system/update/components/update-actions-card/update-actions-card.component';
 import { TrainService } from 'app/pages/system/update/services/train.service';
 import { UpdateService } from 'app/pages/system/update/services/update.service';

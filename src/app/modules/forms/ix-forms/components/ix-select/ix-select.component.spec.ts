@@ -77,7 +77,9 @@ describe('IxSelectComponent', () => {
       const label = spectator.query(IxLabelComponent)!;
       expect(label).toExist();
       expect(label.label()).toBe('Select Group');
-      expect(label.required()).toBe(true);
+      // Required selects are always rendered without an asterisk,
+      // because there is no way to select an empty value anyway.
+      expect(label.required()).toBe(false);
       expect(label.tooltip()).toBe('Select group to use.');
     });
 

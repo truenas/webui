@@ -52,7 +52,7 @@ import { waitForAdvancedConfig, waitForGeneralConfig } from 'app/store/system-co
 @UntilDestroy()
 @Component({
   selector: 'ix-access-card',
-  styleUrls: ['../../common-card.scss'],
+  styleUrls: ['../../../general-settings/common-settings-card.scss'],
   templateUrl: './access-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [

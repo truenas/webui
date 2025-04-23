@@ -7,6 +7,7 @@ export const privilegesListElements = {
   elements: {
     list: {
       anchor: 'privileges-list',
+      synonyms: [T('Privileges List'), 'RBAC', T('Roles'), T('Permissions')],
     },
     add: {
       hierarchy: [T('Add Privilege')],

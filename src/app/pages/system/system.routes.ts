@@ -8,7 +8,6 @@ import {
 import { AlertServiceListComponent } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.component';
 import { AlertSettingsComponent } from 'app/pages/system/alert-settings/alert-settings.component';
 import { GeneralSettingsComponent } from 'app/pages/system/general-settings/general-settings.component';
-import { SupportCardComponent } from 'app/pages/system/general-settings/support/support-card/support-card.component';
 import { ManualUpdateFormComponent } from 'app/pages/system/update/components/manual-update-form/manual-update-form.component';
 import { AdvancedSettingsComponent } from './advanced/advanced-settings.component';
 import { CronListComponent } from './advanced/cron/cron-list/cron-list.component';
@@ -131,10 +130,6 @@ export const systemRoutes: Routes = [
         data: { title: T('Support'), breadcrumb: T('Support') },
         children: [
           {
-            path: '',
-            component: SupportCardComponent,
-            data: { title: T('Support'), breadcrumb: null },
-          }, {
             path: 'eula',
             component: EulaComponent,
             data: { title: T('EULA'), breadcrumb: null },

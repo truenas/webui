@@ -11,7 +11,7 @@ $opened-scroll-container-height: calc(80vh - 48px - 240px); // Viewport - topbar
   text-align: right;
 }
 
-.backtrace-panel {
+.stack-trace-panel {
   border: 0;
   max-height: 0;
   overflow: hidden;
