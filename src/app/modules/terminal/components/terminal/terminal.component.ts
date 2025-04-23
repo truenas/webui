@@ -3,7 +3,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef,
   Component, ElementRef, HostListener, input, OnDestroy, OnInit, Signal, viewChild,
 } from '@angular/core';
-import { MatButton } from '@angular/material/button';
+import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -33,6 +33,7 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatButton,
+    MatIconButton,
     TestDirective,
     NgStyle,
     IxIconComponent,
