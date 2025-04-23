@@ -9,10 +9,10 @@ import { ixControlLabelTag } from 'app/modules/forms/ix-forms/directives/registe
 export class IxFormService {
   private readonly controls = new Map<string, HTMLElement>();
   private readonly sections = new Map<IxFormSectionComponent, (NgControl | null)[]>();
-  private readonly controlNamesWithlabels = new BehaviorSubject<ControlNameWithLabel[]>([]);
+  private readonly controlNamesWithLabels = new BehaviorSubject<ControlNameWithLabel[]>([]);
   private readonly controlSections = new BehaviorSubject<SectionWithControls[]>([]);
 
-  readonly controlNamesWithLabels$: Observable<ControlNameWithLabel[]> = this.controlNamesWithlabels.asObservable();
+  readonly controlNamesWithLabels$: Observable<ControlNameWithLabel[]> = this.controlNamesWithLabels.asObservable();
   readonly controlSections$: Observable<SectionWithControls[]> = this.controlSections.asObservable();
 
   getControlNames(): (string | number | null)[] {
@@ -51,7 +51,7 @@ export class IxFormService {
     elementRef: ElementRef<HTMLElement>,
   ): void {
     this.controls.set(name, elementRef.nativeElement);
-    this.controlNamesWithlabels.next(this.getControlsLabels());
+    this.controlNamesWithLabels.next(this.getControlsLabels());
   }
 
   registerSectionControl(
@@ -69,7 +69,7 @@ export class IxFormService {
 
   unregisterControl(name: string): void {
     this.controls.delete(name);
-    this.controlNamesWithlabels.next(this.getControlsLabels());
+    this.controlNamesWithLabels.next(this.getControlsLabels());
   }
 
   unregisterSectionControl(section: IxFormSectionComponent, control: NgControl | null): void {

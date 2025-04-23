@@ -78,7 +78,7 @@ export class CheckinIndicatorComponent implements OnInit {
       hideCheckbox: true,
       buttonText: this.translate.instant('Continue'),
     }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-      this.router.navigate(['/network']);
+      this.router.navigate(['/system/network']);
     });
   }
 }

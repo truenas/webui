@@ -59,12 +59,6 @@ export class DialogService {
     const dialogRef = this.matDialog.open(ErrorDialog, {
       data: error,
     });
-    dialogRef.componentInstance.title = error.title;
-    dialogRef.componentInstance.message = error.message;
-    dialogRef.componentInstance.backtrace = error.backtrace;
-    if (error.logs) {
-      dialogRef.componentInstance.logs = error.logs;
-    }
     return dialogRef.afterClosed();
   }
 
