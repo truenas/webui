@@ -51,7 +51,7 @@ export class AppRollbackModalComponent {
 
   versionOptions$: Observable<Option[]>;
 
-  readonly helptext = helptextApps.apps.rollback_dialog.version.tooltip;
+  readonly helptext = helptextApps.apps.rollbackDialog.version.tooltip;
   protected readonly requiredRoles = [Role.AppsWrite];
 
   constructor(
@@ -70,7 +70,7 @@ export class AppRollbackModalComponent {
 
     this.dialogService.jobDialog(
       this.api.job('app.rollback', rollbackParams),
-      { title: helptextApps.apps.rollback_dialog.job },
+      { title: helptextApps.apps.rollbackDialog.job },
     )
       .afterClosed()
       .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))

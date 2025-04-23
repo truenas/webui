@@ -3,14 +3,13 @@
     formControlName="host"
     [label]="'Host' | translate"
     [required]="true"
-    [tooltip]="helptext.InfluxDB_host_tooltip | translate"
+    [tooltip]="helptext.influxDb.hostTooltip | translate"
   ></ix-input>
 
   <ix-input
     formControlName="username"
     [label]="'Username' | translate"
     [required]="true"
-    [tooltip]="helptext.InfluxDB_username_tooltip | translate"
   ></ix-input>
 
   <ix-input
@@ -18,20 +17,18 @@
     type="password"
     [label]="'Password' | translate"
     [required]="true"
-    [tooltip]="helptext.InfluxDB_password_tooltip | translate"
   ></ix-input>
 
   <ix-input
     formControlName="database"
     [label]="'Database' | translate"
     [required]="true"
-    [tooltip]="helptext.InfluxDB_database_tooltip | translate"
   ></ix-input>
 
   <ix-input
     formControlName="series_name"
     [label]="'Series' | translate"
     [required]="true"
-    [tooltip]="helptext.InfluxDB_series_name_tooltip | translate"
+    [tooltip]="helptext.influxDb.seriesNameTooltip | translate"
   ></ix-input>
 </ng-container>

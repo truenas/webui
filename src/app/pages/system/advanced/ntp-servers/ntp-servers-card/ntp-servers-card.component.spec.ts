@@ -11,8 +11,8 @@ import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { NtpServerCardComponent } from 'app/pages/system/general-settings/ntp-server/ntp-server-card/ntp-server-card.component';
-import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-server/ntp-server-form/ntp-server-form.component';
+import { NtpServersCardComponent } from 'app/pages/system/advanced/ntp-servers/ntp-servers-card/ntp-servers-card.component';
+import { NtpServersFormComponent } from 'app/pages/system/advanced/ntp-servers/ntp-servers-form/ntp-servers-form.component';
 
 const fakeDataSource: NtpServer[] = [
   {
@@ -45,14 +45,14 @@ const fakeDataSource: NtpServer[] = [
 ];
 
 describe('NtpServerCardComponent', () => {
-  let spectator: Spectator<NtpServerCardComponent>;
+  let spectator: Spectator<NtpServersCardComponent>;
   let loader: HarnessLoader;
   let api: ApiService;
   let slideInRef: SlideIn;
   let table: IxTableHarness;
 
   const createComponent = createComponentFactory({
-    component: NtpServerCardComponent,
+    component: NtpServersCardComponent,
     providers: [
       mockAuth(),
       mockApi([
@@ -93,14 +93,14 @@ describe('NtpServerCardComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(slideInRef.open).toHaveBeenCalledWith(NtpServerFormComponent);
+    expect(slideInRef.open).toHaveBeenCalledWith(NtpServersFormComponent);
   });
 
   it('should open edit ntp server form', async () => {
     const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 6);
     await editButton.click();
 
-    expect(slideInRef.open).toHaveBeenCalledWith(NtpServerFormComponent, { data: fakeDataSource[0] });
+    expect(slideInRef.open).toHaveBeenCalledWith(NtpServersFormComponent, { data: fakeDataSource[0] });
   });
 
   it('should display confirm dialog of deleting ntp server', async () => {

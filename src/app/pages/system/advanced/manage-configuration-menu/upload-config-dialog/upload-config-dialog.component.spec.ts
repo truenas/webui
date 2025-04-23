@@ -9,8 +9,8 @@ import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFileInputHarness } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.harness';
+import { UploadConfigDialog } from 'app/pages/system/advanced/manage-configuration-menu/upload-config-dialog/upload-config-dialog.component';
 import { UploadService } from 'app/services/upload.service';
-import { UploadConfigDialog } from './upload-config-dialog.component';
 
 describe('UploadConfigDialogComponent', () => {
   let spectator: Spectator<UploadConfigDialog>;

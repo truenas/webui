@@ -64,24 +64,24 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
 
   get global2FaMsg(): string {
     if (!this.globalTwoFactorEnabled) {
-      return this.translate.instant(helptext2fa.two_factor.global_disabled);
+      return this.translate.instant(helptext2fa.globallyDisabled);
     }
     if (this.userTwoFactorAuthConfigured) {
-      return this.translate.instant(helptext2fa.two_factor.global_enabled_user_enabled);
+      return this.translate.instant(helptext2fa.allSetUp);
     }
-    return this.translate.instant(helptext2fa.two_factor.global_enabled_user_disabled);
+    return this.translate.instant(helptext2fa.enabledGloballyButNotForUser);
   }
 
   readonly helptext = helptext2fa;
 
   readonly labels = {
-    secret: helptext2fa.two_factor.secret.placeholder,
-    uri: helptext2fa.two_factor.uri.placeholder,
+    secret: helptext2fa.secret.placeholder,
+    uri: helptext2fa.uri.placeholder,
   };
 
   readonly tooltips = {
-    secret: helptext2fa.two_factor.secret.tooltip,
-    uri: helptext2fa.two_factor.uri.tooltip,
+    secret: helptext2fa.secret.tooltip,
+    uri: helptext2fa.uri.tooltip,
   };
 
   constructor(
@@ -165,10 +165,10 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
   private getConfirmation(): Observable<boolean> {
     if (this.userTwoFactorAuthConfigured) {
       return this.dialogService.confirm({
-        title: helptext2fa.two_factor.renewSecret.title,
-        message: helptext2fa.two_factor.renewSecret.message,
+        title: helptext2fa.renewSecret.title,
+        message: helptext2fa.renewSecret.message,
         hideCheckbox: true,
-        buttonText: helptext2fa.two_factor.renewSecret.btn,
+        buttonText: helptext2fa.renewSecret.btn,
       });
     }
     return of(true);

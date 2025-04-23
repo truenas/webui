@@ -12,6 +12,12 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { ApiService } from 'app/modules/websocket/api.service';
 import { advancedSettingsElements } from 'app/pages/system/advanced/advanced-settings.elements';
 import { FailoverCardComponent } from 'app/pages/system/advanced/failover/failover-card.component';
+import {
+  ManageConfigurationMenuComponent,
+} from 'app/pages/system/advanced/manage-configuration-menu/manage-configuration-menu.component';
+import {
+  NtpServersCardComponent,
+} from 'app/pages/system/advanced/ntp-servers/ntp-servers-card/ntp-servers-card.component';
 import { LicenseService } from 'app/services/license.service';
 import { AppState } from 'app/store';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
@@ -25,7 +31,6 @@ import { InitShutdownCardComponent } from './init-shutdown/init-shutdown-card/in
 import { IsolatedGpusCardComponent } from './isolated-gpus/isolated-gpus-card/isolated-gpus-card.component';
 import { KernelCardComponent } from './kernel/kernel-card/kernel-card.component';
 import { ReplicationSettingsCardComponent } from './replication/replication-settings-card/replication-settings-card.component';
-import { SaveDebugButtonComponent } from './save-debug-button/save-debug-button.component';
 import { SelfEncryptingDriveCardComponent } from './self-encrypting-drive/self-encrypting-drive-card/self-encrypting-drive-card.component';
 import { StorageCardComponent } from './storage/storage-card/storage-card.component';
 import { SysctlCardComponent } from './sysctl/sysctl-card/sysctl-card.component';
@@ -40,7 +45,6 @@ import { SystemSecurityCardComponent } from './system-security/system-security-c
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     PageHeaderComponent,
-    SaveDebugButtonComponent,
     UiSearchDirective,
     ConsoleCardComponent,
     SyslogCardComponent,
@@ -59,6 +63,8 @@ import { SystemSecurityCardComponent } from './system-security/system-security-c
     SystemSecurityCardComponent,
     AsyncPipe,
     FailoverCardComponent,
+    NtpServersCardComponent,
+    ManageConfigurationMenuComponent,
   ],
 })
 export class AdvancedSettingsComponent {

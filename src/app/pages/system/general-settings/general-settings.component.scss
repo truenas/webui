@@ -7,7 +7,7 @@
 
   @media #{$media-lt-lg} {
     ix-support-card,
-    ix-ntp-server-card {
+    ix-ntp-servers-card {
       grid-column-end: 3;
       grid-column-start: 1;
     }
@@ -17,7 +17,7 @@
     grid-template-columns: 100%;
 
     ix-support-card,
-    ix-ntp-server-card {
+    ix-ntp-servers-card {
       grid-column-end: inherit;
     }
   }

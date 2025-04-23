@@ -4,6 +4,17 @@
 >
   <mat-toolbar-row class="title-bar">
     <h3>{{ 'Support' | translate }}</h3>
+
+    <button
+      *ixRequiresRoles="requiredRoles"
+      mat-button
+      color="default"
+      ixTest="set-license"
+      [ixUiSearch]="searchableElements.elements.updateLicense"
+      (click)="updateLicense()"
+    >
+      {{ licenseButtonText | translate }}
+    </button>
   </mat-toolbar-row>
 
   <mat-card-content>
@@ -47,17 +58,6 @@
 
           <!-- ACTION BUTTONS -->
           <div class="actions button-group">
-            <button
-              *ixRequiresRoles="requiredRoles"
-              mat-button
-              color="default"
-              ixTest="set-license"
-              [ixUiSearch]="searchableElements.elements.updateLicense"
-              (click)="updateLicense()"
-            >
-              {{ licenseButtonText | translate }}
-            </button>
-
             @if (hasLicense) {
               <button
                 mat-button
@@ -111,6 +111,8 @@
                 }
               </ng-container>
             }
+
+            <ix-save-debug-button></ix-save-debug-button>
           </div>
         </div>
       }
