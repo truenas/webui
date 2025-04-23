@@ -8,13 +8,13 @@ export enum BasicConstraint {
 export const basicConstraintOptions = [
   {
     value: BasicConstraint.Ca,
-    label: helptextSystemCertificates.add.basic_constraints.ca.placeholder,
-    tooltip: helptextSystemCertificates.add.basic_constraints.ca.tooltip,
+    label: helptextSystemCertificates.add.basicConstraints.ca.placeholder,
+    tooltip: helptextSystemCertificates.add.basicConstraints.ca.tooltip,
   },
   {
     value: BasicConstraint.ExtensionCritical,
-    label: helptextSystemCertificates.add.basic_constraints.extension_critical.placeholder,
-    tooltip: helptextSystemCertificates.add.basic_constraints.extension_critical.tooltip,
+    label: helptextSystemCertificates.add.basicConstraints.extensionCritical.placeholder,
+    tooltip: helptextSystemCertificates.add.basicConstraints.extensionCritical.tooltip,
   },
 ];
 
@@ -34,52 +34,52 @@ export enum KeyUsageFlag {
 export const keyUsageOptions = [
   {
     value: KeyUsageFlag.DigitalSignature,
-    label: helptextSystemCertificates.add.key_usage.digital_signature.placeholder,
-    tooltip: helptextSystemCertificates.add.key_usage.digital_signature.tooltip,
+    label: helptextSystemCertificates.add.keyUsage.digitalSignature.placeholder,
+    tooltip: helptextSystemCertificates.add.keyUsage.digitalSignature.tooltip,
   },
   {
     value: KeyUsageFlag.ContentCommitment,
-    label: helptextSystemCertificates.add.key_usage.content_commitment.placeholder,
-    tooltip: helptextSystemCertificates.add.key_usage.content_commitment.tooltip,
+    label: helptextSystemCertificates.add.keyUsage.contentCommitment.placeholder,
+    tooltip: helptextSystemCertificates.add.keyUsage.contentCommitment.tooltip,
   },
   {
     value: KeyUsageFlag.KeyEncipherment,
-    label: helptextSystemCertificates.add.key_usage.key_encipherment.placeholder,
-    tooltip: helptextSystemCertificates.add.key_usage.key_encipherment.tooltip,
+    label: helptextSystemCertificates.add.keyUsage.key_Encipherment.placeholder,
+    tooltip: helptextSystemCertificates.add.keyUsage.key_Encipherment.tooltip,
   },
   {
     value: KeyUsageFlag.DataEncipherment,
-    label: helptextSystemCertificates.add.key_usage.data_encipherment.placeholder,
-    tooltip: helptextSystemCertificates.add.key_usage.data_encipherment.tooltip,
+    label: helptextSystemCertificates.add.keyUsage.dataEncipherment.placeholder,
+    tooltip: helptextSystemCertificates.add.keyUsage.dataEncipherment.tooltip,
   },
   {
     value: KeyUsageFlag.KeyAgreement,
-    label: helptextSystemCertificates.add.key_usage.key_agreement.placeholder,
-    tooltip: helptextSystemCertificates.add.key_usage.key_agreement.tooltip,
+    label: helptextSystemCertificates.add.keyUsage.keyAgreement.placeholder,
+    tooltip: helptextSystemCertificates.add.keyUsage.keyAgreement.tooltip,
   },
   {
     value: KeyUsageFlag.KeyCertSign,
-    label: helptextSystemCertificates.add.key_usage.key_cert_sign.placeholder,
-    tooltip: helptextSystemCertificates.add.key_usage.key_cert_sign.tooltip,
+    label: helptextSystemCertificates.add.keyUsage.keyCertSign.placeholder,
+    tooltip: helptextSystemCertificates.add.keyUsage.keyCertSign.tooltip,
   },
   {
     value: KeyUsageFlag.CrlSign,
-    label: helptextSystemCertificates.add.key_usage.crl_sign.placeholder,
-    tooltip: helptextSystemCertificates.add.key_usage.crl_sign.tooltip,
+    label: helptextSystemCertificates.add.keyUsage.crlSign.placeholder,
+    tooltip: helptextSystemCertificates.add.keyUsage.crlSign.tooltip,
   },
   {
     value: KeyUsageFlag.EncipherOnly,
-    label: helptextSystemCertificates.add.key_usage.encipher_only.placeholder,
-    tooltip: helptextSystemCertificates.add.key_usage.encipher_only.tooltip,
+    label: helptextSystemCertificates.add.keyUsage.encipherOnly.placeholder,
+    tooltip: helptextSystemCertificates.add.keyUsage.encipherOnly.tooltip,
   },
   {
     value: KeyUsageFlag.DecipherOnly,
-    label: helptextSystemCertificates.add.key_usage.decipher_only.placeholder,
-    tooltip: helptextSystemCertificates.add.key_usage.decipher_only.tooltip,
+    label: helptextSystemCertificates.add.keyUsage.decipherOnly.placeholder,
+    tooltip: helptextSystemCertificates.add.keyUsage.decipherOnly.tooltip,
   },
   {
     value: KeyUsageFlag.ExtensionCritical,
-    label: helptextSystemCertificates.add.key_usage.extension_critical.placeholder,
-    tooltip: helptextSystemCertificates.add.key_usage.extension_critical.tooltip,
+    label: helptextSystemCertificates.add.keyUsage.extensionCritical.placeholder,
+    tooltip: helptextSystemCertificates.add.keyUsage.extensionCritical.tooltip,
   },
 ];

@@ -15,7 +15,7 @@
         <ix-radio-group
           formControlName="includeExclude"
           [label]="'Include/Exclude' | translate"
-          [tooltip]="helptext.tooltips.include_exclude"
+          [tooltip]="helptext.tooltips.includeExclude"
           [options]="includeExcludeOptions$"
         ></ix-radio-group>
 
@@ -23,7 +23,7 @@
           <ix-explorer
             formControlName="excludedPaths"
             [required]="true"
-            [tooltip]="helptext.tooltips.excluded_paths"
+            [tooltip]="helptext.tooltips.excludedPaths"
             [label]="'Excluded Paths' | translate"
             [nodeProvider]="snapshotNodeProvider"
             [root]="data.backup.absolute_paths ? mntPath : '/'"
@@ -47,7 +47,7 @@
             [label]="'Subfolder' | translate"
             [nodeProvider]="snapshotNodeProvider"
             [root]="data.backup.absolute_paths ? mntPath : '/'"
-            [tooltip]="helptext.tooltips.sub_folder"
+            [tooltip]="helptext.tooltips.subFolder"
           ></ix-explorer>
         }
 
@@ -57,7 +57,7 @@
             [root]="form.controls.subFolder.value || backupMntPath"
             [label]="'Included Paths' | translate"
             [nodeProvider]="snapshotNodeProvider"
-            [tooltip]="helptext.tooltips.included_paths"
+            [tooltip]="helptext.tooltips.includedPaths"
             [multiple]="true"
           ></ix-explorer>
         }

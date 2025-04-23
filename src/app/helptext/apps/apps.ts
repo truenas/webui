@@ -13,9 +13,9 @@ export const helptextApps = {
 
   message: {
     loading: T('Loading...'),
-    not_running: T('Applications are not running'),
-    no_search_result: T('No Search Results.'),
-    no_installed: T('No Applications Installed'),
+    notRunning: T('Applications are not running'),
+    noSearchResults: T('No Search Results.'),
+    noInstalledApps: T('No Applications Installed'),
   },
 
   dockerRegistries: {
@@ -47,15 +47,10 @@ export const helptextApps = {
   },
 
   apps: {
-    delete_dialog: {
-      job: T('Deleting...'),
-    },
+    deleting: T('Deleting...'),
+    upgrading: T('Upgrading...'),
 
-    upgrade_dialog: {
-      job: T('Upgrading...'),
-    },
-
-    rollback_dialog: {
+    rollbackDialog: {
       version: {
         tooltip: T('Enter the version to roll back to.'),
       },
@@ -69,7 +64,7 @@ export const helptextApps = {
       title: T('Error'),
       message: T('Error detected reading App'),
     },
-    release_name: {
+    releaseName: {
       name: T('Name'),
       placeholder: T('Application Name'),
       tooltip: T('Application name must have the following: \
@@ -87,22 +82,12 @@ export const helptextApps = {
     },
   },
 
-  catalogForm: {
-    title: T('Add Catalog'),
-    name: {
-      tooltip: T('Please specify name to be used to lookup catalog.'),
-    },
-    repository: {
-      tooltip: T('Please specify a valid git repository uri.'),
-    },
+  settingsForm: {
     preferredTrains: {
       tooltip: T('Please specify trains from which UI should retrieve available applications for the catalog.'),
     },
     installNvidiaDriver: {
       tooltip: T('Please specify whether to install NVIDIA driver or not.'),
-    },
-    branch: {
-      tooltip: T('Please specify branch of git repository to use for the catalog.'),
     },
   },
 

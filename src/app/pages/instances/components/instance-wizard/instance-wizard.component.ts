@@ -246,11 +246,11 @@ export class InstanceWizardComponent implements OnInit {
   get secureBootTooltip(): string {
     if (this.form.controls.secure_boot.disabled) {
       return this.form.controls.secure_boot.value
-        ? this.translate.instant(instancesHelptext.secure_boot_on_required_tooltip)
-        : this.translate.instant(instancesHelptext.secure_boot_off_required_tooltip);
+        ? this.translate.instant(instancesHelptext.secureBootOnRequiredTooltip)
+        : this.translate.instant(instancesHelptext.secureBootOffRequiredTooltip);
     }
 
-    return this.translate.instant(instancesHelptext.secure_boot_tooltip);
+    return this.translate.instant(instancesHelptext.secureBootTooltip);
   }
 
   protected readonly instanceType = signal<VirtualizationType>(this.form.getRawValue().instance_type);

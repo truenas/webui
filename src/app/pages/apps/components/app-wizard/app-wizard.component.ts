@@ -380,9 +380,9 @@ export class AppWizardComponent implements OnInit, OnDestroy {
         {
           controlName: 'release_name',
           type: DynamicFormSchemaType.Input,
-          title: helptextApps.appForm.release_name.placeholder,
+          title: helptextApps.appForm.releaseName.placeholder,
           required: true,
-          tooltip: helptextApps.appForm.release_name.tooltip,
+          tooltip: helptextApps.appForm.releaseName.tooltip,
         },
         {
           controlName: 'version',
@@ -453,7 +453,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
         {
           controlName: 'release_name',
           type: DynamicFormSchemaType.Input,
-          title: helptextApps.appForm.release_name.placeholder,
+          title: helptextApps.appForm.releaseName.placeholder,
           required: true,
           editable: false,
         },

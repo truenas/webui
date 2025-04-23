@@ -55,7 +55,7 @@ export class SelfEncryptingDriveFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.SystemAdvancedWrite];
 
   protected isFormLoading = signal(false);
-  title = helptextSystemAdvanced.fieldset_sed;
+  title = helptextSystemAdvanced.sedTitle;
   form = this.fb.group({
     sed_user: ['' as SedUser, Validators.required],
     sed_passwd: [''],
@@ -76,14 +76,14 @@ export class SelfEncryptingDriveFormComponent implements OnInit {
   ]);
 
   readonly labels = {
-    sed_user: helptextSystemAdvanced.sed_user_placeholder,
-    sed_passwd: helptextSystemAdvanced.sed_passwd_placeholder,
-    sed_passwd2: helptextSystemAdvanced.sed_passwd2_placeholder,
+    sed_user: helptextSystemAdvanced.sedUserLabel,
+    sed_passwd: helptextSystemAdvanced.sedPasswordLabel,
+    sed_passwd2: helptextSystemAdvanced.sedConfirmPasswordLabel,
   };
 
   readonly tooltips = {
-    sed_user: helptextSystemAdvanced.sed_user_tooltip,
-    sed_passwd: helptextSystemAdvanced.sed_passwd_tooltip,
+    sed_user: helptextSystemAdvanced.sedUserTooltip,
+    sed_passwd: helptextSystemAdvanced.sedPasswordTooltip,
   };
 
   private sedConfig: SedConfig;

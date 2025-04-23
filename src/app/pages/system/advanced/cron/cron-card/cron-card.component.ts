@@ -70,7 +70,7 @@ export class CronCardComponent implements OnInit {
   protected readonly requiredRoles = [Role.SystemCronWrite];
   protected readonly searchableElements = cronCardElements;
 
-  title = helptextSystemAdvanced.fieldset_cron;
+  title = helptextSystemAdvanced.cronTitle;
   cronjobs: CronjobRow[] = [];
   dataProvider: AsyncDataProvider<CronjobRow>;
 

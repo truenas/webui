@@ -232,7 +232,7 @@ export class InstalledAppsListComponent implements OnInit {
     switch (type) {
       case EmptyType.FirstUse:
       case EmptyType.NoPageData:
-        this.entityEmptyConf.title = helptextApps.message.no_installed;
+        this.entityEmptyConf.title = helptextApps.message.noInstalledApps;
         this.entityEmptyConf.message = this.translate.instant('Applications you install will automatically appear here. Click below and browse available apps to get started.');
         this.entityEmptyConf.button = {
           label: this.translate.instant('Check Available Apps'),
@@ -240,11 +240,11 @@ export class InstalledAppsListComponent implements OnInit {
         };
         break;
       case EmptyType.Errors:
-        this.entityEmptyConf.title = helptextApps.message.not_running;
+        this.entityEmptyConf.title = helptextApps.message.notRunning;
         this.entityEmptyConf.message = undefined;
         break;
       case EmptyType.NoSearchResults:
-        this.entityEmptyConf.title = helptextApps.message.no_search_result;
+        this.entityEmptyConf.title = helptextApps.message.noSearchResults;
         this.entityEmptyConf.message = undefined;
         this.entityEmptyConf.button = {
           label: this.translate.instant('Reset Search'),
@@ -440,7 +440,7 @@ export class InstalledAppsListComponent implements OnInit {
 
     return this.dialogService.jobDialog(
       this.api.job('core.bulk', ['app.delete', bulkDeletePayload]),
-      { title: helptextApps.apps.delete_dialog.job },
+      { title: helptextApps.apps.deleting },
     ).afterClosed();
   }
 

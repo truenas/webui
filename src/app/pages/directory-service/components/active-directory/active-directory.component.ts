@@ -137,7 +137,7 @@ export class ActiveDirectoryComponent implements OnInit {
           this.isLoading.set(false);
           this.snackbarService.success(
             this.translate.instant(
-              description || helptextActiveDirectory.activedirectory_custactions_clearcache_dialog_message,
+              description || helptextActiveDirectory.cacheRebuilt,
             ),
           );
         },

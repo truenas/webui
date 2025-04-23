@@ -68,8 +68,8 @@ export class AcmednsFormComponent implements OnInit {
 
   get title(): string {
     return this.isNew
-      ? this.translate.instant(helptext.add_title)
-      : this.translate.instant(helptext.edit_title);
+      ? this.translate.instant(helptext.addTitle)
+      : this.translate.instant(helptext.editTitle);
   }
 
   form = this.formBuilder.nonNullable.group({

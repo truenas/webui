@@ -86,11 +86,11 @@ export class GroupFormComponent implements OnInit {
   });
 
   readonly tooltips = {
-    gid: helptextGroups.bsdgrp_gid_tooltip,
-    name: helptextGroups.bsdgrp_group_tooltip,
-    privileges: helptextGroups.privileges_tooltip,
-    sudo: helptextGroups.bsdgrp_sudo_tooltip,
-    smb: helptextGroups.smb_tooltip,
+    gid: helptextGroups.groupIdTooltip,
+    name: helptextGroups.nameTooltip,
+    privileges: helptextGroups.privilegesTooltip,
+    sudo: helptextGroups.sudoTooltip,
+    smb: helptextGroups.smbTooltip,
   };
 
   readonly privilegeOptions$ = this.api.call('privilege.query').pipe(
