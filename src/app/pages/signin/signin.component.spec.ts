@@ -28,7 +28,8 @@ describe('SigninComponent', () => {
   const loginBanner$ = new BehaviorSubject<string>('');
   const isTokenWithinTimeline$ = new BehaviorSubject<boolean>(true);
   const isConnectedDelayed$ = new BehaviorSubject<boolean>(false);
-  const allowReconnect$ = new BehaviorSubject<boolean>(false);
+  const isDisconnected$ = new BehaviorSubject<boolean>(false);
+  const isReconnectAllowed$ = new BehaviorSubject<boolean>(false);
 
   const createComponent = createComponentFactory({
     component: SigninComponent,
@@ -63,7 +64,7 @@ describe('SigninComponent', () => {
       }),
       mockProvider(WebSocketStatusService, {
         isConnected$,
-        allowReconnect$,
+        isReconnectAllowed$,
       }),
     ],
   });
@@ -75,8 +76,9 @@ describe('SigninComponent', () => {
     isConnected$.next(true);
     loginBanner$.next('');
     isTokenWithinTimeline$.next(false);
-    allowReconnect$.next(false);
+    isReconnectAllowed$.next(false);
     spectator.component.isConnectedDelayed$ = isConnectedDelayed$;
+    spectator.component.isDisconnected$ = isDisconnected$;
   });
 
   it('initializes SigninStore on component init', () => {
@@ -84,9 +86,13 @@ describe('SigninComponent', () => {
   });
 
   describe('disconnected', () => {
+    afterAll(() => {
+      isDisconnected$.next(false);
+    });
     it('shows DisconnectedMessageComponent when there is no websocket connection', () => {
       isConnected$.next(false);
-      isConnectedDelayed$.next(false);
+      isDisconnected$.next(true);
+      isReconnectAllowed$.next(false);
 
       spectator.detectChanges();
 
@@ -94,9 +100,9 @@ describe('SigninComponent', () => {
     });
 
     it('shows ReconnectMessage when has established initial connection', () => {
-      allowReconnect$.next(true);
       isConnected$.next(false);
       isConnectedDelayed$.next(false);
+      isReconnectAllowed$.next(true);
 
       spectator.detectChanges();
 

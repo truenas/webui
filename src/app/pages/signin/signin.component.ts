@@ -9,7 +9,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   combineLatest, Observable, of,
-  timer,
 } from 'rxjs';
 import {
   delay,
@@ -76,7 +75,7 @@ export class SigninComponent implements OnInit {
     }),
   );
 
-  readonly isDisconnected$ = combineLatest([
+  isDisconnected$ = combineLatest([
     this.isConnected$,
     this.isConnectedDelayed$,
   ]).pipe(
@@ -101,14 +100,6 @@ export class SigninComponent implements OnInit {
       this.signinStore.init();
       this.wsStatus.setReconnect(true);
     });
-
-    // TODO: Remove after code review.
-    timer(10000, 10000)
-      .pipe(untilDestroyed(this))
-      .subscribe(() => {
-        this.wsManager.disconnect();
-        console.info('connection closed');
-      });
 
     this.signinStore.loginBanner$.pipe(
       filter(Boolean),
