@@ -7,7 +7,7 @@ import { MAT_DIALOG_DATA, MatDialogClose } from '@angular/material/dialog';
 import { MatDivider } from '@angular/material/divider';
 import { MatNavList, MatListItem } from '@angular/material/list';
 import { TranslateModule } from '@ngx-translate/core';
-import { CreateVdevLayout, VdevType, vdevTypeLabels } from 'app/enums/v-dev-type.enum';
+import { CreateVdevLayout, VDevType, vdevTypeLabels } from 'app/enums/v-dev-type.enum';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -29,7 +29,6 @@ import {
   templateUrl: './inspect-vdevs-dialog.component.html',
   styleUrls: ['./inspect-vdevs-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatCardContent,
@@ -49,8 +48,8 @@ import {
   ],
 })
 export class InspectVdevsDialog implements OnInit {
-  protected presentTypes: VdevType[] = [];
-  protected selectedType: VdevType;
+  protected presentTypes: VDevType[] = [];
+  protected selectedType: VDevType;
   protected vdevs: ManualSelectionVdev[] = [];
   protected layout: CreateVdevLayout;
 
@@ -58,7 +57,7 @@ export class InspectVdevsDialog implements OnInit {
     @Inject(MAT_DIALOG_DATA) protected data: { topology: PoolManagerTopology; enclosures: Enclosure[] },
   ) {}
 
-  getTypeLabel(type: VdevType): string {
+  getTypeLabel(type: VDevType): string {
     return vdevTypeLabels.get(type) || type;
   }
 
@@ -67,7 +66,7 @@ export class InspectVdevsDialog implements OnInit {
     this.selectType(this.presentTypes[0]);
   }
 
-  selectType(type: VdevType): void {
+  selectType(type: VDevType): void {
     this.selectedType = type;
     const selectedCategory = this.data.topology[type];
     this.layout = selectedCategory.layout;
@@ -76,7 +75,7 @@ export class InspectVdevsDialog implements OnInit {
 
   private setPresentTypes(): void {
     this.presentTypes = Object.keys(this.data.topology).filter((type) => {
-      return this.data.topology[type as VdevType].vdevs.length > 0;
-    }) as VdevType[];
+      return this.data.topology[type as VDevType].vdevs.length > 0;
+    }) as VDevType[];
   }
 }

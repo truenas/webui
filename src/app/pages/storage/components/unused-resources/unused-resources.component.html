@@ -2,7 +2,7 @@
   @if (noPoolsDisks.length) {
     <ix-unused-disk-card
       class="unused-resources"
-      [title]="'Unused Disks' | translate"
+      [title]="'Unassigned Disks' | translate"
       [disks]="noPoolsDisks"
       (addToStorage)="addNoPoolDisksToStorage()"
     ></ix-unused-disk-card>

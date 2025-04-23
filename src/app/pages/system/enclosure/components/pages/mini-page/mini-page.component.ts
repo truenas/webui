@@ -21,7 +21,6 @@ import { MiniPoolsComponent } from './mini-pools/mini-pools.component';
   templateUrl: './mini-page.component.html',
   styleUrls: ['./mini-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatCardHeader,

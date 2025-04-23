@@ -7,7 +7,7 @@ import {
   EnclosureElementType,
   DriveBayLightStatus,
 } from 'app/enums/enclosure-slot-status.enum';
-import { VdevType } from 'app/enums/v-dev-type.enum';
+import { VDevType } from 'app/enums/v-dev-type.enum';
 
 export interface Enclosure {
   name: string;
@@ -107,7 +107,7 @@ export interface EnclosureSlotPoolInfo {
   disk_write_errors?: number;
   disk_checksum_errors?: number;
   vdev_name: string;
-  vdev_type: VdevType;
+  vdev_type: VDevType;
   vdev_disks: EnclosureVdevDisk[];
 }
 

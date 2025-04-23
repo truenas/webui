@@ -14,15 +14,13 @@ import { AuthService } from 'app/modules/auth/auth.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DeleteUserDialog } from 'app/pages/credentials/new-users/all-users/user-details/delete-user-dialog/delete-user-dialog.component';
-import { UsersStore } from 'app/pages/credentials/new-users/store/users.store';
-import { OldUserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
+import { UserFormComponent } from 'app/pages/credentials/new-users/user-form/user-form.component';
 
 @UntilDestroy()
 @Component({
   selector: 'ix-user-detail-header',
   templateUrl: './user-detail-header.component.html',
   styleUrls: ['./user-detail-header.component.scss'],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatButton,
@@ -38,19 +36,15 @@ export class UserDetailHeaderComponent {
   loggedInUser = toSignal(this.authService.user$.pipe(filter(Boolean)));
 
   constructor(
-    private usersStore: UsersStore,
     private authService: AuthService,
     private slideIn: SlideIn,
     private matDialog: MatDialog,
   ) {}
 
   doEdit(): void {
-    this.slideIn.open(OldUserFormComponent, { wide: true, data: this.user() }).pipe(
-      filter((result) => !!result.response),
+    this.slideIn.open(UserFormComponent, { wide: true, data: this.user() }).pipe(
       untilDestroyed(this),
-    ).subscribe(({ response }) => {
-      this.usersStore.userUpdated(response);
-    });
+    ).subscribe();
   }
 
   doDelete(): void {
@@ -59,11 +53,8 @@ export class UserDetailHeaderComponent {
     })
       .afterClosed()
       .pipe(
-        filter(Boolean),
         untilDestroyed(this),
       )
-      .subscribe(() => {
-        this.usersStore.initialize();
-      });
+      .subscribe();
   }
 }

@@ -9,7 +9,6 @@ import {
  */
 @Directive({
   selector: '[ixTestOverride]',
-  standalone: true,
 })
 export class TestOverrideDirective {
   readonly overrideDescription = input<number | string | (string | number)[] | undefined>(

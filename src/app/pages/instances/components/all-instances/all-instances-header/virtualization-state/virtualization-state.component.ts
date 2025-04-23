@@ -8,7 +8,6 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
   selector: 'ix-virtualization-state',
   templateUrl: './virtualization-state.component.html',
   styleUrls: ['./virtualization-state.component.scss'],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     IxIconComponent,

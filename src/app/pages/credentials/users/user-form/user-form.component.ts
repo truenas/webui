@@ -75,7 +75,6 @@ export enum UserStigPasswordOption {
   templateUrl: './user-form.component.html',
   styleUrls: ['./user-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     ReactiveFormsModule,

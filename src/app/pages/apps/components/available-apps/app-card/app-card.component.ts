@@ -14,7 +14,6 @@ import { InstalledAppBadgeComponent } from 'app/pages/apps/components/installed-
   templateUrl: './app-card.component.html',
   styleUrls: ['./app-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     TranslateModule,
     AppCardLogoComponent,

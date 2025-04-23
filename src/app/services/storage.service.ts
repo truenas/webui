@@ -2,11 +2,11 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { GiB } from 'app/constants/bytes.constant';
-import { TopologyItemType, TopologyWarning, VdevType } from 'app/enums/v-dev-type.enum';
+import { TopologyItemType, TopologyWarning, VDevType } from 'app/enums/v-dev-type.enum';
 import { Disk } from 'app/interfaces/disk.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { TopologyItem } from 'app/interfaces/storage.interface';
+import { VDevItem } from 'app/interfaces/storage.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 
 @Injectable({ providedIn: 'root' })
@@ -48,7 +48,7 @@ export class StorageService {
     return !path.includes('/');
   }
 
-  getRedundancyLevel(vdev: TopologyItem): number {
+  getRedundancyLevel(vdev: VDevItem): number {
     switch (vdev.type) {
       case TopologyItemType.Disk:
       case TopologyItemType.Stripe:
@@ -68,7 +68,7 @@ export class StorageService {
     }
   }
 
-  getVdevWidths(vdevs: TopologyItem[]): Set<number> {
+  getVdevWidths(vdevs: VDevItem[]): Set<number> {
     const allVdevWidths = new Set<number>(); // There should only be one value
 
     vdevs?.forEach((vdev) => {
@@ -93,7 +93,7 @@ export class StorageService {
   }
 
   // Get usable space on VDEV.
-  getVdevCapacities(vdevs: TopologyItem[]): Set<number> {
+  getVdevCapacities(vdevs: VDevItem[]): Set<number> {
     const allVdevCapacities = new Set<number>(); // There should only be one value
     vdevs?.forEach((vdev) => {
       allVdevCapacities.add(vdev.stats.size);
@@ -110,7 +110,7 @@ export class StorageService {
     return min + fivePercentOfMax + GiB * 2 < max;
   }
 
-  getVdevDiskCapacities(vdevs: TopologyItem[], disks: Disk[]): Set<number>[] {
+  getVdevDiskCapacities(vdevs: VDevItem[], disks: Disk[]): Set<number>[] {
     const allDiskCapacities: Set<number>[] = [];
     vdevs?.forEach((vdev) => {
       const vdevDiskCapacities = new Set<number>(); // There should only be one value
@@ -137,7 +137,7 @@ export class StorageService {
     return isMixed.length > 0;
   }
 
-  getVdevTypes(vdevs: TopologyItem[]): Set<string> {
+  getVdevTypes(vdevs: VDevItem[]): Set<string> {
     const vdevTypes = new Set<string>();
     vdevs?.forEach((vdev) => {
       vdevTypes.add(vdev.type);
@@ -150,8 +150,8 @@ export class StorageService {
   }
 
   validateVdevs(
-    category: VdevType,
-    vdevs: TopologyItem[],
+    category: VDevType,
+    vdevs: VDevItem[],
     disks: Disk[],
   ): string[] {
     const warnings: string[] = [];
@@ -197,7 +197,7 @@ export class StorageService {
 
       // Check Redundancy
       if (
-        [VdevType.Data, VdevType.Dedup, VdevType.Special].includes(category)
+        [VDevType.Data, VDevType.Dedup, VDevType.Special].includes(category)
         && this.hasZeroRedundancyLevelVdev(vdevs)
       ) {
         warnings.push(TopologyWarning.NoRedundancy);
@@ -207,7 +207,7 @@ export class StorageService {
     return warnings;
   }
 
-  private hasZeroRedundancyLevelVdev(vdevs: TopologyItem[]): boolean {
+  private hasZeroRedundancyLevelVdev(vdevs: VDevItem[]): boolean {
     return vdevs.filter((vdev) => this.getRedundancyLevel(vdev) === 0).length > 0;
   }
 }

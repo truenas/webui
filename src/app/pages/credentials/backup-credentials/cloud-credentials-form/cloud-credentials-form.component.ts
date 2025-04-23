@@ -50,7 +50,6 @@ export interface CloudCredentialFormInput {
   selector: 'ix-cloud-credentials-form',
   templateUrl: './cloud-credentials-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
@@ -203,7 +202,7 @@ export class CloudCredentialsFormComponent implements OnInit {
             this.dialogService.error({
               title: this.translate.instant('Error'),
               message: response.excerpt || '',
-              backtrace: response.error,
+              stackTrace: response.error,
             });
           }
 

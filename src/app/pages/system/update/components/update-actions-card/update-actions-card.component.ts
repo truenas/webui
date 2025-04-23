@@ -32,7 +32,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   SaveConfigDialog, SaveConfigDialogMessages,
-} from 'app/pages/system/general-settings/save-config-dialog/save-config-dialog.component';
+} from 'app/pages/system/advanced/manage-configuration-menu/save-config-dialog/save-config-dialog.component';
 import { UpdateType } from 'app/pages/system/update/enums/update-type.enum';
 import { Package } from 'app/pages/system/update/interfaces/package.interface';
 import { TrainService } from 'app/pages/system/update/services/train.service';
@@ -49,7 +49,6 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
   styleUrls: ['update-actions-card.component.scss'],
   templateUrl: './update-actions-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     IxIconComponent,

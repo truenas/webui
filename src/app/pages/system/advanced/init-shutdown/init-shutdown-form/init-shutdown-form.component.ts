@@ -35,7 +35,6 @@ import { FilesystemService } from 'app/services/filesystem.service';
   selector: 'ix-init-shutdown-form',
   templateUrl: './init-shutdown-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

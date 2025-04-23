@@ -26,10 +26,9 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
 @UntilDestroy(this)
 @Component({
   selector: 'ix-kernel-card',
-  styleUrls: ['../../common-card.scss'],
+  styleUrls: ['../../../general-settings/common-settings-card.scss'],
   templateUrl: './kernel-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     UiSearchDirective,

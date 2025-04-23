@@ -24,7 +24,6 @@ import {
   selector: 'ix-checkin-indicator',
   templateUrl: './checkin-indicator.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatIconButton,
     MatTooltip,
@@ -79,7 +78,7 @@ export class CheckinIndicatorComponent implements OnInit {
       hideCheckbox: true,
       buttonText: this.translate.instant('Continue'),
     }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-      this.router.navigate(['/network']);
+      this.router.navigate(['/system/network']);
     });
   }
 }

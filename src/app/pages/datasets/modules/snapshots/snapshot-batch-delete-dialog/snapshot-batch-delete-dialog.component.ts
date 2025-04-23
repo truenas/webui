@@ -30,7 +30,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './snapshot-batch-delete-dialog.component.html',
   styleUrls: ['./snapshot-batch-delete-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogTitle,
     TranslateModule,

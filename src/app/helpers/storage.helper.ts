@@ -1,8 +1,8 @@
-import { VdevType } from 'app/enums/v-dev-type.enum';
+import { VDevType } from 'app/enums/v-dev-type.enum';
 import { DatasetQuota } from 'app/interfaces/dataset-quota.interface';
 
-export function isTopologyLimitedToOneLayout(type: VdevType): boolean {
-  return type === VdevType.Spare || type === VdevType.Cache;
+export function isTopologyLimitedToOneLayout(type: VDevType): boolean {
+  return type === VDevType.Spare || type === VDevType.Cache;
 }
 
 export const zvolPath = '/dev/zvol';

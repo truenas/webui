@@ -22,10 +22,10 @@ import {
 import {
   PoolUsageCardComponent,
 } from 'app/pages/storage/components/dashboard-pool/pool-usage-card/pool-usage-card.component';
+import { StorageHealthCardComponent } from 'app/pages/storage/components/dashboard-pool/storage-health-card/storage-health-card.component';
 import {
-  TopologyCardComponent,
-} from 'app/pages/storage/components/dashboard-pool/topology-card/topology-card.component';
-import { ZfsHealthCardComponent } from 'app/pages/storage/components/dashboard-pool/zfs-health-card/zfs-health-card.component';
+  VDevsCardComponent,
+} from 'app/pages/storage/components/dashboard-pool/vdevs-card/vdevs-card.component';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
 
 describe('DashboardPoolComponent', () => {
@@ -38,11 +38,11 @@ describe('DashboardPoolComponent', () => {
   const createComponent = createComponentFactory({
     component: DashboardPoolComponent,
     declarations: [
-      MockComponent(ZfsHealthCardComponent),
+      MockComponent(StorageHealthCardComponent),
       MockComponent(ExportDisconnectModalComponent),
       MockComponent(PoolUsageCardComponent),
       MockComponent(DiskHealthCardComponent),
-      MockComponent(TopologyCardComponent),
+      MockComponent(VDevsCardComponent),
     ],
     providers: [
       mockProvider(MatDialog, {
@@ -110,8 +110,8 @@ describe('DashboardPoolComponent', () => {
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
   });
 
-  it('shows a ZFS Health card for the pool', () => {
-    const card = spectator.query(ZfsHealthCardComponent)!;
+  it('shows a Storage Health card for the pool', () => {
+    const card = spectator.query(StorageHealthCardComponent)!;
     expect(card).toBeTruthy();
     expect(card.pool).toBe(pool);
   });

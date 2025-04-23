@@ -42,7 +42,6 @@ import { UserService } from 'app/services/user.service';
   templateUrl: './api-key-form.component.html',
   styleUrls: ['./api-key-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     FormActionsComponent,
     IxCheckboxComponent,

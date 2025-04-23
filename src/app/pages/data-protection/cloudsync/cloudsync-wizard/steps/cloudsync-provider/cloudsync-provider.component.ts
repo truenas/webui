@@ -34,7 +34,6 @@ import { CloudCredentialService } from 'app/services/cloud-credential.service';
   templateUrl: './cloudsync-provider.component.html',
   styleUrls: ['./cloudsync-provider.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxFieldsetComponent,
@@ -126,7 +125,7 @@ export class CloudSyncProviderComponent implements OnInit {
           this.dialogService.error({
             title: this.translate.instant('Error'),
             message: response.excerpt || '',
-            backtrace: response.error,
+            stackTrace: response.error,
           });
         }
 

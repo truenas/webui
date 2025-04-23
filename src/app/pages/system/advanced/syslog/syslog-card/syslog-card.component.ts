@@ -39,10 +39,9 @@ export interface SyslogConfig {
 @UntilDestroy()
 @Component({
   selector: 'ix-syslog-card',
-  styleUrls: ['../../common-card.scss'],
+  styleUrls: ['../../../general-settings/common-settings-card.scss'],
   templateUrl: './syslog-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     UiSearchDirective,

@@ -16,7 +16,6 @@ import {
   selector: 'ix-storj-provider-form',
   templateUrl: './storj-provider-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxFieldsetComponent,
     ReactiveFormsModule,

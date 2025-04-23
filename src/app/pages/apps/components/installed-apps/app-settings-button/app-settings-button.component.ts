@@ -31,7 +31,6 @@ import { DockerStore } from 'app/pages/apps/store/docker.store';
   templateUrl: './app-settings-button.component.html',
   styleUrls: ['./app-settings-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatButton,
     TestDirective,

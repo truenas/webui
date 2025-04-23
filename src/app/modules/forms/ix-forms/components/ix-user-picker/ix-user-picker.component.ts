@@ -46,7 +46,6 @@ import { OldUserFormComponent } from 'app/pages/credentials/users/user-form/user
   templateUrl: './ix-user-picker.component.html',
   styleUrls: ['./ix-user-picker.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxLabelComponent,
     MatInput,

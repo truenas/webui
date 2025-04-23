@@ -70,7 +70,6 @@ import { selectService } from 'app/store/services/services.selectors';
   selector: 'ix-smb-form',
   templateUrl: './smb-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

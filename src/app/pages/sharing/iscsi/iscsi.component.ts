@@ -20,6 +20,7 @@ import { GlobalTargetConfigurationComponent } from 'app/pages/sharing/iscsi/glob
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
 import { iscsiElements } from 'app/pages/sharing/iscsi/iscsi.elements';
 import { IscsiService } from 'app/services/iscsi.service';
+import { LicenseService } from 'app/services/license.service';
 
 @UntilDestroy()
 @Component({
@@ -27,7 +28,6 @@ import { IscsiService } from 'app/services/iscsi.service';
   templateUrl: './iscsi.component.html',
   styleUrls: ['./iscsi.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     PageHeaderComponent,
     RequiresRolesDirective,
@@ -48,7 +48,7 @@ export class IscsiComponent {
   protected readonly requiredRoles = [Role.SharingIscsiWrite];
 
   protected readonly hasFibreChannel = toSignal(
-    this.iscsiService.hasFibreChannel().pipe(startWith(false)),
+    this.license.hasFibreChannel$.pipe(startWith(false)),
   );
 
   protected readonly navLinks = computed(() => {
@@ -89,6 +89,7 @@ export class IscsiComponent {
     private translate: TranslateService,
     private slideIn: SlideIn,
     private iscsiService: IscsiService,
+    private license: LicenseService,
   ) {}
 
   openWizard(): void {

@@ -69,7 +69,6 @@ function doSortCompare(a: number | string, b: number | string, isAsc: boolean): 
   templateUrl: './installed-apps-list.component.html',
   styleUrls: ['./installed-apps-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     InstalledAppsListBulkActionsComponent,
     FakeProgressBarComponent,

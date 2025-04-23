@@ -28,10 +28,9 @@ import { FirstTimeWarningService } from 'app/services/first-time-warning.service
 @UntilDestroy()
 @Component({
   selector: 'ix-storage-card',
-  styleUrls: ['../../common-card.scss'],
+  styleUrls: ['../../../general-settings/common-settings-card.scss'],
   templateUrl: './storage-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     UiSearchDirective,

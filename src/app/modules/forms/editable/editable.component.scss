@@ -1,0 +1,22 @@
+.edit-trigger {
+  all: unset;
+  background-color: var(--alt-bg1);
+  color: var(--fg1);
+  column-gap: 2px;
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 13px;
+  padding: 0 5px;
+  vertical-align: top;
+
+  &.edit-trigger-empty {
+    font-style: italic;
+  }
+
+  .edit-trigger-icon {
+    height: 18px;
+    margin-left: 2px;
+    margin-top: 2px;
+    width: 18px;
+  }
+}

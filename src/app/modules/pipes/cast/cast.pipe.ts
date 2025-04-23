@@ -2,7 +2,6 @@ import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
   name: 'cast',
-  standalone: true,
 })
 export class CastPipe implements PipeTransform {
   /**

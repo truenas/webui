@@ -1,0 +1,46 @@
+@import 'mixins/cards';
+
+:host {
+  display: flex;
+}
+
+.pool-icon {
+  cursor: help;
+  height: 16px;
+  margin-top: 2px;
+  width: 16px;
+}
+
+.card {
+  @include details-card();
+  flex: 1;
+
+  .content-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .vdev-line {
+    align-items: center;
+    display: flex;
+    margin: 8px 0;
+    place-content: center space-between;
+
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+
+  .vdev-stats {
+    align-items: center;
+    display: flex;
+    place-content: center;
+  }
+}
+
+.warning {
+  display: flex;
+  padding: 0 6px;
+}
+

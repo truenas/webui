@@ -10,7 +10,7 @@ import { BehaviorSubject, of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DiskType } from 'app/enums/disk-type.enum';
-import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
+import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
@@ -39,7 +39,7 @@ describe('ReviewWizardStepComponent', () => {
     name: 'test-pool',
     encryption: 'SHA95',
     topology: {
-      [VdevType.Data]: {
+      [VDevType.Data]: {
         diskSize: 2 * GiB,
         vdevsNumber: 2,
         layout: CreateVdevLayout.Stripe,
@@ -47,7 +47,7 @@ describe('ReviewWizardStepComponent', () => {
         diskType: DiskType.Hdd,
         vdevs: [[{ }], [{ }]],
       },
-      [VdevType.Log]: {
+      [VDevType.Log]: {
         vdevs: [{}],
         hasCustomDiskSelection: true,
       },
@@ -106,7 +106,7 @@ describe('ReviewWizardStepComponent', () => {
       expect(spectator.component.createPool.emit).toHaveBeenCalled();
     });
 
-    it('opens an Inspect Vdevs dialog when corresponding button is pressed', async () => {
+    it('opens an Inspect VDEVs dialog when corresponding button is pressed', async () => {
       const inspectButton = await loader.getHarness(MatButtonHarness.with({ text: 'Inspect VDEVs' }));
       await inspectButton.click();
 

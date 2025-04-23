@@ -7,7 +7,7 @@ import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { map } from 'rxjs';
-import { CreateVdevLayout, TopologyItemType, VdevType } from 'app/enums/v-dev-type.enum';
+import { CreateVdevLayout, TopologyItemType, VDevType } from 'app/enums/v-dev-type.enum';
 import { helptextManager } from 'app/helptext/storage/volumes/manager/manager';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -20,7 +20,6 @@ import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/p
   selector: 'ix-log-wizard-step',
   templateUrl: './log-wizard-step.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     LayoutStepComponent,
     FormActionsComponent,
@@ -40,10 +39,10 @@ export class LogWizardStepComponent implements OnInit {
 
   canChangeLayout = true;
 
-  protected readonly VdevType = VdevType;
+  protected readonly vDevType = VDevType;
   readonly helptext = helptextManager;
 
-  protected readonly inventory$ = this.store.getInventoryForStep(VdevType.Log);
+  protected readonly inventory$ = this.store.getInventoryForStep(VDevType.Log);
   protected allowedLayouts = [CreateVdevLayout.Mirror, CreateVdevLayout.Stripe];
   constructor(
     private store: PoolManagerStore,
@@ -53,7 +52,7 @@ export class LogWizardStepComponent implements OnInit {
 
   ngOnInit(): void {
     this.addVdevsStore.pool$.pipe(
-      map((pool) => pool?.topology[VdevType.Log]),
+      map((pool) => pool?.topology[VDevType.Log]),
       untilDestroyed(this),
     ).subscribe({
       next: (logTopology) => {
@@ -76,6 +75,6 @@ export class LogWizardStepComponent implements OnInit {
   }
 
   resetStep(): void {
-    this.store.resetStep(VdevType.Log);
+    this.store.resetStep(VDevType.Log);
   }
 }

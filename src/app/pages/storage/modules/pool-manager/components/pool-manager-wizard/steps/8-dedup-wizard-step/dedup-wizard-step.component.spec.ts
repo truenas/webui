@@ -2,7 +2,7 @@ import { CdkStepper } from '@angular/cdk/stepper';
 import { mockProvider, Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
+import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { helptextManager } from 'app/helptext/storage/volumes/manager/manager';
 import { LayoutStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/layout-step/layout-step.component';
 import { DedupWizardStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/8-dedup-wizard-step/dedup-wizard-step.component';
@@ -39,7 +39,7 @@ describe('DedupWizardStepComponent', () => {
       mockProvider(CdkStepper),
       mockProvider(PoolManagerStore, {
         topology$: of({
-          [VdevType.Data]: { layout: CreateVdevLayout.Raidz1 },
+          [VDevType.Data]: { layout: CreateVdevLayout.Raidz1 },
         } as PoolManagerTopology),
         getInventoryForStep: jest.fn(() => of(fakeInventory)),
       }),
@@ -56,6 +56,6 @@ describe('DedupWizardStepComponent', () => {
     expect(layoutComponent.canChangeLayout).toBeTruthy();
     expect(layoutComponent.inventory).toStrictEqual([...fakeInventory]);
     expect(layoutComponent.limitLayouts).toStrictEqual([CreateVdevLayout.Mirror, CreateVdevLayout.Stripe]);
-    expect(layoutComponent.type).toStrictEqual(VdevType.Dedup);
+    expect(layoutComponent.type).toStrictEqual(VDevType.Dedup);
   });
 });

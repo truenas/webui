@@ -37,7 +37,6 @@ import { defaultVncPort } from 'app/pages/instances/instances.constants';
 @UntilDestroy()
 @Component({
   selector: 'ix-instance-edit-form',
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     IxInputComponent,

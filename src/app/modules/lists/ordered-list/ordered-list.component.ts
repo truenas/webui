@@ -24,7 +24,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   styleUrls: ['./ordered-list.component.scss'],
   templateUrl: 'ordered-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxLabelComponent,
     CdkDropList,

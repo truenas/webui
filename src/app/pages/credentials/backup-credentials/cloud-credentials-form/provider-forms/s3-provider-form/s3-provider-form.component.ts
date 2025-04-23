@@ -16,7 +16,6 @@ import {
   selector: 'ix-s3-provider-form',
   templateUrl: './s3-provider-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxFieldsetComponent,

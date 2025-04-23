@@ -58,7 +58,6 @@ interface FormAclEntry {
   templateUrl: './smb-acl.component.html',
   styleUrls: ['./smb-acl.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

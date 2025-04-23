@@ -20,7 +20,6 @@ import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 @UntilDestroy()
 @Directive({
   selector: '[ixNewFeatureIndicator]',
-  standalone: true,
 })
 export class NewFeatureIndicatorDirective implements OnInit, OnChanges {
   private wrapperContainer: ComponentRef<NewFeatureIndicatorWrapperComponent>;

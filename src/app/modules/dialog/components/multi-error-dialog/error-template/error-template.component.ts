@@ -18,7 +18,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './error-template.component.html',
   styleUrls: ['./error-template.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogTitle,
     IxIconComponent,
@@ -35,7 +34,7 @@ export class ErrorTemplateComponent {
 
   readonly title = input.required<string>();
   readonly message = input<string>();
-  readonly backtrace = input<string>();
+  readonly stackTrace = input<string>();
   readonly logs = input<Job>();
 
   isCloseMoreInfo = true;

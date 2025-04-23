@@ -34,10 +34,9 @@ export interface ConsoleConfig {
 @UntilDestroy(this)
 @Component({
   selector: 'ix-console-card',
-  styleUrls: ['../../common-card.scss'],
+  styleUrls: ['../../../general-settings/common-settings-card.scss'],
   templateUrl: './console-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     UiSearchDirective,

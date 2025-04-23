@@ -38,10 +38,10 @@
     </div>
 
     <div class="cards">
-      <ix-topology-card
+      <ix-vdevs-card
         [poolState]="pool()"
         [disks]="disks()"
-      ></ix-topology-card>
+      ></ix-vdevs-card>
 
       @if (rootDataset()) {
         <ix-pool-usage-card
@@ -50,7 +50,7 @@
         ></ix-pool-usage-card>
       }
 
-      <ix-zfs-health-card [pool]="pool()"></ix-zfs-health-card>
+      <ix-storage-health-card [pool]="pool()"></ix-storage-health-card>
       <ix-disk-health-card
         [poolState]="pool()"
         [disks]="disks()"

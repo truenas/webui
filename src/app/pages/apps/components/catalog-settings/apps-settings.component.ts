@@ -44,7 +44,6 @@ import { DockerStore } from 'app/pages/apps/store/docker.store';
   templateUrl: './apps-settings.component.html',
   styleUrls: ['./apps-settings.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     ModalHeaderComponent,

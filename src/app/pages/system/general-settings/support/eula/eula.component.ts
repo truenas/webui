@@ -19,7 +19,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './eula.component.html',
   styleUrls: ['./eula.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     UiSearchDirective,

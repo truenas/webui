@@ -23,7 +23,6 @@ import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtual
 @Component({
   selector: 'ix-all-instances',
   templateUrl: './all-instances.component.html',
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     PageHeaderComponent,

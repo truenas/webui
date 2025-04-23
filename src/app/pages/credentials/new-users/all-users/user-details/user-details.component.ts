@@ -11,7 +11,6 @@ import { UserProfileCardComponent } from 'app/pages/credentials/new-users/all-us
 @Component({
   selector: 'ix-user-details',
   templateUrl: './user-details.component.html',
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TranslateModule,

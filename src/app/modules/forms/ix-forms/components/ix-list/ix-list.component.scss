@@ -3,6 +3,11 @@
   display: block;
   margin-bottom: 12px;
   margin-top: 18px;
+
+  :host-context(ix-editable) & {
+    margin-bottom: 0;
+    margin-top: 0;
+  }
 }
 
 .container {

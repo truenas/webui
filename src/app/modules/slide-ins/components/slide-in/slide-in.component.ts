@@ -31,7 +31,6 @@ import { ComponentSerialized, SlideInResponse } from 'app/modules/slide-ins/slid
   templateUrl: './slide-in.component.html',
   styleUrls: ['./slide-in.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [CdkTrapFocus],
 })
 export class SlideInComponent implements OnInit, OnDestroy {

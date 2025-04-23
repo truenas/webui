@@ -1,8 +1,8 @@
 import { GiB, TiB } from 'app/constants/bytes.constant';
-import { VdevType, TopologyItemType, TopologyWarning } from 'app/enums/v-dev-type.enum';
+import { VDevType, TopologyItemType, TopologyWarning } from 'app/enums/v-dev-type.enum';
 import { Disk } from 'app/interfaces/disk.interface';
 import { PoolTopology } from 'app/interfaces/pool.interface';
-import { TopologyDisk, TopologyItem, VDev } from 'app/interfaces/storage.interface';
+import { TopologyDisk, VDevItem, VDev } from 'app/interfaces/storage.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { StorageService } from 'app/services/storage.service';
 
@@ -17,34 +17,34 @@ describe('StorageService', () => {
         type: TopologyItemType.Mirror,
         children: [{}, {}, {}] as TopologyDisk[],
       } as VDev;
-      const redundancy = storageService.getRedundancyLevel(mirror as TopologyItem);
+      const redundancy = storageService.getRedundancyLevel(mirror as VDevItem);
 
       expect(redundancy).toBe(2);
     });
 
     it('return 0 disk redundancy for Stripe and Disk', () => {
-      const stripe = storageService.getRedundancyLevel({ type: TopologyItemType.Stripe } as TopologyItem);
+      const stripe = storageService.getRedundancyLevel({ type: TopologyItemType.Stripe } as VDevItem);
       expect(stripe).toBe(0);
 
-      const disk = storageService.getRedundancyLevel({ type: TopologyItemType.Disk } as TopologyItem);
+      const disk = storageService.getRedundancyLevel({ type: TopologyItemType.Disk } as VDevItem);
       expect(disk).toBe(0);
     });
 
     it('return 1 disk redundancy for Raidz and Raidz1', () => {
-      const raidz = storageService.getRedundancyLevel({ type: TopologyItemType.Raidz } as TopologyItem);
+      const raidz = storageService.getRedundancyLevel({ type: TopologyItemType.Raidz } as VDevItem);
       expect(raidz).toBe(1);
 
-      const raidz1 = storageService.getRedundancyLevel({ type: TopologyItemType.Raidz1 } as TopologyItem);
+      const raidz1 = storageService.getRedundancyLevel({ type: TopologyItemType.Raidz1 } as VDevItem);
       expect(raidz1).toBe(1);
     });
 
     it('return 2 disk redundancy for Raidz2', () => {
-      const raidz2 = storageService.getRedundancyLevel({ type: TopologyItemType.Raidz2 } as TopologyItem);
+      const raidz2 = storageService.getRedundancyLevel({ type: TopologyItemType.Raidz2 } as VDevItem);
       expect(raidz2).toBe(2);
     });
 
     it('return 3 disk redundancy for Raidz3', () => {
-      const raidz3 = storageService.getRedundancyLevel({ type: TopologyItemType.Raidz3 } as TopologyItem);
+      const raidz3 = storageService.getRedundancyLevel({ type: TopologyItemType.Raidz3 } as VDevItem);
       expect(raidz3).toBe(3);
     });
 
@@ -58,7 +58,7 @@ describe('StorageService', () => {
       ];
 
       unsupported.forEach((layout: TopologyItemType) => {
-        const unsupportedLayout = storageService.getRedundancyLevel({ type: layout } as TopologyItem);
+        const unsupportedLayout = storageService.getRedundancyLevel({ type: layout } as VDevItem);
         expect(unsupportedLayout).toBe(-1);
       });
     });
@@ -2291,7 +2291,7 @@ describe('StorageService', () => {
       ] as Disk[];
 
       const warnings = storageService.validateVdevs(
-        VdevType.Data,
+        VDevType.Data,
         mockTopology.data,
         mockDisks,
       );
@@ -2573,7 +2573,7 @@ describe('StorageService', () => {
       } as PoolTopology;
 
       const warnings = storageService.validateVdevs(
-        VdevType.Data,
+        VDevType.Data,
         mockTopology.data,
         mockDisks,
       );
@@ -2854,7 +2854,7 @@ describe('StorageService', () => {
         dedup: [],
       } as PoolTopology;
       const warnings = storageService.validateVdevs(
-        VdevType.Data,
+        VDevType.Data,
         mockTopology.data,
         mockDisks,
       );
@@ -3172,7 +3172,7 @@ describe('StorageService', () => {
         dedup: [],
       } as PoolTopology;
       const warnings = storageService.validateVdevs(
-        VdevType.Data,
+        VDevType.Data,
         mockTopology.data,
         mockDisks,
       );
@@ -3527,7 +3527,7 @@ describe('StorageService', () => {
         dedup: [],
       } as PoolTopology;
       const warnings = storageService.validateVdevs(
-        VdevType.Data,
+        VDevType.Data,
         mockTopology.data,
         mockDisks,
       );

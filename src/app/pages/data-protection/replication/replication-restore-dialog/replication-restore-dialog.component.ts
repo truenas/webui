@@ -27,7 +27,6 @@ import { DatasetService } from 'app/services/dataset/dataset.service';
   templateUrl: './replication-restore-dialog.component.html',
   styleUrls: ['./replication-restore-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogTitle,
     ReactiveFormsModule,

@@ -47,7 +47,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './privilege-list.component.html',
   styleUrls: ['./privilege-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatButton,
     TestDirective,
