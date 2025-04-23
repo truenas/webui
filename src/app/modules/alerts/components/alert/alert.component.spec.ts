@@ -159,7 +159,7 @@ describe('AlertComponent', () => {
 
     spectator.component.ngAfterViewInit();
 
-    const expandButton = await loader.getHarness(MatButtonHarness.with({ text: 'Expand' }));
+    const expandButton = await loader.getHarness(MatButtonHarness.with({ text: 'View More' }));
     expect(expandButton).toExist();
 
     await expandButton.click();
