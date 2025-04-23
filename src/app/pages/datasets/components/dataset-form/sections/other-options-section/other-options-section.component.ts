@@ -505,7 +505,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
       if (value === DatasetSync.Disabled && this.form.controls.sync.dirty) {
         this.dialogService.confirm({
           title: this.translate.instant('Warning'),
-          message: helptextDatasetForm.dataset_form_sync_disabled_warning,
+          message: this.translate.instant(helptextDatasetForm.dataset_form_sync_disabled_warning),
           buttonText: this.translate.instant('Okay'),
           hideCheckbox: true,
           hideCancel: true,

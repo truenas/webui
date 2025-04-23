@@ -12,6 +12,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { choicesToOptions, idNameArrayToOptions } from 'app/helpers/operators/options.operators';
+import { ignoreTranslation, TranslatedString } from 'app/helpers/translate.helper';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -76,7 +77,7 @@ export class CertificateAcmeAddComponent implements OnInit {
   protected csr: Certificate;
 
   protected isLoading = signal(false);
-  domains: string[] = [];
+  domains: TranslatedString[] = [];
 
   readonly acmeDirectoryUris$ = this.api.call('certificate.acme_server_choices').pipe(choicesToOptions());
   readonly authenticators$ = this.api.call('acme.dns.authenticator.query').pipe(idNameArrayToOptions());
@@ -158,7 +159,7 @@ export class CertificateAcmeAddComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (domains) => {
-          this.domains = domains;
+          this.domains = domains.map(ignoreTranslation);
           domains.forEach((domain) => this.addDomainControls(domain));
           this.isLoading.set(false);
         },

@@ -10,6 +10,7 @@ import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
+import { ignoreTranslation } from 'app/helpers/translate.helper';
 import { helptextScrubForm } from 'app/helptext/data-protection/scrub/scrub-form';
 import { CreatePoolScrubTask, PoolScrubTask } from 'app/interfaces/pool-scrub.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -77,7 +78,10 @@ export class ScrubTaskFormComponent implements OnInit {
 
   poolOptions$ = this.api.call('pool.query').pipe(
     map((pools) => {
-      return pools.map((pool) => ({ label: pool.name, value: pool.id }));
+      return pools.map((pool) => ({
+        label: ignoreTranslation(pool.name),
+        value: pool.id,
+      }));
     }),
   );
 

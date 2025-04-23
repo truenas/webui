@@ -44,8 +44,6 @@ export class AdditionalDetailsSectionComponent {
   protected shellAccessEnabled = this.newUserStore.shellAccess;
   protected isUsingAlternativeColors = false;
 
-  fakeTooltip = '';
-
   protected hasSharingRole = computed(() => this.newUserStore.role()?.includes(Role.SharingAdmin));
 
   protected isEditingGroups = false;

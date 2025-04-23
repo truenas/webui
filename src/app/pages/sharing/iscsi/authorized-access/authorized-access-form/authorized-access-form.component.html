@@ -30,7 +30,7 @@
           formControlName="user"
           [label]="'User' | translate"
           [required]="true"
-          [tooltip]="tooltips.user"
+          [tooltip]="tooltips.user | translate"
         ></ix-input>
 
         <ix-input
@@ -38,7 +38,7 @@
           type="password"
           [label]="'Secret' | translate"
           [required]="true"
-          [tooltip]="tooltips.secret"
+          [tooltip]="tooltips.secret | translate"
         ></ix-input>
 
         <ix-input
@@ -53,7 +53,7 @@
         <ix-input
           formControlName="peeruser"
           [label]="'Peer User' | translate"
-          [tooltip]="tooltips.peeruser"
+          [tooltip]="tooltips.peeruser | translate"
         ></ix-input>
 
         <ix-input
@@ -61,7 +61,7 @@
           type="password"
           [label]="'Peer Secret' | translate"
           [required]="isPeerUserSet()"
-          [tooltip]="tooltips.peersecret"
+          [tooltip]="tooltips.peersecret | translate"
         ></ix-input>
 
         <ix-input

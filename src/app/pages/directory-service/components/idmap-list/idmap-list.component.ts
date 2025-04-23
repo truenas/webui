@@ -220,10 +220,10 @@ export class IdmapListComponent implements OnInit {
           });
         } else {
           this.dialogService.confirm({
-            title: helptextIdmap.idmap.enable_ad_dialog.title,
-            message: helptextIdmap.idmap.enable_ad_dialog.message,
+            title: this.translate.instant(helptextIdmap.idmap.enable_ad_dialog.title),
+            message: this.translate.instant(helptextIdmap.idmap.enable_ad_dialog.message),
             hideCheckbox: true,
-            buttonText: helptextIdmap.idmap.enable_ad_dialog.button,
+            buttonText: this.translate.instant(helptextIdmap.idmap.enable_ad_dialog.button),
           }).pipe(
             filter(Boolean),
             untilDestroyed(this),

@@ -12,6 +12,7 @@ import {
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
+import { ignoreTranslation } from 'app/helpers/translate.helper';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -93,7 +94,7 @@ export class SelectPoolDialog implements OnInit {
           });
 
           const poolOptions = pools.map((pool) => ({
-            label: pool.name,
+            label: ignoreTranslation(pool.name),
             value: pool.name,
           }));
           this.pools$ = of(poolOptions);
@@ -111,10 +112,10 @@ export class SelectPoolDialog implements OnInit {
 
   private showNoPoolsWarning(): void {
     this.dialogService.confirm({
-      title: helptextApps.noPool.title,
-      message: helptextApps.noPool.message,
+      title: this.translate.instant(helptextApps.noPool.title),
+      message: this.translate.instant(helptextApps.noPool.message),
       hideCheckbox: true,
-      buttonText: helptextApps.noPool.action,
+      buttonText: this.translate.instant(helptextApps.noPool.action),
     }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
       this.dialogRef.close(false);
       if (!confirmed) {
