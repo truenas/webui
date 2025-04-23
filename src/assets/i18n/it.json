@@ -51,7 +51,7 @@
   "Special": "",
   "SSH Password Enabled": "",
   "Storage Health": "",
-  "The connection to TrueNAS was lost due to a timeout or network interruption. To continue, please reconnect manually.": "",
+  "TrueNAS connection has timed out or was interrupted. To continue, press Reconnect.": "",
   "Upper": "",
   "Username = \"root\" AND \"Built in\" = \"Yes\"": "",
   "VDEV Name": "",

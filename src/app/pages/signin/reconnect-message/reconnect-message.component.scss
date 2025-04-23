@@ -6,8 +6,16 @@
   gap: 8px;
   justify-content: flex-end;
   padding: 32px 32px 0;
+  position: relative;
 
   button {
     margin-top: 16px;
+  }
+
+  ix-fake-progress-bar {
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
   }
 }

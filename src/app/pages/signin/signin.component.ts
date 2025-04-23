@@ -59,7 +59,7 @@ export class SigninComponent implements OnInit {
   readonly wasAdminSet$ = this.signinStore.wasAdminSet$;
   readonly canLogin$ = this.signinStore.canLogin$;
   readonly isConnected$ = this.wsStatus.isConnected$;
-  readonly allowReconnect$ = this.wsStatus.allowReconnect$;
+  readonly isReconnectAllowed$ = this.wsStatus.isReconnectAllowed$;
 
   isConnectedDelayed$: Observable<boolean> = of(null).pipe(
     delay(1000),
@@ -74,6 +74,13 @@ export class SigninComponent implements OnInit {
     map(([isLoading, isConnected, isTokenWithinTimeline]) => {
       return isLoading || !isConnected || (isTokenWithinTimeline && this.hasAuthToken);
     }),
+  );
+
+  readonly isDisconnected$ = combineLatest([
+    this.isConnected$,
+    this.isConnectedDelayed$,
+  ]).pipe(
+    map(([isConnected, isDelayed]) => !isConnected && isDelayed !== null),
   );
 
   constructor(
@@ -92,7 +99,7 @@ export class SigninComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe(() => {
       this.signinStore.init();
-      this.wsStatus.setReconnectAllowed(true);
+      this.wsStatus.setReconnect(true);
     });
 
     // TODO: Remove after code review.
