@@ -14,6 +14,11 @@ export interface FilterPreset<T> {
   query: QueryFilters<T>;
 }
 
+export interface FilterPresetChanged<T> {
+  filters: QueryFilters<T>[];
+  selectedLabels: Set<string>;
+}
+
 export type QueryFilters<T> = (QueryFilters<T> | QueryFilter<T> | OrQueryFilter<T>)[];
 
 export type OrQueryFilter<T> = ['OR', QueryFilters<T>[]];

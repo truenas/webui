@@ -24,6 +24,7 @@ import { SystemSecurityFormComponent } from 'app/pages/system/advanced/system-se
 @UntilDestroy()
 @Component({
   selector: 'ix-system-security-card',
+  styleUrls: ['../../../general-settings/common-settings-card.scss'],
   templateUrl: './system-security-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [

@@ -52,7 +52,7 @@ describe('CheckinIndicatorComponent', () => {
         title: 'Pending Network Changes',
       }),
     );
-    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/network']);
+    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/system/network']);
   });
 
   it('dispatches checkinIndicatorPressed when indicator is pressed and checkin is waiting', () => {

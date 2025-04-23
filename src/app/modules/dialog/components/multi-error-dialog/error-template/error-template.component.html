@@ -4,7 +4,7 @@
 </h1>
 <div #errorMdContent id="err-md-content">
   <div #errorMessageWrapper id="err-message-wrapper"><span [innerHTML]="message()"></span></div>
-  @if (backtrace()) {
+  @if (stackTrace()) {
     <div
       class="more-info"
       (click)="toggleOpen()"
@@ -17,15 +17,15 @@
       <span>{{ 'More info...' | translate }}</span>
     </div>
   }
-  @if (backtrace()) {
+  @if (stackTrace()) {
     <div
       #errorBtPanel
       id="err-bt-panel"
-      class="backtrace-panel"
+      class="stack-trace-panel"
       [class.open]="!isCloseMoreInfo"
     >
       <div #errorBtText class="textarea scrolled-down" id="err-bt-text" readonly matInput>
-        {{ 'Error' | translate }}: {{ backtrace() }}
+        {{ 'Error' | translate }}: {{ stackTrace() }}
       </div>
     </div>
   }
