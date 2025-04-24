@@ -173,8 +173,8 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
       switchMap(() => {
         if (this.storageService.isDatasetTopLevel(this.get().mountpoint.replace('mnt/', ''))) {
           return this.dialogService.confirm({
-            title: helptextAcl.dataset_acl_dialog_warning,
-            message: helptextAcl.dataset_acl_toplevel_dialog_message,
+            title: this.translate.instant(helptextAcl.dataset_acl_dialog_warning),
+            message: this.translate.instant(helptextAcl.dataset_acl_toplevel_dialog_message),
           });
         }
 

@@ -26,6 +26,7 @@ import { TransferMode, transferModeNames } from 'app/enums/transfer-mode.enum';
 import { extractApiErrorDetails } from 'app/helpers/api.helper';
 import { prepareBwlimit } from 'app/helpers/bwlimit.utils';
 import { mapToOptions } from 'app/helpers/options.helper';
+import { ignoreTranslation, TranslatedString } from 'app/helpers/translate.helper';
 import { helptextCloudSync } from 'app/helptext/data-protection/cloudsync/cloudsync';
 import { CloudSyncListDirectoryParams, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
@@ -515,8 +516,10 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
           }
 
           this.dialog.confirm({
-            title: apiError.extra ? (apiError.extra as { excerpt: string }).excerpt : `${this.translate.instant('Error: ')}${apiError.error}`,
-            message: apiError.reason,
+            title: apiError.extra
+              ? ignoreTranslation((apiError.extra as { excerpt: string }).excerpt)
+              : `${this.translate.instant('Error: ')}${apiError.error}` as TranslatedString,
+            message: ignoreTranslation(apiError.reason),
             hideCheckbox: true,
             buttonText: this.translate.instant('Fix Credential'),
           }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {

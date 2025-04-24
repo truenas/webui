@@ -10,6 +10,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
+import { ignoreTranslation } from 'app/helpers/translate.helper';
 import { dockerHubRegistry, DockerRegistry, DockerRegistryPayload } from 'app/interfaces/docker-registry.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -48,7 +49,7 @@ export class DockerRegistryFormComponent implements OnInit {
   protected existingDockerRegistry: DockerRegistry | undefined;
   protected isLoggedInToDockerHub = false;
   protected isFormLoading = signal(false);
-  protected readonly dockerHubRegistry = dockerHubRegistry;
+  protected readonly dockerHubRegistry = ignoreTranslation(dockerHubRegistry);
 
   protected registriesOptions$ = of([
     { label: this.translate.instant('Docker Hub'), value: dockerHubRegistry },

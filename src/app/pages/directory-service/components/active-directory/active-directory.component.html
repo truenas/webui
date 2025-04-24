@@ -12,7 +12,7 @@
             formControlName="domainname"
             [label]="'Domain Name' | translate"
             [required]="true"
-            [tooltip]="helptext.activedirectory_domainname_tooltip | translate"
+            [tooltip]="helptext.domainNameTooltip | translate"
           ></ix-input>
 
           @if (!(hasKerberosPrincipal$ | async)) {
@@ -20,20 +20,20 @@
               formControlName="bindname"
               [label]="'Domain Account Name' | translate"
               [required]="true"
-              [tooltip]="helptext.activedirectory_bindname_tooltip | translate"
+              [tooltip]="helptext.bindNameTooltip | translate"
             ></ix-input>
 
             <ix-input
               formControlName="bindpw"
               type="password"
               [label]="'Domain Account Password' | translate"
-              [tooltip]="helptext.activedirectory_bindpw_tooltip | translate"
+              [tooltip]="helptext.bindpwTooltip | translate"
             ></ix-input>
 
             <ix-input
               formControlName="netbiosname"
               [label]="'NetBIOS Name' | translate"
-              [tooltip]="helptext.activedirectory_netbiosname_tooltip | translate"
+              [tooltip]="helptext.netbiosnameTooltip | translate"
               [required]="true"
             ></ix-input>
           }
@@ -41,44 +41,44 @@
           <ix-checkbox
             formControlName="enable"
             [label]="'Enable (requires password or Kerberos principal)' | translate"
-            [tooltip]="helptext.activedirectory_enable_tooltip | translate"
+            [tooltip]="helptext.enableTooltip | translate"
           ></ix-checkbox>
 
           @if (isAdvancedMode) {
             <ix-checkbox
               formControlName="verbose_logging"
               [label]="'Verbose Logging' | translate"
-              [tooltip]="helptext.activedirectory_verbose_logging_tooltip | translate"
+              [tooltip]="helptext.loggingVerbosityTooltip | translate"
             ></ix-checkbox>
 
             <ix-checkbox
               formControlName="allow_trusted_doms"
               [label]="'Allow Trusted Domains' | translate"
-              [tooltip]="helptext.activedirectory_trusted_doms_tooltip | translate"
+              [tooltip]="helptext.allowTrustedDomainsTooltip | translate"
             ></ix-checkbox>
 
             <ix-checkbox
               formControlName="use_default_domain"
               [label]="'Use Default Domain' | translate"
-              [tooltip]="helptext.activedirectory_default_dom_tooltip | translate"
+              [tooltip]="helptext.defaultDomainsTooltip | translate"
             ></ix-checkbox>
 
             <ix-checkbox
               formControlName="allow_dns_updates"
               [label]="'Allow DNS Updates' | translate"
-              [tooltip]="helptext.activedirectory_dns_updates_tooltip | translate"
+              [tooltip]="helptext.dnsUpdatesTooltip | translate"
             ></ix-checkbox>
 
             <ix-checkbox
               formControlName="disable_freenas_cache"
               [label]="'Disable AD User / Group Cache' | translate"
-              [tooltip]="helptext.activedirectory_disable_fn_cache_tooltip | translate"
+              [tooltip]="helptext.disableCacheTooltip | translate"
             ></ix-checkbox>
 
             <ix-checkbox
               formControlName="restrict_pam"
               [label]="'Restrict PAM' | translate"
-              [tooltip]="helptext.restrict_pam.tooltip | translate"
+              [tooltip]="helptext.restrictPamTooltip | translate"
             ></ix-checkbox>
           }
         </ix-fieldset>
@@ -88,52 +88,52 @@
             <ix-input
               formControlName="site"
               [label]="'Site Name' | translate"
-              [tooltip]="helptext.activedirectory_site_tooltip | translate"
+              [tooltip]="helptext.siteTooltip | translate"
             ></ix-input>
 
             <ix-select
               formControlName="kerberos_realm"
               [label]="'Kerberos Realm' | translate"
               [options]="kerberosRealms$"
-              [tooltip]="helptext.activedirectory_kerberos_realm_tooltip | translate"
+              [tooltip]="helptext.kerberosRealmTooltip | translate"
             ></ix-select>
 
             <ix-select
               formControlName="kerberos_principal"
               [label]="'Kerberos Principal' | translate"
-              [tooltip]="helptext.activedirectory_kerberos_principal_tooltip | translate"
+              [tooltip]="helptext.kerberosPrincipalTooltip | translate"
               [options]="kerberosPrincipals$"
             ></ix-select>
 
             <ix-input
               formControlName="createcomputer"
               [label]="'Computer Account OU' | translate"
-              [tooltip]="helptext.computer_account_OU_tooltip | translate"
+              [tooltip]="helptext.computerAccountOuTooltip | translate"
             ></ix-input>
 
             <ix-input
               formControlName="timeout"
               [label]="'AD Timeout' | translate"
-              [tooltip]="helptext.activedirectory_timeout_tooltip | translate"
+              [tooltip]="helptext.timeoutTooltip | translate"
             ></ix-input>
 
             <ix-input
               formControlName="dns_timeout"
               [label]="'DNS Timeout' | translate"
-              [tooltip]="helptext.activedirectory_dns_timeout_tooltip | translate"
+              [tooltip]="helptext.dnsTimeoutTooltip | translate"
             ></ix-input>
 
             <ix-select
               formControlName="nss_info"
               [label]="'Winbind NSS Info' | translate"
-              [tooltip]="helptext.activedirectory_nss_info_tooltip | translate"
+              [tooltip]="helptext.nssInfoTooltip | translate"
               [options]="nssOptions$"
             ></ix-select>
 
             <ix-chips
               formControlName="netbiosalias"
               [label]="'NetBIOS Alias' | translate"
-              [tooltip]="helptext.activedirectory_netbiosalias_tooltip | translate"
+              [tooltip]="helptext.netbiosaliasTooltip | translate"
             ></ix-chips>
           </ix-fieldset>
         }

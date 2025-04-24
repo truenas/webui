@@ -65,11 +65,11 @@ export class ConsoleFormComponent implements OnInit {
   subscriptions: Subscription[] = [];
 
   readonly tooltips = {
-    consolemenu: helptext.consolemenu_tooltip,
-    serialconsole: helptext.serialconsole_tooltip,
-    serialport: helptext.serialport_tooltip,
-    serialspeed: helptext.serialspeed_tooltip,
-    motd: helptext.motd_tooltip,
+    consolemenu: helptext.consoleMenuTooltip,
+    serialconsole: helptext.serialConsoleTooltip,
+    serialport: helptext.serialPortTooltip,
+    serialspeed: helptext.serialSpeedTooltip,
+    motd: helptext.motdTooltip,
   };
 
   readonly serialSpeedOptions$ = of([

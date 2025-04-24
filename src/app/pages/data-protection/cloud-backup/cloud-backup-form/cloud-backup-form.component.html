@@ -5,12 +5,12 @@
       <div class="fieldsets">
         <ix-fieldset
           class="fieldset"
-          [title]="helptext.fieldset_local | translate"
+          [title]="helptext.local | translate"
         >
           <ix-explorer
             formControlName="path"
-            [label]="helptext.source_path_placeholder | translate"
-            [tooltip]="helptext.source_path_tooltip | translate"
+            [label]="helptext.sourcePath | translate"
+            [tooltip]="helptext.sourcePathTooltip | translate"
             [required]="true"
             [multiple]="false"
             [root]="'/'"
@@ -19,8 +19,8 @@
 
           <ix-explorer
             formControlName="cache_path"
-            [label]="helptext.cache_path_placeholder | translate"
-            [tooltip]="helptext.cache_path_tooltip | translate"
+            [label]="helptext.cachePath | translate"
+            [tooltip]="helptext.cachePathTooltip | translate"
             [multiple]="false"
             [nodeProvider]="directoriesNodeProvider"
           ></ix-explorer>
@@ -28,20 +28,20 @@
 
         <ix-fieldset
           class="fieldset"
-          [title]="helptext.fieldset_remote | translate"
+          [title]="helptext.remote | translate"
         >
           <ix-cloud-credentials-select
             formControlName="credentials"
-            [label]="helptext.credentials_placeholder | translate"
-            [tooltip]="helptext.credentials_tooltip | translate"
+            [label]="helptext.credentials | translate"
+            [tooltip]="helptext.credentialsTooltip | translate"
             [filterByProviders]="[CloudSyncProviderName.Storj]"
             [required]="true"
           ></ix-cloud-credentials-select>
           @if (form.controls.bucket.enabled) {
             <ix-select
               formControlName="bucket"
-              [label]="helptext.bucket_placeholder | translate"
-              [tooltip]="helptext.bucket_tooltip | translate"
+              [label]="helptext.bucket | translate"
+              [tooltip]="helptext.bucketTooltip | translate"
               [options]="bucketOptions$"
               [required]="true"
             ></ix-select>
@@ -49,8 +49,8 @@
           @if (form.controls.bucket_input.enabled) {
             <ix-input
               formControlName="bucket_input"
-              [label]="helptext.bucket_input_placeholder | translate"
-              [tooltip]="helptext.bucket_input_tooltip | translate"
+              [label]="helptext.newBucket | translate"
+              [tooltip]="helptext.newBucketTooltip | translate"
               [required]="true"
             ></ix-input>
           }
@@ -58,16 +58,16 @@
             @if (isNewBucketOptionSelected) {
               <ix-input
                 formControlName="folder"
-                [label]="helptext.folder_placeholder | translate"
-                [tooltip]="helptext.folder_tooltip | translate"
+                [label]="helptext.folder | translate"
+                [tooltip]="helptext.folderTooltip | translate"
                 [required]="true"
               ></ix-input>
             } @else {
               <ix-explorer
                 formControlName="folder"
                 root="/"
-                [label]="helptext.folder_placeholder | translate"
-                [tooltip]="helptext.folder_tooltip | translate"
+                [label]="helptext.folder | translate"
+                [tooltip]="helptext.folderTooltip | translate"
                 [nodeProvider]="bucketNodeProvider"
                 [required]="true"
               ></ix-explorer>
@@ -76,79 +76,79 @@
         </ix-fieldset>
         <ix-fieldset
           class="fieldset"
-          [title]="helptext.fieldset_task_settings | translate"
+          [title]="helptext.taskSettings | translate"
         >
           <ix-input
             formControlName="description"
-            [label]="helptext.name_placeholder | translate"
-            [tooltip]="helptext.name_tooltip | translate"
+            [label]="helptext.name | translate"
+            [tooltip]="helptext.nameTooltip | translate"
             [required]="true"
           ></ix-input>
           <ix-input
             formControlName="keep_last"
             type="number"
-            [label]="helptext.keep_last_placeholder | translate"
-            [tooltip]="helptext.keep_last_tooltip | translate"
+            [label]="helptext.keepLast | translate"
+            [tooltip]="helptext.keepLastTooltip | translate"
             [required]="true"
           ></ix-input>
           <ix-input
             formControlName="password"
             type="password"
-            [label]="helptext.password_placeholder | translate"
+            [label]="helptext.password | translate"
             [required]="true"
           ></ix-input>
         </ix-fieldset>
 
         <ix-fieldset
           class="fieldset"
-          [title]="helptext.fieldset_control | translate"
+          [title]="helptext.control | translate"
         >
           <ix-scheduler
             formControlName="schedule"
-            [label]="helptext.schedule_placeholder | translate"
+            [label]="helptext.schedule | translate"
             [required]="true"
           ></ix-scheduler>
           <ix-checkbox
             formControlName="enabled"
-            [label]="helptext.enabled_placeholder | translate"
-            [tooltip]="helptext.enabled_tooltip | translate"
+            [label]="helptext.enabled | translate"
+            [tooltip]="helptext.enabledTooltip | translate"
           ></ix-checkbox>
         </ix-fieldset>
 
         <ix-fieldset
           class="fieldset"
-          [title]="helptext.fieldset_advanced_options| translate"
+          [title]="helptext.advancedOptions| translate"
         >
           <ix-checkbox
             formControlName="snapshot"
-            [label]="helptext.snapshot_placeholder | translate"
-            [tooltip]="helptext.snapshot_tooltip | translate"
+            [label]="helptext.useSnapshot | translate"
+            [tooltip]="helptext.useSnapshotTooltip | translate"
           ></ix-checkbox>
           <ix-checkbox
             formControlName="absolute_paths"
-            [label]="helptext.absolute_paths_placeholder | translate"
-            [tooltip]="helptext.absolute_paths_tooltip | translate"
+            [label]="helptext.absolutePaths | translate"
+            [tooltip]="helptext.absolutePathsTooltip | translate"
           ></ix-checkbox>
           <ix-textarea
             formControlName="pre_script"
-            [label]="helptext.pre_script_placeholder | translate"
-            [tooltip]="helptext.pre_script_tooltip | translate"
+            [label]="helptext.preScript | translate"
+            [tooltip]="helptext.preScriptTooltip | translate"
           ></ix-textarea>
           <ix-textarea
             formControlName="post_script"
-            [label]="helptext.post_script_placeholder | translate"
-            [tooltip]="helptext.post_script_tooltip | translate"
+            [label]="helptext.postScript | translate"
+            [tooltip]="helptext.postScriptTooltip | translate"
           ></ix-textarea>
           <ix-chips
             formControlName="exclude"
-            [label]="helptext.exclude_placeholder | translate"
-            [tooltip]="helptext.exclude_tooltip | translate"
+            [label]="helptext.exclude | translate"
+            [tooltip]="helptext.excludeTooltip | translate"
           ></ix-chips>
         </ix-fieldset>
 
         <ix-fieldset
           class="fieldset"
-          [title]="helptext.fieldset_advanced_remote_options | translate"
+          [title]="helptext.advancedRemoteOptions | translate"
         >
           <ix-select
             formControlName="transfer_setting"

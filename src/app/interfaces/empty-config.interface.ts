@@ -1,15 +1,16 @@
 import { EmptyType } from 'app/enums/empty-type.enum';
+import { TranslatedString } from 'app/helpers/translate.helper';
 import { MarkedIcon } from 'app/modules/ix-icon/icon-marker.util';
 
 export interface EmptyConfig {
   type?: EmptyType;
   large?: boolean;
   compact?: boolean;
-  title: string;
-  message?: string;
+  title: TranslatedString;
+  message?: TranslatedString;
   icon?: MarkedIcon;
   button?: {
-    label: string;
+    label: TranslatedString;
     action: () => void;
   };
 }

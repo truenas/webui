@@ -13,6 +13,7 @@ import { map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { idNameArrayToOptions, singleArrayToOptions } from 'app/helpers/operators/options.operators';
+import { ignoreTranslation } from 'app/helpers/translate.helper';
 import { helptextLdap } from 'app/helptext/directory-service/ldap';
 import { LdapConfigUpdate } from 'app/interfaces/ldap-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -156,7 +157,7 @@ export class LdapComponent implements OnInit {
     this.dialogService.jobDialog(
       this.api.job('ldap.update', [values]),
       {
-        title: 'LDAP',
+        title: ignoreTranslation('LDAP'),
       },
     )
       .afterClosed()

@@ -3,20 +3,19 @@
     formControlName="host"
     [label]="'Hostname' | translate"
     [required]="true"
-    [tooltip]="helptext.SNMPTrap_host_tooltip | translate"
+    [tooltip]="helptext.snmpTrap.hostTooltip | translate"
   ></ix-input>
 
   <ix-input
     formControlName="port"
     type="number"
     [label]="'Port' | translate"
-    [tooltip]="helptext.SNMPTrap_port_tooltip | translate"
+    [tooltip]="helptext.snmpTrap.portTooltip | translate"
   ></ix-input>
 
   <ix-checkbox
     formControlName="v3"
     [label]="'SNMPv3 Security Model' | translate"
-    [tooltip]="helptext.SNMPTrap_v3_tooltip | translate"
   ></ix-checkbox>
 
   @if (isV3) {
@@ -24,19 +23,19 @@
       formControlName="v3_username"
       [label]="'Username' | translate"
       [required]="true"
-      [tooltip]="helptext.SNMPTrap_v3_username_tooltip | translate"
+      [tooltip]="helptext.snmpTrap.usernameTooltip | translate"
     ></ix-input>
 
     <ix-input
       formControlName="v3_authkey"
       [label]="'Secret Authentication Key' | translate"
-      [tooltip]="helptext.SNMPTrap_v3_authkey_tooltip | translate"
+      [tooltip]="helptext.snmpTrap.authKeyTooltip | translate"
     ></ix-input>
 
     <ix-input
       formControlName="v3_privkey"
       [label]="'Secret Encryption Key' | translate"
-      [tooltip]="helptext.SNMPTrap_v3_privkey_tooltip | translate"
+      [tooltip]="helptext.snmpTrap.privateKeyTooltip | translate"
     ></ix-input>
 
     <ix-select
@@ -44,7 +43,7 @@
       [label]="'Authentication Protocol' | translate"
       [options]="authProtocols$"
       [required]="true"
-      [tooltip]="helptext.SNMPTrap_v3_authprotocol_tooltip | translate"
+      [tooltip]="helptext.snmpTrap.authProtocolTooltip | translate"
     ></ix-select>
 
     <ix-select
@@ -52,13 +51,13 @@
       [label]="'Encryption Protocol' | translate"
       [options]="privProtocols$"
       [required]="true"
-      [tooltip]="helptext.SNMPTrap_v3_privprotocol_tooltip | translate"
+      [tooltip]="helptext.snmpTrap.encryptionProtocolTooltip | translate"
     ></ix-select>
   }
 
   <ix-input
     formControlName="community"
     [label]="'SNMP Community' | translate"
-    [tooltip]="helptext.SNMPTrap_community_tooltip | translate"
+    [tooltip]="helptext.snmpTrap.communityTooltip | translate"
   ></ix-input>
 </ng-container>

@@ -31,7 +31,7 @@ describe('QrViewerComponent', () => {
     spectator.setInput('showWarning', true);
     const warning = spectator.query(WarningComponent);
     expect(warning).toBeTruthy();
-    expect(warning).toHaveAttribute('message', helptext2fa.two_factor.qrCodeMessage);
+    expect(warning).toHaveAttribute('message', helptext2fa.qrCodeMessage);
   });
 
   it('shows qr code', () => {

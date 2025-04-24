@@ -100,7 +100,7 @@
 
           <ix-chips
             formControlName="watch_list"
-            hint="Keep this list empty to Watch All"
+            [hint]="'Keep this list empty to Watch All' | translate"
             [label]="'Watch List' | translate"
             [tooltip]="helptextSharingSmb.tooltip_watch_list | translate"
             [autocompleteProvider]="groupProvider"

@@ -73,16 +73,16 @@ export class SshKeypairFormComponent implements OnInit {
   form = this.fb.group({
     name: ['', Validators.required],
     private_key: [''],
-    public_key: ['', atLeastOne('private_key', [helptextSshKeypairs.private_key_placeholder, helptextSshKeypairs.public_key_placeholder])],
+    public_key: ['', atLeastOne('private_key', [helptextSshKeypairs.privateKeyLabel, helptextSshKeypairs.publicKeyLabel])],
   });
 
   readonly tooltips = {
-    name: helptextSshKeypairs.name_tooltip,
-    privateKey: helptextSshKeypairs.private_key_tooltip,
-    publicKey: helptextSshKeypairs.public_key_tooltip,
+    name: helptextSshKeypairs.nameTooltip,
+    privateKey: helptextSshKeypairs.privateKeyTooltip,
+    publicKey: helptextSshKeypairs.publicKeyTooltip,
   };
 
-  readonly keyInstructions = helptextSshKeypairs.key_instructions;
+  readonly keyInstructions = helptextSshKeypairs.keyInstructions;
 
   readonly canDownloadPublicKey$ = this.form.value$.pipe(map((value) => value.name && value.public_key));
   readonly canDownloadPrivateKey$ = this.form.value$.pipe(map((value) => value.name && value.private_key));

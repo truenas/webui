@@ -1,5 +1,6 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { hashMessage } from 'app/helpers/hash-message';
+import { ignoreTranslation } from 'app/helpers/translate.helper';
 import { UseEnterpriseMarketingLinkComponent } from './use-enterprise-marketing-link.component';
 
 const lastShownDate = 'marketingMessageLastShownDate';
@@ -56,9 +57,9 @@ describe('UseEnterpriseMarketingLinkComponent', () => {
     localStorage.setItem('marketingMessageLastHash', originalHash);
 
     spectator.component.messages = [
-      'Boost Performance & Support',
-      'Optimize Your Storage',
-      'More Performance, More Protection',
+      ignoreTranslation('Boost Performance & Support'),
+      ignoreTranslation('Optimize Your Storage'),
+      ignoreTranslation('More Performance, More Protection'),
     ];
 
     const nextMessage = spectator.component.getTodaysMessage();
