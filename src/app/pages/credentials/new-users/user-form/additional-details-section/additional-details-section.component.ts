@@ -2,13 +2,17 @@ import {
   ChangeDetectionStrategy, Component,
   computed,
 } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { map } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
+import { Option } from 'app/interfaces/option.interface';
+import { DetailsItemComponent } from 'app/modules/details-table/details-item/details-item.component';
+import { DetailsTableComponent } from 'app/modules/details-table/details-table.component';
+import { EditableComponent } from 'app/modules/forms/editable/editable.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { ChipsProvider } from 'app/modules/forms/ix-forms/components/ix-chips/chips-provider';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
@@ -37,6 +41,9 @@ import { FilesystemService } from 'app/services/filesystem.service';
     IxChipsComponent,
     IxExplorerComponent,
     MatCheckbox,
+    DetailsTableComponent,
+    DetailsItemComponent,
+    EditableComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -64,16 +71,21 @@ export class AdditionalDetailsSectionComponent {
     );
   };
 
-  form = this.fb.group({
+  readonly form = this.fb.group({
     full_name: [''],
 
-    groups: [[] as string[]],
+    group: [null as number],
     create_group: [true],
+    groups: [[] as number[]],
     email: [null as string],
     home: [''],
     create_home_directory: [false],
     default_permissions: [true],
+    uid: [null as number],
+    shell: new FormControl(null as string | null),
   });
+
+  shellOptions$: Observable<Option[]>;
 
   constructor(
     private filesystemService: FilesystemService,

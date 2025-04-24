@@ -10,6 +10,7 @@ export class EditableSaveOnEnterDirective {
     private editable: EditableComponent,
   ) {}
 
+  @HostListener('keydown.escape', ['$event'])
   @HostListener('keydown.enter', ['$event'])
   onEnter(event: KeyboardEvent): void {
     event.stopPropagation();

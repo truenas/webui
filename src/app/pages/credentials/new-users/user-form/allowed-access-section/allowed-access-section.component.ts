@@ -3,7 +3,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { Role, roleNames } from 'app/enums/role.enum';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -11,6 +11,8 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { UserFormStore } from 'app/pages/credentials/new-users/user-form/user.store';
+
+const defaultRole = 'prompt';
 
 @UntilDestroy()
 @Component({
@@ -32,7 +34,7 @@ export class AllowedAccessSectionComponent {
   protected readonly fakeTooltip = '';
 
   protected readonly roles$ = of([
-    { label: 'Select Role', value: 'prompt' },
+    { label: this.translate.instant('Select Role'), value: defaultRole },
     { label: roleNames.get(Role.FullAdmin), value: Role.FullAdmin },
     { label: roleNames.get(Role.SharingAdmin), value: Role.SharingAdmin },
     { label: roleNames.get(Role.ReadonlyAdmin), value: Role.ReadonlyAdmin },
@@ -43,12 +45,13 @@ export class AllowedAccessSectionComponent {
     truenas_access: [false],
     ssh_access: [false],
     shell_access: [false],
-    role: ['prompt'],
+    role: [defaultRole],
   });
 
   constructor(
     private fb: FormBuilder,
     private userStore: UserFormStore,
+    private translate: TranslateService,
   ) {
     this.form.controls.ssh_access.valueChanges.pipe(
       untilDestroyed(this),
@@ -74,7 +77,7 @@ export class AllowedAccessSectionComponent {
 
         if (this.form.controls.truenas_access.value) {
           this.userStore.updateSetupDetails({
-            role: 'prompt',
+            role: defaultRole,
           });
         }
       },
