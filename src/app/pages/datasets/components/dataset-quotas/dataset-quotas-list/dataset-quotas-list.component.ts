@@ -335,19 +335,19 @@ export class DatasetQuotasListComponent implements OnInit {
 
   private confirmShowAllQuotas(): Observable<boolean> {
     return this.dialogService.confirm({
-      title: helpTextQuotas[this.helpTextKey].filter_dialog.title_show,
-      message: helpTextQuotas[this.helpTextKey].filter_dialog.message_show,
+      title: this.translate.instant(helpTextQuotas[this.helpTextKey].filter_dialog.title_show),
+      message: this.translate.instant(helpTextQuotas[this.helpTextKey].filter_dialog.message_show),
       hideCheckbox: true,
-      buttonText: helpTextQuotas[this.helpTextKey].filter_dialog.button_show,
+      buttonText: this.translate.instant(helpTextQuotas[this.helpTextKey].filter_dialog.button_show),
     });
   }
 
   private confirmFilterQuotas(): Observable<boolean> {
     return this.dialogService.confirm({
-      title: helpTextQuotas[this.helpTextKey].filter_dialog.title_filter,
-      message: helpTextQuotas[this.helpTextKey].filter_dialog.message_filter,
+      title: this.translate.instant(helpTextQuotas[this.helpTextKey].filter_dialog.title_filter),
+      message: this.translate.instant(helpTextQuotas[this.helpTextKey].filter_dialog.message_filter),
       hideCheckbox: true,
-      buttonText: helpTextQuotas[this.helpTextKey].filter_dialog.button_filter,
+      buttonText: this.translate.instant(helpTextQuotas[this.helpTextKey].filter_dialog.button_filter),
     });
   }
 

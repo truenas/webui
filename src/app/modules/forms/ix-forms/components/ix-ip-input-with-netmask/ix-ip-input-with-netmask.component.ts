@@ -6,6 +6,7 @@ import { MatOption } from '@angular/material/core';
 import { MatInput } from '@angular/material/input';
 import { MatSelectChange, MatSelect } from '@angular/material/select';
 import { TranslateModule } from '@ngx-translate/core';
+import { TranslatedString } from 'app/helpers/translate.helper';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
@@ -34,9 +35,9 @@ import { NetworkService } from 'app/services/network.service';
   ],
 })
 export class IxIpInputWithNetmaskComponent implements ControlValueAccessor {
-  readonly label = input<string>();
-  readonly tooltip = input<string>();
-  readonly hint = input<string>();
+  readonly label = input<TranslatedString>();
+  readonly tooltip = input<TranslatedString>();
+  readonly hint = input<TranslatedString>();
   readonly required = input<boolean>(false);
 
   onChange: (value: string) => void = (): void => {};

@@ -2,6 +2,7 @@ import { inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ComboboxQueryType } from 'app/enums/combobox.enum';
+import { ignoreTranslation } from 'app/helpers/translate.helper';
 import { Option } from 'app/interfaces/option.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
@@ -61,7 +62,7 @@ export class UserPickerProvider implements IxComboboxProvider {
 
   private userQueryResToOptions(users: User[]): Option[] {
     return users.map((user) => ({
-      label: user.username,
+      label: ignoreTranslation(user.username),
       value: user[this.valueField],
     }));
   }

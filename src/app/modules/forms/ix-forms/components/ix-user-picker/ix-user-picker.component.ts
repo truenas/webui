@@ -27,6 +27,7 @@ import {
   debounceTime, distinctUntilChanged, filter, map, switchMap, takeUntil,
   tap,
 } from 'rxjs/operators';
+import { TranslatedString } from 'app/helpers/translate.helper';
 import { newOption, Option } from 'app/interfaces/option.interface';
 import { User } from 'app/interfaces/user.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
@@ -66,10 +67,10 @@ import { OldUserFormComponent } from 'app/pages/credentials/users/user-form/user
   ],
 })
 export class IxUserPickerComponent implements ControlValueAccessor, OnInit {
-  readonly label = input<string>();
-  readonly hint = input<string>();
+  readonly label = input<TranslatedString>();
+  readonly hint = input<TranslatedString>();
   readonly required = input<boolean>(false);
-  readonly tooltip = input<string>();
+  readonly tooltip = input<TranslatedString>();
   readonly allowCustomValue = input(false);
 
   readonly provider = input.required<UserPickerProvider>();

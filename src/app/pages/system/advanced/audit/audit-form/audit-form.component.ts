@@ -64,11 +64,11 @@ export class AuditFormComponent implements OnInit {
   });
 
   readonly tooltips = {
-    retention: helptext.retention_tooltip,
-    reservation: helptext.reservation_tooltip,
-    quota: helptext.quota_tooltip,
-    quota_fill_warning: helptext.quota_fill_warning_tooltip,
-    quota_fill_critical: helptext.quota_fill_critical_tooltip,
+    retention: helptext.retentionTooltip,
+    reservation: helptext.reservationTooltip,
+    quota: helptext.quotaTooltip,
+    quota_fill_warning: helptext.quotaFillWarningTooltip,
+    quota_fill_critical: helptext.quotaFillCriticalTooltip,
   };
 
   constructor(

@@ -22,6 +22,7 @@ import {
 import { ProductType } from 'app/enums/product-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { choicesToOptions, singleArrayToOptions } from 'app/helpers/operators/options.operators';
+import { TranslatedString } from 'app/helpers/translate.helper';
 import { helptextInterfacesForm } from 'app/helptext/network/interfaces/interfaces-form';
 import {
   NetworkInterface,
@@ -100,8 +101,8 @@ export class InterfaceFormComponent implements OnInit {
 
   protected isLoading = signal(false);
   isHaLicensed = false;
-  ipLabelSuffix = '';
-  failoverLabelSuffix = '';
+  ipLabelSuffix: TranslatedString = '';
+  failoverLabelSuffix: TranslatedString = '';
 
   form = this.formBuilder.group({
     type: new FormControl(null as NetworkInterfaceType | null, Validators.required),
@@ -388,11 +389,11 @@ export class InterfaceFormComponent implements OnInit {
         this.isHaLicensed = isHaLicensed;
         if (isHaLicensed) {
           if (failoverNode === 'A') {
-            this.ipLabelSuffix = ' ' + this.translate.instant('(This Controller)');
-            this.failoverLabelSuffix = ' ' + this.translate.instant('(TrueNAS Controller 2)');
+            this.ipLabelSuffix = ' ' + this.translate.instant('(This Controller)') as TranslatedString;
+            this.failoverLabelSuffix = ' ' + this.translate.instant('(TrueNAS Controller 2)') as TranslatedString;
           } else if (failoverNode === 'B') {
-            this.ipLabelSuffix = ' ' + this.translate.instant('(TrueNAS Controller 1)');
-            this.failoverLabelSuffix = ' ' + this.translate.instant('(This Controller)');
+            this.ipLabelSuffix = ' ' + this.translate.instant('(TrueNAS Controller 1)') as TranslatedString;
+            this.failoverLabelSuffix = ' ' + this.translate.instant('(This Controller)') as TranslatedString;
           }
         }
         this.cdr.markForCheck();
@@ -458,5 +459,9 @@ export class InterfaceFormComponent implements OnInit {
     }
 
     return params;
+  }
+
+  protected asTranslatedString(string: string): TranslatedString {
+    return string as TranslatedString;
   }
 }

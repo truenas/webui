@@ -6,6 +6,7 @@ import { MatCheckbox } from '@angular/material/checkbox';
 import { TranslateModule } from '@ngx-translate/core';
 import { PosixPermission } from 'app/enums/posix-acl.enum';
 import { parseMode } from 'app/helpers/mode.helper';
+import { TranslatedString } from 'app/helpers/translate.helper';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
@@ -31,8 +32,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class IxPermissionsComponent implements ControlValueAccessor {
-  readonly label = input<string>();
-  readonly tooltip = input<string>();
+  readonly label = input<TranslatedString>();
+  readonly tooltip = input<TranslatedString>();
   readonly required = input(false);
   readonly hideOthersPermissions = input(false);
 

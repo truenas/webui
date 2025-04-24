@@ -338,8 +338,8 @@ export class IdmapFormComponent implements OnInit {
 
   private askAndClearCache(): Observable<unknown> {
     return this.dialogService.confirm({
-      title: helptextIdmap.idmap.clear_cache_dialog.title,
-      message: helptextIdmap.idmap.clear_cache_dialog.message,
+      title: this.translate.instant(helptextIdmap.idmap.clear_cache_dialog.title),
+      message: this.translate.instant(helptextIdmap.idmap.clear_cache_dialog.message),
       hideCheckbox: true,
     }).pipe(
       switchMap((confirmed) => {

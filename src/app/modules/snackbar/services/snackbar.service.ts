@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
+import { TranslatedString } from 'app/helpers/translate.helper';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { SnackbarComponent } from 'app/modules/snackbar/components/snackbar/snackbar.component';
 
@@ -15,7 +16,7 @@ export class SnackbarService {
     private matSnackBar: MatSnackBar,
   ) {}
 
-  success(message: string): MatSnackBarRef<SnackbarComponent> {
+  success(message: TranslatedString): MatSnackBarRef<SnackbarComponent> {
     return this.matSnackBar.openFromComponent(SnackbarComponent, {
       announcementMessage: message,
       politeness: 'assertive',

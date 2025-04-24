@@ -50,7 +50,7 @@ export class ReplicationSettingsFormComponent implements OnInit {
   });
 
   readonly tooltips = {
-    max_parallel_replication_tasks: helptextSystemAdvanced.max_parallel_replication_tasks_tooltip,
+    max_parallel_replication_tasks: helptextSystemAdvanced.maxParallelReplicationTasksTooltip,
   };
 
   private replicationConfig: ReplicationConfig;

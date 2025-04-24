@@ -33,6 +33,7 @@ import { toggleMenuDuration } from 'app/constants/toggle-menu-duration';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { ReportingGraphName } from 'app/enums/reporting.enum';
 import { extractApiErrorDetails } from 'app/helpers/api.helper';
+import { ignoreTranslation } from 'app/helpers/translate.helper';
 import { ReportingData, ReportingDatabaseError } from 'app/interfaces/reporting.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
@@ -505,7 +506,7 @@ export class ReportComponent implements OnInit, OnChanges {
       this.report().errorConf = {
         type: EmptyType.Errors,
         title: this.translate.instant('Error getting chart data'),
-        message: apiError.reason,
+        message: ignoreTranslation(apiError.reason),
       };
     }
   }

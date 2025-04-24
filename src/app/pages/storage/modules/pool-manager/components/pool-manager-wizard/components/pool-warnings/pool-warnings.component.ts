@@ -10,6 +10,7 @@ import { uniq } from 'lodash-es';
 import {
   of, Observable, combineLatest, startWith,
 } from 'rxjs';
+import { ignoreTranslation } from 'app/helpers/translate.helper';
 import { helptextManager } from 'app/helptext/storage/volumes/manager/manager';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -104,7 +105,7 @@ export class PoolWarningsComponent implements OnInit {
       .filter((pool): pool is string => !!pool);
     const options = uniq(exportedPools).map((pool) => {
       this.poolAndDisks.set(pool, this.getDiskNamesByPool(pool));
-      return { label: pool, value: pool };
+      return { label: ignoreTranslation(pool), value: pool };
     });
     this.exportedPoolsOptions$ = of(options);
   }

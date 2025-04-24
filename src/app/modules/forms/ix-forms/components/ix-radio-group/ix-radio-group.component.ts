@@ -10,6 +10,7 @@ import { MatRadioChange, MatRadioGroup, MatRadioButton } from '@angular/material
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
+import { TranslatedString } from 'app/helpers/translate.helper';
 import { RadioOption } from 'app/interfaces/option.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
@@ -41,8 +42,8 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
   ],
 })
 export class IxRadioGroupComponent implements ControlValueAccessor {
-  readonly label = input<string>();
-  readonly tooltip = input<string>();
+  readonly label = input<TranslatedString>();
+  readonly tooltip = input<TranslatedString>();
   readonly required = input<boolean>(false);
   readonly options = input<Observable<RadioOption[]>>();
   readonly inlineFields = input<boolean>();

@@ -8,6 +8,7 @@ import {
 import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatedString } from 'app/helpers/translate.helper';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
@@ -37,8 +38,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class IxFileInputComponent implements ControlValueAccessor {
-  readonly label = input<string>();
-  readonly tooltip = input<string>();
+  readonly label = input<TranslatedString>();
+  readonly tooltip = input<TranslatedString>();
   readonly acceptedFiles = input('*.*');
   readonly multiple = input<boolean>();
   readonly required = input<boolean>(false);

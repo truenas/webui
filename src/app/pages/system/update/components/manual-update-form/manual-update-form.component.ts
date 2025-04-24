@@ -23,6 +23,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { isFailedJobError } from 'app/helpers/api.helper';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
+import { ignoreTranslation } from 'app/helpers/translate.helper';
 import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
 import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -135,7 +136,8 @@ export class ManualUpdateFormComponent implements OnInit {
       const options = [{ label: this.translate.instant('Memory device'), value: ':temp:' }];
       pools.forEach((pool) => {
         options.push({
-          label: '/mnt/' + pool.name, value: '/mnt/' + pool.name,
+          label: ignoreTranslation('/mnt/' + pool.name),
+          value: '/mnt/' + pool.name,
         });
       });
       this.fileLocationOptions$ = of(options);
@@ -255,10 +257,10 @@ export class ManualUpdateFormComponent implements OnInit {
     this.systemService.updateDone(); // Send 'finished' signal to topbar
     this.router.navigate(['/']);
     this.dialogService.confirm({
-      title: helptext.ha_update.complete_title,
-      message: helptext.ha_update.complete_msg,
+      title: this.translate.instant(helptext.ha_update.complete_title),
+      message: this.translate.instant(helptext.ha_update.complete_msg),
       hideCheckbox: true,
-      buttonText: helptext.ha_update.complete_action,
+      buttonText: this.translate.instant(helptext.ha_update.complete_action),
       hideCancel: true,
     }).pipe(untilDestroyed(this)).subscribe();
   }
@@ -276,9 +278,9 @@ export class ManualUpdateFormComponent implements OnInit {
 
     if (isFailedJobError(failure) && failure.job.error?.includes(updateAgainCode)) {
       this.dialogService.confirm({
-        title: helptext.continueDialogTitle,
-        message: failure.job.error.replace(updateAgainCode, ''),
-        buttonText: helptext.continueDialogAction,
+        title: this.translate.instant(helptext.continueDialogTitle),
+        message: ignoreTranslation(failure.job.error.replace(updateAgainCode, '')),
+        buttonText: this.translate.instant(helptext.continueDialogAction),
       }).pipe(
         filter(Boolean),
         untilDestroyed(this),
@@ -296,7 +298,7 @@ export class ManualUpdateFormComponent implements OnInit {
       : this.api.job('update.file', [{ resume: true }]);
 
     this.dialogService
-      .jobDialog(job$, { title: helptext.manual_update_action })
+      .jobDialog(job$, { title: this.translate.instant(helptext.manual_update_action) })
       .afterClosed()
       .pipe(untilDestroyed(this))
       .subscribe({

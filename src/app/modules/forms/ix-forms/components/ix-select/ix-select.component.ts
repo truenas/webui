@@ -15,6 +15,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { EMPTY, Observable } from 'rxjs';
 import { catchError, debounceTime, tap } from 'rxjs/operators';
+import { TranslatedString } from 'app/helpers/translate.helper';
 import { SelectOption, SelectOptionValueType } from 'app/interfaces/option.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
@@ -55,11 +56,11 @@ export type IxSelectValue = SelectOptionValueType;
   ],
 })
 export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChanges {
-  readonly label = input<string>();
-  readonly hint = input<string>();
+  readonly label = input<TranslatedString>();
+  readonly hint = input<TranslatedString>();
   readonly options = model<Observable<SelectOption[]>>();
   readonly required = input<boolean>(false);
-  readonly tooltip = input<string>();
+  readonly tooltip = input<TranslatedString>();
   readonly multiple = input<boolean>();
   readonly emptyValue = input<string | null>(null);
   readonly hideEmpty = input(false);
