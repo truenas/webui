@@ -7,6 +7,7 @@ import { MatButtonToggleChange, MatButtonToggleGroup, MatButtonToggle } from '@a
 import { MatHint } from '@angular/material/form-field';
 import { TranslateModule } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
+import { TranslatedString } from 'app/helpers/translate.helper';
 import { Option } from 'app/interfaces/option.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
@@ -37,9 +38,9 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class IxButtonGroupComponent implements ControlValueAccessor {
-  readonly label = input<string>();
-  readonly hint = input<string>();
-  readonly tooltip = input<string>();
+  readonly label = input<TranslatedString>();
+  readonly hint = input<TranslatedString>();
+  readonly tooltip = input<TranslatedString>();
   readonly required = input<boolean>(false);
   readonly options = input<Observable<Option[]>>();
   readonly vertical = input(false);

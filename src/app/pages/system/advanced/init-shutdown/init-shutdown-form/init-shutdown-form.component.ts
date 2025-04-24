@@ -86,12 +86,12 @@ export class InitShutdownFormComponent implements OnInit {
   readonly whenOptions$ = of(mapToOptions(initShutdownScriptWhenLabels, this.translate));
 
   readonly tooltips = {
-    type: helptextInitShutdown.ini_type_tooltip,
-    command: helptextInitShutdown.ini_command_tooltip,
-    script: helptextInitShutdown.ini_script_tooltip,
-    when: helptextInitShutdown.ini_when_tooltip,
-    enabled: helptextInitShutdown.ini_enabled_tooltip,
-    timeout: helptextInitShutdown.ini_timeout_tooltip,
+    type: helptextInitShutdown.typeTooltip,
+    command: helptextInitShutdown.commandTooltip,
+    script: helptextInitShutdown.scriptTooltip,
+    when: helptextInitShutdown.whenTooltip,
+    enabled: helptextInitShutdown.enabledTooltip,
+    timeout: helptextInitShutdown.timeoutTooltip,
   };
 
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider();

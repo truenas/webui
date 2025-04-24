@@ -1,5 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { IscsiAuthMethod, IscsiExtentType } from 'app/enums/iscsi.enum';
+import { Option } from 'app/interfaces/option.interface';
 
 export const helptextSharingIscsi = {
   fieldset_target_basic: T('Basic Info'),
@@ -34,7 +35,7 @@ export const helptextSharingIscsi = {
     'Choices are <i>None, Auto, CHAP,</i> or <i>Mutual CHAP</i>.',
   ),
   target_form_enum_authmethod: [{
-    label: 'None',
+    label: T('None'),
     value: IscsiAuthMethod.None,
   }, {
     label: 'CHAP',
@@ -215,7 +216,7 @@ export const helptextSharingIscsi = {
     { label: '1024', value: 1024 },
     { label: '2048', value: 2048 },
     { label: '4096', value: 4096 },
-  ],
+  ] as Option[],
 
   authaccess_tooltip_tag: T(
     'Allow different groups to be configured\

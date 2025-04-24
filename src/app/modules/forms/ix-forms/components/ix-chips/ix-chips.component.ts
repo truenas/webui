@@ -24,6 +24,7 @@ import {
 import {
   debounceTime, distinctUntilChanged, startWith, switchMap,
 } from 'rxjs/operators';
+import { TranslatedString } from 'app/helpers/translate.helper';
 import { Option } from 'app/interfaces/option.interface';
 import { ChipsProvider } from 'app/modules/forms/ix-forms/components/ix-chips/chips-provider';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
@@ -61,10 +62,10 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class IxChipsComponent implements OnChanges, ControlValueAccessor {
-  readonly label = input<string>();
-  readonly placeholder = input<string>('');
-  readonly hint = input<string>();
-  readonly tooltip = input<string>();
+  readonly label = input<TranslatedString>();
+  readonly placeholder = input<TranslatedString>('');
+  readonly hint = input<TranslatedString>();
+  readonly tooltip = input<TranslatedString>();
   readonly required = input<boolean>(false);
   readonly allowNewEntries = input(true);
   /**

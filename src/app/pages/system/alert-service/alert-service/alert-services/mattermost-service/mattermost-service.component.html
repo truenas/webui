@@ -3,7 +3,7 @@
     formControlName="url"
     [label]="'Webhook URL' | translate"
     [required]="true"
-    [tooltip]="helptext.Mattermost_url_tooltip | translate"
+    [tooltip]="helptext.mattermost.urlTooltip | translate"
     [parse]="formatter.stringAsUrlParsing"
   ></ix-input>
 
@@ -11,19 +11,18 @@
     formControlName="username"
     [label]="'Username' | translate"
     [required]="true"
-    [tooltip]="helptext.Mattermost_username_tooltip | translate"
   ></ix-input>
 
   <ix-input
     formControlName="channel"
     [label]="'Channel' | translate"
-    [tooltip]="helptext.Mattermost_channel_tooltip | translate"
+    [tooltip]="helptext.mattermost.channelTooltip | translate"
   ></ix-input>
 
   <ix-input
     formControlName="icon_url"
     [label]="'Icon URL' | translate"
-    [tooltip]="helptext.Mattermost_icon_url_tooltip | translate"
+    [tooltip]="helptext.mattermost.iconUrlTooltip | translate"
     [parse]="formatter.stringAsUrlParsing"
   ></ix-input>
 </ng-container>

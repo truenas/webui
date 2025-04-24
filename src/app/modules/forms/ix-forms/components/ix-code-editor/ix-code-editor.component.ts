@@ -24,6 +24,7 @@ import {
 } from 'rxjs';
 import { languageFunctionsMap } from 'app/constants/language-functions-map.constant';
 import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
+import { TranslatedString } from 'app/helpers/translate.helper';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
@@ -50,12 +51,12 @@ import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-ov
   ],
 })
 export class IxCodeEditorComponent implements OnChanges, OnInit, AfterViewInit, ControlValueAccessor {
-  readonly label = input<string>();
-  readonly hint = input<string>();
+  readonly label = input<TranslatedString>();
+  readonly hint = input<TranslatedString>();
   readonly required = input<boolean>(false);
-  readonly tooltip = input<string>();
+  readonly tooltip = input<TranslatedString>();
   readonly language = input<CodeEditorLanguage>();
-  readonly placeholder = input<string>('');
+  readonly placeholder = input<TranslatedString>('');
 
   afterViewInit$ = new BehaviorSubject<boolean>(false);
 

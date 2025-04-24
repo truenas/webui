@@ -274,10 +274,10 @@ export class NetworkComponent implements OnInit {
         }
         this.dialogService
           .confirm({
-            title: helptextInterfaces.commit_changes_title,
-            message: helptextInterfaces.commit_changes_warning,
+            title: this.translate.instant(helptextInterfaces.commit_changes_title),
+            message: this.translate.instant(helptextInterfaces.commit_changes_warning),
             hideCheckbox: false,
-            buttonText: helptextInterfaces.commit_button,
+            buttonText: this.translate.instant(helptextInterfaces.commit_button),
           })
           .pipe(untilDestroyed(this))
           .subscribe((confirm: boolean) => {
@@ -307,13 +307,13 @@ export class NetworkComponent implements OnInit {
     if (this.affectedServices.length > 0) {
       this.dialogService
         .confirm({
-          title: helptextInterfaces.services_restarted.title,
+          title: this.translate.instant(helptextInterfaces.services_restarted.title),
           message: this.translate.instant(helptextInterfaces.services_restarted.message, {
             uniqueIPs: this.uniqueIps.join(', '),
             affectedServices: this.affectedServices.join(', '),
           }),
           hideCheckbox: true,
-          buttonText: helptextInterfaces.services_restarted.button,
+          buttonText: this.translate.instant(helptextInterfaces.services_restarted.button),
         })
         .pipe(filter(Boolean), untilDestroyed(this))
         .subscribe(() => {
@@ -322,10 +322,10 @@ export class NetworkComponent implements OnInit {
     } else {
       this.dialogService
         .confirm({
-          title: helptextInterfaces.checkin_title,
-          message: helptextInterfaces.checkin_message,
+          title: this.translate.instant(helptextInterfaces.checkin_title),
+          message: this.translate.instant(helptextInterfaces.checkin_message),
           hideCheckbox: true,
-          buttonText: helptextInterfaces.checkin_button,
+          buttonText: this.translate.instant(helptextInterfaces.checkin_button),
         })
         .pipe(filter(Boolean), untilDestroyed(this))
         .subscribe(() => {
@@ -359,10 +359,10 @@ export class NetworkComponent implements OnInit {
   rollbackPendingChanges(): void {
     this.dialogService
       .confirm({
-        title: helptextInterfaces.rollback_changes_title,
-        message: helptextInterfaces.rollback_changes_warning,
+        title: this.translate.instant(helptextInterfaces.rollback_changes_title),
+        message: this.translate.instant(helptextInterfaces.rollback_changes_warning),
         hideCheckbox: false,
-        buttonText: helptextInterfaces.rollback_button,
+        buttonText: this.translate.instant(helptextInterfaces.rollback_button),
       })
       .pipe(untilDestroyed(this))
       .subscribe((confirm: boolean) => {

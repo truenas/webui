@@ -65,7 +65,7 @@ export class LeaveDomainDialog {
           }
 
           this.snackbar.success(
-            this.translate.instant(helptextActiveDirectory.ad_leave_domain_dialog.success_msg),
+            this.translate.instant(helptextActiveDirectory.domainLeftMessage),
           );
 
           this.dialogRef.close(true);
