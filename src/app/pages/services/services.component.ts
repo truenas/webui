@@ -17,6 +17,7 @@ import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus, serviceStatusLabels } from 'app/enums/service-status.enum';
+import { TranslatedString } from 'app/helpers/translate.helper';
 import { Service, ServiceRow } from 'app/interfaces/service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -336,7 +337,7 @@ export class ServicesComponent implements OnInit {
         if (sessions.length) {
           const connectionsMessage = this.translate.instant('{n, plural, one {There is an active iSCSI connection.} other {There are # active iSCSI connections}}', { n: sessions.length });
           const stopMessage = this.translate.instant('Stop the {serviceName} service and close these connections?', { serviceName });
-          message = `<font color="red">${connectionsMessage}</font><br>${stopMessage}`;
+          message = `<font color="red">${connectionsMessage}</font><br>${stopMessage}` as TranslatedString;
         }
 
         return this.dialogService.confirm({
