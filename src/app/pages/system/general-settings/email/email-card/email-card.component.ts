@@ -22,6 +22,7 @@ import { EmailFormComponent } from 'app/pages/system/general-settings/email/emai
 @UntilDestroy()
 @Component({
   selector: 'ix-email-card',
+  styleUrls: ['./../../common-settings-card.scss'],
   templateUrl: './email-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [

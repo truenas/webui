@@ -155,7 +155,7 @@ export class AppInfoCardComponent {
       switchMap(
         (version: string) => this.dialogService.jobDialog(
           this.api.job('app.upgrade', [name, { app_version: version }]),
-          { title: helptextApps.apps.upgrade_dialog.job },
+          { title: this.translate.instant(helptextApps.apps.upgrading) },
         ).afterClosed(),
       ),
       this.errorHandler.withErrorHandler(),
@@ -200,7 +200,7 @@ export class AppInfoCardComponent {
         remove_ix_volumes: options.removeVolumes,
         force_remove_ix_volumes: options.forceRemoveVolumes,
       }]),
-      { title: helptextApps.apps.delete_dialog.job },
+      { title: this.translate.instant(helptextApps.apps.deleting) },
     )
       .afterClosed()
       .pipe(

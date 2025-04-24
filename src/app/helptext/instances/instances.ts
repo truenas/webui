@@ -6,10 +6,10 @@ export const instancesHelptext = {
   memoryHint: T('Leave empty to not limit instance memory.'),
   vncHint: T('VNC connection is currently insecure. Secure the connection in other ways.'),
 
-  name_placeholder: T('Name'),
+  namePlaceholderLabel: T('Name'),
 
-  instance_type_placeholder: T('Virtualization Method'),
-  instance_type_tooltip: T('<b>Why choose Container?</b><br />\
+  virtualizationMethodLabel: T('Virtualization Method'),
+  virtualizationMethodTooltip: T('<b>Why choose Container?</b><br />\
 Containers, powered by LXC, offer lightweight, efficient virtualization by sharing the host OS kernel, \
 providing faster startup times and reduced resource usage compared to VMs. \
 <br /><br />\
@@ -19,62 +19,62 @@ Virtual Machines (VMs), powered by QEMU, offer full OS isolation, kernel indepen
 <br /><br />\
 Ideal for legacy applications, full-featured desktops, or software with strict OS dependencies.'),
 
-  cpu_memory_tooltip: T('<b>CPU Configuration</b><br />Enter the number of cores. Alternatively, use multiple values\
+  cpuMemoryTooltip: T('<b>CPU Configuration</b><br />Enter the number of cores. Alternatively, use multiple values\
  or ranges to set the CPU topology.<br />Example: 1-2, 5, 9-11.'),
 
-  cpu_placeholder: T('CPU Configuration'),
-  cpu_tooltip: T('Enter number of cores or multiple values or ranges to set CPU topology. Example: 1-2,5,9-11'),
+  cpuLabel: T('CPU Configuration'),
+  cpuTooltip: T('Enter number of cores or multiple values or ranges to set CPU topology. Example: 1-2,5,9-11'),
 
-  memory_placeholder: T('Memory Size'),
-  memory_tooltip: T('Specify RAM allocation for the container. You can use units such as GB, MB.'),
+  memoryLabel: T('Memory Size'),
+  memoryTooltip: T('Specify RAM allocation for the container. You can use units such as GB, MB.'),
 
-  env_placeholder: T('Environment Variables'),
-  env_name_placeholder: T('Name'),
-  env_value_placeholder: T('Value'),
+  envLabel: T('Environment Variables'),
+  envNameLabel: T('Name'),
+  envValueLabel: T('Value'),
 
-  disks_placeholder: T('Disks'),
-  disks_src_placeholder: T('Source'),
-  disks_dst_placeholder: T('Destination'),
-  disks_dst_tooltip: T('Specify the container filesystem path where the disk will be mounted.'),
+  disksLabel: T('Disks'),
+  disksSourceLabel: T('Source'),
+  disksDestinationLabel: T('Destination'),
+  disksDestinationTooltip: T('Specify the container filesystem path where the disk will be mounted.'),
 
-  proxies_placeholder: T('Proxies'),
+  proxiesLabel: T('Proxies'),
 
-  host_protocol_placeholder: T('Host Protocol'),
-  host_port_placeholder: T('Host Port'),
-  host_port_tooltip: T('Specify the host port to be mapped to the container\'s port.'),
+  hostProtocolLabel: T('Host Protocol'),
+  hostPortLabel: T('Host Port'),
+  hostPortTooltip: T('Specify the host port to be mapped to the container\'s port.'),
 
-  io_bus_tooltip: T('Choose the disk I/O bus type that best suits your system’s needs:\
+  ioBusTooltip: T('Choose the disk I/O bus type that best suits your system’s needs:\
  <br /><br /> • NVMe – Ideal for high-performance storage with faster read and write speeds.\
  <br /><br /> • Virtio-BLK – Efficient for virtualized environments, offering direct block device access with lower overhead.\
  <br /><br /> • Virtio-SCSI – Flexible and scalable, supporting advanced features like hot-swapping and multiple devices.'),
 
-  boot_from_tooltip: T('Select the disk to boot the instance from.'),
+  bootFromTooltip: T('Select the disk to boot the instance from.'),
 
-  instance_protocol_placeholder: T('Instance Protocol'),
-  instance_protocol_tooltip: T('Select the protocol for the instance\'s network connection.'),
-  instance_port_placeholder: T('Instance Port'),
+  instanceProtocolLabel: T('Instance Protocol'),
+  instanceProtocolTooltip: T('Select the protocol for the instance\'s network connection.'),
+  instancePortLabel: T('Instance Port'),
 
-  network_tooltip: T('Use the default network settings to connect the default bridge to the host.</br>\
+  networkTooltip: T('Use the default network settings to connect the default bridge to the host.</br>\
 <br />\
 <b>Bridged NIC</b> uses an existing bridge on the host and creates a virtual device pair to connect the host bridge to the instance.<br />\
 <br />\
 <b>Macvlan NIC</b> sets up a new network device based on an existing network device, but using a different MAC address.'),
 
-  network_use_default_placeholder: T('Use default network settings'),
-  network_bridged_nics_placeholder: T('Bridged NICs'),
-  network_mac_vlan_nics_placeholder: T('Macvlan NICs'),
+  networkUseDefaultLabel: T('Use default network settings'),
+  networkBridgedNicsLabel: T('Bridged NICs'),
+  networkMacVlanNicsLabel: T('Macvlan NICs'),
 
-  usb_devices_placeholder: T('USB Devices'),
+  usbDevicesLabel: T('USB Devices'),
 
-  enable_vnc_placeholder: T('Enable VNC'),
-  enable_vnc_tooltip: T('Check to allow remote desktop access via VNC.'),
+  enableVncLabel: T('Enable VNC'),
+  enableVncTooltip: T('Check to allow remote desktop access via VNC.'),
 
-  add_tpm_placeholder: T('Add Trusted Platform Module'),
-  add_tpm_tooltip: T('Virtual device that provides hardware-based security functions like encryption key management.'),
+  addTpmLabel: T('Add Trusted Platform Module'),
+  addTpmTooltip: T('Virtual device that provides hardware-based security functions like encryption key management.'),
 
-  secure_boot_tooltip: T('Secure Boot ensures that only trusted, signed software runs during a system’s startup process. May be incompatible with some images.'),
-  secure_boot_on_required_tooltip: T('Secure Boot is required for the VM image you selected'),
-  secure_boot_off_required_tooltip: T('Secure Boot is required to be off for the VM image you selected'),
+  secureBootTooltip: T('Secure Boot ensures that only trusted, signed software runs during a system’s startup process. May be incompatible with some images.'),
+  secureBootOnRequiredTooltip: T('Secure Boot is required for the VM image you selected'),
+  secureBootOffRequiredTooltip: T('Secure Boot is required to be off for the VM image you selected'),
 
   idMapHint: T('By default, accounts inside instances are mapped to a special private range of UIDs and GIDs to perform security isolation for the containers.\
   This range starts at 2147000001.\

@@ -89,7 +89,7 @@ describe('DatasetDetailsCardComponent', () => {
   it('shows header', () => {
     setupTest({ dataset });
 
-    expect(spectator.query('mat-card-header h3')).toHaveText('Dataset Details');
+    expect(spectator.query('mat-card-header h3')).toHaveText('Details');
     expect(spectator.query('mat-card-header button')).toHaveText('Edit');
   });
 
@@ -104,7 +104,6 @@ describe('DatasetDetailsCardComponent', () => {
 
       const details = getDetails();
       expect(details).toEqual({
-        'Type:': 'FILESYSTEM',
         'Sync:': 'STANDARD',
         'Compression:': '3.81x (LZ3)',
         'Enable Atime:': 'ON',
@@ -143,7 +142,6 @@ describe('DatasetDetailsCardComponent', () => {
 
       const details = getDetails();
       expect(details).toEqual({
-        'Type:': 'VOLUME',
         'Sync:': 'STANDARD',
         'Compression:': 'Inherit (3.81x (LZ4))',
         'ZFS Deduplication:': 'OFF',

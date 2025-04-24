@@ -15,11 +15,11 @@
   }
   @if (!isLoading()) {
     <div>
-      <h3 class="empty-title">{{ conf().title | translate }}</h3>
+      <h3 class="empty-title">{{ conf().title }}</h3>
       @if (conf().message && !conf().compact) {
         <p class="empty-message">
           @if (conf().message; as message) {
-            {{ message | translate }}
+            {{ message }}
           }
         </p>
       }
@@ -31,7 +31,7 @@
           [ixTest]="conf().button?.label"
           (click)="doAction()"
         >
-          {{ conf().button.label | translate }}
+          {{ conf().button.label }}
         </button>
       }
     </div>

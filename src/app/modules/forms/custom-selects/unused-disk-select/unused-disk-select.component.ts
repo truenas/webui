@@ -16,6 +16,7 @@ import {
 } from 'rxjs';
 import { shareReplay, startWith } from 'rxjs/operators';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
+import { ignoreTranslation, TranslatedString } from 'app/helpers/translate.helper';
 import { helptextVolumeStatus } from 'app/helptext/storage/volumes/volume-status';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -58,9 +59,9 @@ export class UnusedDiskSelectComponent implements OnInit, AfterViewInit {
    * Optional function to filter disks in addition to default select's behaviour.
    */
   readonly diskFilteringFn = input<(disk: DetailsDisk) => boolean>();
-  readonly label = input<string>();
+  readonly label = input<TranslatedString>();
   readonly required = input<boolean>(false);
-  readonly tooltip = input<string>();
+  readonly tooltip = input<TranslatedString>();
   // TODO: It may be better to allow for object to be written as value.
   readonly valueField = input<keyof DetailsDisk>('name');
 
@@ -159,7 +160,7 @@ export class UnusedDiskSelectComponent implements OnInit, AfterViewInit {
         const exportedPool = disk.exported_zpool ? `(${disk.exported_zpool})` : '';
 
         return {
-          label: `${disk.devname} (${buildNormalizedFileSize(disk.size)}) ${exportedPool}`,
+          label: ignoreTranslation(`${disk.devname} (${buildNormalizedFileSize(disk.size)}) ${exportedPool}`),
           value: disk[valueField] as string,
         };
       })

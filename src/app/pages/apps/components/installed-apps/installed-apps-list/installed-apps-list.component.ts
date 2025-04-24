@@ -24,6 +24,7 @@ import {
 } from 'rxjs';
 import { AppState } from 'app/enums/app-state.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
+import { ignoreTranslation } from 'app/helpers/translate.helper';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { App, AppStartQueryParams, AppStats } from 'app/interfaces/app.interface';
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
@@ -110,7 +111,7 @@ export class InstalledAppsListComponent implements OnInit {
   entityEmptyConf: EmptyConfig = {
     type: EmptyType.Loading,
     large: false,
-    title: helptextApps.message.loading,
+    title: this.translate.instant(helptextApps.message.loading),
   };
 
   get isSelectedAppVisible(): boolean {
@@ -232,7 +233,7 @@ export class InstalledAppsListComponent implements OnInit {
     switch (type) {
       case EmptyType.FirstUse:
       case EmptyType.NoPageData:
-        this.entityEmptyConf.title = helptextApps.message.no_installed;
+        this.entityEmptyConf.title = this.translate.instant(helptextApps.message.noInstalledApps);
         this.entityEmptyConf.message = this.translate.instant('Applications you install will automatically appear here. Click below and browse available apps to get started.');
         this.entityEmptyConf.button = {
           label: this.translate.instant('Check Available Apps'),
@@ -240,11 +241,11 @@ export class InstalledAppsListComponent implements OnInit {
         };
         break;
       case EmptyType.Errors:
-        this.entityEmptyConf.title = helptextApps.message.not_running;
+        this.entityEmptyConf.title = this.translate.instant(helptextApps.message.notRunning);
         this.entityEmptyConf.message = undefined;
         break;
       case EmptyType.NoSearchResults:
-        this.entityEmptyConf.title = helptextApps.message.no_search_result;
+        this.entityEmptyConf.title = this.translate.instant(helptextApps.message.noSearchResults);
         this.entityEmptyConf.message = undefined;
         this.entityEmptyConf.button = {
           label: this.translate.instant('Reset Search'),
@@ -351,7 +352,7 @@ export class InstalledAppsListComponent implements OnInit {
       return;
     }
     const job$ = this.store$.select(selectJob(jobId)).pipe(filter((job) => !!job));
-    this.dialogService.jobDialog(job$, { title: name, canMinimize: true })
+    this.dialogService.jobDialog(job$, { title: ignoreTranslation(name), canMinimize: true })
       .afterClosed()
       .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
       .subscribe();
@@ -440,7 +441,7 @@ export class InstalledAppsListComponent implements OnInit {
 
     return this.dialogService.jobDialog(
       this.api.job('core.bulk', ['app.delete', bulkDeletePayload]),
-      { title: helptextApps.apps.delete_dialog.job },
+      { title: this.translate.instant(helptextApps.apps.deleting) },
     ).afterClosed();
   }
 

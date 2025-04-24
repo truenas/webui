@@ -1,7 +1,7 @@
 <mat-card class="card">
   <mat-card-header>
     <h3 mat-card-title>
-      {{ isFilesystem() ? ('Dataset Details' | translate) : ('Zvol Details' | translate) }}
+      {{ isFilesystem() ? ('Details' | translate) : ('Zvol Details' | translate) }}
     </h3>
 
     @if (isFilesystem()) {
@@ -25,10 +25,18 @@
     }
   </mat-card-header>
   <mat-card-content>
-    <div class="details-item">
-      <div class="label">{{ 'Type' | translate }}:</div>
-      <div class="value">{{ dataset().type | orNotAvailable }}</div>
-    </div>
+    @if (isRootDataset) {
+      <div class="details-item">
+        <div class="label root-dataset">
+          {{ 'Root Dataset' | translate }}
+          <ix-tooltip
+            class="tooltip"
+            [message]="helptext.rootDatasetTooltip| translate"
+            [header]="'Root Dataset' | translate"
+          ></ix-tooltip>
+        </div>
+      </div>
+    }
     <div class="details-item">
       <div class="label">{{ 'Sync' | translate }}:</div>
       <div class="value">{{ dataset().sync.value | orNotAvailable }}</div>

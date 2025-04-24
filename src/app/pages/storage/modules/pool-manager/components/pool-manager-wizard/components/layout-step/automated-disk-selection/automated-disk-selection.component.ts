@@ -3,10 +3,11 @@ import {
 } from '@angular/core';
 import { FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { merge, of } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
 import { CreateVdevLayout, vdevLayoutOptions, VDevType } from 'app/enums/v-dev-type.enum';
+import { translateOptions } from 'app/helpers/translate.helper';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { SelectOption } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
@@ -52,7 +53,7 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
 
   protected dataLayoutTooltip = computed(() => {
     if (this.isDataVdev()) {
-      return 'Read only field: The layout of this device has been preselected to match the layout of the existing Data devices in the pool';
+      return this.translate.instant('Read only field: The layout of this device has been preselected to match the layout of the existing Data devices in the pool');
     }
 
     return '';
@@ -62,6 +63,7 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
 
   constructor(
     protected store: PoolManagerStore,
+    private translate: TranslateService,
   ) {
     this.updateStoreOnChanges();
     this.listenForResetEvents();
@@ -114,7 +116,7 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
 
   private updateLayoutOptionsFromLimitedLayouts(limitLayouts: CreateVdevLayout[]): void {
     const allowedLayouts = vdevLayoutOptions.filter((option) => limitLayouts.includes(option.value));
-    this.vdevLayoutOptions$ = of(allowedLayouts);
+    this.vdevLayoutOptions$ = of(translateOptions(this.translate, allowedLayouts));
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare
     const cannotChangeLayout = this.canChangeLayout() === false;
     if (cannotChangeLayout && limitLayouts.length) {

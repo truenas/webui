@@ -10,6 +10,7 @@ import { MatSelect } from '@angular/material/select';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
+import { TranslatedString } from 'app/helpers/translate.helper';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import {
@@ -41,8 +42,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class SchedulerComponent implements ControlValueAccessor {
-  readonly label = input<string>();
-  readonly tooltip = input<string>();
+  readonly label = input<TranslatedString>();
+  readonly tooltip = input<TranslatedString>();
   readonly required = input(false);
   readonly hideMinutes = input(false);
 

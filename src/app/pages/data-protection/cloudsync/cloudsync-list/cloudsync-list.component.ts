@@ -238,8 +238,8 @@ export class CloudSyncListComponent implements OnInit {
 
   dryRun(row: CloudSyncTaskUi): void {
     this.dialogService.confirm({
-      title: helptextCloudSync.dry_run_title,
-      message: helptextCloudSync.dry_run_dialog,
+      title: this.translate.instant(helptextCloudSync.dry_run_title),
+      message: this.translate.instant(helptextCloudSync.dry_run_dialog),
       hideCheckbox: true,
     }).pipe(
       filter(Boolean),

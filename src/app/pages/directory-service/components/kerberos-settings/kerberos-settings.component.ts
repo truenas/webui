@@ -51,8 +51,8 @@ export class KerberosSettingsComponent implements OnInit {
   });
 
   readonly tooltips = {
-    appdefaults_aux: helptextKerberosSettings.ks_appdefaults_tooltip,
-    libdefaults_aux: helptextKerberosSettings.ks_libdefaults_tooltip,
+    appdefaults_aux: helptextKerberosSettings.appDefaultsTooltip,
+    libdefaults_aux: helptextKerberosSettings.libDefaultsTooltip,
   };
 
   constructor(

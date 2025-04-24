@@ -17,6 +17,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { Role } from 'app/enums/role.enum';
+import { TranslatedString } from 'app/helpers/translate.helper';
 import { helptextDashboard } from 'app/helptext/directory-service/dashboard';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -37,7 +38,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { LdapComponent } from './components/ldap/ldap.component';
 
 interface DataCard {
-  title: string;
+  title: TranslatedString;
   items: Option[];
   onSettingsPressed: () => void;
 }
@@ -121,54 +122,54 @@ export class DirectoryServicesComponent implements OnInit {
         this.isLdapEnabled = servicesState.ldap !== DirectoryServiceState.Disabled;
 
         this.activeDirectoryDataCard = {
-          title: helptextDashboard.activeDirectory.title,
+          title: this.translate.instant(helptextDashboard.activeDirectory.title),
           items: [
             {
-              label: helptextDashboard.activeDirectory.status,
+              label: this.translate.instant(helptextDashboard.activeDirectory.status),
               value: servicesState.activedirectory,
             },
             {
-              label: helptextDashboard.activeDirectory.domainName,
+              label: this.translate.instant(helptextDashboard.activeDirectory.domainName),
               value: activeDirectoryConfig?.domainname || null,
             },
             {
-              label: helptextDashboard.activeDirectory.domainAccountName,
+              label: this.translate.instant(helptextDashboard.activeDirectory.domainAccountName),
               value: activeDirectoryConfig?.bindname || null,
             },
           ],
           onSettingsPressed: () => this.openActiveDirectoryForm(),
         };
         this.ldapDataCard = {
-          title: helptextDashboard.ldap.title,
+          title: this.translate.instant(helptextDashboard.ldap.title),
           items: [
             {
-              label: helptextDashboard.ldap.status,
+              label: this.translate.instant(helptextDashboard.ldap.status),
               value: servicesState.ldap,
             },
             {
-              label: helptextDashboard.ldap.hostname,
+              label: this.translate.instant(helptextDashboard.ldap.hostname),
               value: ldapConfig ? ldapConfig.hostname.join(',') : null,
             },
             {
-              label: helptextDashboard.ldap.baseDN,
+              label: this.translate.instant(helptextDashboard.ldap.baseDN),
               value: ldapConfig?.basedn || null,
             },
             {
-              label: helptextDashboard.ldap.bindDN,
+              label: this.translate.instant(helptextDashboard.ldap.bindDN),
               value: ldapConfig?.binddn || null,
             },
           ],
           onSettingsPressed: () => this.openLdapForm(),
         };
         this.kerberosSettingsDataCard = {
-          title: helptextDashboard.kerberosSettings.title,
+          title: this.translate.instant(helptextDashboard.kerberosSettings.title),
           items: [
             {
-              label: helptextDashboard.kerberosSettings.appdefaults,
+              label: this.translate.instant(helptextDashboard.kerberosSettings.appdefaults),
               value: kerberosSettings?.appdefaults_aux || null,
             },
             {
-              label: helptextDashboard.kerberosSettings.libdefaults,
+              label: this.translate.instant(helptextDashboard.kerberosSettings.libdefaults),
               value: kerberosSettings?.libdefaults_aux || null,
             },
           ],
@@ -184,9 +185,9 @@ export class DirectoryServicesComponent implements OnInit {
     // Immediately show additional setting, so that user knows what they are.
     expansionPanel.open();
     this.dialog.confirm({
-      title: helptextDashboard.advancedEdit.title,
+      title: this.translate.instant(helptextDashboard.advancedEdit.title),
       hideCheckbox: true,
-      message: helptextDashboard.advancedEdit.message,
+      message: this.translate.instant(helptextDashboard.advancedEdit.message),
     })
       .pipe(filter((confirmed) => !confirmed), untilDestroyed(this))
       .subscribe(() => {

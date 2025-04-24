@@ -13,6 +13,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
+import { TranslatedString } from 'app/helpers/translate.helper';
 import { helptextVolumes } from 'app/helptext/storage/volumes/volume-list';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { StorageDashboardDisk } from 'app/interfaces/disk.interface';
@@ -126,7 +127,7 @@ export class DashboardPoolComponent implements OnChanges {
   onUpgrade(): void {
     this.dialogService.confirm({
       title: this.translate.instant('Upgrade Pool'),
-      message: this.translate.instant(helptextVolumes.upgradePoolDialog_warning) + this.pool().name,
+      message: this.translate.instant(helptextVolumes.upgradePoolDialog_warning) + this.pool().name as TranslatedString,
     }).pipe(
       filter(Boolean),
       switchMap(() => {

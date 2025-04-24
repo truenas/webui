@@ -11,7 +11,7 @@
         [formArray]="form.controls.addresses"
         [empty]="form.controls.addresses.controls.length === 0"
         [label]="'Allowed IP Addresses' | translate"
-        [tooltip]="helpText.allowed_ip_addresses.tooltip"
+        [tooltip]="helpText.allowedIpAddresses.tooltip | translate"
         (add)="addAddress()"
       >
         @for (network of form.controls.addresses.controls; track network; let i = $index) {

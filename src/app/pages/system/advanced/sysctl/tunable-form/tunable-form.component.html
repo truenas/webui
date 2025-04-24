@@ -15,14 +15,14 @@
           formControlName="var"
           [label]="'Variable' | translate"
           [required]="true"
-          [tooltip]="tooltips.var"
+          [tooltip]="tooltips.var | translate"
         ></ix-input>
 
         <ix-textarea
           formControlName="value"
           [label]="'Value' | translate"
           [required]="true"
-          [tooltip]="tooltips.value"
+          [tooltip]="tooltips.value | translate"
         ></ix-textarea>
 
         <ix-input
@@ -33,7 +33,7 @@
         <ix-checkbox
           formControlName="enabled"
           [label]="'Enabled' | translate"
-          [tooltip]="tooltips.enabled"
+          [tooltip]="tooltips.enabled | translate"
         ></ix-checkbox>
       </ix-fieldset>
 
