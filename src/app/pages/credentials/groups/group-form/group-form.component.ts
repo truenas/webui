@@ -15,6 +15,7 @@ import { map, switchMap } from 'rxjs/operators';
 import { allCommands } from 'app/constants/all-commands.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
+import { ignoreTranslation } from 'app/helpers/translate.helper';
 import { helptextGroups } from 'app/helptext/account/groups';
 import { Group } from 'app/interfaces/group.interface';
 import { Privilege, PrivilegeUpdate } from 'app/interfaces/privilege.interface';
@@ -314,4 +315,6 @@ export class GroupFormComponent implements OnInit {
         .map((privileges) => privileges.id),
     ));
   }
+
+  protected readonly ignoreTranslation = ignoreTranslation;
 }

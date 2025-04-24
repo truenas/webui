@@ -1,18 +1,20 @@
+import { TranslatedString } from 'app/helpers/translate.helper';
+
 export interface ConfirmOptions {
-  title: string;
-  message: string;
+  title: TranslatedString;
+  message: TranslatedString;
   hideCheckbox?: boolean;
-  buttonText?: string;
+  buttonText?: TranslatedString;
   hideCancel?: boolean;
-  cancelText?: string;
+  cancelText?: TranslatedString;
   disableClose?: boolean;
-  confirmationCheckboxText?: string;
+  confirmationCheckboxText?: TranslatedString;
   buttonColor?: 'primary' | 'warn';
 }
 
 export interface ConfirmOptionsWithSecondaryCheckbox extends ConfirmOptions {
   secondaryCheckbox: boolean;
-  secondaryCheckboxText?: string;
+  secondaryCheckboxText?: TranslatedString;
 }
 
 export interface DialogWithSecondaryCheckboxResult {
@@ -21,8 +23,8 @@ export interface DialogWithSecondaryCheckboxResult {
 }
 
 export interface FullScreenDialogOptions {
-  title: string;
-  message: string;
+  title: TranslatedString;
+  message: TranslatedString;
   showClose: boolean;
   pre: boolean;
 }

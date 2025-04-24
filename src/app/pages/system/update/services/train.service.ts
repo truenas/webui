@@ -6,6 +6,7 @@ import {
 } from 'rxjs';
 import { SystemUpdateOperationType, SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { extractApiErrorDetails } from 'app/helpers/api.helper';
+import { TranslatedString } from 'app/helpers/translate.helper';
 import { SystemUpdateTrain, SystemUpdateTrains } from 'app/interfaces/system-update.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -62,7 +63,7 @@ export class TrainService {
 
         this.dialogService.confirm({
           title: this.translate.instant('Switch Train'),
-          message: warning + this.translate.instant('Switch update trains?'),
+          message: warning + this.translate.instant('Switch update trains?') as TranslatedString,
         }).pipe(untilDestroyed(this)).subscribe((confirmSwitch: boolean) => {
           if (confirmSwitch) {
             this.setTrainDescription();

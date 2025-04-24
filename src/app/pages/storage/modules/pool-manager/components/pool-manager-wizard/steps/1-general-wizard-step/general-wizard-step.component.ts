@@ -113,7 +113,7 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
       this.dialog
         .confirm({
           title: this.translate.instant('Warning'),
-          message: helptextManager.manager_encryption_message,
+          message: this.translate.instant(helptextManager.manager_encryption_message),
           buttonText: this.translate.instant('I Understand'),
         })
         .pipe(untilDestroyed(this))

@@ -165,10 +165,10 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
   private getConfirmation(): Observable<boolean> {
     if (this.userTwoFactorAuthConfigured) {
       return this.dialogService.confirm({
-        title: helptext2fa.renewSecret.title,
-        message: helptext2fa.renewSecret.message,
+        title: this.translate.instant(helptext2fa.renewSecret.title),
+        message: this.translate.instant(helptext2fa.renewSecret.message),
         hideCheckbox: true,
-        buttonText: helptext2fa.renewSecret.btn,
+        buttonText: this.translate.instant(helptext2fa.renewSecret.btn),
       });
     }
     return of(true);

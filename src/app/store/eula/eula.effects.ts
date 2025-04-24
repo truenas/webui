@@ -8,6 +8,7 @@ import {
 } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
 import { filterAsync } from 'app/helpers/operators/filter-async.operator';
+import { ignoreTranslation } from 'app/helpers/translate.helper';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -36,7 +37,7 @@ export class EulaEffects {
       switchMap((eula) => {
         return this.dialogService.confirm({
           title: this.translate.instant('End User License Agreement - TrueNAS'),
-          message: eula,
+          message: ignoreTranslation(eula),
           hideCheckbox: true,
           buttonText: this.translate.instant('I Agree'),
           hideCancel: true,

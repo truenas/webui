@@ -9,6 +9,7 @@ import { filter, switchMap, tap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
+import { TranslatedString } from 'app/helpers/translate.helper';
 import { ServiceRow } from 'app/interfaces/service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
@@ -130,7 +131,7 @@ export class ServiceStateColumnComponent extends ColumnComponent<ServiceRow> {
         if (sessions.length) {
           const connectionsMessage = this.translate.instant('{n, plural, one {There is an active iSCSI connection.} other {There are # active iSCSI connections}}', { n: sessions.length });
           const stopMessage = this.translate.instant('Stop the {serviceName} service and close these connections?', { serviceName });
-          message = `<font color="red">${connectionsMessage}</font><br>${stopMessage}`;
+          message = `<font color="red">${connectionsMessage}</font><br>${stopMessage}` as TranslatedString;
         }
 
         return this.dialogService.confirm({

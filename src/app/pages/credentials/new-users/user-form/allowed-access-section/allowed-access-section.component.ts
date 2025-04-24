@@ -29,8 +29,6 @@ import { UserFormStore } from 'app/pages/credentials/new-users/user-form/user.st
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AllowedAccessSectionComponent {
-  protected readonly fakeTooltip = '';
-
   protected readonly roles$ = of([
     { label: 'Select Role', value: 'prompt' },
     { label: roleNames.get(Role.FullAdmin), value: Role.FullAdmin },

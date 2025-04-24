@@ -25,6 +25,7 @@ import {
   catchError,
   debounceTime, distinctUntilChanged, map, takeUntil,
 } from 'rxjs/operators';
+import { TranslatedString } from 'app/helpers/translate.helper';
 import { Option } from 'app/interfaces/option.interface';
 import { IxComboboxProvider } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox-provider';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
@@ -60,10 +61,10 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class IxComboboxComponent implements ControlValueAccessor, OnInit {
-  readonly label = input<string>();
-  readonly hint = input<string>();
+  readonly label = input<TranslatedString>();
+  readonly hint = input<TranslatedString>();
   readonly required = input<boolean>(false);
-  readonly tooltip = input<string>();
+  readonly tooltip = input<TranslatedString>();
   readonly allowCustomValue = input(false);
 
   readonly provider = input.required<IxComboboxProvider>();

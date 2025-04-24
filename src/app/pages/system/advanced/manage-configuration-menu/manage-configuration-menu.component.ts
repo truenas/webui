@@ -5,7 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -51,6 +51,7 @@ export class ManageConfigurationMenuComponent {
     private matDialog: MatDialog,
     private authService: AuthService,
     private router: Router,
+    private translate: TranslateService,
   ) {}
 
   onDownloadConfig(): void {
@@ -63,9 +64,9 @@ export class ManageConfigurationMenuComponent {
 
   onResetToDefaults(): void {
     this.dialogService.confirm({
-      title: helptext.reset_config_form.title,
-      message: helptext.reset_config_form.message,
-      buttonText: helptext.reset_config_form.button_text,
+      title: this.translate.instant(helptext.reset_config_form.title),
+      message: this.translate.instant(helptext.reset_config_form.message),
+      buttonText: this.translate.instant(helptext.reset_config_form.button_text),
       buttonColor: 'warn',
     })
       .pipe(
