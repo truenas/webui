@@ -203,29 +203,31 @@ export class AdvancedSearchComponent<T> implements OnInit {
     this.queryInputValue = this.editorView.state.doc.toString();
     const parsedQuery = this.queryParser.parseQuery(this.queryInputValue);
 
-    this.hasQueryErrors = Boolean(this.queryInputValue.length && parsedQuery.hasErrors);
-    this.cdr.markForCheck();
-    this.cdr.detectChanges();
+    queueMicrotask(() => {
+      this.hasQueryErrors = Boolean(this.queryInputValue.length && parsedQuery.hasErrors);
+      this.cdr.markForCheck();
+      this.cdr.detectChanges();
 
-    this.recalculateActivePresetsFromRawQuery(this.queryInputValue);
+      this.recalculateActivePresetsFromRawQuery(this.queryInputValue);
 
-    if (parsedQuery.hasErrors && this.queryInputValue?.length) {
-      this.errorMessages = parsedQuery.errors;
+      if (parsedQuery.hasErrors && this.queryInputValue?.length) {
+        this.errorMessages = parsedQuery.errors;
+        this.editorView.dispatch({
+          effects: setDiagnostics.of(
+            parsedQuery.errors.filter((error) => error.from !== error.to),
+          ),
+        });
+        return;
+      }
+
       this.editorView.dispatch({
-        effects: setDiagnostics.of(
-          parsedQuery.errors.filter((error) => error.from !== error.to),
-        ),
+        effects: setDiagnostics.of([]),
       });
-      return;
-    }
+      this.errorMessages = null;
 
-    this.editorView.dispatch({
-      effects: setDiagnostics.of([]),
+      const filters = this.queryToApi.buildFilters(parsedQuery, this.properties());
+      this.paramsChange.emit(filters);
     });
-    this.errorMessages = null;
-
-    const filters = this.queryToApi.buildFilters(parsedQuery, this.properties());
-    this.paramsChange.emit(filters);
   }
 
   private replaceEditorContents(contents: string): void {
@@ -243,36 +245,32 @@ export class AdvancedSearchComponent<T> implements OnInit {
   }
 
   private recalculateActivePresetsFromRawQuery(query: string): void {
-    const chunks = this.tokenizeQuery(query);
-
+    const normalizedQuery = this.normalize(query);
     const activeLabels = new Set<string>();
 
+    if (!normalizedQuery || normalizedQuery.length < 2) {
+      this.selectedPresetLabels.set(activeLabels);
+      return;
+    }
+
     for (const preset of this.filterPresets() || []) {
-      const allUsed = preset.query.every((filter) => {
-        const normalizedFilter = this.normalize(
-          this.queryParser.formatFiltersToQuery([filter], this.properties()),
-        );
-        return chunks.includes(normalizedFilter);
+      const presetFilters = preset.query.map((filter) => {
+        return this.normalize(this.queryParser.formatFiltersToQuery([filter], this.properties()));
       });
 
-      if (allUsed) activeLabels.add(preset.label);
+      const hasPartialMatch = presetFilters.some((filterExpr) => {
+        return normalizedQuery.includes(filterExpr) || filterExpr.includes(normalizedQuery);
+      });
+
+      if (hasPartialMatch) {
+        activeLabels.add(preset.label);
+      }
     }
 
     this.selectedPresetLabels.set(activeLabels);
   }
 
-  private tokenizeQuery(query: string): string[] {
-    return query
-      .toLowerCase()
-      .replace(/["']/g, '')
-      .replace(/\s+/g, ' ')
-      .replace(/\s*(and|or)\s*/g, '|')
-      .split('|')
-      .map((chunk) => chunk.trim())
-      .filter(Boolean);
-  }
-
-  private normalize(str: string): string {
-    return str.replace(/["']/g, '').replace(/\s+/g, ' ').trim().toLowerCase();
+  private normalize(value: string): string {
+    return value.replace(/["']/g, '').replace(/\s+/g, ' ').trim().toLowerCase();
   }
 }
