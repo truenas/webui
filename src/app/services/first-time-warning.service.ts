@@ -15,8 +15,8 @@ export class FirstTimeWarningService {
   ) {}
 
   showFirstTimeWarningIfNeeded(title?: string, message?: string): Observable<true> {
-    const effectiveTitle = title || helptextSystemAdvanced.first_time.title;
-    const effectiveMessage = message || helptextSystemAdvanced.first_time.message;
+    const effectiveTitle = title || helptextSystemAdvanced.firstTime.title;
+    const effectiveMessage = message || helptextSystemAdvanced.firstTime.message;
 
     const warningKey = `${effectiveTitle}::${effectiveMessage}`;
 

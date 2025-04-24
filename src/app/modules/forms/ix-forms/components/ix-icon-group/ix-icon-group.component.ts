@@ -5,6 +5,7 @@ import { ControlValueAccessor, NgControl, ReactiveFormsModule } from '@angular/f
 import { MatIconButton } from '@angular/material/button';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { TranslatedString } from 'app/helpers/translate.helper';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IconGroupOption } from 'app/modules/forms/ix-forms/components/ix-icon-group/icon-group-option.interface';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
@@ -33,8 +34,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 })
 export class IxIconGroupComponent implements ControlValueAccessor {
   readonly options = input.required<IconGroupOption[]>();
-  readonly label = input<string>();
-  readonly tooltip = input<string>();
+  readonly label = input<TranslatedString>();
+  readonly tooltip = input<TranslatedString>();
   readonly required = input<boolean>(false);
   readonly showLabels = input<boolean>(false);
 

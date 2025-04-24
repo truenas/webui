@@ -296,10 +296,10 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
       ),
       take(1),
       switchMap(() => this.dialogService.confirm({
-        title: helptextSharingSmb.manglingDialog.title,
-        message: helptextSharingSmb.manglingDialog.message,
+        title: this.translate.instant(helptextSharingSmb.manglingDialog.title),
+        message: this.translate.instant(helptextSharingSmb.manglingDialog.message),
         hideCheckbox: true,
-        buttonText: helptextSharingSmb.manglingDialog.action,
+        buttonText: this.translate.instant(helptextSharingSmb.manglingDialog.action),
         hideCancel: true,
       })),
       untilDestroyed(this),
@@ -418,10 +418,10 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   showStripAclWarning(): void {
     this.dialogService
       .confirm({
-        title: helptextSharingSmb.stripACLDialog.title,
-        message: helptextSharingSmb.stripACLDialog.message,
+        title: this.translate.instant(helptextSharingSmb.stripACLDialog.title),
+        message: this.translate.instant(helptextSharingSmb.stripACLDialog.message),
         hideCheckbox: true,
-        buttonText: helptextSharingSmb.stripACLDialog.button,
+        buttonText: this.translate.instant(helptextSharingSmb.stripACLDialog.button),
         hideCancel: true,
       })
       .pipe(untilDestroyed(this))
@@ -452,10 +452,10 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     const afpControl = this.form.controls.afp;
     this.dialogService
       .confirm({
-        title: helptextSharingSmb.afpDialog_title,
-        message: helptextSharingSmb.afpDialog_message,
+        title: this.translate.instant(helptextSharingSmb.afpDialog_title),
+        message: this.translate.instant(helptextSharingSmb.afpDialog_message),
         hideCheckbox: false,
-        buttonText: helptextSharingSmb.afpDialog_button,
+        buttonText: this.translate.instant(helptextSharingSmb.afpDialog_button),
         hideCancel: false,
       })
       .pipe(untilDestroyed(this))

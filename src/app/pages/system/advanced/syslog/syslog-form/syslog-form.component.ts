@@ -77,17 +77,17 @@ export class SyslogFormComponent implements OnInit {
   readonly isTlsTransport$ = this.form.select((values) => values.syslog_transport === SyslogTransport.Tls);
 
   readonly tooltips = {
-    fqdn_syslog: helptext.fqdn_tooltip,
+    fqdn_syslog: helptext.fqdnTooltip,
     sysloglevel: helptext.sysloglevel.tooltip,
     syslogserver: helptext.syslogserver.tooltip,
-    syslog_transport: helptext.syslog_transport.tooltip,
-    syslog_tls_certificate: helptext.syslog_tls_certificate.tooltip,
-    syslog: helptext.system_dataset_tooltip,
-    syslog_audit: helptext.syslog_audit_tooltip,
+    syslog_transport: helptext.syslogTransport.tooltip,
+    syslog_tls_certificate: helptext.syslogTlsCertificate.tooltip,
+    syslog: helptext.systemDatasetTooltip,
+    syslog_audit: helptext.syslogAuditTooltip,
   };
 
   readonly levelOptions$ = of(helptextSystemAdvanced.sysloglevel.options);
-  readonly transportOptions$ = of(helptextSystemAdvanced.syslog_transport.options);
+  readonly transportOptions$ = of(helptextSystemAdvanced.syslogTransport.options);
   readonly certificateOptions$ = this.api.call('system.advanced.syslog_certificate_choices').pipe(
     choicesToOptions(),
   );

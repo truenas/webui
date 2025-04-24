@@ -51,7 +51,7 @@ export class KernelFormComponent implements OnInit {
   });
 
   readonly tooltips = {
-    debugkernel: helptextSystemAdvanced.debugkernel_tooltip,
+    debugkernel: helptextSystemAdvanced.debugKernelTooltip,
   };
 
   private debugkernel = false;

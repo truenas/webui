@@ -15,6 +15,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
+import { ignoreTranslation } from 'app/helpers/translate.helper';
 import { helptextActiveDirectory } from 'app/helptext/directory-service/active-directory';
 import { ActiveDirectoryUpdate, NssInfoType } from 'app/interfaces/active-directory.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -94,7 +95,7 @@ export class ActiveDirectoryComponent implements OnInit {
   readonly kerberosRealms$ = this.api.call('kerberos.realm.query').pipe(
     map((realms) => {
       return realms.map((realm) => ({
-        label: realm.realm,
+        label: ignoreTranslation(realm.realm),
         value: realm.id,
       }));
     }),
@@ -137,7 +138,7 @@ export class ActiveDirectoryComponent implements OnInit {
           this.isLoading.set(false);
           this.snackbarService.success(
             this.translate.instant(
-              description || helptextActiveDirectory.activedirectory_custactions_clearcache_dialog_message,
+              description || helptextActiveDirectory.cacheRebuilt,
             ),
           );
         },

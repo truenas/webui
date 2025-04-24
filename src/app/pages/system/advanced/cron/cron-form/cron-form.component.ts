@@ -77,12 +77,12 @@ export class CronFormComponent implements OnInit {
   protected isLoading = signal(false);
 
   readonly tooltips = {
-    command: helptextCron.cron_command_tooltip,
-    user: helptextCron.cron_user_tooltip,
-    schedule: helptextCron.crontab_tooltip,
-    stdout: helptextCron.cron_stdout_tooltip,
-    stderr: helptextCron.cron_stderr_tooltip,
-    enabled: helptextCron.cron_enabled_tooltip,
+    command: helptextCron.commandTooltip,
+    user: helptextCron.userTooltip,
+    schedule: helptextCron.crontabTooltip,
+    stdout: helptextCron.stdoutTooltip,
+    stderr: helptextCron.stderrTooltip,
+    enabled: helptextCron.enabledTooltip,
   };
 
   readonly userProvider = new UserComboboxProvider(this.userService);

@@ -52,10 +52,10 @@ export class SaveDebugButtonComponent {
   onSaveDebugClicked(): void {
     this.dialogService
       .confirm({
-        title: helptextSystemAdvanced.dialog_generate_debug_title,
-        message: helptextSystemAdvanced.dialog_generate_debug_message,
+        title: this.translate.instant(helptextSystemAdvanced.generateDebugTitle),
+        message: this.translate.instant(helptextSystemAdvanced.generateDebugMessage),
         hideCheckbox: true,
-        buttonText: helptextSystemAdvanced.dialog_button_ok,
+        buttonText: this.translate.instant(helptextSystemAdvanced.proceed),
       })
       .pipe(
         filter(Boolean),

@@ -181,7 +181,7 @@
                   <ix-ip-input-with-netmask
                     class="alias-ip"
                     formControlName="address"
-                    [label]="('IP Address' | translate) + ipLabelSuffix"
+                    [label]="asTranslatedString(('IP Address' | translate) + ipLabelSuffix)"
                     [required]="true"
                     [tooltip]="helptext.alias_address_tooltip | translate"
                   ></ix-ip-input-with-netmask>
@@ -189,7 +189,7 @@
                   @if (isHaLicensed) {
                     <ix-input
                       formControlName="failover_address"
-                      [label]="('IP Address' | translate) + failoverLabelSuffix"
+                      [label]="asTranslatedString(('IP Address' | translate) + failoverLabelSuffix)"
                       [required]="true"
                       [tooltip]="helptext.failover_alias_address_tooltip | translate"
                     ></ix-input>

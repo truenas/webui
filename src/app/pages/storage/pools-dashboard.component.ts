@@ -14,6 +14,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
+import { TranslatedString } from 'app/helpers/translate.helper';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { StorageDashboardDisk } from 'app/interfaces/disk.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
@@ -71,7 +72,7 @@ export class PoolsDashboardComponent implements OnInit {
       'It seems you haven\'t configured pools yet.',
     )} ${this.translate.instant(
       'Please click the button below to create a pool.',
-    )}`,
+    )}` as TranslatedString,
     button: {
       label: this.translate.instant('Create pool'),
       action: () => this.createPool(),
