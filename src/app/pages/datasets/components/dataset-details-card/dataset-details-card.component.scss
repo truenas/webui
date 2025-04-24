@@ -11,6 +11,12 @@
   .details-item {
     align-items: flex-start;
 
+    .root-dataset {
+      align-items: center;
+      display: flex;
+      gap: 8px;
+    }
+
     .value.dataset-path {
       display: flow-root;
       max-width: calc(100% - 85px);

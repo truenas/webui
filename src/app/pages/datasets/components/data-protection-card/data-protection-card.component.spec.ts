@@ -51,7 +51,7 @@ describe('DataProtectionComponent', () => {
   it('opens the snapshot add from when button clicked', async () => {
     const slideInRef = spectator.inject(SlideIn);
 
-    const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Snapshot' }));
+    const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Take Snapshot' }));
     await editButton.click();
 
     expect(slideInRef.open).toHaveBeenCalledWith(SnapshotAddFormComponent, { data: '/mnt/pool/ds' });

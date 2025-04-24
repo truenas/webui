@@ -47,9 +47,6 @@ describe('ZfsEncryptionCardComponent', () => {
     key_format: {
       value: EncryptionKeyFormat.Passphrase,
     },
-    encryption_algorithm: {
-      value: 'aes-256-cbc',
-    },
   } as DatasetDetails;
 
   const keyEncryptedRoot = {
@@ -86,7 +83,6 @@ describe('ZfsEncryptionCardComponent', () => {
       'Encryption Root:': ' Yes ',
       'Current State:': 'Unlocked',
       'Type:': ' Key ',
-      'Algorithm:': 'aes-256-cbc',
     });
 
     const buttons = await loader.getAllHarnesses(MatButtonHarness);
@@ -105,7 +101,6 @@ describe('ZfsEncryptionCardComponent', () => {
       'Encryption Root:': ' Yes ',
       'Current State:': 'Unlocked',
       'Type:': ' Passphrase ',
-      'Algorithm:': 'aes-256-cbc',
     });
 
     const buttons = await loader.getAllHarnesses(MatButtonHarness);
@@ -127,7 +122,6 @@ describe('ZfsEncryptionCardComponent', () => {
       'Encryption Root:': ' Yes ',
       'Current State:': 'Locked',
       'Type:': ' Passphrase ',
-      'Algorithm:': 'aes-256-cbc',
     });
 
     const buttons = await loader.getAllHarnesses(MatButtonHarness);
@@ -149,7 +143,6 @@ describe('ZfsEncryptionCardComponent', () => {
       'Encryption Root:': '/pool',
       'Current State:': 'Locked by ancestor',
       'Type:': ' Passphrase ',
-      'Algorithm:': 'aes-256-cbc',
     });
 
     const buttons = await loader.getAllHarnesses(MatButtonHarness);
