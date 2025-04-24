@@ -9,6 +9,7 @@ import { of } from 'rxjs';
 import { DatasetEncryptionType } from 'app/enums/dataset.enum';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
+import { ignoreTranslation, translateOptions } from 'app/helpers/translate.helper';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -69,10 +70,10 @@ export class EncryptionSectionComponent implements OnChanges, OnInit {
 
   readonly helptext = helptextDatasetForm;
 
-  encryptionTypeOptions$ = of([
+  encryptionTypeOptions$ = of(translateOptions(this.translate, [
     { label: T('Key'), value: DatasetEncryptionType.Default },
     { label: T('Passphrase'), value: DatasetEncryptionType.Passphrase },
-  ]);
+  ]));
 
   algorithmOptions$ = this.api.call('pool.dataset.encryption_algorithm_choices').pipe(choicesToOptions());
 
@@ -161,4 +162,6 @@ export class EncryptionSectionComponent implements OnChanges, OnInit {
     }
     this.form.controls.encryption.disable();
   }
+
+  protected readonly ignoreTranslation = ignoreTranslation;
 }

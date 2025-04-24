@@ -31,8 +31,6 @@ const defaultRole = 'prompt';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AllowedAccessSectionComponent {
-  protected readonly fakeTooltip = '';
-
   protected readonly roles$ = of([
     { label: this.translate.instant('Select Role'), value: defaultRole },
     { label: roleNames.get(Role.FullAdmin), value: Role.FullAdmin },

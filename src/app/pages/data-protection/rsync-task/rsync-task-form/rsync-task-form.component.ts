@@ -14,6 +14,7 @@ import { Direction } from 'app/enums/direction.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
 import { RsyncMode, RsyncSshConnectMode } from 'app/enums/rsync-mode.enum';
+import { ignoreTranslation } from 'app/helpers/translate.helper';
 import { helptextRsyncForm } from 'app/helptext/data-protection/rsync/rsync-form';
 import { newOption } from 'app/interfaces/option.interface';
 import { RsyncTask, RsyncTaskUpdate } from 'app/interfaces/rsync-task.interface';
@@ -126,7 +127,7 @@ export class RsyncTaskFormComponent implements OnInit {
 
   readonly rsyncModes$ = of([
     { label: this.translate.instant('Module'), value: RsyncMode.Module },
-    { label: 'SSH', value: RsyncMode.Ssh },
+    { label: ignoreTranslation('SSH'), value: RsyncMode.Ssh },
   ]);
 
   readonly sshConnectModes$ = of([

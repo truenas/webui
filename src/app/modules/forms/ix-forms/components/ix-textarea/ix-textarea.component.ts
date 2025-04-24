@@ -7,6 +7,7 @@ import {
 import { MatHint } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { UntilDestroy } from '@ngneat/until-destroy';
+import { TranslatedString } from 'app/helpers/translate.helper';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
@@ -34,10 +35,10 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class IxTextareaComponent implements ControlValueAccessor {
-  readonly label = input<string>();
-  readonly placeholder = input<string>();
-  readonly hint = input<string>();
-  readonly tooltip = input<string>();
+  readonly label = input<TranslatedString>();
+  readonly placeholder = input<TranslatedString>();
+  readonly hint = input<TranslatedString>();
+  readonly tooltip = input<TranslatedString>();
   readonly required = input<boolean>(false);
   readonly rows = input(4);
   readonly readonly = input<boolean>();

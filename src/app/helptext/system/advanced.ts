@@ -1,5 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { SyslogLevel, SyslogTransport } from 'app/enums/syslog.enum';
+import { Option } from 'app/interfaces/option.interface';
 
 export const helptextSystemAdvanced = {
   sedTitle: T('Self-Encrypting Drive'),
@@ -88,7 +89,7 @@ simultaneously.'),
       { label: 'UDP', value: SyslogTransport.Udp },
       { label: 'TCP', value: SyslogTransport.Tcp },
       { label: 'TLS', value: SyslogTransport.Tls },
-    ],
+    ] as Option[],
   },
 
   syslogTlsCertificate: {

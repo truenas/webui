@@ -7,6 +7,7 @@ import {
   BehaviorSubject,
   Observable, lastValueFrom, map, of,
 } from 'rxjs';
+import { ignoreTranslation } from 'app/helpers/translate.helper';
 import { QueryContext, ContextType } from 'app/interfaces/advanced-search.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { QueryComparator } from 'app/interfaces/query-api.interface';
@@ -279,14 +280,20 @@ export class AdvancedSearchAutocompleteService<T> {
           return searchedProperty?.valueSuggestions$ || of([]);
         }
 
-        return of(this.properties.map((property) => ({ label: property.label, value: property.label })));
+        return of(this.properties.map((property) => ({
+          label: ignoreTranslation(property.label),
+          value: property.label,
+        })));
 
       case ContextType.Logical:
-        return of(logicalSuggestions.map((property) => ({ label: property, value: property })));
+        return of(logicalSuggestions.map((property) => ({
+          label: ignoreTranslation(property),
+          value: property,
+        })));
 
       case ContextType.Comparator:
         return of(comparatorSuggestions.map((property, index) => ({
-          label: this.comparatorHints?.[property] || property,
+          label: ignoreTranslation(this.comparatorHints?.[property] || property),
           value: property.toUpperCase(),
           boost: comparatorSuggestions.length - index,
         })));

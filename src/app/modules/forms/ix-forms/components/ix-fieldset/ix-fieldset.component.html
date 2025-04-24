@@ -2,14 +2,14 @@
   @if (title()) {
     <div class="title-container">
       <legend class="title">
-        {{ title() | translate }}
+        {{ title() }}
       </legend>
 
       @if (tooltip()) {
         <ix-tooltip
           class="tooltip"
-          [header]="title() | translate"
-          [message]="tooltip() | translate"
+          [header]="title()"
+          [message]="tooltip()"
         ></ix-tooltip>
       }
     </div>

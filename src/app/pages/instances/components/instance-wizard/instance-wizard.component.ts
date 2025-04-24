@@ -37,8 +37,9 @@ import {
   virtualizationTypeIcons,
   VolumeContentType,
 } from 'app/enums/virtualization.enum';
-import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
+import { choicesToOptions, singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
+import { ignoreTranslation } from 'app/helpers/translate.helper';
 import { instancesHelptext } from 'app/helptext/instances/instances';
 import { Option } from 'app/interfaces/option.interface';
 import {
@@ -148,7 +149,7 @@ export class InstanceWizardComponent implements OnInit {
 
   usbDevices$ = this.api.call('virt.device.usb_choices').pipe(
     map((choices) => Object.values(choices).map((choice) => ({
-      label: `${choice.product} (${choice.product_id})`,
+      label: ignoreTranslation(`${choice.product} (${choice.product_id})`),
       value: choice.product_id.toString(),
     }))),
   );
@@ -230,7 +231,7 @@ export class InstanceWizardComponent implements OnInit {
         .filter((control) => control.controls.source?.value)
         .map((control) => {
           const source = control.controls.source?.value;
-          return { label: source, value: source };
+          return { label: ignoreTranslation(source), value: source };
         });
     }),
   );
@@ -492,12 +493,7 @@ export class InstanceWizardComponent implements OnInit {
   }
 
   private getNicDevicesOptions(nicType: VirtualizationNicType): Observable<Option[]> {
-    return this.api.call('virt.device.nic_choices', [nicType]).pipe(
-      map((choices) => Object.values(choices).map((choice) => ({
-        label: choice,
-        value: choice,
-      }))),
-    );
+    return this.api.call('virt.device.nic_choices', [nicType]).pipe(choicesToOptions());
   }
 
   private get environmentVariablesPayload(): Record<string, string> {

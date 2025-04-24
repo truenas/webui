@@ -19,14 +19,6 @@
       flex: 1;
     }
   }
-
-  .details .label {
-    @media (max-width: calc($breakpoint-dualcolumn - 1px)) {
-      display: block;
-      padding: 0;
-      width: 100%;
-    }
-  }
 }
 
 .details {

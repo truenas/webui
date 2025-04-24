@@ -137,7 +137,7 @@ export class NfsListComponent implements OnInit {
           onClick: (row) => {
             this.dialog.confirm({
               title: this.translate.instant('Unshare {name}', { name: row.path }),
-              message: shared.delete_share_message,
+              message: this.translate.instant(shared.delete_share_message),
               buttonText: this.translate.instant('Unshare'),
               buttonColor: 'warn',
             }).pipe(

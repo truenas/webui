@@ -7,6 +7,7 @@ import {
 import { AbstractControl } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
+import { TranslatedString } from 'app/helpers/translate.helper';
 import { ChartSchemaNode } from 'app/interfaces/app.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
@@ -27,8 +28,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 })
 export class IxListComponent implements AfterViewInit {
   readonly formArray = input<AbstractControl>();
-  readonly label = input<string>();
-  readonly tooltip = input<string>();
+  readonly label = input<TranslatedString>();
+  readonly tooltip = input<TranslatedString>();
   readonly empty = input<boolean>();
   readonly required = input<boolean>(false);
   readonly canAdd = input(true);

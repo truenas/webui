@@ -21,6 +21,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { TranslatedString } from 'app/helpers/translate.helper';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
@@ -61,11 +62,11 @@ type InputValue = string | number | null;
   ],
 })
 export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges {
-  readonly label = input<string>();
-  readonly placeholder = input<string>('');
+  readonly label = input<TranslatedString>();
+  readonly placeholder = input<TranslatedString>('');
   readonly prefixIcon = input<MarkedIcon>();
-  readonly hint = input<string>();
-  readonly tooltip = input<string>();
+  readonly hint = input<TranslatedString>();
+  readonly tooltip = input<TranslatedString>();
   readonly required = input<boolean>(false);
   readonly readonly = input<boolean>();
   readonly type = input<string>('text');

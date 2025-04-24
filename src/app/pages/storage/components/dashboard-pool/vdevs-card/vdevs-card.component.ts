@@ -142,7 +142,7 @@ export class VDevsCardComponent implements OnInit, OnChanges {
   }
 
   private parseDevs(vdevs: VDevItem[], category: VDevType, warning?: string): string {
-    let outputString = vdevs.length ? '' : this.notAssignedDev;
+    let outputString = vdevs.length ? '' : this.notAssignedDev as string;
 
     // Check VDEV Widths
     let vdevWidth = 0;

@@ -17,6 +17,7 @@ import { AlertLevel } from 'app/enums/alert-level.enum';
 import { AlertPolicy } from 'app/enums/alert-policy.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
+import { ignoreTranslation } from 'app/helpers/translate.helper';
 import { helptextAlertSettings } from 'app/helptext/system/alert-settings';
 import { AlertCategory, AlertClassesUpdate, AlertClassSettings } from 'app/interfaces/alert.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -80,7 +81,7 @@ export class AlertConfigFormComponent implements OnInit {
 
   readonly policyOptions$ = this.api.call('alert.list_policies').pipe(
     map((policyList) => {
-      return policyList.map((policy) => ({ label: policy, value: policy }));
+      return policyList.map((policy) => ({ label: ignoreTranslation(policy), value: policy }));
     }),
   );
 

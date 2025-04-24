@@ -109,7 +109,7 @@ export class TaskService {
     { label: '23:30:00', value: '23:30' },
     { label: '23:45:00', value: '23:45' },
     { label: '23:59:00', value: '23:59' },
-  ];
+  ] as Option[];
 
   protected cronOptions: CronOptions = {
     verbose: true,
