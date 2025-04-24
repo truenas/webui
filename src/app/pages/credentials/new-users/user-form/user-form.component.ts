@@ -89,10 +89,7 @@ export class UserFormComponent implements OnInit {
     this.setupUsernameUpdate();
     this.listenForAllFormsValidity();
 
-    // TODO: Handle enable/disable save button based on form sections validation status
     // TODO: Handle changes for `sshpubkey_file` input to set values on sshpubkey
-    // TODO: Handle changes on `group` input to update shell options
-    // TODO: Handle changes on `groups` input to update shell options
     // TODO: Handle changes on `home` input to set the value of `home_mode` input
     // TODO: Handle changes on `home_create` field to set the value for `home_mode` field
     // TODO: Add validator to `password_conf` field to match the value of `pasword` field
@@ -137,6 +134,21 @@ export class UserFormComponent implements OnInit {
     // TODO: Add controls for sudo related values
 
     this.editingUser.set(this.slideInRef.getData() as User);
+
+    if (this.editingUser()) {
+      this.userFormStore.updateUserConfig({
+        username: this.editingUser().username,
+        email: this.editingUser().email,
+        full_name: this.editingUser().full_name,
+        smb: this.editingUser().smb,
+        shell: this.editingUser().shell,
+        home: this.editingUser().home,
+        uid: this.editingUser().uid,
+      });
+      this.form.patchValue({
+        username: this.editingUser().username,
+      });
+    }
   }
 
   private setupUsernameUpdate(): void {
