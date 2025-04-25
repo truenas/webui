@@ -60,10 +60,10 @@ export class KerberosRealmsFormComponent implements OnInit {
   });
 
   readonly tooltips = {
-    realm: helptextKerberosRealms.krbrealm_form_realm_tooltip,
-    kdc: `${helptextKerberosRealms.krbrealm_form_kdc_tooltip} ${helptextKerberosRealms.multiple_values}`,
-    admin_server: `${helptextKerberosRealms.krbrealm_form_admin_server_tooltip} ${helptextKerberosRealms.multiple_values}`,
-    kpasswd_server: `${helptextKerberosRealms.krbrealm_form_kpasswd_server_tooltip} ${helptextKerberosRealms.multiple_values}`,
+    realm: helptextKerberosRealms.realmTooltip,
+    kdc: `${helptextKerberosRealms.kdcTooltip} ${helptextKerberosRealms.multipleValues}`,
+    admin_server: `${helptextKerberosRealms.adminServersTooltip} ${helptextKerberosRealms.multipleValues}`,
+    kpasswd_server: `${helptextKerberosRealms.passwordServersTooltip} ${helptextKerberosRealms.multipleValues}`,
   };
 
   get title(): string {

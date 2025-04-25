@@ -88,29 +88,27 @@ export class SnapshotTaskFormComponent implements OnInit {
   protected editingTask: PeriodicSnapshotTask | undefined;
 
   readonly labels = {
-    dataset: helptextSnapshotForm.dataset_placeholder,
-    exclude: helptextSnapshotForm.exclude_placeholder,
-    recursive: helptextSnapshotForm.recursive_placeholder,
-    lifetime: helptextSnapshotForm.lifetime_placeholder,
-    naming_schema: helptextSnapshotForm.naming_schema_placeholder,
-    schedule: helptextSnapshotForm.snapshot_picker_placeholder,
-    begin: helptextSnapshotForm.begin_placeholder,
-    end: helptextSnapshotForm.end_placeholder,
-    allow_empty: helptextSnapshotForm.allow_empty_placeholder,
-    enabled: helptextSnapshotForm.enabled_placeholder,
+    dataset: helptextSnapshotForm.datasetLabel,
+    exclude: helptextSnapshotForm.excludeLabel,
+    recursive: helptextSnapshotForm.recursiveLabel,
+    lifetime: helptextSnapshotForm.lifetimeLabel,
+    naming_schema: helptextSnapshotForm.namingSchemaLabel,
+    schedule: helptextSnapshotForm.scheduleLabel,
+    begin: helptextSnapshotForm.beginLabel,
+    end: helptextSnapshotForm.endLabel,
+    allow_empty: helptextSnapshotForm.allowEmptyLabel,
+    enabled: helptextSnapshotForm.enabledLabel,
   };
 
   readonly tooltips = {
-    dataset: helptextSnapshotForm.dataset_tooltip,
-    exclude: helptextSnapshotForm.exclude_tooltip,
-    recursive: helptextSnapshotForm.recursive_tooltip,
-    lifetime: helptextSnapshotForm.lifetime_tooltip,
-    naming_schema: helptextSnapshotForm.naming_schema_tooltip,
-    schedule: helptextSnapshotForm.snapshot_picker_tooltip,
-    begin: helptextSnapshotForm.begin_tooltip,
-    end: helptextSnapshotForm.end_tooltip,
-    allow_empty: helptextSnapshotForm.allow_empty_tooltip,
-    enabled: helptextSnapshotForm.enabled_tooltip,
+    exclude: helptextSnapshotForm.excludeTooltip,
+    recursive: helptextSnapshotForm.recursiveTooltip,
+    lifetime: helptextSnapshotForm.lifetimeTooltip,
+    naming_schema: helptextSnapshotForm.namingSchemaTooltip,
+    schedule: helptextSnapshotForm.scheduleTooltip,
+    begin: helptextSnapshotForm.beginTooltip,
+    end: helptextSnapshotForm.endTooltip,
+    allow_empty: helptextSnapshotForm.allowEmptyTooltip,
   };
 
   readonly datasetOptions$ = this.storageService.getDatasetNameOptions();

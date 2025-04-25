@@ -1,6 +1,6 @@
 <h1 matDialogTitle>{{ 'Upload Config' | translate }}</h1>
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-  <div [innerHtml]="helptext.upload_config_form.message | translate"></div>
+  <div [innerHtml]="helptext.uploadConfigForm.message | translate"></div>
 
   <ix-file-input
     formControlName="config"

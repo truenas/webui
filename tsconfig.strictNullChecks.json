@@ -203,7 +203,6 @@
     "./src/app/helptext/sharing/iscsi/iscsi.ts",
     "./src/app/helptext/sharing/nfs/nfs.ts",
     "./src/app/helptext/sharing/smb/smb.ts",
-    "./src/app/helptext/shell/shell.ts",
     "./src/app/helptext/storage/disks/disks.ts",
     "./src/app/helptext/storage/resilver/resilver.ts",
     "./src/app/helptext/storage/snapshots/snapshots.ts",

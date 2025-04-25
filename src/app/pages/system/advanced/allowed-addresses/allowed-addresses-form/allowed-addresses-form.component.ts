@@ -103,8 +103,8 @@ export class AllowedAddressesFormComponent implements OnInit {
 
   handleServiceRestart(): Observable<true> {
     return this.dialogService.confirm({
-      title: this.translate.instant(helptextSystemGeneral.dialog_confirm_title),
-      message: this.translate.instant(helptextSystemGeneral.dialog_confirm_message),
+      title: this.translate.instant(helptextSystemGeneral.restartTitle),
+      message: this.translate.instant(helptextSystemGeneral.restartMessage),
     }).pipe(
       switchMap((shouldRestart): Observable<true> => {
         if (!shouldRestart) {

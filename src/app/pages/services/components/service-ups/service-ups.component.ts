@@ -77,7 +77,6 @@ export class ServiceUpsComponent implements OnInit {
     powerdown: [false],
     nocommwarntime: [300 as number | null],
     hostsync: [15],
-    description: [null as string | null],
     options: [null as string | null],
     optionsupsd: [null as string | null],
   });
@@ -100,7 +99,6 @@ export class ServiceUpsComponent implements OnInit {
     powerdown: helptextServiceUps.ups_powerdown_placeholder,
     nocommwarntime: helptextServiceUps.ups_nocommwarntime_placeholder,
     hostsync: helptextServiceUps.ups_hostsync_placeholder,
-    description: helptextServiceUps.ups_description_placeholder,
     options: helptextServiceUps.ups_options_placeholder,
     optionsupsd: helptextServiceUps.ups_optionsupsd_placeholder,
   };
@@ -135,7 +133,6 @@ export class ServiceUpsComponent implements OnInit {
     powerdown: helptextServiceUps.ups_powerdown_tooltip,
     nocommwarntime: helptextServiceUps.ups_nocommwarntime_tooltip,
     hostsync: helptextServiceUps.ups_hostsync_tooltip,
-    description: helptextServiceUps.ups_description_tooltip,
     options: helptextServiceUps.ups_options_tooltip,
     optionsupsd: helptextServiceUps.ups_optionsupsd_tooltip,
   };

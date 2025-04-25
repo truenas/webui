@@ -8,7 +8,6 @@ export const helptextCloudSync = {
   advanced_remote_options: T('Advanced Remote Options'),
 
   description_placeholder: T('Description'),
-  description_tooltip: T('Enter a description of the Cloud Sync Task.'),
 
   direction_placeholder: T('Direction'),
   direction_tooltip: T('<i>PUSH</i> sends data to cloud storage. <i>PULL</i> \
@@ -135,8 +134,6 @@ export const helptextCloudSync = {
  target="_blank">rclone --transfers</a>.'),
 
   enabled_placeholder: T('Enabled'),
-  enabled_tooltip: T('Enable this Cloud Sync Task. Unset to disable this Cloud\
- Sync Task without deleting it.'),
 
   bwlimit_placeholder: T('Bandwidth Limit'),
   bwlimit_tooltip: T('A single bandwidth limit or bandwidth limit schedule in rclone format.\

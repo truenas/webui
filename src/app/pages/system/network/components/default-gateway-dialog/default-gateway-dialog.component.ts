@@ -12,7 +12,6 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { Role } from 'app/enums/role.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { helptextNetworkConfiguration } from 'app/helptext/network/configuration/configuration';
-import { helptextIpmi } from 'app/helptext/network/ipmi/ipmi';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -53,10 +52,7 @@ export class DefaultGatewayDialog {
       '',
       {
         validators: [
-          this.validatorsService.withMessage(
-            ipv4Validator(),
-            this.translate.instant(helptextIpmi.ip_error),
-          ),
+          ipv4Validator(),
           Validators.required,
         ],
         updateOn: 'blur',

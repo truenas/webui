@@ -14,7 +14,7 @@ import { of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
-import { helptextSharingIscsi } from 'app/helptext/sharing';
+import { helptextIscsi } from 'app/helptext/sharing';
 import { AssociatedTargetDialogData, IscsiTargetExtentUpdate } from 'app/interfaces/iscsi.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -61,8 +61,8 @@ export class AssociatedTargetFormComponent {
   extents$ = of(this.data.extents).pipe(idNameArrayToOptions());
 
   readonly tooltips = {
-    lunid: helptextSharingIscsi.associated_target_tooltip_lunid,
-    extent: helptextSharingIscsi.associated_target_tooltip_extent,
+    lunid: helptextIscsi.associated_target_tooltip_lunid,
+    extent: helptextIscsi.associated_target_tooltip_extent,
   };
 
   protected readonly requiredRoles = [
