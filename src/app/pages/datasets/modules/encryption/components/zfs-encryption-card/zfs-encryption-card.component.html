@@ -1,6 +1,6 @@
 <mat-card class="card">
   <mat-card-header>
-    <h3 mat-card-title>{{ 'ZFS Encryption' | translate }}</h3>
+    <h3 mat-card-title>{{ 'Encryption' | translate }}</h3>
 
     @if (canEdit()) {
       <a
@@ -51,10 +51,6 @@
         <div class="value">
           {{ hasPassphrase() ? ('Passphrase' | translate) : ('Key' | translate) }}
         </div>
-      </div>
-      <div class="details-item">
-        <div class="label">{{ 'Algorithm' | translate }}:</div>
-        <div class="value">{{ dataset().encryption_algorithm.value }}</div>
       </div>
     }
   </mat-card-content>

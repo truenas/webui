@@ -15,11 +15,11 @@ export const datasetDetailsPanelElements = {
       synonyms: [T('Add Filesystem'), T('Create Dataset'), T('New Dataset')],
     },
     datasetDetailsCard: {
-      hierarchy: [T('Dataset Details')],
+      hierarchy: [T('Details')],
       synonyms: [T('Dataset Information')],
     },
     datasetCapacityCard: {
-      hierarchy: [T('Dataset Space Management')],
+      hierarchy: [T('Space Management')],
       synonyms: [T('Dataset Capacity Management')],
     },
     datasetDataProtectionCard: {
@@ -27,8 +27,8 @@ export const datasetDetailsPanelElements = {
       synonyms: [T('Dataset Data Protection')],
     },
     datasetZfsEncryptionCard: {
-      hierarchy: [T('ZFS Encryption')],
-      synonyms: [T('Dataset ZFS Encryption')],
+      hierarchy: [T('Encryption')],
+      synonyms: [T('Dataset Encryption')],
     },
     datasetRolesCard: {
       hierarchy: [T('Roles')],

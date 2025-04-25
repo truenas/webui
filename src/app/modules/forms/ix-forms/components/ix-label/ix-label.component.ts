@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy, Component,
   input,
 } from '@angular/core';
+import { TranslatedString } from 'app/helpers/translate.helper';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 
 @Component({
@@ -12,7 +13,7 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
   imports: [TooltipComponent],
 })
 export class IxLabelComponent {
-  readonly label = input<string>();
+  readonly label = input<TranslatedString>();
   readonly required = input(false);
-  readonly tooltip = input<string>();
+  readonly tooltip = input<TranslatedString>();
 }

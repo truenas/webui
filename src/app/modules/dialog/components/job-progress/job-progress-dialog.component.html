@@ -1,5 +1,5 @@
 <h1 mat-dialog-title>
-  {{ title ? (title | translate) : ('Loading' | translate) }}
+  {{ title ? title : ('Loading' | translate) }}
 </h1>
 <mat-dialog-content class="job-dialog">
   @if (showRealtimeLogs && realtimeLogs) {

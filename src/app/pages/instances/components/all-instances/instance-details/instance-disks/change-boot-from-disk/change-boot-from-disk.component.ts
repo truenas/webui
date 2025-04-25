@@ -9,6 +9,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { map, Observable, of } from 'rxjs';
+import { ignoreTranslation } from 'app/helpers/translate.helper';
 import { instancesHelptext } from 'app/helptext/instances/instances';
 import { Option } from 'app/interfaces/option.interface';
 import { VirtualizationDisk, VirtualizationInstance } from 'app/interfaces/virtualization.interface';
@@ -46,7 +47,7 @@ export class ChangeBootFromDiskComponent {
   readonly bootFromOptions$: Observable<Option[]> = of(this.data.visibleDisks).pipe(
     map((disks) => {
       return disks.map((disk) => ({
-        label: disk.source,
+        label: ignoreTranslation(disk.source),
         value: disk.name,
       }));
     }),

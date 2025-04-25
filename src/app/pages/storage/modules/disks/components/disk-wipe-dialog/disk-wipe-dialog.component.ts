@@ -11,6 +11,7 @@ import { filter } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DiskWipeMethod } from 'app/enums/disk-wipe-method.enum';
 import { Role } from 'app/enums/role.enum';
+import { TranslatedString } from 'app/helpers/translate.helper';
 import { helptextDisks } from 'app/helptext/storage/disks/disks';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -73,14 +74,14 @@ export class DiskWipeDialog {
     @Inject(MAT_DIALOG_DATA) public data: { diskName: string; exportedPool: string },
   ) { }
 
-  get title(): string {
+  get title(): TranslatedString {
     return this.translate.instant('Wipe Disk {name}', { name: this.data.diskName });
   }
 
   onSubmit(): void {
     this.dialogService.confirm({
       title: this.title,
-      message: 'Wipe this disk?',
+      message: this.translate.instant('Wipe this disk?'),
     })
       .pipe(
         filter(Boolean),

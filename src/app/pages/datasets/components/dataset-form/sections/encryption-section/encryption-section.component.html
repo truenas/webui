@@ -56,7 +56,7 @@
           <ix-input
             formControlName="pbkdf2iters"
             type="number"
-            label="pbkdf2iters"
+            [label]="ignoreTranslation('pbkdf2iters')"
             [tooltip]="helptext.dataset_form_encryption.pbkdf2iters_tooltip | translate"
           ></ix-input>
         }

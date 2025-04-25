@@ -8,6 +8,7 @@ import { MatHint, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { TranslateModule } from '@ngx-translate/core';
 import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
+import { TranslatedString } from 'app/helpers/translate.helper';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { IxDateAdapter } from 'app/modules/dates/services/ix-date-adapter';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
@@ -49,10 +50,10 @@ type OnTouchedFn = () => void;
   ],
 })
 export class IxDatepickerComponent implements ControlValueAccessor {
-  readonly label = input<string>();
-  readonly placeholder = input<string>('');
-  readonly hint = input<string>();
-  readonly tooltip = input<string>();
+  readonly label = input<TranslatedString>();
+  readonly placeholder = input<TranslatedString>('');
+  readonly hint = input<TranslatedString>();
+  readonly tooltip = input<TranslatedString>();
   readonly required = input(false);
   readonly readonly = input(false);
 

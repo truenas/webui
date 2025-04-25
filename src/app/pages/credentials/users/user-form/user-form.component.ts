@@ -20,6 +20,7 @@ import { allCommands } from 'app/constants/all-commands.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
+import { ignoreTranslation, TranslatedString } from 'app/helpers/translate.helper';
 import { isEmptyHomeDirectory } from 'app/helpers/user.helper';
 import { helptextUsers } from 'app/helptext/account/user-form';
 import { Option } from 'app/interfaces/option.interface';
@@ -191,7 +192,10 @@ export class OldUserFormComponent implements OnInit {
   };
 
   readonly groupOptions$ = this.api.call('group.query', [[['local', '=', true]]]).pipe(
-    map((groups) => groups.map((group) => ({ label: group.group, value: group.id }))),
+    map((groups) => groups.map((group) => ({
+      label: ignoreTranslation(group.group),
+      value: group.id,
+    }))),
   );
 
   shellOptions$: Observable<Option[]>;
@@ -208,16 +212,16 @@ export class OldUserFormComponent implements OnInit {
     {
       label: this.translate.instant('Disable Password'),
       value: UserStigPasswordOption.DisablePassword,
-      tooltip: this.tooltips.password_disabled,
+      tooltip: this.translate.instant(this.tooltips.password_disabled),
     },
     {
       label: this.translate.instant('Generate Temporary One-Time Password'),
       value: UserStigPasswordOption.OneTimePassword,
-      tooltip: this.tooltips.one_time_password,
+      tooltip: this.translate.instant(this.tooltips.one_time_password),
     },
   ]);
 
-  get homeCreateWarning(): string {
+  get homeCreateWarning(): TranslatedString {
     const homeCreate = this.form.value.home_create;
     const home = this.form.value.home;
     const homeMode = this.form.value.home_mode;

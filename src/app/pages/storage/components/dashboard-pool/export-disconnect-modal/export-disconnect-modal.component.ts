@@ -18,6 +18,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { Role } from 'app/enums/role.enum';
 import { isFailedJobError } from 'app/helpers/api.helper';
+import { ignoreTranslation, TranslatedString } from 'app/helpers/translate.helper';
 import { helptextVolumes } from 'app/helptext/storage/volumes/volume-list';
 import { Job } from 'app/interfaces/job.interface';
 import { PoolAttachment } from 'app/interfaces/pool-attachment.interface';
@@ -229,10 +230,10 @@ export class ExportDisconnectModalComponent implements OnInit {
     conditionalErrMessage += '<br><br>' + continueMsg + '</div><br />';
 
     this.dialogService.confirm({
-      title: helptextVolumes.exportError,
-      message: conditionalErrMessage,
+      title: this.translate.instant(helptextVolumes.exportError),
+      message: ignoreTranslation(conditionalErrMessage),
       hideCheckbox: true,
-      buttonText: helptextVolumes.exportMessages.onfail.continueAction,
+      buttonText: this.translate.instant(helptextVolumes.exportMessages.onfail.continueAction),
     }).pipe(
       filter(Boolean),
       untilDestroyed(this),
@@ -259,7 +260,7 @@ export class ExportDisconnectModalComponent implements OnInit {
     if (!value.destroy) {
       this.snackbar.success(message);
     } else {
-      this.snackbar.success(`${message} ${destroyed}`);
+      this.snackbar.success(`${message} ${destroyed}` as TranslatedString);
     }
   }
 
@@ -290,8 +291,8 @@ export class ExportDisconnectModalComponent implements OnInit {
     this.showDestroy = this.pool.status !== PoolStatus.Unknown;
 
     this.confirmLabelText = this.pool.status === PoolStatus.Unknown
-      ? this.translate.instant(helptextVolumes.exportDialog.confirm)
-      + ' ' + this.translate.instant(helptextVolumes.exportDialog.unknown_status_alt_text)
+      ? (this.translate.instant(helptextVolumes.exportDialog.confirm)
+        + ' ' + this.translate.instant(helptextVolumes.exportDialog.unknown_status_alt_text)) as TranslatedString
       : this.translate.instant(helptextVolumes.exportDialog.confirm);
 
     this.processes.forEach((process) => {

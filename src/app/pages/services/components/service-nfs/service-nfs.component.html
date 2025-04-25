@@ -13,13 +13,13 @@
           [label]="'Bind IP Addresses' | translate"
           [options]="ipChoices$"
           [multiple]="true"
-          [tooltip]="tooltips.bindip"
+          [tooltip]="tooltips.bindip | translate"
         ></ix-select>
 
         <ix-checkbox
           formControlName="servers_auto"
           [label]="'Calculate number of threads dynamically' | translate"
-          [tooltip]="tooltips.servers_auto"
+          [tooltip]="tooltips.servers_auto | translate"
         ></ix-checkbox>
 
         @if (!form.controls.servers_auto.value) {
@@ -28,7 +28,7 @@
             type="number"
             [label]="'Specify number of threads manually' | translate"
             [required]="true"
-            [tooltip]="tooltips.servers"
+            [tooltip]="tooltips.servers | translate"
           ></ix-input>
         }
       </ix-fieldset>
@@ -40,20 +40,20 @@
             [label]="'Enabled Protocols' | translate"
             [options]="protocolOptions$"
             [multiple]="true"
-            [tooltip]="tooltips.protocols"
+            [tooltip]="tooltips.protocols | translate"
             [required]="true"
           ></ix-select>
 
           <ix-input
             formControlName="v4_domain"
             [label]="'NFSv4 DNS Domain' | translate"
-            [tooltip]="tooltips.v4_domain"
+            [tooltip]="tooltips.v4_domain | translate"
           ></ix-input>
 
           <ix-checkbox
             formControlName="v4_krb"
             [label]="'Require Kerberos for NFSv4' | translate"
-            [tooltip]="tooltips.v4_krb"
+            [tooltip]="tooltips.v4_krb | translate"
           ></ix-checkbox>
         </ix-fieldset>
         <ix-fieldset [title]="'Ports' | translate">
@@ -61,21 +61,21 @@
             formControlName="mountd_port"
             type="number"
             [label]="'mountd(8) bind port' | translate"
-            [tooltip]="tooltips.mountd_port"
+            [tooltip]="tooltips.mountd_port | translate"
           ></ix-input>
 
           <ix-input
             formControlName="rpcstatd_port"
             type="number"
             [label]="'rpc.statd(8) bind port' | translate"
-            [tooltip]="tooltips.rpcstatd_port"
+            [tooltip]="tooltips.rpcstatd_port | translate"
           ></ix-input>
 
           <ix-input
             formControlName="rpclockd_port"
             type="number"
             [label]="'rpc.lockd(8) bind port' | translate"
-            [tooltip]="tooltips.rpclockd_port"
+            [tooltip]="tooltips.rpclockd_port | translate"
           ></ix-input>
         </ix-fieldset>
       </div>
@@ -89,13 +89,13 @@
         <ix-checkbox
           formControlName="allow_nonroot"
           [label]="'Allow non-root mount' | translate"
-          [tooltip]="tooltips.allow_nonroot"
+          [tooltip]="tooltips.allow_nonroot | translate"
         ></ix-checkbox>
 
         <ix-checkbox
           formControlName="userd_manage_gids"
           [label]="'Manage Groups Server-side' | translate"
-          [tooltip]="tooltips.userd_manage_gids"
+          [tooltip]="tooltips.userd_manage_gids | translate"
         ></ix-checkbox>
       </ix-fieldset>
 

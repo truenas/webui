@@ -287,7 +287,9 @@ export class AppWizardComponent implements OnInit, OnDestroy {
     }
 
     this.dialogService.jobDialog(job$, {
-      title: this.isNew ? helptextApps.installing : helptextApps.updating,
+      title: this.isNew
+        ? this.translate.instant(helptextApps.installing)
+        : this.translate.instant(helptextApps.updating),
     })
       .afterClosed()
       .pipe(
