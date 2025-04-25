@@ -58,7 +58,7 @@ export class DiskBulkEditComponent {
 
   readonly helptext = helptextDisks;
   readonly helptextBulkEdit = helptextDisks.bulk_edit;
-  readonly hddstandbyOptions$ = of(helptextDisks.disk_form_hddstandby_options);
+  readonly hddstandbyOptions$ = of(translateOptions(this.translate, helptextDisks.disk_form_hddstandby_options));
   readonly advpowermgmtOptions$ = of(translateOptions(this.translate, this.helptext.disk_form_advpowermgmt_options));
 
   constructor(

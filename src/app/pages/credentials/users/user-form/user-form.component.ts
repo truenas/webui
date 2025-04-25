@@ -20,6 +20,7 @@ import { allCommands } from 'app/constants/all-commands.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
+import { ignoreTranslation, TranslatedString } from 'app/helpers/translate.helper';
 import { isEmptyHomeDirectory } from 'app/helpers/user.helper';
 import { helptextUsers } from 'app/helptext/account/user-form';
 import { Option } from 'app/interfaces/option.interface';
@@ -170,28 +171,31 @@ export class OldUserFormComponent implements OnInit {
   });
 
   readonly tooltips = {
-    username: helptextUsers.user_form_username_tooltip,
-    password: helptextUsers.user_form_password_tooltip,
-    password_edit: helptextUsers.user_form_password_tooltip,
-    password_conf_edit: helptextUsers.user_form_password_tooltip,
-    uid: helptextUsers.user_form_uid_tooltip,
-    group: helptextUsers.user_form_primary_group_tooltip,
-    group_create: helptextUsers.user_form_group_create_tooltip,
-    groups: helptextUsers.user_form_aux_groups_tooltip,
-    home: helptextUsers.user_form_dirs_explorer_tooltip,
-    home_mode: helptextUsers.user_form_home_dir_permissions_tooltip,
-    sshpubkey: helptextUsers.user_form_auth_sshkey_tooltip,
-    password_disabled: helptextUsers.user_form_auth_pw_enable_tooltip,
-    one_time_password: helptextUsers.user_form_auth_one_time_pw_tooltip,
-    shell: helptextUsers.user_form_shell_tooltip,
-    locked: helptextUsers.user_form_lockuser_tooltip,
-    smb: helptextUsers.user_form_smb_tooltip,
+    username: helptextUsers.usernameTooltip,
+    password: helptextUsers.passwordTooltip,
+    password_edit: helptextUsers.passwordTooltip,
+    password_conf_edit: helptextUsers.passwordTooltip,
+    uid: helptextUsers.uidTooltip,
+    group: helptextUsers.primaryGroupTooltip,
+    group_create: helptextUsers.createGroupTooltip,
+    groups: helptextUsers.auxGroupsTooltip,
+    home: helptextUsers.homeDirectoryExplorerTooltip,
+    home_mode: helptextUsers.homeDirectoryPermissionsTooltip,
+    sshpubkey: helptextUsers.publicKeyTooltip,
+    password_disabled: helptextUsers.disablePasswordTooltip,
+    one_time_password: helptextUsers.oneTimePasswordTooltip,
+    shell: helptextUsers.shellTooltip,
+    locked: helptextUsers.lockUserTooltip,
+    smb: helptextUsers.smbTooltip,
     smbBuiltin: helptextUsers.smbBuiltin,
     smbStig: helptextUsers.smbStig,
   };
 
   readonly groupOptions$ = this.api.call('group.query', [[['local', '=', true]]]).pipe(
-    map((groups) => groups.map((group) => ({ label: group.group, value: group.id }))),
+    map((groups) => groups.map((group) => ({
+      label: ignoreTranslation(group.group),
+      value: group.id,
+    }))),
   );
 
   shellOptions$: Observable<Option[]>;
@@ -208,16 +212,16 @@ export class OldUserFormComponent implements OnInit {
     {
       label: this.translate.instant('Disable Password'),
       value: UserStigPasswordOption.DisablePassword,
-      tooltip: this.tooltips.password_disabled,
+      tooltip: this.translate.instant(this.tooltips.password_disabled),
     },
     {
       label: this.translate.instant('Generate Temporary One-Time Password'),
       value: UserStigPasswordOption.OneTimePassword,
-      tooltip: this.tooltips.one_time_password,
+      tooltip: this.translate.instant(this.tooltips.one_time_password),
     },
   ]);
 
-  get homeCreateWarning(): string {
+  get homeCreateWarning(): TranslatedString {
     const homeCreate = this.form.value.home_create;
     const home = this.form.value.home;
     const homeMode = this.form.value.home_mode;

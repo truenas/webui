@@ -5,6 +5,7 @@ import { ControlValueAccessor, NgControl, ReactiveFormsModule } from '@angular/f
 import { MatIconButton } from '@angular/material/button';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { TranslatedString } from 'app/helpers/translate.helper';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
@@ -32,9 +33,9 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class IxStarRatingComponent implements ControlValueAccessor {
-  readonly label = input('');
-  readonly hint = input('');
-  readonly tooltip = input('');
+  readonly label = input<TranslatedString>('');
+  readonly hint = input<TranslatedString>('');
+  readonly tooltip = input<TranslatedString>('');
   readonly required = input(false);
   readonly maxRating = input(5);
 

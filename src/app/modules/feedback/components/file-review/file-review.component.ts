@@ -10,6 +10,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { finalize } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
 import { ticketAcceptedFiles } from 'app/enums/file-ticket.enum';
+import { TranslatedString } from 'app/helpers/translate.helper';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { FeedbackDialog } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
@@ -65,17 +66,17 @@ export class FileReviewComponent {
     take_screenshot: [true],
   });
 
-  protected readonly messagePlaceholder = helptext.review.message.placeholder;
-  protected readonly messageAdditionalPlaceholder = helptext.review.message.placeholder_additional;
   protected readonly voteForNewFeaturesText = helptext.review.vote_for_new_features;
   protected readonly acceptedFiles = ticketAcceptedFiles;
 
-  protected get messagePlaceholderText(): string {
-    if (this.form.controls.rating.value === maxRatingValue) {
-      return `${this.messagePlaceholder}\n\n${this.messageAdditionalPlaceholder}`;
+  protected get messagePlaceholderText(): TranslatedString {
+    if (this.form.controls.rating.value !== maxRatingValue) {
+      return this.translate.instant(helptext.review.message.placeholder);
     }
 
-    return this.messagePlaceholder;
+    return this.translate.instant(helptext.review.message.placeholder)
+      + '\n\n'
+      + this.translate.instant(helptext.review.message.placeholder_additional) as TranslatedString;
   }
 
   constructor(

@@ -1,5 +1,6 @@
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
+import { ignoreTranslation } from 'app/helpers/translate.helper';
 import { SnackbarComponent } from 'app/modules/snackbar/components/snackbar/snackbar.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 
@@ -18,7 +19,7 @@ describe('SnackbarService', () => {
 
   describe('success', () => {
     it('opens a snackbar with message', () => {
-      spectator.service.success('All good');
+      spectator.service.success(ignoreTranslation('All good'));
 
       expect(spectator.inject(MatSnackBar).openFromComponent).toHaveBeenCalledWith(SnackbarComponent, {
         announcementMessage: 'All good',

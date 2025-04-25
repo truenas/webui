@@ -5,7 +5,7 @@
     [root]="''"
     [required]="true"
     [multiple]="true"
-    [tooltip]="helptext.source_datasets_tooltip"
+    [tooltip]="helptext.source_datasets_tooltip | translate"
     [nodeProvider]="nodeProvider()"
   ></ix-explorer>
   @if (!form.value.replicate) {

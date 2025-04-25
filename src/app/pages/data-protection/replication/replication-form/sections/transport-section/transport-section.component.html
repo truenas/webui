@@ -48,7 +48,7 @@
     ></ix-select>
     <ix-input
       formControlName="speed_limit"
-      [label]="('Limit' | translate) + sizeSuggestion"
+      [label]="asTranslatedString(('Limit' | translate) + sizeSuggestion)"
       [format]="formatter.memorySizeFormatting"
       [parse]="formatter.memorySizeParsing"
       [tooltip]="helptext.speed_limit_tooltip | translate"

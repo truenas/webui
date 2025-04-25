@@ -24,6 +24,7 @@ import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
 import { zvolPath } from 'app/helpers/storage.helper';
+import { TranslatedString } from 'app/helpers/translate.helper';
 import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
@@ -63,11 +64,11 @@ import { ErrorParserService } from 'app/services/errors/error-parser.service';
   ],
 })
 export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAccessor {
-  readonly label = input<string>();
-  readonly hint = input<string>();
+  readonly label = input<TranslatedString>();
+  readonly hint = input<TranslatedString>();
   readonly readonly = input<boolean>(false);
   readonly multiple = input(false);
-  readonly tooltip = input<string>();
+  readonly tooltip = input<TranslatedString>();
   readonly required = input<boolean>(false);
   readonly root = input(mntPath);
   readonly nodeProvider = input.required<TreeNodeProvider>();

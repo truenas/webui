@@ -29,7 +29,7 @@ import { UserFormStore } from 'app/pages/credentials/new-users/user-form/user.st
 export class AuthSectionComponent implements OnInit {
   sshAccessEnabled = this.userStore.sshAccess;
   smbAccessEnabled = this.userStore.smbAccess;
-  protected fakeTooltip = '';
+
   form = this.fb.group({
     password: [''],
     disable_password: [false],

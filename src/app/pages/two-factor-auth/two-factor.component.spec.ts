@@ -95,7 +95,7 @@ describe('TwoFactorComponent', () => {
     } as GlobalTwoFactorConfig));
     const warning = spectator.query(WarningComponent);
     expect(warning).toBeTruthy();
-    expect(warning).toHaveAttribute('message', helptext2fa.two_factor.global_disabled);
+    expect(warning).toHaveAttribute('message', helptext2fa.globallyDisabled);
   });
 
   it('shows warning when global setting is enabled but user disabled', () => {
@@ -104,7 +104,7 @@ describe('TwoFactorComponent', () => {
     spectator.detectChanges();
     const warning = spectator.query(WarningComponent);
     expect(warning).toBeTruthy();
-    expect(warning).toHaveAttribute('message', helptext2fa.two_factor.global_enabled_user_disabled);
+    expect(warning).toHaveAttribute('message', helptext2fa.enabledGloballyButNotForUser);
   });
 
   it('shows warning when global setting is enabled and user enabled', () => {
@@ -112,7 +112,7 @@ describe('TwoFactorComponent', () => {
     spectator.detectChanges();
     const warning = spectator.query(WarningComponent);
     expect(warning).toBeTruthy();
-    expect(warning).toHaveAttribute('message', helptext2fa.two_factor.global_enabled_user_enabled);
+    expect(warning).toHaveAttribute('message', helptext2fa.allSetUp);
   });
 
   it('renews secret when button is clicked', async () => {
@@ -120,10 +120,10 @@ describe('TwoFactorComponent', () => {
     await renewBtn.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
-      title: helptext2fa.two_factor.renewSecret.title,
-      message: helptext2fa.two_factor.renewSecret.message,
+      title: helptext2fa.renewSecret.title,
+      message: helptext2fa.renewSecret.message,
       hideCheckbox: true,
-      buttonText: helptext2fa.two_factor.renewSecret.btn,
+      buttonText: helptext2fa.renewSecret.btn,
     });
 
     expect(api.call).toHaveBeenCalledWith('user.renew_2fa_secret', ['dummy', {

@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy, Component, input,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
+import { TranslatedString } from 'app/helpers/translate.helper';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 
 @Component({
@@ -15,6 +16,6 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
   ],
 })
 export class IxFieldsetComponent {
-  readonly title = input<string>('');
-  readonly tooltip = input<string>('');
+  readonly title = input<TranslatedString>('');
+  readonly tooltip = input<TranslatedString>('');
 }

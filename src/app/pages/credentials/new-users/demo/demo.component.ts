@@ -5,7 +5,7 @@ import {
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AdvancedConfigUpdate } from 'app/interfaces/advanced-config.interface';
 import { DetailsItemComponent } from 'app/modules/details-table/details-item/details-item.component';
 import { DetailsTableComponent } from 'app/modules/details-table/details-table.component';
@@ -66,6 +66,7 @@ export class DemoComponent {
     private formErrorHandler: FormErrorHandlerService,
     private loader: LoaderService,
     private snackbar: SnackbarService,
+    private translate: TranslateService,
   ) {}
 
   save(): void {
@@ -91,7 +92,7 @@ export class DemoComponent {
     )
       .subscribe({
         next: () => {
-          this.snackbar.success('Form saved');
+          this.snackbar.success(this.translate.instant('Form saved'));
         },
         error: (error: unknown) => {
           this.formErrorHandler.handleValidationErrors(error, this.form);

@@ -1,3 +1,5 @@
+import { Option } from 'app/interfaces/option.interface';
+
 export enum AlertServiceType {
   AwsSns = 'AWSSNS',
   Mail = 'Mail',
@@ -43,4 +45,4 @@ export const alertServiceNames = [
     label: 'Splunk On-Call',
     value: AlertServiceType.SplunkOnCall,
   },
-];
+] as Option[];

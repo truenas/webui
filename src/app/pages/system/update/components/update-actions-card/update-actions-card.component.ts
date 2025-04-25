@@ -18,6 +18,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { SystemUpdateOperationType, SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
+import { ignoreTranslation } from 'app/helpers/translate.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextGlobal } from 'app/helptext/global-helptext';
 import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
@@ -291,9 +292,9 @@ export class UpdateActionsCardComponent implements OnInit {
 
   private finishHaUpdate(): Observable<boolean> {
     return this.dialogService.confirm({
-      title: helptext.ha_update.complete_title,
-      message: helptext.ha_update.complete_msg,
-      buttonText: helptext.ha_update.complete_action,
+      title: this.translate.instant(helptext.ha_update.complete_title),
+      message: this.translate.instant(helptext.ha_update.complete_msg),
+      buttonText: this.translate.instant(helptext.ha_update.complete_action),
       hideCheckbox: true,
       hideCancel: true,
     });
@@ -301,9 +302,9 @@ export class UpdateActionsCardComponent implements OnInit {
 
   private finishNonHaUpdate(): Observable<boolean> {
     return this.dialogService.confirm({
-      title: helptext.ha_update.complete_title,
+      title: this.translate.instant(helptext.ha_update.complete_title),
       message: this.translate.instant('Update completed successfully. The system will restart shortly'),
-      buttonText: helptext.ha_update.complete_action,
+      buttonText: this.translate.instant(helptext.ha_update.complete_action),
       hideCheckbox: true,
       hideCancel: true,
     });
@@ -388,9 +389,9 @@ export class UpdateActionsCardComponent implements OnInit {
   private handleUpdateError(error: Job): void {
     if (error.error?.includes(updateAgainCode)) {
       this.dialogService.confirm({
-        title: helptext.continueDialogTitle,
-        message: error.error.replace(updateAgainCode, ''),
-        buttonText: helptext.continueDialogAction,
+        title: this.translate.instant(helptext.continueDialogTitle),
+        message: ignoreTranslation(error.error.replace(updateAgainCode, '')),
+        buttonText: this.translate.instant(helptext.continueDialogAction),
       }).pipe(
         filter(Boolean),
         untilDestroyed(this),

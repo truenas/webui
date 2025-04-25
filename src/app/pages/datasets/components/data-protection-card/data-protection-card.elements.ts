@@ -7,8 +7,8 @@ export const dataProtectionCardElements = {
   anchorRouterLink: ['/datasets'],
   elements: {
     createSnapshot: {
-      hierarchy: [T('Create Snapshot')],
-      synonyms: [T('Take Snapshot')],
+      hierarchy: [T('Take Snapshot')],
+      synonyms: [T('Create Snapshot')],
     },
     manageSnapshots: {
       hierarchy: [T('Manage Snapshots')],

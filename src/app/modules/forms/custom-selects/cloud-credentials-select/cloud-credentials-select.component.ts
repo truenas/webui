@@ -5,6 +5,7 @@ import {
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { Observable, map } from 'rxjs';
 import { CloudSyncProviderName, cloudSyncProviderNameMap } from 'app/enums/cloudsync-provider.enum';
+import { ignoreTranslation, TranslatedString } from 'app/helpers/translate.helper';
 import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSelectWithNewOption } from 'app/modules/forms/ix-forms/components/ix-select/ix-select-with-new-option.directive';
@@ -27,8 +28,8 @@ import { CloudCredentialService } from 'app/services/cloud-credential.service';
   imports: [IxSelectComponent],
 })
 export class CloudCredentialsSelectComponent extends IxSelectWithNewOption {
-  readonly label = input<string>();
-  readonly tooltip = input<string>();
+  readonly label = input<TranslatedString>();
+  readonly tooltip = input<TranslatedString>();
   readonly required = input<boolean>(false);
   readonly filterByProviders = input<CloudSyncProviderName[]>();
 
@@ -42,7 +43,10 @@ export class CloudCredentialsSelectComponent extends IxSelectWithNewOption {
           options = options.filter((option) => filterByProviders.includes(option.provider.type));
         }
         return options.map((option) => {
-          return { label: `${option.name} (${cloudSyncProviderNameMap.get(option.provider.type)})`, value: option.id };
+          return {
+            label: ignoreTranslation(`${option.name} (${cloudSyncProviderNameMap.get(option.provider.type)})`),
+            value: option.id,
+          };
         });
       }),
     );

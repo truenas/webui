@@ -13,6 +13,7 @@ import { BehaviorSubject, Observable, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { getDynamicFormSchemaNode } from 'app/helpers/get-dynamic-form-schema-node';
+import { ignoreTranslation } from 'app/helpers/translate.helper';
 import {
   DynamicFormSchema, DynamicFormSchemaNode,
 } from 'app/interfaces/dynamic-form-schema.interface';
@@ -152,7 +153,10 @@ export class ReportingExportersFormComponent implements OnInit {
 
   setExporterTypeOptions(schemas: ReportingExporterSchema[]): void {
     this.exporterTypeOptions$ = of(
-      schemas.map((schema) => ({ label: schema.key, value: schema.key })),
+      schemas.map((schema) => ({
+        label: ignoreTranslation(schema.key),
+        value: schema.key,
+      })),
     );
   }
 

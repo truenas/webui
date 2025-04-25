@@ -4,6 +4,7 @@ import { find } from 'lodash-es';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
+import { TranslatedString } from 'app/helpers/translate.helper';
 import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
@@ -58,7 +59,7 @@ export class DatasetService {
     };
   }
 
-  rootLevelDatasetWarning(path: string, message: string, skip = false): Observable<boolean> {
+  rootLevelDatasetWarning(path: string, message: TranslatedString, skip = false): Observable<boolean> {
     return isRootShare(path) && !skip
       ? this.dialog.confirm({
         title: this.translate.instant('Warning'),

@@ -290,11 +290,11 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
 
   private aclDialog(): Observable<boolean> {
     return this.dialog.confirm({
-      title: helptextDatasetForm.afterSubmitDialog.title,
-      message: helptextDatasetForm.afterSubmitDialog.message,
+      title: this.translate.instant(helptextDatasetForm.afterSubmitDialog.title),
+      message: this.translate.instant(helptextDatasetForm.afterSubmitDialog.message),
       hideCheckbox: true,
-      buttonText: helptextDatasetForm.afterSubmitDialog.actionBtn,
-      cancelText: helptextDatasetForm.afterSubmitDialog.cancelBtn,
+      buttonText: this.translate.instant(helptextDatasetForm.afterSubmitDialog.actionBtn),
+      cancelText: this.translate.instant(helptextDatasetForm.afterSubmitDialog.cancelBtn),
     });
   }
 
