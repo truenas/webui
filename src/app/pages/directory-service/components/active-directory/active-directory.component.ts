@@ -15,7 +15,6 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
-import { ignoreTranslation } from 'app/helpers/translate.helper';
 import { helptextActiveDirectory } from 'app/helptext/directory-service/active-directory';
 import { ActiveDirectoryUpdate, NssInfoType } from 'app/interfaces/active-directory.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -29,6 +28,7 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   LeaveDomainDialog,

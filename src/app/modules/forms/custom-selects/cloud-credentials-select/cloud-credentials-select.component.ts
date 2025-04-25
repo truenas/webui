@@ -5,12 +5,12 @@ import {
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { Observable, map } from 'rxjs';
 import { CloudSyncProviderName, cloudSyncProviderNameMap } from 'app/enums/cloudsync-provider.enum';
-import { ignoreTranslation, TranslatedString } from 'app/helpers/translate.helper';
 import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSelectWithNewOption } from 'app/modules/forms/ix-forms/components/ix-select/ix-select-with-new-option.directive';
 import { IxSelectComponent, IxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
+import { ignoreTranslation, TranslatedString } from 'app/modules/translate/translate.helper';
 import { CloudCredentialsFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/cloud-credentials-form.component';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 

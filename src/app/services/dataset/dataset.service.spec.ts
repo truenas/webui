@@ -2,9 +2,9 @@ import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/sp
 import { lastValueFrom, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
-import { ignoreTranslation } from 'app/helpers/translate.helper';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { DatasetService } from 'app/services/dataset/dataset.service';
 
 describe('DatasetService', () => {

@@ -15,7 +15,6 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { IscsiAuthMethod, IscsiTargetMode, iscsiTargetModeNames } from 'app/enums/iscsi.enum';
 import { Role } from 'app/enums/role.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
-import { ignoreTranslation, TranslatedString, translateOptions } from 'app/helpers/translate.helper';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { IscsiTarget, IscsiTargetGroup } from 'app/interfaces/iscsi.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -33,6 +32,8 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TranslateOptionsPipe } from 'app/modules/translate/translate-options/translate-options.pipe';
+import { ignoreTranslation, TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   FcPortsControlsComponent,
@@ -66,6 +67,7 @@ import { LicenseService } from 'app/services/license.service';
     TestDirective,
     TranslateModule,
     IxRadioGroupComponent,
+    TranslateOptionsPipe,
   ],
 })
 export class TargetFormComponent implements OnInit {
@@ -115,7 +117,7 @@ export class TargetFormComponent implements OnInit {
     }),
   );
 
-  readonly authmethods$ = of(translateOptions(this.translate, this.helptext.target_form_enum_authmethod));
+  readonly authmethods$ = of(this.helptext.target_form_enum_authmethod);
   readonly auths$ = this.iscsiService.getAuth().pipe(
     map((auths) => {
       const opts: Option[] = [];

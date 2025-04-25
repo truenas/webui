@@ -164,7 +164,7 @@
     "./src/app/helpers/storage.helper.ts",
     "./src/app/helpers/string-to-title-case.ts",
     "./src/app/helpers/time.helpers.ts",
-    "./src/app/helpers/translate.helper.ts",
+    "./src/app/modules/translate/translate.helper.ts",
     "./src/app/helpers/websocket.helper.ts",
     "./src/app/helpers/api.helper.ts",
     "./src/app/helpers/window.helper.ts",

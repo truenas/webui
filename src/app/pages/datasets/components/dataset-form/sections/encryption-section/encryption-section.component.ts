@@ -2,14 +2,12 @@ import {
   ChangeDetectionStrategy, Component, computed, input, OnChanges, OnInit, output,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { DatasetEncryptionType } from 'app/enums/dataset.enum';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
-import { ignoreTranslation, translateOptions } from 'app/helpers/translate.helper';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -18,6 +16,7 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
+import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 
 @UntilDestroy()
@@ -70,10 +69,10 @@ export class EncryptionSectionComponent implements OnChanges, OnInit {
 
   readonly helptext = helptextDatasetForm;
 
-  encryptionTypeOptions$ = of(translateOptions(this.translate, [
-    { label: T('Key'), value: DatasetEncryptionType.Default },
-    { label: T('Passphrase'), value: DatasetEncryptionType.Passphrase },
-  ]));
+  encryptionTypeOptions$ = of([
+    { label: this.translate.instant('Key'), value: DatasetEncryptionType.Default },
+    { label: this.translate.instant('Passphrase'), value: DatasetEncryptionType.Passphrase },
+  ]);
 
   algorithmOptions$ = this.api.call('pool.dataset.encryption_algorithm_choices').pipe(choicesToOptions());
 
