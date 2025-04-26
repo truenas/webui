@@ -1,23 +1,24 @@
 import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { Observable } from 'rxjs';
+import { filter, Observable, switchMap } from 'rxjs';
 import {
   VirtualizationDeviceType, VirtualizationNicType,
   virtualizationNicTypeLabels,
 } from 'app/enums/virtualization.enum';
 import {
-  VirtualizationDevice,
   VirtualizationNic,
 } from 'app/interfaces/virtualization.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { InstanceNicMacDialog } from 'app/pages/instances/components/common/instance-nics-mac-addr-dialog/instance-nic-mac-dialog.component';
 import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -80,6 +81,7 @@ export class AddNicMenuComponent {
     private translate: TranslateService,
     private devicesStore: VirtualizationDevicesStore,
     private instancesStore: VirtualizationInstancesStore,
+    private matDialog: MatDialog,
   ) {}
 
   protected addBridgedNic(nic: string): void {
@@ -102,21 +104,32 @@ export class AddNicMenuComponent {
     return this.api.call('virt.device.nic_choices', [nicType]);
   }
 
-  private addDevice(payload: VirtualizationDevice): void {
+  private addDevice(payload: VirtualizationNic): void {
     const instanceId = this.instancesStore.selectedInstance()?.id;
     if (!instanceId) {
       return;
     }
 
-    this.api.call('virt.instance.device_add', [instanceId, payload])
-      .pipe(
-        this.loader.withLoader(),
-        this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
-      )
-      .subscribe(() => {
+    this.matDialog.open(InstanceNicMacDialog, {
+      data: payload,
+      minWidth: '500px',
+    }).afterClosed().pipe(
+      filter(Boolean),
+      switchMap((macConfig: { mac: string; useDefault: boolean }) => {
+        if (macConfig.mac) {
+          payload.mac = macConfig.mac;
+        }
+        return this.api.call('virt.instance.device_add', [instanceId, payload]).pipe(
+          this.loader.withLoader(),
+          this.errorHandler.withErrorHandler(),
+        );
+      }),
+      untilDestroyed(this),
+    ).subscribe({
+      next: () => {
         this.snackbar.success(this.translate.instant('NIC was added'));
         this.devicesStore.loadDevices();
-      });
+      },
+    });
   }
 }

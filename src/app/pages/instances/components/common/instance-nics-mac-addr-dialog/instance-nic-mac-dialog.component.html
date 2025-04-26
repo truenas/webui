@@ -1,0 +1,34 @@
+<h1 mat-dialog-title>{{ 'Add NIC Device: {nic}' | translate: { nic: nic().parent } }}</h1>
+<div mat-dialog-content>
+  <form [formGroup]="form">
+    <ix-checkbox
+      formControlName="use_default"
+      [label]="'Use Default Mac Address' | translate"
+    ></ix-checkbox>
+    @if (!useDefault()) {
+      <ix-input
+        formControlName="mac"
+        [required]="true"
+        [label]="'Mac Address' | translate"
+      ></ix-input>
+    }
+  </form>
+</div>
+<div mat-dialog-actions>
+    <button
+      mat-button
+      ixTest="cancel"
+      [mat-dialog-close]="null"
+    >
+      {{ 'Cancel' | translate }}
+    </button>
+    <button
+      mat-button
+      color="primary"
+      ixTest="close"
+      [disabled]="!(isValid$ | async)"
+      (click)="addDevice()"
+    >
+      {{ 'Add' | translate }}
+    </button>
+</div>
