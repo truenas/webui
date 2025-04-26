@@ -14,7 +14,6 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   map, Observable, startWith,
 } from 'rxjs';
-import { VirtualizationNic } from 'app/interfaces/virtualization.interface';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
@@ -41,7 +40,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InstanceNicMacDialog {
-  protected readonly nic = signal(inject<VirtualizationNic>(MAT_DIALOG_DATA));
+  protected readonly nic = signal(inject<string>(MAT_DIALOG_DATA));
   protected readonly form = this.fb.group({
     use_default: [true as boolean],
     mac: ['', [Validators.required, this.ixValidator.withMessage(

@@ -72,11 +72,7 @@ describe('AddNicMenuComponent', () => {
     await menu.clickItem({ text: 'Intel E1000' });
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(InstanceNicMacDialog, {
-      data: {
-        dev_type: VirtualizationDeviceType.Nic,
-        nic_type: VirtualizationNicType.Bridged,
-        parent: 'Intel E1000',
-      },
+      data: 'Intel E1000',
       minWidth: '500px',
     });
 

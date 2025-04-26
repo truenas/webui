@@ -3,8 +3,6 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { VirtualizationDeviceType, VirtualizationNicType } from 'app/enums/virtualization.enum';
-import { VirtualizationNic } from 'app/interfaces/virtualization.interface';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { InstanceNicMacDialog } from 'app/pages/instances/components/common/instance-nics-mac-addr-dialog/instance-nic-mac-dialog.component';
@@ -21,11 +19,7 @@ describe('InstanceNicMacDialogComponent', () => {
       }),
       {
         provide: MAT_DIALOG_DATA,
-        useValue: {
-          dev_type: VirtualizationDeviceType.Nic,
-          nic_type: VirtualizationNicType.Macvlan,
-          parent: 'ens',
-        } as VirtualizationNic,
+        useValue: 'ens',
       },
     ],
   });

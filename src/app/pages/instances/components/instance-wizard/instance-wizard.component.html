@@ -312,11 +312,12 @@
             @if (devices.length > 0) {
               <p>{{ bridgedNicTypeLabel ? (bridgedNicTypeLabel | translate) : '' }}</p>
 
-              <ix-checkbox-list
-                formControlName="bridged_nics"
-                [label]="instancesHelptext.networkBridgedNicsLabel | translate"
-                [options]="bridgedNicDevices$"
-              ></ix-checkbox-list>
+              @for(nicOption of bridgedNicDevices.values(); track nicOption.value ) {
+                <ix-checkbox
+                  [label]="nicOption.label"
+                  [formControl]="nicOption.control"
+                ></ix-checkbox>
+              }
             }
           } @else {
             <ngx-skeleton-loader></ngx-skeleton-loader>
@@ -326,11 +327,12 @@
             @if (devices.length > 0) {
               <p>{{ macVlanNicTypeLabel ? (macVlanNicTypeLabel | translate) : '' }}</p>
 
-              <ix-checkbox-list
-                formControlName="mac_vlan_nics"
-                [label]="instancesHelptext.networkMacVlanNicsLabel | translate"
-                [options]="macVlanNicDevices$"
-              ></ix-checkbox-list>
+              @for(nicOption of macVlanNicDevices.values(); track nicOption.value ) {
+                <ix-checkbox
+                  [label]="nicOption.label"
+                  [formControl]="nicOption.control"
+                ></ix-checkbox>
+              }
             }
           } @else {
             <ngx-skeleton-loader></ngx-skeleton-loader>

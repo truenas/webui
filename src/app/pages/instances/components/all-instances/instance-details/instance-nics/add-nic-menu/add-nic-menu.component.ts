@@ -111,7 +111,7 @@ export class AddNicMenuComponent {
     }
 
     this.matDialog.open(InstanceNicMacDialog, {
-      data: payload,
+      data: payload.parent,
       minWidth: '500px',
     }).afterClosed().pipe(
       filter(Boolean),
