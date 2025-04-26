@@ -1,5 +1,5 @@
 <ix-page-header>
-  <ix-save-debug-button></ix-save-debug-button>
+  <ix-manage-configuration-menu></ix-manage-configuration-menu>
 </ix-page-header>
 
 <div class="cards" [ixUiSearch]="searchableElements.elements.advanced">
@@ -10,6 +10,7 @@
   <ix-cron-card></ix-cron-card>
   <ix-init-shutdown-card></ix-init-shutdown-card>
   <ix-sysctl-card></ix-sysctl-card>
+  <ix-ntp-servers-card></ix-ntp-servers-card>
   <ix-storage-card></ix-storage-card>
   <ix-replication-settings-card></ix-replication-settings-card>
   <ix-access-card></ix-access-card>
@@ -21,5 +22,9 @@
   <ix-global-two-factor-card></ix-global-two-factor-card>
   @if (isSystemLicensed()) {
     <ix-system-security-card></ix-system-security-card>
+  }
+
+  @if (hasFailover$ | async) {
+    <ix-failover-card></ix-failover-card>
   }
 </div>

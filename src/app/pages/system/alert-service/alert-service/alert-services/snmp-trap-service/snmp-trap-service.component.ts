@@ -3,6 +3,7 @@ import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { AlertServiceEdit } from 'app/interfaces/alert-service.interface';
+import { Option } from 'app/interfaces/option.interface';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
@@ -65,7 +66,7 @@ export class SnmpTrapServiceComponent extends BaseAlertServiceForm {
       label: 'HMAC384SHA512',
       value: '384SHA512',
     },
-  ]);
+  ] as Option[]);
 
   readonly privProtocols$ = of([
     {
@@ -100,7 +101,7 @@ export class SnmpTrapServiceComponent extends BaseAlertServiceForm {
       label: 'CFB128-AES-256 Blumenthal',
       value: 'AESBLUMENTHALCFB256',
     },
-  ]);
+  ] as Option[]);
 
   get isV3(): boolean {
     return this.form.controls.v3.value;

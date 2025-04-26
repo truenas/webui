@@ -17,6 +17,7 @@ import { NfsAclTag, smbAclTagLabels } from 'app/enums/nfs-acl.enum';
 import { Role } from 'app/enums/role.enum';
 import { SmbSharesecPermission, SmbSharesecType } from 'app/enums/smb-sharesec.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
+import { ignoreTranslation } from 'app/helpers/translate.helper';
 import { helptextSharingSmb } from 'app/helptext/sharing';
 import { Group } from 'app/interfaces/group.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -101,7 +102,7 @@ export class SmbAclComponent implements OnInit {
       label: 'READ',
       value: SmbSharesecPermission.Read,
     },
-  ]);
+  ] as Option[]);
 
   readonly types$ = of([
     {
@@ -112,7 +113,7 @@ export class SmbAclComponent implements OnInit {
       label: 'DENIED',
       value: SmbSharesecType.Denied,
     },
-  ]);
+  ] as Option[]);
 
   readonly helptext = helptextSharingSmb;
   readonly nfsAclTag = NfsAclTag;
@@ -282,9 +283,15 @@ export class SmbAclComponent implements OnInit {
           let option: Option;
 
           if ('gid' in firstItem) {
-            option = { label: firstItem.group, value: firstItem.gid };
+            option = {
+              label: ignoreTranslation(firstItem.group),
+              value: firstItem.gid,
+            };
           } else if ('uid' in firstItem || (firstItem as User).uid?.toString() === '0') {
-            option = { label: firstItem.username, value: firstItem.uid };
+            option = {
+              label: ignoreTranslation(firstItem.username),
+              value: firstItem.uid,
+            };
           } else {
             return;
           }

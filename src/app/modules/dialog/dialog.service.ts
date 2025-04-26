@@ -4,6 +4,7 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { JobProgressDialogRef } from 'app/classes/job-progress-dialog-ref.class';
+import { TranslatedString } from 'app/helpers/translate.helper';
 import {
   ConfirmOptions,
   ConfirmOptionsWithSecondaryCheckbox,
@@ -59,12 +60,6 @@ export class DialogService {
     const dialogRef = this.matDialog.open(ErrorDialog, {
       data: error,
     });
-    dialogRef.componentInstance.title = error.title;
-    dialogRef.componentInstance.message = error.message;
-    dialogRef.componentInstance.backtrace = error.backtrace;
-    if (error.logs) {
-      dialogRef.componentInstance.logs = error.logs;
-    }
     return dialogRef.afterClosed();
   }
 
@@ -149,8 +144,8 @@ export class DialogService {
   jobDialog<R>(
     job$: Observable<Job<R>>,
     { title, description, canMinimize }: {
-      title?: string;
-      description?: string;
+      title?: TranslatedString;
+      description?: TranslatedString;
 
       // Use for long jobs where it's not required for user to wait for the result.
       // Note that `complete` handler will be called immediately and `next` will never be called.

@@ -2,7 +2,7 @@
   <mat-card-header>
     <h3 mat-card-title>
       @if (isFilesystem()) {
-        {{ 'Dataset Space Management' | translate }}
+        {{ 'Space Management' | translate }}
       }
       @if (isZvol()) {
         {{ 'Zvol Space Management' | translate }}
@@ -71,7 +71,7 @@
       <div class="details-item">
         <div class="label">
           @if (isFilesystem()) {
-            {{ 'Space Available to Dataset' | translate }}:
+            {{ 'Available Space' | translate }}:
           }
           @if (isZvol()) {
             {{ 'Space Available to Zvol' | translate }}:

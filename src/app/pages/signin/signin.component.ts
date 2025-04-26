@@ -12,6 +12,7 @@ import {
   delay,
   filter, map, switchMap, take,
 } from 'rxjs/operators';
+import { TranslatedString } from 'app/helpers/translate.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -88,7 +89,7 @@ export class SigninComponent implements OnInit {
       filter(Boolean),
       filter(() => this.window.sessionStorage.getItem('loginBannerDismissed') !== 'true'),
       switchMap((text) => this.dialog.fullScreenDialog({
-        message: text,
+        message: text as TranslatedString,
         showClose: true,
         pre: true,
       }).pipe(take(1))),

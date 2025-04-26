@@ -111,7 +111,7 @@
         </div>
         @if (isAdvancedMode) {
           <div class="column">
-            <ix-fieldset title="TLS">
+            <ix-fieldset [title]="ignoreTranslation('TLS')">
               <ix-checkbox
                 formControlName="tls"
                 [label]="'Enable TLS' | translate"

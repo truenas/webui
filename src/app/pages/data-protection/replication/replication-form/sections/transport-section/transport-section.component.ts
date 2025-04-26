@@ -10,6 +10,7 @@ import { CompressionType, compressionTypeNames } from 'app/enums/compression-typ
 import { NetcatMode, netcatModeNames } from 'app/enums/netcat-mode.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
+import { TranslatedString } from 'app/helpers/translate.helper';
 import { helptextReplication } from 'app/helptext/data-protection/replication/replication';
 import { helptextGlobal } from 'app/helptext/global-helptext';
 import { newOption } from 'app/interfaces/option.interface';
@@ -151,5 +152,9 @@ export class TransportSectionComponent implements OnChanges {
       }, isNull),
       speed_limit: null,
     };
+  }
+
+  protected asTranslatedString(string: string): TranslatedString {
+    return string as TranslatedString;
   }
 }

@@ -56,8 +56,8 @@ export class BootPoolAttachDialog implements OnInit {
 
   expand = {
     fcName: 'expand',
-    label: this.translate.instant(helptextSystemBootenv.expand_placeholder),
-    tooltip: this.translate.instant(helptextSystemBootenv.expand_tooltip),
+    label: this.translate.instant(helptextSystemBootenv.expandLabel),
+    tooltip: this.translate.instant(helptextSystemBootenv.expandTooltip),
   };
 
   protected readonly Role = Role;

@@ -5,7 +5,7 @@
 <mat-card>
   <mat-card-content>
     <form class="ix-form-container" [formGroup]="formGroup" (submit)="submit()">
-      <ix-fieldset [title]="fieldsetTitle">
+      <ix-fieldset [title]="fieldsetTitle | translate">
         <ix-combobox
           [formControlName]="language.fcName"
           [label]="language.label | translate"

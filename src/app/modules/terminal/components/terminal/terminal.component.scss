@@ -13,3 +13,17 @@
 #terminal {
   height: 100%;
 }
+
+.font-size-controls {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+
+  button {
+    color: var(--fg1);
+
+    &:disabled {
+      opacity: 0.5;
+    }
+  }
+}

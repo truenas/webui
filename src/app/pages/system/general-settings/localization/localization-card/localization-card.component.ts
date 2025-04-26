@@ -33,6 +33,7 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
 @UntilDestroy()
 @Component({
   selector: 'ix-localization-card',
+  styleUrls: ['./../../common-settings-card.scss'],
   templateUrl: './localization-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [

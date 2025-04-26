@@ -15,6 +15,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { IscsiAuthMethod, IscsiTargetMode, iscsiTargetModeNames } from 'app/enums/iscsi.enum';
 import { Role } from 'app/enums/role.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
+import { ignoreTranslation, TranslatedString, translateOptions } from 'app/helpers/translate.helper';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { IscsiTarget, IscsiTargetGroup } from 'app/interfaces/iscsi.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -39,6 +40,7 @@ import {
 import { TargetNameValidationService } from 'app/pages/sharing/iscsi/target/target-name-validation.service';
 import { FibreChannelService } from 'app/services/fibre-channel.service';
 import { IscsiService } from 'app/services/iscsi.service';
+import { LicenseService } from 'app/services/license.service';
 
 @UntilDestroy()
 @Component({
@@ -85,7 +87,7 @@ export class TargetFormComponent implements OnInit {
       : this.translate.instant('Edit ISCSI Target');
   }
 
-  hasFibreChannel = toSignal(this.iscsiService.hasFibreChannel());
+  hasFibreChannel = toSignal(this.license.hasFibreChannel$);
 
   readonly helptext = helptextSharingIscsi;
   readonly portals$ = this.iscsiService.listPortals().pipe(
@@ -106,20 +108,20 @@ export class TargetFormComponent implements OnInit {
         const initiatorsAllowed = initiator.initiators.length === 0
           ? this.translate.instant('ALL Initiators Allowed')
           : initiator.initiators.toString();
-        const optionLabel = `${initiator.id} (${initiatorsAllowed})`;
+        const optionLabel = `${initiator.id} (${initiatorsAllowed})` as TranslatedString;
         opts.push({ label: optionLabel, value: initiator.id });
       });
       return opts;
     }),
   );
 
-  readonly authmethods$ = of(this.helptext.target_form_enum_authmethod);
+  readonly authmethods$ = of(translateOptions(this.translate, this.helptext.target_form_enum_authmethod));
   readonly auths$ = this.iscsiService.getAuth().pipe(
     map((auths) => {
       const opts: Option[] = [];
       const tags = uniq(auths.map((item) => item.tag));
       tags.forEach((tag) => {
-        opts.push({ label: String(tag), value: tag });
+        opts.push({ label: ignoreTranslation(String(tag)), value: tag });
       });
       return opts;
     }),
@@ -161,6 +163,7 @@ export class TargetFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private api: ApiService,
     private fcService: FibreChannelService,
+    private license: LicenseService,
     private targetNameValidationService: TargetNameValidationService,
     public slideInRef: SlideInRef<IscsiTarget | undefined, IscsiTarget>,
   ) {
