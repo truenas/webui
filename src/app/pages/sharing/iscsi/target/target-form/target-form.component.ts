@@ -15,7 +15,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { IscsiAuthMethod, IscsiTargetMode, iscsiTargetModeNames } from 'app/enums/iscsi.enum';
 import { Role } from 'app/enums/role.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
-import { helptextSharingIscsi } from 'app/helptext/sharing';
+import { helptextIscsi } from 'app/helptext/sharing';
 import { IscsiTarget, IscsiTargetGroup } from 'app/interfaces/iscsi.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -91,7 +91,7 @@ export class TargetFormComponent implements OnInit {
 
   hasFibreChannel = toSignal(this.license.hasFibreChannel$);
 
-  readonly helptext = helptextSharingIscsi;
+  readonly helptext = helptextIscsi;
   readonly portals$ = this.iscsiService.listPortals().pipe(
     map((portals) => {
       const opts: Option[] = portals.map((portal) => {
@@ -117,7 +117,7 @@ export class TargetFormComponent implements OnInit {
     }),
   );
 
-  readonly authmethods$ = of(this.helptext.target_form_enum_authmethod);
+  readonly authmethods$ = of(this.helptext.target.authenticationMethodOptions);
   readonly auths$ = this.iscsiService.getAuth().pipe(
     map((auths) => {
       const opts: Option[] = [];

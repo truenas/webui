@@ -71,7 +71,6 @@ export class TunableFormComponent implements OnInit {
   readonly tooltips = {
     var: helptext.varTooltip,
     value: helptext.valueTooltip,
-    enabled: helptext.enabledTooltip,
   };
 
   private editingTunable: Tunable;

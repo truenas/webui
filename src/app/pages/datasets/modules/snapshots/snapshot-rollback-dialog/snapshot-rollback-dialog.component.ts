@@ -68,8 +68,8 @@ export class SnapshotRollbackDialog implements OnInit {
 
   readonly recursive = {
     fcName: 'recursive',
-    tooltip: helptextSnapshots.rollback_recursive_radio_tooltip,
-    label: helptextSnapshots.rollback_recursive_radio_placeholder,
+    tooltip: helptextSnapshots.stopRollbackTooltip,
+    label: helptextSnapshots.stopRollbackLabel,
     options: of([
       {
         value: '',
@@ -91,7 +91,7 @@ export class SnapshotRollbackDialog implements OnInit {
 
   readonly force = {
     fcName: 'force',
-    label: helptextSnapshots.rollback_confirm,
+    label: helptextSnapshots.rollbackConfirm,
     required: true,
   };
 

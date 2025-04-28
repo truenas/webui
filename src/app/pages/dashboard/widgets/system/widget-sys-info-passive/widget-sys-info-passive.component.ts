@@ -117,9 +117,9 @@ export class WidgetSysInfoPassiveComponent {
 
   openDialog(): void {
     this.dialog.confirm({
-      title: this.translate.instant(helptextSystemFailover.dialog_initiate_failover_title),
-      message: this.translate.instant(helptextSystemFailover.dialog_initiate_failover_message),
-      buttonText: this.translate.instant(helptextSystemFailover.dialog_initiate_action),
+      title: this.translate.instant(helptextSystemFailover.failoverDialogTitle),
+      message: this.translate.instant(helptextSystemFailover.failoverDialogMessage),
+      buttonText: this.translate.instant(helptextSystemFailover.failoverButton),
     }).pipe(
       filter(Boolean),
       untilDestroyed(this),

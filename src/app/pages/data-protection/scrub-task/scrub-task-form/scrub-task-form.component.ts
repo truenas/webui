@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal,
+  ChangeDetectionStrategy, Component, OnInit, signal,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -87,14 +87,12 @@ export class ScrubTaskFormComponent implements OnInit {
 
   readonly tooltips = {
     threshold: helptextScrubForm.scrubThresholdTooltip,
-    enabled: helptextScrubForm.scrubEnabledTooltip,
   };
 
   constructor(
     private translate: TranslateService,
     private fb: FormBuilder,
     private api: ApiService,
-    private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
     private errorHandler: FormErrorHandlerService,
     public slideInRef: SlideInRef<PoolScrubTask | undefined, boolean>,

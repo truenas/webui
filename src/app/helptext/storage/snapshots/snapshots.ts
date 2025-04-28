@@ -1,26 +1,26 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const helptextSnapshots = {
-  snapshot_add_dataset_placeholder: T('Dataset'),
+  datasetLabel: T('Dataset'),
 
-  snapshot_add_name_placeholder: T('Name'),
-  snapshot_add_name_tooltip: T('Unique snapshot name. Cannot be used with \
+  nameLabel: T('Name'),
+  nameTooltip: T('Unique snapshot name. Cannot be used with \
  a <i>Naming Schema</i>.'),
 
-  snapshot_add_naming_schema_placeholder: T('Naming Schema'),
-  snapshot_add_naming_schema_tooltip: T('Generate a name for the snapshot \
+  namingSchemaLabel: T('Naming Schema'),
+  namingSchemaTooltip: T('Generate a name for the snapshot \
  using the naming schema from a previously created <b>Periodic Snapshot Task</b>. \
  This allows the snapshot to be replicated. Cannot be used with a <i>Name</i>.'),
 
-  snapshot_add_recursive_placeholder: T('Recursive'),
-  snapshot_add_recursive_tooltip: T('Set to include child datasets and zvols of the \
+  recursiveLabel: T('Recursive'),
+  recursiveTooltip: T('Set to include child datasets and zvols of the \
  chosen dataset.'),
 
-  snapshot_clone_name_tooltip: T('Name of the new dataset created from the \
+  cloneNameTooltip: T('Name of the new dataset created from the \
  cloned snapshot.'),
 
-  rollback_recursive_radio_placeholder: T('Stop Rollback if Snapshots Exist:'),
-  rollback_recursive_radio_tooltip: T('Choose a safety level for the \
+  stopRollbackLabel: T('Stop Rollback if Snapshots Exist:'),
+  stopRollbackTooltip: T('Choose a safety level for the \
  rollback action. The rollback is canceled when the safety check finds \
  additional snapshots that are directly related to the dataset being rolled back.'),
 
@@ -39,7 +39,7 @@ export const helptextSnapshots = {
  related intermediate, child dataset, and cloned snapshots that are \
  newer than the rollback snapshot.'),
 
-  rollback_confirm: T('Confirm'),
+  rollbackConfirm: T('Confirm'),
 
   extra_cols: {
     title_show: T('Show Extra Columns'),

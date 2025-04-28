@@ -108,7 +108,7 @@ export class KerberosRealmsListComponent implements OnInit {
           requiredRoles: this.requiredRoles,
           onClick: (row) => {
             this.dialogService.confirm({
-              title: this.translate.instant(helptextKerberosRealms.krb_realmlist_deletemessage_title),
+              title: this.translate.instant(helptextKerberosRealms.deleteDialogTitle),
               message: this.translate.instant('Are you sure you want to delete this item?'),
             }).pipe(
               filter(Boolean),
