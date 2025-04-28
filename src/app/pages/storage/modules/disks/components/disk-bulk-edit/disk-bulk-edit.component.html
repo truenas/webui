@@ -20,14 +20,14 @@
           formControlName="hddstandby"
           [label]="'HDD Standby' | translate"
           [tooltip]="helptext.disk_form_hddstandby_tooltip | translate"
-          [options]="hddstandbyOptions$"
+          [options]="hddstandbyOptions$ | translateOptions"
           [required]="true"
         ></ix-select>
 
         <ix-select
           formControlName="advpowermgmt"
           [label]="'Advanced Power Management' | translate"
-          [options]="advpowermgmtOptions$"
+          [options]="advpowermgmtOptions$ | translateOptions"
           [required]="true"
         ></ix-select>
       </ix-fieldset>

@@ -9,7 +9,6 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { map, Observable, of } from 'rxjs';
-import { ignoreTranslation } from 'app/helpers/translate.helper';
 import { instancesHelptext } from 'app/helptext/instances/instances';
 import { Option } from 'app/interfaces/option.interface';
 import { VirtualizationDisk, VirtualizationInstance } from 'app/interfaces/virtualization.interface';
@@ -19,6 +18,7 @@ import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-forma
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 

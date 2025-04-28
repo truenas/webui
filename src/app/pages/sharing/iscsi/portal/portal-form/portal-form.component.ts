@@ -13,7 +13,7 @@ import { Observable, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
-import { helptextSharingIscsi } from 'app/helptext/sharing';
+import { helptextIscsi } from 'app/helptext/sharing';
 import { IscsiInterface, IscsiPortal } from 'app/interfaces/iscsi.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -72,15 +72,14 @@ export class PortalFormComponent implements OnInit {
   });
 
   readonly labels = {
-    comment: helptextSharingIscsi.portal_form_placeholder_comment,
-    ip: helptextSharingIscsi.portal_form_placeholder_ip,
-    port: helptextSharingIscsi.portal_form_placeholder_port,
+    comment: helptextIscsi.portal.descriptionLabel,
+    ip: helptextIscsi.portal.ipLabel,
+    port: helptextIscsi.portal.portLabel,
   };
 
   readonly tooltips = {
-    comment: helptextSharingIscsi.portal_form_tooltip_comment,
-    ip: helptextSharingIscsi.portal_form_tooltip_ip,
-    port: helptextSharingIscsi.portal_form_tooltip_port,
+    ip: helptextIscsi.portal.ipTooltip,
+    port: helptextIscsi.portal.portTooltip,
   };
 
   readonly listenOptions$ = this.iscsiService.getIpChoices().pipe(choicesToOptions());

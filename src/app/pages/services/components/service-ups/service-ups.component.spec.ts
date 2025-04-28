@@ -35,7 +35,6 @@ describe('ServiceUpsComponent', () => {
       mockApi([
         mockCall('ups.config', {
           complete_identifier: 'ups@localhost:3',
-          description: '',
           driver: 'bcmxcp$PW9315',
           extrausers: '',
           hostsync: 16,
@@ -101,7 +100,6 @@ describe('ServiceUpsComponent', () => {
       'Power Off UPS': true,
       'No Communication Warning Time': '',
       'Host Sync': '16',
-      Description: '',
       'Auxiliary Parameters (ups.conf)': '',
       'Auxiliary Parameters (upsd.conf)': '',
     });
@@ -124,7 +122,6 @@ describe('ServiceUpsComponent', () => {
       'Power Off UPS': false,
       'No Communication Warning Time': '',
       'Host Sync': '16',
-      Description: 'This is a test',
       'Auxiliary Parameters (ups.conf)': '',
       'Auxiliary Parameters (upsd.conf)': '',
     });
@@ -133,7 +130,6 @@ describe('ServiceUpsComponent', () => {
     await saveButton.click();
 
     expect(api.call).toHaveBeenCalledWith('ups.update', [{
-      description: 'This is a test',
       driver: 'bcmxcp$R1500 G2',
       extrausers: '',
       hostsync: 16,
