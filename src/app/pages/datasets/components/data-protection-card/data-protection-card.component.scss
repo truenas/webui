@@ -2,4 +2,15 @@
 
 .card {
   @include details-card();
+
+  mat-card-content > div {
+    &.details-item {
+      border-bottom: 1px solid var(--lines);
+      padding-bottom: 8px;
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+  }
 }
