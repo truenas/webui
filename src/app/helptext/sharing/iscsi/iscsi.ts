@@ -10,11 +10,11 @@ export const helptextIscsi = {
     nameLabel: T('Target Name'),
     nameTooltip: T(
       'The base name is automatically prepended if the target\
-   name does not start with <i>iqn</i>. Lowercase alphanumeric\
-   characters plus dot (.), dash (-), and colon (:) are allowed.\
-   See the <i>Constructing iSCSI names using the iqn.format</i>\
-   section of <a href="https://tools.ietf.org/html/rfc3721.html"\
-   target="_blank">RFC3721</a>.',
+ name does not start with <i>iqn</i>. Lowercase alphanumeric\
+ characters plus dot (.), dash (-), and colon (:) are allowed.\
+ See the <i>Constructing iSCSI names using the iqn.format</i>\
+ section of <a href="https://tools.ietf.org/html/rfc3721.html"\
+ target="_blank">RFC3721</a>.',
     ),
 
     aliasLabel: T('Target Alias'),
@@ -28,7 +28,7 @@ export const helptextIscsi = {
     initiatorGroupIdLabel: T('Initiator Group ID'),
     initiatorGrouIpIdTooltip: T(
       'Select which existing initiator group\
-   has access to the target.',
+ has access to the target.',
     ),
 
     authenticationMethodLabel: T('Authentication Method'),
@@ -46,7 +46,7 @@ export const helptextIscsi = {
     authGroupNumberLabel: T('Authentication Group Number'),
     authGroupNumberTooltip: T(
       'Select <i>None</i> or an integer. This value\
-   represents the number of existing authorized accesses.',
+ represents the number of existing authorized accesses.',
     ),
   },
 
@@ -54,20 +54,20 @@ export const helptextIscsi = {
     descriptionLabel: T('Description'),
 
     discoveryAuthMethodTooltip: T('iSCSI supports multiple \
-   authentication methods that are used by the target to discover valid \
-   devices. <i>None</i> allows anonymous discovery while <i>CHAP</i> and \
-   <i>Mutual CHAP</i> require authentication.'),
+ authentication methods that are used by the target to discover valid \
+ devices. <i>None</i> allows anonymous discovery while <i>CHAP</i> and \
+ <i>Mutual CHAP</i> require authentication.'),
 
     ipLabel: T('IP Address'),
     ipTooltip: T('Select the IP addresses to be listened on \
-   by the portal. Click ADD to add IP addresses with a different network \
-   port. The address <i>0.0.0.0</i> can be selected to listen on all IPv4 \
-   addresses, or <i>::</i> to listen on all IPv6 addresses.'),
+ by the portal. Click ADD to add IP addresses with a different network \
+ port. The address <i>0.0.0.0</i> can be selected to listen on all IPv4 \
+ addresses, or <i>::</i> to listen on all IPv6 addresses.'),
 
     portLabel: T('Port'),
     portTooltip: T(
       'TCP port used to access the iSCSI target.\
-   Default is <i>3260</i>.',
+ Default is <i>3260</i>.',
     ),
   },
 
@@ -77,10 +77,10 @@ export const helptextIscsi = {
     addIqnLabel: T('Add Allowed Initiators (IQN)'),
     initiatorsTooltip: T(
       'Initiators allowed access to this system. Enter an\
-   <a href="https://tools.ietf.org/html/rfc3720#section-3.2.6"\
-   target="_blank">iSCSI Qualified Name (IQN)</a> and click <i>+</i> to\
-   add it to the list. Example:\
-   <i>iqn.1994-09.org.freebsd:freenas.local</i>',
+ <a href="https://tools.ietf.org/html/rfc3720#section-3.2.6"\
+ target="_blank">iSCSI Qualified Name (IQN)</a> and click <i>+</i> to\
+ add it to the list. Example:\
+ <i>iqn.1994-09.org.freebsd:freenas.local</i>',
     ),
     descriptionLabel: T('Description'),
   },
@@ -88,29 +88,29 @@ export const helptextIscsi = {
   config: {
     basenameTooltip: T(
       'Lowercase alphanumeric characters plus dot (.), dash (-),\
-   and colon (:) are allowed. See the\
-   <i>Constructing iSCSI names using the iqn.format</i>\
-   section of <a href="https://tools.ietf.org/html/rfc3721.html"\
-   target="_blank">RFC3721</a>.',
+ and colon (:) are allowed. See the\
+ <i>Constructing iSCSI names using the iqn.format</i>\
+ section of <a href="https://tools.ietf.org/html/rfc3721.html"\
+ target="_blank">RFC3721</a>.',
     ),
 
     isnsServersTooltip: T('Hostnames or IP addresses of the \
-   ISNS servers to be registered with the iSCSI targets and portals of \
-   the system. Separate entries by pressing <code>Enter</code>.'),
+ ISNS servers to be registered with the iSCSI targets and portals of \
+ the system. Separate entries by pressing <code>Enter</code>.'),
 
     alertThreshold: T('Generate an alert when the \
-     pool has this percent space remaining. This is typically \
-     configured at the pool level when using zvols or at the extent level \
-     for both file and device based extents.'),
+   pool has this percent space remaining. This is typically \
+   configured at the pool level when using zvols or at the extent level \
+   for both file and device based extents.'),
 
     aluaTooltip: T('Do not enable ALUA on TrueNAS unless it is also supported \
-      by and enabled on the client computers. ALUA only works when enabled \
-      on both the client and server.'),
+    by and enabled on the client computers. ALUA only works when enabled \
+    on both the client and server.'),
 
     iserTooltip: T('Activates iSCSI Extensions for RDMA (iSER) in TrueNAS, enabling\
-   the iSCSI protocol to directly transfer data into and out of SCSI memory buffers for improved\
-   performance. Enabling is limited to TrueNAS Enterprise-licensed systems and requires the system\
-   and network environment have Remote Direct Memory Access (RDMA)-capable hardware.'),
+ the iSCSI protocol to directly transfer data into and out of SCSI memory buffers for improved\
+ performance. Enabling is limited to TrueNAS Enterprise-licensed systems and requires the system\
+ and network environment have Remote Direct Memory Access (RDMA)-capable hardware.'),
   },
 
   fieldset_extent_basic: T('Basic Info'),
