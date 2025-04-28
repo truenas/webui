@@ -8,13 +8,13 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { BehaviorSubject, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { JobState } from 'app/enums/job-state.enum';
-import { ignoreTranslation } from 'app/helpers/translate.helper';
 import { Job } from 'app/interfaces/job.interface';
 import {
   JobProgressDialog,
   JobProgressDialogConfig,
 } from 'app/modules/dialog/components/job-progress/job-progress-dialog.component';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
+import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 
 describe('JobProgressDialogComponent', () => {

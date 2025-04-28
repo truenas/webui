@@ -1,11 +1,13 @@
 import { TranslateService } from '@ngx-translate/core';
 import { Brand } from 'utility-types';
-import { Option } from 'app/interfaces/option.interface';
 
-export function translateOptions<T extends Option>(
+export function translateOptions<
+  Value,
+  OptionLike extends { label: string; value: Value },
+>(
   translate: TranslateService,
-  options: T[],
-): T[] {
+  options: OptionLike[],
+): (Omit<OptionLike, 'label'> & { label: TranslatedString })[] {
   return options.map((option) => {
     return {
       ...option,

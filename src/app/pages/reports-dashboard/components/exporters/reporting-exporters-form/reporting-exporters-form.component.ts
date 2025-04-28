@@ -13,7 +13,6 @@ import { BehaviorSubject, Observable, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { getDynamicFormSchemaNode } from 'app/helpers/get-dynamic-form-schema-node';
-import { ignoreTranslation } from 'app/helpers/translate.helper';
 import {
   DynamicFormSchema, DynamicFormSchemaNode,
 } from 'app/interfaces/dynamic-form-schema.interface';
@@ -37,6 +36,7 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 

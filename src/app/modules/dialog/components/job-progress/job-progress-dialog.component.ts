@@ -13,10 +13,10 @@ import {
   Observable, Subscription, map,
 } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
-import { ignoreTranslation, TranslatedString } from 'app/helpers/translate.helper';
 import { Job, JobProgress } from 'app/interfaces/job.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ignoreTranslation, TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 

@@ -17,7 +17,6 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { Role } from 'app/enums/role.enum';
-import { TranslatedString } from 'app/helpers/translate.helper';
 import { helptextDashboard } from 'app/helptext/directory-service/dashboard';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -27,6 +26,7 @@ import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ActiveDirectoryComponent } from 'app/pages/directory-service/components/active-directory/active-directory.component';
 import { IdmapListComponent } from 'app/pages/directory-service/components/idmap-list/idmap-list.component';
