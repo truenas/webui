@@ -63,6 +63,7 @@ describe('SigninComponent', () => {
       mockProvider(WebSocketStatusService, {
         isConnected$,
         isReconnectAllowed$,
+        setReconnect: jest.fn(),
       }),
     ],
   });
