@@ -36,8 +36,4 @@ export class WebSocketConnection {
     this.ws$?.complete();
     this.ws$ = undefined;
   }
-
-  disconnect(): void {
-    this.ws$.error({ code: 1000, type: 'DISCONNECT' });
-  }
 }
