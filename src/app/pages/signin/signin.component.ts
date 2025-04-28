@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  Component, OnInit, ChangeDetectionStrategy,
+  Component, ChangeDetectionStrategy,
   Inject,
 } from '@angular/core';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -19,7 +19,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
-import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { DisconnectedMessageComponent } from 'app/pages/signin/disconnected-message/disconnected-message.component';
 import { ReconnectMessage } from 'app/pages/signin/reconnect-message/reconnect-message.component';
 import { SetAdminPasswordFormComponent } from 'app/pages/signin/set-admin-password-form/set-admin-password-form.component';
@@ -51,7 +50,7 @@ import { WebSocketStatusService } from 'app/services/websocket-status.service';
   ],
   providers: [SigninStore],
 })
-export class SigninComponent implements OnInit {
+export class SigninComponent {
   protected hasAuthToken = this.authService.hasAuthToken;
   protected isTokenWithinTimeline$ = this.tokenLastUsedService.isTokenWithinTimeline$;
 
@@ -59,7 +58,7 @@ export class SigninComponent implements OnInit {
   readonly canLogin$ = this.signinStore.canLogin$;
   readonly isConnected$ = this.wsStatus.isConnected$;
   readonly isReconnectAllowed$ = this.wsStatus.isReconnectAllowed$;
-  isDisconnected$ = this.isConnected$.pipe(map((isConnected) => !isConnected));
+  readonly isDisconnected$ = this.isConnected$.pipe(map((isConnected) => !isConnected));
 
   readonly hasLoadingIndicator$ = combineLatest([
     this.signinStore.isLoading$,
@@ -73,15 +72,12 @@ export class SigninComponent implements OnInit {
 
   constructor(
     private wsStatus: WebSocketStatusService,
-    private wsManager: WebSocketHandlerService,
     private signinStore: SigninStore,
     private dialog: DialogService,
     private authService: AuthService,
     private tokenLastUsedService: TokenLastUsedService,
     @Inject(WINDOW) private window: Window,
-  ) {}
-
-  ngOnInit(): void {
+  ) {
     this.isConnected$.pipe(
       filter(Boolean),
       untilDestroyed(this),
