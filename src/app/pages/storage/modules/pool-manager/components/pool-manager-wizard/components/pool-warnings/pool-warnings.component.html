@@ -5,7 +5,7 @@
       <ix-radio-group
         formControlName="allowNonUniqueSerialDisks"
         [label]="'Allow non-unique serialed disks (not recommended)' | translate"
-        [tooltip]="nonUniqueSerialDisksTooltip"
+        [tooltip]="nonUniqueSerialDisksTooltip | translate"
         [required]="true"
         [options]="allowNonUniqueSerialDisksOptions$"
         [inlineFields]="true"

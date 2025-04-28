@@ -61,7 +61,7 @@ export class FcPortsControlsComponent implements OnInit {
 
   readonly creatingPortOptions$ = this.api.call('fc.fc_host.query').pipe(map((hosts) => {
     return hosts.map((host) => ({
-      label: `${this.translate.instant('Create')} ${host.alias}/${host.npiv + 1}`,
+      label: this.translate.instant('Create {port}', { port: `${host.alias}/${host.npiv + 1}` }),
       value: host.id,
     }));
   }));

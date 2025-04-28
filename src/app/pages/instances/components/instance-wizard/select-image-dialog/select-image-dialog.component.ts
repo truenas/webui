@@ -12,6 +12,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { catchError, Observable, of } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { VirtualizationRemote, VirtualizationType } from 'app/enums/virtualization.enum';
+import { ignoreTranslation } from 'app/helpers/translate.helper';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { VirtualizationImage } from 'app/interfaces/virtualization.interface';
@@ -125,9 +126,16 @@ export class SelectImageDialog implements OnInit {
       releaseSet.add(image.release);
     });
 
-    this.osOptions$ = of([...osSet].map((os) => ({ label: os, value: os })));
-    this.variantOptions$ = of([...variantSet].map((variant) => ({ label: variant, value: variant })));
-    this.releaseOptions$ = of([...releaseSet].map((release) => ({ label: release, value: release })));
+    this.osOptions$ = of([...osSet].map((os) => ({ label: ignoreTranslation(os), value: os })));
+    this.variantOptions$ = of([...variantSet].map((variant) => ({
+      label: ignoreTranslation(variant),
+      value: variant,
+    })));
+
+    this.releaseOptions$ = of([...releaseSet].map((release) => ({
+      label: ignoreTranslation(release),
+      value: release,
+    })));
   }
 
   private filterImages(): void {

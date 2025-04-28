@@ -9,7 +9,9 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { filter, forkJoin, switchMap } from 'rxjs';
+import {
+  filter, forkJoin, switchMap,
+} from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
@@ -73,10 +75,10 @@ export class AppSettingsButtonComponent {
 
   onUnsetPool(): void {
     this.dialogService.confirm({
-      title: helptextApps.choosePool.unsetPool.confirm.title,
-      message: helptextApps.choosePool.unsetPool.confirm.message,
+      title: this.translate.instant(helptextApps.choosePool.unsetPool.confirm.title),
+      message: this.translate.instant(helptextApps.choosePool.unsetPool.confirm.message),
       hideCheckbox: true,
-      buttonText: helptextApps.choosePool.unsetPool.confirm.button,
+      buttonText: this.translate.instant(helptextApps.choosePool.unsetPool.confirm.button),
     }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.dockerStore.setDockerPool(null).pipe(
         untilDestroyed(this),

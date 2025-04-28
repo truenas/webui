@@ -171,20 +171,6 @@
     "hierarchy": [
       "Toolbar",
       "Settings Menu",
-      "About"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "routerLink": null,
-    "anchor": "about",
-    "triggerAnchor": "user-menu",
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Toolbar",
-      "Settings Menu",
       "Log Out"
     ],
     "synonyms": [
@@ -1392,11 +1378,11 @@
   {
     "hierarchy": [
       "Datasets",
-      "Create Snapshot"
+      "Take Snapshot"
     ],
     "synonyms": [
       "View Datasets",
-      "Take Snapshot"
+      "Create Snapshot"
     ],
     "requiredRoles": [
       "SNAPSHOT_WRITE"
@@ -1406,7 +1392,7 @@
       "/datasets"
     ],
     "routerLink": null,
-    "anchor": "create-snapshot",
+    "anchor": "take-snapshot",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -1595,7 +1581,7 @@
   {
     "hierarchy": [
       "Datasets",
-      "Dataset Details"
+      "Details"
     ],
     "synonyms": [
       "View Datasets",
@@ -1607,14 +1593,14 @@
       "/datasets"
     ],
     "routerLink": null,
-    "anchor": "dataset-details",
+    "anchor": "details",
     "triggerAnchor": null,
     "section": "ui"
   },
   {
     "hierarchy": [
       "Datasets",
-      "Dataset Space Management"
+      "Space Management"
     ],
     "synonyms": [
       "View Datasets",
@@ -1626,18 +1612,18 @@
       "/datasets"
     ],
     "routerLink": null,
-    "anchor": "dataset-space-management",
+    "anchor": "space-management",
     "triggerAnchor": null,
     "section": "ui"
   },
   {
     "hierarchy": [
       "Datasets",
-      "ZFS Encryption"
+      "Encryption"
     ],
     "synonyms": [
       "View Datasets",
-      "Dataset ZFS Encryption"
+      "Dataset Encryption"
     ],
     "requiredRoles": [],
     "visibleTokens": [],
@@ -1645,7 +1631,7 @@
       "/datasets"
     ],
     "routerLink": null,
-    "anchor": "zfs-encryption",
+    "anchor": "encryption",
     "triggerAnchor": null,
     "section": "ui"
   },

@@ -8,6 +8,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { BehaviorSubject, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { JobState } from 'app/enums/job-state.enum';
+import { ignoreTranslation } from 'app/helpers/translate.helper';
 import { Job } from 'app/interfaces/job.interface';
 import {
   JobProgressDialog,
@@ -60,14 +61,14 @@ describe('JobProgressDialogComponent', () => {
 
   it('shows title from data when it is provided', async () => {
     await setupTest({
-      title: 'Test job',
+      title: ignoreTranslation('Test job'),
     });
     expect(await dialogHarness.getTitleText()).toBe('Test job');
   });
 
   it('shows description from data when it is provided', async () => {
     await setupTest({
-      description: 'Test description',
+      description: ignoreTranslation('Test description'),
     });
     expect(spectator.query('.job-description')).toHaveExactText('Test description');
   });

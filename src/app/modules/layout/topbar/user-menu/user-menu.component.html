@@ -9,7 +9,7 @@
       [ixUiSearch]="searchableElements.elements.userMenu"
       [matMenuTriggerFor]="userMenu"
     >
-      @if (user?.pw_name) {
+      @if (user.pw_name) {
         <span
           class="username"
           [matTooltip]="user.pw_name"
@@ -22,7 +22,7 @@
     </button>
 
     <mat-menu #userMenu="matMenu">
-      @if (user?.account_attributes?.includes(AccountAttribute.Local)) {
+      @if (user.account_attributes?.includes(AccountAttribute.Local)) {
         <button
           name="settings-change-password"
           mat-menu-item
@@ -35,29 +35,29 @@
         </button>
       }
 
-      <button
-        name="settings-2fa"
-        mat-menu-item
-        ixTest="2fa"
-        (click)="onTwoFactorAuth()"
-      >
-        <ix-icon name="ix-two-factor-auth"></ix-icon>
-        {{ 'Two-Factor Authentication' | translate }}
-      </button>
-
-      @if (loggedInUser$ | async; as user) {
-        <a
-          name="settings-api"
-          ixTest="api-keys"
+      @if (isTwoFactorEnabledGlobally$ | async) {
+        <button
+          name="settings-2fa"
           mat-menu-item
-          [routerLink]="['/credentials/users/api-keys']"
-          [queryParams]="{ userName: user.pw_name }"
-          [ixUiSearch]="searchableElements.elements.myApiKeys"
+          ixTest="2fa"
+          (click)="onTwoFactorAuth()"
         >
-          <ix-icon name="mdi-laptop"></ix-icon>
-          {{ 'My API Keys' | translate }}
-        </a>
+          <ix-icon name="ix-two-factor-auth"></ix-icon>
+          {{ 'Two-Factor Authentication' | translate }}
+        </button>
       }
+
+      <a
+        name="settings-api"
+        ixTest="api-keys"
+        mat-menu-item
+        [routerLink]="['/credentials/users/api-keys']"
+        [queryParams]="{ userName: user.pw_name }"
+        [ixUiSearch]="searchableElements.elements.myApiKeys"
+      >
+        <ix-icon name="mdi-laptop"></ix-icon>
+        {{ 'My API Keys' | translate }}
+      </a>
 
       <a
         name="settings-guide"
@@ -70,17 +70,6 @@
         <ix-icon name="library_books"></ix-icon>
         {{ 'Guide' | translate }}
       </a>
-
-      <button
-        name="settings-about"
-        mat-menu-item
-        ixTest="about"
-        [ixUiSearch]="searchableElements.elements.about"
-        (click)="onShowAbout()"
-      >
-        <ix-icon name="mdi-information-outline"></ix-icon>
-        {{ 'About' | translate }}
-      </button>
 
       <!-- Inline styles because mat-menu contents are rendered outside of the component -->
       <mat-divider style="margin: 5px 0;"></mat-divider>

@@ -211,7 +211,8 @@ export class WidgetStorageComponent {
   private getDiskWithErrorsItemInfo(pool: Pool): ItemInfo {
     let level = StatusLevel.Warn;
     let icon = statusIcons.error;
-    let value = this.translate.instant('Unknown');
+    let unhealthyCount: number | null = null;
+    let value: string = this.translate.instant('Unknown');
 
     if (pool?.topology) {
       const unhealthy: string[] = []; // Disks with errors
@@ -233,16 +234,19 @@ export class WidgetStorageComponent {
         }
       });
       if (unhealthy.length === 0) {
-        value = '0';
+        unhealthyCount = 0;
         level = StatusLevel.Safe;
         icon = statusIcons.checkCircle;
       } else {
         level = StatusLevel.Warn;
         icon = statusIcons.error;
-        value = unhealthy.length.toString();
+        unhealthyCount = unhealthy.length;
       }
 
-      value = `${value} ${this.translate.instant('of')} ${this.getTotalDisks(pool)}`;
+      value = this.translate.instant('{unhealthy} of {total}', {
+        unhealthy: String(unhealthyCount),
+        total: this.getTotalDisks(pool),
+      });
     }
 
     return {

@@ -21,6 +21,7 @@ import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingNfs } from 'app/helptext/sharing';
 import { DatasetCreate } from 'app/interfaces/dataset.interface';
 import { NfsShare, NfsShareUpdate } from 'app/interfaces/nfs-share.interface';
+import { Option } from 'app/interfaces/option.interface';
 import { GroupComboboxProvider } from 'app/modules/forms/ix-forms/classes/group-combobox-provider';
 import { UserComboboxProvider } from 'app/modules/forms/ix-forms/classes/user-combobox-provider';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -134,7 +135,7 @@ export class NfsFormComponent implements OnInit {
       label: 'KRB5P',
       value: NfsSecurityProvider.Krb5p,
     },
-  ]);
+  ] as Option[]);
 
   constructor(
     private api: ApiService,

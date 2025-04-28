@@ -15,6 +15,7 @@ import {
   filter, map,
 } from 'rxjs/operators';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
+import { ignoreTranslation } from 'app/helpers/translate.helper';
 import { ApiJobMethod, ApiJobResponse } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -114,7 +115,7 @@ export class JobsPanelComponent {
     const jobProgressDialogRef = this.dialog.jobDialog(
       job$,
       {
-        title,
+        title: ignoreTranslation(title),
         canMinimize: true,
       },
     );

@@ -6,6 +6,7 @@ import {
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
+import { TranslatedString } from 'app/helpers/translate.helper';
 import { Option } from 'app/interfaces/option.interface';
 import { SshCredentials } from 'app/interfaces/ssh-credentials.interface';
 import { IxSelectWithNewOption } from 'app/modules/forms/ix-forms/components/ix-select/ix-select-with-new-option.directive';
@@ -28,8 +29,8 @@ import { KeychainCredentialService } from 'app/services/keychain-credential.serv
   imports: [IxSelectComponent],
 })
 export class SshCredentialsSelectComponent extends IxSelectWithNewOption {
-  readonly label = input<string>();
-  readonly tooltip = input<string>();
+  readonly label = input<TranslatedString>();
+  readonly tooltip = input<TranslatedString>();
   readonly required = input<boolean>(false);
 
   private keychainCredentialsService = inject(KeychainCredentialService);

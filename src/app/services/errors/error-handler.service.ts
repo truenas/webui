@@ -9,14 +9,11 @@ import { consoleSandbox } from '@sentry/utils';
 import {
   catchError, EMPTY, MonoTypeOperatorFunction, Observable,
 } from 'rxjs';
-import { ApiErrorName } from 'app/enums/api.enum';
-import { JobExceptionType } from 'app/enums/response-error-type.enum';
 import {
   isApiCallError, isFailedJobError,
 } from 'app/helpers/api.helper';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ErrorParserService } from 'app/services/errors/error-parser.service';
-import { AbortedJobError } from 'app/services/errors/error.classes';
 
 @Injectable({
   providedIn: 'root',
@@ -104,22 +101,8 @@ export class ErrorHandlerService extends Sentry.SentryErrorHandler implements Er
       return false;
     }
 
-    if (error instanceof AbortedJobError) {
-      return false;
-    }
-
-    const ignoredApiErrors = [
-      ApiErrorName.Validation,
-      ApiErrorName.Again,
-      ApiErrorName.NoMemory,
-      ApiErrorName.NotAuthenticated,
-    ] as unknown[];
-
-    if (isApiCallError(error) && ignoredApiErrors.includes(error.error.data?.errname)) {
-      return false;
-    }
-
-    if (isFailedJobError(error) && error.job.exc_info?.type === JobExceptionType.Validation) {
+    const isMiddlewareError = isApiCallError(error) || isFailedJobError(error);
+    if (isMiddlewareError) {
       return false;
     }
 
