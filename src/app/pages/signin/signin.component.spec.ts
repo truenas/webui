@@ -27,8 +27,6 @@ describe('SigninComponent', () => {
   const isConnected$ = new BehaviorSubject<boolean>(true);
   const loginBanner$ = new BehaviorSubject<string>('');
   const isTokenWithinTimeline$ = new BehaviorSubject<boolean>(true);
-  const isConnectedDelayed$ = new BehaviorSubject<boolean>(false);
-  const isDisconnected$ = new BehaviorSubject<boolean>(false);
   const isReconnectAllowed$ = new BehaviorSubject<boolean>(false);
 
   const createComponent = createComponentFactory({
@@ -77,8 +75,6 @@ describe('SigninComponent', () => {
     loginBanner$.next('');
     isTokenWithinTimeline$.next(false);
     isReconnectAllowed$.next(false);
-    spectator.component.isConnectedDelayed$ = isConnectedDelayed$;
-    spectator.component.isDisconnected$ = isDisconnected$;
   });
 
   it('initializes SigninStore on component init', () => {
@@ -86,14 +82,8 @@ describe('SigninComponent', () => {
   });
 
   describe('disconnected', () => {
-    afterAll(() => {
-      isConnected$.next(true);
-      isConnectedDelayed$.next(false);
-      isDisconnected$.next(false);
-    });
     it('shows DisconnectedMessageComponent when there is no websocket connection', () => {
       isConnected$.next(false);
-      isDisconnected$.next(true);
       isReconnectAllowed$.next(false);
 
       spectator.detectChanges();
@@ -103,7 +93,6 @@ describe('SigninComponent', () => {
 
     it('shows ReconnectMessage when has established initial connection', () => {
       isConnected$.next(false);
-      isConnectedDelayed$.next(false);
       isReconnectAllowed$.next(true);
 
       spectator.detectChanges();
@@ -113,11 +102,6 @@ describe('SigninComponent', () => {
   });
 
   describe('connected', () => {
-    beforeAll(() => {
-      isConnected$.next(true);
-      isConnectedDelayed$.next(false);
-      isDisconnected$.next(false);
-    });
     it('shows SetRootPasswordFormComponent when root password is not set', () => {
       wasAdminSet$.next(false);
       spectator.detectChanges();
@@ -138,7 +122,6 @@ describe('SigninComponent', () => {
     });
 
     it('shows the logo when waiting for connection status', () => {
-      isConnectedDelayed$.next(true);
       spectator.detectChanges();
 
       const logo = spectator.query('.logo-wrapper ix-icon');
@@ -147,8 +130,6 @@ describe('SigninComponent', () => {
 
     it('shows "Logging in..." message when user is authenticated and token is within the timeline', () => {
       isConnected$.next(true);
-      isConnectedDelayed$.next(true);
-
       isTokenWithinTimeline$.next(true);
 
       spectator.detectChanges();

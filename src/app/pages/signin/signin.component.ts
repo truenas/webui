@@ -8,10 +8,9 @@ import { MatProgressBar } from '@angular/material/progress-bar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-  combineLatest, Observable, of,
+  combineLatest,
 } from 'rxjs';
 import {
-  delay,
   filter, map, switchMap, take,
 } from 'rxjs/operators';
 import { TranslatedString } from 'app/helpers/translate.helper';
@@ -60,11 +59,7 @@ export class SigninComponent implements OnInit {
   readonly canLogin$ = this.signinStore.canLogin$;
   readonly isConnected$ = this.wsStatus.isConnected$;
   readonly isReconnectAllowed$ = this.wsStatus.isReconnectAllowed$;
-
-  isConnectedDelayed$: Observable<boolean> = of(null).pipe(
-    delay(1000),
-    switchMap(() => this.isConnected$),
-  );
+  isDisconnected$ = this.isConnected$.pipe(map((isConnected) => !isConnected));
 
   readonly hasLoadingIndicator$ = combineLatest([
     this.signinStore.isLoading$,
@@ -74,13 +69,6 @@ export class SigninComponent implements OnInit {
     map(([isLoading, isConnected, isTokenWithinTimeline]) => {
       return isLoading || !isConnected || (isTokenWithinTimeline && this.hasAuthToken);
     }),
-  );
-
-  isDisconnected$ = combineLatest([
-    this.isConnected$,
-    this.isConnectedDelayed$,
-  ]).pipe(
-    map(([isConnected, isDelayed]) => !isConnected && isDelayed !== null),
   );
 
   constructor(
