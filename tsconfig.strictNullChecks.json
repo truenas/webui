@@ -502,7 +502,6 @@
     "./src/app/modules/summary/summary.component.spec.ts",
     "./src/app/modules/summary/summary.component.ts",
     "./src/app/modules/summary/summary.interface.ts",
-    "./src/app/modules/terminal/components/copy-paste-message/copy-paste-message.component.ts",
     "./src/app/modules/terminal/xterm-attach-addon.ts",
     "./src/app/modules/test-id/test-override/test-override.directive.ts",
     "./src/app/modules/test-id/test.directive.ts",

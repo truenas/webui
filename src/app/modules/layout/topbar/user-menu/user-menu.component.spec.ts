@@ -7,12 +7,12 @@ import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
-import { of } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { dummyUser } from 'app/core/testing/utils/mock-auth.utils';
+import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { AboutDialog } from 'app/modules/layout/topbar/about-dialog/about-dialog.component';
 import {
   ChangePasswordDialog,
 } from 'app/modules/layout/topbar/change-password-dialog/change-password-dialog.component';
@@ -22,6 +22,8 @@ describe('UserMenuComponent', () => {
   let spectator: Spectator<UserMenuComponent>;
   let loader: HarnessLoader;
   let menu: MatMenuHarness;
+  const globalTwoFactorConfig$ = new BehaviorSubject({ enabled: true } as GlobalTwoFactorConfig);
+
   const createComponent = createComponentFactory({
     component: UserMenuComponent,
     declarations: [
@@ -32,6 +34,7 @@ describe('UserMenuComponent', () => {
       mockApi(),
       mockProvider(AuthService, {
         logout: jest.fn(() => of()),
+        getGlobalTwoFactorConfig: jest.fn(() => globalTwoFactorConfig$),
         user$: of(dummyUser),
       }),
     ],
@@ -82,15 +85,6 @@ describe('UserMenuComponent', () => {
       expect(await guideElement.getAttribute('target')).toBe('_blank');
     });
 
-    it('has an About menu item that opens AboutDialogComponent when clicked', async () => {
-      const about = await menu.getItems({ text: /About$/ });
-      await about[0].click();
-
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(AboutDialog, {
-        disableClose: true,
-      });
-    });
-
     it('has a Log Out menu item that logs user out when pressed', async () => {
       const logout = await menu.getItems({ text: /Log Out$/ });
       await logout[0].click();
@@ -100,12 +94,30 @@ describe('UserMenuComponent', () => {
       expect(authService.logout).toHaveBeenCalled();
     });
 
-    it('has an 2fa menu item that redirects user to TwoFactorComponent when clicked', async () => {
-      const twofa = await menu.getItems({ text: 'Two-Factor Authentication' });
-      const router = spectator.inject(Router);
-      jest.spyOn(router, 'navigate');
-      await twofa[0].click();
-      expect(router.navigate).toHaveBeenCalledWith(['/two-factor-auth']);
+    describe('two factor authentication', () => {
+      beforeEach(() => {
+        globalTwoFactorConfig$.next({
+          enabled: true,
+        } as GlobalTwoFactorConfig);
+      });
+
+      it('does not show two factor authentication menu if it is not enabled globally', async () => {
+        globalTwoFactorConfig$.next({
+          enabled: false,
+        } as GlobalTwoFactorConfig);
+
+        const twoFactorAuth = await menu.getItems({ text: 'Two-Factor Authentication' });
+        expect(twoFactorAuth).toHaveLength(0);
+      });
+
+      it('has an 2fa menu item that redirects user to TwoFactorComponent when clicked', async () => {
+        const twoFactorAuth = await menu.getItems({ text: 'Two-Factor Authentication' });
+        const router = spectator.inject(Router);
+        jest.spyOn(router, 'navigate');
+
+        await twoFactorAuth[0].click();
+        expect(router.navigate).toHaveBeenCalledWith(['/two-factor-auth']);
+      });
     });
   });
 });

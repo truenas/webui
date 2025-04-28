@@ -240,7 +240,7 @@ export const supportedLinks: SupportedLink[] = [
   },
   {
     link: {
-      label: T('Go to Settings'),
+      label: T('Go to System Settings'),
       route: supportCardElements.anchorRouterLink,
     },
     classes: [
