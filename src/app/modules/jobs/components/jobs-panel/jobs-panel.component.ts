@@ -15,7 +15,6 @@ import {
   filter, map,
 } from 'rxjs/operators';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
-import { ignoreTranslation } from 'app/helpers/translate.helper';
 import { ApiJobMethod, ApiJobResponse } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -33,6 +32,7 @@ import {
 } from 'app/modules/jobs/store/job.selectors';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { ErrorParserService } from 'app/services/errors/error-parser.service';
 

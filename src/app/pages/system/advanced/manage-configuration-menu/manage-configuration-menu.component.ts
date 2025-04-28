@@ -64,9 +64,9 @@ export class ManageConfigurationMenuComponent {
 
   onResetToDefaults(): void {
     this.dialogService.confirm({
-      title: this.translate.instant(helptext.reset_config_form.title),
-      message: this.translate.instant(helptext.reset_config_form.message),
-      buttonText: this.translate.instant(helptext.reset_config_form.button_text),
+      title: this.translate.instant(helptext.resetConfigForm.title),
+      message: this.translate.instant(helptext.resetConfigForm.message),
+      buttonText: this.translate.instant(helptext.resetConfigForm.button),
       buttonColor: 'warn',
     })
       .pipe(

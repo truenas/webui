@@ -10,7 +10,6 @@ import { MatRadioChange, MatRadioGroup, MatRadioButton } from '@angular/material
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
-import { TranslatedString } from 'app/helpers/translate.helper';
 import { RadioOption } from 'app/interfaces/option.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
@@ -18,6 +17,7 @@ import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
 
 @UntilDestroy()
 @Component({

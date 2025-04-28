@@ -12,12 +12,12 @@ import {
   delay,
   filter, map, switchMap, take,
 } from 'rxjs/operators';
-import { TranslatedString } from 'app/helpers/translate.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { DisconnectedMessageComponent } from 'app/pages/signin/disconnected-message/disconnected-message.component';
 import { SetAdminPasswordFormComponent } from 'app/pages/signin/set-admin-password-form/set-admin-password-form.component';
 import { SigninFormComponent } from 'app/pages/signin/signin-form/signin-form.component';

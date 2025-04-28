@@ -38,7 +38,6 @@
         <ix-input
           formControlName="dns_domain_name"
           [label]="'DNS Domain Name' | translate"
-          [tooltip]="helptext.idmap.dns_domain_name.tooltip | translate"
         ></ix-input>
 
         <ix-input
@@ -169,7 +168,6 @@
             [label]="'Encryption Mode' | translate"
             [options]="sslModes$"
             [required]="true"
-            [tooltip]="helptext.idmap.ssl.tooltip | translate"
           ></ix-select>
         }
 

@@ -2,8 +2,8 @@ import {
   ChangeDetectionStrategy, Component, input,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { TranslatedString } from 'app/helpers/translate.helper';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
 
 @Component({
   selector: 'ix-fieldset',

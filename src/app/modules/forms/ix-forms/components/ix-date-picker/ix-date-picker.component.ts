@@ -8,7 +8,6 @@ import { MatHint, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { TranslateModule } from '@ngx-translate/core';
 import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
-import { TranslatedString } from 'app/helpers/translate.helper';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { IxDateAdapter } from 'app/modules/dates/services/ix-date-adapter';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
@@ -17,6 +16,7 @@ import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives
 import { LocaleService } from 'app/modules/language/locale.service';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
 
 type OnChangeFn = (value: Date) => void;
 type OnTouchedFn = () => void;

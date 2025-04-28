@@ -10,7 +10,6 @@ import { uniq } from 'lodash-es';
 import {
   of, Observable, combineLatest, startWith,
 } from 'rxjs';
-import { ignoreTranslation } from 'app/helpers/translate.helper';
 import { helptextManager } from 'app/helptext/storage/volumes/manager/manager';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -18,6 +17,7 @@ import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label
 import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { getNonUniqueSerialDisksWarning } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/pool-warnings/get-non-unique-serial-disks';
 import { DiskStore } from 'app/pages/storage/modules/pool-manager/store/disk.store';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';

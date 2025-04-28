@@ -27,7 +27,6 @@ import {
   debounceTime, distinctUntilChanged, filter, map, switchMap, takeUntil,
   tap,
 } from 'rxjs/operators';
-import { TranslatedString } from 'app/helpers/translate.helper';
 import { newOption, Option } from 'app/interfaces/option.interface';
 import { User } from 'app/interfaces/user.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
@@ -39,6 +38,7 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { OldUserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
 
 @UntilDestroy()

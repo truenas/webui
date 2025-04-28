@@ -1,9 +1,9 @@
 import { uniq } from 'lodash-es';
 import { OperatorFunction } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { ignoreTranslation } from 'app/helpers/translate.helper';
 import { Choices } from 'app/interfaces/choices.interface';
 import { MapOption, Option } from 'app/interfaces/option.interface';
+import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 
 /**
  * Convert choices to options

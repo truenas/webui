@@ -9,20 +9,20 @@
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <div class="columns">
         <div class="column">
-          <ix-fieldset [title]="helptext.fieldset_target_basic | translate">
+          <ix-fieldset [title]="helptext.basicInfo | translate">
             <ix-input
               [formControlName]="'name'"
-              [label]="helptext.target_form_placeholder_name | translate"
-              [tooltip]="helptext.target_form_tooltip_name | translate"
-              [placeholder]="helptext.target_form_placeholder_name | translate"
+              [label]="helptext.target.nameLabel | translate"
+              [tooltip]="helptext.target.nameTooltip | translate"
+              [placeholder]="helptext.target.nameLabel | translate"
               [required]="true"
             ></ix-input>
 
             <ix-input
               [formControlName]="'alias'"
-              [label]="helptext.target_form_placeholder_alias | translate"
-              [tooltip]="helptext.target_form_tooltip_alias | translate"
-              [placeholder]="helptext.target_form_placeholder_alias | translate"
+              [label]="helptext.target.aliasLabel | translate"
+              [tooltip]="helptext.target.aliasTooltip | translate"
+              [placeholder]="helptext.target.aliasLabel | translate"
             ></ix-input>
 
             @if (hasFibreChannel()) {
@@ -65,7 +65,7 @@
         </div>
 
         <div class="column">
-          <ix-fieldset [title]="helptext.fieldset_target_group | translate">
+          <ix-fieldset [title]="helptext.targetGroup | translate">
             <ix-list
               formArrayName="groups"
               [formArray]="form.get('groups')"
@@ -81,32 +81,31 @@
                 >
                   <ix-select
                     formControlName="portal"
-                    [label]="helptext.target_form_placeholder_portal | translate"
+                    [label]="helptext.target.portalGroupIdLabel | translate"
                     [options]="portals$"
-                    [tooltip]="helptext.target_form_tooltip_portal | translate"
+                    [tooltip]="helptext.target.portalGroupIdTooltip | translate"
                     [required]="true"
                   ></ix-select>
 
                   <ix-select
                     formControlName="initiator"
-                    [label]="helptext.target_form_placeholder_initiator | translate"
+                    [label]="helptext.target.initiatorGroupIdLabel | translate"
                     [options]="initiators$"
-                    [tooltip]="helptext.target_form_tooltip_initiator | translate"
+                    [tooltip]="helptext.target.initiatorGrouIpIdTooltip | translate"
                   ></ix-select>
 
                   <ix-select
                     formControlName="authmethod"
-                    [label]="helptext.target_form_placeholder_authmethod | translate"
-                    [options]="authmethods$"
-                    [tooltip]="helptext.target_form_tooltip_authmethod | translate"
+                    [label]="helptext.target.authenticationMethodLabel | translate"
+                    [options]="authmethods$ | translateOptions"
                     [required]="true"
                   ></ix-select>
 
                   <ix-select
                     formControlName="auth"
-                    [label]="helptext.target_form_placeholder_auth | translate"
+                    [label]="helptext.target.authGroupNumberLabel | translate"
                     [options]="auths$"
-                    [tooltip]="helptext.target_form_tooltip_auth | translate"
+                    [tooltip]="helptext.target.authGroupNumberTooltip | translate"
                   ></ix-select>
                 </ix-list-item>
               }

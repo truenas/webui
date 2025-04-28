@@ -72,7 +72,7 @@ export class SnapshotAddFormComponent implements OnInit {
   form = this.fb.nonNullable.group({
     dataset: ['', Validators.required],
     name: [this.getDefaultSnapshotName(), [this.validatorsService.withMessage(
-      atLeastOne('naming_schema', [helptextSnapshots.snapshot_add_name_placeholder, helptextSnapshots.snapshot_add_naming_schema_placeholder]),
+      atLeastOne('naming_schema', [helptextSnapshots.nameLabel, helptextSnapshots.namingSchemaLabel]),
       this.translate.instant('Name or Naming Schema must be provided.'),
     ), this.validatorsService.validateOnCondition(
       (control: AbstractControl) => control.value && control.parent?.get('naming_schema')?.value,
