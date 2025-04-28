@@ -103,6 +103,16 @@ describe('TransportSectionComponent', () => {
         netcat_passive_side_connect_address: null,
       });
     });
+
+    it('sends compression: null in payload when it is disabled', async () => {
+      await form.fillForm({
+        'Stream Compression': 'Disabled',
+      });
+
+      expect(spectator.component.getPayload()).toMatchObject({
+        compression: null,
+      });
+    });
   });
 
   describe('SSH+NETCAT transport', () => {
