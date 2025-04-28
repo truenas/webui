@@ -75,7 +75,6 @@ describe('SigninComponent', () => {
     isConnected$.next(true);
     loginBanner$.next('');
     isTokenWithinTimeline$.next(false);
-    isReconnectAllowed$.next(false);
   });
 
   it('initializes SigninStore on component init', () => {
@@ -85,7 +84,6 @@ describe('SigninComponent', () => {
   describe('disconnected', () => {
     it('shows DisconnectedMessageComponent when there is no websocket connection', () => {
       isConnected$.next(false);
-      isReconnectAllowed$.next(false);
 
       spectator.detectChanges();
 
