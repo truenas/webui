@@ -87,6 +87,8 @@ describe('SigninComponent', () => {
 
   describe('disconnected', () => {
     afterAll(() => {
+      isConnected$.next(true);
+      isConnectedDelayed$.next(false);
       isDisconnected$.next(false);
     });
     it('shows DisconnectedMessageComponent when there is no websocket connection', () => {
@@ -111,6 +113,11 @@ describe('SigninComponent', () => {
   });
 
   describe('connected', () => {
+    beforeAll(() => {
+      isConnected$.next(true);
+      isConnectedDelayed$.next(false);
+      isDisconnected$.next(false);
+    });
     it('shows SetRootPasswordFormComponent when root password is not set', () => {
       wasAdminSet$.next(false);
       spectator.detectChanges();
