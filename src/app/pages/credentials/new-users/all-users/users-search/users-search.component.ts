@@ -9,6 +9,7 @@ import { filter, of } from 'rxjs';
 import { Role, roleNames } from 'app/enums/role.enum';
 import { ParamsBuilder } from 'app/helpers/params-builder/params-builder.class';
 import { Option } from 'app/interfaces/option.interface';
+import { FilterPreset } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
 import { SearchInputComponent } from 'app/modules/forms/search-input/components/search-input/search-input.component';
 import { SearchProperty } from 'app/modules/forms/search-input/types/search-property.interface';
@@ -45,6 +46,33 @@ export class UsersSearchComponent implements OnInit {
   });
 
   protected readonly searchProperties = signal<SearchProperty<User>[]>([]);
+
+  protected userPresets: FilterPreset<User>[] = [
+    {
+      label: this.translate.instant('Show Builtin Users'),
+      query: [['builtin', '=', true]],
+    },
+    {
+      label: this.translate.instant('Has API Access'),
+      query: [['api_keys', '!=', null]],
+    },
+    {
+      label: this.translate.instant('Has SMB Access'),
+      query: [['smb', '=', true]],
+    },
+    {
+      label: this.translate.instant('Has Shell Access'),
+      query: [['shell', '!=', null]],
+    },
+    {
+      label: this.translate.instant('Has SSH Access'),
+      query: [['sshpubkey', '!=', null]],
+    },
+    {
+      label: this.translate.instant('From Active Directory'),
+      query: [['local', '=', false]],
+    },
+  ];
 
   constructor(
     private translate: TranslateService,
