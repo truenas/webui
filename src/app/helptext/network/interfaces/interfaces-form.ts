@@ -7,7 +7,6 @@ export const helptextInterfacesForm = {
  connections into a single interface. A <i>Virtual LAN (VLAN)</i> partitions\
  and isolates a segment of the connection. Read-only when editing an\
  interface.'),
-  int_description_tooltip: T('Enter a description of the interface.'),
   int_name_tooltip: T('Enter a name for the interface.\
  Use the format <samp>bond<i>X</i></samp>,\
  <samp>vlan<i>X</i></samp>, or <samp>br<i>X</i></samp> where\

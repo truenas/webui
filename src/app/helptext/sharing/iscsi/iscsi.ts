@@ -2,115 +2,116 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { IscsiAuthMethod, IscsiExtentType } from 'app/enums/iscsi.enum';
 import { Option } from 'app/interfaces/option.interface';
 
-export const helptextSharingIscsi = {
-  fieldset_target_basic: T('Basic Info'),
-  fieldset_target_group: T('iSCSI Group'),
+export const helptextIscsi = {
+  basicInfo: T('Basic Info'),
+  targetGroup: T('iSCSI Group'),
 
-  target_form_placeholder_name: T('Target Name'),
-  target_form_tooltip_name: T(
-    'The base name is automatically prepended if the target\
+  target: {
+    nameLabel: T('Target Name'),
+    nameTooltip: T(
+      'The base name is automatically prepended if the target\
  name does not start with <i>iqn</i>. Lowercase alphanumeric\
  characters plus dot (.), dash (-), and colon (:) are allowed.\
  See the <i>Constructing iSCSI names using the iqn.format</i>\
  section of <a href="https://tools.ietf.org/html/rfc3721.html"\
  target="_blank">RFC3721</a>.',
-  ),
+    ),
 
-  target_form_placeholder_alias: T('Target Alias'),
-  target_form_tooltip_alias: T('Optional user-friendly name.'),
+    aliasLabel: T('Target Alias'),
+    aliasTooltip: T('Optional user-friendly name.'),
 
-  target_form_placeholder_portal: T('Portal Group ID'),
-  target_form_tooltip_portal: T(
-    'Leave empty or select number of existing portal to use.',
-  ),
+    portalGroupIdLabel: T('Portal Group ID'),
+    portalGroupIdTooltip: T(
+      'Leave empty or select number of existing portal to use.',
+    ),
 
-  target_form_placeholder_initiator: T('Initiator Group ID'),
-  target_form_tooltip_initiator: T(
-    'Select which existing initiator group\
+    initiatorGroupIdLabel: T('Initiator Group ID'),
+    initiatorGrouIpIdTooltip: T(
+      'Select which existing initiator group\
  has access to the target.',
-  ),
+    ),
 
-  target_form_placeholder_authmethod: T('Authentication Method'),
-  target_form_tooltip_authmethod: T(
-    'Choices are <i>None, Auto, CHAP,</i> or <i>Mutual CHAP</i>.',
-  ),
-  target_form_enum_authmethod: [{
-    label: T('None'),
-    value: IscsiAuthMethod.None,
-  }, {
-    label: 'CHAP',
-    value: IscsiAuthMethod.Chap,
-  }, {
-    label: 'Mutual CHAP',
-    value: IscsiAuthMethod.ChapMutual,
-  }],
+    authenticationMethodLabel: T('Authentication Method'),
+    authenticationMethodOptions: [{
+      label: T('None'),
+      value: IscsiAuthMethod.None,
+    }, {
+      label: 'CHAP',
+      value: IscsiAuthMethod.Chap,
+    }, {
+      label: 'Mutual CHAP',
+      value: IscsiAuthMethod.ChapMutual,
+    }],
 
-  target_form_placeholder_auth: T('Authentication Group Number'),
-  target_form_tooltip_auth: T(
-    'Select <i>None</i> or an integer. This value\
+    authGroupNumberLabel: T('Authentication Group Number'),
+    authGroupNumberTooltip: T(
+      'Select <i>None</i> or an integer. This value\
  represents the number of existing authorized accesses.',
-  ),
+    ),
+  },
 
-  portal_form_placeholder_comment: T('Description'),
-  portal_form_tooltip_comment: T(
-    'Optional description. Portals are automatically assigned a numeric\
- group.',
-  ),
+  portal: {
+    descriptionLabel: T('Description'),
 
-  portal_form_tooltip_discovery_authmethod: T('iSCSI supports multiple \
+    discoveryAuthMethodTooltip: T('iSCSI supports multiple \
  authentication methods that are used by the target to discover valid \
  devices. <i>None</i> allows anonymous discovery while <i>CHAP</i> and \
  <i>Mutual CHAP</i> require authentication.'),
 
-  portal_form_placeholder_ip: T('IP Address'),
-  portal_form_tooltip_ip: T('Select the IP addresses to be listened on \
+    ipLabel: T('IP Address'),
+    ipTooltip: T('Select the IP addresses to be listened on \
  by the portal. Click ADD to add IP addresses with a different network \
  port. The address <i>0.0.0.0</i> can be selected to listen on all IPv4 \
  addresses, or <i>::</i> to listen on all IPv6 addresses.'),
 
-  portal_form_placeholder_port: T('Port'),
-  portal_form_tooltip_port: T(
-    'TCP port used to access the iSCSI target.\
+    portLabel: T('Port'),
+    portTooltip: T(
+      'TCP port used to access the iSCSI target.\
  Default is <i>3260</i>.',
-  ),
+    ),
+  },
 
-  all_placeholder_initiators: T('Allow All Initiators'),
+  initiator: {
+    allowAllLabel: T('Allow All Initiators'),
 
-  initiator_form_placeholder_initiators: T('Add Allowed Initiators (IQN)'),
-  initiator_form_tooltip_initiators: T(
-    'Initiators allowed access to this system. Enter an\
+    addIqnLabel: T('Add Allowed Initiators (IQN)'),
+    initiatorsTooltip: T(
+      'Initiators allowed access to this system. Enter an\
  <a href="https://tools.ietf.org/html/rfc3720#section-3.2.6"\
  target="_blank">iSCSI Qualified Name (IQN)</a> and click <i>+</i> to\
  add it to the list. Example:\
  <i>iqn.1994-09.org.freebsd:freenas.local</i>',
-  ),
+    ),
+    descriptionLabel: T('Description'),
+  },
 
-  initiator_form_placeholder_comment: T('Description'),
-
-  globalconf_tooltip_basename: T(
-    'Lowercase alphanumeric characters plus dot (.), dash (-),\
+  config: {
+    basenameTooltip: T(
+      'Lowercase alphanumeric characters plus dot (.), dash (-),\
  and colon (:) are allowed. See the\
  <i>Constructing iSCSI names using the iqn.format</i>\
  section of <a href="https://tools.ietf.org/html/rfc3721.html"\
  target="_blank">RFC3721</a>.',
-  ),
+    ),
 
-  globalconf_tooltip_isns_servers: T('Hostnames or IP addresses of the \
+    isnsServersTooltip: T('Hostnames or IP addresses of the \
  ISNS servers to be registered with the iSCSI targets and portals of \
  the system. Separate entries by pressing <code>Enter</code>.'),
 
-  globalconf_tooltip_pool_avail_threshold: T('Generate an alert when the \
+    alertThreshold: T('Generate an alert when the \
    pool has this percent space remaining. This is typically \
    configured at the pool level when using zvols or at the extent level \
    for both file and device based extents.'),
 
-  globalconf_tooltip_alua: T('Do not enable ALUA on TrueNAS unless it is also supported \
+    aluaTooltip: T('Do not enable ALUA on TrueNAS unless it is also supported \
     by and enabled on the client computers. ALUA only works when enabled \
     on both the client and server.'),
-  globalconf_tooltip_iser: T('Activates iSCSI Extensions for RDMA (iSER) in TrueNAS, enabling\
+
+    iserTooltip: T('Activates iSCSI Extensions for RDMA (iSER) in TrueNAS, enabling\
  the iSCSI protocol to directly transfer data into and out of SCSI memory buffers for improved\
  performance. Enabling is limited to TrueNAS Enterprise-licensed systems and requires the system\
  and network environment have Remote Direct Memory Access (RDMA)-capable hardware.'),
+  },
 
   fieldset_extent_basic: T('Basic Info'),
   fieldset_extent_type: T('Type'),

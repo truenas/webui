@@ -8,7 +8,7 @@ export const helptextServiceSnmp = {
  dashes, periods, and spaces. This can be left empty\
  for <i>SNMPv3</i> networks.'),
 
-  v3_tooltip: T('Set to to enable support for <a\
+  v3_tooltip: T('Set to enable support for <a\
  href="https://tools.ietf.org/html/rfc3410"\
  target="_blank">SNMP version 3</a>. See <a\
  href="http://net-snmp.sourceforge.net/docs/man/snmpd.conf.html"\

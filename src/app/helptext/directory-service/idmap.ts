@@ -15,9 +15,6 @@ export const helptextIdmap = {
     custom_name: {
       tooltip: T('Enter the pre-Windows 2000 domain name.'),
     },
-    dns_domain_name: {
-      tooltip: T('DNS name of the domain'),
-    },
     range_tooltip: T('Range Low and Range High set the range of UID/GID numbers which this \
  IDMap backend translates. If an external credential like a Windows SID maps to a UID or GID \
  number outside this range, the external credential is ignored.'),
@@ -72,9 +69,6 @@ export const helptextIdmap = {
       tooltip: T('LDAP server to use for SID/uid/gid map entries. When\
  undefined, idmap_ldap uses *ldap://localhost/*.\
  Example: <i>ldap://ldap.netscape.com/o=Airius.com</i>.'),
-    },
-    ssl: {
-      tooltip: T('Choose an encryption mode to use with LDAP.'),
     },
     linked_service: {
       tooltip: T('Specifies the auxiliary directory service ID provider.'),

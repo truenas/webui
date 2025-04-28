@@ -13,12 +13,12 @@ import {
 import {
   filter, map, switchMap, take,
 } from 'rxjs/operators';
-import { TranslatedString } from 'app/helpers/translate.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { DisconnectedMessageComponent } from 'app/pages/signin/disconnected-message/disconnected-message.component';
 import { ReconnectMessage } from 'app/pages/signin/reconnect-message/reconnect-message.component';

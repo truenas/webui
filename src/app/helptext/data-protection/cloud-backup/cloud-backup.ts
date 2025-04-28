@@ -19,11 +19,8 @@ export const helptextCloudBackup = {
   credentialsTooltip: T('Select the cloud storage provider credentials from the list of available Cloud Credentials.'),
 
   bucket: T('Bucket'),
-  bucketTooltip: T('Select the bucket to store the backup data.'),
 
   enabled: T('Enabled'),
-  enabledTooltip: T('Enable this TrueCloud Backup Task. Unset to disable this TrueCloud\
- Backup Task without deleting it.'),
 
   newBucket: T('New Bucket Name'),
   newBucketTooltip: T('Enter the name of the new bucket. Only lowercase letters, numbers, and hyphens are allowed.'),
@@ -32,7 +29,6 @@ export const helptextCloudBackup = {
   folderTooltip: T('Select the folder to store the backup data.'),
 
   name: T('Name'),
-  nameTooltip: T('Enter a name of the TrueCloud Backup Task.'),
 
   preScript: T('Pre-script'),
   preScriptTooltip: T('Script to execute before running sync.'),
