@@ -18,7 +18,6 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { Role } from 'app/enums/role.enum';
-import { translateOptions } from 'app/helpers/translate.helper';
 import { helptextDisks } from 'app/helptext/storage/disks/disks';
 import { Disk, DiskUpdate } from 'app/interfaces/disk.interface';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -30,6 +29,7 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TranslateOptionsPipe } from 'app/modules/translate/translate-options/translate-options.pipe';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AppState } from 'app/store';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
@@ -55,6 +55,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     MatButton,
     TestDirective,
     TranslateModule,
+    TranslateOptionsPipe,
   ],
 })
 export class DiskFormComponent implements OnInit {
@@ -72,7 +73,7 @@ export class DiskFormComponent implements OnInit {
 
   readonly helptext = helptextDisks;
   readonly hddstandbyOptions$ = of(helptextDisks.disk_form_hddstandby_options);
-  readonly advpowermgmtOptions$ = of(translateOptions(this.translate, this.helptext.disk_form_advpowermgmt_options));
+  readonly advpowermgmtOptions$ = of(helptextDisks.disk_form_advpowermgmt_options);
   readonly isLoading = signal<boolean>(false);
   readonly existingDisk = signal<Disk | null>(null);
 

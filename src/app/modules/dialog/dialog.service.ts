@@ -4,7 +4,6 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { JobProgressDialogRef } from 'app/classes/job-progress-dialog-ref.class';
-import { TranslatedString } from 'app/helpers/translate.helper';
 import {
   ConfirmOptions,
   ConfirmOptionsWithSecondaryCheckbox,
@@ -19,6 +18,7 @@ import { GeneralDialog, GeneralDialogConfig } from 'app/modules/dialog/component
 import { InfoDialog } from 'app/modules/dialog/components/info-dialog/info-dialog.component';
 import { JobProgressDialog } from 'app/modules/dialog/components/job-progress/job-progress-dialog.component';
 import { MultiErrorDialog } from 'app/modules/dialog/components/multi-error-dialog/multi-error-dialog.component';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
 
 @UntilDestroy()
 @Injectable({

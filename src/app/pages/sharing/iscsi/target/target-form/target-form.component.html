@@ -97,7 +97,7 @@
                   <ix-select
                     formControlName="authmethod"
                     [label]="helptext.target.authenticationMethodLabel | translate"
-                    [options]="authmethods$"
+                    [options]="authmethods$ | translateOptions"
                     [required]="true"
                   ></ix-select>
 
