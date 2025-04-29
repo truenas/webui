@@ -4598,6 +4598,7 @@
   "TrueNAS Connect Read": "",
   "TrueNAS Connect Service": "",
   "TrueNAS Connect Write": "",
+  "TrueNAS connection has timed out or was interrupted. To continue, press Reconnect.": "",
   "TrueNAS Help": "",
   "TrueNAS is Free and <a href=\"https://github.com/truenas/\" target=\"_blank\">Open Source</a> software, which is provided as-is with no warranty.": "",
   "TrueNAS maintains a cache of users and groups for API consumers (including the WebUI). This is a convenience feature that may be disabled if the domain contains large numbers of users and groups or if the caching generates excessive load on the domain controller.": "",
