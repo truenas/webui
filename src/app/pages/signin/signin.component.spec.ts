@@ -79,6 +79,7 @@ describe('SigninComponent', () => {
 
   it('initializes SigninStore on component init', () => {
     expect(spectator.inject(SigninStore, true).init).toHaveBeenCalled();
+    expect(spectator.inject(WebSocketStatusService).setReconnect).toHaveBeenCalledWith(true);
   });
 
   describe('disconnected', () => {
