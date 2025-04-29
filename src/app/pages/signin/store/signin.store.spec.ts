@@ -1,3 +1,4 @@
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator';
 import { mockProvider } from '@ngneat/spectator/jest';
@@ -185,6 +186,34 @@ describe('SigninStore', () => {
       spectator.service.init();
       expect(authService.setQueryToken).toHaveBeenCalledWith(token);
       expect(authService.loginWithToken).toHaveBeenCalled();
+    });
+  });
+
+  describe('getRedirectUrl', () => {
+    it('returns /dashboard when no redirectUrl is set in sessionStorage', () => {
+      const result = spectator.service.getRedirectUrl();
+      expect(result).toBe('/dashboard');
+    });
+
+    it('returns sanitized redirectUrl without token query param', () => {
+      jest.spyOn(spectator.inject<Window>(WINDOW).sessionStorage, 'getItem').mockReturnValueOnce('/some-url?token=123');
+      const result = spectator.service.getRedirectUrl();
+      expect(result).toBe('/some-url');
+    });
+  });
+
+  describe('showSnackbar', () => {
+    it('displays a snackbar with the provided message', () => {
+      const snackbarSpy = jest.spyOn(spectator.inject(MatSnackBar), 'open');
+      const message = 'Test Message';
+
+      spectator.service.showSnackbar(message);
+
+      expect(snackbarSpy).toHaveBeenCalledWith(
+        message,
+        'Close',
+        { duration: 4000, verticalPosition: 'bottom' },
+      );
     });
   });
 });
