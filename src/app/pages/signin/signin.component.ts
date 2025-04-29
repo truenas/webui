@@ -58,7 +58,6 @@ export class SigninComponent {
   readonly canLogin$ = this.signinStore.canLogin$;
   readonly isConnected$ = this.wsStatus.isConnected$;
   readonly isReconnectAllowed$ = this.wsStatus.isReconnectAllowed$;
-  readonly isDisconnected$ = this.isConnected$.pipe(map((isConnected) => !isConnected));
 
   readonly hasLoadingIndicator$ = combineLatest([
     this.signinStore.isLoading$,

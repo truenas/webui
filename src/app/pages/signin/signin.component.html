@@ -10,13 +10,13 @@
       ></mat-progress-bar>
     }
 
-    @if ((isDisconnected$ | async) && (isReconnectAllowed$ | async)) {
+    @if (!(isConnected$ | async) && (isReconnectAllowed$ | async)) {
       <mat-card>
         <mat-card-content>
           <ix-reconnect-message></ix-reconnect-message>
         </mat-card-content>
       </mat-card>
-    } @else if (isDisconnected$ | async) {
+    } @else if (!(isConnected$ | async)) {
       <mat-card>
         <mat-card-content>
           <ix-disconnected-message></ix-disconnected-message>
