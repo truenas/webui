@@ -38,6 +38,9 @@ describe('InstanceEditFormComponent', () => {
     status: VirtualizationStatus.Stopped,
     vnc_password: null,
     secure_boot: true,
+    image: {
+      os: 'FreeBSD',
+    },
   } as VirtualizationInstance;
 
   const createComponent = createComponentFactory({
@@ -95,6 +98,7 @@ describe('InstanceEditFormComponent', () => {
         'VNC Port': '9001',
         'VNC Password': '',
         'Secure Boot': true,
+        'OS Image': 'FreeBSD',
       });
     });
 
@@ -117,6 +121,7 @@ describe('InstanceEditFormComponent', () => {
         memory: GiB,
         enable_vnc: true,
         vnc_port: 9000,
+        image_os: 'FreeBSD',
         vnc_password: 'testing',
         secure_boot: false,
       }]);

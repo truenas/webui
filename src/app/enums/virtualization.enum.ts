@@ -1,6 +1,20 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 
+export enum ImageOs {
+  Linux = 'LINUX',
+  FreeBsd = 'FREEBSD',
+  Windows = 'WINDOWS',
+  Archlinux = 'ARCHLINUX',
+}
+
+export const imageOsLabels = new Map<ImageOs, string>([
+  [ImageOs.Linux, T('Linux')],
+  [ImageOs.FreeBsd, T('FreeBSD')],
+  [ImageOs.Windows, T('Windows')],
+  [ImageOs.Archlinux, T('Arch Linux')],
+]);
+
 export enum VirtualizationType {
   Container = 'CONTAINER',
   Vm = 'VM',
