@@ -66,12 +66,12 @@
       [ixUiSearch]="searchableElements.elements.datasetDataProtectionCard"
     ></ix-data-protection-card>
     @if (hasRoles()) {
-      <ix-roles-card
+      <ix-usage-card
         [dataset]="dataset()"
         [hasChildrenWithShares]="hasChildrenWithShares()"
         [ixUiSearch]="searchableElements.elements.datasetRolesCard"
         [systemDataset]="systemDataset()"
-      ></ix-roles-card>
+      ></ix-usage-card>
     }
     @if (hasPermissions()) {
       <ix-permissions-card

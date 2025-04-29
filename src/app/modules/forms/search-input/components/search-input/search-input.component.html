@@ -2,6 +2,7 @@
   <ix-advanced-search
     #advancedSearch
     [query]="advancedQuery"
+    [filterPresets]="filterPresets()"
     [properties]="properties()"
     [placeholder]="advancedSearchPlaceholder()"
     (paramsChange)="advancedSearchUpdated($event)"

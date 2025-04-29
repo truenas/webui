@@ -13,7 +13,7 @@
   </mat-card-header>
   <mat-card-content>
     <div class="details-item">
-      <div class="label">{{ 'Total Snapshots' | translate }}:</div>
+      <div class="label">{{ 'Snapshots' | translate }}:</div>
       <div class="total-snapshots value">{{ dataset().snapshot_count }}</div>
       <a
         class="action"
@@ -21,7 +21,7 @@
         [routerLink]="['/datasets/snapshots', dataset().id]"
         [ixUiSearch]="searchableElements.elements.manageSnapshots"
       >
-        {{ 'Manage Snapshots' | translate }}
+        {{ 'View Snapshots' | translate }}
       </a>
     </div>
     <div class="details-item">
@@ -33,46 +33,17 @@
         [routerLink]="['/data-protection/snapshot', dataset().id]"
         [ixUiSearch]="searchableElements.elements.manageSnapshotTasks"
       >
-        {{ 'Manage Snapshot Tasks' | translate }}
+        {{ 'View Snapshot Tasks' | translate }}
       </a>
     </div>
     <div class="details-item">
-      <div class="label">{{ 'Replication Tasks' | translate }}:</div>
-      <div class="replication-tasks value">
-        {{ dataset().replication_tasks_count }}
-      </div>
+      <div class="label backup-tasks">{{ backupTasksLabel }}</div>
       <a
         class="action"
-        ixTest="manage-replication-tasks"
-        [routerLink]="['/data-protection/replication', dataset().id]"
-        [ixUiSearch]="searchableElements.elements.manageReplicationTasks"
+        ixTest="manage-backups"
+        [routerLink]="['/data-protection']"
       >
-        {{ 'Manage Replication Tasks' | translate }}
-      </a>
-    </div>
-    <div class="details-item">
-      <div class="label">{{ 'Cloud Sync Tasks' | translate }}:</div>
-      <div class="cloudsync-tasks value">
-        {{ dataset().cloudsync_tasks_count }}
-      </div>
-      <a
-        class="action"
-        ixTest="manage-cloudsync-tasks"
-        [routerLink]="['/data-protection/cloudsync', dataset().id]"
-      >
-        {{ 'Manage Cloud Sync Tasks' | translate }}
-      </a>
-    </div>
-    <div class="details-item">
-      <div class="label">{{ 'Rsync Tasks' | translate }}:</div>
-      <div class="rsync-tasks value">{{ dataset().rsync_tasks_count }}</div>
-      <a
-        class="action"
-        ixTest="manage-rsync-tasks"
-        [routerLink]="['/data-protection/rsync', dataset().id]"
-        [ixUiSearch]="searchableElements.elements.manageRsyncTasks"
-      >
-        {{ 'Manage Rsync Tasks' | translate }}
+        {{ 'Go to Backups' | translate }}
       </a>
     </div>
   </mat-card-content>

@@ -5,13 +5,13 @@
         {{ 'VDEVs' | translate }}
       </span>
 
-      <ix-pool-card-icon [type]="iconType()" [tooltip]="iconTooltip()"></ix-pool-card-icon>
-
       <ix-icon
         name="help"
         class="pool-icon"
         [matTooltip]="'A pool is made of VDEVs (virtual devices). Each VDEV is a group of drives working together' | translate"
       ></ix-icon>
+
+      <ix-pool-card-icon [type]="iconType()" [tooltip]="iconTooltip()"></ix-pool-card-icon>
     </h3>
 
     <button
@@ -26,30 +26,33 @@
 
   <mat-card-content>
     <div class="content-container">
-      <div class="vdev-line">
-        <b>{{ 'Data VDEVs' | translate }}</b>
-        <div class="vdev-stats">
-          @if (!!topologyWarningsState.data && !isPoolOffline()) {
-            <span
-              class="warning"
-              [matTooltip]="topologyWarningsState.data"
-            >
-              <ix-icon name="error" class="pool-icon icon-warning"></ix-icon>
-            </span>
-          }
-          @if (isPoolOffline()) {
-            <span class="warning">
-              <ix-icon name="error" class="pool-icon icon-warning"></ix-icon>
-            </span>
-            <span class="offline-data-vdevs">{{ 'Offline VDEVs' | translate }}</span>
-          } @else {
-            <span class="vdev-value">{{ topologyState.data }}</span>
-          }
+      @if (topologyState.data !== notAssignedDev) {
+        <div class="vdev-line">
+          <b>{{ 'Data VDEVs' | translate }}</b>
+          <div class="vdev-stats">
+            @if (!!topologyWarningsState.data && !isPoolOffline()) {
+              <span
+                class="warning"
+                [matTooltip]="topologyWarningsState.data"
+              >
+                <ix-icon name="error" class="pool-icon icon-warning"></ix-icon>
+              </span>
+            }
+            @if (isPoolOffline()) {
+              <span class="warning">
+                <ix-icon name="error" class="pool-icon icon-warning"></ix-icon>
+              </span>
+              <span class="offline-data-vdevs">{{ 'Offline VDEVs' | translate }}</span>
+            } @else {
+              <span class="vdev-value">{{ topologyState.data }}</span>
+            }
+          </div>
         </div>
-      </div>
-      <div class="vdev-line">
-        <b>{{ 'Metadata VDEVs' | translate }}</b>
-        @if (!isPoolOffline()) {
+      }
+
+      @if (topologyState.metadata !== notAssignedDev && !isPoolOffline()) {
+        <div class="vdev-line">
+          <b>{{ 'Metadata VDEVs' | translate }}</b>
           <div class="vdev-stats">
             @if (!!topologyWarningsState.metadata) {
               <span class="warning" [matTooltip]="topologyWarningsState.metadata">
@@ -58,13 +61,12 @@
             }
             <span class="vdev-value">{{ topologyState.metadata }}</span>
           </div>
-        } @else {
-          <span class="vdev-value">{{ 'N/A' | translate }}</span>
-        }
-      </div>
-      <div class="vdev-line">
-        <b>{{ 'Log VDEVs' | translate }}</b>
-        @if (!isPoolOffline()) {
+        </div>
+      }
+
+      @if (topologyState.log !== notAssignedDev && !isPoolOffline()) {
+        <div class="vdev-line">
+          <b>{{ 'Log VDEVs' | translate }}</b>
           <div class="vdev-stats">
             @if (!!topologyWarningsState.log) {
               <span class="warning" [matTooltip]="topologyWarningsState.log">
@@ -73,13 +75,12 @@
             }
             <span class="vdev-value">{{ topologyState.log }}</span>
           </div>
-        } @else {
-          <span class="vdev-value">{{ 'N/A' | translate }}</span>
-        }
-      </div>
-      <div class="vdev-line">
-        <b>{{ 'Cache VDEVs' | translate }}</b>
-        @if (!isPoolOffline()) {
+        </div>
+      }
+
+      @if (topologyState.cache !== notAssignedDev && !isPoolOffline()) {
+        <div class="vdev-line">
+          <b>{{ 'Cache VDEVs' | translate }}</b>
           <div class="vdev-stats">
             @if (!!topologyWarningsState.cache) {
               <span class="warning" [matTooltip]="topologyWarningsState.cache">
@@ -88,30 +89,26 @@
             }
             <span class="vdev-value">{{ topologyState.cache }}</span>
           </div>
-        } @else {
-          <span class="vdev-value">{{ 'N/A' | translate }}</span>
-        }
-      </div>
-      @if (!isDraidLayoutDataVdevs) {
-        <div class="vdev-line">
-          <b>{{ 'Spare VDEVs' | translate }}</b>
-          @if (!isPoolOffline()) {
-            <div class="vdev-stats">
-              @if (!!topologyWarningsState.spare) {
-                <span class="warning" [matTooltip]="topologyWarningsState.spare">
-                  <ix-icon name="error" class="pool-icon icon-warning"></ix-icon>
-                </span>
-              }
-              <span class="vdev-value">{{ topologyState.spare }}</span>
-            </div>
-          } @else {
-            <span class="vdev-value">{{ 'N/A' | translate }}</span>
-          }
         </div>
       }
-      <div class="vdev-line">
-        <b>{{ 'Dedup VDEVs' | translate }}</b>
-        @if (!isPoolOffline()) {
+
+      @if (!isDraidLayoutDataVdevs && topologyState.spare !== notAssignedDev && !isPoolOffline()) {
+        <div class="vdev-line">
+          <b>{{ 'Spare VDEVs' | translate }}</b>
+          <div class="vdev-stats">
+            @if (!!topologyWarningsState.spare) {
+              <span class="warning" [matTooltip]="topologyWarningsState.spare">
+                <ix-icon name="error" class="pool-icon icon-warning"></ix-icon>
+              </span>
+            }
+            <span class="vdev-value">{{ topologyState.spare }}</span>
+          </div>
+        </div>
+      }
+
+      @if (topologyState.dedup !== notAssignedDev && !isPoolOffline()) {
+        <div class="vdev-line">
+          <b>{{ 'Dedup VDEVs' | translate }}</b>
           <div class="vdev-stats">
             @if (!!topologyWarningsState.dedup) {
               <span class="warning" [matTooltip]="topologyWarningsState.dedup">
@@ -120,10 +117,14 @@
             }
             <span class="vdev-value">{{ topologyState.dedup }}</span>
           </div>
-        } @else {
-          <span class="vdev-value">{{ 'N/A' | translate }}</span>
-        }
-      </div>
+        </div>
+      }
+
+      @if (noOtherVdevTypes()) {
+        <div class="vdev-line">
+          <b>{{ 'No other VDEV types.' | translate }}</b>
+        </div>
+      }
     </div>
   </mat-card-content>
 </mat-card>

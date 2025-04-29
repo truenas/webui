@@ -42,6 +42,36 @@ export class DataProtectionCardComponent {
   protected readonly requiredRoles = [Role.SnapshotWrite];
   protected readonly searchableElements = dataProtectionCardElements;
 
+  get backupTasksLabel(): string {
+    const replicationCount = this.dataset()?.replication_tasks_count || 0;
+    const cloudSyncCount = this.dataset()?.cloudsync_tasks_count || 0;
+    const rsyncCount = this.dataset()?.rsync_tasks_count || 0;
+
+    const parts: string[] = [];
+
+    if (replicationCount > 0) {
+      parts.push(
+        this.translate.instant('{count, plural, one {# Replication Task} other {# Replication Tasks}}', { count: replicationCount }),
+      );
+    }
+    if (cloudSyncCount > 0) {
+      parts.push(
+        this.translate.instant('{count, plural, one {# Cloud Sync Task} other {# Cloud Sync Tasks}}', { count: cloudSyncCount }),
+      );
+    }
+    if (rsyncCount > 0) {
+      parts.push(
+        this.translate.instant('{count, plural, one {# Rsync Task} other {# Rsync Tasks}}', { count: rsyncCount }),
+      );
+    }
+
+    if (parts.length === 0) {
+      return this.translate.instant('No Backup Tasks');
+    }
+
+    return parts.join(', ');
+  }
+
   constructor(
     private slideIn: SlideIn,
     private snackbarService: SnackbarService,

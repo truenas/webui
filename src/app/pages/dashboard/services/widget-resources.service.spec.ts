@@ -10,6 +10,7 @@ import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { App } from 'app/interfaces/app.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
+import { SystemUpdateChange } from 'app/interfaces/system-update.interface';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
@@ -50,7 +51,9 @@ describe('WidgetResourcesService', () => {
         mockCall('cloudsync.query'),
         mockCall('webui.main.dashboard.sys_info'),
         mockCall('interface.query'),
-        mockCall('update.check_available'),
+        mockCall('update.get_pending', [
+          {} as SystemUpdateChange,
+        ]),
         mockCall('reporting.netdata_get_data', [interfaceEth0]),
       ]),
       mockProvider(Store, {
@@ -79,6 +82,12 @@ describe('WidgetResourcesService', () => {
 
   it('returns apps', async () => {
     expect(await firstValueFrom(spectator.service.installedApps$)).toEqual(apps);
+  });
+
+  describe('updateAvailable$', () => {
+    it('returns true when api knows about available updates', async () => {
+      expect(await firstValueFrom(spectator.service.updateAvailable$)).toBe(true);
+    });
   });
 
   describe('networkInterfaceLastHourStats', () => {

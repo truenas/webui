@@ -80,7 +80,7 @@ describe('ZfsEncryptionCardComponent', () => {
 
     const details = getDetails();
     expect(details).toEqual({
-      'Encryption Root:': ' Yes ',
+      'Encryption Root:': ' Yes  Help:  Encryption RootEncryption root means that dataset has its own encryption settings. Only encryption roots can be directly locked, unlocked, or have their keys changed. Child datasets will inherit encryption settings from the parent encryption root.',
       'Current State:': 'Unlocked',
       'Type:': ' Key ',
     });
@@ -98,7 +98,7 @@ describe('ZfsEncryptionCardComponent', () => {
 
     const details = getDetails();
     expect(details).toEqual({
-      'Encryption Root:': ' Yes ',
+      'Encryption Root:': ' Yes  Help:  Encryption RootEncryption root means that dataset has its own encryption settings. Only encryption roots can be directly locked, unlocked, or have their keys changed. Child datasets will inherit encryption settings from the parent encryption root.',
       'Current State:': 'Unlocked',
       'Type:': ' Passphrase ',
     });
@@ -119,7 +119,7 @@ describe('ZfsEncryptionCardComponent', () => {
 
     const details = getDetails();
     expect(details).toEqual({
-      'Encryption Root:': ' Yes ',
+      'Encryption Root:': ' Yes  Help:  Encryption RootEncryption root means that dataset has its own encryption settings. Only encryption roots can be directly locked, unlocked, or have their keys changed. Child datasets will inherit encryption settings from the parent encryption root.',
       'Current State:': 'Locked',
       'Type:': ' Passphrase ',
     });
@@ -140,8 +140,8 @@ describe('ZfsEncryptionCardComponent', () => {
 
     const details = getDetails();
     expect(details).toEqual({
-      'Encryption Root:': '/pool',
-      'Current State:': 'Locked by ancestor',
+      'Inherits Encryption From:': ' /pool ',
+      'Current State:': 'Locked by parent',
       'Type:': ' Passphrase ',
     });
 
@@ -149,7 +149,7 @@ describe('ZfsEncryptionCardComponent', () => {
     expect(buttons).toHaveLength(0);
 
     const goToLink = spectator.query('a');
-    expect(goToLink).toHaveText('Go To Encryption Root');
+    expect(goToLink).toHaveText('/pool');
     expect(goToLink).toHaveAttribute('href', '/datasets/pool');
   });
 

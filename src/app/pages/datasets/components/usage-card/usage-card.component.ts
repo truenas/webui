@@ -24,9 +24,9 @@ import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.compon
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-roles-card',
-  templateUrl: './roles-card.component.html',
-  styleUrls: ['./roles-card.component.scss'],
+  selector: 'ix-usage-card',
+  templateUrl: './usage-card.component.html',
+  styleUrls: ['./usage-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatCard,
@@ -41,7 +41,7 @@ import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.compon
     RequiresRolesDirective,
   ],
 })
-export class RolesCardComponent {
+export class UsageCardComponent {
   readonly dataset = input.required<DatasetDetails>();
   readonly systemDataset = input.required<string>();
   readonly hasChildrenWithShares = input<boolean>(false);
