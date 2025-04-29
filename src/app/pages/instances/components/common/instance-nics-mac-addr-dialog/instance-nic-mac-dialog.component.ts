@@ -66,6 +66,7 @@ export class InstanceNicMacDialog {
   protected addDevice(): void {
     if (this.form.value.use_default) {
       this.matDialogRef.close({ useDefault: true });
+      return;
     }
     this.matDialogRef.close({ mac: this.form.value.mac });
   }

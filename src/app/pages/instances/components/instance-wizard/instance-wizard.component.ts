@@ -1,6 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, computed, effect, OnInit, signal,
+  WritableSignal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
@@ -19,7 +20,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { unionBy } from 'lodash-es';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
-  BehaviorSubject,
+  delay,
   filter, map, Observable, of, startWith, switchMap, tap,
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
@@ -154,10 +155,8 @@ export class InstanceWizardComponent implements OnInit {
 
   readonly VirtualizationSource = VirtualizationSource;
 
-  protected readonly bridgedNicDevices = new Map<string, NicDeviceOption>();
-  protected readonly bridgedNicDevices$ = new BehaviorSubject<Option[]>([]);
-  protected readonly macVlanNicDevices = new Map<string, NicDeviceOption>();
-  protected readonly macVlanNicDevices$ = new BehaviorSubject<Option[]>([]);
+  protected readonly bridgedNicDevices = signal<NicDeviceOption[]>(undefined);
+  protected readonly macVlanNicDevices = signal<NicDeviceOption[]>(undefined);
 
   usbDevices$ = this.api.call('virt.device.usb_choices').pipe(
     map((choices) => Object.values(choices).map((choice) => ({
@@ -320,105 +319,83 @@ export class InstanceWizardComponent implements OnInit {
         bootFromControl.setValue(disks[0].value as string);
       }
     });
-    this.setupBridgedNicDevices();
-    this.setupMacVlanNicDevices();
+    this.setupBridgedNicDevices2();
+    this.setupMacVlanNicDevices2();
   }
 
-  private setupBridgedNicDevices(): void {
-    this.getNicDevicesOptions(VirtualizationNicType.Bridged).pipe(
+  private setupBridgedNicDevices2(): void {
+    this.setupNicDevices(VirtualizationNicType.Bridged, this.bridgedNicDevices);
+  }
+
+  private setupMacVlanNicDevices2(): void {
+    this.setupNicDevices(VirtualizationNicType.Macvlan, this.macVlanNicDevices);
+  }
+
+  private setupNicDevices(
+    type: VirtualizationNicType,
+    nicDevicesSignal: WritableSignal<NicDeviceOption[]>,
+  ): void {
+    this.getNicDevicesOptions(type).pipe(
       untilDestroyed(this),
     ).subscribe({
       next: (options) => {
-        this.bridgedNicDevices$.next(options);
+        nicDevicesSignal.set([]);
+
         for (const option of options) {
           const control = new FormControl<boolean>(false);
+
           control.valueChanges.pipe(
             tap((selected) => {
               if (!selected) {
-                const deviceOption = this.bridgedNicDevices.get(option.value.toString());
-                deviceOption.label = option.label;
-                delete deviceOption.mac;
-                this.bridgedNicDevices.set(option.value.toString(), { ...deviceOption });
+                nicDevicesSignal.set(
+                  nicDevicesSignal().map((nic) => {
+                    if (nic.value === option.value) {
+                      nic.label = option.label;
+                      delete nic.mac;
+                    }
+                    return nic;
+                  }),
+                );
               }
             }),
             filter(Boolean),
-            switchMap(() => {
-              return this.matDialog.open(InstanceNicMacDialog, {
-                data: option.value,
-                minWidth: '500px',
-              }).afterClosed() as Observable<{ useDefault: boolean; mac: string }>;
-            }),
+            switchMap(() => this.matDialog.open(InstanceNicMacDialog, {
+              data: option.value,
+              minWidth: '500px',
+            }).afterClosed() as Observable<{ useDefault: boolean; mac: string }>),
             untilDestroyed(this),
           ).subscribe({
             next: (macConfig) => {
               if (!macConfig) {
                 control.setValue(false);
-              }
-              const deviceOption = this.bridgedNicDevices.get(option.value.toString());
-              if (macConfig.useDefault) {
-                deviceOption.label = `${option.label} (Default Mac Address)`;
-              } else if (macConfig.mac) {
-                deviceOption.label = `${option.label} (${macConfig.mac})`;
-                deviceOption.mac = macConfig.mac;
-              } else {
-                deviceOption.label = option.label;
+                return;
               }
 
-              this.bridgedNicDevices.set(option.value.toString(), { ...deviceOption });
+              nicDevicesSignal.set(
+                nicDevicesSignal().map((nic) => {
+                  if (nic.value === option.value) {
+                    if (macConfig.useDefault) {
+                      nic.label = `${option.label} (${this.translate.instant('Default Mac Address')})`;
+                    } else if (macConfig.mac) {
+                      nic.label = `${option.label} (${macConfig.mac})`;
+                      nic.mac = macConfig.mac;
+                    } else {
+                      nic.label = option.label;
+                    }
+                  }
+                  return nic;
+                }),
+              );
             },
           });
-          const deviceOption: NicDeviceOption = { label: option.label, control, value: option.value.toString() };
-          this.bridgedNicDevices.set(option.value.toString(), { ...deviceOption });
-        }
-      },
-    });
-  }
 
-  private setupMacVlanNicDevices(): void {
-    this.getNicDevicesOptions(VirtualizationNicType.Macvlan).pipe(
-      untilDestroyed(this),
-    ).subscribe({
-      next: (options) => {
-        this.macVlanNicDevices$.next(options);
-        for (const option of options) {
-          const control = new FormControl<boolean>(false);
-          control.valueChanges.pipe(
-            tap((selected) => {
-              if (!selected) {
-                const deviceOption = this.macVlanNicDevices.get(option.value.toString());
-                delete deviceOption.mac;
-                deviceOption.label = option.label;
-                this.macVlanNicDevices.set(option.value.toString(), { ...deviceOption });
-              }
-            }),
-            filter(Boolean),
-            switchMap(() => {
-              return this.matDialog.open(InstanceNicMacDialog, {
-                data: option.value,
-                minWidth: '500px',
-              }).afterClosed() as Observable<{ useDefault: boolean; mac: string }>;
-            }),
-            untilDestroyed(this),
-          ).subscribe({
-            next: (macConfig) => {
-              if (!macConfig) {
-                control.setValue(false);
-              }
-              const deviceOption = this.macVlanNicDevices.get(option.value.toString());
-              if (macConfig.useDefault) {
-                deviceOption.label = `${option.label} (Default Mac Address)`;
-              } else if (macConfig.mac) {
-                deviceOption.label = `${option.label} (${macConfig.mac})`;
-                deviceOption.mac = macConfig.mac;
-              } else {
-                deviceOption.label = option.label;
-              }
+          const deviceOption: NicDeviceOption = {
+            label: option.label,
+            control,
+            value: option.value.toString(),
+          };
 
-              this.macVlanNicDevices.set(option.value.toString(), { ...deviceOption });
-            },
-          });
-          const deviceOption: NicDeviceOption = { label: option.label, control, value: option.value.toString() };
-          this.macVlanNicDevices.set(option.value.toString(), deviceOption);
+          nicDevicesSignal.set([...nicDevicesSignal(), deviceOption]);
         }
       },
     });
@@ -605,7 +582,7 @@ export class InstanceWizardComponent implements OnInit {
   }
 
   private getNicDevicesOptions(nicType: VirtualizationNicType): Observable<Option[]> {
-    return this.api.call('virt.device.nic_choices', [nicType]).pipe(choicesToOptions());
+    return this.api.call('virt.device.nic_choices', [nicType]).pipe(choicesToOptions(), delay(5 * 1000));
   }
 
   private get environmentVariablesPayload(): Record<string, string> {
@@ -659,7 +636,7 @@ export class InstanceWizardComponent implements OnInit {
     }
     const macVlanNics: Partial<VirtualizationNic>[] = [];
     if (!this.form.controls.use_default_network.value) {
-      const macVlanDeviceOptions = Array.from(this.macVlanNicDevices.values());
+      const macVlanDeviceOptions = this.macVlanNicDevices();
       const selectedValues: NicDeviceOption[] = [];
       for (const deviceOption of macVlanDeviceOptions) {
         if (deviceOption.control.value) {
@@ -681,7 +658,7 @@ export class InstanceWizardComponent implements OnInit {
 
     const bridgedNics: Partial<VirtualizationNic>[] = [];
     if (!this.form.controls.use_default_network.value) {
-      const bridgedDeviceOptions = Array.from(this.bridgedNicDevices.values());
+      const bridgedDeviceOptions = this.bridgedNicDevices();
       const selectedValues: NicDeviceOption[] = [];
       for (const deviceOption of bridgedDeviceOptions) {
         if (deviceOption.control.value) {
