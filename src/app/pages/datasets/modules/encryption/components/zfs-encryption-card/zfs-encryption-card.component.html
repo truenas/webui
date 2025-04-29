@@ -30,20 +30,26 @@
     </div>
     @if (dataset().encrypted) {
       <div class="details-item">
-        <div class="label">{{ 'Encryption Root' | translate }}:</div>
         @if (isEncryptionRoot()) {
+          <div class="label">{{ 'Encryption Root' | translate }}:</div>
           <div class="value">
             {{ 'Yes' | translate }}
+            <ix-tooltip
+              [message]="'Encryption root means that dataset has its own encryption settings. Only encryption roots can be directly locked, unlocked, or have their keys changed. Child datasets will inherit encryption settings from the parent encryption root.' | translate"
+              [header]="'Encryption Root' | translate"
+            ></ix-tooltip>
           </div>
         } @else {
-          <div class="value">/{{ dataset().encryption_root }}</div>
-          <a
-            class="action"
-            ixTest="go-to-encryption-root"
-            [routerLink]="['/datasets', dataset().encryption_root]"
-          >
-            {{ 'Go To Encryption Root' | translate }}
-          </a>
+          <div class="label">{{ 'Inherits Encryption From' | translate }}:</div>
+          <div class="value">
+            <a
+              class="action"
+              ixTest="go-to-encryption-root"
+              [routerLink]="['/datasets', dataset().encryption_root]"
+            >
+              /{{ dataset().encryption_root }}
+            </a>
+          </div>
         }
       </div>
       <div class="details-item">

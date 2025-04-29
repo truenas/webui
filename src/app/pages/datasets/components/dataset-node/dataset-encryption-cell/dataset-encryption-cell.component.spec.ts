@@ -44,7 +44,7 @@ describe('DatasetEncryptionCellComponent', () => {
     expect(spectator.query(IxIconComponent)!.name).toBe('mdi-lock-open-variant');
   });
 
-  it('shows "Unlocked by ancestor" and an icon when ancestor dataset is unlocked and encryption is inherited', () => {
+  it('shows "Unlocked by parent" and an icon when ancestor dataset is unlocked and encryption is inherited', () => {
     spectator = createComponent({
       props: {
         dataset: {
@@ -58,7 +58,7 @@ describe('DatasetEncryptionCellComponent', () => {
     });
 
     expect(spectator.query('.encryption-description')).toHaveText('Unlocked');
-    expect(spectator.query('.encryption-description')).toHaveText('by ancestor');
+    expect(spectator.query('.encryption-description')).toHaveText('by parent');
     expect(spectator.query(IxIconComponent)!.name).toBe('mdi-lock-open-variant-outline');
   });
 
@@ -79,7 +79,7 @@ describe('DatasetEncryptionCellComponent', () => {
     expect(spectator.query(IxIconComponent)!.name).toBe('mdi-lock');
   });
 
-  it('shows "Locked by ancestor" and an icon when ancestor dataset is locked and encryption is inherited', () => {
+  it('shows "Locked by parent" and an icon when ancestor dataset is locked and encryption is inherited', () => {
     spectator = createComponent({
       props: {
         dataset: {
@@ -93,7 +93,7 @@ describe('DatasetEncryptionCellComponent', () => {
     });
 
     expect(spectator.query('.encryption-description')).toHaveText('Locked');
-    expect(spectator.query('.encryption-description')).toHaveText('by ancestor');
+    expect(spectator.query('.encryption-description')).toHaveText('by parent');
     expect(spectator.query(IxIconComponent)!.name).toBe('mdi-lock-outline');
   });
 });
