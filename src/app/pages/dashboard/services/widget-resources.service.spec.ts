@@ -16,6 +16,7 @@ import { App } from 'app/interfaces/app.interface';
 import { CloudSyncTask } from 'app/interfaces/cloud-sync-task.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { Pool } from 'app/interfaces/pool.interface';
+import { SystemUpdateChange } from 'app/interfaces/system-update.interface';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 
 const pools = [
@@ -214,7 +215,9 @@ describe('WidgetResourcesService', () => {
         mockCall('webui.main.dashboard.sys_info'),
         mockCall('app.query', apps),
         mockCall('pool.query', pools),
-        mockCall('update.check_available'),
+        mockCall('update.get_pending', [
+          {} as SystemUpdateChange,
+        ]),
         mockCall('reporting.netdata_get_data', [interfaceEth0]),
       ]),
     ],
@@ -250,6 +253,12 @@ describe('WidgetResourcesService', () => {
 
   it('returns apps', async () => {
     expect(await firstValueFrom(spectator.service.installedApps$)).toEqual(apps);
+  });
+
+  describe('updateAvailable$', () => {
+    it('returns true when api knows about available updates', async () => {
+      expect(await firstValueFrom(spectator.service.updateAvailable$)).toBe(true);
+    });
   });
 
   describe('networkInterfaceLastHourStats', () => {
