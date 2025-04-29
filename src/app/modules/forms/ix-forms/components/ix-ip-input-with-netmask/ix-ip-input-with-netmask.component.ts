@@ -6,12 +6,12 @@ import { MatOption } from '@angular/material/core';
 import { MatInput } from '@angular/material/input';
 import { MatSelectChange, MatSelect } from '@angular/material/select';
 import { TranslateModule } from '@ngx-translate/core';
-import { TranslatedString } from 'app/helpers/translate.helper';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { NetworkService } from 'app/services/network.service';
 
 @Component({

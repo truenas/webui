@@ -1,7 +1,7 @@
 import { TranslateService } from '@ngx-translate/core';
 import { PosixAclTag, posixAclTagLabels } from 'app/enums/posix-acl.enum';
-import { ignoreTranslation, TranslatedString } from 'app/helpers/translate.helper';
 import { PosixAclItem } from 'app/interfaces/acl.interface';
+import { ignoreTranslation, TranslatedString } from 'app/modules/translate/translate.helper';
 import {
   PermissionItem,
   PermissionsItemType,

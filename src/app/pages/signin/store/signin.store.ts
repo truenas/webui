@@ -49,6 +49,7 @@ export class SigninStore extends ComponentStore<SigninState> {
   private handleLoginResult = (loginResult: LoginResult): void => {
     if (loginResult !== LoginResult.Success) {
       this.authService.clearAuthToken();
+      this.wsStatus.setReconnect(false);
     } else {
       this.handleSuccessfulLogin();
     }
@@ -139,6 +140,10 @@ export class SigninStore extends ComponentStore<SigninState> {
 
     return this.api.call('system.advanced.login_banner').pipe(
       tap((loginBanner) => this.patchState({ loginBanner })),
+      catchError((error: unknown) => {
+        this.errorHandler.showErrorModal(error);
+        return of(initialState.loginBanner);
+      }),
     );
   }
 

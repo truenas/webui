@@ -15,7 +15,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextGlobal } from 'app/helptext/global-helptext';
-import { helpTextQuotas } from 'app/helptext/storage/volumes/datasets/dataset-quotas';
+import { helptextQuotas } from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 import { DatasetQuota, SetDatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { QueryFilter, QueryParams } from 'app/interfaces/query-api.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -66,8 +66,8 @@ export class DatasetQuotaEditFormComponent implements OnInit {
 
   get nameLabel(): string {
     return this.quotaType === DatasetQuotaType.User
-      ? helpTextQuotas.users.dialog.placeholder
-      : helpTextQuotas.groups.dialog.placeholder;
+      ? helptextQuotas.users.dialog.placeholder
+      : helptextQuotas.groups.dialog.placeholder;
   }
 
   get dataQuotaLabel(): string {
@@ -77,19 +77,19 @@ export class DatasetQuotaEditFormComponent implements OnInit {
   }
 
   private getUserDataQuotaLabel(): string {
-    return this.translate.instant(helpTextQuotas.users.data_quota.placeholder)
+    return this.translate.instant(helptextQuotas.users.data_quota.placeholder)
       + this.translate.instant(helptextGlobal.human_readable.suggestion_label);
   }
 
   private getGroupDataQuotaLabel(): string {
-    return this.translate.instant(helpTextQuotas.groups.data_quota.placeholder)
+    return this.translate.instant(helptextQuotas.groups.data_quota.placeholder)
       + this.translate.instant(helptextGlobal.human_readable.suggestion_label);
   }
 
   get objectQuotaLabel(): string {
     return this.quotaType === DatasetQuotaType.User
-      ? helpTextQuotas.users.obj_quota.placeholder
-      : helpTextQuotas.groups.obj_quota.placeholder;
+      ? helptextQuotas.users.obj_quota.placeholder
+      : helptextQuotas.groups.obj_quota.placeholder;
   }
 
   get dataQuotaTooltip(): string {
@@ -99,21 +99,21 @@ export class DatasetQuotaEditFormComponent implements OnInit {
   }
 
   private getUserDataQuotaTooltip(): string {
-    return this.translate.instant(helpTextQuotas.users.data_quota.tooltip)
+    return this.translate.instant(helptextQuotas.users.data_quota.tooltip)
       + this.translate.instant(helptextGlobal.human_readable.suggestion_tooltip)
       + this.translate.instant(' bytes.');
   }
 
   private getGroupDataQuotaTooltip(): string {
-    return this.translate.instant(helpTextQuotas.groups.data_quota.tooltip)
+    return this.translate.instant(helptextQuotas.groups.data_quota.tooltip)
       + this.translate.instant(helptextGlobal.human_readable.suggestion_tooltip)
       + this.translate.instant(' bytes.');
   }
 
   get objectQuotaTooltip(): string {
     return this.quotaType === DatasetQuotaType.User
-      ? helpTextQuotas.users.obj_quota.tooltip
-      : helpTextQuotas.groups.obj_quota.tooltip;
+      ? helptextQuotas.users.obj_quota.tooltip
+      : helptextQuotas.groups.obj_quota.tooltip;
   }
 
   form = this.formBuilder.group({

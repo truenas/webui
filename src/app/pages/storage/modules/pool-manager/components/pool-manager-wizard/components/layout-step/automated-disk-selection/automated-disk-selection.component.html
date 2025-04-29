@@ -6,7 +6,7 @@
       [formControl]="layoutControl"
       [label]="'Layout' | translate"
       [tooltip]="'Select VDEV layout. This is the first step in setting up your VDEVs.' | translate"
-      [options]="vdevLayoutOptions$"
+      [options]="vdevLayoutOptions$ | translateOptions"
       [required]="true"
     ></ix-select>
   </div>

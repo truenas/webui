@@ -50,7 +50,7 @@ export class SnapshotCloneDialog implements OnInit {
   });
 
   readonly tooltips = {
-    dataset_dst: helptextSnapshots.snapshot_clone_name_tooltip,
+    dataset_dst: helptextSnapshots.cloneNameTooltip,
   };
 
   constructor(

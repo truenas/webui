@@ -1,20 +1,20 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const helptextPermissions = {
-  dataset_permissions_user_tooltip: T('Select the user to control the dataset. Users\
+  userTooltip: T('Select the user to control the dataset. Users\
  created manually or imported from a directory service\
  appear in the drop-down menu.'),
 
-  apply_user: {
+  applyUser: {
     tooltip: T('Confirm changes to <i>User</i>. To prevent errors, changes to the <i>User</i> \
 are submitted only when this box is set.'),
   },
 
-  dataset_permissions_group_tooltip: T('Select the group to control the dataset. Groups\
+  groupLabel: T('Select the group to control the dataset. Groups\
  created manually or imported from a directory service\
  appear in the drop-down menu.'),
 
-  apply_group: {
+  applyGroup: {
     tooltip: T('Confirm changes to <i>Group</i>. To prevent errors, changes to the <i>Group</i> \
 are submitted only when this box is set.'),
   },

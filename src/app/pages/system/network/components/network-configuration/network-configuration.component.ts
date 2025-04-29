@@ -89,13 +89,11 @@ export class NetworkConfigurationComponent implements OnInit {
   hostname = {
     fcName: 'hostname',
     label: helptextNetworkConfiguration.hostname_placeholder,
-    tooltip: helptextNetworkConfiguration.hostname_tooltip,
   };
 
   hostnameB = {
     fcName: 'hostname_b',
     label: helptextNetworkConfiguration.hostname_b_placeholder,
-    tooltip: helptextNetworkConfiguration.hostname_b_tooltip,
     hidden: true,
   };
 
@@ -109,7 +107,6 @@ export class NetworkConfigurationComponent implements OnInit {
   inheritDhcp = {
     fcName: 'inherit_dhcp',
     label: helptextNetworkConfiguration.inherit_dhcp_placeholder,
-    tooltip: helptextNetworkConfiguration.inherit_dhcp_tooltip,
   };
 
   domain = {

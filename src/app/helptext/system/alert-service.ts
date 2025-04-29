@@ -1,8 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const helptextAlertService = {
-  enabledTooltip: T('Unset to disable this service without deleting it.'),
-
   typeTooltip: T('Choose an alert service to display options for that\
  service.'),
 

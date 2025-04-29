@@ -15,7 +15,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { EMPTY, Observable } from 'rxjs';
 import { catchError, debounceTime, tap } from 'rxjs/operators';
-import { TranslatedString } from 'app/helpers/translate.helper';
 import { SelectOption, SelectOptionValueType } from 'app/interfaces/option.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
@@ -24,6 +23,7 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
 
 export type IxSelectValue = SelectOptionValueType;
 

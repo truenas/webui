@@ -99,6 +99,20 @@ export class VDevsCardComponent implements OnInit, OnChanges {
     return this.translate.instant('Everything is fine');
   });
 
+  readonly noOtherVdevTypes = computed(() => {
+    const nonDataVdevs = [
+      this.topologyState.metadata,
+      this.topologyState.log,
+      this.topologyState.cache,
+      this.topologyState.spare,
+      this.topologyState.dedup,
+    ];
+
+    const emptyCount = nonDataVdevs.filter((vdevType) => vdevType === this.notAssignedDev).length;
+
+    return emptyCount >= 3;
+  });
+
   get isDraidLayoutDataVdevs(): boolean {
     return /\bDRAID\b/.test(this.topologyState.data);
   }

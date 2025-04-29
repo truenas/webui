@@ -8,10 +8,10 @@
   <mat-card-content>
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       @if (remoteControllerOptions) {
-        <ix-fieldset [title]="helptext.ipmi_remote_controller | translate">
+        <ix-fieldset [title]="helptext.ipmiRemoteController | translate">
           <ix-radio-group
             formControlName="apply_remote"
-            [label]="helptext.ipmi_remote_controller | translate"
+            [label]="helptext.ipmiRemoteController | translate"
             [options]="remoteControllerOptions"
           >
           </ix-radio-group>
@@ -19,29 +19,28 @@
         <mat-divider></mat-divider>
       }
 
-      <ix-fieldset [title]="helptext.ipmi_configuration | translate">
+      <ix-fieldset [title]="helptext.ipmiConfiguration | translate">
         <ix-checkbox
           formControlName="dhcp"
           [label]="'DHCP' | translate"
-          [tooltip]="helptext.dhcp_tooltip | translate"
+          [tooltip]="helptext.dhcpTooltip | translate"
         ></ix-checkbox>
 
         <ix-input
           formControlName="ipaddress"
           [label]="'IPv4 Address' | translate"
-          [tooltip]="helptext.ipaddress_tooltip | translate"
+          [tooltip]="helptext.ipAddressTooltip | translate"
         ></ix-input>
 
         <ix-input
           formControlName="netmask"
           [label]="'IPv4 Netmask' | translate"
-          [tooltip]="helptext.netmask_tooltip | translate"
+          [tooltip]="helptext.netmaskTooltip | translate"
         ></ix-input>
 
         <ix-input
           formControlName="gateway"
           [label]="'IPv4 Default Gateway' | translate"
-          [tooltip]="helptext.gateway_tooltip | translate"
         ></ix-input>
 
         <ix-checkbox
@@ -54,18 +53,18 @@
             type="number"
             [required]="true"
             [label]="'VLAN ID' | translate"
-            [tooltip]="helptext.vlan_tooltip | translate"
+            [tooltip]="helptext.vlanTooltip | translate"
           ></ix-input>
         }
       </ix-fieldset>
       <mat-divider></mat-divider>
 
-      <ix-fieldset [title]="helptext.ipmi_password_reset | translate">
+      <ix-fieldset [title]="helptext.ipmiPasswordReset | translate">
         <ix-input
           formControlName="password"
           type="password"
           [label]="'Password' | translate"
-          [tooltip]="helptext.password_tooltip | translate"
+          [tooltip]="helptext.passwordTooltip | translate"
         ></ix-input>
       </ix-fieldset>
 

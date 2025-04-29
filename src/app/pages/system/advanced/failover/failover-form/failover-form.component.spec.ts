@@ -89,7 +89,7 @@ describe('FailoverFormComponent', () => {
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('failover.sync_to_peer', [{ reboot: true }]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
-      helptextSystemFailover.confirm_dialogs.sync_to_message,
+      helptextSystemFailover.confirmDialogs.syncToMessage,
     );
   });
 
@@ -104,7 +104,7 @@ describe('FailoverFormComponent', () => {
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('failover.sync_from_peer');
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
-      helptextSystemFailover.confirm_dialogs.sync_from_message,
+      helptextSystemFailover.confirmDialogs.syncFromMessage,
     );
   });
 
@@ -116,8 +116,8 @@ describe('FailoverFormComponent', () => {
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
       expect.objectContaining({
-        title: helptextSystemFailover.master_dialog_title,
-        message: helptextSystemFailover.master_dialog_warning,
+        title: helptextSystemFailover.masterDialogTitle,
+        message: helptextSystemFailover.masterDialogWarning,
       }),
     );
 

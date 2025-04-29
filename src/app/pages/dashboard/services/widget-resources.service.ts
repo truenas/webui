@@ -6,7 +6,6 @@ import {
   filter,
   forkJoin, map, of, repeat, shareReplay, startWith, throttleTime, timer,
 } from 'rxjs';
-import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { LoadingState, toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { App, AppStartQueryParams, AppStats } from 'app/interfaces/app.interface';
@@ -72,8 +71,8 @@ export class WidgetResourcesService {
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
-  readonly updateAvailable$ = this.api.call('update.check_available').pipe(
-    map((update) => update.status === SystemUpdateStatus.Available),
+  readonly updateAvailable$ = this.api.call('update.get_pending').pipe(
+    map((updates) => Boolean(updates.length)),
     catchError(() => of(false)),
     shareReplay({ refCount: false, bufferSize: 1 }),
   );

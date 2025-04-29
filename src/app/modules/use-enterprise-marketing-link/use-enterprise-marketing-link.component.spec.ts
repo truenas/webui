@@ -1,6 +1,6 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { hashMessage } from 'app/helpers/hash-message';
-import { ignoreTranslation } from 'app/helpers/translate.helper';
+import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { UseEnterpriseMarketingLinkComponent } from './use-enterprise-marketing-link.component';
 
 const lastShownDate = 'marketingMessageLastShownDate';

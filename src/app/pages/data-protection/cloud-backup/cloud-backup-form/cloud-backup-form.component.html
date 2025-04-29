@@ -41,7 +41,6 @@
             <ix-select
               formControlName="bucket"
               [label]="helptext.bucket | translate"
-              [tooltip]="helptext.bucketTooltip | translate"
               [options]="bucketOptions$"
               [required]="true"
             ></ix-select>
@@ -81,7 +80,6 @@
           <ix-input
             formControlName="description"
             [label]="helptext.name | translate"
-            [tooltip]="helptext.nameTooltip | translate"
             [required]="true"
           ></ix-input>
           <ix-input
@@ -111,7 +109,6 @@
           <ix-checkbox
             formControlName="enabled"
             [label]="helptext.enabled | translate"
-            [tooltip]="helptext.enabledTooltip | translate"
           ></ix-checkbox>
         </ix-fieldset>
 

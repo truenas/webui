@@ -10,14 +10,14 @@
         <div class="header-container">
           <ix-checkbox
             formControlName="all"
-            [label]="helptext.all_placeholder_initiators | translate"
+            [label]="helptext.initiator.allowAllLabel | translate"
           ></ix-checkbox>
           @if (!isAllowAll) {
             <div class="add-container">
               <ix-input
                 formControlName="new_initiator"
-                [label]="helptext.initiator_form_placeholder_initiators | translate"
-                [tooltip]="helptext.initiator_form_tooltip_initiators | translate"
+                [label]="helptext.initiator.addIqnLabel | translate"
+                [tooltip]="helptext.initiator.initiatorsTooltip | translate"
                 (keydown.enter)="$event.preventDefault(); onAddInitiator()"
               ></ix-input>
               <button
@@ -60,7 +60,7 @@
 
         <ix-input
           formControlName="comment"
-          [label]="helptext.initiator_form_placeholder_comment | translate"
+          [label]="helptext.initiator.descriptionLabel | translate"
         ></ix-input>
       </div>
     </mat-card-content>

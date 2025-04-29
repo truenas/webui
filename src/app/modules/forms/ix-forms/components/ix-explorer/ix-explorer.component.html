@@ -22,22 +22,6 @@
     (blur)="onTouch()"
   />
 </div>
-@if (canCreateDataset()) {
-  <div class="create-dataset-container">
-    <button
-      *ixRequiresRoles="requiredRoles"
-      mat-button
-      type="button"
-      class="create-dataset-btn"
-      ixTest="create-dataset"
-      [disabled]="createDatasetDisabled"
-      (click)="createDataset()"
-    >
-      <ix-icon name="create_new_folder"></ix-icon>
-      {{ 'Create Dataset' | translate }}
-    </button>
-  </div>
-}
 <div class="tree-container" [class.disabled]="isDisabled" [attr.aria-label]="label()">
   <tree-root
     #tree
@@ -78,6 +62,23 @@
     </ng-template>
   </tree-root>
 </div>
+
+@if (canCreateDataset()) {
+  <div class="create-dataset-container">
+    <button
+      *ixRequiresRoles="requiredRoles"
+      mat-button
+      type="button"
+      class="create-dataset-btn"
+      ixTest="create-dataset"
+      [disabled]="createDatasetDisabled"
+      (click)="createDataset()"
+    >
+      <ix-icon name="create_new_folder"></ix-icon>
+      {{ 'Create Dataset' | translate }}
+    </button>
+  </div>
+}
 
 
 @if (loadingError(); as loadingError) {
