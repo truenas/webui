@@ -8,7 +8,7 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-  debounceTime, filter, map, Observable, of, take,
+  debounceTime, filter, map, Observable, of,
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
@@ -166,7 +166,7 @@ export class AdditionalDetailsSectionComponent {
     }
 
     this.api.call('user.shell_choices', [Array.from(ids)])
-      .pipe(choicesToOptions(), take(1), untilDestroyed(this))
+      .pipe(choicesToOptions(), untilDestroyed(this))
       .subscribe((options) => {
         this.shellOptions$ = of(options);
         this.cdr.markForCheck();

@@ -116,16 +116,6 @@ export class UserFormComponent implements OnInit {
     // get the next user id and set to uid
     // Set first shell option
     // detect full name changes to set username based on that
-    // Handle setting disableWhile for
-    // `password` when `password_disabled`
-    // `password_conf` when `password_disabled`
-    // `locked` when `password_disabled`
-
-    // TODO: Add `stig_password` field for "stig password" field which is heavily impacted by `isStigMode`
-    // Use `isStigMode` to determine smb related controls disable status and values
-    // `isStigMode` also affects `password` and `password_conf` fields to be disabled
-    // `isStigMode` also affects `locked` to be disabled while
-    // `stig_password` value is `UserStigPasswordOption.DisablePassword`
 
     // TODO: set tooltips for sections
 
