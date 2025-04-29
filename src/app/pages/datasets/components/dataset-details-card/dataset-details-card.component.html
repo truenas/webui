@@ -41,7 +41,7 @@
       <div class="label">{{ 'Sync' | translate }}:</div>
       <div class="value">{{ dataset().sync.value | orNotAvailable }}</div>
     </div>
-    @if (datasetCompression()) {
+    @if (datasetCompression() && dataset().compression?.value !== OnOff.Off) {
       <div class="details-item">
         <div class="label">{{ 'Compression' | translate }}:</div>
         <div class="value">
