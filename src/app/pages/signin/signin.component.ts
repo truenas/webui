@@ -88,11 +88,13 @@ export class SigninComponent implements OnInit {
     this.signinStore.loginBanner$.pipe(
       filter(Boolean),
       filter(() => this.window.sessionStorage.getItem('loginBannerDismissed') !== 'true'),
-      switchMap((text) => this.dialog.fullScreenDialog({
-        message: text,
-        showClose: true,
-        pre: true,
-      }).pipe(take(1))),
+      switchMap((text) => {
+        return this.dialog.fullScreenDialog({
+          message: text,
+          showClose: true,
+          pre: true,
+        }).pipe(take(1));
+      }),
       filter(Boolean),
       untilDestroyed(this),
     ).subscribe(() => {
