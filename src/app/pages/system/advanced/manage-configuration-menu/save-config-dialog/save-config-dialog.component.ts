@@ -61,9 +61,9 @@ export class SaveConfigDialog {
   helptext: SaveConfigDialogMessages;
 
   readonly defaultMessages: SaveConfigDialogMessages = {
-    message: helptext.save_config_form.message,
+    message: helptext.saveConfigForm.message,
     title: this.translate.instant('Save Configuration'),
-    warning: helptext.save_config_form.warning,
+    warning: helptext.saveConfigForm.warning,
     saveButton: this.translate.instant('Save'),
     cancelButton: this.translate.instant('Cancel'),
   };

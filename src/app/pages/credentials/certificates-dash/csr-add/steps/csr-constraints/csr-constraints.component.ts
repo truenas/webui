@@ -11,7 +11,6 @@ import { of } from 'rxjs';
 import { ExtendedKeyUsageFlag } from 'app/enums/extended-key-usage-flag.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { findLabelsByValue } from 'app/helpers/options.helper';
-import { translateOptions } from 'app/helpers/translate.helper';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import {
   CertificateCreate,
@@ -26,6 +25,7 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { SummaryItem, SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TranslateOptionsPipe } from 'app/modules/translate/translate-options/translate-options.pipe';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   extensionsToSelectValues,
@@ -53,6 +53,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TestDirective,
     MatStepperNext,
     TranslateModule,
+    TranslateOptionsPipe,
   ],
 })
 export class CsrConstraintsComponent implements OnInit, SummaryProvider {
@@ -75,8 +76,8 @@ export class CsrConstraintsComponent implements OnInit, SummaryProvider {
 
   readonly helptext = helptextSystemCertificates;
 
-  readonly basicConstraintsOptions$ = of(translateOptions(this.translate, basicConstraintOptions));
-  readonly keyUsageOptions$ = of(translateOptions(this.translate, keyUsageOptions));
+  readonly basicConstraintsOptions$ = of(basicConstraintOptions);
+  readonly keyUsageOptions$ = of(keyUsageOptions);
   extendedKeyUsageOptions$ = of<Option[]>([]);
 
   private extendedKeyUsageOptions: Option[] = [];

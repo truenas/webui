@@ -14,7 +14,7 @@ import { unionBy } from 'lodash-es';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
-import { helptextSharingIscsi } from 'app/helptext/sharing';
+import { helptextIscsi } from 'app/helptext/sharing';
 import { IscsiGlobalSession } from 'app/interfaces/iscsi-global-config.interface';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -80,7 +80,7 @@ export class InitiatorFormComponent implements OnInit {
     return this.form.getRawValue().all;
   }
 
-  readonly helptext = helptextSharingIscsi;
+  readonly helptext = helptextIscsi;
   protected readonly requiredRoles = [
     Role.SharingIscsiInitiatorWrite,
     Role.SharingIscsiWrite,

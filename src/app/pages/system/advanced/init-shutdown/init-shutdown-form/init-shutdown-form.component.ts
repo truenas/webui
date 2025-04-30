@@ -90,7 +90,6 @@ export class InitShutdownFormComponent implements OnInit {
     command: helptextInitShutdown.commandTooltip,
     script: helptextInitShutdown.scriptTooltip,
     when: helptextInitShutdown.whenTooltip,
-    enabled: helptextInitShutdown.enabledTooltip,
     timeout: helptextInitShutdown.timeoutTooltip,
   };
 

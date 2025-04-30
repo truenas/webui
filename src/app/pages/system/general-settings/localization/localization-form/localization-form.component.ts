@@ -74,21 +74,21 @@ export class LocalizationFormComponent implements OnInit {
 
   protected language = {
     fcName: 'language',
-    label: helptext.stg_language.placeholder,
-    tooltip: helptext.stg_language.tooltip,
-    hint: helptext.stg_language.hint,
+    label: helptext.language.label,
+    tooltip: helptext.language.tooltip,
+    hint: helptext.language.hint,
     provider: new SimpleAsyncComboboxProvider(this.sysGeneralService.languageOptions(this.sortLanguagesByName)),
   };
 
   protected kbdMap = {
     fcName: 'kbdmap',
-    label: helptext.stg_kbdmap.placeholder,
+    label: helptext.kbdmap.label,
     options: this.sysGeneralService.kbdMapChoices(),
   };
 
   protected timezone = {
     fcName: 'timezone',
-    label: helptext.stg_timezone.placeholder,
+    label: helptext.timezone.label,
     provider: new SimpleAsyncComboboxProvider(this.sysGeneralService.timezoneChoices().pipe(map(
       (tzChoices) => sortBy(tzChoices, [(option) => option.label.toLowerCase()]),
     ))),
@@ -96,13 +96,13 @@ export class LocalizationFormComponent implements OnInit {
 
   protected dateFormat = {
     fcName: 'date_format',
-    label: helptext.date_format.placeholder,
+    label: helptext.dateFormat.label,
     options: of<Option[]>([]),
   };
 
   protected timeFormat = {
     fcName: 'time_format',
-    label: helptext.time_format.placeholder,
+    label: helptext.timeFormat.label,
     options: of<Option[]>([]),
   };
 

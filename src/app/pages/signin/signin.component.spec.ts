@@ -7,6 +7,7 @@ import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyri
 import {
   DisconnectedMessageComponent,
 } from 'app/pages/signin/disconnected-message/disconnected-message.component';
+import { ReconnectMessage } from 'app/pages/signin/reconnect-message/reconnect-message.component';
 import {
   SetAdminPasswordFormComponent,
 } from 'app/pages/signin/set-admin-password-form/set-admin-password-form.component';
@@ -26,7 +27,7 @@ describe('SigninComponent', () => {
   const isConnected$ = new BehaviorSubject<boolean>(true);
   const loginBanner$ = new BehaviorSubject<string>('');
   const isTokenWithinTimeline$ = new BehaviorSubject<boolean>(true);
-  const isConnectedDelayed$ = new BehaviorSubject<boolean>(false);
+  const isReconnectAllowed$ = new BehaviorSubject<boolean>(false);
 
   const createComponent = createComponentFactory({
     component: SigninComponent,
@@ -37,6 +38,7 @@ describe('SigninComponent', () => {
         SetAdminPasswordFormComponent,
         TrueCommandStatusComponent,
         CopyrightLineComponent,
+        ReconnectMessage,
       ),
     ],
     componentProviders: [
@@ -60,6 +62,8 @@ describe('SigninComponent', () => {
       }),
       mockProvider(WebSocketStatusService, {
         isConnected$,
+        isReconnectAllowed$,
+        setReconnect: jest.fn(),
       }),
     ],
   });
@@ -71,21 +75,29 @@ describe('SigninComponent', () => {
     isConnected$.next(true);
     loginBanner$.next('');
     isTokenWithinTimeline$.next(false);
-    spectator.component.isConnectedDelayed$ = isConnectedDelayed$;
   });
 
   it('initializes SigninStore on component init', () => {
     expect(spectator.inject(SigninStore, true).init).toHaveBeenCalled();
+    expect(spectator.inject(WebSocketStatusService).setReconnect).toHaveBeenCalledWith(true);
   });
 
   describe('disconnected', () => {
     it('shows DisconnectedMessageComponent when there is no websocket connection', () => {
       isConnected$.next(false);
-      isConnectedDelayed$.next(false);
 
       spectator.detectChanges();
 
       expect(spectator.query(DisconnectedMessageComponent)).toExist();
+    });
+
+    it('shows ReconnectMessage when has established initial connection', () => {
+      isConnected$.next(false);
+      isReconnectAllowed$.next(true);
+
+      spectator.detectChanges();
+
+      expect(spectator.query(ReconnectMessage)).toExist();
     });
   });
 
@@ -110,7 +122,6 @@ describe('SigninComponent', () => {
     });
 
     it('shows the logo when waiting for connection status', () => {
-      isConnectedDelayed$.next(true);
       spectator.detectChanges();
 
       const logo = spectator.query('.logo-wrapper ix-icon');
@@ -119,8 +130,6 @@ describe('SigninComponent', () => {
 
     it('shows "Logging in..." message when user is authenticated and token is within the timeline', () => {
       isConnected$.next(true);
-      isConnectedDelayed$.next(true);
-
       isTokenWithinTimeline$.next(true);
 
       spectator.detectChanges();

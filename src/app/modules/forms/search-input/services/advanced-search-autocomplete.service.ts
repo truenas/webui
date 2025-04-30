@@ -7,12 +7,12 @@ import {
   BehaviorSubject,
   Observable, lastValueFrom, map, of,
 } from 'rxjs';
-import { ignoreTranslation } from 'app/helpers/translate.helper';
 import { QueryContext, ContextType } from 'app/interfaces/advanced-search.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { QueryComparator } from 'app/interfaces/query-api.interface';
 import { QueryParserService } from 'app/modules/forms/search-input/services/query-parser/query-parser.service';
 import { PropertyType, SearchProperty } from 'app/modules/forms/search-input/types/search-property.interface';
+import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 
 const inComparator = 'in';
 const ninComparator = 'nin';

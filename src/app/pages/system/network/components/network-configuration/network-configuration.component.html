@@ -14,14 +14,12 @@
           <ix-input
             [formControlName]="hostname.fcName"
             [label]="hostname.label | translate"
-            [tooltip]="hostname.tooltip | translate"
           ></ix-input>
 
           @if (!hostnameB.hidden) {
             <ix-input
               [formControlName]="hostnameB.fcName"
               [label]="hostnameB.label | translate"
-              [tooltip]="hostnameB.tooltip | translate"
             ></ix-input>
           }
 
@@ -36,7 +34,6 @@
           <ix-checkbox
             [formControlName]="inheritDhcp.fcName"
             [label]="inheritDhcp.label | translate"
-            [tooltip]="inheritDhcp.tooltip | translate"
           ></ix-checkbox>
 
           <ix-input

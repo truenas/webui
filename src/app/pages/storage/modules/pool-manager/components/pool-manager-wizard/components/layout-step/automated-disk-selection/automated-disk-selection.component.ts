@@ -7,7 +7,6 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { merge, of } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
 import { CreateVdevLayout, vdevLayoutOptions, VDevType } from 'app/enums/v-dev-type.enum';
-import { translateOptions } from 'app/helpers/translate.helper';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { SelectOption } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
@@ -15,6 +14,7 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
+import { TranslateOptionsPipe } from 'app/modules/translate/translate-options/translate-options.pipe';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { hasDeepChanges, setValueIfNotSame } from 'app/pages/storage/modules/pool-manager/utils/form.utils';
 import { isDraidLayout } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
@@ -36,6 +36,7 @@ import { NormalSelectionComponent } from './normal-selection/normal-selection.co
     NormalSelectionComponent,
     TranslateModule,
     CastPipe,
+    TranslateOptionsPipe,
   ],
 })
 export class AutomatedDiskSelectionComponent implements OnChanges {
@@ -116,7 +117,7 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
 
   private updateLayoutOptionsFromLimitedLayouts(limitLayouts: CreateVdevLayout[]): void {
     const allowedLayouts = vdevLayoutOptions.filter((option) => limitLayouts.includes(option.value));
-    this.vdevLayoutOptions$ = of(translateOptions(this.translate, allowedLayouts));
+    this.vdevLayoutOptions$ = of(allowedLayouts);
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare
     const cannotChangeLayout = this.canChangeLayout() === false;
     if (cannotChangeLayout && limitLayouts.length) {

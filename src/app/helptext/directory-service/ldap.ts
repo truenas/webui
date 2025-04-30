@@ -39,6 +39,4 @@ export const helptextLdap = {
  href="https://arthurdejong.org/nss-pam-ldapd/nslcd.conf.5"\
  target="_blank">nslcd.conf</a>.'),
   ldap_schema_tooltip: T('Select a schema when LDAP NSS schema is set.'),
-  ldap_enable_tooltip: T('Activates the configuration. Unset to disable the\
- configuration without deleting it.'),
 };

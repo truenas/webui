@@ -95,10 +95,10 @@ export class GuiFormComponent implements OnInit {
 
   protected usageCollectionTooltip = computed(() => {
     if (this.isStigMode()) {
-      return this.translate.instant(helptext.usage_collection.stigModeTooltip);
+      return this.translate.instant(helptext.usageCollection.stigModeTooltip);
     }
 
-    return this.translate.instant(helptext.usage_collection.tooltip);
+    return this.translate.instant(helptext.usageCollection.tooltip);
   });
 
   constructor(
@@ -164,8 +164,8 @@ export class GuiFormComponent implements OnInit {
     (
       !this.configData.ui_httpsredirect && values.ui_httpsredirect
         ? this.dialog.confirm({
-          title: this.translate.instant(helptext.redirect_confirm_title),
-          message: this.translate.instant(helptext.redirect_confirm_message),
+          title: this.translate.instant(helptext.redirectConfirmTitle),
+          message: this.translate.instant(helptext.redirectConfirmMessage),
           hideCheckbox: true,
         })
         : of(true)
@@ -225,8 +225,8 @@ export class GuiFormComponent implements OnInit {
 
     if (isServiceRestartRequired) {
       this.dialog.confirm({
-        title: this.translate.instant(helptext.dialog_confirm_title),
-        message: this.translate.instant(helptext.dialog_confirm_message),
+        title: this.translate.instant(helptext.restartTitle),
+        message: this.translate.instant(helptext.restartMessage),
       }).pipe(
         tap(() => this.slideInRef.close({ response: true, error: null })),
         filter(Boolean),

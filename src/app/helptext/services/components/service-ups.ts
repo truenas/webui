@@ -49,9 +49,6 @@ export const helptextServiceUps = {
  href="http://networkupstools.org/docs/man/upsd.conf.html"\
  target="_blank">UPSD.CONF(5)</a>.'),
 
-  ups_description_placeholder: T('Description'),
-  ups_description_tooltip: T('Describe this service.'),
-
   ups_shutdown_placeholder: T('Shutdown Mode'),
   ups_shutdown_tooltip: T('Choose when the UPS initiates shutdown.'),
   ups_shutdown_options: [
