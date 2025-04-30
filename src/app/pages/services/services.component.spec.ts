@@ -100,11 +100,11 @@ describe('ServicesComponent', () => {
       .filter((service) => !hiddenServices.includes(service))
       .map((service) => {
         if (service === ServiceName.Cifs) {
-          return [serviceNames.get(service), 'Stopped', '', 'Audit Logs  SMB Sessions'];
+          return [serviceNames.get(service), 'Stopped', '', 'View Logs  View Sessions'];
         }
 
         if (service === ServiceName.Nfs) {
-          return [serviceNames.get(service), 'Stopped', '', 'NFS Sessions'];
+          return [serviceNames.get(service), 'Stopped', '', 'View Sessions'];
         }
 
         return [serviceNames.get(service), 'Stopped', '', ''];
@@ -185,7 +185,7 @@ describe('ServicesComponent', () => {
       const serviceIndex = fakeDataSource.findIndex((item) => item.service === ServiceName.Cifs) + 1;
 
       const cell = await table.getCell(serviceIndex, 3);
-      const link = await cell.getAnchorByText('SMB Sessions');
+      const link = await cell.getAnchorByText('View Sessions');
       await link.click();
 
       expect(router.navigate).toHaveBeenCalledWith(['/sharing', 'smb', 'status', 'sessions']);
@@ -197,7 +197,7 @@ describe('ServicesComponent', () => {
 
       const serviceIndex = fakeDataSource.findIndex((item) => item.service === ServiceName.Nfs) + 1;
       const cell = await table.getCell(serviceIndex, 3);
-      const link = await cell.getAnchorByText('NFS Sessions');
+      const link = await cell.getAnchorByText('View Sessions');
       await link.click();
 
       expect(router.navigate).toHaveBeenCalledWith(['/sharing', 'nfs', 'sessions']);
@@ -233,7 +233,7 @@ describe('ServicesComponent', () => {
 
     const serviceIndex = fakeDataSource.findIndex((item) => item.service === ServiceName.Cifs) + 1;
     const cell = await table.getCell(serviceIndex, 3);
-    const link = await cell.getAnchorByText('Audit Logs');
+    const link = await cell.getAnchorByText('View Logs');
     await link.click();
 
     expect(router.navigate).toHaveBeenCalledWith([

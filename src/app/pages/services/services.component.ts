@@ -17,7 +17,6 @@ import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus, serviceStatusLabels } from 'app/enums/service-status.enum';
-import { TranslatedString } from 'app/helpers/translate.helper';
 import { Service, ServiceRow } from 'app/interfaces/service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -38,6 +37,7 @@ import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceFtpComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
@@ -62,6 +62,7 @@ import { waitForServices } from 'app/store/services/services.selectors';
 @Component({
   selector: 'ix-services',
   templateUrl: './services.component.html',
+  styleUrls: ['./services.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     SearchInput1Component,
@@ -99,21 +100,17 @@ export class ServicesComponent implements OnInit {
       dynamicRequiredRoles: (row) => of(this.servicesService.getRolesRequiredToManage(row.service)),
     }),
     actionsColumn({
+      cssClass: 'actions-column',
       actions: [
         {
-          dynamicText: () => of(this.translate.instant('Audit Logs')),
+          dynamicText: () => of(this.translate.instant('View Logs')),
           hidden: (row) => of(!this.hasLogs(row.service)),
           onClick: () => this.router.navigate([this.auditLogsUrl()]),
         },
         {
-          dynamicText: (row) => of(this.translate.instant('{name} Sessions', { name: serviceNames.get(row.service) })),
+          dynamicText: () => of(this.translate.instant('View Sessions')),
           hidden: (row) => of(!this.hasSessions(row.service)),
           onClick: (row) => this.router.navigate(this.sessionsUrl(row.service)),
-        },
-        {
-          iconName: iconMarker('edit'),
-          tooltip: this.translate.instant('Edit'),
-          onClick: (row) => this.configureService(row),
         },
         {
           iconName: iconMarker('mdi-play-circle'),
@@ -132,6 +129,11 @@ export class ServicesComponent implements OnInit {
             untilDestroyed(this),
           ).subscribe(() => this.stopService(row.service)),
           requiredRoles: this.requiredRoles,
+        },
+        {
+          iconName: iconMarker('edit'),
+          tooltip: this.translate.instant('Edit'),
+          onClick: (row) => this.configureService(row),
         },
       ],
     }),
@@ -309,24 +311,20 @@ export class ServicesComponent implements OnInit {
   private stopService(serviceName: ServiceName): void {
     this.api.call('service.stop', [serviceName, { silent: false }]).pipe(
       this.loader.withLoader(),
+      this.errorHandler.withErrorHandler(),
       untilDestroyed(this),
-    ).subscribe({
-      next: () => this.snackbar.success(this.translate.instant('Service stopped')),
-      error: (error: unknown) => {
-        this.errorHandler.showErrorModal(error);
-      },
+    ).subscribe(() => {
+      this.snackbar.success(this.translate.instant('Service stopped'));
     });
   }
 
   private startService(serviceName: ServiceName): void {
     this.api.call('service.start', [serviceName, { silent: false }]).pipe(
       this.loader.withLoader(),
+      this.errorHandler.withErrorHandler(),
       untilDestroyed(this),
-    ).subscribe({
-      next: () => this.snackbar.success(this.translate.instant('Service started')),
-      error: (error: unknown) => {
-        this.errorHandler.showErrorModal(error);
-      },
+    ).subscribe(() => {
+      this.snackbar.success(this.translate.instant('Service started'));
     });
   }
 
