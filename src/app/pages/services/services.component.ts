@@ -302,7 +302,7 @@ export class ServicesComponent implements OnInit {
 
     return this.dialogService.confirm({
       title: this.translate.instant('Alert'),
-      message: this.translate.instant('Stop {serviceName}?', { serviceName }),
+      message: this.translate.instant('Stop {serviceName}?', { serviceName: serviceNames.get(serviceName) }),
       hideCheckbox: true,
       buttonText: this.translate.instant('Stop'),
     });
@@ -331,10 +331,10 @@ export class ServicesComponent implements OnInit {
   private confirmStopIscsiService(serviceName: ServiceName): Observable<boolean> {
     return this.iscsiService.getGlobalSessions().pipe(
       switchMap((sessions) => {
-        let message = this.translate.instant('Stop {serviceName}?', { serviceName });
+        let message = this.translate.instant('Stop {serviceName}?', { serviceName: serviceNames.get(serviceName) });
         if (sessions.length) {
           const connectionsMessage = this.translate.instant('{n, plural, one {There is an active iSCSI connection.} other {There are # active iSCSI connections}}', { n: sessions.length });
-          const stopMessage = this.translate.instant('Stop the {serviceName} service and close these connections?', { serviceName });
+          const stopMessage = this.translate.instant('Stop the {serviceName} service and close these connections?', { serviceName: serviceNames.get(serviceName) });
           message = `<font color="red">${connectionsMessage}</font><br>${stopMessage}` as TranslatedString;
         }
 
