@@ -33,7 +33,7 @@ describe('getDeviceDescription', () => {
     } as VirtualizationNic;
 
     const result = getDeviceDescription(mockTranslate as TranslateService, device);
-    expect(result).toBe('NIC: eth0 (BRIDGED)');
+    expect(result).toBe('NIC: eth0 (BRIDGED) (Default Mac Address)');
   });
 
   it('should return "typeLabel: description" for PCI devices', () => {

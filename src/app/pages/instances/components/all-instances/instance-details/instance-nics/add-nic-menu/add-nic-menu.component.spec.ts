@@ -1,13 +1,16 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { MatDialog } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { VirtualizationDeviceType, VirtualizationNicType } from 'app/enums/virtualization.enum';
 import { VirtualizationDevice } from 'app/interfaces/virtualization.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AddNicMenuComponent } from 'app/pages/instances/components/all-instances/instance-details/instance-nics/add-nic-menu/add-nic-menu.component';
+import { InstanceNicMacDialog } from 'app/pages/instances/components/common/instance-nics-mac-addr-dialog/instance-nic-mac-dialog.component';
 import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 
@@ -26,6 +29,11 @@ describe('AddNicMenuComponent', () => {
       ]),
       mockProvider(VirtualizationInstancesStore, {
         selectedInstance: () => ({ id: 'my-instance' }),
+      }),
+      mockProvider(MatDialog, {
+        open: jest.fn(() => ({
+          afterClosed: jest.fn(() => of({ useDefault: true })),
+        })),
       }),
       mockProvider(VirtualizationDevicesStore, {
         devices: () => [
@@ -62,6 +70,11 @@ describe('AddNicMenuComponent', () => {
     await menu.open();
 
     await menu.clickItem({ text: 'Intel E1000' });
+
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(InstanceNicMacDialog, {
+      data: 'Intel E1000',
+      minWidth: '500px',
+    });
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('virt.instance.device_add', ['my-instance', {
       dev_type: VirtualizationDeviceType.Nic,
