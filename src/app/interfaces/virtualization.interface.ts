@@ -170,6 +170,7 @@ export interface VirtualizationNic {
   readonly: boolean;
   network: string;
   product_id: string;
+  mac?: string;
 }
 
 export interface VirtualizationTpm {
