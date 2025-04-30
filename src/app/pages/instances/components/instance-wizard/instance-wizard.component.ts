@@ -801,8 +801,8 @@ export class InstanceWizardComponent implements OnInit {
     const osMappings: { keywords: string[]; os: ImageOs }[] = [
       { keywords: ['win', 'windows'], os: ImageOs.Windows },
       { keywords: ['ubuntu', 'debian', 'fedora', 'centos', 'linux'], os: ImageOs.Linux },
-      { keywords: ['freebsd', 'free bsd'], os: ImageOs.FreeBsd },
-      { keywords: ['arch', 'archlinux'], os: ImageOs.Archlinux },
+      { keywords: ['freebsd', 'free bsd', 'bsd'], os: ImageOs.FreeBsd },
+      { keywords: ['arch', 'archlinux'], os: ImageOs.ArchLinux },
     ];
 
     for (const mapping of osMappings) {

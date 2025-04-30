@@ -5,14 +5,14 @@ export enum ImageOs {
   Linux = 'LINUX',
   FreeBsd = 'FREEBSD',
   Windows = 'WINDOWS',
-  Archlinux = 'ARCHLINUX',
+  ArchLinux = 'ARCHLINUX',
 }
 
 export const imageOsLabels = new Map<ImageOs, string>([
-  [ImageOs.Linux, T('Linux')],
-  [ImageOs.FreeBsd, T('FreeBSD')],
-  [ImageOs.Windows, T('Windows')],
-  [ImageOs.Archlinux, T('Arch Linux')],
+  [ImageOs.Linux, 'Linux'],
+  [ImageOs.FreeBsd, 'FreeBSD'],
+  [ImageOs.Windows, 'Windows'],
+  [ImageOs.ArchLinux, 'Arch Linux'],
 ]);
 
 export enum VirtualizationType {
