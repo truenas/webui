@@ -36,9 +36,7 @@
           (onSelectionChange)="onOptionSelectionChange($event)"
         >
           {{ 'Custom' | translate }}
-          <span class="preset-description">
-            {{ customCrontab | crontabExplanation }}
-          </span>
+          <span class="preset-description">{{ customCrontab | crontabExplanation }}</span>
         </mat-option>
       }
       <mat-option
