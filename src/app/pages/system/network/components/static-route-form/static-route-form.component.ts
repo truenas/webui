@@ -64,7 +64,6 @@ export class StaticRouteFormComponent implements OnInit {
   readonly tooltips = {
     destination: helptextStaticRoutes.sr_destination_tooltip,
     gateway: helptextStaticRoutes.sr_gateway_tooltip,
-    description: helptextStaticRoutes.sr_description_tooltip,
   };
 
   constructor(

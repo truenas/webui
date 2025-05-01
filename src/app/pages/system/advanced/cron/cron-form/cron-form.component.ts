@@ -82,7 +82,6 @@ export class CronFormComponent implements OnInit {
     schedule: helptextCron.crontabTooltip,
     stdout: helptextCron.stdoutTooltip,
     stderr: helptextCron.stderrTooltip,
-    enabled: helptextCron.enabledTooltip,
   };
 
   readonly userProvider = new UserComboboxProvider(this.userService);

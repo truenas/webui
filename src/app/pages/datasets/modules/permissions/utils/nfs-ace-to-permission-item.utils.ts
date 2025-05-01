@@ -6,8 +6,8 @@ import {
   NfsAdvancedPermission, nfsAdvancedPermissionLabels,
   nfsBasicPermissionLabels,
 } from 'app/enums/nfs-acl.enum';
-import { ignoreTranslation } from 'app/helpers/translate.helper';
 import { areNfsPermissionsBasic, NfsAclItem } from 'app/interfaces/acl.interface';
+import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import {
   PermissionItem,
   PermissionsItemType,

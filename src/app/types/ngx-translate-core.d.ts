@@ -1,5 +1,5 @@
 import '@ngx-translate/core';
-import { TranslatedString } from 'app/helpers/translate.helper';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
 
 declare module '@ngx-translate/core' {
   interface TranslateService {

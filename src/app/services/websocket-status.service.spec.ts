@@ -101,4 +101,27 @@ describe('WebSocketStatusSerice', () => {
     expect(spectator.service.isAuthenticated).toBe(false);
     expect(spectator.service.isConnected).toBe(false);
   });
+
+  it('allows reconnect when setReconnect is called with true', () => {
+    spectator.service.setReconnect(true);
+    testScheduler.run(({ expectObservable }) => {
+      expectObservable(spectator.service.isReconnectAllowed$).toBe('a', { a: true });
+    });
+  });
+
+  it('disallows reconnect when setReconnect is called with false', () => {
+    spectator.service.setReconnect(false);
+    testScheduler.run(({ expectObservable }) => {
+      expectObservable(spectator.service.isReconnectAllowed$).toBe('a', { a: false });
+    });
+  });
+
+  it('emits true for isActiveSession$ when both connection and login statuses are true', () => {
+    testScheduler.run(({ expectObservable }) => {
+      spectator.service.setConnectionStatus(true);
+      spectator.service.setLoginStatus(true);
+
+      expectObservable(spectator.service.isActiveSession$).toBe('a', { a: true });
+    });
+  });
 });

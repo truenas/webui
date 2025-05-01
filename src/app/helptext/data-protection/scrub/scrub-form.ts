@@ -8,6 +8,4 @@ export const helptextScrubForm = {
  continues to check daily but does not run again until seven days have \
  elapsed. Using a multiple of seven ensures the scrub always occurs on \
  the same weekday.'),
-  scrubEnabledTooltip: T('Unset to disable the scheduled scrub \
- without deleting it.'),
 };

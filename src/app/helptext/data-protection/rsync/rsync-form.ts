@@ -24,7 +24,6 @@ export const helptextRsyncForm = {
   rsync_validate_rpath_tooltip: T('Set to automatically create the defined <b>Remote\
                 Path</b> if it does not exist.'),
   rsync_direction_tooltip: T('Direct the flow of data to the remote host.'),
-  rsync_description_tooltip: T('Enter a description of the rsync task.'),
   rsync_picker_tooltip: T('Select a schedule preset or choose <i>Custom</i>\
                 to open the advanced scheduler.'),
   rsync_recursive_tooltip: T('Set to include all subdirectories of the specified\
@@ -57,8 +56,6 @@ export const helptextRsyncForm = {
      options to include. Separate entries by pressing <code>Enter</code>.<br> \
      Note: The "*" character must be escaped with a backslash (\\*.txt) or used \
      inside single quotes (\'*.txt\').'),
-  rsync_enabled_tooltip: T('Enable this rsync task. Unset to disable this\
-                rsync task without deleting it.'),
   rsync_ssh_connect_mode_tooltip: T('Choose to connect using either SSH private key stored \
   in user\'s home directory or SSH connection from the keychain'),
   rsync_ssh_credentials_tooltip: T('Select an existing SSH connection to a remote system or \

@@ -292,7 +292,9 @@ export class QueryParserService<T> {
       return `"${mappedConditionProperty}" ${comparator.toUpperCase()} (${valueList})`;
     }
 
-    return `"${mappedConditionProperty}" ${comparator.toUpperCase()} "${mappedConditionValue}"`;
+    return `"${mappedConditionProperty}" ${comparator.toUpperCase()} ${
+      typeof mappedConditionValue === 'string' ? `"${mappedConditionValue}"` : mappedConditionValue
+    }`;
   }
 
   private parseElementFromQueryFilter(

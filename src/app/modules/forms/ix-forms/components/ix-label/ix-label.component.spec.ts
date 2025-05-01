@@ -1,9 +1,9 @@
 import {
   createComponentFactory, Spectator,
 } from '@ngneat/spectator/jest';
-import { ignoreTranslation } from 'app/helpers/translate.helper';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
+import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 
 describe('IxLabelComponent', () => {
   let spectator: Spectator<IxLabelComponent>;

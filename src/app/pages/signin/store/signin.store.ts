@@ -49,6 +49,7 @@ export class SigninStore extends ComponentStore<SigninState> {
   private handleLoginResult = (loginResult: LoginResult): void => {
     if (loginResult !== LoginResult.Success) {
       this.authService.clearAuthToken();
+      this.wsStatus.setReconnect(false);
     } else {
       this.handleSuccessfulLogin();
     }
@@ -75,7 +76,10 @@ export class SigninStore extends ComponentStore<SigninState> {
   setLoadingState = this.updater((state, isLoading: boolean) => ({ ...state, isLoading }));
 
   init = this.effect((trigger$: Observable<void>) => trigger$.pipe(
-    tap(() => this.setLoadingState(true)),
+    tap(() => {
+      this.setState(initialState);
+      this.setLoadingState(true);
+    }),
     switchMap(() => this.updateService.hardRefreshIfNeeded()),
     switchMap(() => forkJoin([
       this.checkIfAdminPasswordSet(),
@@ -139,6 +143,10 @@ export class SigninStore extends ComponentStore<SigninState> {
 
     return this.api.call('system.advanced.login_banner').pipe(
       tap((loginBanner) => this.patchState({ loginBanner })),
+      catchError((error: unknown) => {
+        this.errorHandler.showErrorModal(error);
+        return of(initialState.loginBanner);
+      }),
     );
   }
 

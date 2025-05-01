@@ -131,11 +131,11 @@ export class FailoverFormComponent {
 
   protected onSyncToPeerPressed(): void {
     this.dialogService.confirm({
-      title: this.translate.instant(helptextSystemFailover.dialog_sync_to_peer_title),
-      message: this.translate.instant(helptextSystemFailover.dialog_sync_to_peer_message),
-      buttonText: this.translate.instant(helptextSystemFailover.dialog_button_ok),
+      title: this.translate.instant(helptextSystemFailover.syncToPeerTitle),
+      message: this.translate.instant(helptextSystemFailover.syncToPeerMessage),
+      buttonText: this.translate.instant(helptextSystemFailover.proceedButton),
       secondaryCheckbox: true,
-      secondaryCheckboxText: this.translate.instant(helptextSystemFailover.dialog_sync_to_peer_checkbox),
+      secondaryCheckboxText: this.translate.instant(helptextSystemFailover.syncToPeerRestartStandbyCheckbox),
     })
       .pipe(
         filter((result) => result.confirmed),
@@ -149,7 +149,7 @@ export class FailoverFormComponent {
         next: () => {
           this.isLoading.set(false);
           this.snackbar.success(
-            this.translate.instant(helptextSystemFailover.confirm_dialogs.sync_to_message),
+            this.translate.instant(helptextSystemFailover.confirmDialogs.syncToMessage),
           );
         },
         error: (error: unknown) => {
@@ -161,9 +161,9 @@ export class FailoverFormComponent {
 
   protected onSyncFromPeerPressed(): void {
     this.dialogService.confirm({
-      title: this.translate.instant(helptextSystemFailover.dialog_sync_from_peer_title),
-      message: this.translate.instant(helptextSystemFailover.dialog_sync_from_peer_message),
-      buttonText: this.translate.instant(helptextSystemFailover.dialog_button_ok),
+      title: this.translate.instant(helptextSystemFailover.syncFromPeerTitle),
+      message: this.translate.instant(helptextSystemFailover.syncFromPeerMessage),
+      buttonText: this.translate.instant(helptextSystemFailover.proceedButton),
     })
       .pipe(
         filter(Boolean),
@@ -177,7 +177,7 @@ export class FailoverFormComponent {
         next: () => {
           this.isLoading.set(false);
           this.snackbar.success(
-            this.translate.instant(helptextSystemFailover.confirm_dialogs.sync_from_message),
+            this.translate.instant(helptextSystemFailover.confirmDialogs.syncFromMessage),
           );
         },
         error: (error: unknown) => {
@@ -193,8 +193,8 @@ export class FailoverFormComponent {
         filter((isMaster) => !isMaster),
         switchMap(() => {
           return this.dialogService.confirm({
-            title: this.translate.instant(helptextSystemFailover.master_dialog_title),
-            message: this.translate.instant(helptextSystemFailover.master_dialog_warning),
+            title: this.translate.instant(helptextSystemFailover.masterDialogTitle),
+            message: this.translate.instant(helptextSystemFailover.masterDialogWarning),
             buttonText: this.translate.instant('Continue'),
             cancelText: this.translate.instant('Cancel'),
             disableClose: true,

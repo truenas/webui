@@ -7,49 +7,37 @@ export const helptextSharingNfs = {
  Consider creating a dataset instead.',
   ),
 
-  // NFSFormComponent
-  tooltip_path: T('Full path to the pool, dataset or directory to share. \
+  pathTooltip: T('Full path to the pool, dataset or directory to share. \
   The path must reside within a pool. Mandatory.'),
-  tooltip_comment: T(
-    'Provide helpful notations related to the share, e.g. ‘Shared to everybody’. \
-    Maximum length is 120 characters.',
-  ),
-  tooltip_ro: T('Set to prohibit writing to the share.'),
-  tooltip_enabled: T('Enable this NFS share. Unset to disable this NFS share \
- without deleting it.'),
-  tooltip_expose_snapshots: T('Allow accessing ZFS snapshots over the NFS protocol.'),
-  tooltip_networks_wrapper: T(
+  exposeTooltip: T('Allow accessing ZFS snapshots over the NFS protocol.'),
+  addNetworkTooltip: T(
     'Click "Add" to specify NFS client network ranges for this share.\
  If both networks and hosts are empty the share will be exported to everyone.',
   ),
-  tooltip_network: T(
-    'Allowed network in network/mask CIDR notation (example <i>1.2.3.4/24<i>).\
-     One entry per field. Leave empty to allow everybody.',
-  ),
-  tooltip_hosts: T(
+  hostsTooltip: T(
     'Allowed IP address or hostname. One entry per field. Leave empty to allow everybody.',
   ),
-  tooltip_hosts_wrapper: T(
+  addHostsTooltip: T(
     'Click "Add" to specify NFS client hosts for this share.\
  If both networks and hosts are empty the share will be exported to everyone.',
   ),
-  tooltip_maproot_user: T(
+  maprootUserTooltip: T(
     'When a user is selected, the <i>root</i> user is\
  limited to the permissions of that user.',
   ),
-  tooltip_maproot_group: T(
+  maprootGroupTooltip: T(
     'When a group is selected, the <i>root</i> user is also\
  limited to the permissions of that group.',
   ),
-  tooltip_mapall_user: T(
+  mapallUserTooltip: T(
     'The specified permissions of that user are used\
  by all clients.',
   ),
-  tooltip_mapall_group: T(
+  mapallGroupTooltip: T(
     'The specified permissions of that group are used\
  by all clients.',
   ),
-  tooltip_security: T(
+  securityTooltip: T(
     'Specifies level of authentication and cryptographic protection.\
  SYS or none should be used if no KDC is available. If a KDC is available, e.g. Active Directory, KRB5 is recommended.\
  If desired KRB5I (integrity protection) and/or KRB5P (privacy protection) may be included with KRB5.',

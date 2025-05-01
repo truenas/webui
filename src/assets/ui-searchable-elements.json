@@ -171,20 +171,6 @@
     "hierarchy": [
       "Toolbar",
       "Settings Menu",
-      "About"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "routerLink": null,
-    "anchor": "about",
-    "triggerAnchor": "user-menu",
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Toolbar",
-      "Settings Menu",
       "Log Out"
     ],
     "synonyms": [
@@ -1451,50 +1437,6 @@
       "dataset().id"
     ],
     "anchor": "manage-snapshots-tasks",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Datasets",
-      "Manage Replication Tasks"
-    ],
-    "synonyms": [
-      "View Datasets",
-      "Replication Task Manager"
-    ],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/datasets"
-    ],
-    "routerLink": [
-      "/data-protection/replication",
-      "dataset().id"
-    ],
-    "anchor": "manage-replication-tasks",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Datasets",
-      "Manage Rsync Tasks"
-    ],
-    "synonyms": [
-      "View Datasets",
-      "Rsync Task Manager"
-    ],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/datasets"
-    ],
-    "routerLink": [
-      "/data-protection/rsync",
-      "dataset().id"
-    ],
-    "anchor": "manage-rsync-tasks",
     "triggerAnchor": null,
     "section": "ui"
   },
