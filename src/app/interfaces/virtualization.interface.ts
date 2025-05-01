@@ -286,7 +286,7 @@ export interface VirtualizationVolume {
   created_at: string;
   type: string;
   config: {
-    size: number;
+    size?: number;
   };
   used_by: string[];
   storage_pool: string;
