@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal,
+  ChangeDetectionStrategy, Component, signal,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -7,17 +7,14 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
-import { ignoreTranslation } from 'app/helpers/translate.helper';
 import { helptextScrubForm } from 'app/helptext/data-protection/scrub/scrub-form';
-import { CreatePoolScrubTask, PoolScrubTask } from 'app/interfaces/pool-scrub.interface';
+import { CreateScrubTask, ScrubTask } from 'app/interfaces/pool-scrub.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 import {
@@ -30,10 +27,15 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 
+export interface ScrubFormParams {
+  poolId: number;
+  existingScrubTask: ScrubTask | null;
+}
+
 @UntilDestroy()
 @Component({
-  selector: 'ix-scrub-task-form',
-  templateUrl: './scrub-task-form.component.html',
+  selector: 'ix-scrub-form',
+  templateUrl: './scrub-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ModalHeaderComponent,
@@ -41,7 +43,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
     MatCardContent,
     ReactiveFormsModule,
     IxFieldsetComponent,
-    IxSelectComponent,
     IxInputComponent,
     SchedulerComponent,
     IxCheckboxComponent,
@@ -52,68 +53,53 @@ import { ApiService } from 'app/modules/websocket/api.service';
     TranslateModule,
   ],
 })
-export class ScrubTaskFormComponent implements OnInit {
+export class ScrubFormComponent {
   protected readonly requiredRoles = [Role.PoolScrubWrite];
-  protected editingTask: PoolScrubTask | undefined;
+
+  protected isLoading = signal(false);
+  protected existingTask: ScrubTask | undefined;
+  private poolId: number;
 
   get isNew(): boolean {
-    return !this.editingTask;
+    return !this.existingTask;
   }
 
   get title(): string {
     return this.isNew
-      ? this.translate.instant('Add Scrub Task')
-      : this.translate.instant('Edit Scrub Task');
+      ? this.translate.instant('Schedule Scrub')
+      : this.translate.instant('Configure Scheduled Scrub');
   }
 
   form = this.fb.nonNullable.group({
-    pool: [null as number | null, Validators.required],
     threshold: [35, [Validators.min(0), Validators.required]],
-    description: [''],
     schedule: ['', Validators.required],
     enabled: [true],
   });
 
-  protected isLoading = signal(false);
-
-  poolOptions$ = this.api.call('pool.query').pipe(
-    map((pools) => {
-      return pools.map((pool) => ({
-        label: ignoreTranslation(pool.name),
-        value: pool.id,
-      }));
-    }),
-  );
-
-  readonly tooltips = {
-    threshold: helptextScrubForm.scrubThresholdTooltip,
-    enabled: helptextScrubForm.scrubEnabledTooltip,
-  };
+  protected readonly helptextScrubForm = helptextScrubForm;
 
   constructor(
     private translate: TranslateService,
     private fb: FormBuilder,
     private api: ApiService,
-    private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
     private errorHandler: FormErrorHandlerService,
-    public slideInRef: SlideInRef<PoolScrubTask | undefined, boolean>,
+    public slideInRef: SlideInRef<ScrubFormParams, boolean>,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
-    this.editingTask = this.slideInRef.getData();
-  }
 
-  ngOnInit(): void {
-    if (this.editingTask) {
-      this.setTaskForEdit(this.editingTask);
+    this.poolId = this.slideInRef.getData().poolId;
+    this.existingTask = this.slideInRef.getData().existingScrubTask;
+    if (this.existingTask) {
+      this.setTaskForEdit(this.existingTask);
     }
   }
 
-  setTaskForEdit(editingTask: PoolScrubTask): void {
+  setTaskForEdit(editingTask: ScrubTask): void {
     this.form.patchValue({
-      ...this.editingTask,
+      ...this.existingTask,
       schedule: scheduleToCrontab(editingTask.schedule),
     });
   }
@@ -121,26 +107,27 @@ export class ScrubTaskFormComponent implements OnInit {
   onSubmit(): void {
     const values = {
       ...this.form.value,
+      pool: this.poolId,
       schedule: crontabToSchedule(this.form.getRawValue().schedule),
     };
 
     this.isLoading.set(true);
     let request$: Observable<unknown>;
-    if (this.editingTask) {
+    if (this.existingTask) {
       request$ = this.api.call('pool.scrub.update', [
-        this.editingTask.id,
-        values as CreatePoolScrubTask,
+        this.existingTask.id,
+        values as CreateScrubTask,
       ]);
     } else {
-      request$ = this.api.call('pool.scrub.create', [values as CreatePoolScrubTask]);
+      request$ = this.api.call('pool.scrub.create', [values as CreateScrubTask]);
     }
 
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
         if (this.isNew) {
-          this.snackbar.success(this.translate.instant('Task created'));
+          this.snackbar.success(this.translate.instant('Scrub scheduled'));
         } else {
-          this.snackbar.success(this.translate.instant('Task updated'));
+          this.snackbar.success(this.translate.instant('Scrub settings updated'));
         }
         this.isLoading.set(false);
         this.slideInRef.close({ response: true, error: null });

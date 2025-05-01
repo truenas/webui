@@ -183,7 +183,7 @@ import {
   PeriodicSnapshotTaskUpdate,
 } from 'app/interfaces/periodic-snapshot-task.interface';
 import { DatasetAttachment, PoolAttachment } from 'app/interfaces/pool-attachment.interface';
-import { CreatePoolScrubTask, PoolScrubTask } from 'app/interfaces/pool-scrub.interface';
+import { CreateScrubTask, ScrubTask } from 'app/interfaces/pool-scrub.interface';
 import {
   Pool, PoolInstance,
 } from 'app/interfaces/pool.interface';
@@ -657,10 +657,10 @@ export interface ApiCallDirectory {
   'pool.query': { params: QueryParams<Pool>; response: Pool[] };
   'pool.resilver.config': { params: void; response: ResilverConfig };
   'pool.resilver.update': { params: [ResilverConfigUpdate]; response: ResilverConfig };
-  'pool.scrub.create': { params: [CreatePoolScrubTask]; response: PoolScrubTask };
+  'pool.scrub.create': { params: [CreateScrubTask]; response: ScrubTask };
   'pool.scrub.delete': { params: [id: number]; response: boolean };
-  'pool.scrub.query': { params: QueryParams<PoolScrubTask>; response: PoolScrubTask[] };
-  'pool.scrub.update': { params: [id: number, params: CreatePoolScrubTask]; response: PoolScrubTask };
+  'pool.scrub.query': { params: QueryParams<ScrubTask>; response: ScrubTask[] };
+  'pool.scrub.update': { params: [id: number, params: CreateScrubTask]; response: ScrubTask };
   'pool.snapshottask.create': { params: [PeriodicSnapshotTaskCreate]; response: PeriodicSnapshotTask };
   'pool.snapshottask.delete': { params: [id: number]; response: boolean };
   'pool.snapshottask.query': { params: QueryParams<PeriodicSnapshotTask>; response: PeriodicSnapshotTask[] };

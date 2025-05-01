@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
+import { computed, Injectable } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { ComponentStore } from '@ngrx/component-store';
-import { tapResponse } from '@ngrx/operators';
-import { keyBy, sortBy } from 'lodash-es';
+import { groupBy, keyBy, sortBy } from 'lodash-es';
 import {
   combineLatest, forkJoin, Observable, of, tap,
 } from 'rxjs';
@@ -9,38 +9,51 @@ import { catchError, switchMap } from 'rxjs/operators';
 import { Alert } from 'app/interfaces/alert.interface';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Disk, DiskTemperatureAgg, StorageDashboardDisk } from 'app/interfaces/disk.interface';
+import { ScrubTask } from 'app/interfaces/pool-scrub.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export interface PoolsDashboardState {
-  arePoolsLoading: boolean;
-  areDisksLoading: boolean;
   pools: Pool[];
+  arePoolsLoading: boolean;
+
+  isLoadingPoolDetails: boolean;
+  scrubs: ScrubTask[];
   rootDatasets: Record<string, Dataset>;
   disks: StorageDashboardDisk[];
 }
 
 const initialState: PoolsDashboardState = {
   arePoolsLoading: false,
-  areDisksLoading: false,
+  isLoadingPoolDetails: false,
   pools: [],
+  scrubs: [],
   rootDatasets: {},
   disks: [],
 };
 
-interface DashboardPools {
-  pools: Pool[];
-  rootDatasets: Dataset[];
-}
-
 @Injectable()
 export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
-  readonly pools$ = this.select((state) => state.pools);
-  readonly arePoolsLoading$ = this.select((state) => state.arePoolsLoading);
-  readonly areDisksLoading$ = this.select((state) => state.areDisksLoading);
-  readonly disks$ = this.select((state) => state.disks);
+  readonly stateAsSignal = toSignal(
+    this.state$,
+    { initialValue: initialState },
+  );
+
+  readonly pools = computed(() => this.stateAsSignal().pools);
+  readonly arePoolsLoading = computed(() => this.stateAsSignal().arePoolsLoading);
+  readonly isLoadingPoolDetails = computed(() => this.stateAsSignal().isLoadingPoolDetails);
+  readonly disks = computed(() => this.stateAsSignal().disks);
+
   readonly rootDatasets$ = this.select((state) => state.rootDatasets);
+
+  readonly disksByPool = computed<Record<string, StorageDashboardDisk[]>>(() => {
+    return groupBy(this.stateAsSignal().disks, (disk) => disk.pool);
+  });
+
+  scrubForPool(pool: Pool): ScrubTask | undefined {
+    return this.stateAsSignal().scrubs.find((scrub) => scrub.pool === pool.id);
+  }
 
   constructor(
     private errorHandler: ErrorHandlerService,
@@ -55,89 +68,78 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
         this.patchState({
           ...initialState,
           arePoolsLoading: true,
-          areDisksLoading: true,
+          isLoadingPoolDetails: true,
         });
       }),
-      switchMap(() => this.updatePoolsAndDisksState()),
+      switchMap(() => {
+        return forkJoin([
+          this.loadPoolsAndRootDatasets(),
+          this.loadPoolDetails(),
+        ]).pipe(
+          catchError((error: unknown) => {
+            this.patchState({
+              arePoolsLoading: false,
+              isLoadingPoolDetails: false,
+            });
+            this.errorHandler.showErrorModal(error);
+            return of(null);
+          }),
+        );
+      }),
     );
   });
 
-  updatePoolsAndDisksState(): Observable<{
-    dashboardPools: DashboardPools;
-    dashboardDisks: StorageDashboardDisk[];
-  }> {
-    return forkJoin({
-      dashboardPools: this.getPoolsAndRootDatasets().pipe(
-        this.patchStateWithPoolData(),
-      ),
-      dashboardDisks: this.getDisksWithDashboardData().pipe(
-        this.patchStateWithDisksData(),
-      ),
-    });
-  }
-
-  getPoolsAndRootDatasets(): Observable<DashboardPools> {
-    return combineLatest({
-      pools: this.getPools(),
-      rootDatasets: this.getRootDatasets(),
-    });
-  }
-
-  patchStateWithPoolData(): (source: Observable<DashboardPools>) => Observable<DashboardPools> {
-    return tapResponse<DashboardPools>(
-      ({ pools, rootDatasets }) => {
+  private loadPoolsAndRootDatasets(): Observable<[Pool[], Dataset[]]> {
+    return combineLatest([
+      this.api.callAndSubscribe('pool.query', [[], { extra: { is_upgraded: true } }]),
+      this.api.call('pool.dataset.query', [[], { extra: { retrieve_children: false } }]),
+    ]).pipe(
+      tap(([pools, rootDatasets]) => {
         this.patchState({
           arePoolsLoading: false,
           pools: sortBy(pools, (pool) => pool.name),
           rootDatasets: keyBy(rootDatasets, (dataset) => dataset.id),
         });
-      },
-      (error: unknown) => {
-        this.patchState({
-          arePoolsLoading: false,
-        });
-        this.errorHandler.showErrorModal(error);
-      },
+      }),
     );
   }
 
-  getPools(): Observable<Pool[]> {
-    return this.api.callAndSubscribe('pool.query', [[], { extra: { is_upgraded: true } }]);
-  }
+  // reloadScrubForPool(poolId: number): void {
+  //   this.loadScrubs().pipe(
+  //     tap((scrubs: ScrubTask[]) => {
+  //       const updatedScrub = scrubs.find((scrub) => scrub.pool === poolId);
+  //       if (updatedScrub) {
+  //         this.patchState((state) => ({
+  //           scrubs: state.scrubs.map((scrub) => (scrub.pool === poolId ? updatedScrub : scrub)),
+  //         }));
+  //       }
+  //     }),
+  //   ).subscribe();
+  // }
 
-  getRootDatasets(): Observable<Dataset[]> {
-    return this.api.call('pool.dataset.query', [[], { extra: { retrieve_children: false } }]);
-  }
-
-  getDisksWithDashboardData(): Observable<StorageDashboardDisk[]> {
-    return this.getDisks().pipe(
-      switchMap(this.getDashboardDataForDisks.bind(this)),
-      switchMap(this.getProcessedDisks.bind(this)),
-    );
-  }
-
-  patchStateWithDisksData(): (source: Observable<StorageDashboardDisk[]>) => Observable<StorageDashboardDisk[]> {
-    return tapResponse<StorageDashboardDisk[]>(
-      (disks: StorageDashboardDisk[]) => {
+  private loadPoolDetails(): Observable<[StorageDashboardDisk[], ScrubTask[]]> {
+    return forkJoin([
+      this.loadDisks().pipe(
+        switchMap(this.getDashboardDataForDisks.bind(this)),
+        switchMap(this.processDisks.bind(this)),
+      ),
+      this.api.call('pool.scrub.query'),
+    ]).pipe(
+      tap(([disks, scrubs]) => {
         this.patchState({
+          scrubs,
           disks: [...disks],
-          areDisksLoading: false,
+          isLoadingPoolDetails: false,
         });
-      },
-      (error: unknown) => {
-        this.patchState({
-          areDisksLoading: false,
-        });
-        this.errorHandler.showErrorModal(error);
-      },
+      }),
     );
   }
 
-  getDisks(): Observable<Disk[]> {
+  loadDisks(): Observable<Disk[]> {
     return this.api.call('disk.query', [[], { extra: { pools: true } }]);
   }
 
-  getDashboardDataForDisks(disks: StorageDashboardDisk[]): Observable<{
+  private getDashboardDataForDisks(disks: StorageDashboardDisk[]): Observable<{
     disks: StorageDashboardDisk[];
     alerts: Alert[];
     tempAgg: DiskTemperatureAgg;
@@ -145,25 +147,12 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
     const disksNames = disks.map((disk) => disk.name);
     return combineLatest({
       disks: of(disks),
-      alerts: this.getTemperatureAlerts(disksNames),
-      tempAgg: this.getDiskTempAggregates(disksNames),
+      alerts: this.api.call('disk.temperature_alerts', [disksNames]),
+      tempAgg: this.api.call('disk.temperature_agg', [disksNames, 14]),
     });
   }
 
-  getTemperatureAlerts(disksNames: string[]): Observable<Alert[]> {
-    return this.api.call('disk.temperature_alerts', [disksNames]);
-  }
-
-  getDiskTempAggregates(disksNames: string[]): Observable<DiskTemperatureAgg> {
-    return this.api.call('disk.temperature_agg', [disksNames, 14]).pipe(
-      catchError((error: unknown) => {
-        console.error('Error loading temperature: ', error);
-        return of({});
-      }),
-    );
-  }
-
-  getProcessedDisks(
+  private processDisks(
     {
       disks, alerts, tempAgg,
     }: {

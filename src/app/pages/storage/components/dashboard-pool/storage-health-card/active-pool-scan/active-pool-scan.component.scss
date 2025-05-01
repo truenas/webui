@@ -1,0 +1,31 @@
+@import 'mixins/animations';
+
+.scan-in-progress {
+  @include fade-in();
+  margin-top: 18px;
+
+  .scan-description {
+    text-align: center;
+  }
+
+  .scan-label {
+    font-weight: bold;
+  }
+
+  .time-left {
+    font-size: 0.9rem;
+    text-align: center;
+  }
+
+  .progress {
+    margin-bottom: 8px;
+    margin-top: 8px;
+  }
+}
+
+.controls {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 16px;
+}
