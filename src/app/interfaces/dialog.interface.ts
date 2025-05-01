@@ -1,4 +1,4 @@
-import { TranslatedString } from 'app/helpers/translate.helper';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
 
 export interface ConfirmOptions {
   title: TranslatedString;

@@ -18,8 +18,7 @@ import { IscsiExtentRpm, IscsiExtentType } from 'app/enums/iscsi.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
-import { ignoreTranslation, translateOptions } from 'app/helpers/translate.helper';
-import { helptextSharingIscsi } from 'app/helptext/sharing';
+import { helptextIscsi } from 'app/helptext/sharing';
 import { IscsiExtent, IscsiExtentUpdate } from 'app/interfaces/iscsi.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -33,6 +32,8 @@ import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-forma
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TranslateOptionsPipe } from 'app/modules/translate/translate-options/translate-options.pipe';
+import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IscsiService } from 'app/services/iscsi.service';
@@ -58,6 +59,7 @@ import { IscsiService } from 'app/services/iscsi.service';
     MatButton,
     TestDirective,
     TranslateModule,
+    TranslateOptionsPipe,
   ],
 })
 export class ExtentFormComponent implements OnInit {
@@ -102,7 +104,7 @@ export class ExtentFormComponent implements OnInit {
 
   private extentDiskBeingEdited$ = new BehaviorSubject<Option | undefined>(undefined);
 
-  readonly helptext = helptextSharingIscsi;
+  readonly helptext = helptextIscsi;
 
   protected readonly requiredRoles = [
     Role.SharingIscsiExtentWrite,
@@ -111,7 +113,7 @@ export class ExtentFormComponent implements OnInit {
   ];
 
   readonly rpms$ = of(this.helptext.extent_form_enum_rpm);
-  readonly types$ = of(translateOptions(this.translate, this.helptext.extent_form_enum_type));
+  readonly types$ = of(this.helptext.extent_form_enum_type);
   readonly blocksizes$ = of(this.helptext.extent_form_enum_blocksize);
   readonly disks$ = combineLatest([
     this.iscsiService.getExtentDevices().pipe(choicesToOptions()),

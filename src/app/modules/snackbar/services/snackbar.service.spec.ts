@@ -1,8 +1,8 @@
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
-import { ignoreTranslation } from 'app/helpers/translate.helper';
 import { SnackbarComponent } from 'app/modules/snackbar/components/snackbar/snackbar.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 
 describe('SnackbarService', () => {
   let spectator: SpectatorService<SnackbarService>;

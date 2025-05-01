@@ -13,9 +13,4 @@ export const helptextSystemTunable = {
  href="https://man7.org/linux/man-pages/man8/sysctl.8.html"\
  target="_blank">sysctl</a> variable.',
   ),
-
-  enabledTooltip: T(
-    'Enable this tunable. Unset to disable this tunable\
-without deleting it.',
-  ),
 };

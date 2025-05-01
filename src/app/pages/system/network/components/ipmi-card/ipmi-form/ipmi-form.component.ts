@@ -83,30 +83,15 @@ export class IpmiFormComponent implements OnInit {
   form = this.fb.group({
     apply_remote: new FormControl(false),
     dhcp: [false],
-    ipaddress: ['', [
-      this.validatorsService.withMessage(
-        ipv4Validator(),
-        this.translate.instant(helptextIpmi.ip_error),
-      ),
-    ]],
-    gateway: ['', [
-      this.validatorsService.withMessage(
-        ipv4Validator(),
-        this.translate.instant(helptextIpmi.ip_error),
-      ),
-    ]],
-    netmask: ['', [
-      this.validatorsService.withMessage(
-        ipv4Validator(),
-        this.translate.instant(helptextIpmi.ip_error),
-      ),
-    ]],
+    ipaddress: ['', ipv4Validator()],
+    gateway: ['', ipv4Validator()],
+    netmask: ['', ipv4Validator()],
     vlan_id_enable: [false],
     vlan_id: [null as number | null, [Validators.required]],
     password: ['', [
       this.validatorsService.withMessage(
         Validators.maxLength(20),
-        this.translate.instant(helptextIpmi.password_errors),
+        this.translate.instant(helptextIpmi.passwordLengthError),
       ),
     ]],
   });

@@ -2,4 +2,10 @@
 
 .card {
   @include details-card();
+
+  .value {
+    align-items: center;
+    display: flex;
+    gap: 5px;
+  }
 }

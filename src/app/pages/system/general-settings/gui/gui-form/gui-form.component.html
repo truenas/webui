@@ -20,8 +20,8 @@
         <ix-with-manage-certificates-link>
           <ix-select
             formControlName="ui_certificate"
-            [label]="helptext.ui_certificate.label | translate"
-            [tooltip]="helptext.ui_certificate.tooltip | translate"
+            [label]="helptext.uiCertificate.label | translate"
+            [tooltip]="helptext.uiCertificate.tooltip | translate"
             [options]="options.ui_certificate"
             [required]="true"
           ></ix-select>
@@ -29,8 +29,8 @@
 
         <ix-select
           formControlName="ui_address"
-          [label]="helptext.ui_address.label | translate"
-          [tooltip]="helptext.ui_address.tooltip | translate"
+          [label]="helptext.uiAddress.label | translate"
+          [tooltip]="helptext.uiAddress.tooltip | translate"
           [options]="options.ui_address"
           [required]="true"
           [multiple]="true"
@@ -38,8 +38,8 @@
 
         <ix-select
           formControlName="ui_v6address"
-          [label]="helptext.ui_v6address.label | translate"
-          [tooltip]="helptext.ui_v6address.tooltip | translate"
+          [label]="helptext.uiV6address.label | translate"
+          [tooltip]="helptext.uiV6address.tooltip | translate"
           [options]="options.ui_v6address"
           [required]="true"
           [multiple]="true"
@@ -48,21 +48,21 @@
         <ix-input
           type="number"
           formControlName="ui_port"
-          [label]="helptext.ui_port.label | translate"
-          [tooltip]="helptext.ui_port.tooltip | translate"
+          [label]="helptext.uiPort.label | translate"
+          [tooltip]="helptext.uiPort.tooltip | translate"
         ></ix-input>
 
         <ix-input
           type="number"
           formControlName="ui_httpsport"
-          [label]="helptext.ui_httpsport.label | translate"
-          [tooltip]="helptext.ui_httpsport.tooltip | translate"
+          [label]="helptext.uiHttpsPort.label | translate"
+          [tooltip]="helptext.uiHttpsPort.tooltip | translate"
         ></ix-input>
 
         <ix-select
           formControlName="ui_httpsprotocols"
-          [label]="helptext.ui_httpsprotocols.label | translate"
-          [tooltip]="helptext.ui_httpsprotocols.tooltip | translate"
+          [label]="helptext.uiHttpsProtocols.label | translate"
+          [tooltip]="helptext.uiHttpsProtocols.tooltip | translate"
           [options]="options.ui_httpsprotocols"
           [required]="true"
           [multiple]="true"
@@ -70,22 +70,22 @@
 
         <ix-checkbox
           formControlName="ui_httpsredirect"
-          [label]="helptext.ui_httpsredirect.label | translate"
-          [tooltip]="helptext.ui_httpsredirect.tooltip | translate"
+          [label]="helptext.uiHttpsRedirect.label | translate"
+          [tooltip]="helptext.uiHttpsRedirect.tooltip | translate"
         ></ix-checkbox>
       </ix-fieldset>
 
       <ix-fieldset [title]="helptext.fieldset_other | translate">
         <ix-checkbox
           formControlName="usage_collection"
-          [label]="helptext.usage_collection.label | translate"
+          [label]="helptext.usageCollection.label | translate"
           [tooltip]="usageCollectionTooltip()"
         ></ix-checkbox>
 
         <ix-checkbox
           formControlName="ui_consolemsg"
-          [label]="helptext.ui_consolemsg.label | translate"
-          [tooltip]="helptext.ui_consolemsg.tooltip | translate"
+          [label]="helptext.uiConsoleMessage.label | translate"
+          [tooltip]="helptext.uiConsoleMessage.tooltip | translate"
         ></ix-checkbox>
       </ix-fieldset>
 

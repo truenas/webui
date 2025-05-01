@@ -41,16 +41,16 @@
       <div class="label">{{ 'Sync' | translate }}:</div>
       <div class="value">{{ dataset().sync.value | orNotAvailable }}</div>
     </div>
-    <div class="details-item">
-      <div class="label">{{ 'Compression' | translate }}:</div>
-      <div class="value">
-        @if (datasetCompression()) {
-          {{ datasetCompression() }}
-        } @else {
-          {{ 'N/A' | translate }}
-        }
+    @if (datasetCompression() && dataset().compression?.value !== OnOff.Off) {
+      <div class="details-item">
+        <div class="label">{{ 'Compression' | translate }}:</div>
+        <div class="value">
+          @if (datasetCompression()) {
+            {{ datasetCompression() }}
+          }
+        </div>
       </div>
-    </div>
+    }
     @if (!isZvol()) {
       <div class="details-item">
         <div class="label">{{ 'Enable Atime' | translate }}:</div>

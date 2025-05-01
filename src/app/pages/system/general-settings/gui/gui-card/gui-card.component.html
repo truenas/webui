@@ -24,55 +24,55 @@
         </span>
       </mat-list-item>
       <mat-list-item [ixUiSearch]="searchableElements.elements.sslCertificate">
-        <span class="label">{{ helptext.ui_certificate.label | translate }}:</span>
+        <span class="label">{{ helptext.uiCertificate.label | translate }}:</span>
         <span *ixWithLoadingState="generalConfig$ as generalConfig" class="value">
           {{ generalConfig?.ui_certificate?.name || ('None' | translate) }}
         </span>
       </mat-list-item>
       <mat-list-item [ixUiSearch]="searchableElements.elements.ipv4Address">
-        <span class="label">{{ helptext.ui_address.label | translate }}:</span>
+        <span class="label">{{ helptext.uiAddress.label | translate }}:</span>
         <span *ixWithLoadingState="generalConfig$ as generalConfig" class="value">
           {{ generalConfig.ui_address.join(', ') }}
         </span>
       </mat-list-item>
       <mat-list-item [ixUiSearch]="searchableElements.elements.ipv6Address">
-        <span class="label">{{ helptext.ui_v6address.label | translate }}:</span>
+        <span class="label">{{ helptext.uiV6address.label | translate }}:</span>
         <span *ixWithLoadingState="generalConfig$ as generalConfig" class="value">
           {{ generalConfig.ui_v6address.join(', ') }}
         </span>
       </mat-list-item>
       <mat-list-item [ixUiSearch]="searchableElements.elements.uiHttpPort">
-        <span class="label">{{ helptext.ui_port.label | translate }}:</span>
+        <span class="label">{{ helptext.uiPort.label | translate }}:</span>
         <span *ixWithLoadingState="generalConfig$ as generalConfig" class="value">
           {{ generalConfig.ui_port }}
         </span>
       </mat-list-item>
       <mat-list-item [ixUiSearch]="searchableElements.elements.uiHttpsPort">
-        <span class="label">{{ helptext.ui_httpsport.label | translate }}:</span>
+        <span class="label">{{ helptext.uiHttpsPort.label | translate }}:</span>
         <span *ixWithLoadingState="generalConfig$ as generalConfig" class="value">
           {{ generalConfig.ui_httpsport }}
         </span>
       </mat-list-item>
       <mat-list-item [ixUiSearch]="searchableElements.elements.sslProtocols">
-        <span class="label">{{ helptext.ui_httpsprotocols.label | translate }}:</span>
+        <span class="label">{{ helptext.uiHttpsProtocols.label | translate }}:</span>
         <span *ixWithLoadingState="generalConfig$ as generalConfig" class="value">
           {{ generalConfig.ui_httpsprotocols.join(', ') }}
         </span>
       </mat-list-item>
       <mat-list-item [ixUiSearch]="searchableElements.elements.httpsRedirect">
-        <span class="label">{{ helptext.ui_httpsredirect.label | translate }}:</span>
+        <span class="label">{{ helptext.uiHttpsRedirect.label | translate }}:</span>
         <span *ixWithLoadingState="generalConfig$ as generalConfig" class="value">
           {{ generalConfig.ui_httpsredirect ? ('Enabled' | translate) : ('Disabled' | translate) }}
         </span>
       </mat-list-item>
       <mat-list-item  [ixUiSearch]="searchableElements.elements.usageCollection">
-        <span class="label">{{ helptext.usage_collection.label | translate }}:</span>
+        <span class="label">{{ helptext.usageCollection.label | translate }}:</span>
         <span *ixWithLoadingState="generalConfig$ as generalConfig" class="value">
           {{ generalConfig.usage_collection ? ('Enabled' | translate) : ('Disabled' | translate) }}
         </span>
       </mat-list-item>
       <mat-list-item [ixUiSearch]="searchableElements.elements.consoleMsg">
-        <span class="label">{{ helptext.ui_consolemsg.label | translate }}:</span>
+        <span class="label">{{ helptext.uiConsoleMessage.label | translate }}:</span>
         <span *ixWithLoadingState="generalConfig$ as generalConfig" class="value">
           {{ generalConfig.ui_consolemsg ? ('Enabled' | translate) : ('Disabled' | translate) }}
         </span>

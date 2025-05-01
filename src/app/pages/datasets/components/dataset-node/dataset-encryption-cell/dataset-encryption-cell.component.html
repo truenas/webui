@@ -12,8 +12,8 @@
     <div class="encryption-description">
       <div>{{ 'Locked' | translate }}</div>
       @if (!isEncryptionRoot()) {
-        <div class="by-ancestor">
-          {{ 'by ancestor' | translate }}
+        <div class="by-parent">
+          {{ 'by parent' | translate }}
         </div>
       }
     </div>
@@ -27,7 +27,7 @@
       <div>{{ 'Unlocked' | translate }}</div>
       @if (!isEncryptionRoot()) {
         <div class="by-ancestor">
-          {{ 'by ancestor' | translate }}
+          {{ 'by parent' | translate }}
         </div>
       }
     </div>

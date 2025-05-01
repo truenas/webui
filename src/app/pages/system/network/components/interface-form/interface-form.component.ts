@@ -22,7 +22,6 @@ import {
 import { ProductType } from 'app/enums/product-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { choicesToOptions, singleArrayToOptions } from 'app/helpers/operators/options.operators';
-import { TranslatedString } from 'app/helpers/translate.helper';
 import { helptextInterfacesForm } from 'app/helptext/network/interfaces/interfaces-form';
 import {
   NetworkInterface,
@@ -47,6 +46,7 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   DefaultGatewayDialog,

@@ -92,10 +92,10 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
   readonly groupProvider = new GroupComboboxProvider(this.userService);
 
   readonly tooltips = {
-    user: helptextPermissions.dataset_permissions_user_tooltip,
-    applyUser: helptextPermissions.apply_user.tooltip,
-    group: helptextPermissions.dataset_permissions_group_tooltip,
-    applyGroup: helptextPermissions.apply_group.tooltip,
+    user: helptextPermissions.userTooltip,
+    applyUser: helptextPermissions.applyUser.tooltip,
+    group: helptextPermissions.groupLabel,
+    applyGroup: helptextPermissions.applyGroup.tooltip,
     mode: helptextPermissions.dataset_permissions_mode_tooltip,
     recursive: helptextPermissions.dataset_permissions_recursive_tooltip,
     traverse: helptextPermissions.dataset_permissions_traverse_tooltip,

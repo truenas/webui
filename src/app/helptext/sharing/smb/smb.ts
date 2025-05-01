@@ -14,12 +14,8 @@ export const helptextSharingSmb = {
   placeholder_name: T('Name'),
 
   placeholder_comment: T('Description'),
-  tooltip_comment: T('Description of the share or notes on how it is used.'),
 
   placeholder_enabled: T('Enabled'),
-  tooltip_enabled: T(
-    'Enable this SMB share. Unset to disable this SMB share without deleting it.',
-  ),
   tooltip_enabled_audit_log: T(
     'Controls whether audit messages will be generated for the share. \
 <br><br> <b>Note</b>: Auditing may not be enabled if SMB1 support is enabled for the server.',

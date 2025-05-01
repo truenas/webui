@@ -33,17 +33,6 @@ export const helptextDisks = {
     { label: T('Level 254 - Maximum performance, maximum power usage'), value: DiskPowerLevel.Level254 },
   ],
 
-  disk_form_critical_tooltip: T('Threshold temperature in Celsius. If the\
- drive temperature is higher than this value, a LOG_CRIT level log entry\
- is created and an email is sent. <i>0</i> disables this check.'),
-
-  disk_form_difference_tooltip: T('Report if the temperature of a drive\
- has changed by this many degrees Celsius since the last report.\
- <i>0</i> disables the report.'),
-
-  disk_form_informational_tooltip: T('Report if drive temperature is at or\
- above this temperature in Celsius. <i>0</i> disables the report.'),
-
   disk_form_passwd_tooltip: T('Set or change the password of this SED. \
  This password is used instead of the global SED password.'),
 

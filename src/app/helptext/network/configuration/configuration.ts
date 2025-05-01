@@ -4,17 +4,14 @@ export const helptextNetworkConfiguration = {
   title: T('Edit Global Configuration'),
 
   hostname_placeholder: T('Hostname'),
-  hostname_tooltip: T('System hostname.'),
 
   hostname_b_placeholder: T('Hostname (TrueNAS Controller 2)'),
-  hostname_b_tooltip: T('Host name of second TrueNAS controller.'),
 
   hostname_virtual_placeholder: T('Hostname (Virtual)'),
   hostname_virtual_tooltip: T('When using a virtual host, this is also \
  used as the Kerberos principal name.'),
 
   inherit_dhcp_placeholder: T('Inherit domain from DHCP'),
-  inherit_dhcp_tooltip: T('When this checkbox is checked, domain is inherited from DHCP.'),
 
   domain_placeholder: T('Domain'),
   domain_tooltip: T('System domain name, like <i>example.com</i>'),

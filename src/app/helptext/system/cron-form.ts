@@ -16,6 +16,4 @@ export const helptextCron = {
   stderrTooltip: T('Hide error output (stderr) from the command.\
                 When unset, any error output is mailed to the user\
                 account cron used to run the command.'),
-  enabledTooltip: T('Enable this cron job. When unset, disable the\
-                cron job without deleting it.'),
 };

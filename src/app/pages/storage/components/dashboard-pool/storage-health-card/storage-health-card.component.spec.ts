@@ -175,8 +175,8 @@ describe('StorageHealthCardComponent', () => {
       });
     });
 
-    it('starts a scrub when Scrub is pressed', async () => {
-      const scrubButton = await loader.getHarness(MatButtonHarness.with({ text: 'Scrub' }));
+    it('starts a scrub when Scrub Now is pressed', async () => {
+      const scrubButton = await loader.getHarness(MatButtonHarness.with({ text: 'Scrub Now' }));
       await scrubButton.click();
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
