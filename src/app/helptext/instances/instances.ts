@@ -91,7 +91,9 @@ Ideal for legacy applications, full-featured desktops, or software with strict O
 
   osImage: {
     tooltip: T('Optionally specify the operating system for VM-based instances.\
- Common options are Windows, Linux, FreeBSD, or Arch Linux, but you can also enter a custom value.\
- Leaving this field empty is allowed.'),
+ Common options are Windows, Linux, FreeBSD but you can also enter a custom value.\
+ Leaving this field empty is allowed. \n \n When creating a Windows VM, make sure to set the this field to Windows.\
+ Doing so will tell us to expect Windows to be running inside of the virtual machine\
+ and to tweak behavior accordingly.'),
   },
 };

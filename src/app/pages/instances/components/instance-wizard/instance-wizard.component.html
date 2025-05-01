@@ -76,7 +76,7 @@
           @if (form.value.volume_type === VolumeContentType.Iso) {
             <ix-combobox
               formControlName="image_os"
-              [label]="'OS Image' | translate"
+              [label]="'OS Type' | translate"
               [allowCustomValue]="true"
               [tooltip]="instancesHelptext.osImage.tooltip| translate"
               [provider]="imageOsProvider"

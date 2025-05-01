@@ -25,9 +25,9 @@ import {
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import {
+  AllowedImageOs,
   DiskIoBus,
   diskIoBusLabels,
-  ImageOs,
   imageOsLabels,
   VirtualizationDeviceType,
   VirtualizationGpuType,
@@ -41,6 +41,7 @@ import {
   virtualizationTypeIcons,
   VolumeContentType,
 } from 'app/enums/virtualization.enum';
+import { detectImageOs } from 'app/helpers/detect-image-os.utils';
 import { choicesToOptions, singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { instancesHelptext } from 'app/helptext/instances/instances';
@@ -212,7 +213,7 @@ export class InstanceWizardComponent implements OnInit {
     root_disk_io_bus: [DiskIoBus.Nvme, []],
     volume: ['', [Validators.required]],
     image: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(200)]],
-    image_os: ['' as ImageOs | null],
+    image_os: ['' as AllowedImageOs],
     enable_vnc: [false],
     vnc_port: [defaultVncPort, [Validators.min(5900), Validators.max(65535)]],
     vnc_password: [null as string | null],
@@ -450,7 +451,7 @@ export class InstanceWizardComponent implements OnInit {
 
         this.form.patchValue({ volume: volume.id });
 
-        const imageOs = this.detectImageOs(volume.name);
+        const imageOs = detectImageOs(volume.name);
 
         if (volume.name && imageOs) {
           this.form.controls.image_os.setValue(imageOs);
@@ -789,28 +790,5 @@ export class InstanceWizardComponent implements OnInit {
         this.form.controls.volume.enable();
       }
     });
-  }
-
-  private detectImageOs(value: string | null | undefined): ImageOs | null {
-    if (!value) {
-      return null;
-    }
-
-    const normalized = value.toLowerCase();
-
-    const osMappings: { keywords: string[]; os: ImageOs }[] = [
-      { keywords: ['win', 'windows'], os: ImageOs.Windows },
-      { keywords: ['ubuntu', 'debian', 'fedora', 'centos', 'linux'], os: ImageOs.Linux },
-      { keywords: ['freebsd', 'free bsd', 'bsd'], os: ImageOs.FreeBsd },
-      { keywords: ['arch', 'archlinux'], os: ImageOs.ArchLinux },
-    ];
-
-    for (const mapping of osMappings) {
-      if (mapping.keywords.some((keyword) => normalized.includes(keyword))) {
-        return mapping.os;
-      }
-    }
-
-    return null;
   }
 }

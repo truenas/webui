@@ -98,7 +98,7 @@ describe('InstanceEditFormComponent', () => {
         'VNC Port': '9001',
         'VNC Password': '',
         'Secure Boot': true,
-        'OS Image': 'FreeBSD',
+        'OS Type': 'FreeBSD',
       });
     });
 

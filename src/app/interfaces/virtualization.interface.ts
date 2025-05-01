@@ -1,6 +1,7 @@
 import { FormControl, FormGroup } from '@angular/forms';
 import { NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
 import {
+  AllowedImageOs,
   DiskIoBus,
   ImageOs,
   VirtualizationDeviceType,
@@ -87,7 +88,7 @@ export interface CreateVirtualizationInstance {
   zvol_path?: string | null;
   storage_pool: string | null;
   volume?: string | null;
-  image_os?: ImageOs | null;
+  image_os?: AllowedImageOs;
 }
 
 export interface UpdateVirtualizationInstance {
@@ -101,7 +102,7 @@ export interface UpdateVirtualizationInstance {
   root_disk_io_bus?: DiskIoBus;
   vnc_password?: string | null;
   root_disk_size?: number;
-  image_os?: ImageOs | null;
+  image_os?: AllowedImageOs;
 }
 
 export type VirtualizationDevice =
