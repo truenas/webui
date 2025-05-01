@@ -49,9 +49,7 @@ describe('VolumesDialogComponent', () => {
       content_type: 'ISO',
       created_at: '2025-01-29T15:45:47.527725382-08:00',
       used_by: ['my-instance', 'test'],
-      config: {
-        size: 1024,
-      },
+      config: {},
     },
   ] as VirtualizationVolume[];
 
@@ -98,7 +96,7 @@ describe('VolumesDialogComponent', () => {
       expect(await table.getCellTexts()).toEqual([
         ['Name', 'Size', 'Created At', 'Used By', ''],
         ['ubuntu.iso', '17 MiB', '2025-01-28 23:45:47', 'N/A', ''],
-        ['windows.iso', '1 GiB', '2025-01-29 23:45:47', 'my-instance, test', ''],
+        ['windows.iso', 'Unknown', '2025-01-29 23:45:47', 'my-instance, test', ''],
       ]);
     });
 
