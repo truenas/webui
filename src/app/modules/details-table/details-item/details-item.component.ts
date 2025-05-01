@@ -5,10 +5,9 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
   templateUrl: './details-item.component.html',
   styleUrl: './details-item.component.scss',
   standalone: true,
-  imports: [
-  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DetailsItemComponent {
   label = input('');
+  required = input(false);
 }

@@ -227,6 +227,7 @@
   "Selected Devices": "",
   "Serial Console": "",
   "Set New Password": "",
+  "Set Password": "",
   "Set Up Two-Factor Authentication": "",
   "Shell Access": "",
   "Signing in to a registry, such as Docker Hub, is not required for Apps to function, but may help if you experience rate limiting issues.": "",

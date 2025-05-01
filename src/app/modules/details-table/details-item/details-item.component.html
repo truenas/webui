@@ -1,4 +1,4 @@
-<td class="key-column">{{ label() }}</td>
+<td class="key-column">{{ label() }}@if (required()) {<span>*</span>}</td>
 <td class="value-column">
   <ng-content></ng-content>
 </td>

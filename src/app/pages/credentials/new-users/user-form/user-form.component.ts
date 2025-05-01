@@ -8,7 +8,7 @@ import { tooltips } from '@codemirror/view';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-  catchError, combineLatest, distinctUntilChanged, map, of,
+  catchError, combineLatest, distinctUntilChanged, filter, map, of,
   startWith,
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
@@ -52,7 +52,7 @@ import { UserService } from 'app/services/user.service';
 export class UserFormComponent implements OnInit {
   protected isStigMode = this.userFormStore.isStigMode;
   protected nextUid = this.userFormStore.nextUid;
-  protected editingUser = signal<User>(undefined);
+  protected editingUser = signal<User>(this.slideInRef.getData());
 
   protected isFormLoading = signal<boolean>(false);
 
@@ -75,7 +75,7 @@ export class UserFormComponent implements OnInit {
   });
 
   get isNewUser(): boolean {
-    return !this.editingUser;
+    return !this.editingUser();
   }
 
   constructor(
@@ -83,7 +83,7 @@ export class UserFormComponent implements OnInit {
     public slideInRef: SlideInRef<User | undefined, User>,
     private userFormStore: UserFormStore,
     private errorHandler: ErrorHandlerService,
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.setupUsernameUpdate();
@@ -123,8 +123,6 @@ export class UserFormComponent implements OnInit {
 
     // TODO: Add controls for sudo related values
 
-    this.editingUser.set(this.slideInRef.getData() as User);
-
     if (this.editingUser()) {
       this.userFormStore.updateUserConfig({
         username: this.editingUser().username,
@@ -150,6 +148,15 @@ export class UserFormComponent implements OnInit {
           username,
         });
       },
+    });
+
+    this.userFormStore.state$.pipe(
+      map((state) => state?.userConfig?.username),
+      filter(Boolean),
+      distinctUntilChanged(),
+      untilDestroyed(this),
+    ).subscribe((username) => {
+      this.form.patchValue({ username });
     });
   }
 

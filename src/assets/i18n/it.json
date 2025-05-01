@@ -21,6 +21,7 @@
   "Renewing the secret will cause a new URI and a   new QR code to be generated, making it necessary to update your two-factor device or app.": "",
   "Root Dataset": "",
   "Select Role": "",
+  "Set Password": "",
   "Space Management": "",
   "Telegram Bot API Token (<a href=\"https://core.telegram.org/bots#3-how-do-i-create-a-bot\"   target=\"_blank\">How to create a Telegram Bot</a>)": "",
   "The root dataset is the top-level container in your pool, sharing the same name as the pool itself. <br><br>When managing your TrueNAS system, it's generally best practice to create dedicated datasets under the root dataset for different types of data, rather than storing data directly in the root dataset itself.": "",

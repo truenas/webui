@@ -8,7 +8,10 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-  debounceTime, filter, map, Observable, of,
+  debounceTime, filter, map,
+  Observable,
+  of,
+  take,
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
@@ -89,7 +92,11 @@ export class AdditionalDetailsSectionComponent {
     shell: [null as string | null],
   });
 
-  shellOptions$: Observable<Option[]>;
+  shellOptions$: Observable<Option[]> = this.api.call('user.shell_choices').pipe(
+    choicesToOptions(),
+    take(1),
+    untilDestroyed(this),
+  );
 
   constructor(
     private filesystemService: FilesystemService,
@@ -119,6 +126,7 @@ export class AdditionalDetailsSectionComponent {
 
     this.setupShellUpdate();
     this.setFirstShellOption();
+    this.detectFullNameChanges();
   }
 
   protected onCloseInlineEdits(event: MouseEvent): void {
@@ -182,5 +190,30 @@ export class AdditionalDetailsSectionComponent {
     ).subscribe((firstShell: string) => {
       this.form.patchValue({ shell: firstShell });
     });
+  }
+
+  private detectFullNameChanges(): void {
+    this.form.controls.full_name.valueChanges.pipe(
+      map((fullName) => this.getUserName(fullName)),
+      filter((username) => !!username),
+      untilDestroyed(this),
+    ).subscribe((username) => {
+      this.newUserStore.updateUserConfig({ username });
+    });
+  }
+
+  private getUserName(fullName: string): string {
+    let username: string;
+    const formatted = fullName.trim().split(/[\s,]+/);
+    if (formatted.length === 1) {
+      username = formatted[0];
+    } else {
+      username = formatted[0][0] + formatted.pop();
+    }
+    if (username.length >= 8) {
+      username = username.substring(0, 8);
+    }
+
+    return username.toLocaleLowerCase();
   }
 }

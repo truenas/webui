@@ -2566,6 +2566,7 @@
   "Set New Password": "",
   "Set only if required by the NFS client. Set to allow serving non-root mount requests.": "",
   "Set or change the password of this SED.  This password is used instead of the global SED password.": "",
+  "Set Password": "",
   "Set password for TrueNAS administrative user:": "",
   "Set production status as active": "",
   "Set specific times to snapshot the  <i>Source Datasets</i> and replicate the snapshots to the  <i>Destination Dataset</i>. Select a preset schedule or choose  <i>Custom</i> to use the advanced scheduler.": "",

@@ -98,6 +98,7 @@
   "Select Role": "",
   "Select the directory to store the cache files. This is used to speed up the backup process. If not set, performance may degrade.": "",
   "Select the ISO file path to import": "",
+  "Set Password": "",
   "SMB Access": "",
   "SMB Enabled": "",
   "Space Management": "",
