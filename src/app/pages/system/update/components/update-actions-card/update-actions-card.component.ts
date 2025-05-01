@@ -26,6 +26,7 @@ import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
+import { SafeInnerHtmlDirective } from 'app/modules/layout/sanitize-html/safe-inner-html.directive';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -56,6 +57,7 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
     RequiresRolesDirective,
     MatButton,
     TestDirective,
+    SafeInnerHtmlDirective,
     TranslateModule,
     AsyncPipe,
   ],

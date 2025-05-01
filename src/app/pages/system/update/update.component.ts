@@ -6,6 +6,7 @@ import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
+import { SafeInnerHtmlDirective } from 'app/modules/layout/sanitize-html/safe-inner-html.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TrainService } from 'app/pages/system/update/services/train.service';
 import { UpdateService } from 'app/pages/system/update/services/update.service';
@@ -32,6 +33,7 @@ import { UpdateActionsCardComponent } from './components/update-actions-card/upd
     TrainInfoCardComponent,
     UpdateActionsCardComponent,
     TranslateModule,
+    SafeInnerHtmlDirective,
     AsyncPipe,
     SystemVersionCardComponent,
   ],

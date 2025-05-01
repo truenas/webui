@@ -11,6 +11,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { SafeInnerHtmlDirective } from 'app/modules/layout/sanitize-html/safe-inner-html.directive';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -29,6 +30,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     FormActionsComponent,
     MatDialogActions,
     MatButton,
+    SafeInnerHtmlDirective,
     TestDirective,
     MatDialogClose,
     RequiresRolesDirective,

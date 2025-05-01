@@ -5,6 +5,7 @@ import {
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { getCopyrightHtml } from 'app/helpers/copyright-text.helper';
+import { SafeInnerHtmlDirective } from 'app/modules/layout/sanitize-html/safe-inner-html.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppState } from 'app/store';
 import { selectCopyrightHtml, selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
@@ -14,7 +15,10 @@ import { selectCopyrightHtml, selectIsEnterprise } from 'app/store/system-info/s
   templateUrl: './copyright-line.component.html',
   styleUrls: ['./copyright-line.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TestDirective],
+  imports: [
+    SafeInnerHtmlDirective,
+    TestDirective,
+  ],
 })
 export class CopyrightLineComponent {
   skipType = input(false);

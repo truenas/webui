@@ -1,7 +1,8 @@
+<!-- eslint-disable-next-line @angular-eslint/template/elements-content -->
 <h1
   mat-dialog-title
   class="truecommand-connect-modal-form-title"
-  [innerHTML]="title | translate"
+  [safeInnerHtml]="title | translate"
 ></h1>
 
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">

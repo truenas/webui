@@ -1,7 +1,7 @@
 <h1 mat-dialog-title>{{ options.title }}</h1>
 <div mat-dialog-content id="confirm-msg">
   <div class="message-content">
-    <span [innerHTML]="options.message"></span>
+    <span [safeInnerHtml]="options.message"></span>
   </div>
 
   @if (options.secondaryCheckbox) {

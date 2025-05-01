@@ -19,6 +19,7 @@ import { alertPanelClosed, dismissAlertPressed, reopenAlertPressed } from 'app/m
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { SafeInnerHtmlDirective } from 'app/modules/layout/sanitize-html/safe-inner-html.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppState } from 'app/store';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
@@ -50,6 +51,7 @@ enum AlertLevelColor {
     MatButton,
     TestDirective,
     TranslateModule,
+    SafeInnerHtmlDirective,
     FormatDateTimePipe,
     AsyncPipe,
     RequiresRolesDirective,

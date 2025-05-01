@@ -15,6 +15,7 @@ import {
 import { JobState } from 'app/enums/job-state.enum';
 import { Job, JobProgress } from 'app/interfaces/job.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { SafeInnerHtmlDirective } from 'app/modules/layout/sanitize-html/safe-inner-html.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ignoreTranslation, TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -61,6 +62,7 @@ export interface JobProgressDialogConfig<Result> {
     MatIconButton,
     MatDialogClose,
     IxIconComponent,
+    SafeInnerHtmlDirective,
     TranslateModule,
     DecimalPipe,
     TestDirective,

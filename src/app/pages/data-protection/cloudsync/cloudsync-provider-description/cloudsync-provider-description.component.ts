@@ -4,6 +4,7 @@ import {
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { appImagePlaceholder } from 'app/constants/catalog.constants';
 import { CloudSyncProviderName, cloudSyncProviderNameMap } from 'app/enums/cloudsync-provider.enum';
+import { SafeInnerHtmlDirective } from 'app/modules/layout/sanitize-html/safe-inner-html.directive';
 import { cloudsyncProviderDescriptionMap } from 'app/pages/data-protection/cloudsync/cloudsync-provider-description/cloudsync-provider-description';
 
 @Component({
@@ -11,7 +12,10 @@ import { cloudsyncProviderDescriptionMap } from 'app/pages/data-protection/cloud
   templateUrl: './cloudsync-provider-description.component.html',
   styleUrls: ['./cloudsync-provider-description.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ImgFallbackModule],
+  imports: [
+    SafeInnerHtmlDirective,
+    ImgFallbackModule,
+  ],
 })
 export class CloudSyncProviderDescriptionComponent {
   readonly provider = input.required<CloudSyncProviderName>();

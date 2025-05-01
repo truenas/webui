@@ -16,21 +16,21 @@
       @if (showSysDatasetWarning) {
         <p
           class="full-width"
-          [innerHTML]="helptext.exportDialog.warningSysDataset | translate"
+          [safeInnerHtml]="helptext.exportDialog.warningSysDataset | translate"
         ></p>
       }
 
       @if (showPoolDetachWarning) {
         <p
           class="full-width"
-          [innerHTML]="helptext.exportDialog.warning | translate: { pool: pool.name }"
+          [safeInnerHtml]="helptext.exportDialog.warning | translate: { pool: pool.name }"
         ></p>
       }
 
       @if (showUnknownStatusDetachWarning) {
         <p
           class="full-width"
-          [innerHTML]="helptext.exportDialog.unknownState | translate: { pool: pool.name }"
+          [safeInnerHtml]="helptext.exportDialog.unknownState | translate: { pool: pool.name }"
         ></p>
       }
     </div>

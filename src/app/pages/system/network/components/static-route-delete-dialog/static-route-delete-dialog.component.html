@@ -1,6 +1,6 @@
 <h1 mat-dialog-title>{{ 'Delete Static Route' | translate }}</h1>
 <div mat-dialog-content>
-  <p class="message" [innerHTML]="deleteMessage | translate: { name: route.destination }"></p>
+  <p class="message" [safeInnerHtml]="deleteMessage | translate: { name: route.destination }"></p>
 </div>
 <ix-form-actions mat-dialog-actions class="form-actions">
   <button mat-button ixTest="cancel" [matDialogClose]="false">{{ 'Cancel' | translate }}</button>

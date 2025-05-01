@@ -9,6 +9,7 @@ import { NgxPopperjsModule } from 'ngx-popperjs';
 import { NewFeatureIndicator } from 'app/directives/new-feature-indicator/new-feature-indicator.interface';
 import { NewFeatureIndicatorService } from 'app/directives/new-feature-indicator/new-feature-indicator.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { SafeInnerHtmlDirective } from 'app/modules/layout/sanitize-html/safe-inner-html.directive';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
@@ -28,6 +29,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   imports: [
     NgxPopperjsModule,
     NgTemplateOutlet,
+    SafeInnerHtmlDirective,
     IxIconComponent,
     CastPipe,
     TestDirective,

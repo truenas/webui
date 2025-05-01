@@ -19,7 +19,7 @@
               }
             </a>
           </div>
-          <div class="helptext" [innerHtml]="helptext.docs | translate"></div>
+          <div class="helptext" [safeInnerHtml]="helptext.docs | translate"></div>
         </div>
         <div class="line-item">
           <div class="icon-wrapper">
@@ -34,7 +34,7 @@
               }
             </a>
           </div>
-          <div class="helptext" [innerHtml]="helptext.forums | translate"></div>
+          <div class="helptext" [safeInnerHtml]="helptext.forums | translate"></div>
         </div>
         <div class="line-item">
           <div class="icon-wrapper">
@@ -49,11 +49,11 @@
               }
             </a>
           </div>
-          <div class="helptext" [innerHtml]="helptext.newsletter | translate"></div>
+          <div class="helptext" [safeInnerHtml]="helptext.newsletter | translate"></div>
         </div>
       </div>
 
-      <div class="open-source" [innerHtml]="helptext.opensource | translate"></div>
+      <div class="open-source" [safeInnerHtml]="helptext.opensource | translate"></div>
 
       <div class="copyright">
         <ix-copyright-line></ix-copyright-line>

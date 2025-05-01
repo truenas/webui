@@ -9,7 +9,7 @@
 <div mat-dialog-content class="general-dialog-content-container">
   <div class="generial-dialog-content">
     @if (conf.is_html) {
-      <span [innerHTML]="conf.message | translate"></span>
+      <span [safeInnerHtml]="conf.message | translate"></span>
     } @else {
       <span>{{ conf.message | translate }}</span>
     }

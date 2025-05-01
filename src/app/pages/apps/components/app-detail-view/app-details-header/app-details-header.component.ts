@@ -17,6 +17,7 @@ import { Role } from 'app/enums/role.enum';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { SafeInnerHtmlDirective } from 'app/modules/layout/sanitize-html/safe-inner-html.directive';
 import { CleanLinkPipe } from 'app/modules/pipes/clean-link/clean-link.pipe';
 import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -38,6 +39,7 @@ import { DockerStore } from 'app/pages/apps/store/docker.store';
     MatButton,
     CleanLinkPipe,
     RequiresRolesDirective,
+    SafeInnerHtmlDirective,
     TestDirective,
     NgxSkeletonLoaderModule,
     InstalledAppBadgeComponent,

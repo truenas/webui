@@ -21,7 +21,7 @@
     <div
       class="tooltip-message"
       ixTest="tooltip-message"
-      [innerHTML]="message() | translate"
+      [safeInnerHtml]="message() | translate"
     ></div>
   </popper-content>
 

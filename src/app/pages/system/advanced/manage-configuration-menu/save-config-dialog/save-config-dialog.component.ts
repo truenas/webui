@@ -16,6 +16,7 @@ import { Role } from 'app/enums/role.enum';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { SafeInnerHtmlDirective } from 'app/modules/layout/sanitize-html/safe-inner-html.directive';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DownloadService } from 'app/services/download.service';
@@ -44,6 +45,7 @@ export interface SaveConfigDialogMessages {
     IxCheckboxComponent,
     FormActionsComponent,
     MatButton,
+    SafeInnerHtmlDirective,
     TestDirective,
     MatDialogClose,
     RequiresRolesDirective,

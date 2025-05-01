@@ -13,12 +13,13 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { SafeHtml } from '@angular/platform-browser';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { delay } from 'rxjs';
 import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
+import { SafeInnerHtmlDirective } from 'app/modules/layout/sanitize-html/safe-inner-html.directive';
 import { SvgCacheService } from 'app/pages/system/enclosure/services/svg-cache.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -38,7 +39,10 @@ export type TintingFunction = (slot: DashboardEnclosureSlot) => string | null;
       ]),
     ]),
   ],
-  imports: [NgxSkeletonLoaderModule],
+  imports: [
+    SafeInnerHtmlDirective,
+    NgxSkeletonLoaderModule,
+  ],
 })
 export class EnclosureSvgComponent implements OnDestroy {
   readonly emptyOpacity = 0.15;
@@ -62,7 +66,6 @@ export class EnclosureSvgComponent implements OnDestroy {
     private renderer: Renderer2,
     private svgLoader: SvgCacheService,
     private errorHandler: ErrorHandlerService,
-    private sanitizer: DomSanitizer,
     private translate: TranslateService,
   ) {}
 
@@ -86,8 +89,7 @@ export class EnclosureSvgComponent implements OnDestroy {
         untilDestroyed(this),
       )
       .subscribe((svg) => {
-        // eslint-disable-next-line sonarjs/no-angular-bypass-sanitization
-        this.svg.set(this.sanitizer.bypassSecurityTrustHtml(svg));
+        this.svg.set(svg);
       });
   });
 

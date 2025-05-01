@@ -49,7 +49,7 @@
       <div>{{ 'Change log' | translate }}</div>
     </mat-card-title>
     <mat-card-content id="changelog-scrollbox">
-      <div [innerHTML]="updateService.changeLog$ | async"></div>
+      <div [safeInnerHtml]="updateService.changeLog$ | async"></div>
     </mat-card-content>
   </mat-card>
 }

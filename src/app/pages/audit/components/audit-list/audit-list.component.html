@@ -30,7 +30,7 @@
       [dataProvider]="dataProvider()"
     >
       <div class="user-avatar" [matTooltip]="audit.username">
-        <div [innerHTML]="getUserAvatarForLog(audit)"></div>
+        <div [safeInnerHtml]="getUserAvatarForLog(audit)"></div>
         <span>{{ audit.username }}</span>
       </div>
     </ng-template>

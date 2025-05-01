@@ -2,7 +2,7 @@
 
 <div mat-dialog-content>
   @if (warningMessage()) {
-    <p [innerHTML]="warningMessage()"></p>
+    <p [safeInnerHtml]="warningMessage()"></p>
   }
 
   <p>

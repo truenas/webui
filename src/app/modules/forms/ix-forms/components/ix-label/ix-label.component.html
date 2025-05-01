@@ -1,6 +1,6 @@
 @if (label()) {
   <label class="label">
-    <span [innerHTML]="label()"></span>
+    <span [safeInnerHtml]="label()"></span>
     @if (required()) {
       <span class="required">*</span>
     }

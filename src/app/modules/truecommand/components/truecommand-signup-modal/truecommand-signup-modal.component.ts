@@ -11,6 +11,7 @@ import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { SafeInnerHtmlDirective } from 'app/modules/layout/sanitize-html/safe-inner-html.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
@@ -20,6 +21,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatDialogTitle,
+    SafeInnerHtmlDirective,
     MatDialogContent,
     FormActionsComponent,
     MatDialogActions,

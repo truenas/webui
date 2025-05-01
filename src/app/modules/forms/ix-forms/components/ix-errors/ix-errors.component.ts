@@ -12,6 +12,7 @@ import { filter } from 'rxjs/operators';
 import { DefaultValidationError } from 'app/enums/default-validation-error.enum';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { SafeInnerHtmlDirective } from 'app/modules/layout/sanitize-html/safe-inner-html.directive';
 
 type SomeError = Record<string, unknown>;
 
@@ -26,6 +27,7 @@ export const ixManualValidateError = 'ixManualValidateError';
   imports: [
     MatError,
     IxIconComponent,
+    SafeInnerHtmlDirective,
     MatTooltip,
     TranslateModule,
   ],

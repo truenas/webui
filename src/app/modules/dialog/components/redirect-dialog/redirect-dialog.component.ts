@@ -6,6 +6,7 @@ import {
   MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions,
 } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
+import { SafeInnerHtmlDirective } from 'app/modules/layout/sanitize-html/safe-inner-html.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   RedirectDialogData,
@@ -22,6 +23,7 @@ import {
     MatDialogActions,
     MatButton,
     TranslateModule,
+    SafeInnerHtmlDirective,
     TestDirective,
   ],
 })

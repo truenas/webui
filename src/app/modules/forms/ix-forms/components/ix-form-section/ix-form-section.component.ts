@@ -8,6 +8,7 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxFormService } from 'app/modules/forms/ix-forms/services/ix-form.service';
+import { SafeInnerHtmlDirective } from 'app/modules/layout/sanitize-html/safe-inner-html.directive';
 
 @UntilDestroy()
 @Component({
@@ -18,6 +19,7 @@ import { IxFormService } from 'app/modules/forms/ix-forms/services/ix-form.servi
   imports: [
     IxFieldsetComponent,
     MatDivider,
+    SafeInnerHtmlDirective,
     TranslateModule,
   ],
 })

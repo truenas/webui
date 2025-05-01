@@ -17,6 +17,7 @@ import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-sea
 import { GlobalSearchSectionsProvider } from 'app/modules/global-search/services/global-search-sections.service';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { SafeInnerHtmlDirective } from 'app/modules/layout/sanitize-html/safe-inner-html.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @UntilDestroy()
@@ -28,6 +29,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   imports: [
     MatCard,
     TestDirective,
+    SafeInnerHtmlDirective,
     IxIconComponent,
     MatButton,
     TranslateModule,

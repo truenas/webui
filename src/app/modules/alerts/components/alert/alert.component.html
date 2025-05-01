@@ -12,11 +12,12 @@
       {{ levelLabel() }}
     </h3>
   }
+<!-- eslint-disable-next-line @angular-eslint/template/elements-content -->
   <h4
     #alertMessage
     class="alert-message"
     [class.collapsed]="isCollapsed()"
-    [innerHTML]="alert().formatted"
+    [safeInnerHtml]="alert().formatted"
   ></h4>
   @if (isExpandable()) {
     <button

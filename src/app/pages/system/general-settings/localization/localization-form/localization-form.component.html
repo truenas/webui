@@ -15,7 +15,7 @@
         ></ix-combobox>
 
         @if (!(isEnterprise$ | async) || true) {
-          <p class="language-hint" [innerHtml]="language.hint | translate"></p>
+          <p class="language-hint" [safeInnerHtml]="language.hint | translate"></p>
         }
 
         <ix-select

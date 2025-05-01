@@ -1,7 +1,7 @@
 <h1 mat-dialog-title>{{ options.title | translate }}</h1>
 <div mat-dialog-content id="confirm-msg">
   <div class="message-content">
-    <span [innerHTML]="options.message | translate"></span>
+    <span [safeInnerHtml]="options.message | translate"></span>
 
     <p>
       {{ 'Change Session Timeout in' | translate }}

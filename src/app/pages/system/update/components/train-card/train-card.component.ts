@@ -22,6 +22,7 @@ import { AuthService } from 'app/modules/auth/auth.service';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { SafeInnerHtmlDirective } from 'app/modules/layout/sanitize-html/safe-inner-html.directive';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -44,6 +45,7 @@ import { SystemGeneralService } from 'app/services/system-general.service';
     IxSelectComponent,
     MatMiniFabButton,
     MatTooltip,
+    SafeInnerHtmlDirective,
     TestDirective,
     IxIconComponent,
     TranslateModule,

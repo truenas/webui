@@ -24,6 +24,7 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { LanguageService } from 'app/modules/language/language.service';
 import { LocaleService } from 'app/modules/language/locale.service';
+import { SafeInnerHtmlDirective } from 'app/modules/layout/sanitize-html/safe-inner-html.directive';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -46,6 +47,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
+    SafeInnerHtmlDirective,
     IxFieldsetComponent,
     IxComboboxComponent,
     IxSelectComponent,

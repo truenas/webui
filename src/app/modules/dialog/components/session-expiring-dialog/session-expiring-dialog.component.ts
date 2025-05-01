@@ -8,6 +8,7 @@ import {
 } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
 import { NavigateAndHighlightDirective } from 'app/directives/navigate-and-interact/navigate-and-highlight.directive';
+import { SafeInnerHtmlDirective } from 'app/modules/layout/sanitize-html/safe-inner-html.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
 export interface SessionExpiringDialogOptions {
@@ -26,6 +27,7 @@ export interface SessionExpiringDialogOptions {
     MatDialogContent,
     MatDialogActions,
     MatButton,
+    SafeInnerHtmlDirective,
     TranslateModule,
     NavigateAndHighlightDirective,
     TestDirective,

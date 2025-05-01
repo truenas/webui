@@ -4,13 +4,17 @@ import {
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import { helptextCloudSync } from 'app/helptext/data-protection/cloudsync/cloudsync';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { SafeInnerHtmlDirective } from 'app/modules/layout/sanitize-html/safe-inner-html.directive';
 
 @Component({
   selector: 'ix-transfer-mode-explanation',
   templateUrl: './transfer-mode-explanation.component.html',
   styleUrls: ['./transfer-mode-explanation.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [IxIconComponent],
+  imports: [
+    SafeInnerHtmlDirective,
+    IxIconComponent,
+  ],
 })
 export class TransferModeExplanationComponent {
   readonly mode = input.required< TransferMode>();

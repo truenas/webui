@@ -1,13 +1,13 @@
 <h1 matDialogTitle>{{ helptext.title | translate }}</h1>
 <form class="ix-form-container" (submit)="$event.preventDefault(); onSubmit()">
-  <div [innerHtml]="helptext.message | translate"></div>
+  <div [safeInnerHtml]="helptext.message | translate"></div>
 
   <ix-checkbox
     [formControl]="exportSeedCheckbox"
     [label]="'Export Password Secret Seed' | translate"
   ></ix-checkbox>
 
-  <div [innerHtml]="helptext.warning | translate"></div>
+  <div [safeInnerHtml]="helptext.warning | translate"></div>
 
   <ix-form-actions>
     <button mat-button type="button" ixTest="cancel" [matDialogClose]="false">

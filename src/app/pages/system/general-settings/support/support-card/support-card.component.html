@@ -41,7 +41,7 @@
           <div class="links-wrapper">
             @for (link of links; track link) {
               <div class="links">
-                <div [innerHTML]="link | translate"></div>
+                <div [safeInnerHtml]="link | translate"></div>
               </div>
             }
           </div>

@@ -23,6 +23,7 @@ import { ChartContainerImage } from 'app/interfaces/app.interface';
 import { AppUpgradeSummary } from 'app/interfaces/application.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { SafeInnerHtmlDirective } from 'app/modules/layout/sanitize-html/safe-inner-html.directive';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
@@ -46,6 +47,7 @@ type Version = Omit<AppUpgradeSummary, 'upgrade_version' | 'image_update_availab
     KeyValuePipe,
     MatOption,
     TranslateModule,
+    SafeInnerHtmlDirective,
     MatAccordion,
     MatExpansionPanel,
     MatExpansionPanelHeader,

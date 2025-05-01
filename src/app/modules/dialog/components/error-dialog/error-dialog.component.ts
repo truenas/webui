@@ -12,6 +12,7 @@ import { IfNightlyDirective } from 'app/directives/if-nightly/if-nightly.directi
 import { ErrorReport } from 'app/interfaces/error-report.interface';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { SafeInnerHtmlDirective } from 'app/modules/layout/sanitize-html/safe-inner-html.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DownloadService } from 'app/services/download.service';
@@ -31,6 +32,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     MatDialogActions,
     MatButton,
     TranslateModule,
+    SafeInnerHtmlDirective,
     TestDirective,
     IfNightlyDirective,
   ],

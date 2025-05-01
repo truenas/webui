@@ -47,7 +47,7 @@
         <div class="expansion-content">
           <div class="detail-row row-dark">
             <div
-              [innerHTML]="selectedVersion.changelog || ('No Changelog' | translate)"
+              [safeInnerHtml]="selectedVersion.changelog || ('No Changelog' | translate)"
             ></div>
           </div>
         </div>

@@ -3,7 +3,7 @@
     {{ contentText.title | translate }}
   </h3>
   <p class="dialog-message">
-    <span [innerHTML]="contentText.message | translate"></span>
+    <span [safeInnerHtml]="contentText.message | translate"></span>
   </p>
 </div>
 

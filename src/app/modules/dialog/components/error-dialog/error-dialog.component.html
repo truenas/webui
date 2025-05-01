@@ -5,7 +5,7 @@
 
 <div mat-dialog-content id="err-md-content" role="alertdialog">
   <div class="err-message-wrapper">
-    <span [innerHTML]="error.message"></span>
+    <span [safeInnerHtml]="error.message"></span>
   </div>
 
   <ng-container *ixIfNightly>

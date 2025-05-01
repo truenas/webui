@@ -1,6 +1,6 @@
 <h1 mat-dialog-title>{{ 'Delete Catalog' | translate }}</h1>
 <div mat-dialog-content>
-  <p class="message" [innerHtml]="deleteMessage | translate: { name: cronjob.user + ' ' + cronjob.command + ' ' + cronjob.description }"></p>
+  <p class="message" [safeInnerHtml]="deleteMessage | translate: { name: cronjob.user + ' ' + cronjob.command + ' ' + cronjob.description }"></p>
 </div>
 <ix-form-actions mat-dialog-actions class="form-actions">
   <button mat-button ixTest="cancel" [matDialogClose]="false">{{ 'Cancel' | translate }}</button>

@@ -41,7 +41,7 @@
   @if (description) {
     <div
       class="job-description"
-      [innerHTML]="description"
+      [safeInnerHtml]="description"
     ></div>
   }
 

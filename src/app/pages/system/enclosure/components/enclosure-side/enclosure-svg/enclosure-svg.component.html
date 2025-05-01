@@ -3,7 +3,7 @@
     #svgContainer
     class="svg-container"
     [class.static]="!enableMouseEvents()"
-    [innerHTML]="svg()"
+    [safeInnerHtml]="svg()"
     @svgTransition
   ></div>
 } @else {

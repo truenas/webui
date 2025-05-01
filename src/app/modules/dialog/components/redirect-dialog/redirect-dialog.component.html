@@ -1,7 +1,7 @@
 <h1 mat-dialog-title>{{ data.title | translate }}</h1>
 <div mat-dialog-content>
   <div class="message-content">
-    <span [innerHTML]="data.message | translate"></span>
+    <span [safeInnerHtml]="data.message | translate"></span>
   </div>
 </div>
 <input #el class="invisible" type="text" ixTest="url" [value]="data.url" />

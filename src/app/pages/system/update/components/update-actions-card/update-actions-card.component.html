@@ -2,7 +2,7 @@
   <mat-card>
     <div>
       <ix-icon name="warning"></ix-icon>
-      <span class="update-running-message" [innerHTML]="updateText()"></span>
+      <span class="update-running-message" [safeInnerHtml]="updateText()"></span>
     </div>
   </mat-card>
 } @else {

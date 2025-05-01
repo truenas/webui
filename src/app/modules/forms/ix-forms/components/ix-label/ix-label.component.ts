@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy, Component,
   input,
 } from '@angular/core';
+import { SafeInnerHtmlDirective } from 'app/modules/layout/sanitize-html/safe-inner-html.directive';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 
@@ -10,7 +11,10 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
   templateUrl: './ix-label.component.html',
   styleUrls: ['./ix-label.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TooltipComponent],
+  imports: [
+    SafeInnerHtmlDirective,
+    TooltipComponent,
+  ],
 })
 export class IxLabelComponent {
   readonly label = input<TranslatedString>();

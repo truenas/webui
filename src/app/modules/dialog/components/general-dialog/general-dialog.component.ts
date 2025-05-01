@@ -8,6 +8,7 @@ import {
 import { TranslateModule } from '@ngx-translate/core';
 import { MarkedIcon } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { SafeInnerHtmlDirective } from 'app/modules/layout/sanitize-html/safe-inner-html.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
 export interface GeneralDialogConfig {
@@ -37,6 +38,7 @@ export interface GeneralDialogConfig {
     IxIconComponent,
     MatDialogContent,
     MatDialogActions,
+    SafeInnerHtmlDirective,
     MatButton,
     TranslateModule,
     TestDirective,

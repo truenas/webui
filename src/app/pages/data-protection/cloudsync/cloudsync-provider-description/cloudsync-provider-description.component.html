@@ -5,5 +5,5 @@
   <div class="name">{{ name() }}</div>
 </div>
 <div class="body">
-  <p [innerHTML]="description()"></p>
+  <p [safeInnerHtml]="description()"></p>
 </div>

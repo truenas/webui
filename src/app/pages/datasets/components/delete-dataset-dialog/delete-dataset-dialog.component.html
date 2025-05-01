@@ -6,7 +6,7 @@
   }
 </h1>
 <form class="ix-form-container" [formGroup]="form" (submit)="onDelete()">
-  <p [innerHTML]="deleteMessage"></p>
+  <p [safeInnerHtml]="deleteMessage"></p>
 
   <div
     mat-dialog-content
@@ -65,7 +65,7 @@
     }
   </div>
 
-  <p [innerHtml]="deleteDatasetHelptext.prompt | translate: { value: dataset.name }"></p>
+  <p [safeInnerHtml]="deleteDatasetHelptext.prompt | translate: { value: dataset.name }"></p>
 
   <ix-input formControlName="confirmDatasetName"></ix-input>
   <ix-checkbox

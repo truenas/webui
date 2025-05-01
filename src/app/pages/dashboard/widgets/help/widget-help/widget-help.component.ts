@@ -8,6 +8,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { helptextAbout } from 'app/helptext/about';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
+import { SafeInnerHtmlDirective } from 'app/modules/layout/sanitize-html/safe-inner-html.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { AppState } from 'app/store';
@@ -25,6 +26,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     IxIconComponent,
     CopyrightLineComponent,
     TranslateModule,
+    SafeInnerHtmlDirective,
   ],
 })
 export class WidgetHelpComponent {

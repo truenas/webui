@@ -3,7 +3,7 @@
   {{ title() | translate }}
 </h1>
 <div #errorMdContent id="err-md-content">
-  <div #errorMessageWrapper id="err-message-wrapper"><span [innerHTML]="message()"></span></div>
+  <div #errorMessageWrapper id="err-message-wrapper"><span [safeInnerHtml]="message()"></span></div>
   @if (stackTrace()) {
     <div
       class="more-info"

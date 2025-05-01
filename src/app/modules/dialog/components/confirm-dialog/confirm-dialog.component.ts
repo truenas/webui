@@ -11,6 +11,7 @@ import {
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { ConfirmOptions, ConfirmOptionsWithSecondaryCheckbox, DialogWithSecondaryCheckboxResult } from 'app/interfaces/dialog.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { SafeInnerHtmlDirective } from 'app/modules/layout/sanitize-html/safe-inner-html.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
@@ -27,6 +28,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     FormActionsComponent,
     MatDialogActions,
     MatButton,
+    SafeInnerHtmlDirective,
     TranslateModule,
     TestDirective,
   ],

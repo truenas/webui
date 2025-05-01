@@ -5,6 +5,7 @@ import {
 } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { SafeInnerHtmlDirective } from 'app/modules/layout/sanitize-html/safe-inner-html.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
@@ -18,6 +19,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     MatDialogContent,
     MatDialogActions,
     MatButton,
+    SafeInnerHtmlDirective,
     TranslateModule,
     TestDirective,
   ],

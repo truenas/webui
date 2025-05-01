@@ -41,7 +41,7 @@
   </form>
 
   @if (!(isEnterprise$ | async)) {
-    <p [innerHTML]="voteForNewFeaturesText"></p>
+    <p [safeInnerHtml]="voteForNewFeaturesText"></p>
   }
 </mat-dialog-content>
 

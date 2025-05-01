@@ -4,6 +4,7 @@ import {
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxPopperjsModule, NgxPopperjsPlacements, NgxPopperjsTriggers } from 'ngx-popperjs';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { SafeInnerHtmlDirective } from 'app/modules/layout/sanitize-html/safe-inner-html.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
@@ -16,6 +17,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     TranslateModule,
     IxIconComponent,
     TestDirective,
+    SafeInnerHtmlDirective,
   ],
 })
 export class TooltipComponent {

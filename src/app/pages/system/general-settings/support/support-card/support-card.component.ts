@@ -27,6 +27,7 @@ import {
   IxSlideToggleComponent,
 } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { SafeInnerHtmlDirective } from 'app/modules/layout/sanitize-html/safe-inner-html.directive';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -66,6 +67,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
     TestDirective,
     ReactiveFormsModule,
     FormsModule,
+    SafeInnerHtmlDirective,
     MatButton,
     MatMenuTrigger,
     IxIconComponent,

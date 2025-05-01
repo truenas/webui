@@ -4,7 +4,7 @@ import {
   computed,
 } from '@angular/core';
 import { MatTooltip } from '@angular/material/tooltip';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { SafeHtml } from '@angular/platform-browser';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { toSvg } from 'jdenticon';
@@ -22,6 +22,7 @@ import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
+import { SafeInnerHtmlDirective } from 'app/modules/layout/sanitize-html/safe-inner-html.directive';
 import { auditElements } from 'app/pages/audit/audit.elements';
 import { AuditSearchComponent } from 'app/pages/audit/components/audit-search/audit-search.component';
 import { AuditApiDataProvider } from 'app/pages/audit/utils/audit-api-data-provider';
@@ -43,6 +44,7 @@ import { getLogImportantData } from 'app/pages/audit/utils/get-log-important-dat
     IxTablePagerComponent,
     MatTooltip,
     NgTemplateOutlet,
+    SafeInnerHtmlDirective,
     UiSearchDirective,
     AuditSearchComponent,
     TranslateModule,
@@ -93,7 +95,6 @@ export class AuditListComponent {
   });
 
   constructor(
-    private sanitizer: DomSanitizer,
     protected emptyService: EmptyService,
     private translate: TranslateService,
   ) { }
@@ -103,8 +104,7 @@ export class AuditListComponent {
   }
 
   getUserAvatarForLog(row: AuditEntry): SafeHtml {
-    // eslint-disable-next-line sonarjs/no-angular-bypass-sanitization
-    return this.sanitizer.bypassSecurityTrustHtml(toSvg(row.username, this.isMobileView() ? 20 : 30));
+    return toSvg(row.username, this.isMobileView() ? 20 : 30);
   }
 
   expanded(row: AuditEntry): void {

@@ -3,7 +3,7 @@
   <p>{{ helptext.radio_preset_tooltip | translate }}</p>
 
   @if (!data.allowCustom) {
-    <p [innerHTML]="helptext.message | translate"></p>
+    <p [safeInnerHtml]="helptext.message | translate"></p>
   }
 
   <form [formGroup]="form">

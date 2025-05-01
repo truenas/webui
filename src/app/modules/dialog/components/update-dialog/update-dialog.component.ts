@@ -11,6 +11,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { JobItemComponent } from 'app/modules/jobs/components/job-item/job-item.component';
 import { JobsState } from 'app/modules/jobs/store/job.reducer';
 import { selectUpdateJob } from 'app/modules/jobs/store/job.selectors';
+import { SafeInnerHtmlDirective } from 'app/modules/layout/sanitize-html/safe-inner-html.directive';
 
 @UntilDestroy()
 @Component({
@@ -23,6 +24,7 @@ import { selectUpdateJob } from 'app/modules/jobs/store/job.selectors';
     MatDialogTitle,
     TranslateModule,
     AsyncPipe,
+    SafeInnerHtmlDirective,
     JobItemComponent,
   ],
 })

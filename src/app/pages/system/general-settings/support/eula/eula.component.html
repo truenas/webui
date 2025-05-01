@@ -1,7 +1,7 @@
 <mat-card id="eula-card" [ixUiSearch]="searchableElements.elements.eula">
   <div id="eula">
     <h2>{{ 'End User License Agreement - TrueNAS' | translate }}</h2>
-    <div [innerHTML]="eula"></div>
+    <div [safeInnerHtml]="eula"></div>
   </div>
   @if (eula) {
     <div>

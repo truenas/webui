@@ -1,7 +1,7 @@
 <h1 matDialogTitle>{{ 'Connect to TrueCommand Cloud' | translate }}</h1>
 
 <mat-dialog-content>
-  <p [innerHtml]="helptext.signupDialog.content | translate"></p>
+  <p [safeInnerHtml]="helptext.signupDialog.content | translate"></p>
 </mat-dialog-content>
 
 <ix-form-actions mat-dialog-actions class="form-actions">

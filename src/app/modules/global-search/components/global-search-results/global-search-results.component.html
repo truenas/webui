@@ -18,7 +18,8 @@
                 (click)="selectElement(result)"
                 (keydown.enter)="selectElement(result)"
               >
-                <h3 class="title" [innerHTML]="processHierarchy(result.hierarchy, searchTerm())"></h3>
+                <!-- eslint-disable-next-line @angular-eslint/template/elements-content -->
+                <h3 class="title" [safeInnerHtml]="processHierarchy(result.hierarchy, searchTerm())"></h3>
 
                 @if (result.section === GlobalSearchSection.RecentSearches) {
                   <ix-icon
