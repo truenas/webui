@@ -32,6 +32,18 @@ describe('PasswordChangeRequiredDialog', () => {
     expect(spectator.query(ChangePasswordFormComponent)).toExist();
   });
 
+  it('shows the Skip button before password is changed', async () => {
+    const skipButton = await loader.getHarness(MatButtonHarness.with({ text: 'Skip' }));
+    expect(skipButton).toBeTruthy();
+  });
+
+  it('clicking Skip button closes dialog', async () => {
+    const skipButton = await loader.getHarness(MatButtonHarness.with({ text: 'Skip' }));
+    await skipButton.click();
+
+    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
+  });
+
   it('does not show the Finish button until password is changed', async () => {
     const finishButton = await loader.getHarnessOrNull(MatButtonHarness.with({ text: 'Finish' }));
     expect(finishButton).toBeNull();
@@ -43,6 +55,9 @@ describe('PasswordChangeRequiredDialog', () => {
 
     const finishButton = await loader.getHarness(MatButtonHarness.with({ text: 'Finish' }));
     expect(finishButton).toBeTruthy();
+
+    const skipButton = await loader.getHarnessOrNull(MatButtonHarness.with({ text: 'Skip' }));
+    expect(skipButton).toBeNull();
   });
 
   it('clicking Finish button closes dialog', async () => {
