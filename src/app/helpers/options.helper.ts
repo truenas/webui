@@ -1,7 +1,7 @@
 import { TranslateService } from '@ngx-translate/core';
 import { Option } from 'app/interfaces/option.interface';
 
-export function mapToOptions(optionMap: Map<string, string>, translate: TranslateService): Option[] {
+export function mapToOptions<T>(optionMap: Map<T, string>, translate: TranslateService): Option<T>[] {
   return Array.from(optionMap.entries()).map(([value, label]) => ({ label: translate.instant(label), value }));
 }
 

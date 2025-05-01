@@ -1,28 +1,70 @@
 <ix-modal-header
-  [requiredRoles]="requiredRoles"
+  [requiredRoles]="anyRoles"
   [title]="'Storage Settings' | translate"
-  [loading]="isFormLoading()"
+  [loading]="isLoading()"
 ></ix-modal-header>
+
 <mat-card>
   <mat-card-content>
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset>
         <ix-select
-          formControlName="pool"
-          [label]="'Select Pool' | translate"
+          formControlName="systemDatasetPool"
+          [label]="'System Dataset Pool' | translate"
           [required]="true"
           [options]="poolOptions$"
         ></ix-select>
+
+        @if (isSmbRunning$ | async) {
+          <ix-warning
+            [message]="helptext.smbRebootWarning | translate"
+          ></ix-warning>
+        }
+      </ix-fieldset>
+
+      <ix-fieldset
+        [title]="'Priority Resilvering' | translate"
+        [formGroup]="form.controls.priorityResilver"
+      >
+        <ix-checkbox
+          formControlName="enabled"
+          [label]="'Run Resilvering At Higher Priority At Certain Times' | translate"
+          [tooltip]="helptext.priorityResilverEnabled | translate"
+        ></ix-checkbox>
+
+        @if (this.form.value.priorityResilver.enabled) {
+          <ix-select
+            formControlName="weekday"
+            [label]="'Days of the Week' | translate"
+            [options]="daysOfWeek$"
+            [multiple]="true"
+            [required]="true"
+          ></ix-select>
+
+          <div class="priority-times">
+            <ix-select
+              formControlName="begin"
+              [label]="'From' | translate"
+              [options]="timeOptions$"
+            ></ix-select>
+
+            <ix-select
+              formControlName="end"
+              [label]="'To' | translate"
+              [options]="timeOptions$"
+            ></ix-select>
+          </div>
+        }
       </ix-fieldset>
 
       <ix-form-actions>
         <button
-          *ixRequiresRoles="requiredRoles"
+          *ixRequiresRoles="anyRoles"
           mat-button
           type="submit"
           color="primary"
           ixTest="save"
-          [disabled]="form.invalid || isFormLoading() || !(poolOptions$ | async)"
+          [disabled]="form.invalid || isLoading()"
         >
           {{ 'Save' | translate }}
         </button>
