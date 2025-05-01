@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
+import { MatMenuHarness } from '@angular/material/menu/testing';
 import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
@@ -155,8 +156,10 @@ describe('RsyncTaskCardComponent', () => {
 
   it('shows confirmation dialog when Run Now button is pressed', async () => {
     jest.spyOn(spectator.inject(DialogService), 'confirm');
-    const runNowButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-play-circle' }), 1, 7);
-    await runNowButton.click();
+
+    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
+    await menu.open();
+    await menu.clickItem({ text: 'Run job' });
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Run Now',
@@ -168,8 +171,9 @@ describe('RsyncTaskCardComponent', () => {
   });
 
   it('deletes a Rsync Task with confirmation when Delete button is pressed', async () => {
-    const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 7);
-    await deleteIcon.click();
+    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
+    await menu.open();
+    await menu.clickItem({ text: 'Delete' });
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Confirmation',

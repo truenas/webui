@@ -1,5 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
@@ -202,8 +203,9 @@ describe('RsyncTaskListComponent', () => {
   });
 
   it('deletes a network interface with confirmation when Delete icon is pressed', async () => {
-    const deleteIcon = await table.getHarnessInRow(IxIconHarness.with({ name: 'mdi-delete' }), '/mnt/Pool1');
-    await deleteIcon.click();
+    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
+    await menu.open();
+    await menu.clickItem({ text: 'Delete' });
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
       message: 'Are you sure you want to delete this task?',
@@ -212,8 +214,9 @@ describe('RsyncTaskListComponent', () => {
   });
 
   it('runs a task when run button is pressed', async () => {
-    const runIcon = await table.getHarnessInRow(IxIconHarness.with({ name: 'mdi-play-circle' }), '/mnt/Pool1');
-    await runIcon.click();
+    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
+    await menu.open();
+    await menu.clickItem({ text: 'Run job' });
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('rsynctask.run', [1]);
   });

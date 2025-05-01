@@ -1,0 +1,78 @@
+<div class="actions">
+  @if (editAction) {
+    <div [matTooltip]="editAction.dynamicTooltip ? (editAction.dynamicTooltip(row()) | async) : editAction.tooltip || ''">
+      @if (editAction.hidden ? !(editAction.hidden(row()) | async) : true) {
+        <button
+          *ixRequiresRoles="(editAction?.dynamicRequiredRoles ? (editAction.dynamicRequiredRoles(row()) | async) : editAction.requiredRoles) || []"
+          mat-icon-button
+          [ixTest]="[uniqueRowTag(row()), editAction.iconName, 'row-action']"
+          [attr.aria-label]="(editAction.dynamicTooltip ? (editAction.dynamicTooltip(row()) | async) : editAction.tooltip || '') + ' ' + getAriaLabel(row())"
+          [disabled]="editAction.disabled ? (editAction.disabled(row()) | async) : false"
+          (click)="$event.stopPropagation(); editAction.onClick(row())"
+        >
+          <ix-icon [name]="editAction.iconName"></ix-icon>
+        </button>
+      }
+    </div>
+  }
+
+  @if (otherActions.length <= 1) {
+    @for (action of otherActions; track action) {
+      @if (action.requiredRoles?.length || action.dynamicRequiredRoles) {
+        <div [matTooltip]="action.dynamicTooltip ? (action.dynamicTooltip(row()) | async) : action.tooltip || ''">
+          @if (action.hidden ? !(action.hidden(row()) | async) : true) {
+            <button
+              *ixRequiresRoles="(action?.dynamicRequiredRoles ? (action.dynamicRequiredRoles(row()) | async) : action.requiredRoles) || []"
+              mat-icon-button
+              [ixTest]="[uniqueRowTag(row()), action.iconName, 'row-action']"
+              [attr.aria-label]="(action.dynamicTooltip ? (action.dynamicTooltip(row()) | async) : action.tooltip || '') + ' ' + getAriaLabel(row())"
+              [disabled]="action.disabled ? (action.disabled(row()) | async) : false"
+              (click)="$event.stopPropagation(); action.onClick(row())"
+            >
+              <ix-icon [name]="action.iconName"></ix-icon>
+            </button>
+          }
+        </div>
+      } @else {
+        <div [matTooltip]="action.dynamicTooltip ? (action.dynamicTooltip(row()) | async) : action.tooltip || ''">
+          @if (action.hidden ? !(action.hidden(row()) | async) : true) {
+            <button
+              mat-icon-button
+              [ixTest]="[uniqueRowTag(row()), action.iconName, 'row-action']"
+              [attr.aria-label]="(action.dynamicTooltip ? (action.dynamicTooltip(row()) | async) : action.tooltip || '') + ' ' + getAriaLabel(row())"
+              [disabled]="action.disabled ? (action.disabled(row()) | async) : false"
+              (click)="$event.stopPropagation(); action.onClick(row())"
+            >
+              <ix-icon [name]="action.iconName"></ix-icon>
+            </button>
+          }
+        </div>
+      }
+    }
+  } @else {
+    <button
+      #menuTrigger="matMenuTrigger"
+      mat-icon-button
+      [ixTest]="[uniqueRowTag(row()), 'more-action']"
+      [matMenuTriggerFor]="actionMenu"
+      (click)="$event.stopPropagation();"
+    >
+      <ix-icon name="more_vert"></ix-icon>
+    </button>
+    <mat-menu #actionMenu="matMenu">
+      @for (action of otherActions; track action) {
+        @if (action.hidden ? !(action.hidden(row()) | async) : true) {
+          <button
+            mat-menu-item
+            [ixTest]="[uniqueRowTag(row()), 'more-action', action.iconName, 'row-action']"
+            [disabled]="action.disabled ? (action.disabled(row()) | async) : false"
+            (click)="$event.stopPropagation(); action.onClick(row()); menuTrigger.closeMenu();"
+          >
+            <ix-icon class="menu-icon" [name]="action.iconName"></ix-icon>
+            <span>{{ action.tooltip }}</span>
+          </button>
+        }
+      }
+    </mat-menu>
+  }
+</div>

@@ -1,6 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatDialog } from '@angular/material/dialog';
+import { MatMenuHarness } from '@angular/material/menu/testing';
 import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
@@ -131,8 +132,9 @@ describe('SmbCardComponent', () => {
   });
 
   it('shows confirmation to delete SMB Share when Delete button is pressed', async () => {
-    const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 5);
-    await deleteIcon.click();
+    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
+    await menu.open();
+    await menu.clickItem({ text: 'Delete' });
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
   });
@@ -151,8 +153,9 @@ describe('SmbCardComponent', () => {
   });
 
   it('handles edit Share ACL', async () => {
-    const editIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'share' }), 1, 5);
-    await editIcon.click();
+    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
+    await menu.open();
+    await menu.clickItem({ text: 'Edit Share ACL' });
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
       'sharing.smb.getacl',
@@ -166,8 +169,9 @@ describe('SmbCardComponent', () => {
     const router = spectator.inject(Router);
     jest.spyOn(router, 'navigate').mockImplementation();
 
-    const editIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'security' }), 1, 5);
-    await editIcon.click();
+    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
+    await menu.open();
+    await menu.clickItem({ text: 'Edit Filesystem ACL' });
 
     expect(router.navigate).toHaveBeenCalledWith(
       ['/', 'datasets', 'acl', 'edit'],

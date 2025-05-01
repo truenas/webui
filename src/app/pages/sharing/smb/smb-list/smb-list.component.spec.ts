@@ -1,6 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatMenuHarness } from '@angular/material/menu/testing';
 import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { Router } from '@angular/router';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
@@ -38,7 +39,7 @@ const shares: Partial<SmbShare>[] = [
     enabled: true,
     name: 'some-name',
     comment: 'comment',
-    path: 'some-path',
+    path: '/some-path',
     path_local: 'some-local-path',
     audit: {
       enable: true,
@@ -134,8 +135,9 @@ describe('SmbListComponent', () => {
   });
 
   it('opens smb edit share ACL form when "Edit Share ACL" button is pressed', async () => {
-    const editShareAclButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'share' }), 1, 5);
-    await editShareAclButton.click();
+    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
+    await menu.open();
+    await menu.clickItem({ text: 'Edit Share ACL' });
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(SmbAclComponent, {
       data: 'acl_share_name',
@@ -143,8 +145,9 @@ describe('SmbListComponent', () => {
   });
 
   it('redirects to edit ACL page when "Edit Filesystem ACL" button is pressed', async () => {
-    const editFilesystemAclButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'security' }), 1, 5);
-    await editFilesystemAclButton.click();
+    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
+    await menu.open();
+    await menu.clickItem({ text: 'Edit Filesystem ACL' });
 
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(
       ['/', 'datasets', 'acl', 'edit'],
@@ -153,8 +156,9 @@ describe('SmbListComponent', () => {
   });
 
   it('opens delete dialog when "Delete" button is pressed', async () => {
-    const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 5);
-    await deleteButton.click();
+    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
+    await menu.open();
+    await menu.clickItem({ text: 'Delete' });
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('sharing.smb.delete', [1]);
   });
