@@ -163,7 +163,7 @@ describe('SnapshotTaskComponent', () => {
         'Snapshot Lifetime': '2',
         Unit: LifetimeUnit.Week,
         'Naming Schema': 'auto-%Y-%m-%d_%H-%M',
-        Schedule: 'Daily (0 0 * * *)  At 00:00 (12:00 AM)',
+        Schedule: 'Daily At 00:00 (12:00 AM)',
         'Allow Taking Empty Snapshots': true,
         Enabled: true,
       });
