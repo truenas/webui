@@ -21,7 +21,7 @@
       </p>
       <p>
         <span class="label">{{ 'Base Image' | translate }}:</span>
-        {{ instance.image.description || '-' }}
+        {{ instance.image.description || instance.image.os || '-' }}
       </p>
       <p>
         <span class="label">{{ 'CPU' | translate }}:</span>

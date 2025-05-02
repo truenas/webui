@@ -120,7 +120,7 @@ describe('SourceSectionComponent', () => {
         'system - %Y-%m-%d - 1 DAY (S) - Disabled',
       ],
       'Replicate Specific Snapshots': true,
-      'By snapshot creation time': 'Custom (* * * */2 *) Every minute, every 2 months',
+      'By snapshot creation time': 'Custom Every minute, every 2 months',
       'Also include snapshots with the name': 'Matching naming schema',
       'Also Include Naming Schema': ['%Y-%m-%d'],
       'Save Pending Snapshots': true,

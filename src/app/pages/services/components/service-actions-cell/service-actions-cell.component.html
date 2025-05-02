@@ -1,0 +1,55 @@
+<div class="actions">
+  @if (hasLogs) {
+    <a
+      [attr.tabindex]="0"
+      [ixTest]="[uniqueRowTag, 'row-view-logs']"
+      (click)="$event.stopPropagation(); navigateToAuditLogs()"
+    >
+      {{ 'View Logs' | translate }}
+    </a>
+  }
+
+  @if (hasSessions) {
+    <a
+      [attr.tabindex]="0"
+      [ixTest]="[uniqueRowTag, 'view-sessions']"
+      (click)="$event.stopPropagation(); navigateToSessions()"
+    >
+      {{ 'View Sessions' | translate }}
+    </a>
+  }
+
+  @if (!isRunning) {
+    <button
+      *ixRequiresRoles="requiredRoles"
+      mat-icon-button
+      [ixTest]="[uniqueRowTag, 'start-service']"
+      [attr.aria-label]="'Start Service' | translate"
+      (click)="$event.stopPropagation(); startService()"
+    >
+      <ix-icon name="mdi-play-circle"></ix-icon>
+    </button>
+  }
+
+  @if (isRunning) {
+    <button
+      *ixRequiresRoles="requiredRoles"
+      mat-icon-button
+      [ixTest]="[uniqueRowTag, 'stop-service']"
+      [attr.aria-label]="'Stop Service' | translate"
+      (click)="$event.stopPropagation(); stopServiceClicked()"
+    >
+      <ix-icon name="mdi-stop-circle"></ix-icon>
+    </button>
+  }
+
+  <button
+    *ixRequiresRoles="requiredRoles"
+    mat-icon-button
+    [ixTest]="[uniqueRowTag, 'edit-service']"
+    [attr.aria-label]="'Edit Service' | translate"
+    (click)="$event.stopPropagation(); configureService()"
+  >
+    <ix-icon name="edit"></ix-icon>
+  </button>
+</div>

@@ -6,10 +6,12 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { ResilverConfig } from 'app/interfaces/resilver-config.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { StorageCardComponent } from 'app/pages/system/advanced/storage/storage-card/storage-card.component';
 import {
+  StorageSettingsData,
   StorageSettingsFormComponent,
 } from 'app/pages/system/advanced/storage/storage-settings-form/storage-settings-form.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
@@ -25,6 +27,12 @@ describe('StorageCardComponent', () => {
         mockCall('systemdataset.config', {
           pool: 'tank',
         } as SystemDatasetConfig),
+        mockCall('pool.resilver.config', {
+          enabled: true,
+          begin: '15:00',
+          end: '17:00',
+          weekday: [2, 3],
+        } as ResilverConfig),
       ]),
       mockProvider(FirstTimeWarningService, {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
@@ -46,6 +54,7 @@ describe('StorageCardComponent', () => {
 
     expect(itemTexts).toEqual([
       'System Dataset Pool: tank',
+      'Resilvering At Higher Priority: Between 15:00 and 17:00 on Tuesday, Wednesday',
     ]);
   });
 
@@ -54,11 +63,19 @@ describe('StorageCardComponent', () => {
     await configureButton.click();
 
     expect(spectator.inject(FirstTimeWarningService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
-    expect(
-      spectator.inject(SlideIn).open,
-    ).toHaveBeenCalledWith(
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
       StorageSettingsFormComponent,
-      { data: { systemDsPool: 'tank' } },
+      {
+        data: {
+          priorityResilver: {
+            enabled: true,
+            begin: '15:00',
+            end: '17:00',
+            weekday: [2, 3],
+          },
+          systemDatasetPool: 'tank',
+        } as StorageSettingsData,
+      },
     );
   });
 });

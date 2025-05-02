@@ -8,7 +8,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { filter, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
-import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { PoolScrubTask } from 'app/interfaces/pool-scrub.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -51,7 +50,6 @@ import { TaskService } from 'app/services/task.service';
     IxIconComponent,
     RequiresRolesDirective,
     MatButton,
-    UiSearchDirective,
     IxTableComponent,
     IxTableEmptyDirective,
     IxTableHeadComponent,

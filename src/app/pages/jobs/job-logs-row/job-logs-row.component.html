@@ -1,4 +1,6 @@
 <div class="list-item">
+  <h4>ID: <span class="job-id">{{ job().id }}</span></h4>
+
   <h4>{{ 'Arguments' | translate }}</h4>
   @if (job().arguments.length > 0) {
     <div class="logs">
