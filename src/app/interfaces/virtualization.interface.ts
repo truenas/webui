@@ -167,6 +167,7 @@ export interface VirtualizationNic {
   readonly: boolean;
   network: string;
   product_id: string;
+  mac?: string;
 }
 
 export interface VirtualizationTpm {
@@ -282,7 +283,7 @@ export interface VirtualizationVolume {
   created_at: string;
   type: string;
   config: {
-    size: number;
+    size?: number;
   };
   used_by: string[];
   storage_pool: string;

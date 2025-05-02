@@ -10,13 +10,11 @@ import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler
 
 const fakeSocketUrl = 'ws://localhost:1234';
 let fakeSocketConfig: WebSocketSubjectConfig<unknown>;
-let fakeSocketsList: WebSocketSubject<unknown>[];
 
 function fakeSocketFactory<T>(urlConfigOrSource: WebSocketSubjectConfig<T>): WebSocketSubject<unknown> {
   urlConfigOrSource.url = fakeSocketUrl;
   fakeSocketConfig = urlConfigOrSource;
   const fakeSocket$ = new WebSocketSubject<T>(urlConfigOrSource);
-  fakeSocketsList.push(fakeSocket$);
   return fakeSocket$;
 }
 
@@ -35,7 +33,6 @@ describe('WebSocketHandlerService', () => {
   });
 
   beforeEach(() => {
-    fakeSocketsList = [];
     responseStream$ = new Subject();
     jest.spyOn(WebSocketConnection.prototype, 'send');
     jest.spyOn(WebSocketConnection.prototype, 'close');
@@ -58,21 +55,6 @@ describe('WebSocketHandlerService', () => {
     fakeSocketConfig.openObserver!.next({} as Event);
     expect(spectator.service.isSystemShuttingDown).toBe(false);
   });
-
-  it('closes connection when isTryingReconnect is true', fakeAsync(() => {
-    fakeSocketConfig.openObserver!.next({} as Event);
-    spectator.service.prepareShutdown();
-    fakeSocketConfig.closeObserver!.next({} as CloseEvent);
-    tick(3 * 1000);
-    fakeSocketConfig.openObserver!.next({} as Event);
-    spectator.service.scheduleCall({ id: 'test', method: 'truenas.get_eula', params: [] });
-
-    expect(spectator.service.isSystemShuttingDown).toBe(true);
-    expect(WebSocketConnection.prototype.send).not.toHaveBeenCalledWith({ id: 'test', method: 'truenas.get_eula' });
-    expect(WebSocketConnection.prototype.close).toHaveBeenCalled();
-
-    discardPeriodicTasks();
-  }));
 
   it('resumes calls that were paused because of broken connection', fakeAsync(() => {
     fakeSocketConfig.openObserver!.next({} as Event);
@@ -110,16 +92,6 @@ describe('WebSocketHandlerService', () => {
     discardPeriodicTasks();
   }));
 
-  it('sets isClosed when close connection and isTryingReconnect is false', () => {
-    fakeSocketConfig.openObserver!.next({} as Event);
-
-    fakeSocketConfig.closeObserver!.next({ code: 1006 } as CloseEvent);
-
-    let isClosed;
-    spectator.service.isClosed$.subscribe((value) => isClosed = value);
-    expect(isClosed).toBe(true);
-  });
-
   it('sets isAccessRestricted when close connection with code 1008', () => {
     fakeSocketConfig.openObserver!.next({} as Event);
 
@@ -129,37 +101,4 @@ describe('WebSocketHandlerService', () => {
     spectator.service.isAccessRestricted$.subscribe((value) => isAccessRestricted = value);
     expect(isAccessRestricted).toBe(true);
   });
-
-  it('trying to reconnect when close connection and isTryingReconnect is false', fakeAsync(() => {
-    jest.spyOn(fakeSocketsList[0], 'complete');
-    fakeSocketConfig.openObserver!.next({} as Event);
-
-    fakeSocketConfig.closeObserver!.next({ code: 1006 } as CloseEvent);
-    expect(fakeSocketsList).toHaveLength(1);
-
-    tick(5 * 1000);
-    expect(fakeSocketsList).toHaveLength(2);
-
-    expect(fakeSocketsList[0].complete).toHaveBeenCalled();
-
-    discardPeriodicTasks();
-  }));
-
-  it('ignores closing when close connection and isTryingReconnect is true', fakeAsync(() => {
-    jest.spyOn(fakeSocketsList[0], 'complete');
-    fakeSocketConfig.openObserver!.next({} as Event);
-
-    fakeSocketConfig.closeObserver!.next({ code: 1006 } as CloseEvent);
-    tick(3 * 1000);
-    fakeSocketConfig.closeObserver!.next({ code: 1006 } as CloseEvent);
-
-    expect(fakeSocketsList).toHaveLength(1);
-    expect(fakeSocketsList[0].complete).not.toHaveBeenCalled();
-
-    let isClosed;
-    spectator.service.isClosed$.subscribe((value) => isClosed = value);
-    expect(isClosed).toBe(true);
-
-    discardPeriodicTasks();
-  }));
 });

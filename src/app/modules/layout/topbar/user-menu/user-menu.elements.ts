@@ -26,9 +26,6 @@ export const userMenuElements = {
       hierarchy: [T('My API Keys')],
       synonyms: [T('API Keys')],
     },
-    about: {
-      hierarchy: [T('About')],
-    },
     logOut: {
       hierarchy: [T('Log Out')],
       synonyms: [T('Sign Out'), T('Logout'), T('Logoff'), T('End session'), T('Exit'), T('Drop session')],

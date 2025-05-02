@@ -1,7 +1,7 @@
 @import 'scss-imports/variables';
 @import 'mixins/layout';
 
-:host {
+.advanced-search {
   align-items: flex-start;
   background: rgba(0, 0, 0, 0.1);
   border: 1px solid var(--lines);

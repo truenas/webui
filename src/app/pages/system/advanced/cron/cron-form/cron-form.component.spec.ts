@@ -141,7 +141,7 @@ describe('CronFormComponent', () => {
         Description: 'Important cron job',
         Command: 'ls -la',
         'Run As User': 'root',
-        Schedule: 'Custom (30 * 12 * 1,2,3) At 30 minutes past the hour, on day 12 of the month, and on Monday, Tuesday, and Wednesday',
+        Schedule: 'Custom At 30 minutes past the hour, on day 12 of the month, and on Monday, Tuesday, and Wednesday',
         'Hide Standard Output': true,
         'Hide Standard Error': false,
         Enabled: true,

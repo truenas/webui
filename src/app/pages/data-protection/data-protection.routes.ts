@@ -9,7 +9,6 @@ import { VmwareSnapshotListComponent } from 'app/pages/data-protection/vmware-sn
 import { CloudSyncListComponent } from './cloudsync/cloudsync-list/cloudsync-list.component';
 import { ReplicationListComponent } from './replication/replication-list/replication-list.component';
 import { ReplicationWizardComponent } from './replication/replication-wizard/replication-wizard.component';
-import { ResilverConfigComponent } from './scrub-task/resilver-config/resilver-config.component';
 
 export const dataProtectionRoutes: Routes = [{
   path: '',
@@ -88,10 +87,6 @@ export const dataProtectionRoutes: Routes = [{
         path: '',
         component: ScrubListComponent,
         data: { title: T('Scrub Tasks'), breadcrumb: null },
-      }, {
-        path: 'priority',
-        data: { title: T('Resilver Priority'), breadcrumb: null },
-        component: ResilverConfigComponent,
       }],
     },
     {

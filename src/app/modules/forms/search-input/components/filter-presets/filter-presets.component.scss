@@ -1,0 +1,30 @@
+@import 'scss-imports/variables';
+
+.filter-presets {
+  align-items: center;
+  color: var(--fg2);
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 12px;
+  gap: 8px;
+  margin-top: 15px;
+
+  span {
+    margin: 0;
+  }
+
+  button {
+    align-items: center;
+    border-radius: 16px !important;
+    display: flex;
+    font-size: 12px;
+    height: max-content;
+    padding: 2px 4px;
+
+    &::ng-deep {
+      span {
+        height: 100%;
+      }
+    }
+  }
+}

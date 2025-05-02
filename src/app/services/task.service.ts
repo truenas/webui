@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import * as cronParser from 'cron-parser';
 import { Options as CronOptions } from 'cronstrue/dist/options';
-import cronstrue from 'cronstrue/i18n';
 import { invalidDate } from 'app/constants/invalid-date';
 import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
 import { Option } from 'app/interfaces/option.interface';
@@ -155,13 +154,5 @@ export class TaskService {
     } catch {
       return this.translate.instant(invalidDate);
     }
-  }
-
-  /**
-   * @deprecated Use scheduleDescription or crontabExplanation pipe.
-   */
-  getTaskCronDescription(scheduleExpression: string, options: CronOptions = this.cronOptions): string {
-    options.use24HourTimeFormat = this.localeService.getPreferredTimeFormat() === 'HH:mm:ss';
-    return cronstrue.toString(scheduleExpression, options);
   }
 }

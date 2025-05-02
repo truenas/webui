@@ -1,0 +1,17 @@
+<ix-fake-progress-bar [loading]="isDisabled()"></ix-fake-progress-bar>
+
+<div class="logo-wrapper">
+  <ix-icon name="ix-truenas-logo" class="logo" [fullSize]="true"></ix-icon>
+</div>
+
+<div class="reconnect-message">
+  {{ 'TrueNAS connection has timed out or was interrupted. To continue, press Reconnect.'| translate }}
+</div>
+
+<button
+  mat-button
+  color="primary"
+  ixTest="reconnect"
+  [disabled]="isDisabled()"
+  (click)="reconnectPressed()"
+>{{ 'Reconnect' | translate }}</button>

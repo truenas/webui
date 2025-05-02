@@ -98,9 +98,9 @@ describe('JobsListComponent', () => {
     const table = await loader.getHarness(IxTableHarness);
     const cells = await table.getCellTexts();
     const expectedRows = [
-      ['Name', 'State', 'ID', 'Started', 'Finished'],
-      ['cloudsync.sync', 'FAILED', '446', '2022-05-28 10:00:01', '2022-05-28 10:00:01'],
-      ['cloudsync.sync', 'SUCCESS', '445', '2022-05-28 10:00:01', '2022-05-28 10:00:01'],
+      ['Name', 'State', 'Started', 'Finished'],
+      ['cloudsync.sync', 'FAILED', '2022-05-28 10:00:01', '2022-05-28 10:00:01'],
+      ['cloudsync.sync', 'SUCCESS', '2022-05-28 10:00:01', '2022-05-28 10:00:01'],
     ];
 
     expect(cells).toEqual(expectedRows);

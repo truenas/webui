@@ -5,7 +5,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IscsiExtentType } from 'app/enums/iscsi.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { RolesCardComponent } from 'app/pages/datasets/components/roles-card/roles-card.component';
+import { UsageCardComponent } from 'app/pages/datasets/components/usage-card/usage-card.component';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
 
@@ -21,8 +21,8 @@ const datasetDummy = {
   thick_provisioned: false,
 } as DatasetDetails;
 
-describe('RolesCardComponent', () => {
-  let spectator: Spectator<RolesCardComponent>;
+describe('UsageCardComponent', () => {
+  let spectator: Spectator<UsageCardComponent>;
 
   const createComponent = createComponentFactory({
     providers: [
@@ -32,7 +32,7 @@ describe('RolesCardComponent', () => {
         open: jest.fn(() => of()),
       }),
     ],
-    component: RolesCardComponent,
+    component: UsageCardComponent,
   });
 
   beforeEach(() => {

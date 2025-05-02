@@ -65,7 +65,7 @@
             <ix-select
               formControlName="type"
               [label]="helptext.extent_placeholder_type | translate"
-              [options]="types$"
+              [options]="types$ | translateOptions"
               [tooltip]="helptext.extent_tooltip_type | translate"
               [required]="true"
             ></ix-select>

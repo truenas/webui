@@ -106,4 +106,12 @@ simultaneously.'),
     tooltip: T('You may enter a specific IP address (e.g., 192.168.1.1) for individual access, or use an \
  IP address with a subnet mask (e.g., 192.168.1.0/24) to define a range of addresses.'),
   },
+
+  storageSettings: {
+    priorityResilverEnabled: T('Resilver tasks can run at any time, but by default they have low priority \
+- lower than regular ZFS I/O operations. \
+You can specify a time window during which resilvering is given higher priority \
+— useful for scheduling it during non-business hours.'),
+    smbRebootWarning: T('Changing System Dataset Pool requires SMB service to be restarted. This will cause a temporary disruption of any active SMB connections.'),
+  },
 };
