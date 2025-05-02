@@ -40,7 +40,10 @@ describe('ReportsDashboardComponent', () => {
           {
             name: ReportingGraphName.Disk,
             title: 'Disks',
-            identifiers: ['HDD | Model | test-sda-uuid', 'HDD | Model | test-sdb-uuid'],
+            identifiers: [
+              'sda | Type: HDD | Model: MODEL1 | Serial: 12345',
+              'sdb | Type: HDD | Model: MODEL1 | Serial: 12346',
+            ],
           },
         ] as ReportingGraph[])),
         getReportTabs: jest.fn(() => fakeTabs),
@@ -69,7 +72,10 @@ describe('ReportsDashboardComponent', () => {
         isRendered: [true],
       },
       {
-        identifiers: ['HDD | Model | test-sda-uuid', 'HDD | Model | test-sdb-uuid'],
+        identifiers: [
+          'sda | Type: HDD | Model: MODEL1 | Serial: 12345',
+          'sdb | Type: HDD | Model: MODEL1 | Serial: 12346',
+        ],
         name: ReportingGraphName.Disk,
         title: 'Disks',
         isRendered: [true, true],
@@ -87,16 +93,16 @@ describe('ReportsDashboardComponent', () => {
       expect(spectator.component.activeReports).toHaveLength(2);
 
       spectator.component.buildDiskReport({
-        devices: ['test-sdb-uuid'],
-        metrics: [ReportingGraphName.Disk],
-      });
-      expect(spectator.component.visibleReports).toEqual([1]);
-
-      spectator.component.buildDiskReport({
-        devices: ['test-sda-uuid'],
+        devices: ['sda'],
         metrics: [ReportingGraphName.Disk],
       });
       expect(spectator.component.visibleReports).toEqual([0]);
+
+      spectator.component.buildDiskReport({
+        devices: ['sdb'],
+        metrics: [ReportingGraphName.Disk],
+      });
+      expect(spectator.component.visibleReports).toEqual([1]);
     });
   });
 });

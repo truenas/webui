@@ -1205,25 +1205,6 @@
     "hierarchy": [
       "Data Protection",
       "Scrub Tasks",
-      "Resilver Priority"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/data-protection",
-      "scrub",
-      "priority"
-    ],
-    "routerLink": null,
-    "anchor": "scrub-priority",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Data Protection",
-      "Scrub Tasks",
       "Add Scrub Task"
     ],
     "synonyms": [
@@ -1260,32 +1241,6 @@
     ],
     "routerLink": null,
     "anchor": "scrub-tasks",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Data Protection",
-      "Scrub Tasks",
-      "Adjust Scrub/Resilver Priority"
-    ],
-    "synonyms": [
-      "Adjust Scrub Priority",
-      "Adjust Resilver Priority"
-    ],
-    "requiredRoles": [
-      "POOL_SCRUB_WRITE"
-    ],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/data-protection"
-    ],
-    "routerLink": [
-      "/data-protection",
-      "scrub",
-      "priority"
-    ],
-    "anchor": "adjust-scrub/resilver-priority",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -4444,7 +4399,8 @@
       "Storage Settings"
     ],
     "requiredRoles": [
-      "DATASET_WRITE"
+      "DATASET_WRITE",
+      "POOL_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -4472,6 +4428,31 @@
     ],
     "routerLink": null,
     "anchor": "system-data-pool",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced Settings",
+      "Storage",
+      "Resilvering At Higher Priority"
+    ],
+    "synonyms": [
+      "Resilver Priority",
+      "Scrub Priority",
+      "Resilvering Priority",
+      "Resilver Settings",
+      "Resilvering Settings"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "resilvering-at-higher-priority",
     "triggerAnchor": null,
     "section": "ui"
   },

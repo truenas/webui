@@ -52,14 +52,10 @@
   min-height: 3em;
   white-space: normal;
 
-  .crontab {
-    font-style: italic;
-  }
-
-  .preset-description,
-  .crontab {
+  .preset-description {
     font-size: 11px;
-    margin: 0 1px;
+    margin-left: 5px;
+    margin-top: 1px;
     opacity: 0.7;
   }
 }
