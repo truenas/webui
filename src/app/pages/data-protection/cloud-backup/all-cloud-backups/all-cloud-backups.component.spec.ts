@@ -1,6 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatMenuHarness } from '@angular/material/menu/testing';
 import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
@@ -178,8 +179,9 @@ describe('AllCloudBackupsComponent', () => {
     });
 
     it('shows confirmation dialog when Run Now button is pressed', async () => {
-      const runNowButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-play-circle' }), 1, 5);
-      await runNowButton.click();
+      const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
+      await menu.open();
+      await menu.clickItem({ text: 'Run job' });
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
         title: 'Run Now',
@@ -192,8 +194,9 @@ describe('AllCloudBackupsComponent', () => {
     });
 
     it('deletes a Cloud Backup with confirmation when Delete button is pressed', async () => {
-      const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 5);
-      await deleteIcon.click();
+      const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
+      await menu.open();
+      await menu.clickItem({ text: 'Delete' });
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
         title: 'Confirmation',

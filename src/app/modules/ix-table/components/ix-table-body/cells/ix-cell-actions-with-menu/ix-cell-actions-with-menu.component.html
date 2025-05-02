@@ -55,6 +55,8 @@
       mat-icon-button
       [ixTest]="[uniqueRowTag(row()), 'more-action']"
       [matMenuTriggerFor]="actionMenu"
+      [attr.aria-label]="'Show More Actions' | translate"
+      [matTooltip]="'Show More Actions' | translate"
       (click)="$event.stopPropagation();"
     >
       <ix-icon name="more_vert"></ix-icon>

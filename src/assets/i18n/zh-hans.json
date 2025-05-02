@@ -249,6 +249,7 @@
   "Set Up Two-Factor Authentication": "",
   "Shell Access": "",
   "Show Builtin Users": "",
+  "Show More Actions": "",
   "Signing in to a registry, such as Docker Hub, is not required for Apps to function, but may help if you experience rate limiting issues.": "",
   "SMB Access": "",
   "SMB Enabled": "",

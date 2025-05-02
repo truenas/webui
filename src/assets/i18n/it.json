@@ -40,6 +40,7 @@
   "Root Dataset": "",
   "Set to enable support for <a href=\"https://tools.ietf.org/html/rfc3410\" target=\"_blank\">SNMP version 3</a>. See <a href=\"http://net-snmp.sourceforge.net/docs/man/snmpd.conf.html\" target=\"_blank\">snmpd.conf(5)</a> for configuration details.": "",
   "Show Builtin Users": "",
+  "Show More Actions": "",
   "Space Management": "",
   "Telegram Bot API Token (<a href=\"https://core.telegram.org/bots#3-how-do-i-create-a-bot\"   target=\"_blank\">How to create a Telegram Bot</a>)": "",
   "The root dataset is the top-level container in your pool, sharing the same name as the pool itself. <br><br>When managing your TrueNAS system, it's generally best practice to create dedicated datasets under the root dataset for different types of data, rather than storing data directly in the root dataset itself.": "",
