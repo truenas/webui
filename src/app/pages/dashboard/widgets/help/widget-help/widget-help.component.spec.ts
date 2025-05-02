@@ -4,7 +4,6 @@ import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
 import { ProductType } from 'app/enums/product-type.enum';
-import { helptextAbout } from 'app/helptext/about';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
@@ -53,15 +52,20 @@ describe('WidgetHelpComponent', () => {
       expect(spectator.query('.icon-wrapper a ix-icon')).toExist();
 
       expect(firstIcon).toBe('assignment');
-      expect(firstLine.innerHTML).toBe(helptextAbout.docs);
+      const docsParsed = parseAnchorLine(firstLine.innerHTML);
+      testDocs(docsParsed);
+
       expect(firstHrefIconLine.textContent).not.toExist();
 
       expect(secondIcon).toBe('group');
-      expect(secondLine.innerHTML).toBe(helptextAbout.forums);
+      const forumsParsed = parseAnchorLine(secondLine.innerHTML);
+      testForums(forumsParsed);
       expect(secondHrefIconLine.textContent).not.toExist();
 
       expect(thirdIcon).toBe('mail');
-      expect(thirdLine.innerHTML).toBe(helptextAbout.newsletter);
+      const newsLetterParsed = parseAnchorLine(thirdLine.innerHTML);
+      testNewsLetter(newsLetterParsed);
+
       expect(thirdHrefIconLine.textContent).not.toExist();
     });
 
@@ -88,15 +92,18 @@ describe('WidgetHelpComponent', () => {
       expect(spectator.query('.icon-wrapper a ix-icon')).toExist();
 
       expect(firstIcon).toBe('assignment');
-      expect(firstLine.innerHTML).toBe(helptextAbout.docs);
+      const docsParsed = parseAnchorLine(firstLine.innerHTML);
+      testDocs(docsParsed);
       expect(firstHrefIconLine.textContent).toBe('Docs');
 
       expect(secondIcon).toBe('group');
-      expect(secondLine.innerHTML).toBe(helptextAbout.forums);
+      const forumsParsed = parseAnchorLine(secondLine.innerHTML);
+      testForums(forumsParsed);
       expect(secondHrefIconLine.textContent).toBe('Forums');
 
       expect(thirdIcon).toBe('mail');
-      expect(thirdLine.innerHTML).toBe(helptextAbout.newsletter);
+      const newsLetterParsed = parseAnchorLine(thirdLine.innerHTML);
+      testNewsLetter(newsLetterParsed);
       expect(thirdHrefIconLine.textContent).toBe('Newsletter');
     });
 
@@ -123,15 +130,18 @@ describe('WidgetHelpComponent', () => {
       expect(spectator.query('.icon-wrapper a ix-icon')).toExist();
 
       expect(firstIcon).toBe('assignment');
-      expect(firstLine.innerHTML).toBe(helptextAbout.docs);
+      const parsed = parseAnchorLine(firstLine.innerHTML);
+      testDocs(parsed);
       expect(firstHrefIconLine.textContent).toBe('Docs');
 
       expect(secondIcon).toBe('group');
-      expect(secondLine.innerHTML).toBe(helptextAbout.forums);
+      const forumsParsed = parseAnchorLine(secondLine.innerHTML);
+      testForums(forumsParsed);
       expect(secondHrefIconLine.textContent).toBe('Forums');
 
       expect(thirdIcon).toBe('mail');
-      expect(thirdLine.innerHTML).toBe(helptextAbout.newsletter);
+      const newsLetterParsed = parseAnchorLine(thirdLine.innerHTML);
+      testNewsLetter(newsLetterParsed);
       expect(thirdHrefIconLine.textContent).toBe('Newsletter');
     });
 
@@ -143,4 +153,52 @@ describe('WidgetHelpComponent', () => {
       expect(spectator.query(CopyrightLineComponent)).toExist();
     });
   });
+
+  interface ParsedAnchorLine {
+    textBefore: string;
+    anchorText: string;
+    anchorHref: string;
+    anchorTarget: string | null;
+    textAfter: string;
+  }
+
+  function parseAnchorLine(html: string): ParsedAnchorLine {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    const body = doc.body;
+
+    const anchor = body.querySelector('a');
+
+    return {
+      textBefore: body.childNodes[0]?.textContent ?? '',
+      anchorText: anchor?.textContent?.trim() ?? '',
+      anchorHref: anchor?.getAttribute('href') ?? '',
+      anchorTarget: anchor?.getAttribute('target'),
+      textAfter: body.childNodes[2]?.textContent ?? '',
+    };
+  }
+
+  function testDocs(parsed: ParsedAnchorLine): void {
+    expect(parsed.anchorHref).toBe('https://www.truenas.com/docs/');
+    expect(parsed.anchorTarget).toBe('_blank');
+    expect(parsed.anchorText).toBe('TrueNAS Documentation Site');
+    expect(parsed.textBefore).toBe('The ');
+    expect(parsed.textAfter).toBe(' is a collaborative website with helpful guides and information about your new storage system.');
+  }
+
+  function testForums(forumsParsed: ParsedAnchorLine): void {
+    expect(forumsParsed.anchorTarget).toBe('_blank');
+    expect(forumsParsed.anchorHref).toBe('https://forums.truenas.com/');
+    expect(forumsParsed.anchorText).toBe('TrueNAS Community Forums');
+    expect(forumsParsed.textBefore).toBe('The ');
+    expect(forumsParsed.textAfter).toBe(' are the best place to ask questions and interact with fellow TrueNAS users.');
+  }
+
+  function testNewsLetter(newsLetterParsed: ParsedAnchorLine): void {
+    expect(newsLetterParsed.anchorTarget).toBe('_blank');
+    expect(newsLetterParsed.anchorHref).toBe('https://www.truenas.com/newsletter/');
+    expect(newsLetterParsed.textBefore).toBe('You can join the ');
+    expect(newsLetterParsed.anchorText).toBe('TrueNAS Newsletter');
+    expect(newsLetterParsed.textAfter).toBe(' for monthly updates and latest developments.');
+  }
 });

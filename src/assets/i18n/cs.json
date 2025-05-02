@@ -3646,7 +3646,7 @@
   "The {service} service is running and will auto-start after a system restart.": "",
   "The {service} service is running.": "",
   "The <a href=\"https://forums.truenas.com/\" target=\"_blank\" class=\"external-link\">TrueNAS Community Forums</a> are the best place to ask questions and interact with fellow TrueNAS users.": "",
-  "The <a href=\"https://www.truenas.com/docs/\" target=\"_blank\">TrueNAS Documentation Site</a> is a collaborative website with helpful guides and information about your new storage system.": "",
+  "The <a target=\"_blank\" href=\"https://www.truenas.com/docs/\">TrueNAS Documentation Site</a> is a collaborative website with helpful guides and information about your new storage system.": "",
   "The <i><b>{name}</b></i> dataset and all snapshots stored with it <b>will be permanently deleted</b>.": "",
   "The <i><b>{name}</b></i> zvol and all snapshots stored with it <b>will be permanently deleted</b>.": "",
   "The <i>Use Apple-style character encoding</i> value has changed.  This parameter affects how file names are read from and written to storage. Changes to  this parameter after data is written can prevent accessing or deleting files containing  mangled characters.": "",

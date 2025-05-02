@@ -1,7 +1,7 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const helptextAbout = {
-  docs: T('The <a href="https://www.truenas.com/docs/" target="_blank">TrueNAS Documentation Site</a> \
+  docs: T('The <a target="_blank" href="https://www.truenas.com/docs/">TrueNAS Documentation Site</a> \
 is a collaborative website with helpful guides and information about your new storage system.'),
 
   forums: T('The <a href="https://forums.truenas.com/" target="_blank" class="external-link">TrueNAS Community Forums</a> \

@@ -79,6 +79,7 @@ import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-h
 import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { IcuMissingTranslationHandler } from 'app/modules/language/translations/icu-missing-translation-handler';
+import { SafeInnerHtmlDirective } from 'app/modules/layout/sanitize-html/safe-inner-html.directive';
 import {
   WithLoadingStateDirective,
 } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
@@ -107,6 +108,7 @@ defineGlobalsInjections({
     MatSlideToggleModule,
     MatMenuModule,
     IxIconComponent,
+    SafeInnerHtmlDirective,
     MatDatepickerModule,
     MatNativeDateModule,
     MatSelectModule,
