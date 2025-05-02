@@ -62,6 +62,6 @@ the system dataset transfers back to the TrueNAS operating system device.'),
     locking_dataset: T('Locking Dataset'),
   },
 
-  scrubTooltip: T('A scrub is a data integrity check of your pool.\
+  scrubTooltip: T('A scrub is a data integrity check of your pool. \
 Scrubs identify data integrity problems, detect silent data corruptions caused by transient hardware issues, and provide early disk failure alerts.'),
 };

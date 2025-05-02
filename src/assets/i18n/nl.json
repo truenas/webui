@@ -20,7 +20,7 @@
   "<b>Why choose Container?</b><br />Containers, powered by LXC, offer lightweight, efficient virtualization by sharing the host OS kernel, providing faster startup times and reduced resource usage compared to VMs. <br /><br />Ideal for scalable applications.<br /><br /><b>Why choose VM?</b><br />Virtual Machines (VMs), powered by QEMU, offer full OS isolation, kernel independence, and can run diverse OS types. <br /><br />Ideal for legacy applications, full-featured desktops, or software with strict OS dependencies.": "",
   "700 or owner – all, others – none": "",
   "A pool is made of VDEVs (virtual devices). Each VDEV is a group of drives working together": "",
-  "A scrub is a data integrity check of your pool.Scrubs identify data integrity problems, detect silent data corruptions caused by transient hardware issues, and provide early disk failure alerts.": "",
+  "A scrub is a data integrity check of your pool. Scrubs identify data integrity problems, detect silent data corruptions caused by transient hardware issues, and provide early disk failure alerts.": "",
   "Aborted": "",
   "Access Card": "",
   "Access to API can be granted after user has been created.": "",

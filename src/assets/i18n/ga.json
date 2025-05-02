@@ -14,7 +14,7 @@
   "{unhealthy} of {total}": "",
   "700 or owner – all, others – none": "",
   "A pool is made of VDEVs (virtual devices). Each VDEV is a group of drives working together": "",
-  "A scrub is a data integrity check of your pool.Scrubs identify data integrity problems, detect silent data corruptions caused by transient hardware issues, and provide early disk failure alerts.": "",
+  "A scrub is a data integrity check of your pool. Scrubs identify data integrity problems, detect silent data corruptions caused by transient hardware issues, and provide early disk failure alerts.": "",
   "Access to API can be granted after user has been created.": "",
   "ACTIVE": "",
   "Active Controller must be rebooted because": "",

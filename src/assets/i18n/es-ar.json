@@ -6,7 +6,7 @@
   "{license} Contract,": "",
   "{name} VDEVs": "",
   "{seconds}s": "",
-  "A scrub is a data integrity check of your pool.Scrubs identify data integrity problems, detect silent data corruptions caused by transient hardware issues, and provide early disk failure alerts.": "",
+  "A scrub is a data integrity check of your pool. Scrubs identify data integrity problems, detect silent data corruptions caused by transient hardware issues, and provide early disk failure alerts.": "",
   "Add Filter": "",
   "Add NIC Device: {nic}": "",
   "Block (iSCSI/FC) Shares Targets": "",

@@ -104,19 +104,6 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
     );
   }
 
-  // reloadScrubForPool(poolId: number): void {
-  //   this.loadScrubs().pipe(
-  //     tap((scrubs: ScrubTask[]) => {
-  //       const updatedScrub = scrubs.find((scrub) => scrub.pool === poolId);
-  //       if (updatedScrub) {
-  //         this.patchState((state) => ({
-  //           scrubs: state.scrubs.map((scrub) => (scrub.pool === poolId ? updatedScrub : scrub)),
-  //         }));
-  //       }
-  //     }),
-  //   ).subscribe();
-  // }
-
   private loadPoolDetails(): Observable<[StorageDashboardDisk[], ScrubTask[]]> {
     return forkJoin([
       this.loadDisks().pipe(
