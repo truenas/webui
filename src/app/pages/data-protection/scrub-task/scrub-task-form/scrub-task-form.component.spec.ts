@@ -133,7 +133,7 @@ describe('ScrubTaskFormComponent', () => {
         Pool: 'My pool',
         'Threshold Days': '40',
         Description: 'Existing task',
-        Schedule: 'Custom (10 15 1,2 * 7) At 03:10 PM, on day 1 and 2 of the month, and on Sunday',
+        Schedule: 'Custom At 03:10 PM, on day 1 and 2 of the month, and on Sunday',
         Enabled: true,
       });
     });

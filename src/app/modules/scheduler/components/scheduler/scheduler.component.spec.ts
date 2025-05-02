@@ -74,27 +74,27 @@ describe('SchedulerComponent', () => {
     const options = await select.getOptions();
     const optionLabels = await parallel(() => options.map((option) => option.getText()));
     expect(optionLabels).toEqual([
-      'Hourly (0 * * * *)  At the start of each hour',
-      'Daily (0 0 * * *)  At 00:00 (12:00 AM)',
-      'Weekly (0 0 * * sun)  On Sundays at 00:00 (12:00 AM)',
-      'Monthly (0 0 1 * *)  On the first day of the month at 00:00 (12:00 AM)',
+      'Hourly At the start of each hour',
+      'Daily At 00:00 (12:00 AM)',
+      'Weekly On Sundays at 00:00 (12:00 AM)',
+      'Monthly On the first day of the month at 00:00 (12:00 AM)',
       'Create   Custom schedule',
     ]);
   });
 
   it('shows current form group value in the select', async () => {
-    control.setValue('0 2 15-28 * mon');
+    control.setValue('0 * * * *');
 
     const select = await loader.getHarness(MatSelectHarness);
     const currentValue = await select.getValueText();
     spectator.detectChanges();
-    expect(currentValue).toBe('Custom (0 2 15-28 * mon)');
+    expect(currentValue).toBe('Hourly At the start of each hour');
   });
 
   it('writes values to form group when preset is selected from the dropdown', async () => {
     const select = await loader.getHarness(MatSelectHarness);
     await select.open();
-    await select.clickOptions({ text: 'Daily (0 0 * * *)  At 00:00 (12:00 AM)' });
+    await select.clickOptions({ text: 'Daily At 00:00 (12:00 AM)' });
     expect(control.value).toBe('0 0 * * *');
   });
 
