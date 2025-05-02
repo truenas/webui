@@ -8,7 +8,7 @@
   <mat-card-content>
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <div class="two-columns">
-        <ix-fieldset [title]="helptext.ups_fieldset_general | translate">
+        <ix-fieldset [title]="helptext.fieldsetGeneral | translate">
           <ix-input
             formControlName="identifier"
             [label]="labels.identifier | translate"
@@ -58,7 +58,7 @@
           ></ix-combobox>
         </ix-fieldset>
 
-        <ix-fieldset [title]="helptext.ups_fieldset_monitor | translate">
+        <ix-fieldset [title]="helptext.fieldsetMonitor | translate">
           <ix-input
             formControlName="monuser"
             [label]="labels.monuser | translate"
@@ -89,7 +89,7 @@
       </div>
 
       <div class="one-column">
-        <ix-fieldset [title]="helptext.ups_fieldset_shutdown | translate">
+        <ix-fieldset [title]="helptext.fieldsetShutdown | translate">
           <ix-select
             formControlName="shutdown"
             [label]="labels.shutdown | translate"
@@ -119,7 +119,7 @@
       </div>
 
       <div class="one-column">
-        <ix-fieldset [title]="helptext.ups_fieldset_other | translate">
+        <ix-fieldset [title]="helptext.fieldsetOther | translate">
           <ix-input
             formControlName="nocommwarntime"
             type="number"

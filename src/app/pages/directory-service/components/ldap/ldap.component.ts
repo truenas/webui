@@ -138,7 +138,7 @@ export class LdapComponent implements OnInit {
         next: ({ description }) => {
           this.isLoading = false;
           this.snackbar.success(
-            this.translate.instant(description || helptextLdap.ldap_custactions_clearcache_dialog_message),
+            this.translate.instant(description || helptextLdap.cacheBeingRebuilt),
           );
           this.cdr.markForCheck();
         },

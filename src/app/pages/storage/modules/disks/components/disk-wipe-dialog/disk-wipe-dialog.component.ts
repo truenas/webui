@@ -46,7 +46,7 @@ export class DiskWipeDialog {
   });
 
   readonly tooltips = {
-    wipe_method: helptextDisks.dw_wipe_method_tooltip,
+    wipe_method: helptextDisks.wipeMethodTooltip,
   };
 
   readonly wipeMethods$ = of([

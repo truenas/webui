@@ -58,7 +58,7 @@ export class DatasetCapacitySettingsComponent implements OnInit {
   form = this.formBuilder.group({
     refquota: [null as number | null, this.validators.withMessage(
       Validators.min(GiB),
-      this.translate.instant(helptextDatasetForm.dataset_form_quota_too_small),
+      this.translate.instant(helptextDatasetForm.quotaTooSmall),
     )],
     refquota_warning: [this.defaultQuotaWarning, [
       Validators.min(0),
@@ -73,7 +73,7 @@ export class DatasetCapacitySettingsComponent implements OnInit {
 
     quota: [null as number | null, this.validators.withMessage(
       Validators.min(GiB),
-      this.translate.instant(helptextDatasetForm.dataset_form_quota_too_small),
+      this.translate.instant(helptextDatasetForm.quotaTooSmall),
     )],
     quota_warning: [this.defaultQuotaWarning, [
       Validators.min(0),
