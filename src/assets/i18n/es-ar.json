@@ -13,6 +13,7 @@
   "by parent": "",
   "Connection Name": "",
   "Default Mac Address": "",
+  "Edit Service": "",
   "Encryption root means that dataset has its own encryption settings. Only encryption roots can be directly locked, unlocked, or have their keys changed. Child datasets will inherit encryption settings from the parent encryption root.": "",
   "From Active Directory": "",
   "Go to Backups": "",

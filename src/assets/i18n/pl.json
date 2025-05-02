@@ -82,6 +82,7 @@
   "Define the path to a system location that  will store replicated snapshots. Click the  <i class=\"material-icons\">folder</i> to see all locations on the  destination system or click in the field to manually type a location  path (Example: <code>pool1/dataset1</code>). Selecting a location  defines the full path to that location as the destination. Appending a  name to the path will create new zvol at that location.<br><br>  For example, selecting <i>pool1/dataset1</i> will store  snapshots in <i>dataset1</i>, but clicking the path and typing  <code>/zvol1</code> after <i>dataset1</i> will create <i>zvol1</i> for  snapshot storage.": "",
   "Define whether the control channel,  data channel, both channels, or neither channel of an FTP  session must occur over SSL/TLS. The policies are described  <a href=\"http://www.proftpd.org/docs/directives/configuration_full.html#TLSREQUIRED\" target=\"_blank\">here</a>": "",
   "DISABLED": "",
+  "Edit Service": "",
   "Enable Automatic Failover": "",
   "Enable Serial Console": "",
   "Encryption root means that dataset has its own encryption settings. Only encryption roots can be directly locked, unlocked, or have their keys changed. Child datasets will inherit encryption settings from the parent encryption root.": "",

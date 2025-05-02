@@ -832,6 +832,7 @@
   "Edit Docker Registry": "",
   "Edit Instance: {name}": "",
   "Edit Proxy": "",
+  "Edit Service": "",
   "Edit Trim": "",
   "Editing interface will result in default gateway being removed, which may result in TrueNAS being inaccessible. You can provide new default gateway now:": "",
   "Editing interfaces while HA is enabled is not allowed.": "",

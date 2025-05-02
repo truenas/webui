@@ -10,4 +10,11 @@
   @media(max-width: $breakpoint-sm) {
     flex-wrap: wrap;
   }
+
+  a {
+    color: var(--primary);
+    cursor: pointer;
+    margin: 0 8px;
+    text-decoration: underline;
+  }
 }

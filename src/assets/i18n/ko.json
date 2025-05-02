@@ -13,6 +13,7 @@
   "Dataset Encryption": "",
   "Decrease font size": "",
   "Default Mac Address": "",
+  "Edit Service": "",
   "Encryption root means that dataset has its own encryption settings. Only encryption roots can be directly locked, unlocked, or have their keys changed. Child datasets will inherit encryption settings from the parent encryption root.": "",
   "Enter a list of chat IDs separated by space, comma or semicolon.    To find your chat ID send a message to the bot, group or channel and visit    <a href=\"https://api.telegram.org/bot(BOT_TOKEN)/getUpdates\"    target=\"_blank\">https://api.telegram.org/bot(BOT_TOKEN)/getUpdates</a>.": "",
   "Enter or paste the <a   href=\"https://docs.opsgenie.com/v1.0/docs/api-integration\"   target=\"_blank\">API key</a>. Find the API key by signing   into the OpsGenie web interface and going to   Integrations/Configured Integrations. Click the desired   integration, Settings, and read the API Key field.": "",

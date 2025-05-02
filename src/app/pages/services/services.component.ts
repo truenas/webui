@@ -3,28 +3,23 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { MatCard } from '@angular/material/card';
-import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { EMPTY, Observable, of } from 'rxjs';
+import { EMPTY, of } from 'rxjs';
 import {
-  catchError, filter, map, switchMap, take,
+  catchError, map, take,
 } from 'rxjs/operators';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
-import { AuditService } from 'app/enums/audit.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
-import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
-import { ServiceStatus, serviceStatusLabels } from 'app/enums/service-status.enum';
-import { Service, ServiceRow } from 'app/interfaces/service.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
+import { serviceNames } from 'app/enums/service-name.enum';
+import { serviceStatusLabels } from 'app/enums/service-status.enum';
+import { ServiceRow } from 'app/interfaces/service.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { templateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { toggleColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
@@ -35,25 +30,12 @@ import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-
 import { createTable } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ServiceFtpComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
-import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
-import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
-import { ServiceSnmpComponent } from 'app/pages/services/components/service-snmp/service-snmp.component';
-import { ServiceSshComponent } from 'app/pages/services/components/service-ssh/service-ssh.component';
+import { ServiceActionsCellComponent } from 'app/pages/services/components/service-actions-cell/service-actions-cell.component';
 import { ServiceStatusCellComponent } from 'app/pages/services/components/service-status-cell/service-status-cell.component';
-import { ServiceUpsComponent } from 'app/pages/services/components/service-ups/service-ups.component';
 import { servicesElements } from 'app/pages/services/services.elements';
-import {
-  GlobalTargetConfigurationComponent,
-} from 'app/pages/sharing/iscsi/global-target-configuration/global-target-configuration.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
-import { IscsiService } from 'app/services/iscsi.service';
 import { ServicesService } from 'app/services/services.service';
-import { UrlOptionsService } from 'app/services/url-options.service';
 import { serviceChanged } from 'app/store/services/services.actions';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { waitForServices } from 'app/store/services/services.selectors';
@@ -77,6 +59,7 @@ import { waitForServices } from 'app/store/services/services.selectors';
     ServiceStatusCellComponent,
     TranslateModule,
     AsyncPipe,
+    ServiceActionsCellComponent,
   ],
 })
 export class ServicesComponent implements OnInit {
@@ -99,43 +82,8 @@ export class ServicesComponent implements OnInit {
       onRowToggle: (row) => this.enableToggle(row),
       dynamicRequiredRoles: (row) => of(this.servicesService.getRolesRequiredToManage(row.service)),
     }),
-    actionsColumn({
+    templateColumn({
       cssClass: 'actions-column',
-      actions: [
-        {
-          dynamicText: () => of(this.translate.instant('View Logs')),
-          hidden: (row) => of(!this.hasLogs(row.service)),
-          onClick: () => this.router.navigate([this.auditLogsUrl()]),
-        },
-        {
-          dynamicText: () => of(this.translate.instant('View Sessions')),
-          hidden: (row) => of(!this.hasSessions(row.service)),
-          onClick: (row) => this.router.navigate(this.sessionsUrl(row.service)),
-        },
-        {
-          iconName: iconMarker('mdi-play-circle'),
-          tooltip: this.translate.instant('Start Service'),
-          hidden: (row) => of(row.state === ServiceStatus.Running),
-          onClick: (row) => this.startService(row.service),
-          requiredRoles: this.requiredRoles,
-        },
-        {
-          iconName: iconMarker('mdi-stop-circle'),
-          tooltip: this.translate.instant('Stop Service'),
-          hidden: (row) => of(row.state === ServiceStatus.Stopped),
-          onClick: (row) => this.confirmStop(row.service).pipe(
-            filter(Boolean),
-            take(1),
-            untilDestroyed(this),
-          ).subscribe(() => this.stopService(row.service)),
-          requiredRoles: this.requiredRoles,
-        },
-        {
-          iconName: iconMarker('edit'),
-          tooltip: this.translate.instant('Edit'),
-          onClick: (row) => this.configureService(row),
-        },
-      ],
     }),
   ], {
     uniqueRowTag: (row) => 'service-' + row.name.replace(/\./g, ''),
@@ -167,17 +115,11 @@ export class ServicesComponent implements OnInit {
     protected emptyService: EmptyService,
     private servicesService: ServicesService,
     private api: ApiService,
-    private router: Router,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
-    private slideIn: SlideIn,
     private store$: Store<ServicesState>,
-    private urlOptions: UrlOptionsService,
     private errorHandler: ErrorHandlerService,
     private loader: LoaderService,
-    private snackbar: SnackbarService,
-    private iscsiService: IscsiService,
-    private dialogService: DialogService,
   ) {}
 
   ngOnInit(): void {
@@ -238,114 +180,5 @@ export class ServicesComponent implements OnInit {
         untilDestroyed(this),
       )
       .subscribe();
-  }
-
-  private configureService(row: Service): void {
-    switch (row.service) {
-      case ServiceName.Iscsi:
-        this.slideIn.open(GlobalTargetConfigurationComponent);
-        break;
-      case ServiceName.Ftp:
-        this.slideIn.open(ServiceFtpComponent, { wide: true });
-        break;
-      case ServiceName.Nfs:
-        this.slideIn.open(ServiceNfsComponent, { wide: true });
-        break;
-      case ServiceName.Snmp:
-        this.slideIn.open(ServiceSnmpComponent, { wide: true });
-        break;
-      case ServiceName.Ups:
-        this.slideIn.open(ServiceUpsComponent, { wide: true });
-        break;
-      case ServiceName.Ssh:
-        this.slideIn.open(ServiceSshComponent);
-        break;
-      case ServiceName.Cifs:
-        this.slideIn.open(ServiceSmbComponent);
-        break;
-      default:
-        break;
-    }
-  }
-
-  private sessionsUrl(serviceName: ServiceName): string[] {
-    if (serviceName === ServiceName.Cifs) {
-      return ['/sharing', 'smb', 'status', 'sessions'];
-    }
-    if (serviceName === ServiceName.Nfs) {
-      return ['/sharing', 'nfs', 'sessions'];
-    }
-    return [];
-  }
-
-  private hasSessions(serviceName: ServiceName): boolean {
-    return serviceName === ServiceName.Cifs || serviceName === ServiceName.Nfs;
-  }
-
-  private auditLogsUrl(): string {
-    return this.urlOptions.buildUrl('/system/audit', {
-      searchQuery: {
-        isBasicQuery: false,
-        filters: [['service', '=', AuditService.Smb]],
-      },
-    });
-  }
-
-  private hasLogs(serviceName: ServiceName): boolean {
-    return serviceName === ServiceName.Cifs;
-  }
-
-  private confirmStop(serviceName: ServiceName): Observable<boolean> {
-    if (serviceName === ServiceName.Iscsi) {
-      return this.confirmStopIscsiService(serviceName);
-    }
-
-    return this.dialogService.confirm({
-      title: this.translate.instant('Alert'),
-      message: this.translate.instant('Stop {serviceName}?', { serviceName: serviceNames.get(serviceName) }),
-      hideCheckbox: true,
-      buttonText: this.translate.instant('Stop'),
-    });
-  }
-
-  private stopService(serviceName: ServiceName): void {
-    this.api.call('service.stop', [serviceName, { silent: false }]).pipe(
-      this.loader.withLoader(),
-      this.errorHandler.withErrorHandler(),
-      untilDestroyed(this),
-    ).subscribe(() => {
-      this.snackbar.success(this.translate.instant('Service stopped'));
-    });
-  }
-
-  private startService(serviceName: ServiceName): void {
-    this.api.call('service.start', [serviceName, { silent: false }]).pipe(
-      this.loader.withLoader(),
-      this.errorHandler.withErrorHandler(),
-      untilDestroyed(this),
-    ).subscribe(() => {
-      this.snackbar.success(this.translate.instant('Service started'));
-    });
-  }
-
-  private confirmStopIscsiService(serviceName: ServiceName): Observable<boolean> {
-    return this.iscsiService.getGlobalSessions().pipe(
-      switchMap((sessions) => {
-        let message = this.translate.instant('Stop {serviceName}?', { serviceName: serviceNames.get(serviceName) });
-        if (sessions.length) {
-          const connectionsMessage = this.translate.instant('{n, plural, one {There is an active iSCSI connection.} other {There are # active iSCSI connections}}', { n: sessions.length });
-          const stopMessage = this.translate.instant('Stop the {serviceName} service and close these connections?', { serviceName: serviceNames.get(serviceName) });
-          message = `<font color="red">${connectionsMessage}</font><br>${stopMessage}` as TranslatedString;
-        }
-
-        return this.dialogService.confirm({
-          title: this.translate.instant('Alert'),
-          message,
-          hideCheckbox: true,
-          buttonText: this.translate.instant('Stop'),
-        });
-      }),
-      untilDestroyed(this),
-    );
   }
 }

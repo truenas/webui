@@ -790,6 +790,7 @@
   "Edit Privilege": "",
   "Edit Proxy": "",
   "Edit Reporting Exporter": "",
+  "Edit Service": "",
   "Edit Trim": "",
   "Edit TrueCloud Backup Task": "",
   "Editing interface will result in default gateway being removed, which may result in TrueNAS being inaccessible. You can provide new default gateway now:": "",

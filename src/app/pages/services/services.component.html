@@ -31,6 +31,15 @@
       >
         <ix-service-status-cell [service]="service"></ix-service-status-cell>
       </ng-template>
+
+      <ng-template
+        let-service
+        ix-table-cell
+        [columnIndex]="3"
+        [dataProvider]="dataProvider"
+      >
+        <ix-service-actions-cell [service]="service"></ix-service-actions-cell>
+      </ng-template>
     </tbody>
   </ix-table>
 </mat-card>
