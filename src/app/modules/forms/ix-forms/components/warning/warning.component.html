@@ -1,1 +1,4 @@
-<span class="warning" [ngClass]="{ 'green': color() === 'green' }">{{ message() | translate }}</span>
+<span
+  class="warning"
+  [class.green]="color() === 'green'"
+>{{ message() | translate }}</span>

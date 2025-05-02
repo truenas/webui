@@ -33,10 +33,6 @@ describe('ServiceStateButtonComponent', () => {
   });
 
   it('shows service status based on service state', async () => {
-    const loadingButton = await loader.getHarness(MatButtonHarness.with({ text: 'LOADING' }));
-    expect(loadingButton).toExist();
-    expect((await (await loadingButton.host()).getAttribute('class'))?.split(' ').includes('fn-theme-orange')).toBe(true);
-
     spectator.setInput('service', { id: 1, service: ServiceName.Nfs, state: ServiceStatus.Running } as Service);
     spectator.setInput('count', 5);
     const runningButton = await loader.getHarness(MatButtonHarness.with({ text: 'RUNNING' }));

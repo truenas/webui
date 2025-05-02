@@ -17,5 +17,15 @@ export const storageCardElements = {
     systemPool: {
       hierarchy: [T('System Data Pool')],
     },
+    priorityResilver: {
+      hierarchy: [T('Resilvering At Higher Priority')],
+      synonyms: [
+        T('Resilver Priority'),
+        T('Scrub Priority'),
+        T('Resilvering Priority'),
+        T('Resilver Settings'),
+        T('Resilvering Settings'),
+      ],
+    },
   },
 } satisfies UiSearchableElement;

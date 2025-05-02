@@ -10,16 +10,6 @@
       <button
         *ixRequiresRoles="requiredRoles"
         mat-button
-        [ixTest]="['scrub-task', 'adjust-scrub']"
-        [ixUiSearch]="uiSearchableElement.elements.adjust"
-        [routerLink]="['/data-protection', 'scrub', 'priority']"
-      >
-        {{ 'Adjust Scrub/Resilver Priority' | translate }}
-      </button>
-
-      <button
-        *ixRequiresRoles="requiredRoles"
-        mat-button
         [ixTest]="['scrub-task', 'add']"
         [attr.aria-label]="'Add Scrub Task' | translate"
         (click)="openForm()"

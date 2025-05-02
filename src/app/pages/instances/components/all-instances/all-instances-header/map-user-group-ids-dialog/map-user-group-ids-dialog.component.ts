@@ -81,7 +81,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 export class MapUserGroupIdsDialog implements OnInit {
   protected readonly columns = ['name', 'hostUidOrGid', 'instanceUidOrGid', 'actions'];
-  protected readonly containersHelptext = instancesHelptext;
+  protected readonly instancesHelptext = instancesHelptext;
 
   protected readonly isLoading = signal(false);
   protected readonly mappings = signal<IdMapping[]>([]);

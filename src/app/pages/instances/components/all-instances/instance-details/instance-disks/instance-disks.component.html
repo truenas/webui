@@ -24,7 +24,7 @@
           {{ rootDiskSize | ixFileSize }}
 
           @if (instance().root_disk_io_bus) {
-            ({{ instance().root_disk_io_bus | mapValue: diskIoBusLabels}})
+            ({{ instance().root_disk_io_bus | mapValue: diskIoBusLabels }})
           }
         </span>
 
