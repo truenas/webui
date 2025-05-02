@@ -88,4 +88,12 @@ Ideal for legacy applications, full-featured desktops, or software with strict O
     moveTooltip: T('Renames the ZFS dataset to a path in the `ix-virt` dataset in which the zvol is located.'),
     description: T('Importing a zvol as Instances volume allows its lifecycle to be managed, including backups, restores, and snapshots. This allows portability between systems using standard tools.'),
   },
+
+  osImage: {
+    tooltip: T('Optionally specify the operating system for VM-based instances.\
+ Common options are Windows, Linux, FreeBSD but you can also enter a custom value.\
+ Leaving this field empty is allowed. \n \n When creating a Windows VM, make sure to set the this field to Windows.\
+ Doing so will tell us to expect Windows to be running inside of the virtual machine\
+ and to tweak behavior accordingly.'),
+  },
 };

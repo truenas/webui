@@ -10,8 +10,11 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
-import { VirtualizationStatus, VirtualizationType } from 'app/enums/virtualization.enum';
+import {
+  ImageOs, imageOsLabels, VirtualizationStatus, VirtualizationType,
+} from 'app/enums/virtualization.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
+import { mapToOptions } from 'app/helpers/options.helper';
 import { instancesHelptext } from 'app/helptext/instances/instances';
 import {
   InstanceEnvVariablesFormGroup,
@@ -19,7 +22,9 @@ import {
   VirtualizationInstance,
 } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { SimpleAsyncComboboxProvider } from 'app/modules/forms/ix-forms/classes/simple-async-combobox-provider';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
@@ -49,6 +54,7 @@ import { defaultVncPort } from 'app/pages/instances/instances.constants';
     IxListComponent,
     IxListItemComponent,
     MatTooltip,
+    IxComboboxComponent,
   ],
   templateUrl: './instance-edit-form.component.html',
   styleUrls: ['./instance-edit-form.component.scss'],
@@ -61,8 +67,9 @@ export class InstanceEditFormComponent {
   title: string;
   editingInstance: VirtualizationInstance;
   poolOptions$ = this.api.call('virt.global.pool_choices').pipe(choicesToOptions());
+  readonly imageOsProvider = new SimpleAsyncComboboxProvider(of(mapToOptions(imageOsLabels, this.translate)));
 
-  protected readonly containersHelptext = instancesHelptext;
+  protected readonly instancesHelptext = instancesHelptext;
 
   get isVm(): boolean {
     return this.editingInstance.type === VirtualizationType.Vm;
@@ -84,6 +91,7 @@ export class InstanceEditFormComponent {
     vnc_port: [defaultVncPort as number | null, [Validators.min(5900), Validators.max(65535)]],
     vnc_password: [null as string | null],
     secure_boot: [false],
+    image_os: ['' as ImageOs | null],
     environmentVariables: new FormArray<InstanceEnvVariablesFormGroup>([]),
   });
 
@@ -112,6 +120,7 @@ export class InstanceEditFormComponent {
       vnc_port: this.editingInstance.vnc_port,
       vnc_password: this.editingInstance.vnc_password,
       secure_boot: this.editingInstance.secure_boot,
+      image_os: this.editingInstance?.image?.os as ImageOs,
     });
 
     this.setVncControls();
@@ -177,6 +186,7 @@ export class InstanceEditFormComponent {
 
     if (this.isVm) {
       payload.secure_boot = values.secure_boot;
+      payload.image_os = values.image_os;
     }
 
     return payload;
