@@ -98,7 +98,7 @@ export class PoolsDashboardComponent implements OnInit {
   }
 
   getDisksByPool(pool: Pool): StorageDashboardDisk[] {
-    return this.store.disksByPool()[pool.id] || [];
+    return this.store.disksByPool()[pool.name] || [];
   }
 
   onImportPool(): void {
