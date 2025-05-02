@@ -27,9 +27,7 @@ import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/s
 import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
 import { ServiceSnmpComponent } from 'app/pages/services/components/service-snmp/service-snmp.component';
 import { ServiceSshComponent } from 'app/pages/services/components/service-ssh/service-ssh.component';
-import {
-  ServiceStateColumnComponent,
-} from 'app/pages/services/components/service-state-column/service-state-column.component';
+import { ServiceStatusCellComponent } from 'app/pages/services/components/service-status-cell/service-status-cell.component';
 import { ServiceUpsComponent } from 'app/pages/services/components/service-ups/service-ups.component';
 import { ServicesComponent } from 'app/pages/services/services.component';
 import {
@@ -65,7 +63,7 @@ describe('ServicesComponent', () => {
       SearchInput1Component,
     ],
     declarations: [
-      ServiceStateColumnComponent,
+      ServiceStatusCellComponent,
     ],
     providers: [
       mockAuth(),
@@ -100,10 +98,20 @@ describe('ServicesComponent', () => {
   it('should show table rows', async () => {
     const expectedData = [...serviceNames.keys()]
       .filter((service) => !hiddenServices.includes(service))
-      .map((service) => [serviceNames.get(service), '', '', '']);
+      .map((service) => {
+        if (service === ServiceName.Cifs) {
+          return [serviceNames.get(service), 'Stopped', '', 'View Logs  View Sessions'];
+        }
+
+        if (service === ServiceName.Nfs) {
+          return [serviceNames.get(service), 'Stopped', '', 'View Sessions'];
+        }
+
+        return [serviceNames.get(service), 'Stopped', '', ''];
+      });
 
     const expectedRows = [
-      ['Name', 'Running', 'Start Automatically', ''],
+      ['Name', 'Status', 'Start Automatically', ''],
       ...expectedData,
     ];
 
@@ -175,8 +183,10 @@ describe('ServicesComponent', () => {
       jest.spyOn(router, 'navigate').mockResolvedValue(true);
 
       const serviceIndex = fakeDataSource.findIndex((item) => item.service === ServiceName.Cifs) + 1;
-      const sessionsButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'list' }), serviceIndex, 3);
-      await sessionsButton.click();
+
+      const cell = await table.getCell(serviceIndex, 3);
+      const link = await cell.getAnchorByText('View Sessions');
+      await link.click();
 
       expect(router.navigate).toHaveBeenCalledWith(['/sharing', 'smb', 'status', 'sessions']);
     });
@@ -186,20 +196,23 @@ describe('ServicesComponent', () => {
       jest.spyOn(router, 'navigate').mockResolvedValue(true);
 
       const serviceIndex = fakeDataSource.findIndex((item) => item.service === ServiceName.Nfs) + 1;
-      const sessionsButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'list' }), serviceIndex, 3);
-      await sessionsButton.click();
+      const cell = await table.getCell(serviceIndex, 3);
+      const link = await cell.getAnchorByText('View Sessions');
+      await link.click();
 
       expect(router.navigate).toHaveBeenCalledWith(['/sharing', 'nfs', 'sessions']);
     });
   });
 
-  it('should change service enable state when slide is checked', async () => {
+  it('should change service enable state when Start Service button is clicked', async () => {
+    jest.spyOn(spectator.inject(DialogService), 'confirm');
     const serviceIndex = fakeDataSource.findIndex((item) => item.service === ServiceName.Ftp) + 1;
-    const toggle = await table.getHarnessInCell(MatSlideToggleHarness, serviceIndex, 1);
-
-    expect(await toggle.isChecked()).toBe(false);
-
-    await toggle.check();
+    const startServiceButton = await table.getHarnessInCell(
+      IxIconHarness.with({ name: 'mdi-play-circle' }),
+      serviceIndex,
+      3,
+    );
+    await startServiceButton.click();
 
     expect(api.call).toHaveBeenCalledWith('service.start', [ServiceName.Ftp, { silent: false }]);
   });
@@ -214,14 +227,14 @@ describe('ServicesComponent', () => {
     expect(api.call).toHaveBeenCalledWith('service.update', [0, { enable: true }]);
   });
 
-  it('should show audit log icon for SMB service', async () => {
+  it('should show audit log link for SMB service', async () => {
     const router = spectator.inject(Router);
     jest.spyOn(router, 'navigate').mockResolvedValue(true);
 
     const serviceIndex = fakeDataSource.findIndex((item) => item.service === ServiceName.Cifs) + 1;
-    const logsButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'receipt_long' }), serviceIndex, 3);
-
-    await logsButton.click();
+    const cell = await table.getCell(serviceIndex, 3);
+    const link = await cell.getAnchorByText('View Logs');
+    await link.click();
 
     expect(router.navigate).toHaveBeenCalledWith([
       '/system/audit/{"searchQuery":{"isBasicQuery":false,"filters":[["service","=","SMB"]]}}',
