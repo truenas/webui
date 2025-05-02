@@ -94,6 +94,9 @@ export class VolumesDialog implements OnInit {
       textColumn({
         title: this.translate.instant('Size'),
         getValue: (row) => {
+          if (!row.config.size) {
+            return this.translate.instant('Unknown');
+          }
           return buildNormalizedFileSize(row.config.size * MiB);
         },
       }),
