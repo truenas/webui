@@ -133,12 +133,12 @@ export class NfsListComponent implements OnInit {
         },
         {
           iconName: iconMarker('mdi-delete'),
-          tooltip: this.translate.instant('Unshare'),
+          tooltip: this.translate.instant('Delete'),
           onClick: (row) => {
             this.dialog.confirm({
-              title: this.translate.instant('Unshare {name}', { name: row.path }),
+              title: this.translate.instant('Delete {name}', { name: row.path }),
               message: this.translate.instant(shared.delete_share_message),
-              buttonText: this.translate.instant('Unshare'),
+              buttonText: this.translate.instant('Delete'),
               buttonColor: 'warn',
             }).pipe(
               filter(Boolean),
