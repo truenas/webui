@@ -22,7 +22,7 @@ import { SearchInput1Component } from 'app/modules/forms/search-input1/search-in
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
+import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { toggleColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
 import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
@@ -119,7 +119,7 @@ export class NfsListComponent implements OnInit {
       propertyName: 'expose_snapshots',
       hidden: !this.isEnterprise(),
     }),
-    actionsColumn({
+    actionsWithMenuColumn({
       actions: [
         {
           iconName: iconMarker('edit'),
@@ -133,12 +133,12 @@ export class NfsListComponent implements OnInit {
         },
         {
           iconName: iconMarker('mdi-delete'),
-          tooltip: this.translate.instant('Unshare'),
+          tooltip: this.translate.instant('Delete'),
           onClick: (row) => {
             this.dialog.confirm({
-              title: this.translate.instant('Unshare {name}', { name: row.path }),
+              title: this.translate.instant('Delete {name}', { name: row.path }),
               message: this.translate.instant(shared.delete_share_message),
-              buttonText: this.translate.instant('Unshare'),
+              buttonText: this.translate.instant('Delete'),
               buttonColor: 'warn',
             }).pipe(
               filter(Boolean),
