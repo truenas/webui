@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
+import { MatMenuHarness } from '@angular/material/menu/testing';
 import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
@@ -18,7 +19,6 @@ import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import {
   IxCellScheduleComponent,
@@ -165,8 +165,9 @@ describe('CloudSyncTaskCardComponent', () => {
   });
 
   it('shows form to edit an existing CloudSync Task when Edit button is pressed', async () => {
-    const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 6);
-    await editButton.click();
+    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
+    await menu.open();
+    await menu.clickItem({ text: 'Edit' });
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
       CloudSyncFormComponent,
@@ -189,8 +190,9 @@ describe('CloudSyncTaskCardComponent', () => {
 
   it('shows confirmation dialog when Run Now button is pressed', async () => {
     jest.spyOn(spectator.inject(DialogService), 'confirm');
-    const runNowButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-play-circle' }), 1, 6);
-    await runNowButton.click();
+    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
+    await menu.open();
+    await menu.clickItem({ text: 'Run job' });
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Run Now',
@@ -202,8 +204,9 @@ describe('CloudSyncTaskCardComponent', () => {
   });
 
   it('shows confirmation dialog when Dry Run button is pressed', async () => {
-    const runNowButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'sync' }), 1, 6);
-    await runNowButton.click();
+    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
+    await menu.open();
+    await menu.clickItem({ text: 'Dry Run' });
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Test Cloud Sync',
@@ -216,8 +219,9 @@ describe('CloudSyncTaskCardComponent', () => {
 
   it('shows dialog when Restore button is pressed', async () => {
     jest.spyOn(spectator.inject(MatDialog), 'open');
-    const runNowButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'restore' }), 1, 6);
-    await runNowButton.click();
+    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
+    await menu.open();
+    await menu.clickItem({ text: 'Restore' });
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(CloudSyncRestoreDialog, {
       data: 3,
@@ -226,8 +230,9 @@ describe('CloudSyncTaskCardComponent', () => {
   });
 
   it('deletes a CloudSync Task with confirmation when Delete button is pressed', async () => {
-    const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 6);
-    await deleteIcon.click();
+    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
+    await menu.open();
+    await menu.clickItem({ text: 'Delete' });
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Confirmation',

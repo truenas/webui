@@ -1,3 +1,4 @@
+import { byText } from '@ngneat/spectator';
 import { createHostFactory, SpectatorHost } from '@ngneat/spectator/jest';
 import { JobState } from 'app/enums/job-state.enum';
 import { JobExceptionType } from 'app/enums/response-error-type.enum';
@@ -44,6 +45,11 @@ describe('JobLogsRowComponent', () => {
       '<ix-job-logs-row [job]="job"></ix-job-logs-row>',
       { hostProps: { job: fakeJob } },
     );
+  });
+
+  it('shows job id', () => {
+    const jobId = spectator.query(byText('ID:'));
+    expect(jobId).toHaveText('ID: 446');
   });
 
   it('shows arguments and logs', () => {

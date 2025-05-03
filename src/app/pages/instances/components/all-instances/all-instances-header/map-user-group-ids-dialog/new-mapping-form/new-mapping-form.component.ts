@@ -55,7 +55,7 @@ export class NewMappingFormComponent implements OnChanges, OnInit {
   readonly mappingAdded = output();
 
   protected readonly ViewType = ViewType;
-  protected readonly containersHelptext = instancesHelptext;
+  protected readonly instancesHelptext = instancesHelptext;
 
   protected form = this.formBuilder.group({
     hostUidOrGid: [null as number | null, Validators.required],

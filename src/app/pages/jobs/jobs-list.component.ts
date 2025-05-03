@@ -92,10 +92,6 @@ export class JobsListComponent implements OnInit {
       cssClass: 'state-button',
       getJob: (row) => row,
     }),
-    textColumn({
-      title: this.translate.instant('ID'),
-      propertyName: 'id',
-    }),
     dateColumn({
       title: this.translate.instant('Started'),
       propertyName: 'time_started',

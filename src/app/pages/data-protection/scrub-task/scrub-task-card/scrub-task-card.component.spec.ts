@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
+import { MatMenuHarness } from '@angular/material/menu/testing';
 import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
@@ -13,7 +14,6 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { PoolScrubTask } from 'app/interfaces/pool-scrub.interface';
 import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import {
   IxCellScheduleComponent,
@@ -112,8 +112,9 @@ describe('ScrubTaskCardComponent', () => {
   });
 
   it('shows form to edit an existing Scrub Task when Edit button is pressed', async () => {
-    const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 5);
-    await editButton.click();
+    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
+    await menu.open();
+    await menu.clickItem({ text: 'Edit' });
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ScrubTaskFormComponent, {
       data: expect.objectContaining(scrubTasks[0]),
@@ -130,8 +131,9 @@ describe('ScrubTaskCardComponent', () => {
   });
 
   it('deletes a Scrub Task with confirmation when Delete button is pressed', async () => {
-    const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 5);
-    await deleteIcon.click();
+    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
+    await menu.open();
+    await menu.clickItem({ text: 'Delete' });
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Confirmation',

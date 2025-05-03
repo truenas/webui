@@ -194,7 +194,7 @@ describe('RsyncTaskFormComponent', () => {
         'Rsync Mode': 'Module',
         'Remote Module Name': 'module',
 
-        Schedule: 'Hourly (0 * * * *)  At the start of each hour',
+        Schedule: 'Hourly At the start of each hour',
         Recursive: true,
         Enabled: true,
 
