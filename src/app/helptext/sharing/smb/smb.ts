@@ -170,8 +170,6 @@ export const helptextSharingSmb = {
   placeholder_auxsmbconf: T('Additional Parameters String'),
   tooltip_auxsmbconf: T('String of additional smb4.conf parameters not covered by the system\'s API.'),
 
-  action_share_acl: T('Edit Share ACL'),
-  action_edit_acl: T('Edit Filesystem ACL'),
   restarted_smb_dialog: {
     title: T('SMB Service'),
     message: T('The SMB service has been restarted.'),

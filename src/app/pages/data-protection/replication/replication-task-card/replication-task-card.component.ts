@@ -22,9 +22,7 @@ import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import {
-  actionsColumn,
-} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
+import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
 import {
   relativeDateColumn,
 } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
@@ -112,8 +110,7 @@ export class ReplicationTaskCardComponent implements OnInit {
       title: this.translate.instant('Last Run'),
       getValue: (row) => row.state?.datetime?.$date,
     }),
-    actionsColumn({
-      cssClass: 'wide-actions',
+    actionsWithMenuColumn({
       actions: [
         {
           iconName: iconMarker('edit'),

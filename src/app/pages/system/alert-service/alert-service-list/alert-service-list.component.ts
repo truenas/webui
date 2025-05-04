@@ -98,7 +98,6 @@ export class AlertServiceListComponent implements OnInit {
       getValue: (service) => (service.enabled ? this.translate.instant('Yes') : this.translate.instant('No')),
     }),
     actionsColumn({
-      cssClass: 'wide-actions',
       actions: [
         {
           iconName: iconMarker('edit'),
