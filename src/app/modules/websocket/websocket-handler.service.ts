@@ -200,6 +200,7 @@ export class WebSocketHandlerService {
   }
 
   reconnect(): void {
+    this.wsStatus.setReconnect(false);
     if (this.wsConnection.closed) {
       this.setupWebSocket();
     } else {
