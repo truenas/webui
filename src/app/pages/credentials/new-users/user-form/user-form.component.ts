@@ -92,7 +92,6 @@ export class UserFormComponent implements OnInit {
     // TODO: Handle changes for `sshpubkey_file` input to set values on sshpubkey
     // TODO: Handle changes on `home` input to set the value of `home_mode` input
     // TODO: Handle changes on `home_create` field to set the value for `home_mode` field
-    // TODO: Add validator to `password_conf` field to match the value of `pasword` field
     // TODO: if editing user, handle setting values for `home_mode` depending on whether
     // `home` value is previously set or not
     // TODO: Handle setting disableWhile for
@@ -113,9 +112,6 @@ export class UserFormComponent implements OnInit {
     // TODO: if creating a new user,
     // set names already in user validator for `username`
     // set home share path by calling `sharing.smb.query`
-    // get the next user id and set to uid
-    // Set first shell option
-    // detect full name changes to set username based on that
 
     // TODO: set tooltips for sections
 
