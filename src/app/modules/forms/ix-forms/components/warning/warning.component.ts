@@ -1,4 +1,3 @@
-import { NgClass } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, input,
 } from '@angular/core';
@@ -11,7 +10,7 @@ import { TranslateModule } from '@ngx-translate/core';
   templateUrl: './warning.component.html',
   styleUrls: ['./warning.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgClass, TranslateModule],
+  imports: [TranslateModule],
 })
 export class WarningComponent {
   readonly message = input.required<string>();

@@ -1,8 +1,7 @@
-import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
-  Component,
+  Component, computed,
   OnInit,
 } from '@angular/core';
 import { MatButton, MatAnchor } from '@angular/material/button';
@@ -47,7 +46,6 @@ import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-st
     EmptyComponent,
     UnusedResourcesComponent,
     TranslateModule,
-    AsyncPipe,
   ],
   providers: [
     PoolsDashboardStore,
@@ -57,12 +55,7 @@ export class PoolsDashboardComponent implements OnInit {
   protected readonly requiredRoles = [Role.PoolWrite];
   readonly searchableElements = storageElements;
 
-  pools$ = this.store.pools$;
-  allDisksByPool: Record<string, StorageDashboardDisk[]> = {};
-  disks$ = this.store.disks$;
-
   rootDatasets: Record<string, Dataset> = {};
-  arePoolsLoading = true;
 
   entityEmptyConf: EmptyConfig = {
     type: EmptyType.NoPageData,
@@ -75,14 +68,15 @@ export class PoolsDashboardComponent implements OnInit {
     )}` as TranslatedString,
     button: {
       label: this.translate.instant('Create pool'),
-      action: () => this.createPool(),
+      action: () => this.router.navigate(['/storage', 'create']),
     },
   };
 
-  arePoolsLoading$ = this.store.arePoolsLoading$;
-  areDisksLoading$ = this.store.areDisksLoading$;
+  readonly pools = this.store.pools;
+  readonly arePoolsLoading = this.store.arePoolsLoading;
+  readonly isLoadingPoolDetails = this.store.isLoadingPoolDetails;
 
-  isEmptyPools = false;
+  readonly hasNoPools = computed(() => this.pools().length === 0);
 
   constructor(
     protected router: Router,
@@ -93,13 +87,6 @@ export class PoolsDashboardComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.pools$
-      .pipe(untilDestroyed(this))
-      .subscribe((pools) => {
-        this.isEmptyPools = pools.length === 0;
-        this.cdr.markForCheck();
-      });
-
     this.store.rootDatasets$
       .pipe(untilDestroyed(this))
       .subscribe((rootDatasets) => {
@@ -107,20 +94,11 @@ export class PoolsDashboardComponent implements OnInit {
         this.cdr.markForCheck();
       });
 
-    this.arePoolsLoading$.pipe(untilDestroyed(this)).subscribe((loading) => {
-      this.arePoolsLoading = loading;
-    });
-
     this.store.loadDashboard();
+  }
 
-    this.disks$.pipe(untilDestroyed(this)).subscribe((disks) => {
-      for (const disk of disks) {
-        if (!this.allDisksByPool[disk.pool]) {
-          this.allDisksByPool[disk.pool] = [];
-        }
-        this.allDisksByPool[disk.pool].push(disk);
-      }
-    });
+  getDisksByPool(pool: Pool): StorageDashboardDisk[] {
+    return this.store.disksByPool()[pool.name] || [];
   }
 
   onImportPool(): void {
@@ -128,13 +106,5 @@ export class PoolsDashboardComponent implements OnInit {
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(() => this.store.loadDashboard());
-  }
-
-  createPool(): void {
-    this.router.navigate(['/storage', 'create']);
-  }
-
-  getDisksForPool(pool: Pool): StorageDashboardDisk[] {
-    return this.allDisksByPool[pool.name] || [];
   }
 }

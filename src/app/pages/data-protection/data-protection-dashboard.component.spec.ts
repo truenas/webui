@@ -7,7 +7,6 @@ import { CloudSyncTaskCardComponent } from 'app/pages/data-protection/cloudsync/
 import { DataProtectionDashboardComponent } from 'app/pages/data-protection/data-protection-dashboard.component';
 import { ReplicationTaskCardComponent } from 'app/pages/data-protection/replication/replication-task-card/replication-task-card.component';
 import { RsyncTaskCardComponent } from 'app/pages/data-protection/rsync-task/rsync-task-card/rsync-task-card.component';
-import { ScrubTaskCardComponent } from 'app/pages/data-protection/scrub-task/scrub-task-card/scrub-task-card.component';
 import { SnapshotTaskCardComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-card/snapshot-task-card.component';
 
 describe('DataProtectionDashboardComponent', () => {
@@ -17,7 +16,6 @@ describe('DataProtectionDashboardComponent', () => {
     declarations: [
       MockComponents(
         CloudBackupCardComponent,
-        ScrubTaskCardComponent,
         CloudSyncTaskCardComponent,
         SnapshotTaskCardComponent,
         RsyncTaskCardComponent,
@@ -34,7 +32,6 @@ describe('DataProtectionDashboardComponent', () => {
 
   it('renders data protection cards', () => {
     expect(spectator.query(CloudBackupCardComponent)).toExist();
-    expect(spectator.query(ScrubTaskCardComponent)).toExist();
     expect(spectator.query(CloudSyncTaskCardComponent)).toExist();
     expect(spectator.query(SnapshotTaskCardComponent)).toExist();
     expect(spectator.query(RsyncTaskCardComponent)).toExist();

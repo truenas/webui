@@ -13,6 +13,7 @@ import { filter, map, take } from 'rxjs';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { IxCellActionsComponent } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
+import { IxCellActionsWithMenuComponent } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppState } from 'app/store';
@@ -80,7 +81,7 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges, 
       untilDestroyed(this),
     ).subscribe((displayedColumns) => {
       this.columns().forEach((column) => {
-        if (column instanceof IxCellActionsComponent) return;
+        if (column instanceof IxCellActionsComponent || column instanceof IxCellActionsWithMenuComponent) return;
 
         column.hidden = !displayedColumns.columns.includes(column.title);
 

@@ -6,13 +6,16 @@ import { MatButton } from '@angular/material/button';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { of } from 'rxjs';
 import {
   filter, switchMap, tap,
 } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { Direction } from 'app/enums/direction.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
+import { Job } from 'app/interfaces/job.interface';
 import { RsyncTask } from 'app/interfaces/rsync-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -20,9 +23,7 @@ import { SearchInput1Component } from 'app/modules/forms/search-input1/search-in
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import {
-  actionsColumn,
-} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
+import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
 import { relativeDateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
 import {
   scheduleColumn,
@@ -160,7 +161,7 @@ export class RsyncTaskListComponent implements OnInit {
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
     }),
-    actionsColumn({
+    actionsWithMenuColumn({
       actions: [
         {
           iconName: iconMarker('mdi-play-circle'),
@@ -204,7 +205,50 @@ export class RsyncTaskListComponent implements OnInit {
   ngOnInit(): void {
     this.filterString = this.route.snapshot.paramMap.get('dataset') || '';
 
-    const request$ = this.api.call('rsynctask.query');
+    const request$ = of([
+      {
+        id: 1,
+        enabled: true,
+        desc: 'My task',
+        direction: Direction.Pull,
+        path: '/mnt/Pool1',
+        remotehost: 'server.com',
+        remotemodule: 'my_module',
+        schedule: {
+          minute: '0',
+          hour: '*',
+          dom: '*',
+          month: '*',
+          dow: '*',
+        },
+        user: 'bob',
+        job: {
+          id: 1,
+          state: JobState.Running,
+        } as Job,
+      },
+      {
+        id: 2,
+        enabled: false,
+        desc: 'Second task',
+        direction: Direction.Push,
+        path: '/mnt/Pool2',
+        remotehost: 'server.com',
+        remotemodule: '',
+        schedule: {
+          minute: '0',
+          hour: '0',
+          dom: '1',
+          month: '*',
+          dow: '*',
+        },
+        user: 'peter',
+        job: {
+          id: 2,
+          state: JobState.Finished,
+        } as Job,
+      },
+    ] as RsyncTask[]);
     this.dataProvider = new AsyncDataProvider(request$);
     this.refresh();
     this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {

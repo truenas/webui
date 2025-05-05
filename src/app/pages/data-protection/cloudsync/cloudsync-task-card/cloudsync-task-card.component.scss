@@ -8,10 +8,6 @@
 }
 
 :host ::ng-deep {
-  .wide-actions {
-    width: 135px;
-  }
-
   .state-button {
     text-overflow: inherit !important;
     width: 78px;
