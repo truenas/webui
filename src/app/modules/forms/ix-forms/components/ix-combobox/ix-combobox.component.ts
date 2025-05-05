@@ -98,11 +98,16 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
 
   writeValue(value: string | number): void {
     this.value = value;
+
     if (!this.value) {
       this.selectedOption = null;
     }
     if (this.value && this.options?.length) {
-      this.selectedOption = { ...(this.options.find((option: Option) => option.value === this.value)) };
+      let existingOption = this.options.find((option: Option) => option.value === this.value);
+      if (!existingOption && this.allowCustomValue()) {
+        existingOption = { label: this.value as string, value: this.value };
+      }
+      this.selectedOption = { ...existingOption };
     }
     this.cdr.markForCheck();
   }

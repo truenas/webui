@@ -13,6 +13,7 @@ import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.util
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
   DiskIoBus,
+  ImageOs,
   VirtualizationDeviceType,
   VirtualizationGpuType,
   VirtualizationNicType,
@@ -384,6 +385,7 @@ describe('InstanceWizardComponent', () => {
         root_disk_io_bus: DiskIoBus.Nvme,
         instance_type: VirtualizationType.Vm,
         iso_volume: null,
+        image_os: null,
         devices: [
           {
             dev_type: VirtualizationDeviceType.Disk,
@@ -418,6 +420,7 @@ describe('InstanceWizardComponent', () => {
       jest.spyOn(spectator.inject(MatDialog), 'open').mockReturnValue({
         afterClosed: () => of({
           id: 'myiso.iso',
+          name: 'win10.iso',
           content_type: VolumeContentType.Iso,
         } as VirtualizationVolume),
       } as MatDialogRef<VolumesDialog>);
@@ -447,6 +450,7 @@ describe('InstanceWizardComponent', () => {
         instance_type: VirtualizationType.Vm,
         devices: [],
         image: null,
+        image_os: ImageOs.Windows,
         iso_volume: 'myiso.iso',
         source_type: VirtualizationSource.Iso,
         storage_pool: 'poolio',
@@ -493,6 +497,7 @@ describe('InstanceWizardComponent', () => {
         instance_type: VirtualizationType.Vm,
         devices: [],
         image: null,
+        image_os: null,
         iso_volume: null,
         source_type: VirtualizationSource.Volume,
         enable_vnc: false,

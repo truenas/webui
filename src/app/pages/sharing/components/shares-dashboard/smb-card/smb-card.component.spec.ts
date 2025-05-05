@@ -1,6 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatDialog } from '@angular/material/dialog';
+import { MatMenuHarness } from '@angular/material/menu/testing';
 import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
@@ -15,7 +16,6 @@ import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
 import { SmbPresetType, SmbShare, SmbSharesec } from 'app/interfaces/smb-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import {
   IxTablePagerShowMoreComponent,
@@ -122,8 +122,9 @@ describe('SmbCardComponent', () => {
   });
 
   it('shows form to edit an existing SMB Share when Edit button is pressed', async () => {
-    const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 5);
-    await editButton.click();
+    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
+    await menu.open();
+    await menu.clickItem({ text: 'Edit' });
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(SmbFormComponent, {
       data: { existingSmbShare: expect.objectContaining(smbShares[0]) },
@@ -131,8 +132,9 @@ describe('SmbCardComponent', () => {
   });
 
   it('shows confirmation to delete SMB Share when Delete button is pressed', async () => {
-    const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 5);
-    await deleteIcon.click();
+    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
+    await menu.open();
+    await menu.clickItem({ text: 'Delete' });
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
   });
@@ -151,8 +153,9 @@ describe('SmbCardComponent', () => {
   });
 
   it('handles edit Share ACL', async () => {
-    const editIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'share' }), 1, 5);
-    await editIcon.click();
+    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
+    await menu.open();
+    await menu.clickItem({ text: 'Edit Share ACL' });
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
       'sharing.smb.getacl',
@@ -166,8 +169,9 @@ describe('SmbCardComponent', () => {
     const router = spectator.inject(Router);
     jest.spyOn(router, 'navigate').mockImplementation();
 
-    const editIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'security' }), 1, 5);
-    await editIcon.click();
+    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
+    await menu.open();
+    await menu.clickItem({ text: 'Edit Filesystem ACL' });
 
     expect(router.navigate).toHaveBeenCalledWith(
       ['/', 'datasets', 'acl', 'edit'],

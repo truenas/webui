@@ -25,8 +25,10 @@ import {
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import {
+  AllowedImageOs,
   DiskIoBus,
   diskIoBusLabels,
+  imageOsLabels,
   VirtualizationDeviceType,
   VirtualizationGpuType,
   VirtualizationNicType,
@@ -39,6 +41,7 @@ import {
   virtualizationTypeIcons,
   VolumeContentType,
 } from 'app/enums/virtualization.enum';
+import { detectImageOs } from 'app/helpers/detect-image-os.utils';
 import { choicesToOptions, singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { instancesHelptext } from 'app/helptext/instances/instances';
@@ -53,10 +56,12 @@ import {
 } from 'app/interfaces/virtualization.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { SimpleAsyncComboboxProvider } from 'app/modules/forms/ix-forms/classes/simple-async-combobox-provider';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import {
   IxCheckboxListComponent,
 } from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.component';
+import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import {
   IxFormGlossaryComponent,
@@ -119,6 +124,7 @@ interface NicDeviceOption {
     IxInputComponent,
     IxListComponent,
     IxListItemComponent,
+    IxComboboxComponent,
     IxSelectComponent,
     IxRadioGroupComponent,
     MatButton,
@@ -154,6 +160,7 @@ export class InstanceWizardComponent implements OnInit {
   ]).pipe(map((keys) => keys.map((key) => key.name)));
 
   readonly VirtualizationSource = VirtualizationSource;
+  readonly VolumeContentType = VolumeContentType;
 
   protected readonly bridgedNicDevices = signal<NicDeviceOption[]>(undefined);
   protected readonly macVlanNicDevices = signal<NicDeviceOption[]>(undefined);
@@ -206,6 +213,7 @@ export class InstanceWizardComponent implements OnInit {
     root_disk_io_bus: [DiskIoBus.Nvme, []],
     volume: ['', [Validators.required]],
     image: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(200)]],
+    image_os: ['' as AllowedImageOs],
     enable_vnc: [false],
     vnc_port: [defaultVncPort, [Validators.min(5900), Validators.max(65535)]],
     vnc_password: [null as string | null],
@@ -268,6 +276,7 @@ export class InstanceWizardComponent implements OnInit {
   protected readonly isVm = computed(() => this.instanceType() === VirtualizationType.Vm);
 
   readonly datasetProvider = this.filesystem.getFilesystemNodeProvider({ datasetsOnly: true });
+  readonly imageOsProvider = new SimpleAsyncComboboxProvider(of(mapToOptions(imageOsLabels, this.translate)));
 
   protected defaultIpv4Network = computed(() => {
     return this.configStore.config()?.v4_network || this.translate.instant('N/A');
@@ -276,8 +285,6 @@ export class InstanceWizardComponent implements OnInit {
   protected defaultIpv6Network = computed(() => {
     return this.configStore.config()?.v6_network || this.translate.instant('N/A');
   });
-
-  protected readonly of = of;
 
   constructor(
     private api: ApiService,
@@ -443,6 +450,12 @@ export class InstanceWizardComponent implements OnInit {
         });
 
         this.form.patchValue({ volume: volume.id });
+
+        const imageOs = detectImageOs(volume.name);
+
+        if (volume.name && imageOs) {
+          this.form.controls.image_os.setValue(imageOs);
+        }
       });
   }
 
@@ -572,6 +585,8 @@ export class InstanceWizardComponent implements OnInit {
       payload.secure_boot = values.secure_boot;
       payload.root_disk_io_bus = values.root_disk_io_bus;
       payload.root_disk_size = values.root_disk_size;
+
+      payload.image_os = values.volume_type === VolumeContentType.Iso ? values.image_os : null;
 
       if (values.enable_vnc) {
         payload.vnc_password = values.vnc_password;
