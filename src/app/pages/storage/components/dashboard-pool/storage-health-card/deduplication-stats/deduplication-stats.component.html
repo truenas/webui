@@ -1,0 +1,12 @@
+<div class="details-item">
+  <div class="label">{{ 'Deduplication Table' | translate }}:</div>
+  <div class="value">{{ deduplicationStats() }}</div>
+  <div class="dedup-actions">
+    <a *ixRequiresRoles="[Role.PoolWrite]" class="action" ixTest="prune-dedup" (click)="onPruneDedupTable()">
+      {{ 'Prune' | translate }}
+    </a>
+    <a *ixRequiresRoles="[Role.PoolWrite]" class="action" ixTest="set-dedup-quota" (click)="onSetDedupQuota()">
+      {{ 'Set Quota' | translate }}
+    </a>
+  </div>
+</div>

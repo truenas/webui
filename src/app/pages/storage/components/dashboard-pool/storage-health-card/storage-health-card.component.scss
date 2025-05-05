@@ -24,6 +24,10 @@
   }
 }
 
+.scrub-tooltip {
+  vertical-align: -2px;
+}
+
 .card-content {
   display: flex;
   flex-direction: column;
@@ -32,33 +36,4 @@
 .controls {
   column-gap: 8px;
   display: flex;
-}
-
-.scan-in-progress {
-  @include fade-in();
-  margin-top: 25px;
-
-  .scan-description {
-    text-align: center;
-  }
-
-  .scan-label {
-    font-weight: bold;
-  }
-
-  .time-left {
-    font-size: 0.9rem;
-    text-align: center;
-  }
-
-  .progress {
-    margin-bottom: 8px;
-    margin-top: 8px;
-  }
-}
-
-.dedup-actions {
-  display: flex;
-  gap: 8px;
-  margin-left: auto;
 }
