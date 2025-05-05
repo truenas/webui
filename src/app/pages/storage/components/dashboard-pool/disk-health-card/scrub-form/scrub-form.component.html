@@ -8,25 +8,10 @@
   <mat-card-content>
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset>
-        <ix-select
-          formControlName="pool"
-          [label]="'Pool' | translate"
-          [required]="true"
-          [options]="poolOptions$"
-        ></ix-select>
-
-        <ix-input
-          formControlName="threshold"
-          type="number"
-          [label]="'Threshold Days' | translate"
-          [required]="true"
-          [tooltip]="tooltips.threshold | translate"
-        ></ix-input>
-
-        <ix-input
-          formControlName="description"
-          [label]="'Description' | translate"
-        ></ix-input>
+        <ix-checkbox
+          formControlName="enabled"
+          [label]="'Enabled' | translate"
+        ></ix-checkbox>
 
         <ix-scheduler
           formControlName="schedule"
@@ -34,10 +19,13 @@
           [required]="true"
         ></ix-scheduler>
 
-        <ix-checkbox
-          formControlName="enabled"
-          [label]="'Enabled' | translate"
-        ></ix-checkbox>
+        <ix-input
+          formControlName="threshold"
+          type="number"
+          [label]="'Threshold Days' | translate"
+          [required]="true"
+          [tooltip]="helptextScrubForm.thresholdTooltip | translate"
+        ></ix-input>
       </ix-fieldset>
 
       <ix-form-actions>

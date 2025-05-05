@@ -1,0 +1,20 @@
+@if (scan().end_time?.$date) {
+  <div class="details-item">
+    <div class="label">{{ 'Last Scan' | translate }}:</div>
+    <div class="value">
+      {{ scanExplanation() | translate: { date: (scan().end_time.$date | formatDateTime) } }}
+    </div>
+  </div>
+}
+
+<div class="details-item">
+  <div class="label">{{ 'Last Scan Errors' | translate }}:</div>
+  <div class="value">{{ scan().errors | number }}</div>
+</div>
+
+@if (scanDuration()) {
+  <div class="details-item">
+    <div class="label">{{ 'Last Scan Duration' | translate }}:</div>
+    <div class="value">{{ scanDuration() }}</div>
+  </div>
+}
