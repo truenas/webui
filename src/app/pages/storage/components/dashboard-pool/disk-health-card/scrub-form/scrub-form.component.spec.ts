@@ -4,18 +4,17 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { PoolScrubTask } from 'app/interfaces/pool-scrub.interface';
-import { Pool } from 'app/interfaces/pool.interface';
+import { ScrubTask } from 'app/interfaces/pool-scrub.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { LocaleService } from 'app/modules/language/locale.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ScrubTaskFormComponent } from 'app/pages/data-protection/scrub-task/scrub-task-form/scrub-task-form.component';
+import {
+  ScrubFormComponent, ScrubFormParams,
+} from 'app/pages/storage/components/dashboard-pool/disk-health-card/scrub-form/scrub-form.component';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
 describe('ScrubTaskFormComponent', () => {
@@ -32,19 +31,22 @@ describe('ScrubTaskFormComponent', () => {
       dow: '7',
       month: '*',
     },
-  } as PoolScrubTask;
+  } as ScrubTask;
 
-  const slideInRef: SlideInRef<PoolScrubTask | undefined, unknown> = {
+  const slideInRef: SlideInRef<ScrubFormParams, unknown> = {
     close: jest.fn(),
     requireConfirmationWhen: jest.fn(),
-    getData: jest.fn(() => undefined),
+    getData: jest.fn(() => ({
+      poolId: 2,
+      existingScrubTask: null,
+    })),
   };
 
-  let spectator: Spectator<ScrubTaskFormComponent>;
+  let spectator: Spectator<ScrubFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
   const createComponent = createComponentFactory({
-    component: ScrubTaskFormComponent,
+    component: ScrubFormComponent,
     imports: [
       ReactiveFormsModule,
     ],
@@ -57,14 +59,7 @@ describe('ScrubTaskFormComponent', () => {
       mockApi([
         mockCall('pool.scrub.create'),
         mockCall('pool.scrub.update'),
-        mockCall('pool.query', [
-          { id: 1, name: 'Poolio' },
-          { id: 2, name: 'My pool' },
-        ] as Pool[]),
       ]),
-      mockProvider(SlideIn, {
-        components$: of([]),
-      }),
       provideMockStore({
         selectors: [
           {
@@ -77,30 +72,25 @@ describe('ScrubTaskFormComponent', () => {
     ],
   });
 
-  describe('adds new task', () => {
+  describe('adds new task when form is opened without an existing task', () => {
     beforeEach(async () => {
-      spectator = createComponent({
-        providers: [],
-      });
+      spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
     });
 
     it('adds new scrub task', async () => {
       await form.fillForm({
-        Pool: 'Poolio',
-        'Threshold Days': '30',
-        Description: 'New task',
-        Schedule: '* * 1,2 * *',
         Enabled: true,
+        Schedule: '* * 1,2 * *',
+        'Threshold Days': '30',
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.scrub.create', [{
-        pool: 1,
-        description: 'New task',
+        pool: 2,
         enabled: true,
         schedule: {
           dom: '1,2',
@@ -115,45 +105,46 @@ describe('ScrubTaskFormComponent', () => {
     });
   });
 
-  describe('edits task', () => {
+  describe('edits existing scrub task', () => {
     beforeEach(async () => {
       spectator = createComponent({
         providers: [
-          mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => existingScrubTask) }),
+          mockProvider(SlideInRef, {
+            ...slideInRef,
+            getData: jest.fn(() => ({
+              existingScrubTask,
+              poolId: 2,
+            })),
+          }),
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
     });
 
-    it('shows current values when scrub task form is opened for edit', async () => {
+    it('shows current values', async () => {
       const formValues = await form.getValues();
 
       expect(formValues).toEqual({
-        Pool: 'My pool',
-        'Threshold Days': '40',
-        Description: 'Existing task',
-        Schedule: 'Custom At 03:10 PM, on day 1 and 2 of the month, and on Sunday',
         Enabled: true,
+        Schedule: 'Custom At 03:10 PM, on day 1 and 2 of the month, and on Sunday',
+        'Threshold Days': '40',
       });
     });
 
     it('edits existing Scrub test task when form is opened for edit', async () => {
       await form.fillForm({
-        Pool: 'Poolio',
-        'Threshold Days': '20',
-        Description: 'Updated task',
-        Schedule: '0 * * * *',
         Enabled: false,
+        Schedule: '0 * * * *',
+        'Threshold Days': '20',
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.scrub.update', [13, {
-        description: 'Updated task',
         enabled: false,
-        pool: 1,
+        pool: 2,
         schedule: {
           dom: '*',
           dow: '*',

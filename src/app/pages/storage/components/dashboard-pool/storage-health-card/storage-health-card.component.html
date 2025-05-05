@@ -5,51 +5,22 @@
       <ix-pool-card-icon [type]="iconType()" [tooltip]="iconTooltip()"></ix-pool-card-icon>
     </h3>
 
-    @if (!wasScanInitiated) {
+    @if (!wasScanInitiated()) {
       <button
         *ixRequiresRoles="[Role.PoolScrubWrite]"
         mat-button
         ixTest="scrub"
-        [ixUiSearch]="searchableElements.elements.scrub"
+        [ixUiSearch]="searchableElements.elements.scrubNow"
         (click)="onStartScrub()"
       >
         {{ 'Scrub Now' | translate }}
       </button>
     } @else {
       @if (isScrub) {
-        <ng-container *ixRequiresRoles="[Role.PoolScrubWrite]">
-          <div class="controls">
-            <button
-              mat-button
-              ixTest="stop-scrub"
-              (click)="onStopScrub()"
-            >
-              {{ 'Stop Scrub' | translate }}
-            </button>
-            @if (isScrubPaused) {
-              <button
-                mat-button
-                ixTest="resume-scrub"
-                (click)="onResumeScrub()"
-              >
-                {{ 'Resume Scrub' | translate }}
-              </button>
-            } @else {
-              <button
-                mat-button
-                ixTest="pause-scrub"
-                (click)="onPauseScrub()"
-              >
-                {{ 'Pause Scrub' | translate }}
-              </button>
-            }
-          </div>
-        </ng-container>
       } @else {
         <button mat-button disabled ixTest="scrub-disabled">{{ 'Scrub' | translate }}</button>
       }
     }
-
   </mat-card-header>
 
   <mat-card-content class="card-content">
@@ -59,14 +30,34 @@
       </div>
     </div>
 
-    <div class="details-item">
-      <div class="label">{{ 'Scheduled Scrub Task' | translate }}:</div>
-      <div *ixWithLoadingState="hasScrubTask$ as hasScrubTask" class="value">
-        {{ hasScrubTask ? ('Set' | translate) : ('Not Set' | translate) }}
+    <div
+      class="details-item"
+      [ixUiSearch]="searchableElements.elements.scheduledScrub"
+    >
+      <div class="label">
+        {{ 'Scheduled Scrub' | translate }}:
+        <ix-tooltip
+          class="scrub-tooltip"
+          [message]="helptextVolumes.scrubTooltip | translate"
+        ></ix-tooltip>
       </div>
-      <a ixTest="view-all-scrub-tasks" [routerLink]="['/data-protection/scrub']">
-        {{ 'View All Scrub Tasks' | translate }}
-      </a>
+
+      @if (scrub()?.enabled) {
+        <div class="value">
+          {{ scrub().schedule | scheduleDescription }}
+        </div>
+        <a ixTest="configure-scrub" (click)="onConfigureScrub()">
+          {{ 'Configure' | translate }}
+        </a>
+      }
+      @else {
+        <div class="value">
+          {{ 'Not Set' | translate }}
+        </div>
+        <a ixTest="configure-scrub" (click)="onConfigureScrub()">
+          {{ 'Schedule' | translate }}
+        </a>
+      }
     </div>
 
     <div class="details-item" [ixUiSearch]="searchableElements.elements.autoTrim">
@@ -79,60 +70,19 @@
       </a>
     </div>
 
-    @if (scan?.function) {
-      @if (wasScanInitiated) {
-        <div class="scan-in-progress">
-          <div class="scan-description">
-            <span class="scan-label">
-              {{ scanLabel }}
-            </span>
-            {{ scan.percentage / 100 | percent: '1.2-2' }}
-          </div>
-          @if (scan.total_secs_left && !isScrubPaused) {
-            <div class="time-left">
-              {{ timeLeftString }}
-            </div>
-          }
-          <mat-progress-bar
-            class="progress"
-            [value]="scan.percentage"
-          ></mat-progress-bar>
-        </div>
+    @if (scan()?.function) {
+      @if (wasScanInitiated()) {
+        <ix-active-pool-scan
+          [scan]="scan()"
+          [pool]="pool()"
+        ></ix-active-pool-scan>
       } @else {
-        @if (scan.end_time?.$date) {
-          <div class="details-item">
-            <div class="label">{{ 'Last Scan' | translate }}:</div>
-            <div class="value">
-              {{ scanExplanation | translate: { date: (scan.end_time.$date | formatDateTime) } }}
-            </div>
-          </div>
-        }
-        <div class="details-item">
-          <div class="label">{{ 'Last Scan Errors' | translate }}:</div>
-          <div class="value">{{ scan.errors | number }}</div>
-        </div>
-        @if (scanDuration) {
-          <div class="details-item">
-            <div class="label">{{ 'Last Scan Duration' | translate }}:</div>
-            <div class="value">{{ scanDuration }}</div>
-          </div>
-        }
+        <ix-last-pool-scan [scan]="scan()"></ix-last-pool-scan>
       }
     }
 
     @if (pool().dedup_table_size > 0) {
-      <div class="details-item">
-        <div class="label">{{ 'Deduplication Table' | translate }}:</div>
-        <div class="value">{{ deduplicationStats() }}</div>
-        <div class="dedup-actions">
-          <a *ixRequiresRoles="[Role.PoolWrite]" class="action" ixTest="prune-dedup" (click)="onPruneDedupTable()">
-            {{ 'Prune' | translate }}
-          </a>
-          <a *ixRequiresRoles="[Role.PoolWrite]" class="action" ixTest="set-dedup-quota" (click)="onSetDedupQuota()">
-            {{ 'Set Quota' | translate }}
-          </a>
-        </div>
-      </div>
+      <ix-deduplication-stats [pool]="pool()"></ix-deduplication-stats>
     }
   </mat-card-content>
 </mat-card>

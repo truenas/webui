@@ -26,7 +26,7 @@
 </ix-page-header>
 
 <div [ixUiSearch]="searchableElements.elements.storageDashboard">
-  @if (arePoolsLoading) {
+  @if (arePoolsLoading()) {
     <ix-dashboard-pool
       class="pool"
       [isLoading]="true"
@@ -38,25 +38,25 @@
     ></ix-dashboard-pool>
   }
 
-  @if (isEmptyPools && !arePoolsLoading) {
+  @if (hasNoPools() && !arePoolsLoading()) {
     <div class="entity-empty-wrapper">
       <ix-empty [conf]="entityEmptyConf" [requiredRoles]="requiredRoles"></ix-empty>
     </div>
   }
 
-  @if (!isEmptyPools && !arePoolsLoading) {
-    @if (!isEmptyPools) {
+  @if (!hasNoPools() && !arePoolsLoading()) {
+    @if (!hasNoPools()) {
       <ix-unused-resources
-        [pools]="(pools$ | async) || []"
+        [pools]="pools()"
       ></ix-unused-resources>
     }
 
-    @for (pool of pools$ | async; track pool; let i = $index) {
+    @for (pool of pools(); track pool; let i = $index) {
       <ix-dashboard-pool
         class="pool"
         [pool]="pool"
-        [disks]="getDisksForPool(pool)"
-        [isLoading]="!!(areDisksLoading$ | async)"
+        [disks]="getDisksByPool(pool)"
+        [isLoading]="isLoadingPoolDetails()"
         [rootDataset]="rootDatasets[pool.name]"
       ></ix-dashboard-pool>
     }
