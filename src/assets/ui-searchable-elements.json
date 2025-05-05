@@ -1204,94 +1204,6 @@
   {
     "hierarchy": [
       "Data Protection",
-      "Scrub Tasks",
-      "Resilver Priority"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/data-protection",
-      "scrub",
-      "priority"
-    ],
-    "routerLink": null,
-    "anchor": "scrub-priority",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Data Protection",
-      "Scrub Tasks",
-      "Add Scrub Task"
-    ],
-    "synonyms": [
-      "Create Scrub Task",
-      "New Scrub Task",
-      "Task"
-    ],
-    "requiredRoles": [
-      "POOL_SCRUB_WRITE"
-    ],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/data-protection",
-      "scrub"
-    ],
-    "routerLink": null,
-    "anchor": "add-scrub",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Data Protection",
-      "Scrub Tasks"
-    ],
-    "synonyms": [
-      "Tasks"
-    ],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/data-protection",
-      "scrub"
-    ],
-    "routerLink": null,
-    "anchor": "scrub-tasks",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Data Protection",
-      "Scrub Tasks",
-      "Adjust Scrub/Resilver Priority"
-    ],
-    "synonyms": [
-      "Adjust Scrub Priority",
-      "Adjust Resilver Priority"
-    ],
-    "requiredRoles": [
-      "POOL_SCRUB_WRITE"
-    ],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/data-protection"
-    ],
-    "routerLink": [
-      "/data-protection",
-      "scrub",
-      "priority"
-    ],
-    "anchor": "adjust-scrub/resilver-priority",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Data Protection",
       "Periodic Snapshot Tasks",
       "VMware Snapshot Integration"
     ],
@@ -3160,9 +3072,12 @@
   {
     "hierarchy": [
       "Storage",
-      "Scrub"
+      "Scrub Now"
     ],
-    "synonyms": [],
+    "synonyms": [
+      "Run Scrub",
+      "Start Scrub"
+    ],
     "requiredRoles": [
       "POOL_SCRUB_WRITE"
     ],
@@ -3171,7 +3086,29 @@
       "/storage"
     ],
     "routerLink": null,
-    "anchor": "scrub",
+    "anchor": "scrub-now",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Storage",
+      "Scheduled Scrub"
+    ],
+    "synonyms": [
+      "Periodic Scrub",
+      "Scrub Task",
+      "Periodic Disk Checks",
+      "Scrub Schedule",
+      "Scrub Interval"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/storage"
+    ],
+    "routerLink": null,
+    "anchor": "scheduled-scrub",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -4444,7 +4381,8 @@
       "Storage Settings"
     ],
     "requiredRoles": [
-      "DATASET_WRITE"
+      "DATASET_WRITE",
+      "POOL_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -4472,6 +4410,31 @@
     ],
     "routerLink": null,
     "anchor": "system-data-pool",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced Settings",
+      "Storage",
+      "Resilvering At Higher Priority"
+    ],
+    "synonyms": [
+      "Resilver Priority",
+      "Scrub Priority",
+      "Resilvering Priority",
+      "Resilver Settings",
+      "Resilvering Settings"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "resilvering-at-higher-priority",
     "triggerAnchor": null,
     "section": "ui"
   },

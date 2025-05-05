@@ -3,51 +3,39 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { MatCard } from '@angular/material/card';
-import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { EMPTY, of } from 'rxjs';
 import {
   catchError, map, take,
 } from 'rxjs/operators';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
-import { AuditService } from 'app/enums/audit.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
-import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
-import { Service, ServiceRow } from 'app/interfaces/service.interface';
+import { Role } from 'app/enums/role.enum';
+import { serviceNames } from 'app/enums/service-name.enum';
+import { serviceStatusLabels } from 'app/enums/service-status.enum';
+import { ServiceRow } from 'app/interfaces/service.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
+import { templateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { toggleColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
+import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ServiceFtpComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
-import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
-import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
-import { ServiceSnmpComponent } from 'app/pages/services/components/service-snmp/service-snmp.component';
-import { ServiceSshComponent } from 'app/pages/services/components/service-ssh/service-ssh.component';
-import {
-  ServiceStateColumnComponent,
-} from 'app/pages/services/components/service-state-column/service-state-column.component';
-import { ServiceUpsComponent } from 'app/pages/services/components/service-ups/service-ups.component';
+import { ServiceActionsCellComponent } from 'app/pages/services/components/service-actions-cell/service-actions-cell.component';
+import { ServiceStatusCellComponent } from 'app/pages/services/components/service-status-cell/service-status-cell.component';
 import { servicesElements } from 'app/pages/services/services.elements';
-import {
-  GlobalTargetConfigurationComponent,
-} from 'app/pages/sharing/iscsi/global-target-configuration/global-target-configuration.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { ServicesService } from 'app/services/services.service';
-import { UrlOptionsService } from 'app/services/url-options.service';
 import { serviceChanged } from 'app/store/services/services.actions';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { waitForServices } from 'app/store/services/services.selectors';
@@ -56,6 +44,7 @@ import { waitForServices } from 'app/store/services/services.selectors';
 @Component({
   selector: 'ix-services',
   templateUrl: './services.component.html',
+  styleUrls: ['./services.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     SearchInput1Component,
@@ -65,48 +54,36 @@ import { waitForServices } from 'app/store/services/services.selectors';
     IxTableEmptyDirective,
     IxTableHeadComponent,
     IxTableBodyComponent,
-    AsyncPipe,
+    IxTableCellDirective,
     PageHeaderComponent,
+    ServiceStatusCellComponent,
+    TranslateModule,
+    AsyncPipe,
+    ServiceActionsCellComponent,
   ],
 })
 export class ServicesComponent implements OnInit {
   protected readonly searchableElements = servicesElements;
+  protected readonly requiredRoles = [Role.ServiceWrite];
 
   columns = createTable<ServiceRow>([
     textColumn({
       title: this.translate.instant('Name'),
       propertyName: 'name',
     }),
-    {
-      type: ServiceStateColumnComponent,
-      title: this.translate.instant('Running'),
-    },
+    templateColumn({
+      title: this.translate.instant('Status'),
+      sortBy: (row) => row.state,
+      propertyName: 'state',
+    }),
     toggleColumn({
       title: this.translate.instant('Start Automatically'),
       propertyName: 'enable',
       onRowToggle: (row) => this.enableToggle(row),
       dynamicRequiredRoles: (row) => of(this.servicesService.getRolesRequiredToManage(row.service)),
     }),
-    actionsColumn({
-      actions: [
-        {
-          iconName: iconMarker('receipt_long'),
-          tooltip: this.translate.instant('Audit Logs'),
-          hidden: (row) => of(!this.hasLogs(row.service)),
-          onClick: () => this.router.navigate([this.auditLogsUrl()]),
-        },
-        {
-          iconName: iconMarker('list'),
-          dynamicTooltip: (row) => of(this.translate.instant('{name} Sessions', { name: serviceNames.get(row.service) })),
-          hidden: (row) => of(!this.hasSessions(row.service)),
-          onClick: (row) => this.router.navigate(this.sessionsUrl(row.service)),
-        },
-        {
-          iconName: iconMarker('edit'),
-          tooltip: this.translate.instant('Edit'),
-          onClick: (row) => this.configureService(row),
-        },
-      ],
+    templateColumn({
+      cssClass: 'actions-column',
     }),
   ], {
     uniqueRowTag: (row) => 'service-' + row.name.replace(/\./g, ''),
@@ -116,6 +93,7 @@ export class ServicesComponent implements OnInit {
   dataProvider = new ArrayDataProvider<ServiceRow>();
   filterString = '';
   services: ServiceRow[];
+  protected readonly serviceStatusLabels = serviceStatusLabels;
 
   error = false;
   loading = true;
@@ -137,12 +115,9 @@ export class ServicesComponent implements OnInit {
     protected emptyService: EmptyService,
     private servicesService: ServicesService,
     private api: ApiService,
-    private router: Router,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
-    private slideIn: SlideIn,
     private store$: Store<ServicesState>,
-    private urlOptions: UrlOptionsService,
     private errorHandler: ErrorHandlerService,
     private loader: LoaderService,
   ) {}
@@ -205,60 +180,5 @@ export class ServicesComponent implements OnInit {
         untilDestroyed(this),
       )
       .subscribe();
-  }
-
-  private configureService(row: Service): void {
-    switch (row.service) {
-      case ServiceName.Iscsi:
-        this.slideIn.open(GlobalTargetConfigurationComponent);
-        break;
-      case ServiceName.Ftp:
-        this.slideIn.open(ServiceFtpComponent, { wide: true });
-        break;
-      case ServiceName.Nfs:
-        this.slideIn.open(ServiceNfsComponent, { wide: true });
-        break;
-      case ServiceName.Snmp:
-        this.slideIn.open(ServiceSnmpComponent, { wide: true });
-        break;
-      case ServiceName.Ups:
-        this.slideIn.open(ServiceUpsComponent, { wide: true });
-        break;
-      case ServiceName.Ssh:
-        this.slideIn.open(ServiceSshComponent);
-        break;
-      case ServiceName.Cifs:
-        this.slideIn.open(ServiceSmbComponent);
-        break;
-      default:
-        break;
-    }
-  }
-
-  private sessionsUrl(serviceName: ServiceName): string[] {
-    if (serviceName === ServiceName.Cifs) {
-      return ['/sharing', 'smb', 'status', 'sessions'];
-    }
-    if (serviceName === ServiceName.Nfs) {
-      return ['/sharing', 'nfs', 'sessions'];
-    }
-    return [];
-  }
-
-  private hasSessions(serviceName: ServiceName): boolean {
-    return serviceName === ServiceName.Cifs || serviceName === ServiceName.Nfs;
-  }
-
-  private auditLogsUrl(): string {
-    return this.urlOptions.buildUrl('/system/audit', {
-      searchQuery: {
-        isBasicQuery: false,
-        filters: [['service', '=', AuditService.Smb]],
-      },
-    });
-  }
-
-  private hasLogs(serviceName: ServiceName): boolean {
-    return serviceName === ServiceName.Cifs;
   }
 }
