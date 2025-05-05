@@ -27,4 +27,5 @@ export interface ExplorerNodeData {
   isExpanded?: boolean;
   isMountpoint?: boolean;
   isLock?: boolean;
+  disabled?: boolean;
 }

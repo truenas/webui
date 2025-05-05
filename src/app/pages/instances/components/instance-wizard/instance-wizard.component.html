@@ -187,7 +187,7 @@
             @if (isContainer()) {
               <ix-explorer
                 formControlName="source"
-                root="/"
+                [roots]="['/']"
                 [label]="instancesHelptext.disksSourceLabel | translate"
                 [required]="true"
                 [nodeProvider]="datasetProvider"

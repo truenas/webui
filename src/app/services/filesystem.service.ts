@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {
-  catchError, map, of, throwError,
+  catchError, forkJoin, map, Observable, of, switchMap, throwError,
 } from 'rxjs';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { FileAttribute } from 'app/enums/file-attribute.enum';
@@ -20,6 +20,7 @@ export interface ProviderOptions {
   datasetsAndZvols?: boolean;
   zvolsOnly?: boolean;
   datasetsOnly?: boolean;
+  shouldDisableNode?: (node: ExplorerNodeData) => Observable<boolean>;
 }
 
 const roolZvolNode = {
@@ -105,17 +106,29 @@ export class FilesystemService {
                 fileType = ExplorerNodeType.File;
                 break;
             }
-            children.push({
+            const child: ExplorerNodeData = {
               path: file.path,
               name: file.name,
               isMountpoint: file.attributes.includes(FileAttribute.MountRoot),
               isLock: file.attributes.includes(FileAttribute.Immutable),
               type: fileType,
               hasChildren: file.type === FileType.Directory,
-            });
+            };
+            children.push(child);
           });
 
           return children;
+        }),
+        switchMap((children: ExplorerNodeData[]) => {
+          const updatedObservables$ = children.map((child) => {
+            const disabled$ = providerOptions.shouldDisableNode
+              ? providerOptions.shouldDisableNode(child)
+              : of(false);
+            return disabled$.pipe(
+              map((disabled) => ({ ...child, disabled } as ExplorerNodeData)),
+            );
+          });
+          return updatedObservables$?.length ? forkJoin(updatedObservables$) : of(children);
         }),
         catchError((error: unknown) => {
           const apiError = extractApiErrorDetails(error);

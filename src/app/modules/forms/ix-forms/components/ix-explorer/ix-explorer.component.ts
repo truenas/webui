@@ -70,7 +70,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   readonly multiple = input(false);
   readonly tooltip = input<TranslatedString>();
   readonly required = input<boolean>(false);
-  readonly root = input(mntPath);
+  readonly roots = input<string[]>([mntPath]);
   readonly nodeProvider = input.required<TreeNodeProvider>();
   // TODO: Come up with a system of extendable controls.
   // TODO: Add support for zvols.
@@ -244,13 +244,16 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   }
 
   parentDatasetName(path: string): string {
-    if (!path || path === this.root()) {
+    if (!path || this.roots().includes(path)) {
       return '';
     }
 
-    return path
-      .replace(`${this.root()}/`, '')
-      .replace('/mnt/', '');
+    const roots = this.roots();
+    for (const root of roots) {
+      path = path.replace(`${root}/`, '');
+    }
+
+    return path.replace('/mnt/', '');
   }
 
   createDataset(): void {
@@ -286,15 +289,16 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   }
 
   private setInitialNode(): void {
-    this.nodes.set([
-      {
-        path: this.root(),
-        name: this.root(),
+    const roots = this.roots();
+    this.nodes.set(roots.map((root) => {
+      return {
+        path: root,
+        name: root,
         hasChildren: true,
         type: ExplorerNodeType.Directory,
         isMountpoint: true,
-      },
-    ]);
+      };
+    }));
   }
 
   private updateInputValue(): void {

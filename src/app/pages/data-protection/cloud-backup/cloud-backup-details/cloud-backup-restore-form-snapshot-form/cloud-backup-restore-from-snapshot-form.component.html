@@ -26,7 +26,7 @@
             [tooltip]="helptext.tooltips.excludedPaths | translate"
             [label]="'Excluded Paths' | translate"
             [nodeProvider]="snapshotNodeProvider"
-            [root]="data.backup.absolute_paths ? mntPath : '/'"
+            [roots]="data.backup.absolute_paths ? [mntPath] : ['/']"
             [multiple]="true"
           ></ix-explorer>
         }
@@ -46,7 +46,7 @@
             [required]="true"
             [label]="'Subfolder' | translate"
             [nodeProvider]="snapshotNodeProvider"
-            [root]="data.backup.absolute_paths ? mntPath : '/'"
+            [roots]="data.backup.absolute_paths ? [mntPath] : ['/']"
             [tooltip]="helptext.tooltips.subFolder | translate"
           ></ix-explorer>
         }
@@ -54,7 +54,7 @@
         @if (isIncludeFromSubfolderSelected) {
           <ix-explorer
             formControlName="includedPaths"
-            [root]="form.controls.subFolder.value || backupMntPath"
+            [roots]="[form.controls.subFolder.value] || [backupMntPath]"
             [label]="'Included Paths' | translate"
             [nodeProvider]="snapshotNodeProvider"
             [tooltip]="helptext.tooltips.includedPaths | translate"
