@@ -85,8 +85,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
 
   readonly save = output();
 
-  protected readonly folderSourceRootNodes$ = of([slashRootNode]);
-  protected readonly folderDestinationRootNodes$ = of([slashRootNode]);
+  protected readonly slashRootNode = slashRootNode;
 
   form = this.formBuilder.nonNullable.group({
     description: ['' as string, Validators.required],

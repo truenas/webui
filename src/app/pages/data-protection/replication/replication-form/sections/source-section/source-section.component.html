@@ -2,7 +2,7 @@
   <ix-explorer
     formControlName="source_datasets"
     [label]="'Source' | translate"
-    [rootNodes]="sourceDatasetsRootNodes$"
+    [rootNodes]="[emptyRootNode]"
     [required]="true"
     [multiple]="true"
     [tooltip]="helptext.source_datasets_tooltip | translate"

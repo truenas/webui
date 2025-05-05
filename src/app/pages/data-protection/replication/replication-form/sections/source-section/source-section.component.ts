@@ -54,7 +54,7 @@ export class SourceSectionComponent implements OnChanges {
   readonly direction = input<Direction>();
   readonly nodeProvider = input<TreeNodeProvider>();
 
-  protected readonly sourceDatasetsRootNodes$ = of([emptyRootNode]);
+  protected readonly emptyRootNode = emptyRootNode;
 
   form = this.formBuilder.group({
     source_datasets: [[] as string | string[], Validators.required],

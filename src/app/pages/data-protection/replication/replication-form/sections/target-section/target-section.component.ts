@@ -16,7 +16,6 @@ import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextReplication } from 'app/helptext/data-protection/replication/replication';
 import { Option } from 'app/interfaces/option.interface';
 import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-task.interface';
-import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
@@ -75,7 +74,7 @@ export class TargetSectionComponent implements OnInit, OnChanges {
 
   private allRetentionPolicies$ = of(mapToOptions(retentionPolicyNames, this.translate));
 
-  protected readonly targetDatasetRootNodes$: Observable<ExplorerNodeData[]> = of([emptyRootNode]);
+  protected readonly emptyRootNode = emptyRootNode;
 
   constructor(
     private formBuilder: FormBuilder,

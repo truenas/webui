@@ -121,17 +121,17 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     ],
   });
 
-  protected readonly targetDatasetsRootNodes$: Observable<ExplorerNodeData[]> = of(
-    this.isRemoteTarget
+  protected get targetDatasetsRootNodes(): ExplorerNodeData[] {
+    return this.isRemoteTarget
       ? [emptyRootNode]
-      : [rootDatasetNode],
-  );
+      : [rootDatasetNode];
+  }
 
-  protected readonly sourceDatasetsRootNodes$: Observable<ExplorerNodeData[]> = of(
-    this.isRemoteSource
+  protected get sourceDatasetsRootNodes(): ExplorerNodeData[] {
+    return this.isRemoteSource
       ? [emptyRootNode]
-      : [rootDatasetNode],
-  );
+      : [rootDatasetNode];
+  }
 
   existReplicationOptions$: Observable<Option[]>;
 

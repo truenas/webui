@@ -39,6 +39,7 @@ import {
   SmbPresetType,
   SmbShare, SmbShareUpdate,
 } from 'app/interfaces/smb-share.interface';
+import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -99,16 +100,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   protected readonly requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
   private wasStripAclWarningShown = false;
 
-  protected rootNodes$ = this.filesystemService.getTopLevelDatasetsNodes({
-    directoriesOnly: true,
-    includeSnapshots: false,
-    shouldDisableNode: (node) => {
-      if (this.existingSmbShare?.path === node.path) {
-        return of(false);
-      }
-      return of(true);
-    },
-  });
+  protected rootNodes = signal<ExplorerNodeData[]>([]);
 
   groupProvider: ChipsProvider = (query) => {
     return this.userService.groupQueryDsCache(query).pipe(
@@ -259,6 +251,27 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
     this.existingSmbShare = this.slideInRef.getData()?.existingSmbShare;
     this.defaultSmbShare = this.slideInRef.getData()?.defaultSmbShare;
+
+    this.setupExplorerRootNodes();
+  }
+
+  private setupExplorerRootNodes(): void {
+    this.filesystemService.getTopLevelDatasetsNodes({
+      directoriesOnly: true,
+      includeSnapshots: false,
+      shouldDisableNode: (node) => {
+        if (this.existingSmbShare?.path === node.path) {
+          return of(false);
+        }
+        return of(true);
+      },
+    }).pipe(
+      untilDestroyed(this),
+    ).subscribe({
+      next: (nodes) => {
+        this.rootNodes.set(nodes);
+      },
+    });
   }
 
   ngOnInit(): void {

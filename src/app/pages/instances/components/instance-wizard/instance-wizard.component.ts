@@ -47,7 +47,6 @@ import { choicesToOptions, singleArrayToOptions } from 'app/helpers/operators/op
 import { mapToOptions } from 'app/helpers/options.helper';
 import { instancesHelptext } from 'app/helptext/instances/instances';
 import { Option } from 'app/interfaces/option.interface';
-import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
 import {
   CreateVirtualizationInstance,
   InstanceEnvVariablesFormGroup,
@@ -243,7 +242,7 @@ export class InstanceWizardComponent implements OnInit {
     environment_variables: new FormArray<InstanceEnvVariablesFormGroup>([]),
   });
 
-  protected sourceRootNodes$: Observable<ExplorerNodeData[]> = of([slashRootNode]);
+  protected readonly slashRootNode = slashRootNode;
 
   readonly bootFromOptions$: Observable<Option[]> = this.form.controls.disks.statusChanges.pipe(
     startWith(null),

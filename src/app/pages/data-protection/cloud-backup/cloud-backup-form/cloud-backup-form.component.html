@@ -13,7 +13,7 @@
             [tooltip]="helptext.sourcePathTooltip | translate"
             [required]="true"
             [multiple]="false"
-            [rootNodes]="pathRootNodes$"
+            [rootNodes]="[slashRootNode]"
             [nodeProvider]="fileNodeProvider"
           ></ix-explorer>
 
@@ -64,7 +64,7 @@
             } @else {
               <ix-explorer
                 formControlName="folder"
-                [rootNodes]="folderRootNodes$"
+                [rootNodes]="[slashRootNode]"
                 [label]="helptext.folder | translate"
                 [tooltip]="helptext.folderTooltip | translate"
                 [nodeProvider]="bucketNodeProvider"

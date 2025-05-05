@@ -17,6 +17,7 @@ import {
   firstValueFrom, Observable, of,
 } from 'rxjs';
 import { catchError, filter } from 'rxjs/operators';
+import { rootDatasetNode } from 'app/constants/basic-root-nodes.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { Role } from 'app/enums/role.enum';
@@ -66,8 +67,7 @@ export class IxExplorerComponent implements ControlValueAccessor {
   readonly multiple = input(false);
   readonly tooltip = input<TranslatedString>();
   readonly required = input<boolean>(false);
-  readonly rootNodes = input<Observable<ExplorerNodeData[]>>(/* of([rootDatasetNode]) */);
-  private readonly roots = signal<ExplorerNodeData[]>([]);
+  readonly rootNodes = input<ExplorerNodeData[]>([rootDatasetNode]);
   readonly nodeProvider = input.required<TreeNodeProvider>();
   // TODO: Come up with a system of extendable controls.
   // TODO: Add support for zvols.
@@ -149,21 +149,16 @@ export class IxExplorerComponent implements ControlValueAccessor {
     private errorParser: ErrorParserService,
   ) {
     this.controlDirective.valueAccessor = this;
-    effect(() => {
-      const roots$ = this.rootNodes();
-      roots$.pipe(
-        untilDestroyed(this),
-      ).subscribe({
-        next: (roots) => {
-          this.roots.set(roots);
-          this.setInitialNodes();
-        },
-      });
-    });
 
     effect(() => {
       const nodeProvider = this.nodeProvider();
       if (nodeProvider) {
+        this.setInitialNodes();
+      }
+    });
+    effect(() => {
+      const rootNodes = this.rootNodes();
+      if (rootNodes) {
         this.setInitialNodes();
       }
     });
@@ -259,8 +254,8 @@ export class IxExplorerComponent implements ControlValueAccessor {
   }
 
   parentDatasetName(path: string): string {
-    const roots = this.roots();
-    if (!path || this.roots().map((root) => root.path).includes(path)) {
+    const roots = this.rootNodes();
+    if (!path || this.rootNodes().map((root) => root.path).includes(path)) {
       return '';
     }
 
@@ -304,7 +299,7 @@ export class IxExplorerComponent implements ControlValueAccessor {
   }
 
   private setInitialNodes(): void {
-    const roots = this.roots();
+    const roots = this.rootNodes();
     this.nodes.set(roots);
   }
 

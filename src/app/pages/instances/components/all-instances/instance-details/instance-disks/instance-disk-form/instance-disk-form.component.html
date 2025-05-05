@@ -28,7 +28,7 @@
         } @else {
           <ix-explorer
             formControlName="source"
-            [rootNodes]="sourceRootNodes$"
+            [rootNodes]="[slashRootNode]"
             [label]="'Source' | translate"
             [required]="true"
             [nodeProvider]="datasetProvider"

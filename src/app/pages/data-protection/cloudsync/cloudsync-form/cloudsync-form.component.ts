@@ -108,8 +108,7 @@ export class CloudSyncFormComponent implements OnInit {
     return !this.editingTask;
   }
 
-  protected readonly folderSourceRootNodes$ = of([slashRootNode]);
-  protected readonly folderDestinationRootNodes$ = of([slashRootNode]);
+  protected readonly slashRootNode = slashRootNode;
 
   get title(): string {
     return this.isNew

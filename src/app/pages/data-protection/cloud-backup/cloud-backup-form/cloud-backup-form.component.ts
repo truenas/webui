@@ -88,8 +88,7 @@ export class CloudBackupFormComponent implements OnInit {
       : this.translate.instant('Edit TrueCloud Backup Task');
   }
 
-  protected readonly folderRootNodes$ = of([slashRootNode]);
-  protected readonly pathRootNodes$ = of([slashRootNode]);
+  protected readonly slashRootNode = slashRootNode;
 
   protected readonly newBucketOption = {
     label: this.translate.instant('Add new'),
