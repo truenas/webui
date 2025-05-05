@@ -8,8 +8,19 @@ export const storageHealthCardElements = {
     zfsHealth: {
       hierarchy: [T('Storage Health')],
     },
-    scrub: {
-      hierarchy: [T('Scrub')],
+    scrubNow: {
+      hierarchy: [T('Scrub Now')],
+      synonyms: [T('Run Scrub'), T('Start Scrub')],
+    },
+    scheduledScrub: {
+      hierarchy: [T('Scheduled Scrub')],
+      synonyms: [
+        T('Periodic Scrub'),
+        T('Scrub Task'),
+        T('Periodic Disk Checks'),
+        T('Scrub Schedule'),
+        T('Scrub Interval'),
+      ],
     },
     autoTrim: {
       hierarchy: [T('Auto TRIM')],
