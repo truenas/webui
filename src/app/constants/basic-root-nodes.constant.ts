@@ -8,11 +8,13 @@ export const slashRootNode: ExplorerNodeData = {
   name: '/',
   hasChildren: true,
   type: ExplorerNodeType.Directory,
+  isProvidedRoot: true,
 };
 
 export const emptyRootNode: ExplorerNodeData = {
   path: '',
   name: '',
+  isProvidedRoot: true,
   hasChildren: true,
   type: ExplorerNodeType.Directory,
 };
@@ -21,11 +23,13 @@ export const rootZvolNode = {
   path: zvolPath,
   name: zvolPath,
   hasChildren: true,
+  isProvidedRoot: true,
   type: ExplorerNodeType.Directory,
 } as ExplorerNodeData;
 
 export const rootDatasetNode = {
   path: mntPath,
+  isProvidedRoot: true,
   name: mntPath,
   hasChildren: true,
   type: ExplorerNodeType.Directory,

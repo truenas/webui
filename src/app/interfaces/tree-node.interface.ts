@@ -28,4 +28,5 @@ export interface ExplorerNodeData {
   isMountpoint?: boolean;
   isLock?: boolean;
   disabled?: boolean;
+  isProvidedRoot?: boolean;
 }
