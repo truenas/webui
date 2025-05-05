@@ -11,6 +11,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   debounceTime, map, merge, Observable, of, switchMap,
 } from 'rxjs';
+import { emptyRootNode, rootDatasetNode } from 'app/constants/basic-root-nodes.constant';
 import { DatasetSource } from 'app/enums/dataset.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
@@ -23,6 +24,7 @@ import { CountManualSnapshotsParams, EligibleManualSnapshotsCount } from 'app/in
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { newOption, Option } from 'app/interfaces/option.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
+import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SshCredentialsSelectComponent } from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.component';
@@ -118,6 +120,18 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
       ),
     ],
   });
+
+  protected readonly targetDatasetsRootNodes$: Observable<ExplorerNodeData[]> = of(
+    this.isRemoteTarget
+      ? [emptyRootNode]
+      : [rootDatasetNode],
+  );
+
+  protected readonly sourceDatasetsRootNodes$: Observable<ExplorerNodeData[]> = of(
+    this.isRemoteSource
+      ? [emptyRootNode]
+      : [rootDatasetNode],
+  );
 
   existReplicationOptions$: Observable<Option[]>;
 

@@ -10,6 +10,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   debounceTime, distinctUntilChanged, map, of,
 } from 'rxjs';
+import { slashRootNode } from 'app/constants/basic-root-nodes.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { CloudsyncTransferSetting, cloudsyncTransferSettingLabels } from 'app/enums/cloudsync-transfer-setting.enum';
@@ -86,6 +87,9 @@ export class CloudBackupFormComponent implements OnInit {
       ? this.translate.instant('Add TrueCloud Backup Task')
       : this.translate.instant('Edit TrueCloud Backup Task');
   }
+
+  protected readonly folderRootNodes$ = of([slashRootNode]);
+  protected readonly pathRootNodes$ = of([slashRootNode]);
 
   protected readonly newBucketOption = {
     label: this.translate.instant('Add new'),

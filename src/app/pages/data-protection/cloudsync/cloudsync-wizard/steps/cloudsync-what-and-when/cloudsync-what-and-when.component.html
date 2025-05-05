@@ -46,7 +46,7 @@
       @if (form.controls.folder_destination.enabled) {
         <ix-explorer
           formControlName="folder_destination"
-          [roots]="['/']"
+          [rootNodes]="folderDestinationRootNodes$"
           [label]="helptext.folder_placeholder | translate"
           [tooltip]="helptext.folder_tooltip | translate"
           [nodeProvider]="bucketNodeProvider"
@@ -55,7 +55,7 @@
       @if (form.controls.folder_source.enabled) {
         <ix-explorer
           formControlName="folder_source"
-          [roots]="['/']"
+          [rootNodes]="folderSourceRootNodes$"
           [label]="helptext.folder_placeholder | translate"
           [tooltip]="helptext.folder_tooltip | translate"
           [multiple]="true"

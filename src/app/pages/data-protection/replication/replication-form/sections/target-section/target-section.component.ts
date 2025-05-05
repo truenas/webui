@@ -6,6 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Observable, combineLatest, of } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { emptyRootNode } from 'app/constants/basic-root-nodes.constant';
 import { truenasDbKeyLocation } from 'app/constants/truenas-db-key-location.constant';
 import { EncryptionKeyFormat, encryptionKeyFormatNames } from 'app/enums/encryption-key-format.enum';
 import { LifetimeUnit, lifetimeUnitNames } from 'app/enums/lifetime-unit.enum';
@@ -15,6 +16,7 @@ import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextReplication } from 'app/helptext/data-protection/replication/replication';
 import { Option } from 'app/interfaces/option.interface';
 import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-task.interface';
+import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
@@ -72,6 +74,8 @@ export class TargetSectionComponent implements OnInit, OnChanges {
   protected readonly helptext = helptextReplication;
 
   private allRetentionPolicies$ = of(mapToOptions(retentionPolicyNames, this.translate));
+
+  protected readonly targetDatasetRootNodes$: Observable<ExplorerNodeData[]> = of([emptyRootNode]);
 
   constructor(
     private formBuilder: FormBuilder,

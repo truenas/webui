@@ -20,6 +20,7 @@ import {
   catchError,
   filter, map, pairwise, startWith, switchMap, tap,
 } from 'rxjs/operators';
+import { slashRootNode } from 'app/constants/basic-root-nodes.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Direction, directionNames } from 'app/enums/direction.enum';
@@ -106,6 +107,9 @@ export class CloudSyncFormComponent implements OnInit {
   get isNew(): boolean {
     return !this.editingTask;
   }
+
+  protected readonly folderSourceRootNodes$ = of([slashRootNode]);
+  protected readonly folderDestinationRootNodes$ = of([slashRootNode]);
 
   get title(): string {
     return this.isNew

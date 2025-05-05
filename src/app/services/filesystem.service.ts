@@ -2,11 +2,11 @@ import { Injectable } from '@angular/core';
 import {
   catchError, forkJoin, map, Observable, of, switchMap, throwError,
 } from 'rxjs';
+import { rootDatasetNode, rootZvolNode } from 'app/constants/basic-root-nodes.constant';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { FileAttribute } from 'app/enums/file-attribute.enum';
 import { FileType } from 'app/enums/file-type.enum';
 import { extractApiErrorDetails } from 'app/helpers/api.helper';
-import { zvolPath } from 'app/helpers/storage.helper';
 import { FileRecord } from 'app/interfaces/file-record.interface';
 import { QueryFilter, QueryOptions } from 'app/interfaces/query-api.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
@@ -23,25 +23,15 @@ export interface ProviderOptions {
   shouldDisableNode?: (node: ExplorerNodeData) => Observable<boolean>;
 }
 
-const roolZvolNode = {
-  path: zvolPath,
-  name: zvolPath,
-  hasChildren: true,
-  type: ExplorerNodeType.Directory,
-} as ExplorerNodeData;
-
-const roolDatasetNode = {
-  path: '/mnt',
-  name: '/mnt',
-  hasChildren: true,
-  type: ExplorerNodeType.Directory,
-};
-
 @Injectable({ providedIn: 'root' })
 export class FilesystemService {
   constructor(
     private api: ApiService,
   ) {}
+
+  // getTopLevelDatasets(providerOptions: ProviderOptions): string[] {
+
+  // }
 
   /**
    * Returns a pre-configured node provider for files and directories.
@@ -59,13 +49,13 @@ export class FilesystemService {
 
     return (node: TreeNode<ExplorerNodeData>) => {
       if (options.datasetsAndZvols && node.data.path.trim() === '/') {
-        return of([roolDatasetNode, roolZvolNode]);
+        return of([rootDatasetNode, rootZvolNode]);
       }
       if (options.zvolsOnly && node.data.path.trim() === '/') {
-        return of([roolZvolNode]);
+        return of([rootZvolNode]);
       }
       if (options.datasetsOnly && node.data.path.trim() === '/') {
-        return of([roolDatasetNode]);
+        return of([rootDatasetNode]);
       }
       const typeFilter: [QueryFilter<FileRecord>?] = [];
       if (options.directoriesOnly) {

@@ -5,6 +5,7 @@ import {
   OnChanges,
   OnInit, signal, Signal, viewChild,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { ControlValueAccessor, NgControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -19,9 +20,9 @@ import {
   firstValueFrom, Observable, of,
 } from 'rxjs';
 import { catchError, filter } from 'rxjs/operators';
+import { rootDatasetNode } from 'app/constants/basic-root-nodes.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
-import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
 import { zvolPath } from 'app/helpers/storage.helper';
 import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
@@ -70,7 +71,8 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   readonly multiple = input(false);
   readonly tooltip = input<TranslatedString>();
   readonly required = input<boolean>(false);
-  readonly roots = input<string[]>([mntPath]);
+  readonly rootNodes = input<Observable<ExplorerNodeData[]>>(of([rootDatasetNode]));
+  private readonly roots = toSignal(this.rootNodes());
   readonly nodeProvider = input.required<TreeNodeProvider>();
   // TODO: Come up with a system of extendable controls.
   // TODO: Add support for zvols.
@@ -145,7 +147,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   }
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
-    if ('nodeProvider' in changes || 'root' in changes) {
+    if ('nodeProvider' in changes || 'rootNodes' in changes) {
       this.setInitialNode();
     }
   }
@@ -244,13 +246,13 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   }
 
   parentDatasetName(path: string): string {
-    if (!path || this.roots().includes(path)) {
+    const roots = this.roots();
+    if (!path || this.roots().map((root) => root.path).includes(path)) {
       return '';
     }
 
-    const roots = this.roots();
     for (const root of roots) {
-      path = path.replace(`${root}/`, '');
+      path = path.replace(`${root.path}/`, '');
     }
 
     return path.replace('/mnt/', '');
@@ -290,15 +292,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
 
   private setInitialNode(): void {
     const roots = this.roots();
-    this.nodes.set(roots.map((root) => {
-      return {
-        path: root,
-        name: root,
-        hasChildren: true,
-        type: ExplorerNodeType.Directory,
-        isMountpoint: true,
-      };
-    }));
+    this.nodes.set(roots);
   }
 
   private updateInputValue(): void {

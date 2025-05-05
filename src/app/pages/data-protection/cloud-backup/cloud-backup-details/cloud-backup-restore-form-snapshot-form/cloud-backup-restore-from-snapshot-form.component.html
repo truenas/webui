@@ -26,7 +26,7 @@
             [tooltip]="helptext.tooltips.excludedPaths | translate"
             [label]="'Excluded Paths' | translate"
             [nodeProvider]="snapshotNodeProvider"
-            [roots]="data.backup.absolute_paths ? [mntPath] : ['/']"
+            [rootNodes]="excludedPathRootNodes$"
             [multiple]="true"
           ></ix-explorer>
         }
@@ -46,7 +46,7 @@
             [required]="true"
             [label]="'Subfolder' | translate"
             [nodeProvider]="snapshotNodeProvider"
-            [roots]="data.backup.absolute_paths ? [mntPath] : ['/']"
+            [rootNodes]="subFolderRootNodes$"
             [tooltip]="helptext.tooltips.subFolder | translate"
           ></ix-explorer>
         }
@@ -54,7 +54,7 @@
         @if (isIncludeFromSubfolderSelected) {
           <ix-explorer
             formControlName="includedPaths"
-            [roots]="[form.controls.subFolder.value] || [backupMntPath]"
+            [rootNodes]="includedPathsRootNodes$"
             [label]="'Included Paths' | translate"
             [nodeProvider]="snapshotNodeProvider"
             [tooltip]="helptext.tooltips.includedPaths | translate"
