@@ -1,0 +1,50 @@
+<div class="scan-in-progress">
+  <div class="scan-description">
+    <span class="scan-label">
+      {{ scanLabel() }}
+    </span>
+    {{ scan().percentage / 100 | percent: '1.2-2' }}
+  </div>
+
+  @if (scan().total_secs_left && !isScrubPaused()) {
+    <div class="time-left">
+      {{ timeLeftString() }}
+    </div>
+  }
+
+  <mat-progress-bar
+    class="progress"
+    [value]="scan().percentage"
+  ></mat-progress-bar>
+</div>
+
+@if (isScrub()) {
+  <ng-container *ixRequiresRoles="[Role.PoolScrubWrite]">
+    <div class="controls">
+      <button
+        mat-button
+        ixTest="stop-scrub"
+        (click)="onStopScrub()"
+      >
+        {{ 'Stop Scrub' | translate }}
+      </button>
+      @if (isScrubPaused()) {
+        <button
+          mat-button
+          ixTest="resume-scrub"
+          (click)="onResumeScrub()"
+        >
+          {{ 'Resume Scrub' | translate }}
+        </button>
+      } @else {
+        <button
+          mat-button
+          ixTest="pause-scrub"
+          (click)="onPauseScrub()"
+        >
+          {{ 'Pause Scrub' | translate }}
+        </button>
+      }
+    </div>
+  </ng-container>
+}

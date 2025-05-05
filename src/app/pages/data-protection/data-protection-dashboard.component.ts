@@ -6,7 +6,6 @@ import { CloudBackupCardComponent } from './cloud-backup/cloud-backup-card/cloud
 import { CloudSyncTaskCardComponent } from './cloudsync/cloudsync-task-card/cloudsync-task-card.component';
 import { ReplicationTaskCardComponent } from './replication/replication-task-card/replication-task-card.component';
 import { RsyncTaskCardComponent } from './rsync-task/rsync-task-card/rsync-task-card.component';
-import { ScrubTaskCardComponent } from './scrub-task/scrub-task-card/scrub-task-card.component';
 import { SnapshotTaskCardComponent } from './snapshot-task/snapshot-task-card/snapshot-task-card.component';
 
 @UntilDestroy()
@@ -18,7 +17,6 @@ import { SnapshotTaskCardComponent } from './snapshot-task/snapshot-task-card/sn
   imports: [
     UiSearchDirective,
     CloudBackupCardComponent,
-    ScrubTaskCardComponent,
     CloudSyncTaskCardComponent,
     SnapshotTaskCardComponent,
     RsyncTaskCardComponent,

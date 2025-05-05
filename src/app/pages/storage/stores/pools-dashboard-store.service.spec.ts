@@ -10,6 +10,7 @@ import { DiskType } from 'app/enums/disk-type.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Disk, DiskTemperatureAgg, StorageDashboardDisk } from 'app/interfaces/disk.interface';
+import { ScrubTask } from 'app/interfaces/pool-scrub.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -79,17 +80,23 @@ describe('PoolsDashboardStore', () => {
     testScheduler.run(({ cold, expectObservable }) => {
       const mockedApi = spectator.inject(ApiService);
       const pools = [
-        { name: 'pool1' },
-        { name: 'pool2' },
+        { id: 1, name: 'pool1' },
+        { id: 2, name: 'pool2' },
       ] as Pool[];
       const rootDatasets = [
         { id: 'pool1' },
         { id: 'pool2' },
       ] as Dataset[];
+      const scrubs = [
+        { pool: 1 },
+        { pool: 2 },
+      ] as ScrubTask[];
       jest.spyOn(mockedApi, 'call').mockImplementation((method: string) => {
         switch (method) {
           case 'pool.dataset.query':
             return cold('-a|', { a: rootDatasets });
+          case 'pool.scrub.query':
+            return cold('-a|', { a: scrubs });
           case 'disk.query':
             return cold('-a|', { a: [...disks] });
           case 'disk.temperature_alerts':
@@ -109,39 +116,42 @@ describe('PoolsDashboardStore', () => {
 
       spectator.service.loadDashboard();
 
-      expectObservable(spectator.service.state$).toBe('abc', {
+      expectObservable(spectator.service.state$).toBe('ab-c', {
         a: {
           arePoolsLoading: true,
-          areDisksLoading: true,
+          isLoadingPoolDetails: true,
           pools: [],
           rootDatasets: {},
           disks: [],
+          scrubs: [],
         },
         b: {
           arePoolsLoading: false,
-          areDisksLoading: true,
+          isLoadingPoolDetails: true,
           pools: [
-            { name: 'pool1' },
-            { name: 'pool2' },
+            { id: 1, name: 'pool1' },
+            { id: 2, name: 'pool2' },
           ],
           rootDatasets: {
             pool1: { id: 'pool1' },
             pool2: { id: 'pool2' },
           },
           disks: [],
+          scrubs: [],
         },
         c: {
           arePoolsLoading: false,
-          areDisksLoading: false,
+          isLoadingPoolDetails: false,
           pools: [
-            { name: 'pool1' },
-            { name: 'pool2' },
+            { id: 1, name: 'pool1' },
+            { id: 2, name: 'pool2' },
           ],
           rootDatasets: {
             pool1: { id: 'pool1' },
             pool2: { id: 'pool2' },
           },
           disks: [...dashboardDisks],
+          scrubs,
         },
       });
     });
