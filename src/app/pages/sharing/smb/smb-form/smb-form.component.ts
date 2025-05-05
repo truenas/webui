@@ -99,6 +99,17 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   protected readonly requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
   private wasStripAclWarningShown = false;
 
+  protected rootNodes$ = this.filesystemService.getTopLevelDatasetsNodes({
+    directoriesOnly: true,
+    includeSnapshots: false,
+    shouldDisableNode: (node) => {
+      if (this.existingSmbShare.path === node.path) {
+        return of(false);
+      }
+      return of(true);
+    },
+  });
+
   groupProvider: ChipsProvider = (query) => {
     return this.userService.groupQueryDsCache(query).pipe(
       map((groups) => groups.map((group) => group.group)),

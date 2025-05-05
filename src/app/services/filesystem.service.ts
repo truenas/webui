@@ -29,9 +29,18 @@ export class FilesystemService {
     private api: ApiService,
   ) {}
 
-  // getTopLevelDatasets(providerOptions: ProviderOptions): string[] {
-
-  // }
+  getTopLevelDatasetsNodes(providerOptions: ProviderOptions): Observable<ExplorerNodeData[]> {
+    const options: ProviderOptions = {
+      directoriesOnly: false,
+      showHiddenFiles: false,
+      includeSnapshots: true,
+      datasetsAndZvols: false,
+      zvolsOnly: false,
+      datasetsOnly: false,
+      ...providerOptions,
+    };
+    return this.getTreeNodeProvider(options)({ data: rootDatasetNode } as TreeNode<ExplorerNodeData>);
+  }
 
   /**
    * Returns a pre-configured node provider for files and directories.
@@ -47,6 +56,10 @@ export class FilesystemService {
       ...providerOptions,
     };
 
+    return this.getTreeNodeProvider(options);
+  }
+
+  private getTreeNodeProvider(options: ProviderOptions): TreeNodeProvider {
     return (node: TreeNode<ExplorerNodeData>) => {
       if (options.datasetsAndZvols && node.data.path.trim() === '/') {
         return of([rootDatasetNode, rootZvolNode]);
@@ -111,8 +124,8 @@ export class FilesystemService {
         }),
         switchMap((children: ExplorerNodeData[]) => {
           const updatedObservables$ = children.map((child) => {
-            const disabled$ = providerOptions.shouldDisableNode
-              ? providerOptions.shouldDisableNode(child)
+            const disabled$ = options.shouldDisableNode
+              ? options.shouldDisableNode(child)
               : of(false);
             return disabled$.pipe(
               map((disabled) => ({ ...child, disabled } as ExplorerNodeData)),
