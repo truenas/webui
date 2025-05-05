@@ -1,0 +1,28 @@
+import { HttpClient } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
+import { environment } from 'environments/environment';
+import { Observable } from 'rxjs';
+import { WINDOW } from 'app/helpers/window.helper';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class GlobalApiHttpService {
+  private readonly baseUrl: string;
+
+  constructor(
+    private http: HttpClient,
+    @Inject(WINDOW) private window: Window,
+  ) {
+    const protocol = this.window.location.protocol === 'https:' ? 'https://' : 'http://';
+    this.baseUrl = `${protocol}${environment.remote}/api`;
+  }
+
+  get<T>(path: string): Observable<T> {
+    return this.http.get<T>(`${this.baseUrl}/${path}`);
+  }
+
+  getBootId(): Observable<string> {
+    return this.get<string>('boot_id');
+  }
+}
