@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import {
-  catchError, map, of, throwError,
+  catchError, forkJoin, map, Observable, of, switchMap, throwError,
 } from 'rxjs';
+import { rootDatasetNode, rootZvolNode } from 'app/constants/basic-root-nodes.constant';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { FileAttribute } from 'app/enums/file-attribute.enum';
 import { FileType } from 'app/enums/file-type.enum';
 import { extractApiErrorDetails } from 'app/helpers/api.helper';
-import { zvolPath } from 'app/helpers/storage.helper';
 import { FileRecord } from 'app/interfaces/file-record.interface';
 import { QueryFilter, QueryOptions } from 'app/interfaces/query-api.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
@@ -20,27 +20,27 @@ export interface ProviderOptions {
   datasetsAndZvols?: boolean;
   zvolsOnly?: boolean;
   datasetsOnly?: boolean;
+  shouldDisableNode?: (node: ExplorerNodeData) => Observable<boolean>;
 }
-
-const roolZvolNode = {
-  path: zvolPath,
-  name: zvolPath,
-  hasChildren: true,
-  type: ExplorerNodeType.Directory,
-} as ExplorerNodeData;
-
-const roolDatasetNode = {
-  path: '/mnt',
-  name: '/mnt',
-  hasChildren: true,
-  type: ExplorerNodeType.Directory,
-};
 
 @Injectable({ providedIn: 'root' })
 export class FilesystemService {
   constructor(
     private api: ApiService,
   ) {}
+
+  getTopLevelDatasetsNodes(providerOptions: ProviderOptions): Observable<ExplorerNodeData[]> {
+    const options: ProviderOptions = {
+      directoriesOnly: false,
+      showHiddenFiles: false,
+      includeSnapshots: true,
+      datasetsAndZvols: false,
+      zvolsOnly: false,
+      datasetsOnly: false,
+      ...providerOptions,
+    };
+    return this.getTreeNodeProvider(options)({ data: rootDatasetNode } as TreeNode<ExplorerNodeData>);
+  }
 
   /**
    * Returns a pre-configured node provider for files and directories.
@@ -56,15 +56,19 @@ export class FilesystemService {
       ...providerOptions,
     };
 
+    return this.getTreeNodeProvider(options);
+  }
+
+  private getTreeNodeProvider(options: ProviderOptions): TreeNodeProvider {
     return (node: TreeNode<ExplorerNodeData>) => {
       if (options.datasetsAndZvols && node.data.path.trim() === '/') {
-        return of([roolDatasetNode, roolZvolNode]);
+        return of([rootDatasetNode, rootZvolNode]);
       }
       if (options.zvolsOnly && node.data.path.trim() === '/') {
-        return of([roolZvolNode]);
+        return of([rootZvolNode]);
       }
       if (options.datasetsOnly && node.data.path.trim() === '/') {
-        return of([roolDatasetNode]);
+        return of([rootDatasetNode]);
       }
       const typeFilter: [QueryFilter<FileRecord>?] = [];
       if (options.directoriesOnly) {
@@ -105,17 +109,29 @@ export class FilesystemService {
                 fileType = ExplorerNodeType.File;
                 break;
             }
-            children.push({
+            const child: ExplorerNodeData = {
               path: file.path,
               name: file.name,
               isMountpoint: file.attributes.includes(FileAttribute.MountRoot),
               isLock: file.attributes.includes(FileAttribute.Immutable),
               type: fileType,
               hasChildren: file.type === FileType.Directory,
-            });
+            };
+            children.push(child);
           });
 
           return children;
+        }),
+        switchMap((children: ExplorerNodeData[]) => {
+          const updatedObservables$ = children.map((child) => {
+            const disabled$ = options.shouldDisableNode
+              ? options.shouldDisableNode(child)
+              : of(false);
+            return disabled$.pipe(
+              map((disabled) => ({ ...child, disabled } as ExplorerNodeData)),
+            );
+          });
+          return updatedObservables$?.length ? forkJoin(updatedObservables$) : of(children);
         }),
         catchError((error: unknown) => {
           const apiError = extractApiErrorDetails(error);

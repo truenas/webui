@@ -5,6 +5,7 @@ import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angula
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { emptyRootNode } from 'app/constants/basic-root-nodes.constant';
 import { Direction } from 'app/enums/direction.enum';
 import { SnapshotNamingOption, snapshotNamingOptionNames } from 'app/enums/snapshot-naming-option.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
@@ -52,6 +53,8 @@ export class SourceSectionComponent implements OnChanges {
   readonly replication = input<ReplicationTask>();
   readonly direction = input<Direction>();
   readonly nodeProvider = input<TreeNodeProvider>();
+
+  protected readonly sourceDatasetsRootNodes$ = of([emptyRootNode]);
 
   form = this.formBuilder.group({
     source_datasets: [[] as string | string[], Validators.required],

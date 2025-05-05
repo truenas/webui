@@ -4,9 +4,11 @@ import { MatButton } from '@angular/material/button';
 import { MatDialogClose, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { instancesHelptext } from 'app/helptext/instances/instances';
 import { RadioOption } from 'app/interfaces/option.interface';
+import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
 import { ZvolToImport } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -44,6 +46,16 @@ export class ImportZvolsDialog {
   protected zvolProvider = this.filesystem.getFilesystemNodeProvider({
     zvolsOnly: true,
   });
+
+  protected zvolsRootNodes$: Observable<ExplorerNodeData[]> = of([
+    {
+      path: '/dev/zvol',
+      name: '/dev/zvol',
+      type: ExplorerNodeType.Directory,
+      hasChildren: true,
+      isMountpoint: true,
+    } as ExplorerNodeData,
+  ]);
 
   protected cloneOrMoveOptions$ = of<RadioOption[]>([
     {

@@ -36,6 +36,7 @@
         <span
           tabindex="0"
           class="node-container"
+          [class.node-disabled]="node.data.disabled"
           [attr.aria-label]="ariaLabel(node)"
           [class.selected]="isPathSelected(node.data.path)"
           (keyup.enter)="node?.toggleSelected()"

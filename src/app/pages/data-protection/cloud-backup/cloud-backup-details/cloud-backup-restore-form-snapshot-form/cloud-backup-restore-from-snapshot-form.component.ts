@@ -9,7 +9,8 @@ import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { map, of } from 'rxjs';
+import { BehaviorSubject, map, of } from 'rxjs';
+import { rootDatasetNode, slashRootNode } from 'app/constants/basic-root-nodes.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetPreset } from 'app/enums/dataset.enum';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
@@ -89,6 +90,15 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
     includedPaths: [[] as string[]],
   });
 
+  protected readonly includedPathsRootNodes$ = of(
+    this.form.controls.subFolder.value
+      ? [{ ...rootDatasetNode, path: this.form.controls.subFolder.value, name: this.form.controls.subFolder.value }]
+      : [{ ...rootDatasetNode, path: this.backupMntPath, name: this.backupMntPath }],
+  );
+
+  protected readonly subFolderRootNodes$ = new BehaviorSubject<ExplorerNodeData[]>([]);
+  protected readonly excludedPathRootNodes$ = new BehaviorSubject<ExplorerNodeData[]>([]);
+
   protected isLoading = signal(false);
 
   createDatasetProps: Omit<DatasetCreate, 'name'> = {
@@ -128,6 +138,13 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
     });
 
     this.data = this.slideInRef.getData();
+    if (this.data.backup.absolute_paths) {
+      this.subFolderRootNodes$.next([rootDatasetNode]);
+      this.excludedPathRootNodes$.next([rootDatasetNode]);
+    } else {
+      this.excludedPathRootNodes$.next([slashRootNode]);
+      this.subFolderRootNodes$.next([slashRootNode]);
+    }
     this.form.patchValue({
       subFolder: this.backupMntPath,
     });
