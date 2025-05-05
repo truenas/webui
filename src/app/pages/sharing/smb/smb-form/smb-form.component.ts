@@ -103,7 +103,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     directoriesOnly: true,
     includeSnapshots: false,
     shouldDisableNode: (node) => {
-      if (this.existingSmbShare.path === node.path) {
+      if (this.existingSmbShare?.path === node.path) {
         return of(false);
       }
       return of(true);

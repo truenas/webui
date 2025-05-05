@@ -80,6 +80,12 @@
       outline: 1.5px solid var(--primary);
     }
   }
+
+  .node-disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+    pointer-events: none;
+  }
 }
 
 .loading-error {

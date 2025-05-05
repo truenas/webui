@@ -112,10 +112,20 @@ export class IxExplorerComponent implements ControlValueAccessor {
     mouse: {
       expanderClick: this.toggleExpandNodeFn.bind(this),
       dblClick: this.toggleExpandNodeFn.bind(this),
-      click: TREE_ACTIONS.TOGGLE_SELECTED,
+      click: (tree, node: TreeNode<ExplorerNodeData>, event$) => {
+        if (node.data.disabled) {
+          return TREE_ACTIONS.DESELECT(tree, node, event$);
+        }
+        return TREE_ACTIONS.TOGGLE_SELECTED(tree, node, event$);
+      },
     },
     keys: {
-      [KEYS.ENTER]: TREE_ACTIONS.TOGGLE_SELECTED,
+      [KEYS.ENTER]: (tree, node: TreeNode<ExplorerNodeData>, event$) => {
+        if (node.data.disabled) {
+          return TREE_ACTIONS.DESELECT(tree, node, event$);
+        }
+        return TREE_ACTIONS.TOGGLE_SELECTED(tree, node, event$);
+      },
       [KEYS.SPACE]: this.toggleExpandNodeFn.bind(this),
     },
   };
