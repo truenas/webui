@@ -3,7 +3,7 @@ import { mockProvider, Spectator, createComponentFactory } from '@ngneat/spectat
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
-import { helptextManager } from 'app/helptext/storage/volumes/manager/manager';
+import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
 import { LayoutStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/layout-step/layout-step.component';
 import { CacheWizardStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/6-cache-wizard-step/cache-wizard-step.component';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
@@ -49,7 +49,7 @@ describe('CacheWizardStepComponent', () => {
 
   it('has the correct inputs', () => {
     const layoutComponent = spectator.query(LayoutStepComponent)!;
-    expect(layoutComponent.description).toBe(helptextManager.cache_vdev_description);
+    expect(layoutComponent.description).toBe(helptextPoolCreation.cacheVdevDescription);
     expect(layoutComponent.canChangeLayout).toBeFalsy();
     expect(layoutComponent.inventory).toStrictEqual([...fakeInventory]);
     expect(layoutComponent.limitLayouts).toStrictEqual([CreateVdevLayout.Stripe]);

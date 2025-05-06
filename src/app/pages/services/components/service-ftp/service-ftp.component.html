@@ -15,7 +15,7 @@
               type="number"
               [label]="'Port' | translate"
               [required]="true"
-              [tooltip]="helptext.port_tooltip | translate"
+              [tooltip]="helptext.portTooltip | translate"
             ></ix-input>
 
             <ix-input
@@ -23,7 +23,7 @@
               type="number"
               [label]="'Clients' | translate"
               [required]="true"
-              [tooltip]="helptext.clients_tooltip | translate"
+              [tooltip]="helptext.clientsTooltip | translate"
             ></ix-input>
 
             <ix-input
@@ -31,7 +31,7 @@
               type="number"
               [label]="'Connections' | translate"
               [required]="true"
-              [tooltip]="helptext.ipconnections_tooltip | translate"
+              [tooltip]="helptext.ipconnectionsTooltip | translate"
             ></ix-input>
 
             <ix-input
@@ -39,7 +39,7 @@
               type="number"
               [label]="'Login Attempts' | translate"
               [required]="true"
-              [tooltip]="helptext.loginattempt_tooltip | translate"
+              [tooltip]="helptext.loginattemptTooltip | translate"
             ></ix-input>
 
             <ix-input
@@ -47,7 +47,7 @@
               type="number"
               [label]="'Notransfer Timeout' | translate"
               [required]="true"
-              [tooltip]="helptext.timeout_notransfer_tooltip | translate"
+              [tooltip]="helptext.timeoutNotransferTooltip | translate"
             ></ix-input>
 
             <ix-input
@@ -55,7 +55,7 @@
               type="number"
               [label]="'Timeout' | translate"
               [required]="true"
-              [tooltip]="helptext.timeout_tooltip | translate"
+              [tooltip]="helptext.timeoutTooltip | translate"
             ></ix-input>
           </ix-fieldset>
 
@@ -64,20 +64,20 @@
               <ix-checkbox
                 formControlName="defaultroot"
                 [label]="'Always Chroot' | translate"
-                [tooltip]="helptext.defaultroot_tooltip | translate"
+                [tooltip]="helptext.defaultrootTooltip | translate"
               ></ix-checkbox>
 
               <ix-checkbox
                 formControlName="onlyanonymous"
                 [label]="'Allow Anonymous Login' | translate"
-                [tooltip]="helptext.onlyanonymous_tooltip | translate"
+                [tooltip]="helptext.onlyanonymousTooltip | translate"
               ></ix-checkbox>
 
               @if (isAnonymousLoginAllowed$ | async) {
                 <ix-explorer
                   formControlName="anonpath"
                   [label]="'Path' | translate"
-                  [tooltip]="helptext.anonpath_tooltip | translate"
+                  [tooltip]="helptext.anonpathTooltip | translate"
                   [nodeProvider]="treeNodeProvider"
                   [canCreateDataset]="true"
                 ></ix-explorer>
@@ -86,25 +86,25 @@
               <ix-checkbox
                 formControlName="onlylocal"
                 [label]="'Allow Local User Login' | translate"
-                [tooltip]="helptext.onlylocal_tooltip | translate"
+                [tooltip]="helptext.onlylocalTooltip | translate"
               ></ix-checkbox>
 
               <ix-checkbox
                 formControlName="ident"
                 [label]="'Require IDENT Authentication' | translate"
-                [tooltip]="helptext.ident_tooltip | translate"
+                [tooltip]="helptext.identTooltip | translate"
               ></ix-checkbox>
 
               <ix-permissions
                 formControlName="filemask"
                 [label]="'File Permissions' | translate"
-                [tooltip]="helptext.filemask_tooltip | translate"
+                [tooltip]="helptext.filemaskTooltip | translate"
               ></ix-permissions>
 
               <ix-permissions
                 formControlName="dirmask"
                 [label]="'Directory Permissions' | translate"
-                [tooltip]="helptext.dirmask_tooltip | translate"
+                [tooltip]="helptext.dirmaskTooltip | translate"
               ></ix-permissions>
             </ix-fieldset>
           }
@@ -115,7 +115,7 @@
               <ix-checkbox
                 formControlName="tls"
                 [label]="'Enable TLS' | translate"
-                [tooltip]="helptext.tls_tooltip | translate"
+                [tooltip]="helptext.tlsTooltip | translate"
               ></ix-checkbox>
 
               @if (isTlsEnabled$ | async) {
@@ -123,7 +123,7 @@
                   <ix-select
                     formControlName="ssltls_certificate"
                     [label]="'Certificate' | translate"
-                    [tooltip]="helptext.ssltls_certificate_tooltip | translate"
+                    [tooltip]="helptext.ssltlsCertificateTooltip | translate"
                     [required]="true"
                     [options]="certificates$"
                   ></ix-select>
@@ -132,74 +132,74 @@
                 <ix-select
                   formControlName="tls_policy"
                   [label]="'TLS Policy' | translate"
-                  [tooltip]="helptext.tls_policy_tooltip | translate"
+                  [tooltip]="helptext.tlsPolicyTooltip | translate"
                   [options]="tlsPolicyOptions$"
                 ></ix-select>
 
                 <ix-checkbox
                   formControlName="tls_opt_allow_client_renegotiations"
                   [label]="'TLS Allow Client Renegotiations' | translate"
-                  [tooltip]="helptext.tls_opt_allow_client_renegotiations_tooltip| translate"
+                  [tooltip]="helptext.tlsAllowClientRenegotiationsTooltip| translate"
                 ></ix-checkbox>
 
                 <ix-checkbox
                   formControlName="tls_opt_allow_dot_login"
                   [label]="'TLS Allow Dot Login' | translate"
-                  [tooltip]="helptext.tls_opt_allow_dot_login_tooltip | translate"
+                  [tooltip]="helptext.tlsAllowDotLoginTooltip | translate"
                 ></ix-checkbox>
 
                 <ix-checkbox
                   formControlName="tls_opt_allow_per_user"
                   [label]="'TLS Allow Per User' | translate"
-                  [tooltip]="helptext.tls_opt_allow_per_user_tooltip | translate"
+                  [tooltip]="helptext.tlsAllowPerUserTooltip | translate"
                 ></ix-checkbox>
 
                 <ix-checkbox
                   formControlName="tls_opt_common_name_required"
                   [label]="'TLS Common Name Required' | translate"
-                  [tooltip]="helptext.tls_opt_common_name_required_tooltip | translate"
+                  [tooltip]="helptext.tlsCommonNameRequiredTooltip | translate"
                 ></ix-checkbox>
 
                 <ix-checkbox
                   formControlName="tls_opt_enable_diags"
                   [label]="'TLS Enable Diagnostics' | translate"
-                  [tooltip]="helptext.tls_opt_enable_diags_tooltip | translate"
+                  [tooltip]="helptext.tlsEnableDiagsTooltip | translate"
                 ></ix-checkbox>
 
                 <ix-checkbox
                   formControlName="tls_opt_export_cert_data"
                   [label]="'TLS Export Certificate Data' | translate"
-                  [tooltip]="helptext.tls_opt_export_cert_data_tooltip | translate"
+                  [tooltip]="helptext.tlsExportCertDataTooltip | translate"
                 ></ix-checkbox>
 
                 <ix-checkbox
                   formControlName="tls_opt_no_empty_fragments"
                   [label]="'TLS No Empty Fragments' | translate"
-                  [tooltip]="helptext.tls_opt_no_empty_fragments_tooltip | translate"
+                  [tooltip]="helptext.tlsNoEmptyFragmentsTooltip | translate"
                 ></ix-checkbox>
 
                 <ix-checkbox
                   formControlName="tls_opt_no_session_reuse_required"
                   [label]="'TLS No Session Reuse Required' | translate"
-                  [tooltip]="helptext.tls_opt_no_session_reuse_required_tooltip | translate"
+                  [tooltip]="helptext.tlsNoSessionReuseRequiredTooltip | translate"
                 ></ix-checkbox>
 
                 <ix-checkbox
                   formControlName="tls_opt_stdenvvars"
                   [label]="'TLS Export Standard Vars' | translate"
-                  [tooltip]="helptext.tls_opt_stdenvvars_tooltip | translate"
+                  [tooltip]="helptext.tlsStdenvvarsTooltip | translate"
                 ></ix-checkbox>
 
                 <ix-checkbox
                   formControlName="tls_opt_dns_name_required"
                   [label]="'TLS DNS Name Required' | translate"
-                  [tooltip]="helptext.tls_opt_dns_name_required_tooltip | translate"
+                  [tooltip]="helptext.tlsDnsNameRequiredTooltip | translate"
                 ></ix-checkbox>
 
                 <ix-checkbox
                   formControlName="tls_opt_ip_address_required"
                   [label]="'TLS IP Address Required' | translate"
-                  [tooltip]="helptext.tls_opt_ip_address_required_tooltip | translate"
+                  [tooltip]="helptext.tlsIpAddressRequiredTooltip | translate"
                 ></ix-checkbox>
               }
             </ix-fieldset>
@@ -208,14 +208,14 @@
                 formControlName="passiveportsmin"
                 type="number"
                 [label]="'Minimum Passive Port' | translate"
-                [tooltip]="helptext.passiveportsmin_tooltip | translate"
+                [tooltip]="helptext.passiveportsminTooltip | translate"
               ></ix-input>
 
               <ix-input
                 formControlName="passiveportsmax"
                 type="number"
                 [label]="'Maximum Passive Port' | translate"
-                [tooltip]="helptext.passiveportsmax_tooltip | translate"
+                [tooltip]="helptext.passiveportsmaxTooltip | translate"
               ></ix-input>
 
               <ix-checkbox
@@ -227,39 +227,39 @@
               <ix-checkbox
                 formControlName="resume"
                 [label]="'Allow Transfer Resumption' | translate"
-                [tooltip]="helptext.resume_tooltip | translate"
+                [tooltip]="helptext.resumeTooltip | translate"
               ></ix-checkbox>
 
               <ix-checkbox
                 formControlName="reversedns"
                 [label]="'Perform Reverse DNS Lookups' | translate"
-                [tooltip]="helptext.reversedns_tooltip | translate"
+                [tooltip]="helptext.reversednsTooltip | translate"
               ></ix-checkbox>
 
               <ix-input
                 formControlName="masqaddress"
                 [label]="'Masquerade Address' | translate"
-                [tooltip]="helptext.masqaddress_tooltip | translate"
+                [tooltip]="helptext.masqaddressTooltip | translate"
               ></ix-input>
 
               <ix-textarea
                 formControlName="banner"
                 [label]="'Display Login' | translate"
-                [tooltip]="helptext.banner_tooltip | translate"
+                [tooltip]="helptext.bannerTooltip | translate"
               ></ix-textarea>
 
               <ix-textarea
                 formControlName="options"
                 [label]="'Auxiliary Parameters' | translate"
-                [tooltip]="helptext.options_tooltip | translate"
+                [tooltip]="helptext.optionsTooltip | translate"
               ></ix-textarea>
             </ix-fieldset>
 
             <ix-fieldset [title]="'Bandwidth' | translate">
               <ix-input
                 formControlName="localuserbw"
-                [label]="helptext.localuserbw_placeholder | translate"
-                [tooltip]="helptext.userbw_tooltip | translate"
+                [label]="helptext.localuserbwLabel | translate"
+                [tooltip]="helptext.userbwTooltip | translate"
                 [format]="iecFormatter.memorySizeFormatting"
                 [parse]="kibParser"
               ></ix-input>
@@ -267,7 +267,7 @@
               <ix-input
                 formControlName="localuserdlbw"
                 [label]="'Local User Download Bandwidth' | translate"
-                [tooltip]="helptext.userbw_tooltip | translate"
+                [tooltip]="helptext.userbwTooltip | translate"
                 [format]="iecFormatter.memorySizeFormatting"
                 [parse]="kibParser"
               ></ix-input>
@@ -275,7 +275,7 @@
               <ix-input
                 formControlName="anonuserbw"
                 [label]="'Anonymous User Upload Bandwidth' | translate"
-                [tooltip]="helptext.userbw_tooltip | translate"
+                [tooltip]="helptext.userbwTooltip | translate"
                 [format]="iecFormatter.memorySizeFormatting"
                 [parse]="kibParser"
               ></ix-input>
@@ -283,7 +283,7 @@
               <ix-input
                 formControlName="anonuserdlbw"
                 [label]="'Anonymous User Download Bandwidth' | translate"
-                [tooltip]="helptext.userbw_tooltip | translate"
+                [tooltip]="helptext.userbwTooltip | translate"
                 [format]="iecFormatter.memorySizeFormatting"
                 [parse]="kibParser"
               ></ix-input>

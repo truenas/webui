@@ -14,14 +14,14 @@
             [label]="'Type' | translate"
             [required]="true"
             [options]="interfaceTypes$"
-            [tooltip]="helptext.int_type_tooltip | translate"
+            [tooltip]="helptext.typeTooltip | translate"
           ></ix-select>
         }
 
         <ix-input
           formControlName="name"
           [label]="'Name' | translate"
-          [tooltip]="helptext.int_name_tooltip | translate"
+          [tooltip]="helptext.nameTooltip | translate"
           [required]="true"
           [readonly]="!isNew"
         ></ix-input>
@@ -34,13 +34,13 @@
         <ix-checkbox
           formControlName="ipv4_dhcp"
           [label]="'DHCP' | translate"
-          [tooltip]="helptext.int_dhcp_tooltip | translate"
+          [tooltip]="helptext.dhcpTooltip | translate"
         ></ix-checkbox>
 
         <ix-checkbox
           formControlName="ipv6_auto"
           [label]="'Autoconfigure IPv6' | translate"
-          [tooltip]="helptext.int_ipv6auto_tooltip | translate"
+          [tooltip]="helptext.ipv6autoTooltip | translate"
         ></ix-checkbox>
       </ix-fieldset>
 
@@ -51,13 +51,13 @@
             [multiple]="true"
             [label]="'Bridge Members' | translate"
             [options]="bridgeMembers$"
-            [tooltip]="helptext.bridge_members_tooltip | translate"
+            [tooltip]="helptext.bridgeMembersTooltip | translate"
           ></ix-select>
 
           <ix-checkbox
             formControlName="enable_learning"
             [label]="'Enable Learning' | translate"
-            [tooltip]="helptext.enable_learning_tooltip | translate"
+            [tooltip]="helptext.enableLearningTooltip | translate"
           ></ix-checkbox>
         </ix-fieldset>
       }
@@ -95,7 +95,7 @@
               [label]="'Link Aggregation Interfaces' | translate"
               [options]="lagPorts$"
               [required]="true"
-              [tooltip]="helptext.lagg_interfaces_failover_tooltip | translate"
+              [tooltip]="helptext.lagg.interfacesFailoverTooltip | translate"
             ></ix-ordered-listbox>
           } @else {
             <ix-select
@@ -104,7 +104,7 @@
               [multiple]="true"
               [options]="lagPorts$"
               [required]="true"
-              [tooltip]="helptext.lagg_interfaces_tooltip | translate"
+              [tooltip]="helptext.lagg.interfacesTooltip | translate"
             ></ix-select>
           }
         </ix-fieldset>
@@ -117,21 +117,21 @@
             [label]="'Parent Interface' | translate"
             [required]="true"
             [options]="vlanParentInterfaces$"
-            [tooltip]="helptext.vlan_pint_tooltip | translate"
+            [tooltip]="helptext.vlan.parentInterfaceTooltip | translate"
           ></ix-select>
 
           <ix-input
             formControlName="vlan_tag"
             type="number"
             [label]="'VLAN Tag' | translate"
-            [tooltip]="helptext.vlan_tag_tooltip | translate"
+            [tooltip]="helptext.vlan.tagTooltip | translate"
             [required]="true"
           ></ix-input>
 
           <ix-select
             formControlName="vlan_pcp"
             [label]="'Priority Code Point' | translate"
-            [tooltip]="helptext.vlan_pcp_tooltip | translate"
+            [tooltip]="helptext.vlan.priorityCodePointTooltip | translate"
             [options]="vlanPcpOptions$"
           ></ix-select>
         </ix-fieldset>
@@ -142,14 +142,14 @@
           <ix-checkbox
             formControlName="failover_critical"
             [label]="'Critical' | translate"
-            [tooltip]="helptext.failover_critical_tooltip | translate"
+            [tooltip]="helptext.failover.criticalTooltip | translate"
           ></ix-checkbox>
 
           <ix-select
             formControlName="failover_group"
             [label]="'Failover Group' | translate"
             [options]="failoverGroups$"
-            [tooltip]="helptext.failover_group_tooltip | translate"
+            [tooltip]="helptext.failover.groupTooltip | translate"
           ></ix-select>
         </ix-fieldset>
       }
@@ -159,7 +159,7 @@
           type="number"
           formControlName="mtu"
           [label]="'MTU' | translate"
-          [tooltip]="helptext.mtu_tooltip | translate"
+          [tooltip]="helptext.mtuTooltip | translate"
         ></ix-input>
 
         @if (canHaveAliases) {
@@ -182,7 +182,7 @@
                     formControlName="address"
                     [label]="asTranslatedString(('IP Address' | translate) + ipLabelSuffix)"
                     [required]="true"
-                    [tooltip]="helptext.alias_address_tooltip | translate"
+                    [tooltip]="helptext.aliasAddressTooltip | translate"
                   ></ix-ip-input-with-netmask>
 
                   @if (isHaLicensed) {
@@ -190,13 +190,13 @@
                       formControlName="failover_address"
                       [label]="asTranslatedString(('IP Address' | translate) + failoverLabelSuffix)"
                       [required]="true"
-                      [tooltip]="helptext.failover_alias_address_tooltip | translate"
+                      [tooltip]="helptext.failover.aliasAddressTooltip | translate"
                     ></ix-input>
                     <ix-input
                       formControlName="failover_virtual_address"
                       [label]="'Virtual IP Address (Failover Address)' | translate"
                       [required]="true"
-                      [tooltip]="helptext.failover_virtual_alias_address_tooltip | translate"
+                      [tooltip]="helptext.failover.virtualAliasAddressTooltip | translate"
                     ></ix-input>
                   }
 

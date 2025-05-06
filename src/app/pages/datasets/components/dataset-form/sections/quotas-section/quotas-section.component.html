@@ -5,7 +5,7 @@
       [label]="'Quota for this dataset' | translate"
       [format]="formatter.memorySizeFormatting"
       [parse]="formatter.memorySizeParsing"
-      [tooltip]="helptext.dataset_form_refquota_tooltip | translate"
+      [tooltip]="helptext.refquotaTooltip | translate"
     ></ix-input>
 
     <div class="with-inherit-field">
@@ -17,7 +17,7 @@
       <ix-checkbox
         formControlName="refquota_warning_inherit"
         [label]="'Inherit' | translate"
-        [tooltip]="helptext.dataset_form_refquota_warning_tooltip | translate"
+        [tooltip]="helptext.refquotaWarningTooltip | translate"
       ></ix-checkbox>
     </div>
 
@@ -30,7 +30,7 @@
       <ix-checkbox
         formControlName="refquota_critical_inherit"
         [label]="'Inherit' | translate"
-        [tooltip]="helptext.dataset_form_refquota_critical_tooltip | translate"
+        [tooltip]="helptext.refquotaCriticalTooltip | translate"
       ></ix-checkbox>
     </div>
 
@@ -39,7 +39,7 @@
       [label]="'Reserved space for this dataset' | translate"
       [format]="formatter.memorySizeFormatting"
       [parse]="formatter.memorySizeParsing"
-      [tooltip]="helptext.dataset_form_refreservation_tooltip | translate"
+      [tooltip]="helptext.refreservationTooltip | translate"
     ></ix-input>
   </ix-fieldset>
 
@@ -49,7 +49,7 @@
       [label]="'Quota for this dataset and all children' | translate"
       [format]="formatter.memorySizeFormatting"
       [parse]="formatter.memorySizeParsing"
-      [tooltip]="helptext.dataset_form_quota_tooltip | translate"
+      [tooltip]="helptext.quotaTooltip | translate"
     ></ix-input>
 
     <div class="with-inherit-field">
@@ -61,7 +61,7 @@
       <ix-checkbox
         formControlName="quota_warning_inherit"
         [label]="'Inherit' | translate"
-        [tooltip]="helptext.dataset_form_quota_warning_tooltip | translate"
+        [tooltip]="helptext.quotaWarningTooltip | translate"
       ></ix-checkbox>
     </div>
 
@@ -74,7 +74,7 @@
       <ix-checkbox
         formControlName="quota_critical_inherit"
         [label]="'Inherit' | translate"
-        [tooltip]="helptext.dataset_form_quota_critical_tooltip | translate"
+        [tooltip]="helptext.quotaCriticalTooltip | translate"
       ></ix-checkbox>
     </div>
 

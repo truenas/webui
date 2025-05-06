@@ -69,7 +69,7 @@ describe('StripAclModalComponent', () => {
 
   it('strips ACL with traverse when "Remove ACL from children" checkbox is ticked', async () => {
     const traverseCheckbox = await loader.getHarness(
-      IxCheckboxHarness.with({ label: helptextAcl.stripACL_dialog.traverse_checkbox }),
+      IxCheckboxHarness.with({ label: helptextAcl.stripAclDialog.traverseCheckbox }),
     );
     await traverseCheckbox.setValue(true);
 

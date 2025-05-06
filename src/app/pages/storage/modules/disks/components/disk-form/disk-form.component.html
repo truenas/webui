@@ -7,7 +7,7 @@
 <mat-card>
   <mat-card-content>
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-      <ix-fieldset [title]="helptext.fieldset_disk | translate">
+      <ix-fieldset [title]="helptext.generalTitle | translate">
         <ix-input
           formControlName="name"
           [label]="'Name' | translate"
@@ -28,12 +28,12 @@
 
       <mat-divider></mat-divider>
 
-      <ix-fieldset [title]="helptext.fieldset_powermgmt | translate">
+      <ix-fieldset [title]="helptext.powerManagementTitle | translate">
         <ix-select
           formControlName="hddstandby"
           [required]="true"
           [label]="'HDD Standby' | translate"
-          [tooltip]="helptext.disk_form_hddstandby_tooltip | translate"
+          [tooltip]="helptext.standbyTooltip | translate"
           [options]="hddstandbyOptions$ | translateOptions"
         ></ix-select>
 
@@ -49,12 +49,12 @@
 
       <div class="two-columns">
         @if (showSedSection()) {
-          <ix-fieldset [title]="helptext.fieldset_sed | translate">
+          <ix-fieldset [title]="helptext.sedTitle | translate">
             <ix-input
               formControlName="passwd"
               type="password"
               [label]="'SED Password' | translate"
-              [tooltip]="helptext.disk_form_passwd_tooltip | translate"
+              [tooltip]="helptext.passwordTooltip | translate"
             ></ix-input>
 
             <ix-checkbox
