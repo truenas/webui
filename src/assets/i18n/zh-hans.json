@@ -1,6 +1,5 @@
 {
   "": "",
-  " - (Change Required)": "",
   "...": "",
   "{count, plural, one {# Cloud Sync Task} other {# Cloud Sync Tasks}}": "",
   "{count, plural, one {# Replication Task} other {# Replication Tasks}}": "",
