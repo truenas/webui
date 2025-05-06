@@ -48,7 +48,7 @@ export class WebSocketStatusService {
     this.connectionEstablished$.next(connected);
   }
 
-  setReconnect(status: boolean): void {
+  setReconnectAllowed(status: boolean): void {
     this.isReconnectAllowed$.next(status);
   }
 }

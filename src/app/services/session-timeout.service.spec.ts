@@ -40,7 +40,7 @@ describe('SessionTimeoutService', () => {
       }),
       mockProvider(TokenLastUsedService),
       mockProvider(WebSocketStatusService, {
-        setReconnect: jest.fn(),
+        setReconnectAllowed: jest.fn(),
       }),
       mockProvider(MatSnackBar),
       mockProvider(DialogService, {

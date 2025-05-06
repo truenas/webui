@@ -2083,6 +2083,7 @@
   "Recommended block size based on pool topology:": "",
   "Recommended number of data disks for optimal space allocation should be power of 2 (2, 4, 8, 16...).": "",
   "Reconnect": "",
+  "Reconnect failed. Please try again.": "",
   "Record Size": "",
   "Redfish administrative password.": "",
   "Redfish administrative username.": "",
