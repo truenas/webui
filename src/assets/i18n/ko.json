@@ -1,8 +1,11 @@
 {
   "": "",
   "A scrub is a data integrity check of your pool. Scrubs identify data integrity problems, detect silent data corruptions caused by transient hardware issues, and provide early disk failure alerts.": "",
+  "Change Required": "",
   "Configure Scheduled Scrub": "",
+  "Last Change": "",
   "Master": "",
+  "Password Card": "",
   "Periodic Disk Checks": "",
   "Periodic Scrub": "",
   "Run Scrub": "",

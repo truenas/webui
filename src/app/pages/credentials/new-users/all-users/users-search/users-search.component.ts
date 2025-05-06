@@ -92,7 +92,7 @@ export class UsersSearchComponent implements OnInit {
   private setSearchProperties(users: User[]): void {
     const groups = new Set<string>();
     for (const user of users) {
-      groups.add(user.group?.id.toString());
+      groups.add(user?.group?.id?.toString());
       if (!user.groups) {
         continue;
       }
