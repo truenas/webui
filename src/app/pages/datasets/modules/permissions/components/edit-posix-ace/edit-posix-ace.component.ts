@@ -52,8 +52,8 @@ export class EditPosixAceComponent implements OnInit, OnChanges {
   readonly permissions$ = of(mapToOptions(posixPermissionLabels, this.translate));
 
   readonly tooltips = {
-    user: helptextAcl.dataset_acl_user_tooltip,
-    group: helptextAcl.dataset_acl_group_tooltip,
+    user: helptextAcl.userTooltip,
+    group: helptextAcl.groupTooltip,
   };
 
   readonly userProvider = new UserComboboxProvider(this.userService);

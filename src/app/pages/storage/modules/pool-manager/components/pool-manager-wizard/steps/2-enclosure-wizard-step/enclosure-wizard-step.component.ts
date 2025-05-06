@@ -10,7 +10,7 @@ import { of, timer } from 'rxjs';
 import {
   filter, map, switchMap, tap,
 } from 'rxjs/operators';
-import { helptextManager } from 'app/helptext/storage/volumes/manager/manager';
+import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
@@ -75,7 +75,7 @@ export class EnclosureWizardStepComponent implements OnInit, OnChanges {
     },
   ]);
 
-  protected readonly helptext = helptextManager;
+  protected readonly helptext = helptextPoolCreation;
 
   constructor(
     private store: PoolManagerStore,

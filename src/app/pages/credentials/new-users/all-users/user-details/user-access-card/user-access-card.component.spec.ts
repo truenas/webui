@@ -27,6 +27,7 @@ const mockUser = {
   api_keys: [1, 2],
   roles: [Role.FullAdmin],
   twofactor_auth_configured: true,
+  password_change_required: true,
 } as User;
 
 describe('UserAccessCardComponent', () => {
@@ -72,6 +73,7 @@ describe('UserAccessCardComponent', () => {
   it('should display password availability', () => {
     const passwordSection = spectator.query('.content-wrapper:nth-child(3)');
     expect(passwordSection).toHaveText('Has Password');
+    expect(passwordSection).toContainText('Change Required');
   });
 
   it('should display 2FA access status', () => {

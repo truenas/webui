@@ -1,5 +1,5 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { helptextManager } from 'app/helptext/storage/volumes/manager/manager';
+import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
 
 export const helptextVolumeStatus = {
   dialogFormFields: {
@@ -20,7 +20,7 @@ export const helptextVolumeStatus = {
   replace_disk: {
     title: T('Replacing Disk'),
   },
-  exported_pool_warning: helptextManager.exported_pool_warning,
+  exported_pool_warning: helptextPoolCreation.exportedPoolWarning,
 
   raidzExtendMessage: T('The expanded vdev uses the pre-expanded parity ratio, which reduces the total vdev capacity. \
 To reset the vdev parity ratio and fully use the new capacity, manually rewrite all data in the vdev. \

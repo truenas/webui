@@ -10,7 +10,7 @@ import { uniq } from 'lodash-es';
 import {
   of, Observable, combineLatest, startWith,
 } from 'rxjs';
-import { helptextManager } from 'app/helptext/storage/volumes/manager/manager';
+import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
@@ -46,7 +46,7 @@ export class PoolWarningsComponent implements OnInit {
     allowExportedPools: [[] as string[]],
   });
 
-  exportedPoolsWarning = this.translate.instant(helptextManager.manager_exportedDisksWarning);
+  exportedPoolsWarning = this.translate.instant(helptextPoolCreation.exportedDisksWarning);
 
   nonUniqueSerialDisks: DetailsDisk[] = [];
   nonUniqueSerialDisksTooltip: string;
