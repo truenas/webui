@@ -15,7 +15,7 @@ export class GlobalApiHttpService {
     @Inject(WINDOW) private window: Window,
   ) {
     const protocol = this.window.location.protocol === 'https:' ? 'https://' : 'http://';
-    this.baseUrl = `${protocol}${environment.remote}/api`;
+    this.baseUrl = environment.production ? `${protocol}${environment.remote}/api` : '/api';
   }
 
   get<T>(path: string): Observable<T> {
