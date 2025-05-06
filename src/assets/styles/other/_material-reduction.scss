@@ -261,8 +261,6 @@ ix-tooltip button {
 
 .mat-mdc-card-actions .mat-mdc-button,
 .mat-mdc-card-actions .mat-flat-button {
-  background: var(--btn-default-bg) !important;
-  background-color: var(--btn-default-bg) !important;
   color: var(--fg2) !important;
 }
 
@@ -274,8 +272,6 @@ button.mat-mdc-button.mat-default,
 button.mat-default,
 button.mat-mdc-button.mat-accent.btn-default,
 button.mat-mdc-button[type='button']:not(button.mat-primary) {
-  background: var(--btn-default-bg);
-  background-color: var(--btn-default-bg);
   color: var(--fg2) !important;
 }
 

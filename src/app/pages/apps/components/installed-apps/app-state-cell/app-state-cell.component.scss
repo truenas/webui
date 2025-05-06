@@ -18,11 +18,11 @@
   }
 
   &.has-cell {
-    border: 2px solid transparent;
+    border: 1px solid transparent;
     border-radius: 20px;
     font-weight: bold;
     gap: 6px;
-    padding: 3px 8px;
+    padding: 2px 8px;
   }
 
   &.running {
