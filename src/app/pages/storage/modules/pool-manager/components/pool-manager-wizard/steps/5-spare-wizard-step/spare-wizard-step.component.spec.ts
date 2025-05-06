@@ -7,7 +7,7 @@ import { mockProvider, Spectator, createComponentFactory } from '@ngneat/spectat
 import { MockComponent } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
 import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
-import { helptextManager } from 'app/helptext/storage/volumes/manager/manager';
+import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
 import { IxComboboxHarness } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.harness';
 import { LayoutStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/layout-step/layout-step.component';
 import { SpareWizardStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/5-spare-wizard-step/spare-wizard-step.component';
@@ -67,7 +67,7 @@ describe('SpareWizardStepComponent', () => {
 
   it('has correct description', () => {
     const descriptionEl = spectator.query('div');
-    expect(descriptionEl.textContent).toBe(` ${helptextManager.spare_vdev_description}\n`);
+    expect(descriptionEl.textContent).toBe(` ${helptextPoolCreation.spareVdevDescription}\n`);
   });
 
   it('shows disk options for spare', async () => {

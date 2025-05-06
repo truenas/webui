@@ -340,7 +340,7 @@ describe('OtherOptionsSectionComponent', () => {
       });
       expect(spectator.inject(DialogService).warn).toHaveBeenCalledWith(
         'ACL Types & ACL Modes',
-        helptextDatasetForm.acl_type_change_warning,
+        helptextDatasetForm.aclTypeChangeWarning,
       );
     });
 

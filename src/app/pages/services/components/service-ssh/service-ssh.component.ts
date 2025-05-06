@@ -82,22 +82,22 @@ export class ServiceSshComponent implements OnInit {
   });
 
   readonly tooltips = {
-    tcpport: helptextServiceSsh.ssh_tcpport_tooltip,
-    password_login_groups: helptextServiceSsh.ssh_password_login_groups_tooltip,
-    passwordauth: helptextServiceSsh.ssh_passwordauth_tooltip,
-    kerberosauth: helptextServiceSsh.ssh_kerberosauth_tooltip,
-    tcpfwd: helptextServiceSsh.ssh_tcpfwd_tooltip,
-    bindiface: helptextServiceSsh.ssh_bindiface_tooltip,
-    compression: helptextServiceSsh.ssh_compression_tooltip,
-    sftp_log_level: helptextServiceSsh.ssh_sftp_log_level_tooltip,
-    sftp_log_facility: helptextServiceSsh.ssh_sftp_log_facility_tooltip,
-    weak_ciphers: helptextServiceSsh.ssh_weak_ciphers_tooltip,
-    options: helptextServiceSsh.ssh_options_tooltip,
+    tcpport: helptextServiceSsh.tcpportTooltip,
+    password_login_groups: helptextServiceSsh.passwordLoginGroupsTooltip,
+    passwordauth: helptextServiceSsh.passwordauthTooltip,
+    kerberosauth: helptextServiceSsh.kerberosauthTooltip,
+    tcpfwd: helptextServiceSsh.tcpfwdTooltip,
+    bindiface: helptextServiceSsh.bindifaceTooltip,
+    compression: helptextServiceSsh.compressionTooltip,
+    sftp_log_level: helptextServiceSsh.sftpLogLevelTooltip,
+    sftp_log_facility: helptextServiceSsh.sftpLogFacilityTooltip,
+    weak_ciphers: helptextServiceSsh.weakCiphersTooltip,
+    options: helptextServiceSsh.optionsTooltip,
   };
 
-  readonly sftpLogLevels$ = of(helptextServiceSsh.ssh_sftp_log_level_options);
-  readonly sftpLogFacilities$ = of(helptextServiceSsh.ssh_sftp_log_facility_options);
-  readonly sshWeakCiphers$ = of(helptextServiceSsh.ssh_weak_ciphers_options);
+  readonly sftpLogLevels$ = of(helptextServiceSsh.sftpLogLevelOptions);
+  readonly sftpLogFacilities$ = of(helptextServiceSsh.sftpLogFacilityOptions);
+  readonly sshWeakCiphers$ = of(helptextServiceSsh.weakCiphersOptions);
   readonly bindInterfaces$ = this.api.call('ssh.bindiface_choices').pipe(choicesToOptions());
 
   constructor(

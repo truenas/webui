@@ -194,7 +194,7 @@ export class ExportDisconnectModalComponent implements OnInit {
 
   showUnstoppableErrorDialog(failureData: Job): void {
     let conditionalErrMessage = '';
-    const msg = this.translate.instant(helptextVolumes.exportMessages.onfail.unableToTerminate);
+    const msg = this.translate.instant(helptextVolumes.exportMessages.unableToTerminate);
     conditionalErrMessage = msg + (failureData.extra?.processes as string);
     this.dialogService.error({
       title: helptextVolumes.exportError,
@@ -205,8 +205,8 @@ export class ExportDisconnectModalComponent implements OnInit {
 
   showServicesErrorsDialog(failureData: Job): void {
     // TODO: Just create a separate component for this.
-    const stopMsg = this.translate.instant(helptextVolumes.exportMessages.onfail.stopServices);
-    const restartMsg = this.translate.instant(helptextVolumes.exportMessages.onfail.restartServices);
+    const stopMsg = this.translate.instant(helptextVolumes.exportMessages.stopServices);
+    const restartMsg = this.translate.instant(helptextVolumes.exportMessages.restartServices);
     let conditionalErrMessage = '';
     if (isObject(failureData.exc_info.extra) && !Array.isArray(failureData.exc_info.extra)) {
       if ((failureData.exc_info.extra.stop_services as string[]).length > 0) {
@@ -226,14 +226,14 @@ export class ExportDisconnectModalComponent implements OnInit {
       }
     }
 
-    const continueMsg = this.translate.instant(helptextVolumes.exportMessages.onfail.continueMessage);
+    const continueMsg = this.translate.instant(helptextVolumes.exportMessages.continueMessage);
     conditionalErrMessage += '<br><br>' + continueMsg + '</div><br />';
 
     this.dialogService.confirm({
       title: this.translate.instant(helptextVolumes.exportError),
       message: ignoreTranslation(conditionalErrMessage),
       hideCheckbox: true,
-      buttonText: this.translate.instant(helptextVolumes.exportMessages.onfail.continueAction),
+      buttonText: this.translate.instant(helptextVolumes.exportMessages.continueAction),
     }).pipe(
       filter(Boolean),
       untilDestroyed(this),
@@ -292,7 +292,7 @@ export class ExportDisconnectModalComponent implements OnInit {
 
     this.confirmLabelText = this.pool.status === PoolStatus.Unknown
       ? (this.translate.instant(helptextVolumes.exportDialog.confirm)
-        + ' ' + this.translate.instant(helptextVolumes.exportDialog.unknown_status_alt_text)) as TranslatedString
+        + ' ' + this.translate.instant(helptextVolumes.exportDialog.unknownStatusAltText)) as TranslatedString
       : this.translate.instant(helptextVolumes.exportDialog.confirm);
 
     this.processes.forEach((process) => {

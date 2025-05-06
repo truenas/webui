@@ -79,22 +79,22 @@ export class ServiceSnmpComponent implements OnInit {
   });
 
   readonly tooltips = {
-    location: helptextServiceSnmp.location_tooltip,
-    contact: helptextServiceSnmp.contact_tooltip,
-    community: helptextServiceSnmp.community_tooltip,
-    v3: helptextServiceSnmp.v3_tooltip,
-    v3_username: helptextServiceSnmp.v3_username_tooltip,
-    v3_authtype: helptextServiceSnmp.v3_authtype_tooltip,
-    v3_password: helptextServiceSnmp.v3_password_tooltip,
-    v3_privproto: helptextServiceSnmp.v3_privproto_tooltip,
-    v3_privpassphrase: helptextServiceSnmp.v3_privpassphrase_tooltip,
-    options: helptextServiceSnmp.options_tooltip,
-    loglevel: helptextServiceSnmp.loglevel_tooltip,
+    location: helptextServiceSnmp.locationTooltip,
+    contact: helptextServiceSnmp.contactTooltip,
+    community: helptextServiceSnmp.communityTooltip,
+    v3: helptextServiceSnmp.v3.tooltip,
+    v3_username: helptextServiceSnmp.v3.usernameTooltip,
+    v3_authtype: helptextServiceSnmp.v3.authTypeTooltip,
+    v3_password: helptextServiceSnmp.v3.passwordTooltip,
+    v3_privproto: helptextServiceSnmp.v3.privprotoTooltip,
+    v3_privpassphrase: helptextServiceSnmp.v3.privpassphraseTooltip,
+    options: helptextServiceSnmp.optionsTooltip,
+    loglevel: helptextServiceSnmp.loglevelTooltip,
   };
 
-  readonly authtypeOptions$ = of(helptextServiceSnmp.v3_authtype_options);
-  readonly privprotoOptions$ = of(helptextServiceSnmp.v3_privproto_options);
-  readonly logLevelOptions$ = of(helptextServiceSnmp.loglevel_options);
+  readonly authtypeOptions$ = of(helptextServiceSnmp.v3.authTypeOptions);
+  readonly privprotoOptions$ = of(helptextServiceSnmp.v3.privprotoOptions);
+  readonly logLevelOptions$ = of(helptextServiceSnmp.loglevelOptions);
 
   get isV3SupportEnabled(): boolean {
     return this.form?.value?.v3 || false;

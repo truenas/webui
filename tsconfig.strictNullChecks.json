@@ -212,7 +212,7 @@
     "./src/app/helptext/storage/volumes/datasets/dataset-quotas.ts",
     "./src/app/helptext/storage/volumes/datasets/dataset-unlock.ts",
     "./src/app/helptext/storage/volumes/download-key.ts",
-    "./src/app/helptext/storage/volumes/manager/manager.ts",
+    "./src/app/helptext/storage/volumes/pool-creation/pool-creation.ts",
     "./src/app/helptext/storage/volumes/volume-import-wizard.ts",
     "./src/app/helptext/storage/volumes/volume-list.ts",
     "./src/app/helptext/storage/volumes/volume-status.ts",

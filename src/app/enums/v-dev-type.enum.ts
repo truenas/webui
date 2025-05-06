@@ -1,6 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 // eslint-disable-next-line no-restricted-imports
-import { helptextManager } from '../helptext/storage/volumes/manager/manager';
+import { helptextPoolCreation } from '../helptext/storage/volumes/pool-creation/pool-creation';
 
 // TODO: This may actually be several enums. Consider splitting.
 export enum TopologyItemType {
@@ -36,42 +36,42 @@ export const vdevLayoutOptions = [
   {
     label: T('Stripe'),
     value: CreateVdevLayout.Stripe,
-    hoverTooltip: helptextManager.stripeTooltip,
+    hoverTooltip: helptextPoolCreation.stripeTooltip,
   },
   {
     label: T('Mirror'),
     value: CreateVdevLayout.Mirror,
-    hoverTooltip: helptextManager.mirrorTooltip,
+    hoverTooltip: helptextPoolCreation.mirrorTooltip,
   },
   {
     label: T('RAIDZ1'),
     value: CreateVdevLayout.Raidz1,
-    hoverTooltip: helptextManager.raidz1Tooltip,
+    hoverTooltip: helptextPoolCreation.raidz1Tooltip,
   },
   {
     label: T('RAIDZ2'),
     value: CreateVdevLayout.Raidz2,
-    hoverTooltip: helptextManager.raidz2Tooltip,
+    hoverTooltip: helptextPoolCreation.raidz2Tooltip,
   },
   {
     label: T('RAIDZ3'),
     value: CreateVdevLayout.Raidz3,
-    hoverTooltip: helptextManager.raidz3Tooltip,
+    hoverTooltip: helptextPoolCreation.raidz3Tooltip,
   },
   {
     label: T('dRAID1'),
     value: CreateVdevLayout.Draid1,
-    hoverTooltip: helptextManager.dRaidTooltip,
+    hoverTooltip: helptextPoolCreation.dRaidTooltip,
   },
   {
     label: T('dRAID2'),
     value: CreateVdevLayout.Draid2,
-    hoverTooltip: helptextManager.dRaidTooltip,
+    hoverTooltip: helptextPoolCreation.dRaidTooltip,
   },
   {
     label: T('dRAID3'),
     value: CreateVdevLayout.Draid3,
-    hoverTooltip: helptextManager.dRaidTooltip,
+    hoverTooltip: helptextPoolCreation.dRaidTooltip,
   },
 ];
 

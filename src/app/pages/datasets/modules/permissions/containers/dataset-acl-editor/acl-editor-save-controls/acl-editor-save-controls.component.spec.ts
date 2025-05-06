@@ -69,8 +69,8 @@ describe('AclEditorSaveControlsComponent', () => {
     await recursiveCheckbox.setValue(true);
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
-      title: helptextAcl.dataset_acl_recursive_dialog_warning,
-      message: helptextAcl.dataset_acl_recursive_dialog_warning_message,
+      title: helptextAcl.recursiveDialogTitle,
+      message: helptextAcl.recursiveDialogMessage,
     });
   });
 

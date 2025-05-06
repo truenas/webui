@@ -103,8 +103,8 @@ export class DashboardPoolComponent implements OnChanges {
 
   onExpand(): void {
     this.dialogService.confirm({
-      title: this.translate.instant(helptextVolumes.expand_pool_dialog.title),
-      message: this.translate.instant(helptextVolumes.expand_pool_dialog.message),
+      title: this.translate.instant(helptextVolumes.expandPoolDialog.title),
+      message: this.translate.instant(helptextVolumes.expandPoolDialog.message),
     })
       .pipe(
         filter(Boolean),
@@ -127,7 +127,7 @@ export class DashboardPoolComponent implements OnChanges {
   onUpgrade(): void {
     this.dialogService.confirm({
       title: this.translate.instant('Upgrade Pool'),
-      message: this.translate.instant(helptextVolumes.upgradePoolDialog_warning) + this.pool().name as TranslatedString,
+      message: this.translate.instant(helptextVolumes.upgradePoolDialogWarning) + this.pool().name as TranslatedString,
     }).pipe(
       filter(Boolean),
       switchMap(() => {

@@ -3,7 +3,7 @@ import { mockProvider, Spectator, createComponentFactory } from '@ngneat/spectat
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
-import { helptextManager } from 'app/helptext/storage/volumes/manager/manager';
+import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
 import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
 import { LayoutStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/layout-step/layout-step.component';
 import { MetadataWizardStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/7-metadata-wizard-step/metadata-wizard-step.component';
@@ -57,7 +57,7 @@ describe('MetadataWizardStepComponent', () => {
 
   it('has the correct inputs', () => {
     const layoutComponent = spectator.query(LayoutStepComponent)!;
-    expect(layoutComponent.description).toBe(helptextManager.special_vdev_description);
+    expect(layoutComponent.description).toBe(helptextPoolCreation.specialVdevDescription);
     expect(layoutComponent.canChangeLayout).toBeTruthy();
     expect(layoutComponent.inventory).toStrictEqual([...fakeInventory]);
     expect(layoutComponent.limitLayouts).toStrictEqual([CreateVdevLayout.Mirror, CreateVdevLayout.Stripe]);

@@ -58,9 +58,9 @@ export class DiskBulkEditComponent {
   });
 
   readonly helptext = helptextDisks;
-  readonly helptextBulkEdit = helptextDisks.bulk_edit;
-  readonly hddstandbyOptions$ = of(helptextDisks.disk_form_hddstandby_options);
-  readonly advpowermgmtOptions$ = of(helptextDisks.disk_form_advpowermgmt_options);
+  readonly helptextBulkEdit = helptextDisks.bulkEdit;
+  readonly hddstandbyOptions$ = of(helptextDisks.standbyOptions);
+  readonly advpowermgmtOptions$ = of(helptextDisks.advancedPowerManagementOptions);
 
   constructor(
     private fb: NonNullableFormBuilder,
@@ -141,7 +141,7 @@ export class DiskBulkEditComponent {
             if (result.error !== null) {
               this.slideInRef.close({ response: false, error: result.error });
               this.dialogService.error({
-                title: helptextDisks.dialog_error,
+                title: helptextDisks.errorDialogTitle,
                 message: result.error,
               });
               return false;
