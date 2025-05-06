@@ -1,4 +1,3 @@
-import { KeyValuePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, computed, effect, Inject, input, output,
   signal,
@@ -67,7 +66,6 @@ import { RedirectService } from 'app/services/redirect.service';
     MatCardContent,
     ImgFallbackModule,
     OrNotAvailablePipe,
-    KeyValuePipe,
     MatCardActions,
     CleanLinkPipe,
     AppVersionPipe,
@@ -90,6 +88,19 @@ export class AppInfoCardComponent {
     const app = this.app();
     this.isRollbackPossible.set(false);
     this.updateRollbackSetup(app.name);
+  });
+
+  readonly sortedPortals = computed(() => {
+    const portals = this.app().portals;
+    const entries = Object.entries(portals);
+
+    const webUiIndex = entries.findIndex(([key]) => key.toLowerCase() === 'web ui');
+    if (webUiIndex > -1) {
+      const [webUiEntry] = entries.splice(webUiIndex, 1);
+      return [webUiEntry, ...entries];
+    }
+
+    return entries;
   });
 
   protected readonly appDetailsRouterUrl = computed<string[]>(() => {

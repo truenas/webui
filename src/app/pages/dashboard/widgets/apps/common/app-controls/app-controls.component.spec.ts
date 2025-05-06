@@ -1,5 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Router } from '@angular/router';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of, Observable } from 'rxjs';
@@ -23,6 +24,7 @@ describe('AppControlsComponent', () => {
     name: 'TestApp',
     portals: {
       'Web UI': 'http://test.com',
+      'Other UI': 'https://other.example.com',
     } as Record<string, string>,
     state: AppState.Running,
     upgrade_available: true,
@@ -72,6 +74,31 @@ describe('AppControlsComponent', () => {
     await portalButton.click();
 
     expect(redirectSpy).toHaveBeenCalledWith('http://test.com');
+  });
+
+  it('should open portal menu and show other portals', async () => {
+    const redirectSpy = jest.spyOn(spectator.inject(RedirectService), 'openWindow');
+
+    const otherPortalsButton = await loader.getHarness(IxIconHarness.with({ name: 'mdi-menu-down' }));
+    expect(otherPortalsButton).toExist();
+
+    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
+    await menu.open();
+    await menu.clickItem({ text: 'Other UI' });
+
+    expect(redirectSpy).toHaveBeenCalledWith('https://other.example.com');
+  });
+
+  it('should call openPortal with correct url when menu item clicked', () => {
+    const openPortalSpy = jest.spyOn(spectator.component, 'openPortal');
+
+    spectator.click('[ixTest="apps-web-portal-dropdown"]');
+    spectator.detectChanges();
+
+    const menuItem = spectator.queryAll('button[mat-menu-item]')[0];
+    spectator.click(menuItem);
+
+    expect(openPortalSpy).toHaveBeenCalledWith('https://other.example.com');
   });
 
   it('checks restart app', async () => {
