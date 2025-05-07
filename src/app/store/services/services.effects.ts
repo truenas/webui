@@ -20,15 +20,12 @@ import {
 import { selectService } from 'app/store/services/services.selectors';
 import { serviceEnabled } from './services.actions';
 
-const hiddenServices: ServiceName[] = [ServiceName.Gluster, ServiceName.Afp];
-
 @Injectable()
 export class ServicesEffects {
   loadServices$ = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized),
     mergeMap(() => {
       return this.api.call('service.query', [[], { order_by: ['service'] }]).pipe(
-        map((services) => services.filter((service) => !hiddenServices.includes(service.service))),
         map((services) => servicesLoaded({ services })),
         catchError((error: unknown) => {
           // TODO: Basically a fatal error. Handle it.
@@ -44,7 +41,6 @@ export class ServicesEffects {
     switchMap(() => {
       return this.api.subscribe('service.query').pipe(
         map((event) => event.fields),
-        filter((service) => !hiddenServices.includes(service.service)),
         map((service) => serviceChanged({ service })),
       );
     }),

@@ -38,7 +38,6 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
 @Component({
   selector: 'ix-global-target-configuration',
   templateUrl: './global-target-configuration.component.html',
-  styleUrls: ['./global-target-configuration.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatCard,
