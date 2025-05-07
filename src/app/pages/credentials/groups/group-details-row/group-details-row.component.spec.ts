@@ -93,11 +93,20 @@ describe('GroupDetailsRowComponent', () => {
     expect(spectator.query('td')!.getAttribute('colspan')).toBe('5');
   });
 
-  it('should redirect to group members form', async () => {
-    const membersButton = await loader.getHarness(MatButtonHarness.with({ text: 'Members' }));
-    await membersButton.click();
+  describe('Members button', () => {
+    it('should redirect to group members form', async () => {
+      const membersButton = await loader.getHarness(MatButtonHarness.with({ text: 'Members' }));
+      await membersButton.click();
 
-    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/', 'credentials', 'groups', 1, 'members']);
+      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/', 'credentials', 'groups', 1, 'members']);
+    });
+
+    it('does not show Members button for non-local groups', async () => {
+      spectator.setInput('group', { ...dummyGroup, local: false });
+
+      const membersButton = await loader.getHarnessOrNull(MatButtonHarness.with({ text: 'Members' }));
+      expect(membersButton).toBeNull();
+    });
   });
 
   describe('Edit button', () => {

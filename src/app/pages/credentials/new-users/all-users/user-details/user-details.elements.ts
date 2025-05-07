@@ -17,5 +17,9 @@ export const userDetailsElements = {
       hierarchy: [T('Access Card')],
       anchor: 'access-card',
     },
+    passwordCard: {
+      hierarchy: [T('Password Card')],
+      anchor: 'password-card',
+    },
   },
 } satisfies UiSearchableElement;

@@ -118,7 +118,7 @@ export class ServiceFtpComponent implements OnInit {
   readonly helptext = helptextServiceFtp;
 
   readonly certificates$ = this.systemGeneralService.getCertificates().pipe(idNameArrayToOptions());
-  readonly tlsPolicyOptions$ = of(helptextServiceFtp.tls_policy_options);
+  readonly tlsPolicyOptions$ = of(helptextServiceFtp.tlsPolicyOptions);
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider();
 
   readonly isAnonymousLoginAllowed$ = this.form.select((values) => values.onlyanonymous);

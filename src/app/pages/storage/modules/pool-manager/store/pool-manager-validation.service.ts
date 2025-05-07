@@ -5,7 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { uniqBy } from 'lodash-es';
 import { combineLatest, map, Observable } from 'rxjs';
 import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
-import { helptextManager } from 'app/helptext/storage/volumes/manager/manager';
+import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
 import { Pool } from 'app/interfaces/pool.interface';
 import {
   AddVdevsStore,
@@ -39,7 +39,7 @@ export class PoolManagerValidationService {
     private addVdevsStore: AddVdevsStore,
   ) {}
 
-  exportedPoolsWarning = this.translate.instant(helptextManager.manager_exportedSelectedDisksWarning);
+  exportedPoolsWarning = this.translate.instant(helptextPoolCreation.exportedSelectedDisksWarning);
 
   readonly poolCreationErrors$ = combineLatest([
     this.addVdevsStore.pool$,

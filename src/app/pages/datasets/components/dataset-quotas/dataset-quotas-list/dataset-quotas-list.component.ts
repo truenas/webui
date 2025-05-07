@@ -335,19 +335,19 @@ export class DatasetQuotasListComponent implements OnInit {
 
   private confirmShowAllQuotas(): Observable<boolean> {
     return this.dialogService.confirm({
-      title: this.translate.instant(helptextQuotas[this.helpTextKey].filter_dialog.title_show),
-      message: this.translate.instant(helptextQuotas[this.helpTextKey].filter_dialog.message_show),
+      title: this.translate.instant(helptextQuotas[this.helpTextKey].filterDialog.showTitle),
+      message: this.translate.instant(helptextQuotas[this.helpTextKey].filterDialog.showMessage),
       hideCheckbox: true,
-      buttonText: this.translate.instant(helptextQuotas[this.helpTextKey].filter_dialog.button_show),
+      buttonText: this.translate.instant(helptextQuotas[this.helpTextKey].filterDialog.showButton),
     });
   }
 
   private confirmFilterQuotas(): Observable<boolean> {
     return this.dialogService.confirm({
-      title: this.translate.instant(helptextQuotas[this.helpTextKey].filter_dialog.title_filter),
-      message: this.translate.instant(helptextQuotas[this.helpTextKey].filter_dialog.message_filter),
+      title: this.translate.instant(helptextQuotas[this.helpTextKey].filterDialog.filterTitle),
+      message: this.translate.instant(helptextQuotas[this.helpTextKey].filterDialog.filterMessage),
       hideCheckbox: true,
-      buttonText: this.translate.instant(helptextQuotas[this.helpTextKey].filter_dialog.button_filter),
+      buttonText: this.translate.instant(helptextQuotas[this.helpTextKey].filterDialog.filterButton),
     });
   }
 
@@ -380,8 +380,8 @@ export class DatasetQuotasListComponent implements OnInit {
 
   private confirmDelete(name: string): Observable<boolean> {
     return this.dialogService.confirm({
-      title: this.translate.instant(helptextQuotas[this.helpTextKey].delete_dialog.title),
-      message: this.translate.instant(helptextQuotas[this.helpTextKey].delete_dialog.message, { name }),
+      title: this.translate.instant(helptextQuotas[this.helpTextKey].deleteDialog.title),
+      message: this.translate.instant(helptextQuotas[this.helpTextKey].deleteDialog.message, { name }),
       buttonText: this.translate.instant('Delete'),
       buttonColor: 'warn',
       hideCheckbox: true,
@@ -399,7 +399,7 @@ export class DatasetQuotasListComponent implements OnInit {
   private getRemovalConfirmation(): Observable<boolean> {
     const confirmOptions: ConfirmOptions = {
       title: this.translate.instant('Remove Invalid Quotas'),
-      message: this.translate.instant(helptextQuotas[this.helpTextKey].remove_invalid_quotas.message),
+      message: this.translate.instant(helptextQuotas[this.helpTextKey].removeInvalidQuotas.message),
       buttonText: this.translate.instant('Remove'),
     };
     return this.dialogService.confirm(confirmOptions);

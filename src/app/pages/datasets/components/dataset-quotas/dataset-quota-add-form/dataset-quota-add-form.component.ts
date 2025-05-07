@@ -64,7 +64,7 @@ export class DatasetQuotaAddFormComponent {
 
   get dataQuotaLabel(): string {
     if (this.quotaType === DatasetQuotaType.User) {
-      return this.translate.instant(helptextQuotas.users.data_quota.placeholder)
+      return this.translate.instant(helptextQuotas.users.dataQuota.placeholder)
         + this.translate.instant(helptextGlobal.human_readable.suggestion_label);
     }
 
@@ -74,21 +74,21 @@ export class DatasetQuotaAddFormComponent {
 
   get objectQuotaLabel(): string {
     return this.quotaType === DatasetQuotaType.User
-      ? helptextQuotas.users.obj_quota.placeholder
+      ? helptextQuotas.users.objQuota.placeholder
       : helptextQuotas.groups.obj_quota.placeholder;
   }
 
   get dataQuotaTooltip(): string {
     return this.quotaType === DatasetQuotaType.User
-      ? this.translate.instant(helptextQuotas.users.data_quota.tooltip)
-      + ' ' + this.translate.instant(helptextQuotas.field_accepts_tooltip)
+      ? this.translate.instant(helptextQuotas.users.dataQuota.tooltip)
+      + ' ' + this.translate.instant(helptextQuotas.fieldAcceptsTooltip)
       : this.translate.instant(helptextQuotas.groups.data_quota.tooltip)
-        + ' ' + this.translate.instant(helptextQuotas.field_accepts_tooltip);
+        + ' ' + this.translate.instant(helptextQuotas.fieldAcceptsTooltip);
   }
 
   get objectQuotaTooltip(): string {
     return this.quotaType === DatasetQuotaType.User
-      ? helptextQuotas.users.obj_quota.tooltip
+      ? helptextQuotas.users.objQuota.tooltip
       : helptextQuotas.groups.obj_quota.tooltip;
   }
 
