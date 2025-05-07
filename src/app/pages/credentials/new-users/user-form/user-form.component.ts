@@ -88,6 +88,7 @@ export class UserFormComponent implements OnInit {
   ngOnInit(): void {
     this.setupUsernameUpdate();
     this.listenForAllFormsValidity();
+    this.userFormStore.isNewUser.set(this.isNewUser);
 
     // TODO: Handle changes for `sshpubkey_file` input to set values on sshpubkey
     // TODO: Handle changes on `home` input to set the value of `home_mode` input
@@ -103,7 +104,6 @@ export class UserFormComponent implements OnInit {
     // `sudo_commands_nopasswd` when `sudo_commands_nopasswd_all`
 
     // TODO: If editing user, set form values and
-    // disable `uid` and `group_create`
     // if `user.immutable` is true for the user being edited
     // disable `group`, `home_mode`, `home`, `home_create` and `username`
     // if `user.builtin` is true, disable `smb`

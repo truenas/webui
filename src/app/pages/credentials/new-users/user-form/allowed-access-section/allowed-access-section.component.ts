@@ -48,7 +48,7 @@ export class AllowedAccessSectionComponent {
 
   constructor(
     private fb: FormBuilder,
-    private userStore: UserFormStore,
+    private userFormStore: UserFormStore,
     private translate: TranslateService,
   ) {
     this.form.controls.ssh_access.valueChanges.pipe(
@@ -66,7 +66,7 @@ export class AllowedAccessSectionComponent {
 
     this.form.valueChanges.pipe(untilDestroyed(this)).subscribe({
       next: () => {
-        this.userStore.setAllowedAccessConfig({
+        this.userFormStore.setAllowedAccessConfig({
           smbAccess: this.form.controls.smb_access.value,
           truenasAccess: this.form.controls.truenas_access.value,
           sshAccess: this.form.controls.ssh_access.value,
@@ -74,7 +74,7 @@ export class AllowedAccessSectionComponent {
         });
 
         if (this.form.controls.truenas_access.value) {
-          this.userStore.updateSetupDetails({
+          this.userFormStore.updateSetupDetails({
             role: defaultRole,
           });
         }

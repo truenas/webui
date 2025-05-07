@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, effect, input, OnInit,
+  ChangeDetectionStrategy, Component, effect, OnInit,
 } from '@angular/core';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
@@ -35,7 +35,7 @@ import { UserStigPasswordOption } from 'app/pages/credentials/users/user-form/us
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AuthSectionComponent implements OnInit {
-  isNewUser = input<boolean>(false);
+  isNewUser = this.userStore.isNewUser;
   sshAccessEnabled = this.userStore.sshAccess;
   smbAccessEnabled = this.userStore.smbAccess;
   isStigMode = this.userStore.isStigMode;

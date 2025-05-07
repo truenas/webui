@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component,
   computed,
+  effect,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatCheckbox } from '@angular/material/checkbox';
@@ -57,14 +58,9 @@ import { FilesystemService } from 'app/services/filesystem.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AdditionalDetailsSectionComponent {
-  protected shellAccessEnabled = this.newUserStore.shellAccess;
-  protected isUsingAlternativeColors = false;
-
-  protected hasSharingRole = computed(() => this.newUserStore.role()?.includes(Role.SharingAdmin));
-
-  protected isEditingGroups = false;
-  protected isEditingHomeDirectory = false;
-  protected isEditingFullName = false;
+  protected shellAccessEnabled = this.userFormStore.shellAccess;
+  protected isNewUser = this.userFormStore.isNewUser;
+  protected hasSharingRole = computed(() => this.userFormStore.role()?.includes(Role.SharingAdmin));
 
   readonly groupOptions$ = this.api.call('group.query', [[['local', '=', true]]]).pipe(
     map((groups) => groups.map((group) => ({ label: group.group, value: group.id }))),
@@ -82,7 +78,7 @@ export class AdditionalDetailsSectionComponent {
     full_name: [''],
 
     group: [null as number],
-    create_group: [true],
+    group_create: [true],
     groups: [[] as number[]],
     email: [null as string, [emailValidator()]],
     home: [''],
@@ -102,15 +98,31 @@ export class AdditionalDetailsSectionComponent {
     private filesystemService: FilesystemService,
     private fb: FormBuilder,
     private api: ApiService,
-    private newUserStore: UserFormStore,
+    private userFormStore: UserFormStore,
     private cdr: ChangeDetectorRef,
   ) {
+    effect(() => {
+      if (!this.isNewUser()) {
+        this.form.patchValue({
+          full_name: this.userFormStore.userConfig().full_name,
+          email: this.userFormStore.userConfig().email,
+          group_create: this.userFormStore.userConfig().group_create,
+          groups: this.userFormStore.userConfig().groups,
+          home: this.userFormStore.userConfig().home,
+          create_home_directory: this.userFormStore.userConfig().home_create,
+          uid: this.userFormStore.userConfig().uid,
+        }, { emitEvent: false });
+
+        this.form.controls.uid.disable();
+        this.form.controls.group_create.disable();
+      }
+    });
     this.form.valueChanges.pipe(
       untilDestroyed(this),
     ).subscribe({
       next: () => {
-        this.newUserStore.updateUserConfig({
-          group_create: this.form.value.create_group,
+        this.userFormStore.updateUserConfig({
+          group_create: this.form.value.group_create,
           home_create: this.form.value.create_home_directory,
           full_name: this.form.value.full_name,
           groups: this.form.value.groups.map((grp) => (+grp)),
@@ -118,7 +130,7 @@ export class AdditionalDetailsSectionComponent {
           email: this.form.value.email,
           uid: this.form.value.uid,
         });
-        this.newUserStore.updateSetupDetails({
+        this.userFormStore.updateSetupDetails({
           defaultPermissions: this.form.value.default_permissions,
         });
       },
@@ -127,34 +139,6 @@ export class AdditionalDetailsSectionComponent {
     this.setupShellUpdate();
     this.setFirstShellOption();
     this.detectFullNameChanges();
-  }
-
-  protected onCloseInlineEdits(event: MouseEvent): void {
-    if ((event.target as HTMLElement).closest('.extra-controls-container')) {
-      return;
-    }
-
-    this.isEditingFullName = false;
-    this.isEditingGroups = false;
-    this.isEditingHomeDirectory = false;
-  }
-
-  protected onEditFullName(): void {
-    this.isEditingFullName = true;
-    this.isEditingGroups = false;
-    this.isEditingHomeDirectory = false;
-  }
-
-  protected onEditGroups(): void {
-    this.isEditingGroups = true;
-    this.isEditingFullName = false;
-    this.isEditingHomeDirectory = false;
-  }
-
-  protected onEditHomeDirectory(): void {
-    this.isEditingFullName = false;
-    this.isEditingHomeDirectory = true;
-    this.isEditingGroups = false;
   }
 
   private setupShellUpdate(): void {
@@ -198,7 +182,7 @@ export class AdditionalDetailsSectionComponent {
       filter((username) => !!username),
       untilDestroyed(this),
     ).subscribe((username) => {
-      this.newUserStore.updateUserConfig({ username });
+      this.userFormStore.updateUserConfig({ username });
     });
   }
 
