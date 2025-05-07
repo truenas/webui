@@ -18,7 +18,7 @@ export class GlobalApiHttpService {
     this.baseUrl = environment.production ? `${protocol}${environment.remote}/api` : '/api';
   }
 
-  get<T>(path: string): Observable<T> {
+  private get<T>(path: string): Observable<T> {
     return this.http.get<T>(`${this.baseUrl}/${path}`);
   }
 

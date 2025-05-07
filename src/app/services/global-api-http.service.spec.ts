@@ -3,24 +3,19 @@ import {
   SpectatorService,
   createServiceFactory,
 } from '@ngneat/spectator/jest';
-import { WINDOW } from 'app/helpers/window.helper';
+import { firstValueFrom } from 'rxjs';
+import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { GlobalApiHttpService } from './global-api-http.service';
 
 describe('GlobalApiHttpService', () => {
   let spectator: SpectatorService<GlobalApiHttpService>;
   let httpMock: HttpTestingController;
 
-  const mockWindow = {
-    location: {
-      protocol: 'https:',
-    },
-  } as unknown as Window;
-
   const createService = createServiceFactory({
     service: GlobalApiHttpService,
     imports: [HttpClientTestingModule],
     providers: [
-      { provide: WINDOW, useValue: mockWindow },
+      mockWindow(),
     ],
   });
 
@@ -29,15 +24,16 @@ describe('GlobalApiHttpService', () => {
     httpMock = spectator.inject(HttpTestingController);
   });
 
-  it('should call getBootId() and return string', () => {
+  it('should call getBootId() and return string', async () => {
     const expectedBootId = 'boot-abc';
 
-    spectator.service.getBootId().subscribe((result) => {
-      expect(result).toBe(expectedBootId);
-    });
+    const promise = firstValueFrom(spectator.service.getBootId());
 
     const req = httpMock.expectOne('/api/boot_id');
     expect(req.request.method).toBe('GET');
     req.flush(expectedBootId);
+
+    const result = await promise;
+    expect(result).toBe(expectedBootId);
   });
 });
