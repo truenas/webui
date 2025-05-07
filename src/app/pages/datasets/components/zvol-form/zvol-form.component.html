@@ -10,68 +10,67 @@
       <ix-fieldset>
         <ix-input
           formControlName="name"
-          [label]="helptext.zvol_name_placeholder | translate"
-          [tooltip]="helptext.zvol_name_tooltip | translate"
+          [label]="helptext.nameLabel | translate"
+          [tooltip]="helptext.nameTooltip | translate"
           [required]="true"
         ></ix-input>
         <ix-input
           formControlName="comments"
-          [label]="helptext.zvol_comments_placeholder | translate"
-          [tooltip]="helptext.zvol_comments_tooltip | translate"
+          [label]="helptext.commentsLabel | translate"
         ></ix-input>
         <ix-input
           formControlName="volsize"
-          [label]="helptext.zvol_volsize_placeholder | translate"
-          [tooltip]="helptext.zvol_volsize_tooltip | translate"
+          [label]="helptext.sizeLabel | translate"
+          [tooltip]="helptext.sizeTooltip | translate"
           [format]="formatter.memorySizeFormatting"
           [parse]="formatter.memorySizeParsing"
           [required]="true"
         ></ix-input>
         <ix-checkbox
           formControlName="force_size"
-          [label]="helptext.zvol_forcesize_placeholder | translate"
-          [tooltip]="helptext.zvol_forcesize_tooltip | translate"
+          [label]="helptext.forceSizeLabel | translate"
+          [tooltip]="helptext.forceSizeTooltip | translate"
         ></ix-checkbox>
         <ix-select
           formControlName="sync"
-          [label]="helptext.zvol_sync_placeholder | translate"
-          [tooltip]="helptext.zvol_sync_tooltip | translate"
+          [label]="helptext.syncLabel | translate"
+          [tooltip]="helptext.syncTooltip | translate"
           [options]="syncOptions$"
           [required]="true"
         ></ix-select>
         <ix-select
           formControlName="compression"
-          [label]="helptext.zvol_compression_placeholder | translate"
-          [tooltip]="helptext.zvol_compression_tooltip | translate"
+          [label]="helptext.compressionLabel | translate"
+          [tooltip]="helptext.compressionTooltip | translate"
           [options]="compressionOptions$"
           [required]="true"
         ></ix-select>
         <ix-select
           formControlName="deduplication"
-          [label]="helptext.zvol_deduplication_placeholder | translate"
-          [tooltip]="helptext.zvol_deduplication_tooltip | translate"
+          [label]="helptext.deduplicationLabel | translate"
+          [tooltip]="helptext.deduplicationTooltip | translate"
           [options]="deduplicationOptions$"
           [required]="true"
         ></ix-select>
         @if (form.controls.sparse.enabled) {
           <ix-checkbox
             formControlName="sparse"
-            [label]="helptext.zvol_sparse_placeholder | translate"
-            [tooltip]="helptext.zvol_sparse_tooltip | translate"
+            [label]="helptext.sparseLabel | translate"
+            [tooltip]="helptext.sparseTooltip | translate"
           ></ix-checkbox>
         }
         <ix-select
           formControlName="readonly"
-          [label]="helptext.zvol_readonly_placeholder | translate"
-          [tooltip]="helptext.zvol_readonly_tooltip | translate"
+          [label]="helptext.readonlyLabel | translate"
+          [tooltip]="helptext.readonlyTooltip | translate"
           [options]="readonlyOptions$"
           [required]="true"
         ></ix-select>
         @if (form.controls.volblocksize.enabled) {
           <ix-select
             formControlName="volblocksize"
-            [label]="helptext.zvol_volblocksize_placeholder | translate"
-            [tooltip]="helptext.zvol_volblocksize_tooltip | translate"
+            [label]="helptext.volblocksizeLabel | translate"
+            [tooltip]="helptext.volblocksizeTooltip | translate"
             [options]="volblocksizeOptions$"
             [required]="true"
           ></ix-select>
@@ -85,24 +84,24 @@
         ></ix-select>
       </ix-fieldset>
       @if (isNew) {
-        <ix-fieldset [title]="helptext.dataset_form_encryption.fieldset_title | translate">
+        <ix-fieldset [title]="helptext.encryption.title | translate">
           <ix-checkbox
             formControlName="inherit_encryption"
             [label]="inheritEncryptPlaceholder | translate"
-            [tooltip]="helptext.dataset_form_encryption.inherit_checkbox_tooltip | translate"
+            [tooltip]="helptext.encryption.inheritTooltip | translate"
           ></ix-checkbox>
           @if (!form.controls.inherit_encryption.value) {
             <ix-checkbox
               formControlName="encryption"
-              [label]="helptext.dataset_form_encryption.encryption_checkbox_placeholder | translate"
-              [tooltip]="helptext.dataset_form_encryption.encryption_checkbox_tooltip | translate"
+              [label]="helptext.encryption.encryptionLabel | translate"
+              [tooltip]="helptext.encryption.encryptionTooltip | translate"
             ></ix-checkbox>
           }
           @if (form.controls.encryption_type.enabled) {
             <ix-select
               formControlName="encryption_type"
-              [label]="helptext.dataset_form_encryption.encryption_type_placeholder | translate"
-              [tooltip]="helptext.dataset_form_encryption.encryption_type_tooltip | translate"
+              [label]="helptext.encryption.encryptionTypeLabel | translate"
+              [tooltip]="helptext.encryption.encryptionTypeTooltip | translate"
               [options]="encryptionTypeOptions$"
               [required]="true"
             ></ix-select>
@@ -110,15 +109,15 @@
           @if (form.controls.generate_key.enabled) {
             <ix-checkbox
               formControlName="generate_key"
-              [label]="helptext.dataset_form_encryption.generate_key_checkbox_placeholder | translate"
-              [tooltip]="helptext.dataset_form_encryption.generate_key_checkbox_tooltip | translate"
+              [label]="helptext.encryption.generateKeyLabel | translate"
+              [tooltip]="helptext.encryption.generateKeyTooltip | translate"
             ></ix-checkbox>
           }
           @if (form.controls.key.enabled) {
             <ix-textarea
               formControlName="key"
-              [label]="helptext.dataset_form_encryption.key_placeholder | translate"
-              [tooltip]="helptext.dataset_form_encryption.key_tooltip | translate"
+              [label]="helptext.encryption.keyLabel | translate"
+              [tooltip]="helptext.encryption.keyTooltip | translate"
               [required]="true"
             ></ix-textarea>
           }
@@ -126,8 +125,8 @@
             <ix-input
               formControlName="passphrase"
               type="password"
-              [label]="helptext.dataset_form_encryption.passphrase_placeholder | translate"
-              [tooltip]="helptext.dataset_form_encryption.passphrase_tooltip | translate"
+              [label]="helptext.encryption.passphraseLabel | translate"
+              [tooltip]="helptext.encryption.passphraseTooltip | translate"
               [required]="true"
             ></ix-input>
           }
@@ -135,23 +134,23 @@
             <ix-input
               formControlName="confirm_passphrase"
               type="password"
-              [label]="helptext.dataset_form_encryption.confirm_passphrase_placeholder | translate"
+              [label]="helptext.encryption.confirmPassphraseLabel | translate"
               [required]="true"
             ></ix-input>
           }
           @if (form.controls.pbkdf2iters.enabled) {
             <ix-input
               formControlName="pbkdf2iters"
-              [label]="helptext.dataset_form_encryption.pbkdf2iters_placeholder | translate"
-              [tooltip]="helptext.dataset_form_encryption.pbkdf2iters_tooltip | translate"
+              [label]="helptext.encryption.pbkdf2itersLabel | translate"
+              [tooltip]="helptext.encryption.pbkdf2itersTooltip | translate"
               [required]="true"
             ></ix-input>
           }
           @if (form.controls.algorithm.enabled) {
             <ix-select
               formControlName="algorithm"
-              [label]="helptext.dataset_form_encryption.algorithm_placeholder | translate"
-              [tooltip]="helptext.dataset_form_encryption.algorithm_tooltip | translate"
+              [label]="helptext.encryption.algorithmLabel | translate"
+              [tooltip]="helptext.encryption.algorithmTooltip | translate"
               [options]="algorithmOptions$"
               [required]="true"
             ></ix-select>

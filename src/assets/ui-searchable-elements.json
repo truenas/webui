@@ -852,6 +852,23 @@
     "hierarchy": [
       "Credentials",
       "Users (WIP)",
+      "Password Card"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/credentials/users-new"
+    ],
+    "routerLink": null,
+    "anchor": "password-card",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
+      "Users (WIP)",
       "Access Card"
     ],
     "synonyms": [],
@@ -1198,49 +1215,6 @@
     ],
     "routerLink": null,
     "anchor": "rsync-tasks",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Data Protection",
-      "Scrub Tasks",
-      "Add Scrub Task"
-    ],
-    "synonyms": [
-      "Create Scrub Task",
-      "New Scrub Task",
-      "Task"
-    ],
-    "requiredRoles": [
-      "POOL_SCRUB_WRITE"
-    ],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/data-protection",
-      "scrub"
-    ],
-    "routerLink": null,
-    "anchor": "add-scrub",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Data Protection",
-      "Scrub Tasks"
-    ],
-    "synonyms": [
-      "Tasks"
-    ],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/data-protection",
-      "scrub"
-    ],
-    "routerLink": null,
-    "anchor": "scrub-tasks",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -3115,9 +3089,12 @@
   {
     "hierarchy": [
       "Storage",
-      "Scrub"
+      "Scrub Now"
     ],
-    "synonyms": [],
+    "synonyms": [
+      "Run Scrub",
+      "Start Scrub"
+    ],
     "requiredRoles": [
       "POOL_SCRUB_WRITE"
     ],
@@ -3126,7 +3103,29 @@
       "/storage"
     ],
     "routerLink": null,
-    "anchor": "scrub",
+    "anchor": "scrub-now",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Storage",
+      "Scheduled Scrub"
+    ],
+    "synonyms": [
+      "Periodic Scrub",
+      "Scrub Task",
+      "Periodic Disk Checks",
+      "Scrub Schedule",
+      "Scrub Interval"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/storage"
+    ],
+    "routerLink": null,
+    "anchor": "scheduled-scrub",
     "triggerAnchor": null,
     "section": "ui"
   },

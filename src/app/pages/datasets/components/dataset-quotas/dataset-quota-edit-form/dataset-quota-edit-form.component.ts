@@ -66,8 +66,8 @@ export class DatasetQuotaEditFormComponent implements OnInit {
 
   get nameLabel(): string {
     return this.quotaType === DatasetQuotaType.User
-      ? helptextQuotas.users.dialog.placeholder
-      : helptextQuotas.groups.dialog.placeholder;
+      ? helptextQuotas.users.nameLabel
+      : helptextQuotas.groups.nameLabel;
   }
 
   get dataQuotaLabel(): string {
@@ -77,7 +77,7 @@ export class DatasetQuotaEditFormComponent implements OnInit {
   }
 
   private getUserDataQuotaLabel(): string {
-    return this.translate.instant(helptextQuotas.users.data_quota.placeholder)
+    return this.translate.instant(helptextQuotas.users.dataQuota.placeholder)
       + this.translate.instant(helptextGlobal.human_readable.suggestion_label);
   }
 
@@ -88,7 +88,7 @@ export class DatasetQuotaEditFormComponent implements OnInit {
 
   get objectQuotaLabel(): string {
     return this.quotaType === DatasetQuotaType.User
-      ? helptextQuotas.users.obj_quota.placeholder
+      ? helptextQuotas.users.objQuota.placeholder
       : helptextQuotas.groups.obj_quota.placeholder;
   }
 
@@ -99,7 +99,7 @@ export class DatasetQuotaEditFormComponent implements OnInit {
   }
 
   private getUserDataQuotaTooltip(): string {
-    return this.translate.instant(helptextQuotas.users.data_quota.tooltip)
+    return this.translate.instant(helptextQuotas.users.dataQuota.tooltip)
       + this.translate.instant(helptextGlobal.human_readable.suggestion_tooltip)
       + this.translate.instant(' bytes.');
   }
@@ -112,7 +112,7 @@ export class DatasetQuotaEditFormComponent implements OnInit {
 
   get objectQuotaTooltip(): string {
     return this.quotaType === DatasetQuotaType.User
-      ? helptextQuotas.users.obj_quota.tooltip
+      ? helptextQuotas.users.objQuota.tooltip
       : helptextQuotas.groups.obj_quota.tooltip;
   }
 

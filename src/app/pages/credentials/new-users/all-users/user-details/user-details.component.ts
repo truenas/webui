@@ -6,6 +6,7 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { User } from 'app/interfaces/user.interface';
 import { UserAccessCardComponent } from 'app/pages/credentials/new-users/all-users/user-details/user-access-card/user-access-card.component';
 import { userDetailsElements } from 'app/pages/credentials/new-users/all-users/user-details/user-details.elements';
+import { UserPasswordCardComponent } from 'app/pages/credentials/new-users/all-users/user-details/user-password-card/user-password-card.component';
 import { UserProfileCardComponent } from 'app/pages/credentials/new-users/all-users/user-details/user-profile-card/user-profile-card.component';
 
 @Component({
@@ -16,6 +17,7 @@ import { UserProfileCardComponent } from 'app/pages/credentials/new-users/all-us
     TranslateModule,
     UserProfileCardComponent,
     UserAccessCardComponent,
+    UserPasswordCardComponent,
     UiSearchDirective,
   ],
 })

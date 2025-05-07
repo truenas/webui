@@ -18,8 +18,8 @@ describe('ReportsService', () => {
     providers: [
       mockApi([
         mockCall('disk.query', [
-          { devname: 'sda', identifier: '{uuid}test-sda-uuid' },
-          { devname: 'sdb', identifier: '{uuid}test-sdb-uuid' },
+          { devname: 'sda' },
+          { devname: 'sdb' },
         ] as Disk[]),
         mockCall('reporting.netdata_graphs', [
           { name: ReportingGraphName.Cpu },
@@ -54,8 +54,8 @@ describe('ReportsService', () => {
       const options = await firstValueFrom(spectator.service.getDiskDevices());
       expect(api.call).toHaveBeenCalledWith('disk.query');
       expect(options).toEqual([
-        { label: 'sda', value: '{uuid}test-sda-uuid' },
-        { label: 'sdb', value: '{uuid}test-sdb-uuid' },
+        { label: 'sda', value: 'sda' },
+        { label: 'sdb', value: 'sdb' },
       ]);
     });
   });
@@ -105,8 +105,8 @@ describe('ReportsService', () => {
   describe('getDiskMetrics', () => {
     it('returns disk metrics', async () => {
       const fakeMetrics = [
-        { label: 'sda', value: 'uuid_sda' },
-        { label: 'sdb', value: 'uuid_sdb' },
+        { label: 'sda', value: 'sda' },
+        { label: 'sdb', value: 'sdb' },
       ];
       spectator.service.setDiskMetrics(fakeMetrics);
 
