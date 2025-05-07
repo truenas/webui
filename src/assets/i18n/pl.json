@@ -161,6 +161,7 @@
   "Master": "",
   "Max Password Age": "",
   "Maximum number of days a password can be used before it must be changed.": "",
+  "Migrate existing applications": "",
   "Min Password Age": "",
   "Min Password Length": "",
   "Minimum number of characters in a password. Must be at least 8 characters.": "",

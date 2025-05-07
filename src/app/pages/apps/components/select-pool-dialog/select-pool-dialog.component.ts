@@ -16,6 +16,7 @@ import { helptextApps } from 'app/helptext/apps/apps';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -40,6 +41,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     MatButton,
     TestDirective,
     MatDialogClose,
+    IxCheckboxComponent,
     RequiresRolesDirective,
   ],
 })
@@ -52,6 +54,12 @@ export class SelectPoolDialog implements OnInit {
   });
 
   pools$: Observable<Option[]>;
+  private selectedPoolName: string | null = null;
+
+  get shouldShowMigrateCheckbox(): boolean {
+    const selected = this.form.value.pool;
+    return !!this.selectedPoolName && selected && selected !== this.selectedPoolName;
+  }
 
   constructor(
     private formBuilder: FormBuilder,
@@ -71,7 +79,9 @@ export class SelectPoolDialog implements OnInit {
   }
 
   onSubmit(): void {
-    this.dockerStore.setDockerPool(this.form.getRawValue().pool).pipe(
+    const { pool, migrateApplications } = this.form.getRawValue();
+
+    this.dockerStore.setDockerPool(pool, migrateApplications).pipe(
       untilDestroyed(this),
     ).subscribe(() => {
       this.snackbar.success(
@@ -89,6 +99,12 @@ export class SelectPoolDialog implements OnInit {
       .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: ([selectedPool, pools]) => {
+          this.form.patchValue({
+            pool: selectedPool || '',
+          });
+
+          this.selectedPoolName = selectedPool || null;
+
           this.form.patchValue({
             pool: selectedPool || '',
           });
