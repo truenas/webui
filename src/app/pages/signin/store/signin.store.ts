@@ -49,7 +49,6 @@ export class SigninStore extends ComponentStore<SigninState> {
   private handleLoginResult = (loginResult: LoginResult): void => {
     if (loginResult !== LoginResult.Success) {
       this.authService.clearAuthToken();
-      this.wsStatus.setReconnect(false);
     } else {
       this.handleSuccessfulLogin();
     }
