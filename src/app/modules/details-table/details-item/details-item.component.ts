@@ -9,5 +9,4 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 })
 export class DetailsItemComponent {
   label = input('');
-  required = input(false);
 }
