@@ -9,7 +9,7 @@
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <div class="two-columns">
         <ix-fieldset
-          [title]="helptext.hostname_and_domain | translate"
+          [title]="helptext.hostnameAndDomain | translate"
         >
           <ix-input
             [formControlName]="hostname.fcName"
@@ -50,7 +50,7 @@
           ></ix-chips>
         </ix-fieldset>
         <ix-fieldset
-          [title]="helptext.service_announcement | translate"
+          [title]="helptext.serviceAnnouncement | translate"
         >
           <ix-checkbox
             class="mt-field"
@@ -114,7 +114,7 @@
 
       <div class="two-columns">
         <ix-fieldset
-          [title]="helptext.outbound_network | translate"
+          [title]="helptext.outboundNetwork | translate"
         >
           <ix-radio-group
             class="mt-field outbound-network-radio"

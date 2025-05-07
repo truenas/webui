@@ -88,131 +88,131 @@ export class NetworkConfigurationComponent implements OnInit {
 
   hostname = {
     fcName: 'hostname',
-    label: helptextNetworkConfiguration.hostname_placeholder,
+    label: helptextNetworkConfiguration.hostnameLabel,
   };
 
   hostnameB = {
     fcName: 'hostname_b',
-    label: helptextNetworkConfiguration.hostname_b_placeholder,
+    label: helptextNetworkConfiguration.bHostnameLabel,
     hidden: true,
   };
 
   hostnameVirtual = {
     fcName: 'hostname_virtual',
-    label: helptextNetworkConfiguration.hostname_virtual_placeholder,
-    tooltip: helptextNetworkConfiguration.hostname_virtual_tooltip,
+    label: helptextNetworkConfiguration.hostnameVirtualLabel,
+    tooltip: helptextNetworkConfiguration.hostnameVirtualTooltip,
     hidden: true,
   };
 
   inheritDhcp = {
     fcName: 'inherit_dhcp',
-    label: helptextNetworkConfiguration.inherit_dhcp_placeholder,
+    label: helptextNetworkConfiguration.inheritDhcpPlaceholder,
   };
 
   domain = {
     fcName: 'domain',
-    label: helptextNetworkConfiguration.domain_placeholder,
-    tooltip: helptextNetworkConfiguration.domain_tooltip,
+    label: helptextNetworkConfiguration.domainLabel,
+    tooltip: helptextNetworkConfiguration.domainTooltip,
   };
 
   domains = {
     fcName: 'domains',
-    label: helptextNetworkConfiguration.domains_placeholder,
-    tooltip: helptextNetworkConfiguration.domains_tooltip,
+    label: helptextNetworkConfiguration.domainsLabel,
+    tooltip: helptextNetworkConfiguration.domainsTooltip,
   };
 
   netbios = {
     fcName: 'netbios',
-    label: helptextNetworkConfiguration.netbios_placeholder,
-    tooltip: helptextNetworkConfiguration.netbios_tooltip,
+    label: helptextNetworkConfiguration.netbiosLabel,
+    tooltip: helptextNetworkConfiguration.netbiosTooltip,
   };
 
   mdns = {
     fcName: 'mdns',
-    label: helptextNetworkConfiguration.mdns_placeholder,
-    tooltip: helptextNetworkConfiguration.mdns_tooltip,
+    label: helptextNetworkConfiguration.mdnsLabel,
+    tooltip: helptextNetworkConfiguration.mdnsTooltip,
   };
 
   wsd = {
     fcName: 'wsd',
-    label: helptextNetworkConfiguration.wsd_placeholder,
-    tooltip: helptextNetworkConfiguration.wsd_tooltip,
+    label: helptextNetworkConfiguration.wsdLabel,
+    tooltip: helptextNetworkConfiguration.wsdTooltip,
   };
 
   nameserver1 = {
     fcName: 'nameserver1',
-    label: helptextNetworkConfiguration.nameserver1_placeholder,
-    tooltip: helptextNetworkConfiguration.nameserver1_tooltip,
+    label: helptextNetworkConfiguration.nameserver1Label,
+    tooltip: helptextNetworkConfiguration.nameserver1Tooltip,
   };
 
   nameserver2 = {
     fcName: 'nameserver2',
-    label: helptextNetworkConfiguration.nameserver2_placeholder,
-    tooltip: helptextNetworkConfiguration.nameserver2_tooltip,
+    label: helptextNetworkConfiguration.nameserver2Label,
+    tooltip: helptextNetworkConfiguration.nameserver2Tooltip,
   };
 
   nameserver3 = {
     fcName: 'nameserver3',
-    label: helptextNetworkConfiguration.nameserver3_placeholder,
-    tooltip: helptextNetworkConfiguration.nameserver3_tooltip,
+    label: helptextNetworkConfiguration.nameserver3Label,
+    tooltip: helptextNetworkConfiguration.nameserver3Tooltip,
   };
 
   ipv4gateway = {
     fcName: 'ipv4gateway',
-    label: helptextNetworkConfiguration.ipv4gateway_placeholder,
-    tooltip: helptextNetworkConfiguration.ipv4gateway_tooltip,
+    label: helptextNetworkConfiguration.ipv4gatewayLabel,
+    tooltip: helptextNetworkConfiguration.ipv4gatewayTooltip,
   };
 
   ipv6gateway = {
     fcName: 'ipv6gateway',
-    label: helptextNetworkConfiguration.ipv6gateway_placeholder,
-    tooltip: helptextNetworkConfiguration.ipv6gateway_tooltip,
+    label: helptextNetworkConfiguration.ipv6gatewayLabel,
+    tooltip: helptextNetworkConfiguration.ipv6gatewayTooltip,
   };
 
   outboundNetworkActivity = {
     fcName: 'outbound_network_activity',
-    label: helptextNetworkConfiguration.outbound_activity,
+    label: helptextNetworkConfiguration.outboundActivity,
     tooltip: '',
     options: of([
       // Mismatch between enum and label is expected.
       // We will send empty list of services when Allow All or Deny All is selected.
       // I.e. selecting 'Allow All' will send Deny [], effectively allowing all services.
       {
-        label: helptextNetworkConfiguration.outbound_network_activity.allow.placeholder,
+        label: helptextNetworkConfiguration.outboundNetworkActivity.allow.label,
         value: NetworkActivityType.Deny,
-        tooltip: helptextNetworkConfiguration.outbound_network_activity.allow.tooltip,
+        tooltip: helptextNetworkConfiguration.outboundNetworkActivity.allow.tooltip,
       },
       {
-        label: helptextNetworkConfiguration.outbound_network_activity.deny.placeholder,
+        label: helptextNetworkConfiguration.outboundNetworkActivity.deny.label,
         value: NetworkActivityType.Allow,
-        tooltip: helptextNetworkConfiguration.outbound_network_activity.deny.tooltip,
+        tooltip: helptextNetworkConfiguration.outboundNetworkActivity.deny.tooltip,
       },
       {
-        label: helptextNetworkConfiguration.outbound_network_activity.specific.placeholder,
+        label: helptextNetworkConfiguration.outboundNetworkActivity.specific.label,
         value: 'SPECIFIC',
-        tooltip: helptextNetworkConfiguration.outbound_network_activity.specific.tooltip,
+        tooltip: helptextNetworkConfiguration.outboundNetworkActivity.specific.tooltip,
       },
     ]),
   };
 
   outboundNetworkValue = {
     fcName: 'outbound_network_value',
-    label: helptextNetworkConfiguration.outbound_network_value.placeholder,
-    tooltip: helptextNetworkConfiguration.outbound_network_value.tooltip,
+    label: helptextNetworkConfiguration.outboundNetworkValue.label,
+    tooltip: helptextNetworkConfiguration.outboundNetworkValue.tooltip,
     options: this.api.call('network.configuration.activity_choices').pipe(arrayToOptions()),
     hidden: true,
   };
 
   httpproxy = {
     fcName: 'httpproxy',
-    label: helptextNetworkConfiguration.httpproxy_placeholder,
-    tooltip: helptextNetworkConfiguration.httpproxy_tooltip,
+    label: helptextNetworkConfiguration.httpproxyLabel,
+    tooltip: helptextNetworkConfiguration.httpproxyTooltip,
   };
 
   hosts = {
     fcName: 'hosts',
-    label: helptextNetworkConfiguration.hosts_placeholder,
-    tooltip: helptextNetworkConfiguration.hosts_tooltip,
+    label: helptextNetworkConfiguration.hostsLabel,
+    tooltip: helptextNetworkConfiguration.hostsTooltip,
   };
 
   constructor(
