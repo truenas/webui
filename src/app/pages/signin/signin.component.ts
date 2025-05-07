@@ -82,7 +82,7 @@ export class SigninComponent {
       untilDestroyed(this),
     ).subscribe(() => {
       this.signinStore.init();
-      this.wsStatus.setReconnect(true);
+      this.wsStatus.setReconnectAllowed(true);
     });
 
     this.signinStore.loginBanner$.pipe(
