@@ -7,6 +7,7 @@ import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { ChangePasswordFormComponent } from 'app/modules/layout/topbar/change-password-dialog/change-password-form/change-password-form.component';
+import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { PasswordChangeRequiredDialog } from './password-change-required-dialog.component';
 
 describe('PasswordChangeRequiredDialog', () => {
@@ -20,6 +21,12 @@ describe('PasswordChangeRequiredDialog', () => {
     providers: [
       mockProvider(MatDialogRef, {
         close: jest.fn(),
+      }),
+      mockProvider(WebSocketHandlerService, {
+        reconnect: jest.fn(),
+      }),
+      mockProvider(AuthService, {
+        logout: jest.fn(() => of()),
       }),
       mockAuth(),
     ],
