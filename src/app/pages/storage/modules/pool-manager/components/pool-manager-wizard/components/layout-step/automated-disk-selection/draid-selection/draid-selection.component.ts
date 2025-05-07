@@ -9,7 +9,7 @@ import { merge, of } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { generateOptionsRange } from 'app/helpers/options.helper';
-import { helptextManager } from 'app/helptext/storage/volumes/manager/manager';
+import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Option, SelectOption } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
@@ -71,7 +71,7 @@ export class DraidSelectionComponent implements OnInit, OnChanges {
    */
   private selectedDisks: DetailsDisk[] = [];
 
-  readonly helptext = helptextManager;
+  readonly helptext = helptextPoolCreation;
 
   constructor(
     private formBuilder: FormBuilder,

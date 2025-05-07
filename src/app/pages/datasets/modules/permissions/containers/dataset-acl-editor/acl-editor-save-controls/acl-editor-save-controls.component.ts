@@ -89,8 +89,8 @@ export class AclEditorSaveControlsComponent implements OnInit {
       filter(Boolean),
       switchMap(() => {
         return this.dialogService.confirm({
-          title: this.translate.instant(helptextAcl.dataset_acl_recursive_dialog_warning),
-          message: this.translate.instant(helptextAcl.dataset_acl_recursive_dialog_warning_message),
+          title: this.translate.instant(helptextAcl.recursiveDialogTitle),
+          message: this.translate.instant(helptextAcl.recursiveDialogMessage),
         });
       }),
       untilDestroyed(this),

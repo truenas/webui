@@ -59,7 +59,7 @@ export class LockDatasetDialog {
     const force = this.forceCheckbox.value;
     this.dialogService.jobDialog(
       this.api.job('pool.dataset.lock', [this.dataset.id, { force_umount: force }]),
-      { title: this.translate.instant(helptextVolumes.lock_dataset_dialog.locking_dataset) },
+      { title: this.translate.instant(helptextVolumes.lockingDataset) },
     )
       .afterClosed()
       .pipe(
