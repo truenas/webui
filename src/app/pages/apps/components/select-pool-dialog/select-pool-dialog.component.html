@@ -9,7 +9,7 @@
     [options]="pools$"
   ></ix-select>
 
-  @if (shouldShowMigrateCheckbox) {
+  @if (showMigrateCheckbox) {
     <ix-checkbox
       formControlName="migrateApplications"
       [label]="'Migrate existing applications' | translate"

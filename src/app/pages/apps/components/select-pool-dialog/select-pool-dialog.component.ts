@@ -56,7 +56,7 @@ export class SelectPoolDialog implements OnInit {
   pools$: Observable<Option[]>;
   private selectedPoolName: string | null = null;
 
-  get shouldShowMigrateCheckbox(): boolean {
+  get showMigrateCheckbox(): boolean {
     const selected = this.form.value.pool;
     return !!this.selectedPoolName && selected && selected !== this.selectedPoolName;
   }
