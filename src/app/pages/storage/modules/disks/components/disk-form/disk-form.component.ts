@@ -72,8 +72,8 @@ export class DiskFormComponent implements OnInit {
   });
 
   readonly helptext = helptextDisks;
-  readonly hddstandbyOptions$ = of(helptextDisks.disk_form_hddstandby_options);
-  readonly advpowermgmtOptions$ = of(helptextDisks.disk_form_advpowermgmt_options);
+  readonly hddstandbyOptions$ = of(helptextDisks.standbyOptions);
+  readonly advpowermgmtOptions$ = of(helptextDisks.advancedPowerManagementOptions);
   readonly isLoading = signal<boolean>(false);
   readonly existingDisk = signal<Disk | null>(null);
 

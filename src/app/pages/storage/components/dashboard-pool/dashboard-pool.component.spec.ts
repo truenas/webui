@@ -94,8 +94,8 @@ describe('DashboardPoolComponent', () => {
     await expandButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
-      title: helptextVolumes.expand_pool_dialog.title,
-      message: helptextVolumes.expand_pool_dialog.message,
+      title: helptextVolumes.expandPoolDialog.title,
+      message: helptextVolumes.expandPoolDialog.message,
     });
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('pool.expand', [pool.id]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();

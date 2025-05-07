@@ -72,19 +72,19 @@ export class VmwareSnapshotFormComponent implements OnInit {
   protected editingSnapshot: VmwareSnapshot;
 
   readonly labels = {
-    hostname: helptextVmwareSnapshot.VMware_snapshot_form_hostname_placeholder,
-    username: helptextVmwareSnapshot.VMware_snapshot_form_username_placeholder,
-    password: helptextVmwareSnapshot.VMware_snapshot_form_password_placeholder,
-    filesystem: helptextVmwareSnapshot.VMware_snapshot_form_filesystem_placeholder,
-    datastore: helptextVmwareSnapshot.VMware_snapshot_form_datastore_placeholder,
+    hostname: helptextVmwareSnapshot.hostnameLabel,
+    username: helptextVmwareSnapshot.usernameLabel,
+    password: helptextVmwareSnapshot.passwordLabel,
+    filesystem: helptextVmwareSnapshot.filesystemLabel,
+    datastore: helptextVmwareSnapshot.datastoreLabel,
   };
 
   readonly tooltips = {
-    hostname: helptextVmwareSnapshot.VMware_snapshot_form_hostname_tooltip,
-    username: helptextVmwareSnapshot.VMware_snapshot_form_username_tooltip,
-    password: helptextVmwareSnapshot.VMware_snapshot_form_password_tooltip,
-    filesystem: helptextVmwareSnapshot.VMware_snapshot_form_filesystem_tooltip,
-    datastore: helptextVmwareSnapshot.VMware_snapshot_form_datastore_tooltip,
+    hostname: helptextVmwareSnapshot.hostnameTooltip,
+    username: helptextVmwareSnapshot.usernameTooltip,
+    password: helptextVmwareSnapshot.passwordTooltip,
+    filesystem: helptextVmwareSnapshot.filesystemTooltip,
+    datastore: helptextVmwareSnapshot.datastoreTooltip,
   };
 
   private datastoreList: VmwareDatastore[];
@@ -174,8 +174,8 @@ export class VmwareSnapshotFormComponent implements OnInit {
         const apiError = extractApiErrorDetails(error);
         if (apiError?.reason?.includes('[ETIMEDOUT]')) {
           this.dialogService.error({
-            title: helptextVmwareSnapshot.connect_err_dialog.title,
-            message: helptextVmwareSnapshot.connect_err_dialog.msg,
+            title: helptextVmwareSnapshot.connectionErrorDialog.title,
+            message: helptextVmwareSnapshot.connectionErrorDialog.message,
           });
         } else {
           this.errorHandler.showErrorModal(error);
