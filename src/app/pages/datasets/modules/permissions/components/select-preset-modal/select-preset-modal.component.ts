@@ -59,17 +59,17 @@ export class SelectPresetModalComponent implements OnInit {
 
   readonly usePresetOptions$ = of([
     {
-      label: helptextAcl.type_dialog.radio_preset,
-      tooltip: helptextAcl.type_dialog.radio_preset_tooltip,
+      label: helptextAcl.typeDialog.selectPreset,
+      tooltip: helptextAcl.typeDialog.selectPresetTooltip,
       value: true,
     },
     {
-      label: helptextAcl.type_dialog.radio_custom,
+      label: helptextAcl.typeDialog.createCustom,
       value: false,
     },
   ]);
 
-  readonly helptext = helptextAcl.type_dialog;
+  readonly helptext = helptextAcl.typeDialog;
 
   constructor(
     private dialogRef: MatDialogRef<SelectPresetModalComponent>,

@@ -4,6 +4,7 @@ import { discardPeriodicTasks, fakeAsync, tick } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatInputModule } from '@angular/material/input';
+import { MatMenuHarness } from '@angular/material/menu/testing';
 import {
   createComponentFactory,
   mockProvider, Spectator,
@@ -22,8 +23,6 @@ import {
   IxIpInputWithNetmaskComponent,
 } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import { InterfaceStatusIconComponent } from 'app/modules/interface-status-icon/interface-status-icon.component';
-import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
-import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
 import { SlideInComponent } from 'app/modules/slide-ins/components/slide-in/slide-in.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -150,9 +149,9 @@ describe('NetworkComponent', () => {
   async function makeEdit(): Promise<void> {
     wasEditMade = true;
 
-    const table = await loader.getHarness(IxTableHarness);
-    const editIcon = await table.getHarnessInRow(IxIconHarness.with({ name: 'edit' }), 'eno1');
-    await editIcon.click();
+    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
+    await menu.open();
+    await menu.clickItem({ text: 'Edit' });
     spectator.detectComponentChanges();
   }
 

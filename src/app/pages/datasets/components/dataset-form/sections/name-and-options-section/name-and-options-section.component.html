@@ -7,7 +7,6 @@
       formControlName="parent"
       [rows]="3"
       [label]="'Parent Path' | translate"
-      [tooltip]="helptext.dataset_parent_name_tooltip | translate"
     ></ix-textarea>
   }
 
@@ -16,7 +15,7 @@
     [rows]="3"
     [required]="true"
     [label]="'Name' | translate"
-    [tooltip]="helptext.dataset_form_name_tooltip | translate"
+    [tooltip]="helptext.nameTooltip | translate"
   ></ix-textarea>
 
   @if (!existing()) {
@@ -25,7 +24,6 @@
       [label]="'Dataset Preset' | translate"
       [options]="datasetPresetOptions$"
       [required]="true"
-      [tooltip]="helptext.dataset_form_dataset_preset_tooltip | translate"
     ></ix-select>
   }
 </ix-fieldset>
@@ -36,19 +34,19 @@
       @if (form.value.share_type) {
         <div class="comments">
           @if (form.value.share_type === DatasetPreset.Generic) {
-            {{ helptext.dataset_form_preset.generic| translate }}
+            {{ helptext.preset.generic| translate }}
           }
           @if (form.value.share_type === DatasetPreset.Smb) {
             <div class="smb-comment">
-              <div>{{ helptext.dataset_form_preset.smb | translate }}</div>
-              <div>{{ helptext.dataset_form_preset.smb_description | translate }}</div>
+              <div>{{ helptext.preset.smb | translate }}</div>
+              <div>{{ helptext.preset.smbDescription | translate }}</div>
             </div>
           }
           @if (form.value.share_type === DatasetPreset.Apps) {
-            {{ helptext.dataset_form_preset.apps | translate }}
+            {{ helptext.preset.apps | translate }}
           }
           @if (form.value.share_type === DatasetPreset.Multiprotocol) {
-            {{ helptext.dataset_form_preset.multiprotocol| translate }}
+            {{ helptext.preset.multiprotocol| translate }}
           }
         </div>
       }
