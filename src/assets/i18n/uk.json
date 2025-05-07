@@ -1711,6 +1711,7 @@
   "Received: {received}/s Sent: {sent}/s": "",
   "Recent Searches": "",
   "Recommended number of data disks for optimal space allocation should be power of 2 (2, 4, 8, 16...).": "",
+  "Reconnect failed. Please try again.": "",
   "Record Size": "",
   "Redfish administrative password.": "",
   "Redfish administrative username.": "",

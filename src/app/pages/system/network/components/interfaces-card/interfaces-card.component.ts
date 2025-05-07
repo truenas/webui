@@ -27,7 +27,7 @@ import { InterfaceStatusIconComponent } from 'app/modules/interface-status-icon/
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
+import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
@@ -98,7 +98,7 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
       title: this.translate.instant('IP Addresses'),
       sortBy: (row) => row.aliases.map((alias) => alias.address).join(', '),
     }),
-    actionsColumn({
+    actionsWithMenuColumn({
       actions: [
         {
           iconName: iconMarker('edit'),
@@ -108,6 +108,7 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
         {
           iconName: iconMarker('refresh'),
           requiredRoles: this.requiredRoles,
+          tooltip: this.translate.instant('Refresh'),
           hidden: (row) => of(!this.isPhysical(row)),
           disabled: () => this.isHaEnabled$,
           dynamicTooltip: () => this.isHaEnabled$.pipe(map((isHaEnabled) => (isHaEnabled
@@ -118,7 +119,9 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
         {
           iconName: iconMarker('mdi-delete'),
           requiredRoles: this.requiredRoles,
-          tooltip: this.isHaEnabled() ? this.translate.instant(helptextInterfaces.ha_enabled_delete_msg) : '',
+          tooltip: this.isHaEnabled()
+            ? this.translate.instant(helptextInterfaces.ha_enabled_delete_msg)
+            : this.translate.instant('Delete'),
           hidden: (row) => of(this.isPhysical(row)),
           onClick: (row) => this.onDelete(row),
           disabled: () => this.isHaEnabled$,

@@ -3124,6 +3124,7 @@
   "Recommended number of data disks for optimal space allocation should be power of 2 (2, 4, 8, 16...).": "",
   "Recommended when <i>Max. Poll</i> is greater than 10. Only use on personal NTP servers or those under direct control. <b>Do not</b> enable when using public NTP servers.": "",
   "Reconnect": "",
+  "Reconnect failed. Please try again.": "",
   "Record Size": "",
   "Recursive": "",
   "Redfish administrative password.": "",

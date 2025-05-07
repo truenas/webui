@@ -32,6 +32,7 @@
   "Privilege Write": "",
   "Privileges List": "",
   "Pull": "",
+  "Reconnect failed. Please try again.": "",
   "Replication Task Write Pull": "",
   "Resilver Settings": "",
   "Resilver tasks can run at any time, but by default they have low priority - lower than regular ZFS I/O operations. You can specify a time window during which resilvering is given higher priority — useful for scheduling it during non-business hours.": "",
