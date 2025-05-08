@@ -1,9 +1,11 @@
 import { Location } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
@@ -11,6 +13,9 @@ import { LoaderService } from 'app/modules/loader/loader.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { WebSocketStatusService } from 'app/services/websocket-status.service';
+import { AppState } from 'app/store';
+import { selectIsHaEnabled, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -27,6 +32,9 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class RestartComponent implements OnInit {
+  isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
+  isHaEnabled = toSignal(this.store$.select(selectIsHaEnabled));
+
   constructor(
     protected api: ApiService,
     private wsManager: WebSocketHandlerService,
@@ -36,6 +44,9 @@ export class RestartComponent implements OnInit {
     protected loader: LoaderService,
     protected matDialog: MatDialog,
     private location: Location,
+    private wsStatus: WebSocketStatusService,
+    private store$: Store<AppState>,
+
   ) {
   }
 
@@ -55,6 +66,9 @@ export class RestartComponent implements OnInit {
           });
       },
       complete: () => { // show restart screen
+        if (this.isHaLicensed() && this.isHaEnabled()) {
+          this.wsStatus.setReconnectAllowed(false);
+        }
         this.wsManager.prepareShutdown();
         this.wsManager.reconnect();
         setTimeout(() => {
