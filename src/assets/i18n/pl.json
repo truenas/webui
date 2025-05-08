@@ -286,6 +286,7 @@
   "UID/GID from the host is directly mapped to the same id in a container. This means that GID 3000 will appear as GID 3000 in the container.": "",
   "Unknown error": "",
   "Unlock User": "",
+  "Unspecified": "",
   "Update completed successfully. The system will restart shortly": "",
   "Upload ISO": "",
   "Upload ISO, import a zvol or use another volume": "",

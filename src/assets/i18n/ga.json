@@ -1,6 +1,7 @@
 {
   "": "",
   "Other Portals": "",
+  "Unspecified": "",
   "\n              It looks like your session has been inactive for more than {lifetime} seconds.<br>\n              For security reasons we will log you out at {time}.\n            ": "\n              Tá an chuma ar an scéal go bhfuil do sheisiún neamhghníomhach le níos mó ná {lifetime} soicind.<br>\n               Ar chúiseanna slándála, déanfaimid tú a logáil amach ag {time}.\n              ",
   " as of {dateTime}": " ó {dateTime}",
   " bytes.": " bearta.",
