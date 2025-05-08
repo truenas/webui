@@ -2835,6 +2835,24 @@
   {
     "hierarchy": [
       "Shares",
+      "NVMe-oF",
+      "Global Configuration"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/sharing",
+      "nvme-of"
+    ],
+    "routerLink": null,
+    "anchor": "global-configuration",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Shares",
       "SMB",
       "Add SMB Share"
     ],

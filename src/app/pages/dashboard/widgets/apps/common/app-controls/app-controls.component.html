@@ -1,15 +1,37 @@
 <ng-container *ixWithLoadingState="app() as app">
-  @if ((app.portals | keyvalue).length > 0) {
-    <button
-      mat-icon-button
-      ixTest="apps-web-portal"
-      matTooltipPosition="above"
-      [attr.aria-label]="'Web Portal' | translate"
-      [matTooltip]="'Web Portal' | translate"
-      (click)="openWebPortal(app)"
-    >
-      <ix-icon name="mdi-web"></ix-icon>
-    </button>
+  @if (mainPortal(); as mainPortal) {
+    <div class="portal-button-wrapper">
+      <button
+        mat-icon-button
+        ixTest="apps-web-portal"
+        matTooltipPosition="above"
+        [attr.aria-label]="mainPortal.label"
+        [matTooltip]="mainPortal.label"
+        (click)="openPortal(mainPortal.url)"
+      >
+        <ix-icon name="mdi-web"></ix-icon>
+      </button>
+
+      @if (otherPortals().length > 0) {
+        <button
+          mat-icon-button
+          ixTest="apps-web-portal-dropdown"
+          matTooltipPosition="above"
+          [matTooltip]="'Other Portals' | translate"
+          [matMenuTriggerFor]="portalMenu"
+        >
+          <ix-icon name="mdi-menu-down" class="dropdown-icon"></ix-icon>
+        </button>
+
+        <mat-menu #portalMenu="matMenu">
+          @for (portal of otherPortals(); track portal.label) {
+            <button mat-menu-item [ixTest]="['apps-web-portal', portal.label]" (click)="openPortal(portal.url)">
+              {{ portal.label }}
+            </button>
+          }
+        </mat-menu>
+      }
+    </div>
   }
 
   <button
