@@ -42,19 +42,17 @@ export class UserDetailHeaderComponent {
   ) {}
 
   doEdit(): void {
-    this.slideIn.open(UserFormComponent, { wide: true, data: this.user() }).pipe(
-      untilDestroyed(this),
-    ).subscribe();
+    this.slideIn
+      .open(UserFormComponent, { data: this.user() })
+      .pipe(untilDestroyed(this))
+      .subscribe();
   }
 
   doDelete(): void {
-    this.matDialog.open(DeleteUserDialog, {
-      data: this.user(),
-    })
+    this.matDialog
+      .open(DeleteUserDialog, { data: this.user() })
       .afterClosed()
-      .pipe(
-        untilDestroyed(this),
-      )
+      .pipe(untilDestroyed(this))
       .subscribe();
   }
 }
