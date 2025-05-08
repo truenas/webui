@@ -105,15 +105,15 @@
         </div>
         @if (sortedPortals().length > 0) {
           <div class="portals" [class.has-many]="sortedPortals().length > 1">
-            @for (portal of sortedPortals(); track portal[0]) {
+            @for (portal of sortedPortals(); track portal.label) {
               <button
                 mat-button
                 class="portal-button"
-                [ixTest]="['portal', app().name, portal[0]]"
-                [matTooltip]="portal[1]"
-                (click)="openPortalLink(app(), portal[0])"
+                [ixTest]="['portal', app().name, portal.label]"
+                [matTooltip]="portal.url"
+                (click)="openPortalLink(app(), portal.label)"
               >
-                {{ portal[0] }}
+                {{ portal.label }}
               </button>
             }
           </div>

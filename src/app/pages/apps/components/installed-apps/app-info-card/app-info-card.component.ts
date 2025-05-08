@@ -92,12 +92,12 @@ export class AppInfoCardComponent {
 
   readonly sortedPortals = computed(() => {
     const portals = this.app().portals;
-    const entries = Object.entries(portals);
+    const entries = Object.entries(portals).map(([label, url]) => ({ label, url }));
 
-    const webUiIndex = entries.findIndex(([key]) => key.toLowerCase() === 'web ui');
+    const webUiIndex = entries.findIndex((entry) => entry.label.toLowerCase() === 'web ui');
     if (webUiIndex > -1) {
-      const [webUiEntry] = entries.splice(webUiIndex, 1);
-      return [webUiEntry, ...entries];
+      const [webUi] = entries.splice(webUiIndex, 1);
+      return [webUi, ...entries];
     }
 
     return entries;
