@@ -1,6 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
@@ -12,7 +13,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   InterfaceStatusIconComponent,
 } from 'app/modules/interface-status-icon/interface-status-icon.component';
-import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -126,8 +126,9 @@ describe('InterfacesCardComponent', () => {
   });
 
   it('shows form to edit an existing interface when Edit icon is pressed', async () => {
-    const editIcon = await table.getHarnessInRow(IxIconHarness.with({ name: 'edit' }), 'eno1');
-    await editIcon.click();
+    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
+    await menu.open();
+    await menu.clickItem({ text: 'Edit' });
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(InterfaceFormComponent, {
       data: { interface: interfaces[0] },
@@ -137,8 +138,9 @@ describe('InterfacesCardComponent', () => {
   });
 
   it('deletes a network interface with confirmation when Delete icon is pressed', async () => {
-    const deleteIcon = await table.getHarnessInRow(IxIconHarness.with({ name: 'mdi-delete' }), 'vlan1');
-    await deleteIcon.click();
+    const [, , menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
+    await menu.open();
+    await menu.clickItem({ text: 'Delete' });
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
       title: 'Delete Interface',
@@ -149,8 +151,9 @@ describe('InterfacesCardComponent', () => {
   });
 
   it('resets a network interface when Reset icon is pressed on a physical interface', async () => {
-    const refreshIcon = await table.getHarnessInRow(IxIconHarness.with({ name: 'refresh' }), 'eno1');
-    await refreshIcon.click();
+    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
+    await menu.open();
+    await menu.clickItem({ text: 'Refresh' });
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
       title: 'Reset Configuration',
@@ -163,15 +166,14 @@ describe('InterfacesCardComponent', () => {
   it('disables Add and Delete buttons on HA systems', async () => {
     spectator.setInput('isHaEnabled', true);
 
-    // Add button
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     expect(await addButton.isDisabled()).toBe(true);
 
-    // Delete button
-    const cellButtons = await table.getAllHarnessesInRow(MatButtonHarness, 'vlan1');
-    const deleteButton = cellButtons[1];
-    expect(await deleteButton.hasHarness(IxIconHarness.with({ name: 'mdi-delete' }))).toBe(true);
-    expect(await deleteButton.isDisabled()).toBe(true);
+    const [, , menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
+    await menu.open();
+    const menuItems = await menu.getItems();
+
+    expect(await menuItems[1].isDisabled()).toBe(true);
   });
 
   it('subscribes to updates and shows interface status in first column', () => {

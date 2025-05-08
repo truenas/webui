@@ -103,16 +103,17 @@
             {{ app().metadata.train | orNotAvailable }}
           </div>
         </div>
-        @if ((app().portals | keyvalue).length > 0 ) {
-          <div class="portals">
-            @for (portal of app().portals | keyvalue; track portal.key) {
+        @if (sortedPortals().length > 0) {
+          <div class="portals" [class.has-many]="sortedPortals().length > 1">
+            @for (portal of sortedPortals(); track portal.label) {
               <button
                 mat-button
                 class="portal-button"
-                [ixTest]="['portal', app().name, portal.key]"
-                (click)="openPortalLink(app(), portal.key)"
+                [ixTest]="['portal', app().name, portal.label]"
+                [matTooltip]="portal.url"
+                (click)="openPortalLink(app(), portal.label)"
               >
-                {{ portal.key }}
+                {{ portal.label }}
               </button>
             }
           </div>

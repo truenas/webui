@@ -852,6 +852,23 @@
     "hierarchy": [
       "Credentials",
       "Users (WIP)",
+      "Password Card"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/credentials/users-new"
+    ],
+    "routerLink": null,
+    "anchor": "password-card",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
+      "Users (WIP)",
       "Access Card"
     ],
     "synonyms": [],
