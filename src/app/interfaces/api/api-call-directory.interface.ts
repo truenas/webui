@@ -176,6 +176,14 @@ import {
   Nfs3Session, Nfs4Session, NfsShare, NfsShareUpdate,
 } from 'app/interfaces/nfs-share.interface';
 import { CreateNtpServer, NtpServer } from 'app/interfaces/ntp-server.interface';
+import {
+  CreateNvmeOfNamespace,
+  CreateNvmeOfPort,
+  CreateNvmeOfSubsystem, DeleteNamespaceParams,
+  NvmeOfGlobalConfig,
+  NvmeOfGlobalConfigUpdate, NvmeOfNamespace, NvmeOfPort,
+  NvmeOfSubsystem, NvmeOfTransportParams, UpdateNvmeOfNamespace, UpdateNvmeOfPort, UpdateNvmeOfSubsystem,
+} from 'app/interfaces/nvme-of.interface';
 import { MapOption } from 'app/interfaces/option.interface';
 import {
   PeriodicSnapshotTask,
@@ -629,6 +637,27 @@ export interface ApiCallDirectory {
   'nfs.get_nfs3_clients': { params: [params?: QueryParams<Nfs3Session>]; response: Nfs3Session[] };
   'nfs.get_nfs4_clients': { params: [params?: QueryParams<Nfs4Session>]; response: Nfs4Session[] };
   'nfs.update': { params: [NfsConfigUpdate]; response: NfsConfig };
+
+  // NVMe-oF
+  'nvmet.global.config': { params: [void]; response: NvmeOfGlobalConfig };
+  'nvmet.global.update': { params: [NvmeOfGlobalConfigUpdate]; response: NvmeOfGlobalConfig };
+
+  'nvmet.subsys.query': { params: QueryParams<NvmeOfSubsystem>; response: NvmeOfSubsystem[] };
+  'nvmet.subsys.create': { params: [CreateNvmeOfSubsystem]; response: NvmeOfSubsystem };
+  'nvmet.subsys.update': { params: [id: number, update: UpdateNvmeOfSubsystem]; response: NvmeOfSubsystem };
+  'nvmet.subsys.delete': { params: [id: number, { force: boolean }?]; response: void };
+
+  'nvmet.port.query': { params: QueryParams<NvmeOfPort>; response: NvmeOfPort[] };
+  'nvmet.port.create': { params: [CreateNvmeOfPort]; response: NvmeOfPort };
+  'nvmet.port.update': { params: [id: number, update: UpdateNvmeOfPort]; response: NvmeOfPort };
+  'nvmet.port.delete': { params: [id: number, { force: boolean }?]; response: void };
+
+  'nvmet.namespace.query': { params: QueryParams<NvmeOfNamespace>; response: NvmeOfNamespace };
+  'nvmet.namespace.create': { params: [CreateNvmeOfNamespace]; response: NvmeOfNamespace };
+  'nvmet.namespace.update': { params: [id: number, update: UpdateNvmeOfNamespace]; response: NvmeOfNamespace };
+  'nvmet.namespace.delete': { params: DeleteNamespaceParams; response: void };
+
+  'nvmet.port.transport_address_choices': { params: NvmeOfTransportParams; response: Choices };
 
   // Pool
   'pool.attachments': { params: [id: number]; response: PoolAttachment[] };
