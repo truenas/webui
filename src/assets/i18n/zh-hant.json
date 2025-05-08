@@ -3252,6 +3252,7 @@
   "This option is disabled in STIG mode.": "",
   "This option is experimental in rclone and we recommend you do not use it. Are you sure you want to continue?": "",
   "This password is only valid for one login within 24 hours and does not persist across reboots.": "",
+  "This path is not selectable for {label}.": "",
   "This pool contains the system dataset that stores critical data like debugging core files, encryption keys for pools, and Samba 4 metadata such as the user/group cache and share level permissions. Exporting this pool will transfer the system dataset to another available pool. If the only available pool is encrypted, that pool will no longer be able to be locked. When no other pools exist, the system dataset transfers back to the TrueNAS operating system device.": "",
   "This pool has an encrypted root dataset which is locked. Do you want to unlock it?": "",
   "This process continues in the background after closing this dialog.": "",

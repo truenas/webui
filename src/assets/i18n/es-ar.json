@@ -49,6 +49,7 @@
   "Sharing iSCSI Target Write": "",
   "Sharing iSCSI Write": "",
   "Strip ACL": "",
+  "This path is not selectable for {label}.": "",
   "To": "",
   "\n              It looks like your session has been inactive for more than {lifetime} seconds.<br>\n              For security reasons we will log you out at {time}.\n            ": "\nParece que tu sesión estuvo inactiva durante más de {lifetime} segundos.<br>\nPor razones de seguridad, vamos a cerrar tu sesión a las {time}.\n",
   " as of {dateTime}": " a partir de {dateTime}",

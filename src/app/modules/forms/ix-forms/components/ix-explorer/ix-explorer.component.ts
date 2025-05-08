@@ -8,6 +8,7 @@ import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatError, MatHint } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
+import { MatTooltip } from '@angular/material/tooltip';
 import {
   IActionMapping, ITreeOptions, KEYS, TREE_ACTIONS, TreeComponent, TreeModel, TreeModule,
 } from '@bugsplat/angular-tree-component';
@@ -50,6 +51,7 @@ import { ErrorParserService } from 'app/services/errors/error-parser.service';
     MatError,
     IxErrorsComponent,
     MatHint,
+    MatTooltip,
     TranslateModule,
     RequiresRolesDirective,
     TestDirective,
@@ -73,6 +75,11 @@ export class IxExplorerComponent implements ControlValueAccessor {
   // TODO: Add support for zvols.
   readonly canCreateDataset = input(false);
   readonly createDatasetProps = input<Omit<DatasetCreate, 'name'>>({});
+  protected readonly notSelectableNodeTooltip = computed(() => {
+    return this.translate.instant('This path is not selectable for {label}.', { label: this.label() });
+  });
+
+  protected highlightedPath = signal<string | string[]>('');
 
   // TODO: Should be private, but it's used directly in tests
   readonly tree = viewChild.required(TreeComponent);
@@ -113,6 +120,7 @@ export class IxExplorerComponent implements ControlValueAccessor {
       expanderClick: this.toggleExpandNodeFn.bind(this),
       dblClick: this.toggleExpandNodeFn.bind(this),
       click: (tree, node: TreeNode<ExplorerNodeData>, event$) => {
+        this.highlightedPath.set(node.path);
         if (node.data.disabled) {
           return TREE_ACTIONS.DESELECT(tree, node, event$);
         }
@@ -121,6 +129,7 @@ export class IxExplorerComponent implements ControlValueAccessor {
     },
     keys: {
       [KEYS.ENTER]: (tree, node: TreeNode<ExplorerNodeData>, event$) => {
+        this.highlightedPath.set(node.path);
         if (node.data.disabled) {
           return TREE_ACTIONS.DESELECT(tree, node, event$);
         }
@@ -199,6 +208,10 @@ export class IxExplorerComponent implements ControlValueAccessor {
     }
 
     this.onSelectionChanged();
+  }
+
+  protected getNodeDisabledTooltip(isNodeDisabled: boolean): string | null {
+    return isNodeDisabled ? this.notSelectableNodeTooltip() : null;
   }
 
   onNodeDeselect(event: { node: TreeNode<ExplorerNodeData> }): void {

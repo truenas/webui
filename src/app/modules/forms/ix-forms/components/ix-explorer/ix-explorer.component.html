@@ -39,6 +39,10 @@
           [class.node-disabled]="node.data.disabled"
           [attr.aria-label]="ariaLabel(node)"
           [class.selected]="isPathSelected(node.data.path)"
+          [class.highlighted]="highlightedPath()"
+          [matTooltip]="getNodeDisabledTooltip(node.data.disabled)"
+          [matTooltipDisabled]="!node.data.disabled"
+          [matTooltipPosition]="'above'"
           (keyup.enter)="node?.toggleSelected()"
           (keydown.space)="$event.preventDefault(); node?.toggleExpanded()"
         >
