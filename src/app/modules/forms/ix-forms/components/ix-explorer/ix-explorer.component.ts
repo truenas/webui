@@ -267,16 +267,7 @@ export class IxExplorerComponent implements ControlValueAccessor {
   }
 
   parentDatasetName(path: string): string {
-    const roots = this.rootNodes();
-    if (!path || this.rootNodes().map((root) => root.path).includes(path)) {
-      return '';
-    }
-
-    for (const root of roots) {
-      path = path.replace(`${root.path}/`, '');
-    }
-
-    return path.replace('/mnt/', '');
+    return path?.replace('/mnt/', '') || '';
   }
 
   createDataset(): void {
