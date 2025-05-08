@@ -1,0 +1,13 @@
+name: Require Checklist Items To Be Resolved
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize]
+
+jobs:
+  job1:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: mheap/require-checklist-action@v2
+        with:
+          requireChecklist: false # Does not fail if the checklist is not present at all.
