@@ -461,7 +461,9 @@ export class OldUserFormComponent implements OnInit {
   private submitUserRequest(payload: UserUpdate): Observable<User> {
     this.isFormLoading.set(true);
 
-    return this.editingUser ? this.getUpdateUserRequest(payload) : this.getCreateUserRequest(payload);
+    return this.editingUser
+      ? this.getUpdateUserRequest(payload)
+      : this.getCreateUserRequest(payload);
   }
 
   private getCreateUserRequest(payload: UserUpdate): Observable<User> {
