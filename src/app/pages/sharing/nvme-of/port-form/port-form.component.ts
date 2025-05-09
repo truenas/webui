@@ -9,7 +9,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  finalize, of, share, switchMap,
+  finalize, of, switchMap,
 } from 'rxjs';
 import { startWith } from 'rxjs/operators';
 import { NvmeOfTransportType, nvmeOfTransportTypeLabels } from 'app/enums/nvme-of.enum';
@@ -72,7 +72,6 @@ export class PortFormComponent implements OnInit {
       return this.api.call('nvmet.port.transport_address_choices', [type]);
     }),
     choicesToOptions(),
-    share(),
   );
 
   constructor(

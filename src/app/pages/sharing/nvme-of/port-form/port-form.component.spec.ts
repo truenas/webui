@@ -54,7 +54,7 @@ describe('PortFormComponent', () => {
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nvmet.port.create', [{
       addr_trtype: NvmeOfTransportType.Tcp,
       addr_traddr: '10.220.8.1',
-      addr_trsvcid: '20000',
+      addr_trsvcid: 20000,
     }]);
     expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({
       response: true,
@@ -105,7 +105,7 @@ describe('PortFormComponent', () => {
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nvmet.port.update', [23, {
         addr_trtype: NvmeOfTransportType.Tcp,
         addr_traddr: '10.220.8.1',
-        addr_trsvcid: '20000',
+        addr_trsvcid: 20000,
       }]);
     });
   });
