@@ -516,16 +516,20 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .mat-mdc-button,
   .mdc-button {
     @include variable(font-family, --font-family-body, !important);
-    background: var(--btn-default-bg);
+    background: transparent;
     font-weight: 700 !important;
+
+    &:not(a) {
+      border: 1px solid var(--lines);
+    }
   }
 
   .mdc-button--outlined {
     background-color: transparent !important;
     border: 1px solid currentColor !important;
-    border-radius: 25px !important;
-    height: 30px;
-    line-height: 30px;
+    border-radius: 20px !important;
+    height: 26px;
+    line-height: 26px;
 
     &.fn-theme-primary {
       @include variable(color, --primary, $primary, !important);
