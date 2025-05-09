@@ -108,7 +108,6 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
         {
           iconName: iconMarker('refresh'),
           requiredRoles: this.requiredRoles,
-          tooltip: this.translate.instant('Reset configuration'),
           hidden: (row) => of(!this.isPhysical(row)),
           disabled: () => this.isHaEnabled$,
           dynamicTooltip: () => this.isHaEnabled$.pipe(map((isHaEnabled) => (isHaEnabled
