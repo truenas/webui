@@ -63,7 +63,7 @@ describe('SigninComponent', () => {
       mockProvider(WebSocketStatusService, {
         isConnected$,
         isReconnectAllowed$,
-        setReconnect: jest.fn(),
+        setReconnectAllowed: jest.fn(),
       }),
     ],
   });
@@ -79,7 +79,7 @@ describe('SigninComponent', () => {
 
   it('initializes SigninStore on component init', () => {
     expect(spectator.inject(SigninStore, true).init).toHaveBeenCalled();
-    expect(spectator.inject(WebSocketStatusService).setReconnect).toHaveBeenCalledWith(true);
+    expect(spectator.inject(WebSocketStatusService).setReconnectAllowed).toHaveBeenCalledWith(true);
   });
 
   describe('disconnected', () => {

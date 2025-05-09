@@ -103,14 +103,14 @@ describe('WebSocketStatusSerice', () => {
   });
 
   it('allows reconnect when setReconnect is called with true', () => {
-    spectator.service.setReconnect(true);
+    spectator.service.setReconnectAllowed(true);
     testScheduler.run(({ expectObservable }) => {
       expectObservable(spectator.service.isReconnectAllowed$).toBe('a', { a: true });
     });
   });
 
   it('disallows reconnect when setReconnect is called with false', () => {
-    spectator.service.setReconnect(false);
+    spectator.service.setReconnectAllowed(false);
     testScheduler.run(({ expectObservable }) => {
       expectObservable(spectator.service.isReconnectAllowed$).toBe('a', { a: false });
     });

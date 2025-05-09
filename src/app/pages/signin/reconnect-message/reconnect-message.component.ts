@@ -1,7 +1,8 @@
 import { Component, ChangeDetectionStrategy, signal } from '@angular/core';
 import { MatButton } from '@angular/material/button';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { take, timer } from 'rxjs';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
@@ -26,16 +27,23 @@ export class ReconnectMessage {
 
   constructor(
     private wsHandler: WebSocketHandlerService,
+    private snackbar: MatSnackBar,
+    private translate: TranslateService,
   ) {}
 
   protected reconnectPressed(): void {
     this.isDisabled.set(true);
     this.wsHandler.reconnect();
 
-    timer(0, 10000)
+    timer(10000)
       .pipe(take(1), untilDestroyed(this))
       .subscribe(() => {
         this.isDisabled.set(false);
+        this.snackbar.open(
+          this.translate.instant('Reconnect failed. Please try again.'),
+          null,
+          { duration: 4000, verticalPosition: 'bottom' },
+        );
       });
   }
 }

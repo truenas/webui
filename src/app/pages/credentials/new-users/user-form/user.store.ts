@@ -1,4 +1,6 @@
-import { computed, Injectable } from '@angular/core';
+import {
+  computed, Injectable, signal,
+} from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import {
   combineLatest, Observable, switchMap, tap,
@@ -59,6 +61,7 @@ export class UserFormStore extends ComponentStore<UserFormState> {
   readonly role = computed(() => this.state().setupDetails.role);
 
   readonly userConfig = computed(() => this.state().userConfig);
+  readonly isNewUser = signal<boolean>(true);
 
   readonly initialize = this.effect((trigger$) => {
     return trigger$.pipe(
