@@ -27,7 +27,7 @@ describe('IxSelectComponent', () => {
     ],
   });
 
-  describe('ix-select', () => {
+  describe('rendering', () => {
     beforeEach(() => {
       control = new FormControl('', { nonNullable: true });
       options$ = of([
@@ -124,7 +124,6 @@ describe('IxSelectComponent', () => {
 
     it('shows \'No options\' if options length === 0', async () => {
       spectator.setHostInput('options', of<SelectOption[]>([]));
-      spectator.component.ngOnChanges();
 
       const select = await (await loader.getHarness(IxSelectHarness)).getSelectHarness();
       await select.open();
@@ -137,7 +136,6 @@ describe('IxSelectComponent', () => {
       jest.spyOn(console, 'error').mockImplementation();
 
       spectator.setHostInput('options', throwError(() => new Error('Some Error')));
-      spectator.component.ngOnChanges();
 
       const select = await (await loader.getHarness(IxSelectHarness)).getSelectHarness();
       await select.open();
@@ -153,8 +151,6 @@ describe('IxSelectComponent', () => {
         { label: 'GRL', value: 'Greenland', disabled: true },
       ]));
 
-      spectator.component.ngOnChanges();
-
       const select = await (await loader.getHarness(IxSelectHarness)).getSelectHarness();
       await select.open();
       const options = await select.getOptions();
@@ -168,7 +164,6 @@ describe('IxSelectComponent', () => {
         { label: 'GBR', value: 'Great Britain' },
         { label: 'GRL', value: 'Greenland', tooltip: 'Not really green.' },
       ]));
-      spectator.component.ngOnChanges();
 
       const select = await (await loader.getHarness(IxSelectHarness)).getSelectHarness();
       await select.open();
@@ -224,6 +219,31 @@ describe('IxSelectComponent', () => {
 
       expect(control.value).toBe('');
       expect(await select.getValue()).toEqual([]);
+    });
+  });
+
+  describe('special cases', () => {
+    it('only subscribes once to options observable', () => {
+      const options1$ = of([]);
+      jest.spyOn(options1$, 'subscribe');
+
+      spectator = createHost(
+        '<ix-select [formControl]="control" [options]="options$"></ix-select>',
+        {
+          hostProps: {
+            control,
+            options$: options1$,
+          },
+        },
+      );
+
+      // One subscription in the component and another in the template.
+      expect(options1$.subscribe).toHaveBeenCalledTimes(2);
+
+      const options2$ = of([]);
+      spectator.setHostInput('options$', options2$);
+      // Unchanged
+      expect(options1$.subscribe).toHaveBeenCalledTimes(2);
     });
   });
 });

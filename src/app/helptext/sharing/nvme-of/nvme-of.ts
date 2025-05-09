@@ -5,4 +5,6 @@ export const helptextNvmeOf = {
   rdmaTooltip: T('Once enabled one or more ports may be configured with RDMA selected as the transport.\
 Requires RDMA-capable system and network equipment.'),
   xportReferralTooltip: T('If ANA is active then referrals will always be generated between the peer ports on each TrueNAS controller node.'),
+
+  onlyStaticIpsShown: T('Only interfaces with static IPs are shown.'),
 };
