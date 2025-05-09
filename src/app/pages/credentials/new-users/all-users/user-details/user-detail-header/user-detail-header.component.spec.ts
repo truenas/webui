@@ -82,7 +82,7 @@ describe('UserDetailHeaderComponent', () => {
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
       UserFormComponent,
-      { wide: true, data: dummyUser },
+      { data: dummyUser },
     );
   });
 

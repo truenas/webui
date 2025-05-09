@@ -63,6 +63,11 @@ export const sharingRoutes: Routes = [
         data: { title: T('iSCSI'), breadcrumb: null },
         loadChildren: () => import('./iscsi/iscsi.routes').then((module) => module.iscsiRoutes),
       },
+      {
+        path: 'nvme-of',
+        data: { title: T('NVMe-oF'), breadcrumb: null },
+        loadChildren: () => import('app/pages/sharing/nvme-of/nvme-of.routes').then((module) => module.nvmeOfRoutes),
+      },
     ],
   },
 ];

@@ -8,7 +8,7 @@ import { tooltips } from '@codemirror/view';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-  catchError, combineLatest, distinctUntilChanged, map, of,
+  catchError, combineLatest, distinctUntilChanged, filter, map, of,
   startWith,
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
@@ -52,7 +52,7 @@ import { UserService } from 'app/services/user.service';
 export class UserFormComponent implements OnInit {
   protected isStigMode = this.userFormStore.isStigMode;
   protected nextUid = this.userFormStore.nextUid;
-  protected editingUser = signal<User>(undefined);
+  protected editingUser = signal<User>(this.slideInRef.getData());
 
   protected isFormLoading = signal<boolean>(false);
 
@@ -75,7 +75,7 @@ export class UserFormComponent implements OnInit {
   });
 
   get isNewUser(): boolean {
-    return !this.editingUser;
+    return !this.editingUser();
   }
 
   constructor(
@@ -83,19 +83,16 @@ export class UserFormComponent implements OnInit {
     public slideInRef: SlideInRef<User | undefined, User>,
     private userFormStore: UserFormStore,
     private errorHandler: ErrorHandlerService,
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.setupUsernameUpdate();
     this.listenForAllFormsValidity();
+    this.userFormStore.isNewUser.set(this.isNewUser);
 
-    // TODO: Handle enable/disable save button based on form sections validation status
     // TODO: Handle changes for `sshpubkey_file` input to set values on sshpubkey
-    // TODO: Handle changes on `group` input to update shell options
-    // TODO: Handle changes on `groups` input to update shell options
     // TODO: Handle changes on `home` input to set the value of `home_mode` input
     // TODO: Handle changes on `home_create` field to set the value for `home_mode` field
-    // TODO: Add validator to `password_conf` field to match the value of `pasword` field
     // TODO: if editing user, handle setting values for `home_mode` depending on whether
     // `home` value is previously set or not
     // TODO: Handle setting disableWhile for
@@ -107,7 +104,6 @@ export class UserFormComponent implements OnInit {
     // `sudo_commands_nopasswd` when `sudo_commands_nopasswd_all`
 
     // TODO: If editing user, set form values and
-    // disable `uid` and `group_create`
     // if `user.immutable` is true for the user being edited
     // disable `group`, `home_mode`, `home`, `home_create` and `username`
     // if `user.builtin` is true, disable `smb`
@@ -116,19 +112,6 @@ export class UserFormComponent implements OnInit {
     // TODO: if creating a new user,
     // set names already in user validator for `username`
     // set home share path by calling `sharing.smb.query`
-    // get the next user id and set to uid
-    // Set first shell option
-    // detect full name changes to set username based on that
-    // Handle setting disableWhile for
-    // `password` when `password_disabled`
-    // `password_conf` when `password_disabled`
-    // `locked` when `password_disabled`
-
-    // TODO: Add `stig_password` field for "stig password" field which is heavily impacted by `isStigMode`
-    // Use `isStigMode` to determine smb related controls disable status and values
-    // `isStigMode` also affects `password` and `password_conf` fields to be disabled
-    // `isStigMode` also affects `locked` to be disabled while
-    // `stig_password` value is `UserStigPasswordOption.DisablePassword`
 
     // TODO: set tooltips for sections
 
@@ -136,7 +119,20 @@ export class UserFormComponent implements OnInit {
 
     // TODO: Add controls for sudo related values
 
-    this.editingUser.set(this.slideInRef.getData() as User);
+    if (this.editingUser()) {
+      this.userFormStore.updateUserConfig({
+        username: this.editingUser().username,
+        email: this.editingUser().email,
+        full_name: this.editingUser().full_name,
+        smb: this.editingUser().smb,
+        shell: this.editingUser().shell,
+        home: this.editingUser().home,
+        uid: this.editingUser().uid,
+      });
+      this.form.patchValue({
+        username: this.editingUser().username,
+      });
+    }
   }
 
   private setupUsernameUpdate(): void {
@@ -148,6 +144,15 @@ export class UserFormComponent implements OnInit {
           username,
         });
       },
+    });
+
+    this.userFormStore.state$.pipe(
+      map((state) => state?.userConfig?.username),
+      filter(Boolean),
+      distinctUntilChanged(),
+      untilDestroyed(this),
+    ).subscribe((username) => {
+      this.form.patchValue({ username });
     });
   }
 
