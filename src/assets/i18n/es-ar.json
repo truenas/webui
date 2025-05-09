@@ -6,6 +6,7 @@
   "Block (iSCSI/FC) Shares Targets": "",
   "Block (iSCSI/Fibre Channel) Shares Targets": "",
   "by parent": "",
+  "Create Dataset { path }": "",
   "Encryption root means that dataset has its own encryption settings. Only encryption roots can be directly locked, unlocked, or have their keys changed. Child datasets will inherit encryption settings from the parent encryption root.": "",
   "From Active Directory": "",
   "Heartbeat Url": "",

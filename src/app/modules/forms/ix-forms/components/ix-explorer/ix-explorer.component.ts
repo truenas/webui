@@ -79,7 +79,7 @@ export class IxExplorerComponent implements ControlValueAccessor {
     return this.translate.instant('This path is not selectable for {label}.', { label: this.label() });
   });
 
-  protected highlightedPath = signal<string | string[]>('');
+  protected activePath = signal<string | string[]>('');
 
   // TODO: Should be private, but it's used directly in tests
   readonly tree = viewChild.required(TreeComponent);
@@ -98,7 +98,11 @@ export class IxExplorerComponent implements ControlValueAccessor {
   readonly ExplorerNodeType = ExplorerNodeType;
 
   get createDatasetDisabled(): boolean {
-    return !this.parentDatasetName(Array.isArray(this.value) ? this.value[0] : this.value).length
+    let highlightedPath = this.activePath();
+    if (Array.isArray(highlightedPath)) {
+      highlightedPath = highlightedPath.reduce((path, nodePath) => `${path}/${nodePath}`);
+    }
+    return !this.parentDatasetName(highlightedPath).length
       || !this.tree().treeModel.selectedLeafNodes.every((node: TreeNode<ExplorerNodeData>) => node.data.isMountpoint)
       || this.isDisabled;
   }
@@ -120,7 +124,7 @@ export class IxExplorerComponent implements ControlValueAccessor {
       expanderClick: this.toggleExpandNodeFn.bind(this),
       dblClick: this.toggleExpandNodeFn.bind(this),
       click: (tree, node: TreeNode<ExplorerNodeData>, event$) => {
-        this.highlightedPath.set(node.path);
+        this.activePath.set(node?.path[node.path.length - 1]);
         if (node.data.disabled) {
           return TREE_ACTIONS.DESELECT(tree, node, event$);
         }
@@ -129,7 +133,7 @@ export class IxExplorerComponent implements ControlValueAccessor {
     },
     keys: {
       [KEYS.ENTER]: (tree, node: TreeNode<ExplorerNodeData>, event$) => {
-        this.highlightedPath.set(node.path);
+        this.activePath.set(node?.path[node?.path.length - 1]);
         if (node.data.disabled) {
           return TREE_ACTIONS.DESELECT(tree, node, event$);
         }
@@ -175,6 +179,7 @@ export class IxExplorerComponent implements ControlValueAccessor {
 
   writeValue(value: string | string[]): void {
     this.value = value;
+    this.activePath.set(value);
     this.updateInputValue();
     this.selectTreeNodes(Array.isArray(value) ? value : [value]);
     this.cdr.markForCheck();
@@ -193,18 +198,19 @@ export class IxExplorerComponent implements ControlValueAccessor {
     this.cdr.markForCheck();
   }
 
-  onNodeSelect(event: { node: TreeNode<ExplorerNodeData> }): void {
-    if (!event.node.id) {
+  onNodeSelect({ node }: { node: TreeNode<ExplorerNodeData> }): void {
+    this.activePath.set(node?.path[node.path.length - 1]);
+    if (!node.id || node.data?.disabled) {
       return;
     }
 
     if (this.multiple()) {
       this.selectTreeNodes([
         ...Object.keys(this.tree().treeModel.selectedLeafNodeIds),
-        event.node.id as string,
+        node.id as string,
       ]);
     } else {
-      this.selectTreeNodes([event.node.id as string]);
+      this.selectTreeNodes([node.id as string]);
     }
 
     this.onSelectionChanged();
@@ -214,10 +220,11 @@ export class IxExplorerComponent implements ControlValueAccessor {
     return isNodeDisabled ? this.notSelectableNodeTooltip() : null;
   }
 
-  onNodeDeselect(event: { node: TreeNode<ExplorerNodeData> }): void {
+  onNodeDeselect({ node }: { node: TreeNode<ExplorerNodeData> }): void {
+    this.activePath.set('');
     if (this.multiple()) {
       this.selectTreeNodes(
-        Object.keys(this.tree().treeModel.selectedLeafNodeIds).filter((node) => node !== event.node.id),
+        Object.keys(this.tree().treeModel.selectedLeafNodeIds).filter((treeNode) => treeNode !== node.id),
       );
     } else {
       this.selectTreeNodes([]);
@@ -271,9 +278,13 @@ export class IxExplorerComponent implements ControlValueAccessor {
   }
 
   createDataset(): void {
+    let highlightedPath = this.activePath();
+    if (Array.isArray(highlightedPath)) {
+      highlightedPath = highlightedPath.reduce((path, nodePath) => `${path}/${nodePath}`);
+    }
     this.matDialog.open(CreateDatasetDialog, {
       data: {
-        parentId: this.parentDatasetName(Array.isArray(this.value) ? this.value[0] : this.value),
+        parentId: this.parentDatasetName(highlightedPath),
         dataset: this.createDatasetProps(),
       },
     }).afterClosed()

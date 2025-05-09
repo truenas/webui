@@ -11,6 +11,7 @@
   "Changing System Dataset Pool requires SMB service to be restarted. This will cause a temporary disruption of any active SMB connections.": "",
   "Connection Name": "",
   "Create {port}": "",
+  "Create Dataset { path }": "",
   "Dataset Encryption": "",
   "Decrease font size": "",
   "Default Mac Address": "",

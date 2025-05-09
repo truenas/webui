@@ -34,16 +34,18 @@
     <ng-template #treeNodeTemplate let-node>
       @if (typeNode(node); as node) {
         <span
+          #tooltip="matTooltip"
           tabindex="0"
           class="node-container"
           [class.node-disabled]="node.data.disabled"
           [attr.aria-label]="ariaLabel(node)"
           [class.selected]="isPathSelected(node.data.path)"
-          [class.highlighted]="highlightedPath()"
+          [class.highlighted]="activePath()"
           [matTooltip]="getNodeDisabledTooltip(node.data.disabled)"
           [matTooltipDisabled]="!node.data.disabled"
           [matTooltipPosition]="'above'"
-          (keyup.enter)="node?.toggleSelected()"
+          (focus)="tooltip.show()"
+          (keyup.enter)="node?.isSelected ? onNodeDeselect({ node }) : onNodeSelect({ node })"
           (keydown.space)="$event.preventDefault(); node?.toggleExpanded()"
         >
           @if (node.data.type === ExplorerNodeType.File) {
@@ -80,7 +82,7 @@
       (click)="createDataset()"
     >
       <ix-icon name="create_new_folder"></ix-icon>
-      {{ 'Create Dataset' | translate }}
+      {{ 'Create Dataset { path }' | translate: { path: activePath() ? '> \'' + activePath() + '\'' : '' } }}
     </button>
   </div>
 }
