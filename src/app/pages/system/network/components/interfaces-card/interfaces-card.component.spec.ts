@@ -153,7 +153,7 @@ describe('InterfacesCardComponent', () => {
   it('resets a network interface when Reset icon is pressed on a physical interface', async () => {
     const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
     await menu.open();
-    await menu.clickItem({ text: 'Refresh' });
+    await menu.clickItem({ text: 'Reset configuration' });
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
       title: 'Reset Configuration',
