@@ -13,9 +13,10 @@ import { MatSelect, MatSelectTrigger } from '@angular/material/select';
 import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { EMPTY, Observable } from 'rxjs';
+import { EMPTY, Observable, Subscription } from 'rxjs';
 import { catchError, debounceTime, tap } from 'rxjs/operators';
 import { SelectOption, SelectOptionValueType } from 'app/interfaces/option.interface';
+import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
@@ -78,6 +79,7 @@ export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChange
   };
 
   private opts: SelectOption[] = [];
+  private optsSubscription: Subscription;
 
   get selectedLabel(): string {
     if (this.value === undefined) {
@@ -117,28 +119,9 @@ export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChange
     this.controlDirective.valueAccessor = this;
   }
 
-  ngOnChanges(): void {
-    const options$ = this.options();
-    if (!options$) {
-      this.hasErrorInOptions = true;
-    } else {
-      this.hasErrorInOptions = false;
-      this.isLoading = true;
-      this.opts$ = options$.pipe(
-        catchError((error: unknown) => {
-          console.error(error);
-          this.hasErrorInOptions = true;
-          return EMPTY;
-        }),
-        tap(() => {
-          this.isLoading = false;
-          this.cdr.markForCheck();
-        }),
-      );
-
-      this.opts$.pipe(untilDestroyed(this)).subscribe((opts) => {
-        this.opts = opts;
-      });
+  ngOnChanges(changes: IxSimpleChanges<IxSelectComponent>): void {
+    if ('options' in changes) {
+      this.refreshOptions();
     }
   }
 
@@ -170,6 +153,32 @@ export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChange
   setDisabledState(isDisabled: boolean): void {
     this.isDisabled = isDisabled;
     this.cdr.markForCheck();
+  }
+
+  refreshOptions(): void {
+    const options$ = this.options();
+    if (!options$) {
+      this.hasErrorInOptions = true;
+    } else {
+      this.hasErrorInOptions = false;
+      this.isLoading = true;
+      this.opts$ = options$.pipe(
+        catchError((error: unknown) => {
+          console.error(error);
+          this.hasErrorInOptions = true;
+          return EMPTY;
+        }),
+        tap(() => {
+          this.isLoading = false;
+          this.cdr.markForCheck();
+        }),
+      );
+
+      this.optsSubscription?.unsubscribe();
+      this.optsSubscription = this.opts$.pipe(untilDestroyed(this)).subscribe((opts) => {
+        this.opts = opts;
+      });
+    }
   }
 
   onOptionTooltipClicked(event: MouseEvent): void {

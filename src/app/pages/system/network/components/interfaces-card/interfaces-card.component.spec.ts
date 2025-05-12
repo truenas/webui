@@ -164,7 +164,7 @@ describe('InterfacesCardComponent', () => {
   });
 
   it('disables Add and Delete buttons on HA systems', async () => {
-    spectator.setInput('isHaEnabled', true);
+    spectator.setInput('isHaLicensed', true);
 
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     expect(await addButton.isDisabled()).toBe(true);
