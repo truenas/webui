@@ -49,7 +49,7 @@ export type CreateNvmeOfPort = Required<
 
 export type NvmeOfTransportParams = [
   transportType: NvmeOfTransportType,
-  force_ana: boolean,
+  force_ana?: boolean,
 ];
 
 export interface NvmeOfNamespace {
@@ -80,3 +80,37 @@ export type DeleteNamespaceParams = [
     remove?: boolean;
   },
 ];
+
+export interface NvmeOfHost {
+  id: number;
+  hostnqn: string;
+  dhchap: string | null;
+  dhchap_ctrl_key: string | null;
+  dhchap_dhgroup: string | null;
+  dhchap_hash: string | null;
+}
+
+export type UpdateNvmeOfHost = Partial<Omit<NvmeOfHost, 'id'>>;
+export type CreateNvmeOfHost = Required<UpdateNvmeOfHost, 'hostnqn'>;
+
+export interface SubsystemPortAssociation {
+  id: number;
+  port: NvmeOfPort;
+  subsystem: NvmeOfSubsystem;
+}
+
+export interface AssociateSubsystemPort {
+  port_id: number;
+  subsys_id: number;
+}
+
+export interface SubsystemHostAssociation {
+  id: number;
+  host: NvmeOfHost;
+  subsystem: NvmeOfSubsystem;
+}
+
+export interface AssociateSubsystemHost {
+  host_id: number;
+  subsys_id: number;
+}

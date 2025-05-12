@@ -9,6 +9,7 @@ import { Role } from 'app/enums/role.enum';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { AddSubsystemComponent } from 'app/pages/sharing/nvme-of/add-subsystem/add-subsystem.component';
 import {
   NvmeOfConfigurationComponent,
 } from 'app/pages/sharing/nvme-of/nvme-of-configuration/nvme-of-configuration.component';
@@ -62,7 +63,7 @@ export class NvmeOfComponent {
     this.slideIn.open(NvmeOfConfigurationComponent);
   }
 
-  protected openWizard(): void {
-    throw new Error('Not implemented');
+  protected addSubsystem(): void {
+    this.slideIn.open(AddSubsystemComponent);
   }
 }
