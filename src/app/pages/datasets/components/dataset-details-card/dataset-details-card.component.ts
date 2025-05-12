@@ -16,17 +16,20 @@ import { DatasetType } from 'app/enums/dataset.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { Role } from 'app/enums/role.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
+import { datasetDetailsHelptext } from 'app/helptext/storage/volumes/datasets/dataset-details';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
 import { DeleteDatasetDialog } from 'app/pages/datasets/components/delete-dataset-dialog/delete-dataset-dialog.component';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
+import { isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
@@ -35,7 +38,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './dataset-details-card.component.html',
   styleUrls: ['./dataset-details-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatCardHeader,
@@ -49,6 +51,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     MatTooltip,
     CopyButtonComponent,
     MatCardActions,
+    TooltipComponent,
   ],
 })
 export class DatasetDetailsCardComponent {
@@ -80,12 +83,17 @@ export class DatasetDetailsCardComponent {
 
   protected readonly isFilesystem = computed(() => this.dataset().type === DatasetType.Filesystem);
   protected readonly isZvol = computed(() => this.dataset().type === DatasetType.Volume);
+  protected readonly helptext = datasetDetailsHelptext;
 
   protected readonly hasComments = computed(() => {
     return this.dataset().comments?.source === ZfsPropertySource.Local && !!this.dataset().comments?.value?.length;
   });
 
   protected readonly canBePromoted = computed(() => Boolean(this.dataset().origin?.parsed));
+
+  get isRootDataset(): boolean {
+    return !!this.dataset() && isRootDataset(this.dataset());
+  }
 
   deleteDataset(): void {
     this.matDialog.open(DeleteDatasetDialog, { data: this.dataset() })

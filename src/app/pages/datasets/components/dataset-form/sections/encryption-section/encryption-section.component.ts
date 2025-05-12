@@ -2,7 +2,6 @@ import {
   ChangeDetectionStrategy, Component, computed, input, OnChanges, OnInit, output,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
@@ -17,6 +16,7 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
+import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 
 @UntilDestroy()
@@ -24,7 +24,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
   selector: 'ix-encryption-section',
   templateUrl: './encryption-section.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxFieldsetComponent,
     ReactiveFormsModule,
@@ -71,8 +70,8 @@ export class EncryptionSectionComponent implements OnChanges, OnInit {
   readonly helptext = helptextDatasetForm;
 
   encryptionTypeOptions$ = of([
-    { label: T('Key'), value: DatasetEncryptionType.Default },
-    { label: T('Passphrase'), value: DatasetEncryptionType.Passphrase },
+    { label: this.translate.instant('Key'), value: DatasetEncryptionType.Default },
+    { label: this.translate.instant('Passphrase'), value: DatasetEncryptionType.Passphrase },
   ]);
 
   algorithmOptions$ = this.api.call('pool.dataset.encryption_algorithm_choices').pipe(choicesToOptions());
@@ -162,4 +161,6 @@ export class EncryptionSectionComponent implements OnChanges, OnInit {
     }
     this.form.controls.encryption.disable();
   }
+
+  protected readonly ignoreTranslation = ignoreTranslation;
 }

@@ -1,5 +1,5 @@
 import {
-  Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef,
+  Component, OnInit, ChangeDetectionStrategy, signal,
 } from '@angular/core';
 import { AbstractControl, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -46,7 +46,6 @@ interface BindIp {
   templateUrl: './service-smb.component.html',
   styleUrls: ['./service-smb.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
@@ -68,7 +67,7 @@ interface BindIp {
   ],
 })
 export class ServiceSmbComponent implements OnInit {
-  isFormLoading = false;
+  protected isFormLoading = signal(false);
   isBasicMode = true;
   subscriptions: Subscription[] = [];
 
@@ -103,23 +102,23 @@ export class ServiceSmbComponent implements OnInit {
   protected readonly requiredRoles = [Role.SharingSmbWrite];
   readonly helptext = helptextServiceSmb;
   readonly tooltips = {
-    netbiosname: helptextServiceSmb.cifs_srv_netbiosname_tooltip,
-    netbiosalias: helptextServiceSmb.cifs_srv_netbiosalias_tooltip,
-    workgroup: helptextServiceSmb.cifs_srv_workgroup_tooltip,
-    description: helptextServiceSmb.cifs_srv_description_tooltip,
-    enable_smb1: helptextServiceSmb.cifs_srv_enable_smb1_tooltip,
-    ntlmv1_auth: helptextServiceSmb.cifs_srv_ntlmv1_auth_tooltip,
-    unixcharset: helptextServiceSmb.cifs_srv_unixcharset_tooltip,
-    debug: helptextServiceSmb.cifs_srv_debug_tooltip,
-    syslog: helptextServiceSmb.cifs_srv_syslog_tooltip,
-    localmaster: helptextServiceSmb.cifs_srv_localmaster_tooltip,
-    guest: helptextServiceSmb.cifs_srv_guest_tooltip,
-    filemask: helptextServiceSmb.cifs_srv_filemask_tooltip,
-    dirmask: helptextServiceSmb.cifs_srv_dirmask_tooltip,
-    admin_group: helptextServiceSmb.cifs_srv_admin_group_tooltip,
-    bindip: helptextServiceSmb.cifs_srv_bindip_tooltip,
-    aapl_extensions: helptextServiceSmb.cifs_srv_aapl_extensions_tooltip,
-    multichannel: helptextServiceSmb.cifs_srv_multichannel_tooltip,
+    netbiosname: helptextServiceSmb.netbiosnameTooltip,
+    netbiosalias: helptextServiceSmb.netbiosaliasTooltip,
+    workgroup: helptextServiceSmb.workgroupTooltip,
+    description: helptextServiceSmb.descriptionTooltip,
+    enable_smb1: helptextServiceSmb.enableSmb1Tooltip,
+    ntlmv1_auth: helptextServiceSmb.ntlmv1AuthTooltip,
+    unixcharset: helptextServiceSmb.unixcharsetTooltip,
+    debug: helptextServiceSmb.debugTooltip,
+    syslog: helptextServiceSmb.syslogTooltip,
+    localmaster: helptextServiceSmb.localmasterTooltip,
+    guest: helptextServiceSmb.guestTooltip,
+    filemask: helptextServiceSmb.filemaskTooltip,
+    dirmask: helptextServiceSmb.dirmaskTooltip,
+    admin_group: helptextServiceSmb.adminGroupTooltip,
+    bindip: helptextServiceSmb.bindipTooltip,
+    aapl_extensions: helptextServiceSmb.aaplExtensionsTooltip,
+    multichannel: helptextServiceSmb.multichannelTooltip,
   };
 
   readonly unixCharsetOptions$ = this.api.call('smb.unixcharset_choices').pipe(choicesToOptions());
@@ -152,7 +151,6 @@ export class ServiceSmbComponent implements OnInit {
   constructor(
     private api: ApiService,
     private formErrorHandler: FormErrorHandlerService,
-    private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
     private fb: FormBuilder,
     private translate: TranslateService,
@@ -167,19 +165,17 @@ export class ServiceSmbComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
 
     this.api.call('smb.config').pipe(untilDestroyed(this)).subscribe({
       next: (config) => {
         config.bindip.forEach(() => this.addBindIp());
         this.form.patchValue({ ...config, bindip: config.bindip.map((ip) => ({ bindIp: ip })) });
-        this.isFormLoading = false;
-        this.cdr.markForCheck();
+        this.isFormLoading.set(false);
       },
       error: (error: unknown) => {
-        this.isFormLoading = false;
+        this.isFormLoading.set(false);
         this.errorHandler.showErrorModal(error);
-        this.cdr.markForCheck();
       },
     });
   }
@@ -204,20 +200,18 @@ export class ServiceSmbComponent implements OnInit {
       bindip: this.form.value.bindip.map((value) => value.bindIp),
     };
 
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
     this.api.call('smb.update', [values])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
-          this.isFormLoading = false;
+          this.isFormLoading.set(false);
           this.snackbar.success(this.translate.instant('Service configuration saved'));
           this.slideInRef.close({ response: true, error: null });
-          this.cdr.markForCheck();
         },
         error: (error: unknown) => {
-          this.isFormLoading = false;
+          this.isFormLoading.set(false);
           this.formErrorHandler.handleValidationErrors(error, this.form);
-          this.cdr.markForCheck();
         },
       });
   }

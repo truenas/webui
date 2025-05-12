@@ -1,7 +1,7 @@
 <ix-modal-header
   [requiredRoles]="requiredRoles"
   [title]="'Add Snapshot' | translate"
-  [loading]="isFormLoading"
+  [loading]="isFormLoading()"
 ></ix-modal-header>
 <mat-card>
   <mat-card-content>
@@ -9,28 +9,28 @@
       <ix-fieldset>
         <ix-select
           formControlName="dataset"
-          [label]="helptext.snapshot_add_dataset_placeholder | translate"
+          [label]="helptext.datasetLabel | translate"
           [options]="datasetOptions$"
           [required]="true"
         ></ix-select>
 
         <ix-input
           formControlName="name"
-          [label]="helptext.snapshot_add_name_placeholder | translate"
-          [tooltip]="helptext.snapshot_add_name_tooltip | translate"
+          [label]="helptext.nameLabel | translate"
+          [tooltip]="helptext.nameTooltip | translate"
         ></ix-input>
 
         <ix-select
           formControlName="naming_schema"
-          [label]="helptext.snapshot_add_naming_schema_placeholder | translate"
-          [tooltip]="helptext.snapshot_add_naming_schema_tooltip | translate"
+          [label]="helptext.namingSchemaLabel | translate"
+          [tooltip]="helptext.namingSchemaTooltip | translate"
           [options]="namingSchemaOptions$"
         ></ix-select>
 
         <ix-checkbox
           formControlName="recursive"
-          [label]="helptext.snapshot_add_recursive_placeholder | translate"
-          [tooltip]="helptext.snapshot_add_recursive_tooltip | translate"
+          [label]="helptext.recursiveLabel | translate"
+          [tooltip]="helptext.recursiveTooltip | translate"
         ></ix-checkbox>
 
         @if (hasVmsInDataset) {
@@ -48,7 +48,7 @@
           type="submit"
           color="primary"
           ixTest="save"
-          [disabled]="form.invalid || isFormLoading"
+          [disabled]="form.invalid || isFormLoading()"
         >
           {{ 'Save' | translate }}
         </button>

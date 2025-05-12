@@ -11,6 +11,7 @@ import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
 
 @UntilDestroy()
 @Component({
@@ -18,7 +19,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './ix-star-rating.component.html',
   styleUrls: ['./ix-star-rating.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxLabelComponent,
     MatIconButton,
@@ -33,9 +33,9 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class IxStarRatingComponent implements ControlValueAccessor {
-  readonly label = input('');
-  readonly hint = input('');
-  readonly tooltip = input('');
+  readonly label = input<TranslatedString>('');
+  readonly hint = input<TranslatedString>('');
+  readonly tooltip = input<TranslatedString>('');
   readonly required = input(false);
   readonly maxRating = input(5);
 

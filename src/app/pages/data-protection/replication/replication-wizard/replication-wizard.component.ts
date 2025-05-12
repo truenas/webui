@@ -54,7 +54,6 @@ import { ReplicationService } from 'app/services/replication.service';
   styleUrls: ['./replication-wizard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [ReplicationService],
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
@@ -455,8 +454,8 @@ export class ReplicationWizardComponent {
           .some((snapshots: string[]) => snapshots.length > 0);
         if (hasBadSnapshots) {
           return this.dialogService.confirm({
-            title: helptextReplicationWizard.clearSnapshotDialog_title,
-            message: helptextReplicationWizard.clearSnapshotDialog_content,
+            title: this.translate.instant(helptextReplicationWizard.clearSnapshotDialog_title),
+            message: this.translate.instant(helptextReplicationWizard.clearSnapshotDialog_content),
           }).pipe(
             switchMap((dialogResult) => {
               replicationPayload.allow_from_scratch = dialogResult;

@@ -17,6 +17,7 @@ import { filter } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { Role } from 'app/enums/role.enum';
+import { isFailedJobError } from 'app/helpers/api.helper';
 import { helptextVolumes } from 'app/helptext/storage/volumes/volume-list';
 import { Job } from 'app/interfaces/job.interface';
 import { PoolAttachment } from 'app/interfaces/pool-attachment.interface';
@@ -32,6 +33,7 @@ import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-vali
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ignoreTranslation, TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -42,7 +44,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./export-disconnect-modal.component.scss'],
   templateUrl: './export-disconnect-modal.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogTitle,
     MatProgressBar,
@@ -161,7 +162,7 @@ export class ExportDisconnectModalComponent implements OnInit {
           this.handleDisconnectJobSuccess(value);
         },
         error: (error: unknown) => {
-          this.handleDisconnectJobFailure(error as Job);
+          this.handleDisconnectJobFailure(error);
         },
         complete: () => {
           this.isFormLoading = false;
@@ -172,46 +173,40 @@ export class ExportDisconnectModalComponent implements OnInit {
     this.datasetStore.resetDatasets();
   }
 
-  showExportErrorDialog(failureData: Job): void {
-    this.dialogService.error({
-      title: helptextVolumes.exportError,
-      message: failureData.error,
-      backtrace: failureData.exception,
-    });
-  }
-
-  handleDisconnectJobFailure(failureData: Job): void {
-    if (failureData.error) {
+  private handleDisconnectJobFailure(error: unknown): void {
+    if (isFailedJobError(error) && error.job.error) {
       if (
-        isObject(failureData.exc_info.extra)
-        && !Array.isArray(failureData.exc_info.extra)
-        && failureData.exc_info.extra.code === 'control_services'
+        isObject(error.job.exc_info.extra)
+        && !Array.isArray(error.job.exc_info.extra)
+        && error.job.exc_info.extra.code === 'control_services'
       ) {
-        this.showServicesErrorsDialog(failureData);
+        this.showServicesErrorsDialog(error.job);
         return;
       }
-      if (failureData.extra && failureData.extra.code === 'unstoppable_processes') {
-        this.showUnstoppableErrorDialog(failureData);
+      if (error.job.extra && error.job.extra.code === 'unstoppable_processes') {
+        this.showUnstoppableErrorDialog(error.job);
         return;
       }
     }
-    this.showExportErrorDialog(failureData);
+
+    this.errorHandler.showErrorModal(error);
   }
 
   showUnstoppableErrorDialog(failureData: Job): void {
     let conditionalErrMessage = '';
-    const msg = this.translate.instant(helptextVolumes.exportMessages.onfail.unableToTerminate);
+    const msg = this.translate.instant(helptextVolumes.exportMessages.unableToTerminate);
     conditionalErrMessage = msg + (failureData.extra?.processes as string);
     this.dialogService.error({
       title: helptextVolumes.exportError,
       message: conditionalErrMessage,
-      backtrace: failureData.exception,
+      stackTrace: failureData.exception,
     });
   }
 
   showServicesErrorsDialog(failureData: Job): void {
-    const stopMsg = this.translate.instant(helptextVolumes.exportMessages.onfail.stopServices);
-    const restartMsg = this.translate.instant(helptextVolumes.exportMessages.onfail.restartServices);
+    // TODO: Just create a separate component for this.
+    const stopMsg = this.translate.instant(helptextVolumes.exportMessages.stopServices);
+    const restartMsg = this.translate.instant(helptextVolumes.exportMessages.restartServices);
     let conditionalErrMessage = '';
     if (isObject(failureData.exc_info.extra) && !Array.isArray(failureData.exc_info.extra)) {
       if ((failureData.exc_info.extra.stop_services as string[]).length > 0) {
@@ -231,14 +226,14 @@ export class ExportDisconnectModalComponent implements OnInit {
       }
     }
 
-    const continueMsg = this.translate.instant(helptextVolumes.exportMessages.onfail.continueMessage);
+    const continueMsg = this.translate.instant(helptextVolumes.exportMessages.continueMessage);
     conditionalErrMessage += '<br><br>' + continueMsg + '</div><br />';
 
     this.dialogService.confirm({
-      title: helptextVolumes.exportError,
-      message: conditionalErrMessage,
+      title: this.translate.instant(helptextVolumes.exportError),
+      message: ignoreTranslation(conditionalErrMessage),
       hideCheckbox: true,
-      buttonText: helptextVolumes.exportMessages.onfail.continueAction,
+      buttonText: this.translate.instant(helptextVolumes.exportMessages.continueAction),
     }).pipe(
       filter(Boolean),
       untilDestroyed(this),
@@ -265,7 +260,7 @@ export class ExportDisconnectModalComponent implements OnInit {
     if (!value.destroy) {
       this.snackbar.success(message);
     } else {
-      this.snackbar.success(`${message} ${destroyed}`);
+      this.snackbar.success(`${message} ${destroyed}` as TranslatedString);
     }
   }
 
@@ -296,8 +291,8 @@ export class ExportDisconnectModalComponent implements OnInit {
     this.showDestroy = this.pool.status !== PoolStatus.Unknown;
 
     this.confirmLabelText = this.pool.status === PoolStatus.Unknown
-      ? this.translate.instant(helptextVolumes.exportDialog.confirm)
-      + ' ' + this.translate.instant(helptextVolumes.exportDialog.unknown_status_alt_text)
+      ? (this.translate.instant(helptextVolumes.exportDialog.confirm)
+        + ' ' + this.translate.instant(helptextVolumes.exportDialog.unknownStatusAltText)) as TranslatedString
       : this.translate.instant(helptextVolumes.exportDialog.confirm);
 
     this.processes.forEach((process) => {

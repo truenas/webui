@@ -8,6 +8,7 @@ import {
 
 const testBackup = {
   path: '/mnt/test',
+  cache_path: '/mnt/cache',
   post_script: 'test',
   pre_script: 'test',
   attributes: {
@@ -47,14 +48,15 @@ describe('CloudBackupStatsComponent', () => {
 
   it('renders Details in card', () => {
     const chartExtra = spectator.query('mat-card-content')!.querySelectorAll('p');
-    expect(chartExtra).toHaveLength(8);
+    expect(chartExtra).toHaveLength(9);
     expect(chartExtra[0]).toHaveText('Path: /mnt/test');
-    expect(chartExtra[1]).toHaveText('Credentials: Storj');
-    expect(chartExtra[2]).toHaveText('Bucket: ixsystems');
-    expect(chartExtra[3]).toHaveText('Folder: /ix');
-    expect(chartExtra[4]).toHaveText('Keep Last: 5');
-    expect(chartExtra[5]).toHaveText('Transfer Setting: Fast Storage');
-    expect(chartExtra[6]).toHaveText('Post Script: test');
-    expect(chartExtra[7]).toHaveText('Pre Script: test');
+    expect(chartExtra[1]).toHaveText('Cache Path: /mnt/cache');
+    expect(chartExtra[2]).toHaveText('Credentials: Storj');
+    expect(chartExtra[3]).toHaveText('Bucket: ixsystems');
+    expect(chartExtra[4]).toHaveText('Folder: /ix');
+    expect(chartExtra[5]).toHaveText('Keep Last: 5');
+    expect(chartExtra[6]).toHaveText('Transfer Setting: Fast Storage');
+    expect(chartExtra[7]).toHaveText('Post Script: test');
+    expect(chartExtra[8]).toHaveText('Pre Script: test');
   });
 });

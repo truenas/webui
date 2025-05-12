@@ -32,6 +32,7 @@ import {
 } from 'app/modules/jobs/store/job.selectors';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { ErrorParserService } from 'app/services/errors/error-parser.service';
 
@@ -41,7 +42,6 @@ import { ErrorParserService } from 'app/services/errors/error-parser.service';
   templateUrl: './jobs-panel.component.html',
   styleUrls: ['./jobs-panel.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogContent,
     MatTooltip,
@@ -115,7 +115,7 @@ export class JobsPanelComponent {
     const jobProgressDialogRef = this.dialog.jobDialog(
       job$,
       {
-        title,
+        title: ignoreTranslation(title),
         canMinimize: true,
       },
     );

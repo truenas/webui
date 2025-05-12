@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef, Component, OnInit,
+  signal,
 } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -12,7 +13,7 @@ import { Observable, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
-import { helptextSharingIscsi } from 'app/helptext/sharing';
+import { helptextIscsi } from 'app/helptext/sharing';
 import { IscsiInterface, IscsiPortal } from 'app/interfaces/iscsi.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -34,7 +35,6 @@ import { IscsiService } from 'app/services/iscsi.service';
   templateUrl: './portal-form.component.html',
   styleUrls: ['./portal-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
@@ -53,7 +53,7 @@ import { IscsiService } from 'app/services/iscsi.service';
   ],
 })
 export class PortalFormComponent implements OnInit {
-  isLoading = false;
+  protected isLoading = signal(false);
   listen: IscsiInterface[] = [];
 
   get isNew(): boolean {
@@ -72,15 +72,14 @@ export class PortalFormComponent implements OnInit {
   });
 
   readonly labels = {
-    comment: helptextSharingIscsi.portal_form_placeholder_comment,
-    ip: helptextSharingIscsi.portal_form_placeholder_ip,
-    port: helptextSharingIscsi.portal_form_placeholder_port,
+    comment: helptextIscsi.portal.descriptionLabel,
+    ip: helptextIscsi.portal.ipLabel,
+    port: helptextIscsi.portal.portLabel,
   };
 
   readonly tooltips = {
-    comment: helptextSharingIscsi.portal_form_tooltip_comment,
-    ip: helptextSharingIscsi.portal_form_tooltip_ip,
-    port: helptextSharingIscsi.portal_form_tooltip_port,
+    ip: helptextIscsi.portal.ipTooltip,
+    port: helptextIscsi.portal.portTooltip,
   };
 
   readonly listenOptions$ = this.iscsiService.getIpChoices().pipe(choicesToOptions());
@@ -125,7 +124,6 @@ export class PortalFormComponent implements OnInit {
     this.form.patchValue({
       ...portal,
     });
-    this.cdr.markForCheck();
   }
 
   onAdd(): void {
@@ -145,7 +143,7 @@ export class PortalFormComponent implements OnInit {
       listen: values.ip.map((ip) => ({ ip })) as IscsiInterface[],
     };
 
-    this.isLoading = true;
+    this.isLoading.set(true);
     let request$: Observable<unknown>;
     if (this.editingIscsiPortal) {
       request$ = this.api.call('iscsi.portal.update', [this.editingIscsiPortal.id, params]);
@@ -155,14 +153,12 @@ export class PortalFormComponent implements OnInit {
 
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
-        this.isLoading = false;
-        this.cdr.markForCheck();
+        this.isLoading.set(false);
         this.slideInRef.close({ response: true, error: null });
       },
       error: (error: unknown) => {
-        this.isLoading = false;
+        this.isLoading.set(false);
         this.errorHandler.handleValidationErrors(error, this.form);
-        this.cdr.markForCheck();
       },
     });
   }

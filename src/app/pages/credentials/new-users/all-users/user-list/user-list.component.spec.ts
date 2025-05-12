@@ -1,72 +1,66 @@
-import { Router } from '@angular/router';
-import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { createRoutingFactory, Spectator } from '@ngneat/spectator/jest';
+import { MockComponent } from 'ng-mocks';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { Role } from 'app/enums/role.enum';
-import { User } from 'app/interfaces/user.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
+import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
+import { mockUserApiDataProvider, mockUsers } from 'app/pages/credentials/new-users/all-users/testing/mock-user-api-data-provider';
 import { UserListComponent } from 'app/pages/credentials/new-users/all-users/user-list/user-list.component';
-import { UserRowComponent } from 'app/pages/credentials/new-users/all-users/user-list/user-row/user-row.component';
-import { UsersStore } from 'app/pages/credentials/new-users/store/users.store';
+import { UsersSearchComponent } from 'app/pages/credentials/new-users/all-users/users-search/users-search.component';
 
 describe('UserListComponent', () => {
   let spectator: Spectator<UserListComponent>;
-
-  const mockUsers = [
-    {
-      id: 1,
-      username: 'john_doe',
-      full_name: 'John Doe',
-      locked: false,
-      roles: [Role.FullAdmin],
-    },
-    {
-      id: 2,
-      username: 'jane_smith',
-      full_name: 'Jane Smith',
-      locked: false,
-      roles: [Role.FullAdmin],
-    },
-  ] as User[];
+  let table: IxTableHarness;
 
   const createComponent = createRoutingFactory({
     component: UserListComponent,
     imports: [
-      UserRowComponent,
+      MockComponent(IxTableComponent),
+      MockComponent(UsersSearchComponent),
       EmptyComponent,
       SearchInput1Component,
       FakeProgressBarComponent,
     ],
     providers: [
       mockAuth(),
-      mockProvider(UsersStore, {
-        users: jest.fn(() => mockUsers),
-        isLoading: jest.fn(() => false),
-        selectedUser: jest.fn(() => null),
-        selectUser: jest.fn(),
-      }),
     ],
     params: {
       id: 'invalid',
     },
   });
 
-  beforeEach(() => {
-    spectator = createComponent();
+  beforeEach(async () => {
+    spectator = createComponent({
+      props: {
+        dataProvider: mockUserApiDataProvider,
+      },
+    });
+    jest.spyOn(spectator.component.userSelected, 'emit');
+    table = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, IxTableHarness);
   });
 
   describe('Rendering users', () => {
-    it('should show a list of users', () => {
-      const userRows = spectator.queryAll(UserRowComponent);
-      expect(userRows).toHaveLength(mockUsers.length);
-      expect(userRows[0].user()).toEqual(mockUsers[0]);
-      expect(userRows[1].user()).toEqual(mockUsers[1]);
-    });
-
-    it('redirects to first instance when given invalid instanceId', () => {
-      const spyOn = jest.spyOn(spectator.inject(Router), 'navigate');
-      expect(spyOn).toHaveBeenCalledWith(['/credentials/users-new', 'view', 'john_doe']);
+    it('should show a list of users', async () => {
+      expect(await table.getCellTexts()).toEqual([
+        ['Username', 'UID', 'Built in', 'Full Name', 'Roles'],
+        [
+          mockUsers[0].username,
+          mockUsers[0].uid.toString(),
+          mockUsers[0].builtin ? 'Yes' : 'No',
+          mockUsers[0].full_name,
+          'Full Admin',
+        ],
+        [
+          mockUsers[1].username,
+          mockUsers[1].uid.toString(),
+          mockUsers[1].builtin ? 'Yes' : 'No',
+          mockUsers[1].full_name,
+          'Full Admin',
+        ],
+      ]);
     });
   });
 });

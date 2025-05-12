@@ -12,6 +12,7 @@ import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
 
 @UntilDestroy()
 @Component({
@@ -19,7 +20,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './ix-textarea.component.html',
   styleUrls: ['./ix-textarea.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxLabelComponent,
     MatInput,
@@ -35,10 +35,10 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class IxTextareaComponent implements ControlValueAccessor {
-  readonly label = input<string>();
-  readonly placeholder = input<string>();
-  readonly hint = input<string>();
-  readonly tooltip = input<string>();
+  readonly label = input<TranslatedString>();
+  readonly placeholder = input<TranslatedString>();
+  readonly hint = input<TranslatedString>();
+  readonly tooltip = input<TranslatedString>();
   readonly required = input<boolean>(false);
   readonly rows = input(4);
   readonly readonly = input<boolean>();

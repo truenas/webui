@@ -5,8 +5,8 @@ import {
 import { MatButton } from '@angular/material/button';
 import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
 import { TranslateModule } from '@ngx-translate/core';
-import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
-import { helptextManager } from 'app/helptext/storage/volumes/manager/manager';
+import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
+import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { LayoutStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/layout-step/layout-step.component';
@@ -16,7 +16,6 @@ import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/p
   selector: 'ix-cache-wizard-step',
   templateUrl: './cache-wizard-step.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     LayoutStepComponent,
     FormActionsComponent,
@@ -34,10 +33,10 @@ export class CacheWizardStepComponent {
 
   readonly goToLastStep = output();
 
-  protected readonly VdevType = VdevType;
-  readonly helptext = helptextManager;
+  protected readonly vDevType = VDevType;
+  readonly helptext = helptextPoolCreation;
 
-  protected readonly inventory$ = this.store.getInventoryForStep(VdevType.Cache);
+  protected readonly inventory$ = this.store.getInventoryForStep(VDevType.Cache);
   protected allowedLayouts = [CreateVdevLayout.Stripe];
 
   constructor(
@@ -49,6 +48,6 @@ export class CacheWizardStepComponent {
   }
 
   resetStep(): void {
-    this.store.resetStep(VdevType.Cache);
+    this.store.resetStep(VDevType.Cache);
   }
 }

@@ -26,6 +26,7 @@ import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ActiveDirectoryComponent } from 'app/pages/directory-service/components/active-directory/active-directory.component';
 import { IdmapListComponent } from 'app/pages/directory-service/components/idmap-list/idmap-list.component';
@@ -37,7 +38,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { LdapComponent } from './components/ldap/ldap.component';
 
 interface DataCard {
-  title: string;
+  title: TranslatedString;
   items: Option[];
   onSettingsPressed: () => void;
 }
@@ -48,7 +49,6 @@ interface DataCard {
   templateUrl: './directory-services.component.html',
   styleUrls: ['./directory-services.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     EmptyComponent,
     RequiresRolesDirective,
@@ -122,54 +122,54 @@ export class DirectoryServicesComponent implements OnInit {
         this.isLdapEnabled = servicesState.ldap !== DirectoryServiceState.Disabled;
 
         this.activeDirectoryDataCard = {
-          title: helptextDashboard.activeDirectory.title,
+          title: this.translate.instant(helptextDashboard.activeDirectory.title),
           items: [
             {
-              label: helptextDashboard.activeDirectory.status,
+              label: this.translate.instant(helptextDashboard.activeDirectory.status),
               value: servicesState.activedirectory,
             },
             {
-              label: helptextDashboard.activeDirectory.domainName,
+              label: this.translate.instant(helptextDashboard.activeDirectory.domainName),
               value: activeDirectoryConfig?.domainname || null,
             },
             {
-              label: helptextDashboard.activeDirectory.domainAccountName,
+              label: this.translate.instant(helptextDashboard.activeDirectory.domainAccountName),
               value: activeDirectoryConfig?.bindname || null,
             },
           ],
           onSettingsPressed: () => this.openActiveDirectoryForm(),
         };
         this.ldapDataCard = {
-          title: helptextDashboard.ldap.title,
+          title: this.translate.instant(helptextDashboard.ldap.title),
           items: [
             {
-              label: helptextDashboard.ldap.status,
+              label: this.translate.instant(helptextDashboard.ldap.status),
               value: servicesState.ldap,
             },
             {
-              label: helptextDashboard.ldap.hostname,
+              label: this.translate.instant(helptextDashboard.ldap.hostname),
               value: ldapConfig ? ldapConfig.hostname.join(',') : null,
             },
             {
-              label: helptextDashboard.ldap.baseDN,
+              label: this.translate.instant(helptextDashboard.ldap.baseDN),
               value: ldapConfig?.basedn || null,
             },
             {
-              label: helptextDashboard.ldap.bindDN,
+              label: this.translate.instant(helptextDashboard.ldap.bindDN),
               value: ldapConfig?.binddn || null,
             },
           ],
           onSettingsPressed: () => this.openLdapForm(),
         };
         this.kerberosSettingsDataCard = {
-          title: helptextDashboard.kerberosSettings.title,
+          title: this.translate.instant(helptextDashboard.kerberosSettings.title),
           items: [
             {
-              label: helptextDashboard.kerberosSettings.appdefaults,
+              label: this.translate.instant(helptextDashboard.kerberosSettings.appdefaults),
               value: kerberosSettings?.appdefaults_aux || null,
             },
             {
-              label: helptextDashboard.kerberosSettings.libdefaults,
+              label: this.translate.instant(helptextDashboard.kerberosSettings.libdefaults),
               value: kerberosSettings?.libdefaults_aux || null,
             },
           ],
@@ -185,9 +185,9 @@ export class DirectoryServicesComponent implements OnInit {
     // Immediately show additional setting, so that user knows what they are.
     expansionPanel.open();
     this.dialog.confirm({
-      title: helptextDashboard.advancedEdit.title,
+      title: this.translate.instant(helptextDashboard.advancedEdit.title),
       hideCheckbox: true,
-      message: helptextDashboard.advancedEdit.message,
+      message: this.translate.instant(helptextDashboard.advancedEdit.message),
     })
       .pipe(filter((confirmed) => !confirmed), untilDestroyed(this))
       .subscribe(() => {

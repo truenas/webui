@@ -20,7 +20,6 @@
         <ix-checkbox
           formControlName="enabled"
           [label]="'Enabled' | translate"
-          [tooltip]="helptext.enabled_tooltip | translate"
         ></ix-checkbox>
 
         <ix-select
@@ -28,7 +27,7 @@
           [label]="'Type' | translate"
           [options]="services$"
           [required]="true"
-          [tooltip]="helptext.type_tooltip | translate"
+          [tooltip]="helptext.typeTooltip | translate"
         ></ix-select>
 
         <ix-select
@@ -36,7 +35,7 @@
           [label]="'Level' | translate"
           [options]="levels$"
           [required]="true"
-          [tooltip]="helptext.level_tooltip | translate"
+          [tooltip]="helptext.levelTooltip | translate"
         ></ix-select>
       </ix-fieldset>
 

@@ -22,7 +22,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './card-expand-collapse.component.html',
   styleUrls: ['./card-expand-collapse.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     TranslateModule,
     MatButton,

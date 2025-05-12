@@ -27,7 +27,6 @@ import { UserService } from 'app/services/user.service';
   templateUrl: './edit-posix-ace.component.html',
   styleUrls: ['./edit-posix-ace.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxFieldsetComponent,
@@ -53,8 +52,8 @@ export class EditPosixAceComponent implements OnInit, OnChanges {
   readonly permissions$ = of(mapToOptions(posixPermissionLabels, this.translate));
 
   readonly tooltips = {
-    user: helptextAcl.dataset_acl_user_tooltip,
-    group: helptextAcl.dataset_acl_group_tooltip,
+    user: helptextAcl.userTooltip,
+    group: helptextAcl.groupTooltip,
   };
 
   readonly userProvider = new UserComboboxProvider(this.userService);

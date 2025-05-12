@@ -16,12 +16,12 @@ import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives
 import { LocaleService } from 'app/modules/language/locale.service';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
 
 type OnChangeFn = (value: Date) => void;
 type OnTouchedFn = () => void;
 
 @Component({
-  standalone: true,
   selector: 'ix-datepicker',
   templateUrl: './ix-date-picker.component.html',
   styleUrls: ['./ix-date-picker.component.scss'],
@@ -50,10 +50,10 @@ type OnTouchedFn = () => void;
   ],
 })
 export class IxDatepickerComponent implements ControlValueAccessor {
-  readonly label = input<string>();
-  readonly placeholder = input<string>('');
-  readonly hint = input<string>();
-  readonly tooltip = input<string>();
+  readonly label = input<TranslatedString>();
+  readonly placeholder = input<TranslatedString>('');
+  readonly hint = input<TranslatedString>();
+  readonly tooltip = input<TranslatedString>();
   readonly required = input(false);
   readonly readonly = input(false);
 

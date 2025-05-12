@@ -47,9 +47,6 @@ describe('ZfsEncryptionCardComponent', () => {
     key_format: {
       value: EncryptionKeyFormat.Passphrase,
     },
-    encryption_algorithm: {
-      value: 'aes-256-cbc',
-    },
   } as DatasetDetails;
 
   const keyEncryptedRoot = {
@@ -83,10 +80,9 @@ describe('ZfsEncryptionCardComponent', () => {
 
     const details = getDetails();
     expect(details).toEqual({
-      'Encryption Root:': ' Yes ',
+      'Encryption Root:': ' Yes  Help:  Encryption RootEncryption root means that dataset has its own encryption settings. Only encryption roots can be directly locked, unlocked, or have their keys changed. Child datasets will inherit encryption settings from the parent encryption root.',
       'Current State:': 'Unlocked',
       'Type:': ' Key ',
-      'Algorithm:': 'aes-256-cbc',
     });
 
     const buttons = await loader.getAllHarnesses(MatButtonHarness);
@@ -102,10 +98,9 @@ describe('ZfsEncryptionCardComponent', () => {
 
     const details = getDetails();
     expect(details).toEqual({
-      'Encryption Root:': ' Yes ',
+      'Encryption Root:': ' Yes  Help:  Encryption RootEncryption root means that dataset has its own encryption settings. Only encryption roots can be directly locked, unlocked, or have their keys changed. Child datasets will inherit encryption settings from the parent encryption root.',
       'Current State:': 'Unlocked',
       'Type:': ' Passphrase ',
-      'Algorithm:': 'aes-256-cbc',
     });
 
     const buttons = await loader.getAllHarnesses(MatButtonHarness);
@@ -124,10 +119,9 @@ describe('ZfsEncryptionCardComponent', () => {
 
     const details = getDetails();
     expect(details).toEqual({
-      'Encryption Root:': ' Yes ',
+      'Encryption Root:': ' Yes  Help:  Encryption RootEncryption root means that dataset has its own encryption settings. Only encryption roots can be directly locked, unlocked, or have their keys changed. Child datasets will inherit encryption settings from the parent encryption root.',
       'Current State:': 'Locked',
       'Type:': ' Passphrase ',
-      'Algorithm:': 'aes-256-cbc',
     });
 
     const buttons = await loader.getAllHarnesses(MatButtonHarness);
@@ -146,17 +140,16 @@ describe('ZfsEncryptionCardComponent', () => {
 
     const details = getDetails();
     expect(details).toEqual({
-      'Encryption Root:': '/pool',
-      'Current State:': 'Locked by ancestor',
+      'Inherits Encryption From:': ' /pool ',
+      'Current State:': 'Locked by parent',
       'Type:': ' Passphrase ',
-      'Algorithm:': 'aes-256-cbc',
     });
 
     const buttons = await loader.getAllHarnesses(MatButtonHarness);
     expect(buttons).toHaveLength(0);
 
     const goToLink = spectator.query('a');
-    expect(goToLink).toHaveText('Go To Encryption Root');
+    expect(goToLink).toHaveText('/pool');
     expect(goToLink).toHaveAttribute('href', '/datasets/pool');
   });
 

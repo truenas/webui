@@ -17,6 +17,7 @@ import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-erro
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
 
 @UntilDestroy()
 @Component({
@@ -24,7 +25,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   styleUrls: ['./ordered-list.component.scss'],
   templateUrl: 'ordered-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxLabelComponent,
     CdkDropList,
@@ -39,8 +39,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class OrderedListboxComponent implements ControlValueAccessor, OnInit {
-  readonly label = input<string>();
-  readonly tooltip = input<string>();
+  readonly label = input<TranslatedString>();
+  readonly tooltip = input<TranslatedString>();
   readonly required = input(false);
 
   readonly options = input.required<Observable<Option[]>>();

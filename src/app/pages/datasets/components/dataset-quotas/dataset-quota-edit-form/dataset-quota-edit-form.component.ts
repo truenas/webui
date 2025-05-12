@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit, signal,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -15,7 +15,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextGlobal } from 'app/helptext/global-helptext';
-import { helpTextQuotas } from 'app/helptext/storage/volumes/datasets/dataset-quotas';
+import { helptextQuotas } from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 import { DatasetQuota, SetDatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { QueryFilter, QueryParams } from 'app/interfaces/query-api.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -35,7 +35,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
   selector: 'ix-dataset-quota-edit-form',
   templateUrl: './dataset-quota-edit-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
@@ -53,7 +52,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 export class DatasetQuotaEditFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.DatasetWrite];
 
-  isFormLoading = false;
+  protected isFormLoading = signal(false);
   private datasetQuota: DatasetQuota;
   private datasetId: string;
   private quotaType: DatasetQuotaType;
@@ -67,8 +66,8 @@ export class DatasetQuotaEditFormComponent implements OnInit {
 
   get nameLabel(): string {
     return this.quotaType === DatasetQuotaType.User
-      ? helpTextQuotas.users.dialog.placeholder
-      : helpTextQuotas.groups.dialog.placeholder;
+      ? helptextQuotas.users.nameLabel
+      : helptextQuotas.groups.nameLabel;
   }
 
   get dataQuotaLabel(): string {
@@ -78,19 +77,19 @@ export class DatasetQuotaEditFormComponent implements OnInit {
   }
 
   private getUserDataQuotaLabel(): string {
-    return this.translate.instant(helpTextQuotas.users.data_quota.placeholder)
+    return this.translate.instant(helptextQuotas.users.dataQuota.placeholder)
       + this.translate.instant(helptextGlobal.human_readable.suggestion_label);
   }
 
   private getGroupDataQuotaLabel(): string {
-    return this.translate.instant(helpTextQuotas.groups.data_quota.placeholder)
+    return this.translate.instant(helptextQuotas.groups.data_quota.placeholder)
       + this.translate.instant(helptextGlobal.human_readable.suggestion_label);
   }
 
   get objectQuotaLabel(): string {
     return this.quotaType === DatasetQuotaType.User
-      ? helpTextQuotas.users.obj_quota.placeholder
-      : helpTextQuotas.groups.obj_quota.placeholder;
+      ? helptextQuotas.users.objQuota.placeholder
+      : helptextQuotas.groups.obj_quota.placeholder;
   }
 
   get dataQuotaTooltip(): string {
@@ -100,21 +99,21 @@ export class DatasetQuotaEditFormComponent implements OnInit {
   }
 
   private getUserDataQuotaTooltip(): string {
-    return this.translate.instant(helpTextQuotas.users.data_quota.tooltip)
+    return this.translate.instant(helptextQuotas.users.dataQuota.tooltip)
       + this.translate.instant(helptextGlobal.human_readable.suggestion_tooltip)
       + this.translate.instant(' bytes.');
   }
 
   private getGroupDataQuotaTooltip(): string {
-    return this.translate.instant(helpTextQuotas.groups.data_quota.tooltip)
+    return this.translate.instant(helptextQuotas.groups.data_quota.tooltip)
       + this.translate.instant(helptextGlobal.human_readable.suggestion_tooltip)
       + this.translate.instant(' bytes.');
   }
 
   get objectQuotaTooltip(): string {
     return this.quotaType === DatasetQuotaType.User
-      ? helpTextQuotas.users.obj_quota.tooltip
-      : helpTextQuotas.groups.obj_quota.tooltip;
+      ? helptextQuotas.users.objQuota.tooltip
+      : helptextQuotas.groups.obj_quota.tooltip;
   }
 
   form = this.formBuilder.group({
@@ -128,7 +127,6 @@ export class DatasetQuotaEditFormComponent implements OnInit {
     private api: ApiService,
     private translate: TranslateService,
     public formatter: IxFormatterService,
-    private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
     private snackbar: SnackbarService,
     protected dialogService: DialogService,
@@ -152,22 +150,20 @@ export class DatasetQuotaEditFormComponent implements OnInit {
   }
 
   private updateForm(): void {
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
     this.getQuota(this.id).pipe(
       tap((quotas) => {
         this.datasetQuota = quotas[0];
-        this.isFormLoading = false;
+        this.isFormLoading.set(false);
         this.form.patchValue({
           name: this.datasetQuota.name || '',
           data_quota: this.datasetQuota.quota || null,
           obj_quota: this.datasetQuota.obj_quota,
         });
-        this.cdr.markForCheck();
       }),
       catchError((error: unknown) => {
-        this.isFormLoading = false;
+        this.isFormLoading.set(false);
         this.errorHandler.handleValidationErrors(error, this.form);
-        this.cdr.markForCheck();
         return EMPTY;
       }),
       untilDestroyed(this),
@@ -207,20 +203,18 @@ export class DatasetQuotaEditFormComponent implements OnInit {
     canSubmit$.pipe(
       filter(Boolean),
       switchMap(() => {
-        this.isFormLoading = true;
+        this.isFormLoading.set(true);
         return this.api.call('pool.dataset.set_quota', [this.datasetId, payload]);
       }),
       untilDestroyed(this),
     ).subscribe({
       next: () => {
         this.snackbar.success(this.translate.instant('Quotas updated'));
-        this.isFormLoading = false;
+        this.isFormLoading.set(false);
         this.slideInRef.close({ response: true, error: null });
-        this.cdr.markForCheck();
       },
       error: (error: unknown) => {
-        this.isFormLoading = false;
-        this.cdr.markForCheck();
+        this.isFormLoading.set(false);
         this.errorHandler.handleValidationErrors(error, this.form);
       },
     });

@@ -21,7 +21,6 @@ export interface SessionExpiringDialogOptions {
   templateUrl: './session-expiring-dialog.component.html',
   styleUrls: ['./session-expiring-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogTitle,
     MatDialogContent,

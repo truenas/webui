@@ -49,7 +49,7 @@ export class NetworkInterfacesEffects {
     ),
     this.actions$.pipe(ofType(checkinIndicatorPressed)),
   ).pipe(
-    filter(() => this.router.url !== '/network'),
+    filter(() => this.router.url !== '/system/network'),
     switchMap(() => {
       return this.dialogService.confirm({
         title: this.translate.instant(helptextInterfaces.checkin_title),
@@ -59,7 +59,7 @@ export class NetworkInterfacesEffects {
       }).pipe(
         filter(Boolean),
         tap(() => {
-          this.router.navigate(['/network']);
+          this.router.navigate(['/system/network']);
         }),
       );
     }),

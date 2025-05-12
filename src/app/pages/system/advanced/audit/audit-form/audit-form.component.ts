@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit, signal,
 } from '@angular/core';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -36,7 +36,6 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
   selector: 'ix-audit-form',
   templateUrl: 'audit-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
@@ -54,7 +53,7 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
 export class AuditFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.SystemAuditWrite];
 
-  isFormLoading = false;
+  protected isFormLoading = signal(false);
 
   readonly form = this.fb.group({
     retention: [null as number | null, [Validators.required, Validators.min(1), Validators.max(30)]],
@@ -65,17 +64,16 @@ export class AuditFormComponent implements OnInit {
   });
 
   readonly tooltips = {
-    retention: helptext.retention_tooltip,
-    reservation: helptext.reservation_tooltip,
-    quota: helptext.quota_tooltip,
-    quota_fill_warning: helptext.quota_fill_warning_tooltip,
-    quota_fill_critical: helptext.quota_fill_critical_tooltip,
+    retention: helptext.retentionTooltip,
+    reservation: helptext.reservationTooltip,
+    quota: helptext.quotaTooltip,
+    quota_fill_warning: helptext.quotaFillWarningTooltip,
+    quota_fill_critical: helptext.quotaFillCriticalTooltip,
   };
 
   constructor(
     private fb: NonNullableFormBuilder,
     private api: ApiService,
-    private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
     private store$: Store<AppState>,
     private snackbar: SnackbarService,
@@ -94,19 +92,17 @@ export class AuditFormComponent implements OnInit {
 
   onSubmit(): void {
     const configUpdate = this.form.value as AuditConfig;
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
     this.api.call('audit.update', [configUpdate]).pipe(
       tap(() => {
         this.snackbar.success(this.translate.instant('Settings saved'));
         this.store$.dispatch(advancedConfigUpdated());
-        this.isFormLoading = false;
-        this.cdr.markForCheck();
+        this.isFormLoading.set(false);
         this.slideInRef.close({ response: true, error: null });
       }),
       catchError((error: unknown) => {
-        this.isFormLoading = false;
+        this.isFormLoading.set(false);
         this.formErrorHandler.handleValidationErrors(error, this.form);
-        this.cdr.markForCheck();
         return EMPTY;
       }),
       untilDestroyed(this),
@@ -114,20 +110,18 @@ export class AuditFormComponent implements OnInit {
   }
 
   private loadForm(): void {
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
 
     this.api.call('audit.config').pipe(untilDestroyed(this))
       .subscribe({
         next: (auditConfig) => {
-          this.isFormLoading = false;
-          this.cdr.markForCheck();
+          this.isFormLoading.set(false);
           this.form.patchValue({
             ...auditConfig,
           });
         },
         error: (error: unknown) => {
-          this.isFormLoading = false;
-          this.cdr.markForCheck();
+          this.isFormLoading.set(false);
           this.errorHandler.showErrorModal(error);
         },
       });

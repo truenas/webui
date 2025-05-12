@@ -29,6 +29,7 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -39,7 +40,6 @@ import { SystemGeneralService } from 'app/services/system-general.service';
   templateUrl: './ldap.component.html',
   styleUrls: ['./ldap.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
@@ -138,7 +138,7 @@ export class LdapComponent implements OnInit {
         next: ({ description }) => {
           this.isLoading = false;
           this.snackbar.success(
-            this.translate.instant(description || helptextLdap.ldap_custactions_clearcache_dialog_message),
+            this.translate.instant(description || helptextLdap.cacheBeingRebuilt),
           );
           this.cdr.markForCheck();
         },
@@ -157,7 +157,7 @@ export class LdapComponent implements OnInit {
     this.dialogService.jobDialog(
       this.api.job('ldap.update', [values]),
       {
-        title: 'LDAP',
+        title: ignoreTranslation('LDAP'),
       },
     )
       .afterClosed()

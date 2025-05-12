@@ -17,6 +17,7 @@ import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
 
 @UntilDestroy()
 @Component({
@@ -24,7 +25,6 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
   styleUrls: ['./ix-radio-group.component.scss'],
   templateUrl: './ix-radio-group.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxLabelComponent,
     MatRadioGroup,
@@ -42,8 +42,8 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
   ],
 })
 export class IxRadioGroupComponent implements ControlValueAccessor {
-  readonly label = input<string>();
-  readonly tooltip = input<string>();
+  readonly label = input<TranslatedString>();
+  readonly tooltip = input<TranslatedString>();
   readonly required = input<boolean>(false);
   readonly options = input<Observable<RadioOption[]>>();
   readonly inlineFields = input<boolean>();

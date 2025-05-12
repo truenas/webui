@@ -59,6 +59,7 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ignoreTranslation, TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudSyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
 import { CreateStorjBucketDialog } from 'app/pages/data-protection/cloudsync/create-storj-bucket-dialog/create-storj-bucket-dialog.component';
@@ -79,7 +80,6 @@ type FormValue = CloudSyncFormComponent['form']['value'];
   styleUrls: ['./cloudsync-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CloudCredentialService],
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
@@ -458,8 +458,10 @@ export class CloudSyncFormComponent implements OnInit {
           }
 
           this.dialogService.confirm({
-            title: apiError.extra ? (apiError.extra as { excerpt: string }).excerpt : `${this.translate.instant('Error: ')}${apiError.error}`,
-            message: apiError.reason,
+            title: apiError.extra
+              ? ignoreTranslation((apiError.extra as { excerpt: string }).excerpt)
+              : `${this.translate.instant('Error: ')}${apiError.error}` as TranslatedString,
+            message: ignoreTranslation(apiError.reason),
             hideCheckbox: true,
             buttonText: this.translate.instant('Fix Credential'),
           }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {

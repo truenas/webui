@@ -18,6 +18,7 @@ import { GeneralDialog, GeneralDialogConfig } from 'app/modules/dialog/component
 import { InfoDialog } from 'app/modules/dialog/components/info-dialog/info-dialog.component';
 import { JobProgressDialog } from 'app/modules/dialog/components/job-progress/job-progress-dialog.component';
 import { MultiErrorDialog } from 'app/modules/dialog/components/multi-error-dialog/multi-error-dialog.component';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
 
 @UntilDestroy()
 @Injectable({
@@ -59,12 +60,6 @@ export class DialogService {
     const dialogRef = this.matDialog.open(ErrorDialog, {
       data: error,
     });
-    dialogRef.componentInstance.title = error.title;
-    dialogRef.componentInstance.message = error.message;
-    dialogRef.componentInstance.backtrace = error.backtrace;
-    if (error.logs) {
-      dialogRef.componentInstance.logs = error.logs;
-    }
     return dialogRef.afterClosed();
   }
 
@@ -149,8 +144,8 @@ export class DialogService {
   jobDialog<R>(
     job$: Observable<Job<R>>,
     { title, description, canMinimize }: {
-      title?: string;
-      description?: string;
+      title?: TranslatedString;
+      description?: TranslatedString;
 
       // Use for long jobs where it's not required for user to wait for the result.
       // Note that `complete` handler will be called immediately and `next` will never be called.

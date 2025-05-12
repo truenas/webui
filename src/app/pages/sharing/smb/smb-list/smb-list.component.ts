@@ -16,7 +16,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
-import { shared, helptextSharingSmb } from 'app/helptext/sharing';
+import { shared } from 'app/helptext/sharing';
 import { SmbShare } from 'app/interfaces/smb-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -24,7 +24,7 @@ import { SearchInput1Component } from 'app/modules/forms/search-input1/search-in
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
+import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { toggleColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
 import {
@@ -56,7 +56,6 @@ import { selectService } from 'app/store/services/services.selectors';
   selector: 'ix-smb-list',
   templateUrl: './smb-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     FakeProgressBarComponent,
@@ -113,7 +112,7 @@ export class SmbListComponent implements OnInit {
       title: this.translate.instant('Audit Logging'),
       getValue: (row) => Boolean(row.audit?.enable),
     }),
-    actionsColumn({
+    actionsWithMenuColumn({
       actions: [
         {
           iconName: iconMarker('edit'),
@@ -128,7 +127,7 @@ export class SmbListComponent implements OnInit {
         },
         {
           iconName: iconMarker('share'),
-          tooltip: helptextSharingSmb.action_share_acl,
+          tooltip: this.translate.instant('Edit Share ACL'),
           requiredRoles: this.requiredRoles,
           onClick: (row) => {
             if (row.locked) {
@@ -154,7 +153,7 @@ export class SmbListComponent implements OnInit {
         },
         {
           iconName: iconMarker('security'),
-          tooltip: helptextSharingSmb.action_edit_acl,
+          tooltip: this.translate.instant('Edit Filesystem ACL'),
           requiredRoles: this.requiredRoles,
           disabled: (row) => of(isRootShare(row.path)),
           onClick: (row) => {
@@ -171,12 +170,12 @@ export class SmbListComponent implements OnInit {
         },
         {
           iconName: iconMarker('mdi-delete'),
-          tooltip: this.translate.instant('Unshare'),
+          tooltip: this.translate.instant('Delete'),
           requiredRoles: this.requiredRoles,
           onClick: (row) => {
             this.dialog.confirm({
               title: this.translate.instant('Unshare {name}', { name: row.name }),
-              message: shared.delete_share_message,
+              message: this.translate.instant(shared.delete_share_message),
               buttonText: this.translate.instant('Unshare'),
               buttonColor: 'warn',
             }).pipe(

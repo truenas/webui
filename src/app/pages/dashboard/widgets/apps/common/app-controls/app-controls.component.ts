@@ -1,8 +1,9 @@
-import { KeyValuePipe } from '@angular/common';
 import {
   Component, ChangeDetectionStrategy, input,
+  computed,
 } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -24,7 +25,6 @@ import { RedirectService } from 'app/services/redirect.service';
   templateUrl: './app-controls.component.html',
   styleUrls: ['./app-controls.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     WithLoadingStateDirective,
     MatIconButton,
@@ -32,12 +32,27 @@ import { RedirectService } from 'app/services/redirect.service';
     MatTooltip,
     IxIconComponent,
     TranslateModule,
-    KeyValuePipe,
+    MatMenuTrigger,
+    MatMenu,
+    MatMenuItem,
   ],
 })
 export class AppControlsComponent {
   app = input.required<LoadingState<App>>();
   appState = AppState;
+
+  portalEntries = computed(() => Object.entries(this.app()?.value?.portals).map(([label, url]) => ({ label, url })));
+
+  mainPortal = computed(() => {
+    const entries = this.portalEntries();
+    const webUi = entries.find((entry) => entry.label.toLowerCase().includes('web ui'));
+    return webUi ?? entries[0] ?? null;
+  });
+
+  otherPortals = computed(() => {
+    const main = this.mainPortal();
+    return this.portalEntries().filter((entry) => entry !== main);
+  });
 
   constructor(
     private translate: TranslateService,
@@ -58,14 +73,11 @@ export class AppControlsComponent {
       });
   }
 
-  openWebPortal(app: App): void {
-    const webPortal = Object.values(app.portals);
-    if (webPortal?.length) {
-      this.redirect.openWindow(webPortal[0]);
-    }
-  }
-
   openAppDetails(app: App): void {
     this.router.navigate(['/apps', 'installed', app.metadata.train, app.id]);
+  }
+
+  openPortal(url: string): void {
+    this.redirect.openWindow(url);
   }
 }

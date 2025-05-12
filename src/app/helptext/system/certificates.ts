@@ -1,6 +1,5 @@
 import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { helptextSystemCa } from 'app/helptext/system/ca';
 
 export const helptextSystemCertificates = {
   add: {
@@ -9,12 +8,7 @@ export const helptextSystemCertificates = {
       errors: T('Allowed characters: letters, numbers, underscore (_), and dash (-).'),
     },
 
-    cert_create_type: {
-      tooltip: T('<i>Internal Certificates</i> use system-managed CAs for certificate issuance. \
- <i>Import Certificate</i> lets you import an existing certificate onto the system.'),
-    },
-
-    csr_create_type: {
+    csrCreateType: {
       placeholder: T('Type'),
       tooltip: T('<i>Certificate Signing Requests</i> control when an external CA will issue (sign) the certificate. Typically used with ACME or other CAs that most popular browsers trust by default \
  <i>Import Certificate Signing Request</i> lets you import an existing CSR onto the system. Typically used with ACME or internal CAs.'),
@@ -25,33 +19,24 @@ export const helptextSystemCertificates = {
 matches your certificate usage scenario.'),
     },
 
-    isCSRonSystem: {
+    keyType: {
       tooltip: T(
-        'Check this box if importing a certificate for which a CSR exists on this system',
+        'See <a href="https://crypto.stackexchange.com/questions/1190/why-is-elliptic-curve-cryptography-not-widely-used-compared-to-rsa" target="blank">\
+ Why is elliptic curve cryptography not widely used, compared to RSA?</a>\
+ for more information about key types.',
       ),
     },
 
-    csrlist: {
+    ecCurve: {
       tooltip: T(
-        'Select an existing CSR.',
+        'Brainpool curves can be more secure, while secp curves can be faster. See\
+ <a href="https://tls.mbed.org/kb/cryptography/elliptic-curve-performance-nist-vs-brainpool" target="blank">\
+ Elliptic Curve performance: NIST vs Brainpool\
+ </a> for more information.',
       ),
     },
 
-    signedby: {
-      tooltip: T(
-        'Select a previously imported or created CA.',
-      ),
-    },
-
-    key_type: {
-      tooltip: helptextSystemCa.add.key_type.tooltip,
-    },
-
-    ec_curve: {
-      tooltip: helptextSystemCa.add.ec_curve.tooltip,
-    },
-
-    key_length: {
+    keyLength: {
       tooltip: T(
         'The number of bits in the key used by the\
  cryptographic algorithm. For security reasons,\
@@ -59,7 +44,7 @@ matches your certificate usage scenario.'),
       ),
     },
 
-    digest_algorithm: {
+    digestAlgorithm: {
       tooltip: T(
         'The cryptographic algorithm to use. The default\
  <i>SHA256</i> only needs to be changed if the\
@@ -92,7 +77,7 @@ matches your certificate usage scenario.'),
       tooltip: T('Enter the name of the company or organization.'),
     },
 
-    organizational_unit: {
+    organizationalUnit: {
       tooltip: T('Organizational unit of the entity.'),
     },
 
@@ -122,10 +107,10 @@ matches your certificate usage scenario.'),
     },
 
     certificate: {
-      tooltip: T('Paste the certificate for the CA.'),
+      tooltip: T('Paste the certificate.'),
     },
 
-    cert_csr: {
+    certCsr: {
       tooltip: T('Paste the contents of your Certificate Signing Request here.'),
     },
 
@@ -141,7 +126,7 @@ matches your certificate usage scenario.'),
       tooltip: T('Enter the passphrase for the Private Key.'),
     },
 
-    basic_constraints: {
+    basicConstraints: {
       config: {
         tooltip: T('Specify whether to use the certificate for a Certificate Authority \
           and whether this extension is critical. Clients must recognize critical extensions \
@@ -157,12 +142,12 @@ matches your certificate usage scenario.'),
           the certificate\'s subject is a CA and the maximum depth of valid \
           certification paths that include this certificate.'),
       },
-      path_length: {
+      pathLength: {
         tooltip: T('How many non-self-issued intermediate certificates that can follow \
 this certificate in a valid certification path. Entering <i>0</i> allows a single \
 additional certificate to follow in the certificate path. Cannot be less than <i>0</i>.'),
       },
-      extension_critical: {
+      extensionCritical: {
         placeholder: T('Critical Extension'),
         tooltip: T('Identify this extension as critical for the certificate. Critical extensions must \
 be recognized by the certificate-using system or this certificate will be rejected. Extensions \
@@ -171,38 +156,7 @@ certificate still approved.'),
       },
     },
 
-    authority_key_identifier: {
-      config: {
-        tooltip: T('Specify whether the issued certificate should include Authority Key Identifier information,\
-          and whether the extension is critical. Critical extensions must be recognized by the client or be rejected.'),
-      },
-      authority_cert_issuer: {
-        placeholder: T('Authority Cert Issuer'),
-        tooltip: T('Pair this certificate\'s public key with the Certificate Authority private \
-key used to sign this certificate.'),
-      },
-      enabled: {
-        tooltip: T('Activate this extension.\
- The authority key identifier extension provides a means of \
- identifying the public key corresponding to the private key used to \
- sign a certificate. This extension is used where an issuer has \
- multiple signing keys (either due to multiple concurrent key pairs or \
- due to changeover). The identification MAY be based on either the \
- key identifier (the subject key identifier in the issuer\'s \
- certificate) or on the issuer name and serial number.<br> \
- See <a href="https://www.ietf.org/rfc/rfc3280.txt">RFC 3280, section 4.2.1.1</a> \
- for more information.'),
-      },
-      extension_critical: {
-        placeholder: T('Critical Extension'),
-        tooltip: T('Identify this extension as critical for the certificate. Critical extensions must \
-be recognized by the certificate-using system or this certificate will be rejected. Extensions \
-identified as <i>not</i> critical can be ignored by the certificate-using system and the \
-certificate still approved.'),
-      },
-    },
-
-    extended_key_usage: {
+    extendedKeyUsage: {
       usages: {
         tooltip: T('Identify the purpose for this public key. Typically used for end \
 entity certificates. Multiple usages can be selected. Do not mark this extension \
@@ -218,7 +172,7 @@ The Extended Key Usage extension identifies and limits valid uses for this certi
 See <a href="https://www.ietf.org/rfc/rfc3280.txt" target="_blank">RFC 3280, section 4.2.1.13</a> \
 for more details.'),
       },
-      extension_critical: {
+      extensionCritical: {
         placeholder: T('Critical Extension'),
         tooltip: T('Identify this extension as critical for the certificate. Critical extensions must \
 be recognized by the certificate-using system or this certificate will be rejected. Extensions \
@@ -227,7 +181,7 @@ certificate still approved.'),
       },
     },
 
-    key_usage: {
+    keyUsage: {
       config: {
         tooltip: T('Specify this certificate\'s valid Key Usages. Web certificates \
           typically need at least Digital Signature and possibly Key Encipherment \
@@ -246,52 +200,52 @@ certificate still approved.'),
  See <a href="https://www.ietf.org/rfc/rfc3280.txt">RFC 3280, section 4.2.1.3</a> \
  for more information.'),
       },
-      digital_signature: {
+      digitalSignature: {
         placeholder: T('Digital Signature'),
         tooltip: T('This certificate\'s public key is used with digital signature methods \
 that are separate from certificate or CRL signing.'),
       },
-      content_commitment: {
+      contentCommitment: {
         placeholder: T('Content Commitment'),
         tooltip: T('This certificate\'s public key verifies digital signatures used for a \
 non-repudiation service.'),
       },
-      key_encipherment: {
+      key_Encipherment: {
         placeholder: T('Key Encipherment'),
         tooltip: T('This certificate\'s public key is used for key management.'),
       },
-      data_encipherment: {
+      dataEncipherment: {
         placeholder: T('Data Encipherment'),
         tooltip: T('This certificate\'s public key is used to encipher user data.'),
       },
-      key_agreement: {
+      keyAgreement: {
         placeholder: T('Key Agreement'),
         tooltip: T('This certificate\'s public key is used to manage key agreement.'),
       },
-      key_cert_sign: {
+      keyCertSign: {
         placeholder: T('Key Cert Sign'),
         tooltip: T('This certificate\'s public key is used to verify signatures on \
 other public key certificates. Activating this also requires enabling the \
 <b>CA</b> basic constraint.'),
       },
-      crl_sign: {
+      crlSign: {
         placeholder: T('CRL Sign'),
         tooltip: T('This certificate\'s public key is used to verify signatures \
 on a certificate revocation list (CRL).'),
       },
-      encipher_only: {
+      encipherOnly: {
         placeholder: T('Encipher Only'),
         tooltip: T('The certificate\'s public key is used to encipher user \
 data only during key agreement operations. Requires that \
 <b>Key Agreement</b> is also set.'),
       },
-      decipher_only: {
+      decipherOnly: {
         placeholder: T('Decipher Only'),
         tooltip: T('This certificate\'s public key is used to decipher \
 user data only during key agreement operations. Requires that \
 <b>Key Agreement</b> is also set.'),
       },
-      extension_critical: {
+      extensionCritical: {
         placeholder: T('Critical Extension'),
         tooltip: T('Identify this extension as critical for the certificate. Critical extensions must \
 be recognized by the certificate-using system or this certificate will be rejected. Extensions \
@@ -308,7 +262,7 @@ certificate still approved.'),
  Underscore (_), and dash (-) characters are allowed.',
       ),
     },
-    renew_days: {
+    renewDays: {
       tooltip: T(
         'For example if you set this value to 5, system will renew certificates that expire in 5 days or less.',
       ),
@@ -325,13 +279,13 @@ certificate still approved.'),
       tooltip: T('Please accept the terms of service for the given ACME\
  Server.'),
     },
-    renew_day: {
+    renewDay: {
       tooltip: T('Number of days to renew certificate before expiring.'),
     },
-    dir_uri: {
+    dirUri: {
       tooltip: T('URI of the ACME Server Directory. Choose a pre configured URI'),
-      custom_checkbox_tooltip: T('Use Custom ACME Server Directory URI'),
-      custom_input_tooltip: T('URI of the ACME Server Directory. Enter a custom URI.'),
+      customCheckboxTooltip: T('Use Custom ACME Server Directory URI'),
+      customInputTooltip: T('URI of the ACME Server Directory. Enter a custom URI.'),
     },
     authenticator: {
       tooltip: T('Authenticator to validate the Domain. Choose a\

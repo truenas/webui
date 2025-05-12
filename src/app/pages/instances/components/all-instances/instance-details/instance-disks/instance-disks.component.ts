@@ -36,7 +36,6 @@ import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtual
   selector: 'ix-instance-disks',
   templateUrl: './instance-disks.component.html',
   styleUrls: ['./instance-disks.component.scss'],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatButton,
@@ -56,7 +55,7 @@ import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtual
 export class InstanceDisksComponent {
   readonly instance = input.required<VirtualizationInstance>();
 
-  protected readonly isLoadingDevices = this.deviceStore.isLoading;
+  protected readonly isLoadingDevices = this.devicesStore.isLoading;
   protected readonly diskIoBusLabels = diskIoBusLabels;
 
   protected readonly disksDisabledMessage = this.translate.instant(
@@ -74,11 +73,11 @@ export class InstanceDisksComponent {
     private slideIn: SlideIn,
     private matDialog: MatDialog,
     private translate: TranslateService,
-    private deviceStore: VirtualizationDevicesStore,
+    private devicesStore: VirtualizationDevicesStore,
     private instanceStore: VirtualizationInstancesStore,
   ) {}
 
-  protected readonly visibleDisks = computed(() => this.deviceStore.devices().filter(
+  protected readonly visibleDisks = computed(() => this.devicesStore.devices().filter(
     (device): device is VirtualizationDisk => device.dev_type === VirtualizationDeviceType.Disk && !!device.source,
   ));
 
@@ -118,12 +117,12 @@ export class InstanceDisksComponent {
     })
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe(() => this.deviceStore.loadDevices());
+      .subscribe(() => this.devicesStore.loadDevices());
   }
 
   private openDiskForm(disk?: VirtualizationDisk): void {
     this.slideIn.open(InstanceDiskFormComponent, { data: { disk, instance: this.instance() } })
       .pipe(filter((result) => !!result.response), untilDestroyed(this))
-      .subscribe(() => this.deviceStore.loadDevices());
+      .subscribe(() => this.devicesStore.loadDevices());
   }
 }

@@ -1,0 +1,88 @@
+<mat-card class="card" [ixUiSearch]="searchableElements.elements.zfsHealth">
+  <mat-card-header>
+    <h3 mat-card-title>
+      {{ 'Storage Health' | translate }}
+      <ix-pool-card-icon [type]="iconType()" [tooltip]="iconTooltip()"></ix-pool-card-icon>
+    </h3>
+
+    @if (!wasScanInitiated()) {
+      <button
+        *ixRequiresRoles="[Role.PoolScrubWrite]"
+        mat-button
+        ixTest="scrub"
+        [ixUiSearch]="searchableElements.elements.scrubNow"
+        (click)="onStartScrub()"
+      >
+        {{ 'Scrub Now' | translate }}
+      </button>
+    } @else {
+      @if (isScrub) {
+      } @else {
+        <button mat-button disabled ixTest="scrub-disabled">{{ 'Scrub' | translate }}</button>
+      }
+    }
+  </mat-card-header>
+
+  <mat-card-content class="card-content">
+    <div class="details-item">
+      <div class="label status">
+        {{ '{status}, {errorCount, plural, =0 {no errors} other {# errors}}.' | translate:{ status: (pool().status | mapValue: poolStatusLabels | translate), errorCount: totalZfsErrors } }}
+      </div>
+    </div>
+
+    <div
+      class="details-item"
+      [ixUiSearch]="searchableElements.elements.scheduledScrub"
+    >
+      <div class="label">
+        {{ 'Scheduled Scrub' | translate }}:
+        <ix-tooltip
+          class="scrub-tooltip"
+          [message]="helptextVolumes.scrubTooltip | translate"
+        ></ix-tooltip>
+      </div>
+
+      @if (scrub()?.enabled) {
+        <div class="value">
+          {{ scrub().schedule | scheduleDescription }}
+        </div>
+        <a ixTest="configure-scrub" (click)="onConfigureScrub()">
+          {{ 'Configure' | translate }}
+        </a>
+      }
+      @else {
+        <div class="value">
+          {{ 'Not Set' | translate }}
+        </div>
+        <a ixTest="configure-scrub" (click)="onConfigureScrub()">
+          {{ 'Schedule' | translate }}
+        </a>
+      }
+    </div>
+
+    <div class="details-item" [ixUiSearch]="searchableElements.elements.autoTrim">
+      <div class="label">{{ 'Auto TRIM' | translate }}:</div>
+      <div class="value">
+        {{ pool().autotrim.value === 'on' ? ('On' | translate) : ('Off' | translate) }}
+      </div>
+      <a *ixRequiresRoles="[Role.PoolWrite]" class="action" ixTest="edit-auto-trim" (click)="onEditAutotrim()">
+        {{ 'Edit Auto TRIM' | translate }}
+      </a>
+    </div>
+
+    @if (scan()?.function) {
+      @if (wasScanInitiated()) {
+        <ix-active-pool-scan
+          [scan]="scan()"
+          [pool]="pool()"
+        ></ix-active-pool-scan>
+      } @else {
+        <ix-last-pool-scan [scan]="scan()"></ix-last-pool-scan>
+      }
+    }
+
+    @if (pool().dedup_table_size > 0) {
+      <ix-deduplication-stats [pool]="pool()"></ix-deduplication-stats>
+    }
+  </mat-card-content>
+</mat-card>

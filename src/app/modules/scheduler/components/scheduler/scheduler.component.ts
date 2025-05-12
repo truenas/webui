@@ -21,6 +21,7 @@ import {
 import { CrontabExplanationPipe } from 'app/modules/scheduler/pipes/crontab-explanation.pipe';
 import { CronPresetValue, getDefaultCrontabPresets } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
 
 @UntilDestroy()
 @Component({
@@ -28,7 +29,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './scheduler.component.html',
   styleUrls: ['./scheduler.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxLabelComponent,
     MatSelect,
@@ -42,8 +42,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class SchedulerComponent implements ControlValueAccessor {
-  readonly label = input<string>();
-  readonly tooltip = input<string>();
+  readonly label = input<TranslatedString>();
+  readonly tooltip = input<TranslatedString>();
   readonly required = input(false);
   readonly hideMinutes = input(false);
 

@@ -38,7 +38,8 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
+import { OldUserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
 
 @UntilDestroy()
 @Component({
@@ -46,7 +47,6 @@ import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-fo
   templateUrl: './ix-user-picker.component.html',
   styleUrls: ['./ix-user-picker.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxLabelComponent,
     MatInput,
@@ -67,10 +67,10 @@ import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-fo
   ],
 })
 export class IxUserPickerComponent implements ControlValueAccessor, OnInit {
-  readonly label = input<string>();
-  readonly hint = input<string>();
+  readonly label = input<TranslatedString>();
+  readonly hint = input<TranslatedString>();
   readonly required = input<boolean>(false);
-  readonly tooltip = input<string>();
+  readonly tooltip = input<TranslatedString>();
   readonly allowCustomValue = input(false);
 
   readonly provider = input.required<UserPickerProvider>();
@@ -316,7 +316,7 @@ export class IxUserPickerComponent implements ControlValueAccessor, OnInit {
     this.controlDirective?.control?.valueChanges?.pipe(
       distinctUntilChanged(),
       filter((selectedOption) => selectedOption === newOption),
-      switchMap(() => this.slideIn.open(UserFormComponent, { wide: true })),
+      switchMap(() => this.slideIn.open(OldUserFormComponent, { wide: true })),
       filter((response: SlideInResponse) => !response.error),
       tap((response: SlideInResponse<User>) => {
         // TODO: Handle it better. Show all users and select newly created.

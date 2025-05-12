@@ -1,7 +1,7 @@
 <ix-modal-header
   [requiredRoles]="requiredRoles"
   [title]="title"
-  [loading]="isLoading"
+  [loading]="isLoading()"
 ></ix-modal-header>
 
 <mat-card>
@@ -65,7 +65,7 @@
             <ix-select
               formControlName="type"
               [label]="helptext.extent_placeholder_type | translate"
-              [options]="types$"
+              [options]="types$ | translateOptions"
               [tooltip]="helptext.extent_tooltip_type | translate"
               [required]="true"
             ></ix-select>
@@ -142,7 +142,7 @@
           type="submit"
           color="primary"
           ixTest="save"
-          [disabled]="form.invalid || isLoading"
+          [disabled]="form.invalid || isLoading()"
         >
           {{ 'Save' | translate }}
         </button>

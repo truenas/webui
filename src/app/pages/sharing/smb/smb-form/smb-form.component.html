@@ -1,7 +1,7 @@
 <ix-modal-header
   [requiredRoles]="requiredRoles"
   [title]="title"
-  [loading]="isLoading"
+  [loading]="isLoading()"
 ></ix-modal-header>
 
 <mat-card>
@@ -36,13 +36,11 @@
         <ix-input
           formControlName="comment"
           [label]="helptextSharingSmb.placeholder_comment | translate"
-          [tooltip]="helptextSharingSmb.tooltip_comment | translate"
         ></ix-input>
 
         <ix-checkbox
           formControlName="enabled"
           [label]="helptextSharingSmb.placeholder_enabled | translate"
-          [tooltip]="helptextSharingSmb.tooltip_enabled | translate"
         ></ix-checkbox>
       </ix-fieldset>
 
@@ -100,7 +98,7 @@
 
           <ix-chips
             formControlName="watch_list"
-            hint="Keep this list empty to Watch All"
+            [hint]="'Keep this list empty to Watch All' | translate"
             [label]="'Watch List' | translate"
             [tooltip]="helptextSharingSmb.tooltip_watch_list | translate"
             [autocompleteProvider]="groupProvider"
@@ -202,7 +200,7 @@
           type="submit"
           color="primary"
           ixTest="save"
-          [disabled]="form.invalid || isLoading || isAsyncValidatorPending"
+          [disabled]="form.invalid || isLoading() || isAsyncValidatorPending"
         >
           {{ 'Save' | translate }}
         </button>

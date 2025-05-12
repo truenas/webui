@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit, signal,
 } from '@angular/core';
 import {
   UntypedFormGroup, Validators, ReactiveFormsModule,
@@ -36,6 +36,7 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -45,7 +46,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './reporting-exporters-form.component.html',
   styleUrls: ['./reporting-exporters-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
@@ -85,8 +85,8 @@ export class ReportingExportersFormComponent implements OnInit {
     return this.form.controls.attributes as UntypedFormGroup;
   }
 
-  isLoading = false;
-  isLoadingSchemas = true;
+  protected isLoading = signal(false);
+  protected isLoadingSchemas = signal(true);
   dynamicSection: DynamicFormSchema[] = [];
   protected editingExporter: ReportingExporter | undefined;
 
@@ -99,7 +99,6 @@ export class ReportingExportersFormComponent implements OnInit {
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private formErrorHandler: FormErrorHandlerService,
-    private cdr: ChangeDetectorRef,
     public slideInRef: SlideInRef<ReportingExporter | undefined, boolean>,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
@@ -122,7 +121,7 @@ export class ReportingExportersFormComponent implements OnInit {
   }
 
   private loadSchemas(): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
     this.getExportersSchemas().pipe(
       untilDestroyed(this),
     ).subscribe({
@@ -137,15 +136,13 @@ export class ReportingExportersFormComponent implements OnInit {
           });
         }
 
-        this.isLoading = false;
-        this.isLoadingSchemas = false;
-        this.cdr.markForCheck();
+        this.isLoading.set(false);
+        this.isLoadingSchemas.set(false);
       },
       error: (error: unknown) => {
         this.errorHandler.showErrorModal(error);
-        this.isLoading = false;
-        this.isLoadingSchemas = false;
-        this.cdr.markForCheck();
+        this.isLoading.set(false);
+        this.isLoadingSchemas.set(false);
       },
     });
   }
@@ -156,7 +153,10 @@ export class ReportingExportersFormComponent implements OnInit {
 
   setExporterTypeOptions(schemas: ReportingExporterSchema[]): void {
     this.exporterTypeOptions$ = of(
-      schemas.map((schema) => ({ label: schema.key, value: schema.key })),
+      schemas.map((schema) => ({
+        label: ignoreTranslation(schema.key),
+        value: schema.key,
+      })),
     );
   }
 
@@ -231,7 +231,7 @@ export class ReportingExportersFormComponent implements OnInit {
       }
     }
 
-    this.isLoading = true;
+    this.isLoading.set(true);
     let request$: Observable<unknown>;
 
     if (this.editingExporter) {
@@ -245,13 +245,12 @@ export class ReportingExportersFormComponent implements OnInit {
 
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
-        this.isLoading = false;
+        this.isLoading.set(false);
         this.slideInRef.close({ response: true, error: null });
       },
       error: (error: unknown) => {
-        this.isLoading = false;
+        this.isLoading.set(false);
         this.formErrorHandler.handleValidationErrors(error, this.form);
-        this.cdr.markForCheck();
       },
     });
   }

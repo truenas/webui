@@ -6,7 +6,7 @@ import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -27,7 +27,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
   selector: 'ix-license',
   templateUrl: './license.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
@@ -63,6 +62,7 @@ export class LicenseComponent {
     protected api: ApiService,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
+    private translate: TranslateService,
     public slideInRef: SlideInRef<undefined, boolean>,
     @Inject(WINDOW) private window: Window,
   ) {
@@ -82,10 +82,10 @@ export class LicenseComponent {
         this.cdr.markForCheck();
         this.dialogService
           .confirm({
-            title: helptext.update_license.reload_dialog_title,
-            message: helptext.update_license.reload_dialog_message,
+            title: this.translate.instant(helptext.update_license.reload_dialog_title),
+            message: this.translate.instant(helptext.update_license.reload_dialog_message),
             hideCheckbox: true,
-            buttonText: helptext.update_license.reload_dialog_action,
+            buttonText: this.translate.instant(helptext.update_license.reload_dialog_action),
             hideCancel: true,
             disableClose: true,
           })

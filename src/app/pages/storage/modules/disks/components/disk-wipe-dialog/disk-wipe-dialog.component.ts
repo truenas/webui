@@ -17,6 +17,7 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -26,7 +27,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './disk-wipe-dialog.component.html',
   styleUrls: ['./disk-wipe-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogTitle,
     WarningComponent,
@@ -46,7 +46,7 @@ export class DiskWipeDialog {
   });
 
   readonly tooltips = {
-    wipe_method: helptextDisks.dw_wipe_method_tooltip,
+    wipe_method: helptextDisks.wipeMethodTooltip,
   };
 
   readonly wipeMethods$ = of([
@@ -74,14 +74,14 @@ export class DiskWipeDialog {
     @Inject(MAT_DIALOG_DATA) public data: { diskName: string; exportedPool: string },
   ) { }
 
-  get title(): string {
+  get title(): TranslatedString {
     return this.translate.instant('Wipe Disk {name}', { name: this.data.diskName });
   }
 
   onSubmit(): void {
     this.dialogService.confirm({
       title: this.title,
-      message: 'Wipe this disk?',
+      message: this.translate.instant('Wipe this disk?'),
     })
       .pipe(
         filter(Boolean),

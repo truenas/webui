@@ -27,7 +27,7 @@ import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
+import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
@@ -46,6 +46,7 @@ import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi
 import { DeleteTargetDialog } from 'app/pages/sharing/iscsi/target/delete-target-dialog/delete-target-dialog.component';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
 import { IscsiService } from 'app/services/iscsi.service';
+import { LicenseService } from 'app/services/license.service';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectService } from 'app/store/services/services.selectors';
 
@@ -55,7 +56,6 @@ import { selectService } from 'app/store/services/services.selectors';
   templateUrl: './iscsi-card.component.html',
   styleUrls: ['./iscsi-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatToolbarRow,
@@ -88,7 +88,7 @@ export class IscsiCardComponent implements OnInit {
   targets = signal<IscsiTarget[] | null>(null);
 
   protected readonly hasFibreChannel = toSignal(
-    this.iscsiService.hasFibreChannel().pipe(startWith(false)),
+    this.license.hasFibreChannel$.pipe(startWith(false)),
   );
 
   protected readonly searchableElements = iscsiCardElements;
@@ -110,7 +110,7 @@ export class IscsiCardComponent implements OnInit {
       hidden: true,
       getValue: (row) => this.translate.instant(iscsiTargetModeNames.get(row.mode) || row.mode) || '-',
     }),
-    actionsColumn({
+    actionsWithMenuColumn({
       actions: [
         {
           iconName: iconMarker('edit'),
@@ -139,6 +139,7 @@ export class IscsiCardComponent implements OnInit {
     private matDialog: MatDialog,
     private iscsiService: IscsiService,
     private cdr: ChangeDetectorRef,
+    private license: LicenseService,
   ) {
     effect(() => {
       if (this.targets()?.some((target) => target.mode !== IscsiTargetMode.Iscsi)) {

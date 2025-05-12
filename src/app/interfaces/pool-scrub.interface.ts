@@ -1,7 +1,7 @@
 import { PoolScrubAction } from 'app/enums/pool-scrub-action.enum';
 import { Schedule } from 'app/interfaces/schedule.interface';
 
-export interface PoolScrubTask {
+export interface ScrubTask {
   description: string;
   enabled: boolean;
   id: number;
@@ -11,7 +11,7 @@ export interface PoolScrubTask {
   threshold: number;
 }
 
-export type CreatePoolScrubTask = Omit<PoolScrubTask, 'id' | 'pool_name'>;
+export type CreateScrubTask = Omit<ScrubTask, 'id' | 'pool_name'>;
 
 export type PoolScrubTaskParams = [
   poolId: number,

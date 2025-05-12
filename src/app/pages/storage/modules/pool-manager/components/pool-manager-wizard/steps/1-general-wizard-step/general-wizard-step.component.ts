@@ -11,7 +11,7 @@ import {
 } from 'rxjs';
 import { startWith } from 'rxjs/operators';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
-import { helptextManager } from 'app/helptext/storage/volumes/manager/manager';
+import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
 import { Pool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -33,7 +33,6 @@ const defaultEncryptionStandard = 'AES-256-GCM';
   templateUrl: './general-wizard-step.component.html',
   styleUrls: ['./general-wizard-step.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxInputComponent,
@@ -114,7 +113,7 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
       this.dialog
         .confirm({
           title: this.translate.instant('Warning'),
-          message: helptextManager.manager_encryption_message,
+          message: this.translate.instant(helptextPoolCreation.encryptionMessage),
           buttonText: this.translate.instant('I Understand'),
         })
         .pipe(untilDestroyed(this))

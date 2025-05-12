@@ -7,6 +7,7 @@ import {
   nfsBasicPermissionLabels,
 } from 'app/enums/nfs-acl.enum';
 import { areNfsPermissionsBasic, NfsAclItem } from 'app/interfaces/acl.interface';
+import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import {
   PermissionItem,
   PermissionsItemType,
@@ -21,12 +22,12 @@ export function nfsAceToPermissionItem(translate: TranslateService, ace: NfsAclI
     case NfsAclTag.User:
     case NfsAclTag.Owner:
       type = PermissionsItemType.User;
-      name = `${name} - ${getAceWhoString(ace)}`;
+      name = ignoreTranslation(`${name} - ${getAceWhoString(ace)}`);
       break;
     case NfsAclTag.Group:
     case NfsAclTag.UserGroup:
       type = PermissionsItemType.Group;
-      name = `${name} - ${getAceWhoString(ace)}`;
+      name = ignoreTranslation(`${name} - ${getAceWhoString(ace)}`);
       break;
     default:
       type = PermissionsItemType.Other;

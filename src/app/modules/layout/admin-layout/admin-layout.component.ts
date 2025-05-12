@@ -38,6 +38,7 @@ import { TopbarComponent } from 'app/modules/layout/topbar/topbar.component';
 import { TruenasLogoComponent } from 'app/modules/layout/topbar/truenas-logo/truenas-logo.component';
 import { DefaultPageHeaderComponent } from 'app/modules/page-header/default-page-header/default-page-header.component';
 import { SlideInControllerComponent } from 'app/modules/slide-ins/components/slide-in-controller/slide-in-controller.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ThemeService } from 'app/modules/theme/theme.service';
 import { SentryConfigurationService } from 'app/services/errors/sentry-configuration.service';
 import { SessionTimeoutService } from 'app/services/session-timeout.service';
@@ -45,7 +46,7 @@ import { AppState } from 'app/store';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectHasConsoleFooter } from 'app/store/system-config/system-config.selectors';
 import {
-  selectCopyrightHtml, selectProductType, waitForSystemInfo,
+  selectCopyrightHtml, selectIsEnterprise, selectProductType, waitForSystemInfo,
 } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
@@ -54,8 +55,8 @@ import {
   templateUrl: './admin-layout.component.html',
   styleUrls: ['./admin-layout.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
+    TestDirective,
     MatSidenavContainer,
     MatSidenav,
     IxIconComponent,
@@ -84,6 +85,8 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly hasConsoleFooter$ = this.store$.select(selectHasConsoleFooter);
   readonly copyrightHtml = toSignal(this.store$.select(selectCopyrightHtml));
   readonly productType = toSignal(this.store$.select(selectProductType));
+  readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
+
   protected currentMessageHref = computed(() => `${exploreNasEnterpriseLink}?m=${hashMessage(this.productType())}`);
 
   get sidenavWidth(): string {

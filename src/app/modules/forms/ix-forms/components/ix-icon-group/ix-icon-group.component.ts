@@ -11,6 +11,7 @@ import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
 
 @UntilDestroy()
 @Component({
@@ -18,7 +19,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './ix-icon-group.component.html',
   styleUrls: ['./ix-icon-group.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxErrorsComponent,
     IxIconComponent,
@@ -34,8 +34,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 })
 export class IxIconGroupComponent implements ControlValueAccessor {
   readonly options = input.required<IconGroupOption[]>();
-  readonly label = input<string>();
-  readonly tooltip = input<string>();
+  readonly label = input<TranslatedString>();
+  readonly tooltip = input<TranslatedString>();
   readonly required = input<boolean>(false);
   readonly showLabels = input<boolean>(false);
 

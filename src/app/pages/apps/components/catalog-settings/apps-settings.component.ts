@@ -44,7 +44,6 @@ import { DockerStore } from 'app/pages/apps/store/docker.store';
   templateUrl: './apps-settings.component.html',
   styleUrls: ['./apps-settings.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     ModalHeaderComponent,
@@ -88,8 +87,8 @@ export class AppsSettingsComponent implements OnInit {
   );
 
   readonly tooltips = {
-    preferred_trains: helptextApps.catalogForm.preferredTrains.tooltip,
-    install_nvidia_driver: helptextApps.catalogForm.installNvidiaDriver.tooltip,
+    preferred_trains: helptextApps.settingsForm.preferredTrains.tooltip,
+    install_nvidia_driver: helptextApps.settingsForm.installNvidiaDriver.tooltip,
   };
 
   constructor(

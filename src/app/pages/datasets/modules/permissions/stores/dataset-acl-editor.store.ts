@@ -173,8 +173,8 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
       switchMap(() => {
         if (this.storageService.isDatasetTopLevel(this.get().mountpoint.replace('mnt/', ''))) {
           return this.dialogService.confirm({
-            title: helptextAcl.dataset_acl_dialog_warning,
-            message: helptextAcl.dataset_acl_toplevel_dialog_message,
+            title: this.translate.instant(helptextAcl.warningTitle),
+            message: this.translate.instant(helptextAcl.topLevelDialogMessage),
           });
         }
 
@@ -243,8 +243,8 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
     return this.dialogService.jobDialog(
       this.api.job('filesystem.setacl', [setAcl]),
       {
-        title: this.translate.instant(helptextAcl.save_dialog.title),
-        description: this.translate.instant(helptextAcl.save_dialog.message),
+        title: this.translate.instant(helptextAcl.saveDialog.title),
+        description: this.translate.instant(helptextAcl.saveDialog.message),
       },
     )
       .afterClosed()

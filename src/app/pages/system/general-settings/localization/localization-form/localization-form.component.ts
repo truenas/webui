@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, Component, Inject, OnInit,
   signal,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
@@ -41,7 +41,6 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   templateUrl: './localization-form.component.html',
   styleUrls: ['./localization-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
@@ -75,21 +74,21 @@ export class LocalizationFormComponent implements OnInit {
 
   protected language = {
     fcName: 'language',
-    label: helptext.stg_language.placeholder,
-    tooltip: helptext.stg_language.tooltip,
-    hint: helptext.stg_language.hint,
+    label: helptext.language.label,
+    tooltip: helptext.language.tooltip,
+    hint: helptext.language.hint,
     provider: new SimpleAsyncComboboxProvider(this.sysGeneralService.languageOptions(this.sortLanguagesByName)),
   };
 
   protected kbdMap = {
     fcName: 'kbdmap',
-    label: helptext.stg_kbdmap.placeholder,
+    label: helptext.kbdmap.label,
     options: this.sysGeneralService.kbdMapChoices(),
   };
 
   protected timezone = {
     fcName: 'timezone',
-    label: helptext.stg_timezone.placeholder,
+    label: helptext.timezone.label,
     provider: new SimpleAsyncComboboxProvider(this.sysGeneralService.timezoneChoices().pipe(map(
       (tzChoices) => sortBy(tzChoices, [(option) => option.label.toLowerCase()]),
     ))),
@@ -97,13 +96,13 @@ export class LocalizationFormComponent implements OnInit {
 
   protected dateFormat = {
     fcName: 'date_format',
-    label: helptext.date_format.placeholder,
+    label: helptext.dateFormat.label,
     options: of<Option[]>([]),
   };
 
   protected timeFormat = {
     fcName: 'time_format',
-    label: helptext.time_format.placeholder,
+    label: helptext.timeFormat.label,
     options: of<Option[]>([]),
   };
 
@@ -116,7 +115,6 @@ export class LocalizationFormComponent implements OnInit {
     protected api: ApiService,
     protected langService: LanguageService,
     private errorHandler: FormErrorHandlerService,
-    private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,
     public slideInRef: SlideInRef<LocalizationSettings, boolean>,
     @Inject(WINDOW) private window: Window,
@@ -174,12 +172,10 @@ export class LocalizationFormComponent implements OnInit {
         this.slideInRef.close({ response: true, error: null });
         this.langService.setLanguage(values.language);
         this.setTimeOptions(payload.timezone);
-        this.cdr.markForCheck();
       },
       error: (error: unknown) => {
         this.isFormLoading.set(false);
         this.errorHandler.handleValidationErrors(error, this.formGroup);
-        this.cdr.markForCheck();
       },
     });
   }

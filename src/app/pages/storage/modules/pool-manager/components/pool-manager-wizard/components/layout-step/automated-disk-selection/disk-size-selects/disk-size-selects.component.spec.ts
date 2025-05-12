@@ -5,7 +5,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { Subject } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { DiskType } from 'app/enums/disk-type.enum';
-import { VdevType } from 'app/enums/v-dev-type.enum';
+import { VDevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
@@ -45,7 +45,7 @@ describe('DiskSizeSelectsComponent', () => {
   beforeEach(async () => {
     spectator = createComponent({
       props: {
-        type: VdevType.Spare,
+        type: VDevType.Spare,
         inventory: inventoryDisks,
         isStepActive: true,
       },
@@ -67,7 +67,7 @@ describe('DiskSizeSelectsComponent', () => {
       await diskSizeSelect.setValue('20 GiB (HDD)');
 
       expect(spectator.inject(PoolManagerStore).setTopologyCategoryDiskSizes).toHaveBeenCalledWith(
-        VdevType.Spare,
+        VDevType.Spare,
         {
           diskType: DiskType.Hdd,
           diskSize: 20 * GiB,
@@ -96,7 +96,7 @@ describe('DiskSizeSelectsComponent', () => {
       await minimumCheckbox.setValue(true);
 
       expect(spectator.inject(PoolManagerStore).setTopologyCategoryDiskSizes).toHaveBeenLastCalledWith(
-        VdevType.Spare,
+        VDevType.Spare,
         {
           diskSize: 20 * GiB,
           diskType: DiskType.Hdd,
@@ -119,7 +119,7 @@ describe('DiskSizeSelectsComponent', () => {
 
     expect(await diskSizeSelect.getValue()).toBe('10 GiB (HDD)');
     expect(spectator.inject(PoolManagerStore).setTopologyCategoryDiskSizes).toHaveBeenCalledWith(
-      VdevType.Spare,
+      VDevType.Spare,
       {
         diskType: DiskType.Hdd,
         diskSize: 10 * GiB,

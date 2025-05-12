@@ -10,7 +10,7 @@ import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { PoolInstance } from 'app/interfaces/pool.interface';
-import { TopologyItem } from 'app/interfaces/storage.interface';
+import { VDevItem } from 'app/interfaces/storage.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { TreeHarness } from 'app/modules/ix-tree/testing/tree.harness';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
@@ -33,7 +33,7 @@ const oneDisk = {
     allocated: 5607686144,
     fragmentation: 4,
   },
-} as TopologyItem;
+} as VDevItem;
 
 const poolInstance = {
   guid: 'boot-pool',

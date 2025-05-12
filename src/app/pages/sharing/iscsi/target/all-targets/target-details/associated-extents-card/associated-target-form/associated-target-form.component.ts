@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject,
+  ChangeDetectionStrategy, Component, Inject,
   signal,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
@@ -14,7 +14,7 @@ import { of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
-import { helptextSharingIscsi } from 'app/helptext/sharing';
+import { helptextIscsi } from 'app/helptext/sharing';
 import { AssociatedTargetDialogData, IscsiTargetExtentUpdate } from 'app/interfaces/iscsi.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -31,7 +31,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
   styleUrls: ['./associated-target-form.component.scss'],
   templateUrl: './associated-target-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogContent,
     MatDialogTitle,
@@ -62,8 +61,8 @@ export class AssociatedTargetFormComponent {
   extents$ = of(this.data.extents).pipe(idNameArrayToOptions());
 
   readonly tooltips = {
-    lunid: helptextSharingIscsi.associated_target_tooltip_lunid,
-    extent: helptextSharingIscsi.associated_target_tooltip_extent,
+    lunid: helptextIscsi.associated_target_tooltip_lunid,
+    extent: helptextIscsi.associated_target_tooltip_extent,
   };
 
   protected readonly requiredRoles = [
@@ -76,7 +75,6 @@ export class AssociatedTargetFormComponent {
     private formBuilder: FormBuilder,
     private api: ApiService,
     private errorHandler: FormErrorHandlerService,
-    private cdr: ChangeDetectorRef,
     private loader: LoaderService,
     @Inject(MAT_DIALOG_DATA) public data: AssociatedTargetDialogData,
     public dialogRef: MatDialogRef<AssociatedTargetFormComponent>,
@@ -101,7 +99,6 @@ export class AssociatedTargetFormComponent {
       error: (error: unknown) => {
         this.isLoading.set(false);
         this.errorHandler.handleValidationErrors(error, this.form);
-        this.cdr.markForCheck();
       },
     });
   }

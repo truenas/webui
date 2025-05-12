@@ -1,5 +1,6 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit,
+  signal,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -26,7 +27,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
   selector: 'ix-kerberos-realms-form',
   templateUrl: './kerberos-realms-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
@@ -50,7 +50,7 @@ export class KerberosRealmsFormComponent implements OnInit {
     return !this.editingRealm;
   }
 
-  isFormLoading = false;
+  protected isFormLoading = signal(false);
 
   form = this.fb.group({
     realm: ['', Validators.required],
@@ -60,10 +60,10 @@ export class KerberosRealmsFormComponent implements OnInit {
   });
 
   readonly tooltips = {
-    realm: helptextKerberosRealms.krbrealm_form_realm_tooltip,
-    kdc: `${helptextKerberosRealms.krbrealm_form_kdc_tooltip} ${helptextKerberosRealms.multiple_values}`,
-    admin_server: `${helptextKerberosRealms.krbrealm_form_admin_server_tooltip} ${helptextKerberosRealms.multiple_values}`,
-    kpasswd_server: `${helptextKerberosRealms.krbrealm_form_kpasswd_server_tooltip} ${helptextKerberosRealms.multiple_values}`,
+    realm: helptextKerberosRealms.realmTooltip,
+    kdc: `${helptextKerberosRealms.kdcTooltip} ${helptextKerberosRealms.multipleValues}`,
+    admin_server: `${helptextKerberosRealms.adminServersTooltip} ${helptextKerberosRealms.multipleValues}`,
+    kpasswd_server: `${helptextKerberosRealms.passwordServersTooltip} ${helptextKerberosRealms.multipleValues}`,
   };
 
   get title(): string {
@@ -75,7 +75,6 @@ export class KerberosRealmsFormComponent implements OnInit {
   constructor(
     private api: ApiService,
     private errorHandler: FormErrorHandlerService,
-    private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
     private translate: TranslateService,
     public slideInRef: SlideInRef<KerberosRealm | undefined, boolean>,
@@ -95,7 +94,7 @@ export class KerberosRealmsFormComponent implements OnInit {
   onSubmit(): void {
     const values = this.form.value;
 
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
     let request$: Observable<unknown>;
     if (this.editingRealm) {
       request$ = this.api.call('kerberos.realm.update', [
@@ -108,14 +107,12 @@ export class KerberosRealmsFormComponent implements OnInit {
 
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
-        this.isFormLoading = false;
-        this.cdr.markForCheck();
+        this.isFormLoading.set(false);
         this.slideInRef.close({ response: true, error: null });
       },
       error: (error: unknown) => {
-        this.isFormLoading = false;
+        this.isFormLoading.set(false);
         this.errorHandler.handleValidationErrors(error, this.form);
-        this.cdr.markForCheck();
       },
     });
   }

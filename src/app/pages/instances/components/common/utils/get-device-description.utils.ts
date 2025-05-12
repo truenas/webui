@@ -11,7 +11,8 @@ export function getDeviceDescription(translate: TranslateService, device: Virtua
   const typeLabel = translate.instant(virtualizationDeviceTypeLabels.get(device.dev_type) || device.dev_type);
 
   if (device.dev_type === VirtualizationDeviceType.Nic) {
-    return `${typeLabel}: ${device.name} (${device.nic_type})`;
+    const nicMac = device.mac ? device.mac : 'Default Mac Address';
+    return `${typeLabel}: ${device.name} (${device.nic_type}) (${nicMac})`;
   }
 
   return `${typeLabel}: ${device.description}`;

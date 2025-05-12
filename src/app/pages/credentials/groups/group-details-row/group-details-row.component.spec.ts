@@ -28,6 +28,7 @@ const dummyGroup = {
   id: 1,
   gid: 1000,
   group: 'dummy',
+  local: true,
   builtin: false,
   smb: true,
   users: [] as number[],
@@ -92,18 +93,43 @@ describe('GroupDetailsRowComponent', () => {
     expect(spectator.query('td')!.getAttribute('colspan')).toBe('5');
   });
 
-  it('should redirect to group members form', async () => {
-    const membersButton = await loader.getHarness(MatButtonHarness.with({ text: 'Members' }));
-    await membersButton.click();
+  describe('Members button', () => {
+    it('should redirect to group members form', async () => {
+      const membersButton = await loader.getHarness(MatButtonHarness.with({ text: 'Members' }));
+      await membersButton.click();
 
-    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/', 'credentials', 'groups', 1, 'members']);
+      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/', 'credentials', 'groups', 1, 'members']);
+    });
+
+    it('does not show Members button for non-local groups', async () => {
+      spectator.setInput('group', { ...dummyGroup, local: false });
+
+      const membersButton = await loader.getHarnessOrNull(MatButtonHarness.with({ text: 'Members' }));
+      expect(membersButton).toBeNull();
+    });
   });
 
-  it('should open edit group form', async () => {
-    const editButton = await loader.getHarness(MatButtonHarness.with({ text: /Edit/ }));
-    await editButton.click();
+  describe('Edit button', () => {
+    it('should open edit group form', async () => {
+      const editButton = await loader.getHarness(MatButtonHarness.with({ text: /Edit/ }));
+      await editButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(GroupFormComponent, { data: dummyGroup });
+      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(GroupFormComponent, { data: dummyGroup });
+    });
+
+    it('does not show Edit button for built-in groups', async () => {
+      spectator.setInput('group', { ...dummyGroup, builtin: true });
+
+      const editButton = await loader.getHarnessOrNull(MatButtonHarness.with({ text: 'Edit' }));
+      expect(editButton).toBeNull();
+    });
+
+    it('does not show Edit button for Active Directory groups', async () => {
+      spectator.setInput('group', { ...dummyGroup, local: false });
+
+      const editButton = await loader.getHarnessOrNull(MatButtonHarness.with({ text: 'Edit' }));
+      expect(editButton).toBeNull();
+    });
   });
 
   it('should open DeleteUserGroup when Delete button is pressed', async () => {

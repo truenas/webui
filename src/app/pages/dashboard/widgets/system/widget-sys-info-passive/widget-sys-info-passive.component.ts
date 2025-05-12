@@ -10,7 +10,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
   filter, map,
@@ -43,7 +43,6 @@ import {
   templateUrl: './widget-sys-info-passive.component.html',
   styleUrls: ['../common/widget-sys-info.scss', './widget-sys-info-passive.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatCardContent,
@@ -107,6 +106,7 @@ export class WidgetSysInfoPassiveComponent {
     private store$: Store<AppState>,
     private router: Router,
     private localeService: LocaleService,
+    private translate: TranslateService,
   ) {
     effect(() => {
       if (!this.systemInfo() && this.canFailover()) {
@@ -117,9 +117,9 @@ export class WidgetSysInfoPassiveComponent {
 
   openDialog(): void {
     this.dialog.confirm({
-      title: helptextSystemFailover.dialog_initiate_failover_title,
-      message: helptextSystemFailover.dialog_initiate_failover_message,
-      buttonText: helptextSystemFailover.dialog_initiate_action,
+      title: this.translate.instant(helptextSystemFailover.failoverDialogTitle),
+      message: this.translate.instant(helptextSystemFailover.failoverDialogMessage),
+      buttonText: this.translate.instant(helptextSystemFailover.failoverButton),
     }).pipe(
       filter(Boolean),
       untilDestroyed(this),

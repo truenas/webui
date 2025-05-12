@@ -7,9 +7,9 @@ import { TranslateModule } from '@ngx-translate/core';
 import { range } from 'lodash-es';
 import { merge, of } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
+import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { generateOptionsRange } from 'app/helpers/options.helper';
-import { helptextManager } from 'app/helptext/storage/volumes/manager/manager';
+import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Option, SelectOption } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
@@ -37,7 +37,6 @@ const maxDisksInDraidGroup = 255;
   templateUrl: './draid-selection.component.html',
   styleUrls: ['./draid-selection.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     DiskSizeSelectsComponent,
@@ -47,7 +46,7 @@ const maxDisksInDraidGroup = 255;
   ],
 })
 export class DraidSelectionComponent implements OnInit, OnChanges {
-  readonly type = input.required<VdevType>();
+  readonly type = input.required<VDevType>();
   readonly layout = input.required<CreateVdevLayout.Draid1 | CreateVdevLayout.Draid2 | CreateVdevLayout.Draid3>();
   readonly inventory = input<DetailsDisk[]>();
   readonly isStepActive = input<boolean>(false);
@@ -72,7 +71,7 @@ export class DraidSelectionComponent implements OnInit, OnChanges {
    */
   private selectedDisks: DetailsDisk[] = [];
 
-  readonly helptext = helptextManager;
+  readonly helptext = helptextPoolCreation;
 
   constructor(
     private formBuilder: FormBuilder,

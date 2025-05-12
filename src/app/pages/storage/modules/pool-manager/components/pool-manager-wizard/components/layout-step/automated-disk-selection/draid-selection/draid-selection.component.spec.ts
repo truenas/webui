@@ -4,7 +4,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { Subject } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { DiskType } from 'app/enums/disk-type.enum';
-import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
+import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
@@ -40,7 +40,7 @@ describe('DraidSelectionComponent', () => {
   beforeEach(async () => {
     spectator = createComponent({
       props: {
-        type: VdevType.Spare,
+        type: VDevType.Spare,
         layout: CreateVdevLayout.Draid1,
         inventory: [
           { type: DiskType.Hdd, size: 10 * GiB, name: 'disk1' },
@@ -171,7 +171,7 @@ describe('DraidSelectionComponent', () => {
 
     const store = spectator.inject(PoolManagerStore);
     expect(store.setAutomaticTopologyCategory).toHaveBeenLastCalledWith(
-      VdevType.Spare,
+      VDevType.Spare,
       {
         draidDataDisks: 2,
         draidSpareDisks: 1,

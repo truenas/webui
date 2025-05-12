@@ -8,7 +8,6 @@ import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 @UntilDestroy()
 @Directive({
   selector: '[disableFocusableElements]',
-  standalone: true,
 })
 export class DisableFocusableElementsDirective implements OnChanges {
   readonly disableFocusableElements = input.required<boolean>();

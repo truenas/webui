@@ -8,7 +8,7 @@ import { isEqual } from 'lodash-es';
 import { merge, of } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { DiskType } from 'app/enums/disk-type.enum';
-import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
+import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { SelectOption } from 'app/interfaces/option.interface';
@@ -27,7 +27,6 @@ import { getDiskTypeSizeMap } from 'app/pages/storage/modules/pool-manager/utils
   selector: 'ix-disk-size-dropdowns',
   templateUrl: './disk-size-selects.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxSelectComponent,
@@ -38,7 +37,7 @@ import { getDiskTypeSizeMap } from 'app/pages/storage/modules/pool-manager/utils
 })
 export class DiskSizeSelectsComponent implements OnChanges {
   readonly layout = input.required<CreateVdevLayout>();
-  readonly type = input.required<VdevType>();
+  readonly type = input.required<VDevType>();
   readonly inventory = input.required<DetailsDisk[]>();
   readonly isStepActive = input(false);
 

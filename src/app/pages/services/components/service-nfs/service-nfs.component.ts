@@ -48,7 +48,6 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   templateUrl: './service-nfs.component.html',
   styleUrls: ['./service-nfs.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
@@ -92,17 +91,17 @@ export class ServiceNfsComponent implements OnInit {
   });
 
   readonly tooltips = {
-    allow_nonroot: helptextServiceNfs.nfs_srv_allow_nonroot_tooltip,
-    bindip: helptextServiceNfs.nfs_srv_bindip_tooltip,
-    servers: helptextServiceNfs.nfs_srv_servers_tooltip,
-    servers_auto: helptextServiceNfs.nfs_srv_servers_auto_tooltip,
-    v4_domain: helptextServiceNfs.nfs_srv_v4_domain_tooltip,
-    protocols: helptextServiceNfs.nfs_srv_protocols_tooltip,
-    v4_krb: helptextServiceNfs.nfs_srv_v4_krb_tooltip,
-    mountd_port: helptextServiceNfs.nfs_srv_mountd_port_tooltip,
-    rpcstatd_port: helptextServiceNfs.nfs_srv_rpcstatd_port_tooltip,
-    rpclockd_port: helptextServiceNfs.nfs_srv_rpclockd_port_tooltip,
-    userd_manage_gids: helptextServiceNfs.userd_manage_gids,
+    allow_nonroot: helptextServiceNfs.allowNonrootTooltip,
+    bindip: helptextServiceNfs.bindipTooltip,
+    servers: helptextServiceNfs.serversTooltip,
+    servers_auto: helptextServiceNfs.serversAutoTooltip,
+    v4_domain: helptextServiceNfs.v4DomainTooltip,
+    protocols: helptextServiceNfs.protocolsTooltip,
+    v4_krb: helptextServiceNfs.v4KrbTooltip,
+    mountd_port: helptextServiceNfs.mountdPortTooltip,
+    rpcstatd_port: helptextServiceNfs.rpcstatdPortTooltip,
+    rpclockd_port: helptextServiceNfs.rpclockdPortTooltip,
+    userd_manage_gids: helptextServiceNfs.userdManageGids,
   };
 
   readonly ipChoices$ = combineLatest([

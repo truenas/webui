@@ -60,6 +60,7 @@ import { TreeDataSource } from 'app/modules/ix-tree/tree-datasource';
 import { TreeFlattener } from 'app/modules/ix-tree/tree-flattener';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetDetailsPanelComponent } from 'app/pages/datasets/components/dataset-details-panel/dataset-details-panel.component';
 import { datasetManagementElements } from 'app/pages/datasets/components/dataset-management/dataset-management.elements';
@@ -74,7 +75,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './dataset-management.component.html',
   styleUrls: ['./dataset-management.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     EmptyComponent,
     FakeProgressBarComponent,
@@ -140,7 +140,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
         "It seems you haven't configured pools yet.",
       )} ${this.translate.instant(
         'Please click the button below to create a pool.',
-      )}`,
+      )}` as TranslatedString,
       button: {
         label: this.translate.instant('Create pool'),
         action: () => this.createPool(),

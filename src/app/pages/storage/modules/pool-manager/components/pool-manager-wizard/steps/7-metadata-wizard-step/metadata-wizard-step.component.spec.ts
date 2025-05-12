@@ -2,8 +2,8 @@ import { CdkStepper } from '@angular/cdk/stepper';
 import { mockProvider, Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
-import { helptextManager } from 'app/helptext/storage/volumes/manager/manager';
+import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
+import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
 import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
 import { LayoutStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/layout-step/layout-step.component';
 import { MetadataWizardStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/7-metadata-wizard-step/metadata-wizard-step.component';
@@ -44,7 +44,7 @@ describe('MetadataWizardStepComponent', () => {
       }),
       mockProvider(PoolManagerStore, {
         topology$: of({
-          [VdevType.Data]: { layout: CreateVdevLayout.Raidz1 },
+          [VDevType.Data]: { layout: CreateVdevLayout.Raidz1 },
         } as PoolManagerTopology),
         getInventoryForStep: jest.fn(() => of(fakeInventory)),
       }),
@@ -57,10 +57,10 @@ describe('MetadataWizardStepComponent', () => {
 
   it('has the correct inputs', () => {
     const layoutComponent = spectator.query(LayoutStepComponent)!;
-    expect(layoutComponent.description).toBe(helptextManager.special_vdev_description);
+    expect(layoutComponent.description).toBe(helptextPoolCreation.specialVdevDescription);
     expect(layoutComponent.canChangeLayout).toBeTruthy();
     expect(layoutComponent.inventory).toStrictEqual([...fakeInventory]);
     expect(layoutComponent.limitLayouts).toStrictEqual([CreateVdevLayout.Mirror, CreateVdevLayout.Stripe]);
-    expect(layoutComponent.type).toStrictEqual(VdevType.Special);
+    expect(layoutComponent.type).toStrictEqual(VDevType.Special);
   });
 });

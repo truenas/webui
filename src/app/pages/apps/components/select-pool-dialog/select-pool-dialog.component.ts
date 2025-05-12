@@ -20,6 +20,7 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -30,7 +31,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './select-pool-dialog.component.html',
   styleUrls: ['./select-pool-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     MatDialogTitle,
@@ -94,7 +94,7 @@ export class SelectPoolDialog implements OnInit {
           });
 
           const poolOptions = pools.map((pool) => ({
-            label: pool.name,
+            label: ignoreTranslation(pool.name),
             value: pool.name,
           }));
           this.pools$ = of(poolOptions);
@@ -112,10 +112,10 @@ export class SelectPoolDialog implements OnInit {
 
   private showNoPoolsWarning(): void {
     this.dialogService.confirm({
-      title: helptextApps.noPool.title,
-      message: helptextApps.noPool.message,
+      title: this.translate.instant(helptextApps.noPool.title),
+      message: this.translate.instant(helptextApps.noPool.message),
       hideCheckbox: true,
-      buttonText: helptextApps.noPool.action,
+      buttonText: this.translate.instant(helptextApps.noPool.action),
     }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
       this.dialogRef.close(false);
       if (!confirmed) {

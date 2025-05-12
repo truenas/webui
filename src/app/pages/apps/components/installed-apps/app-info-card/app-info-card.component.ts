@@ -1,4 +1,3 @@
-import { KeyValuePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, computed, effect, Inject, input, output,
   signal,
@@ -52,7 +51,6 @@ import { RedirectService } from 'app/services/redirect.service';
   templateUrl: './app-info-card.component.html',
   styleUrls: ['./app-info-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     TranslateModule,
     MatCard,
@@ -68,7 +66,6 @@ import { RedirectService } from 'app/services/redirect.service';
     MatCardContent,
     ImgFallbackModule,
     OrNotAvailablePipe,
-    KeyValuePipe,
     MatCardActions,
     CleanLinkPipe,
     AppVersionPipe,
@@ -91,6 +88,19 @@ export class AppInfoCardComponent {
     const app = this.app();
     this.isRollbackPossible.set(false);
     this.updateRollbackSetup(app.name);
+  });
+
+  readonly sortedPortals = computed(() => {
+    const portals = this.app().portals;
+    const entries = Object.entries(portals).map(([label, url]) => ({ label, url }));
+
+    const webUiIndex = entries.findIndex((entry) => entry.label.toLowerCase() === 'web ui');
+    if (webUiIndex > -1) {
+      const [webUi] = entries.splice(webUiIndex, 1);
+      return [webUi, ...entries];
+    }
+
+    return entries;
   });
 
   protected readonly appDetailsRouterUrl = computed<string[]>(() => {
@@ -156,7 +166,7 @@ export class AppInfoCardComponent {
       switchMap(
         (version: string) => this.dialogService.jobDialog(
           this.api.job('app.upgrade', [name, { app_version: version }]),
-          { title: helptextApps.apps.upgrade_dialog.job },
+          { title: this.translate.instant(helptextApps.apps.upgrading) },
         ).afterClosed(),
       ),
       this.errorHandler.withErrorHandler(),
@@ -201,7 +211,7 @@ export class AppInfoCardComponent {
         remove_ix_volumes: options.removeVolumes,
         force_remove_ix_volumes: options.forceRemoveVolumes,
       }]),
-      { title: helptextApps.apps.delete_dialog.job },
+      { title: this.translate.instant(helptextApps.apps.deleting) },
     )
       .afterClosed()
       .pipe(

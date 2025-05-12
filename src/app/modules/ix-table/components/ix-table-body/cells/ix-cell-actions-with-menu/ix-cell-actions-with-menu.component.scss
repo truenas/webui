@@ -1,0 +1,11 @@
+@import 'scss-imports/variables';
+
+.actions {
+  display: flex;
+  gap: 0;
+  justify-content: flex-end;
+
+  @media(max-width: $breakpoint-sm) {
+    flex-wrap: wrap;
+  }
+}

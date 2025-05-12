@@ -144,7 +144,7 @@ describe('LdapComponent', () => {
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
-      helptextLdap.ldap_custactions_clearcache_dialog_message,
+      helptextLdap.cacheBeingRebuilt,
     );
   });
 

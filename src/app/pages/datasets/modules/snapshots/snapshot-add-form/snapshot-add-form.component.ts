@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit, signal,
 } from '@angular/core';
 import {
   AbstractControl, FormBuilder, ReactiveFormsModule, Validators,
@@ -45,7 +45,6 @@ import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service
   selector: 'ix-snapshot-add-form',
   templateUrl: './snapshot-add-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     RequiresRolesDirective,
@@ -67,13 +66,13 @@ import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service
 export class SnapshotAddFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.SnapshotWrite];
 
-  isFormLoading = true;
+  protected isFormLoading = signal(true);
   protected datasetId: string | undefined;
 
   form = this.fb.nonNullable.group({
     dataset: ['', Validators.required],
     name: [this.getDefaultSnapshotName(), [this.validatorsService.withMessage(
-      atLeastOne('naming_schema', [helptextSnapshots.snapshot_add_name_placeholder, helptextSnapshots.snapshot_add_naming_schema_placeholder]),
+      atLeastOne('naming_schema', [helptextSnapshots.nameLabel, helptextSnapshots.namingSchemaLabel]),
       this.translate.instant('Name or Naming Schema must be provided.'),
     ), this.validatorsService.validateOnCondition(
       (control: AbstractControl) => control.value && control.parent?.get('naming_schema')?.value,
@@ -95,7 +94,6 @@ export class SnapshotAddFormComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private cdr: ChangeDetectorRef,
     private api: ApiService,
     private translate: TranslateService,
     private authService: AuthService,
@@ -120,15 +118,13 @@ export class SnapshotAddFormComponent implements OnInit {
       next: ([datasetOptions, namingSchemaOptions]) => {
         this.datasetOptions$ = of(datasetOptions);
         this.namingSchemaOptions$ = of(namingSchemaOptions);
-        this.isFormLoading = false;
+        this.isFormLoading.set(false);
         this.form.controls.name.markAsTouched();
         this.checkForVmsInDataset();
-        this.cdr.markForCheck();
       },
       error: (error: unknown) => {
         this.errorHandler.handleValidationErrors(error, this.form);
-        this.isFormLoading = false;
-        this.cdr.markForCheck();
+        this.isFormLoading.set(false);
       },
     });
 
@@ -158,20 +154,18 @@ export class SnapshotAddFormComponent implements OnInit {
       params.vmware_sync = values.vmware_sync;
     }
 
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
     this.api.call('pool.snapshot.create', [params]).pipe(
       untilDestroyed(this),
     ).subscribe({
       next: () => {
-        this.isFormLoading = false;
+        this.isFormLoading.set(false);
         this.slideInRef.close({ response: true, error: null });
         this.datasetStore.datasetUpdated();
-        this.cdr.markForCheck();
       },
       error: (error: unknown) => {
-        this.isFormLoading = false;
+        this.isFormLoading.set(false);
         this.errorHandler.handleValidationErrors(error, this.form);
-        this.cdr.markForCheck();
       },
     });
   }
@@ -205,19 +199,17 @@ export class SnapshotAddFormComponent implements OnInit {
   }
 
   private checkForVmsInDataset(): void {
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
     this.api.call('vmware.dataset_has_vms', [this.form.controls.dataset.value, this.form.controls.recursive.value])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (hasVmsInDataset) => {
           this.hasVmsInDataset = hasVmsInDataset;
-          this.isFormLoading = false;
-          this.cdr.markForCheck();
+          this.isFormLoading.set(false);
         },
         error: (error: unknown) => {
           this.errorHandler.handleValidationErrors(error, this.form);
-          this.isFormLoading = false;
-          this.cdr.markForCheck();
+          this.isFormLoading.set(false);
         },
       });
   }

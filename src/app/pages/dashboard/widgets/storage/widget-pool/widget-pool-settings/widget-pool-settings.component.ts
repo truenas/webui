@@ -9,6 +9,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { filter, map } from 'rxjs';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { getAllFormErrors } from 'app/modules/forms/ix-forms/utils/get-form-errors.utils';
+import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetSettingsComponent } from 'app/pages/dashboard/types/widget-component.interface';
 import { WidgetSettingsRef } from 'app/pages/dashboard/types/widget-settings-ref.interface';
@@ -20,7 +21,6 @@ import { WidgetPoolSettings } from 'app/pages/dashboard/widgets/storage/widget-p
   templateUrl: './widget-pool-settings.component.html',
   styleUrl: './widget-pool-settings.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxSelectComponent,
@@ -33,7 +33,10 @@ export class WidgetPoolSettingsComponent implements WidgetSettingsComponent<Widg
   });
 
   protected poolOptions$ = this.resources.pools$.pipe(
-    map((pools) => pools.map((pool) => ({ label: pool.name, value: pool.id.toString() }))),
+    map((pools) => pools.map((pool) => ({
+      label: ignoreTranslation(pool.name),
+      value: String(pool.id),
+    }))),
   );
 
   private firstOption = toSignal(this.poolOptions$.pipe(map((opts) => opts[0]?.value)));

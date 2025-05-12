@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit, signal,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -33,7 +33,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './service-snmp.component.html',
   styleUrls: ['./service-snmp.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
@@ -54,7 +53,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 export class ServiceSnmpComponent implements OnInit {
   protected readonly requiredRoles = [Role.SystemGeneralWrite];
 
-  isFormLoading = false;
+  protected isFormLoading = signal(false);
 
   form = this.fb.group({
     location: [''],
@@ -80,22 +79,22 @@ export class ServiceSnmpComponent implements OnInit {
   });
 
   readonly tooltips = {
-    location: helptextServiceSnmp.location_tooltip,
-    contact: helptextServiceSnmp.contact_tooltip,
-    community: helptextServiceSnmp.community_tooltip,
-    v3: helptextServiceSnmp.v3_tooltip,
-    v3_username: helptextServiceSnmp.v3_username_tooltip,
-    v3_authtype: helptextServiceSnmp.v3_authtype_tooltip,
-    v3_password: helptextServiceSnmp.v3_password_tooltip,
-    v3_privproto: helptextServiceSnmp.v3_privproto_tooltip,
-    v3_privpassphrase: helptextServiceSnmp.v3_privpassphrase_tooltip,
-    options: helptextServiceSnmp.options_tooltip,
-    loglevel: helptextServiceSnmp.loglevel_tooltip,
+    location: helptextServiceSnmp.locationTooltip,
+    contact: helptextServiceSnmp.contactTooltip,
+    community: helptextServiceSnmp.communityTooltip,
+    v3: helptextServiceSnmp.v3.tooltip,
+    v3_username: helptextServiceSnmp.v3.usernameTooltip,
+    v3_authtype: helptextServiceSnmp.v3.authTypeTooltip,
+    v3_password: helptextServiceSnmp.v3.passwordTooltip,
+    v3_privproto: helptextServiceSnmp.v3.privprotoTooltip,
+    v3_privpassphrase: helptextServiceSnmp.v3.privpassphraseTooltip,
+    options: helptextServiceSnmp.optionsTooltip,
+    loglevel: helptextServiceSnmp.loglevelTooltip,
   };
 
-  readonly authtypeOptions$ = of(helptextServiceSnmp.v3_authtype_options);
-  readonly privprotoOptions$ = of(helptextServiceSnmp.v3_privproto_options);
-  readonly logLevelOptions$ = of(helptextServiceSnmp.loglevel_options);
+  readonly authtypeOptions$ = of(helptextServiceSnmp.v3.authTypeOptions);
+  readonly privprotoOptions$ = of(helptextServiceSnmp.v3.privprotoOptions);
+  readonly logLevelOptions$ = of(helptextServiceSnmp.loglevelOptions);
 
   get isV3SupportEnabled(): boolean {
     return this.form?.value?.v3 || false;
@@ -105,7 +104,6 @@ export class ServiceSnmpComponent implements OnInit {
     private fb: FormBuilder,
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
-    private cdr: ChangeDetectorRef,
     private formErrorHandler: FormErrorHandlerService,
     private validation: IxValidatorsService,
     private snackbar: SnackbarService,
@@ -122,7 +120,7 @@ export class ServiceSnmpComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
     const values = this.form.value;
     if (!values.v3) {
       values.v3_username = '';
@@ -134,31 +132,27 @@ export class ServiceSnmpComponent implements OnInit {
 
     this.api.call('snmp.update', [values as SnmpConfigUpdate]).pipe(untilDestroyed(this)).subscribe({
       next: () => {
-        this.isFormLoading = false;
+        this.isFormLoading.set(false);
         this.snackbar.success(this.translate.instant('Service configuration saved'));
         this.slideInRef.close({ response: true, error: null });
-        this.cdr.markForCheck();
       },
       error: (error: unknown) => {
-        this.isFormLoading = false;
+        this.isFormLoading.set(false);
         this.formErrorHandler.handleValidationErrors(error, this.form);
-        this.cdr.markForCheck();
       },
     });
   }
 
   private loadCurrentSettings(): void {
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
     this.api.call('snmp.config').pipe(untilDestroyed(this)).subscribe({
       next: (config) => {
-        this.isFormLoading = false;
+        this.isFormLoading.set(false);
         this.form.patchValue(config);
-        this.cdr.markForCheck();
       },
       error: (error: unknown) => {
         this.errorHandler.showErrorModal(error);
-        this.isFormLoading = false;
-        this.cdr.markForCheck();
+        this.isFormLoading.set(false);
       },
     });
   }

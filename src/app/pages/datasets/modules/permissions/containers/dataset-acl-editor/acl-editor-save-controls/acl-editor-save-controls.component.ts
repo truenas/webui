@@ -5,7 +5,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { filter, map, switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
@@ -23,7 +23,6 @@ import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/st
   templateUrl: './acl-editor-save-controls.component.html',
   styleUrls: ['./acl-editor-save-controls.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxCheckboxComponent,
@@ -55,6 +54,7 @@ export class AclEditorSaveControlsComponent implements OnInit {
     private formBuilder: FormBuilder,
     private store: DatasetAclEditorStore,
     private dialogService: DialogService,
+    private translate: TranslateService,
     private api: ApiService,
   ) {}
 
@@ -89,8 +89,8 @@ export class AclEditorSaveControlsComponent implements OnInit {
       filter(Boolean),
       switchMap(() => {
         return this.dialogService.confirm({
-          title: helptextAcl.dataset_acl_recursive_dialog_warning,
-          message: helptextAcl.dataset_acl_recursive_dialog_warning_message,
+          title: this.translate.instant(helptextAcl.recursiveDialogTitle),
+          message: this.translate.instant(helptextAcl.recursiveDialogMessage),
         });
       }),
       untilDestroyed(this),

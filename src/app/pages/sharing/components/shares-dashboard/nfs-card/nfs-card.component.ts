@@ -19,7 +19,7 @@ import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
+import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { toggleColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
@@ -44,7 +44,6 @@ import { selectService } from 'app/store/services/services.selectors';
   templateUrl: './nfs-card.component.html',
   styleUrls: ['./nfs-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatToolbarRow,
@@ -85,7 +84,7 @@ export class NfsCardComponent implements OnInit {
       onRowToggle: (row: NfsShare) => this.onChangeEnabledState(row),
       requiredRoles: this.requiredRoles,
     }),
-    actionsColumn({
+    actionsWithMenuColumn({
       cssClass: 'tight-actions',
       actions: [
         {

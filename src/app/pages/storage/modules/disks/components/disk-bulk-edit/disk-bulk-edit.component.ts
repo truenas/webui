@@ -10,7 +10,6 @@ import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
-import { translateOptions } from 'app/helpers/translate.helper';
 import { helptextDisks } from 'app/helptext/storage/disks/disks';
 import { Disk, DiskUpdate } from 'app/interfaces/disk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -23,6 +22,7 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TranslateOptionsPipe } from 'app/modules/translate/translate-options/translate-options.pipe';
 import { ApiService } from 'app/modules/websocket/api.service';
 
 @UntilDestroy()
@@ -30,7 +30,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
   selector: 'ix-disk-bulk-edit',
   templateUrl: 'disk-bulk-edit.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
@@ -44,6 +43,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
     MatButton,
     TestDirective,
     TranslateModule,
+    TranslateOptionsPipe,
   ],
 })
 export class DiskBulkEditComponent {
@@ -58,9 +58,9 @@ export class DiskBulkEditComponent {
   });
 
   readonly helptext = helptextDisks;
-  readonly helptextBulkEdit = helptextDisks.bulk_edit;
-  readonly hddstandbyOptions$ = of(helptextDisks.disk_form_hddstandby_options);
-  readonly advpowermgmtOptions$ = of(translateOptions(this.translate, this.helptext.disk_form_advpowermgmt_options));
+  readonly helptextBulkEdit = helptextDisks.bulkEdit;
+  readonly hddstandbyOptions$ = of(helptextDisks.standbyOptions);
+  readonly advpowermgmtOptions$ = of(helptextDisks.advancedPowerManagementOptions);
 
   constructor(
     private fb: NonNullableFormBuilder,
@@ -141,7 +141,7 @@ export class DiskBulkEditComponent {
             if (result.error !== null) {
               this.slideInRef.close({ response: false, error: result.error });
               this.dialogService.error({
-                title: helptextDisks.dialog_error,
+                title: helptextDisks.errorDialogTitle,
                 message: result.error,
               });
               return false;

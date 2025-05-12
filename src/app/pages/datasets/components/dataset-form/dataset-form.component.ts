@@ -1,9 +1,8 @@
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
-  OnInit,
+  OnInit, signal,
   viewChild,
 } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
@@ -53,7 +52,6 @@ import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
   selector: 'ix-dataset-form',
   templateUrl: './dataset-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     RequiresRolesDirective,
@@ -84,7 +82,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
   isEncryptionValid = true;
   isOtherOptionsValid = true;
 
-  isLoading = false;
+  protected isLoading = signal(false);
   isAdvancedMode = false;
   datasetPreset = DatasetPreset.Generic;
 
@@ -134,7 +132,6 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
 
   constructor(
     private api: ApiService,
-    private cdr: ChangeDetectorRef,
     private dialog: DialogService,
     private datasetFormService: DatasetFormService,
     private router: Router,
@@ -174,8 +171,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
   }
 
   setForNew(): void {
-    this.isLoading = true;
-    this.cdr.markForCheck();
+    this.isLoading.set(true);
 
     this.datasetFormService.checkAndWarnForLengthAndDepth(this.slideInData.datasetId).pipe(
       filter(Boolean),
@@ -184,12 +180,10 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
     ).subscribe({
       next: (dataset) => {
         this.parentDataset = dataset;
-        this.isLoading = false;
-        this.cdr.markForCheck();
+        this.isLoading.set(false);
       },
       error: (error: unknown) => {
-        this.isLoading = false;
-        this.cdr.markForCheck();
+        this.isLoading.set(false);
         this.errorHandler.showErrorModal(error);
       },
     });
@@ -205,19 +199,16 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
       requests.push(this.datasetFormService.loadDataset(parentId));
     }
 
-    this.isLoading = true;
-    this.cdr.markForCheck();
+    this.isLoading.set(true);
 
     forkJoin(requests).pipe(untilDestroyed(this)).subscribe({
       next: ([existingDataset, parent]) => {
         this.existingDataset = existingDataset;
         this.parentDataset = parent;
-        this.isLoading = false;
-        this.cdr.markForCheck();
+        this.isLoading.set(false);
       },
       error: (error: unknown) => {
-        this.isLoading = false;
-        this.cdr.markForCheck();
+        this.isLoading.set(false);
         this.errorHandler.showErrorModal(error);
       },
     });
@@ -225,7 +216,6 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
 
   toggleAdvancedMode(): void {
     this.isAdvancedMode = !this.isAdvancedMode;
-    this.cdr.markForCheck();
   }
 
   onSwitchToAdvanced(): void {
@@ -233,8 +223,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
   }
 
   onSubmit(): void {
-    this.isLoading = true;
-    this.cdr.markForCheck();
+    this.isLoading.set(true);
 
     const payload = this.preparePayload();
     const request$ = this.isNew
@@ -259,8 +248,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
         if (this.nameAndOptionsSection().canCreateNfs && datasetPresetFormValue.create_nfs) {
           this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Nfs }));
         }
-        this.isLoading = false;
-        this.cdr.markForCheck();
+        this.isLoading.set(false);
         this.slideInRef.close({ response: createdDataset, error: null });
         if (shouldGoToEditor) {
           this.router.navigate(['/', 'datasets', 'acl', 'edit'], {
@@ -275,8 +263,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
         }
       },
       error: (error: unknown) => {
-        this.isLoading = false;
-        this.cdr.markForCheck();
+        this.isLoading.set(false);
         this.errorHandler.showErrorModal(error);
       },
     });
@@ -303,11 +290,11 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
 
   private aclDialog(): Observable<boolean> {
     return this.dialog.confirm({
-      title: helptextDatasetForm.afterSubmitDialog.title,
-      message: helptextDatasetForm.afterSubmitDialog.message,
+      title: this.translate.instant(helptextDatasetForm.afterSubmitDialog.title),
+      message: this.translate.instant(helptextDatasetForm.afterSubmitDialog.message),
       hideCheckbox: true,
-      buttonText: helptextDatasetForm.afterSubmitDialog.actionBtn,
-      cancelText: helptextDatasetForm.afterSubmitDialog.cancelBtn,
+      buttonText: this.translate.instant(helptextDatasetForm.afterSubmitDialog.actionBtn),
+      cancelText: this.translate.instant(helptextDatasetForm.afterSubmitDialog.cancelBtn),
     });
   }
 

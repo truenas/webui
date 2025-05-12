@@ -14,7 +14,7 @@ import { switchMap } from 'rxjs/operators';
 import { MiB } from 'app/constants/bytes.constant';
 import { Role } from 'app/enums/role.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
-import { VirtualizationVolume } from 'app/interfaces/virtualization.interface';
+import { VirtualizationGlobalConfig, VirtualizationVolume } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
@@ -38,6 +38,7 @@ import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { IxImportIsoDialogComponent } from 'app/pages/instances/components/common/volumes-dialog/import-iso-dialog/import-iso-dialog.component';
 import {
   ImportZvolsDialog,
 } from 'app/pages/instances/components/common/volumes-dialog/import-zvol-dialog/import-zvols-dialog.component';
@@ -51,6 +52,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export interface VolumesDialogOptions {
   selectionMode: boolean;
+  config: VirtualizationGlobalConfig | null;
 }
 
 @UntilDestroy()
@@ -58,7 +60,6 @@ export interface VolumesDialogOptions {
   selector: 'ix-volumes-dialog',
   templateUrl: './volumes-dialog.component.html',
   styleUrls: ['./volumes-dialog.component.scss'],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatDialogTitle,
@@ -78,7 +79,7 @@ export interface VolumesDialogOptions {
   ],
 })
 export class VolumesDialog implements OnInit {
-  private options = signal<VolumesDialogOptions>({ selectionMode: false });
+  private options = signal<VolumesDialogOptions>({ selectionMode: false, config: null });
 
   protected requiredRoles = [Role.VirtImageWrite];
 
@@ -93,6 +94,9 @@ export class VolumesDialog implements OnInit {
       textColumn({
         title: this.translate.instant('Size'),
         getValue: (row) => {
+          if (!row.config.size) {
+            return this.translate.instant('Unknown');
+          }
           return buildNormalizedFileSize(row.config.size * MiB);
         },
       }),
@@ -157,7 +161,7 @@ export class VolumesDialog implements OnInit {
     protected dialogRef: MatDialogRef<VolumesDialog, VirtualizationVolume | null>,
     @Inject(MAT_DIALOG_DATA) options: VolumesDialogOptions,
   ) {
-    this.options.set(options || { selectionMode: false });
+    this.options.set(options || { selectionMode: false, config: null });
   }
 
   ngOnInit(): void {
@@ -207,5 +211,21 @@ export class VolumesDialog implements OnInit {
 
   protected onImageUploaded(): void {
     this.dataProvider.load();
+  }
+
+  protected importIso(): void {
+    this.matDialog.open(IxImportIsoDialogComponent, {
+      minWidth: '500px',
+      data: {
+        config: this.options().config,
+      },
+    }).afterClosed().pipe(
+      filter(Boolean),
+      untilDestroyed(this),
+    ).subscribe({
+      next: () => {
+        this.dataProvider.load();
+      },
+    });
   }
 }

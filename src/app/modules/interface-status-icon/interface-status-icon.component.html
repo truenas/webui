@@ -1,11 +1,7 @@
-@if (isLinkUp()) {
-  <ix-icon
-    [id]="elementId"
-    [name]="statusIcon()"
-    [matTooltip]="tooltipText()"
-  ></ix-icon>
-} @else {
-  <ix-icon name="ix-network-upload-download-disabled"></ix-icon>
-}
-
+<ix-icon
+  [id]="elementId"
+  [name]="statusIcon()"
+  [matTooltip]="tooltipText()"
+  [ngClass]="{ 'link-up': isLinkUp(), 'link-down': !isLinkUp() }"
+></ix-icon>
 

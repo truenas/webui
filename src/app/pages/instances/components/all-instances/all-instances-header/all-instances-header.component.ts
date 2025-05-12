@@ -33,7 +33,6 @@ import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtual
   selector: 'ix-all-instances-header',
   templateUrl: './all-instances-header.component.html',
   styleUrls: ['./all-instances-header.component.scss'],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TranslateModule,

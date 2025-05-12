@@ -12,6 +12,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { QueryComparator } from 'app/interfaces/query-api.interface';
 import { QueryParserService } from 'app/modules/forms/search-input/services/query-parser/query-parser.service';
 import { PropertyType, SearchProperty } from 'app/modules/forms/search-input/types/search-property.interface';
+import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 
 const inComparator = 'in';
 const ninComparator = 'nin';
@@ -279,14 +280,20 @@ export class AdvancedSearchAutocompleteService<T> {
           return searchedProperty?.valueSuggestions$ || of([]);
         }
 
-        return of(this.properties.map((property) => ({ label: property.label, value: property.label })));
+        return of(this.properties.map((property) => ({
+          label: ignoreTranslation(property.label),
+          value: property.label,
+        })));
 
       case ContextType.Logical:
-        return of(logicalSuggestions.map((property) => ({ label: property, value: property })));
+        return of(logicalSuggestions.map((property) => ({
+          label: ignoreTranslation(property),
+          value: property,
+        })));
 
       case ContextType.Comparator:
         return of(comparatorSuggestions.map((property, index) => ({
-          label: this.comparatorHints?.[property] || property,
+          label: ignoreTranslation(this.comparatorHints?.[property] || property),
           value: property.toUpperCase(),
           boost: comparatorSuggestions.length - index,
         })));

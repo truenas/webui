@@ -11,13 +11,13 @@ import { ChartSchemaNode } from 'app/interfaces/app.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
 
 @Component({
   selector: 'ix-list',
   templateUrl: './ix-list.component.html',
   styleUrls: ['./ix-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxLabelComponent,
     MatButton,
@@ -28,8 +28,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 })
 export class IxListComponent implements AfterViewInit {
   readonly formArray = input<AbstractControl>();
-  readonly label = input<string>();
-  readonly tooltip = input<string>();
+  readonly label = input<TranslatedString>();
+  readonly tooltip = input<TranslatedString>();
   readonly empty = input<boolean>();
   readonly required = input<boolean>(false);
   readonly canAdd = input(true);

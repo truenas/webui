@@ -25,6 +25,7 @@ describe('TruenasConnectModalComponent', () => {
     account_service_base_url: 'https://account-service.dev.ixsystems.net/',
     leca_service_base_url: 'https://leca-server.dev.ixsystems.net/',
     status: TruenasConnectStatus.Configured,
+    heartbeat_url: 'https://heartbeat.dev.ixsystems.net/',
   } as TruenasConnectConfig;
   const configSignal = signal(config);
   const createComponent = createComponentFactory({
@@ -71,28 +72,7 @@ describe('TruenasConnectModalComponent', () => {
       }),
     );
     await enableBtn.click();
-    expect(enableSpy).toHaveBeenCalledWith({
-      enabled: config.enabled,
-      ips: config.ips,
-      tnc_base_url: config.tnc_base_url,
-      account_service_base_url: config.account_service_base_url,
-      leca_service_base_url: config.leca_service_base_url,
-    });
-  });
-
-  it('should generate a tokken', async () => {
-    configSignal.set({
-      ...config,
-      status: TruenasConnectStatus.ClaimTokenMissing,
-    });
-    const generateSpy = jest.spyOn(spectator.inject(TruenasConnectService), 'generateToken');
-    const generateBtn = await loader.getHarness(
-      MatButtonHarness.with({
-        text: 'Generate Token',
-      }),
-    );
-    await generateBtn.click();
-    expect(generateSpy).toHaveBeenCalled();
+    expect(enableSpy).toHaveBeenCalled();
   });
 
   it('should save the form', async () => {
@@ -111,11 +91,10 @@ describe('TruenasConnectModalComponent', () => {
     await tncInput.setValue(tncUrl);
     await saveBtn.click();
     expect(enableService).toHaveBeenCalledWith({
-      enabled: config.enabled,
-      ips: config.ips,
       tnc_base_url: tncUrl,
       account_service_base_url: config.account_service_base_url,
       leca_service_base_url: config.leca_service_base_url,
+      heartbeat_url: config.heartbeat_url,
     });
   });
 

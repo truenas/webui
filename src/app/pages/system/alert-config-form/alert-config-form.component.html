@@ -1,9 +1,9 @@
 <mat-card class="form-card">
-  @if (isFormLoading) {
+  @if (isFormLoading()) {
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   }
 
-  @if (!isFormLoading && !categories.length) {
+  @if (!isFormLoading() && !categories.length) {
     <ix-empty [conf]="noResponseConfig"></ix-empty>
   }
 
@@ -40,7 +40,7 @@
               [ixTestOverride]="[cls.title, 'level']"
               [label]="'Set Warning Level' | translate"
               [required]="true"
-              [tooltip]="helptext.level_tooltip | translate"
+              [tooltip]="helptext.levelTooltip | translate"
               [options]="levelOptions$"
             ></ix-select>
             <ix-select
@@ -48,7 +48,7 @@
               [ixTestOverride]="[cls.title, 'policy']"
               [label]="'Set Frequency' | translate"
               [required]="true"
-              [tooltip]="helptext.policy_tooltip | translate"
+              [tooltip]="helptext.policyTooltip | translate"
               [options]="policyOptions$"
             ></ix-select>
           </div>
@@ -60,7 +60,7 @@
             type="submit"
             color="primary"
             ixTest="save"
-            [disabled]="form.invalid || isFormLoading || !selectedCategory"
+            [disabled]="form.invalid || isFormLoading() || !selectedCategory"
           >{{ 'Save' | translate }}</button>
         </div>
       </form>

@@ -22,7 +22,7 @@ import { EmptyService } from 'app/modules/empty/empty.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
+import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
 import { relativeDateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
@@ -43,7 +43,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './cloud-backup-snapshots.component.html',
   styleUrls: ['./cloud-backup-snapshots.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatCardHeader,
@@ -74,7 +73,7 @@ export class CloudBackupSnapshotsComponent implements OnChanges {
       title: this.translate.instant('Hostname'),
       propertyName: 'hostname',
     }),
-    actionsColumn({
+    actionsWithMenuColumn({
       actions: [
         {
           iconName: iconMarker('restore'),

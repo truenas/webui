@@ -5,29 +5,39 @@
 </h1>
 
 <mat-dialog-content>
-  @if(tnc.config()?.status !== TruenasConnectStatus.Disabled) {
-  <span class="warning">{{
-    'In order to update the form, you need to disable the service first'
-      | translate
-  }}</span>
-  }
-  <form [formGroup]="form">
-    <ix-input
-      formControlName="tnc_base_url"
-      [label]="'TNC Base Url' | translate"
-      [required]="true"
-    ></ix-input>
-    <ix-input
-      formControlName="account_service_base_url"
-      [label]="'Account Service Base Url' | translate"
-      [required]="true"
-    ></ix-input>
-    <ix-input
-      formControlName="leca_service_base_url"
-      [label]="'Leca Service Base Url' | translate"
-      [required]="true"
-    ></ix-input>
-  </form>
+  <mat-expansion-panel class="mat-elevation-z0">
+    <mat-expansion-panel-header>
+      <mat-panel-title>{{'Advanced Settings' | translate}}</mat-panel-title>
+    </mat-expansion-panel-header>
+    @if(tnc.config()?.status !== TruenasConnectStatus.Disabled) {
+      <span class="warning">{{
+        'In order to update the form, you need to disable the service first'
+          | translate
+      }}</span>
+      }
+      <form [formGroup]="form">
+        <ix-input
+          formControlName="tnc_base_url"
+          [label]="'TNC Base Url' | translate"
+          [required]="true"
+        ></ix-input>
+        <ix-input
+          formControlName="account_service_base_url"
+          [label]="'Account Service Base Url' | translate"
+          [required]="true"
+        ></ix-input>
+        <ix-input
+          formControlName="leca_service_base_url"
+          [label]="'Leca Service Base Url' | translate"
+          [required]="true"
+        ></ix-input>
+        <ix-input
+          formControlName="heartbeat_url"
+          [label]="'Heartbeat Url' | translate"
+          [required]="true"
+        ></ix-input>
+      </form>
+  </mat-expansion-panel>
 </mat-dialog-content>
 
 <mat-dialog-actions>
@@ -54,11 +64,6 @@
   </div>
 
   <div>
-    @if(tnc.config()?.status === TruenasConnectStatus.ClaimTokenMissing) {
-    <button ixTest="tnc-generate-token" mat-button (click)="generateToken()">
-      {{ 'Generate Token' | translate }}
-    </button>
-    }
     <button mat-button ixTest="tnc-form-cancel" (click)="cancel()">
       {{ 'Cancel' | translate }}
     </button>

@@ -44,7 +44,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './kerberos-realms-list.component.html',
   styleUrls: ['./kerberos-realms-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     SearchInput1Component,
     RequiresRolesDirective,
@@ -109,7 +108,7 @@ export class KerberosRealmsListComponent implements OnInit {
           requiredRoles: this.requiredRoles,
           onClick: (row) => {
             this.dialogService.confirm({
-              title: this.translate.instant(helptextKerberosRealms.krb_realmlist_deletemessage_title),
+              title: this.translate.instant(helptextKerberosRealms.deleteDialogTitle),
               message: this.translate.instant('Are you sure you want to delete this item?'),
             }).pipe(
               filter(Boolean),

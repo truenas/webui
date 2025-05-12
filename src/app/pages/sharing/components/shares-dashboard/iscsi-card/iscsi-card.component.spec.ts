@@ -1,6 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatDialog } from '@angular/material/dialog';
+import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
@@ -14,7 +15,6 @@ import { ServiceStatus } from 'app/enums/service-status.enum';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import {
   IxTablePagerShowMoreComponent,
@@ -30,7 +30,7 @@ import {
 } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { DeleteTargetDialog } from 'app/pages/sharing/iscsi/target/delete-target-dialog/delete-target-dialog.component';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
-import { IscsiService } from 'app/services/iscsi.service';
+import { LicenseService } from 'app/services/license.service';
 import { selectServices } from 'app/store/services/services.selectors';
 
 describe('IscsiCardComponent', () => {
@@ -86,8 +86,8 @@ describe('IscsiCardComponent', () => {
         open: jest.fn(() => of()),
       }),
       mockProvider(SlideInRef, slideInRef),
-      mockProvider(IscsiService, {
-        hasFibreChannel: jest.fn(() => of(true)),
+      mockProvider(LicenseService, {
+        hasFibreChannel$: of(true),
       }),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
@@ -131,8 +131,9 @@ describe('IscsiCardComponent', () => {
   });
 
   it('shows form to edit an existing iSCSI Share when Edit button is pressed', async () => {
-    const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 3);
-    await editButton.click();
+    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
+    await menu.open();
+    await menu.clickItem({ text: 'Edit' });
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(TargetFormComponent, {
       data: expect.objectContaining(iscsiShares[0]),
@@ -141,8 +142,9 @@ describe('IscsiCardComponent', () => {
   });
 
   it('shows confirmation to delete iSCSI Share when Delete button is pressed', async () => {
-    const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 3);
-    await deleteIcon.click();
+    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
+    await menu.open();
+    await menu.clickItem({ text: 'Delete' });
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
       DeleteTargetDialog,

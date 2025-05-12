@@ -25,7 +25,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
   templateUrl: './snapshot-clone-dialog.component.html',
   styleUrls: ['./snapshot-clone-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogTitle,
     TranslateModule,
@@ -51,7 +50,7 @@ export class SnapshotCloneDialog implements OnInit {
   });
 
   readonly tooltips = {
-    dataset_dst: helptextSnapshots.snapshot_clone_name_tooltip,
+    dataset_dst: helptextSnapshots.cloneNameTooltip,
   };
 
   constructor(

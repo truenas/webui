@@ -71,7 +71,7 @@ export class UploadService {
           const fakeJob: Job<ApiJobResponse<M>> = {
             progress: {
               percent: response.loaded && response.total ? response.loaded / response.total * 100 : 0,
-              description: this.translate.instant('Uploading'),
+              description: this.translate.instant('Uploading') as string,
             },
             method: options.method,
             state: JobState.Running,

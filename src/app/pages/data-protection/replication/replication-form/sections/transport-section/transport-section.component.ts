@@ -20,13 +20,13 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
 
 @UntilDestroy()
 @Component({
   selector: 'ix-replication-transport-section',
   templateUrl: './transport-section.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxFieldsetComponent,
     ReactiveFormsModule,
@@ -126,11 +126,11 @@ export class TransportSectionComponent implements OnChanges {
       return {
         ...omitBy({
           ssh_credentials: values.ssh_credentials,
-          compression: values.compression === CompressionType.Disabled ? null : values.compression,
           speed_limit: values.speed_limit,
           large_block: values.large_block,
           compressed: values.compressed,
         }, isNull),
+        compression: values.compression === CompressionType.Disabled ? null : values.compression,
         netcat_active_side: null,
         netcat_active_side_listen_address: null,
         netcat_active_side_port_min: null,
@@ -152,5 +152,9 @@ export class TransportSectionComponent implements OnChanges {
       }, isNull),
       speed_limit: null,
     };
+  }
+
+  protected asTranslatedString(string: string): TranslatedString {
+    return string as TranslatedString;
   }
 }

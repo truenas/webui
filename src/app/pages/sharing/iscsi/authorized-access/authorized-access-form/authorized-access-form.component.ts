@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit, signal,
 } from '@angular/core';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -12,7 +12,7 @@ import {
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { IscsiAuthMethod } from 'app/enums/iscsi.enum';
 import { Role } from 'app/enums/role.enum';
-import { helptextSharingIscsi } from 'app/helptext/sharing';
+import { helptextIscsi } from 'app/helptext/sharing';
 import { IscsiAuthAccess, IscsiAuthAccessUpdate } from 'app/interfaces/iscsi.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -35,7 +35,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
   selector: 'ix-authorized-access-form',
   templateUrl: './authorized-access-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
@@ -102,7 +101,7 @@ export class AuthorizedAccessFormComponent implements OnInit {
     ],
   });
 
-  isLoading = false;
+  protected isLoading = signal(false);
   discoveryAuthOptions$: Observable<Option<IscsiAuthMethod>[]>;
   protected editingAccess: IscsiAuthAccess | undefined;
 
@@ -118,12 +117,12 @@ export class AuthorizedAccessFormComponent implements OnInit {
   ];
 
   readonly tooltips = {
-    tag: helptextSharingIscsi.authaccess_tooltip_tag,
-    user: helptextSharingIscsi.authaccess_tooltip_user,
-    secret: helptextSharingIscsi.authaccess_tooltip_user,
-    peeruser: helptextSharingIscsi.authaccess_tooltip_peeruser,
-    peersecret: helptextSharingIscsi.authaccess_tooltip_peersecret,
-    discovery_auth: helptextSharingIscsi.portal_form_tooltip_discovery_authmethod,
+    tag: helptextIscsi.authaccess_tooltip_tag,
+    user: helptextIscsi.authaccess_tooltip_user,
+    secret: helptextIscsi.authaccess_tooltip_user,
+    peeruser: helptextIscsi.authaccess_tooltip_peeruser,
+    peersecret: helptextIscsi.authaccess_tooltip_peersecret,
+    discovery_auth: helptextIscsi.portal.discoveryAuthMethodTooltip,
   };
 
   protected readonly requiredRoles = [
@@ -136,7 +135,6 @@ export class AuthorizedAccessFormComponent implements OnInit {
     private translate: TranslateService,
     private formBuilder: NonNullableFormBuilder,
     private errorHandler: FormErrorHandlerService,
-    private cdr: ChangeDetectorRef,
     private api: ApiService,
     private validatorService: IxValidatorsService,
     public slideInRef: SlideInRef<IscsiAuthAccess | undefined, boolean>,
@@ -201,20 +199,19 @@ export class AuthorizedAccessFormComponent implements OnInit {
       discovery_auth: values.discovery_auth,
     } as IscsiAuthAccessUpdate;
 
-    this.isLoading = true;
+    this.isLoading.set(true);
     const request$ = this.editingAccess
       ? this.api.call('iscsi.auth.update', [this.editingAccess.id, payload])
       : this.api.call('iscsi.auth.create', [payload]);
 
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
-        this.isLoading = false;
+        this.isLoading.set(false);
         this.slideInRef.close({ response: true, error: null });
       },
       error: (error: unknown) => {
-        this.isLoading = false;
+        this.isLoading.set(false);
         this.errorHandler.handleValidationErrors(error, this.form);
-        this.cdr.markForCheck();
       },
     });
   }

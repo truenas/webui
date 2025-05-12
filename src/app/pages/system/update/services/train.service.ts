@@ -8,6 +8,7 @@ import { SystemUpdateOperationType, SystemUpdateStatus } from 'app/enums/system-
 import { extractApiErrorDetails } from 'app/helpers/api.helper';
 import { SystemUpdateTrain, SystemUpdateTrains } from 'app/interfaces/system-update.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { Package } from 'app/pages/system/update/interfaces/package.interface';
 import { UpdateService } from 'app/pages/system/update/services/update.service';
@@ -62,7 +63,7 @@ export class TrainService {
 
         this.dialogService.confirm({
           title: this.translate.instant('Switch Train'),
-          message: warning + this.translate.instant('Switch update trains?'),
+          message: warning + this.translate.instant('Switch update trains?') as TranslatedString,
         }).pipe(untilDestroyed(this)).subscribe((confirmSwitch: boolean) => {
           if (confirmSwitch) {
             this.setTrainDescription();

@@ -4,6 +4,7 @@ import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { DatasetService } from 'app/services/dataset/dataset.service';
 
 describe('DatasetService', () => {
@@ -66,14 +67,15 @@ describe('DatasetService', () => {
   });
 
   describe('rootLevelDatasetWarning', () => {
+    // TODO: Rewrite not to call rootLevelDatasetWarning that should be protected.
     it('shows a dialog when the dataset is root-level', async () => {
-      const dialog = await lastValueFrom(spectator.service.rootLevelDatasetWarning('/mnt/root_pool', 'msg'));
+      const dialog = await lastValueFrom(spectator.service.rootLevelDatasetWarning('/mnt/root_pool', ignoreTranslation('msg')));
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
       expect(dialog).toBe(true);
     });
 
     it('returns True when the dataset is not root-level', async () => {
-      const dialog = await lastValueFrom(spectator.service.rootLevelDatasetWarning('/mnt/root_pool/dataset', 'msg'));
+      const dialog = await lastValueFrom(spectator.service.rootLevelDatasetWarning('/mnt/root_pool/dataset', ignoreTranslation('msg')));
       expect(spectator.inject(DialogService).confirm).not.toHaveBeenCalled();
       expect(dialog).toBe(true);
     });

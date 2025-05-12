@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, Inject, OnInit,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
@@ -29,10 +29,11 @@ import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   SaveConfigDialog, SaveConfigDialogMessages,
-} from 'app/pages/system/general-settings/save-config-dialog/save-config-dialog.component';
+} from 'app/pages/system/advanced/manage-configuration-menu/save-config-dialog/save-config-dialog.component';
 import { UpdateType } from 'app/pages/system/update/enums/update-type.enum';
 import { Package } from 'app/pages/system/update/interfaces/package.interface';
 import { TrainService } from 'app/pages/system/update/services/train.service';
@@ -49,7 +50,6 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
   styleUrls: ['update-actions-card.component.scss'],
   templateUrl: './update-actions-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     IxIconComponent,
@@ -65,9 +65,16 @@ export class UpdateActionsCardComponent implements OnInit {
   updateMethod: ApiJobMethod = 'update.update';
   isHaLicensed = false;
   updateType: UpdateType;
-  sysUpdateMessage = helptextGlobal.sysUpdateMessage;
-  sysUpdateMsgPt2 = helptextGlobal.sysUpdateMessagePt2;
   updateTitle = this.translate.instant('Update');
+  updateText = computed(() => {
+    if (this.isHaLicensed) {
+      return this.translate.instant(helptextGlobal.sysUpdateMessage);
+    }
+    return [
+      this.translate.instant(helptextGlobal.sysUpdateMessage),
+      this.translate.instant(helptextGlobal.sysUpdateMessagePt2),
+    ].join(' ');
+  });
 
   showApplyPendingButton$ = combineLatest([
     this.updateService.updateDownloaded$,
@@ -285,9 +292,9 @@ export class UpdateActionsCardComponent implements OnInit {
 
   private finishHaUpdate(): Observable<boolean> {
     return this.dialogService.confirm({
-      title: helptext.ha_update.complete_title,
-      message: helptext.ha_update.complete_msg,
-      buttonText: helptext.ha_update.complete_action,
+      title: this.translate.instant(helptext.ha_update.complete_title),
+      message: this.translate.instant(helptext.ha_update.complete_msg),
+      buttonText: this.translate.instant(helptext.ha_update.complete_action),
       hideCheckbox: true,
       hideCancel: true,
     });
@@ -295,9 +302,9 @@ export class UpdateActionsCardComponent implements OnInit {
 
   private finishNonHaUpdate(): Observable<boolean> {
     return this.dialogService.confirm({
-      title: helptext.ha_update.complete_title,
+      title: this.translate.instant(helptext.ha_update.complete_title),
       message: this.translate.instant('Update completed successfully. The system will restart shortly'),
-      buttonText: helptext.ha_update.complete_action,
+      buttonText: this.translate.instant(helptext.ha_update.complete_action),
       hideCheckbox: true,
       hideCancel: true,
     });
@@ -382,9 +389,9 @@ export class UpdateActionsCardComponent implements OnInit {
   private handleUpdateError(error: Job): void {
     if (error.error?.includes(updateAgainCode)) {
       this.dialogService.confirm({
-        title: helptext.continueDialogTitle,
-        message: error.error.replace(updateAgainCode, ''),
-        buttonText: helptext.continueDialogAction,
+        title: this.translate.instant(helptext.continueDialogTitle),
+        message: ignoreTranslation(error.error.replace(updateAgainCode, '')),
+        buttonText: this.translate.instant(helptext.continueDialogAction),
       }).pipe(
         filter(Boolean),
         untilDestroyed(this),

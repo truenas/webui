@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, computed, input, ViewContainerRef,
+  ChangeDetectionStrategy, Component, computed, Inject, input, ViewContainerRef,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
@@ -7,13 +7,15 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import createDOMPurify from 'dompurify';
+import type { DOMPurify as DOMPurifyType } from 'dompurify';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
   filter, Observable, of, switchMap, take,
 } from 'rxjs';
-import sanitizeHtml from 'sanitize-html';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
+import { WINDOW } from 'app/helpers/window.helper';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -32,7 +34,6 @@ import { DockerStore } from 'app/pages/apps/store/docker.store';
   templateUrl: './app-details-header.component.html',
   styleUrls: ['./app-details-header.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     TranslateModule,
     AppCardLogoComponent,
@@ -52,6 +53,7 @@ export class AppDetailsHeaderComponent {
   protected readonly dockerUpdateRequiredRoles = [Role.DockerWrite];
   protected readonly selectedPool = toSignal(this.dockerStore.selectedPool$);
 
+  private domPurify: DOMPurifyType;
   constructor(
     protected dockerStore: DockerStore,
     private router: Router,
@@ -61,16 +63,17 @@ export class AppDetailsHeaderComponent {
     private translate: TranslateService,
     private api: ApiService,
     private viewContainerRef: ViewContainerRef,
-  ) { }
+    @Inject(WINDOW) private window: Window,
+  ) {
+    this.domPurify = createDOMPurify(this.window.window);
+  }
 
   description = computed<string>(() => {
     const splitText = this.app()?.app_readme?.split('</h1>');
     const html = splitText?.[1] || splitText?.[0];
-    const sanitizedHtml = sanitizeHtml(html, {
-      allowedTags: ['b', 'i', 'em', 'strong', 'a', 'br', 'p'],
-      allowedAttributes: {
-        a: ['href'],
-      },
+    const sanitizedHtml = this.domPurify.sanitize(html, {
+      ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'br', 'p', 'a'],
+      ALLOWED_ATTR: ['href'],
     });
     return sanitizedHtml.trim() || '';
   });

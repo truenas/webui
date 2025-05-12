@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
@@ -15,7 +15,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { IscsiAuthMethod, IscsiTargetMode, iscsiTargetModeNames } from 'app/enums/iscsi.enum';
 import { Role } from 'app/enums/role.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
-import { helptextSharingIscsi } from 'app/helptext/sharing';
+import { helptextIscsi } from 'app/helptext/sharing';
 import { IscsiTarget, IscsiTargetGroup } from 'app/interfaces/iscsi.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -32,6 +32,8 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TranslateOptionsPipe } from 'app/modules/translate/translate-options/translate-options.pipe';
+import { ignoreTranslation, TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   FcPortsControlsComponent,
@@ -39,6 +41,7 @@ import {
 import { TargetNameValidationService } from 'app/pages/sharing/iscsi/target/target-name-validation.service';
 import { FibreChannelService } from 'app/services/fibre-channel.service';
 import { IscsiService } from 'app/services/iscsi.service';
+import { LicenseService } from 'app/services/license.service';
 
 @UntilDestroy()
 @Component({
@@ -46,7 +49,6 @@ import { IscsiService } from 'app/services/iscsi.service';
   templateUrl: './target-form.component.html',
   styleUrls: ['./target-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
@@ -65,6 +67,7 @@ import { IscsiService } from 'app/services/iscsi.service';
     TestDirective,
     TranslateModule,
     IxRadioGroupComponent,
+    TranslateOptionsPipe,
   ],
 })
 export class TargetFormComponent implements OnInit {
@@ -86,9 +89,9 @@ export class TargetFormComponent implements OnInit {
       : this.translate.instant('Edit ISCSI Target');
   }
 
-  hasFibreChannel = toSignal(this.iscsiService.hasFibreChannel());
+  hasFibreChannel = toSignal(this.license.hasFibreChannel$);
 
-  readonly helptext = helptextSharingIscsi;
+  readonly helptext = helptextIscsi;
   readonly portals$ = this.iscsiService.listPortals().pipe(
     map((portals) => {
       const opts: Option[] = portals.map((portal) => {
@@ -107,20 +110,20 @@ export class TargetFormComponent implements OnInit {
         const initiatorsAllowed = initiator.initiators.length === 0
           ? this.translate.instant('ALL Initiators Allowed')
           : initiator.initiators.toString();
-        const optionLabel = `${initiator.id} (${initiatorsAllowed})`;
+        const optionLabel = `${initiator.id} (${initiatorsAllowed})` as TranslatedString;
         opts.push({ label: optionLabel, value: initiator.id });
       });
       return opts;
     }),
   );
 
-  readonly authmethods$ = of(this.helptext.target_form_enum_authmethod);
+  readonly authmethods$ = of(this.helptext.target.authenticationMethodOptions);
   readonly auths$ = this.iscsiService.getAuth().pipe(
     map((auths) => {
       const opts: Option[] = [];
       const tags = uniq(auths.map((item) => item.tag));
       tags.forEach((tag) => {
-        opts.push({ label: String(tag), value: tag });
+        opts.push({ label: ignoreTranslation(String(tag)), value: tag });
       });
       return opts;
     }),
@@ -134,7 +137,7 @@ export class TargetFormComponent implements OnInit {
     Role.SharingWrite,
   ];
 
-  isLoading = false;
+  protected isLoading = signal(false);
   protected editingTarget: IscsiTarget | undefined = undefined;
   protected editingTargetPort: string | undefined = undefined;
 
@@ -162,6 +165,7 @@ export class TargetFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private api: ApiService,
     private fcService: FibreChannelService,
+    private license: LicenseService,
     private targetNameValidationService: TargetNameValidationService,
     public slideInRef: SlideInRef<IscsiTarget | undefined, IscsiTarget>,
   ) {
@@ -198,8 +202,7 @@ export class TargetFormComponent implements OnInit {
   onSubmit(): void {
     const values = this.form.getRawValue();
 
-    this.isLoading = true;
-    this.cdr.markForCheck();
+    this.isLoading.set(true);
     let request$: Observable<IscsiTarget>;
     if (this.editingTarget) {
       request$ = this.api.call('iscsi.target.update', [this.editingTarget.id, values]);
@@ -222,13 +225,12 @@ export class TargetFormComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe({
       next: (response) => {
-        this.isLoading = false;
+        this.isLoading.set(false);
         this.slideInRef.close({ response, error: null });
       },
       error: (error: unknown) => {
-        this.isLoading = false;
+        this.isLoading.set(false);
         this.errorHandler.handleValidationErrors(error, this.form);
-        this.cdr.markForCheck();
       },
     });
   }

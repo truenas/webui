@@ -23,6 +23,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SimpleAsyncComboboxProvider } from 'app/modules/forms/ix-forms/classes/simple-async-combobox-provider';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
+import { ignoreTranslation, TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   getNonUniqueSerialDisksWarning,
@@ -38,7 +39,6 @@ import { hasNonUniqueSerial } from 'app/pages/storage/modules/pool-manager/utils
 @Component({
   selector: 'ix-unused-disk-select',
   templateUrl: './unused-disk-select.component.html',
-  standalone: true,
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -59,9 +59,9 @@ export class UnusedDiskSelectComponent implements OnInit, AfterViewInit {
    * Optional function to filter disks in addition to default select's behaviour.
    */
   readonly diskFilteringFn = input<(disk: DetailsDisk) => boolean>();
-  readonly label = input<string>();
+  readonly label = input<TranslatedString>();
   readonly required = input<boolean>(false);
-  readonly tooltip = input<string>();
+  readonly tooltip = input<TranslatedString>();
   // TODO: It may be better to allow for object to be written as value.
   readonly valueField = input<keyof DetailsDisk>('name');
 
@@ -160,7 +160,7 @@ export class UnusedDiskSelectComponent implements OnInit, AfterViewInit {
         const exportedPool = disk.exported_zpool ? `(${disk.exported_zpool})` : '';
 
         return {
-          label: `${disk.devname} (${buildNormalizedFileSize(disk.size)}) ${exportedPool}`,
+          label: ignoreTranslation(`${disk.devname} (${buildNormalizedFileSize(disk.size)}) ${exportedPool}`),
           value: disk[valueField] as string,
         };
       })

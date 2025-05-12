@@ -3,6 +3,7 @@ import {
 } from '@ngneat/spectator/jest';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
+import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 
 describe('IxLabelComponent', () => {
   let spectator: Spectator<IxLabelComponent>;
@@ -13,8 +14,8 @@ describe('IxLabelComponent', () => {
   beforeEach(() => {
     spectator = createComponent({
       props: {
-        label: 'First Name',
-        tooltip: 'Enter your first name.',
+        label: ignoreTranslation('First Name'),
+        tooltip: ignoreTranslation('Enter your first name.'),
         required: true,
       },
     });

@@ -171,20 +171,6 @@
     "hierarchy": [
       "Toolbar",
       "Settings Menu",
-      "About"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "routerLink": null,
-    "anchor": "about",
-    "triggerAnchor": "user-menu",
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Toolbar",
-      "Settings Menu",
       "Log Out"
     ],
     "synonyms": [
@@ -294,7 +280,9 @@
     "requiredRoles": [
       "APPS_WRITE"
     ],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "APPS"
+    ],
     "anchorRouterLink": [
       "/apps",
       "docker-registries"
@@ -311,7 +299,9 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "APPS"
+    ],
     "anchorRouterLink": [
       "/apps",
       "docker-registries"
@@ -591,12 +581,10 @@
     "hierarchy": [
       "Credentials",
       "Certificates",
-      "Add Certificate"
+      "Import Certificate"
     ],
     "synonyms": [
-      "Create Certificate",
-      "New Certificate",
-      "Generate Certificate"
+      "Add Certificate"
     ],
     "requiredRoles": [
       "CERTIFICATE_WRITE"
@@ -607,7 +595,7 @@
       "certificates"
     ],
     "routerLink": null,
-    "anchor": "add-certificate",
+    "anchor": "import-certificate",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -771,7 +759,12 @@
       "Groups",
       "Privileges"
     ],
-    "synonyms": [],
+    "synonyms": [
+      "Privileges List",
+      "RBAC",
+      "Roles",
+      "Permissions"
+    ],
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -852,6 +845,23 @@
     ],
     "routerLink": null,
     "anchor": "profile",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
+      "Users (WIP)",
+      "Password Card"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/credentials/users-new"
+    ],
+    "routerLink": null,
+    "anchor": "password-card",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -951,29 +961,6 @@
     "requiredRoles": [
       "ACCOUNT_WRITE"
     ],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/credentials",
-      "users"
-    ],
-    "routerLink": null,
-    "anchor": "add-user",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Credentials",
-      "Users",
-      "Add User"
-    ],
-    "synonyms": [
-      "New User",
-      "Create User",
-      "User",
-      "Add Local User"
-    ],
-    "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
       "/credentials",
@@ -1234,94 +1221,6 @@
   {
     "hierarchy": [
       "Data Protection",
-      "Scrub Tasks",
-      "Resilver Priority"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/data-protection",
-      "scrub",
-      "priority"
-    ],
-    "routerLink": null,
-    "anchor": "scrub-priority",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Data Protection",
-      "Scrub Tasks",
-      "Add Scrub Task"
-    ],
-    "synonyms": [
-      "Create Scrub Task",
-      "New Scrub Task",
-      "Task"
-    ],
-    "requiredRoles": [
-      "POOL_SCRUB_WRITE"
-    ],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/data-protection",
-      "scrub"
-    ],
-    "routerLink": null,
-    "anchor": "add-scrub",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Data Protection",
-      "Scrub Tasks"
-    ],
-    "synonyms": [
-      "Tasks"
-    ],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/data-protection",
-      "scrub"
-    ],
-    "routerLink": null,
-    "anchor": "scrub-tasks",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Data Protection",
-      "Scrub Tasks",
-      "Adjust Scrub/Resilver Priority"
-    ],
-    "synonyms": [
-      "Adjust Scrub Priority",
-      "Adjust Resilver Priority"
-    ],
-    "requiredRoles": [
-      "POOL_SCRUB_WRITE"
-    ],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/data-protection"
-    ],
-    "routerLink": [
-      "/data-protection",
-      "scrub",
-      "priority"
-    ],
-    "anchor": "adjust-scrub/resilver-priority",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Data Protection",
       "Periodic Snapshot Tasks",
       "VMware Snapshot Integration"
     ],
@@ -1408,11 +1307,11 @@
   {
     "hierarchy": [
       "Datasets",
-      "Create Snapshot"
+      "Take Snapshot"
     ],
     "synonyms": [
-      "Manage Datasets",
-      "Take Snapshot"
+      "View Datasets",
+      "Create Snapshot"
     ],
     "requiredRoles": [
       "SNAPSHOT_WRITE"
@@ -1422,7 +1321,7 @@
       "/datasets"
     ],
     "routerLink": null,
-    "anchor": "create-snapshot",
+    "anchor": "take-snapshot",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -1432,7 +1331,7 @@
       "Manage Snapshots"
     ],
     "synonyms": [
-      "Manage Datasets",
+      "View Datasets",
       "Snapshot Manager"
     ],
     "requiredRoles": [],
@@ -1454,7 +1353,7 @@
       "Manage Snapshots Tasks"
     ],
     "synonyms": [
-      "Manage Datasets",
+      "View Datasets",
       "Snapshot Task Manager"
     ],
     "requiredRoles": [],
@@ -1473,54 +1372,10 @@
   {
     "hierarchy": [
       "Datasets",
-      "Manage Replication Tasks"
-    ],
-    "synonyms": [
-      "Manage Datasets",
-      "Replication Task Manager"
-    ],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/datasets"
-    ],
-    "routerLink": [
-      "/data-protection/replication",
-      "dataset().id"
-    ],
-    "anchor": "manage-replication-tasks",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Datasets",
-      "Manage Rsync Tasks"
-    ],
-    "synonyms": [
-      "Manage Datasets",
-      "Rsync Task Manager"
-    ],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/datasets"
-    ],
-    "routerLink": [
-      "/data-protection/rsync",
-      "dataset().id"
-    ],
-    "anchor": "manage-rsync-tasks",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Datasets",
       "Manage User Quotas"
     ],
     "synonyms": [
-      "Manage Datasets",
+      "View Datasets",
       "User Quota Manager"
     ],
     "requiredRoles": [],
@@ -1544,7 +1399,7 @@
       "Manage Group Quotas"
     ],
     "synonyms": [
-      "Manage Datasets",
+      "View Datasets",
       "Group Quota Manager"
     ],
     "requiredRoles": [],
@@ -1568,7 +1423,7 @@
       "Add Zvol"
     ],
     "synonyms": [
-      "Manage Datasets",
+      "View Datasets",
       "Add Volume",
       "Create Zvol",
       "New Zvol"
@@ -1591,7 +1446,7 @@
       "Add Dataset"
     ],
     "synonyms": [
-      "Manage Datasets",
+      "View Datasets",
       "Add Filesystem",
       "Create Dataset",
       "New Dataset"
@@ -1611,10 +1466,10 @@
   {
     "hierarchy": [
       "Datasets",
-      "Dataset Details"
+      "Details"
     ],
     "synonyms": [
-      "Manage Datasets",
+      "View Datasets",
       "Dataset Information"
     ],
     "requiredRoles": [],
@@ -1623,17 +1478,17 @@
       "/datasets"
     ],
     "routerLink": null,
-    "anchor": "dataset-details",
+    "anchor": "details",
     "triggerAnchor": null,
     "section": "ui"
   },
   {
     "hierarchy": [
       "Datasets",
-      "Dataset Space Management"
+      "Space Management"
     ],
     "synonyms": [
-      "Manage Datasets",
+      "View Datasets",
       "Dataset Capacity Management"
     ],
     "requiredRoles": [],
@@ -1642,18 +1497,18 @@
       "/datasets"
     ],
     "routerLink": null,
-    "anchor": "dataset-space-management",
+    "anchor": "space-management",
     "triggerAnchor": null,
     "section": "ui"
   },
   {
     "hierarchy": [
       "Datasets",
-      "ZFS Encryption"
+      "Encryption"
     ],
     "synonyms": [
-      "Manage Datasets",
-      "Dataset ZFS Encryption"
+      "View Datasets",
+      "Dataset Encryption"
     ],
     "requiredRoles": [],
     "visibleTokens": [],
@@ -1661,7 +1516,7 @@
       "/datasets"
     ],
     "routerLink": null,
-    "anchor": "zfs-encryption",
+    "anchor": "encryption",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -1671,7 +1526,7 @@
       "Data Protection"
     ],
     "synonyms": [
-      "Manage Datasets",
+      "View Datasets",
       "Dataset Data Protection"
     ],
     "requiredRoles": [],
@@ -1690,7 +1545,7 @@
       "Roles"
     ],
     "synonyms": [
-      "Manage Datasets",
+      "View Datasets",
       "Dataset Roles"
     ],
     "requiredRoles": [],
@@ -1709,7 +1564,7 @@
       "Permissions"
     ],
     "synonyms": [
-      "Manage Datasets",
+      "View Datasets",
       "Dataset Permissions",
       "ACL"
     ],
@@ -1959,7 +1814,9 @@
       "Virtual Machine Settings"
     ],
     "requiredRoles": [],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "VMS"
+    ],
     "anchorRouterLink": [
       "/instances"
     ],
@@ -1986,7 +1843,9 @@
       "Add Container"
     ],
     "requiredRoles": [],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "VMS"
+    ],
     "anchorRouterLink": [
       "/instances"
     ],
@@ -2009,7 +1868,9 @@
       "Containers"
     ],
     "requiredRoles": [],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "VMS"
+    ],
     "anchorRouterLink": [
       "/instances/view/def"
     ],
@@ -2030,7 +1891,9 @@
       "Containers"
     ],
     "requiredRoles": [],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "VMS"
+    ],
     "anchorRouterLink": [
       "/instances/view/def"
     ],
@@ -2051,7 +1914,9 @@
       "Containers"
     ],
     "requiredRoles": [],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "VMS"
+    ],
     "anchorRouterLink": [
       "/instances/view/def"
     ],
@@ -2072,7 +1937,9 @@
       "Containers"
     ],
     "requiredRoles": [],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "VMS"
+    ],
     "anchorRouterLink": [
       "/instances/view/def"
     ],
@@ -2093,7 +1960,9 @@
       "Containers"
     ],
     "requiredRoles": [],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "VMS"
+    ],
     "anchorRouterLink": [
       "/instances/view/def"
     ],
@@ -2114,7 +1983,9 @@
       "Containers"
     ],
     "requiredRoles": [],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "VMS"
+    ],
     "anchorRouterLink": [
       "/instances/view/def"
     ],
@@ -2135,7 +2006,9 @@
       "Containers"
     ],
     "requiredRoles": [],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "VMS"
+    ],
     "anchorRouterLink": [
       "/instances/view/def"
     ],
@@ -2156,7 +2029,9 @@
       "Containers"
     ],
     "requiredRoles": [],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "VMS"
+    ],
     "anchorRouterLink": [
       "/instances/view/def"
     ],
@@ -2177,7 +2052,9 @@
       "Containers"
     ],
     "requiredRoles": [],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "VMS"
+    ],
     "anchorRouterLink": [
       "/instances/view/def"
     ],
@@ -2204,206 +2081,6 @@
     ],
     "routerLink": null,
     "anchor": "jobs",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Network",
-      "Add Interface"
-    ],
-    "synonyms": [
-      "Networking",
-      "NIC",
-      "Network Interface Card",
-      "New Interface",
-      "Create Interface"
-    ],
-    "requiredRoles": [
-      "NETWORK_INTERFACE_WRITE"
-    ],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/network"
-    ],
-    "routerLink": null,
-    "anchor": "add-interface",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Network",
-      "Interfaces"
-    ],
-    "synonyms": [
-      "Networking",
-      "NIC",
-      "Network Interface Card"
-    ],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/network"
-    ],
-    "routerLink": null,
-    "anchor": "interfaces",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Network",
-      "Ipmi"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/network"
-    ],
-    "routerLink": null,
-    "anchor": "ipmi",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Network",
-      "Show Events"
-    ],
-    "synonyms": [
-      "Show Ipmi Events"
-    ],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/network"
-    ],
-    "routerLink": null,
-    "anchor": "show-events",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Network",
-      "Global Configuration Settings"
-    ],
-    "synonyms": [
-      "Hostname",
-      "Domain",
-      "HTTP Proxy",
-      "Service Announcement",
-      "Additional Domains",
-      "Hostname Database",
-      "Outbound Network",
-      "Domain Name System",
-      "DNS Servers",
-      "DHCP",
-      "Gateway",
-      "Lan"
-    ],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/network"
-    ],
-    "routerLink": null,
-    "anchor": "global-configuration-settings",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Network",
-      "Global Configuration"
-    ],
-    "synonyms": [
-      "Network Configuration",
-      "Network Settings"
-    ],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/network"
-    ],
-    "routerLink": null,
-    "anchor": "global-configuration",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Network",
-      "Nameserver"
-    ],
-    "synonyms": [
-      "NS"
-    ],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/network"
-    ],
-    "routerLink": null,
-    "anchor": "nameserver",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Network",
-      "Static Routes"
-    ],
-    "synonyms": [
-      "Routing",
-      "Static Routing"
-    ],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/network"
-    ],
-    "routerLink": null,
-    "anchor": "static-routes",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Network",
-      "Static Routes",
-      "Add Static Route"
-    ],
-    "synonyms": [
-      "Create Static Route",
-      "New Static Route"
-    ],
-    "requiredRoles": [
-      "NETWORK_INTERFACE_WRITE"
-    ],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/network"
-    ],
-    "routerLink": null,
-    "anchor": "add-static-route",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Network"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/network"
-    ],
-    "routerLink": null,
-    "anchor": "network-dashboard",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -2932,7 +2609,9 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "FIBRECHANNEL"
+    ],
     "anchorRouterLink": [
       "/sharing",
       "iscsi",
@@ -3150,6 +2829,24 @@
     ],
     "routerLink": null,
     "anchor": "nfs-session-list",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Shares",
+      "NVMe-oF",
+      "Global Configuration"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/sharing",
+      "nvme-of"
+    ],
+    "routerLink": null,
+    "anchor": "global-configuration",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -3394,7 +3091,7 @@
   {
     "hierarchy": [
       "Storage",
-      "Topology"
+      "Storage Health"
     ],
     "synonyms": [],
     "requiredRoles": [],
@@ -3403,48 +3100,19 @@
       "/storage"
     ],
     "routerLink": null,
-    "anchor": "topology",
+    "anchor": "storage-health",
     "triggerAnchor": null,
     "section": "ui"
   },
   {
     "hierarchy": [
       "Storage",
-      "Manage Devices"
+      "Scrub Now"
     ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/storage"
+    "synonyms": [
+      "Run Scrub",
+      "Start Scrub"
     ],
-    "routerLink": null,
-    "anchor": "manage-devices",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Storage",
-      "ZFS Health"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/storage"
-    ],
-    "routerLink": null,
-    "anchor": "zfs-health",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Storage",
-      "Scrub"
-    ],
-    "synonyms": [],
     "requiredRoles": [
       "POOL_SCRUB_WRITE"
     ],
@@ -3453,7 +3121,29 @@
       "/storage"
     ],
     "routerLink": null,
-    "anchor": "scrub",
+    "anchor": "scrub-now",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Storage",
+      "Scheduled Scrub"
+    ],
+    "synonyms": [
+      "Periodic Scrub",
+      "Scrub Task",
+      "Periodic Disk Checks",
+      "Scrub Schedule",
+      "Scrub Interval"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/storage"
+    ],
+    "routerLink": null,
+    "anchor": "scheduled-scrub",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -3479,10 +3169,44 @@
   {
     "hierarchy": [
       "Storage",
+      "VDEVs"
+    ],
+    "synonyms": [
+      "Topology"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/storage"
+    ],
+    "routerLink": null,
+    "anchor": "vdevs",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Storage",
+      "View VDEVs"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/storage"
+    ],
+    "routerLink": null,
+    "anchor": "view-vdevs",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Storage",
       "Disks"
     ],
     "synonyms": [
-      "Manage Disks"
+      "View Disks"
     ],
     "requiredRoles": [],
     "visibleTokens": [],
@@ -4052,6 +3776,57 @@
     "hierarchy": [
       "System",
       "Advanced Settings",
+      "Failover",
+      "Failover Settings"
+    ],
+    "synonyms": [
+      "HA",
+      "High Availability",
+      "Sync To Peer",
+      "Sync From Peer"
+    ],
+    "requiredRoles": [
+      "FAILOVER_WRITE"
+    ],
+    "visibleTokens": [
+      "FAILOVER"
+    ],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "failover-settings",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced Settings",
+      "Failover"
+    ],
+    "synonyms": [
+      "HA",
+      "High Availability"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [
+      "FAILOVER"
+    ],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "failover-card",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced Settings",
       "Global Two Factor Authentication"
     ],
     "synonyms": [],
@@ -4321,6 +4096,157 @@
     "hierarchy": [
       "System",
       "Advanced Settings",
+      "Manage Configuration"
+    ],
+    "synonyms": [],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "manage-configuration",
+    "triggerAnchor": "manage-configuration",
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced Settings",
+      "Manage Configuration",
+      "Download File"
+    ],
+    "synonyms": [
+      "Export File",
+      "Export Configuration",
+      "Download Configuration",
+      "Export Config",
+      "Save Config",
+      "Download Config",
+      "Backup Config"
+    ],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "download-file",
+    "triggerAnchor": "manage-configuration",
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced Settings",
+      "Manage Configuration",
+      "Upload File"
+    ],
+    "synonyms": [
+      "Import File",
+      "Import Configuration",
+      "Upload Configuration",
+      "Import Config",
+      "Upload Config",
+      "Restore Config"
+    ],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "upload-file",
+    "triggerAnchor": "manage-configuration",
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced Settings",
+      "Manage Configuration",
+      "Reset to Defaults"
+    ],
+    "synonyms": [
+      "Restore Defaults",
+      "Reset Defaults",
+      "Restore Default Config",
+      "Reset Default Config",
+      "Reset Config",
+      "Restore Config Defaults",
+      "Restore Default Configuration"
+    ],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "reset-to-defaults",
+    "triggerAnchor": "manage-configuration",
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "General Settings",
+      "NTP Server"
+    ],
+    "synonyms": [
+      "Add NTP Server"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "routerLink": null,
+    "anchor": "ntp-card",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "General Settings",
+      "NTP Server",
+      "Add NTP Server"
+    ],
+    "synonyms": [
+      "Create NTP Server",
+      "New NTP Server",
+      "Time Server"
+    ],
+    "requiredRoles": [
+      "NETWORK_GENERAL_WRITE"
+    ],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "routerLink": null,
+    "anchor": "add-ntp-server",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced Settings",
       "Replication"
     ],
     "synonyms": [],
@@ -4374,23 +4300,6 @@
     ],
     "routerLink": null,
     "anchor": "replication-tasks-limit",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "Advanced Settings",
-      "Save Debug"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/system/advanced"
-    ],
-    "routerLink": null,
-    "anchor": "save-debug",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -4507,7 +4416,8 @@
       "Storage Settings"
     ],
     "requiredRoles": [
-      "DATASET_WRITE"
+      "DATASET_WRITE",
+      "POOL_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -4535,6 +4445,31 @@
     ],
     "routerLink": null,
     "anchor": "system-data-pool",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced Settings",
+      "Storage",
+      "Resilvering At Higher Priority"
+    ],
+    "synonyms": [
+      "Resilver Priority",
+      "Scrub Priority",
+      "Resilvering Priority",
+      "Resilver Settings",
+      "Resilvering Settings"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "resilvering-at-higher-priority",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -4895,69 +4830,6 @@
     ],
     "routerLink": null,
     "anchor": "jbof",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "Failover"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [
-      "FAILOVER"
-    ],
-    "anchorRouterLink": [
-      "/system",
-      "failover"
-    ],
-    "routerLink": null,
-    "anchor": "failover",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "Failover",
-      "Sync To Peer"
-    ],
-    "synonyms": [],
-    "requiredRoles": [
-      "FAILOVER_WRITE"
-    ],
-    "visibleTokens": [
-      "FAILOVER"
-    ],
-    "anchorRouterLink": [
-      "/system",
-      "failover"
-    ],
-    "routerLink": null,
-    "anchor": "sync-to-peer",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "Failover",
-      "Sync From Peer"
-    ],
-    "synonyms": [],
-    "requiredRoles": [
-      "FAILOVER_WRITE"
-    ],
-    "visibleTokens": [
-      "FAILOVER"
-    ],
-    "anchorRouterLink": [
-      "/system",
-      "failover"
-    ],
-    "routerLink": null,
-    "anchor": "sync-from-peer",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -5421,157 +5293,6 @@
   {
     "hierarchy": [
       "System",
-      "General Settings",
-      "Manage Configuration"
-    ],
-    "synonyms": [],
-    "requiredRoles": [
-      "FULL_ADMIN"
-    ],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/system",
-      "general"
-    ],
-    "routerLink": null,
-    "anchor": "manage-configuration",
-    "triggerAnchor": "manage-configuration",
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "General Settings",
-      "Manage Configuration",
-      "Download File"
-    ],
-    "synonyms": [
-      "Export File",
-      "Export Configuration",
-      "Download Configuration",
-      "Export Config",
-      "Save Config",
-      "Download Config",
-      "Backup Config"
-    ],
-    "requiredRoles": [
-      "FULL_ADMIN"
-    ],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/system",
-      "general"
-    ],
-    "routerLink": null,
-    "anchor": "download-file",
-    "triggerAnchor": "manage-configuration",
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "General Settings",
-      "Manage Configuration",
-      "Upload File"
-    ],
-    "synonyms": [
-      "Import File",
-      "Import Configuration",
-      "Upload Configuration",
-      "Import Config",
-      "Upload Config",
-      "Restore Config"
-    ],
-    "requiredRoles": [
-      "FULL_ADMIN"
-    ],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/system",
-      "general"
-    ],
-    "routerLink": null,
-    "anchor": "upload-file",
-    "triggerAnchor": "manage-configuration",
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "General Settings",
-      "Manage Configuration",
-      "Reset to Defaults"
-    ],
-    "synonyms": [
-      "Restore Defaults",
-      "Reset Defaults",
-      "Restore Default Config",
-      "Reset Default Config",
-      "Reset Config",
-      "Restore Config Defaults",
-      "Restore Default Configuration"
-    ],
-    "requiredRoles": [
-      "FULL_ADMIN"
-    ],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/system",
-      "general"
-    ],
-    "routerLink": null,
-    "anchor": "reset-to-defaults",
-    "triggerAnchor": "manage-configuration",
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "General Settings",
-      "NTP Server"
-    ],
-    "synonyms": [
-      "Add NTP Server"
-    ],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/system",
-      "general"
-    ],
-    "routerLink": null,
-    "anchor": "ntp-card",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "General Settings",
-      "NTP Server",
-      "Add NTP Server"
-    ],
-    "synonyms": [
-      "Create NTP Server",
-      "New NTP Server",
-      "Time Server"
-    ],
-    "requiredRoles": [
-      "NETWORK_GENERAL_WRITE"
-    ],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/system",
-      "general"
-    ],
-    "routerLink": null,
-    "anchor": "add-ntp-server",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
       "Support",
       "Eula"
     ],
@@ -5591,6 +5312,24 @@
   {
     "hierarchy": [
       "System",
+      "General Settings",
+      "Save Debug"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/system/general"
+    ],
+    "routerLink": null,
+    "anchor": "save-debug",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "General Settings",
       "Support"
     ],
     "synonyms": [],
@@ -5598,7 +5337,7 @@
     "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
-      "support"
+      "general"
     ],
     "routerLink": null,
     "anchor": "support",
@@ -5608,6 +5347,7 @@
   {
     "hierarchy": [
       "System",
+      "General Settings",
       "Support",
       "License"
     ],
@@ -5622,7 +5362,7 @@
     "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
-      "support"
+      "general"
     ],
     "routerLink": null,
     "anchor": "license",
@@ -5632,6 +5372,7 @@
   {
     "hierarchy": [
       "System",
+      "General Settings",
       "Support",
       "File Ticket"
     ],
@@ -5642,10 +5383,221 @@
     "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
-      "support"
+      "general"
     ],
     "routerLink": null,
     "anchor": "file-ticket",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Network",
+      "Add Interface"
+    ],
+    "synonyms": [
+      "Networking",
+      "NIC",
+      "Network Interface Card",
+      "New Interface",
+      "Create Interface"
+    ],
+    "requiredRoles": [
+      "NETWORK_INTERFACE_WRITE"
+    ],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/system",
+      "network"
+    ],
+    "routerLink": null,
+    "anchor": "add-interface",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Network",
+      "Interfaces"
+    ],
+    "synonyms": [
+      "Networking",
+      "NIC",
+      "Network Interface Card"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/system",
+      "network"
+    ],
+    "routerLink": null,
+    "anchor": "interfaces",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Network",
+      "Ipmi"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/system",
+      "network"
+    ],
+    "routerLink": null,
+    "anchor": "ipmi",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Network",
+      "Show Events"
+    ],
+    "synonyms": [
+      "Show Ipmi Events"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/system",
+      "network"
+    ],
+    "routerLink": null,
+    "anchor": "show-events",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Network",
+      "Global Configuration Settings"
+    ],
+    "synonyms": [
+      "Hostname",
+      "Domain",
+      "HTTP Proxy",
+      "Service Announcement",
+      "Additional Domains",
+      "Hostname Database",
+      "Outbound Network",
+      "Domain Name System",
+      "DNS Servers",
+      "DHCP",
+      "Gateway",
+      "Lan"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/system",
+      "network"
+    ],
+    "routerLink": null,
+    "anchor": "global-configuration-settings",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Network",
+      "Global Configuration"
+    ],
+    "synonyms": [
+      "Network Configuration",
+      "Network Settings"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/system",
+      "network"
+    ],
+    "routerLink": null,
+    "anchor": "global-configuration",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Network",
+      "Nameserver"
+    ],
+    "synonyms": [
+      "NS"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/system",
+      "network"
+    ],
+    "routerLink": null,
+    "anchor": "nameserver",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Network",
+      "Static Routes"
+    ],
+    "synonyms": [
+      "Routing",
+      "Static Routing"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/system",
+      "network"
+    ],
+    "routerLink": null,
+    "anchor": "static-routes",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Network",
+      "Static Routes",
+      "Add Static Route"
+    ],
+    "synonyms": [
+      "Create Static Route",
+      "New Static Route"
+    ],
+    "requiredRoles": [
+      "NETWORK_INTERFACE_WRITE"
+    ],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/system",
+      "network"
+    ],
+    "routerLink": null,
+    "anchor": "add-static-route",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Network"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/system",
+      "network"
+    ],
+    "routerLink": null,
+    "anchor": "network-dashboard",
     "triggerAnchor": null,
     "section": "ui"
   },

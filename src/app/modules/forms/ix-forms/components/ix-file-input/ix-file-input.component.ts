@@ -15,6 +15,7 @@ import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-forma
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
 
 @UntilDestroy()
 @Component({
@@ -22,7 +23,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './ix-file-input.component.html',
   styleUrls: ['./ix-file-input.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxLabelComponent,
     MatTooltip,
@@ -38,8 +38,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class IxFileInputComponent implements ControlValueAccessor {
-  readonly label = input<string>();
-  readonly tooltip = input<string>();
+  readonly label = input<TranslatedString>();
+  readonly tooltip = input<TranslatedString>();
   readonly acceptedFiles = input('*.*');
   readonly multiple = input<boolean>();
   readonly required = input<boolean>(false);

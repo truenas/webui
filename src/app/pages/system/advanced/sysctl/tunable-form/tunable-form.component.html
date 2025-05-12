@@ -1,4 +1,4 @@
-<ix-modal-header [requiredRoles]="requiredRoles" [title]="title" [loading]="isFormLoading"></ix-modal-header>
+<ix-modal-header [requiredRoles]="requiredRoles" [title]="title" [loading]="isFormLoading()"></ix-modal-header>
 
 <mat-card>
   <mat-card-content>
@@ -15,14 +15,14 @@
           formControlName="var"
           [label]="'Variable' | translate"
           [required]="true"
-          [tooltip]="tooltips.var"
+          [tooltip]="tooltips.var | translate"
         ></ix-input>
 
         <ix-textarea
           formControlName="value"
           [label]="'Value' | translate"
           [required]="true"
-          [tooltip]="tooltips.value"
+          [tooltip]="tooltips.value | translate"
         ></ix-textarea>
 
         <ix-input
@@ -33,7 +33,6 @@
         <ix-checkbox
           formControlName="enabled"
           [label]="'Enabled' | translate"
-          [tooltip]="tooltips.enabled"
         ></ix-checkbox>
       </ix-fieldset>
 
@@ -44,7 +43,7 @@
           type="submit"
           color="primary"
           ixTest="save"
-          [disabled]="form.invalid || isFormLoading"
+          [disabled]="form.invalid || isFormLoading()"
         >
           {{ 'Save' | translate }}
         </button>

@@ -1,5 +1,6 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit,
+  signal,
 } from '@angular/core';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -25,6 +26,7 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -34,7 +36,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './alert-config-form.component.html',
   styleUrls: ['./alert-config-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatProgressBar,
@@ -65,7 +66,7 @@ export class AlertConfigFormComponent implements OnInit {
   categories: AlertCategory[] = [];
   selectedCategory: AlertCategory | undefined = undefined;
   form = this.formBuilder.group({});
-  isFormLoading = false;
+  protected isFormLoading = signal(false);
   readonly helptext = helptextAlertSettings;
 
   readonly levelOptions$ = of([
@@ -80,7 +81,7 @@ export class AlertConfigFormComponent implements OnInit {
 
   readonly policyOptions$ = this.api.call('alert.list_policies').pipe(
     map((policyList) => {
-      return policyList.map((policy) => ({ label: policy, value: policy }));
+      return policyList.map((policy) => ({ label: ignoreTranslation(policy), value: policy }));
     }),
   );
 
@@ -91,11 +92,10 @@ export class AlertConfigFormComponent implements OnInit {
     protected translate: TranslateService,
     private snackbarService: SnackbarService,
     private formBuilder: FormBuilder,
-    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
 
     forkJoin([
       this.api.call('alert.list_categories'),
@@ -124,12 +124,10 @@ export class AlertConfigFormComponent implements OnInit {
           });
 
           this.form.patchValue(alertConfig.classes);
-          this.isFormLoading = false;
-          this.cdr.markForCheck();
+          this.isFormLoading.set(false);
         },
         error: (error: unknown) => {
-          this.isFormLoading = false;
-          this.cdr.markForCheck();
+          this.isFormLoading.set(false);
           this.errorHandler.showErrorModal(error);
         },
       });
@@ -140,7 +138,7 @@ export class AlertConfigFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
     const payload: AlertClassesUpdate = { classes: {} };
     Object.entries(this.form.controls)
       .forEach(([className, classControl]: [string, FormGroup<ControlsOf<AlertClassSettings>>]) => {
@@ -166,10 +164,8 @@ export class AlertConfigFormComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe(() => {
       this.snackbarService.success(this.translate.instant('Settings saved.'));
-      this.cdr.markForCheck();
     }).add(() => {
-      this.isFormLoading = false;
-      this.cdr.markForCheck();
+      this.isFormLoading.set(false);
     });
   }
 }

@@ -7,7 +7,7 @@ import {
   MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle,
 } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Observable, of, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -28,7 +28,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './app-rollback-modal.component.html',
   styleUrls: ['./app-rollback-modal.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     MatDialogTitle,
@@ -52,7 +51,7 @@ export class AppRollbackModalComponent {
 
   versionOptions$: Observable<Option[]>;
 
-  readonly helptext = helptextApps.apps.rollback_dialog.version.tooltip;
+  readonly helptext = helptextApps.apps.rollbackDialog.version.tooltip;
   protected readonly requiredRoles = [Role.AppsWrite];
 
   constructor(
@@ -61,6 +60,7 @@ export class AppRollbackModalComponent {
     private dialogService: DialogService,
     private formBuilder: FormBuilder,
     private errorHandler: ErrorHandlerService,
+    private translate: TranslateService,
     @Inject(MAT_DIALOG_DATA) private app: App,
   ) {
     this.setVersionOptions();
@@ -71,7 +71,7 @@ export class AppRollbackModalComponent {
 
     this.dialogService.jobDialog(
       this.api.job('app.rollback', rollbackParams),
-      { title: helptextApps.apps.rollback_dialog.job },
+      { title: this.translate.instant(helptextApps.apps.rollbackDialog.job) },
     )
       .afterClosed()
       .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))

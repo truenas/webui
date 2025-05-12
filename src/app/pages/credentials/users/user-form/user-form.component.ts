@@ -51,6 +51,7 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ignoreTranslation, TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { OneTimePasswordCreatedDialog } from 'app/pages/credentials/users/one-time-password-created-dialog/one-time-password-created-dialog.component';
 import { userAdded, userChanged } from 'app/pages/credentials/users/store/user.actions';
@@ -71,11 +72,10 @@ export enum UserStigPasswordOption {
 
 @UntilDestroy({ arrayName: 'subscriptions' })
 @Component({
-  selector: 'ix-user-form',
+  selector: 'ix-old-user-form',
   templateUrl: './user-form.component.html',
   styleUrls: ['./user-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     ReactiveFormsModule,
@@ -99,8 +99,8 @@ export enum UserStigPasswordOption {
     TranslateModule,
   ],
 })
-export class UserFormComponent implements OnInit {
-  isFormLoading = false;
+export class OldUserFormComponent implements OnInit {
+  protected isFormLoading = signal(false);
   subscriptions: Subscription[] = [];
   homeModeOldValue = '';
   protected readonly requiredRoles = [Role.AccountWrite];
@@ -171,28 +171,31 @@ export class UserFormComponent implements OnInit {
   });
 
   readonly tooltips = {
-    username: helptextUsers.user_form_username_tooltip,
-    password: helptextUsers.user_form_password_tooltip,
-    password_edit: helptextUsers.user_form_password_tooltip,
-    password_conf_edit: helptextUsers.user_form_password_tooltip,
-    uid: helptextUsers.user_form_uid_tooltip,
-    group: helptextUsers.user_form_primary_group_tooltip,
-    group_create: helptextUsers.user_form_group_create_tooltip,
-    groups: helptextUsers.user_form_aux_groups_tooltip,
-    home: helptextUsers.user_form_dirs_explorer_tooltip,
-    home_mode: helptextUsers.user_form_home_dir_permissions_tooltip,
-    sshpubkey: helptextUsers.user_form_auth_sshkey_tooltip,
-    password_disabled: helptextUsers.user_form_auth_pw_enable_tooltip,
-    one_time_password: helptextUsers.user_form_auth_one_time_pw_tooltip,
-    shell: helptextUsers.user_form_shell_tooltip,
-    locked: helptextUsers.user_form_lockuser_tooltip,
-    smb: helptextUsers.user_form_smb_tooltip,
+    username: helptextUsers.usernameTooltip,
+    password: helptextUsers.passwordTooltip,
+    password_edit: helptextUsers.passwordTooltip,
+    password_conf_edit: helptextUsers.passwordTooltip,
+    uid: helptextUsers.uidTooltip,
+    group: helptextUsers.primaryGroupTooltip,
+    group_create: helptextUsers.createGroupTooltip,
+    groups: helptextUsers.auxGroupsTooltip,
+    home: helptextUsers.homeDirectoryExplorerTooltip,
+    home_mode: helptextUsers.homeDirectoryPermissionsTooltip,
+    sshpubkey: helptextUsers.publicKeyTooltip,
+    password_disabled: helptextUsers.disablePasswordTooltip,
+    one_time_password: helptextUsers.oneTimePasswordTooltip,
+    shell: helptextUsers.shellTooltip,
+    locked: helptextUsers.lockUserTooltip,
+    smb: helptextUsers.smbTooltip,
     smbBuiltin: helptextUsers.smbBuiltin,
     smbStig: helptextUsers.smbStig,
   };
 
   readonly groupOptions$ = this.api.call('group.query', [[['local', '=', true]]]).pipe(
-    map((groups) => groups.map((group) => ({ label: group.group, value: group.id }))),
+    map((groups) => groups.map((group) => ({
+      label: ignoreTranslation(group.group),
+      value: group.id,
+    }))),
   );
 
   shellOptions$: Observable<Option[]>;
@@ -209,16 +212,16 @@ export class UserFormComponent implements OnInit {
     {
       label: this.translate.instant('Disable Password'),
       value: UserStigPasswordOption.DisablePassword,
-      tooltip: this.tooltips.password_disabled,
+      tooltip: this.translate.instant(this.tooltips.password_disabled),
     },
     {
       label: this.translate.instant('Generate Temporary One-Time Password'),
       value: UserStigPasswordOption.OneTimePassword,
-      tooltip: this.tooltips.one_time_password,
+      tooltip: this.translate.instant(this.tooltips.one_time_password),
     },
   ]);
 
-  get homeCreateWarning(): string {
+  get homeCreateWarning(): TranslatedString {
     const homeCreate = this.form.value.home_create;
     const home = this.form.value.home;
     const homeMode = this.form.value.home_mode;
@@ -396,14 +399,12 @@ export class UserFormComponent implements OnInit {
             this.snackbar.success(this.translate.instant('User updated'));
             this.store$.dispatch(userChanged({ user }));
           }
-          this.isFormLoading = false;
+          this.isFormLoading.set(false);
           this.slideInRef.close({ response: user, error: null });
-          this.cdr.markForCheck();
         },
         error: (error: unknown) => {
-          this.isFormLoading = false;
+          this.isFormLoading.set(false);
           this.formErrorHandler.handleValidationErrors(error, this.form);
-          this.cdr.markForCheck();
         },
       });
   }
@@ -458,10 +459,11 @@ export class UserFormComponent implements OnInit {
   }
 
   private submitUserRequest(payload: UserUpdate): Observable<User> {
-    this.isFormLoading = true;
-    this.cdr.markForCheck();
+    this.isFormLoading.set(true);
 
-    return this.editingUser ? this.getUpdateUserRequest(payload) : this.getCreateUserRequest(payload);
+    return this.editingUser
+      ? this.getUpdateUserRequest(payload)
+      : this.getCreateUserRequest(payload);
   }
 
   private getCreateUserRequest(payload: UserUpdate): Observable<User> {

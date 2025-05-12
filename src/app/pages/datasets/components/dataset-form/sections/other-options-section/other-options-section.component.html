@@ -3,7 +3,6 @@
     <ix-input
       formControlName="comments"
       [label]="'Comments' | translate"
-      [tooltip]="helptext.dataset_form_comments_tooltip | translate"
     ></ix-input>
 
     <ix-select
@@ -11,7 +10,7 @@
       [required]="true"
       [options]="syncOptions$"
       [label]="'Sync' | translate"
-      [tooltip]="helptext.dataset_form_sync_tooltip | translate"
+      [tooltip]="helptext.syncTooltip | translate"
     ></ix-select>
 
     <ix-select
@@ -19,7 +18,7 @@
       [required]="true"
       [options]="compressionOptions$"
       [label]="'Compression Level' | translate"
-      [tooltip]="helptext.dataset_form_compression_tooltip | translate"
+      [tooltip]="helptext.compressionTooltip | translate"
     ></ix-select>
 
     <ix-select
@@ -27,7 +26,7 @@
       [required]="true"
       [options]="atimeOptions$"
       [label]="'Enable Atime' | translate"
-      [tooltip]="helptext.dataset_form_atime_tooltip | translate"
+      [tooltip]="helptext.atimeTooltip | translate"
     ></ix-select>
 
     @if (hasDeduplication) {
@@ -36,7 +35,7 @@
         [label]="'ZFS Deduplication' | translate"
         [required]="true"
         [options]="deduplicationOptions$"
-        [tooltip]="helptext.dataset_form_deduplication_tooltip | translate"
+        [tooltip]="helptext.deduplicationTooltip | translate"
       ></ix-select>
     }
 
@@ -45,7 +44,7 @@
       [label]="'Case Sensitivity' | translate"
       [required]="true"
       [options]="caseSensitivityOptions$"
-      [tooltip]="helptext.dataset_form_casesensitivity_tooltip | translate"
+      [tooltip]="helptext.caseSensitivityTooltip | translate"
     ></ix-select>
 
     <ix-select
@@ -64,7 +63,6 @@
       [label]="'Read-only' | translate"
       [required]="true"
       [options]="readonlyOptions$"
-      [tooltip]="helptext.dataset_form_readonly_tooltip | translate"
     ></ix-select>
 
     <ix-select
@@ -72,13 +70,13 @@
       [label]="'Exec' | translate"
       [required]="true"
       [options]="execOptions$"
-      [tooltip]="helptext.dataset_form_exec_tooltip | translate"
+      [tooltip]="helptext.execTooltip | translate"
     ></ix-select>
 
     <ix-select
       formControlName="snapdir"
       [label]="'Snapshot Directory' | translate"
-      [tooltip]="helptext.dataset_form_snapdir_tooltip | translate"
+      [tooltip]="helptext.snapdirTooltip | translate"
       [options]="snapdirOptions$"
     ></ix-select>
 
@@ -86,14 +84,14 @@
       formControlName="snapdev"
       [label]="'Snapdev' | translate"
       [required]="true"
-      [tooltip]="helptext.dataset_form_snapdev_tooltip | translate"
+      [tooltip]="helptext.snapdevTooltip | translate"
       [options]="snapdevOptions$"
     ></ix-select>
 
     <ix-select
       formControlName="copies"
       [label]="'Copies' | translate"
-      [tooltip]="helptext.dataset_form_copies_tooltip | translate"
+      [tooltip]="helptext.copiesTooltip | translate"
       [options]="copiesOptions$"
     ></ix-select>
 
@@ -102,12 +100,12 @@
       [label]="'Record Size' | translate"
       [required]="true"
       [options]="recordsizeOptions$"
-      [tooltip]="helptext.dataset_form_recordsize_tooltip | translate"
+      [tooltip]="helptext.recordsizeTooltip | translate"
     ></ix-select>
 
     @if (hasRecordsizeWarning) {
       <div class="recordsize-warning">
-        {{ helptext.dataset_form_warning | translate: { size: minimumRecommendedRecordsize } }}
+        {{ helptext.recordsizeWarning | translate: { size: minimumRecommendedRecordsize } }}
       </div>
     }
 
@@ -122,7 +120,7 @@
       formControlName="aclmode"
       [label]="'ACL Mode' | translate"
       [required]="true"
-      [tooltip]="helptext.dataset_form_aclmode_tooltip | translate"
+      [tooltip]="helptext.aclmodeTooltip | translate"
       [options]="aclModeOptions$"
     ></ix-select>
 
@@ -131,7 +129,7 @@
       [label]="'Metadata (Special) Small Block Size' | translate"
       [required]="true"
       [options]="specialSmallBlockSizeOptions$"
-      [tooltip]="helptext.dataset_form_special_small_blocks_tooltip | translate"
+      [tooltip]="helptext.specialSmallBlocksTooltip | translate"
     ></ix-select>
   </ix-fieldset>
 }

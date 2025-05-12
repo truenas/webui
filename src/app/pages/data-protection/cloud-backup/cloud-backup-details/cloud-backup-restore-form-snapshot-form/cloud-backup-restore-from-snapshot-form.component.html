@@ -1,7 +1,7 @@
 <ix-modal-header
   [requiredRoles]="requiredRoles"
   [title]="title"
-  [loading]="isLoading"
+  [loading]="isLoading()"
 ></ix-modal-header>
 
 <mat-card>
@@ -15,7 +15,7 @@
         <ix-radio-group
           formControlName="includeExclude"
           [label]="'Include/Exclude' | translate"
-          [tooltip]="helptext.tooltips.include_exclude"
+          [tooltip]="helptext.tooltips.includeExclude | translate"
           [options]="includeExcludeOptions$"
         ></ix-radio-group>
 
@@ -23,7 +23,7 @@
           <ix-explorer
             formControlName="excludedPaths"
             [required]="true"
-            [tooltip]="helptext.tooltips.excluded_paths"
+            [tooltip]="helptext.tooltips.excludedPaths | translate"
             [label]="'Excluded Paths' | translate"
             [nodeProvider]="snapshotNodeProvider"
             [root]="data.backup.absolute_paths ? mntPath : '/'"
@@ -34,7 +34,7 @@
         @if (isExcludeByPatternSelected) {
           <ix-input
             formControlName="excludePattern"
-            [tooltip]="helptext.tooltips.pattern"
+            [tooltip]="helptext.tooltips.pattern | translate"
             [label]="'Pattern' | translate"
             [required]="true"
           ></ix-input>
@@ -47,7 +47,7 @@
             [label]="'Subfolder' | translate"
             [nodeProvider]="snapshotNodeProvider"
             [root]="data.backup.absolute_paths ? mntPath : '/'"
-            [tooltip]="helptext.tooltips.sub_folder"
+            [tooltip]="helptext.tooltips.subFolder | translate"
           ></ix-explorer>
         }
 
@@ -57,7 +57,7 @@
             [root]="form.controls.subFolder.value || backupMntPath"
             [label]="'Included Paths' | translate"
             [nodeProvider]="snapshotNodeProvider"
-            [tooltip]="helptext.tooltips.included_paths"
+            [tooltip]="helptext.tooltips.includedPaths | translate"
             [multiple]="true"
           ></ix-explorer>
         }
@@ -69,7 +69,7 @@
           [required]="true"
           [label]="'Target' | translate"
           [nodeProvider]="fileNodeProvider"
-          [tooltip]="helptext.tooltips.target"
+          [tooltip]="helptext.tooltips.target | translate"
           [canCreateDataset]="true"
           [createDatasetProps]="createDatasetProps"
         ></ix-explorer>
@@ -82,7 +82,7 @@
           type="submit"
           color="primary"
           ixTest="save"
-          [disabled]="form.invalid || isLoading"
+          [disabled]="form.invalid || isLoading()"
         >
           {{ 'Save' | translate }}
         </button>

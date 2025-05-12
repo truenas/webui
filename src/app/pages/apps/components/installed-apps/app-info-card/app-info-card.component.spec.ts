@@ -44,8 +44,8 @@ describe('AppInfoCardComponent', () => {
       train: 'stable',
     },
     portals: {
-      'Web UI': 'http://localhost:8000/ui',
       'Admin Panel': 'http://localhost:8000/admin',
+      'Web UI': 'http://localhost:8000/ui',
     } as Record<string, string>,
     custom_app: false,
   } as App;
@@ -264,10 +264,10 @@ describe('AppInfoCardComponent', () => {
     const buttons = await loader.getAllHarnesses(MatButtonHarness.with({ ancestor: '.portals' }));
 
     expect(buttons).toHaveLength(2);
-    expect(await buttons[0].getText()).toBe('Admin Panel');
-    expect(await buttons[1].getText()).toBe('Web UI');
+    expect(await buttons[0].getText()).toBe('Web UI');
+    expect(await buttons[1].getText()).toBe('Admin Panel');
 
-    await buttons[1].click();
+    await buttons[0].click();
 
     expect(spectator.inject(RedirectService).openWindow).toHaveBeenCalledWith(fakeApp.portals['Web UI']);
   });
@@ -284,14 +284,14 @@ describe('AppInfoCardComponent', () => {
     const buttons = await loader.getAllHarnesses(MatButtonHarness.with({ ancestor: '.portals' }));
 
     expect(buttons).toHaveLength(2);
-    expect(await buttons[0].getText()).toBe('Admin Panel');
-    expect(await buttons[1].getText()).toBe('Web UI');
+    expect(await buttons[0].getText()).toBe('Web UI');
+    expect(await buttons[1].getText()).toBe('Admin Panel');
 
     await buttons[0].click();
-    expect(spectator.inject(RedirectService).openWindow).toHaveBeenCalledWith('http://localhost:8000/');
+    expect(spectator.inject(RedirectService).openWindow).toHaveBeenCalledWith('http://localhost:8000/ui?q=ui#yes');
 
     await buttons[1].click();
-    expect(spectator.inject(RedirectService).openWindow).toHaveBeenCalledWith('http://localhost:8000/ui?q=ui#yes');
+    expect(spectator.inject(RedirectService).openWindow).toHaveBeenCalledWith('http://localhost:8000/');
   });
 
   it('opens rollback app dialog when Roll Back button is pressed', async () => {

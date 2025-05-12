@@ -3,10 +3,10 @@ import {
 } from '@angular/core';
 import { FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { merge, of } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
-import { CreateVdevLayout, vdevLayoutOptions, VdevType } from 'app/enums/v-dev-type.enum';
+import { CreateVdevLayout, vdevLayoutOptions, VDevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { SelectOption } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
@@ -14,6 +14,7 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
+import { TranslateOptionsPipe } from 'app/modules/translate/translate-options/translate-options.pipe';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { hasDeepChanges, setValueIfNotSame } from 'app/pages/storage/modules/pool-manager/utils/form.utils';
 import { isDraidLayout } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
@@ -26,7 +27,6 @@ import { NormalSelectionComponent } from './normal-selection/normal-selection.co
   templateUrl: './automated-disk-selection.component.html',
   styleUrls: ['./automated-disk-selection.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxSelectComponent,
     TestOverrideDirective,
@@ -36,11 +36,12 @@ import { NormalSelectionComponent } from './normal-selection/normal-selection.co
     NormalSelectionComponent,
     TranslateModule,
     CastPipe,
+    TranslateOptionsPipe,
   ],
 })
 export class AutomatedDiskSelectionComponent implements OnChanges {
   readonly isStepActive = input<boolean>(false);
-  readonly type = input<VdevType>();
+  readonly type = input<VDevType>();
   readonly inventory = input<DetailsDisk[]>([]);
   readonly canChangeLayout = input(false);
   readonly limitLayouts = input<CreateVdevLayout[]>([]);
@@ -48,12 +49,12 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
   readonly layoutControl = new FormControl(null as CreateVdevLayout | null, Validators.required);
 
   protected isDataVdev = computed(() => {
-    return this.type() === VdevType.Data;
+    return this.type() === VDevType.Data;
   });
 
   protected dataLayoutTooltip = computed(() => {
     if (this.isDataVdev()) {
-      return 'Read only field: The layout of this device has been preselected to match the layout of the existing Data devices in the pool';
+      return this.translate.instant('Read only field: The layout of this device has been preselected to match the layout of the existing Data devices in the pool');
     }
 
     return '';
@@ -63,6 +64,7 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
 
   constructor(
     protected store: PoolManagerStore,
+    private translate: TranslateService,
   ) {
     this.updateStoreOnChanges();
     this.listenForResetEvents();
@@ -79,7 +81,7 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
   }
 
   protected isMetadataVdev = computed(() => {
-    return this.type() === VdevType.Special;
+    return this.type() === VDevType.Special;
   });
 
   private updateStoreOnChanges(): void {

@@ -4,6 +4,11 @@
   margin-bottom: 12px;
   margin-top: 18px;
   padding: 8px 0;
+
+  :host-context(ix-editable) & {
+    margin-bottom: 0;
+    margin-top: 0;
+  }
 }
 
 .input-container {
@@ -87,7 +92,7 @@
 }
 
 .create-dataset-container {
-  background: var(--alt-bg1);
+  background: var(--bg2);
   display: flex;
   justify-content: flex-end;
 }

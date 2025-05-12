@@ -9,29 +9,40 @@
       ></ix-checkbox>
     </ix-fieldset>
 
+    @if (isVm) {
+      <ix-fieldset [title]="'Operating System' | translate">
+        <ix-combobox
+          formControlName="image_os"
+          [label]="'OS Type' | translate"
+          [allowCustomValue]="true"
+          [tooltip]="instancesHelptext.osImage.tooltip| translate"
+          [provider]="imageOsProvider"
+        ></ix-combobox>
+      </ix-fieldset>
+    }
+
     <ix-fieldset [title]="'CPU & Memory' | translate">
       <ix-input
         formControlName="cpu"
         [label]="'CPU Configuration' | translate"
-        [tooltip]="containersHelptext.cpu_tooltip | translate"
+        [tooltip]="instancesHelptext.cpuTooltip | translate"
         [required]="isVm"
-        [hint]="isVm ? undefined : (containersHelptext.cpuHint | translate)"
+        [hint]="isVm ? undefined : (instancesHelptext.cpuHint | translate)"
       ></ix-input>
 
       <ix-input
         formControlName="memory"
         [label]="'Memory Size' | translate"
-        [tooltip]="containersHelptext.memory_tooltip | translate"
+        [tooltip]="instancesHelptext.memoryTooltip | translate"
         [format]="formatter.memorySizeFormatting"
         [parse]="formatter.memorySizeParsing"
         [required]="isVm"
-        [hint]="isVm ? undefined : (containersHelptext.memoryHint | translate)"
+        [hint]="isVm ? undefined : (instancesHelptext.memoryHint | translate)"
       ></ix-input>
     </ix-fieldset>
 
     @if (isVm) {
       <ix-fieldset [title]="'VNC' | translate">
-
         <div [matTooltip]="isStopped ? '' : ('Instance must be stopped to update VNC.' | translate)">
           <ix-checkbox
             formControlName="enable_vnc"
@@ -95,7 +106,7 @@
         <ix-checkbox
           formControlName="secure_boot"
           [label]="'Secure Boot' | translate"
-          [tooltip]="containersHelptext.secure_boot_tooltip | translate"
+          [tooltip]="instancesHelptext.secureBootTooltip | translate"
         ></ix-checkbox>
       </ix-fieldset>
     }

@@ -1,7 +1,7 @@
 <ix-modal-header
   [requiredRoles]="requiredRoles"
   [title]="'Kerberos Settings' | translate"
-  [loading]="isFormLoading"
+  [loading]="isFormLoading()"
 ></ix-modal-header>
 <mat-card>
   <mat-card-content>
@@ -10,13 +10,13 @@
         <ix-textarea
           formControlName="appdefaults_aux"
           [label]="'Appdefaults Auxiliary Parameters' | translate"
-          [tooltip]="tooltips.appdefaults_aux"
+          [tooltip]="tooltips.appdefaults_aux | translate"
         ></ix-textarea>
 
         <ix-textarea
           formControlName="libdefaults_aux"
           [label]="'Libdefaults Auxiliary Parameters' | translate"
-          [tooltip]="tooltips.libdefaults_aux"
+          [tooltip]="tooltips.libdefaults_aux | translate"
         ></ix-textarea>
       </ix-fieldset>
 
@@ -27,7 +27,7 @@
           type="submit"
           color="primary"
           ixTest="save"
-          [disabled]="form.invalid || isFormLoading"
+          [disabled]="form.invalid || isFormLoading()"
         >
           {{ 'Save' | translate }}
         </button>

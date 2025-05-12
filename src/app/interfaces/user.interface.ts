@@ -29,6 +29,10 @@ export interface User {
   roles: Role[];
   api_keys: number[];
   userns_idmap: number | null | typeof directIdMapping;
+  password_history: unknown[] | null;
+  password_change_required: boolean;
+  password_age: number | null;
+  last_password_change: { $date: number } | null;
 }
 
 export interface UserGroup {

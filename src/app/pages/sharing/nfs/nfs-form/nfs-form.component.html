@@ -1,7 +1,7 @@
 <ix-modal-header
   [requiredRoles]="requiredRoles"
   [title]="title"
-  [loading]="isLoading"
+  [loading]="isLoading()"
 ></ix-modal-header>
 
 <mat-card>
@@ -12,7 +12,7 @@
           formControlName="path"
           [required]="true"
           [label]="'Path' | translate"
-          [tooltip]="helptext.tooltip_path | translate"
+          [tooltip]="helptext.pathTooltip | translate"
           [nodeProvider]="treeNodeProvider"
           [canCreateDataset]="isNew"
           [createDatasetProps]="createDatasetProps"
@@ -23,20 +23,18 @@
         <ix-input
           formControlName="comment"
           [label]="'Description' | translate"
-          [tooltip]="helptext.tooltip_comment | translate"
         ></ix-input>
 
         <ix-checkbox
           formControlName="enabled"
           [label]="'Enabled' | translate"
-          [tooltip]="helptext.tooltip_enabled | translate"
         ></ix-checkbox>
 
         @if (isEnterprise()) {
           <ix-checkbox
             formControlName="expose_snapshots"
             [label]="'Expose Snapshots' | translate"
-            [tooltip]="helptext.tooltip_expose_snapshots | translate"
+            [tooltip]="helptext.exposeTooltip | translate"
           ></ix-checkbox>
         }
       </ix-fieldset>
@@ -46,34 +44,33 @@
           <ix-checkbox
             formControlName="ro"
             [label]="'Read Only' | translate"
-            [tooltip]="helptext.tooltip_ro | translate"
           ></ix-checkbox>
 
           <ix-combobox
             formControlName="maproot_user"
             [label]="'Maproot User' | translate"
-            [tooltip]="helptext.tooltip_maproot_user | translate"
+            [tooltip]="helptext.maprootUserTooltip | translate"
             [provider]="userProvider"
           ></ix-combobox>
 
           <ix-combobox
             formControlName="maproot_group"
             [label]="'Maproot Group' | translate"
-            [tooltip]="helptext.tooltip_maproot_group | translate"
+            [tooltip]="helptext.maprootGroupTooltip | translate"
             [provider]="groupProvider"
           ></ix-combobox>
 
           <ix-combobox
             formControlName="mapall_user"
             [label]="'Mapall User' | translate"
-            [tooltip]="helptext.tooltip_mapall_user | translate"
+            [tooltip]="helptext.mapallUserTooltip | translate"
             [provider]="userProvider"
           ></ix-combobox>
 
           <ix-combobox
             formControlName="mapall_group"
             [label]="'Mapall Group' | translate"
-            [tooltip]="helptext.tooltip_mapall_group | translate"
+            [tooltip]="helptext.mapallGroupTooltip | translate"
             [provider]="groupProvider"
           ></ix-combobox>
 
@@ -82,7 +79,7 @@
             [label]="'Security' | translate"
             [options]="securityOptions$"
             [multiple]="true"
-            [tooltip]="helptext.tooltip_security | translate"
+            [tooltip]="helptext.securityTooltip | translate"
           ></ix-select>
         </ix-fieldset>
       }
@@ -93,7 +90,7 @@
           [empty]="form.controls.networks.controls.length === 0"
           [label]="'Networks' | translate"
           [formArray]="form.get('networks')"
-          [tooltip]="helptext.tooltip_networks_wrapper | translate"
+          [tooltip]="helptext.addNetworkTooltip | translate"
           (add)="addNetworkControl()"
         >
           @for (network of form.controls.networks.controls; track network; let i = $index) {
@@ -105,7 +102,6 @@
                 [required]="true"
                 [formControlName]="i"
                 [label]="'Network' | translate"
-                [tooltip]="helptext.tooltip_network | translate"
               ></ix-ip-input-with-netmask>
             </ix-list-item>
           }
@@ -116,7 +112,7 @@
           [empty]="form.controls.hosts.controls.length === 0"
           [label]="'Hosts' | translate"
           [formArray]="form.get('hosts')"
-          [tooltip]="helptext.tooltip_hosts_wrapper | translate"
+          [tooltip]="helptext.addHostsTooltip | translate"
           (add)="addHostControl()"
         >
           @for (network of form.controls.hosts.controls; track network; let i = $index) {
@@ -128,7 +124,7 @@
                 [required]="true"
                 [formControlName]="i"
                 [label]="'Authorized Hosts and IP addresses' | translate"
-                [tooltip]="helptext.tooltip_hosts | translate"
+                [tooltip]="helptext.hostsTooltip | translate"
               ></ix-input>
             </ix-list-item>
           }
@@ -142,7 +138,7 @@
           type="submit"
           color="primary"
           ixTest="save"
-          [disabled]="form.invalid || isLoading"
+          [disabled]="form.invalid || isLoading()"
         >
           {{ 'Save' | translate }}
         </button>

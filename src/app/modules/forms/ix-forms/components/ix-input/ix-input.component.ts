@@ -30,6 +30,7 @@ import { MarkedIcon } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
 
 type InputValue = string | number | null;
 
@@ -39,7 +40,6 @@ type InputValue = string | number | null;
   templateUrl: './ix-input.component.html',
   styleUrls: ['./ix-input.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxLabelComponent,
     IxIconComponent,
@@ -62,11 +62,11 @@ type InputValue = string | number | null;
   ],
 })
 export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges {
-  readonly label = input<string>();
-  readonly placeholder = input<string>('');
+  readonly label = input<TranslatedString>();
+  readonly placeholder = input<TranslatedString>('');
   readonly prefixIcon = input<MarkedIcon>();
-  readonly hint = input<string>();
-  readonly tooltip = input<string>();
+  readonly hint = input<TranslatedString>();
+  readonly tooltip = input<TranslatedString>();
   readonly required = input<boolean>(false);
   readonly readonly = input<boolean>();
   readonly type = input<string>('text');

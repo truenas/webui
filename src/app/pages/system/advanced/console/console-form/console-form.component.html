@@ -1,7 +1,7 @@
 <ix-modal-header
   [requiredRoles]="requiredRoles"
   [title]="'Console' | translate"
-  [loading]="isFormLoading"
+  [loading]="isFormLoading()"
 ></ix-modal-header>
 
 <mat-card>
@@ -11,33 +11,33 @@
         <ix-checkbox
           formControlName="consolemenu"
           [label]="'Show Text Console without Password Prompt' | translate"
-          [tooltip]="tooltips.consolemenu"
+          [tooltip]="tooltips.consolemenu | translate"
         ></ix-checkbox>
 
         <ix-checkbox
           formControlName="serialconsole"
           [label]="'Enable Serial Console' | translate"
-          [tooltip]="tooltips.serialconsole"
+          [tooltip]="tooltips.serialconsole | translate"
         ></ix-checkbox>
 
         <ix-select
           formControlName="serialport"
           [label]="'Serial Port' | translate"
-          [tooltip]="tooltips.serialport"
+          [tooltip]="tooltips.serialport | translate"
           [options]="serialPortOptions$"
         ></ix-select>
 
         <ix-select
           formControlName="serialspeed"
           [label]="'Serial Speed' | translate"
-          [tooltip]="tooltips.serialport"
+          [tooltip]="tooltips.serialport | translate"
           [options]="serialSpeedOptions$"
         ></ix-select>
 
         <ix-textarea
           formControlName="motd"
           [label]="'MOTD Banner' | translate"
-          [tooltip]="tooltips.motd"
+          [tooltip]="tooltips.motd | translate"
         ></ix-textarea>
       </ix-fieldset>
 
@@ -48,7 +48,7 @@
           type="submit"
           color="primary"
           ixTest="save"
-          [disabled]="form.invalid || isFormLoading"
+          [disabled]="form.invalid || isFormLoading()"
         >
           {{ 'Save' | translate }}
         </button>

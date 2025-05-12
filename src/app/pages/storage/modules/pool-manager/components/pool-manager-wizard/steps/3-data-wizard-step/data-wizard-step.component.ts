@@ -10,8 +10,8 @@ import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { map } from 'rxjs';
-import { CreateVdevLayout, TopologyItemType, VdevType } from 'app/enums/v-dev-type.enum';
-import { helptextManager } from 'app/helptext/storage/volumes/manager/manager';
+import { CreateVdevLayout, TopologyItemType, VDevType } from 'app/enums/v-dev-type.enum';
+import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
@@ -26,7 +26,6 @@ import { parseDraidVdevName } from 'app/pages/storage/modules/pool-manager/utils
   selector: 'ix-data-wizard-step',
   templateUrl: './data-wizard-step.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     LayoutStepComponent,
     FormActionsComponent,
@@ -44,10 +43,10 @@ export class DataWizardStepComponent implements OnInit {
 
   readonly goToLastStep = output();
 
-  protected readonly VdevType = VdevType;
-  protected readonly inventory$ = this.store.getInventoryForStep(VdevType.Data);
+  protected readonly vDevType = VDevType;
+  protected readonly inventory$ = this.store.getInventoryForStep(VDevType.Data);
   protected allowedLayouts = Object.values(CreateVdevLayout) as CreateVdevLayout[];
-  readonly helptext = helptextManager;
+  readonly helptext = helptextPoolCreation;
   canChangeLayout = true;
 
   constructor(
@@ -58,7 +57,7 @@ export class DataWizardStepComponent implements OnInit {
 
   ngOnInit(): void {
     this.addVdevsStore.pool$.pipe(
-      map((pool) => pool?.topology[VdevType.Data]),
+      map((pool) => pool?.topology[VDevType.Data]),
       untilDestroyed(this),
     ).subscribe((dataTopology) => {
       if (!dataTopology?.length) {
@@ -83,6 +82,6 @@ export class DataWizardStepComponent implements OnInit {
   }
 
   resetStep(): void {
-    this.store.resetStep(VdevType.Data);
+    this.store.resetStep(VDevType.Data);
   }
 }

@@ -15,6 +15,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { Role } from 'app/enums/role.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import {
   EncryptionOptionsDialogData,
 } from 'app/pages/datasets/modules/encryption/components/encryption-options-dialog/encryption-options-dialog-data.interface';
@@ -39,7 +40,6 @@ import { isEncryptionRoot, isPasswordEncrypted, isRootDataset } from 'app/pages/
   templateUrl: './zfs-encryption-card.component.html',
   styleUrls: ['./zfs-encryption-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatCardHeader,
@@ -53,6 +53,7 @@ import { isEncryptionRoot, isPasswordEncrypted, isRootDataset } from 'app/pages/
     MatCardContent,
     MatCardActions,
     MatAnchor,
+    TooltipComponent,
   ],
 })
 export class ZfsEncryptionCardComponent {
@@ -80,7 +81,7 @@ export class ZfsEncryptionCardComponent {
 
     if (this.dataset().locked) {
       if (!this.isEncryptionRoot()) {
-        return this.translate.instant('Locked by ancestor');
+        return this.translate.instant('Locked by parent');
       }
 
       return this.translate.instant('Locked');

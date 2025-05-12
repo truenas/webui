@@ -14,12 +14,8 @@ export const helptextSharingSmb = {
   placeholder_name: T('Name'),
 
   placeholder_comment: T('Description'),
-  tooltip_comment: T('Description of the share or notes on how it is used.'),
 
   placeholder_enabled: T('Enabled'),
-  tooltip_enabled: T(
-    'Enable this SMB share. Unset to disable this SMB share without deleting it.',
-  ),
   tooltip_enabled_audit_log: T(
     'Controls whether audit messages will be generated for the share. \
 <br><br> <b>Note</b>: Auditing may not be enabled if SMB1 support is enabled for the server.',
@@ -174,8 +170,6 @@ export const helptextSharingSmb = {
   placeholder_auxsmbconf: T('Additional Parameters String'),
   tooltip_auxsmbconf: T('String of additional smb4.conf parameters not covered by the system\'s API.'),
 
-  action_share_acl: T('Edit Share ACL'),
-  action_edit_acl: T('Edit Filesystem ACL'),
   restarted_smb_dialog: {
     title: T('SMB Service'),
     message: T('The SMB service has been restarted.'),

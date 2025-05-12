@@ -17,7 +17,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { DatasetType } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
 import { extractApiErrorDetails } from 'app/helpers/api.helper';
-import { deleteDatasetHelptext } from 'app/helptext/storage/volumes/datasets/delete-dataset';
+import { helptextDeleteDataset } from 'app/helptext/storage/volumes/datasets/delete-dataset';
 import { DatasetAttachment } from 'app/interfaces/pool-attachment.interface';
 import { Process } from 'app/interfaces/process.interface';
 import { VolumesListDataset } from 'app/interfaces/volumes-list-pool.interface';
@@ -37,7 +37,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './delete-dataset-dialog.component.html',
   styleUrls: ['./delete-dataset-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogTitle,
     TranslateModule,
@@ -66,7 +65,7 @@ export class DeleteDatasetDialog implements OnInit {
 
   deleteMessage: string;
 
-  protected readonly deleteDatasetHelptext = deleteDatasetHelptext;
+  protected readonly deleteDatasetHelptext = helptextDeleteDataset;
 
   get isZvol(): boolean {
     return this.dataset.type === DatasetType.Volume;

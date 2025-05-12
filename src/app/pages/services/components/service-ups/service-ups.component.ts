@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit, signal,
 } from '@angular/core';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -27,6 +27,7 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { translateOptions } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -36,7 +37,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './service-ups.component.html',
   styleUrls: ['./service-ups.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
@@ -58,7 +58,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 export class ServiceUpsComponent implements OnInit {
   protected readonly requiredRoles = [Role.SystemGeneralWrite];
 
-  isFormLoading = false;
+  protected isFormLoading = signal(false);
   isMasterMode = true;
 
   form = this.fb.group({
@@ -78,32 +78,30 @@ export class ServiceUpsComponent implements OnInit {
     powerdown: [false],
     nocommwarntime: [300 as number | null],
     hostsync: [15],
-    description: [null as string | null],
     options: [null as string | null],
     optionsupsd: [null as string | null],
   });
 
   readonly helptext = helptextServiceUps;
   readonly labels = {
-    identifier: helptextServiceUps.ups_identifier_placeholder,
-    mode: helptextServiceUps.ups_mode_placeholder,
-    remotehost: helptextServiceUps.ups_remotehost_placeholder,
-    remoteport: helptextServiceUps.ups_remoteport_placeholder,
-    driver: helptextServiceUps.ups_driver_placeholder,
-    port: helptextServiceUps.ups_port_placeholder,
-    monuser: helptextServiceUps.ups_monuser_placeholder,
-    monpwd: helptextServiceUps.ups_monpwd_placeholder,
-    extrausers: helptextServiceUps.ups_extrausers_placeholder,
-    rmonitor: helptextServiceUps.ups_rmonitor_placeholder,
-    shutdown: helptextServiceUps.ups_shutdown_placeholder,
-    shutdowntimer: helptextServiceUps.ups_shutdowntimer_placeholder,
-    shutdowncmd: helptextServiceUps.ups_shutdowncmd_placeholder,
-    powerdown: helptextServiceUps.ups_powerdown_placeholder,
-    nocommwarntime: helptextServiceUps.ups_nocommwarntime_placeholder,
-    hostsync: helptextServiceUps.ups_hostsync_placeholder,
-    description: helptextServiceUps.ups_description_placeholder,
-    options: helptextServiceUps.ups_options_placeholder,
-    optionsupsd: helptextServiceUps.ups_optionsupsd_placeholder,
+    identifier: helptextServiceUps.identifierLabel,
+    mode: helptextServiceUps.modeLabel,
+    remotehost: helptextServiceUps.remotehostLabel,
+    remoteport: helptextServiceUps.remoteportLabel,
+    driver: helptextServiceUps.driverLabel,
+    port: helptextServiceUps.portLabel,
+    monuser: helptextServiceUps.monuserLabel,
+    monpwd: helptextServiceUps.monpwdLabel,
+    extrausers: helptextServiceUps.extrausersLabel,
+    rmonitor: helptextServiceUps.rmonitorLabel,
+    shutdown: helptextServiceUps.shutdownLabel,
+    shutdowntimer: helptextServiceUps.shutdowntimerLabel,
+    shutdowncmd: helptextServiceUps.shutdowncmdLabel,
+    powerdown: helptextServiceUps.powerdownLabel,
+    nocommwarntime: helptextServiceUps.nocommwarntimeLabel,
+    hostsync: helptextServiceUps.hostsyncLabel,
+    options: helptextServiceUps.optionsLabel,
+    optionsupsd: helptextServiceUps.optionsupsdLabel,
   };
 
   readonly providers: Record<string, IxComboboxProvider> = {
@@ -112,7 +110,7 @@ export class ServiceUpsComponent implements OnInit {
   };
 
   readonly tooltips = {
-    identifier: helptextServiceUps.ups_identifier_tooltip,
+    identifier: helptextServiceUps.identifierTooltip,
     mode: this.translate.instant(
       'Choose <i>Master</i> if the UPS is plugged directly\
       into the system serial port. The UPS will remain the\
@@ -122,32 +120,30 @@ export class ServiceUpsComponent implements OnInit {
       target="_blank">Network UPS Tools Overview</a>.',
       { url: 'https://networkupstools.org/docs/user-manual.chunked/ar01s02.html#_monitoring_client' },
     ),
-    remotehost: helptextServiceUps.ups_remotehost_tooltip,
-    remoteport: helptextServiceUps.ups_remoteport_tooltip,
-    driver: helptextServiceUps.ups_driver_tooltip,
-    port: helptextServiceUps.ups_port_tooltip,
-    monuser: helptextServiceUps.ups_monuser_tooltip,
-    monpwd: helptextServiceUps.ups_monpwd_tooltip,
-    extrausers: helptextServiceUps.ups_extrausers_tooltip,
-    rmonitor: helptextServiceUps.ups_rmonitor_tooltip,
-    shutdown: helptextServiceUps.ups_shutdown_tooltip,
-    shutdowntimer: helptextServiceUps.ups_shutdowntimer_tooltip,
-    shutdowncmd: helptextServiceUps.ups_shutdowncmd_tooltip,
-    powerdown: helptextServiceUps.ups_powerdown_tooltip,
-    nocommwarntime: helptextServiceUps.ups_nocommwarntime_tooltip,
-    hostsync: helptextServiceUps.ups_hostsync_tooltip,
-    description: helptextServiceUps.ups_description_tooltip,
-    options: helptextServiceUps.ups_options_tooltip,
-    optionsupsd: helptextServiceUps.ups_optionsupsd_tooltip,
+    remotehost: helptextServiceUps.remotehostTooltip,
+    remoteport: helptextServiceUps.remoteportTooltip,
+    driver: helptextServiceUps.driverTooltip,
+    port: helptextServiceUps.portTooltip,
+    monuser: helptextServiceUps.monuserTooltip,
+    monpwd: helptextServiceUps.monpwdTooltip,
+    extrausers: helptextServiceUps.extrausersTooltip,
+    rmonitor: helptextServiceUps.rmonitorTooltip,
+    shutdown: helptextServiceUps.shutdownTooltip,
+    shutdowntimer: helptextServiceUps.shutdowntimerTooltip,
+    shutdowncmd: helptextServiceUps.shutdowncmdTooltip,
+    powerdown: helptextServiceUps.powerdownTooltip,
+    nocommwarntime: helptextServiceUps.nocommwarntimeTooltip,
+    hostsync: helptextServiceUps.hostsyncTooltip,
+    options: helptextServiceUps.optionsTooltip,
+    optionsupsd: helptextServiceUps.optionsupsdTooltip,
   };
 
-  readonly modeOptions$ = of(helptextServiceUps.ups_mode_options);
-  readonly shutdownOptions$ = of(helptextServiceUps.ups_shutdown_options);
+  readonly modeOptions$ = of(translateOptions(this.translate, helptextServiceUps.modeOptions));
+  readonly shutdownOptions$ = of(translateOptions(this.translate, helptextServiceUps.shutdownOptions));
 
   constructor(
     private api: ApiService,
     private formErrorHandler: FormErrorHandlerService,
-    private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
     private fb: NonNullableFormBuilder,
     private translate: TranslateService,
@@ -160,7 +156,7 @@ export class ServiceUpsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
     this.loadConfig();
     this.form.controls.remotehost.disable();
     this.form.controls.remoteport.disable();
@@ -188,13 +184,11 @@ export class ServiceUpsComponent implements OnInit {
       .subscribe({
         next: (config) => {
           this.form.patchValue(config);
-          this.isFormLoading = false;
-          this.cdr.markForCheck();
+          this.isFormLoading.set(false);
         },
         error: (error: unknown) => {
-          this.isFormLoading = false;
+          this.isFormLoading.set(false);
           this.errorHandler.showErrorModal(error);
-          this.cdr.markForCheck();
         },
       });
   }
@@ -209,20 +203,18 @@ export class ServiceUpsComponent implements OnInit {
       delete params.driver;
     }
 
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
     this.api.call('ups.update', [params as UpsConfigUpdate])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
-          this.isFormLoading = false;
+          this.isFormLoading.set(false);
           this.snackbar.success(this.translate.instant('Service configuration saved'));
           this.slideInRef.close({ response: true, error: null });
-          this.cdr.markForCheck();
         },
         error: (error: unknown) => {
-          this.isFormLoading = false;
+          this.isFormLoading.set(false);
           this.formErrorHandler.handleValidationErrors(error, this.form);
-          this.cdr.markForCheck();
         },
       });
   }

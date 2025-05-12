@@ -11,6 +11,7 @@ import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { NetworkService } from 'app/services/network.service';
 
 @Component({
@@ -18,7 +19,6 @@ import { NetworkService } from 'app/services/network.service';
   templateUrl: './ix-ip-input-with-netmask.component.html',
   styleUrls: ['./ix-ip-input-with-netmask.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxLabelComponent,
     MatInput,
@@ -35,9 +35,9 @@ import { NetworkService } from 'app/services/network.service';
   ],
 })
 export class IxIpInputWithNetmaskComponent implements ControlValueAccessor {
-  readonly label = input<string>();
-  readonly tooltip = input<string>();
-  readonly hint = input<string>();
+  readonly label = input<TranslatedString>();
+  readonly tooltip = input<TranslatedString>();
+  readonly hint = input<TranslatedString>();
   readonly required = input<boolean>(false);
 
   onChange: (value: string) => void = (): void => {};

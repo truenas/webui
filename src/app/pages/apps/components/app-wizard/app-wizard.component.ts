@@ -76,7 +76,6 @@ import { AppSchemaService } from 'app/services/schema/app-schema.service';
   templateUrl: './app-wizard.component.html',
   styleUrls: ['./app-wizard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     PageHeaderComponent,
     ReadOnlyComponent,
@@ -288,7 +287,9 @@ export class AppWizardComponent implements OnInit, OnDestroy {
     }
 
     this.dialogService.jobDialog(job$, {
-      title: this.isNew ? helptextApps.installing : helptextApps.updating,
+      title: this.isNew
+        ? this.translate.instant(helptextApps.installing)
+        : this.translate.instant(helptextApps.updating),
     })
       .afterClosed()
       .pipe(
@@ -381,9 +382,9 @@ export class AppWizardComponent implements OnInit, OnDestroy {
         {
           controlName: 'release_name',
           type: DynamicFormSchemaType.Input,
-          title: helptextApps.appForm.release_name.placeholder,
+          title: helptextApps.appForm.releaseName.placeholder,
           required: true,
-          tooltip: helptextApps.appForm.release_name.tooltip,
+          tooltip: helptextApps.appForm.releaseName.tooltip,
         },
         {
           controlName: 'version',
@@ -454,7 +455,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
         {
           controlName: 'release_name',
           type: DynamicFormSchemaType.Input,
-          title: helptextApps.appForm.release_name.placeholder,
+          title: helptextApps.appForm.releaseName.placeholder,
           required: true,
           editable: false,
         },

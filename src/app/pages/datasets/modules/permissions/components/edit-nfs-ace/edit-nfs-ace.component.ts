@@ -46,7 +46,6 @@ import {
   templateUrl: './edit-nfs-ace.component.html',
   styleUrls: ['./edit-nfs-ace.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxFieldsetComponent,
@@ -83,16 +82,16 @@ export class EditNfsAceComponent implements OnChanges, OnInit {
   readonly advancedFlags$ = of(mapToOptions(nfsAdvancedFlagLabels, this.translate));
 
   readonly tooltips = {
-    tag: helptextAcl.dataset_acl_tag_tooltip,
-    user: helptextAcl.dataset_acl_user_tooltip,
-    group: helptextAcl.dataset_acl_group_tooltip,
-    type: helptextAcl.dataset_acl_type_tooltip,
-    permissionType: helptextAcl.dataset_acl_perms_type_tooltip,
-    basicPermission: helptextAcl.dataset_acl_perms_tooltip,
-    advancedPermissions: helptextAcl.dataset_acl_perms_tooltip,
-    flagsType: helptextAcl.dataset_acl_flags_type_tooltip,
-    basicFlag: helptextAcl.dataset_acl_flags_tooltip,
-    advancedFlags: helptextAcl.dataset_acl_flags_tooltip,
+    tag: helptextAcl.tagTooltip,
+    user: helptextAcl.userTooltip,
+    group: helptextAcl.groupTooltip,
+    type: helptextAcl.typeTooltip,
+    permissionType: helptextAcl.permissionTypeTooltip,
+    basicPermission: helptextAcl.permissionsTooltip,
+    advancedPermissions: helptextAcl.permissionsTooltip,
+    flagsType: helptextAcl.flagsTypeTooltip,
+    basicFlag: helptextAcl.flagsTooltip,
+    advancedFlags: helptextAcl.flagsTooltip,
   };
 
   readonly userProvider = new UserComboboxProvider(this.userService);

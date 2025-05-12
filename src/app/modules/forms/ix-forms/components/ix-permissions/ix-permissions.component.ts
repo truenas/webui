@@ -11,13 +11,13 @@ import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
 
 @Component({
   selector: 'ix-permissions',
   templateUrl: './ix-permissions.component.html',
   styleUrls: ['./ix-permissions.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxLabelComponent,
     MatCheckbox,
@@ -32,8 +32,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class IxPermissionsComponent implements ControlValueAccessor {
-  readonly label = input<string>();
-  readonly tooltip = input<string>();
+  readonly label = input<TranslatedString>();
+  readonly tooltip = input<TranslatedString>();
   readonly required = input(false);
   readonly hideOthersPermissions = input(false);
 

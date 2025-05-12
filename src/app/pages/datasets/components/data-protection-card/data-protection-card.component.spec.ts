@@ -43,15 +43,13 @@ describe('DataProtectionComponent', () => {
   it('renders component values', () => {
     expect(spectator.query('.total-snapshots.value')).toHaveText('2');
     expect(spectator.query('.snapshot-tasks.value')).toHaveText('3');
-    expect(spectator.query('.replication-tasks.value')).toHaveText('4');
-    expect(spectator.query('.cloudsync-tasks.value')).toHaveText('5');
-    expect(spectator.query('.rsync-tasks.value')).toHaveText('6');
+    expect(spectator.query('.backup-tasks.value')).toHaveText('');
   });
 
   it('opens the snapshot add from when button clicked', async () => {
     const slideInRef = spectator.inject(SlideIn);
 
-    const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Snapshot' }));
+    const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Take Snapshot' }));
     await editButton.click();
 
     expect(slideInRef.open).toHaveBeenCalledWith(SnapshotAddFormComponent, { data: '/mnt/pool/ds' });

@@ -6,6 +6,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
 import { IxComboboxProvider } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox-provider';
+import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 
 interface UserPickerOptions {
@@ -61,7 +62,7 @@ export class UserPickerProvider implements IxComboboxProvider {
 
   private userQueryResToOptions(users: User[]): Option[] {
     return users.map((user) => ({
-      label: user.username,
+      label: ignoreTranslation(user.username),
       value: user[this.valueField],
     }));
   }

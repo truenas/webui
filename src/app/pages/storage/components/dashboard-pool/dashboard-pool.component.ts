@@ -24,17 +24,18 @@ import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { dashboardPoolElements } from 'app/pages/storage/components/dashboard-pool/dashboard-pool.elements';
 import {
   ExportDisconnectModalComponent,
 } from 'app/pages/storage/components/dashboard-pool/export-disconnect-modal/export-disconnect-modal.component';
+import { VDevsCardComponent } from 'app/pages/storage/components/dashboard-pool/vdevs-card/vdevs-card.component';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { DiskHealthCardComponent } from './disk-health-card/disk-health-card.component';
 import { PoolUsageCardComponent } from './pool-usage-card/pool-usage-card.component';
-import { TopologyCardComponent } from './topology-card/topology-card.component';
-import { ZfsHealthCardComponent } from './zfs-health-card/zfs-health-card.component';
+import { StorageHealthCardComponent } from './storage-health-card/storage-health-card.component';
 
 @UntilDestroy()
 @Component({
@@ -42,15 +43,14 @@ import { ZfsHealthCardComponent } from './zfs-health-card/zfs-health-card.compon
   templateUrl: './dashboard-pool.component.html',
   styleUrls: ['./dashboard-pool.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     RequiresRolesDirective,
     MatButton,
     TestDirective,
     UiSearchDirective,
-    TopologyCardComponent,
+    VDevsCardComponent,
     PoolUsageCardComponent,
-    ZfsHealthCardComponent,
+    StorageHealthCardComponent,
     DiskHealthCardComponent,
     NgxSkeletonLoaderModule,
     MatCard,
@@ -103,8 +103,8 @@ export class DashboardPoolComponent implements OnChanges {
 
   onExpand(): void {
     this.dialogService.confirm({
-      title: this.translate.instant(helptextVolumes.expand_pool_dialog.title),
-      message: this.translate.instant(helptextVolumes.expand_pool_dialog.message),
+      title: this.translate.instant(helptextVolumes.expandPoolDialog.title),
+      message: this.translate.instant(helptextVolumes.expandPoolDialog.message),
     })
       .pipe(
         filter(Boolean),
@@ -127,7 +127,7 @@ export class DashboardPoolComponent implements OnChanges {
   onUpgrade(): void {
     this.dialogService.confirm({
       title: this.translate.instant('Upgrade Pool'),
-      message: this.translate.instant(helptextVolumes.upgradePoolDialog_warning) + this.pool().name,
+      message: this.translate.instant(helptextVolumes.upgradePoolDialogWarning) + this.pool().name as TranslatedString,
     }).pipe(
       filter(Boolean),
       switchMap(() => {

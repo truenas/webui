@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit, signal,
 } from '@angular/core';
 import {
   FormControl, Validators, ReactiveFormsModule, NonNullableFormBuilder,
@@ -43,7 +43,6 @@ import { SystemGeneralService } from 'app/services/system-general.service';
   templateUrl: './email-form.component.html',
   styleUrls: ['./email-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
@@ -84,7 +83,7 @@ export class EmailFormComponent implements OnInit {
     pass: [''],
   });
 
-  isLoading = false;
+  protected isLoading = signal(false);
   protected emailConfig: MailConfig | undefined;
 
   readonly sendMethodOptions$ = of([
@@ -139,7 +138,6 @@ export class EmailFormComponent implements OnInit {
     private dialogService: DialogService,
     private formErrorHandler: FormErrorHandlerService,
     private formBuilder: NonNullableFormBuilder,
-    private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
     private validatorService: IxValidatorsService,
@@ -204,21 +202,19 @@ export class EmailFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
     const update = this.prepareConfigUpdate();
 
     this.api.call('mail.update', [update])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
-          this.isLoading = false;
+          this.isLoading.set(false);
           this.snackbar.success(this.translate.instant('Email settings updated.'));
           this.slideInRef.close({ response: true, error: null });
-          this.cdr.markForCheck();
         },
         error: (error: unknown) => {
-          this.isLoading = false;
-          this.cdr.markForCheck();
+          this.isLoading.set(false);
           this.formErrorHandler.handleValidationErrors(error, this.form);
         },
       });
@@ -231,7 +227,6 @@ export class EmailFormComponent implements OnInit {
       this.sendMethodControl.setValue(emailConfig.oauth?.provider);
       this.oauthCredentials = emailConfig.oauth;
     }
-    this.cdr.markForCheck();
   }
 
   private sendTestEmail(): void {

@@ -1,57 +1,57 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { SyslogLevel, SyslogTransport } from 'app/enums/syslog.enum';
+import { Option } from 'app/interfaces/option.interface';
 
 export const helptextSystemAdvanced = {
-  fieldset_sed: T('Self-Encrypting Drive'),
-  fieldset_cron: T('Cron Jobs'),
+  sedTitle: T('Self-Encrypting Drive'),
+  cronTitle: T('Cron Jobs'),
 
-  dialog_generate_debug_title: T('Generate Debug File'),
-  dialog_generate_debug_message: T('Warning: Debugs may contain log files with personal information such as usernames or other identifying information about your system. Please review debugs and redact any sensitive information before sharing with external entities.'),
-  dialog_button_ok: T('Proceed'),
+  generateDebugTitle: T('Generate Debug File'),
+  generateDebugMessage: T('Warning: Debugs may contain log files with personal information such as usernames or other identifying information about your system. Please review debugs and redact any sensitive information before sharing with external entities.'),
+  proceed: T('Proceed'),
 
-  system_dataset_tooltip: T('Store system logs on the system dataset. Unset to store system logs in <i>/var/</i> on the operating system device.'),
-  syslog_audit_tooltip: T('Check to enable Audit Logs'),
+  systemDatasetTooltip: T('Store system logs on the system dataset. Unset to store system logs in <i>/var/</i> on the operating system device.'),
+  syslogAuditTooltip: T('Check to enable Audit Logs'),
 
-  consolemenu_tooltip: T('Unset to add a login prompt to the system before\
+  consoleMenuTooltip: T('Unset to add a login prompt to the system before\
  the console menu is shown.'),
 
-  serialconsole_tooltip: T('Do not set this if the Serial Port is disabled.'),
+  serialConsoleTooltip: T('Do not set this if the Serial Port is disabled.'),
 
-  serialport_tooltip: T('Select the serial port address in hex.'),
+  serialPortTooltip: T('Select the serial port address in hex.'),
 
-  serialspeed_tooltip: T('Choose the speed in bps used by the serial port.'),
+  serialSpeedTooltip: T('Choose the speed in bps used by the serial port.'),
 
-  debugkernel_tooltip: T('Set to boot a debug kernel after the next system\
+  debugKernelTooltip: T('Set to boot a debug kernel after the next system\
   restart.'),
 
-  max_parallel_replication_tasks_tooltip: T('Maximum number of replication tasks being executed \
+  maxParallelReplicationTasksTooltip: T('Maximum number of replication tasks being executed \
 simultaneously.'),
 
-  motd_tooltip: T('The message to show when a user logs in with SSH.'),
+  motdTooltip: T('The message to show when a user logs in with SSH.'),
 
-  fqdn_tooltip: T('Set to include the Fully-Qualified Domain Name (FQDN)\
+  fqdnTooltip: T('Set to include the Fully-Qualified Domain Name (FQDN)\
  in logs to precisely identify systems with similar\
  hostnames.'),
 
-  sed_user_placeholder: T('ATA Security User'),
-  sed_user_tooltip: T('User passed to <i>camcontrol security -u</i> to unlock\
+  sedUserLabel: T('ATA Security User'),
+  sedUserTooltip: T('User passed to <i>camcontrol security -u</i> to unlock\
  SEDs'),
 
-  sed_passwd_placeholder: T('SED Password'),
-  sed_passwd_tooltip: T('Global password to unlock SEDs.'),
+  sedPasswordLabel: T('SED Password'),
+  sedPasswordTooltip: T('Global password to unlock SEDs.'),
+  sedConfirmPasswordLabel: T('Confirm SED Password'),
 
-  sed_passwd2_placeholder: T('Confirm SED Password'),
-
-  retention_tooltip: T('Number of days to retain local audit messages.'),
-  reservation_tooltip: T('Size in GiB of refreservation to set on ZFS dataset \
+  retentionTooltip: T('Number of days to retain local audit messages.'),
+  reservationTooltip: T('Size in GiB of refreservation to set on ZFS dataset \
  where the audit databases are stored. The refreservation specifies the \
  minimum amount of space guaranteed to the dataset, and counts against \
  the space available for other datasets in the zpool where the audit \
  dataset is located.'),
-  quota_tooltip: T('Size in GiB of the maximum amount of space that may be \
+  quotaTooltip: T('Size in GiB of the maximum amount of space that may be \
  consumed by the dataset where the audit dabases are stored.'),
-  quota_fill_warning_tooltip: T('Percentage used of dataset quota at which to generate a warning alert.'),
-  quota_fill_critical_tooltip: T('Percentage used of dataset quota at which to generate a critical alert.'),
+  quotaFillWarningTooltip: T('Percentage used of dataset quota at which to generate a warning alert.'),
+  quotaFillCriticalTooltip: T('Percentage used of dataset quota at which to generate a critical alert.'),
 
   sysloglevel: {
     tooltip: T(
@@ -81,7 +81,7 @@ simultaneously.'),
     ),
   },
 
-  syslog_transport: {
+  syslogTransport: {
     tooltip: T('<a href="https://tools.ietf.org/html/rfc8095" target="_blank">Transport Protocol</a>\
  for the remote system log server connection. Choosing Transport Layer Security (TLS)\
  also requires selecting a preconfigured system Certificate.'),
@@ -89,21 +89,29 @@ simultaneously.'),
       { label: 'UDP', value: SyslogTransport.Udp },
       { label: 'TCP', value: SyslogTransport.Tcp },
       { label: 'TLS', value: SyslogTransport.Tls },
-    ],
+    ] as Option[],
   },
 
-  syslog_tls_certificate: {
+  syslogTlsCertificate: {
     tooltip: T('The preconfigured system <i>Certificate</i> to use for authenticating\
  the TLS protocol connection to the remote system log server.'),
   },
 
-  first_time: {
+  firstTime: {
     title: T('Warning'),
     message: T('Changing Advanced settings can be dangerous when done incorrectly. Please use caution before saving.'),
   },
 
-  allowed_ip_addresses: {
+  allowedIpAddresses: {
     tooltip: T('You may enter a specific IP address (e.g., 192.168.1.1) for individual access, or use an \
  IP address with a subnet mask (e.g., 192.168.1.0/24) to define a range of addresses.'),
+  },
+
+  storageSettings: {
+    priorityResilverEnabled: T('Resilver tasks can run at any time, but by default they have low priority \
+- lower than regular ZFS I/O operations. \
+You can specify a time window during which resilvering is given higher priority \
+— useful for scheduling it during non-business hours.'),
+    smbRebootWarning: T('Changing System Dataset Pool requires SMB service to be restarted. This will cause a temporary disruption of any active SMB connections.'),
   },
 };

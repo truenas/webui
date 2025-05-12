@@ -35,6 +35,7 @@ import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ErrorParserService } from 'app/services/errors/error-parser.service';
 
 @UntilDestroy()
@@ -43,7 +44,6 @@ import { ErrorParserService } from 'app/services/errors/error-parser.service';
   templateUrl: './ix-explorer.component.html',
   styleUrls: ['./ix-explorer.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxLabelComponent,
     MatInput,
@@ -64,11 +64,11 @@ import { ErrorParserService } from 'app/services/errors/error-parser.service';
   ],
 })
 export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAccessor {
-  readonly label = input<string>();
-  readonly hint = input<string>();
+  readonly label = input<TranslatedString>();
+  readonly hint = input<TranslatedString>();
   readonly readonly = input<boolean>(false);
   readonly multiple = input(false);
-  readonly tooltip = input<string>();
+  readonly tooltip = input<TranslatedString>();
   readonly required = input<boolean>(false);
   readonly root = input(mntPath);
   readonly nodeProvider = input.required<TreeNodeProvider>();

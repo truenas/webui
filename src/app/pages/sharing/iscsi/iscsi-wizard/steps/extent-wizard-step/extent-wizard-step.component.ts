@@ -8,7 +8,7 @@ import { of, switchMap } from 'rxjs';
 import { IscsiExtentType, iscsiExtentUseforMap } from 'app/enums/iscsi.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
-import { helptextSharingIscsi } from 'app/helptext/sharing';
+import { helptextIscsi } from 'app/helptext/sharing';
 import { newOption } from 'app/interfaces/option.interface';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -23,7 +23,6 @@ import { IscsiService } from 'app/services/iscsi.service';
   selector: 'ix-extent-wizard-step',
   templateUrl: './extent-wizard-step.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxInputComponent,
@@ -35,7 +34,7 @@ import { IscsiService } from 'app/services/iscsi.service';
 export class ExtentWizardStepComponent implements OnInit {
   readonly form = input.required<IscsiWizardComponent['form']['controls']['extent']>();
 
-  readonly helptextSharingIscsi = helptextSharingIscsi;
+  readonly helptextSharingIscsi = helptextIscsi;
   readonly fileNodeProvider = this.filesystemService.getFilesystemNodeProvider();
 
   readonly typeOptions$ = of([

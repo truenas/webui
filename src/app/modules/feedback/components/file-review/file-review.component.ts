@@ -21,6 +21,7 @@ import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-te
 import { ImageValidatorService } from 'app/modules/forms/ix-forms/validators/image-validator/image-validator.service';
 import { rangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 
@@ -33,7 +34,6 @@ export const maxFileSizeBytes = 5 * MiB;
   styleUrls: ['file-review.component.scss'],
   templateUrl: './file-review.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogContent,
     ReactiveFormsModule,
@@ -66,17 +66,17 @@ export class FileReviewComponent {
     take_screenshot: [true],
   });
 
-  protected readonly messagePlaceholder = helptext.review.message.placeholder;
-  protected readonly messageAdditionalPlaceholder = helptext.review.message.placeholder_additional;
   protected readonly voteForNewFeaturesText = helptext.review.vote_for_new_features;
   protected readonly acceptedFiles = ticketAcceptedFiles;
 
-  protected get messagePlaceholderText(): string {
-    if (this.form.controls.rating.value === maxRatingValue) {
-      return `${this.messagePlaceholder}\n\n${this.messageAdditionalPlaceholder}`;
+  protected get messagePlaceholderText(): TranslatedString {
+    if (this.form.controls.rating.value !== maxRatingValue) {
+      return this.translate.instant(helptext.review.message.placeholder);
     }
 
-    return this.messagePlaceholder;
+    return this.translate.instant(helptext.review.message.placeholder)
+      + '\n\n'
+      + this.translate.instant(helptext.review.message.placeholder_additional) as TranslatedString;
   }
 
   constructor(

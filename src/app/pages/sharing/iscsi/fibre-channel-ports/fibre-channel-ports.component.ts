@@ -22,7 +22,7 @@ import { SearchInput1Component } from 'app/modules/forms/search-input1/search-in
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
+import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
@@ -49,7 +49,6 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
   templateUrl: './fibre-channel-ports.component.html',
   styleUrl: './fibre-channel-ports.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     FakeProgressBarComponent,
     IxTableBodyComponent,
@@ -93,18 +92,20 @@ export class FibreChannelPortsComponent implements OnInit {
         title: this.translate.instant('Target'),
         propertyName: 'target',
         getValue: (row) => {
-          return row.target?.iscsi_target_name;
+          return row.target?.iscsi_target_name || '-';
         },
         disableSorting: true,
       }),
       textColumn({
         title: this.translate.instant('WWPN'),
         propertyName: 'wwpn',
+        getValue: (row) => this.resolveWwpn(row, 'wwpn'),
         disableSorting: true,
       }),
       textColumn({
         title: this.translate.instant('WWPN (B)'),
         propertyName: 'wwpn_b',
+        getValue: (row) => this.resolveWwpn(row, 'wwpn_b'),
         hidden: !this.isHa(),
         disableSorting: true,
       }),
@@ -113,9 +114,10 @@ export class FibreChannelPortsComponent implements OnInit {
         getValue: (row) => {
           return `A: ${row.aPortState || '–'} B: ${row.bPortState || '–'}`;
         },
+        hidden: !this.isHa(),
         disableSorting: true,
       }),
-      actionsColumn({
+      actionsWithMenuColumn({
         disableSorting: true,
         actions: [
           {
@@ -181,5 +183,20 @@ export class FibreChannelPortsComponent implements OnInit {
         this.rows.set(buildPortsTableRow(hosts, ports, statuses));
         this.dataProvider.setRows(this.rows());
       });
+  }
+
+  private resolveWwpn(row: FibreChannelPortRow, key: 'wwpn' | 'wwpn_b'): string {
+    if (row?.[key]) {
+      return row[key];
+    }
+
+    const aliasPrefix = row?.host?.alias?.split?.('/')?.[0];
+    const isPhysical = row?.name === aliasPrefix;
+
+    if (isPhysical && row?.host?.[key]) {
+      return row.host[key];
+    }
+
+    return '-';
   }
 }

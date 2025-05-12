@@ -43,6 +43,7 @@ import { LocaleService } from 'app/modules/language/locale.service';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ThemeService } from 'app/modules/theme/theme.service';
+import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { LineChartComponent } from 'app/pages/reports-dashboard/components/line-chart/line-chart.component';
 import { ReportStepDirection } from 'app/pages/reports-dashboard/enums/report-step-direction.enum';
 import { ReportZoomLevel, zoomLevelLabels } from 'app/pages/reports-dashboard/enums/report-zoom-level.enum';
@@ -62,7 +63,6 @@ import { selectTimezone } from 'app/store/system-config/system-config.selectors'
   templateUrl: './report.component.html',
   styleUrls: ['./report.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatToolbarRow,
@@ -506,7 +506,7 @@ export class ReportComponent implements OnInit, OnChanges {
       this.report().errorConf = {
         type: EmptyType.Errors,
         title: this.translate.instant('Error getting chart data'),
-        message: apiError.reason,
+        message: ignoreTranslation(apiError.reason),
       };
     }
   }

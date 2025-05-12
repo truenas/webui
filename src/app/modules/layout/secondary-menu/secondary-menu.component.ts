@@ -13,7 +13,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   selector: 'ix-secondary-menu',
   templateUrl: './secondary-menu.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatList,
     MatListItem,

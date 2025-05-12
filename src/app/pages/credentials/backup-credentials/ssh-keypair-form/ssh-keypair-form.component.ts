@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal,
 } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
@@ -38,7 +38,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './ssh-keypair-form.component.html',
   styleUrls: ['./ssh-keypair-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
@@ -67,23 +66,23 @@ export class SshKeypairFormComponent implements OnInit {
     return !this.editingKeypair;
   }
 
-  isFormLoading = false;
+  protected isFormLoading = signal(false);
 
   protected editingKeypair: KeychainSshKeyPair | undefined;
 
   form = this.fb.group({
     name: ['', Validators.required],
     private_key: [''],
-    public_key: ['', atLeastOne('private_key', [helptextSshKeypairs.private_key_placeholder, helptextSshKeypairs.public_key_placeholder])],
+    public_key: ['', atLeastOne('private_key', [helptextSshKeypairs.privateKeyLabel, helptextSshKeypairs.publicKeyLabel])],
   });
 
   readonly tooltips = {
-    name: helptextSshKeypairs.name_tooltip,
-    privateKey: helptextSshKeypairs.private_key_tooltip,
-    publicKey: helptextSshKeypairs.public_key_tooltip,
+    name: helptextSshKeypairs.nameTooltip,
+    privateKey: helptextSshKeypairs.privateKeyTooltip,
+    publicKey: helptextSshKeypairs.publicKeyTooltip,
   };
 
-  readonly keyInstructions = helptextSshKeypairs.key_instructions;
+  readonly keyInstructions = helptextSshKeypairs.keyInstructions;
 
   readonly canDownloadPublicKey$ = this.form.value$.pipe(map((value) => value.name && value.public_key));
   readonly canDownloadPrivateKey$ = this.form.value$.pipe(map((value) => value.name && value.private_key));
@@ -154,7 +153,7 @@ export class SshKeypairFormComponent implements OnInit {
       },
     };
 
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
     let request$: Observable<unknown>;
     if (this.editingKeypair) {
       request$ = this.api.call('keychaincredential.update', [
@@ -176,14 +175,12 @@ export class SshKeypairFormComponent implements OnInit {
           this.snackbar.success(this.translate.instant('SSH Keypair updated'));
         }
 
-        this.isFormLoading = false;
-        this.cdr.markForCheck();
+        this.isFormLoading.set(false);
         this.slideInRef.close({ response: true, error: null });
       },
       error: (error: unknown) => {
-        this.isFormLoading = false;
+        this.isFormLoading.set(false);
         this.formErrorHandler.handleValidationErrors(error, this.form);
-        this.cdr.markForCheck();
       },
     });
   }

@@ -20,7 +20,6 @@ import { UploadService } from 'app/services/upload.service';
   selector: 'ix-upload-iso',
   styleUrls: ['./upload-iso-button.component.scss'],
   templateUrl: './upload-iso-button.component.html',
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     IxFileInputComponent,

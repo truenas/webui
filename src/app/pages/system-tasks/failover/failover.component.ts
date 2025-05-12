@@ -22,7 +22,6 @@ import { passiveNodeReplaced } from 'app/store/system-info/system-info.actions';
   templateUrl: './failover.component.html',
   styleUrls: ['./failover.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatCardContent,

@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit, signal,
 } from '@angular/core';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -40,7 +40,6 @@ import { TaskService } from 'app/services/task.service';
   templateUrl: './snapshot-task-form.component.html',
   styleUrls: ['./snapshot-task-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
@@ -85,33 +84,31 @@ export class SnapshotTaskFormComponent implements OnInit {
     enabled: [true],
   });
 
-  isLoading = false;
+  protected isLoading = signal(false);
   protected editingTask: PeriodicSnapshotTask | undefined;
 
   readonly labels = {
-    dataset: helptextSnapshotForm.dataset_placeholder,
-    exclude: helptextSnapshotForm.exclude_placeholder,
-    recursive: helptextSnapshotForm.recursive_placeholder,
-    lifetime: helptextSnapshotForm.lifetime_placeholder,
-    naming_schema: helptextSnapshotForm.naming_schema_placeholder,
-    schedule: helptextSnapshotForm.snapshot_picker_placeholder,
-    begin: helptextSnapshotForm.begin_placeholder,
-    end: helptextSnapshotForm.end_placeholder,
-    allow_empty: helptextSnapshotForm.allow_empty_placeholder,
-    enabled: helptextSnapshotForm.enabled_placeholder,
+    dataset: helptextSnapshotForm.datasetLabel,
+    exclude: helptextSnapshotForm.excludeLabel,
+    recursive: helptextSnapshotForm.recursiveLabel,
+    lifetime: helptextSnapshotForm.lifetimeLabel,
+    naming_schema: helptextSnapshotForm.namingSchemaLabel,
+    schedule: helptextSnapshotForm.scheduleLabel,
+    begin: helptextSnapshotForm.beginLabel,
+    end: helptextSnapshotForm.endLabel,
+    allow_empty: helptextSnapshotForm.allowEmptyLabel,
+    enabled: helptextSnapshotForm.enabledLabel,
   };
 
   readonly tooltips = {
-    dataset: helptextSnapshotForm.dataset_tooltip,
-    exclude: helptextSnapshotForm.exclude_tooltip,
-    recursive: helptextSnapshotForm.recursive_tooltip,
-    lifetime: helptextSnapshotForm.lifetime_tooltip,
-    naming_schema: helptextSnapshotForm.naming_schema_tooltip,
-    schedule: helptextSnapshotForm.snapshot_picker_tooltip,
-    begin: helptextSnapshotForm.begin_tooltip,
-    end: helptextSnapshotForm.end_tooltip,
-    allow_empty: helptextSnapshotForm.allow_empty_tooltip,
-    enabled: helptextSnapshotForm.enabled_tooltip,
+    exclude: helptextSnapshotForm.excludeTooltip,
+    recursive: helptextSnapshotForm.recursiveTooltip,
+    lifetime: helptextSnapshotForm.lifetimeTooltip,
+    naming_schema: helptextSnapshotForm.namingSchemaTooltip,
+    schedule: helptextSnapshotForm.scheduleTooltip,
+    begin: helptextSnapshotForm.beginTooltip,
+    end: helptextSnapshotForm.endTooltip,
+    allow_empty: helptextSnapshotForm.allowEmptyTooltip,
   };
 
   readonly datasetOptions$ = this.storageService.getDatasetNameOptions();
@@ -125,7 +122,6 @@ export class SnapshotTaskFormComponent implements OnInit {
     private api: ApiService,
     private translate: TranslateService,
     private errorHandler: FormErrorHandlerService,
-    private cdr: ChangeDetectorRef,
     private taskService: TaskService,
     private snackbar: SnackbarService,
     protected storageService: StorageService,
@@ -172,7 +168,7 @@ export class SnapshotTaskFormComponent implements OnInit {
     delete params.begin;
     delete params.end;
 
-    this.isLoading = true;
+    this.isLoading.set(true);
     let request$: Observable<unknown>;
     if (this.editingTask) {
       request$ = this.api.call('pool.snapshottask.update', [
@@ -190,13 +186,12 @@ export class SnapshotTaskFormComponent implements OnInit {
         } else {
           this.snackbar.success(this.translate.instant('Task updated'));
         }
-        this.isLoading = false;
+        this.isLoading.set(false);
         this.slideInRef.close({ response: true, error: null });
       },
       error: (error: unknown) => {
-        this.isLoading = false;
+        this.isLoading.set(false);
         this.errorHandler.handleValidationErrors(error, this.form);
-        this.cdr.markForCheck();
       },
     });
   }

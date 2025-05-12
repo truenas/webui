@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  signal,
 } from '@angular/core';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -29,6 +30,7 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { groupAdded, groupChanged } from 'app/pages/credentials/groups/store/group.actions';
 import { GroupSlice } from 'app/pages/credentials/groups/store/group.selectors';
@@ -40,7 +42,6 @@ import { UserService } from 'app/services/user.service';
   selector: 'ix-group-form',
   templateUrl: './group-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
@@ -68,7 +69,7 @@ export class GroupFormComponent implements OnInit {
     return this.isNew ? this.translate.instant('Add Group') : this.translate.instant('Edit Group');
   }
 
-  isFormLoading = false;
+  protected isFormLoading = signal(false);
 
   privilegesList: Privilege[];
   initialGroupRelatedPrivilegesList: Privilege[] = [];
@@ -86,11 +87,11 @@ export class GroupFormComponent implements OnInit {
   });
 
   readonly tooltips = {
-    gid: helptextGroups.bsdgrp_gid_tooltip,
-    name: helptextGroups.bsdgrp_group_tooltip,
-    privileges: helptextGroups.privileges_tooltip,
-    sudo: helptextGroups.bsdgrp_sudo_tooltip,
-    smb: helptextGroups.smb_tooltip,
+    gid: helptextGroups.groupIdTooltip,
+    name: helptextGroups.nameTooltip,
+    privileges: helptextGroups.privilegesTooltip,
+    sudo: helptextGroups.sudoTooltip,
+    smb: helptextGroups.smbTooltip,
   };
 
   readonly privilegeOptions$ = this.api.call('privilege.query').pipe(
@@ -165,7 +166,7 @@ export class GroupFormComponent implements OnInit {
       sudo_commands_nopasswd: values.sudo_commands_nopasswd_all ? [allCommands] : values.sudo_commands_nopasswd,
     };
 
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
     let request$: Observable<unknown>;
     if (this.editingGroup) {
       request$ = this.api.call('group.update', [
@@ -198,14 +199,12 @@ export class GroupFormComponent implements OnInit {
           this.store$.dispatch(groupChanged({ group: { ...group, roles } }));
         }
 
-        this.isFormLoading = false;
+        this.isFormLoading.set(false);
         this.slideInRef.close({ response: true, error: null });
-        this.cdr.markForCheck();
       },
       error: (error: unknown) => {
-        this.isFormLoading = false;
+        this.isFormLoading.set(false);
         this.formErrorHandler.handleValidationErrors(error, this.form);
-        this.cdr.markForCheck();
       },
     });
   }
@@ -316,4 +315,6 @@ export class GroupFormComponent implements OnInit {
         .map((privileges) => privileges.id),
     ));
   }
+
+  protected readonly ignoreTranslation = ignoreTranslation;
 }

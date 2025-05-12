@@ -7,10 +7,10 @@
 
     <a
       mat-button
-      ixTest="manage-disks"
+      ixTest="view-disks"
       [routerLink]="['/storage', 'disks']"
     >
-      {{ 'Manage Disks' | translate }}
+      {{ 'View Disks' | translate }}
     </a>
   </mat-card-header>
 
@@ -24,48 +24,53 @@
       </div>
     </div>
 
-    <div class="details-item">
-      <div class="label">{{ 'Highest Temperature' | translate }}:</div>
-      <div class="value">
-        @if (isHighestTempReady) {
-          {{ diskState.highestTemperature | number }}
-          {{ diskState.unit }}
-        } @else {
-          {{ 'No Data' | translate }}
-        }
+    @if (isTemperatureDataAvailable) {
+      <div class="details-item">
+        <div class="label">{{ 'Highest Temperature' | translate }}:</div>
+        <div class="value">
+          @if (isHighestTempReady) {
+            {{ diskState.highestTemperature | number }}
+            {{ diskState.unit }}
+          } @else {
+            {{ 'No Data' | translate }}
+          }
+        </div>
       </div>
-    </div>
 
-    <div class="details-item">
-      <div class="label">{{ 'Lowest Temperature' | translate }}:</div>
-      <div class="value">
-        @if (isLowestTempReady) {
-          {{ diskState.lowestTemperature | number }}
-          {{ diskState.unit }}
-        } @else {
-          {{ 'No Data' | translate }}
-        }
+      <div class="details-item">
+        <div class="label">{{ 'Lowest Temperature' | translate }}:</div>
+        <div class="value">
+          @if (isLowestTempReady) {
+            {{ diskState.lowestTemperature | number }}
+            {{ diskState.unit }}
+          } @else {
+            {{ 'No Data' | translate }}
+          }
+        </div>
       </div>
-    </div>
 
-    <div class="details-item">
-      <div class="label">{{ 'Average Disk Temperature' | translate }}:</div>
-      <div class="value">
-        @if (isAverageTempReady) {
-          {{ diskState.averageTemperature | number }}
-          {{ diskState.unit }}
-        } @else {
-          {{ 'No Data' | translate }}
-        }
+      <div class="details-item">
+        <div class="label">{{ 'Average Disk Temperature' | translate }}:</div>
+        <div class="value">
+          @if (isAverageTempReady) {
+            {{ diskState.averageTemperature | number }}
+            {{ diskState.unit }}
+          } @else {
+            {{ 'No Data' | translate }}
+          }
+        </div>
+        <a
+          ixTest="view-disk-reports"
+          [routerLink]="['/reportsdashboard', 'disk']"
+          [queryParams]="{ disks: disksNames }"
+        >
+          {{ 'View Disk Reports' | translate }}
+        </a>
       </div>
-      <a
-        ixTest="view-reports"
-        [routerLink]="['/reportsdashboard', 'disk']"
-        [queryParams]="{ disks: disksNames }"
-      >
-        {{ 'View Reports' | translate }}
-      </a>
-    </div>
-
+    } @else {
+      <div class="details-item">
+        <div class="label">{{ 'No disk temperature is available' | translate }}.</div>
+      </div>
+    }
   </mat-card-content>
 </mat-card>

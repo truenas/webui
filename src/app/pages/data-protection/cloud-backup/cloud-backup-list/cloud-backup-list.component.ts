@@ -21,7 +21,7 @@ import { SearchInput1Component } from 'app/modules/forms/search-input1/search-in
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
+import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
 import { relativeDateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
 import { stateButtonColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
@@ -48,7 +48,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './cloud-backup-list.component.html',
   styleUrl: './cloud-backup-list.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     UiSearchDirective,
     IxTableComponent,
@@ -96,8 +95,7 @@ export class CloudBackupListComponent {
       title: this.translate.instant('Last Run'),
       getValue: (row) => row.job?.time_finished?.$date,
     }),
-    actionsColumn({
-      cssClass: 'wide-actions',
+    actionsWithMenuColumn({
       actions: [
         {
           iconName: iconMarker('edit'),

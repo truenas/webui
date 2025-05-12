@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit, signal,
 } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -49,7 +49,6 @@ const customIdmapName = 'custom';
   selector: 'ix-idmap-form',
   templateUrl: './idmap-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
@@ -131,7 +130,7 @@ export class IdmapFormComponent implements OnInit {
   });
 
   backendChoices: IdmapBackendOptions;
-  isLoading = false;
+  protected isLoading = signal(false);
 
   readonly helptext = helptextIdmap;
 
@@ -193,7 +192,6 @@ export class IdmapFormComponent implements OnInit {
     private idmapService: IdmapService,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
-    private cdr: ChangeDetectorRef,
     private formErrorHandler: FormErrorHandlerService,
     private snackbar: SnackbarService,
     public slideInRef: SlideInRef<Idmap | undefined, boolean>,
@@ -237,7 +235,7 @@ export class IdmapFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
 
     const params = this.prepareSubmitParams();
 
@@ -252,26 +250,24 @@ export class IdmapFormComponent implements OnInit {
       )
       .subscribe({
         next: () => {
-          this.isLoading = false;
+          this.isLoading.set(false);
           this.slideInRef.close({ response: true, error: null });
         },
         error: (error: unknown) => {
           this.formErrorHandler.handleValidationErrors(error, this.form);
-          this.isLoading = false;
-          this.cdr.markForCheck();
+          this.isLoading.set(false);
         },
       });
   }
 
   private loadBackendChoices(): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
 
     this.idmapService.getBackendChoices()
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (backendChoices) => {
-          this.isLoading = false;
-          this.cdr.markForCheck();
+          this.isLoading.set(false);
           this.backendChoices = backendChoices;
           this.backends$ = of(Object.keys(backendChoices).map((backend) => ({
             label: backend,
@@ -283,8 +279,7 @@ export class IdmapFormComponent implements OnInit {
           }
         },
         error: (error: unknown) => {
-          this.isLoading = false;
-          this.cdr.markForCheck();
+          this.isLoading.set(false);
           this.errorHandler.showErrorModal(error);
         },
       });
@@ -343,8 +338,8 @@ export class IdmapFormComponent implements OnInit {
 
   private askAndClearCache(): Observable<unknown> {
     return this.dialogService.confirm({
-      title: helptextIdmap.idmap.clear_cache_dialog.title,
-      message: helptextIdmap.idmap.clear_cache_dialog.message,
+      title: this.translate.instant(helptextIdmap.idmap.clear_cache_dialog.title),
+      message: this.translate.instant(helptextIdmap.idmap.clear_cache_dialog.message),
       hideCheckbox: true,
     }).pipe(
       switchMap((confirmed) => {

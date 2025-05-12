@@ -19,7 +19,7 @@ import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { isQuotaSet } from 'app/helpers/storage.helper';
-import { helpTextQuotas } from 'app/helptext/storage/volumes/datasets/dataset-quotas';
+import { helptextQuotas } from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 import { DatasetQuota, SetDatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { ConfirmOptions } from 'app/interfaces/dialog.interface';
 import { QueryFilter, QueryParams } from 'app/interfaces/query-api.interface';
@@ -63,7 +63,6 @@ interface QuotaData {
   templateUrl: './dataset-quotas-list.component.html',
   styleUrls: ['./dataset-quotas-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     PageHeaderComponent,
     SearchInput1Component,
@@ -83,7 +82,7 @@ interface QuotaData {
 export class DatasetQuotasListComponent implements OnInit {
   protected readonly requiredRoles = [Role.DatasetWrite];
   readonly emptyValue = '—';
-  readonly helpText = helpTextQuotas;
+  readonly helpText = helptextQuotas;
 
   dataProvider = new ArrayDataProvider<DatasetQuota>();
   columns = createTable<DatasetQuota>([
@@ -336,19 +335,19 @@ export class DatasetQuotasListComponent implements OnInit {
 
   private confirmShowAllQuotas(): Observable<boolean> {
     return this.dialogService.confirm({
-      title: helpTextQuotas[this.helpTextKey].filter_dialog.title_show,
-      message: helpTextQuotas[this.helpTextKey].filter_dialog.message_show,
+      title: this.translate.instant(helptextQuotas[this.helpTextKey].filterDialog.showTitle),
+      message: this.translate.instant(helptextQuotas[this.helpTextKey].filterDialog.showMessage),
       hideCheckbox: true,
-      buttonText: helpTextQuotas[this.helpTextKey].filter_dialog.button_show,
+      buttonText: this.translate.instant(helptextQuotas[this.helpTextKey].filterDialog.showButton),
     });
   }
 
   private confirmFilterQuotas(): Observable<boolean> {
     return this.dialogService.confirm({
-      title: helpTextQuotas[this.helpTextKey].filter_dialog.title_filter,
-      message: helpTextQuotas[this.helpTextKey].filter_dialog.message_filter,
+      title: this.translate.instant(helptextQuotas[this.helpTextKey].filterDialog.filterTitle),
+      message: this.translate.instant(helptextQuotas[this.helpTextKey].filterDialog.filterMessage),
       hideCheckbox: true,
-      buttonText: helpTextQuotas[this.helpTextKey].filter_dialog.button_filter,
+      buttonText: this.translate.instant(helptextQuotas[this.helpTextKey].filterDialog.filterButton),
     });
   }
 
@@ -381,8 +380,8 @@ export class DatasetQuotasListComponent implements OnInit {
 
   private confirmDelete(name: string): Observable<boolean> {
     return this.dialogService.confirm({
-      title: this.translate.instant(helpTextQuotas[this.helpTextKey].delete_dialog.title),
-      message: this.translate.instant(helpTextQuotas[this.helpTextKey].delete_dialog.message, { name }),
+      title: this.translate.instant(helptextQuotas[this.helpTextKey].deleteDialog.title),
+      message: this.translate.instant(helptextQuotas[this.helpTextKey].deleteDialog.message, { name }),
       buttonText: this.translate.instant('Delete'),
       buttonColor: 'warn',
       hideCheckbox: true,
@@ -400,7 +399,7 @@ export class DatasetQuotasListComponent implements OnInit {
   private getRemovalConfirmation(): Observable<boolean> {
     const confirmOptions: ConfirmOptions = {
       title: this.translate.instant('Remove Invalid Quotas'),
-      message: this.translate.instant(helpTextQuotas[this.helpTextKey].remove_invalid_quotas.message),
+      message: this.translate.instant(helptextQuotas[this.helpTextKey].removeInvalidQuotas.message),
       buttonText: this.translate.instant('Remove'),
     };
     return this.dialogService.confirm(confirmOptions);

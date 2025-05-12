@@ -50,7 +50,6 @@ import { jobsListElements } from 'app/pages/jobs/jobs-list.elements';
   templateUrl: './jobs-list.component.html',
   styleUrls: ['./jobs-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     PageHeaderComponent,
     MatButtonToggleGroup,
@@ -92,10 +91,6 @@ export class JobsListComponent implements OnInit {
       propertyName: 'state',
       cssClass: 'state-button',
       getJob: (row) => row,
-    }),
-    textColumn({
-      title: this.translate.instant('ID'),
-      propertyName: 'id',
     }),
     dateColumn({
       title: this.translate.instant('Started'),

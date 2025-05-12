@@ -46,6 +46,7 @@ import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedu
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ignoreTranslation, TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { CreateStorjBucketDialog } from 'app/pages/data-protection/cloudsync/create-storj-bucket-dialog/create-storj-bucket-dialog.component';
@@ -62,7 +63,6 @@ type FormValue = CloudSyncWhatAndWhenComponent['form']['value'];
   templateUrl: './cloudsync-what-and-when.component.html',
   styleUrls: ['./cloudsync-what-and-when.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxFieldsetComponent,
@@ -516,8 +516,10 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
           }
 
           this.dialog.confirm({
-            title: apiError.extra ? (apiError.extra as { excerpt: string }).excerpt : `${this.translate.instant('Error: ')}${apiError.error}`,
-            message: apiError.reason,
+            title: apiError.extra
+              ? ignoreTranslation((apiError.extra as { excerpt: string }).excerpt)
+              : `${this.translate.instant('Error: ')}${apiError.error}` as TranslatedString,
+            message: ignoreTranslation(apiError.reason),
             hideCheckbox: true,
             buttonText: this.translate.instant('Fix Credential'),
           }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {

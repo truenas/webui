@@ -23,7 +23,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './leave-domain-dialog.component.html',
   styleUrls: ['./leave-domain-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogTitle,
     ReactiveFormsModule,
@@ -66,7 +65,7 @@ export class LeaveDomainDialog {
           }
 
           this.snackbar.success(
-            this.translate.instant(helptextActiveDirectory.ad_leave_domain_dialog.success_msg),
+            this.translate.instant(helptextActiveDirectory.domainLeftMessage),
           );
 
           this.dialogRef.close(true);

@@ -47,6 +47,7 @@ describe('CloudBackupFormComponent', () => {
     id: 1,
     description: 'sdf',
     path: '/mnt/my pool',
+    cache_path: null,
     attributes: {
       folder: '/My Folder',
       chunk_size: 48,
@@ -143,6 +144,7 @@ describe('CloudBackupFormComponent', () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
         'Source Path': '/mnt/my pool 2',
+        'Cache Path': '/mnt/path',
         Name: 'Cloud Backup Task With New Bucket',
         Password: 'qwerty',
         Credentials: 'Storj (Storj)',
@@ -159,6 +161,7 @@ describe('CloudBackupFormComponent', () => {
         args: '',
         attributes: { folder: '/', bucket: 'brand-new-bucket' },
         credentials: 2,
+        cache_path: '/mnt/path',
         description: 'Cloud Backup Task With New Bucket',
         enabled: true,
         exclude: [],
@@ -207,6 +210,7 @@ describe('CloudBackupFormComponent', () => {
         args: '',
         attributes: { folder: '/', bucket: 'path_to_bucket1' },
         credentials: 2,
+        cache_path: null,
         description: 'New Cloud Backup Task',
         enabled: false,
         exclude: ['/test'],
@@ -248,6 +252,7 @@ describe('CloudBackupFormComponent', () => {
       const form = await loader.getHarness(IxFormHarness);
       expect(await form.getValues()).toEqual({
         Bucket: '',
+        'Cache Path': '',
         Credentials: 'Storj (Storj)',
         Enabled: true,
         Exclude: [],
@@ -257,7 +262,7 @@ describe('CloudBackupFormComponent', () => {
         Password: '1234',
         'Post-script': '',
         'Pre-script': '',
-        Schedule: 'Weekly (0 0 * * sun)  On Sundays at 00:00 (12:00 AM)',
+        Schedule: 'Weekly On Sundays at 00:00 (12:00 AM)',
         'Source Path': '/mnt/my pool',
         'Use Snapshot': false,
         'Use Absolute Paths': true,
@@ -289,6 +294,7 @@ describe('CloudBackupFormComponent', () => {
           bucket: 'path_to_bucket1',
         },
         credentials: 2,
+        cache_path: null,
         description: 'Edited description',
         enabled: true,
         exclude: [],

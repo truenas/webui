@@ -20,9 +20,7 @@ import { SearchInput1Component } from 'app/modules/forms/search-input1/search-in
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import {
-  actionsColumn,
-} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
+import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
 import { relativeDateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
 import {
   scheduleColumn,
@@ -59,7 +57,6 @@ import { TaskService } from 'app/services/task.service';
   templateUrl: './rsync-task-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CrontabExplanationPipe],
-  standalone: true,
   imports: [
     PageHeaderComponent,
     SearchInput1Component,
@@ -161,7 +158,7 @@ export class RsyncTaskListComponent implements OnInit {
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
     }),
-    actionsColumn({
+    actionsWithMenuColumn({
       actions: [
         {
           iconName: iconMarker('mdi-play-circle'),
@@ -276,12 +273,6 @@ export class RsyncTaskListComponent implements OnInit {
       )
       .subscribe(() => this.refresh());
   }
-
-  private filterTask = (task: RsyncTask): boolean => {
-    return task.remotehost?.includes(this.filterString)
-      || task.path.toLowerCase().includes(this.filterString)
-      || task.desc.toLowerCase().includes(this.filterString);
-  };
 
   private refresh(): void {
     this.dataProvider.load();

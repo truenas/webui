@@ -16,6 +16,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { Job, JobProgress } from 'app/interfaces/job.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ignoreTranslation, TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -25,12 +26,12 @@ export interface JobProgressDialogConfig<Result> {
   /**
    * Defaults to job.method.
    */
-  title?: string;
+  title?: TranslatedString;
 
   /**
    * Defaults to job.description;
    */
-  description?: string;
+  description?: TranslatedString;
 
   /**
    * Defaults to false;
@@ -51,7 +52,6 @@ export interface JobProgressDialogConfig<Result> {
   templateUrl: './job-progress-dialog.component.html',
   styleUrls: ['./job-progress-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogTitle,
     MatDialogContent,
@@ -77,8 +77,8 @@ export class JobProgressDialog<T> implements OnInit, AfterViewChecked {
 
   readonly JobState = JobState;
 
-  protected title: string | undefined;
-  protected description: string | undefined;
+  protected title: TranslatedString | undefined;
+  protected description: TranslatedString | undefined;
   private realtimeLogsSubscribed = false;
   protected realtimeLogs = '';
   protected showMinimizeButton = true;
@@ -130,10 +130,10 @@ export class JobProgressDialog<T> implements OnInit, AfterViewChecked {
       next: (job) => {
         this.job = job;
         if (!this.title) {
-          this.title = this.job.method;
+          this.title = ignoreTranslation(this.job.method);
         }
         if (!this.description) {
-          this.description = this.job.description || '';
+          this.description = ignoreTranslation(this.job.description || '');
         }
         if (
           this.data.showRealtimeLogs
@@ -145,7 +145,7 @@ export class JobProgressDialog<T> implements OnInit, AfterViewChecked {
         if (job.progress && !this.data.showRealtimeLogs) {
           this.jobProgress.emit(job.progress);
           if (job.progress.description) {
-            this.description = job.progress.description;
+            this.description = ignoreTranslation(job.progress.description);
           }
           if (job.progress.percent) {
             this.progressTotalPercent = job.progress.percent;

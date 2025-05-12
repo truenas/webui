@@ -6,13 +6,13 @@ import {
 } from '@angular/material/card';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { IsHaDirective } from 'app/directives/is-ha/is-ha.directive';
 import { FibreChannelPort } from 'app/interfaces/fibre-channel.interface';
 
 @Component({
   selector: 'ix-fibre-channel-port-card',
   styleUrls: ['./fibre-channel-port-card.component.scss'],
   templateUrl: './fibre-channel-port-card.component.html',
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatCard,
@@ -21,6 +21,7 @@ import { FibreChannelPort } from 'app/interfaces/fibre-channel.interface';
     TranslateModule,
     MatCardContent,
     NgxSkeletonLoaderModule,
+    IsHaDirective,
   ],
 })
 export class FibreChannelPortCardComponent {

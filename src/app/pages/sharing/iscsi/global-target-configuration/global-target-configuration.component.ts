@@ -15,7 +15,7 @@ import {
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { RdmaProtocolName, ServiceName } from 'app/enums/service-name.enum';
-import { helptextSharingIscsi } from 'app/helptext/sharing';
+import { helptextIscsi } from 'app/helptext/sharing';
 import { IscsiGlobalConfigUpdate } from 'app/interfaces/iscsi-global-config.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -38,9 +38,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
 @Component({
   selector: 'ix-global-target-configuration',
   templateUrl: './global-target-configuration.component.html',
-  styleUrls: ['./global-target-configuration.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatCardContent,
@@ -78,11 +76,11 @@ export class GlobalTargetConfigurationComponent implements OnInit {
   }>;
 
   readonly tooltips = {
-    basename: helptextSharingIscsi.globalconf_tooltip_basename,
-    isns_servers: helptextSharingIscsi.globalconf_tooltip_isns_servers,
-    pool_avail_threshold: helptextSharingIscsi.globalconf_tooltip_pool_avail_threshold,
-    alua: helptextSharingIscsi.globalconf_tooltip_alua,
-    iser: helptextSharingIscsi.globalconf_tooltip_iser,
+    basename: helptextIscsi.config.basenameTooltip,
+    isns_servers: helptextIscsi.config.isnsServersTooltip,
+    pool_avail_threshold: helptextIscsi.config.alertThreshold,
+    alua: helptextIscsi.config.aluaTooltip,
+    iser: helptextIscsi.config.iserTooltip,
   };
 
   protected readonly requiredRoles = [Role.SharingIscsiGlobalWrite];
@@ -119,14 +117,12 @@ export class GlobalTargetConfigurationComponent implements OnInit {
         complete: () => {
           this.isLoading.set(false);
           this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Iscsi }));
-          this.cdr.markForCheck();
           this.slideInRef.close({ response: true, error: null });
           this.snackbar.success(this.translate.instant('Settings saved.'));
         },
         error: (error: unknown) => {
           this.isLoading.set(false);
           this.formErrorHandler.handleValidationErrors(error, this.form);
-          this.cdr.markForCheck();
         },
       });
   }

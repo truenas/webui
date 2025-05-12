@@ -27,9 +27,9 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
 @UntilDestroy()
 @Component({
   selector: 'ix-gui-card',
+  styleUrls: ['./../../common-settings-card.scss'],
   templateUrl: './gui-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     UiSearchDirective,

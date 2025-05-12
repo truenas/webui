@@ -8,19 +8,19 @@
   <form class="form" [formGroup]="form" (submit)="onSubmit()">
     <ix-form-section
       [label]="'Instance Configuration' | translate"
-      [help]="instancesHelptext.instance_type_tooltip | translate"
+      [help]="instancesHelptext.virtualizationMethodTooltip | translate"
     >
       <ix-input
         formControlName="name"
-        [label]="instancesHelptext.name_placeholder | translate"
+        [label]="instancesHelptext.namePlaceholderLabel | translate"
         [required]="true"
         [hint]="instancesHelptext.nameHint | translate"
       ></ix-input>
 
       <ix-icon-group
         formControlName="instance_type"
-        [label]="instancesHelptext.instance_type_placeholder | translate"
-        [tooltip]="instancesHelptext.instance_type_tooltip | translate"
+        [label]="instancesHelptext.virtualizationMethodLabel | translate"
+        [tooltip]="instancesHelptext.virtualizationMethodTooltip | translate"
         [required]="true"
         [options]="virtualizationTypeIcons"
         [showLabels]="true"
@@ -72,26 +72,36 @@
               (click)="onSelectRootVolume()"
             >{{ 'Select Volume' | translate }}</button>
           </div>
+
+          @if (form.value.volume_type === VolumeContentType.Iso) {
+            <ix-combobox
+              formControlName="image_os"
+              [label]="'OS Type' | translate"
+              [allowCustomValue]="true"
+              [tooltip]="instancesHelptext.osImage.tooltip| translate"
+              [provider]="imageOsProvider"
+            ></ix-combobox>
+          }
         }
       }
     </ix-form-section>
 
     <ix-form-section
       [label]="'CPU & Memory' | translate"
-      [help]="instancesHelptext.cpu_memory_tooltip | translate"
+      [help]="instancesHelptext.cpuMemoryTooltip | translate"
     >
       <ix-input
         formControlName="cpu"
-        [label]="instancesHelptext.cpu_placeholder | translate"
-        [tooltip]="instancesHelptext.cpu_tooltip | translate"
+        [label]="instancesHelptext.cpuLabel | translate"
+        [tooltip]="instancesHelptext.cpuTooltip | translate"
         [required]="isVm()"
         [hint]="isContainer() ? (instancesHelptext.cpuHint | translate) : undefined"
       ></ix-input>
 
       <ix-input
         formControlName="memory"
-        [label]="instancesHelptext.memory_placeholder | translate"
-        [tooltip]="instancesHelptext.memory_tooltip | translate"
+        [label]="instancesHelptext.memoryLabel | translate"
+        [tooltip]="instancesHelptext.memoryTooltip | translate"
         [format]="formatter.memorySizeFormatting"
         [parse]="formatter.memorySizeParsing"
         [required]="isVm()"
@@ -106,7 +116,7 @@
         <ix-list
           formArrayName="environment_variables"
           [empty]="form.controls.environment_variables.controls.length === 0"
-          [label]="instancesHelptext.env_placeholder | translate"
+          [label]="instancesHelptext.envLabel | translate"
           (add)="addEnvironmentVariable()"
         >
           @for (envControl of form.controls.environment_variables.controls; track envControl; let i = $index) {
@@ -118,13 +128,13 @@
               <div class="environment-variable">
                 <ix-input
                   formControlName="name"
-                  [label]="instancesHelptext.env_name_placeholder | translate"
+                  [label]="instancesHelptext.envNameLabel | translate"
                   [required]="true"
                 ></ix-input>
 
                 <ix-input
                   formControlName="value"
-                  [label]="instancesHelptext.env_value_placeholder | translate"
+                  [label]="instancesHelptext.envValueLabel | translate"
                   [required]="true"
                 ></ix-input>
               </div>
@@ -148,25 +158,23 @@
         <ix-select
           formControlName="root_disk_io_bus"
           [label]="'Root Disk I/O Bus' | translate"
-          [tooltip]="instancesHelptext.io_bus_tooltip | translate"
+          [tooltip]="instancesHelptext.ioBusTooltip | translate"
           [required]="true"
           [options]="diskIoBusOptions$"
         ></ix-select>
 
-        @if (!isZvolSourceType) {
-          <ix-input
-            formControlName="root_disk_size"
-            type="number"
-            [required]="true"
-            [label]="'Root Disk Size (in GiB)' | translate"
-          ></ix-input>
-        }
+        <ix-input
+          formControlName="root_disk_size"
+          type="number"
+          [required]="true"
+          [label]="'Root Disk Size (in GiB)' | translate"
+        ></ix-input>
       }
 
       <ix-list
         formArrayName="disks"
         [empty]="form.controls.disks.controls.length === 0"
-        [label]="instancesHelptext.disks_placeholder | translate"
+        [label]="instancesHelptext.disksLabel | translate"
         [formArray]="form.controls.disks"
         (add)="addDisk()"
       >
@@ -180,7 +188,7 @@
               <ix-explorer
                 formControlName="source"
                 root="/"
-                [label]="instancesHelptext.disks_src_placeholder | translate"
+                [label]="instancesHelptext.disksSourceLabel | translate"
                 [required]="true"
                 [nodeProvider]="datasetProvider"
                 [canCreateDataset]="true"
@@ -188,8 +196,8 @@
 
               <ix-input
                 formControlName="destination"
-                [label]="instancesHelptext.disks_dst_placeholder | translate"
-                [tooltip]="instancesHelptext.disks_dst_tooltip | translate"
+                [label]="instancesHelptext.disksDestinationLabel | translate"
+                [tooltip]="instancesHelptext.disksDestinationTooltip | translate"
                 [required]="true"
               ></ix-input>
             }
@@ -215,7 +223,7 @@
               <ix-select
                 formControlName="io_bus"
                 [label]="'I/O Bus' | translate"
-                [tooltip]="instancesHelptext.io_bus_tooltip | translate"
+                [tooltip]="instancesHelptext.ioBusTooltip | translate"
                 [required]="true"
                 [options]="diskIoBusOptions$"
               ></ix-select>
@@ -228,7 +236,7 @@
         <ix-select
           formControlName="boot_from"
           [label]="'Boot From' | translate"
-          [tooltip]="instancesHelptext.boot_from_tooltip | translate"
+          [tooltip]="instancesHelptext.bootFromTooltip | translate"
           [required]="true"
           [options]="bootFromOptions$"
         ></ix-select>
@@ -242,7 +250,7 @@
         <ix-list
           formArrayName="proxies"
           [empty]="form.controls.proxies.controls.length === 0"
-          [label]="instancesHelptext.proxies_placeholder | translate"
+          [label]="instancesHelptext.proxiesLabel | translate"
           [formArray]="form.controls.proxies"
           (add)="addProxy()"
         >
@@ -256,7 +264,7 @@
                 <ix-select
                   class="protocol"
                   formControlName="source_proto"
-                  [label]="instancesHelptext.host_protocol_placeholder | translate"
+                  [label]="instancesHelptext.hostProtocolLabel | translate"
                   [required]="true"
                   [options]="proxyProtocols$"
                 ></ix-select>
@@ -265,8 +273,8 @@
                   class="port"
                   type="number"
                   formControlName="source_port"
-                  [label]="instancesHelptext.host_port_placeholder | translate"
-                  [tooltip]="instancesHelptext.host_port_tooltip | translate"
+                  [label]="instancesHelptext.hostPortLabel | translate"
+                  [tooltip]="instancesHelptext.hostPortTooltip | translate"
                   [required]="true"
                 ></ix-input>
               </div>
@@ -275,8 +283,8 @@
                 <ix-select
                   class="protocol"
                   formControlName="dest_proto"
-                  [label]="instancesHelptext.instance_protocol_placeholder | translate"
-                  [tooltip]="instancesHelptext.instance_protocol_tooltip | translate"
+                  [label]="instancesHelptext.instanceProtocolLabel | translate"
+                  [tooltip]="instancesHelptext.instanceProtocolTooltip | translate"
                   [required]="true"
                   [options]="proxyProtocols$"
                 ></ix-select>
@@ -285,7 +293,7 @@
                   class="port"
                   type="number"
                   formControlName="dest_port"
-                  [label]="instancesHelptext.instance_port_placeholder | translate"
+                  [label]="instancesHelptext.instancePortLabel | translate"
                   [required]="true"
                 ></ix-input>
               </div>
@@ -297,11 +305,11 @@
 
     <ix-form-section
       [label]="'Network' | translate"
-      [help]="instancesHelptext.network_tooltip | translate"
+      [help]="instancesHelptext.networkTooltip | translate"
     >
       <ix-checkbox
         formControlName="use_default_network"
-        [label]="instancesHelptext.network_use_default_placeholder | translate"
+        [label]="instancesHelptext.networkUseDefaultLabel | translate"
       ></ix-checkbox>
 
       @if (!form.controls.use_default_network.value) {
@@ -310,29 +318,31 @@
             {{ 'NIC selection is currently restricted due to pending network changes.' | translate }}
           </p>
         } @else {
-          @if ((bridgedNicDevices$ | async); as devices) {
+          @if (bridgedNicDevices(); as devices) {
             @if (devices.length > 0) {
               <p>{{ bridgedNicTypeLabel ? (bridgedNicTypeLabel | translate) : '' }}</p>
 
-              <ix-checkbox-list
-                formControlName="bridged_nics"
-                [label]="instancesHelptext.network_bridged_nics_placeholder | translate"
-                [options]="bridgedNicDevices$"
-              ></ix-checkbox-list>
+              @for(nicOption of devices; track nicOption.value ) {
+                <ix-checkbox
+                  [label]="nicOption.label"
+                  [formControl]="nicOption.control"
+                ></ix-checkbox>
+              }
             }
           } @else {
             <ngx-skeleton-loader></ngx-skeleton-loader>
           }
 
-          @if ((macVlanNicDevices$ | async); as devices) {
+          @if (macVlanNicDevices(); as devices) {
             @if (devices.length > 0) {
               <p>{{ macVlanNicTypeLabel ? (macVlanNicTypeLabel | translate) : '' }}</p>
 
-              <ix-checkbox-list
-                formControlName="mac_vlan_nics"
-                [label]="instancesHelptext.network_mac_vlan_nics_placeholder | translate"
-                [options]="macVlanNicDevices$"
-              ></ix-checkbox-list>
+              @for(nicOption of devices; track nicOption.value ) {
+                <ix-checkbox
+                  [label]="nicOption.label"
+                  [formControl]="nicOption.control"
+                ></ix-checkbox>
+              }
             }
           } @else {
             <ngx-skeleton-loader></ngx-skeleton-loader>
@@ -363,7 +373,7 @@
       >
         <ix-checkbox-list
           formControlName="usb_devices"
-          [label]="instancesHelptext.usb_devices_placeholder | translate"
+          [label]="instancesHelptext.usbDevicesLabel | translate"
           [options]="usbDevices$"
         ></ix-checkbox-list>
       </ix-form-section>
@@ -421,8 +431,8 @@
       <ix-form-section [label]="'VNC' | translate">
         <ix-checkbox
           formControlName="enable_vnc"
-          [label]="instancesHelptext.enable_vnc_placeholder | translate"
-          [tooltip]="instancesHelptext.enable_vnc_tooltip | translate"
+          [label]="instancesHelptext.enableVncLabel | translate"
+          [tooltip]="instancesHelptext.enableVncTooltip | translate"
           [hint]="form.value.enable_vnc && instancesHelptext.vncHint | translate"
         ></ix-checkbox>
 
@@ -445,8 +455,8 @@
       <ix-form-section [label]="'Security' | translate">
         <ix-checkbox
           formControlName="tpm"
-          [label]="instancesHelptext.add_tpm_placeholder | translate"
-          [tooltip]="instancesHelptext.add_tpm_tooltip | translate"
+          [label]="instancesHelptext.addTpmLabel | translate"
+          [tooltip]="instancesHelptext.addTpmTooltip | translate"
         ></ix-checkbox>
 
         <ix-checkbox

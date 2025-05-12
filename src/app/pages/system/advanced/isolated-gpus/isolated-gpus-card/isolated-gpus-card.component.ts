@@ -26,10 +26,9 @@ import { GpuService } from 'app/services/gpu/gpu.service';
 @UntilDestroy()
 @Component({
   selector: 'ix-isolated-gpus-card',
-  styleUrls: ['../../common-card.scss'],
+  styleUrls: ['../../../general-settings/common-settings-card.scss'],
   templateUrl: './isolated-gpus-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     UiSearchDirective,

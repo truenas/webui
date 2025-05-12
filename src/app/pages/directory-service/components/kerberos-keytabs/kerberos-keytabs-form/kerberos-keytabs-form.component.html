@@ -1,7 +1,7 @@
 <ix-modal-header
   [requiredRoles]="requiredRoles"
   [title]="title"
-  [loading]="isLoading"
+  [loading]="isLoading()"
 ></ix-modal-header>
 
 <mat-card>
@@ -10,15 +10,15 @@
       <ix-fieldset>
         <ix-input
           formControlName="name"
-          [label]="helptext.kkt_ktname_placeholder | translate"
-          [placeholder]="helptext.kkt_ktname_placeholder | translate"
+          [label]="helptext.name | translate"
+          [placeholder]="helptext.name | translate"
           [required]="true"
         ></ix-input>
 
         <ix-file-input
           formControlName="file"
-          [label]="helptext.kkt_ktfile_placeholder | translate"
-          [tooltip]="helptext.kkt_ktfile_tooltip | translate"
+          [label]="helptext.keytab | translate"
+          [tooltip]="helptext.keytabTooltip | translate"
           [multiple]="false"
           [required]="true"
           [acceptedFiles]="'binary'"
@@ -32,7 +32,7 @@
           type="submit"
           color="primary"
           ixTest="save"
-          [disabled]="form.invalid || isLoading"
+          [disabled]="form.invalid || isLoading()"
         >
           {{ 'Save' | translate }}
         </button>

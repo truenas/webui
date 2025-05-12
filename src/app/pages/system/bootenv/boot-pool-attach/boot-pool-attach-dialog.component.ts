@@ -28,7 +28,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
   templateUrl: './boot-pool-attach-dialog.component.html',
   styleUrls: ['./boot-pool-attach-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogTitle,
     ReactiveFormsModule,
@@ -57,8 +56,8 @@ export class BootPoolAttachDialog implements OnInit {
 
   expand = {
     fcName: 'expand',
-    label: this.translate.instant(helptextSystemBootenv.expand_placeholder),
-    tooltip: this.translate.instant(helptextSystemBootenv.expand_tooltip),
+    label: this.translate.instant(helptextSystemBootenv.expandLabel),
+    tooltip: this.translate.instant(helptextSystemBootenv.expandTooltip),
   };
 
   protected readonly Role = Role;

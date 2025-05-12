@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component,
+  ChangeDetectionStrategy, Component, computed, OnInit, signal,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -7,7 +7,7 @@ import { MatList, MatListItem } from '@angular/material/list';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { Observable, filter, of } from 'rxjs';
+import { filter } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { LoadingState, toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { helptextSystemEmail } from 'app/helptext/system/email';
@@ -18,14 +18,13 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { emailCardElements } from 'app/pages/system/general-settings/email/email-card/email-card.elements';
 import { EmailFormComponent } from 'app/pages/system/general-settings/email/email-form/email-form.component';
-import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
   selector: 'ix-email-card',
+  styleUrls: ['./../../common-settings-card.scss'],
   templateUrl: './email-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     UiSearchDirective,
@@ -39,35 +38,39 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TranslateModule,
   ],
 })
-export class EmailCardComponent {
+export class EmailCardComponent implements OnInit {
   readonly helptext = helptextSystemEmail;
   protected readonly searchableElements = emailCardElements;
 
-  emailConfig$: Observable<LoadingState<MailConfig>> = this.api.call('mail.config').pipe(toLoadingState());
+  protected emailConfigState = signal<LoadingState<MailConfig>>({
+    isLoading: false,
+    value: null,
+  });
+
+  protected hasLoadedConfig = computed(() => Boolean(this.emailConfigState().value));
 
   constructor(
     private slideIn: SlideIn,
     private api: ApiService,
-    private cdr: ChangeDetectorRef,
-    private errorHandler: ErrorHandlerService,
   ) {}
 
-  openEmailSettings(): void {
+  ngOnInit(): void {
+    this.loadEmailConfig();
+  }
+
+  private loadEmailConfig(): void {
     this.api.call('mail.config')
       .pipe(
-        this.errorHandler.withErrorHandler(),
+        toLoadingState(),
         untilDestroyed(this),
       )
-      .subscribe((config) => {
-        this.slideIn.open(EmailFormComponent, { data: config }).pipe(
-          filter((response) => !!response.response),
-          untilDestroyed(this),
-        ).subscribe(() => {
-          this.api.call('mail.config').pipe(untilDestroyed(this)).subscribe((result) => {
-            this.emailConfig$ = of(result).pipe(toLoadingState());
-            this.cdr.markForCheck();
-          });
-        });
-      });
+      .subscribe((state) => this.emailConfigState.set(state));
+  }
+
+  protected openEmailSettings(): void {
+    this.slideIn.open(EmailFormComponent, { data: this.emailConfigState().value }).pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe(() => this.loadEmailConfig());
   }
 }

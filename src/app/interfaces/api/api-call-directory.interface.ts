@@ -45,10 +45,6 @@ import {
   CatalogUpdate, GetItemDetailsParams,
 } from 'app/interfaces/catalog.interface';
 import {
-  CertificateAuthority, CertificateAuthoritySignRequest,
-  CertificateAuthorityUpdate,
-} from 'app/interfaces/certificate-authority.interface';
-import {
   Certificate,
   CertificateProfiles,
   ExtendedKeyUsageChoices,
@@ -180,6 +176,25 @@ import {
   Nfs3Session, Nfs4Session, NfsShare, NfsShareUpdate,
 } from 'app/interfaces/nfs-share.interface';
 import { CreateNtpServer, NtpServer } from 'app/interfaces/ntp-server.interface';
+import {
+  AssociateSubsystemHost,
+  AssociateSubsystemPort,
+  CreateNvmeOfHost,
+  CreateNvmeOfNamespace,
+  CreateNvmeOfPort,
+  CreateNvmeOfSubsystem,
+  DeleteNamespaceParams,
+  NvmeOfGlobalConfig,
+  NvmeOfGlobalConfigUpdate, NvmeOfHost,
+  NvmeOfNamespace,
+  NvmeOfPort,
+  NvmeOfSubsystem,
+  NvmeOfTransportParams, SubsystemHostAssociation,
+  SubsystemPortAssociation, UpdateNvmeOfHost,
+  UpdateNvmeOfNamespace,
+  UpdateNvmeOfPort,
+  UpdateNvmeOfSubsystem,
+} from 'app/interfaces/nvme-of.interface';
 import { MapOption } from 'app/interfaces/option.interface';
 import {
   PeriodicSnapshotTask,
@@ -187,7 +202,7 @@ import {
   PeriodicSnapshotTaskUpdate,
 } from 'app/interfaces/periodic-snapshot-task.interface';
 import { DatasetAttachment, PoolAttachment } from 'app/interfaces/pool-attachment.interface';
-import { CreatePoolScrubTask, PoolScrubTask } from 'app/interfaces/pool-scrub.interface';
+import { CreateScrubTask, ScrubTask } from 'app/interfaces/pool-scrub.interface';
 import {
   Pool, PoolInstance,
 } from 'app/interfaces/pool.interface';
@@ -383,16 +398,6 @@ export interface ApiCallDirectory {
   'certificate.ec_curve_choices': { params: void; response: Choices };
   'certificate.extended_key_usage_choices': { params: void; response: ExtendedKeyUsageChoices };
   'certificate.query': { params: QueryParams<Certificate>; response: Certificate[] };
-
-  // Certificate Authority
-  'certificateauthority.ca_sign_csr': { params: [CertificateAuthoritySignRequest]; response: CertificateAuthority };
-  'certificateauthority.create': { params: [CertificateAuthorityUpdate]; response: CertificateAuthority };
-  'certificateauthority.delete': { params: [id: number]; response: boolean };
-  'certificateauthority.query': { params: QueryParams<CertificateAuthority>; response: CertificateAuthority[] };
-  'certificateauthority.update': {
-    params: [number, Partial<CertificateAuthorityUpdate>];
-    response: CertificateAuthority;
-  };
 
   // CloudBackup
   'cloud_backup.create': { params: [CloudBackupUpdate]; response: CloudBackup };
@@ -644,6 +649,42 @@ export interface ApiCallDirectory {
   'nfs.get_nfs4_clients': { params: [params?: QueryParams<Nfs4Session>]; response: Nfs4Session[] };
   'nfs.update': { params: [NfsConfigUpdate]; response: NfsConfig };
 
+  // NVMe-oF
+  'nvmet.global.config': { params: void; response: NvmeOfGlobalConfig };
+  'nvmet.global.update': { params: [NvmeOfGlobalConfigUpdate]; response: NvmeOfGlobalConfig };
+  'nvmet.global.rdma_enabled': { params: void; response: boolean };
+  'nvmet.global.ana_enabled': { params: void; response: boolean };
+
+  'nvmet.subsys.query': { params: QueryParams<NvmeOfSubsystem>; response: NvmeOfSubsystem[] };
+  'nvmet.subsys.create': { params: [CreateNvmeOfSubsystem]; response: NvmeOfSubsystem };
+  'nvmet.subsys.update': { params: [id: number, update: UpdateNvmeOfSubsystem]; response: NvmeOfSubsystem };
+  'nvmet.subsys.delete': { params: [id: number, { force: boolean }?]; response: void };
+
+  'nvmet.port.query': { params: QueryParams<NvmeOfPort>; response: NvmeOfPort[] };
+  'nvmet.port.create': { params: [CreateNvmeOfPort]; response: NvmeOfPort };
+  'nvmet.port.update': { params: [id: number, update: UpdateNvmeOfPort]; response: NvmeOfPort };
+  'nvmet.port.delete': { params: [id: number, { force: boolean }?]; response: void };
+
+  'nvmet.port_subsys.query': { params: QueryParams<SubsystemPortAssociation>; response: SubsystemPortAssociation[] };
+  'nvmet.port_subsys.create': { params: [AssociateSubsystemPort]; response: void };
+  'nvmet.port_subsys.delete': { params: [id: number]; response: void };
+
+  'nvmet.host.query': { params: QueryParams<NvmeOfHost>; response: NvmeOfHost[] };
+  'nvmet.host.create': { params: [CreateNvmeOfHost]; response: NvmeOfHost };
+  'nvmet.host.update': { params: [id: number, update: UpdateNvmeOfHost]; response: NvmeOfHost };
+  'nvmet.host.delete': { params: [id: number]; response: void };
+
+  'nvmet.host_subsys.query': { params: QueryParams<SubsystemHostAssociation>; response: SubsystemHostAssociation[] };
+  'nvmet.host_subsys.create': { params: [AssociateSubsystemHost]; response: void };
+  'nvmet.host_subsys.delete': { params: [id: number]; response: void };
+
+  'nvmet.namespace.query': { params: QueryParams<NvmeOfNamespace>; response: NvmeOfNamespace };
+  'nvmet.namespace.create': { params: [CreateNvmeOfNamespace]; response: NvmeOfNamespace };
+  'nvmet.namespace.update': { params: [id: number, update: UpdateNvmeOfNamespace]; response: NvmeOfNamespace };
+  'nvmet.namespace.delete': { params: DeleteNamespaceParams; response: void };
+
+  'nvmet.port.transport_address_choices': { params: NvmeOfTransportParams; response: Choices };
+
   // Pool
   'pool.attachments': { params: [id: number]; response: PoolAttachment[] };
   'pool.dataset.attachments': { params: [datasetId: string]; response: DatasetAttachment[] };
@@ -671,10 +712,10 @@ export interface ApiCallDirectory {
   'pool.query': { params: QueryParams<Pool>; response: Pool[] };
   'pool.resilver.config': { params: void; response: ResilverConfig };
   'pool.resilver.update': { params: [ResilverConfigUpdate]; response: ResilverConfig };
-  'pool.scrub.create': { params: [CreatePoolScrubTask]; response: PoolScrubTask };
+  'pool.scrub.create': { params: [CreateScrubTask]; response: ScrubTask };
   'pool.scrub.delete': { params: [id: number]; response: boolean };
-  'pool.scrub.query': { params: QueryParams<PoolScrubTask>; response: PoolScrubTask[] };
-  'pool.scrub.update': { params: [id: number, params: CreatePoolScrubTask]; response: PoolScrubTask };
+  'pool.scrub.query': { params: QueryParams<ScrubTask>; response: ScrubTask[] };
+  'pool.scrub.update': { params: [id: number, params: CreateScrubTask]; response: ScrubTask };
   'pool.snapshottask.create': { params: [PeriodicSnapshotTaskCreate]; response: PeriodicSnapshotTask };
   'pool.snapshottask.delete': { params: [id: number]; response: boolean };
   'pool.snapshottask.query': { params: QueryParams<PeriodicSnapshotTask>; response: PeriodicSnapshotTask[] };
@@ -816,7 +857,6 @@ export interface ApiCallDirectory {
 
   // Truenas Connect
   'tn_connect.config': { params: void; response: TruenasConnectConfig };
-  'tn_connect.ip_choices': { params: void; response: Record<string, string> };
   'tn_connect.update': { params: [TruenasConnectUpdate]; response: TruenasConnectConfig };
   'tn_connect.generate_claim_token': { params: void; response: string };
   'tn_connect.get_registration_uri': { params: void; response: string };
@@ -887,7 +927,7 @@ export interface ApiCallDirectory {
   'virt.volume.query': { params: QueryParams<VirtualizationVolume>; response: VirtualizationVolume[] };
   'virt.volume.update': { params: VirtualizationVolumeUpdate; response: VirtualizationVolume };
   'virt.volume.delete': { params: [id: string]; response: true };
-  'virt.volume.import_iso': { params: VirtualizationImportIsoParams; response: VirtualizationVolume };
+  'virt.volume.import_iso': { params: [VirtualizationImportIsoParams]; response: VirtualizationVolume };
 
   'system.advanced.get_gpu_pci_choices': { params: void; response: Choices };
 
@@ -904,10 +944,8 @@ export interface ApiCallDirectory {
   'webui.main.dashboard.sys_info': { params: void; response: SystemInfo };
 
   // WebUI Crypto
-  'webui.crypto.certificate_profiles': { params: void; response: CertificateProfiles };
   'webui.crypto.csr_profiles': { params: void; response: CertificateProfiles };
   'webui.crypto.get_certificate_domain_names': { params: [number]; response: string[] };
-  'webui.crypto.certificateauthority_profiles': { params: void; response: CertificateProfiles };
 
   // ZFS
   'pool.snapshot.clone': { params: [CloneZfsSnapshot]; response: boolean };

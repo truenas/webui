@@ -1,0 +1,62 @@
+<ix-modal-header
+  [title]="'Failover' | translate"
+  [loading]="isLoading()"
+></ix-modal-header>
+
+<mat-card>
+  <mat-card-content>
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+      <ix-fieldset>
+        <ix-checkbox
+          formControlName="enabled"
+          [label]="'Enable Automatic Failover' | translate"
+        ></ix-checkbox>
+
+        <ix-checkbox
+          formControlName="master"
+          [label]="'Default TrueNAS controller' | translate"
+          [tooltip]="helptext.masterTooltip | translate"
+        ></ix-checkbox>
+
+        <ix-input
+          formControlName="timeout"
+          type="number"
+          [label]="'Network Timeout Before Initiating Failover' | translate"
+          [tooltip]="helptext.timeoutTooltip | translate"
+        ></ix-input>
+      </ix-fieldset>
+
+      <ix-form-actions>
+        <button
+          mat-button
+          type="submit"
+          color="primary"
+          ixTest="save"
+          [disabled]="form.invalid || isLoading()"
+        >
+          {{ submitButtonText$ | async }}
+        </button>
+
+        <button
+          mat-button
+          type="button"
+          ixTest="sync-to-peer"
+          [disabled]="isLoading()"
+          (click)="onSyncToPeerPressed()"
+        >
+          {{ 'Sync To Peer' | translate }}
+        </button>
+
+        <button
+          mat-button
+          type="button"
+          ixTest="sync-from-peer"
+          [disabled]="isLoading()"
+          (click)="onSyncFromPeerPressed()"
+        >
+          {{ 'Sync From Peer' | translate }}
+        </button>
+      </ix-form-actions>
+    </form>
+  </mat-card-content>
+</mat-card>

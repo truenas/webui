@@ -25,7 +25,6 @@ const critical = 95;
   styleUrls: ['./quotas-section.component.scss'],
   templateUrl: './quotas-section.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxFieldsetComponent,
     IxInputComponent,
@@ -40,7 +39,7 @@ export class QuotasSectionComponent implements OnInit {
   readonly form = this.formBuilder.nonNullable.group({
     refquota: [null as number | null, this.validators.withMessage(
       Validators.min(GiB),
-      this.translate.instant(helptextDatasetForm.dataset_form_quota_too_small),
+      this.translate.instant(helptextDatasetForm.quotaTooSmall),
     )],
     refquota_warning: [warning, [Validators.min(0), Validators.max(100)]],
     refquota_warning_inherit: [true],
@@ -49,7 +48,7 @@ export class QuotasSectionComponent implements OnInit {
     refreservation: [null as number | null],
     quota: [null as number | null, this.validators.withMessage(
       Validators.min(GiB),
-      this.translate.instant(helptextDatasetForm.dataset_form_quota_too_small),
+      this.translate.instant(helptextDatasetForm.quotaTooSmall),
     )],
     quota_warning: [warning, [Validators.min(0), Validators.max(100)]],
     quota_warning_inherit: [true],

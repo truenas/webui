@@ -25,7 +25,6 @@ const newOption = 'NEW';
   selector: 'ix-sftp-provider-form',
   templateUrl: './sftp-provider-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxFieldsetComponent,
     ReactiveFormsModule,

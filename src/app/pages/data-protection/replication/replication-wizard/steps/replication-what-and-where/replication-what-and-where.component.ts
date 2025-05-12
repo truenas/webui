@@ -55,7 +55,6 @@ import { ReplicationService } from 'app/services/replication.service';
   styleUrls: ['./replication-what-and-where.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [ReplicationService, DatePipe, KeychainCredentialService],
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxSelectComponent,
@@ -325,7 +324,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
 
         this.dialogService.confirm({
           title: this.translate.instant('Sudo Enabled'),
-          message: helptextReplicationWizard.sudo_warning,
+          message: this.translate.instant(helptextReplicationWizard.sudo_warning),
           hideCheckbox: true,
           buttonText: this.translate.instant('Use Sudo For ZFS Commands'),
         }).pipe(untilDestroyed(this)).subscribe((useSudo) => {

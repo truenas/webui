@@ -1,6 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit,
+  signal,
 } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -31,6 +32,7 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -42,7 +44,6 @@ import { SystemGeneralService } from 'app/services/system-general.service';
   templateUrl: './service-ftp.component.html',
   styleUrls: ['./service-ftp.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
@@ -67,7 +68,7 @@ import { SystemGeneralService } from 'app/services/system-general.service';
 export class ServiceFtpComponent implements OnInit {
   protected readonly requiredRoles = [Role.SharingFtpWrite];
 
-  isFormLoading = false;
+  protected isFormLoading = signal(false);
   isAdvancedMode = false;
 
   kibParser = (value: string): number | null => this.iecFormatter.memorySizeParsing(value, 'KiB');
@@ -117,7 +118,7 @@ export class ServiceFtpComponent implements OnInit {
   readonly helptext = helptextServiceFtp;
 
   readonly certificates$ = this.systemGeneralService.getCertificates().pipe(idNameArrayToOptions());
-  readonly tlsPolicyOptions$ = of(helptextServiceFtp.tls_policy_options);
+  readonly tlsPolicyOptions$ = of(helptextServiceFtp.tlsPolicyOptions);
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider();
 
   readonly isAnonymousLoginAllowed$ = this.form.select((values) => values.onlyanonymous);
@@ -127,7 +128,6 @@ export class ServiceFtpComponent implements OnInit {
     private formBuilder: FormBuilder,
     private api: ApiService,
     private formErrorHandler: FormErrorHandlerService,
-    private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
     private systemGeneralService: SystemGeneralService,
     private filesystemService: FilesystemService,
@@ -161,20 +161,18 @@ export class ServiceFtpComponent implements OnInit {
       anonuserdlbw: this.convertByteToKbyte(Number(this.form.value.anonuserdlbw)),
     } as FtpConfigUpdate;
 
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
     this.api.call('ftp.update', [values])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
-          this.isFormLoading = false;
+          this.isFormLoading.set(false);
           this.snackbar.success(this.translate.instant('Service configuration saved'));
           this.slideInRef.close({ response: true, error: null });
-          this.cdr.markForCheck();
         },
         error: (error: unknown) => {
-          this.isFormLoading = false;
+          this.isFormLoading.set(false);
           this.formErrorHandler.handleValidationErrors(error, this.form);
-          this.cdr.markForCheck();
         },
       });
   }
@@ -184,7 +182,7 @@ export class ServiceFtpComponent implements OnInit {
   }
 
   private loadConfig(): void {
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
     this.api.call('ftp.config')
       .pipe(untilDestroyed(this))
       .subscribe({
@@ -198,13 +196,11 @@ export class ServiceFtpComponent implements OnInit {
             anonuserbw: this.convertKbyteToByte(config.anonuserbw),
             anonuserdlbw: this.convertKbyteToByte(config.anonuserdlbw),
           });
-          this.isFormLoading = false;
-          this.cdr.markForCheck();
+          this.isFormLoading.set(false);
         },
         error: (error: unknown) => {
           this.errorHandler.showErrorModal(error);
-          this.isFormLoading = false;
-          this.cdr.markForCheck();
+          this.isFormLoading.set(false);
         },
       });
   }
@@ -216,4 +212,6 @@ export class ServiceFtpComponent implements OnInit {
   private convertKbyteToByte(value: number): number {
     return value * 1024;
   }
+
+  protected readonly ignoreTranslation = ignoreTranslation;
 }

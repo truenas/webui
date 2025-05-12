@@ -26,7 +26,7 @@ import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
+import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
 import { relativeDateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
 import {
   scheduleColumn,
@@ -57,7 +57,6 @@ import { AppState } from 'app/store';
   templateUrl: './cloudsync-task-card.component.html',
   styleUrls: ['./cloudsync-task-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatToolbarRow,
@@ -112,8 +111,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
       getJob: (row) => row.job,
       cssClass: 'state-button',
     }),
-    actionsColumn({
-      cssClass: 'wide-actions',
+    actionsWithMenuColumn({
       actions: [
         {
           iconName: iconMarker('edit'),
@@ -281,8 +279,8 @@ export class CloudSyncTaskCardComponent implements OnInit {
 
   dryRun(row: CloudSyncTaskUi): void {
     this.dialogService.confirm({
-      title: helptextCloudSync.dry_run_title,
-      message: helptextCloudSync.dry_run_dialog,
+      title: this.translate.instant(helptextCloudSync.dry_run_title),
+      message: this.translate.instant(helptextCloudSync.dry_run_dialog),
       hideCheckbox: true,
     }).pipe(
       filter(Boolean),

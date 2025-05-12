@@ -19,6 +19,7 @@ import {
 } from 'app/modules/dialog/components/session-expiring-dialog/session-expiring-dialog.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
+import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { AppState } from 'app/store';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 
@@ -41,6 +42,7 @@ export class SessionTimeoutService {
     private snackbar: MatSnackBar,
     private appStore$: Store<AppState>,
     private tokenLastUsedService: TokenLastUsedService,
+    private wsStatus: WebSocketStatusService,
     @Inject(WINDOW) private window: Window,
   ) {
     this.resumeBound = this.resume.bind(this);
@@ -62,45 +64,49 @@ export class SessionTimeoutService {
   }
 
   resume(): void {
-    this.appStore$.select(selectPreferences).pipe(filter(Boolean), untilDestroyed(this)).subscribe((preferences) => {
-      this.pause();
-      const lifetime = preferences.lifetime || 300;
-      this.actionWaitTimeout = setTimeout(() => {
-        this.stop();
-        const showConfirmTime = 30000;
+    this.appStore$
+      .select(selectPreferences)
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe((preferences) => {
+        this.pause();
+        const lifetime = preferences.lifetime || 300;
+        this.actionWaitTimeout = setTimeout(() => {
+          this.stop();
+          const showConfirmTime = 30000;
 
-        this.terminateCancelTimeout = setTimeout(() => {
-          this.authService.clearAuthToken();
-          this.router.navigate(['/signin']);
-          this.dialogService.closeAllDialogs();
-          this.snackbar.open(
-            this.translate.instant('Token expired'),
-            this.translate.instant('Close'),
-            { duration: 4000, verticalPosition: 'bottom' },
-          );
-          this.authService.logout().pipe(untilDestroyed(this)).subscribe();
-        }, showConfirmTime);
+          this.terminateCancelTimeout = setTimeout(() => {
+            this.authService.clearAuthToken();
+            this.wsStatus.setReconnectAllowed(false);
+            this.router.navigate(['/signin']);
+            this.dialogService.closeAllDialogs();
+            this.snackbar.open(
+              this.translate.instant('Token expired'),
+              this.translate.instant('Close'),
+              { duration: 4000, verticalPosition: 'bottom' },
+            );
+            this.authService.logout().pipe(untilDestroyed(this)).subscribe();
+          }, showConfirmTime);
 
-        const dialogRef = this.matDialog.open(SessionExpiringDialog, {
-          disableClose: true,
-          data: {
-            title: this.translate.instant('Logout'),
-            message: this.translate.instant(`
+          const dialogRef = this.matDialog.open(SessionExpiringDialog, {
+            disableClose: true,
+            data: {
+              title: this.translate.instant('Logout'),
+              message: this.translate.instant(`
               It looks like your session has been inactive for more than {lifetime} seconds.<br>
               For security reasons we will log you out at {time}.
             `, { time: format(new Date(new Date().getTime() + showConfirmTime), 'HH:mm:ss'), lifetime }),
-            buttonText: this.translate.instant('Extend session'),
-          } as SessionExpiringDialogOptions,
-        });
+              buttonText: this.translate.instant('Extend session'),
+            } as SessionExpiringDialogOptions,
+          });
 
-        dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe((isExtend) => {
-          clearTimeout(this.terminateCancelTimeout);
-          if (isExtend) {
-            this.start();
-          }
-        });
-      }, lifetime * 1000);
-    });
+          dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe((isExtend) => {
+            clearTimeout(this.terminateCancelTimeout);
+            if (isExtend) {
+              this.start();
+            }
+          });
+        }, lifetime * 1000);
+      });
   }
 
   pause(): void {

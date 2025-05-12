@@ -1,5 +1,5 @@
 import {
-  Component, ChangeDetectionStrategy, OnInit, ChangeDetectorRef,
+  Component, ChangeDetectionStrategy, OnInit, signal,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -36,7 +36,6 @@ import { generalConfigUpdated } from 'app/store/system-config/system-config.acti
   templateUrl: 'allowed-addresses-form.component.html',
   styleUrls: ['./allowed-addresses-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
@@ -56,7 +55,7 @@ export class AllowedAddressesFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.SystemGeneralWrite];
   protected readonly helpText = helptextSystemAdvanced;
 
-  isFormLoading = true;
+  protected isFormLoading = signal(true);
   form = this.fb.nonNullable.group({
     addresses: this.fb.nonNullable.array<string>([]),
   });
@@ -67,7 +66,6 @@ export class AllowedAddressesFormComponent implements OnInit {
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private store$: Store<AppState>,
-    private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
     private translate: TranslateService,
     public slideInRef: SlideInRef<undefined, boolean>,
@@ -84,13 +82,11 @@ export class AllowedAddressesFormComponent implements OnInit {
           this.addAddress();
         });
         this.form.controls.addresses.patchValue(config.ui_allowlist);
-        this.isFormLoading = false;
-        this.cdr.markForCheck();
+        this.isFormLoading.set(false);
       },
       error: (error: unknown) => {
-        this.isFormLoading = false;
+        this.isFormLoading.set(false);
         this.errorHandler.showErrorModal(error);
-        this.cdr.markForCheck();
       },
     });
   }
@@ -107,8 +103,8 @@ export class AllowedAddressesFormComponent implements OnInit {
 
   handleServiceRestart(): Observable<true> {
     return this.dialogService.confirm({
-      title: this.translate.instant(helptextSystemGeneral.dialog_confirm_title),
-      message: this.translate.instant(helptextSystemGeneral.dialog_confirm_message),
+      title: this.translate.instant(helptextSystemGeneral.restartTitle),
+      message: this.translate.instant(helptextSystemGeneral.restartMessage),
     }).pipe(
       switchMap((shouldRestart): Observable<true> => {
         if (!shouldRestart) {
@@ -123,14 +119,13 @@ export class AllowedAddressesFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
     const addresses = this.form.getRawValue().addresses;
 
     this.api.call('system.general.update', [{ ui_allowlist: addresses }]).pipe(
       tap(() => {
         this.store$.dispatch(generalConfigUpdated());
-        this.isFormLoading = false;
-        this.cdr.markForCheck();
+        this.isFormLoading.set(false);
         this.snackbar.success(this.translate.instant('Allowed addresses have been updated'));
       }),
       switchMap(() => this.handleServiceRestart()),
@@ -140,9 +135,8 @@ export class AllowedAddressesFormComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe({
       error: (error: unknown) => {
-        this.isFormLoading = false;
+        this.isFormLoading.set(false);
         this.errorHandler.showErrorModal(error);
-        this.cdr.markForCheck();
       },
     });
   }

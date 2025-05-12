@@ -7,9 +7,8 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { isObject } from 'lodash-es';
 import {
-  filter, map, of, switchMap, tap,
+  filter, map, switchMap, tap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -22,9 +21,7 @@ import { EmptyService } from 'app/modules/empty/empty.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import {
-  actionsColumn,
-} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
+import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
@@ -41,8 +38,8 @@ import {
 } from 'app/pages/credentials/certificates-dash/certificate-edit/certificate-edit.component';
 import { certificateListElements } from 'app/pages/credentials/certificates-dash/certificate-list/certificate-list.elements';
 import {
-  CertificateAddComponent,
-} from 'app/pages/credentials/certificates-dash/forms/certificate-add/certificate-add.component';
+  ImportCertificateComponent,
+} from 'app/pages/credentials/certificates-dash/import-certificate/import-certificate.component';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -52,7 +49,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './certificate-list.component.html',
   styleUrls: ['./certificate-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatToolbarRow,
@@ -93,21 +89,8 @@ export class CertificateListComponent implements OnInit {
       title: this.translate.instant('CN'),
       propertyName: 'common',
     }),
-    actionsColumn({
+    actionsWithMenuColumn({
       actions: [
-        {
-          iconName: iconMarker('block'),
-          tooltip: this.translate.instant('Revoked'),
-          hidden: (row) => of(!row.revoked),
-          onClick: () => {},
-        },
-        {
-          iconName: iconMarker('mdi-undo'),
-          requiredRoles: this.requiredRoles,
-          tooltip: this.translate.instant('Revoke'),
-          hidden: (row) => of(!row.can_be_revoked),
-          onClick: (row) => this.doRevoke(row),
-        },
         {
           iconName: iconMarker('mdi-download'),
           tooltip: this.translate.instant('Download'),
@@ -144,14 +127,7 @@ export class CertificateListComponent implements OnInit {
   ngOnInit(): void {
     const certificates$ = this.api.call('certificate.query').pipe(
       map((certificates) => {
-        return certificates
-          .map((certificate) => {
-            if (isObject(certificate.issuer)) {
-              certificate.issuer = certificate.issuer.name;
-            }
-            return certificate;
-          })
-          .filter((certificate) => certificate.certificate !== null);
+        return certificates.filter((certificate) => certificate.certificate !== null);
       }),
       tap((certificates) => this.certificates = certificates),
       untilDestroyed(this),
@@ -173,8 +149,8 @@ export class CertificateListComponent implements OnInit {
     });
   }
 
-  doAdd(): void {
-    this.slideIn.open(CertificateAddComponent).pipe(
+  doImport(): void {
+    this.slideIn.open(ImportCertificateComponent).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(() => {
@@ -251,32 +227,5 @@ export class CertificateListComponent implements OnInit {
         untilDestroyed(this),
       )
       .subscribe();
-  }
-
-  doRevoke(certificate: Certificate): void {
-    this.dialogService
-      .confirm({
-        title: this.translate.instant('Revoke Certificate'),
-        message: this.translate.instant(
-          'This is a one way action and cannot be reversed. Are you sure you want to revoke this Certificate?',
-        ),
-        buttonText: this.translate.instant('Revoke'),
-        cancelText: this.translate.instant('Cancel'),
-        hideCheckbox: true,
-      })
-      .pipe(
-        filter(Boolean),
-        switchMap(() => {
-          return this.dialogService.jobDialog(
-            this.api.job('certificate.update', [certificate.id, { revoked: true }]),
-            { title: this.translate.instant('Revoking Certificate') },
-          ).afterClosed();
-        }),
-        this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
-      )
-      .subscribe(() => {
-        this.getCertificates();
-      });
   }
 }

@@ -1,6 +1,10 @@
 :host {
   display: block;
   margin-bottom: 12px;
+
+  :host-context(ix-editable) & {
+    margin-bottom: 0;
+  }
 }
 
 .input-container {

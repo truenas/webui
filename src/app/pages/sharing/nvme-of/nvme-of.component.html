@@ -1,0 +1,37 @@
+<ix-page-header pageTitle="NVME-oF">
+  <button
+    mat-button
+    color="default"
+    ixTest="global-configuration"
+    [ixUiSearch]="searchableElements.elements.config"
+    (click)="openGlobalConfiguration()"
+  >{{ 'Global Configuration' | translate }}</button>
+
+  <button
+    *ixRequiresRoles="requiredRoles"
+    mat-button
+    color="primary"
+    ixTest="add-subsystem"
+    (click)="addSubsystem()"
+  >
+    {{ 'Add Subsystem' | translate }}
+  </button>
+</ix-page-header>
+
+<nav mat-tab-nav-bar [tabPanel]="tabPanel">
+  @for (link of navLinks; track link.label) {
+    <a
+      #rla="routerLinkActive"
+      mat-tab-link
+      routerLinkActive
+      [ixTest]="link.label"
+      [routerLink]="link.path"
+      [active]="rla.isActive"
+    >
+      {{ link.label | translate }}
+    </a>
+  }
+</nav>
+<mat-tab-nav-panel #tabPanel>
+  <router-outlet></router-outlet>
+</mat-tab-nav-panel>

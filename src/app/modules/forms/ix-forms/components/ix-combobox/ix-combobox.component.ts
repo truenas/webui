@@ -33,6 +33,7 @@ import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
 
 @UntilDestroy()
 @Component({
@@ -40,7 +41,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './ix-combobox.component.html',
   styleUrls: ['./ix-combobox.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxLabelComponent,
     MatInput,
@@ -61,10 +61,10 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class IxComboboxComponent implements ControlValueAccessor, OnInit {
-  readonly label = input<string>();
-  readonly hint = input<string>();
+  readonly label = input<TranslatedString>();
+  readonly hint = input<TranslatedString>();
   readonly required = input<boolean>(false);
-  readonly tooltip = input<string>();
+  readonly tooltip = input<TranslatedString>();
   readonly allowCustomValue = input(false);
 
   readonly provider = input.required<IxComboboxProvider>();
@@ -98,11 +98,16 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
 
   writeValue(value: string | number): void {
     this.value = value;
+
     if (!this.value) {
       this.selectedOption = null;
     }
     if (this.value && this.options?.length) {
-      this.selectedOption = { ...(this.options.find((option: Option) => option.value === this.value)) };
+      let existingOption = this.options.find((option: Option) => option.value === this.value);
+      if (!existingOption && this.allowCustomValue()) {
+        existingOption = { label: this.value as string, value: this.value };
+      }
+      this.selectedOption = { ...existingOption };
     }
     this.cdr.markForCheck();
   }

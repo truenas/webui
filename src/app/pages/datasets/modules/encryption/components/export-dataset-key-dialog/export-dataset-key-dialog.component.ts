@@ -22,7 +22,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './export-dataset-key-dialog.component.html',
   styleUrls: ['./export-dataset-key-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogTitle,
     TranslateModule,

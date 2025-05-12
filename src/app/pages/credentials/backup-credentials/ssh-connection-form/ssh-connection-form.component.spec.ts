@@ -92,7 +92,7 @@ describe('SshConnectionFormComponent', () => {
 
       const values = await form.getValues();
       expect(values).toEqual({
-        Name: 'auto',
+        'Connection Name': 'auto',
 
         Host: '127.0.0.1',
         Port: '22',
@@ -108,7 +108,7 @@ describe('SshConnectionFormComponent', () => {
       spectator.component.setConnectionForEdit();
 
       await form.fillForm({
-        Name: 'Updated',
+        'Connection Name': 'Updated',
         'Remote Host Key': 'ssh-rsaAAAAUpdated',
       });
 
@@ -141,7 +141,7 @@ describe('SshConnectionFormComponent', () => {
     it('saves new SSH connection added manually', async () => {
       await form.fillForm(
         {
-          Name: 'New',
+          'Connection Name': 'New',
           'Setup Method': 'Manual',
           Host: 'truenas.com',
           Port: 23,
@@ -176,7 +176,7 @@ describe('SshConnectionFormComponent', () => {
     it('saves new SSH connection added using semi-automatic setup', async () => {
       await form.fillForm(
         {
-          Name: 'Update',
+          'Connection Name': 'Update',
           'Setup Method': 'Semi-automatic (TrueNAS only)',
 
           'TrueNAS URL': '10.11.12.13',
@@ -237,7 +237,7 @@ describe('SshConnectionFormComponent', () => {
 
     it('allows new primary key to be generated when creating a new connection', async () => {
       await form.fillForm({
-        Name: 'Test',
+        'Connection Name': 'Test',
         'TrueNAS URL': 'truenas.com',
         'Admin Password': '123456',
         'Private Key': 'Generate New',

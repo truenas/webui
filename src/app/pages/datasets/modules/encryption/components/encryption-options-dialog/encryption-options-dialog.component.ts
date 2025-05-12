@@ -49,7 +49,6 @@ enum EncryptionType {
   templateUrl: './encryption-options-dialog.component.html',
   styleUrls: ['./encryption-options-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogTitle,
     TranslateModule,
@@ -94,14 +93,13 @@ export class EncryptionOptionsDialog implements OnInit {
   isSetToGenerateKey$ = this.form.select((values) => values.generate_key);
 
   readonly tooltips = {
-    encryption_type: helptextDatasetForm.dataset_form_encryption.encryption_type_tooltip,
-    generate_key: helptextDatasetForm.dataset_form_encryption.generate_key_checkbox_tooltip,
-    key: helptextDatasetForm.dataset_form_encryption.key_tooltip,
-    passphrase: helptextDatasetForm.dataset_form_encryption.passphrase_tooltip,
-    pbkdf2iters: helptextDatasetForm.dataset_form_encryption.pbkdf2iters_tooltip,
+    encryption_type: helptextDatasetForm.encryption.typeTooltip,
+    generate_key: helptextDatasetForm.encryption.generateKeyTooltip,
+    passphrase: helptextDatasetForm.encryption.passphraseTooltip,
+    pbkdf2iters: helptextDatasetForm.encryption.pbkdf2itersTooltip,
   };
 
-  readonly encryptionTypeOptions$ = of(helptextDatasetForm.dataset_form_encryption.encryption_type_options);
+  readonly encryptionTypeOptions$ = of(helptextDatasetForm.encryption.typeOptions);
 
   protected readonly Role = Role;
 

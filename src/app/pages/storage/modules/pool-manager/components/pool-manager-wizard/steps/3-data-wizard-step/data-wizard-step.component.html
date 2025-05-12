@@ -1,6 +1,6 @@
 <ix-layout-step
-  [description]="helptext.data_vdev_description | translate"
-  [type]="VdevType.Data"
+  [description]="helptext.dataVdevDescription | translate"
+  [type]="vDevType.Data"
   [inventory]="(inventory$ | async) || []"
   [canChangeLayout]="canChangeLayout"
   [limitLayouts]="allowedLayouts"

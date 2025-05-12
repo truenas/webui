@@ -21,6 +21,7 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -31,7 +32,6 @@ export type VirtualizationImageWithId = VirtualizationImage & {
 @UntilDestroy()
 @Component({
   selector: 'ix-select-image-dialog',
-  standalone: true,
   imports: [
     MatTableModule,
     IxFieldsetComponent,
@@ -126,9 +126,16 @@ export class SelectImageDialog implements OnInit {
       releaseSet.add(image.release);
     });
 
-    this.osOptions$ = of([...osSet].map((os) => ({ label: os, value: os })));
-    this.variantOptions$ = of([...variantSet].map((variant) => ({ label: variant, value: variant })));
-    this.releaseOptions$ = of([...releaseSet].map((release) => ({ label: release, value: release })));
+    this.osOptions$ = of([...osSet].map((os) => ({ label: ignoreTranslation(os), value: os })));
+    this.variantOptions$ = of([...variantSet].map((variant) => ({
+      label: ignoreTranslation(variant),
+      value: variant,
+    })));
+
+    this.releaseOptions$ = of([...releaseSet].map((release) => ({
+      label: ignoreTranslation(release),
+      value: release,
+    })));
   }
 
   private filterImages(): void {

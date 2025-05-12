@@ -31,7 +31,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
   templateUrl: './bootenv-form.component.html',
   styleUrls: ['./bootenv-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
@@ -57,8 +56,8 @@ export class BootEnvironmentFormComponent implements OnInit {
 
   protected isLoading = signal(false);
   protected tooltips = {
-    name: helptextSystemBootenv.clone_name_tooltip,
-    source: helptextSystemBootenv.clone_source_tooltip,
+    name: helptextSystemBootenv.cloneNameTooltip,
+    source: helptextSystemBootenv.cloneSourceTooltip,
   };
 
   constructor(

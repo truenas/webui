@@ -1,7 +1,7 @@
 <ix-modal-header
   [requiredRoles]="requiredRoles"
   [title]="'Capacity Settings' | translate"
-  [loading]="isLoading"
+  [loading]="isLoading()"
 ></ix-modal-header>
 <mat-card>
   <mat-card-content>
@@ -13,7 +13,7 @@
               <ix-input
                 formControlName="refquota"
                 [label]="'Quota for this dataset' | translate"
-                [tooltip]="helptext.dataset_form_refquota_tooltip | translate"
+                [tooltip]="helptext.refquotaTooltip | translate"
                 [format]="formatter.memorySizeFormatting"
                 [parse]="formatter.memorySizeParsing"
               ></ix-input>
@@ -29,7 +29,7 @@
                   formControlName="refquota_warning_inherit"
                   class="inherit-field"
                   [label]="isRoot ? ('Default' | translate) : ('Inherit' | translate)"
-                  [tooltip]="helptext.dataset_form_refquota_warning_tooltip | translate"
+                  [tooltip]="helptext.refquotaWarningTooltip | translate"
                 ></ix-checkbox>
               </div>
 
@@ -44,14 +44,14 @@
                   formControlName="refquota_critical_inherit"
                   class="inherit-field"
                   [label]="isRoot ? ('Default' | translate) : ('Inherit' | translate)"
-                  [tooltip]="helptext.dataset_form_refquota_critical_tooltip | translate"
+                  [tooltip]="helptext.refquotaCriticalTooltip | translate"
                 ></ix-checkbox>
               </div>
 
               <ix-input
                 formControlName="refreservation"
                 [label]="'Reserved space for this dataset' | translate"
-                [tooltip]="helptext.dataset_form_refreservation_tooltip | translate"
+                [tooltip]="helptext.refreservationTooltip | translate"
                 [format]="formatter.memorySizeFormatting"
                 [parse]="formatter.memorySizeParsing"
               ></ix-input>
@@ -62,7 +62,7 @@
               <ix-input
                 formControlName="quota"
                 [label]="'Quota for this dataset and all children' | translate"
-                [tooltip]="helptext.dataset_form_quota_tooltip | translate"
+                [tooltip]="helptext.quotaTooltip | translate"
                 [format]="formatter.memorySizeFormatting"
                 [parse]="formatter.memorySizeParsing"
               ></ix-input>
@@ -78,7 +78,7 @@
                   formControlName="quota_warning_inherit"
                   class="inherit-field"
                   [label]="isRoot ? ('Default' | translate) : ('Inherit' | translate)"
-                  [tooltip]="helptext.dataset_form_quota_warning_tooltip | translate"
+                  [tooltip]="helptext.quotaWarningTooltip | translate"
                 ></ix-checkbox>
               </div>
 
@@ -93,13 +93,13 @@
                   formControlName="quota_critical_inherit"
                   class="inherit-field"
                   [label]="isRoot ? ('Default' | translate) : ('Inherit' | translate)"
-                  [tooltip]="helptext.dataset_form_quota_critical_tooltip | translate"
+                  [tooltip]="helptext.quotaCriticalTooltip | translate"
                 ></ix-checkbox>
               </div>
               <ix-input
                 formControlName="reservation"
                 [label]="'Reserved space for this dataset and all children' | translate"
-                [tooltip]="helptext.dataset_form_reservation_tooltip | translate"
+                [tooltip]="helptext.reservationTooltip | translate"
                 [format]="formatter.memorySizeFormatting"
                 [parse]="formatter.memorySizeParsing"
               ></ix-input>
@@ -115,7 +115,7 @@
           type="submit"
           color="primary"
           ixTest="save"
-          [disabled]="form.invalid || isLoading"
+          [disabled]="form.invalid || isLoading()"
         >
           {{ 'Save' | translate }}
         </button>

@@ -7,7 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { map, of, switchMap } from 'rxjs';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
-import { helptextSharingIscsi } from 'app/helptext/sharing';
+import { helptextIscsi } from 'app/helptext/sharing';
 import { newOption } from 'app/interfaces/option.interface';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
@@ -23,7 +23,6 @@ import { IscsiService } from 'app/services/iscsi.service';
   selector: 'ix-protocol-options-wizard-step',
   templateUrl: './protocol-options-wizard-step.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxSelectComponent,
@@ -38,7 +37,7 @@ export class ProtocolOptionsWizardStepComponent implements OnInit {
   form = input.required<IscsiWizardComponent['form']['controls']['options']>();
   isFibreChannelMode = input(false);
 
-  readonly helptextSharingIscsi = helptextSharingIscsi;
+  readonly helptextSharingIscsi = helptextIscsi;
 
   readonly portalOptions$ = this.iscsiService.listPortals().pipe(
     map((portals) => {

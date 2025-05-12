@@ -30,6 +30,7 @@ import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label
 import { IxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
 
 @UntilDestroy()
 @Component({
@@ -37,7 +38,6 @@ import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-ov
   templateUrl: './ix-code-editor.component.html',
   styleUrls: ['./ix-code-editor.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxLabelComponent,
     IxErrorsComponent,
@@ -51,12 +51,12 @@ import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-ov
   ],
 })
 export class IxCodeEditorComponent implements OnChanges, OnInit, AfterViewInit, ControlValueAccessor {
-  readonly label = input<string>();
-  readonly hint = input<string>();
+  readonly label = input<TranslatedString>();
+  readonly hint = input<TranslatedString>();
   readonly required = input<boolean>(false);
-  readonly tooltip = input<string>();
+  readonly tooltip = input<TranslatedString>();
   readonly language = input<CodeEditorLanguage>();
-  readonly placeholder = input<string>('');
+  readonly placeholder = input<TranslatedString>('');
 
   afterViewInit$ = new BehaviorSubject<boolean>(false);
 

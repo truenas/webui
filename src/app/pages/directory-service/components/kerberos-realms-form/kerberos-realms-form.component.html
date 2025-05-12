@@ -1,7 +1,7 @@
 <ix-modal-header
   [requiredRoles]="requiredRoles"
   [title]="title"
-  [loading]="isFormLoading"
+  [loading]="isFormLoading()"
 ></ix-modal-header>
 
 <mat-card>
@@ -12,28 +12,28 @@
           formControlName="realm"
           [label]="'Realm' | translate"
           [required]="true"
-          [tooltip]="tooltips.realm"
+          [tooltip]="tooltips.realm | translate"
         ></ix-input>
 
         <ix-chips
           formControlName="kdc"
           [label]="'KDC' | translate"
           [placeholder]="'KDC' | translate"
-          [tooltip]="tooltips.kdc"
+          [tooltip]="tooltips.kdc | translate"
         ></ix-chips>
 
         <ix-chips
           formControlName="admin_server"
           [label]="'Admin Servers' | translate"
           [placeholder]="'Admin Servers' | translate"
-          [tooltip]="tooltips.admin_server"
+          [tooltip]="tooltips.admin_server | translate"
         ></ix-chips>
 
         <ix-chips
           formControlName="kpasswd_server"
           [label]="'Password Servers' | translate"
           [placeholder]="'Password Servers' | translate"
-          [tooltip]="tooltips.kpasswd_server"
+          [tooltip]="tooltips.kpasswd_server | translate"
         ></ix-chips>
       </ix-fieldset>
 
@@ -44,7 +44,7 @@
           type="submit"
           color="primary"
           ixTest="save"
-          [disabled]="form.invalid || isFormLoading"
+          [disabled]="form.invalid || isFormLoading()"
         >
           {{ 'Save' | translate }}
         </button>

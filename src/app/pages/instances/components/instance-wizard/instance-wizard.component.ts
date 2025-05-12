@@ -1,6 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, computed, effect, OnInit, signal,
+  WritableSignal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
@@ -19,12 +20,15 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { unionBy } from 'lodash-es';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
-  filter, map, Observable, of, startWith, tap,
+  delay,
+  filter, map, Observable, of, startWith, switchMap, tap,
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import {
+  AllowedImageOs,
   DiskIoBus,
   diskIoBusLabels,
+  imageOsLabels,
   VirtualizationDeviceType,
   VirtualizationGpuType,
   VirtualizationNicType,
@@ -37,7 +41,8 @@ import {
   virtualizationTypeIcons,
   VolumeContentType,
 } from 'app/enums/virtualization.enum';
-import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
+import { detectImageOs } from 'app/helpers/detect-image-os.utils';
+import { choicesToOptions, singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { instancesHelptext } from 'app/helptext/instances/instances';
 import { Option } from 'app/interfaces/option.interface';
@@ -46,14 +51,17 @@ import {
   InstanceEnvVariablesFormGroup,
   VirtualizationDevice,
   VirtualizationInstance,
+  VirtualizationNic,
   VirtualizationVolume,
 } from 'app/interfaces/virtualization.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { SimpleAsyncComboboxProvider } from 'app/modules/forms/ix-forms/classes/simple-async-combobox-provider';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import {
   IxCheckboxListComponent,
 } from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.component';
+import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import {
   IxFormGlossaryComponent,
@@ -78,7 +86,9 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { InstanceNicMacDialog } from 'app/pages/instances/components/common/instance-nics-mac-addr-dialog/instance-nic-mac-dialog.component';
 import {
   PciPassthroughDialog,
 } from 'app/pages/instances/components/common/pci-passthough-dialog/pci-passthrough-dialog.component';
@@ -94,10 +104,16 @@ import { defaultVncPort } from 'app/pages/instances/instances.constants';
 import { VirtualizationConfigStore } from 'app/pages/instances/stores/virtualization-config.store';
 import { FilesystemService } from 'app/services/filesystem.service';
 
+interface NicDeviceOption {
+  control: FormControl<boolean>;
+  label: string;
+  mac?: string;
+  value: string;
+}
+
 @UntilDestroy()
 @Component({
   selector: 'ix-instance-wizard',
-  standalone: true,
   imports: [
     AsyncPipe,
     IxCheckboxComponent,
@@ -108,6 +124,7 @@ import { FilesystemService } from 'app/services/filesystem.service';
     IxInputComponent,
     IxListComponent,
     IxListItemComponent,
+    IxComboboxComponent,
     IxSelectComponent,
     IxRadioGroupComponent,
     MatButton,
@@ -143,13 +160,14 @@ export class InstanceWizardComponent implements OnInit {
   ]).pipe(map((keys) => keys.map((key) => key.name)));
 
   readonly VirtualizationSource = VirtualizationSource;
+  readonly VolumeContentType = VolumeContentType;
 
-  bridgedNicDevices$ = this.getNicDevicesOptions(VirtualizationNicType.Bridged);
-  macVlanNicDevices$ = this.getNicDevicesOptions(VirtualizationNicType.Macvlan);
+  protected readonly bridgedNicDevices = signal<NicDeviceOption[]>(undefined);
+  protected readonly macVlanNicDevices = signal<NicDeviceOption[]>(undefined);
 
   usbDevices$ = this.api.call('virt.device.usb_choices').pipe(
     map((choices) => Object.values(choices).map((choice) => ({
-      label: `${choice.product} (${choice.product_id})`,
+      label: ignoreTranslation(`${choice.product} (${choice.product_id})`),
       value: choice.product_id.toString(),
     }))),
   );
@@ -195,6 +213,7 @@ export class InstanceWizardComponent implements OnInit {
     root_disk_io_bus: [DiskIoBus.Nvme, []],
     volume: ['', [Validators.required]],
     image: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(200)]],
+    image_os: ['' as AllowedImageOs],
     enable_vnc: [false],
     vnc_port: [defaultVncPort, [Validators.min(5900), Validators.max(65535)]],
     vnc_password: [null as string | null],
@@ -208,8 +227,6 @@ export class InstanceWizardComponent implements OnInit {
     usb_devices: [[] as string[]],
     gpu_devices: [[] as string[]],
     pci_devices: [[] as Option<string>[]],
-    bridged_nics: [[] as string[]],
-    mac_vlan_nics: [[] as string[]],
     proxies: this.formBuilder.array<FormGroup<{
       source_proto: FormControl<VirtualizationProxyProtocol>;
       source_port: FormControl<number | null>;
@@ -231,7 +248,7 @@ export class InstanceWizardComponent implements OnInit {
         .filter((control) => control.controls.source?.value)
         .map((control) => {
           const source = control.controls.source?.value;
-          return { label: source, value: source };
+          return { label: ignoreTranslation(source), value: source };
         });
     }),
   );
@@ -247,11 +264,11 @@ export class InstanceWizardComponent implements OnInit {
   get secureBootTooltip(): string {
     if (this.form.controls.secure_boot.disabled) {
       return this.form.controls.secure_boot.value
-        ? this.translate.instant(instancesHelptext.secure_boot_on_required_tooltip)
-        : this.translate.instant(instancesHelptext.secure_boot_off_required_tooltip);
+        ? this.translate.instant(instancesHelptext.secureBootOnRequiredTooltip)
+        : this.translate.instant(instancesHelptext.secureBootOffRequiredTooltip);
     }
 
-    return this.translate.instant(instancesHelptext.secure_boot_tooltip);
+    return this.translate.instant(instancesHelptext.secureBootTooltip);
   }
 
   protected readonly instanceType = signal<VirtualizationType>(this.form.getRawValue().instance_type);
@@ -259,6 +276,7 @@ export class InstanceWizardComponent implements OnInit {
   protected readonly isVm = computed(() => this.instanceType() === VirtualizationType.Vm);
 
   readonly datasetProvider = this.filesystem.getFilesystemNodeProvider({ datasetsOnly: true });
+  readonly imageOsProvider = new SimpleAsyncComboboxProvider(of(mapToOptions(imageOsLabels, this.translate)));
 
   protected defaultIpv4Network = computed(() => {
     return this.configStore.config()?.v4_network || this.translate.instant('N/A');
@@ -267,8 +285,6 @@ export class InstanceWizardComponent implements OnInit {
   protected defaultIpv6Network = computed(() => {
     return this.configStore.config()?.v6_network || this.translate.instant('N/A');
   });
-
-  protected readonly of = of;
 
   constructor(
     private api: ApiService,
@@ -310,6 +326,86 @@ export class InstanceWizardComponent implements OnInit {
         bootFromControl.setValue(disks[0].value as string);
       }
     });
+    this.setupBridgedNicDevices2();
+    this.setupMacVlanNicDevices2();
+  }
+
+  private setupBridgedNicDevices2(): void {
+    this.setupNicDevices(VirtualizationNicType.Bridged, this.bridgedNicDevices);
+  }
+
+  private setupMacVlanNicDevices2(): void {
+    this.setupNicDevices(VirtualizationNicType.Macvlan, this.macVlanNicDevices);
+  }
+
+  private setupNicDevices(
+    type: VirtualizationNicType,
+    nicDevicesSignal: WritableSignal<NicDeviceOption[]>,
+  ): void {
+    this.getNicDevicesOptions(type).pipe(
+      untilDestroyed(this),
+    ).subscribe({
+      next: (options) => {
+        nicDevicesSignal.set([]);
+
+        for (const option of options) {
+          const control = new FormControl<boolean>(false);
+
+          control.valueChanges.pipe(
+            tap((selected) => {
+              if (!selected) {
+                nicDevicesSignal.set(
+                  nicDevicesSignal().map((nic) => {
+                    if (nic.value === option.value) {
+                      nic.label = option.label;
+                      delete nic.mac;
+                    }
+                    return nic;
+                  }),
+                );
+              }
+            }),
+            filter(Boolean),
+            switchMap(() => this.matDialog.open(InstanceNicMacDialog, {
+              data: option.value,
+              minWidth: '500px',
+            }).afterClosed() as Observable<{ useDefault: boolean; mac: string }>),
+            untilDestroyed(this),
+          ).subscribe({
+            next: (macConfig) => {
+              if (!macConfig) {
+                control.setValue(false);
+                return;
+              }
+
+              nicDevicesSignal.set(
+                nicDevicesSignal().map((nic) => {
+                  if (nic.value === option.value) {
+                    if (macConfig.useDefault) {
+                      nic.label = `${option.label} (${this.translate.instant('Default Mac Address')})`;
+                    } else if (macConfig.mac) {
+                      nic.label = `${option.label} (${macConfig.mac})`;
+                      nic.mac = macConfig.mac;
+                    } else {
+                      nic.label = option.label;
+                    }
+                  }
+                  return nic;
+                }),
+              );
+            },
+          });
+
+          const deviceOption: NicDeviceOption = {
+            label: option.label,
+            control,
+            value: option.value.toString(),
+          };
+
+          nicDevicesSignal.set([...nicDevicesSignal(), deviceOption]);
+        }
+      },
+    });
   }
 
   protected onBrowseCatalogImages(): void {
@@ -343,6 +439,7 @@ export class InstanceWizardComponent implements OnInit {
         minWidth: '90vw',
         data: {
           selectionMode: true,
+          config: this.configStore.config(),
         },
       })
       .afterClosed()
@@ -353,6 +450,12 @@ export class InstanceWizardComponent implements OnInit {
         });
 
         this.form.patchValue({ volume: volume.id });
+
+        const imageOs = detectImageOs(volume.name);
+
+        if (volume.name && imageOs) {
+          this.form.controls.image_os.setValue(imageOs);
+        }
       });
   }
 
@@ -361,6 +464,7 @@ export class InstanceWizardComponent implements OnInit {
       .open<VolumesDialog, VolumesDialogOptions, VirtualizationVolume>(VolumesDialog, {
         minWidth: '90vw',
         data: {
+          config: this.configStore.config(),
           selectionMode: true,
         },
       })
@@ -482,6 +586,8 @@ export class InstanceWizardComponent implements OnInit {
       payload.root_disk_io_bus = values.root_disk_io_bus;
       payload.root_disk_size = values.root_disk_size;
 
+      payload.image_os = values.volume_type === VolumeContentType.Iso ? values.image_os : null;
+
       if (values.enable_vnc) {
         payload.vnc_password = values.vnc_password;
       }
@@ -491,12 +597,7 @@ export class InstanceWizardComponent implements OnInit {
   }
 
   private getNicDevicesOptions(nicType: VirtualizationNicType): Observable<Option[]> {
-    return this.api.call('virt.device.nic_choices', [nicType]).pipe(
-      map((choices) => Object.values(choices).map((choice) => ({
-        label: choice,
-        value: choice,
-      }))),
-    );
+    return this.api.call('virt.device.nic_choices', [nicType]).pipe(choicesToOptions(), delay(5 * 1000));
   }
 
   private get environmentVariablesPayload(): Record<string, string> {
@@ -548,25 +649,47 @@ export class InstanceWizardComponent implements OnInit {
         gpu_type: VirtualizationGpuType.Physical,
       });
     }
-    const macVlanNics: { parent: string; dev_type: VirtualizationDeviceType; nic_type: VirtualizationNicType }[] = [];
+    const macVlanNics: Partial<VirtualizationNic>[] = [];
     if (!this.form.controls.use_default_network.value) {
-      for (const parent of this.form.controls.mac_vlan_nics.value) {
-        macVlanNics.push({
-          parent,
+      const macVlanDeviceOptions = this.macVlanNicDevices();
+      const selectedValues: NicDeviceOption[] = [];
+      for (const deviceOption of macVlanDeviceOptions) {
+        if (deviceOption.control.value) {
+          selectedValues.push(deviceOption);
+        }
+      }
+      for (const deviceOption of selectedValues) {
+        const macVlanNic: Partial<VirtualizationNic> = {
+          parent: deviceOption.value,
           dev_type: VirtualizationDeviceType.Nic,
           nic_type: VirtualizationNicType.Macvlan,
-        });
+        };
+        if (deviceOption.mac) {
+          macVlanNic.mac = deviceOption.mac;
+        }
+        macVlanNics.push(macVlanNic);
       }
     }
 
-    const bridgedNics: { parent: string; dev_type: VirtualizationDeviceType; nic_type: VirtualizationNicType }[] = [];
+    const bridgedNics: Partial<VirtualizationNic>[] = [];
     if (!this.form.controls.use_default_network.value) {
-      for (const parent of this.form.controls.bridged_nics.value) {
-        bridgedNics.push({
-          parent,
+      const bridgedDeviceOptions = this.bridgedNicDevices();
+      const selectedValues: NicDeviceOption[] = [];
+      for (const deviceOption of bridgedDeviceOptions) {
+        if (deviceOption.control.value) {
+          selectedValues.push(deviceOption);
+        }
+      }
+      for (const deviceOption of selectedValues) {
+        const bridgedNic: Partial<VirtualizationNic> = {
+          parent: deviceOption.value,
           dev_type: VirtualizationDeviceType.Nic,
           nic_type: VirtualizationNicType.Bridged,
-        });
+        };
+        if (deviceOption.mac) {
+          bridgedNic.mac = deviceOption.mac;
+        }
+        bridgedNics.push(bridgedNic);
       }
     }
 

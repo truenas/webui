@@ -1,0 +1,21 @@
+<h1 matDialogTitle>
+  {{ 'Pool Options for {pool}' | translate: { pool: pool.name } }}
+</h1>
+
+<form class="ix-form-container" (submit)="onSubmit($event)">
+  <ix-checkbox
+    [formControl]="autotrimControl"
+    [label]="'Auto TRIM' | translate"
+    [tooltip]="helptext.autotrimTooltip | translate"
+  ></ix-checkbox>
+
+  <ix-form-actions>
+    <button mat-button type="button" ixTest="cancel" [matDialogClose]="false">
+      {{ 'Cancel' | translate }}
+    </button>
+
+    <button *ixRequiresRoles="requiredRoles" mat-button type="submit" color="primary" ixTest="save">
+      {{ 'Save' | translate }}
+    </button>
+  </ix-form-actions>
+</form>

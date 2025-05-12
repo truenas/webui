@@ -1,5 +1,5 @@
 import {
-  Component, ChangeDetectionStrategy, OnInit, ChangeDetectorRef,
+  Component, ChangeDetectionStrategy, OnInit, signal,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -40,7 +40,6 @@ import {
   selector: 'ix-access-form',
   templateUrl: 'access-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
@@ -60,7 +59,8 @@ import {
 export class AccessFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.AuthSessionsWrite];
 
-  isLoading = false;
+  protected isLoading = signal(false);
+
   form = this.fb.nonNullable.group({
     token_lifetime: [defaultPreferences.lifetime, [
       Validators.required,
@@ -78,7 +78,6 @@ export class AccessFormComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private store$: Store<AppState>,
-    private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
     private translate: TranslateService,
     private api: ApiService,
@@ -96,18 +95,15 @@ export class AccessFormComponent implements OnInit {
     this.store$.pipe(waitForPreferences, untilDestroyed(this)).subscribe((preferences) => {
       if (preferences.lifetime) {
         this.form.controls.token_lifetime.setValue(preferences.lifetime);
-        this.cdr.markForCheck();
       }
     });
 
     this.store$.pipe(waitForGeneralConfig, untilDestroyed(this)).subscribe((config) => {
       this.form.controls.ds_auth.setValue(config.ds_auth);
-      this.cdr.markForCheck();
     });
 
     this.store$.pipe(waitForAdvancedConfig, untilDestroyed(this)).subscribe((config) => {
       this.form.controls.login_banner.setValue(config.login_banner);
-      this.cdr.markForCheck();
     });
   }
 
@@ -124,7 +120,7 @@ export class AccessFormComponent implements OnInit {
 
         if (bannerChanged || this.isEnterprise) {
           const requests$ = [];
-          this.isLoading = true;
+          this.isLoading.set(true);
 
           if (bannerChanged) {
             requests$.push(this.updateLoginBanner());
@@ -138,14 +134,12 @@ export class AccessFormComponent implements OnInit {
             .pipe(untilDestroyed(this))
             .subscribe({
               next: () => {
-                this.isLoading = false;
+                this.isLoading.set(false);
                 this.showSuccessNotificationAndClose();
-                this.cdr.markForCheck();
               },
               error: (error: unknown) => {
-                this.isLoading = false;
+                this.isLoading.set(false);
                 this.errorHandler.showErrorModal(error);
-                this.cdr.markForCheck();
               },
             });
         } else {

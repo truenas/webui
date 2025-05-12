@@ -3,7 +3,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  OnInit,
+  OnInit, signal,
 } from '@angular/core';
 import {
   Validators, ReactiveFormsModule, NonNullableFormBuilder,
@@ -70,7 +70,6 @@ import { selectService } from 'app/store/services/services.selectors';
   selector: 'ix-smb-form',
   templateUrl: './smb-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
@@ -93,7 +92,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   private existingSmbShare: SmbShare | undefined;
   defaultSmbShare: SmbShare | undefined;
 
-  isLoading = false;
+  protected isLoading = signal(false);
   isAdvancedMode = false;
   namesInUse: string[] = [];
   readonly helptextSharingSmb = helptextSharingSmb;
@@ -297,10 +296,10 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
       ),
       take(1),
       switchMap(() => this.dialogService.confirm({
-        title: helptextSharingSmb.manglingDialog.title,
-        message: helptextSharingSmb.manglingDialog.message,
+        title: this.translate.instant(helptextSharingSmb.manglingDialog.title),
+        message: this.translate.instant(helptextSharingSmb.manglingDialog.message),
         hideCheckbox: true,
-        buttonText: helptextSharingSmb.manglingDialog.action,
+        buttonText: this.translate.instant(helptextSharingSmb.manglingDialog.action),
         hideCancel: true,
       })),
       untilDestroyed(this),
@@ -419,10 +418,10 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   showStripAclWarning(): void {
     this.dialogService
       .confirm({
-        title: helptextSharingSmb.stripACLDialog.title,
-        message: helptextSharingSmb.stripACLDialog.message,
+        title: this.translate.instant(helptextSharingSmb.stripACLDialog.title),
+        message: this.translate.instant(helptextSharingSmb.stripACLDialog.message),
         hideCheckbox: true,
-        buttonText: helptextSharingSmb.stripACLDialog.button,
+        buttonText: this.translate.instant(helptextSharingSmb.stripACLDialog.button),
         hideCancel: true,
       })
       .pipe(untilDestroyed(this))
@@ -453,10 +452,10 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     const afpControl = this.form.controls.afp;
     this.dialogService
       .confirm({
-        title: helptextSharingSmb.afpDialog_title,
-        message: helptextSharingSmb.afpDialog_message,
+        title: this.translate.instant(helptextSharingSmb.afpDialog_title),
+        message: this.translate.instant(helptextSharingSmb.afpDialog_message),
         hideCheckbox: false,
-        buttonText: helptextSharingSmb.afpDialog_button,
+        buttonText: this.translate.instant(helptextSharingSmb.afpDialog_button),
         hideCancel: false,
       })
       .pipe(untilDestroyed(this))
@@ -489,8 +488,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     ).pipe(
       filter(Boolean),
       tap(() => {
-        this.isLoading = true;
-        this.cdr.markForCheck();
+        this.isLoading.set(true);
       }),
       switchMap(() => request$),
       switchMap((smbShareResponse) => this.restartCifsServiceIfNecessary().pipe(
@@ -502,8 +500,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
       untilDestroyed(this),
     ).subscribe({
       next: ({ smbShareResponse, shouldRedirect }) => {
-        this.isLoading = false;
-        this.cdr.markForCheck();
+        this.isLoading.set(false);
         if (shouldRedirect) {
           this.dialogService.confirm({
             title: this.translate.instant('Configure ACL'),
@@ -532,8 +529,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
         if (apiError?.reason?.includes('[ENOENT]') || apiError?.reason?.includes('[EXDEV]')) {
           this.dialogService.closeAllDialogs();
         }
-        this.isLoading = false;
-        this.cdr.markForCheck();
+        this.isLoading.set(false);
         this.formErrorHandler.handleValidationErrors(error, this.form, {}, 'smb-form-toggle-advanced-options');
       },
     });

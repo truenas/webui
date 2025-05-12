@@ -2,8 +2,8 @@ import { CdkStepper } from '@angular/cdk/stepper';
 import { mockProvider, Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
-import { helptextManager } from 'app/helptext/storage/volumes/manager/manager';
+import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
+import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
 import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
 import { LayoutStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/layout-step/layout-step.component';
 import { LogWizardStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/4-log-wizard-step/log-wizard-step.component';
@@ -53,10 +53,10 @@ describe('LogWizardStepComponent', () => {
 
   it('has the correct inputs', () => {
     const layoutComponent = spectator.query(LayoutStepComponent)!;
-    expect(layoutComponent.description).toBe(helptextManager.log_vdev_description);
+    expect(layoutComponent.description).toBe(helptextPoolCreation.logVdevDescription);
     expect(layoutComponent.canChangeLayout).toBeTruthy();
     expect(layoutComponent.inventory).toStrictEqual([...fakeInventory]);
     expect(layoutComponent.limitLayouts).toStrictEqual([CreateVdevLayout.Mirror, CreateVdevLayout.Stripe]);
-    expect(layoutComponent.type).toStrictEqual(VdevType.Log);
+    expect(layoutComponent.type).toStrictEqual(VDevType.Log);
   });
 });

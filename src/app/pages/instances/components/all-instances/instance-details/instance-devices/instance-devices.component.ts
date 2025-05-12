@@ -23,7 +23,6 @@ import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualiz
   selector: 'ix-instance-devices',
   templateUrl: './instance-devices.component.html',
   styleUrls: ['./instance-devices.component.scss'],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatCard,
@@ -36,10 +35,10 @@ import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualiz
   ],
 })
 export class InstanceDevicesComponent {
-  protected readonly isLoadingDevices = this.deviceStore.isLoading;
+  protected readonly isLoadingDevices = this.devicesStore.isLoading;
 
   protected readonly shownDevices = computed(() => {
-    return this.deviceStore.devices().filter((device) => {
+    return this.devicesStore.devices().filter((device) => {
       return [
         VirtualizationDeviceType.Usb,
         VirtualizationDeviceType.Gpu,
@@ -50,7 +49,7 @@ export class InstanceDevicesComponent {
   });
 
   constructor(
-    private deviceStore: VirtualizationDevicesStore,
+    private devicesStore: VirtualizationDevicesStore,
     private translate: TranslateService,
   ) {}
 

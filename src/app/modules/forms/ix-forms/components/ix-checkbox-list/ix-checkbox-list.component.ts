@@ -12,6 +12,7 @@ import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-erro
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
 
 @UntilDestroy()
 @Component({
@@ -19,7 +20,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './ix-checkbox-list.component.html',
   styleUrls: ['./ix-checkbox-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxLabelComponent,
     MatCheckbox,
@@ -34,8 +34,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class IxCheckboxListComponent implements ControlValueAccessor {
-  readonly label = input<string>();
-  readonly tooltip = input<string>();
+  readonly label = input<TranslatedString>();
+  readonly tooltip = input<TranslatedString>();
   readonly required = input<boolean>(false);
   readonly options = input<Observable<Option[]>>();
   readonly inlineFields = input<boolean>();

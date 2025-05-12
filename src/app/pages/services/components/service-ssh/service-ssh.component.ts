@@ -1,5 +1,6 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit,
+  signal,
 } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -36,7 +37,6 @@ import { UserService } from 'app/services/user.service';
   templateUrl: './service-ssh.component.html',
   styleUrls: ['./service-ssh.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
@@ -58,7 +58,7 @@ import { UserService } from 'app/services/user.service';
 export class ServiceSshComponent implements OnInit {
   protected readonly requiredRoles = [Role.SshWrite];
 
-  isFormLoading = false;
+  protected isFormLoading = signal(false);
   isBasicMode = true;
 
   groupProvider: ChipsProvider = (query) => {
@@ -82,28 +82,27 @@ export class ServiceSshComponent implements OnInit {
   });
 
   readonly tooltips = {
-    tcpport: helptextServiceSsh.ssh_tcpport_tooltip,
-    password_login_groups: helptextServiceSsh.ssh_password_login_groups_tooltip,
-    passwordauth: helptextServiceSsh.ssh_passwordauth_tooltip,
-    kerberosauth: helptextServiceSsh.ssh_kerberosauth_tooltip,
-    tcpfwd: helptextServiceSsh.ssh_tcpfwd_tooltip,
-    bindiface: helptextServiceSsh.ssh_bindiface_tooltip,
-    compression: helptextServiceSsh.ssh_compression_tooltip,
-    sftp_log_level: helptextServiceSsh.ssh_sftp_log_level_tooltip,
-    sftp_log_facility: helptextServiceSsh.ssh_sftp_log_facility_tooltip,
-    weak_ciphers: helptextServiceSsh.ssh_weak_ciphers_tooltip,
-    options: helptextServiceSsh.ssh_options_tooltip,
+    tcpport: helptextServiceSsh.tcpportTooltip,
+    password_login_groups: helptextServiceSsh.passwordLoginGroupsTooltip,
+    passwordauth: helptextServiceSsh.passwordauthTooltip,
+    kerberosauth: helptextServiceSsh.kerberosauthTooltip,
+    tcpfwd: helptextServiceSsh.tcpfwdTooltip,
+    bindiface: helptextServiceSsh.bindifaceTooltip,
+    compression: helptextServiceSsh.compressionTooltip,
+    sftp_log_level: helptextServiceSsh.sftpLogLevelTooltip,
+    sftp_log_facility: helptextServiceSsh.sftpLogFacilityTooltip,
+    weak_ciphers: helptextServiceSsh.weakCiphersTooltip,
+    options: helptextServiceSsh.optionsTooltip,
   };
 
-  readonly sftpLogLevels$ = of(helptextServiceSsh.ssh_sftp_log_level_options);
-  readonly sftpLogFacilities$ = of(helptextServiceSsh.ssh_sftp_log_facility_options);
-  readonly sshWeakCiphers$ = of(helptextServiceSsh.ssh_weak_ciphers_options);
+  readonly sftpLogLevels$ = of(helptextServiceSsh.sftpLogLevelOptions);
+  readonly sftpLogFacilities$ = of(helptextServiceSsh.sftpLogFacilityOptions);
+  readonly sshWeakCiphers$ = of(helptextServiceSsh.weakCiphersOptions);
   readonly bindInterfaces$ = this.api.call('ssh.bindiface_choices').pipe(choicesToOptions());
 
   constructor(
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
-    private cdr: ChangeDetectorRef,
     private formErrorHandler: FormErrorHandlerService,
     private fb: NonNullableFormBuilder,
     private userService: UserService,
@@ -117,17 +116,15 @@ export class ServiceSshComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
     this.api.call('ssh.config').pipe(untilDestroyed(this)).subscribe({
       next: (config) => {
         this.form.patchValue(config);
-        this.isFormLoading = false;
-        this.cdr.markForCheck();
+        this.isFormLoading.set(false);
       },
       error: (error: unknown) => {
-        this.isFormLoading = false;
+        this.isFormLoading.set(false);
         this.errorHandler.showErrorModal(error);
-        this.cdr.markForCheck();
       },
     });
   }
@@ -139,20 +136,18 @@ export class ServiceSshComponent implements OnInit {
   onSubmit(): void {
     const values = this.form.value;
 
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
     this.api.call('ssh.update', [values as SshConfigUpdate])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
-          this.isFormLoading = false;
+          this.isFormLoading.set(false);
           this.snackbar.success(this.translate.instant('Service configuration saved'));
           this.slideInRef.close({ response: true, error: null });
-          this.cdr.markForCheck();
         },
         error: (error: unknown) => {
-          this.isFormLoading = false;
+          this.isFormLoading.set(false);
           this.formErrorHandler.handleValidationErrors(error, this.form);
-          this.cdr.markForCheck();
         },
       });
   }

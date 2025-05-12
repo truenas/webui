@@ -51,7 +51,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   selector: 'ix-map-user-group-ids-dialog',
   templateUrl: './map-user-group-ids-dialog.component.html',
   styleUrls: ['./map-user-group-ids-dialog.component.scss'],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FakeProgressBarComponent,
@@ -82,7 +81,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 export class MapUserGroupIdsDialog implements OnInit {
   protected readonly columns = ['name', 'hostUidOrGid', 'instanceUidOrGid', 'actions'];
-  protected readonly containersHelptext = instancesHelptext;
+  protected readonly instancesHelptext = instancesHelptext;
 
   protected readonly isLoading = signal(false);
   protected readonly mappings = signal<IdMapping[]>([]);

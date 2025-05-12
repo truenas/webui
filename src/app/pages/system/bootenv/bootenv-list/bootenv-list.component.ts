@@ -63,7 +63,6 @@ interface BootEnvironmentUi extends BootEnvironment {
   providers: [
     { provide: MAT_SLIDE_TOGGLE_DEFAULT_OPTIONS, useValue: { disableToggleValue: true } },
   ],
-  standalone: true,
   imports: [
     PageHeaderComponent,
     SearchInput1Component,
@@ -275,7 +274,7 @@ export class BootEnvironmentListComponent implements OnInit {
     this.dialogService.confirm({
       title: this.translate.instant('Activate'),
       message: this.translate.instant('Activate this Boot Environment?'),
-      buttonText: helptextSystemBootenv.list_dialog_activate_action,
+      buttonText: this.translate.instant(helptextSystemBootenv.activateButton),
     }).pipe(
       filter(Boolean),
       switchMap(() => {

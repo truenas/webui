@@ -1,7 +1,7 @@
 <ix-modal-header
   [requiredRoles]="requiredRoles"
   [title]="title | translate"
-  [loading]="isLoading"
+  [loading]="isLoading()"
 ></ix-modal-header>
 
 <mat-card>
@@ -11,7 +11,6 @@
         <ix-input
           formControlName="comment"
           [label]="labels.comment | translate"
-          [tooltip]="tooltips.comment | translate"
         ></ix-input>
       </ix-fieldset>
 
@@ -48,7 +47,7 @@
           type="submit"
           color="primary"
           ixTest="save"
-          [disabled]="form.invalid || isLoading"
+          [disabled]="form.invalid || isLoading()"
         >
           {{ 'Save' | translate }}
         </button>

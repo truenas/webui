@@ -3,13 +3,13 @@ import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 
 export const helptextDisks = {
-  fieldset_disk: T('General'),
-  fieldset_powermgmt: T('Power Management'),
-  fieldset_sed: T('SED'),
+  generalTitle: T('General'),
+  powerManagementTitle: T('Power Management'),
+  sedTitle: T('SED'),
 
-  disk_form_hddstandby_tooltip: T('Minutes of inactivity before the drive enters standby mode. Temperature monitoring is disabled for standby disks.'),
+  standbyTooltip: T('Minutes of inactivity before the drive enters standby mode. Temperature monitoring is disabled for standby disks.'),
 
-  disk_form_hddstandby_options: [
+  standbyOptions: [
     { label: T('Always On'), value: DiskStandby.AlwaysOn },
     { label: '5', value: DiskStandby.Minutes5 },
     { label: '10', value: DiskStandby.Minutes10 },
@@ -23,7 +23,7 @@ export const helptextDisks = {
     { label: '330', value: DiskStandby.Minutes330 },
   ],
 
-  disk_form_advpowermgmt_options: [
+  advancedPowerManagementOptions: [
     { label: T('Disabled'), value: DiskPowerLevel.Disabled },
     { label: T('Level 1 - Minimum power usage with Standby (spindown)'), value: DiskPowerLevel.Level1 },
     { label: T('Level 64 - Intermediate power usage with Standby'), value: DiskPowerLevel.Level64 },
@@ -33,40 +33,23 @@ export const helptextDisks = {
     { label: T('Level 254 - Maximum performance, maximum power usage'), value: DiskPowerLevel.Level254 },
   ],
 
-  disk_form_critical_tooltip: T('Threshold temperature in Celsius. If the\
- drive temperature is higher than this value, a LOG_CRIT level log entry\
- is created and an email is sent. <i>0</i> disables this check.'),
-
-  disk_form_difference_tooltip: T('Report if the temperature of a drive\
- has changed by this many degrees Celsius since the last report.\
- <i>0</i> disables the report.'),
-
-  disk_form_informational_tooltip: T('Report if drive temperature is at or\
- above this temperature in Celsius. <i>0</i> disables the report.'),
-
-  disk_form_passwd_tooltip: T('Set or change the password of this SED. \
+  passwordTooltip: T('Set or change the password of this SED. \
  This password is used instead of the global SED password.'),
 
-  bulk_edit: {
+  bulkEdit: {
     title: T('Disks'),
     label: T('Settings'),
     disks: {
-      placeholder: T('Disks to be edited:'),
       tooltip: T('Device names of each disk being edited.'),
     },
     serial: {
-      placeholder: T('Serial'),
       tooltip: T('Serial numbers of each disk being edited.'),
     },
-
-  },
-  dialog_error: T('Error updating disks'),
-
-  clear_pw: {
-    placeholder: T('Clear SED Password'),
   },
 
-  dw_wipe_method_tooltip: T('<i>Quick</i> erases only the partitioning information\
+  errorDialogTitle: T('Error updating disks'),
+
+  wipeMethodTooltip: T('<i>Quick</i> erases only the partitioning information\
  on a disk without clearing other old data. <i>Full\
  with zeros</i> overwrites the entire disk with zeros.\
  <i>Full with random data</i> overwrites the entire\

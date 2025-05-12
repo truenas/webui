@@ -79,7 +79,6 @@ interface ZvolFormData {
   templateUrl: './zvol-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CloudCredentialService],
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
@@ -102,15 +101,15 @@ export class ZvolFormComponent implements OnInit {
 
   get title(): string {
     return this.isNew
-      ? this.translate.instant(helptextZvol.zvol_title_add)
-      : this.translate.instant(helptextZvol.zvol_title_edit);
+      ? this.translate.instant(helptextZvol.addTitle)
+      : this.translate.instant(helptextZvol.editTitle);
   }
 
   readonly helptext = helptextZvol;
   parentId: string;
   isNew = true;
   isLoading = false;
-  inheritEncryptPlaceholder: string = helptextZvol.dataset_form_encryption.inherit_checkbox_placeholder;
+  inheritEncryptPlaceholder: string = helptextZvol.encryption.inheritLabel;
   namesInUse: string[] = [];
   volBlockSizeWarning: string | null;
   protected slideInData: { isNew: boolean; parentId: string };
@@ -349,7 +348,7 @@ export class ZvolFormComponent implements OnInit {
     this.encryptedParent = parent.encrypted;
     this.encryptionAlgorithm = parent.encryption_algorithm.value;
 
-    this.inheritEncryptPlaceholder = helptextZvol.dataset_form_encryption.inherit_checkbox_notencrypted;
+    this.inheritEncryptPlaceholder = helptextZvol.encryption.inheritNotEncrypted;
     if (this.encryptedParent) {
       if (parent.key_format.value === EncryptionKeyFormat.Passphrase) {
         this.passphraseParent = true;
@@ -357,7 +356,7 @@ export class ZvolFormComponent implements OnInit {
         this.encryptionType = 'passphrase';
         this.form.controls.encryption_type.disable();
       }
-      this.inheritEncryptPlaceholder = helptextZvol.dataset_form_encryption.inherit_checkbox_encrypted;
+      this.inheritEncryptPlaceholder = helptextZvol.encryption.inheritEncrypted;
     }
 
     if (this.isNew) {
@@ -701,8 +700,8 @@ export class ZvolFormComponent implements OnInit {
         } else {
           this.isLoading = false;
           this.dialogService.error({
-            title: helptextZvol.zvol_save_errDialog.title,
-            message: helptextZvol.zvol_save_errDialog.msg,
+            title: helptextZvol.zvolSaveError.title,
+            message: helptextZvol.zvolSaveError.msg,
           });
         }
       },
@@ -743,7 +742,7 @@ export class ZvolFormComponent implements OnInit {
           return;
         }
 
-        this.volBlockSizeWarning = `${this.translate.instant(helptextZvol.blocksize_warning.a)} ${this.minimumRecommendedBlockSize}. ${this.translate.instant(helptextZvol.blocksize_warning.b)}`;
+        this.volBlockSizeWarning = `${this.translate.instant(helptextZvol.blocksizeWarning.a)} ${this.minimumRecommendedBlockSize}. ${this.translate.instant(helptextZvol.blocksizeWarning.b)}`;
       });
   }
 

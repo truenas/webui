@@ -10,7 +10,7 @@ import { MockComponents } from 'ng-mocks';
 import { BehaviorSubject, Subject, of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
-import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
+import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { Pool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
@@ -70,21 +70,21 @@ describe('PoolManagerWizardComponent', () => {
       allowNonUniqueSerialDisks: true,
     },
     topology: {
-      [VdevType.Data]: {
+      [VDevType.Data]: {
         layout: CreateVdevLayout.Mirror,
         vdevs: [
           [{ devname: 'ada1' }, { devname: 'ada2' }],
           [{ devname: 'ada3' }, { devname: 'ada4' }],
         ],
       },
-      [VdevType.Log]: {
+      [VDevType.Log]: {
         layout: CreateVdevLayout.Stripe,
         vdevs: [
           [{ devname: 'sda1' }],
           [{ devname: 'sda2' }],
         ],
       },
-      [VdevType.Spare]: {
+      [VDevType.Spare]: {
         vdevs: [
           [{ devname: 'sda3' }, { devname: 'sda4' }],
           [{ devname: 'sda5' }, { devname: 'sda6' }],

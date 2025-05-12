@@ -1,7 +1,7 @@
 <ix-modal-header
   [requiredRoles]="requiredRoles"
   [title]="title"
-  [loading]="isLoading"
+  [loading]="isLoading()"
 ></ix-modal-header>
 
 <mat-card>
@@ -31,7 +31,7 @@
           <ix-chips
             formControlName="users"
             [label]="'Apply To Users' | translate"
-            [tooltip]="tooltips.users"
+            [tooltip]="tooltips.users | translate"
             [autocompleteProvider]="usersProvider"
             [allowNewEntries]="false"
           ></ix-chips>
@@ -45,7 +45,7 @@
           <ix-chips
             formControlName="groups"
             [label]="'Apply To Groups' | translate"
-            [tooltip]="tooltips.groups"
+            [tooltip]="tooltips.groups | translate"
             [required]="true"
             [autocompleteProvider]="groupProvider"
           ></ix-chips>
@@ -59,7 +59,7 @@
           mat-button
           color="primary"
           ixTest="save"
-          [disabled]="form.invalid || isLoading"
+          [disabled]="form.invalid || isLoading()"
         >
           {{ 'Save' | translate }}
         </button>

@@ -1,5 +1,6 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit,
+  signal,
 } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -17,7 +18,7 @@ import { IscsiExtentRpm, IscsiExtentType } from 'app/enums/iscsi.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
-import { helptextSharingIscsi } from 'app/helptext/sharing';
+import { helptextIscsi } from 'app/helptext/sharing';
 import { IscsiExtent, IscsiExtentUpdate } from 'app/interfaces/iscsi.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -31,6 +32,8 @@ import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-forma
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TranslateOptionsPipe } from 'app/modules/translate/translate-options/translate-options.pipe';
+import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IscsiService } from 'app/services/iscsi.service';
@@ -41,7 +44,6 @@ import { IscsiService } from 'app/services/iscsi.service';
   templateUrl: './extent-form.component.html',
   styleUrls: ['./extent-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
@@ -57,6 +59,7 @@ import { IscsiService } from 'app/services/iscsi.service';
     MatButton,
     TestDirective,
     TranslateModule,
+    TranslateOptionsPipe,
   ],
 })
 export class ExtentFormComponent implements OnInit {
@@ -96,12 +99,12 @@ export class ExtentFormComponent implements OnInit {
     ro: [false],
   });
 
-  isLoading = false;
+  protected isLoading = signal(false);
   protected editingExtent: IscsiExtent | undefined;
 
   private extentDiskBeingEdited$ = new BehaviorSubject<Option | undefined>(undefined);
 
-  readonly helptext = helptextSharingIscsi;
+  readonly helptext = helptextIscsi;
 
   protected readonly requiredRoles = [
     Role.SharingIscsiExtentWrite,
@@ -134,7 +137,6 @@ export class ExtentFormComponent implements OnInit {
     private translate: TranslateService,
     private formBuilder: FormBuilder,
     private errorHandler: FormErrorHandlerService,
-    private cdr: ChangeDetectorRef,
     private api: ApiService,
     private filesystemService: FilesystemService,
     public slideInRef: SlideInRef<IscsiExtent | undefined, boolean>,
@@ -185,7 +187,7 @@ export class ExtentFormComponent implements OnInit {
       values.filesize = Number(values.filesize) + (values.blocksize - Number(values.filesize) % values.blocksize);
     }
 
-    this.isLoading = true;
+    this.isLoading.set(true);
     let request$: Observable<unknown>;
     if (this.editingExtent) {
       request$ = this.api.call('iscsi.extent.update', [
@@ -198,13 +200,12 @@ export class ExtentFormComponent implements OnInit {
 
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
-        this.isLoading = false;
+        this.isLoading.set(false);
         this.slideInRef.close({ response: true, error: null });
       },
       error: (error: unknown) => {
-        this.isLoading = false;
+        this.isLoading.set(false);
         this.errorHandler.handleValidationErrors(error, this.form);
-        this.cdr.markForCheck();
       },
     });
   }
@@ -216,7 +217,7 @@ export class ExtentFormComponent implements OnInit {
 
     const extentDiskBeingEdited = extent.path.slice('zvol'.length + 1);
     this.extentDiskBeingEdited$.next({
-      label: extentDiskBeingEdited,
+      label: ignoreTranslation(extentDiskBeingEdited),
       value: extent.path,
     });
     this.form.patchValue({

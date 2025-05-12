@@ -13,13 +13,13 @@ import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
 
 @Component({
   selector: 'ix-button-group',
   templateUrl: './ix-button-group.component.html',
   styleUrls: ['./ix-button-group.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxLabelComponent,
     MatButtonToggleGroup,
@@ -38,9 +38,9 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class IxButtonGroupComponent implements ControlValueAccessor {
-  readonly label = input<string>();
-  readonly hint = input<string>();
-  readonly tooltip = input<string>();
+  readonly label = input<TranslatedString>();
+  readonly hint = input<TranslatedString>();
+  readonly tooltip = input<TranslatedString>();
   readonly required = input<boolean>(false);
   readonly options = input<Observable<Option[]>>();
   readonly vertical = input(false);

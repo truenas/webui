@@ -1,0 +1,40 @@
+<h1 mat-dialog-title>{{ 'Register Default Gateway' | translate }}</h1>
+
+<div mat-dialog-content>
+  <p class="message">{{ 'Editing interface will result in default gateway being removed, which may result in TrueNAS being inaccessible. You can provide new default gateway now:' | translate }}</p>
+  <div class="list-item">
+    <span>{{ 'Current Default Gateway' | translate }}:</span>
+    <span *ixWithLoadingState="currentGateway$ as currentGateway">
+      {{ currentGateway.default_routes[0] || ('None' | translate) }}
+    </span>
+  </div>
+</div>
+<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+  <div mat-dialog-content>
+    <ix-fieldset>
+      <ix-input
+        formControlName="defaultGateway"
+        [label]="'New IPv4 Default Gateway' | translate"
+        [required]="true"
+        [tooltip]="helptext.ipv4gatewayTooltip | translate"
+      ></ix-input>
+    </ix-fieldset>
+  </div>
+
+  <ix-form-actions mat-dialog-actions class="form-actions">
+    <button mat-button type="button" ixTest="cancel" [matDialogClose]="false">
+      {{ 'Skip' | translate }}
+    </button>
+
+    <button
+      *ixRequiresRoles="requiredRoles"
+      mat-button
+      type="submit"
+      color="primary"
+      ixTest="register"
+      [disabled]="form.invalid"
+    >
+      {{ 'Register' | translate }}
+    </button>
+  </ix-form-actions>
+</form>

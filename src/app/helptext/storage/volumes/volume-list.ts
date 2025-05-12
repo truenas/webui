@@ -2,13 +2,11 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const helptextVolumes = {
   exportMessages: {
-    onfail: {
-      stopServices: T('These services must be stopped to export the pool:'),
-      restartServices: T('These services must be restarted to export the pool:'),
-      continueMessage: T('Exporting/disconnecting will continue after services have been managed.'),
-      continueAction: T('Manage Services and Continue'),
-      unableToTerminate: T('Unable to terminate processes which are using this pool: '),
-    },
+    stopServices: T('These services must be stopped to export the pool:'),
+    restartServices: T('These services must be restarted to export the pool:'),
+    continueMessage: T('Exporting/disconnecting will continue after services have been managed.'),
+    continueAction: T('Manage Services and Continue'),
+    unableToTerminate: T('Unable to terminate processes which are using this pool: '),
   },
 
   exportError: T('Error exporting/disconnecting pool.'),
@@ -37,28 +35,26 @@ the system dataset transfers back to the TrueNAS operating system device.'),
     },
     enterName: T('Enter <strong>{pool}</strong> below to confirm'),
     confirm: T('Confirm Export/Disconnect'),
-    unknown_status_alt_text: T('(Remove pool from database)'),
+    unknownStatusAltText: T('(Remove pool from database)'),
     saveButton: T('Export/Disconnect'),
   },
 
   exporting: T('Exporting Pool'),
 
-  upgradePoolDialog_warning: T('Proceed with upgrading the pool? WARNING: Upgrading a pool is a\
+  upgradePoolDialogWarning: T('Proceed with upgrading the pool? WARNING: Upgrading a pool is a\
  one-way operation that might make some features of\
  the pool incompatible with older versions of TrueNAS: '),
 
-  expand_pool_dialog: {
+  expandPoolDialog: {
     title: T('Expand pool '),
     message: T('Expand pool to fit all available disk space.'),
   },
 
-  pool_options_dialog: {
-    autotrim_tooltip: T('Enable for TrueNAS to periodically review data blocks and identify\
+  autotrimTooltip: T('Enable for TrueNAS to periodically review data blocks and identify\
  empty blocks, or obsolete blocks that can be deleted. Unset to use dirty block\
  overwrites (default).'),
-  },
-  lock_dataset_dialog: {
-    button: T('Lock'),
-    locking_dataset: T('Locking Dataset'),
-  },
+  lockingDataset: T('Locking Dataset'),
+
+  scrubTooltip: T('A scrub is a data integrity check of your pool. \
+Scrubs identify data integrity problems, detect silent data corruptions caused by transient hardware issues, and provide early disk failure alerts.'),
 };

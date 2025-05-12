@@ -14,6 +14,7 @@ import {
   JobProgressDialogConfig,
 } from 'app/modules/dialog/components/job-progress/job-progress-dialog.component';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
+import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 
 describe('JobProgressDialogComponent', () => {
@@ -60,14 +61,14 @@ describe('JobProgressDialogComponent', () => {
 
   it('shows title from data when it is provided', async () => {
     await setupTest({
-      title: 'Test job',
+      title: ignoreTranslation('Test job'),
     });
     expect(await dialogHarness.getTitleText()).toBe('Test job');
   });
 
   it('shows description from data when it is provided', async () => {
     await setupTest({
-      description: 'Test description',
+      description: ignoreTranslation('Test description'),
     });
     expect(spectator.query('.job-description')).toHaveExactText('Test description');
   });

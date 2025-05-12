@@ -31,10 +31,9 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
 @UntilDestroy()
 @Component({
   selector: 'ix-self-encrypting-drive-card',
-  styleUrls: ['../../common-card.scss'],
+  styleUrls: ['../../../general-settings/common-settings-card.scss'],
   templateUrl: './self-encrypting-drive-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     UiSearchDirective,

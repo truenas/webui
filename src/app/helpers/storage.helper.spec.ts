@@ -1,19 +1,19 @@
-import { VdevType } from 'app/enums/v-dev-type.enum';
+import { VDevType } from 'app/enums/v-dev-type.enum';
 import { DatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { isQuotaSet, isTopologyLimitedToOneLayout } from './storage.helper';
 
 describe('Storage Helper', () => {
   describe('isTopologyLimitedToOneLayout', () => {
     it('returns true for Spare type', () => {
-      expect(isTopologyLimitedToOneLayout(VdevType.Spare)).toBe(true);
+      expect(isTopologyLimitedToOneLayout(VDevType.Spare)).toBe(true);
     });
 
     it('returns true for Cache type', () => {
-      expect(isTopologyLimitedToOneLayout(VdevType.Cache)).toBe(true);
+      expect(isTopologyLimitedToOneLayout(VDevType.Cache)).toBe(true);
     });
 
     it('returns false for other types', () => {
-      expect(isTopologyLimitedToOneLayout(VdevType.Dedup)).toBe(false);
+      expect(isTopologyLimitedToOneLayout(VDevType.Dedup)).toBe(false);
     });
   });
 

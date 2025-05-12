@@ -6,20 +6,20 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Observable, of, switchMap } from 'rxjs';
 import { IscsiTargetMode } from 'app/enums/iscsi.enum';
 import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
-import { helptextSharingIscsi } from 'app/helptext/sharing';
+import { helptextIscsi } from 'app/helptext/sharing';
 import { newOption, Option } from 'app/interfaces/option.interface';
 import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
 import { IscsiService } from 'app/services/iscsi.service';
+import { LicenseService } from 'app/services/license.service';
 
 @UntilDestroy()
 @Component({
   selector: 'ix-target-wizard-step',
   templateUrl: './target-wizard-step.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     TranslateModule,
@@ -30,7 +30,7 @@ import { IscsiService } from 'app/services/iscsi.service';
 export class TargetWizardStepComponent {
   form = input.required<IscsiWizardComponent['form']['controls']['target']>();
 
-  readonly helptextSharingIscsi = helptextSharingIscsi;
+  readonly helptextSharingIscsi = helptextIscsi;
 
   readonly targetOptions$ = this.iscsiService.getTargets().pipe(
     idNameArrayToOptions(),
@@ -45,7 +45,7 @@ export class TargetWizardStepComponent {
     { label: this.translate.instant('Fibre Channel'), value: IscsiTargetMode.Fc },
   ]);
 
-  readonly hasFibreChannel = toSignal(this.iscsiService.hasFibreChannel());
+  readonly hasFibreChannel = toSignal(this.license.hasFibreChannel$);
 
   get isNewTarget(): boolean {
     return this.form().enabled && this.form().value.target === newOption;
@@ -54,6 +54,7 @@ export class TargetWizardStepComponent {
   constructor(
     private iscsiService: IscsiService,
     private translate: TranslateService,
+    private license: LicenseService,
     public formatter: IxFormatterService,
   ) {}
 }

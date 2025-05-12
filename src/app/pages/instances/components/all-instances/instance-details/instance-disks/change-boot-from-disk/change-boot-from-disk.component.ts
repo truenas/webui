@@ -18,6 +18,7 @@ import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-forma
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -26,7 +27,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   selector: 'ix-change-boot-from-disk',
   templateUrl: './change-boot-from-disk.component.html',
   styleUrls: ['./change-boot-from-disk.component.scss'],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatButton,
@@ -47,7 +47,7 @@ export class ChangeBootFromDiskComponent {
   readonly bootFromOptions$: Observable<Option[]> = of(this.data.visibleDisks).pipe(
     map((disks) => {
       return disks.map((disk) => ({
-        label: disk.source,
+        label: ignoreTranslation(disk.source),
         value: disk.name,
       }));
     }),

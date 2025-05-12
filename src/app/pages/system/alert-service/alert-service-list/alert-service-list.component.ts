@@ -43,7 +43,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './alert-service-list.component.html',
   styleUrls: ['./alert-service-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     UiSearchDirective,
@@ -99,7 +98,6 @@ export class AlertServiceListComponent implements OnInit {
       getValue: (service) => (service.enabled ? this.translate.instant('Yes') : this.translate.instant('No')),
     }),
     actionsColumn({
-      cssClass: 'wide-actions',
       actions: [
         {
           iconName: iconMarker('edit'),
