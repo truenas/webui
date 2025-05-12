@@ -31,11 +31,12 @@
           [label]="'Description' | translate"
         ></ix-input>
 
-        <ix-checkbox
+        <ix-radio-group
           formControlName="ipv4_dhcp"
           [label]="'DHCP' | translate"
           [tooltip]="helptext.dhcpTooltip | translate"
-        ></ix-checkbox>
+          [options]="dhcpOptions$"
+        ></ix-radio-group>
 
         <ix-checkbox
           formControlName="ipv6_auto"
@@ -162,19 +163,19 @@
           [tooltip]="helptext.mtuTooltip | translate"
         ></ix-input>
 
-        @if (canHaveAliases) {
+        @if (canHaveStaticIpAddresses) {
           <ix-list
             formArrayName="aliases"
             [empty]="form.controls.aliases.controls.length === 0"
-            [label]="'Aliases' | translate"
+            [label]="'Static IP Addresses' | translate"
             [formArray]="form.get('aliases')"
-            (add)="addAlias()"
+            (add)="addStaticIpAddress()"
           >
             @for (network of form.controls.aliases.controls; track network; let i = $index) {
               <ix-list-item
                 [formGroupName]="i"
-                [label]="'Aliases' | translate"
-                (delete)="removeAlias(i)"
+                [label]="'Static IP Addresses' | translate"
+                (delete)="removeStaticIpAddress(i)"
               >
                 <div class="alias">
                   <ix-ip-input-with-netmask
