@@ -9,90 +9,89 @@
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <div class="columns">
         <div class="column">
-          <ix-fieldset [title]="helptext.fieldset_extent_basic | translate">
+          <ix-fieldset [title]="helptext.fieldsetExtentBasic | translate">
             <ix-input
               formControlName="name"
-              [label]="helptext.extent_placeholder_name | translate"
-              [tooltip]="helptext.extent_tooltip_name | translate"
-              [placeholder]="helptext.extent_placeholder_name | translate"
+              [label]="helptext.extent.nameLabel | translate"
+              [tooltip]="helptext.extent.nameTooltip | translate"
+              [placeholder]="helptext.extent.nameLabel | translate"
               [required]="true"
             ></ix-input>
 
             <ix-input
               formControlName="comment"
-              [label]="helptext.extent_placeholder_comment | translate"
-              [tooltip]="helptext.extent_tooltip_comment | translate"
-              [placeholder]="helptext.extent_placeholder_comment | translate"
+              [label]="helptext.extent.commentLabel | translate"
+              [placeholder]="helptext.extent.commentLabel | translate"
             ></ix-input>
 
             <ix-checkbox
               formControlName="enabled"
-              [label]="helptext.extent_placeholder_enabled | translate"
-              [tooltip]="helptext.extent_tooltip_enabled | translate"
+              [label]="helptext.extent.enabledLabel | translate"
+              [tooltip]="helptext.extent.enabledTooltip | translate"
             ></ix-checkbox>
           </ix-fieldset>
-          <ix-fieldset [title]="helptext.fieldset_extent_options | translate">
+          <ix-fieldset [title]="helptext.fieldsetExtentOptions | translate">
             <ix-checkbox
               formControlName="insecure_tpc"
-              [label]="helptext.extent_placeholder_insecure_tpc | translate"
-              [tooltip]="helptext.extent_tooltip_insecure_tpc | translate"
+              [label]="helptext.extent.tpcLabel | translate"
+              [tooltip]="helptext.extent.tpcTooltip | translate"
             ></ix-checkbox>
 
             <ix-checkbox
               formControlName="xen"
-              [label]="helptext.extent_placeholder_xen | translate"
-              [tooltip]="helptext.extent_tooltip_xen | translate"
+              [label]="helptext.extent.xenLabel | translate"
+              [tooltip]="helptext.extent.xenTooltip | translate"
             ></ix-checkbox>
 
             <ix-select
               formControlName="rpm"
-              [label]="helptext.extent_placeholder_rpm | translate"
+              [label]="helptext.extent.rpmLabel | translate"
               [options]="rpms$"
-              [tooltip]="helptext.extent_tooltip_rpm | translate"
+              [tooltip]="helptext.extent.rpmTooltip | translate"
               [required]="true"
             ></ix-select>
 
             <ix-checkbox
               formControlName="ro"
-              [label]="helptext.extent_placeholder_ro | translate"
-              [tooltip]="helptext.extent_tooltip_ro | translate"
+              [label]="helptext.extent.readOnlyLabel | translate"
+              [tooltip]="helptext.extent.readOnlyTooltip | translate"
             ></ix-checkbox>
           </ix-fieldset>
         </div>
 
         <div class="column">
-          <ix-fieldset [title]="helptext.fieldset_extent_type | translate">
+          <ix-fieldset [title]="helptext.fieldsetExtentType | translate">
             <ix-select
               formControlName="type"
-              [label]="helptext.extent_placeholder_type | translate"
+              [label]="helptext.extent.typeLabel | translate"
               [options]="types$ | translateOptions"
-              [tooltip]="helptext.extent_tooltip_type | translate"
+              [tooltip]="helptext.extent.typeTooltip | translate"
               [required]="true"
             ></ix-select>
 
             @if (isDevice) {
               <ix-select
                 formControlName="disk"
-                [label]="helptext.extent_placeholder_disk | translate"
+                [label]="helptext.extent.deviceLabel | translate"
                 [options]="disks$"
-                [tooltip]="helptext.extent_tooltip_disk | translate"
+                [tooltip]="helptext.extent.deviceTooltip | translate"
                 [required]="true"
               ></ix-select>
             } @else {
               <ix-explorer
                 formControlName="path"
                 [nodeProvider]="treeNodeProvider"
-                [label]="helptext.extent_placeholder_path | translate"
-                [tooltip]="helptext.extent_tooltip_path | translate"
+                [label]="helptext.extent.pathLabel | translate"
+                [tooltip]="helptext.extent.pathTooltip | translate"
                 [required]="true"
                 [canCreateDataset]="isNew"
               ></ix-explorer>
 
               <ix-input
                 formControlName="filesize"
-                [label]="helptext.extent_placeholder_filesize | translate"
-                [tooltip]="helptext.extent_tooltip_filesize | translate"
-                [placeholder]="helptext.extent_placeholder_filesize | translate"
+                [label]="helptext.extent.filesizeLabel | translate"
+                [tooltip]="helptext.extent.filesizeTooltip | translate"
+                [placeholder]="helptext.extent.filesizeLabel | translate"
                 [required]="true"
                 [parse]="formatter.memorySizeParsing"
                 [format]="formatter.memorySizeFormatting"
@@ -102,33 +101,33 @@
             @if (!isNew) {
               <ix-input
                 formControlName="serial"
-                [label]="helptext.extent_placeholder_serial | translate"
-                [tooltip]="helptext.extent_tooltip_serial | translate"
-                [placeholder]="helptext.extent_placeholder_serial | translate"
+                [label]="helptext.extent.serialLabel | translate"
+                [tooltip]="helptext.extent.serialTooltip | translate"
+                [placeholder]="helptext.extent.serialLabel | translate"
               ></ix-input>
             }
 
             <ix-select
               formControlName="blocksize"
-              [label]="helptext.extent_placeholder_blocksize | translate"
+              [label]="helptext.extent.blocksizeLabel | translate"
               [options]="blocksizes$"
-              [tooltip]="helptext.extent_tooltip_blocksize | translate"
+              [tooltip]="helptext.extent.blocksizeTooltip | translate"
               [required]="true"
             ></ix-select>
 
             <ix-checkbox
               formControlName="pblocksize"
-              [label]="helptext.extent_placeholder_pblocksize | translate"
-              [tooltip]="helptext.extent_tooltip_pblocksize | translate"
+              [label]="helptext.extent.disablePhysicalBlockSizeLabel | translate"
+              [tooltip]="helptext.extent.disablePhysicalBlockSizeTooltip | translate"
             ></ix-checkbox>
 
             @if (isAvailableThreshold) {
               <ix-input
                 formControlName="avail_threshold"
                 type="number"
-                [label]="helptext.extent_placeholder_avail_threshold | translate"
-                [tooltip]="helptext.extent_tooltip_avail_threshold | translate"
-                [placeholder]="helptext.extent_placeholder_avail_threshold | translate"
+                [label]="helptext.extent.thresholdLabel | translate"
+                [tooltip]="helptext.extent.thresholdTooltip | translate"
+                [placeholder]="helptext.extent.thresholdLabel | translate"
               ></ix-input>
             }
           </ix-fieldset>

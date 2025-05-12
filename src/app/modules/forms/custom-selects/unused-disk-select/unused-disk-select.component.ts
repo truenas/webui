@@ -174,7 +174,7 @@ export class UnusedDiskSelectComponent implements OnInit, AfterViewInit {
     }
     this.dialogService.warn(
       this.translate.instant('Warning') + ': ' + unusedDisk.name,
-      this.translate.instant(helptextVolumeStatus.exported_pool_warning, { pool: `'${unusedDisk.exported_zpool}'` }),
+      this.translate.instant(helptextVolumeStatus.exportedPoolWarning, { pool: `'${unusedDisk.exported_zpool}'` }),
     );
   }
 }

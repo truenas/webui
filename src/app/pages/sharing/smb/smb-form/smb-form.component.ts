@@ -452,10 +452,10 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     const afpControl = this.form.controls.afp;
     this.dialogService
       .confirm({
-        title: this.translate.instant(helptextSharingSmb.afpDialog_title),
-        message: this.translate.instant(helptextSharingSmb.afpDialog_message),
+        title: this.translate.instant(helptextSharingSmb.afpWarningTitle),
+        message: this.translate.instant(helptextSharingSmb.afpWarningMessage),
         hideCheckbox: false,
-        buttonText: this.translate.instant(helptextSharingSmb.afpDialog_button),
+        buttonText: this.translate.instant(helptextSharingSmb.afpDialogButton),
         hideCancel: false,
       })
       .pipe(untilDestroyed(this))
@@ -483,7 +483,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
     this.datasetService.rootLevelDatasetWarning(
       smbShare.path,
-      this.translate.instant(helptextSharingSmb.root_level_warning),
+      this.translate.instant(helptextSharingSmb.rootLevelWarning),
       !this.form.controls.path.dirty,
     ).pipe(
       filter(Boolean),

@@ -210,7 +210,7 @@ export class NfsFormComponent implements OnInit {
 
     this.datasetService.rootLevelDatasetWarning(
       nfsShare.path,
-      this.translate.instant(helptextSharingNfs.root_level_warning),
+      this.translate.instant(helptextSharingNfs.rootLevelWarning),
       !this.form.controls.path.dirty,
     )
       .pipe(
