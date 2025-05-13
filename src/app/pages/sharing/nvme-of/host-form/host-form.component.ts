@@ -60,6 +60,8 @@ export class HostFormComponent implements OnInit {
     dhchap_key: [null as string | null],
   });
 
+  protected isGeneratingHostKey = signal(false);
+
   constructor(
     private api: ApiService,
     private formBuilder: NonNullableFormBuilder,
@@ -84,11 +86,18 @@ export class HostFormComponent implements OnInit {
   }
 
   protected generateHostKey(): void {
-    this.api.call('nvmet.host.generate_key').pipe(untilDestroyed(this)).subscribe((key) => {
-      this.form.patchValue({
-        dhchap_key: key,
+    this.isGeneratingHostKey.set(true);
+    this.api.call('nvmet.host.generate_key')
+      .pipe(
+        finalize(() => this.isGeneratingHostKey.set(false)),
+        this.errorHandler.withErrorHandler(),
+        untilDestroyed(this),
+      )
+      .subscribe((key) => {
+        this.form.patchValue({
+          dhchap_key: key,
+        });
       });
-    });
   }
 
   protected onSubmit(): void {

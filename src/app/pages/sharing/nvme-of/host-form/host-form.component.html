@@ -32,6 +32,7 @@
               mat-button
               type="button"
               ixTest="generate-key"
+              [disabled]="isGeneratingHostKey()"
               (click)="generateHostKey()"
             >{{ 'Generate Key' | translate }}</button>
           </div>
