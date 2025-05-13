@@ -29,9 +29,9 @@ export const helptextNetworkConfiguration = {
   ipv6gatewayTooltip: T('Enter an IPv6 address. This overrides the default\
  gateway provided by DHCP.'),
 
-  nameserver1Label: T('Nameserver Primary'),
-  nameserver2Label: T('Nameserver Secondary'),
-  nameserver3Label: T('Nameserver Tertiary'),
+  nameserver1Label: T('Primary'),
+  nameserver2Label: T('Secondary'),
+  nameserver3Label: T('Tertiary'),
 
   httpproxyLabel: T('HTTP Proxy'),
   httpproxyTooltip: T('When using a proxy, enter the proxy information for \

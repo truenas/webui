@@ -38,6 +38,51 @@
           [options]="dhcpOptions$"
         ></ix-radio-group>
 
+        @if (canHaveStaticIpAddresses) {
+          <ix-list
+            formArrayName="aliases"
+            [empty]="form.controls.aliases.controls.length === 0"
+            [label]="'Static IP Addresses' | translate"
+            [formArray]="form.get('aliases')"
+            (add)="addStaticIpAddress()"
+          >
+            @for (network of form.controls.aliases.controls; track network; let i = $index) {
+              <ix-list-item
+                [formGroupName]="i"
+                [label]="'Static IP Addresses' | translate"
+                (delete)="removeStaticIpAddress(i)"
+              >
+                <div class="alias">
+                  <ix-ip-input-with-netmask
+                    class="alias-ip"
+                    formControlName="address"
+                    [label]="asTranslatedString(('IP Address' | translate) + ipLabelSuffix)"
+                    [required]="true"
+                    [tooltip]="helptext.aliasAddressTooltip | translate"
+                  ></ix-ip-input-with-netmask>
+
+                  @if (isHaLicensed) {
+                    <ix-input
+                      formControlName="failover_address"
+                      [label]="asTranslatedString(('IP Address' | translate) + failoverLabelSuffix)"
+                      [required]="true"
+                      [tooltip]="helptext.failover.aliasAddressTooltip | translate"
+                    ></ix-input>
+                    <ix-input
+                      formControlName="failover_virtual_address"
+                      [label]="'Virtual IP Address (Failover Address)' | translate"
+                      [required]="true"
+                      [tooltip]="helptext.failover.virtualAliasAddressTooltip | translate"
+                    ></ix-input>
+                  }
+
+                  <ix-errors [control]="network"></ix-errors>
+                </div>
+              </ix-list-item>
+            }
+          </ix-list>
+        }
+
         <ix-checkbox
           formControlName="ipv6_auto"
           [label]="'Autoconfigure IPv6' | translate"
@@ -162,51 +207,6 @@
           [label]="'MTU' | translate"
           [tooltip]="helptext.mtuTooltip | translate"
         ></ix-input>
-
-        @if (canHaveStaticIpAddresses) {
-          <ix-list
-            formArrayName="aliases"
-            [empty]="form.controls.aliases.controls.length === 0"
-            [label]="'Static IP Addresses' | translate"
-            [formArray]="form.get('aliases')"
-            (add)="addStaticIpAddress()"
-          >
-            @for (network of form.controls.aliases.controls; track network; let i = $index) {
-              <ix-list-item
-                [formGroupName]="i"
-                [label]="'Static IP Addresses' | translate"
-                (delete)="removeStaticIpAddress(i)"
-              >
-                <div class="alias">
-                  <ix-ip-input-with-netmask
-                    class="alias-ip"
-                    formControlName="address"
-                    [label]="asTranslatedString(('IP Address' | translate) + ipLabelSuffix)"
-                    [required]="true"
-                    [tooltip]="helptext.aliasAddressTooltip | translate"
-                  ></ix-ip-input-with-netmask>
-
-                  @if (isHaLicensed) {
-                    <ix-input
-                      formControlName="failover_address"
-                      [label]="asTranslatedString(('IP Address' | translate) + failoverLabelSuffix)"
-                      [required]="true"
-                      [tooltip]="helptext.failover.aliasAddressTooltip | translate"
-                    ></ix-input>
-                    <ix-input
-                      formControlName="failover_virtual_address"
-                      [label]="'Virtual IP Address (Failover Address)' | translate"
-                      [required]="true"
-                      [tooltip]="helptext.failover.virtualAliasAddressTooltip | translate"
-                    ></ix-input>
-                  }
-
-                  <ix-errors [control]="network"></ix-errors>
-                </div>
-              </ix-list-item>
-            }
-          </ix-list>
-        }
       </ix-fieldset>
 
       <ix-form-actions>
