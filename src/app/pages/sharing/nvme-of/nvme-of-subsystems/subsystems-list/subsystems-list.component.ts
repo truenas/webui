@@ -145,6 +145,7 @@ export class SubsystemsListComponent implements OnInit {
       )
       .subscribe(({ response }: { response: NvmeOfSubsystem | boolean }) => {
         this.dataProvider().expandedRow = response as NvmeOfSubsystem;
+        this.nvmeOfStore.initialize();
       });
   }
 

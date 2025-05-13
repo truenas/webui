@@ -7,12 +7,14 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   filter, Observable, switchMap,
+  tap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { NvmeOfSubsystem } from 'app/interfaces/nvme-of.interface';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master-detail-view.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -55,6 +57,7 @@ export class NvmeOfSubsystemsComponent {
     private matDialog: MatDialog,
     private slideIn: SlideIn,
     private api: ApiService,
+    private loader: LoaderService,
   ) {
     effect(() => {
       const subsystems = this.subsystems();
@@ -87,25 +90,28 @@ export class NvmeOfSubsystemsComponent {
       { data: subsystem, minWidth: '500px' },
     ).afterClosed() as Observable<{ confirmed: boolean; force: boolean }>).pipe(
       filter(({ confirmed }) => confirmed),
+      tap(() => this.loader.open()),
       switchMap(({ force }) => this.api.call('nvmet.subsys.delete', [subsystem.id, { force }])),
       untilDestroyed(this),
     ).subscribe({
       next: () => {
+        this.loader.close();
         this.dataProvider.expandedRow = null;
+        this.nvmeOfStore.initialize();
       },
     });
   }
 
-  addSubsystem(): void {
-    const slideInRef$ = this.slideIn.open(
+  editSubsystem(): void {
+    this.slideIn.open(
       AddSubsystemComponent,
       { wide: true },
-    );
-    slideInRef$.pipe(
+    ).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(({ response }: { response: NvmeOfSubsystem | boolean }) => {
       this.dataProvider.expandedRow = response as NvmeOfSubsystem;
+      this.nvmeOfStore.initialize();
     });
   }
 }
