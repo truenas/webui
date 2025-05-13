@@ -2,25 +2,25 @@
   <ix-checkbox
     formControlName="auto"
     [label]="'Run Automatically' | translate"
-    [tooltip]="helptext.auto_tooltip | translate"
+    [tooltip]="helptext.autoTooltip | translate"
   ></ix-checkbox>
   <ix-checkbox
     formControlName="schedule"
     [label]="'Schedule' | translate"
-    [tooltip]="helptext.schedule_tooltip | translate"
+    [tooltip]="helptext.scheduleTooltip | translate"
   ></ix-checkbox>
   @if (form.value.schedule) {
     <ix-scheduler
       formControlName="schedule_picker"
       [label]="'Frequency' | translate"
-      [tooltip]="helptext.schedule_picker_tooltip | translate"
+      [tooltip]="helptext.schedulePickerTooltip | translate"
     ></ix-scheduler>
     @if (form.value.schedule_picker === CronPresetValue.Hourly) {
       <ix-select
         formControlName="schedule_begin"
         [label]="'Begin' | translate"
         [options]="timeOptions$"
-        [tooltip]="helptext.schedule_begin_tooltip | translate"
+        [tooltip]="helptext.scheduleBeginTooltip | translate"
       ></ix-select>
     }
     @if (form.value.schedule_picker === CronPresetValue.Hourly) {
@@ -28,7 +28,7 @@
         formControlName="schedule_end"
         [label]="'End' | translate"
         [options]="timeOptions$"
-        [tooltip]="helptext.schedule_end_tooltip | translate"
+        [tooltip]="helptext.scheduleEndTooltip | translate"
       ></ix-select>
     }
   }
@@ -36,7 +36,7 @@
     <ix-checkbox
       formControlName="only_matching_schedule"
       [label]="'Only Replicate Snapshots Matching Schedule' | translate"
-      [tooltip]="helptext.only_matching_schedule_tooltip | translate"
+      [tooltip]="helptext.onlyMatchingScheduleTooltip | translate"
     ></ix-checkbox>
   }
 </ix-fieldset>

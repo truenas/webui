@@ -1,22 +1,22 @@
 <ng-container [formGroup]="form()">
   <ix-input
     formControlName="name"
-    [label]="helptextSharingIscsi.name_placeholder | translate"
-    [tooltip]="helptextSharingIscsi.name_tooltip | translate"
+    [label]="helptextSharingIscsi.nameLabel | translate"
+    [tooltip]="helptextSharingIscsi.nameTooltip | translate"
     [required]="true"
   ></ix-input>
   <ix-select
     formControlName="type"
-    [label]="helptextSharingIscsi.extent_placeholder_type | translate"
-    [tooltip]="helptextSharingIscsi.extent_tooltip_type | translate"
+    [label]="helptextSharingIscsi.extent.typeLabel | translate"
+    [tooltip]="helptextSharingIscsi.extent.typeTooltip | translate"
     [options]="typeOptions$"
     [required]="true"
   ></ix-select>
   @if (isDevice) {
     <ix-select
       formControlName="disk"
-      [label]="helptextSharingIscsi.disk_placeholder | translate"
-      [tooltip]="helptextSharingIscsi.disk_tooltip | translate"
+      [label]="helptextSharingIscsi.diskName | translate"
+      [tooltip]="helptextSharingIscsi.diskTooltip | translate"
       [options]="diskOptions$"
       [required]="true"
     ></ix-select>
@@ -24,8 +24,8 @@
   @if (isNewZvol) {
     <ix-explorer
       formControlName="dataset"
-      [label]="helptextSharingIscsi.dataset_placeholder | translate"
-      [tooltip]="helptextSharingIscsi.dataset_tooltip | translate"
+      [label]="helptextSharingIscsi.datasetLabel | translate"
+      [tooltip]="helptextSharingIscsi.datasetTooltip | translate"
       [required]="true"
       [nodeProvider]="fileNodeProvider"
       [canCreateDataset]="true"
@@ -33,8 +33,8 @@
 
     <ix-input
       formControlName="volsize"
-      [label]="helptextSharingIscsi.volsize_placeholder | translate"
-      [tooltip]="helptextSharingIscsi.volsize_tooltip | translate"
+      [label]="helptextSharingIscsi.sizeLabel | translate"
+      [tooltip]="helptextSharingIscsi.sizeTooltip | translate"
       [format]="formatter.memorySizeFormatting"
       [parse]="formatter.memorySizeParsing"
       [required]="true"
@@ -43,15 +43,15 @@
   @if (!isDevice) {
     <ix-explorer
       formControlName="path"
-      [label]="helptextSharingIscsi.extent_placeholder_path | translate"
+      [label]="helptextSharingIscsi.extent.pathLabel | translate"
       [required]="true"
       [nodeProvider]="fileNodeProvider"
     ></ix-explorer>
 
     <ix-input
       formControlName="filesize"
-      [label]="helptextSharingIscsi.extent_placeholder_filesize | translate"
-      [tooltip]="helptextSharingIscsi.extent_tooltip_filesize | translate"
+      [label]="helptextSharingIscsi.extent.filesizeLabel | translate"
+      [tooltip]="helptextSharingIscsi.extent.filesizeTooltip | translate"
       [format]="formatter.memorySizeFormatting"
       [parse]="formatter.memorySizeParsing"
       [required]="true"
@@ -59,8 +59,8 @@
   }
   <ix-select
     formControlName="usefor"
-    [label]="helptextSharingIscsi.usefor_placeholder | translate"
-    [tooltip]="helptextSharingIscsi.usefor_tooltip | translate"
+    [label]="helptextSharingIscsi.useforLabel | translate"
+    [tooltip]="helptextSharingIscsi.useforTooltip | translate"
     [options]="useforOptions$"
     [required]="true"
   ></ix-select>
