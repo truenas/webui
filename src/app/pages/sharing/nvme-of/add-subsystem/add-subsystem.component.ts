@@ -8,7 +8,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  finalize, forkJoin, Observable, switchMap,
+  finalize, forkJoin, map, Observable, switchMap,
 } from 'rxjs';
 import { NvmeOfSubsystem } from 'app/interfaces/nvme-of.interface';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -59,7 +59,7 @@ export class AddSubsystemComponent {
 
   constructor(
     private formBuilder: FormBuilder,
-    public slideInRef: SlideInRef<void, boolean>,
+    public slideInRef: SlideInRef<void, boolean | NvmeOfSubsystem>,
     private api: ApiService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
@@ -74,16 +74,18 @@ export class AddSubsystemComponent {
         return forkJoin([
           this.nvmeOfService.associatePorts(subsystem, this.form.value.ports),
           this.nvmeOfService.associateHosts(subsystem, this.form.value.allowedHosts),
-        ]);
+        ]).pipe(
+          map(() => subsystem),
+        );
       }),
       finalize(() => this.isLoading.set(false)),
       this.errorHandler.withErrorHandler(),
       untilDestroyed(this),
     )
-      .subscribe(() => {
+      .subscribe((subsystem) => {
         this.snackbar.success(this.translate.instant('New subsystem added'));
         this.slideInRef.close({
-          response: true,
+          response: subsystem,
           error: null,
         });
       });
