@@ -37,9 +37,7 @@ import { IscsiService } from 'app/services/iscsi.service';
 import { initialState } from 'app/store/services/services.reducer';
 import { selectServices } from 'app/store/services/services.selectors';
 
-const hiddenServices = [ServiceName.Gluster, ServiceName.Afp];
 const fakeDataSource: Service[] = [...serviceNames.entries()]
-  .filter(([serviceName]) => !hiddenServices.includes(serviceName))
   .map(([service], id) => {
     return {
       id,
@@ -97,7 +95,6 @@ describe('ServicesComponent', () => {
 
   it('should show table rows', async () => {
     const expectedData = [...serviceNames.keys()]
-      .filter((service) => !hiddenServices.includes(service))
       .map((service) => {
         if (service === ServiceName.Cifs) {
           return [serviceNames.get(service), 'Stopped', '', 'View Logs  View Sessions'];

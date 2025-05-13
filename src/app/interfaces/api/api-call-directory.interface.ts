@@ -176,6 +176,25 @@ import {
   Nfs3Session, Nfs4Session, NfsShare, NfsShareUpdate,
 } from 'app/interfaces/nfs-share.interface';
 import { CreateNtpServer, NtpServer } from 'app/interfaces/ntp-server.interface';
+import {
+  AssociateSubsystemHost,
+  AssociateSubsystemPort,
+  CreateNvmeOfHost,
+  CreateNvmeOfNamespace,
+  CreateNvmeOfPort,
+  CreateNvmeOfSubsystem,
+  DeleteNamespaceParams,
+  NvmeOfGlobalConfig,
+  NvmeOfGlobalConfigUpdate, NvmeOfHost,
+  NvmeOfNamespace,
+  NvmeOfPort,
+  NvmeOfSubsystem,
+  NvmeOfTransportParams, SubsystemHostAssociation,
+  SubsystemPortAssociation, UpdateNvmeOfHost,
+  UpdateNvmeOfNamespace,
+  UpdateNvmeOfPort,
+  UpdateNvmeOfSubsystem,
+} from 'app/interfaces/nvme-of.interface';
 import { MapOption } from 'app/interfaces/option.interface';
 import {
   PeriodicSnapshotTask,
@@ -629,6 +648,42 @@ export interface ApiCallDirectory {
   'nfs.get_nfs3_clients': { params: [params?: QueryParams<Nfs3Session>]; response: Nfs3Session[] };
   'nfs.get_nfs4_clients': { params: [params?: QueryParams<Nfs4Session>]; response: Nfs4Session[] };
   'nfs.update': { params: [NfsConfigUpdate]; response: NfsConfig };
+
+  // NVMe-oF
+  'nvmet.global.config': { params: void; response: NvmeOfGlobalConfig };
+  'nvmet.global.update': { params: [NvmeOfGlobalConfigUpdate]; response: NvmeOfGlobalConfig };
+  'nvmet.global.rdma_enabled': { params: void; response: boolean };
+  'nvmet.global.ana_enabled': { params: void; response: boolean };
+
+  'nvmet.subsys.query': { params: QueryParams<NvmeOfSubsystem>; response: NvmeOfSubsystem[] };
+  'nvmet.subsys.create': { params: [CreateNvmeOfSubsystem]; response: NvmeOfSubsystem };
+  'nvmet.subsys.update': { params: [id: number, update: UpdateNvmeOfSubsystem]; response: NvmeOfSubsystem };
+  'nvmet.subsys.delete': { params: [id: number, { force: boolean }?]; response: void };
+
+  'nvmet.port.query': { params: QueryParams<NvmeOfPort>; response: NvmeOfPort[] };
+  'nvmet.port.create': { params: [CreateNvmeOfPort]; response: NvmeOfPort };
+  'nvmet.port.update': { params: [id: number, update: UpdateNvmeOfPort]; response: NvmeOfPort };
+  'nvmet.port.delete': { params: [id: number, { force: boolean }?]; response: void };
+
+  'nvmet.port_subsys.query': { params: QueryParams<SubsystemPortAssociation>; response: SubsystemPortAssociation[] };
+  'nvmet.port_subsys.create': { params: [AssociateSubsystemPort]; response: void };
+  'nvmet.port_subsys.delete': { params: [id: number]; response: void };
+
+  'nvmet.host.query': { params: QueryParams<NvmeOfHost>; response: NvmeOfHost[] };
+  'nvmet.host.create': { params: [CreateNvmeOfHost]; response: NvmeOfHost };
+  'nvmet.host.update': { params: [id: number, update: UpdateNvmeOfHost]; response: NvmeOfHost };
+  'nvmet.host.delete': { params: [id: number]; response: void };
+
+  'nvmet.host_subsys.query': { params: QueryParams<SubsystemHostAssociation>; response: SubsystemHostAssociation[] };
+  'nvmet.host_subsys.create': { params: [AssociateSubsystemHost]; response: void };
+  'nvmet.host_subsys.delete': { params: [id: number]; response: void };
+
+  'nvmet.namespace.query': { params: QueryParams<NvmeOfNamespace>; response: NvmeOfNamespace };
+  'nvmet.namespace.create': { params: [CreateNvmeOfNamespace]; response: NvmeOfNamespace };
+  'nvmet.namespace.update': { params: [id: number, update: UpdateNvmeOfNamespace]; response: NvmeOfNamespace };
+  'nvmet.namespace.delete': { params: DeleteNamespaceParams; response: void };
+
+  'nvmet.port.transport_address_choices': { params: NvmeOfTransportParams; response: Choices };
 
   // Pool
   'pool.attachments': { params: [id: number]; response: PoolAttachment[] };

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { combineLatest } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, share } from 'rxjs/operators';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AppState } from 'app/store';
@@ -27,6 +27,7 @@ export class LicenseService {
     this.api.call('fc.capable'),
   ]).pipe(
     map(([hasFibreChannel, isFcCapable]) => hasFibreChannel && isFcCapable),
+    share(),
   );
 
   hasVms$ = combineLatest([

@@ -1,0 +1,14 @@
+name: Checklist
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize]
+
+jobs:
+  checklist:
+    name: Resolve all checklist items
+    runs-on: ubuntu-latest
+    steps:
+      - uses: mheap/require-checklist-action@v2
+        with:
+          requireChecklist: false # Does not fail if the checklist is not present at all.

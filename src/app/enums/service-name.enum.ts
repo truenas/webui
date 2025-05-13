@@ -1,7 +1,5 @@
 export enum ServiceName {
-  Afp = 'afp',
   Ftp = 'ftp',
-  Gluster = 'glusterd',
   Iscsi = 'iscsitarget',
   Nfs = 'nfs',
   Snmp = 'snmp',
@@ -9,18 +7,18 @@ export enum ServiceName {
   Cifs = 'cifs',
   Ups = 'ups',
   Http = 'http',
+  NvmeOf = 'nvmet',
 }
 
 export const serviceNames = new Map<ServiceName, string>([
-  [ServiceName.Afp, 'AFP'],
   [ServiceName.Ftp, 'FTP'],
-  [ServiceName.Gluster, 'Gluster'],
   [ServiceName.Iscsi, 'iSCSI'],
   [ServiceName.Nfs, 'NFS'],
   [ServiceName.Snmp, 'SNMP'],
   [ServiceName.Ssh, 'SSH'],
   [ServiceName.Cifs, 'SMB'],
   [ServiceName.Ups, 'UPS'],
+  [ServiceName.NvmeOf, 'NVMe-oF'],
 ]);
 
 export enum RdmaProtocolName {
