@@ -1,7 +1,7 @@
 import { A11yModule } from '@angular/cdk/a11y';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { ElementRef, Renderer2 } from '@angular/core';
+import { ElementRef, Renderer2, signal } from '@angular/core';
 import { tick, fakeAsync, discardPeriodicTasks } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
@@ -18,6 +18,8 @@ import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interfa
 import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { CloudCredentialsSelectComponent } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.component';
+import { EditableComponent } from 'app/modules/forms/editable/editable.component';
+import { EditableService } from 'app/modules/forms/editable/services/editable.service';
 import { SlideInComponent } from 'app/modules/slide-ins/components/slide-in/slide-in.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -235,6 +237,40 @@ describe('SlideInComponent', () => {
     backdrop.dispatchEvent(new Event('click'));
 
     expect(spectator.inject(DialogService).confirm).not.toHaveBeenCalled();
+    discardPeriodicTasks();
+  }));
+
+  it('closes editable fields first on Escape, then closes slide-in on second Escape', fakeAsync(() => {
+    setupComponent();
+
+    const editableService = spectator.inject(EditableService);
+    const isOpenSignal = signal(true);
+
+    const fakeEditable = {
+      isOpen: isOpenSignal,
+      tryToClose: jest.fn(() => {
+        isOpenSignal.set(false);
+      }),
+    } as unknown as EditableComponent;
+
+    editableService.register(fakeEditable);
+
+    const event = new KeyboardEvent('keydown', { key: 'Escape' });
+    document.dispatchEvent(event);
+    spectator.detectChanges();
+
+    expect(fakeEditable.tryToClose).toHaveBeenCalled();
+    expect(close$.next).not.toHaveBeenCalled();
+
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+    tick(305);
+    spectator.detectChanges();
+
+    expect(close$.next).toHaveBeenCalledWith({ response: false, error: null });
+    expect(close$.complete).toHaveBeenCalled();
+    expect(spectator.inject(SlideIn).popComponent).toHaveBeenCalledWith('id');
+
+    editableService.deregister(fakeEditable);
     discardPeriodicTasks();
   }));
 });

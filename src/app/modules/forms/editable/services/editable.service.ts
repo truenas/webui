@@ -1,7 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
-import { fromEvent } from 'rxjs';
-import { takeWhile } from 'rxjs/operators';
+import { debounceTime, fromEvent, takeWhile } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
 import { EditableComponent } from 'app/modules/forms/editable/editable.component';
 
@@ -51,7 +50,10 @@ export class EditableService {
 
   private setupDocumentListeners(): void {
     fromEvent(this.window.document, 'keydown')
-      .pipe(takeWhile((_) => this.editables.size > 0))
+      .pipe(
+        debounceTime(0),
+        takeWhile((_) => this.editables.size > 0),
+      )
       .subscribe((event: KeyboardEvent) => {
         if (event.key === 'Escape') {
           this.tryToCloseAll();
@@ -59,16 +61,16 @@ export class EditableService {
       });
 
     fromEvent(this.window.document, 'mousedown')
-      .pipe(takeWhile((_) => this.editables.size > 0))
+      .pipe(
+        debounceTime(0),
+        takeWhile((_) => this.editables.size > 0),
+      )
       .subscribe((event: MouseEvent) => {
         const target = event.target as HTMLElement;
         const clickedWithin = Array.from(this.editables)
           .filter((editable) => editable.isElementWithin(target));
 
-        // TODO: Unclear why setTimeout is needed.
-        setTimeout(() => {
-          this.tryToCloseAllExcept(clickedWithin);
-        }, 150);
+        this.tryToCloseAllExcept(clickedWithin);
       });
   }
 }
