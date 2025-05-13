@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/angular';
 import { environment } from 'environments/environment';
-import product from 'environments/product';
+import product from 'environments/release';
 import { filter, firstValueFrom } from 'rxjs';
 import { waitForConsent$ } from 'app/services/errors/wait-for-sentry-consent';
 
@@ -12,7 +12,7 @@ export function enableSentry(): void {
       Sentry.replayIntegration(),
       Sentry.captureConsoleIntegration({ levels: ['error'] }),
     ],
-    release: product.product || '',
+    release: product.release || '',
     environment: environment.production ? 'production' : 'development',
     replaysOnErrorSampleRate: 1.0,
     // Clear up some potential PII from events.

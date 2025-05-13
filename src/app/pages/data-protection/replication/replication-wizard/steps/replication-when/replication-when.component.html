@@ -1,8 +1,8 @@
 <form [formGroup]="form">
   <ix-radio-group
     formControlName="schedule_method"
-    [label]="helptext.schedule_method_placeholder | translate"
-    [tooltip]="helptext.schedule_method_tooltip | translate"
+    [label]="helptext.scheduleMethodLabel | translate"
+    [tooltip]="helptext.scheduleMethodTooltip | translate"
     [required]="true"
     [options]="scheduleMethodOptions$"
   ></ix-radio-group>
@@ -10,21 +10,21 @@
     <ix-scheduler
       formControlName="schedule_picker"
       [required]="true"
-      [label]="helptext.schedule_placeholder | translate"
-      [tooltip]="helptext.schedule_tooltip| translate"
+      [label]="helptext.scheduleLabel | translate"
+      [tooltip]="helptext.scheduleTooltip| translate"
     ></ix-scheduler>
   }
   @if (form.controls.readonly.enabled) {
     <ix-checkbox
       formControlName="readonly"
-      [label]="helptext.readonly_placeholder | translate"
-      [tooltip]="helptext.readonly_tooltip | translate"
+      [label]="helptext.readonlyLabel | translate"
+      [tooltip]="helptext.readonlyTooltip | translate"
     ></ix-checkbox>
   }
   <ix-radio-group
     formControlName="retention_policy"
-    [label]="helptext.retention_policy_placeholder | translate"
-    [tooltip]="helptext.retention_policy_tooltip | translate"
+    [label]="helptext.retentionPolicyLabel | translate"
+    [tooltip]="helptext.retentionPolicyTooltip | translate"
     [required]="true"
     [options]="retentionPolicyOptions$"
   ></ix-radio-group>

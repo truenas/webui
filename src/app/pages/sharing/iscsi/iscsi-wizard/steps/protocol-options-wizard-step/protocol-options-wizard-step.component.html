@@ -4,8 +4,8 @@
   } @else {
     <ix-select
       formControlName="portal"
-      [label]="helptextSharingIscsi.portal_placeholder | translate"
-      [tooltip]="helptextSharingIscsi.portal_tooltip | translate"
+      [label]="helptextSharingIscsi.portalLabel | translate"
+      [tooltip]="helptextSharingIscsi.portalTooltip | translate"
       [options]="portalOptions$"
       [required]="true"
     ></ix-select>
@@ -36,8 +36,8 @@
     }
     <ix-chips
       formControlName="initiators"
-      [label]="helptextSharingIscsi.initiators_placeholder | translate"
-      [tooltip]="helptextSharingIscsi.initiators_tooltip | translate"
+      [label]="helptextSharingIscsi.initiatorsLabel | translate"
+      [tooltip]="helptextSharingIscsi.initiatorsTooltip | translate"
     ></ix-chips>
   }
 </ng-container>

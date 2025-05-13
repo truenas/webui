@@ -1,52 +1,52 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const helptextInterfaces = {
-  pending_changes_text: T('There are unapplied network interface changes that must be tested before being permanently saved. Test changes now?'),
+  pendingChangesText: T('There are unapplied network interface changes that must be tested before being permanently saved. Test changes now?'),
 
-  checkin_text: T('Test network interface changes for '),
-  checkin_text_2: T(' seconds.'),
+  checkinText: T('Test network interface changes for '),
+  checkinText2: T(' seconds.'),
 
-  pending_checkin_dialog_text: T('Network interface changes have been temporarily applied for testing. Keep changes permanently?\
+  pendingCheckinDialogText: T('Network interface changes have been temporarily applied for testing. Keep changes permanently?\
  Changes are automatically reverted after the testing delay if they are not permanently applied.'),
 
-  pending_checkin_text: T('Network interface settings have been temporarily changed for testing. The settings will revert to the previous configuration after {x} seconds unless SAVE CHANGES is chosen to make them permanent.'),
+  pendingCheckinText: T('Network interface settings have been temporarily changed for testing. The settings will revert to the previous configuration after {x} seconds unless SAVE CHANGES is chosen to make them permanent.'),
 
-  commit_changes_title: T('Test Changes'),
-  commit_changes_warning: T('Test network interface changes? Network connectivity can be interrupted.'),
+  commitChangesTitle: T('Test Changes'),
+  commitChangesWarning: T('Test network interface changes? Network connectivity can be interrupted.'),
 
-  commit_button: T('Test Changes'),
-  keep_button: T('Save Changes'),
-  rollback_button: T('Revert Changes'),
-  rollback_changes_title: T('Revert Network Interface Changes'),
-  rollback_changes_warning: T('Revert interface changes? All changes that are being tested will be lost.'),
-  changes_rolled_back: T('Interface changes reverted.'),
-  network_reconnection_issue: T('Network Reconnection Issue'),
-  network_reconnection_issue_text: T('We encountered an issue while applying the new network changes. \
+  commitButton: T('Test Changes'),
+  keepButton: T('Save Changes'),
+  revertChangesButton: T('Revert Changes'),
+  revertChangesTitle: T('Revert Network Interface Changes'),
+  revertChangesWarning: T('Revert interface changes? All changes that are being tested will be lost.'),
+  changesRolledBack: T('Interface changes reverted.'),
+  networkReconnectionIssue: T('Network Reconnection Issue'),
+  networkReconnectionIssueText: T('We encountered an issue while applying the new network changes. \
  Unfortunately, we were unable to reconnect to the system after the changes were implemented. \
  As a result, we have restored the previous network configuration to ensure continued connectivity.'),
 
-  services_restarted: {
+  servicesRestarted: {
     title: T('Attention'),
     message: T('These IP Addresses were removed: {uniqueIPs}. The listed services will be changed to listen on 0.0.0.0: {affectedServices}'),
     button: T('Continue'),
   },
 
-  checkin_title: T('Save Changes'),
-  checkin_message: T('Save network interface changes?'),
-  checkin_complete_message: T('Network interface changes have been made permanent.'),
-  checkin_button: T('Save'),
-  go_to_network: T('Go To Network Settings'),
+  checkinTitle: T('Save Changes'),
+  checkinMessage: T('Save network interface changes?'),
+  checkinCompleteMessage: T('Network interface changes have been made permanent.'),
+  checkinButton: T('Save'),
+  goToNetwork: T('Go To Network Settings'),
 
-  pending_changes_title: T('Pending Network Changes'),
-  pending_changes_message: T('There are pending network interface changes. Review them now?'),
+  pendingChangesTitle: T('Pending Network Changes'),
+  pendingChangesMessage: T('There are pending network interface changes. Review them now?'),
 
-  ha_enabled_edit_msg: T('Editing interfaces while HA is enabled is not allowed.'),
+  haEnabledEditMessage: T('Editing interfaces while HA is enabled is not allowed.'),
 
-  ha_enabled_delete_msg: T('Deleting interfaces while HA is enabled is not allowed.'),
-  ha_enabled_reset_msg: T('Resetting interfaces while HA is enabled is not allowed.'),
+  haEnabledDeleteMessage: T('Deleting interfaces while HA is enabled is not allowed.'),
+  haEnabledResetMessage: T('Resetting interfaces while HA is enabled is not allowed.'),
 
-  ha_enabled_text: T('Cannot edit while HA is enabled.'),
-  go_to_ha: T('Go to HA settings'),
+  haEnabledText: T('Cannot edit while HA is enabled.'),
+  goToHa: T('Go to HA settings'),
 
-  delete_dialog_text: T('This change can interrupt connectivity and must be tested before making permanent. '),
+  deleteDialogText: T('This change can interrupt connectivity and must be tested before making permanent. '),
 };

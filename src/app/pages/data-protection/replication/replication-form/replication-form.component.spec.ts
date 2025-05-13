@@ -355,7 +355,7 @@ describe('ReplicationFormComponent', () => {
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
         buttonText: 'Use Sudo For ZFS Commands',
         hideCheckbox: true,
-        message: helptextReplicationWizard.sudo_warning,
+        message: helptextReplicationWizard.sudoWarning,
         title: 'Sudo Enabled',
       });
     }));
