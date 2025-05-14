@@ -39,6 +39,7 @@ import {
   SmbPresetType,
   SmbShare, SmbShareUpdate,
 } from 'app/interfaces/smb-share.interface';
+import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -178,6 +179,8 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     );
   }
 
+  protected rootNodes = signal<ExplorerNodeData[]>([]);
+
   hostsAllowTooltip = this.translate.instant('Enter a list of allowed hostnames or IP addresses.\
     Separate entries by pressing <code>Enter</code>. A more detailed description \
     with examples can be found \
@@ -257,6 +260,17 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
     this.existingSmbShare = this.slideInRef.getData()?.existingSmbShare;
     this.defaultSmbShare = this.slideInRef.getData()?.defaultSmbShare;
+    this.setupExplorerRootNodes();
+  }
+
+  private setupExplorerRootNodes(): void {
+    this.filesystemService.getTopLevelDatasetsNodes().pipe(
+      untilDestroyed(this),
+    ).subscribe({
+      next: (nodes) => {
+        this.rootNodes.set(nodes);
+      },
+    });
   }
 
   ngOnInit(): void {
