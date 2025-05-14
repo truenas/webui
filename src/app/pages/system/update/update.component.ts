@@ -2,6 +2,7 @@ import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component,
   computed,
+  OnInit,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -13,7 +14,7 @@ import { select, Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
-  combineLatest, filter, map, Observable, of, shareReplay, switchMap, take, tap,
+  combineLatest, filter, forkJoin, map, Observable, of, shareReplay, switchMap, take, tap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -24,10 +25,12 @@ import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
 import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
+import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -51,6 +54,10 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   templateUrl: './update.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    UiSearchDirective,
+    TestDirective,
+    TranslateModule,
+    AsyncPipe,
     RequiresRolesDirective,
     UiSearchDirective,
     TestDirective,
@@ -61,9 +68,10 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     IxIconComponent,
     IxSelectComponent,
     ReactiveFormsModule,
+    FakeProgressBarComponent,
   ],
 })
-export class UpdateComponent {
+export class UpdateComponent implements OnInit {
   readonly SystemUpdateStatus = SystemUpdateStatus;
   protected readonly searchableElements = systemUpdateElements;
   protected readonly requiredRoles = [Role.SystemUpdateWrite];
@@ -73,6 +81,8 @@ export class UpdateComponent {
   protected updateTitle = this.translate.instant('Update');
   protected isUpdateRunning = false;
   protected updateProfileControl = new FormControl('general');
+  protected singleDescription: string;
+  private trains: Option[] = [];
 
   private wasConfigurationSaved = false;
 
@@ -205,6 +215,57 @@ export class UpdateComponent {
       this.isUpdateRunning = isUpdating === 'true';
       this.cdr.markForCheck();
     });
+  }
+
+  ngOnInit(): void {
+    forkJoin([
+      this.trainService.getAutoDownload(),
+      this.trainService.getTrains(),
+    ]).pipe(untilDestroyed(this)).subscribe({
+      next: ([isAutoDownloadOn, trains]) => {
+        this.cdr.markForCheck();
+        this.trainService.fullTrainList$.next(trains.trains);
+
+        this.trainService.trainValue$.next(trains.selected || '');
+        this.trainService.selectedTrain$.next(trains.selected);
+
+        if (isAutoDownloadOn) {
+          this.trainService.check();
+        }
+
+        this.trains = Object.entries(trains.trains).map(([name, train]) => ({
+          label: train.description,
+          value: name,
+        }));
+        if (this.trains.length > 0) {
+          this.singleDescription = Object.values(trains.trains)[0]?.description;
+        }
+
+        let currentTrainDescription = '';
+
+        if (trains.trains[trains.current]) {
+          if (trains.trains[trains.current].description.toLowerCase().includes('[nightly]')) {
+            currentTrainDescription = '[nightly]';
+          } else if (trains.trains[trains.current].description.toLowerCase().includes('[release]')) {
+            currentTrainDescription = '[release]';
+          } else if (trains.trains[trains.current].description.toLowerCase().includes('[prerelease]')) {
+            currentTrainDescription = '[prerelease]';
+          } else {
+            currentTrainDescription = trains.trains[trains.selected].description.toLowerCase();
+          }
+        }
+        this.trainService.currentTrainDescription$.next(currentTrainDescription);
+        // To remember train description if user switches away and then switches back
+        this.trainService.trainDescriptionOnPageLoad$.next(currentTrainDescription);
+
+        this.cdr.markForCheck();
+      },
+      error: (error: unknown) => {
+        this.errorHandler.showErrorModal(error);
+      },
+    });
+
+    this.trainService.toggleAutoCheck(true);
   }
 
   manualUpdate(): void {

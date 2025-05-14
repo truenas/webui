@@ -1,5 +1,10 @@
 @import 'scss-imports/variables';
 
+ix-fake-progress-bar {
+  position: absolute;
+  top: 0;
+}
+
 .update-container {
   color: var(--fg2);
   display: grid;
@@ -42,7 +47,7 @@
   .train-warning {
     align-items: center;
     display: flex;
-    gap: 8px;
+    gap: 16px;
     padding: 0;
   }
 
@@ -52,7 +57,7 @@
     flex-wrap: wrap;
     gap: 16px;
     justify-content: space-between;
-    padding: 32px 0 0;
+    padding: 16px 0 0;
 
     h4 {
       align-items: center;
@@ -63,7 +68,7 @@
     .versions {
       display: grid;
       flex-wrap: wrap;
-      gap: 8px;
+      gap: 16px;
 
       ngx-skeleton-loader {
         height: 18px;
@@ -124,7 +129,7 @@
   .update-profile {
     align-items: center;
     display: flex;
-    gap: 8px;
+    gap: 16px;
 
     ix-select {
       margin: 0;

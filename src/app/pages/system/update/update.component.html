@@ -1,3 +1,5 @@
+<ix-fake-progress-bar [loading]="!!(updateService.isLoading$ | async)"></ix-fake-progress-bar>
+
 <div class="update-container">
   <div class="left-side">
     <h2>
@@ -12,6 +14,14 @@
 
     <div class="update-available">
       <div class="versions">
+        <h4>
+          <b>{{ 'Current Train:' | translate }}</b>
+          {{ trainService.trainValue$ | async }}
+          @if (singleDescription) {
+            <span>- {{ singleDescription }}</span>
+          }
+        </h4>
+
         <h4>
           {{ 'Current version' | translate }}:
           @if (systemVersion(); as systemVersion) {
@@ -30,7 +40,8 @@
 
         @if (updateVersion(); as updateVersion) {
           <h4>
-            {{ 'Update Version' | translate }}: {{ updateVersion }}
+            {{ 'Update Version' | translate }}:
+            <span>{{ updateVersion }}</span>
           </h4>
         }
       </div>
@@ -61,7 +72,7 @@
       }
 
       @if ((updateService.status$ | async) === SystemUpdateStatus.RebootRequired) {
-        <h4>
+        <h4 class="hint">
           {{ 'An update is already applied. Please restart the system.' | translate }}
         </h4>
       }
