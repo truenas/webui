@@ -274,6 +274,7 @@
   "Set to enable support for <a href=\"https://tools.ietf.org/html/rfc3410\" target=\"_blank\">SNMP version 3</a>. See <a href=\"http://net-snmp.sourceforge.net/docs/man/snmpd.conf.html\" target=\"_blank\">snmpd.conf(5)</a> for configuration details.": "",
   "Sharing NVMe-oF Target Read": "",
   "Sharing NVMe-oF Target Write": "",
+  "Sharing root datasets is not recommended. Please create a child dataset.": "",
   "Shell Access": "",
   "Show Actions": "",
   "Show Builtin Users": "",
