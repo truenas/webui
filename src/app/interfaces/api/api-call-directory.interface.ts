@@ -674,6 +674,8 @@ export interface ApiCallDirectory {
   'nvmet.host.update': { params: [id: number, update: UpdateNvmeOfHost]; response: NvmeOfHost };
   'nvmet.host.delete': { params: [id: number]; response: void };
   'nvmet.host.generate_key': { params: GenerateNvmeHostParams; response: string };
+  'nvmet.host.dhchap_dhgroup_choices': { params: void; response: string[] };
+  'nvmet.host.dhchap_hash_choices': { params: void; response: string[] };
 
   'nvmet.host_subsys.query': { params: QueryParams<SubsystemHostAssociation>; response: SubsystemHostAssociation[] };
   'nvmet.host_subsys.create': { params: [AssociateSubsystemHost]; response: void };

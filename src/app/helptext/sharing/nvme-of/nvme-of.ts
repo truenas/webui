@@ -8,6 +8,10 @@ Requires RDMA-capable system and network equipment.'),
   xportReferralTooltip: T('If ANA is active then referrals will always be generated between the peer ports on each TrueNAS controller node.'),
 
   dhchapKeyTooltip: T('DH-CHAP key to be used to authenticate the host.'),
+  dhGroupTooltip: T('Use DH (Diffie-Hellman) key exchange on top of CHAP for additional security'),
+  noDhText: T("Don't use DH key exchange."),
+  generateHostKeyDisabled: T('Please enter Host NQN first.'),
+  dhchapCtrlKey: T('If set, the secret that this TrueNAS will present to the host when the host is connecting (Bi-Directional Authentication).'),
 
   onlyStaticIpsShown: T('Only interfaces with static IPs are shown.'),
 };

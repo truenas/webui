@@ -124,7 +124,7 @@ export class PortFormComponent implements OnInit {
       finalize(() => this.isLoading.set(false)),
       untilDestroyed(this),
     ).subscribe({
-      complete: () => {
+      next: () => {
         this.snackbar.success(
           this.isNew()
             ? this.translate.instant('Port Created')
