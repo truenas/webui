@@ -3,6 +3,7 @@
 ix-fake-progress-bar {
   position: absolute;
   top: 0;
+  width: 100%;
 }
 
 .update-container {
@@ -12,7 +13,18 @@ ix-fake-progress-bar {
   grid-template-columns: 1fr 1fr;
   margin-bottom: 100px;
 
+  // TODO: remove when .right-side will be shown, currently it's hidden
+  @media(max-width: $breakpoint-lg) {
+    grid-template-columns: 1fr 0.5fr;
+  }
+
+  // TODO: remove when .right-side will be shown, currently it's hidden
+  @media(max-width: $breakpoint-md) {
+    grid-template-columns: 1fr;
+  }
+
   @media(max-width: $breakpoint-sm) {
+    gap: 32px;
     grid-template-columns: 1fr;
   }
 
@@ -62,6 +74,7 @@ ix-fake-progress-bar {
     h4 {
       align-items: center;
       display: flex;
+      flex-wrap: wrap;
       gap: 8px;
     }
 
@@ -94,6 +107,7 @@ ix-fake-progress-bar {
     .manual-update {
       align-items: center;
       display: flex;
+      flex-wrap: wrap;
       justify-content: space-between;
     }
   }
@@ -110,6 +124,10 @@ ix-fake-progress-bar {
         display: grid;
         gap: 1rem;
         grid-template-columns: 150px 1fr;
+
+        @media (max-width: $breakpoint-md) {
+          grid-template-columns: 1fr;
+        }
       }
 
       .profile-name {

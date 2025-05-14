@@ -1,7 +1,7 @@
 <ix-fake-progress-bar [loading]="!!(updateService.isLoading$ | async)"></ix-fake-progress-bar>
 
 <div class="update-container">
-  <div class="left-side">
+  <div>
     <h2>
       @if (showApplyPendingButton()) {
         {{ 'Pending Update' | translate }}
@@ -159,7 +159,7 @@
     </div>
   </div>
 
-  <div class="right-side">
+  <div [hidden]="true">
     <h2>
       {{ 'Update Profile' | translate }}
     </h2>
