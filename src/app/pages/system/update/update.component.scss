@@ -1,3 +1,145 @@
+@import 'scss-imports/variables';
+
+.update-container {
+  color: var(--fg2);
+  display: grid;
+  gap: 5%;
+  grid-template-columns: 1fr 1fr;
+  margin-bottom: 100px;
+
+  @media(max-width: $breakpoint-sm) {
+    grid-template-columns: 1fr;
+  }
+
+  .green-color {
+    color: var(--green);
+  }
+
+  .error-color {
+    color: var(--red);
+  }
+
+  ix-icon {
+    width: 18px;
+  }
+
+  a {
+    color: var(--primary);
+    margin: 10px 0 0;
+    text-decoration: underline;
+  }
+
+  h2,
+  h3 {
+    border-bottom: 1px solid var(--lines);
+    padding-bottom: 10px;
+  }
+
+  h3 {
+    margin-top: 30px;
+  }
+
+  .train-warning {
+    align-items: center;
+    display: flex;
+    gap: 8px;
+    padding: 0;
+  }
+
+  .update-available {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: space-between;
+    padding: 32px 0 0;
+
+    h4 {
+      align-items: center;
+      display: flex;
+      gap: 8px;
+    }
+
+    .versions {
+      display: grid;
+      flex-wrap: wrap;
+      gap: 8px;
+
+      ngx-skeleton-loader {
+        height: 18px;
+        margin-left: 10px;
+        width: 100px;
+      }
+    }
+  }
+
+  .update-summary {
+    h4 {
+      margin-top: 15px;
+    }
+  }
+
+  .other-options {
+    margin-top: 20px;
+
+    h4 {
+      margin-top: 15px;
+    }
+
+    .manual-update {
+      align-items: center;
+      display: flex;
+      justify-content: space-between;
+    }
+  }
+
+  .available-profiles {
+    .profile-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      padding: 8px 0;
+
+      .profile-row {
+        align-items: center;
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: 150px 1fr;
+      }
+
+      .profile-name {
+        font-size: 1rem;
+        line-height: 1.4;
+      }
+
+      .profile-note {
+        color: var(--alt-fg1);
+        display: block;
+        font-size: 0.85rem;
+        padding-top: 2px;
+      }
+    }
+  }
+
+  .update-profile {
+    align-items: center;
+    display: flex;
+    gap: 8px;
+
+    ix-select {
+      margin: 0;
+      min-width: 50%;
+    }
+
+    button {
+      margin-top: 24px;
+    }
+  }
+
+  .hint {
+    color: var(--alt-fg1);
+  }
+}
 
 #upgrades-card {
   max-height: 180px;
