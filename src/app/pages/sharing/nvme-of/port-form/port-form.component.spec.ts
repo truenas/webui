@@ -2,14 +2,17 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { NvmeOfTransportType } from 'app/enums/nvme-of.enum';
 import { NvmeOfPort } from 'app/interfaces/nvme-of.interface';
+import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { PortFormComponent } from 'app/pages/sharing/nvme-of/port-form/port-form.component';
+import { NvmeOfService } from 'app/pages/sharing/nvme-of/utils/nvme-of.service';
 
 describe('PortFormComponent', () => {
   let spectator: Spectator<PortFormComponent>;
@@ -28,6 +31,12 @@ describe('PortFormComponent', () => {
         }),
       ]),
       mockProvider(SnackbarService),
+      mockProvider(NvmeOfService, {
+        getSupportedTransports: jest.fn(() => of([
+          NvmeOfTransportType.Tcp,
+          NvmeOfTransportType.Rdma,
+        ])),
+      }),
       mockProvider(SlideInRef, {
         getData: slideInGetData,
         close: jest.fn(),
@@ -61,6 +70,15 @@ describe('PortFormComponent', () => {
       error: null,
     });
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
+  });
+
+  it('only shows supported transports in the Transport Type select', async () => {
+    expect(spectator.inject(NvmeOfService).getSupportedTransports).toHaveBeenCalled();
+
+    const select = await form.getControl('Transport Type') as IxSelectHarness;
+    const transportOptions = await select.getOptionLabels();
+
+    expect(transportOptions).toEqual(['TCP', 'RDMA']);
   });
 
   it('loads addresses based on the transport type selected', async () => {
