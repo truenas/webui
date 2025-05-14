@@ -175,7 +175,7 @@ export class SmbListComponent implements OnInit {
           onClick: (row) => {
             this.dialog.confirm({
               title: this.translate.instant('Unshare {name}', { name: row.name }),
-              message: this.translate.instant(shared.delete_share_message),
+              message: this.translate.instant(shared.deleteShareMessage),
               buttonText: this.translate.instant('Unshare'),
               buttonColor: 'warn',
             }).pipe(

@@ -4,7 +4,7 @@
       formControlName="ssh_credentials"
       [label]="'SSH Connection' | translate"
       [required]="true"
-      [tooltip]="helptext.ssh_credentials_tooltip | translate"
+      [tooltip]="helptext.sshCredentialsTooltip | translate"
     ></ix-ssh-credentials-select>
   }
   @if (isNetcat()) {
@@ -13,29 +13,29 @@
       [label]="'Netcat Active Side' | translate"
       [required]="true"
       [options]="netcatActiveSides$"
-      [tooltip]="helptext.netcat_active_side_tooltip | translate"
+      [tooltip]="helptext.netcatActiveSideTooltip | translate"
     ></ix-select>
     <ix-input
       formControlName="netcat_active_side_listen_address"
       [label]="'Netcat Active Side Listen Address' | translate"
-      [tooltip]="helptext.netcat_active_side_listen_address_tooltip | translate"
+      [tooltip]="helptext.netcatActiveSideListenAddressTooltip | translate"
     ></ix-input>
     <ix-input
       formControlName="netcat_active_side_port_min"
       type="number"
       [label]="'Netcat Active Side Min Port' | translate"
-      [tooltip]="helptext.netcat_active_side_port_min_tooltip | translate"
+      [tooltip]="helptext.netcatActiveSidePortMinTooltip | translate"
     ></ix-input>
     <ix-input
       formControlName="netcat_active_side_port_max"
       type="number"
       [label]="'Netcat Active Side Max Port' | translate"
-      [tooltip]="helptext.netcat_active_side_port_max_tooltip | translate"
+      [tooltip]="helptext.netcatActiveSidePortMaxTooltip | translate"
     ></ix-input>
     <ix-input
       formControlName="netcat_passive_side_connect_address"
       [label]="'Netcat Active Side Connect Address' | translate"
-      [tooltip]="helptext.netcat_passive_side_connect_address_tooltip | translate"
+      [tooltip]="helptext.netcatPassiveSideConnectAddressTooltip | translate"
     ></ix-input>
   }
   @if (isSsh()) {
@@ -44,24 +44,24 @@
       [label]="'Stream Compression' | translate"
       [required]="true"
       [options]="compressions$"
-      [tooltip]="helptext.compression_tooltip | translate"
+      [tooltip]="helptext.compressionTooltip | translate"
     ></ix-select>
     <ix-input
       formControlName="speed_limit"
       [label]="asTranslatedString(('Limit' | translate) + sizeSuggestion)"
       [format]="formatter.memorySizeFormatting"
       [parse]="formatter.memorySizeParsing"
-      [tooltip]="helptext.speed_limit_tooltip | translate"
+      [tooltip]="helptext.speedLimitTooltip | translate"
     ></ix-input>
   }
   <ix-checkbox
     formControlName="large_block"
     [label]="'Allow Blocks Larger than 128KB' | translate"
-    [tooltip]="helptext.large_block_tooltip | translate"
+    [tooltip]="helptext.largeBlockTooltip | translate"
   ></ix-checkbox>
   <ix-checkbox
     formControlName="compressed"
     [label]="'Allow Compressed WRITE Records' | translate"
-    [tooltip]="helptext.compressed_tooltip | translate"
+    [tooltip]="helptext.compressedTooltip | translate"
   ></ix-checkbox>
 </ix-fieldset>

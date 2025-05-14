@@ -52,10 +52,10 @@ export class NetworkInterfacesEffects {
     filter(() => this.router.url !== '/system/network'),
     switchMap(() => {
       return this.dialogService.confirm({
-        title: this.translate.instant(helptextInterfaces.checkin_title),
-        message: this.translate.instant(helptextInterfaces.pending_checkin_dialog_text),
+        title: this.translate.instant(helptextInterfaces.checkinTitle),
+        message: this.translate.instant(helptextInterfaces.pendingCheckinDialogText),
         hideCheckbox: true,
-        buttonText: this.translate.instant(helptextInterfaces.go_to_network),
+        buttonText: this.translate.instant(helptextInterfaces.goToNetwork),
       }).pipe(
         filter(Boolean),
         tap(() => {

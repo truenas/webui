@@ -95,6 +95,31 @@
         }
       </ix-fieldset>
 
+      <ix-fieldset [title]="'Authentication' | translate">
+        <ix-checkbox
+          formControlName="requireHostAuthentication"
+          [label]="'Require Host Authentication' | translate"
+        ></ix-checkbox>
+
+        @if (form.value.requireHostAuthentication) {
+          <ix-textarea
+            formControlName="dhchap_key"
+            [label]="'Key For Host To Present' | translate"
+            [tooltip]="helptext.dhchapKeyTooltip | translate"
+          ></ix-textarea>
+
+          <div class="generate-key-row">
+            <button
+              mat-button
+              type="button"
+              ixTest="generate-key"
+              [disabled]="isGeneratingHostKey()"
+              (click)="generateHostKey()"
+            >{{ 'Generate Key' | translate }}</button>
+          </div>
+        }
+      </ix-fieldset>
+
       <ix-form-actions>
         <button
           mat-button

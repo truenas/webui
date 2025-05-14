@@ -33,12 +33,12 @@ import {
   ],
 })
 export class UnlockSummaryDialog {
-  title: string = helptextUnlock.unlock_dataset_dialog.title;
-  errorsMessage: string = helptextUnlock.unlock_dataset_dialog.errors_message;
-  unlockMessage: string = helptextUnlock.unlock_dataset_dialog.unlock_message;
-  buttonMessage: string = helptextUnlock.unlock_dataset_dialog.ok_button;
-  cancelMessage: string = helptextUnlock.unlock_dataset_dialog.cancel_button;
-  skippedMessage: string = helptextUnlock.unlock_result_dialog.skipped_message;
+  title: string = helptextUnlock.unlockDatasetDialog.title;
+  errorsMessage: string = helptextUnlock.unlockDatasetDialog.errorsMessage;
+  unlockMessage: string = helptextUnlock.unlockDatasetDialog.unlockMessage;
+  buttonMessage: string = helptextUnlock.unlockDatasetDialog.continueButton;
+  cancelMessage: string = helptextUnlock.unlockDatasetDialog.cancelButton;
+  skippedMessage: string = helptextUnlock.unlockResultDialog.skippedMessage;
   unlockDatasets: { name: string }[] = [];
   errorDatasets: { name: string; unlock_error?: string }[] = [];
   skippedDatasets: { name: string }[] = [];
@@ -65,8 +65,8 @@ export class UnlockSummaryDialog {
 
   showFinalResults(): void {
     this.final = true;
-    this.errorsMessage = helptextUnlock.unlock_result_dialog.errors_message;
-    this.unlockMessage = helptextUnlock.unlock_result_dialog.unlock_message;
+    this.errorsMessage = helptextUnlock.unlockResultDialog.errorsMessage;
+    this.unlockMessage = helptextUnlock.unlockResultDialog.unlockMessage;
   }
 
   cancel(): void {
@@ -80,7 +80,7 @@ export class UnlockSummaryDialog {
   showError(dataset: { name: string; unlock_error?: string }): void {
     if (this.dialogService && dataset.unlock_error) {
       this.dialogService.warn(
-        helptextUnlock.unlock_dataset_dialog.error_dialog_title + dataset.name,
+        helptextUnlock.unlockDatasetDialog.errorDialogTitle + dataset.name,
         dataset.unlock_error,
       );
     }

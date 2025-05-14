@@ -3526,7 +3526,6 @@
   "Normal VDEV type, used for primary storage operations. ZFS pools always have at least one DATA VDEV.": "Type VDEV normal, utilisé pour les opérations de stockage primaire. Les volumes ZFS ont toujours au moins un DATA VDEV.",
   "Not Set": "Non défini",
   "Not Shared": "Non partagé",
-  "Notes about this extent.": "Notes sur cette étendue.",
   "Notice": "Remarque",
   "NOTICE": "NOTICE",
   "Notransfer Timeout": "Délai de non-transfert",
