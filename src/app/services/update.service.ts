@@ -1,7 +1,8 @@
 import { Inject, Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { catchError, Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { WINDOW } from 'app/helpers/window.helper';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { GlobalApiHttpService } from 'app/services/global-api-http.service';
 
 @Injectable({
@@ -12,6 +13,7 @@ export class UpdateService {
 
   constructor(
     private globalApi: GlobalApiHttpService,
+    private errorHandler: ErrorHandlerService,
     @Inject(WINDOW) private window: Window,
   ) {}
 
@@ -29,6 +31,12 @@ export class UpdateService {
         if (this.lastSeenBootId !== bootId) {
           this.window.location.reload();
         }
+      }),
+      catchError((error: unknown) => {
+        // Critical path, silence errors to avoid UI reboot loop and hope for the best.
+        this.errorHandler.handleError(error);
+
+        return of('');
       }),
     );
   }
