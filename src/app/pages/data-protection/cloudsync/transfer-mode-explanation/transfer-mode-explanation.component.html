@@ -3,21 +3,21 @@
     <ix-icon name="add_to_photos"></ix-icon>
     <div
       class="description"
-      [innerHtml]="helptext.transfer_mode_warning_copy"
+      [innerHtml]="helptext.copyModeExplanation"
     ></div>
   }
   @case (TransferMode.Move) {
     <ix-icon name="move_to_inbox"></ix-icon>
     <div
       class="description"
-      [innerHtml]="helptext.transfer_mode_warning_move"
+      [innerHtml]="helptext.moveModeExplanation"
     ></div>
   }
   @case (TransferMode.Sync) {
     <ix-icon name="sync"></ix-icon>
     <div
       class="description"
-      [innerHtml]="helptext.transfer_mode_warning_sync"
+      [innerHtml]="helptext.syncModeExplanation"
     ></div>
   }
 }
