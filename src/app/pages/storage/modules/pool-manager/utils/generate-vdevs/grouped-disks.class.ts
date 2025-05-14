@@ -16,7 +16,20 @@ export class GroupedDisks {
 
   findSuitableDisks(category: PoolManagerTopologyCategory): DetailsDisk[] {
     const categoryDiskSize = Number(category.diskSize);
+    const diskType = category.diskType;
+
     if (category.treatDiskSizeAsMinimum) {
+      if (diskType) {
+        const matchingDisks: DetailsDisk[] = [];
+        const disksByType = this.diskMap[diskType];
+        for (const diskSize of Object.keys(disksByType)) {
+          if (categoryDiskSize <= Number(diskSize)) {
+            matchingDisks.push(...disksByType[diskSize]);
+          }
+        }
+        return matchingDisks;
+      }
+
       const matchingDisks: DetailsDisk[] = [];
       [DiskType.Hdd, DiskType.Ssd].forEach((type) => {
         const disksByType = this.diskMap[type];
@@ -27,6 +40,10 @@ export class GroupedDisks {
         }
       });
       return matchingDisks;
+    }
+
+    if (diskType) {
+      return this.diskMap[diskType][categoryDiskSize] || [];
     }
 
     return [...this.diskMap.HDD[categoryDiskSize] || [], ...this.diskMap.SSD[categoryDiskSize] || []];
