@@ -1,38 +1,38 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const helptextUnlock = {
-  unlock_key_file_placeholder: T('Unlock with Key file'),
-  unlock_key_file_tooltip: T('Use an exported encryption key file to unlock datasets.'),
-  unlock_children_placeholder: T('Unlock Child Encrypted Roots'),
-  unlock_children_tooltip: T('Also unlock any separate encryption roots that are children of this dataset. \
+  keyFileLabel: T('Unlock with Key file'),
+  keyFileTooltip: T('Use an exported encryption key file to unlock datasets.'),
+  unlockChildrenLabel: T('Unlock Child Encrypted Roots'),
+  unlockChildrenTooltip: T('Also unlock any separate encryption roots that are children of this dataset. \
 Child datasets that inherit encryption from this encryption root will be unlocked in either case.'),
-  upload_key_file_placeholder: T('Upload Key file'),
-  upload_key_file_tooltip: T('Browse to the exported key file that can be used to unlock this \
+  uploadKeyFileLabel: T('Upload Key file'),
+  uploadKeyFileTooltip: T('Browse to the exported key file that can be used to unlock this \
      dataset.'),
-  dataset_key_placeholder: T('Dataset Key'),
-  dataset_passphrase_placeholder: T('Dataset Passphrase'),
-  dataset_passphrase_tooltip: T('The user-defined string that can unlock this dataset.'),
-  dataset_force_tooltip: T('In some cases it\'s possible that the provided key/passphrase is valid but the path \
+  datasetKeyLabel: T('Dataset Key'),
+  datasetPassphraseLabel: T('Dataset Passphrase'),
+  datasetPassphraseTooltip: T('The user-defined string that can unlock this dataset.'),
+  datasetForceTooltip: T('In some cases it\'s possible that the provided key/passphrase is valid but the path \
 where the dataset is supposed to be mounted after being unlocked already exists and is not empty. In this case, unlock \
 operation would fail. This can be overridden by Force flag. \
 When it is set, system will rename the existing \
 directory/file path where the dataset should be mounted resulting in successful unlock of the dataset.'),
-  fetching_encryption_summary_title: T('Fetching Encryption Summary'),
-  fetching_encryption_summary_message: T('Fetching Encryption Summary for {dataset}'),
-  unlocking_datasets_title: T('Unlocking Datasets'),
-  unlock_dataset_dialog: {
+  fetchingEncryptionSummaryTitle: T('Fetching Encryption Summary'),
+  fetchingEncryptionSummaryMessage: T('Fetching Encryption Summary for {dataset}'),
+  unlockingDatasetsTitle: T('Unlocking Datasets'),
+  unlockDatasetDialog: {
     title: T('Unlock Datasets'),
     errors: T('Errors'),
-    errors_message: T('The following datasets cannot be unlocked.'),
-    error_dialog_title: T('Error details for '),
+    errorsMessage: T('The following datasets cannot be unlocked.'),
+    errorDialogTitle: T('Error details for '),
     unlock: T('Unlock'),
-    unlock_message: T('These datasets will be unlocked with the provided credentials.'),
-    ok_button: T('Continue'),
-    cancel_button: T('Close'),
+    unlockMessage: T('These datasets will be unlocked with the provided credentials.'),
+    continueButton: T('Continue'),
+    cancelButton: T('Close'),
   },
-  unlock_result_dialog: {
-    errors_message: T('These datasets could not be unlocked.'),
-    unlock_message: T('These datasets were successfully unlocked.'),
-    skipped_message: T('These datasets were not unlocked because the parent datasets could not be unlocked.'),
+  unlockResultDialog: {
+    errorsMessage: T('These datasets could not be unlocked.'),
+    unlockMessage: T('These datasets were successfully unlocked.'),
+    skippedMessage: T('These datasets were not unlocked because the parent datasets could not be unlocked.'),
   },
 };

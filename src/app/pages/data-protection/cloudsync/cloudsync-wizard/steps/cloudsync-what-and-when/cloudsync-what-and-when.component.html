@@ -4,8 +4,8 @@
       @if (form.controls.direction.enabled) {
         <ix-select
           formControlName="direction"
-          [label]="helptext.direction_placeholder | translate"
-          [tooltip]="helptext.direction_tooltip | translate"
+          [label]="helptext.directionLabel | translate"
+          [tooltip]="helptext.directionTooltip | translate"
           [required]="true"
           [options]="directionOptions$"
         ></ix-select>
@@ -13,7 +13,7 @@
       @if (form.controls.transfer_mode.enabled) {
         <ix-select
           formControlName="transfer_mode"
-          [label]="helptext.transfer_mode_placeholder | translate"
+          [label]="helptext.transferModeLabel | translate"
           [tooltip]="transferModeTooltip | translate"
           [required]="true"
           [options]="transferModeOptions$"
@@ -27,8 +27,8 @@
       @if (form.controls.path_destination.enabled) {
         <ix-explorer
           formControlName="path_destination"
-          [label]="helptext.path_placeholder | translate"
-          [tooltip]="helptext.path_tooltip | translate"
+          [label]="helptext.pathLabel | translate"
+          [tooltip]="helptext.pathTooltip | translate"
           [required]="true"
           [nodeProvider]="fileNodeProvider"
         ></ix-explorer>
@@ -36,8 +36,8 @@
       @if (form.controls.path_source.enabled) {
         <ix-explorer
           formControlName="path_source"
-          [label]="helptext.path_placeholder | translate"
-          [tooltip]="helptext.path_tooltip | translate"
+          [label]="helptext.pathLabel | translate"
+          [tooltip]="helptext.pathTooltip | translate"
           [required]="true"
           [multiple]="true"
           [nodeProvider]="fileNodeProvider"
@@ -47,8 +47,8 @@
         <ix-explorer
           formControlName="folder_destination"
           root="/"
-          [label]="helptext.folder_placeholder | translate"
-          [tooltip]="helptext.folder_tooltip | translate"
+          [label]="helptext.folderLabel | translate"
+          [tooltip]="helptext.folderTooltip | translate"
           [nodeProvider]="bucketNodeProvider"
         ></ix-explorer>
       }
@@ -56,8 +56,8 @@
         <ix-explorer
           formControlName="folder_source"
           root="/"
-          [label]="helptext.folder_placeholder | translate"
-          [tooltip]="helptext.folder_tooltip | translate"
+          [label]="helptext.folderLabel | translate"
+          [tooltip]="helptext.folderTooltip | translate"
           [multiple]="true"
           [nodeProvider]="bucketNodeProvider"
         ></ix-explorer>
@@ -66,7 +66,7 @@
     @if (form.controls.description.enabled) {
       <ix-input
         formControlName="description"
-        [label]="helptext.description_placeholder | translate"
+        [label]="helptext.descriptionLabel | translate"
         [required]="true"
       ></ix-input>
     }
@@ -81,14 +81,14 @@
     @if (form.controls.bucket_input.enabled) {
       <ix-input
         formControlName="bucket_input"
-        [label]="helptext.bucket_input_placeholder | translate"
-        [tooltip]="helptext.bucket_input_tooltip | translate"
+        [label]="helptext.bucketLabel | translate"
+        [tooltip]="helptext.bucketInputTooltip | translate"
         [required]="true"
       ></ix-input>
     }
     <ix-scheduler
       formControlName="cloudsync_picker"
-      [label]="helptext.cloudsync_picker_placeholder | translate"
+      [label]="helptext.scheduleLabel | translate"
       [required]="true"
     ></ix-scheduler>
   </ix-fieldset>

@@ -23,6 +23,7 @@
           formControlName="rdma"
           [label]="'Enable Remote Direct Memory Access (RDMA)' | translate"
           [tooltip]="helptext.rdmaTooltip"
+          [matTooltip]="form.controls.rdma.disabled ? (helptext.rdmaDisabledTooltip | translate) : ''"
         ></ix-checkbox>
 
         <ix-checkbox

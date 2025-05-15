@@ -212,8 +212,8 @@ describe('IdmapFormComponent', () => {
       await saveButton.click();
 
       expect(confirm).toHaveBeenCalledWith({
-        title: helptextIdmap.idmap.clear_cache_dialog.title,
-        message: helptextIdmap.idmap.clear_cache_dialog.message,
+        title: helptextIdmap.idmap.clearCacheDialog.title,
+        message: helptextIdmap.idmap.clearCacheDialog.message,
         hideCheckbox: true,
       });
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();

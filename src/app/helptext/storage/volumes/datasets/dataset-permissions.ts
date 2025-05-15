@@ -19,12 +19,12 @@ are submitted only when this box is set.'),
 are submitted only when this box is set.'),
   },
 
-  dataset_permissions_mode_tooltip: T('Set the read, write, and execute permissions for the dataset.'),
+  modeTooltip: T('Set the read, write, and execute permissions for the dataset.'),
 
-  dataset_permissions_recursive_tooltip: T('Apply permissions recursively to all directories\
+  recursiveTooltip: T('Apply permissions recursively to all directories\
  and files within the current dataset.'),
 
-  dataset_permissions_traverse_tooltip: T('Apply permissions recursively to all child datasets of the current dataset.'),
+  traverseTooltip: T('Apply permissions recursively to all child datasets of the current dataset.'),
 
   editDisabled: {
     locked: T('Permissions cannot be modified on a locked dataset.'),
