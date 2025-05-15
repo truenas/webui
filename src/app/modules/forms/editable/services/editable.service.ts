@@ -1,19 +1,28 @@
-import { Inject, Injectable } from '@angular/core';
+import { Inject, Injectable, OnDestroy } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
-import { debounceTime, fromEvent, takeWhile } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
 import { EditableComponent } from 'app/modules/forms/editable/editable.component';
 
 @Injectable({
   providedIn: 'root',
 })
-export class EditableService {
+export class EditableService implements OnDestroy {
   private editables = new Set<EditableComponent>();
+  private listenersInitialized = false;
+
+  get hasOpenEditables(): boolean {
+    return this.getAll().some((item) => item.isOpen());
+  }
+
+  private keydownHandler = this.handleKeydown.bind(this);
+  private mousedownHandler = this.handleMousedown.bind(this);
 
   constructor(
     @Inject(WINDOW) private window: Window,
-  ) {
-    this.setupDocumentListeners();
+  ) {}
+
+  ngOnDestroy(): void {
+    this.removeDocumentListeners();
   }
 
   getAll(): EditableComponent[] {
@@ -22,10 +31,20 @@ export class EditableService {
 
   register(component: EditableComponent): void {
     this.editables.add(component);
+
+    if (!this.listenersInitialized) {
+      this.setupDocumentListeners();
+      this.listenersInitialized = true;
+    }
   }
 
   deregister(component: EditableComponent): void {
     this.editables.delete(component);
+
+    if (this.editables.size === 0) {
+      this.removeDocumentListeners();
+      this.listenersInitialized = false;
+    }
   }
 
   tryToCloseAll(): void {
@@ -34,43 +53,38 @@ export class EditableService {
 
   tryToCloseAllExcept(except: EditableComponent[]): void {
     this.editables.forEach((editable) => {
-      if (except.includes(editable)) {
-        return;
+      if (!except.includes(editable)) {
+        editable.tryToClose();
       }
-
-      editable.tryToClose();
     });
   }
 
   findEditablesWithControl(control: AbstractControl): EditableComponent[] {
-    return Array.from(this.editables).filter((editable) => {
-      return editable.hasControl(control);
-    });
+    return this.getAll().filter((editable) => editable.hasControl(control));
   }
 
   private setupDocumentListeners(): void {
-    fromEvent(this.window.document, 'keydown')
-      .pipe(
-        debounceTime(0),
-        takeWhile((_) => this.editables.size > 0),
-      )
-      .subscribe((event: KeyboardEvent) => {
-        if (event.key === 'Escape') {
-          this.tryToCloseAll();
-        }
-      });
+    this.window.document.addEventListener('keydown', this.keydownHandler, true);
+    this.window.document.addEventListener('mousedown', this.mousedownHandler, true);
+  }
 
-    fromEvent(this.window.document, 'mousedown')
-      .pipe(
-        debounceTime(0),
-        takeWhile((_) => this.editables.size > 0),
-      )
-      .subscribe((event: MouseEvent) => {
-        const target = event.target as HTMLElement;
-        const clickedWithin = Array.from(this.editables)
-          .filter((editable) => editable.isElementWithin(target));
+  private removeDocumentListeners(): void {
+    this.window.document.removeEventListener('keydown', this.keydownHandler, true);
+    this.window.document.removeEventListener('mousedown', this.mousedownHandler, true);
+  }
 
-        this.tryToCloseAllExcept(clickedWithin);
-      });
+  private handleKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Escape' && this.hasOpenEditables) {
+      event.stopImmediatePropagation();
+      this.tryToCloseAll();
+    }
+  }
+
+  private handleMousedown(event: MouseEvent): void {
+    if (!this.hasOpenEditables) return;
+
+    const target = event.target as HTMLElement;
+    const clickedWithin = this.getAll().filter((editable) => editable.isElementWithin(target));
+    this.tryToCloseAllExcept(clickedWithin);
   }
 }

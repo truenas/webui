@@ -10,9 +10,12 @@ describe('EditableService', () => {
 
   type EventListener = (event: Event) => unknown;
   const registeredListeners = new Map<string, EventListener>();
-  const addEventListener = jest.fn((type: string, listener: EventListener) => {
-    registeredListeners.set(type, listener);
-  });
+
+  const addEventListener = jest.fn(
+    (type: string, listener: EventListener) => {
+      registeredListeners.set(type, listener);
+    },
+  );
   const removeEventListener = jest.fn();
 
   const createService = createServiceFactory({
@@ -28,6 +31,7 @@ describe('EditableService', () => {
   });
 
   beforeEach(() => {
+    registeredListeners.clear();
     spectator = createService();
   });
 
@@ -64,7 +68,7 @@ describe('EditableService', () => {
   });
 
   describe('findEditablesWithControl', () => {
-    it('returns an editable that contains specific form control', () => {
+    it('returns editables that contain a specific form control', () => {
       const component1 = {
         hasControl: (_: AbstractControl) => true,
       } as EditableComponent;
@@ -75,9 +79,9 @@ describe('EditableService', () => {
       spectator.service.register(component1);
       spectator.service.register(component2);
 
-      const components = spectator.service.findEditablesWithControl({} as AbstractControl);
+      const result = spectator.service.findEditablesWithControl({} as AbstractControl);
 
-      expect(components).toEqual([component1]);
+      expect(result).toEqual([component1]);
     });
   });
 
@@ -101,7 +105,7 @@ describe('EditableService', () => {
   });
 
   describe('tryToCloseAllExcept', () => {
-    it('calls tryToClose on all registered editables except the ones passed in', () => {
+    it('calls tryToClose on all editables except the ones passed in', () => {
       const component1 = {
         tryToClose: jest.fn() as EditableComponent['tryToClose'],
       } as EditableComponent;
@@ -121,38 +125,40 @@ describe('EditableService', () => {
 
   describe('document listeners', () => {
     const component1 = {
-      tryToClose: jest.fn() as EditableComponent['tryToClose'],
-      isElementWithin: jest.fn(() => false) as EditableComponent['isElementWithin'],
-    } as EditableComponent;
+      isOpen: () => true,
+      tryToClose: jest.fn(),
+      isElementWithin: () => false,
+    } as unknown as EditableComponent;
     const component2 = {
-      tryToClose: jest.fn() as EditableComponent['tryToClose'],
-      isElementWithin: jest.fn(() => true) as EditableComponent['isElementWithin'],
-    } as EditableComponent;
+      isOpen: () => true,
+      tryToClose: jest.fn(),
+      isElementWithin: () => true,
+    } as unknown as EditableComponent;
 
     beforeEach(() => {
       spectator.service.register(component1);
       spectator.service.register(component2);
     });
 
-    it('listens to keydown events and tries to close all editables when Escape is pressed', fakeAsync(() => {
+    it('listens to keydown Escape and closes all if open editables exist', () => {
       const event = new KeyboardEvent('keydown', { key: 'Escape' });
       const listener = registeredListeners.get('keydown');
-      if (listener) {
-        listener(event);
-      }
+      listener?.(event);
 
       tick(0);
 
       expect(component1.tryToClose).toHaveBeenCalled();
       expect(component2.tryToClose).toHaveBeenCalled();
-    }));
+    });
 
-    it('listens to mousedown events and closes editables except the one that has received the click', fakeAsync(() => {
-      const event = new MouseEvent('mousedown');
+    it('listens to mousedown and closes only editables not clicked inside', fakeAsync(() => {
+      const event = new MouseEvent('mousedown', { bubbles: true });
+      Object.defineProperty(event, 'target', {
+        value: document.createElement('div'),
+      });
+
       const listener = registeredListeners.get('mousedown');
-      if (listener) {
-        listener(event);
-      }
+      listener?.(event);
 
       tick(0);
 
