@@ -16,7 +16,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { isEqual } from 'lodash-es';
-import { noop, Observable, of } from 'rxjs';
+import {
+  endWith, noop, Observable, of,
+} from 'rxjs';
 import {
   debounceTime,
   filter,
@@ -570,15 +572,19 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
   restartCifsService = (): Observable<boolean> => {
     this.loader.open();
-    return this.api.call('service.restart', [ServiceName.Cifs]).pipe(
-      tap(() => {
-        this.loader.close();
-        this.snackbar.success(
-          this.translate.instant(
-            helptextSharingSmb.restarted_smb_dialog.message,
-          ),
-        );
+    return this.api.job('service.restart', [ServiceName.Cifs]).pipe(
+      tap({
+        complete: () => {
+          this.loader.close();
+          this.snackbar.success(
+            this.translate.instant(
+              helptextSharingSmb.restarted_smb_dialog.message,
+            ),
+          );
+        },
       }),
+      endWith(true),
+      filter((job) => job === true),
     );
   };
 

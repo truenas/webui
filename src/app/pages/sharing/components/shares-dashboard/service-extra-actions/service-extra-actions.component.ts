@@ -11,6 +11,7 @@ import { AuditService } from 'app/enums/audit.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
+import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { Service } from 'app/interfaces/service.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
@@ -114,26 +115,28 @@ export class ServiceExtraActionsComponent {
   }
 
   private startService(service: Service): void {
-    this.api.call('service.start', [service.service, { silent: false }])
+    this.api.job('service.start', [service.service, { silent: false }])
       .pipe(
+        observeJob(),
         this.loader.withLoader(),
         this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
-      .subscribe(() => {
-        this.snackbar.success(this.translate.instant('Service started'));
+      .subscribe({
+        complete: () => this.snackbar.success(this.translate.instant('Service started')),
       });
   }
 
   private stopService(service: Service): void {
-    this.api.call('service.stop', [service.service, { silent: false }])
+    this.api.job('service.stop', [service.service, { silent: false }])
       .pipe(
+        observeJob(),
         this.loader.withLoader(),
         this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
-      .subscribe(() => {
-        this.snackbar.success(this.translate.instant('Service stopped'));
+      .subscribe({
+        complete: () => this.snackbar.success(this.translate.instant('Service stopped')),
       });
   }
 }

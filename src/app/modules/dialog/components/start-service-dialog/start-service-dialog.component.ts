@@ -11,6 +11,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Observable, forkJoin, filter } from 'rxjs';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
+import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { Service } from 'app/interfaces/service.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxSlideToggleComponent } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
@@ -82,7 +83,7 @@ export class StartServiceDialog implements OnInit {
 
   onSubmit(): void {
     this.isLoading = true;
-    const requests: Observable<boolean | number>[] = [];
+    const requests: Observable<unknown>[] = [];
     const result: StartServiceDialogResult = {
       start: true,
       startAutomatically: this.startAutomaticallyControl.value,
@@ -93,7 +94,9 @@ export class StartServiceDialog implements OnInit {
     }
 
     if (result.start) {
-      requests.push(this.api.call('service.start', [this.serviceName, { silent: false }]));
+      requests.push(
+        this.api.job('service.start', [this.serviceName, { silent: false }]).pipe(observeJob()),
+      );
     }
 
     forkJoin(requests)

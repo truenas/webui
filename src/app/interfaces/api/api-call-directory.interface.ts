@@ -737,12 +737,6 @@ export interface ApiCallDirectory {
 
   // Service
   'service.query': { params: QueryParams<Service>; response: Service[] };
-  'service.restart': { params: [ServiceName]; response: boolean };
-  'service.start': { params: [ServiceName, { silent: boolean }]; response: boolean };
-  'service.stop': {
-    params: [ServiceName, { silent: boolean }];
-    response: boolean; // False indicates that service has been stopped.
-  };
   'service.update': { params: [number | ServiceName, Partial<Service>]; response: number };
 
   // Sharing

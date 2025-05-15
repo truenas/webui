@@ -6,7 +6,8 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dial
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { Subject } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { mockCall, mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
@@ -39,7 +40,7 @@ describe('StartServiceDialogComponent', () => {
       mockAuth(),
       mockApi([
         mockCall('service.update'),
-        mockCall('service.start'),
+        mockJob('service.start', fakeSuccessfulJob()),
       ]),
       {
         provide: MAT_DIALOG_DATA,
@@ -88,7 +89,7 @@ describe('StartServiceDialogComponent', () => {
     await startButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('service.update', [4, { enable: true }]);
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('service.start', ['cifs', { silent: false }]);
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('service.start', ['cifs', { silent: false }]);
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({
       start: true,
       startAutomatically: true,
@@ -114,7 +115,7 @@ describe('StartServiceDialogComponent', () => {
     await startButton.click();
 
     expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('service.update', [4, { enable: true }]);
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('service.start', ['cifs', { silent: false }]);
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('service.start', ['cifs', { silent: false }]);
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({
       start: true,
       startAutomatically: false,

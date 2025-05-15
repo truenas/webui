@@ -1,4 +1,5 @@
 import { DockerConfig, DockerConfigUpdate } from 'app/enums/docker-config.interface';
+import { ServiceName } from 'app/enums/service-name.enum';
 import { SetAcl } from 'app/interfaces/acl.interface';
 import { ActiveDirectoryConfig, LeaveActiveDirectory } from 'app/interfaces/active-directory-config.interface';
 import { ActiveDirectoryUpdate } from 'app/interfaces/active-directory.interface';
@@ -169,6 +170,14 @@ export interface ApiJobDirectory {
 
   // Rsync
   'rsynctask.run': { params: [id: number]; response: null };
+
+  // Service
+  'service.restart': { params: [ServiceName]; response: boolean };
+  'service.start': { params: [ServiceName, { silent: boolean }]; response: boolean };
+  'service.stop': {
+    params: [ServiceName, { silent: boolean }];
+    response: boolean; // False indicates that service has been stopped.
+  };
 
   // Support
   'support.attach_ticket': { params: AttachTicketParams; response: Job };
