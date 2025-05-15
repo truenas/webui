@@ -17,6 +17,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 /**
  * Editable component that allows inline editing of a value.
  *
+ * You may want to use it with ix-details-table.
+ *
  * @example
  * ```html
  * <ix-editable>

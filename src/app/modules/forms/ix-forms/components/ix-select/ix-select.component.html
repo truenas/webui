@@ -14,6 +14,7 @@
       [disabled]="disabledState"
       [multiple]="multiple()"
       [ixTest]="controlDirective.name"
+      [canSelectNullableOptions]="true"
       [aria-label]="label() || ''"
       [(ngModel)]="value"
       (blur)="onTouch()"
@@ -51,7 +52,7 @@
             [value]="emptyValue()"
             [ixTest]="[controlDirective.name, 'select']"
           >
-            --
+            {{ emptyLabel() }}
           </mat-option>
         }
         @for (option of opts; track option.label) {

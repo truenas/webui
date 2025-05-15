@@ -17,12 +17,24 @@ export function choicesToOptions(): OperatorFunction<Choices, Option[]> {
   });
 }
 
+/**
+ * Transfers array of tuples to array of options:
+ * ```
+ * [['value1', 'label1'], ['value2', 'label2']]
+ * ```
+ */
 export function arrayToOptions(): OperatorFunction<MapOption[], Option[]> {
   return map((choices) => {
     return choices.map(([value, label]) => ({ label: ignoreTranslation(label), value }));
   });
 }
 
+/**
+ * Transfers normal array to array of options:
+ * ```
+ * ['value1', 'value2', 'value3'],
+ * ```
+ */
 export function singleArrayToOptions(): OperatorFunction<(string | number)[], Option[]> {
   return map((choices) => {
     return choices.map((choice) => ({ label: ignoreTranslation(String(choice)), value: choice }));

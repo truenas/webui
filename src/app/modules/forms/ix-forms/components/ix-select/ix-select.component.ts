@@ -64,6 +64,7 @@ export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChange
   readonly tooltip = input<TranslatedString>();
   readonly multiple = input<boolean>();
   readonly emptyValue = input<string | null>(null);
+  readonly emptyLabel = input('--');
   readonly hideEmpty = input(false);
   readonly showSelectAll = input(false);
   readonly compareWith = input<(val1: unknown, val2: unknown) => boolean>((val1, val2) => val1 === val2);
@@ -83,7 +84,7 @@ export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChange
 
   get selectedLabel(): string {
     if (this.value === undefined) {
-      return '';
+      return this.emptyLabel();
     }
 
     if (this.multiple()) {
@@ -91,7 +92,7 @@ export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChange
     }
 
     const selectedOption = this.opts.find((opt) => this.compareWith()(opt.value, this.value));
-    return selectedOption ? selectedOption.label : '';
+    return selectedOption ? selectedOption.label : this.emptyLabel();
   }
 
   get multipleLabels(): string[] {

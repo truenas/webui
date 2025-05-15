@@ -1,4 +1,14 @@
-<td class="key-column">{{ label() }}</td>
+<td class="key-column">
+  {{ label() }}
+
+  @if (tooltip()) {
+    <ix-tooltip
+      class="tooltip"
+      [header]="label()"
+      [message]="tooltip()"
+    ></ix-tooltip>
+  }
+</td>
 <td class="value-column">
   <ng-content></ng-content>
 </td>
