@@ -29,7 +29,7 @@ const mockSubsystems: NvmeOfSubsystem[] = [
   },
   {
     allow_any_host: true,
-    id: 1,
+    id: 2,
     name: 'subsys-2',
     ieee_oui: 'ieee_oui-2',
     ana: false,
