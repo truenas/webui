@@ -10,9 +10,9 @@
     #masterList
     master
     [dataProvider]="dataProvider"
-    [subsystems]="subsystems()"
     [isMobileView]="masterDetailView.isMobileView()"
     (toggleShowMobileDetails)="masterDetailView.toggleShowMobileDetails($event)"
+    (search)="onFilter($event)"
   ></ix-subsystems-list>
 
   <div detail-header class="detail-header">

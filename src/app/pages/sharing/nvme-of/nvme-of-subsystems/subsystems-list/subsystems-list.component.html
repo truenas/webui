@@ -4,7 +4,7 @@
     <h3>{{ 'Subsystems' | translate }}</h3>
 
     <div class="actions action-icon">
-      <ix-search-input1 [value]="filterString" (search)="onListFiltered($event)"></ix-search-input1>
+      <ix-search-input1 (search)="onListFiltered($event)"></ix-search-input1>
 
       <button
         *ixRequiresRoles="requiredRoles"

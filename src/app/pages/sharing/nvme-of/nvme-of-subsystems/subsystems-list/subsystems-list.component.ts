@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, input, output, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, input, output,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -24,7 +24,6 @@ import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-h
 import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
-import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -60,11 +59,11 @@ import { NvmeOfStore } from 'app/pages/sharing/nvme-of/nvme-of.store';
     IxTablePagerComponent,
   ],
 })
-export class SubsystemsListComponent implements OnInit {
+export class SubsystemsListComponent {
   readonly isMobileView = input<boolean>();
   readonly toggleShowMobileDetails = output<boolean>();
   readonly dataProvider = input.required<ArrayDataProvider<NvmeOfSubsystem>>();
-  readonly subsystems = input<NvmeOfSubsystem[]>();
+  readonly search = output<string>();
 
   protected readonly searchableElements = subsystemListElements;
 
@@ -76,7 +75,7 @@ export class SubsystemsListComponent implements OnInit {
 
   filterString = '';
 
-  columns = createTable<NvmeOfSubsystem>([
+  protected columns = createTable<NvmeOfSubsystem>([
     textColumn({
       title: this.translate.instant('Name'),
       propertyName: 'name',
@@ -115,11 +114,7 @@ export class SubsystemsListComponent implements OnInit {
     private nvmeOfStore: NvmeOfStore,
   ) { }
 
-  ngOnInit(): void {
-    this.setDefaultSort();
-  }
-
-  expanded(subsys: NvmeOfSubsystem): void {
+  protected expanded(subsys: NvmeOfSubsystem): void {
     if (this.isMobileView()) {
       this.toggleShowMobileDetails.emit(!!subsys);
       if (!subsys) {
@@ -129,15 +124,7 @@ export class SubsystemsListComponent implements OnInit {
     }
   }
 
-  setDefaultSort(): void {
-    this.dataProvider().setSorting({
-      active: 0,
-      direction: SortDirection.Asc,
-      propertyName: 'name',
-    });
-  }
-
-  doAdd(): void {
+  protected doAdd(): void {
     this.slideIn.open(AddSubsystemComponent, { wide: true })
       .pipe(
         filter((response) => !!response.response),
@@ -149,12 +136,8 @@ export class SubsystemsListComponent implements OnInit {
       });
   }
 
-  onListFiltered(query: string): void {
+  protected onListFiltered(query: string): void {
     this.filterString = query;
-    this.dataProvider().setFilter({
-      list: this.subsystems(),
-      query,
-      columnKeys: ['name'],
-    });
+    this.search.emit(query);
   }
 }

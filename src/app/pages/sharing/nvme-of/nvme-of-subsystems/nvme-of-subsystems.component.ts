@@ -14,6 +14,7 @@ import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { NvmeOfSubsystem } from 'app/interfaces/nvme-of.interface';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
+import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master-detail-view.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -66,6 +67,11 @@ export class NvmeOfSubsystemsComponent {
         this.dataProvider.expandedRow = firstSubsystem;
       }
       this.dataProvider.setRows(subsystems);
+      this.dataProvider.setSorting({
+        active: 0,
+        direction: SortDirection.Asc,
+        propertyName: 'name',
+      });
     });
 
     effect(() => {
@@ -112,6 +118,14 @@ export class NvmeOfSubsystemsComponent {
     ).subscribe(({ response }: { response: NvmeOfSubsystem | boolean }) => {
       this.dataProvider.expandedRow = response as NvmeOfSubsystem;
       this.nvmeOfStore.initialize();
+    });
+  }
+
+  onFilter(query: string): void {
+    this.dataProvider.setFilter({
+      list: this.subsystems(),
+      query,
+      columnKeys: ['name'],
     });
   }
 }
