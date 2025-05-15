@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
-import { NvmeOfHost } from 'app/interfaces/nvme-of.interface';
+import { NvmeOfGlobalConfig, NvmeOfHost } from 'app/interfaces/nvme-of.interface';
 import { DetailsTableHarness } from 'app/modules/details-table/details-table.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -15,6 +15,7 @@ describe('HostFormComponent', () => {
   let spectator: Spectator<HostFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
+  let api: ApiService;
   const slideInGetData = jest.fn(() => undefined);
   const createComponent = createComponentFactory({
     component: HostFormComponent,
@@ -25,6 +26,9 @@ describe('HostFormComponent', () => {
         mockCall('nvmet.host.generate_key', '123456'),
         mockCall('nvmet.host.dhchap_hash_choices', ['SHA-256', 'SHA-512']),
         mockCall('nvmet.host.dhchap_dhgroup_choices', ['2048-BIT', '4096-BIT']),
+        mockCall('nvmet.global.config', {
+          basenqn: 'nqn.2011-06.com.truenas',
+        } as NvmeOfGlobalConfig),
       ]),
       mockProvider(SnackbarService),
       mockProvider(SlideInRef, {
@@ -38,6 +42,7 @@ describe('HostFormComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
+    api = spectator.inject(ApiService);
   });
 
   it('creates a new host when form is submitted', async () => {
@@ -46,18 +51,23 @@ describe('HostFormComponent', () => {
       'Require Host Authentication': true,
       'Key For Host To Present': '1234567890',
       'Key For TrueNAS To Present (Optional)': '111222',
+      'Also use Diffie–Hellman key exchange for additional security': true,
     });
 
-    const details = await loader.getHarness(DetailsTableHarness);
-    await details.setValues({
+    const firstDetails = await loader.getHarness(DetailsTableHarness);
+    await firstDetails.setValues({
       Hash: 'SHA-512',
-      'DH Group': '4096-BIT',
+    });
+
+    const secondDetails = (await loader.getAllHarnesses(DetailsTableHarness))[1];
+    await secondDetails.setValues({
+      'DH Group': '2048-BIT',
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nvmet.host.create', [{
+    expect(api.call).toHaveBeenCalledWith('nvmet.host.create', [{
       hostnqn: 'nqn.2014-08.org',
       dhchap_key: '1234567890',
       dhchap_ctrl_key: '111222',
@@ -78,6 +88,7 @@ describe('HostFormComponent', () => {
         hostnqn: 'nqn.2014-08.org',
         dhchap_key: '1234567890',
         dhchap_ctrl_key: '111222',
+        dhchap_dhgroup: '2048-BIT',
       } as NvmeOfHost);
 
       spectator.component.ngOnInit();
@@ -90,6 +101,17 @@ describe('HostFormComponent', () => {
         'Require Host Authentication': true,
         'Key For Host To Present': '1234567890',
         'Key For TrueNAS To Present (Optional)': '111222',
+        'Also use Diffie–Hellman key exchange for additional security': true,
+      });
+
+      const firstDetails = await loader.getHarness(DetailsTableHarness);
+      expect(await firstDetails.getValues()).toEqual({
+        Hash: 'SHA-256',
+      });
+
+      const secondDetails = (await loader.getAllHarnesses(DetailsTableHarness))[1];
+      expect(await secondDetails.getValues()).toEqual({
+        'DH Group': '2048-BIT',
       });
     });
 
@@ -102,12 +124,12 @@ describe('HostFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nvmet.host.update', [23, {
+      expect(api.call).toHaveBeenCalledWith('nvmet.host.update', [23, {
         hostnqn: 'nqn.2014-09.org',
         dhchap_key: null,
         dhchap_ctrl_key: '111222',
-        dhchap_dhgroup: '2048-BIT',
         dhchap_hash: 'SHA-256',
+        dhchap_dhgroup: null,
       }]);
     });
   });
@@ -122,13 +144,13 @@ describe('HostFormComponent', () => {
       const generateKeyButton = await loader.getHarness(MatButtonHarness.with({ text: 'Generate Key' }));
       await generateKeyButton.click();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nvmet.host.generate_key', ['SHA-256', 'nqn.2014-08.org']);
+      expect(api.call).toHaveBeenCalledWith('nvmet.host.generate_key', ['SHA-256', 'nqn.2014-08.org']);
       expect(await form.getValues()).toMatchObject({
         'Key For Host To Present': '123456',
       });
     });
 
-    it('generates TrueNAS key when host authentication is enabled and the other Generate Key is pressed', async () => {
+    it('generates TrueNAS key using basenqn from settings when the other Generate Key is pressed', async () => {
       await form.fillForm({
         'Host NQN': 'nqn.2014-08.org',
         'Require Host Authentication': true,
@@ -137,7 +159,8 @@ describe('HostFormComponent', () => {
       const generateKeyButton = (await loader.getAllHarnesses(MatButtonHarness.with({ text: 'Generate Key' })))[1];
       await generateKeyButton.click();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nvmet.host.generate_key', ['SHA-256']);
+      expect(api.call).toHaveBeenCalledWith('nvmet.global.config');
+      expect(api.call).toHaveBeenCalledWith('nvmet.host.generate_key', ['SHA-256', 'nqn.2011-06.com.truenas']);
       expect(await form.getValues()).toMatchObject({
         'Key For TrueNAS To Present (Optional)': '123456',
       });

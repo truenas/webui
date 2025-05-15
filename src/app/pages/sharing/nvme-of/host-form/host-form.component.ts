@@ -10,7 +10,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { omit } from 'lodash-es';
-import { finalize } from 'rxjs';
+import { finalize, switchMap } from 'rxjs';
 import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextNvmeOf } from 'app/helptext/sharing/nvme-of/nvme-of';
 import { NvmeOfHost } from 'app/interfaces/nvme-of.interface';
@@ -73,9 +73,11 @@ export class HostFormComponent implements OnInit {
 
     requireHostAuthentication: [false],
     dhchap_hash: ['SHA-256'],
-    dhchap_dhgroup: ['2048-BIT' as string | null],
+    dhchap_dhgroup: ['4096-BIT' as string | null],
     dhchap_key: [null as string | null],
     dhchap_ctrl_key: [null as string | null],
+
+    addDhKeyExchange: [false],
   });
 
   protected isGeneratingHostKey = signal(false);
@@ -100,6 +102,7 @@ export class HostFormComponent implements OnInit {
       this.form.patchValue({
         ...existingHost,
         requireHostAuthentication: Boolean(existingHost.dhchap_key),
+        addDhKeyExchange: Boolean(existingHost.dhchap_dhgroup),
       });
     }
   }
@@ -125,7 +128,11 @@ export class HostFormComponent implements OnInit {
 
   protected generateTrueNasKey(): void {
     this.isGeneratingTrueNasKey.set(true);
-    this.api.call('nvmet.host.generate_key', [this.form.value.dhchap_hash])
+    this.api.call('nvmet.global.config').pipe(
+      switchMap((config) => {
+        return this.api.call('nvmet.host.generate_key', [this.form.value.dhchap_hash, config.basenqn]);
+      }),
+    )
       .pipe(
         finalize(() => this.isGeneratingTrueNasKey.set(false)),
         this.errorHandler.withErrorHandler(),
@@ -143,8 +150,9 @@ export class HostFormComponent implements OnInit {
 
     const value = this.form.getRawValue();
     const payload = {
-      ...omit(value, 'requireHostAuthentication'),
+      ...omit(value, 'requireHostAuthentication', 'addDhKeyExchange'),
       dhchap_key: value.requireHostAuthentication ? value.dhchap_key : null,
+      dhchap_dhgroup: (value.requireHostAuthentication && value.addDhKeyExchange) ? value.dhchap_dhgroup : null,
     };
 
     const request$ = this.isNew()

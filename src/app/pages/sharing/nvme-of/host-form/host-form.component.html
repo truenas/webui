@@ -38,26 +38,6 @@
                 </div>
               </ix-editable>
             </ix-details-item>
-
-            <ix-details-item
-              [label]="'DH Group' | translate"
-              [tooltip]="helptext.dhGroupTooltip | translate"
-            >
-              <ix-editable>
-                <div view>
-                  {{ form.value.dhchap_dhgroup || (helptext.noDhText | translate) }}
-                </div>
-
-                <div edit>
-                  <ix-select
-                    class="dh-group-select"
-                    formControlName="dhchap_dhgroup"
-                    [options]="dhGroupOptions$"
-                    [emptyLabel]="helptext.noDhText | translate"
-                  ></ix-select>
-                </div>
-              </ix-editable>
-            </ix-details-item>
           </ix-details-table>
 
           <ix-textarea
@@ -92,31 +72,36 @@
               (click)="generateTrueNasKey()"
             >{{ 'Generate Key' | translate }}</button>
           </div>
-        }
-      </ix-fieldset>
 
-      <ix-fieldset [title]="'Authentication' | translate">
-        <ix-checkbox
-          formControlName="requireHostAuthentication"
-          [label]="'Require Host Authentication' | translate"
-        ></ix-checkbox>
+          <ix-checkbox
+            formControlName="addDhKeyExchange"
+            class="dh-checkbox"
+            [label]="'Also use Diffie–Hellman key exchange for additional security' | translate"
+            [tooltip]="helptext.dhKeyExchangeTooltip | translate"
+          ></ix-checkbox>
 
-        @if (form.value.requireHostAuthentication) {
-          <ix-textarea
-            formControlName="dhchap_key"
-            [label]="'Key For Host To Present' | translate"
-            [tooltip]="helptext.dhchapKeyTooltip | translate"
-          ></ix-textarea>
+          @if (form.value.addDhKeyExchange) {
+            <ix-details-table class="authentication-details">
+              <ix-details-item
+                [label]="'DH Group' | translate"
+              >
+                <ix-editable>
+                  <div view>
+                    {{ form.value.dhchap_dhgroup || (helptext.noDhText | translate) }}
+                  </div>
 
-          <div class="generate-key-row">
-            <button
-              mat-button
-              type="button"
-              ixTest="generate-key"
-              [disabled]="isGeneratingHostKey()"
-              (click)="generateHostKey()"
-            >{{ 'Generate Key' | translate }}</button>
-          </div>
+                  <div edit>
+                    <ix-select
+                      class="dh-group-select"
+                      formControlName="dhchap_dhgroup"
+                      [options]="dhGroupOptions$"
+                      [emptyLabel]="helptext.noDhText | translate"
+                    ></ix-select>
+                  </div>
+                </ix-editable>
+              </ix-details-item>
+            </ix-details-table>
+          }
         }
       </ix-fieldset>
 
