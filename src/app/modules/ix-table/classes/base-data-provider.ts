@@ -77,7 +77,8 @@ export class BaseDataProvider<T> implements DataProvider<T> {
   }
 
   protected updateCurrentPage(rows: T[]): void {
-    this.currentPage$.next(paginate(sort(rows, this.sorting), this.pagination));
+    const paginatorRows = paginate(sort(rows, this.sorting), this.pagination);
+    this.currentPage$.next(paginatorRows);
   }
 }
 

@@ -1,0 +1,12 @@
+@import 'scss-imports/variables';
+
+:host ::ng-deep .view-details-column {
+  align-items: center;
+  display: flex;
+  height: inherit;
+  justify-content: flex-end;
+
+  @media (min-width: calc($breakpoint-tablet + 1px)) {
+    display: none;
+  }
+}
