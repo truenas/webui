@@ -30,6 +30,7 @@ binary-stamp:
 	/usr/bin/yarn run build:prod:aot
 	date +%s > dist/assets/buildtime
 	/usr/bin/yarn run sentry:sourcemaps
+	/usr/bin/yarn run check-sentry
 	cp -r dist/* debian/truenas-webui/usr/share/truenas/webui
 	rm -rf dist/
 	rm -rf node_modules/
