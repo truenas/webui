@@ -19,7 +19,6 @@ import {
   filter, Observable, of, Subscription, switchMap, timer,
 } from 'rxjs';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EditableService } from 'app/modules/forms/editable/services/editable.service';
 import {
   SlideIn,
 } from 'app/modules/slide-ins/slide-in';
@@ -42,16 +41,7 @@ export class SlideInComponent implements OnInit, OnDestroy {
   private readonly slideInBody = viewChild.required('slideInBody', { read: ViewContainerRef });
   private needConfirmation: () => Observable<boolean>;
 
-  @HostListener('document:keydown.escape', ['$event'])
-  onKeydownHandler(event: KeyboardEvent): void {
-    const hasOpenEditables = this.editableService.getAll().some((item) => item.isOpen());
-
-    if (hasOpenEditables) {
-      this.editableService.tryToCloseAll();
-      event.stopPropagation();
-      return;
-    }
-
+  @HostListener('document:keydown.escape') onKeydownHandler(): void {
     this.onBackdropClicked();
   }
 
@@ -72,7 +62,6 @@ export class SlideInComponent implements OnInit, OnDestroy {
     private renderer: Renderer2,
     private slideIn: SlideIn,
     private cdr: ChangeDetectorRef,
-    private editableService: EditableService,
   ) {
     this.element = this.el.nativeElement as HTMLElement;
   }
