@@ -3,10 +3,10 @@
 <div class="update-container">
   <div>
     <h2>
-      @if (showApplyPendingButton()) {
-        {{ 'Pending Update' | translate }}
-      } @else if (showDownloadUpdateButton()) {
+      @if (showDownloadUpdateButton()) {
         {{ 'Update Available' | translate }}
+      } @else if (showApplyPendingButton()) {
+        {{ 'Pending Update' | translate }}
       } @else {
         {{ 'Installed Version' | translate }}
       }
@@ -46,7 +46,7 @@
         }
       </div>
 
-      @if (showDownloadUpdateButton()) {
+       @if (showDownloadUpdateButton()) {
         <button
           *ixRequiresRoles="requiredRoles"
           mat-button
@@ -57,9 +57,7 @@
         >
           {{ 'Install Update' | translate }}
         </button>
-      }
-
-      @if (showApplyPendingButton()) {
+      } @else if (showApplyPendingButton()) {
         <button
           *ixRequiresRoles="requiredRoles"
           mat-button
@@ -71,25 +69,21 @@
         </button>
       }
 
-      @if ((updateService.status$ | async) === SystemUpdateStatus.RebootRequired) {
-        <h4 class="hint">
-          {{ 'An update is already applied. Please restart the system.' | translate }}
-        </h4>
-      }
-
       @if ((updateService.status$ | async) === SystemUpdateStatus.Unavailable) {
         <h4>
           <b>{{ 'System is up to date!' | translate }}</b>
           <ix-icon name="check_circle" class="green-color"></ix-icon>
         </h4>
       }
-
-      @if (updateService.error$ | async) {
-        <h4 class="error-color">
-          {{ updateService.error$ | async }}
-        </h4>
-      }
     </div>
+
+    @if ((updateService.status$ | async) === SystemUpdateStatus.RebootRequired) {
+      <h4 class="hint">{{ 'An update is already applied. Please restart the system.' | translate }}</h4>
+    }
+
+    @if (updateService.error$ | async) {
+      <h4 class="error-color">{{ updateService.error$ | async }}</h4>
+    }
 
     @if (updateVersion()) {
       <div class="update-summary">
@@ -98,18 +92,16 @@
         </h3>
 
         @if (showInfoForTesting()) {
-          <h4 class="train-warning">
+          <p class="train-warning">
             <ix-icon name="info"></ix-icon>
             <strong>
               {{ 'Selected train does not have production releases, and should only be used for testing.' | translate }}
             </strong>
-          </h4>
+          </p>
         }
 
         @if ((updateService.changeLog$ | async) && (trainService.nightlyTrain$ | async)) {
-          <h4>
-            {{ 'Summary' | translate }}:
-          </h4>
+          <h4>{{ 'Summary' | translate }}:</h4>
 
           <div [innerHTML]="updateService.changeLog$ | async"></div>
         }
@@ -131,19 +123,16 @@
     <div class="other-options">
       <h3>{{ 'Other Options' | translate }}</h3>
 
-      <h4>
-        {{ 'Manual Update' | translate }}
-      </h4>
+      <h4>{{ 'Manual Update' | translate }}</h4>
 
       <div class="manual-update">
         <p>
-          {{ 'Install a manual image. Manual images can be found at' | translate }}
           <a
             href="https://www.truenas.com/download/"
             ixTest="download-truenas"
             target="_blank"
           >
-            https://www.truenas.com/download/
+            {{ 'Install a manual image' | translate }}
           </a>
         </p>
 
@@ -159,48 +148,6 @@
     </div>
   </div>
 
-  <div [hidden]="true">
-    <h2>
-      {{ 'Update Profile' | translate }}
-    </h2>
-
-    <div class="update-profile">
-      <ix-select
-        [formControl]="updateProfileControl"
-        [hideEmpty]="true"
-        [label]="'Select an update profile' | translate"
-        [options]="updateProfileOptions()"
-      ></ix-select>
-
-      <button mat-button ixTest="apply-profile">Apply</button>
-    </div>
-
-    <div class="hint">
-      {{ 'Selecting an update profile allows users to choose how conservative the software selection is based on their use case. Descriptions of update profiles are listed below from least conservative to most conservative.' | translate }}
-    </div>
-
-    <div class="available-profiles">
-      <h3>
-        {{ 'Available Profiles' | translate }}
-      </h3>
-
-      <div class="profile-list">
-        <div class="profile-list">
-          @for (profile of updateProfiles(); track profile.name) {
-            <div class="profile-row">
-              <div class="profile-name">
-                <strong>{{ profile.name }}</strong>
-                @if (profile.note) {
-                  <span class="profile-note">({{ profile.note }})</span>
-                }
-              </div>
-              <div class="profile-description">
-                {{ profile.description }}
-              </div>
-            </div>
-          }
-        </div>
-      </div>
-    </div>
-  </div>
+  <!-- TODO: Ticket said: Build HTML for right column, but mark it as hidden in the PR. Ignore TrueNAS ad banner for now. -->
+  <ix-update-profile-card hidden></ix-update-profile-card>
 </div>

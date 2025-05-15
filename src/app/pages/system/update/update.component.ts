@@ -1,11 +1,10 @@
 import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component,
-  computed,
   OnInit,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -27,7 +26,6 @@ import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
@@ -37,6 +35,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { getSystemVersion } from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
 import { SaveConfigDialog, SaveConfigDialogMessages } from 'app/pages/system/advanced/manage-configuration-menu/save-config-dialog/save-config-dialog.component';
+import { UpdateProfileCard } from 'app/pages/system/update/components/update-profile-card/update-profile-card.component';
 import { UpdateType } from 'app/pages/system/update/enums/update-type.enum';
 import { Package } from 'app/pages/system/update/interfaces/package.interface';
 import { TrainService } from 'app/pages/system/update/services/train.service';
@@ -45,7 +44,7 @@ import { systemUpdateElements } from 'app/pages/system/update/update.elements';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
+import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -66,9 +65,9 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     NgxSkeletonLoaderModule,
     MatButton,
     IxIconComponent,
-    IxSelectComponent,
     ReactiveFormsModule,
     FakeProgressBarComponent,
+    UpdateProfileCard,
   ],
 })
 export class UpdateComponent implements OnInit {
@@ -76,19 +75,14 @@ export class UpdateComponent implements OnInit {
   protected readonly searchableElements = systemUpdateElements;
   protected readonly requiredRoles = [Role.SystemUpdateWrite];
   protected updateType: UpdateType;
-  protected isHaLicensed = false;
-  protected updateMethod: ApiJobMethod = 'update.update';
-  protected updateTitle = this.translate.instant('Update');
   protected isUpdateRunning = false;
-  protected updateProfileControl = new FormControl('general');
   protected singleDescription: string;
   private trains: Option[] = [];
-
   private wasConfigurationSaved = false;
 
-  protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
+  protected readonly isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
 
-  showApplyPendingButton = toSignal(
+  protected readonly showApplyPendingButton = toSignal(
     combineLatest([
       this.updateService.updateDownloaded$,
       this.updateService.status$,
@@ -97,15 +91,15 @@ export class UpdateComponent implements OnInit {
     ),
   );
 
-  showDownloadUpdateButton = toSignal(this.updateService.updatesAvailable$);
+  protected readonly showDownloadUpdateButton = toSignal(this.updateService.updatesAvailable$);
 
-  isDownloadUpdatesButtonDisabled = toSignal(
+  protected readonly isDownloadUpdatesButtonDisabled = toSignal(
     this.updateService.status$.pipe(
       map((status) => status === SystemUpdateStatus.RebootRequired),
     ),
   );
 
-  showInfoForTesting = toSignal(
+  protected readonly showInfoForTesting = toSignal(
     combineLatest([
       this.updateService.updatesAvailable$,
       this.trainService.nightlyTrain$,
@@ -134,67 +128,6 @@ export class UpdateComponent implements OnInit {
     filter((info) => Boolean(info?.remote_info?.version)),
     map((info) => getSystemVersion(info.remote_info.version)),
   ));
-
-  readonly enterpriseUpdateProfiles = [
-    {
-      name: 'General',
-      note: 'not recommended',
-      description: 'Field tested software with mature features. Few issues are expected.',
-      id: 'general',
-    },
-    {
-      name: 'Conservative',
-      note: 'Default',
-      description: 'Mature software with well documented limitations. Software updates are infrequent.',
-      id: 'conservative',
-    },
-    {
-      name: 'Mission Critical',
-      description: 'Mature software that enables 24 x 7 operations with high availability for a very clearly defined use case. Software updates are very infrequent and based on need.',
-      id: 'mission_critical',
-    },
-  ];
-
-  readonly communityEditionUpdateProfiles = [
-    {
-      name: 'Developer',
-      description: 'Latest software with new features and bugs alike. There is an opportunity to contribute directly to the development process.',
-      id: 'developer',
-    },
-    {
-      name: 'Tester',
-      description: 'New software with recent features. Some bugs are expected and there is a willingness to provide bug reports and feedback to the developers.',
-      id: 'tester',
-    },
-    {
-      name: 'Early Adopter',
-      description: 'Released software with new features. Data is protected, but some issues may need workarounds or patience.',
-      id: 'early_adopter',
-    },
-    {
-      name: 'General',
-      note: 'default',
-      description: 'Field tested software with mature features. Few issues are expected.',
-      id: 'general',
-    },
-  ];
-
-  updateProfiles = computed(() => {
-    if (this.isEnterprise()) {
-      return this.enterpriseUpdateProfiles;
-    }
-
-    return this.communityEditionUpdateProfiles;
-  });
-
-  updateProfileOptions = computed(() => {
-    return of(
-      this.updateProfiles().map((profile) => ({
-        label: profile.name,
-        value: profile.id,
-      })),
-    );
-  });
 
   constructor(
     protected trainService: TrainService,
@@ -255,7 +188,6 @@ export class UpdateComponent implements OnInit {
           }
         }
         this.trainService.currentTrainDescription$.next(currentTrainDescription);
-        // To remember train description if user switches away and then switches back
         this.trainService.trainDescriptionOnPageLoad$.next(currentTrainDescription);
 
         this.cdr.markForCheck();
@@ -284,12 +216,10 @@ export class UpdateComponent implements OnInit {
       .subscribe(() => this.continueUpdate());
   }
 
-  // Continues the update (based on its type) after the Save Config dialog is closed
   continueUpdate(): void {
-    // eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
     switch (this.updateType) {
       case UpdateType.ApplyPending: {
-        const message = this.isHaLicensed
+        const message = this.isHaLicensed()
           ? this.translate.instant('The standby controller will be automatically restarted to finalize the update. Apply updates and restart the standby controller?')
           : this.translate.instant('The system will restart and be briefly unavailable while applying updates. Apply updates and restart?');
         this.dialogService.confirm({
@@ -302,10 +232,12 @@ export class UpdateComponent implements OnInit {
       }
       case UpdateType.Standard:
         this.confirmAndUpdate();
+        break;
+      default:
+        console.warn('Unhandled updateType in continueUpdate:', this.updateType);
     }
   }
 
-  // Shows an update in progress as a job dialog on the update page
   showRunningUpdate(jobId: number): void {
     const job$ = this.store$.pipe(
       select(selectJob(jobId)),
@@ -315,7 +247,7 @@ export class UpdateComponent implements OnInit {
     this.dialogService.jobDialog(
       job$,
       {
-        title: this.updateTitle,
+        title: this.translate.instant('Update'),
         canMinimize: true,
       },
     )
@@ -392,7 +324,7 @@ export class UpdateComponent implements OnInit {
   }
 
   downloadUpdate(): void {
-    this.api.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', JobState.Running]]])
+    this.api.call('core.get_jobs', [[['method', '=', 'update.update'], ['state', '=', JobState.Running]]])
       .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
       .subscribe((jobs) => {
         if (jobs[0]) {
@@ -404,12 +336,11 @@ export class UpdateComponent implements OnInit {
       });
   }
 
-  // Continues the update process began in startUpdate(), after passing through the Save Config dialog
   confirmAndUpdate(): void {
     let downloadMsg;
     let confirmMsg;
 
-    if (!this.isHaLicensed) {
+    if (!this.isHaLicensed()) {
       downloadMsg = helptext.non_ha_download_msg;
       confirmMsg = helptext.non_ha_confirm_msg;
     } else {
@@ -462,12 +393,12 @@ export class UpdateComponent implements OnInit {
   }
 
   private update(resume = false): void {
-    // this.window.sessionStorage.removeItem('updateLastChecked');
-    // this.window.sessionStorage.removeItem('updateAvailable');
+    sessionStorage.removeItem('updateLastChecked');
+    sessionStorage.removeItem('updateAvailable');
     this.sysGenService.updateRunningNoticeSent.emit();
 
     let job$: Observable<Job>;
-    if (this.isHaLicensed) {
+    if (this.isHaLicensed()) {
       job$ = this.trainService.trainValue$.pipe(
         take(1),
         switchMap((trainValue) => this.api.call('update.set_train', [trainValue])),
@@ -478,15 +409,15 @@ export class UpdateComponent implements OnInit {
     }
 
     this.dialogService
-      .jobDialog(job$, { title: this.translate.instant(this.updateTitle) })
+      .jobDialog(job$, { title: this.translate.instant(this.translate.instant('Update')) })
       .afterClosed()
       .pipe(
         switchMap(() => {
           this.dialogService.closeAllDialogs();
           this.isUpdateRunning = false;
-          this.sysGenService.updateDone(); // Send 'finished' signal to topbar
+          this.sysGenService.updateDone();
           this.cdr.markForCheck();
-          return this.isHaLicensed ? this.finishHaUpdate() : this.finishNonHaUpdate();
+          return this.isHaLicensed() ? this.finishHaUpdate() : this.finishNonHaUpdate();
         }),
         this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
@@ -497,7 +428,7 @@ export class UpdateComponent implements OnInit {
   private downloadUpdates(): void {
     this.dialogService.jobDialog(
       this.api.job('update.download'),
-      { title: this.updateTitle },
+      { title: this.translate.instant('Update') },
     )
       .afterClosed()
       .pipe(
