@@ -117,11 +117,11 @@ export class AuthorizedAccessFormComponent implements OnInit {
   ];
 
   readonly tooltips = {
-    tag: helptextIscsi.authaccess_tooltip_tag,
-    user: helptextIscsi.authaccess_tooltip_user,
-    secret: helptextIscsi.authaccess_tooltip_user,
-    peeruser: helptextIscsi.authaccess_tooltip_peeruser,
-    peersecret: helptextIscsi.authaccess_tooltip_peersecret,
+    tag: helptextIscsi.authaccess.tagTooltip,
+    user: helptextIscsi.authaccess.userTooltip,
+    secret: helptextIscsi.authaccess.userTooltip,
+    peeruser: helptextIscsi.authaccess.peeruserTooltip,
+    peersecret: helptextIscsi.authaccess.peersecretTooltip,
     discovery_auth: helptextIscsi.portal.discoveryAuthMethodTooltip,
   };
 

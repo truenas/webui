@@ -11,8 +11,8 @@
         <ix-explorer
           formControlName="path"
           [required]="true"
-          [tooltip]="helptextSharingSmb.tooltip_path | translate"
-          [label]="helptextSharingSmb.placeholder_path | translate"
+          [tooltip]="helptextSharingSmb.pathTooltip | translate"
+          [label]="helptextSharingSmb.pathLabel | translate"
           [nodeProvider]="treeNodeProvider"
           [canCreateDataset]="isNew"
           [createDatasetProps]="createDatasetProps"
@@ -20,27 +20,27 @@
 
         <ix-input
           formControlName="name"
-          [label]="helptextSharingSmb.placeholder_name | translate"
+          [label]="helptextSharingSmb.nameLabel | translate"
           [required]="true"
         ></ix-input>
 
         <ix-select
           formControlName="purpose"
           emptyValue=""
-          [label]="helptextSharingSmb.placeholder_purpose | translate"
-          [tooltip]="helptextSharingSmb.tooltip_purpose | translate"
+          [label]="helptextSharingSmb.purposeLabel | translate"
+          [tooltip]="helptextSharingSmb.purposeTooltip | translate"
           [required]="true"
           [options]="purposeOptions$"
         ></ix-select>
 
         <ix-input
           formControlName="comment"
-          [label]="helptextSharingSmb.placeholder_comment | translate"
+          [label]="helptextSharingSmb.commentLabel | translate"
         ></ix-input>
 
         <ix-checkbox
           formControlName="enabled"
-          [label]="helptextSharingSmb.placeholder_enabled | translate"
+          [label]="helptextSharingSmb.enabledLabel | translate"
         ></ix-checkbox>
       </ix-fieldset>
 
@@ -48,20 +48,20 @@
         <ix-fieldset [title]="'Access' | translate">
           <ix-checkbox
             formControlName="acl"
-            [label]="helptextSharingSmb.placeholder_acl | translate"
-            [tooltip]="helptextSharingSmb.tooltip_acl | translate"
+            [label]="helptextSharingSmb.aclLabel | translate"
+            [tooltip]="helptextSharingSmb.aclTooltip | translate"
           ></ix-checkbox>
 
           <ix-checkbox
             formControlName="ro"
-            [label]="helptextSharingSmb.placeholder_ro | translate"
-            [tooltip]="helptextSharingSmb.tooltip_ro | translate"
+            [label]="helptextSharingSmb.readOnlyLabel | translate"
+            [tooltip]="helptextSharingSmb.readOnlyTooltip | translate"
           ></ix-checkbox>
 
           <ix-checkbox
             formControlName="browsable"
-            [label]="helptextSharingSmb.placeholder_browsable | translate"
-            [tooltip]="helptextSharingSmb.tooltip_browsable | translate"
+            [label]="helptextSharingSmb.browsableLabel | translate"
+            [tooltip]="helptextSharingSmb.browsableTooltip | translate"
           ></ix-checkbox>
 
           <ix-checkbox
@@ -92,15 +92,15 @@
         <ix-fieldset formGroupName="audit" [title]="'Audit Logging' | translate">
           <ix-checkbox
             formControlName="enable"
-            [label]="helptextSharingSmb.placeholder_enabled | translate"
-            [tooltip]="helptextSharingSmb.tooltip_enabled_audit_log | translate"
+            [label]="helptextSharingSmb.enabledLabel | translate"
+            [tooltip]="helptextSharingSmb.auditLogTooltip | translate"
           ></ix-checkbox>
 
           <ix-chips
             formControlName="watch_list"
             [hint]="'Keep this list empty to Watch All' | translate"
             [label]="'Watch List' | translate"
-            [tooltip]="helptextSharingSmb.tooltip_watch_list | translate"
+            [tooltip]="helptextSharingSmb.watchListTooltip | translate"
             [autocompleteProvider]="groupProvider"
             [allowNewEntries]="false"
           ></ix-chips>
@@ -108,7 +108,7 @@
           <ix-chips
             formControlName="ignore_list"
             [label]="'Ignore List' | translate"
-            [tooltip]="helptextSharingSmb.tooltip_ignore_list | translate"
+            [tooltip]="helptextSharingSmb.ignoreListTooltip | translate"
             [autocompleteProvider]="groupProvider"
             [allowNewEntries]="false"
           ></ix-chips>
@@ -117,21 +117,21 @@
         <ix-fieldset [title]="'Other Options' | translate">
           <ix-checkbox
             formControlName="home"
-            [label]="helptextSharingSmb.placeholder_home | translate"
-            [tooltip]="helptextSharingSmb.tooltip_home | translate"
+            [label]="helptextSharingSmb.homeLabel | translate"
+            [tooltip]="helptextSharingSmb.homeTooltip | translate"
           ></ix-checkbox>
 
           <ix-checkbox
             formControlName="timemachine"
-            [label]="helptextSharingSmb.placeholder_timemachine | translate"
-            [tooltip]="helptextSharingSmb.tooltip_timemachine | translate"
+            [label]="helptextSharingSmb.timemachineLabel | translate"
+            [tooltip]="helptextSharingSmb.timemachineTooltip | translate"
           ></ix-checkbox>
 
           <div [hidden]="!form.value.timemachine">
             <ix-input
               formControlName="timemachine_quota"
-              [label]="helptextSharingSmb.placeholder_timemachine_quota | translate"
-              [tooltip]="helptextSharingSmb.tooltip_timemachine_quota | translate"
+              [label]="helptextSharingSmb.timemachineQuotaLabel | translate"
+              [tooltip]="helptextSharingSmb.timemachineQuotaTooltip | translate"
               [format]="formatter.memorySizeFormatting"
               [parse]="formatter.memorySizeParsing"
             ></ix-input>
@@ -139,8 +139,8 @@
 
           <ix-checkbox
             formControlName="afp"
-            [label]="helptextSharingSmb.placeholder_afp | translate"
-            [tooltip]="helptextSharingSmb.tooltip_afp | translate"
+            [label]="helptextSharingSmb.afpLabel | translate"
+            [tooltip]="helptextSharingSmb.afpTooltip | translate"
           ></ix-checkbox>
 
           <ix-checkbox
@@ -151,8 +151,8 @@
 
           <ix-checkbox
             formControlName="recyclebin"
-            [label]="helptextSharingSmb.placeholder_recyclebin | translate"
-            [tooltip]="helptextSharingSmb.tooltip_recyclebin | translate"
+            [label]="helptextSharingSmb.recyclebinLabel | translate"
+            [tooltip]="helptextSharingSmb.recyclebinTooltip | translate"
           ></ix-checkbox>
 
           <ix-checkbox

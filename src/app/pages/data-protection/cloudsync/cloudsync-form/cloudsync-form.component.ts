@@ -167,15 +167,15 @@ export class CloudSyncFormComponent implements OnInit {
 
   isCredentialInvalid$ = new BehaviorSubject(false);
   isLoading = false;
-  bucketPlaceholder: string = helptextCloudSync.bucket_placeholder;
-  bucketTooltip: string = helptextCloudSync.bucket_tooltip;
-  bucketInputPlaceholder: string = helptextCloudSync.bucket_input_placeholder;
-  bucketInputTooltip: string = helptextCloudSync.bucket_input_tooltip;
+  bucketPlaceholder: string = helptextCloudSync.bucketLabel;
+  bucketTooltip: string = helptextCloudSync.bucketTooltip;
+  bucketInputPlaceholder: string = helptextCloudSync.bucketLabel;
+  bucketInputTooltip: string = helptextCloudSync.bucketInputTooltip;
 
   readonly transferModeTooltip = `
-    ${helptextCloudSync.transfer_mode_warning_sync}<br><br>
-    ${helptextCloudSync.transfer_mode_warning_copy}<br><br>
-    ${helptextCloudSync.transfer_mode_warning_move}
+    ${helptextCloudSync.syncModeExplanation}<br><br>
+    ${helptextCloudSync.copyModeExplanation}<br><br>
+    ${helptextCloudSync.moveModeExplanation}
   `;
 
   readonly helptext = helptextCloudSync;
@@ -536,10 +536,10 @@ export class CloudSyncFormComponent implements OnInit {
           this.bucketInputPlaceholder = this.translate.instant('Container');
           this.bucketInputTooltip = this.translate.instant('Input the pre-defined container to use.');
         } else {
-          this.bucketPlaceholder = helptextCloudSync.bucket_placeholder;
-          this.bucketTooltip = helptextCloudSync.bucket_tooltip;
-          this.bucketInputPlaceholder = helptextCloudSync.bucket_input_placeholder;
-          this.bucketInputTooltip = helptextCloudSync.bucket_input_tooltip;
+          this.bucketPlaceholder = helptextCloudSync.bucketLabel;
+          this.bucketTooltip = helptextCloudSync.bucketTooltip;
+          this.bucketInputPlaceholder = helptextCloudSync.bucketLabel;
+          this.bucketInputTooltip = helptextCloudSync.bucketInputTooltip;
         }
 
         this.loadBucketOptions();
@@ -743,7 +743,7 @@ export class CloudSyncFormComponent implements OnInit {
     const payload = this.getPayload();
     this.dialogService.jobDialog(
       this.api.job('cloudsync.sync_onetime', [payload, { dry_run: true }]),
-      { title: this.translate.instant(helptextCloudSync.job_dialog_title_dry_run) },
+      { title: this.translate.instant(helptextCloudSync.dryRunDialogTitle) },
     )
       .afterClosed()
       .pipe(untilDestroyed(this))

@@ -133,11 +133,11 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
 
   schemaOrRegexOptions$ = of([
     {
-      label: this.translate.instant(helptextReplicationWizard.naming_schema_placeholder),
+      label: this.translate.instant(helptextReplicationWizard.namingSchemaLabel),
       value: SnapshotNamingOption.NamingSchema,
     },
     {
-      label: this.translate.instant(helptextReplicationWizard.name_regex_placeholder),
+      label: this.translate.instant(helptextReplicationWizard.nameRegexLabel),
       value: SnapshotNamingOption.NameRegex,
     },
   ]);
@@ -157,8 +157,8 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
 
   get schemaOrRegexLabel(): string {
     return this.form.value.source_datasets_from === DatasetSource.Local
-      ? helptextReplicationWizard.name_schema_or_regex_placeholder_push
-      : helptextReplicationWizard.name_schema_or_regex_placeholder_pull;
+      ? helptextReplicationWizard.nameSchemaOrRegexPush
+      : helptextReplicationWizard.nameSchemaOrRegexPull;
   }
 
   constructor(
@@ -324,7 +324,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
 
         this.dialogService.confirm({
           title: this.translate.instant('Sudo Enabled'),
-          message: this.translate.instant(helptextReplicationWizard.sudo_warning),
+          message: this.translate.instant(helptextReplicationWizard.sudoWarning),
           hideCheckbox: true,
           buttonText: this.translate.instant('Use Sudo For ZFS Commands'),
         }).pipe(untilDestroyed(this)).subscribe((useSudo) => {
@@ -472,11 +472,11 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
 
     return [
       {
-        label: this.translate.instant(helptextReplicationWizard.source_datasets_placeholder),
+        label: this.translate.instant(helptextReplicationWizard.sourceDatasetsLabel),
         value: values.source_datasets.join(','),
       },
       {
-        label: this.translate.instant(helptextReplicationWizard.target_dataset_placeholder),
+        label: this.translate.instant(helptextReplicationWizard.targetDatasetLabel),
         value: values.target_dataset || '',
       },
     ];
