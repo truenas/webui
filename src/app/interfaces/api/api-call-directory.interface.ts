@@ -183,7 +183,7 @@ import {
   CreateNvmeOfNamespace,
   CreateNvmeOfPort,
   CreateNvmeOfSubsystem,
-  DeleteNamespaceParams,
+  DeleteNamespaceParams, GenerateNvmeHostParams,
   NvmeOfGlobalConfig,
   NvmeOfGlobalConfigUpdate, NvmeOfHost,
   NvmeOfNamespace,
@@ -673,6 +673,7 @@ export interface ApiCallDirectory {
   'nvmet.host.create': { params: [CreateNvmeOfHost]; response: NvmeOfHost };
   'nvmet.host.update': { params: [id: number, update: UpdateNvmeOfHost]; response: NvmeOfHost };
   'nvmet.host.delete': { params: [id: number]; response: void };
+  'nvmet.host.generate_key': { params: GenerateNvmeHostParams; response: string };
 
   'nvmet.host_subsys.query': { params: QueryParams<SubsystemHostAssociation>; response: SubsystemHostAssociation[] };
   'nvmet.host_subsys.create': { params: [AssociateSubsystemHost]; response: void };
