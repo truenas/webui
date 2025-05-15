@@ -1,7 +1,9 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
+import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { NvmeOfSubsystem } from 'app/interfaces/nvme-of.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -41,7 +43,6 @@ const mockSubsystems: NvmeOfSubsystem[] = [
 describe('SubsystemsListComponent', () => {
   let spectator: Spectator<SubsystemsListComponent>;
   let loader: HarnessLoader;
-  let table: IxTableHarness;
 
   const createComponent = createComponentFactory({
     component: SubsystemsListComponent,
@@ -51,7 +52,11 @@ describe('SubsystemsListComponent', () => {
     ],
     providers: [
       mockProvider(EmptyService),
-      mockProvider(SlideIn),
+      mockProvider(SlideIn, {
+        open: jest.fn(() => {
+          return of({ response: { ...mockSubsystems[0], name: 'subsys-3' } });
+        }),
+      }),
       mockProvider(NvmeOfStore, {
         initialize: jest.fn(),
         getSubsystemNamespaces: jest.fn(() => 2),
@@ -75,7 +80,7 @@ describe('SubsystemsListComponent', () => {
   });
 
   it('shows table rows', async () => {
-    table = await loader.getHarness(IxTableHarness);
+    const table = await loader.getHarness(IxTableHarness);
     const expectedRows = [
       ['Name', 'Namespaces', 'Hosts', 'Ports', ''],
       ['subsys-1', '2', '3', '4', ''],
@@ -83,5 +88,12 @@ describe('SubsystemsListComponent', () => {
     ];
 
     expect(await table.getCellTexts()).toEqual(expectedRows);
+  });
+
+  it('initializes store when added', async () => {
+    const button = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+    expect(spectator.inject(NvmeOfStore).initialize).not.toHaveBeenCalled();
+    await button.click();
+    expect(spectator.inject(NvmeOfStore).initialize).toHaveBeenCalled();
   });
 });
