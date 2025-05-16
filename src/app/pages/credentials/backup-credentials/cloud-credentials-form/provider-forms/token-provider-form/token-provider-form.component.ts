@@ -49,13 +49,13 @@ export class TokenProviderFormComponent extends BaseProviderFormComponent implem
   get tooltip(): string {
     switch (this.provider.name) {
       case CloudSyncProviderName.Box:
-        return helptext.token_box.tooltip;
+        return helptext.box.token.tooltip;
       case CloudSyncProviderName.Dropbox:
-        return helptext.token_dropbox.tooltip;
+        return helptext.dropbox.token.tooltip;
       case CloudSyncProviderName.Hubic:
-        return helptext.token_hubic.tooltip;
+        return helptext.hubic.token.tooltip;
       case CloudSyncProviderName.Yandex:
-        return helptext.token_yandex.tooltip;
+        return helptext.yandex.token.tooltip;
       default:
         return '';
     }

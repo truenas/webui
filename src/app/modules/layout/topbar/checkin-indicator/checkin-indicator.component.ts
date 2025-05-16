@@ -36,7 +36,7 @@ import {
 export class CheckinIndicatorComponent implements OnInit {
   protected hasPendingNetworkChanges$ = this.store$.select(selectHasPendingNetworkChanges);
 
-  protected readonly tooltips = helptextTopbar.mat_tooltips;
+  protected readonly tooltips = helptextTopbar.tooltips;
 
   private isWaitingForCheckin = false;
 

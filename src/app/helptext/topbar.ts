@@ -2,19 +2,19 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 
 export const helptextTopbar = {
-  ha_status: T('HA Status'),
-  mat_tooltips: {
-    toggle_collapse: T('Toggle Collapse'),
-    tc_connect: T('Connecting to TrueCommand'),
-    tc_status: T('Status of TrueCommand'),
-    tnc_status: T('Status of TrueNAS Connect'),
+  haStatus: T('HA Status'),
+  tooltips: {
+    toggleCollapse: T('Toggle Collapse'),
+    connectingToTruecommand: T('Connecting to TrueCommand'),
+    truecommandStatus: T('Status of TrueCommand'),
+    tncStatus: T('Status of TrueNAS Connect'),
     update: T('Update in Progress'),
-    reboot_info: T('Reboot Required'),
-    pending_network_changes: T('Pending Network Changes'),
-    directory_services_monitor: T('Directory Services Monitor'),
+    rebootInfo: T('Reboot Required'),
+    pendingNetworkChanges: T('Pending Network Changes'),
+    directoryServicesMonitor: T('Directory Services Monitor'),
     resilvering: T('Resilvering'),
     replication: T('Replication'),
-    task_manager: T('Running Jobs'),
+    taskManager: T('Running Jobs'),
     alerts: T('Alerts'),
     settings: T('Settings'),
     power: T('Power'),
@@ -26,16 +26,16 @@ export const helptextTopbar = {
   },
 
   updateDialog: {
-    title_connect: T('Connect to TrueCommand Cloud'),
-    title_update: T('Update TrueCommand Settings'),
-    connect_btn: T('Connect'),
-    save_btn: T('Save'),
-    api_placeholder: T('API Key'),
-    api_tooltip: T('Enter or paste the API key provided from \
+    titleConnect: T('Connect to TrueCommand Cloud'),
+    titleUpdate: T('Update TrueCommand Settings'),
+    connectButton: T('Connect'),
+    saveButton: T('Save'),
+    apiKey: T('API Key'),
+    apiTooltip: T('Enter or paste the API key provided from \
 <a href="https://portal.ixsystems.com/portal/login/" target="_blank">iXsystems Account Services</a>. \
 Login or signup is required.'),
-    enabled_placeholder: T('Enable'),
-    enabled_tooltip: T('Immediately connect to TrueCommand.'),
+    enabledLabel: T('Enable'),
+    enabledTooltip: T('Immediately connect to TrueCommand.'),
   },
 
   tcDialog: {
@@ -70,9 +70,9 @@ Login or signup is required.'),
 address. Please verify the email address before continuing.'),
   },
   changePasswordDialog: {
-    pw_new_pw_tooltip: T('Passwords should \
+    newPasswordTooltip: T('Passwords should \
 be at least eight characters and contain a mix of lower and \
 upper case, numbers, and special characters.'),
-    pw_updated: T('Password updated.'),
+    passwordUpdated: T('Password updated.'),
   },
 };

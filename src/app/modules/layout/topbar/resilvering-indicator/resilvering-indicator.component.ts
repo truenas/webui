@@ -37,7 +37,7 @@ export class ResilveringIndicatorComponent {
     }),
   );
 
-  protected readonly tooltips = helptextTopbar.mat_tooltips;
+  protected readonly tooltips = helptextTopbar.tooltips;
 
   constructor(
     private matDialog: MatDialog,

@@ -86,7 +86,7 @@ export class TopbarComponent implements OnInit {
   updateIsRunning = false;
   systemWillRestart = false;
   updateNotificationSent = false;
-  tooltips = helptextTopbar.mat_tooltips;
+  tooltips = helptextTopbar.tooltips;
   protected searchableElements = toolBarElements;
 
   readonly hasRebootRequiredReasons = signal(false);

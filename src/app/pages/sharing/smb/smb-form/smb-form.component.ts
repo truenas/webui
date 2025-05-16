@@ -575,7 +575,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
         this.loader.close();
         this.snackbar.success(
           this.translate.instant(
-            helptextSharingSmb.restarted_smb_dialog.message,
+            helptextSharingSmb.restartedSmbDialog.message,
           ),
         );
       }),

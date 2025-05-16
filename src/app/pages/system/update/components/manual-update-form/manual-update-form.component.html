@@ -14,7 +14,7 @@
 
         <ix-file-input
           formControlName="updateFile"
-          [label]="helptext.filename.placeholder | translate"
+          [label]="helptext.filename.label | translate"
           [tooltip]="helptext.filename.tooltip | translate"
           [multiple]="false"
           [required]="true"
@@ -24,7 +24,7 @@
         @if (!isHaLicensed) {
           <ix-select
             formControlName="filelocation"
-            [label]="helptext.filelocation.placeholder | translate"
+            [label]="helptext.filelocation.label | translate"
             [tooltip]="helptext.filelocation.tooltip | translate"
             [options]="fileLocationOptions$"
             [required]="true"
@@ -34,7 +34,7 @@
         @if (!isHaLicensed && systemService.isEnterprise) {
           <ix-checkbox
             formControlName="rebootAfterManualUpdate"
-            [label]="helptext.rebootAfterManualUpdate.placeholder | translate"
+            [label]="helptext.rebootAfterManualUpdate.label | translate"
             [tooltip]="helptext.rebootAfterManualUpdate.tooltip | translate"
           ></ix-checkbox>
         }

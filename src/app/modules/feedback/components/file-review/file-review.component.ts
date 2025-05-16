@@ -66,7 +66,7 @@ export class FileReviewComponent {
     take_screenshot: [true],
   });
 
-  protected readonly voteForNewFeaturesText = helptext.review.vote_for_new_features;
+  protected readonly voteForNewFeaturesText = helptext.review.voteForNewFeatures;
   protected readonly acceptedFiles = ticketAcceptedFiles;
 
   protected get messagePlaceholderText(): TranslatedString {
@@ -76,7 +76,7 @@ export class FileReviewComponent {
 
     return this.translate.instant(helptext.review.message.placeholder)
       + '\n\n'
-      + this.translate.instant(helptext.review.message.placeholder_additional) as TranslatedString;
+      + this.translate.instant(helptext.review.message.placeholderAdditional) as TranslatedString;
   }
 
   constructor(
