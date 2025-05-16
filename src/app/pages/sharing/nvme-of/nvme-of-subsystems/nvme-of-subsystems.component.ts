@@ -90,7 +90,7 @@ export class NvmeOfSubsystemsComponent {
     });
   }
 
-  deleteSubsys(subsystem: NvmeOfSubsystem): void {
+  deleteSubsystem(subsystem: NvmeOfSubsystem): void {
     (this.matDialog.open(
       SubsystemDeleteDialogComponent,
       { data: subsystem, minWidth: '500px' },
