@@ -286,18 +286,12 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
       this.form.patchValue(this.defaultSmbShare);
       this.setNameFromPath();
     }
-
+    this.form.controls.path.addValidators(this.validatorsService.customValidator(
+      getRootDatasetsValidator(this.existingSmbShare ? [this.existingSmbShare.path] : []),
+      this.translate.instant('Sharing root datasets is not recommended. Please create a child dataset.'),
+    ));
     if (this.existingSmbShare) {
-      this.form.controls.path.addValidators(this.validatorsService.customValidator(
-        getRootDatasetsValidator([this.existingSmbShare.path]),
-        this.translate.instant('Sharing root datasets is not recommended. Please create a child dataset.'),
-      ));
       this.setSmbShareForEdit(this.existingSmbShare);
-    } else {
-      this.form.controls.path.addValidators(this.validatorsService.customValidator(
-        getRootDatasetsValidator(),
-        this.translate.instant('Sharing root datasets is not recommended. Please create a child dataset.'),
-      ));
     }
   }
 
