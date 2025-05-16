@@ -36,7 +36,7 @@
           (click)="$event.stopPropagation(); action.onClick(row()); menuTrigger.closeMenu();"
         >
           <ix-icon class="menu-icon" [name]="action.iconName"></ix-icon>
-          <span>{{ action.tooltip }}</span>
+          <span>{{ action.dynamicTooltip ? (action.dynamicTooltip(row()) | async) : action.tooltip }}</span>
         </button>
       }
     </mat-menu>
