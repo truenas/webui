@@ -5,20 +5,20 @@
       <div class="fieldsets">
         <ix-fieldset
           class="fieldset"
-          [title]="helptext.fieldset_transfer | translate"
+          [title]="helptext.transferTitle | translate"
         >
           @if (form.controls.description.enabled) {
             <ix-input
               formControlName="description"
-              [label]="helptext.description_placeholder | translate"
+              [label]="helptext.descriptionLabel | translate"
               [required]="true"
             ></ix-input>
           }
           @if (form.controls.direction.enabled) {
             <ix-select
               formControlName="direction"
-              [label]="helptext.direction_placeholder | translate"
-              [tooltip]="helptext.direction_tooltip | translate"
+              [label]="helptext.directionLabel | translate"
+              [tooltip]="helptext.directionTooltip | translate"
               [required]="true"
               [options]="directionOptions$"
             ></ix-select>
@@ -26,7 +26,7 @@
           @if (form.controls.transfer_mode.enabled) {
             <ix-select
               formControlName="transfer_mode"
-              [label]="helptext.transfer_mode_placeholder | translate"
+              [label]="helptext.transferModeLabel | translate"
               [tooltip]="transferModeTooltip | translate"
               [required]="true"
               [options]="transferModeOptions$"
@@ -38,8 +38,8 @@
           @if (form.controls.path_destination.enabled) {
             <ix-explorer
               formControlName="path_destination"
-              [label]="helptext.path_placeholder | translate"
-              [tooltip]="helptext.path_tooltip | translate"
+              [label]="helptext.pathLabel | translate"
+              [tooltip]="helptext.pathTooltip | translate"
               [required]="true"
               [nodeProvider]="fileNodeProvider"
             ></ix-explorer>
@@ -47,8 +47,8 @@
           @if (form.controls.path_source.enabled) {
             <ix-explorer
               formControlName="path_source"
-              [label]="helptext.path_placeholder | translate"
-              [tooltip]="helptext.path_tooltip | translate"
+              [label]="helptext.pathLabel | translate"
+              [tooltip]="helptext.pathTooltip | translate"
               [required]="true"
               [multiple]="true"
               [nodeProvider]="fileNodeProvider"
@@ -58,7 +58,7 @@
 
         <ix-fieldset
           class="fieldset"
-          [title]="helptext.fieldset_remote | translate"
+          [title]="helptext.remoteTitle | translate"
         >
           <a
             ixTest="manage-credentials"
@@ -71,8 +71,8 @@
           @if (form.controls.credentials.enabled) {
             <ix-cloud-credentials-select
               formControlName="credentials"
-              [label]="helptext.credentials_placeholder | translate"
-              [tooltip]="helptext.credentials_tooltip | translate"
+              [label]="helptext.credentialLabel | translate"
+              [tooltip]="helptext.credentialsTooltip | translate"
               [required]="true"
             ></ix-cloud-credentials-select>
           }
@@ -97,8 +97,8 @@
               formControlName="folder_destination"
               root="/"
               [readonly]="!hasRequiredRoles()"
-              [label]="helptext.folder_placeholder | translate"
-              [tooltip]="helptext.folder_tooltip | translate"
+              [label]="helptext.folderLabel | translate"
+              [tooltip]="helptext.folderTooltip | translate"
               [nodeProvider]="bucketNodeProvider"
             ></ix-explorer>
           }
@@ -107,8 +107,8 @@
               formControlName="folder_source"
               root="/"
               [readonly]="!hasRequiredRoles()"
-              [label]="helptext.folder_placeholder | translate"
-              [tooltip]="helptext.folder_tooltip | translate"
+              [label]="helptext.folderLabel | translate"
+              [tooltip]="helptext.folderTooltip | translate"
               [multiple]="true"
               [nodeProvider]="bucketNodeProvider"
             ></ix-explorer>
@@ -116,152 +116,152 @@
           @if (form.controls.bucket_policy_only.enabled) {
             <ix-checkbox
               formControlName="bucket_policy_only"
-              [label]="helptext.bucket_policy_only_placeholder | translate"
-              [tooltip]="helptext.bucket_policy_only_tooltip | translate"
+              [label]="helptext.bucketPolicyOnlyLabel | translate"
+              [tooltip]="helptext.bucketPolicyOnlyTooltip | translate"
             ></ix-checkbox>
           }
         </ix-fieldset>
 
         <ix-fieldset
           class="fieldset"
-          [title]="helptext.fieldset_control | translate"
+          [title]="helptext.controlTitle | translate"
         >
           @if (form.controls.cloudsync_picker.enabled) {
             <ix-scheduler
               formControlName="cloudsync_picker"
               [required]="true"
-              [label]="helptext.cloudsync_picker_placeholder | translate"
+              [label]="helptext.scheduleLabel | translate"
             ></ix-scheduler>
           }
           @if (form.controls.enabled.enabled) {
             <ix-checkbox
               formControlName="enabled"
-              [label]="helptext.enabled_placeholder | translate"
+              [label]="helptext.enabledLabel | translate"
             ></ix-checkbox>
           }
         </ix-fieldset>
 
         <ix-fieldset
           class="fieldset"
-          [title]="helptext.fieldset_advanced_options | translate"
+          [title]="helptext.advancedOptionsTitle | translate"
         >
           @if (googleDriveProviderIds.includes(form.controls.credentials.value)) {
             <ix-checkbox
               formControlName="acknowledge_abuse"
-              [label]="helptext.acknowledge_abuse_placeholder | translate"
-              [tooltip]="helptext.acknowledge_abuse_tooltip | translate"
+              [label]="helptext.acknowledgeAbuseLabel | translate"
+              [tooltip]="helptext.acknowledgeAbuseTooltip | translate"
             ></ix-checkbox>
           }
           @if (form.controls.snapshot.enabled) {
             <ix-checkbox
               formControlName="snapshot"
-              [label]="helptext.snapshot_placeholder | translate"
-              [tooltip]="helptext.snapshot_tooltip | translate"
+              [label]="helptext.snapshotLabel | translate"
+              [tooltip]="helptext.snapshotTooltip | translate"
             ></ix-checkbox>
           }
           @if (form.controls.create_empty_src_dirs.enabled) {
             <ix-checkbox
               formControlName="create_empty_src_dirs"
-              [label]="helptext.empty_src_dirs_placeholder | translate"
+              [label]="helptext.emptySrcDirsLabel | translate"
             ></ix-checkbox>
           }
           @if (form.controls.follow_symlinks.enabled) {
             <ix-checkbox
               formControlName="follow_symlinks"
-              [label]="helptext.follow_symlinks_placeholder | translate"
-              [tooltip]="helptext.follow_symlinks_tooltip | translate"
+              [label]="helptext.followSymlinksLabel | translate"
+              [tooltip]="helptext.followSymlinksTooltip | translate"
             ></ix-checkbox>
           }
           @if (form.controls.pre_script.enabled) {
             <ix-textarea
               formControlName="pre_script"
-              [label]="helptext.pre_script_placeholder | translate"
-              [tooltip]="helptext.pre_script_tooltip | translate"
+              [label]="helptext.preScriptLabel | translate"
+              [tooltip]="helptext.preScriptTooltip | translate"
             ></ix-textarea>
           }
           @if (form.controls.post_script.enabled) {
             <ix-textarea
               formControlName="post_script"
-              [label]="helptext.post_script_placeholder | translate"
-              [tooltip]="helptext.post_script_tooltip | translate"
+              [label]="helptext.postScriptLabel | translate"
+              [tooltip]="helptext.postScriptTooltip | translate"
             ></ix-textarea>
           }
           @if (form.controls.exclude.enabled) {
             <ix-chips
               formControlName="exclude"
-              [label]="helptext.exclude_placeholder | translate"
-              [tooltip]="helptext.exclude_tooltip | translate"
+              [label]="helptext.excludeLabel | translate"
+              [tooltip]="helptext.excludeTooltip | translate"
             ></ix-chips>
           }
           @if (form.controls.task_encryption.enabled) {
             <ix-select
               formControlName="task_encryption"
-              [label]="helptext.encryption_placeholder | translate"
-              [tooltip]="helptext.encryption_tooltip | translate"
+              [label]="helptext.encryptionLabel | translate"
+              [tooltip]="helptext.encryptionTooltip | translate"
               [options]="encryptionOptions$"
             ></ix-select>
           }
           <div class="advanced-title">
-            {{ helptext.advanced_remote_options | translate }}
+            {{ helptext.advancedRemoteOptionsTitle | translate }}
           </div>
           @if (form.controls.storage_class.enabled) {
             <ix-select
               formControlName="storage_class"
-              [label]="helptext.storage_class_placeholder | translate"
-              [tooltip]="helptext.storage_class_tooltip | translate"
+              [label]="helptext.storageClassLabel | translate"
+              [tooltip]="helptext.storageClassTooltip | translate"
               [options]="storageClassOptions$"
             ></ix-select>
           }
           @if (form.controls.fast_list.enabled) {
             <ix-checkbox
               formControlName="fast_list"
-              [label]="helptext.fast_list_placeholder | translate"
-              [tooltip]="helptext.fast_list_tooltip | translate"
+              [label]="helptext.fastListLabel | translate"
+              [tooltip]="helptext.fastListTooltip | translate"
             ></ix-checkbox>
           }
           @if (form.controls.encryption.enabled) {
             <ix-checkbox
               formControlName="encryption"
-              [label]="helptext.remote_encryption_placeholder | translate"
-              [tooltip]="helptext.remote_encryption_tooltip | translate"
+              [label]="helptext.remoteEncryptionLabel | translate"
+              [tooltip]="helptext.remoteEncryptionTooltip | translate"
             ></ix-checkbox>
           }
           @if (form.controls.filename_encryption.enabled) {
             <ix-checkbox
               formControlName="filename_encryption"
-              [label]="helptext.filename_encryption_placeholder | translate"
-              [tooltip]="helptext.filename_encryption_tooltip | translate"
+              [label]="helptext.filenameEncryptionLabel | translate"
+              [tooltip]="helptext.filenameEncryptionTooltip | translate"
             ></ix-checkbox>
           }
           @if (form.controls.encryption_password.enabled) {
             <ix-input
               formControlName="encryption_password"
               type="password"
-              [label]="helptext.encryption_password_placeholder | translate"
-              [tooltip]="helptext.encryption_password_tooltip | translate"
+              [label]="helptext.encryptionPasswordLabel | translate"
+              [tooltip]="helptext.encryptionPasswordTooltip | translate"
             ></ix-input>
           }
           @if (form.controls.encryption_salt.enabled) {
             <ix-input
               formControlName="encryption_salt"
               type="password"
-              [label]="helptext.encryption_salt_placeholder | translate"
-              [tooltip]="helptext.encryption_salt_tooltip | translate"
+              [label]="helptext.encryptionSaltLabel | translate"
+              [tooltip]="helptext.encryptionSaltTooltip | translate"
             ></ix-input>
           }
           @if (form.controls.transfers.enabled) {
             <ix-select
               formControlName="transfers"
               [options]="transfersOptions$"
-              [label]="helptext.transfers_placeholder | translate"
-              [tooltip]="helptext.transfers_tooltip | translate"
+              [label]="helptext.transfersLabel | translate"
+              [tooltip]="helptext.transfersTooltip | translate"
             ></ix-select>
           }
           @if (form.controls.bwlimit.enabled) {
             <ix-chips
               formControlName="bwlimit"
-              [label]="helptext.bwlimit_placeholder | translate"
-              [tooltip]="helptext.bwlimit_tooltip | translate"
+              [label]="helptext.bwlimitLabel | translate"
+              [tooltip]="helptext.bwlimitTooltip | translate"
             ></ix-chips>
           }
         </ix-fieldset>
@@ -286,7 +286,7 @@
           [disabled]="form.invalid || isLoading"
           (click)="onDryRun()"
         >
-          {{ helptext.action_button_dry_run | translate }}
+          {{ helptext.dryRunButton | translate }}
         </button>
         @if (isNew) {
           <button

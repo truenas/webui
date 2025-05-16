@@ -1,7 +1,7 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const helptextSharingSmb = {
-  root_level_warning: T(
+  rootLevelWarning: T(
     'Configuring SMB exports of root-level datasets\
  may lead to storage reconfiguration issues.\
  Consider creating a dataset instead.',
@@ -9,27 +9,27 @@ export const helptextSharingSmb = {
 
   shareAclDescription: T('The SMB share ACL defines access rights for users of this SMB share up to, but not beyond, the access granted by filesystem ACLs.'),
 
-  placeholder_path: T('Path'),
-  tooltip_path: T('Select pool, dataset, or directory to share.'),
-  placeholder_name: T('Name'),
+  pathLabel: T('Path'),
+  pathTooltip: T('Select pool, dataset, or directory to share.'),
+  nameLabel: T('Name'),
 
-  placeholder_comment: T('Description'),
+  commentLabel: T('Description'),
 
-  placeholder_enabled: T('Enabled'),
-  tooltip_enabled_audit_log: T(
+  enabledLabel: T('Enabled'),
+  auditLogTooltip: T(
     'Controls whether audit messages will be generated for the share. \
 <br><br> <b>Note</b>: Auditing may not be enabled if SMB1 support is enabled for the server.',
   ),
-  tooltip_watch_list: T(
+  watchListTooltip: T(
     'List of groups for which to generate audit messages. Keep this list empty to Watch All.',
   ),
-  tooltip_ignore_list: T(
+  ignoreListTooltip: T(
     'List of groups to ignore when auditing. If conflict arises between Watch List and Ignore List \
  (based on user group membership), then Watch List will take precedence and ops will be audited.',
   ),
 
-  placeholder_home: T('Use as Home Share'),
-  tooltip_home: T(
+  homeLabel: T('Use as Home Share'),
+  homeTooltip: T(
     'Legacy feature. <br><br>Allows the share to host user home \
  directories. Each user is given a personal home directory when \
  connecting to the share which is not accessible by other users. This \
@@ -37,43 +37,43 @@ export const helptextSharingSmb = {
  as the home share.',
   ),
 
-  placeholder_purpose: T('Purpose'),
-  tooltip_purpose: T(
+  purposeLabel: T('Purpose'),
+  purposeTooltip: T(
     'Select a preset configuration for the share. This\
  applies predetermined values and disables changing some share options.',
   ),
 
-  placeholder_timemachine: T('Time Machine'),
-  tooltip_timemachine: T('Enable Time Machine backups on this share.'),
+  timemachineLabel: T('Time Machine'),
+  timemachineTooltip: T('Enable Time Machine backups on this share.'),
 
-  placeholder_timemachine_quota: T('Time Machine Quota'),
-  tooltip_timemachine_quota: T('Number of bytes'),
+  timemachineQuotaLabel: T('Time Machine Quota'),
+  timemachineQuotaTooltip: T('Number of bytes'),
 
-  placeholder_afp: T('Legacy AFP Compatibility'),
-  tooltip_afp: T(
+  afpLabel: T('Legacy AFP Compatibility'),
+  afpTooltip: T(
     'This controls how the SMB share reads and writes data. Leave unset for the share to behave like a normal SMB share and set for the share to behave like the deprecated Apple Filing Protocol (AFP). This should only be set when this share originated as an AFP sharing configuration. This is not required for pure SMB shares or MacOS SMB clients.',
   ),
-  afpDialog_title: T('Warning'),
-  afpDialog_message: T(
+  afpWarningTitle: T('Warning'),
+  afpWarningMessage: T(
     'This option controls how metadata and alternate data streams read write to disks. Only enable this when the share configuration was migrated from the deprecated Apple Filing Protocol (AFP). Do not attempt to force a previous AFP share to behave like a pure SMB share or file corruption can occur.',
   ),
-  afpDialog_button: T('I understand'),
+  afpDialogButton: T('I understand'),
 
-  placeholder_acl: T('Enable ACL'),
-  tooltip_acl: T('Enable ACL support for the SMB share.'),
+  aclLabel: T('Enable ACL'),
+  aclTooltip: T('Enable ACL support for the SMB share.'),
 
-  placeholder_ro: T('Export Read Only'),
-  tooltip_ro: T('Prohibits writes to this share.'),
+  readOnlyLabel: T('Export Read Only'),
+  readOnlyTooltip: T('Prohibits writes to this share.'),
 
-  placeholder_browsable: T('Browsable to Network Clients'),
-  tooltip_browsable: T(
+  browsableLabel: T('Browsable to Network Clients'),
+  browsableTooltip: T(
     'Determine whether this share name is included\
  when browsing shares. Home shares are only visible to the owner\
  regardless of this setting.',
   ),
 
-  placeholder_recyclebin: T('Export Recycle Bin'),
-  tooltip_recyclebin: T('Select to enable. Deleted files from the same \
+  recyclebinLabel: T('Export Recycle Bin'),
+  recyclebinTooltip: T('Select to enable. Deleted files from the same \
     dataset move to a <b>Recycle Bin</b> in that dataset and do not take any \
     additional space. Recycle bin is for access over SMB protocol only.\
     The files are renamed to a per-user subdirectory within \

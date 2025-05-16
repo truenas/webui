@@ -4,8 +4,8 @@
       @if (!hideFileInput) {
         <ix-radio-group
           formControlName="use_file"
-          [label]="helptext.unlock_key_file_placeholder | translate"
-          [tooltip]="helptext.unlock_key_file_tooltip | translate"
+          [label]="helptext.keyFileLabel | translate"
+          [tooltip]="helptext.keyFileTooltip | translate"
           [options]="useFileOptions$"
         ></ix-radio-group>
       }
@@ -13,13 +13,13 @@
       @if (useFile) {
         <ix-checkbox
           formControlName="unlock_children"
-          [label]="helptext.unlock_children_placeholder | translate"
-          [tooltip]="helptext.unlock_children_tooltip | translate"
+          [label]="helptext.unlockChildrenLabel | translate"
+          [tooltip]="helptext.unlockChildrenTooltip | translate"
         ></ix-checkbox>
         <ix-file-input
           formControlName="file"
-          [label]="helptext.upload_key_file_placeholder | translate"
-          [tooltip]="helptext.upload_key_file_tooltip | translate"
+          [label]="helptext.uploadKeyFileLabel | translate"
+          [tooltip]="helptext.uploadKeyFileTooltip | translate"
           [required]="true"
         ></ix-file-input>
       } @else {
@@ -43,14 +43,14 @@
                 <ix-input
                   formControlName="passphrase"
                   type="password"
-                  [label]="helptext.dataset_passphrase_placeholder | translate"
-                  [tooltip]="helptext.dataset_passphrase_tooltip | translate"
+                  [label]="helptext.datasetPassphraseLabel | translate"
+                  [tooltip]="helptext.datasetPassphraseTooltip | translate"
                 ></ix-input>
               } @else {
                 <ix-textarea
                   formControlName="key"
-                  [label]="helptext.dataset_key_placeholder | translate"
-                  [tooltip]="helptext.dataset_key_placeholder | translate"
+                  [label]="helptext.datasetKeyLabel | translate"
+                  [tooltip]="helptext.datasetKeyLabel | translate"
                 ></ix-textarea>
                 <ix-file-input
                   formControlName="file"
@@ -65,7 +65,7 @@
       <ix-checkbox
         formControlName="force"
         [label]="'Force' | translate"
-        [tooltip]="helptext.dataset_force_tooltip | translate"
+        [tooltip]="helptext.datasetForceTooltip | translate"
       ></ix-checkbox>
 
       <div class="form-actions">

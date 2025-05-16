@@ -66,7 +66,7 @@ describe('NetworkInterfacesEffects', () => {
       spectator.service.showCheckinPrompt$.subscribe();
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
-        message: helptextInterfaces.pending_checkin_dialog_text,
+        message: helptextInterfaces.pendingCheckinDialogText,
       }));
       expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/system/network']);
     });
@@ -79,7 +79,7 @@ describe('NetworkInterfacesEffects', () => {
       spectator.service.showCheckinPrompt$.subscribe();
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
-        message: helptextInterfaces.pending_checkin_dialog_text,
+        message: helptextInterfaces.pendingCheckinDialogText,
       }));
       expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/system/network']);
     });
