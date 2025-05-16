@@ -261,11 +261,11 @@ export class UpdateActionsCardComponent implements OnInit {
     let confirmMsg;
 
     if (!this.isHaLicensed) {
-      downloadMsg = helptext.non_ha_download_msg;
-      confirmMsg = helptext.non_ha_confirm_msg;
+      downloadMsg = helptext.nonHaDownloadMessage;
+      confirmMsg = helptext.nonHaConfirmMessage;
     } else {
-      downloadMsg = helptext.ha_download_msg;
-      confirmMsg = helptext.ha_confirm_msg;
+      downloadMsg = helptext.haDownloadMessage;
+      confirmMsg = helptext.haConfirmMessage;
     }
 
     this.dialogService.confirm({
@@ -292,9 +292,9 @@ export class UpdateActionsCardComponent implements OnInit {
 
   private finishHaUpdate(): Observable<boolean> {
     return this.dialogService.confirm({
-      title: this.translate.instant(helptext.ha_update.complete_title),
-      message: this.translate.instant(helptext.ha_update.complete_msg),
-      buttonText: this.translate.instant(helptext.ha_update.complete_action),
+      title: this.translate.instant(helptext.haUpdate.completeTitle),
+      message: this.translate.instant(helptext.haUpdate.completeMessage),
+      buttonText: this.translate.instant(helptext.haUpdate.completeAction),
       hideCheckbox: true,
       hideCancel: true,
     });
@@ -302,9 +302,9 @@ export class UpdateActionsCardComponent implements OnInit {
 
   private finishNonHaUpdate(): Observable<boolean> {
     return this.dialogService.confirm({
-      title: this.translate.instant(helptext.ha_update.complete_title),
+      title: this.translate.instant(helptext.haUpdate.completeTitle),
       message: this.translate.instant('Update completed successfully. The system will restart shortly'),
-      buttonText: this.translate.instant(helptext.ha_update.complete_action),
+      buttonText: this.translate.instant(helptext.haUpdate.completeAction),
       hideCheckbox: true,
       hideCancel: true,
     });

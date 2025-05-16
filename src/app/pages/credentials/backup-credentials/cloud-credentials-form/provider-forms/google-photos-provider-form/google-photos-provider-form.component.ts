@@ -31,8 +31,8 @@ export class GooglePhotosProviderFormComponent extends BaseProviderFormComponent
     client_secret: ['', Validators.required],
   });
 
-  readonly oauthTooltip = helptext.token_google_photos.oauth_tooltip;
-  readonly tokenTooltip = helptext.token_google_photos.tooltip;
+  readonly oauthTooltip = helptext.googlePhotosToken.oauth_tooltip;
+  readonly tokenTooltip = helptext.googlePhotosToken.tooltip;
 
   constructor(
     private formBuilder: FormBuilder,

@@ -281,7 +281,7 @@ export const helptextIscsi = {
    Separate entries by pressing <code>Enter</code>.'),
 
   authNetwork: {
-    placeholder: T('Authorized Networks'),
+    label: T('Authorized Networks'),
     tooltip: T('Network addresses allowed to use this initiator. Leave blank to allow all \
      networks or list network addresses with a CIDR mask. Separate entries by pressing \
      <code>Enter</code>.'),

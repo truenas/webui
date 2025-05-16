@@ -75,8 +75,8 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
   readonly helptext = helptext2fa;
 
   readonly labels = {
-    secret: helptext2fa.secret.placeholder,
-    uri: helptext2fa.uri.placeholder,
+    secret: helptext2fa.secret.label,
+    uri: helptext2fa.uri.label,
   };
 
   readonly tooltips = {

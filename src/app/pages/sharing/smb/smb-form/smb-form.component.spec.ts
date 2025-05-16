@@ -459,7 +459,7 @@ describe('SmbFormComponent', () => {
       });
 
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
-        helptextSharingSmb.restarted_smb_dialog.message,
+        helptextSharingSmb.restartedSmbDialog.message,
       );
 
       const sharePath = await (await loader.getHarness(

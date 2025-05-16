@@ -46,14 +46,14 @@ export class LicenseComponent {
 
   isFormLoading = false;
 
-  title = helptext.update_license.license_placeholder;
+  title = helptext.updateLicense.licensePlaceholder;
   form = this.fb.nonNullable.group({
     license: ['', Validators.required],
   });
 
   license = {
     fcName: 'license',
-    label: helptext.update_license.license_placeholder,
+    label: helptext.updateLicense.licensePlaceholder,
   };
 
   constructor(
@@ -82,10 +82,10 @@ export class LicenseComponent {
         this.cdr.markForCheck();
         this.dialogService
           .confirm({
-            title: this.translate.instant(helptext.update_license.reload_dialog_title),
-            message: this.translate.instant(helptext.update_license.reload_dialog_message),
+            title: this.translate.instant(helptext.updateLicense.reloadDialogTitle),
+            message: this.translate.instant(helptext.updateLicense.reloadDialogMessage),
             hideCheckbox: true,
-            buttonText: this.translate.instant(helptext.update_license.reload_dialog_action),
+            buttonText: this.translate.instant(helptext.updateLicense.reloadDialogAction),
             hideCancel: true,
             disableClose: true,
           })
