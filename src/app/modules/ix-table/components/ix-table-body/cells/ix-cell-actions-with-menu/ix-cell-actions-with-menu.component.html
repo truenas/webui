@@ -29,6 +29,7 @@
     <mat-menu #actionMenu="matMenu">
       @for (action of visibleActions(); track action) {
         <button
+          *ixRequiresRoles="(action?.dynamicRequiredRoles ? (action.dynamicRequiredRoles(row()) | async) : action.requiredRoles) || []"
           mat-menu-item
           [ixTest]="[uniqueRowTag(row()), 'more-action', action.iconName, 'row-action']"
           [disabled]="action.disabled ? (action.disabled(row()) | async) : false"
