@@ -2,13 +2,10 @@ import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, input, output,
 } from '@angular/core';
-import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { filter } from 'rxjs';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { NvmeOfSubsystem } from 'app/interfaces/nvme-of.interface';
@@ -27,8 +24,6 @@ import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-
 import { createTable } from 'app/modules/ix-table/utils';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
-import { AddSubsystemComponent } from 'app/pages/sharing/nvme-of/add-subsystem/add-subsystem.component';
 import { subsystemListElements } from 'app/pages/sharing/nvme-of/nvme-of-subsystems/nvme-of-subsystems.elements';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/nvme-of.store';
 
@@ -45,9 +40,6 @@ import { NvmeOfStore } from 'app/pages/sharing/nvme-of/nvme-of.store';
     SearchInput1Component,
     TranslateModule,
     AsyncPipe,
-    MatButton,
-    RequiresRolesDirective,
-    TestDirective,
     MatToolbarRow,
     MatCardContent,
     IxTableComponent,
@@ -122,18 +114,6 @@ export class SubsystemsListComponent {
         this.cdr.markForCheck();
       }
     }
-  }
-
-  protected doAdd(): void {
-    this.slideIn.open(AddSubsystemComponent, { wide: true })
-      .pipe(
-        filter((response) => !!response.response),
-        untilDestroyed(this),
-      )
-      .subscribe(({ response }: { response: NvmeOfSubsystem | boolean }) => {
-        this.dataProvider().expandedRow = response as NvmeOfSubsystem;
-        this.nvmeOfStore.initialize();
-      });
   }
 
   protected onListFiltered(query: string): void {

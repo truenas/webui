@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, effect,
+  ChangeDetectionStrategy, Component, computed, effect,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -43,8 +43,24 @@ import { NvmeOfStore } from 'app/pages/sharing/nvme-of/nvme-of.store';
   ],
 })
 export class NvmeOfSubsystemsComponent {
-  protected dataProvider = new ArrayDataProvider<NvmeOfSubsystem>();
   protected readonly subsystems = this.nvmeOfStore.subsystems;
+  protected dataProvider = computed<ArrayDataProvider<NvmeOfSubsystem>>(() => {
+    const subsystems = this.subsystems();
+    const dataProvider = new ArrayDataProvider<NvmeOfSubsystem>();
+
+    dataProvider.setRows(subsystems);
+    dataProvider.setSorting({
+      active: 0,
+      direction: SortDirection.Asc,
+      propertyName: 'name',
+    });
+    if (!subsystems.length) {
+      dataProvider.setEmptyType(EmptyType.NoPageData);
+    }
+
+    return dataProvider;
+  });
+
   protected readonly isLoading = this.nvmeOfStore.isLoading;
 
   protected readonly requiredRoles = [
@@ -61,32 +77,12 @@ export class NvmeOfSubsystemsComponent {
     private loader: LoaderService,
   ) {
     effect(() => {
-      const subsystems = this.subsystems();
-      const firstSubsystem = subsystems[subsystems.length - 1];
-      if (!this.dataProvider.expandedRow && firstSubsystem) {
-        this.dataProvider.expandedRow = firstSubsystem;
-      }
-      this.dataProvider.setRows(subsystems);
-      this.dataProvider.setSorting({
-        active: 0,
-        direction: SortDirection.Asc,
-        propertyName: 'name',
-      });
-    });
-
-    effect(() => {
       const isLoading = this.isLoading();
       if (isLoading) {
-        this.dataProvider.setEmptyType(EmptyType.Loading);
+        this.dataProvider().setEmptyType(EmptyType.Loading);
         return;
       }
-
-      const subsystems = this.subsystems();
-      if (!subsystems.length) {
-        this.dataProvider.setEmptyType(EmptyType.NoPageData);
-        return;
-      }
-      this.dataProvider.setEmptyType(EmptyType.None);
+      this.dataProvider().setEmptyType(EmptyType.None);
     });
   }
 
@@ -102,7 +98,7 @@ export class NvmeOfSubsystemsComponent {
     ).subscribe({
       next: () => {
         this.loader.close();
-        this.dataProvider.expandedRow = null;
+        this.dataProvider().expandedRow = null;
         this.nvmeOfStore.initialize();
       },
     });
@@ -116,13 +112,13 @@ export class NvmeOfSubsystemsComponent {
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(({ response }: { response: NvmeOfSubsystem | boolean }) => {
-      this.dataProvider.expandedRow = response as NvmeOfSubsystem;
+      this.dataProvider().expandedRow = response as NvmeOfSubsystem;
       this.nvmeOfStore.initialize();
     });
   }
 
   onFilter(query: string): void {
-    this.dataProvider.setFilter({
+    this.dataProvider().setFilter({
       list: this.subsystems(),
       query,
       columnKeys: ['name'],
