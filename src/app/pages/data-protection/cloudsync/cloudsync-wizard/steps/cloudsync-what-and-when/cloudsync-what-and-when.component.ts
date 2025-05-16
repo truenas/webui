@@ -123,10 +123,10 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
   isCredentialInvalid$ = new BehaviorSubject(false);
   credentials: CloudSyncCredential[] = [];
   providers: CloudSyncProvider[] = [];
-  bucketPlaceholder: string = helptextCloudSync.bucket_placeholder;
-  bucketTooltip: string = helptextCloudSync.bucket_tooltip;
-  bucketInputPlaceholder: string = helptextCloudSync.bucket_input_placeholder;
-  bucketInputTooltip: string = helptextCloudSync.bucket_input_tooltip;
+  bucketPlaceholder: string = helptextCloudSync.bucketLabel;
+  bucketTooltip: string = helptextCloudSync.bucketTooltip;
+  bucketInputPlaceholder: string = helptextCloudSync.bucketLabel;
+  bucketInputTooltip: string = helptextCloudSync.bucketInputTooltip;
   googleDriveProviderIds: number[] = [];
   bucketOptions$: Observable<Option[]>;
 
@@ -138,9 +138,9 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
   readonly helptext = helptextCloudSync;
   protected readonly requiredRoles = [Role.CloudSyncWrite];
   readonly transferModeTooltip = `
-    ${helptextCloudSync.transfer_mode_warning_sync}<br><br>
-    ${helptextCloudSync.transfer_mode_warning_copy}<br><br>
-    ${helptextCloudSync.transfer_mode_warning_move}
+    ${helptextCloudSync.syncModeExplanation}<br><br>
+    ${helptextCloudSync.copyModeExplanation}<br><br>
+    ${helptextCloudSync.moveModeExplanation}
   `;
 
   get credentialsDependentControls(): FormControl[] {
@@ -408,10 +408,10 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
             this.bucketInputPlaceholder = this.translate.instant('Container');
             this.bucketInputTooltip = this.translate.instant('Input the pre-defined container to use.');
           } else {
-            this.bucketPlaceholder = helptextCloudSync.bucket_placeholder;
-            this.bucketTooltip = helptextCloudSync.bucket_tooltip;
-            this.bucketInputPlaceholder = helptextCloudSync.bucket_input_placeholder;
-            this.bucketInputTooltip = helptextCloudSync.bucket_input_tooltip;
+            this.bucketPlaceholder = helptextCloudSync.bucketLabel;
+            this.bucketTooltip = helptextCloudSync.bucketTooltip;
+            this.bucketInputPlaceholder = helptextCloudSync.bucketLabel;
+            this.bucketInputTooltip = helptextCloudSync.bucketInputTooltip;
           }
 
           this.loadBucketOptions();

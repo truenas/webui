@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { NvmeOfGlobalConfig } from 'app/interfaces/nvme-of.interface';
@@ -12,6 +13,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import {
   NvmeOfConfigurationComponent,
 } from 'app/pages/sharing/nvme-of/nvme-of-configuration/nvme-of-configuration.component';
+import { NvmeOfService } from 'app/pages/sharing/nvme-of/utils/nvme-of.service';
 
 describe('NvmeOfConfigurationComponent', () => {
   let spectator: Spectator<NvmeOfConfigurationComponent>;
@@ -32,6 +34,9 @@ describe('NvmeOfConfigurationComponent', () => {
       ]),
       mockProvider(SlideInRef, {
         close: jest.fn(),
+      }),
+      mockProvider(NvmeOfService, {
+        isRdmaEnabled: jest.fn(() => of(true)),
       }),
       mockProvider(SnackbarService),
     ],
@@ -76,5 +81,15 @@ describe('NvmeOfConfigurationComponent', () => {
       xport_referral: false,
     }]);
     expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+  });
+
+  it('disables RDMA control if RDMA support is missing from the system', async () => {
+    spectator.inject(NvmeOfService).isRdmaEnabled.mockReturnValue(of(false));
+    spectator.component.ngOnInit();
+
+    const controls = await form.getDisabledState();
+    expect(controls).toMatchObject({
+      'Enable Remote Direct Memory Access (RDMA)': true,
+    });
   });
 });

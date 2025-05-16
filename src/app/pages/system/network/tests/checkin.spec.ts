@@ -161,7 +161,7 @@ describe('NetworkComponent', () => {
     expect(api.call).toHaveBeenCalledWith('interface.has_pending_changes');
     expect(api.call).toHaveBeenCalledWith('interface.checkin_waiting');
 
-    expect(spectator.query('.pending-changes-card')).toContainText(helptextInterfaces.pending_changes_text);
+    expect(spectator.query('.pending-changes-card')).toContainText(helptextInterfaces.pendingChangesText);
   });
 
   it('reverts changes when user presses Revert Changes', async () => {
@@ -184,11 +184,11 @@ describe('NetworkComponent', () => {
     expect(api.call).toHaveBeenCalledWith('interface.commit', [{ checkin_timeout: 60 }]);
 
     expect(spectator.query('.pending-changes-card'))
-      .toContainText(helptextInterfaces.pending_checkin_text.replace('{x}', '60'));
+      .toContainText(helptextInterfaces.pendingCheckinText.replace('{x}', '60'));
     tick(1000);
     spectator.detectChanges();
     expect(spectator.query('.pending-changes-card'))
-      .toContainText(helptextInterfaces.pending_checkin_text.replace('{x}', '59'));
+      .toContainText(helptextInterfaces.pendingCheckinText.replace('{x}', '59'));
     discardPeriodicTasks();
   }));
 
@@ -214,6 +214,6 @@ describe('NetworkComponent', () => {
 
     expect(api.call).toHaveBeenCalledWith('interface.cancel_rollback');
 
-    expect(spectator.query('.pending-changes-card')).toContainText(helptextInterfaces.pending_changes_text);
+    expect(spectator.query('.pending-changes-card')).toContainText(helptextInterfaces.pendingChangesText);
   }));
 });

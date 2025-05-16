@@ -111,7 +111,7 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
           hidden: (row) => of(!this.isPhysical(row)),
           disabled: () => this.isHaLicensed$,
           dynamicTooltip: () => this.isHaLicensed$.pipe(map((isHaLicensed) => (isHaLicensed
-            ? this.translate.instant(helptextInterfaces.ha_enabled_reset_msg)
+            ? this.translate.instant(helptextInterfaces.haEnabledResetMessage)
             : this.translate.instant('Reset configuration')))),
           onClick: (row) => this.onReset(row),
         },
@@ -119,7 +119,7 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
           iconName: iconMarker('mdi-delete'),
           requiredRoles: this.requiredRoles,
           tooltip: this.isHaLicensed()
-            ? this.translate.instant(helptextInterfaces.ha_enabled_delete_msg)
+            ? this.translate.instant(helptextInterfaces.haEnabledDeleteMessage)
             : this.translate.instant('Delete'),
           hidden: (row) => of(this.isPhysical(row)),
           onClick: (row) => this.onDelete(row),
@@ -211,7 +211,7 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
   onDelete(row: NetworkInterface): void {
     this.dialogService.confirm({
       title: this.translate.instant('Delete Interface'),
-      message: this.translate.instant(helptextInterfaces.delete_dialog_text),
+      message: this.translate.instant(helptextInterfaces.deleteDialogText),
       buttonText: this.translate.instant('Delete'),
     })
       .pipe(filter(Boolean), untilDestroyed(this))
@@ -221,7 +221,7 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
   onReset(row: NetworkInterface): void {
     this.dialogService.confirm({
       title: this.translate.instant('Reset Configuration'),
-      message: this.translate.instant(helptextInterfaces.delete_dialog_text),
+      message: this.translate.instant(helptextInterfaces.deleteDialogText),
       buttonText: this.translate.instant('Reset'),
     })
       .pipe(filter(Boolean), untilDestroyed(this))

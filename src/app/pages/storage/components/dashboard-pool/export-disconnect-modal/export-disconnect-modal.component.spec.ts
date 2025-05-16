@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import {
   createComponentFactory, mockProvider, Spectator, SpectatorFactory,
 } from '@ngneat/spectator/jest';
@@ -22,6 +22,9 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
+import {
+  ServicesToBeRestartedDialogComponent,
+} from 'app/pages/storage/components/dashboard-pool/export-disconnect-modal/services-need-to-be-restarted-dialog/services-to-be-restarted-dialog.component';
 import { FailedJobError } from 'app/services/errors/error.classes';
 import { ExportDisconnectModalComponent } from './export-disconnect-modal.component';
 
@@ -82,6 +85,11 @@ describe('ExportDisconnectModalComponent', () => {
           })),
         }),
         mockProvider(MatDialogRef),
+        mockProvider(MatDialog, {
+          open: jest.fn(() => ({
+            afterClosed: () => of(false),
+          }) as unknown as MatDialogRef<JobProgressDialogRef<unknown>>),
+        }),
         mockAuth(),
         mockProvider(SnackbarService),
       ],
@@ -255,21 +263,24 @@ describe('ExportDisconnectModalComponent', () => {
             } as Job);
           }) as Observable<Job>,
         } as JobProgressDialogRef<unknown>);
-        jest.spyOn(dialog, 'confirm').mockImplementation((() => of(false)) as typeof dialog.confirm);
       });
 
       it('shows a warning when there are processes that can be stopped', async () => {
         await submitForm();
 
-        expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
-          buttonText: 'Manage Services and Continue',
-          message: '<div class="warning-box">These services must be stopped to export the pool:<br>- docker<br><br><div class="warning-box">These services must be restarted to export the pool:<br>- cifs<br>- iscsi<br><br>Exporting/disconnecting will continue after services have been managed.</div><br />',
-        }));
+        expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ServicesToBeRestartedDialogComponent, {
+          data: {
+            code: 'control_services',
+            restart_services: ['cifs', 'iscsi'],
+            stop_services: ['docker'],
+          },
+        });
       });
 
       it('calls pool.export with `restart_services` = true when warning dialog is shown and user confirms', async () => {
-        const dialog = spectator.inject(DialogService);
-        jest.spyOn(dialog, 'confirm').mockImplementation((() => of(true)) as typeof dialog.confirm);
+        jest.spyOn(spectator.inject(MatDialog), 'open').mockReturnValue({
+          afterClosed: () => of(true),
+        } as unknown as MatDialogRef<ServicesToBeRestartedDialogComponent>);
 
         await submitForm();
 

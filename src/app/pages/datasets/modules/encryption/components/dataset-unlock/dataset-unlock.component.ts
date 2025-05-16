@@ -135,8 +135,8 @@ export class DatasetUnlockComponent implements OnInit {
     this.dialogService.jobDialog(
       this.api.job('pool.dataset.encryption_summary', [this.pk]),
       {
-        title: this.translate.instant(helptextUnlock.fetching_encryption_summary_title),
-        description: this.translate.instant(helptextUnlock.fetching_encryption_summary_message, { dataset: this.pk }),
+        title: this.translate.instant(helptextUnlock.fetchingEncryptionSummaryTitle),
+        description: this.translate.instant(helptextUnlock.fetchingEncryptionSummaryMessage, { dataset: this.pk }),
       },
     )
       .afterClosed()
@@ -205,7 +205,7 @@ export class DatasetUnlockComponent implements OnInit {
       : this.api.job('pool.dataset.unlock', [this.pk, payload]);
 
     this.dialogService.jobDialog(job$, {
-      title: this.translate.instant(helptextUnlock.unlocking_datasets_title),
+      title: this.translate.instant(helptextUnlock.unlockingDatasetsTitle),
     })
       .afterClosed()
       .pipe(
@@ -247,8 +247,8 @@ export class DatasetUnlockComponent implements OnInit {
       : this.api.job('pool.dataset.encryption_summary', [this.pk, payload]);
 
     this.dialogService.jobDialog(job$, {
-      title: this.translate.instant(helptextUnlock.fetching_encryption_summary_title),
-      description: this.translate.instant(helptextUnlock.fetching_encryption_summary_message, { dataset: this.pk }),
+      title: this.translate.instant(helptextUnlock.fetchingEncryptionSummaryTitle),
+      description: this.translate.instant(helptextUnlock.fetchingEncryptionSummaryMessage, { dataset: this.pk }),
     })
       .afterClosed()
       .pipe(

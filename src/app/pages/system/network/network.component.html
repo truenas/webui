@@ -9,10 +9,10 @@
           <mat-card-content>
             @if (!checkinWaiting) {
               <div>
-                <p>{{ helptext.pending_changes_text | translate }}</p>
+                <p>{{ helptext.pendingChangesText | translate }}</p>
 
                 <p>
-                  {{ helptext.checkin_text | translate }}
+                  {{ helptext.checkinText | translate }}
                   <mat-form-field floatPlaceholder="never" id="timeout-field">
                     <input
                       #checkinTimeoutField="ngModel"
@@ -25,7 +25,7 @@
                       [(ngModel)]="checkinTimeout"
                     />
                   </mat-form-field>
-                  {{ helptext.checkin_text_2 | translate }}
+                  {{ helptext.checkinText2 | translate }}
                 </p>
 
                 @if (!checkinTimeout || checkinTimeoutField.errors?.min || checkinTimeoutField.errors?.pattern) {
@@ -39,7 +39,7 @@
             } @else {
               <div>
                 <p>
-                  {{ helptext.pending_checkin_text | translate: { x: checkinRemaining } }}
+                  {{ helptext.pendingCheckinText | translate: { x: checkinRemaining } }}
                 </p>
               </div>
             }
@@ -53,7 +53,7 @@
                 [disabled]="isHaEnabled || isCheckinTimeoutFieldInvalid"
                 (click)="commitPendingChanges()"
               >
-                {{ helptext.commit_button | translate }}
+                {{ helptext.commitButton | translate }}
               </button>
             }
 
@@ -64,7 +64,7 @@
                 [disabled]="isHaEnabled"
                 (click)="checkInNow()"
               >
-                {{ helptext.keep_button | translate }}
+                {{ helptext.keepButton | translate }}
               </button>
             }
 
@@ -74,19 +74,19 @@
               [disabled]="isHaEnabled"
               (click)="rollbackPendingChanges()"
             >
-              {{ helptext.rollback_button | translate }}
+              {{ helptext.revertChangesButton | translate }}
             </button>
           </mat-card-actions>
 
           @if (isHaEnabled) {
             <div class="disabled-notice">
-              {{ helptext.ha_enabled_text | translate }}
+              {{ helptext.haEnabledText | translate }}
               (
               <span
                 class="pseudolink"
                 (click)="goToHa()"
               >
-                {{ helptext.go_to_ha | translate }}
+                {{ helptext.goToHa | translate }}
               </span>
               ).
             </div>

@@ -3,7 +3,7 @@
     formControlName="name"
     [label]="'Name' | translate"
     [required]="true"
-    [tooltip]="helptext.name_tooltip | translate"
+    [tooltip]="helptext.nameTooltip | translate"
   ></ix-input>
   @if (!isLocal) {
     <ix-select
@@ -11,7 +11,7 @@
       [label]="'Direction' | translate"
       [required]="true"
       [options]="directions$"
-      [tooltip]="helptext.direction_tooltip | translate"
+      [tooltip]="helptext.directionTooltip | translate"
     ></ix-select>
   }
   <ix-select
@@ -19,31 +19,31 @@
     [label]="'Transport' | translate"
     [required]="true"
     [options]="transports$"
-    [tooltip]="helptext.transport_tooltip | translate"
+    [tooltip]="helptext.transportTooltip | translate"
   ></ix-select>
   @if (!isLocal) {
     <ix-checkbox
       formControlName="sudo"
       [label]="'Use Sudo For ZFS Commands' | translate"
-      [tooltip]="helptext.sudo_tooltip | translate"
+      [tooltip]="helptext.sudoTooltip | translate"
     ></ix-checkbox>
   }
   <ix-input
     formControlName="retries"
     type="number"
     [label]="'Number of retries for failed replications' | translate"
-    [tooltip]="helptext.retries_tooltip | translate"
+    [tooltip]="helptext.retriesTooltip | translate"
   ></ix-input>
   <ix-select
     formControlName="logging_level"
     [label]="'Logging Level' | translate"
     [required]="true"
     [options]="loggingLevels$"
-    [tooltip]="helptext.logging_level_tooltip | translate"
+    [tooltip]="helptext.loggingLevelTooltip | translate"
   ></ix-select>
   <ix-checkbox
     formControlName="enabled"
     [label]="'Enabled' | translate"
-    [tooltip]="helptext.enabled_tooltip | translate"
+    [tooltip]="helptext.enabledTooltip | translate"
   ></ix-checkbox>
 </ix-fieldset>

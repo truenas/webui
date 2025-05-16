@@ -68,28 +68,28 @@ export class DatasetQuotaAddFormComponent {
         + this.translate.instant(helptextGlobal.human_readable.suggestion_label);
     }
 
-    return this.translate.instant(helptextQuotas.groups.data_quota.placeholder)
+    return this.translate.instant(helptextQuotas.groups.dataQuota.placeholder)
       + this.translate.instant(helptextGlobal.human_readable.suggestion_label);
   }
 
   get objectQuotaLabel(): string {
     return this.quotaType === DatasetQuotaType.User
       ? helptextQuotas.users.objQuota.placeholder
-      : helptextQuotas.groups.obj_quota.placeholder;
+      : helptextQuotas.groups.objectQuota.placeholder;
   }
 
   get dataQuotaTooltip(): string {
     return this.quotaType === DatasetQuotaType.User
       ? this.translate.instant(helptextQuotas.users.dataQuota.tooltip)
       + ' ' + this.translate.instant(helptextQuotas.fieldAcceptsTooltip)
-      : this.translate.instant(helptextQuotas.groups.data_quota.tooltip)
+      : this.translate.instant(helptextQuotas.groups.dataQuota.tooltip)
         + ' ' + this.translate.instant(helptextQuotas.fieldAcceptsTooltip);
   }
 
   get objectQuotaTooltip(): string {
     return this.quotaType === DatasetQuotaType.User
       ? helptextQuotas.users.objQuota.tooltip
-      : helptextQuotas.groups.obj_quota.tooltip;
+      : helptextQuotas.groups.objectQuota.tooltip;
   }
 
   form = this.formBuilder.nonNullable.group({

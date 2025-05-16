@@ -114,6 +114,7 @@ export class FibreChannelPortsComponent implements OnInit {
         getValue: (row) => {
           return `A: ${row.aPortState || '–'} B: ${row.bPortState || '–'}`;
         },
+        hidden: !this.isHa(),
         disableSorting: true,
       }),
       actionsWithMenuColumn({
