@@ -1,13 +1,23 @@
 import { AbstractControl } from '@angular/forms';
 
-export const forbiddenRootDatasetsSharingValidatorFn = (control: AbstractControl<string | string[]>): boolean => {
-  let path = Array.isArray(control.value) ? control.value : control.value.split('/');
-  path = path.filter((pathItem) => !!pathItem);
-  if (!path.length) {
+export const getRootDatasetsValidator = (allowedPaths: string[] = []): ((control: AbstractControl) => boolean) => {
+  return (control: AbstractControl<string | string[]>): boolean => {
+    if (!control) {
+      return true;
+    }
+    const joinedPath = Array.isArray(control.value)
+      ? control.value.reduce((prevValue, currentValue) => `${prevValue}/${currentValue}`)
+      : control.value;
+    if (!joinedPath || allowedPaths.includes(joinedPath)) {
+      return true;
+    }
+    const splitPath = joinedPath.split('/').filter((pathItem) => !!pathItem);
+    if (!splitPath.length) {
+      return true;
+    }
+    if (splitPath[0].includes('mnt') && splitPath.length === 2) {
+      return false;
+    }
     return true;
-  }
-  if (path[0].includes('mnt') && path.length === 2) {
-    return false;
-  }
-  return true;
+  };
 };

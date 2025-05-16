@@ -60,7 +60,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { RestartSmbDialog } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
 import { SmbValidationService } from 'app/pages/sharing/smb/smb-form/smb-validator.service';
-import { forbiddenRootDatasetsSharingValidatorFn } from 'app/pages/sharing/utils/root-datasets-validator';
+import { getRootDatasetsValidator } from 'app/pages/sharing/utils/root-datasets-validator';
 import { DatasetService } from 'app/services/dataset/dataset.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { UserService } from 'app/services/user.service';
@@ -197,13 +197,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     then allow it.', { url: 'https://wiki.samba.org/index.php/1.4_Samba_Security' });
 
   form = this.formBuilder.group({
-    path: ['', [
-      Validators.required,
-      this.validatorsService.customValidator(
-        forbiddenRootDatasetsSharingValidatorFn,
-        this.translate.instant('Sharing root datasets is not recommended. Please create a child dataset.'),
-      ),
-    ]],
+    path: ['', [Validators.required]],
     name: ['', Validators.required],
     purpose: [null as SmbPresetType | null],
     comment: [''],
@@ -294,7 +288,16 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     }
 
     if (this.existingSmbShare) {
+      this.form.controls.path.addValidators(this.validatorsService.customValidator(
+        getRootDatasetsValidator([this.existingSmbShare.path]),
+        this.translate.instant('Sharing root datasets is not recommended. Please create a child dataset.'),
+      ));
       this.setSmbShareForEdit(this.existingSmbShare);
+    } else {
+      this.form.controls.path.addValidators(this.validatorsService.customValidator(
+        getRootDatasetsValidator(),
+        this.translate.instant('Sharing root datasets is not recommended. Please create a child dataset.'),
+      ));
     }
   }
 
