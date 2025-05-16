@@ -8,7 +8,7 @@
   "Add Host": "",
   "Add Port": "",
   "Add Subsystem": "",
-  "Are you sure you want to delete subsystem {subsys}": "",
+  "Are you sure you want to delete subsystem {subsys}?": "",
   "Base NQN": "",
   "Block (iSCSI/FC) Shares Targets": "",
   "Block (iSCSI/Fibre Channel) Shares Targets": "",

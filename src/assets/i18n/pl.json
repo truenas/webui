@@ -36,7 +36,7 @@
   "Allows multiple  <a href=\"http://www.ntfs.com/ntfs-multiple.htm\">NTFS data streams</a>.  Disabling this option causes macOS to write streams to files on the filesystem.": "",
   "An unknown error occurred": "",
   "API URL": "",
-  "Are you sure you want to delete subsystem {subsys}": "",
+  "Are you sure you want to delete subsystem {subsys}?": "",
   "Are you sure you want to lock \"{user}\" user?": "",
   "Are you sure you want to unlock \"{user}\" user?": "",
   "At least one module must be defined in <a                href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\"                target=\"_blank\">rsyncd.conf(5)</a> of the rsync                server or in the <b>Rsync Modules</b> of another                system.": "",

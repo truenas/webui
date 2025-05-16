@@ -1,7 +1,7 @@
 {
   "": "",
   "<i>PUSH</i> sends snapshots to a destination  system.<br><br>  <i>PULL</i> connects to a remote system and retrieves snapshots  matching a <b>Naming Schema</b>.": "",
-  "Are you sure you want to delete subsystem {subsys}": "",
+  "Are you sure you want to delete subsystem {subsys}?": "",
   "Create Subsystem": "",
   "Data is identical in each disk. A mirror requires at least two disks, provides the most redundancy, and has the least capacity.": "",
   "Dataset for use by an application. If you plan to deploy container applications, the system automatically creates the ix-apps dataset but this is not used for application data storage.": "",

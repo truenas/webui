@@ -1,6 +1,6 @@
 {
   "": "",
-  "Are you sure you want to delete subsystem {subsys}": "",
+  "Are you sure you want to delete subsystem {subsys}?": "",
   "Create Subsystem": "",
   "Delete Subsystem": "",
   "DH-CHAP key to be used to authenticate the host.": "",

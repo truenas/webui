@@ -287,7 +287,7 @@
   "Are you sure you want to delete NFS Share <b>\"{path}\"</b>?": "",
   "Are you sure you want to delete SMB Share <b>\"{name}\"</b>?": "",
   "Are you sure you want to delete static route <b>\"{name}\"</b>?": "",
-  "Are you sure you want to delete subsystem {subsys}": "",
+  "Are you sure you want to delete subsystem {subsys}?": "",
   "Are you sure you want to delete the <b>{name}</b> DNS Authenticator?": "",
   "Are you sure you want to delete the <b>{name}</b> registry?": "",
   "Are you sure you want to delete the <b>{name}</b> SSH Connection?": "",
