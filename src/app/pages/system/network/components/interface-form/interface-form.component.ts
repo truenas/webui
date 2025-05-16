@@ -36,6 +36,7 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxIpInputWithNetmaskComponent } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
+import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
@@ -91,6 +92,7 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
     MatButton,
     TestDirective,
     TranslateModule,
+    IxRadioGroupComponent,
   ],
 })
 export class InterfaceFormComponent implements OnInit {
@@ -144,6 +146,11 @@ export class InterfaceFormComponent implements OnInit {
     { label: this.translate.instant('Bridge'), value: NetworkInterfaceType.Bridge },
     { label: this.translate.instant('Link Aggregation'), value: NetworkInterfaceType.LinkAggregation },
     { label: 'VLAN', value: NetworkInterfaceType.Vlan },
+  ]);
+
+  dhcpOptions$ = of([
+    { label: this.translate.instant('Get IP Address Automatically from DHCP'), value: true },
+    { label: this.translate.instant('Define Static IP Addresses'), value: false },
   ]);
 
   bridgeMembers$ = this.networkService.getBridgeMembersChoices().pipe(choicesToOptions());
@@ -220,7 +227,7 @@ export class InterfaceFormComponent implements OnInit {
     return this.form.controls.lag_protocol.value === LinkAggregationProtocol.LoadBalance;
   }
 
-  get canHaveAliases(): boolean {
+  get canHaveStaticIpAddresses(): boolean {
     return !this.form.value.ipv4_dhcp;
   }
 
@@ -234,7 +241,7 @@ export class InterfaceFormComponent implements OnInit {
   }
 
   setInterfaceForEdit(nic: NetworkInterface): void {
-    nic.aliases.forEach(() => this.addAlias());
+    nic.aliases.forEach(() => this.addStaticIpAddress());
     this.form.patchValue({
       ...nic,
       mtu: nic.mtu || this.defaultMtu,
@@ -245,7 +252,7 @@ export class InterfaceFormComponent implements OnInit {
     this.disableVlanParentInterface();
   }
 
-  addAlias(): void {
+  addStaticIpAddress(): void {
     this.form.controls.aliases.push(this.formBuilder.group({
       address: ['', [Validators.required, ipv4or6cidrValidator()]],
       failover_address: ['', [
@@ -265,7 +272,7 @@ export class InterfaceFormComponent implements OnInit {
     }));
   }
 
-  removeAlias(index: number): void {
+  removeStaticIpAddress(index: number): void {
     this.form.controls.aliases.removeAt(index);
   }
 

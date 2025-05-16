@@ -10,7 +10,7 @@
       [formGroup]="formGroup"
       (submit)="onSubmit()"
     >
-      <ix-fieldset [title]="helptext.fieldset_gui | translate">
+      <ix-fieldset [title]="helptext.guiTitle | translate">
         <ix-select
           formControlName="theme"
           [label]="'Theme' | translate"
@@ -75,7 +75,7 @@
         ></ix-checkbox>
       </ix-fieldset>
 
-      <ix-fieldset [title]="helptext.fieldset_other | translate">
+      <ix-fieldset [title]="helptext.otherTitle | translate">
         <ix-checkbox
           formControlName="usage_collection"
           [label]="helptext.usageCollection.label | translate"

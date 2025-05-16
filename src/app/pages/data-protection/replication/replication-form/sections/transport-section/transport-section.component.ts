@@ -57,7 +57,7 @@ export class TransportSectionComponent implements OnChanges {
   readonly netcatActiveSides$ = of(mapToOptions(netcatModeNames, this.translate));
   readonly compressions$ = of(mapToOptions(compressionTypeNames, this.translate));
 
-  readonly sizeSuggestion = this.translate.instant(helptextGlobal.human_readable.suggestion_label);
+  readonly sizeSuggestion = this.translate.instant(helptextGlobal.humanReadable.suggestionLabel);
 
   protected readonly helptext = helptextReplication;
 

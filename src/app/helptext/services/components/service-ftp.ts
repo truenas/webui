@@ -40,9 +40,9 @@ export const helptextServiceFtp = {
  means any port above 1023.'),
   passiveportsmaxTooltip: T('Used by clients in PASV mode. A default of <i>0</i>\
  means any port above 1023.'),
-  localuserbwLabel: T('Local User Upload Bandwidth: ') + helptextGlobal.human_readable.suggestion_label,
+  localuserbwLabel: T('Local User Upload Bandwidth: ') + helptextGlobal.humanReadable.suggestionLabel,
   userbwTooltip: T('In KiBs or greater. A default of <i>0 KiB</i> means unlimited. ')
-    + helptextGlobal.human_readable.suggestion_tooltip
+    + helptextGlobal.humanReadable.suggestionTooltip
     + ' KiB.',
   tlsTooltip: T('Allow encrypted connections. Requires a certificate \
  created or imported with the <b>System > Certificates</b> menu.'),
