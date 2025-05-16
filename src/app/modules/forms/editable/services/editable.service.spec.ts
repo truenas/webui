@@ -140,7 +140,7 @@ describe('EditableService', () => {
       spectator.service.register(component2);
     });
 
-    it('listens to keydown Escape and closes all if open editables exist', () => {
+    it('listens to keydown Escape and closes all if open editables exist', fakeAsync(() => {
       const event = new KeyboardEvent('keydown', { key: 'Escape' });
       const listener = registeredListeners.get('keydown');
       listener?.(event);
@@ -149,7 +149,7 @@ describe('EditableService', () => {
 
       expect(component1.tryToClose).toHaveBeenCalled();
       expect(component2.tryToClose).toHaveBeenCalled();
-    });
+    }));
 
     it('listens to mousedown and closes only editables not clicked inside', fakeAsync(() => {
       const event = new MouseEvent('mousedown', { bubbles: true });
