@@ -59,7 +59,7 @@ export class AddSubsystemComponent {
 
   constructor(
     private formBuilder: FormBuilder,
-    public slideInRef: SlideInRef<void, boolean | NvmeOfSubsystem>,
+    public slideInRef: SlideInRef<void, false | NvmeOfSubsystem>,
     private api: ApiService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
