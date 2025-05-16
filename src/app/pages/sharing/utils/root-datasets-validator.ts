@@ -6,7 +6,7 @@ export const getRootDatasetsValidator = (allowedPaths: string[] = []): ((control
       return true;
     }
     const joinedPath = Array.isArray(control.value)
-      ? control.value.reduce((prevValue, currentValue) => `${prevValue}/${currentValue}`)
+      ? control.value.reduce((prevValue, currentValue) => `${prevValue}/${currentValue}`, '')
       : control.value;
     if (!joinedPath || allowedPaths.includes(joinedPath)) {
       return true;
