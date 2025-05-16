@@ -113,6 +113,6 @@ describe('NvmeOfSubsystems', () => {
   it('deletes subsystem', async () => {
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
     await deleteButton.click();
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nvmet.subsys.delete', [2, { force: true }]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nvmet.subsys.delete', [1, { force: true }]);
   });
 });

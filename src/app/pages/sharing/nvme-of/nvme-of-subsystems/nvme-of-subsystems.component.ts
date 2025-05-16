@@ -56,6 +56,8 @@ export class NvmeOfSubsystemsComponent {
     });
     if (!subsystems.length) {
       dataProvider.setEmptyType(EmptyType.NoPageData);
+    } else {
+      dataProvider.expandedRow = subsystems[0];
     }
 
     return dataProvider;

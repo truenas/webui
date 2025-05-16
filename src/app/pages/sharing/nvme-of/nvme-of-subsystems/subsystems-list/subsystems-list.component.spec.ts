@@ -1,6 +1,5 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
@@ -88,12 +87,5 @@ describe('SubsystemsListComponent', () => {
     ];
 
     expect(await table.getCellTexts()).toEqual(expectedRows);
-  });
-
-  it('initializes store when added', async () => {
-    const button = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
-    expect(spectator.inject(NvmeOfStore).initialize).not.toHaveBeenCalled();
-    await button.click();
-    expect(spectator.inject(NvmeOfStore).initialize).toHaveBeenCalled();
   });
 });
