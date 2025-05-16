@@ -8,7 +8,7 @@
           <ix-explorer
             formControlName="path"
             [label]="'Path' | translate"
-            [tooltip]="helptext.rsync_path_tooltip | translate"
+            [tooltip]="helptext.rsyncPathTooltip | translate"
             [required]="true"
             [nodeProvider]="treeNodeProvider"
           ></ix-explorer>
@@ -16,7 +16,7 @@
           <ix-combobox
             formControlName="user"
             [label]="'User' | translate"
-            [tooltip]="helptext.rsync_user_tooltip | translate"
+            [tooltip]="helptext.rsyncUserTooltip | translate"
             [required]="true"
             [provider]="userProvider"
           ></ix-combobox>
@@ -24,7 +24,7 @@
           <ix-select
             formControlName="direction"
             [label]="'Direction' | translate"
-            [tooltip]="helptext.rsync_direction_tooltip | translate"
+            [tooltip]="helptext.rsyncDirectionTooltip | translate"
             [required]="true"
             [options]="directions$"
           ></ix-select>
@@ -39,7 +39,7 @@
           <ix-select
             formControlName="mode"
             [label]="'Rsync Mode' | translate"
-            [tooltip]="helptext.rsync_mode_tooltip | translate"
+            [tooltip]="helptext.rsyncModeTooltip | translate"
             [options]="rsyncModes$"
             [hideEmpty]="true"
           ></ix-select>
@@ -49,19 +49,19 @@
               formControlName="remotehost"
               [label]="'Remote Host' | translate"
               [required]="true"
-              [tooltip]="helptext.rsync_remotehost_tooltip | translate"
+              [tooltip]="helptext.rsyncRemotehostTooltip | translate"
             ></ix-input>
             <ix-input
               formControlName="remotemodule"
               [label]="'Remote Module Name' | translate"
-              [tooltip]="helptext.rsync_remotemodule_tooltip | translate"
+              [tooltip]="helptext.rsyncRemotemoduleTooltip | translate"
               [required]="true"
             ></ix-input>
           } @else {
             <ix-select
               formControlName="sshconnectmode"
               [label]="'Connect using:' | translate"
-              [tooltip]="helptext.rsync_ssh_connect_mode_tooltip | translate"
+              [tooltip]="helptext.rsyncSshConnectModeTooltip | translate"
               [options]="sshConnectModes$"
               [hideEmpty]="true"
             ></ix-select>
@@ -71,13 +71,13 @@
                 formControlName="remotehost"
                 [label]="'Remote Host' | translate"
                 [required]="true"
-                [tooltip]="helptext.rsync_remotehost_tooltip | translate"
+                [tooltip]="helptext.rsyncRemotehostTooltip | translate"
               ></ix-input>
               @if (isRemoteHostSpecified) {
                 <ix-slide-toggle
                   formControlName="ssh_keyscan"
                   [label]="'SSH Keyscan' | translate"
-                  [tooltip]="helptext.ssh_keyscan_tooltip | translate"
+                  [tooltip]="helptext.sshKeyscanTooltip | translate"
                 ></ix-slide-toggle>
               }
               <ix-input
@@ -85,13 +85,13 @@
                 type="number"
                 [label]="'Remote SSH Port' | translate"
                 [required]="true"
-                [tooltip]="helptext.rsync_remoteport_tooltip | translate"
+                [tooltip]="helptext.rsyncRemoteportTooltip | translate"
               ></ix-input>
             } @else {
               <ix-ssh-credentials-select
                 formControlName="ssh_credentials"
                 [label]="'SSH Connection' | translate"
-                [tooltip]="helptext.rsync_ssh_credentials_tooltip | translate"
+                [tooltip]="helptext.rsyncSshCredentialsTooltip | translate"
                 [required]="true"
               ></ix-ssh-credentials-select>
             }
@@ -103,7 +103,7 @@
             <ix-checkbox
               formControlName="validate_rpath"
               [label]="'Validate Remote Path' | translate"
-              [tooltip]="helptext.rsync_validate_rpath_tooltip | translate"
+              [tooltip]="helptext.rsyncValidateRpathTooltip | translate"
             ></ix-checkbox>
           }
 
@@ -114,13 +114,13 @@
             formControlName="schedule"
             [required]="true"
             [label]="'Schedule' | translate"
-            [tooltip]="helptext.rsync_picker_tooltip | translate"
+            [tooltip]="helptext.rsyncPickerTooltip | translate"
           ></ix-scheduler>
 
           <ix-checkbox
             formControlName="recursive"
             [label]="'Recursive' | translate"
-            [tooltip]="helptext.rsync_recursive_tooltip | translate"
+            [tooltip]="helptext.rsyncRecursiveTooltip | translate"
           ></ix-checkbox>
 
           <ix-checkbox
@@ -133,55 +133,55 @@
           <ix-checkbox
             formControlName="times"
             [label]="'Times' | translate"
-            [tooltip]="helptext.rsync_times_tooltip | translate"
+            [tooltip]="helptext.rsyncTimesTooltip | translate"
           ></ix-checkbox>
 
           <ix-checkbox
             formControlName="compress"
             [label]="'Compress' | translate"
-            [tooltip]="helptext.rsync_compress_tooltip | translate"
+            [tooltip]="helptext.rsyncCompressTooltip | translate"
           ></ix-checkbox>
 
           <ix-checkbox
             formControlName="archive"
             [label]="'Archive' | translate"
-            [tooltip]="helptext.rsync_archive_tooltip | translate"
+            [tooltip]="helptext.rsyncArchiveTooltip | translate"
           ></ix-checkbox>
 
           <ix-checkbox
             formControlName="delete"
             [label]="'Delete' | translate"
-            [tooltip]="helptext.rsync_delete_tooltip | translate"
+            [tooltip]="helptext.rsyncDeleteTooltip | translate"
           ></ix-checkbox>
 
           <ix-checkbox
             formControlName="quiet"
             [label]="'Quiet' | translate"
-            [tooltip]="helptext.rsync_quiet_tooltip | translate"
+            [tooltip]="helptext.rsyncQuietTooltip | translate"
           ></ix-checkbox>
 
           <ix-checkbox
             formControlName="preserveperm"
             [label]="'Preserve Permissions' | translate"
-            [tooltip]="helptext.rsync_preserveperm_tooltip | translate"
+            [tooltip]="helptext.rsyncPreservepermTooltip | translate"
           ></ix-checkbox>
 
           <ix-checkbox
             formControlName="preserveattr"
             [label]="'Preserve Extended Attributes' | translate"
-            [tooltip]="helptext.rsync_preserveattr_tooltip | translate"
+            [tooltip]="helptext.rsyncPreserveattrTooltip | translate"
           ></ix-checkbox>
 
           <ix-checkbox
             formControlName="delayupdates"
             [label]="'Delay Updates' | translate"
-            [tooltip]="helptext.rsync_delayupdates_tooltip | translate"
+            [tooltip]="helptext.rsyncDelayupdatesTooltip | translate"
           ></ix-checkbox>
 
           <ix-chips
             formControlName="extra"
             [label]="'Auxiliary Parameters' | translate"
-            [tooltip]="helptext.rsync_extra_tooltip | translate"
+            [tooltip]="helptext.rsyncExtraTooltip | translate"
           ></ix-chips>
         </ix-fieldset>
       </div>

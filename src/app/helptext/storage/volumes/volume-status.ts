@@ -11,16 +11,16 @@ export const helptextVolumeStatus = {
       tooltip: T('Set to override safety checks and add the disk to the pool. <br>WARNING:\
  any data stored on the disk will be erased!'),
     },
-    new_disk: {
+    newDisk: {
       tooltip: T('Select an unused disk to add to this vdev. <br>WARNING: any data stored\
  on the unused disk will be erased!'),
     },
   },
 
-  replace_disk: {
+  replaceDisk: {
     title: T('Replacing Disk'),
   },
-  exported_pool_warning: helptextPoolCreation.exportedPoolWarning,
+  exportedPoolWarning: helptextPoolCreation.exportedPoolWarning,
 
   raidzExtendMessage: T('The expanded vdev uses the pre-expanded parity ratio, which reduces the total vdev capacity. \
 To reset the vdev parity ratio and fully use the new capacity, manually rewrite all data in the vdev. \

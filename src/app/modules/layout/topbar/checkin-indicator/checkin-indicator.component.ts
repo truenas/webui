@@ -73,8 +73,8 @@ export class CheckinIndicatorComponent implements OnInit {
 
   private showPendingNetworkChangesDialog(): void {
     this.dialogService.confirm({
-      title: this.translate.instant(helptextInterfaces.pending_changes_title),
-      message: this.translate.instant(helptextInterfaces.pending_changes_message),
+      title: this.translate.instant(helptextInterfaces.pendingChangesTitle),
+      message: this.translate.instant(helptextInterfaces.pendingChangesMessage),
       hideCheckbox: true,
       buttonText: this.translate.instant('Continue'),
     }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {

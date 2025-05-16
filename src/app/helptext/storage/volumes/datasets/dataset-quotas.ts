@@ -40,12 +40,12 @@ Press ENTER to separate entries.'),
     title: T('Show All Groups'),
     tooltip: T('You can search both for local groups as well as groups from Active Directory.\
  Press ENTER to separate entries.'),
-    data_quota: {
+    dataQuota: {
       placeholder: T('Group Data Quota '),
       tooltip: T('Amount of disk space that can be used by the selected groups. \
  Entering <code>0</code> (zero) allows all disk space.'),
     },
-    obj_quota: {
+    objectQuota: {
       placeholder: T('Group Object Quota'),
       tooltip: T('Number of objects that can be owned by each of the selected groups. \
  Entering <code>0</code> (zero) allows unlimited objects.'),
