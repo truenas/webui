@@ -1,9 +1,13 @@
 import { Injectable } from '@angular/core';
 import {
-  from, mergeMap, Observable, of, toArray,
+  combineLatest,
+  from, mergeMap, Observable, of, tap, toArray,
 } from 'rxjs';
+import { map, take } from 'rxjs/operators';
+import { NvmeOfTransportType } from 'app/enums/nvme-of.enum';
 import { NvmeOfSubsystem } from 'app/interfaces/nvme-of.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { LicenseService } from 'app/services/license.service';
 
 @Injectable({
   providedIn: 'root',
@@ -11,9 +15,47 @@ import { ApiService } from 'app/modules/websocket/api.service';
 export class NvmeOfService {
   private maxConcurrentRequests = 15;
 
+  private cachedRdmaEnabled: boolean | null = null;
+
   constructor(
     private api: ApiService,
+    private license: LicenseService,
   ) {}
+
+  getSupportedTransports(): Observable<NvmeOfTransportType[]> {
+    return combineLatest([
+      this.license.hasFibreChannel$,
+      this.isRdmaEnabled(),
+    ])
+      .pipe(
+        map(([hasFibreChannel, isRdmaEnabled]) => {
+          const transports = [NvmeOfTransportType.Tcp];
+
+          if (hasFibreChannel) {
+            transports.push(NvmeOfTransportType.FibreChannel);
+          }
+
+          if (isRdmaEnabled) {
+            transports.push(NvmeOfTransportType.Rdma);
+          }
+
+          return transports;
+        }),
+        take(1),
+      );
+  }
+
+  isRdmaEnabled(): Observable<boolean> {
+    if (this.cachedRdmaEnabled === null) {
+      return this.api.call('nvmet.global.rdma_enabled').pipe(
+        tap((rdmaEnabled) => {
+          this.cachedRdmaEnabled = rdmaEnabled;
+        }),
+      );
+    }
+
+    return of(this.cachedRdmaEnabled);
+  }
 
   associatePorts(subsystem: NvmeOfSubsystem, portIds: number[]): Observable<unknown> {
     if (portIds.length === 0) {

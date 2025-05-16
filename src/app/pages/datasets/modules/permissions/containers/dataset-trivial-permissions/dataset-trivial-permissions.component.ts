@@ -96,9 +96,9 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
     applyUser: helptextPermissions.applyUser.tooltip,
     group: helptextPermissions.groupLabel,
     applyGroup: helptextPermissions.applyGroup.tooltip,
-    mode: helptextPermissions.dataset_permissions_mode_tooltip,
-    recursive: helptextPermissions.dataset_permissions_recursive_tooltip,
-    traverse: helptextPermissions.dataset_permissions_traverse_tooltip,
+    mode: helptextPermissions.modeTooltip,
+    recursive: helptextPermissions.recursiveTooltip,
+    traverse: helptextPermissions.traverseTooltip,
   };
 
   readonly isRecursive$ = this.form.select((values) => values.recursive);

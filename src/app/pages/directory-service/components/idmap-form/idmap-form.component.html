@@ -21,7 +21,7 @@
             formControlName="custom_name"
             [label]="'Custom Name' | translate"
             [required]="true"
-            [tooltip]="helptext.idmap.custom_name.tooltip | translate"
+            [tooltip]="helptext.idmap.customNameTooltip | translate"
           ></ix-input>
         }
 
@@ -31,7 +31,7 @@
             [label]="'Idmap Backend' | translate"
             [required]="true"
             [options]="backends$"
-            [tooltip]="helptext.idmap.idmap_backend.tooltip | translate"
+            [tooltip]="helptext.idmap.idmapBackendTooltip | translate"
           ></ix-select>
         }
 
@@ -45,7 +45,7 @@
           type="number"
           [label]="'Range Low' | translate"
           [required]="true"
-          [tooltip]="helptext.idmap.range_tooltip | translate"
+          [tooltip]="helptext.idmap.rangeTooltip | translate"
         ></ix-input>
 
         <ix-input
@@ -53,7 +53,7 @@
           type="number"
           [label]="'Range High' | translate"
           [required]="true"
-          [tooltip]="helptext.idmap.range_tooltip | translate"
+          [tooltip]="helptext.idmap.rangeTooltip | translate"
         ></ix-input>
 
         @if (hasCertificateField$ | async) {
@@ -62,7 +62,7 @@
               formControlName="certificate"
               [label]="'Certificate' | translate"
               [options]="certificates$"
-              [tooltip]="helptext.idmap.certificate_id.tooltip | translate"
+              [tooltip]="helptext.idmap.certificateIdTooltip | translate"
             ></ix-select>
           </ix-with-manage-certificates-link>
         }
@@ -75,7 +75,7 @@
             [label]="'Schema Mode' | translate"
             [options]="schemaModes$"
             [required]="true"
-            [tooltip]="helptext.idmap.schema_mode.tooltip | translate"
+            [tooltip]="helptext.idmap.schemaModeTooltip | translate"
           ></ix-select>
         }
 
@@ -84,7 +84,7 @@
             formControlName="unix_primary_group"
             [label]="'Unix Primary Group' | translate"
             [required]="isOptionRequired('unix_primary_group')"
-            [tooltip]="helptext.idmap.unix_primary_group.tooltip | translate"
+            [tooltip]="helptext.idmap.unixPrimaryGroupTooltip | translate"
           ></ix-checkbox>
         }
 
@@ -93,7 +93,7 @@
             formControlName="unix_nss_info"
             [label]="'Unix NSS Info' | translate"
             [required]="isOptionRequired('unix_nss_info')"
-            [tooltip]="helptext.idmap.unix_nss.tooltip | translate"
+            [tooltip]="helptext.idmap.unixNssTooltip | translate"
           ></ix-checkbox>
         }
 
@@ -103,7 +103,7 @@
             type="number"
             [label]="'Range Size' | translate"
             [required]="isOptionRequired('rangesize')"
-            [tooltip]="helptext.idmap.rangesize.tooltip | translate"
+            [tooltip]="helptext.idmap.rangesizeTooltip | translate"
           ></ix-input>
         }
 
@@ -112,7 +112,7 @@
             formControlName="readonly"
             [label]="'Read Only' | translate"
             [required]="isOptionRequired('readonly')"
-            [tooltip]="helptext.idmap.readonly.tooltip | translate"
+            [tooltip]="helptext.idmap.readonlyTooltip | translate"
           ></ix-checkbox>
         }
 
@@ -121,7 +121,7 @@
             formControlName="ignore_builtin"
             [label]="'Ignore Builtin' | translate"
             [required]="isOptionRequired('ignore_builtin')"
-            [tooltip]="helptext.idmap.ignore_builtin.tooltip | translate"
+            [tooltip]="helptext.idmap.ignoreBuiltinTooltip | translate"
           ></ix-checkbox>
         }
 
@@ -130,7 +130,7 @@
             formControlName="ldap_base_dn"
             [label]="'Base DN' | translate"
             [required]="isOptionRequired('ldap_base_dn')"
-            [tooltip]="helptext.idmap.ldap_basedn.tooltip | translate"
+            [tooltip]="helptext.idmap.ldapBasednTooltip | translate"
           ></ix-input>
         }
 
@@ -139,7 +139,7 @@
             formControlName="ldap_user_dn"
             [label]="'LDAP User DN' | translate"
             [required]="isOptionRequired('ldap_user_dn')"
-            [tooltip]="helptext.idmap.ldap_userdn.tooltip | translate"
+            [tooltip]="helptext.idmap.ldapUserdnTooltip | translate"
           ></ix-input>
         }
 
@@ -149,7 +149,7 @@
             type="password"
             [label]="'LDAP User DN Password' | translate"
             [required]="isOptionRequired('ldap_user_dn_password')"
-            [tooltip]="helptext.idmap.ldap_user_dn_password.tooltip | translate"
+            [tooltip]="helptext.idmap.ldapUserDnPasswordTooltip | translate"
           ></ix-input>
         }
 
@@ -158,7 +158,7 @@
             formControlName="ldap_url"
             [label]="'URL' | translate"
             [required]="isOptionRequired('ldap_url')"
-            [tooltip]="helptext.idmap.ldap_url.tooltip | translate"
+            [tooltip]="helptext.idmap.ldapUrlTooltip | translate"
           ></ix-input>
         }
 
@@ -177,7 +177,7 @@
             [label]="'Linked Service' | translate"
             [options]="linkedServices$"
             [required]="true"
-            [tooltip]="helptext.idmap.linked_service.tooltip | translate"
+            [tooltip]="helptext.idmap.linkedServiceTooltip | translate"
           ></ix-select>
         }
 
@@ -186,7 +186,7 @@
             formControlName="ldap_server"
             [label]="'LDAP Server' | translate"
             [required]="isOptionRequired('ldap_server')"
-            [tooltip]="helptext.idmap.ldap_server.tooltip | translate"
+            [tooltip]="helptext.idmap.ldapServerTooltip | translate"
           ></ix-input>
         }
 
@@ -195,7 +195,7 @@
             formControlName="ldap_realm"
             [label]="'LDAP Realm' | translate"
             [required]="isOptionRequired('ldap_realm')"
-            [tooltip]="helptext.idmap.ldap_realm.tooltip | translate"
+            [tooltip]="helptext.idmap.ldapRealmTooltip | translate"
           ></ix-input>
         }
 
@@ -204,7 +204,7 @@
             formControlName="bind_path_user"
             [label]="'User Bind Path' | translate"
             [required]="isOptionRequired('bind_path_user')"
-            [tooltip]="helptext.idmap.bind_path_user.tooltip | translate"
+            [tooltip]="helptext.idmap.bindPathUserTooltip | translate"
           ></ix-input>
         }
 
@@ -213,7 +213,7 @@
             formControlName="bind_path_group"
             [label]="'Group Bind Path' | translate"
             [required]="isOptionRequired('bind_path_group')"
-            [tooltip]="helptext.idmap.bind_path_group.tooltip | translate"
+            [tooltip]="helptext.idmap.bindPathGroupTooltip | translate"
           ></ix-input>
         }
 
@@ -222,7 +222,7 @@
             formControlName="user_cn"
             [label]="'User CN' | translate"
             [required]="isOptionRequired('user_cn')"
-            [tooltip]="helptext.idmap.user_cn.tooltip | translate"
+            [tooltip]="helptext.idmap.userCnTooltip | translate"
           ></ix-input>
         }
 
@@ -231,7 +231,7 @@
             formControlName="cn_realm"
             [label]="'CN Realm' | translate"
             [required]="isOptionRequired('cn_realm')"
-            [tooltip]="helptext.idmap.cn_realm.tooltip | translate"
+            [tooltip]="helptext.idmap.cnRealmTooltip | translate"
           ></ix-input>
         }
 
@@ -240,7 +240,7 @@
             formControlName="ldap_domain"
             [label]="'LDAP Domain' | translate"
             [required]="isOptionRequired('ldap_domain')"
-            [tooltip]="helptext.idmap.ldap_domain.tooltip | translate"
+            [tooltip]="helptext.idmap.ldapDomainTooltip | translate"
           ></ix-input>
         }
 
@@ -249,7 +249,7 @@
             formControlName="sssd_compat"
             [label]="'SSSD Compat' | translate"
             [required]="isOptionRequired('sssd_compat')"
-            [tooltip]="helptext.idmap.sssd_compat.tooltip | translate"
+            [tooltip]="helptext.idmap.sssdCompatTooltip | translate"
           ></ix-checkbox>
         }
       </ix-fieldset>

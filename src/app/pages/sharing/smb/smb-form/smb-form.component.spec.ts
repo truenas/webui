@@ -310,10 +310,10 @@ describe('SmbFormComponent', () => {
       const afpCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: formLabels.afp }));
       await afpCheckbox.setValue(true);
       expect(spectator.inject(DialogService).confirm).toHaveBeenLastCalledWith({
-        title: helptextSharingSmb.afpDialog_title,
-        message: helptextSharingSmb.afpDialog_message,
+        title: helptextSharingSmb.afpWarningTitle,
+        message: helptextSharingSmb.afpWarningMessage,
         hideCheckbox: false,
-        buttonText: helptextSharingSmb.afpDialog_button,
+        buttonText: helptextSharingSmb.afpDialogButton,
         hideCancel: false,
       });
     });

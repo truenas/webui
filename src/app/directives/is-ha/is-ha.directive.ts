@@ -10,6 +10,12 @@ import { Store } from '@ngrx/store';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
+/**
+ * Usage:
+ * ```
+ * <div *isHa="true"> Shown on HA licensed systems </div>
+ * ```
+ */
 @UntilDestroy()
 @Directive({
   selector: '[isHa]',

@@ -6,14 +6,14 @@
     formControlName="name"
     [label]="'Name' | translate"
     [required]="true"
-    [tooltip]="helptext.name_tooltip | translate"
+    [tooltip]="helptext.nameTooltip | translate"
   ></ix-input>
 
   <ix-explorer
     formControlName="target_dataset"
     [label]="'Destination' | translate"
     [required]="true"
-    [tooltip]="helptext.target_dataset_tooltip | translate"
+    [tooltip]="helptext.targetDatasetTooltip | translate"
     [nodeProvider]="treeNodeProvider"
   ></ix-explorer>
 

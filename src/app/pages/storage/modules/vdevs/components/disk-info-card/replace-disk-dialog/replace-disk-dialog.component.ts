@@ -78,7 +78,7 @@ export class ReplaceDiskDialog {
         preserve_settings: values.preserve_settings,
         preserve_description: values.preserve_description,
       }]),
-      { title: this.translate.instant(helptextVolumeStatus.replace_disk.title) },
+      { title: this.translate.instant(helptextVolumeStatus.replaceDisk.title) },
     )
       .afterClosed()
       .pipe(

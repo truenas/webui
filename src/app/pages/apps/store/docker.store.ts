@@ -84,7 +84,7 @@ export class DockerStore extends ComponentStore<DockerConfigState> {
       pool: poolName,
     } as DockerConfig;
 
-    if (typeof migrateApps === 'boolean') {
+    if (migrateApps) {
       payload.migrate_applications = migrateApps;
     }
 
