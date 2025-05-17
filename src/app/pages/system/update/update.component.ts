@@ -15,6 +15,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
   combineLatest, filter, forkJoin, map, Observable, of, shareReplay, switchMap, take, tap,
 } from 'rxjs';
+import { scaleDownloadUrl } from 'app/constants/links.constants';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { JobState } from 'app/enums/job-state.enum';
@@ -28,8 +29,8 @@ import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
-import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -66,7 +67,7 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
     MatButton,
     IxIconComponent,
     ReactiveFormsModule,
-    FakeProgressBarComponent,
+    PageHeaderComponent,
     UpdateProfileCard,
   ],
 })
@@ -74,6 +75,7 @@ export class UpdateComponent implements OnInit {
   readonly SystemUpdateStatus = SystemUpdateStatus;
   protected readonly searchableElements = systemUpdateElements;
   protected readonly requiredRoles = [Role.SystemUpdateWrite];
+  protected readonly scaleDownloadUrl = scaleDownloadUrl;
   protected updateType: UpdateType;
   protected isUpdateRunning = false;
   protected singleDescription: string;
@@ -341,11 +343,11 @@ export class UpdateComponent implements OnInit {
     let confirmMsg;
 
     if (!this.isHaLicensed()) {
-      downloadMsg = helptext.non_ha_download_msg;
-      confirmMsg = helptext.non_ha_confirm_msg;
+      downloadMsg = helptext.nonHaDownloadMessage;
+      confirmMsg = helptext.nonHaConfirmMessage;
     } else {
-      downloadMsg = helptext.ha_download_msg;
-      confirmMsg = helptext.ha_confirm_msg;
+      downloadMsg = helptext.haDownloadMessage;
+      confirmMsg = helptext.haConfirmMessage;
     }
 
     this.dialogService.confirm({
@@ -443,9 +445,9 @@ export class UpdateComponent implements OnInit {
 
   private finishHaUpdate(): Observable<boolean> {
     return this.dialogService.confirm({
-      title: this.translate.instant(helptext.ha_update.complete_title),
-      message: this.translate.instant(helptext.ha_update.complete_msg),
-      buttonText: this.translate.instant(helptext.ha_update.complete_action),
+      title: this.translate.instant(helptext.haUpdate.completeTitle),
+      message: this.translate.instant(helptext.haUpdate.completeMessage),
+      buttonText: this.translate.instant(helptext.haUpdate.completeAction),
       hideCheckbox: true,
       hideCancel: true,
     });
@@ -453,9 +455,9 @@ export class UpdateComponent implements OnInit {
 
   private finishNonHaUpdate(): Observable<boolean> {
     return this.dialogService.confirm({
-      title: this.translate.instant(helptext.ha_update.complete_title),
+      title: this.translate.instant(helptext.haUpdate.completeTitle),
       message: this.translate.instant('Update completed successfully. The system will restart shortly'),
-      buttonText: this.translate.instant(helptext.ha_update.complete_action),
+      buttonText: this.translate.instant(helptext.haUpdate.completeAction),
       hideCheckbox: true,
       hideCancel: true,
     });

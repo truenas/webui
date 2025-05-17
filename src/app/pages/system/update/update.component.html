@@ -1,4 +1,4 @@
-<ix-fake-progress-bar [loading]="!!(updateService.isLoading$ | async)"></ix-fake-progress-bar>
+<ix-page-header [loading]="!!(updateService.isLoading$ | async)"></ix-page-header>
 
 <div class="update-container">
   <div>
@@ -16,9 +16,13 @@
       <div class="versions">
         <h4>
           <b>{{ 'Current Train:' | translate }}</b>
-          {{ trainService.trainValue$ | async }}
-          @if (singleDescription) {
-            <span>- {{ singleDescription }}</span>
+          @if (trainService.trainValue$ | async; as train) {
+            {{ train }}
+            @if (singleDescription) {
+              <span>- {{ singleDescription }}</span>
+            }
+          } @else {
+            <ngx-skeleton-loader class="inline-loader"></ngx-skeleton-loader>
           }
         </h4>
 
@@ -110,11 +114,11 @@
           <a
             class="release-notes-link"
             target="_blank"
-            ixTest="check-release-notes"
+            ixTest="view-release-notes"
             [href]="releaseNotesUrl"
             [ixUiSearch]="searchableElements.elements.releaseNotes"
           >
-            {{ 'Check Release Notes' | translate }}
+            {{ 'View Release Notes' | translate }}
           </a>
         }
       </div>
@@ -128,11 +132,11 @@
       <div class="manual-update">
         <p>
           <a
-            href="https://www.truenas.com/download/"
             ixTest="download-truenas"
             target="_blank"
+            [attr.href]="scaleDownloadUrl"
           >
-            {{ 'Install a manual image' | translate }}
+            {{ 'See the manual image installation guide' | translate }}
           </a>
         </p>
 

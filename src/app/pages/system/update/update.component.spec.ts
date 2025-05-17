@@ -5,7 +5,9 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { MockComponents } from 'ng-mocks';
 import { BehaviorSubject, of } from 'rxjs';
+import { scaleDownloadUrl } from 'app/constants/links.constants';
 import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { JobState } from 'app/enums/job-state.enum';
@@ -14,6 +16,7 @@ import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { SystemUpdate, SystemUpdateChange } from 'app/interfaces/system-update.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SaveConfigDialog } from 'app/pages/system/advanced/manage-configuration-menu/save-config-dialog/save-config-dialog.component';
 import { TrainService } from 'app/pages/system/update/services/train.service';
@@ -46,6 +49,11 @@ describe('UpdateComponent', () => {
 
   const createComponent = createComponentFactory({
     component: UpdateComponent,
+    declarations: [
+      MockComponents(
+        PageHeaderComponent,
+      ),
+    ],
     providers: [
       mockApi([
         mockCall('core.get_jobs', []),
@@ -270,10 +278,10 @@ describe('UpdateComponent', () => {
     expect(h4).toHaveText('Manual Update');
 
     const paragraph = spectator.query('.manual-update p');
-    expect(paragraph?.textContent).toContain('Install a manual image');
+    expect(paragraph?.textContent).toContain('See the manual image installation guide');
 
     const link = spectator.query('.manual-update a');
-    expect(link).toHaveAttribute('href', 'https://www.truenas.com/download/');
+    expect(link).toHaveAttribute('href', scaleDownloadUrl);
 
     const installManualButton = await loader.getHarness(MatButtonHarness.with({ text: 'Install' }));
     await installManualButton.click();
