@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, computed, input,
+} from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -8,7 +10,6 @@ import {
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AuditService } from 'app/enums/audit.enum';
-import { Role } from 'app/enums/role.enum';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
@@ -29,6 +30,7 @@ import { ServiceUpsComponent } from 'app/pages/services/components/service-ups/s
 import { GlobalTargetConfigurationComponent } from 'app/pages/sharing/iscsi/global-target-configuration/global-target-configuration.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
+import { ServicesService } from 'app/services/services.service';
 import { UrlOptionsService } from 'app/services/url-options.service';
 
 @UntilDestroy()
@@ -48,23 +50,25 @@ import { UrlOptionsService } from 'app/services/url-options.service';
 export class ServiceActionsCellComponent {
   readonly service = input.required<Service>();
 
-  protected readonly requiredRoles = [Role.ServiceWrite];
+  protected readonly requiredRoles = computed(() => {
+    return this.servicesService.getRolesRequiredToManage(this.service().service);
+  });
 
-  get hasLogs(): boolean {
+  protected hasLogs = computed(() => {
     return this.service().service === ServiceName.Cifs;
-  }
+  });
 
-  get hasSessions(): boolean {
+  protected hasSessions = computed(() => {
     return this.service().service === ServiceName.Cifs || this.service().service === ServiceName.Nfs;
-  }
+  });
 
-  get isRunning(): boolean {
+  protected isRunning = computed(() => {
     return this.service().state === ServiceStatus.Running;
-  }
+  });
 
-  get uniqueRowTag(): string {
+  protected uniqueRowTag = computed(() => {
     return 'service-' + this.service().service.replace(/\./g, '');
-  }
+  });
 
   constructor(
     private urlOptions: UrlOptionsService,
@@ -76,6 +80,7 @@ export class ServiceActionsCellComponent {
     private errorHandler: ErrorHandlerService,
     private iscsiService: IscsiService,
     private snackbar: SnackbarService,
+    private servicesService: ServicesService,
     private slideIn: SlideIn,
   ) {}
 
@@ -139,9 +144,10 @@ export class ServiceActionsCellComponent {
     }
 
     return this.dialogService.confirm({
-      title: this.translate.instant('Alert'),
-      message: this.translate.instant('Stop {serviceName}?', { serviceName: serviceNames.get(this.service().service) }),
+      title: this.translate.instant('Confirm'),
+      message: this.translate.instant('Are you sure you want to stop {serviceName}?', { serviceName: serviceNames.get(this.service().service) }),
       hideCheckbox: true,
+      buttonColor: 'warn',
       buttonText: this.translate.instant('Stop'),
     });
   }
