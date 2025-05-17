@@ -1,11 +1,5 @@
 @import 'scss-imports/variables';
 
-ix-fake-progress-bar {
-  position: absolute;
-  top: 0;
-  width: 100%;
-}
-
 .update-container {
   color: var(--fg2);
   display: grid;
