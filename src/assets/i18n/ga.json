@@ -18,6 +18,7 @@
   "Host Updated": "",
   "If ANA is active then referrals will always be generated between the peer ports on each TrueNAS controller node.": "",
   "Key For Host To Present": "",
+  "Migrate existing applications": "",
   "New group": "",
   "New subsystem added": "",
   "Not enabled, because this system does not support RDMA.": "",

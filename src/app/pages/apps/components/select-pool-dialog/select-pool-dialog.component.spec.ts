@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
@@ -20,11 +21,10 @@ describe('SelectPoolDialogComponent', () => {
   let spectator: Spectator<SelectPoolDialog>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
+
   const createComponent = createComponentFactory({
     component: SelectPoolDialog,
-    imports: [
-      ReactiveFormsModule,
-    ],
+    imports: [ReactiveFormsModule],
     providers: [
       mockAuth(),
       mockProvider(DockerStore, {
@@ -32,16 +32,11 @@ describe('SelectPoolDialogComponent', () => {
         selectedPool$: of(null),
       }),
       mockProvider(ApplicationsService, {
-        getPoolList: jest.fn(() => of([
-          { name: 'pool1' },
-          { name: 'pool2' },
-        ])),
+        getPoolList: jest.fn(() => of([{ name: 'pool1' }, { name: 'pool2' }])),
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
-        jobDialog: jest.fn(() => ({
-          afterClosed: () => of(null),
-        })),
+        jobDialog: jest.fn(() => ({ afterClosed: () => of(null) })),
       }),
       mockProvider(MatDialogRef),
       mockProvider(Router),
@@ -55,21 +50,17 @@ describe('SelectPoolDialogComponent', () => {
   });
 
   it('loads pools available in system and shows them in the dropdown', async () => {
-    expect(spectator.inject(ApplicationsService).getPoolList).toHaveBeenCalled();
-
     const poolSelect = await form.getControl('Pool') as IxSelectHarness;
     expect(await poolSelect.getOptionLabels()).toEqual(['pool1', 'pool2']);
   });
 
   it('sets a pool for applications when form is submitted', async () => {
-    await form.fillForm({
-      Pool: 'pool2',
-    });
+    await form.fillForm({ Pool: 'pool2' });
 
     const chooseButton = await loader.getHarness(MatButtonHarness.with({ text: 'Choose' }));
     await chooseButton.click();
 
-    expect(spectator.inject(DockerStore).setDockerPool).toHaveBeenCalledWith('pool2');
+    expect(spectator.inject(DockerStore).setDockerPool).toHaveBeenCalledWith('pool2', false);
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
   });
 
@@ -85,5 +76,98 @@ describe('SelectPoolDialogComponent', () => {
       buttonText: helptextApps.noPool.action,
     });
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/storage', 'create']);
+  });
+});
+
+describe('SelectPoolDialogComponent Migrate Checkbox', () => {
+  const createMigrateTestComponent = createComponentFactory({
+    component: SelectPoolDialog,
+    imports: [ReactiveFormsModule],
+    providers: [
+      mockAuth(),
+      mockProvider(ApplicationsService, {
+        getPoolList: jest.fn(() => of([{ name: 'pool1' }, { name: 'pool2' }])),
+      }),
+      mockProvider(DialogService, {
+        confirm: jest.fn(() => of(true)),
+        jobDialog: jest.fn(() => ({ afterClosed: () => of(null) })),
+      }),
+      mockProvider(MatDialogRef),
+      mockProvider(Router),
+    ],
+  });
+
+  it('shows migrateApplications checkbox only when user changes selected pool', async () => {
+    const setDockerPoolMock = jest.fn(() => of(true));
+    const spectator = createMigrateTestComponent({
+      providers: [
+        mockProvider(DockerStore, {
+          selectedPool$: of('pool1'),
+          setDockerPool: setDockerPoolMock,
+        }),
+      ],
+    });
+
+    const loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    const form = await loader.getHarness(IxFormHarness);
+
+    let checkbox = await loader.getAllHarnesses(MatCheckboxHarness.with({ label: /Migrate existing/ }));
+    expect(checkbox).toHaveLength(0);
+
+    const poolSelect = await form.getControl('Pool') as IxSelectHarness;
+    await poolSelect.setValue('pool2');
+    spectator.detectChanges();
+
+    checkbox = await loader.getAllHarnesses(MatCheckboxHarness.with({ label: /Migrate existing/ }));
+    expect(checkbox).toHaveLength(1);
+  });
+
+  it('does not show migrateApplications checkbox when no pool is selected initially', async () => {
+    const spectator = createMigrateTestComponent({
+      providers: [
+        mockProvider(DockerStore, {
+          selectedPool$: of(null),
+          setDockerPool: jest.fn(),
+        }),
+      ],
+    });
+
+    const loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    const form = await loader.getHarness(IxFormHarness);
+
+    const poolSelect = await form.getControl('Pool') as IxSelectHarness;
+    await poolSelect.setValue('pool1');
+    spectator.detectChanges();
+
+    const checkbox = await loader.getAllHarnesses(MatCheckboxHarness.with({ label: /Migrate existing/ }));
+    expect(checkbox).toHaveLength(0);
+  });
+
+  it('sends migrateApplications: true when checkbox is checked', async () => {
+    const setDockerPoolMock = jest.fn(() => of(true));
+
+    const spectator = createMigrateTestComponent({
+      providers: [
+        mockProvider(DockerStore, {
+          selectedPool$: of('pool1'),
+          setDockerPool: setDockerPoolMock,
+        }),
+      ],
+    });
+
+    const loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    const form = await loader.getHarness(IxFormHarness);
+
+    const poolSelect = await form.getControl('Pool') as IxSelectHarness;
+    await poolSelect.setValue('pool2');
+    spectator.detectChanges();
+
+    const checkbox = await loader.getHarness(MatCheckboxHarness.with({ label: /Migrate existing/ }));
+    await checkbox.check();
+
+    const chooseButton = await loader.getHarness(MatButtonHarness.with({ text: 'Choose' }));
+    await chooseButton.click();
+
+    expect(setDockerPoolMock).toHaveBeenCalledWith('pool2', true);
   });
 });
