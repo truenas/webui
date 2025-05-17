@@ -149,14 +149,16 @@ export class DiskSizeSelectsComponent implements OnChanges {
 
   private getSuitableDisks(): DetailsDisk[] {
     const selectedDiskSize = this.selectedDiskSize;
-    if (!selectedDiskSize) {
+    const selectedDiskType = this.selectedDiskType;
+
+    if (!selectedDiskSize || !selectedDiskType) {
       return [];
     }
 
     if (!this.form.controls.treatDiskSizeAsMinimum.value) {
-      return this.sizeDisksMap[this.selectedDiskType][selectedDiskSize];
+      return this.sizeDisksMap[selectedDiskType][selectedDiskSize];
     }
 
-    return this.inventory().filter((disk) => disk.size >= selectedDiskSize);
+    return this.inventory().filter((disk) => disk.size >= selectedDiskSize && disk.type === selectedDiskType);
   }
 }
