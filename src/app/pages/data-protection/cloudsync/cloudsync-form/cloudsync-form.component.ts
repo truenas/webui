@@ -20,6 +20,7 @@ import {
   catchError,
   filter, map, pairwise, startWith, switchMap, tap,
 } from 'rxjs/operators';
+import { slashRootNode } from 'app/constants/basic-root-nodes.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Direction, directionNames } from 'app/enums/direction.enum';
@@ -112,6 +113,8 @@ export class CloudSyncFormComponent implements OnInit {
       ? this.translate.instant('Add Cloud Sync Task')
       : this.translate.instant('Edit Cloud Sync Task');
   }
+
+  protected readonly slashRootNode = slashRootNode;
 
   get credentialsDependentControls(): FormControl[] {
     return [

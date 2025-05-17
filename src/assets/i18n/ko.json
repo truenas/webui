@@ -10,6 +10,7 @@
   "Primary": "",
   "Require Host Authentication": "",
   "Secondary": "",
+  "Sharing root datasets is not recommended. Please create a child dataset.": "",
   "Static IP Addresses": "",
   "Tertiary": "",
   "Unspecified": "",

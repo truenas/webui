@@ -170,7 +170,16 @@ describe('SmbFormComponent', () => {
       }),
       mockProvider(Router),
       mockProvider(LoaderService),
-      mockProvider(FilesystemService),
+      mockProvider(FilesystemService, {
+        getTopLevelDatasetsNodes: jest.fn(() => {
+          return of([
+            {
+              path: 'pool',
+              name: 'pool',
+            },
+          ]);
+        }),
+      }),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
           afterClosed: () => of(true),

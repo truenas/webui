@@ -30,7 +30,7 @@
           [tooltip]="helptext.sourceDatasetsTooltip | translate"
           [multiple]="true"
           [required]="true"
-          [root]="isRemoteSource ? '' : mntPath"
+          [rootNodes]="sourceDatasetsRootNodes"
           [nodeProvider]="sourceNodeProvider"
         ></ix-explorer>
       }
@@ -99,7 +99,7 @@
           [label]="helptext.targetDatasetLabel | translate"
           [tooltip]="helptext.targetDatasetTooltip | translate"
           [required]="true"
-          [root]="isRemoteTarget ? '' : mntPath"
+          [rootNodes]="targetDatasetsRootNodes"
           [nodeProvider]="targetNodeProvider"
         ></ix-explorer>
       }
