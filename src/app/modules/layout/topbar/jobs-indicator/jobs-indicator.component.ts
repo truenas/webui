@@ -37,7 +37,7 @@ import { jobIndicatorPressed } from 'app/store/topbar/topbar.actions';
   ],
 })
 export class JobsIndicatorComponent implements OnInit {
-  tooltips = helptextTopbar.mat_tooltips;
+  tooltips = helptextTopbar.tooltips;
 
   jobBadgeCount$ = this.store$.select(selectRunningJobsCount);
   isJobPanelOpen$ = this.store$.select(selectIsJobPanelOpen);

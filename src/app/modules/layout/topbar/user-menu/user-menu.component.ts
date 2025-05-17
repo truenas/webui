@@ -44,7 +44,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class UserMenuComponent {
-  protected readonly tooltips = helptextTopbar.mat_tooltips;
+  protected readonly tooltips = helptextTopbar.tooltips;
   protected searchableElements = userMenuElements;
   protected readonly AccountAttribute = AccountAttribute;
 

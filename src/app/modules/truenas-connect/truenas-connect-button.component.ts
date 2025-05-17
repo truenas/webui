@@ -30,7 +30,7 @@ import { TruenasConnectService } from 'app/modules/truenas-connect/services/true
 })
 export class TruenasConnectButtonComponent {
   readonly TruenasConnectStatus = TruenasConnectStatus;
-  tooltips = helptextTopbar.mat_tooltips;
+  tooltips = helptextTopbar.tooltips;
 
   constructor(private matDialog: MatDialog, public tnc: TruenasConnectService) {
     effect(() => {

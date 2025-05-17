@@ -224,7 +224,7 @@ export class ManualUpdateFormComponent implements OnInit {
 
     const job$ = this.upload.uploadAsJob(params);
     this.dialogService
-      .jobDialog(job$, { title: this.translate.instant(helptext.manual_update_action) })
+      .jobDialog(job$, { title: this.translate.instant(helptext.manualUpdateAction) })
       .afterClosed()
       .pipe(
         finalize(() => {
@@ -244,7 +244,7 @@ export class ManualUpdateFormComponent implements OnInit {
     } else {
       this.dialogService.confirm({
         title: this.translate.instant('Restart'),
-        message: this.translate.instant(helptext.rebootAfterManualUpdate.manual_reboot_msg),
+        message: this.translate.instant(helptext.rebootAfterManualUpdate.manualRebootMessage),
       }).pipe(
         filter(Boolean),
         untilDestroyed(this),
@@ -257,10 +257,10 @@ export class ManualUpdateFormComponent implements OnInit {
     this.systemService.updateDone(); // Send 'finished' signal to topbar
     this.router.navigate(['/']);
     this.dialogService.confirm({
-      title: this.translate.instant(helptext.ha_update.complete_title),
-      message: this.translate.instant(helptext.ha_update.complete_msg),
+      title: this.translate.instant(helptext.haUpdate.completeTitle),
+      message: this.translate.instant(helptext.haUpdate.completeMessage),
       hideCheckbox: true,
-      buttonText: this.translate.instant(helptext.ha_update.complete_action),
+      buttonText: this.translate.instant(helptext.haUpdate.completeAction),
       hideCancel: true,
     }).pipe(untilDestroyed(this)).subscribe();
   }
@@ -298,7 +298,7 @@ export class ManualUpdateFormComponent implements OnInit {
       : this.api.job('update.file', [{ resume: true }]);
 
     this.dialogService
-      .jobDialog(job$, { title: this.translate.instant(helptext.manual_update_action) })
+      .jobDialog(job$, { title: this.translate.instant(helptext.manualUpdateAction) })
       .afterClosed()
       .pipe(untilDestroyed(this))
       .subscribe({

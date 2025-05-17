@@ -77,19 +77,19 @@ export class DatasetQuotaEditFormComponent implements OnInit {
   }
 
   private getUserDataQuotaLabel(): string {
-    return this.translate.instant(helptextQuotas.users.dataQuota.placeholder)
-      + this.translate.instant(helptextGlobal.human_readable.suggestion_label);
+    return this.translate.instant(helptextQuotas.users.dataQuota.label)
+      + this.translate.instant(helptextGlobal.humanReadable.suggestionLabel);
   }
 
   private getGroupDataQuotaLabel(): string {
-    return this.translate.instant(helptextQuotas.groups.dataQuota.placeholder)
-      + this.translate.instant(helptextGlobal.human_readable.suggestion_label);
+    return this.translate.instant(helptextQuotas.groups.dataQuota.label)
+      + this.translate.instant(helptextGlobal.humanReadable.suggestionLabel);
   }
 
   get objectQuotaLabel(): string {
     return this.quotaType === DatasetQuotaType.User
-      ? helptextQuotas.users.objQuota.placeholder
-      : helptextQuotas.groups.objectQuota.placeholder;
+      ? helptextQuotas.users.objQuota.label
+      : helptextQuotas.groups.objectQuota.label;
   }
 
   get dataQuotaTooltip(): string {
@@ -100,13 +100,13 @@ export class DatasetQuotaEditFormComponent implements OnInit {
 
   private getUserDataQuotaTooltip(): string {
     return this.translate.instant(helptextQuotas.users.dataQuota.tooltip)
-      + this.translate.instant(helptextGlobal.human_readable.suggestion_tooltip)
+      + this.translate.instant(helptextGlobal.humanReadable.suggestionTooltip)
       + this.translate.instant(' bytes.');
   }
 
   private getGroupDataQuotaTooltip(): string {
     return this.translate.instant(helptextQuotas.groups.dataQuota.tooltip)
-      + this.translate.instant(helptextGlobal.human_readable.suggestion_tooltip)
+      + this.translate.instant(helptextGlobal.humanReadable.suggestionTooltip)
       + this.translate.instant(' bytes.');
   }
 
