@@ -5628,30 +5628,6 @@
     "hierarchy": [
       "System",
       "Update",
-      "Check for Updates"
-    ],
-    "synonyms": [
-      "Upgrade",
-      "Update System",
-      "Update Software",
-      "Check for Software Updates",
-      "Download Updates"
-    ],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/system",
-      "update"
-    ],
-    "routerLink": null,
-    "anchor": "check-for-updates",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "Update",
       "Release Notes"
     ],
     "synonyms": [

@@ -1,41 +1,117 @@
+@import 'scss-imports/variables';
 
-#upgrades-card {
-  max-height: 180px;
-}
+.update-container {
+  color: var(--fg2);
+  display: grid;
+  gap: 5%;
+  grid-template-columns: 1fr 1fr;
+  margin-bottom: 100px;
 
-#upgrades-card-scrollbox {
-  max-height: 170px;
-  overflow-y: auto;
-}
+  // TODO: remove when .right-side will be shown, currently it's hidden
+  @media(max-width: $breakpoint-lg) {
+    grid-template-columns: 1fr 0.5fr;
+  }
 
-.release-notes-link {
-  display: block;
-  margin: 3px;
-  text-decoration: underline;
-}
+  // TODO: remove when .right-side will be shown, currently it's hidden
+  @media(max-width: $breakpoint-md) {
+    grid-template-columns: 1fr;
+  }
 
-#changelog-card {
-  height: 230px;
-  padding-right: 40px !important;
-}
+  @media(max-width: $breakpoint-sm) {
+    gap: 32px;
+    grid-template-columns: 1fr;
+  }
 
-#changelog-title {
-  font-weight: 700;
-  margin: 10px 25px;
-  padding-top: 15px;
-}
+  .green-color {
+    color: var(--green);
+  }
 
-#changelog-scrollbox {
-  height: 140px;
-  overflow-y: auto;
-}
+  .error-color {
+    color: var(--red);
+  }
 
-mat-card {
-  margin: 0 auto 15px;
-  max-width: 960px;
-  padding: 20px !important;
-}
+  ix-icon {
+    width: 18px;
+  }
 
-.upgrades-table {
-  width: 100%;
+  a {
+    color: var(--primary);
+    margin: 10px 0 0;
+    text-decoration: underline;
+  }
+
+  h2,
+  h3 {
+    border-bottom: 1px solid var(--lines);
+    padding-bottom: 10px;
+  }
+
+  h3 {
+    margin-top: 30px;
+  }
+
+  .train-warning {
+    align-items: center;
+    display: flex;
+    gap: 8px;
+    padding: 0;
+
+    a {
+      margin: 0;
+    }
+  }
+
+  .update-available {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: space-between;
+    padding: 16px 0 0;
+
+    h4 {
+      align-items: center;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .versions {
+      display: grid;
+      flex-wrap: wrap;
+      gap: 16px;
+
+      ngx-skeleton-loader {
+        height: 18px;
+        margin-left: 10px;
+        width: 100px;
+      }
+    }
+  }
+
+  .update-summary {
+    h4 {
+      margin-top: 15px;
+    }
+  }
+
+  .other-options {
+    margin-top: 20px;
+
+    h4 {
+      margin-top: 15px;
+    }
+
+    .manual-update {
+      align-items: center;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+  }
+
+  .hint {
+    color: var(--alt-fg1);
+    margin-top: 15px;
+  }
 }

@@ -173,6 +173,7 @@ export class TrainService {
           if (update.changelog) {
             this.updateService.changeLog$.next(update.changelog.replace(/\n/g, '<br>'));
           }
+
           if (update.release_notes_url) {
             this.updateService.releaseNotesUrl$.next(update.release_notes_url);
           }

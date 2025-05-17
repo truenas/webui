@@ -1,0 +1,44 @@
+<div>
+  <h2>
+    {{ 'Update Profile' | translate }}
+  </h2>
+
+  <div class="update-profile">
+    <ix-select
+      [formControl]="updateProfileControl"
+      [hideEmpty]="true"
+      [label]="'Select an update profile' | translate"
+      [options]="profileOptions()"
+    ></ix-select>
+
+    <button mat-button ixTest="apply-profile">Apply</button>
+  </div>
+
+  <div class="hint">
+    {{ 'Selecting an update profile allows users to choose how conservative the software selection is based on their use case. Descriptions of update profiles are listed below from least conservative to most conservative.' | translate }}
+  </div>
+
+  <div class="available-profiles">
+    <h3>
+      {{ 'Available Profiles' | translate }}
+    </h3>
+
+    <div class="profile-list">
+      <div class="profile-list">
+        @for (profile of profiles(); track profile.name) {
+          <div class="profile-row">
+            <div class="profile-name">
+              <strong>{{ profile.name }}</strong>
+              @if (profile.note) {
+                <span class="profile-note">({{ profile.note }})</span>
+              }
+            </div>
+            <div class="profile-description">
+              {{ profile.description }}
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>
