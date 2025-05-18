@@ -58,9 +58,9 @@ describe('SubsystemsListComponent', () => {
       }),
       mockProvider(NvmeOfStore, {
         initialize: jest.fn(),
-        getSubsystemNamespaces: jest.fn(() => 2),
-        getSubsystemHosts: jest.fn(() => 3),
-        getSubsystemPorts: jest.fn(() => 4),
+        getSubsystemNamespaces: jest.fn(() => [{ id: 1 }, { id: 2 }]),
+        getSubsystemHosts: jest.fn(() => [{ id: 1 }, { id: 2 }, { id: 3 }]),
+        getSubsystemPorts: jest.fn(() => [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }]),
       }),
       mockAuth(),
     ],

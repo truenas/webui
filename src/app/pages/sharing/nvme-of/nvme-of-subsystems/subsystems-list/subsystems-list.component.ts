@@ -23,7 +23,6 @@ import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-c
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { subsystemListElements } from 'app/pages/sharing/nvme-of/nvme-of-subsystems/nvme-of-subsystems.elements';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/nvme-of.store';
 
@@ -75,19 +74,19 @@ export class SubsystemsListComponent {
     textColumn({
       title: this.translate.instant('Namespaces'),
       getValue: (row: NvmeOfSubsystem) => {
-        return this.nvmeOfStore.getSubsystemNamespaces(row);
+        return this.nvmeOfStore.getSubsystemNamespaces(row).length;
       },
     }),
     textColumn({
       title: this.translate.instant('Hosts'),
       getValue: (row) => {
-        return this.nvmeOfStore.getSubsystemHosts(row);
+        return this.nvmeOfStore.getSubsystemHosts(row).length;
       },
     }),
     textColumn({
       title: this.translate.instant('Ports'),
       getValue: (row) => {
-        return this.nvmeOfStore.getSubsystemPorts(row);
+        return this.nvmeOfStore.getSubsystemPorts(row).length;
       },
     }),
     templateColumn({
@@ -100,7 +99,6 @@ export class SubsystemsListComponent {
 
   constructor(
     protected emptyService: EmptyService,
-    private slideIn: SlideIn,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
     private nvmeOfStore: NvmeOfStore,

@@ -69,18 +69,18 @@ export class NvmeOfStore extends ComponentStore<NvmeOfState> {
     );
   });
 
-  getSubsystemNamespaces(subsystem: NvmeOfSubsystem): number {
+  getSubsystemNamespaces(subsystem: NvmeOfSubsystem): NvmeOfNamespace[] {
     const { namespaces } = this.state();
-    return namespaces.filter((namespace) => namespace.subsystem.id === subsystem.id).length;
+    return namespaces.filter((namespace) => namespace.subsystem.id === subsystem.id);
   }
 
-  getSubsystemHosts(subsystem: NvmeOfSubsystem): number {
+  getSubsystemHosts(subsystem: NvmeOfSubsystem): SubsystemHostAssociation[] {
     const { hostSubsystems } = this.state();
-    return hostSubsystems.filter((host) => host.subsystem.id === subsystem.id).length;
+    return hostSubsystems.filter((host) => host.subsystem.id === subsystem.id);
   }
 
-  getSubsystemPorts(subsystem: NvmeOfSubsystem): number {
+  getSubsystemPorts(subsystem: NvmeOfSubsystem): SubsystemPortAssociation[] {
     const { ports } = this.state();
-    return ports.filter((port) => port.subsystem.id === subsystem.id).length;
+    return ports.filter((port) => port.subsystem.id === subsystem.id);
   }
 }

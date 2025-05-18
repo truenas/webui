@@ -62,9 +62,9 @@ describe('NvmeOfSubsystems', () => {
       mockProvider(NvmeOfStore, {
         initialize: jest.fn(),
         subsystems: signal(mockSubsystems),
-        getSubsystemHosts: jest.fn(() => 2),
-        getSubsystemNamespaces: jest.fn(() => 3),
-        getSubsystemPorts: jest.fn(() => 4),
+        getSubsystemHosts: jest.fn(() => [{ id: 1 }, { id: 2 }]),
+        getSubsystemNamespaces: jest.fn(() => [{ id: 1 }, { id: 2 }, { id: 3 }]),
+        getSubsystemPorts: jest.fn(() => [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }]),
         isLoading: signal(false),
       }),
       mockProvider(SlideIn, {
