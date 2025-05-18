@@ -56,10 +56,10 @@ export class NvmeOfStore extends ComponentStore<NvmeOfState> {
         ports,
       ]: [NvmeOfSubsystem[], NvmeOfNamespace[], SubsystemHostAssociation[], SubsystemPortAssociation[]]) => {
         this.patchState({
-          subsystems: [...subsystems],
-          namespaces: [...namespaces],
-          hostSubsystems: [...hostSubsystems],
-          ports: [...ports],
+          subsystems,
+          namespaces,
+          hostSubsystems,
+          ports,
           isLoading: false,
         });
       }),
