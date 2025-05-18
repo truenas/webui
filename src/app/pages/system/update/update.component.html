@@ -1,58 +1,157 @@
-<ix-train-card></ix-train-card>
-<ix-system-version-card></ix-system-version-card>
+<ix-page-header [loading]="!!(updateService.isLoading$ | async)"></ix-page-header>
 
-@if ((updateService.status$ | async) === SystemUpdateStatus.Available) {
-  <mat-card
-    id="upgrades-card"
-    [ixUiSearch]="searchableElements.elements.update"
-  >
-    <mat-card-content id="upgrades-card-scrollbox">
-      <table class="table table-striped table-sm upgrades-table" ixTest="upgrades-table">
-        <thead>
-          <tr ixTest="table-header">
-            <th>{{ 'Operation' | translate }}</th>
-            <th>{{ 'Name' | translate }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (package of updateService.packages$ | async; track package) {
-            <tr [ixTest]="package.name">
-              <td>{{ package.operation }}</td>
-              <td>{{ package.name }}</td>
-            </tr>
-          }
-          @if ((updateService.packages$ | async)?.length === 0) {
-            <tr ixTest="no-update-found">
-              <td>{{ 'No update found.' | translate }}</td>
-            </tr>
-          }
-        </tbody>
-      </table>
-      @if (updateService.releaseNotesUrl$ | async; as releaseNotesUrl) {
-        <a
-          class="release-notes-link"
-          target="_blank"
-          ixTest="check-release-notes"
-          [href]="releaseNotesUrl"
-          [ixUiSearch]="searchableElements.elements.releaseNotes"
-        >
-          {{ 'Check Release Notes' | translate }}
-        </a>
+<div class="update-container">
+  <div>
+    <h2>
+      @if (showDownloadUpdateButton()) {
+        {{ 'Update Available' | translate }}
+      } @else if (showApplyPendingButton()) {
+        {{ 'Pending Update' | translate }}
+      } @else {
+        {{ 'Installed Version' | translate }}
       }
-    </mat-card-content>
-  </mat-card>
-}
+    </h2>
 
-@if ((updateService.changeLog$ | async) && (trainService.nightlyTrain$ | async)) {
-  <mat-card id="changelog-card">
-    <mat-card-title id="changelog-title">
-      <div>{{ 'Change log' | translate }}</div>
-    </mat-card-title>
-    <mat-card-content id="changelog-scrollbox">
-      <div [innerHTML]="updateService.changeLog$ | async"></div>
-    </mat-card-content>
-  </mat-card>
-}
+    <div class="update-available">
+      <div class="versions">
+        <h4>
+          <b>{{ 'Current Train:' | translate }}</b>
+          @if (trainService.trainValue$ | async; as train) {
+            {{ train }}
+            @if (singleDescription) {
+              <span>- {{ singleDescription }}</span>
+            }
+          } @else {
+            <ngx-skeleton-loader class="inline-loader"></ngx-skeleton-loader>
+          }
+        </h4>
 
-<ix-train-info-card></ix-train-info-card>
-<ix-update-actions-card></ix-update-actions-card>
+        <h4>
+          {{ 'Current version' | translate }}:
+          @if (systemVersion(); as systemVersion) {
+            <span>{{ systemVersion }}</span>
+          } @else {
+            <ngx-skeleton-loader class="inline-loader"></ngx-skeleton-loader>
+          }
+        </h4>
+
+        @if (standbySystemVersion(); as standbySystemVersion) {
+          <h4>
+            {{ 'Current version (standby node)' | translate }}:
+            <span>{{ standbySystemVersion }}</span>
+          </h4>
+        }
+
+        @if (updateVersion(); as updateVersion) {
+          <h4>
+            {{ 'Update Version' | translate }}:
+            <span>{{ updateVersion }}</span>
+          </h4>
+        }
+      </div>
+
+       @if (showDownloadUpdateButton()) {
+        <button
+          *ixRequiresRoles="requiredRoles"
+          mat-button
+          color="primary"
+          ixTest="download-updates"
+          [disabled]="isDownloadUpdatesButtonDisabled()"
+          (click)="downloadUpdate()"
+        >
+          {{ 'Install Update' | translate }}
+        </button>
+      } @else if (showApplyPendingButton()) {
+        <button
+          *ixRequiresRoles="requiredRoles"
+          mat-button
+          color="primary"
+          ixTest="apply-pending-update"
+          (click)="applyPendingUpdate()"
+        >
+          {{ 'Apply Pending Update' | translate }}
+        </button>
+      }
+
+      @if ((updateService.status$ | async) === SystemUpdateStatus.Unavailable) {
+        <h4>
+          <b>{{ 'System is up to date!' | translate }}</b>
+          <ix-icon name="check_circle" class="green-color"></ix-icon>
+        </h4>
+      }
+    </div>
+
+    @if ((updateService.status$ | async) === SystemUpdateStatus.RebootRequired) {
+      <h4 class="hint">{{ 'An update is already applied. Please restart the system.' | translate }}</h4>
+    }
+
+    @if (updateService.error$ | async) {
+      <h4 class="error-color">{{ updateService.error$ | async }}</h4>
+    }
+
+    @if (updateVersion()) {
+      <div class="update-summary">
+        <h3>
+          {{ 'Update Summary for {version}' | translate: { version: updateVersion() } }}
+        </h3>
+
+        @if (showInfoForTesting()) {
+          <p class="train-warning">
+            <ix-icon name="info"></ix-icon>
+            <strong>
+              {{ 'Selected train does not have production releases, and should only be used for testing.' | translate }}
+            </strong>
+          </p>
+        }
+
+        @if ((updateService.changeLog$ | async) && (trainService.nightlyTrain$ | async)) {
+          <h4>{{ 'Summary' | translate }}:</h4>
+
+          <div [innerHTML]="updateService.changeLog$ | async"></div>
+        }
+
+        @if (updateService.releaseNotesUrl$ | async; as releaseNotesUrl) {
+          <a
+            class="release-notes-link"
+            target="_blank"
+            ixTest="view-release-notes"
+            [href]="releaseNotesUrl"
+            [ixUiSearch]="searchableElements.elements.releaseNotes"
+          >
+            {{ 'View Release Notes' | translate }}
+          </a>
+        }
+      </div>
+    }
+
+    <div class="other-options">
+      <h3>{{ 'Other Options' | translate }}</h3>
+
+      <h4>{{ 'Manual Update' | translate }}</h4>
+
+      <div class="manual-update">
+        <p>
+          <a
+            ixTest="download-truenas"
+            target="_blank"
+            [attr.href]="scaleDownloadUrl"
+          >
+            {{ 'See the manual image installation guide' | translate }}
+          </a>
+        </p>
+
+        <button
+          *ixRequiresRoles="requiredRoles"
+          mat-button
+          ixTest="install-manual-update"
+          (click)="manualUpdate()"
+        >
+          {{ 'Install' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TODO: Ticket said: Build HTML for right column, but mark it as hidden in the PR. Ignore TrueNAS ad banner for now. -->
+  <ix-update-profile-card hidden></ix-update-profile-card>
+</div>
