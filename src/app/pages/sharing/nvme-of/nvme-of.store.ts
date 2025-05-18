@@ -26,10 +26,7 @@ const initialState: NvmeOfState = {
 
 @Injectable()
 export class NvmeOfStore extends ComponentStore<NvmeOfState> {
-  readonly subsystems = computed(() => {
-    const subsystems = [...this.state().subsystems];
-    return subsystems;
-  });
+  readonly subsystems = computed(() => this.state().subsystems);
 
   readonly isLoading = computed(() => this.state().isLoading);
 
