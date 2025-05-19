@@ -10,4 +10,8 @@ Requires RDMA-capable system and network equipment.'),
   dhchapKeyTooltip: T('DH-CHAP key to be used to authenticate the host.'),
 
   onlyStaticIpsShown: T('Only interfaces with static IPs are shown.'),
+
+  noPortsWarning: T('No ports are associated with this subsystem. It will not be accessible.'),
+  noHostsWarning: T('No hosts are allowed to access this subsystem. It will not be accessible.'),
+  hasHostAuthentication: T('Host authentication is enabled'),
 };

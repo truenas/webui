@@ -1,0 +1,26 @@
+.no-ports-warning {
+  align-items: center;
+  display: flex;
+  gap: 14px;
+}
+
+.port-list {
+  margin-top: 0;
+  padding-left: 20px;
+
+  li {
+    margin-bottom: 2px;
+
+    .separator {
+      opacity: 0.6;
+    }
+
+    &:last-of-type {
+      margin-bottom: 0;
+    }
+
+    &::marker {
+      color: var(--alt-fg1);
+    }
+  }
+}
