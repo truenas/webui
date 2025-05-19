@@ -1,9 +1,7 @@
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
-  Component, computed, input,
-  OnChanges,
-  OnInit, signal, Signal, viewChild,
+  Component, computed, effect, input, signal, Signal, viewChild,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -19,13 +17,12 @@ import {
   firstValueFrom, Observable, of,
 } from 'rxjs';
 import { catchError, filter } from 'rxjs/operators';
+import { datasetsRootNode } from 'app/constants/basic-root-nodes.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
-import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
 import { zvolPath } from 'app/helpers/storage.helper';
 import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
-import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { CreateDatasetDialog } from 'app/modules/forms/ix-forms/components/ix-explorer/create-dataset-dialog/create-dataset-dialog.component';
@@ -63,14 +60,14 @@ import { ErrorParserService } from 'app/services/errors/error-parser.service';
     { ...registeredDirectiveConfig },
   ],
 })
-export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAccessor {
+export class IxExplorerComponent implements ControlValueAccessor {
   readonly label = input<TranslatedString>();
   readonly hint = input<TranslatedString>();
   readonly readonly = input<boolean>(false);
   readonly multiple = input(false);
   readonly tooltip = input<TranslatedString>();
   readonly required = input<boolean>(false);
-  readonly root = input(mntPath);
+  readonly rootNodes = input<ExplorerNodeData[]>([datasetsRootNode]);
   readonly nodeProvider = input.required<TreeNodeProvider>();
   // TODO: Come up with a system of extendable controls.
   // TODO: Add support for zvols.
@@ -142,16 +139,18 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
     private errorParser: ErrorParserService,
   ) {
     this.controlDirective.valueAccessor = this;
-  }
-
-  ngOnChanges(changes: IxSimpleChanges<this>): void {
-    if ('nodeProvider' in changes || 'root' in changes) {
-      this.setInitialNode();
-    }
-  }
-
-  ngOnInit(): void {
-    this.setInitialNode();
+    effect(() => {
+      const nodeProvider = this.nodeProvider();
+      if (nodeProvider) {
+        this.setInitialNodes();
+      }
+    });
+    effect(() => {
+      const rootNodes = this.rootNodes();
+      if (rootNodes) {
+        this.setInitialNodes();
+      }
+    });
   }
 
   writeValue(value: string | string[]): void {
@@ -244,13 +243,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   }
 
   parentDatasetName(path: string): string {
-    if (!path || path === this.root()) {
-      return '';
-    }
-
-    return path
-      .replace(`${this.root()}/`, '')
-      .replace('/mnt/', '');
+    return path?.replace('/mnt/', '') || '';
   }
 
   createDataset(): void {
@@ -285,16 +278,9 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
     return node;
   }
 
-  private setInitialNode(): void {
-    this.nodes.set([
-      {
-        path: this.root(),
-        name: this.root(),
-        hasChildren: true,
-        type: ExplorerNodeType.Directory,
-        isMountpoint: true,
-      },
-    ]);
+  private setInitialNodes(): void {
+    const roots = this.rootNodes();
+    this.nodes.set(roots);
   }
 
   private updateInputValue(): void {
