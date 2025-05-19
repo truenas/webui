@@ -45,7 +45,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class AddSubsystemComponent {
-  // TODO: Handle edit case
   protected isLoading = signal(false);
 
   protected form = this.formBuilder.group({
