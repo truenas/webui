@@ -162,7 +162,7 @@ describe('InterfaceFormComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Aliases' }));
+      aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Static IP Addresses' }));
       api = spectator.inject(ApiService);
     });
 
@@ -245,7 +245,7 @@ describe('InterfaceFormComponent', () => {
           Type: 'Link Aggregation',
           Name: 'bond0',
           Description: 'LAG',
-          DHCP: true,
+          DHCP: 'Get IP Address Automatically from DHCP',
           'Link Aggregation Protocol': 'LACP',
           MTU: 1024,
           'Transmit Hash Policy': 'LAYER2+3',
@@ -321,22 +321,22 @@ describe('InterfaceFormComponent', () => {
     });
 
     it('hides Aliases when either DHCP or Autoconfigure IPv6 is enabled', async () => {
-      aliasesList = await loader.getHarnessOrNull(IxListHarness.with({ label: 'Aliases' }));
+      aliasesList = await loader.getHarnessOrNull(IxListHarness.with({ label: 'Static IP Addresses' }));
       expect(aliasesList).toBeTruthy();
 
       await form.fillForm({
-        DHCP: true,
+        DHCP: 'Get IP Address Automatically from DHCP',
       });
 
-      aliasesList = await loader.getHarnessOrNull(IxListHarness.with({ label: 'Aliases' }));
+      aliasesList = await loader.getHarnessOrNull(IxListHarness.with({ label: 'Static IP Addresses' }));
       expect(aliasesList).toBeNull();
 
       await form.fillForm({
-        DHCP: false,
+        DHCP: 'Define Static IP Addresses',
         'Autoconfigure IPv6': true,
       });
 
-      aliasesList = await loader.getHarnessOrNull(IxListHarness.with({ label: 'Aliases' }));
+      aliasesList = await loader.getHarnessOrNull(IxListHarness.with({ label: 'Static IP Addresses' }));
       expect(aliasesList).toBeTruthy();
     });
   });
@@ -350,7 +350,7 @@ describe('InterfaceFormComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Aliases' }));
+      aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Static IP Addresses' }));
       api = spectator.inject(ApiService);
     });
 
@@ -358,7 +358,7 @@ describe('InterfaceFormComponent', () => {
       const values = await form.getValues();
       expect(values).toEqual({
         Name: 'enp0s6',
-        DHCP: false,
+        DHCP: 'Define Static IP Addresses',
         'Autoconfigure IPv6': false,
         Description: 'Main NIC',
         MTU: '1500',
@@ -385,7 +385,7 @@ describe('InterfaceFormComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Aliases' }));
+      aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Static IP Addresses' }));
       api = spectator.inject(ApiService);
     });
 
@@ -414,7 +414,7 @@ describe('InterfaceFormComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Aliases' }));
+      aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Static IP Addresses' }));
       api = spectator.inject(ApiService);
     });
 
@@ -446,7 +446,7 @@ describe('InterfaceFormComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Aliases' }));
+      aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Static IP Addresses' }));
       api = spectator.inject(ApiService);
     });
 
@@ -460,7 +460,7 @@ describe('InterfaceFormComponent', () => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Aliases' }));
+      aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Static IP Addresses' }));
       api = spectator.inject(ApiService);
     });
 

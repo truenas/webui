@@ -79,9 +79,17 @@ export class DockerStore extends ComponentStore<DockerConfigState> {
     return this.api.call('docker.status');
   }
 
-  setDockerPool(poolName: string | null): Observable<Job<DockerConfig>> {
+  setDockerPool(poolName: string | null, migrateApps?: boolean): Observable<Job<DockerConfig>> {
+    const payload = {
+      pool: poolName,
+    } as DockerConfig;
+
+    if (migrateApps) {
+      payload.migrate_applications = migrateApps;
+    }
+
     return this.dialogService.jobDialog(
-      this.api.job('docker.update', [{ pool: poolName }]),
+      this.api.job('docker.update', [payload]),
       { title: this.translate.instant('Configuring...') },
     )
       .afterClosed()

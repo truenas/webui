@@ -35,7 +35,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class PowerMenuComponent {
-  protected readonly tooltips = helptextTopbar.mat_tooltips;
+  protected readonly tooltips = helptextTopbar.tooltips;
   protected readonly requiredRoles = [Role.FullAdmin];
   protected searchableElements = powerMenuElements;
 
