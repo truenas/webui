@@ -56,6 +56,7 @@
   "Are you sure you want to delete volume {name}?": "",
   "Are you sure you want to generate a one-time password for \"{username}\" user?": "",
   "Are you sure you want to lock \"{user}\" user?": "",
+  "Are you sure you want to stop {serviceName}?": "",
   "Are you sure you want to unlock \"{user}\" user?": "",
   "Automatic": "",
   "Available Profiles": "",
