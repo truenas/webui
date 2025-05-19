@@ -5,17 +5,6 @@
 
     <div class="actions action-icon">
       <ix-search-input1 (search)="onListFiltered($event)"></ix-search-input1>
-
-      <button
-        *ixRequiresRoles="requiredRoles"
-        mat-button
-        color="primary"
-        ixTest="add-subsystem"
-        [ixUiSearch]="searchableElements.elements.add"
-        (click)="doAdd()"
-      >
-        {{ 'Add' | translate }}
-      </button>
     </div>
   </mat-toolbar-row>
   <mat-card-content>

@@ -4,7 +4,7 @@ import { helptextNvmeOf } from 'app/helptext/sharing/nvme-of/nvme-of';
 import {
   SubsystemPortsCardComponent,
 } from 'app/pages/sharing/nvme-of/nvme-of-subsystems/subsystem-details/subsystem-ports-card/subsystem-ports-card.component';
-import { SubsystemWithRelations } from 'app/pages/sharing/nvme-of/utils/subsystem-with-relations.interface';
+import { NvmeOfSubsystemDetails } from 'app/pages/sharing/nvme-of/services/nvme-of-subsystem-details.interface';
 
 describe('SubsystemPortsCardComponent', () => {
   let spectator: Spectator<SubsystemPortsCardComponent>;
@@ -18,7 +18,7 @@ describe('SubsystemPortsCardComponent', () => {
         subsystem: {
           id: 1,
           ports: [],
-        } as SubsystemWithRelations,
+        } as NvmeOfSubsystemDetails,
       },
     });
 
@@ -49,14 +49,14 @@ describe('SubsystemPortsCardComponent', () => {
               addr_traddr: 'nn-0x20000025b500a123',
             },
           ],
-        } as SubsystemWithRelations,
+        } as NvmeOfSubsystemDetails,
       },
     });
 
     const portList = spectator.queryAll('.port-list li');
     expect(portList).toHaveLength(3);
-    expect(portList[0].textContent).toContain('TCP – 10.23.23.12:7000');
-    expect(portList[1].textContent).toContain('RDMA – 192.168.1.5:6000');
-    expect(portList[2].textContent).toContain('Fibre Channel – nn-0x20000025b500a123');
+    expect(portList[0].textContent).toContain('TCP — 10.23.23.12:7000');
+    expect(portList[1].textContent).toContain('RDMA — 192.168.1.5:6000');
+    expect(portList[2].textContent).toContain('Fibre Channel — nn-0x20000025b500a123');
   });
 });

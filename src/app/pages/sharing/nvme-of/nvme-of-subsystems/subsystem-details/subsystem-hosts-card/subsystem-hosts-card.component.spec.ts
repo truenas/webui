@@ -2,7 +2,7 @@ import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import {
   SubsystemHostsCardComponent,
 } from 'app/pages/sharing/nvme-of/nvme-of-subsystems/subsystem-details/subsystem-hosts-card/subsystem-hosts-card.component';
-import { SubsystemWithRelations } from 'app/pages/sharing/nvme-of/utils/subsystem-with-relations.interface';
+import { NvmeOfSubsystemDetails } from 'app/pages/sharing/nvme-of/services/nvme-of-subsystem-details.interface';
 
 describe('SubsystemHostsCardComponent', () => {
   let spectator: Spectator<SubsystemHostsCardComponent>;
@@ -16,7 +16,7 @@ describe('SubsystemHostsCardComponent', () => {
         subsystem: {
           allow_any_host: true,
           hosts: [],
-        } as SubsystemWithRelations,
+        } as NvmeOfSubsystemDetails,
       },
     });
 
@@ -30,7 +30,7 @@ describe('SubsystemHostsCardComponent', () => {
         subsystem: {
           allow_any_host: false,
           hosts: [],
-        } as SubsystemWithRelations,
+        } as NvmeOfSubsystemDetails,
       },
     });
 
@@ -47,7 +47,7 @@ describe('SubsystemHostsCardComponent', () => {
             { id: 1, hostnqn: 'nqn.2014-01.org' },
             { id: 2, hostnqn: 'nqn.2014-02.org', dhchap_key: 'key' },
           ],
-        } as SubsystemWithRelations,
+        } as NvmeOfSubsystemDetails,
       },
     });
 

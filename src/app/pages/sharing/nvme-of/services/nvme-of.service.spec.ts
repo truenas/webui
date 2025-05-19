@@ -4,7 +4,7 @@ import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { NvmeOfTransportType } from 'app/enums/nvme-of.enum';
 import { NvmeOfSubsystem } from 'app/interfaces/nvme-of.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { NvmeOfService } from 'app/pages/sharing/nvme-of/utils/nvme-of.service';
+import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
 import { LicenseService } from 'app/services/license.service';
 
 describe('NvmeOfService', () => {

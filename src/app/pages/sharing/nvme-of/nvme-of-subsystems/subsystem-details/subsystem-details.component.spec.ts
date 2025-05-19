@@ -1,6 +1,5 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
-import { NvmeOfSubsystem } from 'app/interfaces/nvme-of.interface';
 import {
   SubsystemDetailsComponent,
 } from 'app/pages/sharing/nvme-of/nvme-of-subsystems/subsystem-details/subsystem-details.component';
@@ -10,10 +9,11 @@ import {
 import {
   SubsystemPortsCardComponent,
 } from 'app/pages/sharing/nvme-of/nvme-of-subsystems/subsystem-details/subsystem-ports-card/subsystem-ports-card.component';
+import { NvmeOfSubsystemDetails } from 'app/pages/sharing/nvme-of/services/nvme-of-subsystem-details.interface';
 
 describe('SubsystemDetailsComponent', () => {
   let spectator: Spectator<SubsystemDetailsComponent>;
-  const subsystem = { } as NvmeOfSubsystem;
+  const subsystem = { } as NvmeOfSubsystemDetails;
 
   const createComponent = createComponentFactory({
     component: SubsystemDetailsComponent,

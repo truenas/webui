@@ -11,7 +11,8 @@ import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
 import {
-  NvmeOfNamespace, NvmeOfSubsystemDetails, SubsystemHostAssociation, SubsystemPortAssociation,
+  NvmeOfHost,
+  NvmeOfNamespace, NvmeOfPort,
 } from 'app/interfaces/nvme-of.interface';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
@@ -20,7 +21,8 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NvmeOfSubsystemsComponent } from 'app/pages/sharing/nvme-of/nvme-of-subsystems/nvme-of-subsystems.component';
-import { NvmeOfStore } from 'app/pages/sharing/nvme-of/nvme-of.store';
+import { NvmeOfSubsystemDetails } from 'app/pages/sharing/nvme-of/services/nvme-of-subsystem-details.interface';
+import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 const mockSubsystems: NvmeOfSubsystemDetails[] = [
@@ -34,8 +36,8 @@ const mockSubsystems: NvmeOfSubsystemDetails[] = [
     qix_max: 4,
     serial: 'serial-1',
     subnqn: 'subnqn-1',
-    hosts: [{ id: 1 }, { id: 2 }] as SubsystemHostAssociation[],
-    ports: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }] as SubsystemPortAssociation[],
+    hosts: [{ id: 1 }, { id: 2 }] as NvmeOfHost[],
+    ports: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }] as NvmeOfPort[],
     namespaces: [{ id: 1 }, { id: 2 }, { id: 3 }] as NvmeOfNamespace[],
   },
   {
@@ -48,8 +50,8 @@ const mockSubsystems: NvmeOfSubsystemDetails[] = [
     qix_max: 4,
     serial: 'serial-2',
     subnqn: 'subnqn-2',
-    hosts: [{ id: 1 }, { id: 2 }] as SubsystemHostAssociation[],
-    ports: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }] as SubsystemPortAssociation[],
+    hosts: [{ id: 1 }, { id: 2 }] as NvmeOfHost[],
+    ports: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }] as NvmeOfPort[],
     namespaces: [{ id: 1 }, { id: 2 }, { id: 3 }] as NvmeOfNamespace[],
   },
 ];
@@ -107,9 +109,9 @@ describe('NvmeOfSubsystems', () => {
   it('shows table rows', async () => {
     const table = await loader.getHarness(IxTableHarness);
     const expectedRows = [
-      ['Name', 'Namespaces', 'Hosts', 'Ports', ''],
-      ['subsys-1', '3', '2', '4', ''],
-      ['subsys-2', '3', '2', '4', ''],
+      ['Name', 'Namespaces', 'Ports', 'Hosts', ''],
+      ['subsys-1', '3', '4', '2', ''],
+      ['subsys-2', '3', '4', '2', ''],
     ];
 
     expect(await table.getCellTexts()).toEqual(expectedRows);

@@ -10,7 +10,7 @@ import {
   NvmeOfConfigurationComponent,
 } from 'app/pages/sharing/nvme-of/nvme-of-configuration/nvme-of-configuration.component';
 import { NvmeOfComponent } from 'app/pages/sharing/nvme-of/nvme-of.component';
-import { NvmeOfStore } from 'app/pages/sharing/nvme-of/nvme-of.store';
+import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
 
 describe('NvmeOfComponent', () => {
   let spectator: Spectator<NvmeOfComponent>;

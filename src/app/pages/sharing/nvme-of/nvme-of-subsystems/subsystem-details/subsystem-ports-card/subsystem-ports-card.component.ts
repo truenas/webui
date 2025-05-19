@@ -8,7 +8,7 @@ import { helptextNvmeOf } from 'app/helptext/sharing/nvme-of/nvme-of';
 import { NvmeOfPort } from 'app/interfaces/nvme-of.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
-import { SubsystemWithRelations } from 'app/pages/sharing/nvme-of/utils/subsystem-with-relations.interface';
+import { NvmeOfSubsystemDetails } from 'app/pages/sharing/nvme-of/services/nvme-of-subsystem-details.interface';
 
 @Component({
   selector: 'ix-subsystem-ports-card',
@@ -26,7 +26,7 @@ import { SubsystemWithRelations } from 'app/pages/sharing/nvme-of/utils/subsyste
   ],
 })
 export class SubsystemPortsCardComponent {
-  subsystem = input.required<SubsystemWithRelations>();
+  subsystem = input.required<NvmeOfSubsystemDetails>();
 
   protected helptext = helptextNvmeOf;
 

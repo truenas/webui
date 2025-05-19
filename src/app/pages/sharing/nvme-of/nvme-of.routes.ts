@@ -4,7 +4,7 @@ import { NvmeOfHostsComponent } from 'app/pages/sharing/nvme-of/nvme-of-hosts/nv
 import { NvmeOfPortsComponent } from 'app/pages/sharing/nvme-of/nvme-of-ports/nvme-of-ports.component';
 import { NvmeOfSubsystemsComponent } from 'app/pages/sharing/nvme-of/nvme-of-subsystems/nvme-of-subsystems.component';
 import { NvmeOfComponent } from 'app/pages/sharing/nvme-of/nvme-of.component';
-import { NvmeOfStore } from 'app/pages/sharing/nvme-of/nvme-of.store';
+import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
 
 export const nvmeOfRoutes: Routes = [
   {
