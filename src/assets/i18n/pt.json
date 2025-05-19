@@ -2681,6 +2681,7 @@
   "Sharing FTP Write": "",
   "Sharing NVMe-oF Target Read": "",
   "Sharing NVMe-oF Target Write": "",
+  "Sharing root datasets is not recommended. Please create a child dataset.": "",
   "Shell": "",
   "Shell Access": "",
   "Should only be used for highly accurate <b>NTP</b> servers such as those with time monitoring hardware.": "",

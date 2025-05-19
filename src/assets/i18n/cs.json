@@ -3309,6 +3309,7 @@
   "Sharing NVMe-oF Target Write": "",
   "Sharing Platform": "",
   "Sharing Read": "",
+  "Sharing root datasets is not recommended. Please create a child dataset.": "",
   "Sharing SMB Read": "",
   "Sharing SMB Write": "",
   "Sharing Write": "",

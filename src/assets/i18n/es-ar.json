@@ -109,6 +109,7 @@
   "Sharing iSCSI Write": "",
   "Sharing NVMe-oF Target Read": "",
   "Sharing NVMe-oF Target Write": "",
+  "Sharing root datasets is not recommended. Please create a child dataset.": "",
   "Slave": "",
   "Static IP Addresses": "",
   "Strip ACL": "",

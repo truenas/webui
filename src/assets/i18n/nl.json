@@ -366,6 +366,7 @@
   "Set Up Two-Factor Authentication": "",
   "Sharing NVMe-oF Target Read": "",
   "Sharing NVMe-oF Target Write": "",
+  "Sharing root datasets is not recommended. Please create a child dataset.": "",
   "Shell Access": "",
   "Show Actions": "",
   "Show Builtin Users": "",

@@ -44,6 +44,7 @@
   "Set Password": "",
   "Sharing NVMe-oF Target Read": "",
   "Sharing NVMe-oF Target Write": "",
+  "Sharing root datasets is not recommended. Please create a child dataset.": "",
   "Static IP Addresses": "",
   "Subsystem Name": "",
   "Subsystems": "",
