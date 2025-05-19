@@ -8,7 +8,7 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
-import { NvmeOfSubsystem } from 'app/interfaces/nvme-of.interface';
+import { NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -53,7 +53,7 @@ import { NvmeOfStore } from 'app/pages/sharing/nvme-of/nvme-of.store';
 export class SubsystemsListComponent {
   readonly isMobileView = input<boolean>();
   readonly toggleShowMobileDetails = output<boolean>();
-  readonly dataProvider = input.required<ArrayDataProvider<NvmeOfSubsystem>>();
+  readonly dataProvider = input.required<ArrayDataProvider<NvmeOfSubsystemDetails>>();
   readonly search = output<string>();
 
   protected readonly searchableElements = subsystemListElements;
@@ -66,27 +66,27 @@ export class SubsystemsListComponent {
 
   filterString = '';
 
-  protected columns = createTable<NvmeOfSubsystem>([
+  protected columns = createTable<NvmeOfSubsystemDetails>([
     textColumn({
       title: this.translate.instant('Name'),
       propertyName: 'name',
     }),
     textColumn({
       title: this.translate.instant('Namespaces'),
-      getValue: (row: NvmeOfSubsystem) => {
-        return this.nvmeOfStore.getSubsystemNamespaces(row).length;
+      getValue: (row: NvmeOfSubsystemDetails) => {
+        return row.namespaces.length;
       },
     }),
     textColumn({
       title: this.translate.instant('Hosts'),
       getValue: (row) => {
-        return this.nvmeOfStore.getSubsystemHosts(row).length;
+        return row.hosts.length;
       },
     }),
     textColumn({
       title: this.translate.instant('Ports'),
       getValue: (row) => {
-        return this.nvmeOfStore.getSubsystemPorts(row).length;
+        return row.ports.length;
       },
     }),
     templateColumn({
@@ -104,7 +104,7 @@ export class SubsystemsListComponent {
     private nvmeOfStore: NvmeOfStore,
   ) { }
 
-  protected expanded(subsys: NvmeOfSubsystem): void {
+  protected expanded(subsys: NvmeOfSubsystemDetails): void {
     if (this.isMobileView()) {
       this.toggleShowMobileDetails.emit(!!subsys);
       if (!subsys) {

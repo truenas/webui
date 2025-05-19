@@ -4,29 +4,37 @@ import {
   combineLatest, switchMap, tap,
 } from 'rxjs';
 import {
-  NvmeOfNamespace, NvmeOfSubsystem, SubsystemHostAssociation, SubsystemPortAssociation,
+  NvmeOfNamespace, NvmeOfSubsystem, NvmeOfSubsystemDetails, SubsystemHostAssociation, SubsystemPortAssociation,
 } from 'app/interfaces/nvme-of.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 
 export interface NvmeOfState {
   subsystems: NvmeOfSubsystem[];
   namespaces: NvmeOfNamespace[];
-  hostSubsystems: SubsystemHostAssociation[];
-  ports: SubsystemPortAssociation[];
+  subsystemsHosts: SubsystemHostAssociation[];
+  subsystemPorts: SubsystemPortAssociation[];
   isLoading: boolean;
 }
 
 const initialState: NvmeOfState = {
   subsystems: [],
   namespaces: [],
-  hostSubsystems: [],
-  ports: [],
+  subsystemsHosts: [],
+  subsystemPorts: [],
   isLoading: false,
 };
 
 @Injectable()
 export class NvmeOfStore extends ComponentStore<NvmeOfState> {
-  readonly subsystems = computed(() => this.state().subsystems);
+  readonly subsystems = computed((): NvmeOfSubsystemDetails[] => {
+    const state = this.state();
+    return state.subsystems.map((subsystem: NvmeOfSubsystemDetails) => {
+      subsystem.hosts = state.subsystemsHosts.filter((host) => host.subsystem.id === subsystem.id);
+      subsystem.ports = state.subsystemPorts.filter((port) => port.subsystem.id === subsystem.id);
+      subsystem.namespaces = state.namespaces.filter((namespace) => namespace.subsystem.id === subsystem.id);
+      return subsystem;
+    });
+  });
 
   readonly isLoading = computed(() => this.state().isLoading);
 
@@ -53,31 +61,16 @@ export class NvmeOfStore extends ComponentStore<NvmeOfState> {
         subsystems,
         namespaces,
         hostSubsystems,
-        ports,
+        subsystemPorts,
       ]: [NvmeOfSubsystem[], NvmeOfNamespace[], SubsystemHostAssociation[], SubsystemPortAssociation[]]) => {
         this.patchState({
           subsystems,
           namespaces,
-          hostSubsystems,
-          ports,
+          subsystemsHosts: hostSubsystems,
+          subsystemPorts,
           isLoading: false,
         });
       }),
     );
   });
-
-  getSubsystemNamespaces(subsystem: NvmeOfSubsystem): NvmeOfNamespace[] {
-    const { namespaces } = this.state();
-    return namespaces.filter((namespace) => namespace.subsystem.id === subsystem.id);
-  }
-
-  getSubsystemHosts(subsystem: NvmeOfSubsystem): SubsystemHostAssociation[] {
-    const { hostSubsystems } = this.state();
-    return hostSubsystems.filter((host) => host.subsystem.id === subsystem.id);
-  }
-
-  getSubsystemPorts(subsystem: NvmeOfSubsystem): SubsystemPortAssociation[] {
-    const { ports } = this.state();
-    return ports.filter((port) => port.subsystem.id === subsystem.id);
-  }
 }

@@ -4,7 +4,9 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { NvmeOfSubsystem } from 'app/interfaces/nvme-of.interface';
+import {
+  NvmeOfNamespace, NvmeOfSubsystemDetails, SubsystemHostAssociation, SubsystemPortAssociation,
+} from 'app/interfaces/nvme-of.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
@@ -14,7 +16,7 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SubsystemsListComponent } from 'app/pages/sharing/nvme-of/nvme-of-subsystems/subsystems-list/subsystems-list.component';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/nvme-of.store';
 
-const mockSubsystems: NvmeOfSubsystem[] = [
+const mockSubsystems: NvmeOfSubsystemDetails[] = [
   {
     allow_any_host: true,
     id: 1,
@@ -25,6 +27,9 @@ const mockSubsystems: NvmeOfSubsystem[] = [
     qix_max: 4,
     serial: 'serial-1',
     subnqn: 'subnqn-1',
+    hosts: [{ id: 1 }, { id: 2 }, { id: 3 }] as SubsystemHostAssociation[],
+    ports: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }] as SubsystemPortAssociation[],
+    namespaces: [{ id: 1 }, { id: 2 }] as NvmeOfNamespace[],
   },
   {
     allow_any_host: true,
@@ -36,6 +41,9 @@ const mockSubsystems: NvmeOfSubsystem[] = [
     qix_max: 4,
     serial: 'serial-2',
     subnqn: 'subnqn-2',
+    hosts: [{ id: 1 }, { id: 2 }, { id: 3 }] as SubsystemHostAssociation[],
+    ports: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }] as SubsystemPortAssociation[],
+    namespaces: [{ id: 1 }, { id: 2 }] as NvmeOfNamespace[],
   },
 ];
 
@@ -58,16 +66,13 @@ describe('SubsystemsListComponent', () => {
       }),
       mockProvider(NvmeOfStore, {
         initialize: jest.fn(),
-        getSubsystemNamespaces: jest.fn(() => [{ id: 1 }, { id: 2 }]),
-        getSubsystemHosts: jest.fn(() => [{ id: 1 }, { id: 2 }, { id: 3 }]),
-        getSubsystemPorts: jest.fn(() => [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }]),
       }),
       mockAuth(),
     ],
   });
 
   beforeEach(() => {
-    const mockSubsystemsDataProvicer = new ArrayDataProvider<NvmeOfSubsystem>();
+    const mockSubsystemsDataProvicer = new ArrayDataProvider<NvmeOfSubsystemDetails>();
     mockSubsystemsDataProvicer.setRows(mockSubsystems);
     spectator = createComponent({
       props: {

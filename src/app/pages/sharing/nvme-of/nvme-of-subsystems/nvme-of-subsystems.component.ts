@@ -12,7 +12,7 @@ import {
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
-import { NvmeOfSubsystem } from 'app/interfaces/nvme-of.interface';
+import { NvmeOfSubsystem, NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.interface';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { LoaderService } from 'app/modules/loader/loader.service';
@@ -44,9 +44,9 @@ import { NvmeOfStore } from 'app/pages/sharing/nvme-of/nvme-of.store';
 })
 export class NvmeOfSubsystemsComponent {
   protected readonly subsystems = this.nvmeOfStore.subsystems;
-  protected dataProvider = computed<ArrayDataProvider<NvmeOfSubsystem>>(() => {
+  protected dataProvider = computed<ArrayDataProvider<NvmeOfSubsystemDetails>>(() => {
     const subsystems = this.subsystems();
-    const dataProvider = new ArrayDataProvider<NvmeOfSubsystem>();
+    const dataProvider = new ArrayDataProvider<NvmeOfSubsystemDetails>();
 
     dataProvider.setRows(subsystems);
     dataProvider.setSorting({
@@ -114,7 +114,7 @@ export class NvmeOfSubsystemsComponent {
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(({ response }: { response: NvmeOfSubsystem | boolean }) => {
-      this.dataProvider().expandedRow = response as NvmeOfSubsystem;
+      this.dataProvider().expandedRow = response as NvmeOfSubsystemDetails;
       this.nvmeOfStore.initialize();
     });
   }
