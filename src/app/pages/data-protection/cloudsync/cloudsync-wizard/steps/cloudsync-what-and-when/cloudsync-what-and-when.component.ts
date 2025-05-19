@@ -16,6 +16,7 @@ import {
   EMPTY,
   Observable, catchError, combineLatest, filter, map, merge, of, tap,
 } from 'rxjs';
+import { slashRootNode } from 'app/constants/basic-root-nodes.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Direction, directionNames } from 'app/enums/direction.enum';
@@ -84,6 +85,8 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
 
   readonly save = output();
 
+  protected readonly slashRootNode = slashRootNode;
+
   form = this.formBuilder.nonNullable.group({
     description: ['' as string, Validators.required],
     direction: [Direction.Pull, Validators.required],
@@ -123,10 +126,10 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
   isCredentialInvalid$ = new BehaviorSubject(false);
   credentials: CloudSyncCredential[] = [];
   providers: CloudSyncProvider[] = [];
-  bucketPlaceholder: string = helptextCloudSync.bucket_placeholder;
-  bucketTooltip: string = helptextCloudSync.bucket_tooltip;
-  bucketInputPlaceholder: string = helptextCloudSync.bucket_input_placeholder;
-  bucketInputTooltip: string = helptextCloudSync.bucket_input_tooltip;
+  bucketPlaceholder: string = helptextCloudSync.bucketLabel;
+  bucketTooltip: string = helptextCloudSync.bucketTooltip;
+  bucketInputPlaceholder: string = helptextCloudSync.bucketLabel;
+  bucketInputTooltip: string = helptextCloudSync.bucketInputTooltip;
   googleDriveProviderIds: number[] = [];
   bucketOptions$: Observable<Option[]>;
 
@@ -138,9 +141,9 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
   readonly helptext = helptextCloudSync;
   protected readonly requiredRoles = [Role.CloudSyncWrite];
   readonly transferModeTooltip = `
-    ${helptextCloudSync.transfer_mode_warning_sync}<br><br>
-    ${helptextCloudSync.transfer_mode_warning_copy}<br><br>
-    ${helptextCloudSync.transfer_mode_warning_move}
+    ${helptextCloudSync.syncModeExplanation}<br><br>
+    ${helptextCloudSync.copyModeExplanation}<br><br>
+    ${helptextCloudSync.moveModeExplanation}
   `;
 
   get credentialsDependentControls(): FormControl[] {
@@ -408,10 +411,10 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
             this.bucketInputPlaceholder = this.translate.instant('Container');
             this.bucketInputTooltip = this.translate.instant('Input the pre-defined container to use.');
           } else {
-            this.bucketPlaceholder = helptextCloudSync.bucket_placeholder;
-            this.bucketTooltip = helptextCloudSync.bucket_tooltip;
-            this.bucketInputPlaceholder = helptextCloudSync.bucket_input_placeholder;
-            this.bucketInputTooltip = helptextCloudSync.bucket_input_tooltip;
+            this.bucketPlaceholder = helptextCloudSync.bucketLabel;
+            this.bucketTooltip = helptextCloudSync.bucketTooltip;
+            this.bucketInputPlaceholder = helptextCloudSync.bucketLabel;
+            this.bucketInputTooltip = helptextCloudSync.bucketInputTooltip;
           }
 
           this.loadBucketOptions();

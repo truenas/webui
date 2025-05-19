@@ -3,8 +3,8 @@
     formControlName="target_dataset"
     [label]="'Destination' | translate"
     [required]="true"
-    [root]="''"
-    [tooltip]="helptext.target_dataset_tooltip | translate"
+    [rootNodes]="[emptyRootNode]"
+    [tooltip]="helptext.targetDatasetTooltip | translate"
     [nodeProvider]="nodeProvider()"
   ></ix-explorer>
   <ix-select
@@ -12,18 +12,18 @@
     [label]="'Destination Dataset Read-only Policy' | translate"
     [options]="readonlyModes$"
     [required]="true"
-    [tooltip]="helptext.readonly_tooltip | translate"
+    [tooltip]="helptext.readonlyTooltip | translate"
   ></ix-select>
   <ix-checkbox
     formControlName="encryption"
     [label]="'Encryption' | translate"
-    [tooltip]="helptext.encryption_tooltip | translate"
+    [tooltip]="helptext.encryptionTooltip | translate"
   ></ix-checkbox>
   @if (hasEncryption) {
     <ix-checkbox
       formControlName="encryption_inherit"
       [label]="'Inherit Encryption' | translate"
-      [tooltip]="helptext.encryption_inherit_tooltip | translate"
+      [tooltip]="helptext.encryptionInheritTooltip | translate"
     ></ix-checkbox>
   }
 
@@ -33,20 +33,20 @@
       [label]="'Encryption Key Format' | translate"
       [options]="encryptionKeyFormats$"
       [required]="true"
-      [tooltip]="helptext.encryption_key_generate_tooltip | translate"
+      [tooltip]="helptext.encryptionKeyGenerateTooltip | translate"
     ></ix-select>
     @if (isHex) {
       <ix-checkbox
         formControlName="encryption_key_generate"
         [label]="'Generate Encryption Key' | translate"
-        [tooltip]="helptext.encryption_key_generate_tooltip | translate"
+        [tooltip]="helptext.encryptionKeyGenerateTooltip | translate"
       ></ix-checkbox>
     }
     @if (isHex && !form.value.encryption_key_generate) {
       <ix-input
         formControlName="encryption_key_hex"
         [label]="'Encryption Key' | translate"
-        [tooltip]="helptext.encryption_key_hex_tooltip | translate"
+        [tooltip]="helptext.encryptionKeyHexTooltip | translate"
       ></ix-input>
     }
     @if (!isHex) {
@@ -54,19 +54,19 @@
         formControlName="encryption_key_passphrase"
         type="password"
         [label]="'Passphrase' | translate"
-        [tooltip]="helptext.encryption_key_passphrase_tooltip | translate"
+        [tooltip]="helptext.encryptionKeyPassphraseTooltip | translate"
       ></ix-input>
     }
     <ix-checkbox
       formControlName="encryption_key_location_truenasdb"
       [label]="'Store Encryption key in Sending TrueNAS database' | translate"
-      [tooltip]="helptext.encryption_key_location_truenasdb_tooltip | translate"
+      [tooltip]="helptext.encryptionKeyLocationTruenasdbTooltip | translate"
     ></ix-checkbox>
     @if (!form.value.encryption_key_location_truenasdb) {
       <ix-input
         formControlName="encryption_key_location"
         [label]="'Encryption Key Location in Target System' | translate"
-        [tooltip]="helptext.encryption_key_location_tooltip | translate"
+        [tooltip]="helptext.encryptionKeyLocationTooltip | translate"
       ></ix-input>
     }
   }
@@ -74,14 +74,14 @@
   <ix-checkbox
     formControlName="allow_from_scratch"
     [label]="'Replication from scratch' | translate"
-    [tooltip]="helptext.allow_from_scratch_tooltip | translate"
+    [tooltip]="helptext.allowFromScratchTooltip | translate"
   ></ix-checkbox>
   <ix-select
     formControlName="retention_policy"
     [label]="'Snapshot Retention Policy' | translate"
     [options]="retentionPolicies$"
     [required]="true"
-    [tooltip]="helptext.retention_policy_tooltip | translate"
+    [tooltip]="helptext.retentionPolicyTooltip | translate"
   ></ix-select>
   @if (form.value.retention_policy === RetentionPolicy.Custom) {
     <div class="retention-policy">
@@ -89,7 +89,7 @@
         formControlName="lifetime_value"
         type="number"
         [label]="'Snapshot Lifetime' | translate"
-        [tooltip]="helptext.lifetime_value_tooltip | translate"
+        [tooltip]="helptext.lifetimeValueTooltip | translate"
         [required]="true"
       ></ix-input>
       <ix-select

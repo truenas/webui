@@ -6,6 +6,7 @@ import {
 } from '@angular/material/card';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { IsHaDirective } from 'app/directives/is-ha/is-ha.directive';
 import { FibreChannelPort } from 'app/interfaces/fibre-channel.interface';
 
 @Component({
@@ -20,6 +21,7 @@ import { FibreChannelPort } from 'app/interfaces/fibre-channel.interface';
     TranslateModule,
     MatCardContent,
     NgxSkeletonLoaderModule,
+    IsHaDirective,
   ],
 })
 export class FibreChannelPortCardComponent {

@@ -35,12 +35,14 @@ import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-li
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { ipv4or6cidrValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { getRootDatasetsValidator } from 'app/pages/sharing/utils/root-datasets-validator';
 import { DatasetService } from 'app/services/dataset/dataset.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { UserService } from 'app/services/user.service';
@@ -148,10 +150,15 @@ export class NfsFormComponent implements OnInit {
     private datasetService: DatasetService,
     private store$: Store<ServicesState>,
     public slideInRef: SlideInRef<{ existingNfsShare?: NfsShare; defaultNfsShare?: NfsShare } | undefined, boolean>,
+    private validatorsService: IxValidatorsService,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
+    this.form.controls.path.addValidators(this.validatorsService.customValidator(
+      getRootDatasetsValidator(this.existingNfsShare ? [this.existingNfsShare.path] : []),
+      this.translate.instant('Sharing root datasets is not recommended. Please create a child dataset.'),
+    ));
     this.existingNfsShare = this.slideInRef.getData()?.existingNfsShare;
     this.defaultNfsShare = this.slideInRef.getData()?.defaultNfsShare;
   }
@@ -210,7 +217,7 @@ export class NfsFormComponent implements OnInit {
 
     this.datasetService.rootLevelDatasetWarning(
       nfsShare.path,
-      this.translate.instant(helptextSharingNfs.root_level_warning),
+      this.translate.instant(helptextSharingNfs.rootLevelWarning),
       !this.form.controls.path.dirty,
     )
       .pipe(

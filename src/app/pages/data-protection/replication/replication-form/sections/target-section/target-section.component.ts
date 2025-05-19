@@ -6,6 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Observable, combineLatest, of } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { emptyRootNode } from 'app/constants/basic-root-nodes.constant';
 import { truenasDbKeyLocation } from 'app/constants/truenas-db-key-location.constant';
 import { EncryptionKeyFormat, encryptionKeyFormatNames } from 'app/enums/encryption-key-format.enum';
 import { LifetimeUnit, lifetimeUnitNames } from 'app/enums/lifetime-unit.enum';
@@ -60,6 +61,8 @@ export class TargetSectionComponent implements OnInit, OnChanges {
     lifetime_value: [null as number | null, [Validators.required]],
     lifetime_unit: [LifetimeUnit.Week, [Validators.required]],
   });
+
+  protected readonly emptyRootNode = emptyRootNode;
 
   retentionPolicies$: Observable<Option[]>;
 

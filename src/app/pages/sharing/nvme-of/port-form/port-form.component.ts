@@ -9,9 +9,9 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  finalize, of, switchMap,
+  finalize, switchMap,
 } from 'rxjs';
-import { startWith } from 'rxjs/operators';
+import { map, startWith } from 'rxjs/operators';
 import { NvmeOfTransportType, nvmeOfTransportTypeLabels } from 'app/enums/nvme-of.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
@@ -21,11 +21,13 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { NvmeOfService } from 'app/pages/sharing/nvme-of/utils/nvme-of.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
@@ -56,8 +58,14 @@ export class PortFormComponent implements OnInit {
 
   protected isNew = computed(() => !this.existingPort());
 
-  // TODO: Limit by what's available in the system and hide control if not needed.
-  protected types$ = of(mapToOptions(nvmeOfTransportTypeLabels, this.translate));
+  protected types$ = this.nvmeOfService.getSupportedTransports().pipe(
+    map((supportedTransports) => {
+      const allOptions = mapToOptions(nvmeOfTransportTypeLabels, this.translate);
+
+      return allOptions.filter((option) => supportedTransports.includes(option.value));
+    }),
+  );
+
   protected readonly helptext = helptextNvmeOf;
 
   protected form = this.formBuilder.group({
@@ -76,10 +84,12 @@ export class PortFormComponent implements OnInit {
 
   constructor(
     private api: ApiService,
+    private nvmeOfService: NvmeOfService,
     private formBuilder: NonNullableFormBuilder,
     private snackbar: SnackbarService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
+    private formErrorHandler: FormErrorHandlerService,
     public slideInRef: SlideInRef<NvmeOfPort | undefined, boolean>,
   ) {}
 
@@ -112,19 +122,23 @@ export class PortFormComponent implements OnInit {
 
     request$.pipe(
       finalize(() => this.isLoading.set(false)),
-      this.errorHandler.withErrorHandler(),
       untilDestroyed(this),
-    ).subscribe(() => {
-      this.snackbar.success(
-        this.isNew()
-          ? this.translate.instant('Port Created')
-          : this.translate.instant('Port Updated'),
-      );
+    ).subscribe({
+      next: () => {
+        this.snackbar.success(
+          this.isNew()
+            ? this.translate.instant('Port Created')
+            : this.translate.instant('Port Updated'),
+        );
 
-      this.slideInRef.close({
-        response: true,
-        error: null,
-      });
+        this.slideInRef.close({
+          response: true,
+          error: null,
+        });
+      },
+      error: (error: unknown) => {
+        this.formErrorHandler.handleValidationErrors(error, this.form);
+      },
     });
   }
 }

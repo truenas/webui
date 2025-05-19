@@ -1,36 +1,36 @@
 <form [formGroup]="form">
   <ix-select
     formControlName="exist_replication"
-    [label]="helptext.exist_replication_placeholder | translate"
+    [label]="helptext.existReplicationLabel | translate"
     [options]="existReplicationOptions$"
-    [tooltip]="helptext.exist_replication_tooltip | translate"
+    [tooltip]="helptext.existReplicationTooltip | translate"
   ></ix-select>
 
   <div class="replication">
     <div class="source">
       <ix-select
         formControlName="source_datasets_from"
-        [label]="helptext.source_datasets_from_placeholder | translate"
+        [label]="helptext.sourceDatasetsFromLabel | translate"
         [options]="datasetFromOptions$"
-        [tooltip]="helptext.source_datasets_from_tooltip | translate"
+        [tooltip]="helptext.sourceDatasetsFromTooltip | translate"
         [required]="true"
       ></ix-select>
       @if (form.controls.ssh_credentials_source.enabled) {
         <ix-ssh-credentials-select
           formControlName="ssh_credentials_source"
-          [label]="helptext.ssh_credentials_source_placeholder | translate"
-          [tooltip]="helptext.ssh_credentials_source_tooltip | translate"
+          [label]="helptext.sshCredentialsSourceLabel | translate"
+          [tooltip]="helptext.sshCredentialsSourceTooltip | translate"
           [required]="true"
         ></ix-ssh-credentials-select>
       }
       @if (form.controls.source_datasets.enabled) {
         <ix-explorer
           formControlName="source_datasets"
-          [label]="helptext.source_datasets_placeholder | translate"
-          [tooltip]="helptext.source_datasets_tooltip | translate"
+          [label]="helptext.sourceDatasetsLabel | translate"
+          [tooltip]="helptext.sourceDatasetsTooltip | translate"
           [multiple]="true"
           [required]="true"
-          [root]="isRemoteSource ? '' : mntPath"
+          [rootNodes]="sourceDatasetsRootNodes"
           [nodeProvider]="sourceNodeProvider"
         ></ix-explorer>
       }
@@ -38,8 +38,8 @@
       @if (form.controls.recursive.enabled) {
         <ix-checkbox
           formControlName="recursive"
-          [label]="helptext.recursive_placeholder | translate"
-          [tooltip]="helptext.recursive_tooltip | translate"
+          [label]="helptext.recursiveLabel | translate"
+          [tooltip]="helptext.recursiveTooltip | translate"
         ></ix-checkbox>
       }
       @if (snapshotsText) {
@@ -48,8 +48,8 @@
       @if (form.controls.custom_snapshots.enabled) {
         <ix-checkbox
           formControlName="custom_snapshots"
-          [label]="helptext.custom_snapshots_placeholder | translate"
-          [tooltip]="helptext.custom_snapshots_tooltip | translate"
+          [label]="helptext.customSnapshotsLabel | translate"
+          [tooltip]="helptext.customSnapshotsTooltip | translate"
         ></ix-checkbox>
       }
       @if (form.controls.schema_or_regex.enabled) {
@@ -63,16 +63,16 @@
       @if (form.controls.naming_schema.enabled) {
         <ix-input
           formControlName="naming_schema"
-          [label]="helptext.naming_schema_placeholder | translate"
-          [tooltip]="helptext.naming_schema_tooltip | translate"
+          [label]="helptext.namingSchemaLabel | translate"
+          [tooltip]="helptext.namingSchemaTooltip | translate"
           [required]="true"
         ></ix-input>
       }
       @if (form.controls.name_regex.enabled) {
         <ix-input
           formControlName="name_regex"
-          [label]="helptext.name_regex_placeholder  | translate"
-          [tooltip]="helptext.name_regex_tooltip | translate"
+          [label]="helptext.nameRegexLabel  | translate"
+          [tooltip]="helptext.nameRegexTooltip | translate"
           [required]="true"
         ></ix-input>
       }
@@ -80,48 +80,48 @@
     <div class="target">
       <ix-select
         formControlName="target_dataset_from"
-        [label]="helptext.target_dataset_from_placeholder | translate"
-        [tooltip]="helptext.target_dataset_from_tooltip | translate"
+        [label]="helptext.targetDatasetFromLabel | translate"
+        [tooltip]="helptext.targetDatasetFromTooltip | translate"
         [options]="datasetFromOptions$"
         [required]="true"
       ></ix-select>
       @if (form.controls.ssh_credentials_target.enabled) {
         <ix-ssh-credentials-select
           formControlName="ssh_credentials_target"
-          [label]="helptext.ssh_credentials_target_placeholder | translate"
-          [tooltip]="helptext.ssh_credentials_target_tooltip | translate"
+          [label]="helptext.sshCredentialsTargetLabel | translate"
+          [tooltip]="helptext.sshCredentialsTargetTooltip | translate"
           [required]="true"
         ></ix-ssh-credentials-select>
       }
       @if (form.controls.target_dataset.enabled) {
         <ix-explorer
           formControlName="target_dataset"
-          [label]="helptext.target_dataset_placeholder | translate"
-          [tooltip]="helptext.target_dataset_tooltip | translate"
+          [label]="helptext.targetDatasetLabel | translate"
+          [tooltip]="helptext.targetDatasetTooltip | translate"
           [required]="true"
-          [root]="isRemoteTarget ? '' : mntPath"
+          [rootNodes]="targetDatasetsRootNodes"
           [nodeProvider]="targetNodeProvider"
         ></ix-explorer>
       }
       @if (form.controls.encryption.enabled) {
         <ix-checkbox
           formControlName="encryption"
-          [label]="helptext.encryption_placeholder | translate"
-          [tooltip]="helptext.encryption_tooltip | translate"
+          [label]="helptext.encryptionLabel | translate"
+          [tooltip]="helptext.encryptionTooltip | translate"
         ></ix-checkbox>
       }
       @if (form.controls.encryption.enabled && form.controls.encryption.value) {
         <ix-checkbox
           formControlName="encryption_inherit"
-          [label]="helptext.encryption_inherit_placeholder | translate"
-          [tooltip]="helptext.encryption_inherit_tooltip | translate"
+          [label]="helptext.encryptionInheritLabel | translate"
+          [tooltip]="helptext.encryptionInheritTooltip | translate"
         ></ix-checkbox>
       }
       @if (form.controls.encryption_key_format.enabled) {
         <ix-select
           formControlName="encryption_key_format"
-          [label]="helptext.encryption_key_format_placeholder | translate"
-          [tooltip]="helptext.encryption_key_format_tooltip | translate"
+          [label]="helptext.encryptionKeyFormatLabel | translate"
+          [tooltip]="helptext.encryptionKeyFormatTooltip | translate"
           [options]="encryptionKeyFormatOptions$"
           [required]="true"
         ></ix-select>
@@ -129,15 +129,15 @@
       @if (form.controls.encryption_key_generate.enabled) {
         <ix-checkbox
           formControlName="encryption_key_generate"
-          [label]="helptext.encryption_key_generate_placeholder | translate"
-          [tooltip]="helptext.encryption_key_generate_tooltip | translate"
+          [label]="helptext.encryptionKeyGenerateLabel | translate"
+          [tooltip]="helptext.encryptionKeyGenerateTooltip | translate"
         ></ix-checkbox>
       }
       @if (form.controls.encryption_key_hex.enabled) {
         <ix-input
           formControlName="encryption_key_hex"
-          [label]="helptext.encryption_key_hex_placeholder  | translate"
-          [tooltip]="helptext.encryption_key_hex_tooltip | translate"
+          [label]="helptext.encryptionKeyHexLabel  | translate"
+          [tooltip]="helptext.encryptionKeyHexTooltip | translate"
           [required]="true"
         ></ix-input>
       }
@@ -145,23 +145,23 @@
         <ix-input
           formControlName="encryption_key_passphrase"
           type="password"
-          [label]="helptext.encryption_key_passphrase_placeholder  | translate"
-          [tooltip]="helptext.encryption_key_passphrase_tooltip | translate"
+          [label]="helptext.encryptionKeyPassphraseLabel  | translate"
+          [tooltip]="helptext.encryptionKeyPassphraseTooltip | translate"
           [required]="true"
         ></ix-input>
       }
       @if (form.controls.encryption_key_location_truenasdb.enabled) {
         <ix-checkbox
           formControlName="encryption_key_location_truenasdb"
-          [label]="helptext.encryption_key_location_truenasdb_placeholder | translate"
-          [tooltip]="helptext.encryption_key_location_truenasdb_tooltip | translate"
+          [label]="helptext.encryptionKeyLocationTruenasdbLabel | translate"
+          [tooltip]="helptext.encryptionKeyLocationTruenasdbTooltip | translate"
         ></ix-checkbox>
       }
       @if (form.controls.encryption_key_location.enabled) {
         <ix-input
           formControlName="encryption_key_location"
-          [label]="helptext.encryption_key_location_placeholder  | translate"
-          [tooltip]="helptext.encryption_key_location_tooltip | translate"
+          [label]="helptext.encryptionKeyLocationLabel  | translate"
+          [tooltip]="helptext.encryptionKeyLocationTooltip | translate"
           [required]="true"
         ></ix-input>
       }
@@ -171,8 +171,8 @@
   @if (form.controls.transport.enabled) {
     <ix-radio-group
       formControlName="transport"
-      [label]="helptext.transport_placeholder | translate"
-      [tooltip]="helptext.transport_tooltip | translate"
+      [label]="helptext.transportLabel | translate"
+      [tooltip]="helptext.transportTooltip | translate"
       [required]="true"
       [options]="transportOptions$"
     ></ix-radio-group>
@@ -181,12 +181,12 @@
     <ix-checkbox
       formControlName="sudo"
       [label]="'Use Sudo For ZFS Commands' | translate"
-      [tooltip]="helptext.sudo_tooltip | translate"
+      [tooltip]="helptext.sudoTooltip | translate"
     ></ix-checkbox>
   }
   <ix-input
     formControlName="name"
-    [label]="helptext.name_placeholder | translate"
+    [label]="helptext.nameLabel | translate"
     [required]="true"
   ></ix-input>
   <ix-form-actions>

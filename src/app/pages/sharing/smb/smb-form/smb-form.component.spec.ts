@@ -170,7 +170,16 @@ describe('SmbFormComponent', () => {
       }),
       mockProvider(Router),
       mockProvider(LoaderService),
-      mockProvider(FilesystemService),
+      mockProvider(FilesystemService, {
+        getTopLevelDatasetsNodes: jest.fn(() => {
+          return of([
+            {
+              path: 'pool',
+              name: 'pool',
+            },
+          ]);
+        }),
+      }),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
           afterClosed: () => of(true),
@@ -310,10 +319,10 @@ describe('SmbFormComponent', () => {
       const afpCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: formLabels.afp }));
       await afpCheckbox.setValue(true);
       expect(spectator.inject(DialogService).confirm).toHaveBeenLastCalledWith({
-        title: helptextSharingSmb.afpDialog_title,
-        message: helptextSharingSmb.afpDialog_message,
+        title: helptextSharingSmb.afpWarningTitle,
+        message: helptextSharingSmb.afpWarningMessage,
         hideCheckbox: false,
-        buttonText: helptextSharingSmb.afpDialog_button,
+        buttonText: helptextSharingSmb.afpDialogButton,
         hideCancel: false,
       });
     });
@@ -459,7 +468,7 @@ describe('SmbFormComponent', () => {
       });
 
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
-        helptextSharingSmb.restarted_smb_dialog.message,
+        helptextSharingSmb.restartedSmbDialog.message,
       );
 
       const sharePath = await (await loader.getHarness(

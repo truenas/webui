@@ -78,9 +78,6 @@ are submitted only when this box is set.'),
     selectPresetTooltip: T('Choosing an entry loads a preset ACL that is \
  configured to match general permissions situations.'),
     createCustom: T('Create a custom ACL'),
-    input: {
-      placeholder: T('Default ACL Options'),
-    },
     message: T('The chosen preset ACL will <strong>REPLACE</strong> the ACL currently displayed in the form \
  and delete any unsaved changes.'),
   },

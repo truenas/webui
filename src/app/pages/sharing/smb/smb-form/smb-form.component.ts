@@ -39,6 +39,7 @@ import {
   SmbPresetType,
   SmbShare, SmbShareUpdate,
 } from 'app/interfaces/smb-share.interface';
+import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -50,6 +51,7 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
+import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -58,6 +60,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { RestartSmbDialog } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
 import { SmbValidationService } from 'app/pages/sharing/smb/smb-form/smb-validator.service';
+import { getRootDatasetsValidator } from 'app/pages/sharing/utils/root-datasets-validator';
 import { DatasetService } from 'app/services/dataset/dataset.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { UserService } from 'app/services/user.service';
@@ -176,6 +179,8 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     );
   }
 
+  protected rootNodes = signal<ExplorerNodeData[]>([]);
+
   hostsAllowTooltip = this.translate.instant('Enter a list of allowed hostnames or IP addresses.\
     Separate entries by pressing <code>Enter</code>. A more detailed description \
     with examples can be found \
@@ -192,7 +197,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     then allow it.', { url: 'https://wiki.samba.org/index.php/1.4_Samba_Security' });
 
   form = this.formBuilder.group({
-    path: ['', Validators.required],
+    path: ['', [Validators.required]],
     name: ['', Validators.required],
     purpose: [null as SmbPresetType | null],
     comment: [''],
@@ -238,6 +243,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     private formErrorHandler: FormErrorHandlerService,
     private filesystemService: FilesystemService,
     private snackbar: SnackbarService,
+    private validatorsService: IxValidatorsService,
     private store$: Store<ServicesState>,
     private smbValidationService: SmbValidationService,
     public slideInRef: SlideInRef<{ existingSmbShare?: SmbShare; defaultSmbShare?: SmbShare } | undefined, boolean>,
@@ -248,6 +254,17 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
     this.existingSmbShare = this.slideInRef.getData()?.existingSmbShare;
     this.defaultSmbShare = this.slideInRef.getData()?.defaultSmbShare;
+    this.setupExplorerRootNodes();
+  }
+
+  private setupExplorerRootNodes(): void {
+    this.filesystemService.getTopLevelDatasetsNodes().pipe(
+      untilDestroyed(this),
+    ).subscribe({
+      next: (nodes) => {
+        this.rootNodes.set(nodes);
+      },
+    });
   }
 
   ngOnInit(): void {
@@ -269,7 +286,10 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
       this.form.patchValue(this.defaultSmbShare);
       this.setNameFromPath();
     }
-
+    this.form.controls.path.addValidators(this.validatorsService.customValidator(
+      getRootDatasetsValidator(this.existingSmbShare ? [this.existingSmbShare.path] : []),
+      this.translate.instant('Sharing root datasets is not recommended. Please create a child dataset.'),
+    ));
     if (this.existingSmbShare) {
       this.setSmbShareForEdit(this.existingSmbShare);
     }
@@ -452,10 +472,10 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     const afpControl = this.form.controls.afp;
     this.dialogService
       .confirm({
-        title: this.translate.instant(helptextSharingSmb.afpDialog_title),
-        message: this.translate.instant(helptextSharingSmb.afpDialog_message),
+        title: this.translate.instant(helptextSharingSmb.afpWarningTitle),
+        message: this.translate.instant(helptextSharingSmb.afpWarningMessage),
         hideCheckbox: false,
-        buttonText: this.translate.instant(helptextSharingSmb.afpDialog_button),
+        buttonText: this.translate.instant(helptextSharingSmb.afpDialogButton),
         hideCancel: false,
       })
       .pipe(untilDestroyed(this))
@@ -483,7 +503,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
     this.datasetService.rootLevelDatasetWarning(
       smbShare.path,
-      this.translate.instant(helptextSharingSmb.root_level_warning),
+      this.translate.instant(helptextSharingSmb.rootLevelWarning),
       !this.form.controls.path.dirty,
     ).pipe(
       filter(Boolean),
@@ -575,7 +595,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
         this.loader.close();
         this.snackbar.success(
           this.translate.instant(
-            helptextSharingSmb.restarted_smb_dialog.message,
+            helptextSharingSmb.restartedSmbDialog.message,
           ),
         );
       }),

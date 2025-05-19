@@ -73,11 +73,11 @@ export class TruecommandConnectModalComponent implements OnInit {
 
   ngOnInit(): void {
     this.title = this.data.isConnected
-      ? helptextTopbar.updateDialog.title_update
-      : helptextTopbar.updateDialog.title_connect;
+      ? helptextTopbar.updateDialog.titleUpdate
+      : helptextTopbar.updateDialog.titleConnect;
     this.saveButtonText = this.data.isConnected
-      ? helptextTopbar.updateDialog.save_btn
-      : helptextTopbar.updateDialog.connect_btn;
+      ? helptextTopbar.updateDialog.saveButton
+      : helptextTopbar.updateDialog.connectButton;
 
     if (this.data.isConnected) {
       this.form.patchValue({

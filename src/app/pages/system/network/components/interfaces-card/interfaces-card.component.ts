@@ -71,7 +71,7 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
   ],
 })
 export class InterfacesCardComponent implements OnInit, OnChanges {
-  readonly isHaEnabled = input(false);
+  readonly isHaLicensed = input(false);
 
   protected readonly searchableElements = interfacesCardElements.elements;
 
@@ -80,7 +80,7 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
   protected readonly requiredRoles = [Role.NetworkInterfaceWrite];
   protected interfaces: NetworkInterface[] = [];
 
-  isHaEnabled$ = new BehaviorSubject(false);
+  isHaLicensed$ = new BehaviorSubject(false);
 
   isLoading = false;
   dataProvider = new ArrayDataProvider<NetworkInterface>();
@@ -108,23 +108,22 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
         {
           iconName: iconMarker('refresh'),
           requiredRoles: this.requiredRoles,
-          tooltip: this.translate.instant('Refresh'),
           hidden: (row) => of(!this.isPhysical(row)),
-          disabled: () => this.isHaEnabled$,
-          dynamicTooltip: () => this.isHaEnabled$.pipe(map((isHaEnabled) => (isHaEnabled
-            ? this.translate.instant(helptextInterfaces.ha_enabled_reset_msg)
+          disabled: () => this.isHaLicensed$,
+          dynamicTooltip: () => this.isHaLicensed$.pipe(map((isHaLicensed) => (isHaLicensed
+            ? this.translate.instant(helptextInterfaces.haEnabledResetMessage)
             : this.translate.instant('Reset configuration')))),
           onClick: (row) => this.onReset(row),
         },
         {
           iconName: iconMarker('mdi-delete'),
           requiredRoles: this.requiredRoles,
-          tooltip: this.isHaEnabled()
-            ? this.translate.instant(helptextInterfaces.ha_enabled_delete_msg)
+          tooltip: this.isHaLicensed()
+            ? this.translate.instant(helptextInterfaces.haEnabledDeleteMessage)
             : this.translate.instant('Delete'),
           hidden: (row) => of(this.isPhysical(row)),
           onClick: (row) => this.onDelete(row),
-          disabled: () => this.isHaEnabled$,
+          disabled: () => this.isHaLicensed$,
         },
       ],
     }),
@@ -153,7 +152,7 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(): void {
-    this.isHaEnabled$.next(this.isHaEnabled());
+    this.isHaLicensed$.next(this.isHaLicensed());
   }
 
   ngOnInit(): void {
@@ -212,7 +211,7 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
   onDelete(row: NetworkInterface): void {
     this.dialogService.confirm({
       title: this.translate.instant('Delete Interface'),
-      message: this.translate.instant(helptextInterfaces.delete_dialog_text),
+      message: this.translate.instant(helptextInterfaces.deleteDialogText),
       buttonText: this.translate.instant('Delete'),
     })
       .pipe(filter(Boolean), untilDestroyed(this))
@@ -222,7 +221,7 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
   onReset(row: NetworkInterface): void {
     this.dialogService.confirm({
       title: this.translate.instant('Reset Configuration'),
-      message: this.translate.instant(helptextInterfaces.delete_dialog_text),
+      message: this.translate.instant(helptextInterfaces.deleteDialogText),
       buttonText: this.translate.instant('Reset'),
     })
       .pipe(filter(Boolean), untilDestroyed(this))

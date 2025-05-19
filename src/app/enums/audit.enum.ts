@@ -25,6 +25,7 @@ export enum AuditEvent {
   Accept = 'ACCEPT',
   Reject = 'REJECT',
   Reboot = 'REBOOT',
+  Logout = 'LOGOUT',
 }
 
 export const auditServiceLabels = new Map<AuditService, string>([
@@ -52,4 +53,5 @@ export const auditEventLabels = new Map<AuditEvent, string>([
   [AuditEvent.Accept, T('Accept')],
   [AuditEvent.Reject, T('Reject')],
   [AuditEvent.Reboot, T('Reboot')],
+  [AuditEvent.Logout, T('Logout')],
 ]);

@@ -36,7 +36,7 @@ import {
 export class CheckinIndicatorComponent implements OnInit {
   protected hasPendingNetworkChanges$ = this.store$.select(selectHasPendingNetworkChanges);
 
-  protected readonly tooltips = helptextTopbar.mat_tooltips;
+  protected readonly tooltips = helptextTopbar.tooltips;
 
   private isWaitingForCheckin = false;
 
@@ -73,8 +73,8 @@ export class CheckinIndicatorComponent implements OnInit {
 
   private showPendingNetworkChangesDialog(): void {
     this.dialogService.confirm({
-      title: this.translate.instant(helptextInterfaces.pending_changes_title),
-      message: this.translate.instant(helptextInterfaces.pending_changes_message),
+      title: this.translate.instant(helptextInterfaces.pendingChangesTitle),
+      message: this.translate.instant(helptextInterfaces.pendingChangesMessage),
       hideCheckbox: true,
       buttonText: this.translate.instant('Continue'),
     }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {

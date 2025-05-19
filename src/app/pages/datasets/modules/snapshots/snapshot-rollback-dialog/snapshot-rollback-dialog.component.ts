@@ -73,18 +73,18 @@ export class SnapshotRollbackDialog implements OnInit {
     options: of([
       {
         value: '',
-        label: helptextSnapshots.rollback_dataset_placeholder,
-        tooltip: helptextSnapshots.rollback_dataset_tooltip,
+        label: helptextSnapshots.rollbackDatasetLabel,
+        tooltip: helptextSnapshots.rollbackDatasetTooltip,
       },
       {
         value: RollbackRecursiveType.Recursive,
-        label: helptextSnapshots.rollback_recursive_placeholder,
-        tooltip: helptextSnapshots.rollback_recursive_tooltip,
+        label: helptextSnapshots.rollbackRecursiveLabel,
+        tooltip: helptextSnapshots.rollbackRecursiveTooltip,
       },
       {
         value: RollbackRecursiveType.RecursiveClones,
-        label: helptextSnapshots.rollback_recursive_clones_placeholder,
-        tooltip: helptextSnapshots.rollback_recursive_clones_tooltip,
+        label: helptextSnapshots.rollbackRecursiveClonesLabel,
+        tooltip: helptextSnapshots.rollbackRecursiveClonesTooltip,
       },
     ]),
   };

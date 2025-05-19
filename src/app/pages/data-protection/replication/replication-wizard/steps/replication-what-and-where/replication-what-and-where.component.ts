@@ -11,6 +11,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   debounceTime, map, merge, Observable, of, switchMap,
 } from 'rxjs';
+import { emptyRootNode, datasetsRootNode } from 'app/constants/basic-root-nodes.constant';
 import { DatasetSource } from 'app/enums/dataset.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
@@ -23,6 +24,7 @@ import { CountManualSnapshotsParams, EligibleManualSnapshotsCount } from 'app/in
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { newOption, Option } from 'app/interfaces/option.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
+import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SshCredentialsSelectComponent } from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.component';
@@ -75,6 +77,18 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
 
   sourceNodeProvider: TreeNodeProvider;
   targetNodeProvider: TreeNodeProvider;
+
+  protected get targetDatasetsRootNodes(): ExplorerNodeData[] {
+    return this.isRemoteTarget
+      ? [emptyRootNode]
+      : [datasetsRootNode];
+  }
+
+  protected get sourceDatasetsRootNodes(): ExplorerNodeData[] {
+    return this.isRemoteSource
+      ? [emptyRootNode]
+      : [datasetsRootNode];
+  }
 
   readonly helptext = helptextReplicationWizard;
   readonly mntPath = mntPath;
@@ -133,11 +147,11 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
 
   schemaOrRegexOptions$ = of([
     {
-      label: this.translate.instant(helptextReplicationWizard.naming_schema_placeholder),
+      label: this.translate.instant(helptextReplicationWizard.namingSchemaLabel),
       value: SnapshotNamingOption.NamingSchema,
     },
     {
-      label: this.translate.instant(helptextReplicationWizard.name_regex_placeholder),
+      label: this.translate.instant(helptextReplicationWizard.nameRegexLabel),
       value: SnapshotNamingOption.NameRegex,
     },
   ]);
@@ -157,8 +171,8 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
 
   get schemaOrRegexLabel(): string {
     return this.form.value.source_datasets_from === DatasetSource.Local
-      ? helptextReplicationWizard.name_schema_or_regex_placeholder_push
-      : helptextReplicationWizard.name_schema_or_regex_placeholder_pull;
+      ? helptextReplicationWizard.nameSchemaOrRegexPush
+      : helptextReplicationWizard.nameSchemaOrRegexPull;
   }
 
   constructor(
@@ -324,7 +338,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
 
         this.dialogService.confirm({
           title: this.translate.instant('Sudo Enabled'),
-          message: this.translate.instant(helptextReplicationWizard.sudo_warning),
+          message: this.translate.instant(helptextReplicationWizard.sudoWarning),
           hideCheckbox: true,
           buttonText: this.translate.instant('Use Sudo For ZFS Commands'),
         }).pipe(untilDestroyed(this)).subscribe((useSudo) => {
@@ -472,11 +486,11 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
 
     return [
       {
-        label: this.translate.instant(helptextReplicationWizard.source_datasets_placeholder),
+        label: this.translate.instant(helptextReplicationWizard.sourceDatasetsLabel),
         value: values.source_datasets.join(','),
       },
       {
-        label: this.translate.instant(helptextReplicationWizard.target_dataset_placeholder),
+        label: this.translate.instant(helptextReplicationWizard.targetDatasetLabel),
         value: values.target_dataset || '',
       },
     ];

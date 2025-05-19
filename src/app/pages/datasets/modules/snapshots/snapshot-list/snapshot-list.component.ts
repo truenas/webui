@@ -260,17 +260,17 @@ export class SnapshotListComponent implements OnInit {
   getConfirmOptions(): ConfirmOptions {
     if (!this.showExtraColumnsControl.value) {
       return {
-        title: this.translate.instant(helptextSnapshots.extra_cols.title_hide),
-        message: this.translate.instant(helptextSnapshots.extra_cols.message_hide),
-        buttonText: this.translate.instant(helptextSnapshots.extra_cols.button_hide),
+        title: this.translate.instant(helptextSnapshots.extraColumns.hide),
+        message: this.translate.instant(helptextSnapshots.extraColumns.hideMessage),
+        buttonText: this.translate.instant(helptextSnapshots.extraColumns.hideButton),
         hideCheckbox: true,
       };
     }
 
     return {
-      title: this.translate.instant(helptextSnapshots.extra_cols.title_show),
-      message: this.translate.instant(helptextSnapshots.extra_cols.message_show),
-      buttonText: this.translate.instant(helptextSnapshots.extra_cols.button_show),
+      title: this.translate.instant(helptextSnapshots.extraColumns.show),
+      message: this.translate.instant(helptextSnapshots.extraColumns.showMessage),
+      buttonText: this.translate.instant(helptextSnapshots.extraColumns.showButton),
       hideCheckbox: true,
     };
   }
