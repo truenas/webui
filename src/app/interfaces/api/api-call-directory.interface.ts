@@ -681,7 +681,7 @@ export interface ApiCallDirectory {
   'nvmet.host_subsys.create': { params: [AssociateSubsystemHost]; response: void };
   'nvmet.host_subsys.delete': { params: [id: number]; response: void };
 
-  'nvmet.namespace.query': { params: QueryParams<NvmeOfNamespace>; response: NvmeOfNamespace };
+  'nvmet.namespace.query': { params: QueryParams<NvmeOfNamespace>; response: NvmeOfNamespace[] };
   'nvmet.namespace.create': { params: [CreateNvmeOfNamespace]; response: NvmeOfNamespace };
   'nvmet.namespace.update': { params: [id: number, update: UpdateNvmeOfNamespace]; response: NvmeOfNamespace };
   'nvmet.namespace.delete': { params: DeleteNamespaceParams; response: void };
