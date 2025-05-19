@@ -2,13 +2,13 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const helptext2fa = {
   secret: {
-    placeholder: T('Secret (Read only)'),
+    label: T('Secret (Read only)'),
     tooltip: T('The secret used to generate OTPs. The secret is produced by the system when Two-Factor \
   Authentication is first activated.'),
   },
 
   uri: {
-    placeholder: T('Provisioning URI (includes Secret - Read only):'),
+    label: T('Provisioning URI (includes Secret - Read only):'),
     tooltip: T('The URI used to provision an OTP. The URI (which contains the secret) is encoded in a QR Code. \
   To set up an OTP app like Google Authenticator, use the app to scan the QR code or enter the secret manually \
   into the app. The URI is produced by the system when Two-Factor Authentication is first activated.'),

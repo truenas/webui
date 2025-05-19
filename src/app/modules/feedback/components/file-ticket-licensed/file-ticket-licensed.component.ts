@@ -90,7 +90,7 @@ export class FileTicketLicensedComponent {
     take_screenshot: [true],
   });
 
-  protected readonly messagePlaceholder = helptext.bug.message.placeholder;
+  protected readonly messagePlaceholder = helptext.bug.message.label;
   protected readonly acceptedFiles = ticketAcceptedFiles;
 
   readonly categoryOptions$ = of(mapToOptions(ticketCategoryLabels, this.translate));
@@ -104,7 +104,7 @@ export class FileTicketLicensedComponent {
     phone: helptext.phone.tooltip,
     category: helptext.type.tooltip,
     title: helptext.title.placeholder,
-    attach_debug: helptext.attach_debug.tooltip,
+    attach_debug: helptext.attachDebug.tooltip,
   };
 
   constructor(

@@ -4,7 +4,7 @@
     id="tc-connecting"
     class="topbar-button-right"
     ixTest="truecommand-indicator"
-    [matTooltip]="tooltips.tc_connect | translate"
+    [matTooltip]="tooltips.connectingToTruecommand | translate"
     (click)="stopTrueCommandConnecting()"
   >
     <ix-icon
@@ -20,7 +20,7 @@
     class="topbar-button-right truecommand-button"
     ixTest="truecommand-indicator"
     matBadgeSize="small"
-    [matTooltip]="tooltips.tc_status | translate"
+    [matTooltip]="tooltips.truecommandStatus | translate"
     [matBadge]="tcsStatusMatBadge"
     [ngClass]="[tcStatus.status]"
     [ixUiSearch]="searchableElements.elements.trueCommand"

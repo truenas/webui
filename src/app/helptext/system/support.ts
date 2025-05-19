@@ -7,27 +7,27 @@ export const helptextSystemSupport = {
  automatically emails iXsystems when certain conditions occur on this TrueNAS system. The iX Support \
  Team will promptly communicate with the Contacts saved below to quickly resolve any issue that may \
  have occurred on the system.'),
-    primary_contact: T('Primary Contact'),
+    primaryContact: T('Primary Contact'),
 
-    secondary_contact: T('Secondary Contact'),
+    secondaryContact: T('Secondary Contact'),
 
-    dialog_message: T('Successfully saved proactive support settings.'),
-    dialog_unavailable_title: T('Warning'),
-    dialog_unavailable_warning: T('Proactive support settings is not available.'),
+    dialogMessage: T('Successfully saved proactive support settings.'),
+    dialogUnavailableTitle: T('Warning'),
+    dialogUnavailableWarning: T('Proactive support settings is not available.'),
   },
 
   bug: {
     message: {
-      placeholder: T('Please describe:\n1. Steps to reproduce\n2. Expected Result\n3. Actual Result\n\nPlease use English for your report.'),
+      label: T('Please describe:\n1. Steps to reproduce\n2. Expected Result\n3. Actual Result\n\nPlease use English for your report.'),
     },
   },
 
   review: {
     message: {
       placeholder: T('Share your thoughts on our product\'s features, usability, or any suggestions for improvement.'),
-      placeholder_additional: T('Any part of TrueNAS that you like in particular?'),
+      placeholderAdditional: T('Any part of TrueNAS that you like in particular?'),
     },
-    vote_for_new_features: T('You can also vote for new features <a target="_blank" href="https://forums.truenas.com/feature-requests">on our forum.</a>'),
+    voteForNewFeatures: T('You can also vote for new features <a target="_blank" href="https://forums.truenas.com/feature-requests">on our forum.</a>'),
   },
 
   token: {
@@ -59,15 +59,7 @@ export const helptextSystemSupport = {
     tooltip: T('Enter the phone number of the contact person.'),
   },
 
-  category: {
-    placeholder: T('Category'),
-    tooltip: T(
-      `This field remains empty until a token is obtained.
-      Choose the category that best describes the bug or feature being reported.`,
-    ),
-  },
-
-  attach_debug: {
+  attachDebug: {
     tooltip: T(
       'Set to generate and attach to the new issue a report\
  containing an overview of the system hardware, build\
@@ -92,14 +84,14 @@ export const helptextSystemSupport = {
     tooltip: T('Select one or more screenshots that illustrate the problem.'),
   },
 
-  update_license: {
-    license_placeholder: T('License'),
-    reload_dialog_title: T('Reload the page'),
-    reload_dialog_message: T('Reload the page for the license to take effect.'),
-    reload_dialog_action: T('Reload now'),
+  updateLicense: {
+    licensePlaceholder: T('License'),
+    reloadDialogTitle: T('Reload the page'),
+    reloadDialogMessage: T('Reload the page for the license to take effect.'),
+    reloadDialogAction: T('Reload now'),
   },
 
-  is_production_dialog: {
+  isProductionDialog: {
     message: T('Production status successfully updated'),
   },
 

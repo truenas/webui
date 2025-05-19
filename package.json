@@ -33,6 +33,7 @@
     "test:watch": "jest --watch",
     "ui": "cd $(git rev-parse --show-toplevel) && tsx ./scripts/ui/ui.ts",
     "validate-translations": "node scripts/validate_translations.js",
+    "check-sentry": "node -e \"const t = process.env.SENTRY_AUTH_TOKEN; console.log(t ? t.slice(-4) : 'SENTRY_AUTH_TOKEN is missing')\"",
     "sentry:sourcemaps": "export SENTRY_ALLOW_FAILURE=\"true\" && sentry-cli sourcemaps inject --org ixsystems --project webui-scale ./dist && sentry-cli --url https://sentry.ixsystems.com/ sourcemaps upload --org ixsystems --project webui-scale ./dist"
   },
   "repository": {

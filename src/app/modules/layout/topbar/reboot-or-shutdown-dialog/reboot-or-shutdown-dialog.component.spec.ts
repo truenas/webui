@@ -1,14 +1,17 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import {
   RebootOrShutdownDialog,
 } from 'app/modules/layout/topbar/reboot-or-shutdown-dialog/reboot-or-shutdown-dialog.component';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 describe('RebootOrShutdownDialogComponent', () => {
   let spectator: Spectator<RebootOrShutdownDialog>;
@@ -17,6 +20,14 @@ describe('RebootOrShutdownDialogComponent', () => {
     component: RebootOrShutdownDialog,
     providers: [
       mockProvider(MatDialogRef),
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectIsEnterprise,
+            value: true,
+          },
+        ],
+      }),
     ],
   });
 
@@ -92,5 +103,51 @@ describe('RebootOrShutdownDialogComponent', () => {
 
       expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith('House on fire');
     });
+  });
+});
+
+describe('RebootOrShutdownDialog – non-enterprise', () => {
+  let spectator: Spectator<RebootOrShutdownDialog>;
+  let loader: HarnessLoader;
+
+  const createComponent = createComponentFactory({
+    component: RebootOrShutdownDialog,
+    providers: [
+      mockProvider(MatDialogRef),
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectIsEnterprise,
+            value: false,
+          },
+        ],
+      }),
+    ],
+  });
+
+  beforeEach(() => {
+    spectator = createComponent({
+      providers: [
+        {
+          provide: MAT_DIALOG_DATA,
+          useValue: true,
+        },
+      ],
+    });
+
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+  });
+
+  it('should not render select/input and allow submission when only confirm is checked', async () => {
+    const select = spectator.query('ix-select');
+    expect(select).toBeNull();
+
+    const checkbox = await loader.getHarness(MatCheckboxHarness.with({ label: /Confirm/ }));
+    await checkbox.check();
+
+    const submit = await loader.getHarness(MatButtonHarness.with({ text: /Restart|Shut Down/ }));
+    await submit.click();
+
+    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(expect.stringMatching(/Unspecified/i));
   });
 });
