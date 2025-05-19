@@ -128,7 +128,6 @@ export class SmbListComponent implements OnInit {
         {
           iconName: iconMarker('share'),
           tooltip: this.translate.instant('Edit Share ACL'),
-          requiredRoles: this.requiredRoles,
           onClick: (row) => {
             if (row.locked) {
               this.lockedPathDialog(row.path);
@@ -154,7 +153,6 @@ export class SmbListComponent implements OnInit {
         {
           iconName: iconMarker('security'),
           tooltip: this.translate.instant('Edit Filesystem ACL'),
-          requiredRoles: this.requiredRoles,
           disabled: (row) => of(isRootShare(row.path)),
           onClick: (row) => {
             if (row.locked) {

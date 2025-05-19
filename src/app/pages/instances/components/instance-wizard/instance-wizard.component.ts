@@ -23,6 +23,7 @@ import {
   delay,
   filter, map, Observable, of, startWith, switchMap, tap,
 } from 'rxjs';
+import { slashRootNode } from 'app/constants/basic-root-nodes.constant';
 import { Role } from 'app/enums/role.enum';
 import {
   AllowedImageOs,
@@ -150,6 +151,8 @@ export class InstanceWizardComponent implements OnInit {
   protected readonly hasPendingInterfaceChanges = toSignal(this.api.call('interface.has_pending_changes'));
 
   protected readonly diskIoBusOptions$ = of(mapToOptions(diskIoBusLabels, this.translate));
+
+  protected readonly slashRootNode = slashRootNode;
 
   protected readonly proxyProtocols$ = of(mapToOptions(virtualizationProxyProtocolLabels, this.translate));
   protected readonly bridgedNicTypeLabel = virtualizationNicTypeLabels.get(VirtualizationNicType.Bridged);

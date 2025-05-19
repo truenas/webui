@@ -63,12 +63,12 @@ export class FileTicketComponent {
 
   protected OauthButtonType = OauthButtonType;
   protected readonly oauthUrl = 'https://support-proxy.ixsystems.com/oauth/initiate?origin=';
-  protected readonly messagePlaceholder = helptext.bug.message.placeholder;
+  protected readonly messagePlaceholder = helptext.bug.message.label;
   protected readonly acceptedFiles = ticketAcceptedFiles;
 
   protected readonly tooltips = {
     title: helptext.title.placeholder,
-    attach_debug: helptext.attach_debug.tooltip,
+    attach_debug: helptext.attachDebug.tooltip,
   };
 
   private get ticketType(): TicketType {

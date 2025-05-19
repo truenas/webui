@@ -42,15 +42,15 @@ export const helptextSystemEmail = {
  characters are accepted.',
     ),
   },
-  send_mail_method: {
+  sendMailMethod: {
     smtp: {
-      placeholder: 'SMTP',
+      label: 'SMTP',
     },
     gmail: {
-      placeholder: 'GMail OAuth',
+      label: 'GMail OAuth',
     },
     outlook: {
-      placeholder: 'Outlook OAuth',
+      label: 'Outlook OAuth',
     },
   },
 
@@ -63,7 +63,7 @@ export const helptextSystemEmail = {
    Requires a valid Username and Password.',
       ),
     },
-    client_id: {
+    clientId: {
       tooltip: T('Use the <i>Log In to GMail</i> button to obtain the credentials for this form.'),
     },
   },

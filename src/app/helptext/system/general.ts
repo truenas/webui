@@ -1,8 +1,7 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const helptextSystemGeneral = {
-  fieldset_gui: T('GUI'),
-  fieldset_other: T('Other Options'),
+  otherTitle: T('Other Options'),
 
   uiCertificate: {
     label: T('GUI SSL Certificate'),
