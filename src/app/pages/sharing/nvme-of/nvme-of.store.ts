@@ -7,6 +7,7 @@ import {
   NvmeOfNamespace, NvmeOfSubsystem, NvmeOfSubsystemDetails, SubsystemHostAssociation, SubsystemPortAssociation,
 } from 'app/interfaces/nvme-of.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export interface NvmeOfState {
   subsystems: NvmeOfSubsystem[];
@@ -38,7 +39,7 @@ export class NvmeOfStore extends ComponentStore<NvmeOfState> {
 
   readonly isLoading = computed(() => this.state().isLoading);
 
-  constructor(private api: ApiService) {
+  constructor(private api: ApiService, private errorHandler: ErrorHandlerService) {
     super(initialState);
     this.initialize();
   }
@@ -52,10 +53,18 @@ export class NvmeOfStore extends ComponentStore<NvmeOfState> {
         });
       }),
       switchMap(() => combineLatest([
-        this.api.call('nvmet.subsys.query'),
-        this.api.call('nvmet.namespace.query'),
-        this.api.call('nvmet.host_subsys.query'),
-        this.api.call('nvmet.port_subsys.query'),
+        this.api.call('nvmet.subsys.query').pipe(
+          this.errorHandler.withErrorHandler(),
+        ),
+        this.api.call('nvmet.namespace.query').pipe(
+          this.errorHandler.withErrorHandler(),
+        ),
+        this.api.call('nvmet.host_subsys.query').pipe(
+          this.errorHandler.withErrorHandler(),
+        ),
+        this.api.call('nvmet.port_subsys.query').pipe(
+          this.errorHandler.withErrorHandler(),
+        ),
       ])),
       tap(([
         subsystems,
