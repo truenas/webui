@@ -3,104 +3,102 @@
   [ixUiSearch]="searchableElements.elements.network"
 >
   <div class="content">
-    <div class="left-column">
-      @if (hasPendingChanges) {
-        <mat-card class="pending-changes-card">
-          <mat-card-content>
-            @if (!checkinWaiting) {
-              <div>
-                <p>{{ helptext.pendingChangesText | translate }}</p>
+    @if (hasPendingChanges) {
+      <mat-card class="pending-changes-card">
+        <mat-card-content>
+          @if (!checkinWaiting) {
+            <div>
+              <p>{{ helptext.pendingChangesText | translate }}</p>
 
-                <p>
-                  {{ helptext.checkinText | translate }}
-                  <mat-form-field floatPlaceholder="never" id="timeout-field">
-                    <input
-                      #checkinTimeoutField="ngModel"
-                      matInput
-                      type="number"
-                      ixTest="checkin-timeout"
-                      required
-                      [min]="checkinTimeoutMinValue"
-                      [pattern]="checkinTimeoutPattern"
-                      [(ngModel)]="checkinTimeout"
-                    />
-                  </mat-form-field>
-                  {{ helptext.checkinText2 | translate }}
-                </p>
+              <p>
+                {{ helptext.checkinText | translate }}
+                <mat-form-field floatPlaceholder="never" id="timeout-field">
+                  <input
+                    #checkinTimeoutField="ngModel"
+                    matInput
+                    type="number"
+                    ixTest="checkin-timeout"
+                    required
+                    [min]="checkinTimeoutMinValue"
+                    [pattern]="checkinTimeoutPattern"
+                    [(ngModel)]="checkinTimeout"
+                  />
+                </mat-form-field>
+                {{ helptext.checkinText2 | translate }}
+              </p>
 
-                @if (!checkinTimeout || checkinTimeoutField.errors?.min || checkinTimeoutField.errors?.pattern) {
-                  <mat-error>
-                    <span>
-                      {{ 'Invalid value. Must be greater than or equal to ' | translate }} {{ checkinTimeoutMinValue }}
-                    </span>
-                  </mat-error>
-                }
-              </div>
-            } @else {
-              <div>
-                <p>
-                  {{ helptext.pendingCheckinText | translate: { x: checkinRemaining } }}
-                </p>
-              </div>
-            }
-          </mat-card-content>
-
-          <mat-card-actions class="interface-pending-actions">
-            @if (!checkinWaiting) {
-              <button
-                mat-button
-                ixTest="test-changes"
-                [disabled]="isHaEnabled || isCheckinTimeoutFieldInvalid"
-                (click)="commitPendingChanges()"
-              >
-                {{ helptext.commitButton | translate }}
-              </button>
-            }
-
-            @if (checkinWaiting) {
-              <button
-                mat-button
-                ixTest="save-changes"
-                [disabled]="isHaEnabled"
-                (click)="checkInNow()"
-              >
-                {{ helptext.keepButton | translate }}
-              </button>
-            }
-
-            <button
-              mat-button
-              ixTest="revert-changes"
-              [disabled]="isHaEnabled"
-              (click)="rollbackPendingChanges()"
-            >
-              {{ helptext.revertChangesButton | translate }}
-            </button>
-          </mat-card-actions>
-
-          @if (isHaEnabled) {
-            <div class="disabled-notice">
-              {{ helptext.haEnabledText | translate }}
-              (
-              <span
-                class="pseudolink"
-                (click)="goToHa()"
-              >
-                {{ helptext.goToHa | translate }}
-              </span>
-              ).
+              @if (!checkinTimeout || checkinTimeoutField.errors?.min || checkinTimeoutField.errors?.pattern) {
+                <mat-error>
+                  <span>
+                    {{ 'Invalid value. Must be greater than or equal to ' | translate }} {{ checkinTimeoutMinValue }}
+                  </span>
+                </mat-error>
+              }
+            </div>
+          } @else {
+            <div>
+              <p>
+                {{ helptext.pendingCheckinText | translate: { x: checkinRemaining } }}
+              </p>
             </div>
           }
-        </mat-card>
-      }
-      <ix-interfaces-card
-        [isHaLicensed]="isHaLicensed"
-        (interfacesUpdated)="loadCheckinStatusAfterChange()"
-      ></ix-interfaces-card>
-      <ix-network-configuration-card
-        class="dashboard-card"
-      ></ix-network-configuration-card>
-    </div>
+        </mat-card-content>
+
+        <mat-card-actions class="interface-pending-actions">
+          @if (!checkinWaiting) {
+            <button
+              mat-button
+              ixTest="test-changes"
+              [disabled]="isHaEnabled || isCheckinTimeoutFieldInvalid"
+              (click)="commitPendingChanges()"
+            >
+              {{ helptext.commitButton | translate }}
+            </button>
+          }
+
+          @if (checkinWaiting) {
+            <button
+              mat-button
+              ixTest="save-changes"
+              [disabled]="isHaEnabled"
+              (click)="checkInNow()"
+            >
+              {{ helptext.keepButton | translate }}
+            </button>
+          }
+
+          <button
+            mat-button
+            ixTest="revert-changes"
+            [disabled]="isHaEnabled"
+            (click)="rollbackPendingChanges()"
+          >
+            {{ helptext.revertChangesButton | translate }}
+          </button>
+        </mat-card-actions>
+
+        @if (isHaEnabled) {
+          <div class="disabled-notice">
+            {{ helptext.haEnabledText | translate }}
+            (
+            <span
+              class="pseudolink"
+              (click)="goToHa()"
+            >
+              {{ helptext.goToHa | translate }}
+            </span>
+            ).
+          </div>
+        }
+      </mat-card>
+    }
+    <ix-interfaces-card
+      [isHaLicensed]="isHaLicensed"
+      (interfacesUpdated)="loadCheckinStatusAfterChange()"
+    ></ix-interfaces-card>
+    <ix-network-configuration-card
+      class="dashboard-card"
+    ></ix-network-configuration-card>
 
     <div class="right-column">
       <ix-static-routes></ix-static-routes>

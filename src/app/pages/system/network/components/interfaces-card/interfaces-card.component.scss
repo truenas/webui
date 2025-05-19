@@ -4,6 +4,12 @@
     width: 30px;
   }
 
+  ::ng-deep {
+    .wider-column {
+      width: 150px;
+    }
+  }
+
   ix-interface-status-icon {
     display: block;
     margin-left: 3px;

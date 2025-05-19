@@ -89,7 +89,7 @@ export class NetworkConfigurationCardComponent implements OnInit {
   }
 
   get additionalDomains(): string {
-    return this.config.domains.length > 0 ? this.config.domains.join(', ') : '---';
+    return this.config.domains.length > 0 ? this.config.domains.join(', ') : '-';
   }
 
   get outboundNetwork(): string {
@@ -110,11 +110,17 @@ export class NetworkConfigurationCardComponent implements OnInit {
   get nameservers(): Option[] {
     const nameservers: Option[] = [];
     const nameserverAttributes = ['nameserver1', 'nameserver2', 'nameserver3'] as const;
-    nameserverAttributes.forEach((attribute, n) => {
+    const labels = [
+      this.translate.instant('Primary'),
+      this.translate.instant('Secondary'),
+      this.translate.instant('Tertiary'),
+    ];
+
+    nameserverAttributes.forEach((attribute, index) => {
       const nameserver = this.config[attribute];
       if (nameserver) {
         nameservers.push({
-          label: this.translate.instant('Nameserver {n}', { n: n + 1 }),
+          label: this.translate.instant(labels[index]),
           value: nameserver,
         });
       }

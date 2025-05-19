@@ -1,25 +1,12 @@
 @import 'scss-imports/cssvars';
 
 div.content {
-  display: flex;
-  flex-direction: row;
-  gap: 8px;
-
   .right-column {
-    flex-basis: 35%;
-  }
+    display: grid;
+    grid-template-columns: 1fr 1fr;
 
-  .left-column {
-    flex-basis: 65%;
-    gap: 8px;
-  }
-
-  @media #{$media-lt-md} {
-    flex-direction: column;
-
-    .right-column,
-    .left-column {
-      flex-basis: 100%;
+    @media #{$media-lt-md} {
+      grid-template-columns: 1fr;
     }
   }
 }
