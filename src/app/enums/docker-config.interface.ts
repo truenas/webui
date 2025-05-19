@@ -7,6 +7,7 @@ export interface DockerConfig {
   enable_image_updates: boolean;
   nvidia: boolean;
   address_pools: DockerAddressPool[];
+  migrate_applications?: boolean;
 }
 
 export interface DockerAddressPool {

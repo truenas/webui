@@ -87,7 +87,7 @@ describe('ManualUpdateFormComponent', () => {
   });
 
   it('loads all pool location options if is not HA system', async () => {
-    const locationSelect = await loader.getHarness(IxSelectHarness.with({ label: helptext.filelocation.placeholder }));
+    const locationSelect = await loader.getHarness(IxSelectHarness.with({ label: helptext.filelocation.label }));
     const optionLabels = await locationSelect.getOptionLabels();
     expect(spectator.component.isHaLicensed).toBe(false);
     expect(optionLabels).toEqual([
@@ -98,7 +98,7 @@ describe('ManualUpdateFormComponent', () => {
 
   it('hides filelocation select if is HA system', async () => {
     spectator.component.isHaLicensed = true;
-    const select = await loader.getHarnessOrNull(IxSelectHarness.with({ label: helptext.filelocation.placeholder }));
+    const select = await loader.getHarnessOrNull(IxSelectHarness.with({ label: helptext.filelocation.label }));
 
     expect(spectator.component.isHaLicensed).toBe(true);
     expect(select).toBeNull();

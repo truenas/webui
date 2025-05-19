@@ -50,7 +50,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 export class TruecommandButtonComponent implements OnInit {
   readonly TrueCommandStatus = TrueCommandStatus;
-  tooltips = helptextTopbar.mat_tooltips;
+  tooltips = helptextTopbar.tooltips;
   protected searchableElements = trueCommandElements;
 
   tcStatus: TrueCommandConfig;

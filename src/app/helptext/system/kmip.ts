@@ -15,14 +15,14 @@ export const helptextSystemKmip = {
  the Certificate used for key server authentication.'),
   },
 
-  manage_sed_disks: {
+  manageSedDisks: {
     tooltip: T('Self-Encrypting Drive (SED) passwords can be managed with KMIP. Enabling this\
  option allows the key server to manage creating or updating the global SED password, creating or\
  updating individual SED passwords, and retrieving SED passwords when SEDs are unlocked. Disabling\
  this option leaves SED password management with the local system.'),
   },
 
-  manage_zfs_keys: {
+  manageZfsKeys: {
     tooltip: T('Use the KMIP server to manage ZFS encrypted dataset keys. The key server stores,\
  applies, and destroys encryption keys whenever an encrypted dataset is created, when an existing key\
  is modified, an encrypted dataset is unlocked, or an encrypted dataset is removed. Unsetting this option\
@@ -33,7 +33,7 @@ export const helptextSystemKmip = {
     tooltip: T('Activate KMIP configuration and begin syncing keys with the KMIP server.'),
   },
 
-  change_server: {
+  changeServer: {
     tooltip: T('Move existing keys from the current key server to a new key server. \
  To switch to a different key server, key synchronization must be <i>Enabled</i>, then \
  enable this setting, update the key server connection configuration, and click <b>SAVE</b>.'),
@@ -46,7 +46,7 @@ export const helptextSystemKmip = {
  click <b>SAVE</b>.'),
   },
 
-  force_clear: {
+  forceClear: {
     tooltip: T('Cancel any pending Key synchronization.'),
   },
 

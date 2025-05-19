@@ -76,6 +76,7 @@ export class NetworkComponent implements OnInit {
   readonly checkinTimeoutField = viewChild<NgModel>('checkinTimeoutField');
 
   isHaEnabled = false;
+  isHaLicensed = false;
   hasPendingChanges = false;
   checkinWaiting = false;
   checkinTimeout = 60;
@@ -185,6 +186,7 @@ export class NetworkComponent implements OnInit {
       this.store$.select(selectHaStatus).pipe(filter(Boolean)),
     ]).pipe(untilDestroyed(this)).subscribe(([isHa, { hasHa }]) => {
       this.isHaEnabled = isHa && hasHa;
+      this.isHaLicensed = isHa;
       this.cdr.markForCheck();
     });
   }
