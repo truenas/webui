@@ -68,7 +68,7 @@ describe('UserFormComponent', () => {
     password: new FormControl(),
     password_conf: new FormControl(),
     password_disabled: new FormControl(false),
-    allow_ssh_login_with_password: new FormControl(false),
+    ssh_password_enabled: new FormControl(false),
     ssh_key: new FormControl(''),
     stig_password: new FormControl(''),
     show_password: new FormControl(false),
