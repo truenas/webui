@@ -18,6 +18,7 @@
   "See the manual image installation guide": "",
   "Select an update profile": "",
   "Selecting an update profile allows users to choose how conservative the software selection is based on their use case. Descriptions of update profiles are listed below from least conservative to most conservative.": "",
+  "Sharing root datasets is not recommended. Please create a child dataset.": "",
   "Static IP Addresses": "",
   "Summary": "",
   "System is up to date!": "",
