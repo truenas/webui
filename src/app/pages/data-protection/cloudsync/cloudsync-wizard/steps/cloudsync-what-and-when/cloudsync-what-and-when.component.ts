@@ -16,6 +16,7 @@ import {
   EMPTY,
   Observable, catchError, combineLatest, filter, map, merge, of, tap,
 } from 'rxjs';
+import { slashRootNode } from 'app/constants/basic-root-nodes.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Direction, directionNames } from 'app/enums/direction.enum';
@@ -83,6 +84,8 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
   readonly credentialId = input<number>();
 
   readonly save = output();
+
+  protected readonly slashRootNode = slashRootNode;
 
   form = this.formBuilder.nonNullable.group({
     description: ['' as string, Validators.required],

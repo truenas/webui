@@ -251,7 +251,7 @@ describe('OtherOptionsSectionComponent', () => {
         Exec: 'Inherit (ON)',
         'Snapshot Directory': 'Visible',
         Snapdev: 'Hidden',
-        Copies: '',
+        Copies: '--',
         'Record Size': 'Inherit (128 KiB)',
         'ACL Type': 'POSIX',
         'ACL Mode': 'Discard',
@@ -307,7 +307,7 @@ describe('OtherOptionsSectionComponent', () => {
         'Read-only': 'Inherit (OFF)',
         'Record Size': 'Inherit (128 KiB)',
         Snapdev: 'Inherit (HIDDEN)',
-        'Snapshot Directory': '',
+        'Snapshot Directory': '--',
       });
     });
 

@@ -7,8 +7,8 @@
   </p>
 
   <ix-explorer
-    root="/dev/zvol"
     formControlName="zvols"
+    [rootNodes]="zvolsRootNodes"
     [label]="'Select Zvols' | translate"
     [required]="true"
     [nodeProvider]="zvolProvider"

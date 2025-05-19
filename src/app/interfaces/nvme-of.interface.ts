@@ -123,5 +123,5 @@ export interface AssociateSubsystemHost {
 
 export type GenerateNvmeHostParams = [
   dhchap_hash: string,
-  nqn: string,
+  nqn?: string,
 ];

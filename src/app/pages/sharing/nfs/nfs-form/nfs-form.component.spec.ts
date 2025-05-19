@@ -49,7 +49,7 @@ describe('NfsFormComponent', () => {
     maproot_group: 'operator',
     maproot_user: 'news',
     networks: ['192.168.1.78/21'],
-    path: '/mnt/nfs',
+    path: '/mnt/nfs/ds',
     quiet: false,
     ro: false,
   } as NfsShare;
@@ -164,7 +164,7 @@ describe('NfsFormComponent', () => {
       await advancedButton.click();
 
       await form.fillForm({
-        Path: '/mnt/new',
+        Path: '/mnt/new/ds',
         Description: 'New share',
         Enabled: true,
         'Read Only': true,
@@ -194,7 +194,7 @@ describe('NfsFormComponent', () => {
       await saveButton.click();
 
       expect(api.call).toHaveBeenCalledWith('sharing.nfs.create', [{
-        path: '/mnt/new',
+        path: '/mnt/new/ds',
         comment: 'New share',
         enabled: true,
         ro: true,
@@ -235,7 +235,7 @@ describe('NfsFormComponent', () => {
       const networks = await loader.getAllHarnesses(IxIpInputWithNetmaskHarness.with({ label: 'Network' }));
       const hosts = await loader.getAllHarnesses(IxInputHarness.with({ label: 'Authorized Hosts and IP addresses' }));
       expect(values).toMatchObject({
-        Path: '/mnt/nfs',
+        Path: '/mnt/nfs/ds',
         Description: 'My share',
         Enabled: true,
         'Read Only': false,
@@ -279,7 +279,7 @@ describe('NfsFormComponent', () => {
           maproot_group: 'operator',
           maproot_user: 'news',
           networks: ['192.168.1.78/21', '10.56.1.1/20'],
-          path: '/mnt/nfs',
+          path: '/mnt/nfs/ds',
           ro: false,
           security: [],
         },
