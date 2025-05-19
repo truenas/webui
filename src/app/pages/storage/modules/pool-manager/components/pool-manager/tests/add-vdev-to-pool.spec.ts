@@ -164,9 +164,9 @@ describe('AddVdevsComponent – Add Vdev to existing pool', () => {
     expect(dataStepValues).toEqual({
       'Disk Size': '',
       Layout: TopologyItemType.Mirror,
-      'Number of VDEVs': '',
+      'Number of VDEVs': '--',
       'Treat Disk Size as Minimum': false,
-      Width: '',
+      Width: '--',
     });
 
     await wizard.fillStep({
