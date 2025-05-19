@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, effect,
+  ChangeDetectionStrategy, Component, computed, effect,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -12,7 +12,7 @@ import {
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
-import { NvmeOfSubsystem } from 'app/interfaces/nvme-of.interface';
+import { NvmeOfSubsystem, NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.interface';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { LoaderService } from 'app/modules/loader/loader.service';
@@ -43,8 +43,26 @@ import { NvmeOfStore } from 'app/pages/sharing/nvme-of/nvme-of.store';
   ],
 })
 export class NvmeOfSubsystemsComponent {
-  protected dataProvider = new ArrayDataProvider<NvmeOfSubsystem>();
   protected readonly subsystems = this.nvmeOfStore.subsystems;
+  protected dataProvider = computed<ArrayDataProvider<NvmeOfSubsystemDetails>>(() => {
+    const subsystems = this.subsystems();
+    const dataProvider = new ArrayDataProvider<NvmeOfSubsystemDetails>();
+
+    dataProvider.setRows(subsystems);
+    dataProvider.setSorting({
+      active: 0,
+      direction: SortDirection.Asc,
+      propertyName: 'name',
+    });
+    if (!subsystems.length) {
+      dataProvider.setEmptyType(EmptyType.NoPageData);
+    } else {
+      dataProvider.expandedRow = subsystems[0];
+    }
+
+    return dataProvider;
+  });
+
   protected readonly isLoading = this.nvmeOfStore.isLoading;
 
   protected readonly requiredRoles = [
@@ -61,36 +79,16 @@ export class NvmeOfSubsystemsComponent {
     private loader: LoaderService,
   ) {
     effect(() => {
-      const subsystems = this.subsystems();
-      const firstSubsystem = subsystems[subsystems.length - 1];
-      if (!this.dataProvider.expandedRow && firstSubsystem) {
-        this.dataProvider.expandedRow = firstSubsystem;
-      }
-      this.dataProvider.setRows(subsystems);
-      this.dataProvider.setSorting({
-        active: 0,
-        direction: SortDirection.Asc,
-        propertyName: 'name',
-      });
-    });
-
-    effect(() => {
       const isLoading = this.isLoading();
       if (isLoading) {
-        this.dataProvider.setEmptyType(EmptyType.Loading);
+        this.dataProvider().setEmptyType(EmptyType.Loading);
         return;
       }
-
-      const subsystems = this.subsystems();
-      if (!subsystems.length) {
-        this.dataProvider.setEmptyType(EmptyType.NoPageData);
-        return;
-      }
-      this.dataProvider.setEmptyType(EmptyType.None);
+      this.dataProvider().setEmptyType(EmptyType.None);
     });
   }
 
-  deleteSubsys(subsystem: NvmeOfSubsystem): void {
+  deleteSubsystem(subsystem: NvmeOfSubsystem): void {
     (this.matDialog.open(
       SubsystemDeleteDialogComponent,
       { data: subsystem, minWidth: '500px' },
@@ -102,7 +100,7 @@ export class NvmeOfSubsystemsComponent {
     ).subscribe({
       next: () => {
         this.loader.close();
-        this.dataProvider.expandedRow = null;
+        this.dataProvider().expandedRow = null;
         this.nvmeOfStore.initialize();
       },
     });
@@ -116,13 +114,13 @@ export class NvmeOfSubsystemsComponent {
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(({ response }: { response: NvmeOfSubsystem | boolean }) => {
-      this.dataProvider.expandedRow = response as NvmeOfSubsystem;
+      this.dataProvider().expandedRow = response as NvmeOfSubsystemDetails;
       this.nvmeOfStore.initialize();
     });
   }
 
   onFilter(query: string): void {
-    this.dataProvider.setFilter({
+    this.dataProvider().setFilter({
       list: this.subsystems(),
       query,
       columnKeys: ['name'],

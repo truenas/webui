@@ -36,13 +36,13 @@
             <ix-list
               formArrayName="auth_networks"
               [empty]="form.controls.auth_networks.length === 0"
-              [label]="helptext.authNetwork.placeholder | translate"
+              [label]="helptext.authNetwork.label | translate"
               [formArray]="form.get('auth_networks')"
               (add)="addNetwork()"
             >
               @for (entry of form.controls.auth_networks.controls; track entry; let i = $index) {
                 <ix-list-item
-                  [label]="helptext.authNetwork.placeholder | translate"
+                  [label]="helptext.authNetwork.label | translate"
                   (delete)="deleteNetwork(i)"
                 >
                   <ix-ip-input-with-netmask

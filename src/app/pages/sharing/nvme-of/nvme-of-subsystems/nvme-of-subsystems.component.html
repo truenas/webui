@@ -1,4 +1,4 @@
-@let subsys = dataProvider.expandedRow;
+@let subsys = dataProvider().expandedRow;
 @let showDetails = !masterList.filterString || subsys.name.toLowerCase().includes(masterList.filterString.toLowerCase());
 
 <ix-master-detail-view
@@ -9,7 +9,7 @@
   <ix-subsystems-list
     #masterList
     master
-    [dataProvider]="dataProvider"
+    [dataProvider]="dataProvider()"
     [isMobileView]="masterDetailView.isMobileView()"
     (toggleShowMobileDetails)="masterDetailView.toggleShowMobileDetails($event)"
     (search)="onFilter($event)"
@@ -36,7 +36,7 @@
           *ixRequiresRoles="requiredRoles"
           mat-button
           ixTest="delete-subsys"
-          (click)="deleteSubsys(subsys)"
+          (click)="deleteSubsystem(subsys)"
         >
           {{ 'Delete' | translate }}
         </button>

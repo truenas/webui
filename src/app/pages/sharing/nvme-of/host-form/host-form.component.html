@@ -1,5 +1,5 @@
 <ix-modal-header
-  [title]="isNew() ? ('Add Port' | translate) : ('Edit Port' | translate)"
+  [title]="isNew() ? ('Add Host' | translate) : ('Edit Host' | translate)"
   [loading]="isLoading()"
 ></ix-modal-header>
 
@@ -8,6 +8,7 @@
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset>
         <ix-input
+          class="host-nqn"
           formControlName="hostnqn"
           [label]="'Host NQN' | translate"
           [required]="true"
@@ -21,6 +22,24 @@
         ></ix-checkbox>
 
         @if (form.value.requireHostAuthentication) {
+          <ix-details-table class="authentication-details">
+            <ix-details-item [label]="'Hash' | translate">
+              <ix-editable>
+                <div view>
+                  {{ form.value.dhchap_hash }}
+                </div>
+
+                <div edit>
+                  <ix-select
+                    formControlName="dhchap_hash"
+                    [options]="hashOptions$"
+                    [required]="true"
+                  ></ix-select>
+                </div>
+              </ix-editable>
+            </ix-details-item>
+          </ix-details-table>
+
           <ix-textarea
             formControlName="dhchap_key"
             [label]="'Key For Host To Present' | translate"
@@ -32,10 +51,57 @@
               mat-button
               type="button"
               ixTest="generate-key"
-              [disabled]="isGeneratingHostKey()"
+              [disabled]="!hasNqn || isGeneratingHostKey()"
+              [matTooltip]="!hasNqn ? (helptext.generateHostKeyDisabled | translate) : ''"
               (click)="generateHostKey()"
             >{{ 'Generate Key' | translate }}</button>
           </div>
+
+          <ix-textarea
+            formControlName="dhchap_ctrl_key"
+            [label]="'Key For TrueNAS To Present (Optional)' | translate"
+            [tooltip]="helptext.dhchapCtrlKey | translate"
+          ></ix-textarea>
+
+          <div class="generate-key-row">
+            <button
+              mat-button
+              type="button"
+              ixTest="generate-key"
+              [disabled]="isGeneratingTrueNasKey()"
+              (click)="generateTrueNasKey()"
+            >{{ 'Generate Key' | translate }}</button>
+          </div>
+
+          <ix-checkbox
+            formControlName="addDhKeyExchange"
+            class="dh-checkbox"
+            [label]="'Also use Diffie–Hellman key exchange for additional security' | translate"
+            [tooltip]="helptext.dhKeyExchangeTooltip | translate"
+          ></ix-checkbox>
+
+          @if (form.value.addDhKeyExchange) {
+            <ix-details-table class="authentication-details">
+              <ix-details-item
+                [label]="'DH Group' | translate"
+              >
+                <ix-editable>
+                  <div view>
+                    {{ form.value.dhchap_dhgroup || (helptext.noDhText | translate) }}
+                  </div>
+
+                  <div edit>
+                    <ix-select
+                      class="dh-group-select"
+                      formControlName="dhchap_dhgroup"
+                      [options]="dhGroupOptions$"
+                      [emptyLabel]="helptext.noDhText | translate"
+                    ></ix-select>
+                  </div>
+                </ix-editable>
+              </ix-details-item>
+            </ix-details-table>
+          }
         }
       </ix-fieldset>
 

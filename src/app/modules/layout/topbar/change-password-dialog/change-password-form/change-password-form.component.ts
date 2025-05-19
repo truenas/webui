@@ -57,7 +57,7 @@ export class ChangePasswordFormComponent {
   private loggedInUser: LoggedInUser;
 
   readonly tooltips = {
-    password: helptextTopbar.changePasswordDialog.pw_new_pw_tooltip,
+    password: helptextTopbar.changePasswordDialog.newPasswordTooltip,
   };
 
   get isFullAdminUser$(): Observable<boolean> {
@@ -89,7 +89,7 @@ export class ChangePasswordFormComponent {
     ).subscribe({
       next: () => {
         this.snackbar.success(
-          this.translate.instant(helptextTopbar.changePasswordDialog.pw_updated),
+          this.translate.instant(helptextTopbar.changePasswordDialog.passwordUpdated),
         );
 
         this.passwordUpdated.emit();

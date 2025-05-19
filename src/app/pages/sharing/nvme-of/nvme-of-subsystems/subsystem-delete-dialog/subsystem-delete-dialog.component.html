@@ -1,6 +1,6 @@
 <h1 mat-dialog-title>{{ 'Delete Subsystem' | translate }}</h1>
 <div mat-dialog-content>
-  <p class="message">{{ 'Are you sure you want to delete subsystem {subsys}' | translate: { subsys: subsystem.name } }}</p>
+  <p class="message">{{ 'Are you sure you want to delete subsystem {subsys}?' | translate: { subsys: subsystem.name } }}</p>
   <ix-checkbox
     [label]="'Force' | translate"
     [formControl]="force"

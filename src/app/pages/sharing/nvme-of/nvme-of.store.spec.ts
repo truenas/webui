@@ -77,17 +77,17 @@ describe('NvmeOfstore', () => {
   });
 
   it('returns correct number of namespaces', () => {
-    expect(spectator.service.getSubsystemNamespaces(mockedSubsys1)).toBe(1);
-    expect(spectator.service.getSubsystemNamespaces(mockedSubsys2)).toBe(0);
+    expect(spectator.service.subsystems()[0].namespaces).toEqual(mockedNameSpaces);
+    expect(spectator.service.subsystems()[1].namespaces).toEqual([]);
   });
 
   it('returns correct number of hosts', () => {
-    expect(spectator.service.getSubsystemHosts(mockedSubsys1)).toBe(1);
-    expect(spectator.service.getSubsystemHosts(mockedSubsys2)).toBe(0);
+    expect(spectator.service.subsystems()[0].hosts).toEqual(mockedHosts);
+    expect(spectator.service.subsystems()[1].hosts).toEqual([]);
   });
 
   it('returns correct number of ports', () => {
-    expect(spectator.service.getSubsystemPorts(mockedSubsys1)).toBe(1);
-    expect(spectator.service.getSubsystemPorts(mockedSubsys2)).toBe(0);
+    expect(spectator.service.subsystems()[0].ports).toEqual(mockedPorts);
+    expect(spectator.service.subsystems()[1].ports).toEqual([]);
   });
 });

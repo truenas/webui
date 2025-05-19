@@ -34,7 +34,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
   ],
 })
 export class DirectoryServicesIndicatorComponent implements OnInit, OnDestroy {
-  protected tooltips = helptextTopbar.mat_tooltips;
+  protected tooltips = helptextTopbar.tooltips;
 
   protected isIconShown = signal(false);
 

@@ -10,7 +10,9 @@ import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
-import { NvmeOfSubsystem } from 'app/interfaces/nvme-of.interface';
+import {
+  NvmeOfNamespace, NvmeOfSubsystemDetails, SubsystemHostAssociation, SubsystemPortAssociation,
+} from 'app/interfaces/nvme-of.interface';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { IxTableDetailsRowComponent } from 'app/modules/ix-table/components/ix-table-details-row/ix-table-details-row.component';
@@ -21,7 +23,7 @@ import { NvmeOfSubsystemsComponent } from 'app/pages/sharing/nvme-of/nvme-of-sub
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/nvme-of.store';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
-const mockSubsystems: NvmeOfSubsystem[] = [
+const mockSubsystems: NvmeOfSubsystemDetails[] = [
   {
     allow_any_host: true,
     id: 1,
@@ -32,6 +34,9 @@ const mockSubsystems: NvmeOfSubsystem[] = [
     qix_max: 4,
     serial: 'serial-1',
     subnqn: 'subnqn-1',
+    hosts: [{ id: 1 }, { id: 2 }] as SubsystemHostAssociation[],
+    ports: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }] as SubsystemPortAssociation[],
+    namespaces: [{ id: 1 }, { id: 2 }, { id: 3 }] as NvmeOfNamespace[],
   },
   {
     allow_any_host: true,
@@ -43,6 +48,9 @@ const mockSubsystems: NvmeOfSubsystem[] = [
     qix_max: 4,
     serial: 'serial-2',
     subnqn: 'subnqn-2',
+    hosts: [{ id: 1 }, { id: 2 }] as SubsystemHostAssociation[],
+    ports: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }] as SubsystemPortAssociation[],
+    namespaces: [{ id: 1 }, { id: 2 }, { id: 3 }] as NvmeOfNamespace[],
   },
 ];
 
@@ -62,9 +70,6 @@ describe('NvmeOfSubsystems', () => {
       mockProvider(NvmeOfStore, {
         initialize: jest.fn(),
         subsystems: signal(mockSubsystems),
-        getSubsystemHosts: jest.fn(() => 2),
-        getSubsystemNamespaces: jest.fn(() => 3),
-        getSubsystemPorts: jest.fn(() => 4),
         isLoading: signal(false),
       }),
       mockProvider(SlideIn, {
@@ -113,6 +118,6 @@ describe('NvmeOfSubsystems', () => {
   it('deletes subsystem', async () => {
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
     await deleteButton.click();
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nvmet.subsys.delete', [2, { force: true }]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nvmet.subsys.delete', [1, { force: true }]);
   });
 });

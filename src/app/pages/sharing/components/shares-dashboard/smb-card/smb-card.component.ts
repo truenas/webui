@@ -109,14 +109,12 @@ export class SmbCardComponent implements OnInit {
           iconName: iconMarker('share'),
           tooltip: this.translate.instant('Edit Share ACL'),
           onClick: (row) => this.doShareAclEdit(row),
-          requiredRoles: this.requiredRoles,
         },
         {
           iconName: iconMarker('security'),
           tooltip: this.translate.instant('Edit Filesystem ACL'),
           disabled: (row) => of(isRootShare(row.path)),
           onClick: (row) => this.doFilesystemAclEdit(row),
-          requiredRoles: this.requiredRoles,
         },
         {
           iconName: iconMarker('edit'),

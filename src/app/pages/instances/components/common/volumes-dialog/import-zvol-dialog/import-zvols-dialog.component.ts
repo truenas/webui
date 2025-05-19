@@ -5,6 +5,7 @@ import { MatDialogClose, MatDialogRef, MatDialogTitle } from '@angular/material/
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
+import { zvolsRootNode } from 'app/constants/basic-root-nodes.constant';
 import { instancesHelptext } from 'app/helptext/instances/instances';
 import { RadioOption } from 'app/interfaces/option.interface';
 import { ZvolToImport } from 'app/interfaces/virtualization.interface';
@@ -40,6 +41,8 @@ export class ImportZvolsDialog {
     zvols: [[] as string[], Validators.required],
     clone: [false],
   });
+
+  protected readonly zvolsRootNodes = [zvolsRootNode];
 
   protected zvolProvider = this.filesystem.getFilesystemNodeProvider({
     zvolsOnly: true,

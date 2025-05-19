@@ -34,7 +34,7 @@ describe('DeleteSubsystemDialogComponent', () => {
 
   it('shows subsystem name for confirmation', () => {
     const message = spectator.query('.message');
-    expect(message.textContent).toBe('Are you sure you want to delete subsystem subsys-1');
+    expect(message.textContent).toBe('Are you sure you want to delete subsystem subsys-1?');
   });
 
   it('emits right object when delete is clicked', async () => {

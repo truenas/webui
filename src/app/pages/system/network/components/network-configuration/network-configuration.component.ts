@@ -142,19 +142,16 @@ export class NetworkConfigurationComponent implements OnInit {
   nameserver1 = {
     fcName: 'nameserver1',
     label: helptextNetworkConfiguration.nameserver1Label,
-    tooltip: helptextNetworkConfiguration.nameserver1Tooltip,
   };
 
   nameserver2 = {
     fcName: 'nameserver2',
     label: helptextNetworkConfiguration.nameserver2Label,
-    tooltip: helptextNetworkConfiguration.nameserver2Tooltip,
   };
 
   nameserver3 = {
     fcName: 'nameserver3',
     label: helptextNetworkConfiguration.nameserver3Label,
-    tooltip: helptextNetworkConfiguration.nameserver3Tooltip,
   };
 
   ipv4gateway = {

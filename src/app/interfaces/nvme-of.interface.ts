@@ -24,6 +24,12 @@ export interface NvmeOfSubsystem {
   ana: boolean | null;
 }
 
+export interface NvmeOfSubsystemDetails extends NvmeOfSubsystem {
+  hosts: SubsystemHostAssociation[];
+  ports: SubsystemPortAssociation[];
+  namespaces: NvmeOfNamespace[];
+}
+
 export type UpdateNvmeOfSubsystem = Partial<Omit<NvmeOfSubsystem, 'id'>>;
 export type CreateNvmeOfSubsystem = Required<UpdateNvmeOfSubsystem, 'name'>;
 
@@ -117,5 +123,5 @@ export interface AssociateSubsystemHost {
 
 export type GenerateNvmeHostParams = [
   dhchap_hash: string,
-  nqn: string,
+  nqn?: string,
 ];
