@@ -7,7 +7,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   debounceTime, filter, map,
   Observable,
@@ -16,6 +16,7 @@ import {
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
+import { isEmptyHomeDirectory } from 'app/helpers/user.helper';
 import { Option } from 'app/interfaces/option.interface';
 import { DetailsItemComponent } from 'app/modules/details-table/details-item/details-item.component';
 import { DetailsTableComponent } from 'app/modules/details-table/details-table.component';
@@ -30,9 +31,12 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
 import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-validation/email-validation';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { UserFormStore } from 'app/pages/credentials/new-users/user-form/user.store';
+import { defaultHomePath, UserFormStore } from 'app/pages/credentials/new-users/user-form/user.store';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
+import { StorageService } from 'app/services/storage.service';
 
 @UntilDestroy()
 @Component({
@@ -61,6 +65,7 @@ export class AdditionalDetailsSectionComponent {
   protected shellAccessEnabled = this.userFormStore.shellAccess;
   protected isNewUser = this.userFormStore.isNewUser;
   protected hasSharingRole = computed(() => this.userFormStore.role()?.includes(Role.SharingAdmin));
+  protected editingUser = this.userFormStore.userConfig;
 
   readonly groupOptions$ = this.api.call('group.query', [[['local', '=', true]]]).pipe(
     map((groups) => groups.map((group) => ({ label: group.group, value: group.id }))),
@@ -75,17 +80,23 @@ export class AdditionalDetailsSectionComponent {
   };
 
   readonly form = this.fb.group({
-    full_name: [''],
+    full_name: ['' as string],
 
     group: [null as number],
     group_create: [true],
     groups: [[] as number[]],
     email: [null as string, [emailValidator()]],
     home: [''],
-    create_home_directory: [false],
+    home_mode: ['700'],
+    home_create: [false],
     default_permissions: [true],
     uid: [null as number],
     shell: [null as string | null],
+
+    sudo_commands: [[] as string[]],
+    sudo_commands_all: [false],
+    sudo_commands_nopasswd: [[] as string[]],
+    sudo_commands_nopasswd_all: [false],
   });
 
   shellOptions$: Observable<Option[]> = this.api.call('user.shell_choices').pipe(
@@ -94,12 +105,46 @@ export class AdditionalDetailsSectionComponent {
     untilDestroyed(this),
   );
 
+  get homeCreateWarning(): TranslatedString {
+    const homeCreate = this.form.value.home_create;
+    const home = this.form.value.home;
+    const homeMode = this.form.value.home_mode;
+    if (this.editingUser()) {
+      // const immutable = this.editingUser().immutable || false;
+      const immutable = false;
+      if (immutable || isEmptyHomeDirectory(home)) {
+        return '';
+      }
+      if (!homeCreate && this.editingUser().home !== home) {
+        return this.translate.instant(
+          'Operation will change permissions on path: {path}',
+          { path: '\'' + this.form.value.home + '\'' },
+        );
+      }
+      if (!homeCreate && !!homeMode && this.userFormStore.homeModeOldValue() !== homeMode) {
+        return this.translate.instant(
+          'Operation will change permissions on path: {path}',
+          { path: '\'' + this.form.value.home + '\'' },
+        );
+      }
+    } else if (!homeCreate && home !== defaultHomePath) {
+      return this.translate.instant(
+        'With this configuration, the existing directory {path} will be used as a home directory without creating a new directory for the user.',
+        { path: '\'' + this.form.value.home + '\'' },
+      );
+    }
+    return '';
+  }
+
   constructor(
+    private storageService: StorageService,
     private filesystemService: FilesystemService,
     private fb: FormBuilder,
     private api: ApiService,
     private userFormStore: UserFormStore,
     private cdr: ChangeDetectorRef,
+    private errorHandler: ErrorHandlerService,
+    private translate: TranslateService,
   ) {
     effect(() => {
       if (!this.isNewUser()) {
@@ -109,36 +154,69 @@ export class AdditionalDetailsSectionComponent {
           group_create: this.userFormStore.userConfig().group_create,
           groups: this.userFormStore.userConfig().groups,
           home: this.userFormStore.userConfig().home,
-          create_home_directory: this.userFormStore.userConfig().home_create,
+          home_mode: this.userFormStore.userConfig().home_mode,
+          home_create: this.userFormStore.userConfig().home_create,
           uid: this.userFormStore.userConfig().uid,
         }, { emitEvent: false });
 
         this.form.controls.uid.disable();
         this.form.controls.group_create.disable();
+        this.form.controls.group.disable();
+        this.form.controls.home_mode.disable();
+        this.form.controls.home.disable();
+        this.form.controls.home_create.disable();
       }
     });
-    this.form.valueChanges.pipe(
-      untilDestroyed(this),
-    ).subscribe({
-      next: () => {
-        this.userFormStore.updateUserConfig({
-          group_create: this.form.value.group_create,
-          home_create: this.form.value.create_home_directory,
-          full_name: this.form.value.full_name,
-          groups: this.form.value.groups.map((grp) => (+grp)),
-          home: this.form.value.home,
-          email: this.form.value.email,
-          uid: this.form.value.uid,
-        });
-        this.userFormStore.updateSetupDetails({
-          defaultPermissions: this.form.value.default_permissions,
-        });
-      },
-    });
+    this.form.valueChanges
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: () => {
+          this.userFormStore.updateUserConfig({
+            group_create: this.form.value.group_create,
+            home_create: this.form.value.home_create,
+            full_name: this.form.value.full_name,
+            groups: this.form.value.groups.map((grp) => (+grp)),
+            home: this.form.value.home,
+            home_mode: this.userFormStore.homeModeOldValue() !== this.form.value.home_mode
+              ? this.form.value.home_mode
+              : undefined,
+            email: this.form.value.email,
+            uid: this.form.value.uid,
+          });
+          this.userFormStore.updateSetupDetails({
+            defaultPermissions: this.form.value.default_permissions,
+          });
+        },
+      });
 
     this.setupShellUpdate();
     this.setFirstShellOption();
     this.detectFullNameChanges();
+    // this.detectHomeDirectoryChanges();
+    this.setHomeSharePath();
+    this.listenValueChanges();
+  }
+
+  private listenValueChanges(): void {
+    this.form.controls.home.valueChanges.pipe(untilDestroyed(this)).subscribe((home) => {
+      // TODO: Fix when editingUser is available
+      // if (isEmptyHomeDirectory(home) || this.editingUser()?.immutable) {
+      if (isEmptyHomeDirectory(home)) {
+        this.form.controls.home_mode.disable();
+      } else {
+        this.form.controls.home_mode.enable();
+      }
+    });
+
+    this.form.controls.home_create.valueChanges.pipe(untilDestroyed(this)).subscribe((checked) => {
+      if (checked) {
+        this.form.patchValue({ home_mode: '700' });
+      }
+    });
+
+    this.form.controls.group.disabledWhile(this.form.controls.group_create.value$);
+    this.form.controls.sudo_commands.disabledWhile(this.form.controls.sudo_commands_all.value$);
+    this.form.controls.sudo_commands_nopasswd.disabledWhile(this.form.controls.sudo_commands_nopasswd_all.value$);
   }
 
   private setupShellUpdate(): void {
@@ -199,5 +277,34 @@ export class AdditionalDetailsSectionComponent {
     }
 
     return username.toLocaleLowerCase();
+  }
+
+  private detectHomeDirectoryChanges(): void {
+    const homePath = this.userFormStore.userConfig()?.home;
+    if (homePath && !isEmptyHomeDirectory(homePath)) {
+      this.storageService.filesystemStat(homePath)
+        .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
+        .subscribe((stat) => {
+          const homeMode = stat.mode.toString(8).substring(2, 5);
+          this.form.patchValue({ home_mode: homeMode });
+          this.userFormStore.updateSetupDetails({ homeModeOldValue: homeMode });
+        });
+    } else {
+      this.form.patchValue({ home_mode: '700' });
+      this.form.controls.home_mode.disable();
+    }
+  }
+
+  private setHomeSharePath(): void {
+    this.api.call('sharing.smb.query', [[
+      ['enabled', '=', true],
+      ['home', '=', true],
+    ]]).pipe(
+      filter((shares) => !!shares?.length),
+      map((shares) => shares[0].path),
+      untilDestroyed(this),
+    ).subscribe((homeSharePath) => {
+      this.form.patchValue({ home: homeSharePath });
+    });
   }
 }

@@ -1,19 +1,26 @@
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import {
   FormControl, FormGroup, ReactiveFormsModule,
 } from '@angular/forms';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { User } from '@sentry/angular';
 import { MockComponents, MockInstance } from 'ng-mocks';
 import { allCommands } from 'app/constants/all-commands.constant';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { Choices } from 'app/interfaces/choices.interface';
 import { Group } from 'app/interfaces/group.interface';
+import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { AdditionalDetailsSectionComponent } from 'app/pages/credentials/new-users/user-form/additional-details-section/additional-details-section.component';
 import { AllowedAccessSectionComponent } from 'app/pages/credentials/new-users/user-form/allowed-access-section/allowed-access-section.component';
 import { AuthSectionComponent } from 'app/pages/credentials/new-users/user-form/auth-section/auth-section.component';
 import { UserFormComponent } from 'app/pages/credentials/new-users/user-form/user-form.component';
 import { UserFormStore } from 'app/pages/credentials/new-users/user-form/user.store';
+import { selectUsers } from 'app/pages/credentials/users/store/user.selectors';
+import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 describe('UserFormComponent', () => {
@@ -41,6 +48,7 @@ describe('UserFormComponent', () => {
   } as User;
 
   let spectator: Spectator<UserFormComponent>;
+  let loader: HarnessLoader;
 
   const slideInRef: SlideInRef<undefined, unknown> = {
     close: jest.fn(),
@@ -122,12 +130,22 @@ describe('UserFormComponent', () => {
       }),
       mockProvider(ErrorHandlerService),
       mockProvider(SlideInRef, slideInRef),
+      provideMockStore({
+        selectors: [{
+          selector: selectUsers,
+          value: [],
+        }],
+      }),
+      mockProvider(DownloadService, {
+        downloadBlob: jest.fn(),
+      }),
     ],
   });
 
   describe('adding user', () => {
     beforeEach(() => {
       spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
     it('checks initial value', () => {
@@ -142,10 +160,23 @@ describe('UserFormComponent', () => {
           mockProvider(SlideInRef, { ...slideInRef, getData: () => mockUser }),
         ],
       });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
     it('checks initial value', () => {
       expect(spectator.component.isNewUser).toBe(false);
+    });
+
+    it('shows download ssh key button', async () => {
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({
+        Username: 'test-user',
+      });
+
+      const downloadButton = await loader.getHarness(MatButtonHarness.with({ text: 'Download Authorized Keys' }));
+      await downloadButton.click();
+
+      expect(spectator.inject(DownloadService).downloadBlob).toHaveBeenCalledWith(new Blob(), 'test-user_public_key_rsa');
     });
   });
 
