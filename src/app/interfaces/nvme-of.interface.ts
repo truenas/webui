@@ -121,6 +121,12 @@ export interface AssociateSubsystemPort {
   subsys_id: number;
 }
 
+export interface SubsystemHostAssociation {
+  id: number;
+  host: NvmeOfHost;
+  subsystem: NvmeOfSubsystem;
+}
+
 export interface AssociateSubsystemHost {
   host_id: number;
   subsys_id: number;

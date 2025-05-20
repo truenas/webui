@@ -22,7 +22,6 @@ import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
 @Component({
   selector: 'ix-add-port-menu',
   templateUrl: './add-port-menu.component.html',
-  styleUrl: './add-port-menu.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     IxIconComponent,
