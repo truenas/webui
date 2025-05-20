@@ -189,8 +189,7 @@ import {
   NvmeOfNamespace,
   NvmeOfPort,
   NvmeOfSubsystem,
-  NvmeOfTransportParams, SubsystemHostAssociation,
-  SubsystemPortAssociation, UpdateNvmeOfHost,
+  NvmeOfTransportParams, UpdateNvmeOfHost,
   UpdateNvmeOfNamespace,
   UpdateNvmeOfPort,
   UpdateNvmeOfSubsystem,
@@ -665,7 +664,6 @@ export interface ApiCallDirectory {
   'nvmet.port.update': { params: [id: number, update: UpdateNvmeOfPort]; response: NvmeOfPort };
   'nvmet.port.delete': { params: [id: number, { force: boolean }?]; response: void };
 
-  'nvmet.port_subsys.query': { params: QueryParams<SubsystemPortAssociation>; response: SubsystemPortAssociation[] };
   'nvmet.port_subsys.create': { params: [AssociateSubsystemPort]; response: void };
   'nvmet.port_subsys.delete': { params: [id: number]; response: void };
 
@@ -677,7 +675,6 @@ export interface ApiCallDirectory {
   'nvmet.host.dhchap_dhgroup_choices': { params: void; response: string[] };
   'nvmet.host.dhchap_hash_choices': { params: void; response: string[] };
 
-  'nvmet.host_subsys.query': { params: QueryParams<SubsystemHostAssociation>; response: SubsystemHostAssociation[] };
   'nvmet.host_subsys.create': { params: [AssociateSubsystemHost]; response: void };
   'nvmet.host_subsys.delete': { params: [id: number]; response: void };
 
