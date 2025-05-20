@@ -6,8 +6,6 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { UiSearchDirective } from 'app/directives/ui-search.directive';
-import { Role } from 'app/enums/role.enum';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -22,9 +20,7 @@ import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-c
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
-import { subsystemListElements } from 'app/pages/sharing/nvme-of/nvme-of-subsystems/nvme-of-subsystems.elements';
 import { NvmeOfSubsystemDetails } from 'app/pages/sharing/nvme-of/services/nvme-of-subsystem-details.interface';
-import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
 
 @UntilDestroy()
 @Component({
@@ -34,7 +30,6 @@ import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatCard,
-    UiSearchDirective,
     FakeProgressBarComponent,
     SearchInput1Component,
     TranslateModule,
@@ -55,14 +50,6 @@ export class SubsystemsListComponent {
   readonly toggleShowMobileDetails = output<boolean>();
   readonly dataProvider = input.required<ArrayDataProvider<NvmeOfSubsystemDetails>>();
   readonly search = output<string>();
-
-  protected readonly searchableElements = subsystemListElements;
-
-  protected readonly requiredRoles = [
-    Role.SharingNvmeTargetRead,
-    Role.SharingNvmeTargetWrite,
-    Role.SharingWrite,
-  ];
 
   filterString = '';
 
@@ -101,7 +88,6 @@ export class SubsystemsListComponent {
     protected emptyService: EmptyService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
-    private nvmeOfStore: NvmeOfStore,
   ) { }
 
   protected expanded(subsys: NvmeOfSubsystemDetails): void {

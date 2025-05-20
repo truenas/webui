@@ -5,7 +5,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
-import { SubsystemDeleteDialogComponent } from 'app/pages/sharing/nvme-of/nvme-of-subsystems/subsystem-delete-dialog/subsystem-delete-dialog.component';
+import { SubsystemDeleteDialogComponent } from 'app/pages/sharing/nvme-of/subsystem-details-header/subsystem-delete-dialog/subsystem-delete-dialog.component';
 
 describe('DeleteSubsystemDialogComponent', () => {
   let spectator: Spectator<SubsystemDeleteDialogComponent>;

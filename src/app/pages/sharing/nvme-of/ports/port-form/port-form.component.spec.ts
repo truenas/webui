@@ -11,19 +11,20 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { PortFormComponent } from 'app/pages/sharing/nvme-of/port-form/port-form.component';
+import { PortFormComponent } from 'app/pages/sharing/nvme-of/ports/port-form/port-form.component';
 import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
 
 describe('PortFormComponent', () => {
   let spectator: Spectator<PortFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
+  const newPort = { id: 1 } as NvmeOfPort;
   const slideInGetData = jest.fn(() => undefined);
   const createComponent = createComponentFactory({
     component: PortFormComponent,
     providers: [
       mockApi([
-        mockCall('nvmet.port.create'),
+        mockCall('nvmet.port.create', newPort),
         mockCall('nvmet.port.update'),
         mockCall('nvmet.port.transport_address_choices', {
           '10.220.8.1': '10.220.8.1',
@@ -66,7 +67,7 @@ describe('PortFormComponent', () => {
       addr_trsvcid: 20000,
     }]);
     expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({
-      response: true,
+      response: newPort,
       error: null,
     });
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();

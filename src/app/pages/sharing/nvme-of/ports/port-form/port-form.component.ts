@@ -28,7 +28,6 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
-import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -88,9 +87,8 @@ export class PortFormComponent implements OnInit {
     private formBuilder: NonNullableFormBuilder,
     private snackbar: SnackbarService,
     private translate: TranslateService,
-    private errorHandler: ErrorHandlerService,
     private formErrorHandler: FormErrorHandlerService,
-    public slideInRef: SlideInRef<NvmeOfPort | undefined, boolean>,
+    public slideInRef: SlideInRef<NvmeOfPort | undefined, NvmeOfPort | null>,
   ) {}
 
   get isTcp(): boolean {
@@ -124,7 +122,7 @@ export class PortFormComponent implements OnInit {
       finalize(() => this.isLoading.set(false)),
       untilDestroyed(this),
     ).subscribe({
-      next: () => {
+      next: (port) => {
         this.snackbar.success(
           this.isNew()
             ? this.translate.instant('Port Created')
@@ -132,7 +130,7 @@ export class PortFormComponent implements OnInit {
         );
 
         this.slideInRef.close({
-          response: true,
+          response: port,
           error: null,
         });
       },

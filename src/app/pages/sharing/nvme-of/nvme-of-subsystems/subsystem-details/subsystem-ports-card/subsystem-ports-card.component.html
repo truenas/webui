@@ -1,6 +1,11 @@
 <mat-card class="card">
   <mat-card-header>
     <h3 mat-card-title>{{ 'Ports' | translate }}</h3>
+
+    <ix-add-port-menu
+      [subsystemPorts]="subsystem().ports"
+      (portSelected)="onPortAdded($event)"
+    ></ix-add-port-menu>
   </mat-card-header>
   <mat-card-content>
     @if (!subsystem().ports.length) {
@@ -18,9 +23,28 @@
       <ul class="port-list">
         @for (port of subsystem().ports; track port.id) {
           <li>
-            {{ port.addr_trtype | mapValue: typeLabels | translate }}
-            <span class="separator">&mdash;</span>
-            {{ getPortDescription(port) }}
+            <span class="port">
+              <ix-port-description [port]="port"></ix-port-description>
+
+              <span class="port-actions">
+                <button
+                  mat-icon-button
+                  [ixTest]="['edit-port', port.addr_trtype, port.addr_traddr, port.addr_trsvcid]"
+                  (click)="onEdit(port)"
+                >
+                  <ix-icon class="icon" name="edit"></ix-icon>
+                </button>
+
+                <button
+                  mat-icon-button
+                  [ixTest]="['remove-port-association', port.addr_trtype, port.addr_traddr, port.addr_trsvcid]"
+                  [matTooltip]="'Remove port from the subsystem' | translate"
+                  (click)="onRemoveAssociation(port)"
+                >
+                  <ix-icon class="icon" name="mdi-link-variant-off"></ix-icon>
+                </button>
+              </span>
+            </span>
           </li>
         }
       </ul>

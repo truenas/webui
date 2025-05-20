@@ -11,16 +11,27 @@
   li {
     margin-bottom: 2px;
 
-    .separator {
-      opacity: 0.6;
-    }
-
     &:last-of-type {
       margin-bottom: 0;
     }
 
     &::marker {
       color: var(--alt-fg1);
+    }
+
+    .port {
+      align-items: center;
+      display: flex;
+      justify-content: space-between;
+
+      .port-actions {
+        display: flex;
+      }
+
+      .icon {
+        height: 20px;
+        width: 20px;
+      }
     }
   }
 }
