@@ -1,9 +1,9 @@
-@let subsys = dataProvider().expandedRow;
-@let showDetails = !masterList.filterString || subsys.name.toLowerCase().includes(masterList.filterString.toLowerCase());
+@let subsystem = dataProvider().expandedRow;
+@let showDetails = !masterList.filterString || subsystem.name.toLowerCase().includes(masterList.filterString.toLowerCase());
 
 <ix-master-detail-view
   #masterDetailView="masterDetailViewContext"
-  [selectedItem]="subsys"
+  [selectedItem]="subsystem"
   [showDetails]="showDetails"
 >
   <ix-subsystems-list
@@ -16,10 +16,10 @@
   ></ix-subsystems-list>
 
   <div detail-header class="detail-header">
-    @if (subsys) {
+    @if (subsystem) {
       <span>
         {{ 'Details for' | translate }}
-        {{ subsys?.name }}
+        {{ subsystem?.name }}
       </span>
 
       <div class="detail-actions">
@@ -36,7 +36,7 @@
           *ixRequiresRoles="requiredRoles"
           mat-button
           ixTest="delete-subsys"
-          (click)="deleteSubsystem(subsys)"
+          (click)="deleteSubsystem(subsystem)"
         >
           {{ 'Delete' | translate }}
         </button>
@@ -45,8 +45,8 @@
   </div>
 
   <ng-container detail>
-    @if (subsys) {
-      <ix-subsystem-details [subsystem]="subsys"></ix-subsystem-details>
+    @if (subsystem) {
+      <ix-subsystem-details [subsystem]="subsystem"></ix-subsystem-details>
     }
   </ng-container>
 </ix-master-detail-view>

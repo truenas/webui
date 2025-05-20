@@ -17,7 +17,7 @@ import {
   NvmeOfConfigurationComponent,
 } from 'app/pages/sharing/nvme-of/nvme-of-configuration/nvme-of-configuration.component';
 import { nvmeOfElements } from 'app/pages/sharing/nvme-of/nvme-of.elements';
-import { NvmeOfStore } from 'app/pages/sharing/nvme-of/nvme-of.store';
+import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
 
 @UntilDestroy()
 @Component({

@@ -12,7 +12,6 @@ import {
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
-import { NvmeOfSubsystem, NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.interface';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { LoaderService } from 'app/modules/loader/loader.service';
@@ -20,11 +19,11 @@ import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { AddSubsystemComponent } from 'app/pages/sharing/nvme-of/add-subsystem/add-subsystem.component';
 import { SubsystemDeleteDialogComponent } from 'app/pages/sharing/nvme-of/nvme-of-subsystems/subsystem-delete-dialog/subsystem-delete-dialog.component';
 import { SubsystemDetailsComponent } from 'app/pages/sharing/nvme-of/nvme-of-subsystems/subsystem-details/subsystem-details.component';
 import { SubsystemsListComponent } from 'app/pages/sharing/nvme-of/nvme-of-subsystems/subsystems-list/subsystems-list.component';
-import { NvmeOfStore } from 'app/pages/sharing/nvme-of/nvme-of.store';
+import { NvmeOfSubsystemDetails } from 'app/pages/sharing/nvme-of/services/nvme-of-subsystem-details.interface';
+import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
 
 @UntilDestroy()
 @Component({
@@ -88,7 +87,7 @@ export class NvmeOfSubsystemsComponent {
     });
   }
 
-  deleteSubsystem(subsystem: NvmeOfSubsystem): void {
+  deleteSubsystem(subsystem: NvmeOfSubsystemDetails): void {
     (this.matDialog.open(
       SubsystemDeleteDialogComponent,
       { data: subsystem, minWidth: '500px' },
@@ -107,16 +106,7 @@ export class NvmeOfSubsystemsComponent {
   }
 
   editSubsystem(): void {
-    this.slideIn.open(
-      AddSubsystemComponent,
-      { wide: true },
-    ).pipe(
-      filter((response) => !!response.response),
-      untilDestroyed(this),
-    ).subscribe(({ response }: { response: NvmeOfSubsystem | boolean }) => {
-      this.dataProvider().expandedRow = response as NvmeOfSubsystemDetails;
-      this.nvmeOfStore.initialize();
-    });
+    throw new Error('Not implemented');
   }
 
   onFilter(query: string): void {

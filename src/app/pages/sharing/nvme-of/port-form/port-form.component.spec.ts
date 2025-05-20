@@ -12,7 +12,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { PortFormComponent } from 'app/pages/sharing/nvme-of/port-form/port-form.component';
-import { NvmeOfService } from 'app/pages/sharing/nvme-of/utils/nvme-of.service';
+import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
 
 describe('PortFormComponent', () => {
   let spectator: Spectator<PortFormComponent>;
