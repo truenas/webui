@@ -19,6 +19,7 @@ export class WebSocketStatusService {
   }
 
   readonly isReconnectAllowed$ = new BehaviorSubject<boolean>(false);
+  readonly isFailoverRestart$ = new BehaviorSubject<boolean>(false);
   private readonly isLoggedIn$ = new BehaviorSubject<boolean>(false);
   private readonly authStatus$ = new BehaviorSubject<boolean>(false);
   readonly isAuthenticated$ = this.authStatus$.asObservable();
@@ -50,5 +51,9 @@ export class WebSocketStatusService {
 
   setReconnectAllowed(status: boolean): void {
     this.isReconnectAllowed$.next(status);
+  }
+
+  setFailoverStatus(status: boolean): void {
+    this.isFailoverRestart$.next(status);
   }
 }
