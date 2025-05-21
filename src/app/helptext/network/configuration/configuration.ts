@@ -86,15 +86,18 @@ export const helptextNetworkConfiguration = {
       placeholder: T('Deny All'),
       tooltip: T('This system cannot communicate externally.'),
     },
-    specific: {
+    allowSpecific: {
       placeholder: T('Allow Specific'),
       tooltip: T('Define the system services that are allowed to \
 communicate externally. All other external traffic is restricted.'),
     },
+    denySpecific: {
+      placeholder: T('Allow All Except'),
+      tooltip: T('Define the system services that are NOT allowed to \
+communicate externally. All other external traffic will be allowed.'),
+    },
   },
   outbound_network_value: {
-    placeholder: T('Allowed Services'),
-    tooltip: T('Select the system services that will be allowed to \
-communicate externally.'),
+    placeholder: T('Services'),
   },
 };
