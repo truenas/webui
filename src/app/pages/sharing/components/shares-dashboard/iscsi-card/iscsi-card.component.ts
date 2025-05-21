@@ -16,12 +16,14 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   filter, Observable, startWith, tap,
 } from 'rxjs';
+import { iscsiCardEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { IscsiTargetMode, iscsiTargetModeNames } from 'app/enums/iscsi.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -75,6 +77,7 @@ import { selectService } from 'app/store/services/services.selectors';
     AsyncPipe,
     RouterLink,
     MatTooltip,
+    EmptyComponent,
   ],
 })
 export class IscsiCardComponent implements OnInit {
@@ -92,6 +95,7 @@ export class IscsiCardComponent implements OnInit {
   );
 
   protected readonly searchableElements = iscsiCardElements;
+  protected readonly emptyConfig = iscsiCardEmptyConfig;
 
   dataProvider: AsyncDataProvider<IscsiTarget>;
 

@@ -86,6 +86,23 @@ export const smbCardEmptyConfig = {
   title: T('No Windows (SMB) Shares'),
   large: true,
   message: T(`Well supported by all major operating systems, allows for easy authentication and authorization.
- <br> Choose SMB for easy file sharing across mixed operating systems, especially in home or office networks.
-`),
+ <br> Choose SMB for easy file sharing across mixed operating systems, especially in home or office networks.`),
+} as EmptyConfig;
+
+export const nfsCardEmptyConfig = {
+  type: EmptyType.NoPageData,
+  icon: iconMarker('folder_shared'),
+  title: T('No UNIX (NFS) Shares'),
+  large: true,
+  message: T(`Optimized for Linux and Unix systems, offering deeper integration in those environments. <br>
+ Choose NFS if you're working primarily with Linux servers or need efficient file access in Unix-based workflows.`),
+} as EmptyConfig;
+
+export const iscsiCardEmptyConfig = {
+  type: EmptyType.NoPageData,
+  icon: iconMarker('folder_shared'),
+  title: T('No Block (iSCSI) Shares Targets'),
+  large: true,
+  message: T(`Provides raw block storage over the network, appearing as a local disk on the client. <br>
+ Ideal for virtual machines or applications that require direct disk-level access.`),
 } as EmptyConfig;

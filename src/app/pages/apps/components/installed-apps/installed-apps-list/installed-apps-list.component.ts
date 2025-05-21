@@ -32,6 +32,7 @@ import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
@@ -239,6 +240,7 @@ export class InstalledAppsListComponent implements OnInit {
           label: this.translate.instant('Check Available Apps'),
           action: () => this.redirectToAvailableApps(),
         };
+        this.entityEmptyConf.icon = iconMarker('apps');
         this.entityEmptyConf.large = true;
         break;
       case EmptyType.Errors:

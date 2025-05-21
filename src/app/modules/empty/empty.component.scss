@@ -19,9 +19,10 @@
   display: flex;
   flex: 1;
   flex-direction: column;
-  height: inherit;
+  height: initial;
   justify-content: center;
-  padding: 15px;
+  margin: 8px;
+  padding: 8px;
 }
 
 .empty-page {

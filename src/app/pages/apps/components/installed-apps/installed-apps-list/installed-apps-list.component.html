@@ -29,9 +29,7 @@
 </div>
 
 @if (empty) {
-  <div class="no-apps">
-    <ix-empty [conf]="entityEmptyConf"></ix-empty>
-  </div>
+  <ix-empty [conf]="entityEmptyConf"></ix-empty>
 } @else {
   <div
   class="sticky-header"

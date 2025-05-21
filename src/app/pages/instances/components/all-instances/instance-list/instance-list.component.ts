@@ -19,6 +19,7 @@ import { VirtualizationInstance } from 'app/interfaces/virtualization.interface'
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
+import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { InstanceListBulkActionsComponent } from 'app/pages/instances/components/all-instances/instance-list/instance-list-bulk-actions/instance-list-bulk-actions.component';
@@ -89,6 +90,7 @@ export class InstanceListComponent {
     }
     return {
       type: EmptyType.NoPageData,
+      icon: iconMarker('mdi-laptop'),
       title: this.translate.instant('No instances'),
       message: this.translate.instant('Instances you create will automatically appear here.'),
       large: true,

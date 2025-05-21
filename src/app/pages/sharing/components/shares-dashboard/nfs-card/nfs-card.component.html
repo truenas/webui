@@ -33,9 +33,7 @@
   </mat-toolbar-row>
 
   @if (!(dataProvider.currentPageCount$ | async) && !(dataProvider.isLoading$ | async)) {
-    <p>
-      {{ 'No UNIX (NFS) Shares configured' | translate }}
-    </p>
+    <ix-empty [conf]="emptyConfig"></ix-empty>
   } @else {
     <ix-table
       class="table"

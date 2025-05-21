@@ -1,3 +1,5 @@
+@let empty = !(dataProvider.currentPageCount$ | async) && !(dataProvider.isLoading$ | async);
+
 <mat-card>
   <ix-fake-progress-bar [loading]="!!(dataProvider.isLoading$ | async)"></ix-fake-progress-bar>
   <mat-toolbar-row>
@@ -7,7 +9,11 @@
       [count]="+(dataProvider.currentPageCount$ | async)"
     ></ix-service-state-button>
     <div class="actions action-icon">
-      <ix-search-input1 [value]="filterString" (search)="onListFiltered($event)"></ix-search-input1>
+      <ix-search-input1
+        [value]="filterString"
+        [disabled]="empty"
+        (search)="onListFiltered($event)"
+      ></ix-search-input1>
 
       <a mat-button ixTest="smb-sessions" routerLink="/sharing/smb/status/sessions">
         {{ 'SMB Sessions' | translate }}
@@ -32,10 +38,8 @@
     </div>
   </mat-toolbar-row>
   <mat-card-content>
-    @if (!(dataProvider.currentPageCount$ | async) && !(dataProvider.isLoading$ | async)) {
-      <p>
-        {{ 'No Windows (SMB) Shares configured' | translate }}
-      </p>
+    @if (empty) {
+      <ix-empty [conf]="emptyConfig"></ix-empty>
     } @else {
       <ix-table
         [ixUiSearch]="searchableElements.elements.smbList"

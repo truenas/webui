@@ -1,9 +1,15 @@
+@let empty = !(dataProvider.currentPageCount$ | async) && !(dataProvider.isLoading$ | async);
+
 <mat-card>
   <ix-fake-progress-bar [loading]="!!(dataProvider.isLoading$ | async)"></ix-fake-progress-bar>
   <mat-toolbar-row>
     <h3>{{ 'NFS' | translate }}</h3>
     <div class="actions action-icon">
-      <ix-search-input1 [value]="filterString" (search)="onListFiltered($event)"></ix-search-input1>
+      <ix-search-input1
+        [value]="filterString"
+        [disabled]="empty"
+        (search)="onListFiltered($event)"
+      ></ix-search-input1>
 
       <a mat-button ixTest="nfs-sessions" routerLink="/sharing/nfs/sessions">
         {{ 'NFS Sessions' | translate }}
@@ -29,10 +35,8 @@
   </mat-toolbar-row>
 
   <mat-card-content [ixUiSearch]="searchableElements.elements.nfs">
-    @if (!(dataProvider.currentPageCount$ | async) && !(dataProvider.isLoading$ | async)) {
-      <p>
-        {{ 'No UNIX (NFS) Shares configured' | translate }}
-      </p>
+    @if (empty) {
+      <ix-empty [conf]="emptyConfig"></ix-empty>
     } @else {
       <ix-table
         [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
