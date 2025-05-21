@@ -1,8 +1,8 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { NvmeOfSubsystemDetails } from 'app/pages/sharing/nvme-of/services/nvme-of-subsystem-details.interface';
 import {
   SubsystemHostsCardComponent,
-} from 'app/pages/sharing/nvme-of/nvme-of-subsystems/subsystem-details/subsystem-hosts-card/subsystem-hosts-card.component';
-import { NvmeOfSubsystemDetails } from 'app/pages/sharing/nvme-of/services/nvme-of-subsystem-details.interface';
+} from 'app/pages/sharing/nvme-of/subsystem-details/subsystem-hosts-card/subsystem-hosts-card.component';
 
 describe('SubsystemHostsCardComponent', () => {
   let spectator: Spectator<SubsystemHostsCardComponent>;

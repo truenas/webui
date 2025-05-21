@@ -19,12 +19,12 @@ import { AddSubsystemComponent } from 'app/pages/sharing/nvme-of/add-subsystem/a
 import {
   NvmeOfConfigurationComponent,
 } from 'app/pages/sharing/nvme-of/nvme-of-configuration/nvme-of-configuration.component';
-import {
-  SubsystemDetailsComponent,
-} from 'app/pages/sharing/nvme-of/nvme-of-subsystems/subsystem-details/subsystem-details.component';
 import { nvmeOfElements } from 'app/pages/sharing/nvme-of/nvme-of.elements';
 import { NvmeOfSubsystemDetails } from 'app/pages/sharing/nvme-of/services/nvme-of-subsystem-details.interface';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
+import {
+  SubsystemDetailsComponent,
+} from 'app/pages/sharing/nvme-of/subsystem-details/subsystem-details.component';
 import {
   SubsystemsDetailsHeaderComponent,
 } from 'app/pages/sharing/nvme-of/subsystem-details-header/subsystems-details-header.component';

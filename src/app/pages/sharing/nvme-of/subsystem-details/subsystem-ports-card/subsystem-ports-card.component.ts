@@ -8,17 +8,14 @@ import {
 import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { filter } from 'rxjs/operators';
 import { helptextNvmeOf } from 'app/helptext/sharing/nvme-of/nvme-of';
 import { NvmeOfPort } from 'app/interfaces/nvme-of.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AddPortMenuComponent } from 'app/pages/sharing/nvme-of/ports/add-port-menu/add-port-menu.component';
 import { PortDescriptionComponent } from 'app/pages/sharing/nvme-of/ports/port-description/port-description.component';
-import { PortFormComponent } from 'app/pages/sharing/nvme-of/ports/port-form/port-form.component';
 import { NvmeOfSubsystemDetails } from 'app/pages/sharing/nvme-of/services/nvme-of-subsystem-details.interface';
 import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
@@ -55,7 +52,6 @@ export class SubsystemPortsCardComponent {
     private nvmeOfService: NvmeOfService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
-    private slideIn: SlideIn,
     private nvmeOfStore: NvmeOfStore,
   ) {}
 
@@ -69,17 +65,6 @@ export class SubsystemPortsCardComponent {
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Port added to the subsystem'));
         // TODO: Consider reloading a single record or removing loading animation.
-        this.nvmeOfStore.initialize();
-      });
-  }
-
-  protected onEdit(port: NvmeOfPort): void {
-    this.slideIn.open(PortFormComponent, { data: port })
-      .pipe(
-        filter((response) => Boolean(response.response)),
-        untilDestroyed(this),
-      )
-      .subscribe(() => {
         this.nvmeOfStore.initialize();
       });
   }
