@@ -55,6 +55,7 @@ import { selectService } from 'app/store/services/services.selectors';
 @Component({
   selector: 'ix-smb-list',
   templateUrl: './smb-list.component.html',
+  styleUrls: ['./smb-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatCard,

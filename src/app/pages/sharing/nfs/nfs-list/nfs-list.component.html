@@ -27,23 +27,31 @@
       </button>
     </div>
   </mat-toolbar-row>
+
   <mat-card-content [ixUiSearch]="searchableElements.elements.nfs">
-    <ix-table
-      [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
-      [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
-    >
-      <thead
-        ix-table-head
-        [columns]="columns"
-        [dataProvider]="dataProvider"
-      ></thead>
-      <tbody
-        ix-table-body
-        [columns]="columns"
-        [dataProvider]="dataProvider"
-        [isLoading]="!!(dataProvider.isLoading$ | async)"
-      ></tbody>
-    </ix-table>
-    <ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>
+    @if (!(dataProvider.currentPageCount$ | async) && !(dataProvider.isLoading$ | async)) {
+      <p>
+        {{ 'No UNIX (NFS) Shares configured' | translate }}
+      </p>
+    } @else {
+      <ix-table
+        [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
+        [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
+      >
+        <thead
+          ix-table-head
+          [columns]="columns"
+          [dataProvider]="dataProvider"
+        ></thead>
+        <tbody
+          ix-table-body
+          [columns]="columns"
+          [dataProvider]="dataProvider"
+          [isLoading]="!!(dataProvider.isLoading$ | async)"
+        ></tbody>
+      </ix-table>
+
+      <ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>
+    }
   </mat-card-content>
 </mat-card>

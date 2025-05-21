@@ -239,6 +239,7 @@ export class InstalledAppsListComponent implements OnInit {
           label: this.translate.instant('Check Available Apps'),
           action: () => this.redirectToAvailableApps(),
         };
+        this.entityEmptyConf.large = true;
         break;
       case EmptyType.Errors:
         this.entityEmptyConf.title = this.translate.instant(helptextApps.message.notRunning);
