@@ -25,7 +25,9 @@ const initialState: NvmeOfState = {
   isLoading: false,
 };
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class NvmeOfStore extends ComponentStore<NvmeOfState> {
   readonly subsystems = computed((): NvmeOfSubsystemDetails[] => {
     const state = this.state();
@@ -39,11 +41,17 @@ export class NvmeOfStore extends ComponentStore<NvmeOfState> {
     });
   });
 
+  readonly ports = computed(() => this.state().ports);
+  readonly namespaces = computed(() => this.state().namespaces);
+  readonly hosts = computed(() => this.state().hosts);
+
   readonly isLoading = computed(() => this.state().isLoading);
 
-  constructor(private api: ApiService, private errorHandler: ErrorHandlerService) {
+  constructor(
+    private api: ApiService,
+    private errorHandler: ErrorHandlerService,
+  ) {
     super(initialState);
-    this.initialize();
   }
 
   initialize = this.effect((trigger$) => {
@@ -84,6 +92,17 @@ export class NvmeOfStore extends ComponentStore<NvmeOfState> {
               });
             },
           ),
+        );
+      }),
+    );
+  });
+
+  reloadPorts = this.effect((trigger$) => {
+    return trigger$.pipe(
+      switchMap(() => {
+        return this.api.call('nvmet.port.query').pipe(
+          this.errorHandler.withErrorHandler(),
+          tap((ports) => this.patchState({ ports })),
         );
       }),
     );
