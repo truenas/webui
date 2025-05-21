@@ -13,7 +13,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import {
   NvmeOfConfigurationComponent,
 } from 'app/pages/sharing/nvme-of/nvme-of-configuration/nvme-of-configuration.component';
-import { NvmeOfService } from 'app/pages/sharing/nvme-of/utils/nvme-of.service';
+import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
 
 describe('NvmeOfConfigurationComponent', () => {
   let spectator: Spectator<NvmeOfConfigurationComponent>;

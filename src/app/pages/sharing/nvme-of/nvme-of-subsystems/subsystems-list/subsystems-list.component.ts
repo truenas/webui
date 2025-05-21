@@ -8,7 +8,6 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
-import { NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -24,7 +23,8 @@ import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-
 import { createTable } from 'app/modules/ix-table/utils';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { subsystemListElements } from 'app/pages/sharing/nvme-of/nvme-of-subsystems/nvme-of-subsystems.elements';
-import { NvmeOfStore } from 'app/pages/sharing/nvme-of/nvme-of.store';
+import { NvmeOfSubsystemDetails } from 'app/pages/sharing/nvme-of/services/nvme-of-subsystem-details.interface';
+import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
 
 @UntilDestroy()
 @Component({
@@ -78,15 +78,15 @@ export class SubsystemsListComponent {
       },
     }),
     textColumn({
-      title: this.translate.instant('Hosts'),
-      getValue: (row) => {
-        return row.hosts.length;
-      },
-    }),
-    textColumn({
       title: this.translate.instant('Ports'),
       getValue: (row) => {
         return row.ports.length;
+      },
+    }),
+    textColumn({
+      title: this.translate.instant('Hosts'),
+      getValue: (row) => {
+        return row.hosts.length;
       },
     }),
     templateColumn({
