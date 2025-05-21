@@ -18,7 +18,7 @@ export const datasetEmptyConfig = {
   large: true,
   title: T('No Datasets'),
   icon: iconMarker('ix-dataset-root'),
-  message: T(`A dataset is a logical container within a pool used to organize your files and folders. <br> \n
+  message: T(`A dataset is a logical container within a pool used to organize your files and folders. <br>
  After you create a pool, this page will list all your datasets.`),
 } as EmptyConfig;
 
@@ -27,7 +27,7 @@ export const dataProtectionEmptyConfig = {
   large: true,
   icon: iconMarker('security'),
   title: T('No Data Protection Tasks'),
-  message: T(`This page will help you protect your data by syncing it with other systems on the cloud. <br> \n
+  message: T(`This page will help you protect your data by syncing it with other systems on the cloud. <br>
  But first, you need to create a storage pool to get started.`),
 } as EmptyConfig;
 
@@ -36,7 +36,7 @@ export const sharesEmptyConfig = {
   large: true,
   icon: iconMarker('folder_shared'),
   title: T('No Shares'),
-  message: T(`Shares allow you to make your data accessible over the network. <br> \n
+  message: T(`Shares allow you to make your data accessible over the network. <br>
  You’ll need a pool and a dataset that you want to share.`),
 } as EmptyConfig;
 
