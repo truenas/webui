@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Timeout } from 'app/interfaces/timeout.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
@@ -45,6 +46,7 @@ export class ConfigResetComponent implements OnInit, OnDestroy {
     protected matDialog: MatDialog,
     private location: Location,
     private api: ApiService,
+    private authService: AuthService,
   ) {}
 
   isWsConnected(): void {
@@ -53,6 +55,7 @@ export class ConfigResetComponent implements OnInit, OnDestroy {
       next: (isConnected) => {
         if (isConnected) {
           this.loader.close();
+          this.authService.clearAuthToken();
           this.router.navigate(['/signin']);
         } else {
           // TODO: Why not just rely on isConnected$ emitting new value.
