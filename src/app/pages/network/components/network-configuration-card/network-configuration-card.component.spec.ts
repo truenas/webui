@@ -5,6 +5,7 @@ import {
   byText, createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
 import { NetworkConfiguration } from 'app/interfaces/network-configuration.interface';
@@ -18,6 +19,26 @@ import { NetworkConfigurationCardComponent } from 'app/pages/network/components/
 describe('NetworkConfigurationCardComponent', () => {
   let spectator: Spectator<NetworkConfigurationCardComponent>;
   let loader: HarnessLoader;
+  const configuration = {
+    hostname: 'truenas',
+    domain: 'local',
+    nameserver1: '8.8.8.8',
+    nameserver2: '8.8.4.4',
+    httpproxy: 'http://proxy.com',
+    hosts: ['host1.com', 'host2.com'],
+    domains: ['domain.cz'],
+    service_announcement: {
+      mdns: true,
+      wsd: true,
+      netbios: false,
+    },
+    activity: {
+      type: NetworkActivityType.Allow,
+      activities: ['usage', 'kmip', 'rsync', 'update'],
+    },
+    hostname_local: 'truenas',
+  } as NetworkConfiguration;
+
   const createComponent = createComponentFactory({
     component: NetworkConfigurationCardComponent,
     imports: [
@@ -25,25 +46,7 @@ describe('NetworkConfigurationCardComponent', () => {
     ],
     providers: [
       mockApi([
-        mockCall('network.configuration.config', {
-          hostname: 'truenas',
-          domain: 'local',
-          nameserver1: '8.8.8.8',
-          nameserver2: '8.8.4.4',
-          httpproxy: 'http://proxy.com',
-          hosts: ['host1.com', 'host2.com'],
-          domains: ['domain.cz'],
-          service_announcement: {
-            mdns: true,
-            wsd: true,
-            netbios: false,
-          },
-          activity: {
-            type: NetworkActivityType.Allow,
-            activities: ['usage', 'kmip', 'rsync', 'update'],
-          },
-          hostname_local: 'truenas',
-        } as NetworkConfiguration),
+        mockCall('network.configuration.config', configuration),
         mockCall('network.general.summary', {
           default_routes: ['192.168.1.1', 'fe80::a00:27ff:fe09:c274'],
           nameservers: ['8.8.8.8', '8.8.4.4', '8.8.1.1'],
@@ -118,9 +121,26 @@ describe('NetworkConfigurationCardComponent', () => {
       'HTTP Proxy:': 'http://proxy.com',
       'Hostname Database:': 'host1.com, host2.com',
       'Hostname:': 'truenas',
-      'Outbound Network:': 'Allow usage, kmip, rsync, update',
+      'Outbound Network:': 'Only allow: usage, kmip, rsync, update',
       'Service Announcement:': 'mDNS, WS-DISCOVERY',
     });
+  });
+
+  it('correctly shows cases when only some outbound network activity is denied', () => {
+    const mockedApi = spectator.inject(MockApiService);
+    mockedApi.mockCall('network.configuration.config', {
+      ...configuration,
+      activity: {
+        type: NetworkActivityType.Deny,
+        activities: ['mail', 'kmip'],
+      },
+    } as NetworkConfiguration);
+
+    spectator.component.ngOnInit();
+    spectator.detectChanges();
+
+    const outboundActivity = spectator.query(byText('Outbound Network:')).parentElement.querySelector('.value');
+    expect(outboundActivity).toHaveText('Allow all except: mail, kmip');
   });
 
   it('opens settings form when Settings button is clicked', async () => {
