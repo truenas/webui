@@ -2297,6 +2297,7 @@
   "This password is only valid for one login within 24 hours and does not persist across reboots.": "",
   "This pool has an encrypted root dataset which is locked. Do you want to unlock it?": "",
   "This session is current and cannot be terminated": "",
+  "This subsystem is currently not usable due to missing required configuration.": "",
   "This system is not licensed for HA.": "",
   "This view is not available for this enclosure.": "",
   "Ticket": "",

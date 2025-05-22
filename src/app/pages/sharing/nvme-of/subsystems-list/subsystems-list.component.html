@@ -25,6 +25,15 @@
         (expanded)="expanded($event)"
       >
         <ng-template
+          let-subsystem
+          ix-table-cell
+          [columnIndex]="0"
+          [dataProvider]="dataProvider()"
+        >
+          <ix-subsystem-name-cell [subsystem]="subsystem"></ix-subsystem-name-cell>
+        </ng-template>
+
+        <ng-template
           ix-table-cell
           [columnIndex]="4"
           [dataProvider]="dataProvider()"

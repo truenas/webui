@@ -441,6 +441,7 @@
   "This is the only time the password is shown.": "",
   "This option is disabled in STIG mode.": "",
   "This password is only valid for one login within 24 hours and does not persist across reboots.": "",
+  "This subsystem is currently not usable due to missing required configuration.": "",
   "Ticket Created": "",
   "To": "",
   "Transport Type": "",

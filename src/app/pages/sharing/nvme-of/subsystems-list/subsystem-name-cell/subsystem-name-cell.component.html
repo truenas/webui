@@ -1,0 +1,10 @@
+<span>
+  {{ subsystem().name }}
+</span>
+
+@if (showWarning()) {
+  <ix-icon
+    name="warning"
+    [matTooltip]="'This subsystem is currently not usable due to missing required configuration.' | translate"
+  ></ix-icon>
+}

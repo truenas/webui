@@ -21,6 +21,7 @@ import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-
 import { createTable } from 'app/modules/ix-table/utils';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { NvmeOfSubsystemDetails } from 'app/pages/sharing/nvme-of/services/nvme-of-subsystem-details.interface';
+import { SubSystemNameCellComponent } from 'app/pages/sharing/nvme-of/subsystems-list/subsystem-name-cell/subsystem-name-cell.component';
 
 @UntilDestroy()
 @Component({
@@ -43,6 +44,7 @@ import { NvmeOfSubsystemDetails } from 'app/pages/sharing/nvme-of/services/nvme-
     IxIconComponent,
     IxTableEmptyDirective,
     IxTablePagerComponent,
+    SubSystemNameCellComponent,
   ],
 })
 export class SubsystemsListComponent {
@@ -54,9 +56,8 @@ export class SubsystemsListComponent {
   filterString = '';
 
   protected columns = createTable<NvmeOfSubsystemDetails>([
-    textColumn({
+    templateColumn({
       title: this.translate.instant('Name'),
-      propertyName: 'name',
     }),
     textColumn({
       title: this.translate.instant('Namespaces'),

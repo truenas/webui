@@ -621,6 +621,7 @@
   "The time values when the task will run. Accepts standard <a href=\"https://man7.org/linux/man-pages/man5/crontab.5.html\" target=\"_blank\">crontab(5)</a> values. </br></br>Symbols:</br> A comma (,) separates individual values.</br> An asterisk (*) means  \"match all values\".</br> Hyphenated numbers (1-5) sets a range of time.</br> A slash (/) designates a step in the value: */2 means every other minute.</br></br> Example: 30-35 in Minutes, 1,14 in Hours, and */2 in Days means the task will run on 1:30 - 1:35 AM and 2:30 - 2:35 PM every other day.": "",
   "The TrueNAS controllers do not have the same quantity of disks.": "",
   "The URI used to provision an OTP. The URI (which contains the secret) is encoded in a QR Code.   To set up an OTP app like Google Authenticator, use the app to scan the QR code or enter the secret manually   into the app. The URI is produced by the system when Two-Factor Authentication is first activated.": "",
+  "This subsystem is currently not usable due to missing required configuration.": "",
   "Treat Disk Size as Minimum": "",
   "TrueNAS is Free and <a href=\"https://github.com/truenas/\" target=\"_blank\">Open Source</a> software, which is provided as-is with no warranty.": "",
   "TrueNAS maintains a cache of users and groups for API consumers (including the WebUI). This is a convenience feature that may be disabled if the domain contains large numbers of users and groups or if the caching generates excessive load on the domain controller.": "",

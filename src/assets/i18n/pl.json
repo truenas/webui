@@ -352,6 +352,7 @@
   "The URI used to provision an OTP. The URI (which contains the secret) is encoded in a QR Code.   To set up an OTP app like Google Authenticator, use the app to scan the QR code or enter the secret manually   into the app. The URI is produced by the system when Two-Factor Authentication is first activated.": "",
   "This action will set all dataset quotas for the removed or invalid groups to 0, virtually removing any dataset quota entries for such groups. Are you sure you want to proceed?": "",
   "This option is disabled in STIG mode.": "",
+  "This subsystem is currently not usable due to missing required configuration.": "",
   "Ticket Created": "",
   "To": "",
   "Transport Type": "",
