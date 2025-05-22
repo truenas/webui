@@ -4201,7 +4201,7 @@
   {
     "hierarchy": [
       "System",
-      "General Settings",
+      "Advanced Settings",
       "NTP Server"
     ],
     "synonyms": [
@@ -4211,7 +4211,7 @@
     "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
-      "general"
+      "advanced"
     ],
     "routerLink": null,
     "anchor": "ntp-card",
@@ -4221,7 +4221,7 @@
   {
     "hierarchy": [
       "System",
-      "General Settings",
+      "Advanced Settings",
       "NTP Server",
       "Add NTP Server"
     ],
@@ -4236,7 +4236,7 @@
     "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
-      "general"
+      "advanced"
     ],
     "routerLink": null,
     "anchor": "add-ntp-server",
