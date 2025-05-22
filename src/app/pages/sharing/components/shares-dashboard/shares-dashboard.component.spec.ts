@@ -28,5 +28,6 @@ describe('SharesDashboardComponent', () => {
     expect(spectator.query(SmbCardComponent)).toExist();
     expect(spectator.query(NfsCardComponent)).toExist();
     expect(spectator.query(IscsiCardComponent)).toExist();
+    expect(spectator.query(NvmeOfCardComponent)).toExist();
   });
 });
