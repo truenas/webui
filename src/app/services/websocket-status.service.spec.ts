@@ -124,4 +124,16 @@ describe('WebSocketStatusSerice', () => {
       expectObservable(spectator.service.isActiveSession$).toBe('a', { a: true });
     });
   });
+
+  it('checks setFailoverStatus', () => {
+    spectator.service.setFailoverStatus(true);
+    testScheduler.run(({ expectObservable }) => {
+      expectObservable(spectator.service.isFailoverRestart$).toBe('a', { a: true });
+    });
+
+    spectator.service.setFailoverStatus(false);
+    testScheduler.run(({ expectObservable }) => {
+      expectObservable(spectator.service.isFailoverRestart$).toBe('a', { a: false });
+    });
+  });
 });
