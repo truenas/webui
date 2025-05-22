@@ -7,6 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { AlertSlice } from 'app/modules/alerts/store/alert.selectors';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
@@ -44,6 +45,7 @@ export class FailoverComponent implements OnInit {
     protected matDialog: MatDialog,
     private location: Location,
     private store$: Store<AlertSlice>,
+    private authService: AuthService,
   ) {}
 
   isWsConnected(): void {
@@ -52,6 +54,7 @@ export class FailoverComponent implements OnInit {
         if (isConnected) {
           this.loader.close();
           // ws is connected
+          this.authService.clearAuthToken();
           this.router.navigate(['/signin']);
         } else {
           setTimeout(() => {
