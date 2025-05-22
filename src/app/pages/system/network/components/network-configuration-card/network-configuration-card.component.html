@@ -68,18 +68,14 @@
             </mat-list-item>
             <mat-list-item>
               <span class="label">{{ 'Domain:' | translate }}</span>
-              <span class="value">
-                {{ config.domain || ('Inherit from DHCP' | translate) }}
-              </span>
+              <span class="value">{{ config.domain || ('Inherit from DHCP' | translate) }}</span>
             </mat-list-item>
             <mat-list-item>
               <span class="label">{{ 'HTTP Proxy:' | translate }}</span>
               <span class="value">{{ config.httpproxy || '-' }}</span>
             </mat-list-item>
             <mat-list-item>
-              <span class="label">
-                {{ 'Service Announcement:' | translate }}
-              </span>
+              <span class="label">{{ 'Service Announcement:' | translate }}</span>
               <span class="value">{{ serviceAnnouncement }}</span>
             </mat-list-item>
             <mat-list-item>

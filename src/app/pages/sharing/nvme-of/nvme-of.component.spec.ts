@@ -1,8 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatTabNavBarHarness } from '@angular/material/tabs/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -10,13 +10,19 @@ import {
   NvmeOfConfigurationComponent,
 } from 'app/pages/sharing/nvme-of/nvme-of-configuration/nvme-of-configuration.component';
 import { NvmeOfComponent } from 'app/pages/sharing/nvme-of/nvme-of.component';
-import { NvmeOfStore } from 'app/pages/sharing/nvme-of/nvme-of.store';
+import { NvmeOfSubsystemDetails } from 'app/pages/sharing/nvme-of/services/nvme-of-subsystem-details.interface';
+import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
+import { SubsystemsListComponent } from 'app/pages/sharing/nvme-of/subsystems-list/subsystems-list.component';
 
 describe('NvmeOfComponent', () => {
   let spectator: Spectator<NvmeOfComponent>;
   let loader: HarnessLoader;
+  const subsystems = [] as NvmeOfSubsystemDetails[];
   const createComponent = createComponentFactory({
     component: NvmeOfComponent,
+    imports: [
+      MockComponent(SubsystemsListComponent),
+    ],
     providers: [
       mockProvider(SlideIn, {
         open: jest.fn(() => {
@@ -25,6 +31,8 @@ describe('NvmeOfComponent', () => {
       }),
       mockAuth(),
       mockProvider(NvmeOfStore, {
+        subsystems: () => subsystems,
+        isLoading: () => false,
         initialize: jest.fn(),
       }),
     ],
@@ -42,20 +50,15 @@ describe('NvmeOfComponent', () => {
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(NvmeOfConfigurationComponent);
   });
 
-  it('shows a navtab with supported links', async () => {
-    const navbar = await loader.getHarness(MatTabNavBarHarness);
-    const links = await navbar.getLinks();
-
-    expect(links).toHaveLength(3);
-    expect(await links[0].getLabel()).toBe('Subsystems');
-    expect(await links[1].getLabel()).toBe('Hosts');
-    expect(await links[2].getLabel()).toBe('Ports');
+  it('shows a table with subsystems', () => {
+    const table = spectator.query(SubsystemsListComponent);
+    expect(table).toBeTruthy();
   });
 
   it('initializes store when added', async () => {
-    const button = await loader.getHarness(MatButtonHarness.with({ text: 'Add Subsystem' }));
-    expect(spectator.inject(NvmeOfStore).initialize).not.toHaveBeenCalled();
-    await button.click();
-    expect(spectator.inject(NvmeOfStore).initialize).toHaveBeenCalled();
+    const addSubsystemButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add Subsystem' }));
+    expect(spectator.inject(NvmeOfStore).initialize).toHaveBeenCalledTimes(1);
+    await addSubsystemButton.click();
+    expect(spectator.inject(NvmeOfStore).initialize).toHaveBeenCalledTimes(2);
   });
 });
