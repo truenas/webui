@@ -33,7 +33,7 @@ export interface AllowedAccessConfig {
 export interface UserFormState {
   isStigMode: boolean;
   nextUid: number;
-  userConfig: Partial<UserUpdate>;
+  userConfig: UserUpdate;
   setupDetails: UserFormSetupDetails;
 }
 

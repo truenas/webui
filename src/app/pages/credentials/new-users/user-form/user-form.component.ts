@@ -11,10 +11,11 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   catchError, combineLatest, distinctUntilChanged, filter, map, Observable, of,
   startWith,
+  switchMap,
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { isEmptyHomeDirectory } from 'app/helpers/user.helper';
-import { User } from 'app/interfaces/user.interface';
+import { User, UserUpdate } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -95,7 +96,7 @@ export class UserFormComponent implements OnInit {
     };
   });
 
-  get homeCreateWarning(): TranslatedString {
+  homeCreateWarning = computed<TranslatedString>(() => {
     const homeCreate = this.formValues().home_create;
     const home = this.formValues().home;
     const homeMode = this.formValues().home_mode;
@@ -122,7 +123,7 @@ export class UserFormComponent implements OnInit {
       );
     }
     return '';
-  }
+  });
 
   constructor(
     private formBuilder: NonNullableFormBuilder,
@@ -155,14 +156,13 @@ export class UserFormComponent implements OnInit {
       email: user.email,
       full_name: user.full_name,
       smb: user.smb,
-      shell: user.shell,
       home: user.home,
       uid: user.uid,
-      group: user.group.id,
-      groups: user.groups,
-      password_disabled: user.password_disabled,
-      sshpubkey: user.sshpubkey,
-      ssh_password_enabled: user.ssh_password_enabled,
+      group: user?.group?.id,
+      groups: user?.groups,
+      password_disabled: user?.password_disabled,
+      sshpubkey: user?.sshpubkey,
+      ssh_password_enabled: user?.ssh_password_enabled,
     });
 
     this.form.patchValue({
@@ -208,10 +208,10 @@ export class UserFormComponent implements OnInit {
   }
 
   private getHomeCreateConfirmation(): Observable<boolean> {
-    if (this.homeCreateWarning) {
+    if (this.homeCreateWarning()) {
       return this.dialog.confirm({
         title: this.translate.instant('Warning!'),
-        message: this.homeCreateWarning,
+        message: this.homeCreateWarning(),
       });
     }
     return of(true);
@@ -224,20 +224,21 @@ export class UserFormComponent implements OnInit {
     this.downloadService.downloadBlob(blob, `${name}_public_key_rsa`);
   }
 
+  private submitUserRequest(payload: UserUpdate): Observable<User> {
+    this.isFormLoading.set(true);
+
+    return this.editingUser()
+      ? this.userFormStore.updateUser(this.editingUser().id, payload)
+      : this.userFormStore.createUser();
+  }
+
   protected onSubmit(): void {
     // TODO: password related fields are impacted if
     // UserStigPasswordOption.OneTimePassword is used as value for `stig_password`
-
-    this.isFormLoading.set(true);
-
-    let request$ = this.userFormStore.createUser();
-
-    if (this.editingUser()) {
-      const payload = { ...this.formValues() };
-      request$ = this.userFormStore.updateUser(this.editingUser().id, payload);
-    }
-
-    request$.pipe(
+    const payload = { ...this.formValues() };
+    this.getHomeCreateConfirmation().pipe(
+      filter(Boolean),
+      switchMap(() => this.submitUserRequest(payload)),
       catchError((error: unknown) => {
         this.errorHandler.showErrorModal(error);
         return of(undefined);
