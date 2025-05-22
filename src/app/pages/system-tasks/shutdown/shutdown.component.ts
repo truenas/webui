@@ -4,6 +4,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -32,6 +33,7 @@ export class ShutdownComponent implements OnInit {
     protected router: Router,
     private route: ActivatedRoute,
     private location: Location,
+    private authService: AuthService,
   ) {}
 
   ngOnInit(): void {
@@ -50,6 +52,7 @@ export class ShutdownComponent implements OnInit {
       },
       complete: () => {
         this.wsManager.prepareShutdown();
+        this.authService.clearAuthToken();
       },
     });
     // fade to black after 60 sec on shut down
