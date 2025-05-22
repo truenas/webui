@@ -5,8 +5,8 @@ import {
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { helptextNvmeOf } from 'app/helptext/sharing/nvme-of/nvme-of';
+import { NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { NvmeOfSubsystemDetails } from 'app/pages/sharing/nvme-of/services/nvme-of-subsystem-details.interface';
 
 @Component({
   selector: 'ix-subsystem-hosts-card',

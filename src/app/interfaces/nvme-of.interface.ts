@@ -1,4 +1,4 @@
-import { Required } from 'utility-types';
+import { Required, Overwrite } from 'utility-types';
 import { NvmeOfAddressFamily, NvmeOfNamespaceDeviceType, NvmeOfTransportType } from 'app/enums/nvme-of.enum';
 
 export interface NvmeOfGlobalConfig {
@@ -136,3 +136,21 @@ export type GenerateNvmeHostParams = [
   dhchap_hash: string,
   nqn?: string,
 ];
+
+export type NvmeOfSubsystemDetails = Overwrite<NvmeOfSubsystem, {
+  hosts: NvmeOfHost[];
+  ports: NvmeOfPort[];
+  namespaces: NvmeOfNamespace[];
+}>;
+
+export enum PortOrHostDeleteType {
+  Port = 'port',
+  Host = 'host',
+}
+
+export interface PortOrHostDeleteDialogData {
+  type: PortOrHostDeleteType;
+  item: NvmeOfPort | NvmeOfHost;
+  name: string;
+  subsystemsInUse: NvmeOfSubsystemDetails[];
+}

@@ -1,5 +1,6 @@
 {
   "": "",
+  "{type} is currently in use by the following subsystems:": "",
   "700 or owner - all, others - none": "",
   "Add Host": "",
   "Add Port": "",
@@ -9,6 +10,7 @@
   "Allow all except: {activities}": "",
   "Also use Diffie–Hellman key exchange for additional security": "",
   "Apply Pending Update": "",
+  "Are you sure you want to delete {type}: {name}?": "",
   "Are you sure you want to delete subsystem {subsys}?": "",
   "Are you sure you want to stop {serviceName}?": "",
   "Associated Hosts": "",
@@ -16,6 +18,7 @@
   "Base NQN": "",
   "Define Static IP Addresses": "",
   "Define the system services that are NOT allowed to communicate externally. All other external traffic will be allowed.": "",
+  "Delete Anyway": "",
   "Delete Subsystem": "",
   "DH Group": "",
   "DH-CHAP key to be used to authenticate the host.": "",
