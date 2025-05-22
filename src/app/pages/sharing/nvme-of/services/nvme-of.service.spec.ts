@@ -1,8 +1,11 @@
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { firstValueFrom, of } from 'rxjs';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { NvmeOfTransportType } from 'app/enums/nvme-of.enum';
-import { NvmeOfSubsystem } from 'app/interfaces/nvme-of.interface';
+import {
+  NvmeOfHost, NvmeOfPort, NvmeOfSubsystem, SubsystemPortAssociation,
+} from 'app/interfaces/nvme-of.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
 import { LicenseService } from 'app/services/license.service';
@@ -18,6 +21,7 @@ describe('NvmeOfService', () => {
         mockCall('nvmet.port_subsys.create'),
         mockCall('nvmet.host_subsys.create'),
         mockCall('nvmet.global.rdma_enabled', true),
+        mockCall('nvmet.port_subsys.delete'),
       ]),
       mockProvider(LicenseService, {
         hasFibreChannel$: of(false),
@@ -33,32 +37,52 @@ describe('NvmeOfService', () => {
   describe('associatePorts', () => {
     it('should make multiple calls to associate port with a subsystem', async () => {
       const subsystem = { id: 1 } as NvmeOfSubsystem;
-      const portIds: number[] = [1, 2, 3];
+      const ports = [
+        { id: 1 },
+        { id: 2 },
+        { id: 3 },
+      ] as NvmeOfPort[];
 
-      await firstValueFrom(spectator.service.associatePorts(subsystem, portIds));
+      await firstValueFrom(spectator.service.associatePorts(subsystem, ports));
 
-      expect(api.call).toHaveBeenCalledTimes(portIds.length);
-      portIds.forEach((portId) => {
+      expect(api.call).toHaveBeenCalledTimes(ports.length);
+      ports.forEach((port) => {
         expect(api.call).toHaveBeenCalledWith(
           'nvmet.port_subsys.create',
-          [{ port_id: portId, subsys_id: subsystem.id }],
+          [{ port_id: port.id, subsys_id: subsystem.id }],
         );
       });
+    });
+  });
+
+  describe('removePortAssociation', () => {
+    it('queries for subsystem-port association and deletes it', async () => {
+      const mockedApi = spectator.inject(MockApiService);
+      mockedApi.mockCall('nvmet.port_subsys.query', [{ id: 1 } as SubsystemPortAssociation]);
+
+      await firstValueFrom(spectator.service.removePortAssociation({ id: 1 }, { id: 1 } as NvmeOfPort));
+
+      expect(api.call).toHaveBeenCalledWith('nvmet.port_subsys.query', [[['subsys_id', '=', 1], ['port_id', '=', 1]]]);
+      expect(api.call).toHaveBeenCalledWith('nvmet.port_subsys.delete', [1]);
     });
   });
 
   describe('associateHosts', () => {
     it('should make multiple calls to associate host with a subsystem', async () => {
       const subsystem = { id: 1 } as NvmeOfSubsystem;
-      const hostIds: number[] = [1, 2, 3];
+      const hosts = [
+        { id: 1 },
+        { id: 2 },
+        { id: 3 },
+      ] as NvmeOfHost[];
 
-      await firstValueFrom(spectator.service.associateHosts(subsystem, hostIds));
+      await firstValueFrom(spectator.service.associateHosts(subsystem, hosts));
 
-      expect(api.call).toHaveBeenCalledTimes(hostIds.length);
-      hostIds.forEach((hostId) => {
+      expect(api.call).toHaveBeenCalledTimes(hosts.length);
+      hosts.forEach((host) => {
         expect(api.call).toHaveBeenCalledWith(
           'nvmet.host_subsys.create',
-          [{ host_id: hostId, subsys_id: subsystem.id }],
+          [{ host_id: host.id, subsys_id: subsystem.id }],
         );
       });
     });
