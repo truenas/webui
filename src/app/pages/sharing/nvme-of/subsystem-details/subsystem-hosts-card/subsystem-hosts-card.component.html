@@ -1,6 +1,11 @@
 <mat-card class="card">
   <mat-card-header>
     <h3 mat-card-title>{{ 'Associated Hosts' | translate }}</h3>
+
+    <ix-add-host-menu
+      [subsystemHosts]="subsystem().hosts"
+      (hostSelected)="onHostAdded($event)"
+    ></ix-add-host-menu>
   </mat-card-header>
   <mat-card-content>
     @if (subsystem().allow_any_host) {
@@ -20,15 +25,30 @@
       <ul class="host-list">
         @for (host of subsystem().hosts; track host.id) {
           <li>
-            {{ host.hostnqn }}
+            <span class="host">
+              <span class="host-description">
+                {{ host.hostnqn }}
 
-            @if (host.dhchap_key) {
-              <ix-icon
-                name="mdi-key"
-                class="key-icon"
-                [matTooltip]="helptext.hasHostAuthentication | translate"
-              ></ix-icon>
-            }
+                @if (host.dhchap_key) {
+                  <ix-icon
+                    name="mdi-key"
+                    class="key-icon"
+                    [matTooltip]="helptext.hasHostAuthentication | translate"
+                  ></ix-icon>
+                }
+              </span>
+
+              <span class="host-actions">
+                <button
+                  mat-icon-button
+                  [ixTest]="['remove-host-association', host.hostnqn]"
+                  [matTooltip]="'Remove host from the subsystem' | translate"
+                  (click)="onRemoveAssociation(host)"
+                >
+                  <ix-icon class="icon" name="mdi-link-variant-off"></ix-icon>
+                </button>
+              </span>
+            </span>
           </li>
         }
       </ul>

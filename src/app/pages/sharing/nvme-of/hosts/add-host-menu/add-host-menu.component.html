@@ -1,8 +1,8 @@
-@if (noPortsExist()) {
+@if (noHostsExist()) {
   <button
     mat-button
-    [ixTest]="'add-port'"
-    (click)="openPortForm()"
+    [ixTest]="'add-host'"
+    (click)="openHostForm()"
   >
     {{ 'Add' | translate }}
   </button>
@@ -10,7 +10,7 @@
 @else {
   <button
     mat-button
-    [ixTest]="'add-port'"
+    [ixTest]="'add-host'"
     [matMenuTriggerFor]="addMenu"
   >
     {{ 'Add' | translate }}
@@ -19,13 +19,13 @@
   </button>
 
   <mat-menu #addMenu="matMenu">
-    @for (port of unusedPorts(); track port.id) {
+    @for (host of unusedHosts(); track host.id) {
       <button
         mat-menu-item
-        [ixTest]="['add-port', port.addr_trtype, port.addr_traddr, port.addr_trsvcid]"
-        (click)="selectPort(port)"
+        [ixTest]="['add-host', host.hostnqn]"
+        (click)="selectHost(host)"
       >
-        <ix-port-description [port]="port"></ix-port-description>
+        {{ host.hostnqn }}
       </button>
     }
 
@@ -33,18 +33,18 @@
 
     <button
       mat-menu-item
-      ixTest="create-new-port"
-      (click)="openPortForm()"
+      ixTest="create-new-host"
+      (click)="openHostForm()"
     >
       {{ 'Create New' | translate }}
     </button>
 
     <button
       mat-menu-item
-      ixTest="manage-ports"
-      (click)="onManagePorts()"
+      ixTest="manage-hosts"
+      (click)="onManageHosts()"
     >
-      {{ 'Manage Ports' | translate }}
+      {{ 'Manage Hosts' | translate }}
     </button>
   </mat-menu>
 }
