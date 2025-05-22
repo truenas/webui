@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { NvmeOfCardComponent } from 'app/pages/sharing/components/shares-dashboard/nvme-of-card/nvme-of-card.component';
 import { sharesDashboardElements } from 'app/pages/sharing/components/shares-dashboard/shares-dashboard.elements';
 import { IscsiCardComponent } from './iscsi-card/iscsi-card.component';
 import { NfsCardComponent } from './nfs-card/nfs-card.component';
@@ -17,6 +18,7 @@ import { SmbCardComponent } from './smb-card/smb-card.component';
     SmbCardComponent,
     NfsCardComponent,
     IscsiCardComponent,
+    NvmeOfCardComponent,
   ],
 })
 export class SharesDashboardComponent {

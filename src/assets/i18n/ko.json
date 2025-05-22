@@ -1,5 +1,6 @@
 {
   "": "",
+  "Add NVME-oF Share": "",
   "All hosts are allowed.": "",
   "Also use Diffie–Hellman key exchange for additional security": "",
   "Apply Pending Update": "",
@@ -22,6 +23,7 @@
   "Namespaces": "",
   "No hosts are allowed to access this subsystem. It will not be accessible.": "",
   "No ports are associated with this subsystem. It will not be accessible.": "",
+  "NVME-oF Shares Subsystems": "",
   "Pending Update": "",
   "Please enter Host NQN first.": "",
   "Port added to the subsystem": "",
