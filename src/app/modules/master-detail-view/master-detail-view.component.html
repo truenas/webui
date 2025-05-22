@@ -10,7 +10,7 @@
       [class.details-container-mobile]="showMobileDetails()"
     >
       <div class="header-container">
-        @if(isMobileView()) {
+        @if (isMobileView()) {
           <ix-mobile-back-button
             (close)="toggleShowMobileDetails(false)"
           ></ix-mobile-back-button>

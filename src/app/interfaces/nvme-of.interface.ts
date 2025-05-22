@@ -108,9 +108,23 @@ export interface NvmeOfHost {
 export type UpdateNvmeOfHost = Partial<Omit<NvmeOfHost, 'id'>>;
 export type CreateNvmeOfHost = Required<UpdateNvmeOfHost, 'hostnqn'>;
 
+export interface SubsystemPortAssociation {
+  id: number;
+  port: NvmeOfPort;
+  subsystem: NvmeOfSubsystem;
+  subsys_id: number;
+  port_id: number;
+}
+
 export interface AssociateSubsystemPort {
   port_id: number;
   subsys_id: number;
+}
+
+export interface SubsystemHostAssociation {
+  id: number;
+  host: NvmeOfHost;
+  subsystem: NvmeOfSubsystem;
 }
 
 export interface AssociateSubsystemHost {

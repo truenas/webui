@@ -10,7 +10,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   finalize, forkJoin, map, Observable, switchMap,
 } from 'rxjs';
-import { NvmeOfSubsystem } from 'app/interfaces/nvme-of.interface';
+import { NvmeOfHost, NvmeOfPort, NvmeOfSubsystem } from 'app/interfaces/nvme-of.interface';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import {
   UseIxIconsInStepperComponent,
@@ -52,9 +52,9 @@ export class AddSubsystemComponent {
     ana: [false],
 
     allowAnyHost: [false],
-    allowedHosts: [[] as number[]],
+    allowedHosts: [[] as NvmeOfHost[]],
 
-    ports: [[] as number[]],
+    ports: [[] as NvmeOfPort[]],
   });
 
   constructor(
