@@ -33,7 +33,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 @UntilDestroy()
 @Component({
   selector: 'ix-port-form',
-  styleUrls: ['./port-form.component.scss'],
   templateUrl: './port-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
