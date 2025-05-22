@@ -85,6 +85,16 @@ export class SigninComponent {
       this.wsStatus.setReconnectAllowed(true);
     });
 
+    this.wsStatus.isFailoverRestart$
+      .pipe(
+        filter(Boolean),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        this.signinStore.init();
+        this.wsStatus.setFailoverStatus(false);
+      });
+
     this.signinStore.loginBanner$.pipe(
       filter(Boolean),
       filter(() => this.window.sessionStorage.getItem('loginBannerDismissed') !== 'true'),
