@@ -1,0 +1,37 @@
+<mat-card class="card">
+  <mat-card-header>
+    <h3 mat-card-title>{{ 'Associated Hosts' | translate }}</h3>
+  </mat-card-header>
+  <mat-card-content>
+    @if (subsystem().allow_any_host) {
+      {{ 'All hosts are allowed.' | translate }}
+    } @else if (!subsystem().hosts.length) {
+      <div class="no-hosts-warning">
+        <ix-icon
+          name="mdi-alert"
+          class="icon"
+        ></ix-icon>
+
+        <div>
+          {{ helptext.noHostsWarning | translate }}
+        </div>
+      </div>
+    } @else {
+      <ul class="host-list">
+        @for (host of subsystem().hosts; track host.id) {
+          <li>
+            {{ host.hostnqn }}
+
+            @if (host.dhchap_key) {
+              <ix-icon
+                name="mdi-key"
+                class="key-icon"
+                [matTooltip]="helptext.hasHostAuthentication | translate"
+              ></ix-icon>
+            }
+          </li>
+        }
+      </ul>
+    }
+  </mat-card-content>
+</mat-card>

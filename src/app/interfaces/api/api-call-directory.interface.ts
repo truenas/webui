@@ -657,7 +657,7 @@ export interface ApiCallDirectory {
   'nvmet.global.rdma_enabled': { params: void; response: boolean };
   'nvmet.global.ana_enabled': { params: void; response: boolean };
 
-  'nvmet.subsys.query': { params: QueryParams<NvmeOfSubsystem>; response: NvmeOfSubsystem[] };
+  'nvmet.subsys.query': { params: QueryParams<NvmeOfSubsystem, { extra: { verbose: boolean } }>; response: NvmeOfSubsystem[] };
   'nvmet.subsys.create': { params: [CreateNvmeOfSubsystem]; response: NvmeOfSubsystem };
   'nvmet.subsys.update': { params: [id: number, update: UpdateNvmeOfSubsystem]; response: NvmeOfSubsystem };
   'nvmet.subsys.delete': { params: [id: number, { force: boolean }?]; response: void };

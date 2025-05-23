@@ -10,7 +10,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   finalize, forkJoin, map, Observable, switchMap,
 } from 'rxjs';
-import { NvmeOfSubsystem } from 'app/interfaces/nvme-of.interface';
+import { NvmeOfHost, NvmeOfPort, NvmeOfSubsystem } from 'app/interfaces/nvme-of.interface';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import {
   UseIxIconsInStepperComponent,
@@ -20,7 +20,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { NvmeOfService } from 'app/pages/sharing/nvme-of/utils/nvme-of.service';
+import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
@@ -52,9 +52,9 @@ export class AddSubsystemComponent {
     ana: [false],
 
     allowAnyHost: [false],
-    allowedHosts: [[] as number[]],
+    allowedHosts: [[] as NvmeOfHost[]],
 
-    ports: [[] as number[]],
+    ports: [[] as NvmeOfPort[]],
   });
 
   constructor(
