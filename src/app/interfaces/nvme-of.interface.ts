@@ -125,6 +125,8 @@ export interface SubsystemHostAssociation {
   id: number;
   host: NvmeOfHost;
   subsystem: NvmeOfSubsystem;
+  subsys_id: number;
+  host_id: number;
 }
 
 export interface AssociateSubsystemHost {
