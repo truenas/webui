@@ -29,7 +29,7 @@
   "No hosts are allowed to access this subsystem. It will not be accessible.": "",
   "No ports are associated with this subsystem. It will not be accessible.": "",
   "No static routes configured": "",
-  "NVME-oF Shares Subsystems": "",
+  "NVME-oF Subsystems": "",
   "Only allow: {activities}": "",
   "Pending Update": "",
   "Please enter Host NQN first.": "",

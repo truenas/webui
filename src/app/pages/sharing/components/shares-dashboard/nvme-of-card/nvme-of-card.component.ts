@@ -10,7 +10,7 @@ import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { filter, switchMap, of } from 'rxjs';
+import { filter, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
@@ -69,7 +69,7 @@ import { selectService } from 'app/store/services/services.selectors';
   ],
 })
 export class NvmeOfCardComponent implements OnInit {
-  requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
+  requiredRoles = [Role.SharingNvmeTargetWrite];
   protected readonly isLoading = this.nvmeOfStore.isLoading;
 
   protected service$ = this.store$.select(selectService(ServiceName.NvmeOf));
@@ -127,12 +127,13 @@ export class NvmeOfCardComponent implements OnInit {
     }),
     actionsWithMenuColumn({
       actions: [
-        {
-          iconName: iconMarker('edit'),
-          tooltip: this.translate.instant('Edit'),
-          disabled: () => of(this.isLoading()),
-          onClick: () => this.openGlobalConfiguration(),
-        },
+        // TODO: add edit action once logic is implemented
+        // {
+        //   iconName: iconMarker('edit'),
+        //   tooltip: this.translate.instant('Edit'),
+        //   disabled: () => of(this.isLoading()),
+        //   onClick: () => this.doEdit(),
+        // },
         {
           iconName: iconMarker('mdi-delete'),
           tooltip: this.translate.instant('Delete'),
