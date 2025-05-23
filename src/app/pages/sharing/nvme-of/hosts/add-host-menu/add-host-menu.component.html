@@ -1,6 +1,7 @@
 @if (noHostsExist()) {
   <button
     mat-button
+    type="button"
     [ixTest]="'add-host'"
     (click)="openHostForm()"
   >
@@ -10,6 +11,7 @@
 @else {
   <button
     mat-button
+    type="button"
     [ixTest]="'add-host'"
     [matMenuTriggerFor]="addMenu"
   >

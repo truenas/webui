@@ -21,7 +21,7 @@ export class DetailsItemHarness extends ContentContainerComponentHarness {
 
   async getLabelText(): Promise<string> {
     const label = await this.keyColumn();
-    return label.text();
+    return label.text({ exclude: 'ix-tooltip' });
   }
 
   async getValueText(): Promise<string> {

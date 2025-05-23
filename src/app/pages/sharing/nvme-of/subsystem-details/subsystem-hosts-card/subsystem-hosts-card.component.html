@@ -29,13 +29,13 @@
               <span class="host-description">
                 {{ host.hostnqn }}
 
-            @if (host.dhchap_key) {
-              <ix-icon
-                name="mdi-key"
-                class="key-icon"
-                [matTooltip]="helptext.hasHostAuthentication | translate"
-              ></ix-icon>
-            }
+                @if (host.dhchap_key) {
+                  <ix-icon
+                    name="mdi-key"
+                    class="key-icon"
+                    [matTooltip]="helptext.hasHostAuthentication | translate"
+                  ></ix-icon>
+                }
               </span>
 
               <span class="host-actions">
