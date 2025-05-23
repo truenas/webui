@@ -135,7 +135,7 @@ describe('DraidSelectionComponent', () => {
     await form.fillForm({
       'Treat Disk Size as Minimum': true,
     });
-    expect(await children.getValue()).toBe('9');
+    expect(await children.getValue()).toBe('6');
   });
 
   it('updates number of vdevs when Children are selected', async () => {
@@ -151,7 +151,7 @@ describe('DraidSelectionComponent', () => {
     expect(await vdevs.getOptionLabels()).toEqual(['1']);
 
     await form.fillForm({
-      Children: '4',
+      Children: '3',
     });
 
     expect(await vdevs.getOptionLabels()).toEqual(['1', '2']);

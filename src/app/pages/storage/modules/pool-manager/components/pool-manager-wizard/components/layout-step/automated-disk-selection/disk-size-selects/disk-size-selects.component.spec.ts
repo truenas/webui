@@ -108,8 +108,11 @@ describe('DiskSizeSelectsComponent', () => {
     it('emits (disksSelected) when checkbox is ticked', async () => {
       await diskSizeSelect.setValue('10 GiB (HDD)');
       await minimumCheckbox.setValue(true);
+      const expectedDisks = inventoryDisks.filter(
+        (disk) => disk.type === DiskType.Hdd && disk.size >= 10 * GiB,
+      );
 
-      expect(spectator.component.disksSelected.emit).toHaveBeenCalledWith(inventoryDisks);
+      expect(spectator.component.disksSelected.emit).toHaveBeenCalledWith(expectedDisks);
     });
   });
 
