@@ -7,6 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { filter, switchMap, tap } from 'rxjs';
+import { replicationTaskEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { JobState } from 'app/enums/job-state.enum';
@@ -15,6 +16,7 @@ import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { Job } from 'app/interfaces/job.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -82,6 +84,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     IxTablePagerComponent,
     TranslateModule,
     AsyncPipe,
+    EmptyComponent,
   ],
 })
 export class ReplicationListComponent implements OnInit {
@@ -91,6 +94,7 @@ export class ReplicationListComponent implements OnInit {
   readonly jobState = JobState;
   protected readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
   protected readonly searchableElements = replicationListElements;
+  protected readonly emptyConfig = replicationTaskEmptyConfig;
 
   columns = createTable<ReplicationTask>([
     textColumn({

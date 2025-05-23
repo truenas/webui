@@ -11,6 +11,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   filter, of, switchMap, tap,
 } from 'rxjs';
+import { cloudBackupTaskEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
@@ -19,6 +20,7 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { CloudBackup, CloudBackupUpdate } from 'app/interfaces/cloud-backup.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -66,6 +68,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     IxTableBodyComponent,
     TranslateModule,
     AsyncPipe,
+    EmptyComponent,
   ],
 })
 export class CloudBackupCardComponent implements OnInit {
@@ -73,6 +76,7 @@ export class CloudBackupCardComponent implements OnInit {
   dataProvider: AsyncDataProvider<CloudBackup>;
   protected readonly requiredRoles = [Role.CloudBackupWrite];
   protected readonly searchableElements = replicationListElements;
+  protected readonly emptyConfig = cloudBackupTaskEmptyConfig;
   updatedCount = signal(0);
 
   columns = createTable<CloudBackup>([

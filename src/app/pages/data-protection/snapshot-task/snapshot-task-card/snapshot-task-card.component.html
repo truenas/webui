@@ -19,38 +19,42 @@
     </div>
   </mat-toolbar-row>
 
-  <ix-table
-    class="table"
-    [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
-    [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
-  >
-    <thead
-      ix-table-head
-      [columns]="columns"
-      [dataProvider]="dataProvider"
-    ></thead>
-    <tbody
-      ix-table-body
-      [columns]="columns"
-      [dataProvider]="dataProvider"
-      [isLoading]="!!(dataProvider.isLoading$ | async)"
-    ></tbody>
-  </ix-table>
+  @if (!(dataProvider.currentPageCount$ | async) && !(dataProvider.isLoading$ | async)) {
+    <ix-empty [conf]="emptyConfig"></ix-empty>
+  } @else {
+    <ix-table
+      class="table"
+      [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
+      [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
+    >
+      <thead
+        ix-table-head
+        [columns]="columns"
+        [dataProvider]="dataProvider"
+      ></thead>
+      <tbody
+        ix-table-body
+        [columns]="columns"
+        [dataProvider]="dataProvider"
+        [isLoading]="!!(dataProvider.isLoading$ | async)"
+      ></tbody>
+    </ix-table>
 
-  <div class="justify-end">
-    <div class="footer-actions">
-      <a
-        mat-button
-        [ixTest]="['snapshot-task', 'vmware-snapshots']"
-        [routerLink]="['/data-protection', 'vmware-snapshots']"
-        [ixUiSearch]="uiSearchableElement.elements.vmwareSnapshots"
-      >{{ 'VMware Snapshot Integration' | translate }}</a>
+    <div class="justify-end">
+      <div class="footer-actions">
+        <a
+          mat-button
+          [ixTest]="['snapshot-task', 'vmware-snapshots']"
+          [routerLink]="['/data-protection', 'vmware-snapshots']"
+          [ixUiSearch]="uiSearchableElement.elements.vmwareSnapshots"
+        >{{ 'VMware Snapshot Integration' | translate }}</a>
 
-      <a
-        mat-button
-        [ixTest]="['snapshot-task', 'snapshots']"
-        [routerLink]="['/datasets', 'snapshots']"
-      >{{ 'Snapshots' | translate }}</a>
+        <a
+          mat-button
+          [ixTest]="['snapshot-task', 'snapshots']"
+          [routerLink]="['/datasets', 'snapshots']"
+        >{{ 'Snapshots' | translate }}</a>
+      </div>
     </div>
-  </div>
+  }
 </mat-card>

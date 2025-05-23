@@ -8,12 +8,14 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, filter, switchMap } from 'rxjs';
+import { nfsCardEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { LoadingMap, accumulateLoadingState } from 'app/helpers/operators/accumulate-loading-state.helper';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -61,6 +63,7 @@ import { selectService } from 'app/store/services/services.selectors';
     TranslateModule,
     AsyncPipe,
     RouterLink,
+    EmptyComponent,
   ],
 })
 export class NfsCardComponent implements OnInit {
@@ -68,6 +71,7 @@ export class NfsCardComponent implements OnInit {
   requiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
   service$ = this.store$.select(selectService(ServiceName.Nfs));
   dataProvider: AsyncDataProvider<NfsShare>;
+  protected readonly emptyConfig = nfsCardEmptyConfig;
 
   columns = createTable<NfsShare>([
     textColumn({
