@@ -2,6 +2,11 @@
   <mat-toolbar-row>
     <h3>{{ 'Static Routes' | translate }}</h3>
 
+    <ix-tooltip
+      [header]="'Static Routes' | translate"
+      [message]="'Used for advanced routing, e.g., sending traffic to a specific network via a non-default gateway.' | translate"
+    ></ix-tooltip>
+
     <div class="actions action-icon">
       <button
         *ixRequiresRoles="requiredRoles"
@@ -16,26 +21,32 @@
     </div>
   </mat-toolbar-row>
   <mat-card-content>
-    <ix-table
-      [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
-      [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
-    >
-      <thead
-        ix-table-head
-        [columns]="columns"
+    @if (!dataProvider.totalRows && !(dataProvider.isLoading$ | async)) {
+      <p>
+        {{ 'No static routes configured' | translate }}
+      </p>
+    } @else {
+      <ix-table
+        [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
+        [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
+      >
+        <thead
+          ix-table-head
+          [columns]="columns"
+          [dataProvider]="dataProvider"
+        ></thead>
+        <tbody
+          ix-table-body
+          [columns]="columns"
+          [dataProvider]="dataProvider"
+          [isLoading]="!!(dataProvider.isLoading$ | async)"
+        ></tbody>
+      </ix-table>
+      <ix-table-pager-show-more
+        [pageSize]="4"
         [dataProvider]="dataProvider"
-      ></thead>
-      <tbody
-        ix-table-body
-        [columns]="columns"
-        [dataProvider]="dataProvider"
-        [isLoading]="!!(dataProvider.isLoading$ | async)"
-      ></tbody>
-    </ix-table>
-    <ix-table-pager-show-more
-      [pageSize]="4"
-      [dataProvider]="dataProvider"
-      [ixTestOverride]="['static-routes']"
-    ></ix-table-pager-show-more>
+        [ixTestOverride]="['static-routes']"
+      ></ix-table-pager-show-more>
+    }
   </mat-card-content>
 </mat-card>
