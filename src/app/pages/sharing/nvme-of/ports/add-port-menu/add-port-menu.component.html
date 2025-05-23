@@ -1,6 +1,7 @@
 @if (noPortsExist()) {
   <button
     mat-button
+    type="button"
     [ixTest]="'add-port'"
     (click)="openPortForm()"
   >
@@ -10,6 +11,7 @@
 @else {
   <button
     mat-button
+    type="button"
     [ixTest]="'add-port'"
     [matMenuTriggerFor]="addMenu"
   >
