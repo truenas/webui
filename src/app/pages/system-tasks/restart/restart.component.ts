@@ -7,6 +7,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
@@ -46,7 +47,7 @@ export class RestartComponent implements OnInit {
     private location: Location,
     private wsStatus: WebSocketStatusService,
     private store$: Store<AppState>,
-
+    private authService: AuthService,
   ) {
   }
 
@@ -62,6 +63,7 @@ export class RestartComponent implements OnInit {
         this.errorHandler.showErrorModal(error)
           .pipe(untilDestroyed(this))
           .subscribe(() => {
+            this.authService.clearAuthToken();
             this.router.navigate(['/signin']);
           });
       },
@@ -70,6 +72,7 @@ export class RestartComponent implements OnInit {
           this.wsStatus.setReconnectAllowed(false);
         }
         this.wsManager.prepareShutdown();
+        this.authService.clearAuthToken();
         this.wsManager.reconnect();
         setTimeout(() => {
           this.router.navigate(['/signin']);

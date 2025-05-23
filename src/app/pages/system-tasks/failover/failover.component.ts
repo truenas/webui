@@ -7,6 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { AlertSlice } from 'app/modules/alerts/store/alert.selectors';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
@@ -41,6 +42,7 @@ export class FailoverComponent implements OnInit {
     protected matDialog: MatDialog,
     private location: Location,
     private store$: Store<AlertSlice>,
+    private authService: AuthService,
   ) {}
 
   isWsConnected(): void {
@@ -49,6 +51,7 @@ export class FailoverComponent implements OnInit {
         if (isConnected) {
           this.loader.close();
           // ws is connected
+          this.authService.clearAuthToken();
           this.router.navigate(['/signin']);
         } else {
           setTimeout(() => {
@@ -62,6 +65,9 @@ export class FailoverComponent implements OnInit {
   ngOnInit(): void {
     // Replace URL so that we don't restart again if page is refreshed.
     this.location.replaceState('/signin');
+    this.wsStatus.setReconnectAllowed(false);
+    this.wsStatus.setFailoverStatus(true);
+
     this.matDialog.closeAll();
     this.api.call('failover.become_passive').pipe(untilDestroyed(this)).subscribe({
       error: (error: unknown) => { // error on restart

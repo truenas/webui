@@ -95,6 +95,8 @@ describe('NvmeOfstore', () => {
 
   describe('subsystems()', () => {
     it('returns an array of subsystems together with their relations as NvmeOfSubsystemDetails', () => {
+      spectator.service.initialize();
+
       const subsystems = spectator.service.subsystems();
 
       expect(subsystems).toHaveLength(2);
