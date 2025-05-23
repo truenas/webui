@@ -1,6 +1,7 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { UserFormStore } from 'app/pages/credentials/new-users/user-form/user.store';
 
 describe('UserFormStore', () => {
@@ -32,6 +33,13 @@ describe('UserFormStore', () => {
     expect(spectator.service.truenasAccess()).toBe(false);
     expect(spectator.service.sshAccess()).toBe(false);
     expect(spectator.service.role()).toBe('prompt');
+  });
+
+  it('loads next uid and stig mode', () => {
+    spectator.service.initialize();
+
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('system.security.config');
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('user.get_next_uid');
   });
 
   // TODO: Add more tests
