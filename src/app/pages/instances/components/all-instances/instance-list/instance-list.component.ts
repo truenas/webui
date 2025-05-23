@@ -12,6 +12,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { injectParams } from 'ngxtension/inject-params';
 import { distinctUntilChanged, tap } from 'rxjs';
+import { instancesEmptyConfig } from 'app/constants/empty-configs';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
@@ -19,7 +20,6 @@ import { VirtualizationInstance } from 'app/interfaces/virtualization.interface'
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { InstanceListBulkActionsComponent } from 'app/pages/instances/components/all-instances/instance-list/instance-list-bulk-actions/instance-list-bulk-actions.component';
@@ -88,13 +88,7 @@ export class InstanceListComponent {
         large: false,
       };
     }
-    return {
-      type: EmptyType.NoPageData,
-      icon: iconMarker('mdi-laptop'),
-      title: this.translate.instant('No instances'),
-      message: this.translate.instant('Instances you create will automatically appear here.'),
-      large: true,
-    };
+    return instancesEmptyConfig;
   });
 
   constructor(

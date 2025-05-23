@@ -43,7 +43,6 @@ export const sharesEmptyConfig = {
 export const cloudSyncTaskEmptyConfig = {
   type: EmptyType.NoPageData,
   icon: iconMarker('security'),
-  title: T('No Cloud Sync Tasks'),
   message: T('Sync data to a popular cloud storage provider, such as: Google Drive and Photos, Dropbox, Amazon S3 and many others.'),
   large: true,
 } as EmptyConfig;
@@ -51,7 +50,6 @@ export const cloudSyncTaskEmptyConfig = {
 export const cloudBackupTaskEmptyConfig = {
   type: EmptyType.NoPageData,
   icon: iconMarker('security'),
-  title: T('No TrueCloud Backup Tasks'),
   message: T('Back up to the decentralized network provided by Storj in partnership with TrueNAS.'),
   large: true,
 } as EmptyConfig;
@@ -59,15 +57,15 @@ export const cloudBackupTaskEmptyConfig = {
 export const snapshotTaskEmptyConfig = {
   type: EmptyType.NoPageData,
   icon: iconMarker('security'),
-  title: T('No Periodic Snapshot Tasks'),
-  message: T('No Periodic Snapshot Tasks configured'),
+  message: T(`Automatically create point-in-time snapshots of selected datasets at regular intervals.
+ <br> These snapshots help preserve data states for recovery, backup, and versioning purposes,
+ ensuring minimal data loss in case of accidental deletion or corruption.`),
   large: true,
 } as EmptyConfig;
 
 export const rsyncTaskEmptyConfig = {
   type: EmptyType.NoPageData,
   icon: iconMarker('security'),
-  title: T('No Rsync Tasks'),
   message: T('Best if you\'re syncing with a generic system that lacks ZFS capabilities.'),
   large: true,
 } as EmptyConfig;
@@ -75,15 +73,13 @@ export const rsyncTaskEmptyConfig = {
 export const replicationTaskEmptyConfig = {
   type: EmptyType.NoPageData,
   icon: iconMarker('security'),
-  title: T('No Replication Tasks'),
   message: T('Best if you\'re syncing with another TrueNAS or ZFS system — enables advanced features not available with other methods.'),
   large: true,
 } as EmptyConfig;
 
 export const smbCardEmptyConfig = {
   type: EmptyType.NoPageData,
-  icon: iconMarker('folder_shared'),
-  title: T('No Windows (SMB) Shares'),
+  icon: iconMarker('ix-smb-share'),
   large: true,
   message: T(`Well supported by all major operating systems, allows for easy authentication and authorization.
  <br> Choose SMB for easy file sharing across mixed operating systems, especially in home or office networks.`),
@@ -91,8 +87,7 @@ export const smbCardEmptyConfig = {
 
 export const nfsCardEmptyConfig = {
   type: EmptyType.NoPageData,
-  icon: iconMarker('folder_shared'),
-  title: T('No UNIX (NFS) Shares'),
+  icon: iconMarker('ix-nfs-share'),
   large: true,
   message: T(`Optimized for Linux and Unix systems, offering deeper integration in those environments. <br>
  Choose NFS if you're working primarily with Linux servers or need efficient file access in Unix-based workflows.`),
@@ -100,9 +95,25 @@ export const nfsCardEmptyConfig = {
 
 export const iscsiCardEmptyConfig = {
   type: EmptyType.NoPageData,
-  icon: iconMarker('folder_shared'),
-  title: T('No Block (iSCSI) Shares Targets'),
+  icon: iconMarker('ix-iscsi-share'),
   large: true,
   message: T(`Provides raw block storage over the network, appearing as a local disk on the client. <br>
  Ideal for virtual machines or applications that require direct disk-level access.`),
+} as EmptyConfig;
+
+export const installedAppsEmptyConfig = {
+  type: EmptyType.NoPageData,
+  title: T('No Applications Installed'),
+  icon: iconMarker('apps'),
+  large: true,
+  message: T(`Applications you install will automatically appear here.
+ <br> Click below and browse available apps to get started.`),
+} as EmptyConfig;
+
+export const instancesEmptyConfig = {
+  type: EmptyType.NoPageData,
+  title: T('No instances'),
+  icon: iconMarker('mdi-laptop'),
+  large: true,
+  message: T('Instances you create will automatically appear here.'),
 } as EmptyConfig;

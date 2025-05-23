@@ -22,6 +22,7 @@ import { injectParams } from 'ngxtension/inject-params';
 import {
   combineLatest, filter, forkJoin, Observable, switchMap,
 } from 'rxjs';
+import { installedAppsEmptyConfig } from 'app/constants/empty-configs';
 import { AppState } from 'app/enums/app-state.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
@@ -32,7 +33,6 @@ import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
@@ -234,14 +234,11 @@ export class InstalledAppsListComponent implements OnInit {
     switch (type) {
       case EmptyType.FirstUse:
       case EmptyType.NoPageData:
-        this.entityEmptyConf.title = this.translate.instant(helptextApps.message.noInstalledApps);
-        this.entityEmptyConf.message = this.translate.instant('Applications you install will automatically appear here. Click below and browse available apps to get started.');
+        this.entityEmptyConf = { ...installedAppsEmptyConfig };
         this.entityEmptyConf.button = {
           label: this.translate.instant('Check Available Apps'),
           action: () => this.redirectToAvailableApps(),
         };
-        this.entityEmptyConf.icon = iconMarker('apps');
-        this.entityEmptyConf.large = true;
         break;
       case EmptyType.Errors:
         this.entityEmptyConf.title = this.translate.instant(helptextApps.message.notRunning);

@@ -1,3 +1,5 @@
+@import 'scss-imports/variables';
+
 :host ::ng-deep {
   ix-missing-access-wrapper {
     width: 100%;
@@ -33,6 +35,11 @@
   margin: auto 24px;
   max-width: 100%;
 
+  @media (max-width: $breakpoint-sm) {
+    display: block;
+    text-align: center;
+  }
+
   .icon-div {
     text-align: center;
 
@@ -60,6 +67,7 @@
 
   .empty-message {
     font-size: 0.875rem;
+    line-height: 28px;
     margin-bottom: 10px;
   }
 

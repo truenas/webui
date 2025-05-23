@@ -1,6 +1,11 @@
 <ix-page-header [loading]="pools() === null"></ix-page-header>
 
-@if (pools()?.length > 0) {
+@if (pools()?.length === 0 && pools() !== null) {
+  <ix-empty
+    [conf]="emptyConfig"
+    [requiredRoles]="requiredRoles"
+  ></ix-empty>
+} @else {
   <div class="cards" [ixUiSearch]="searchableElements.elements.dashboard">
     <ix-cloud-backup-card></ix-cloud-backup-card>
     <ix-cloudsync-task-card></ix-cloudsync-task-card>
@@ -8,11 +13,4 @@
     <ix-rsync-task-card></ix-rsync-task-card>
     <ix-replication-task-card></ix-replication-task-card>
   </div>
-}
-
-@if (pools()?.length === 0) {
-  <ix-empty
-    [conf]="emptyConfig"
-    [requiredRoles]="requiredRoles"
-  ></ix-empty>
 }
