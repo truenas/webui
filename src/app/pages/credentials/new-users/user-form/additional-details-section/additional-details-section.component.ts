@@ -16,6 +16,7 @@ import {
   of,
   take,
 } from 'rxjs';
+import { allCommands } from 'app/constants/all-commands.constant';
 import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { isEmptyHomeDirectory } from 'app/helpers/user.helper';
@@ -64,7 +65,7 @@ import { StorageService } from 'app/services/storage.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AdditionalDetailsSectionComponent implements OnInit {
-  editingUser = input.required<User>();
+  editingUser = input<User>();
   protected shellAccessEnabled = this.userFormStore.shellAccess;
   protected hasSharingRole = computed(() => this.userFormStore.role()?.includes(Role.SharingAdmin));
 
@@ -125,6 +126,11 @@ export class AdditionalDetailsSectionComponent implements OnInit {
           groups: user.groups,
           home: user.home,
           uid: user.uid,
+          group: user.group?.id,
+          sudo_commands: this.form.value.sudo_commands_all ? [allCommands] : this.form.value.sudo_commands,
+          sudo_commands_nopasswd: this.form.value.sudo_commands_nopasswd_all
+            ? [allCommands]
+            : this.form.value.sudo_commands_nopasswd,
         }, { emitEvent: false });
 
         this.form.controls.uid.disable();
@@ -135,6 +141,19 @@ export class AdditionalDetailsSectionComponent implements OnInit {
           this.form.controls.home_mode.disable();
           this.form.controls.home.disable();
           this.form.controls.home_create.disable();
+        }
+
+        if (this.editingUser()?.home && !isEmptyHomeDirectory(this.editingUser()?.home)) {
+          this.storageService.filesystemStat(this.editingUser().home)
+            .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
+            .subscribe((stat) => {
+              const homeMode = stat.mode.toString(8).substring(2, 5);
+              this.form.patchValue({ home_mode: homeMode });
+              this.userFormStore.updateSetupDetails({ homeModeOldValue: homeMode });
+            });
+        } else {
+          this.form.patchValue({ home_mode: '700' });
+          this.form.controls.home_mode.disable();
         }
       }
     });
@@ -250,19 +269,6 @@ export class AdditionalDetailsSectionComponent implements OnInit {
         this.form.patchValue({ home_mode: '700' });
       }
     });
-
-    if (this.editingUser()?.home && !isEmptyHomeDirectory(this.editingUser()?.home)) {
-      this.storageService.filesystemStat(this.editingUser().home)
-        .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
-        .subscribe((stat) => {
-          const homeMode = stat.mode.toString(8).substring(2, 5);
-          this.form.patchValue({ home_mode: homeMode });
-          this.userFormStore.updateSetupDetails({ homeModeOldValue: homeMode });
-        });
-    } else {
-      this.form.patchValue({ home_mode: '700' });
-      this.form.controls.home_mode.disable();
-    }
   }
 
   private setHomeSharePath(): void {
