@@ -73,6 +73,7 @@ export interface NetworkInterfaceState {
   cloned: boolean;
   description: string;
   flags: NetworkInterfaceFlag[];
+  permanent_link_address: string;
   link_address: string;
   link_state: LinkState;
   media_options: unknown;

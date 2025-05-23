@@ -97,6 +97,12 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
     ipAddressesColumn({
       title: this.translate.instant('IP Addresses'),
       sortBy: (row) => row.aliases.map((alias) => alias.address).join(', '),
+      cssClass: 'wider-column',
+    }),
+    textColumn({
+      title: this.translate.instant('MAC Address'),
+      cssClass: 'wider-column',
+      getValue: (row) => row.state.permanent_link_address,
     }),
     actionsWithMenuColumn({
       actions: [

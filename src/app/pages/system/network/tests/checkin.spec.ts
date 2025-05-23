@@ -50,6 +50,9 @@ describe('NetworkComponent', () => {
     id: '1',
     type: NetworkInterfaceType.Physical,
     name: 'eno1',
+    state: {
+      permanent_link_address: 'ac:1f:6b:ca:32:24',
+    },
     aliases: [
       {
         address: '192.168.238.12',

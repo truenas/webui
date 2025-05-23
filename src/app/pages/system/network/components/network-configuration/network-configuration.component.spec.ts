@@ -140,6 +140,8 @@ describe('NetworkConfigurationComponent', () => {
       'IPv6 Default Gateway': '',
       'HTTP Proxy': '',
       'Host Name Database': [],
+      'Outbound Activity': 'Allow Specific',
+      Services: ['Cloud sync'],
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -149,8 +151,8 @@ describe('NetworkConfigurationComponent', () => {
       'network.configuration.update',
       [{
         activity: {
-          activities: [],
-          type: NetworkActivityType.Deny,
+          activities: ['cloud_sync'],
+          type: NetworkActivityType.Allow,
         },
         domain: 'local',
         domains: [],

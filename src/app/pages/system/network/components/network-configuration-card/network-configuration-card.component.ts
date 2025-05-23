@@ -7,7 +7,7 @@ import { MatList, MatListItem } from '@angular/material/list';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Actions, ofType } from '@ngrx/effects';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import ipRegex from 'ip-regex';
 import { combineLatest, filter } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -89,20 +89,27 @@ export class NetworkConfigurationCardComponent implements OnInit {
   }
 
   get additionalDomains(): string {
-    return this.config.domains.length > 0 ? this.config.domains.join(', ') : '---';
+    return this.config.domains.length > 0 ? this.config.domains.join(', ') : '-';
   }
 
   get outboundNetwork(): string {
-    if (this.config.activity.type === NetworkActivityType.Deny) {
+    if (this.config.activity.activities.length === 0) {
+      if (this.config.activity.type === NetworkActivityType.Allow) {
+        return this.translate.instant('Deny All');
+      }
+
       return this.translate.instant('Allow All');
     }
 
-    if (this.config.activity.activities.length === 0) {
-      return this.translate.instant('Deny All');
+    if (this.config.activity.type === NetworkActivityType.Allow) {
+      return this.translate.instant(
+        'Only allow: {activities}',
+        { activities: this.config.activity.activities.join(', ') },
+      );
     }
 
     return this.translate.instant(
-      'Allow {activities}',
+      'Allow all except: {activities}',
       { activities: this.config.activity.activities.join(', ') },
     );
   }
@@ -110,11 +117,17 @@ export class NetworkConfigurationCardComponent implements OnInit {
   get nameservers(): Option[] {
     const nameservers: Option[] = [];
     const nameserverAttributes = ['nameserver1', 'nameserver2', 'nameserver3'] as const;
-    nameserverAttributes.forEach((attribute, n) => {
+    const labels = [
+      this.translate.instant('Primary'),
+      this.translate.instant('Secondary'),
+      this.translate.instant('Tertiary'),
+    ];
+
+    nameserverAttributes.forEach((attribute, index) => {
       const nameserver = this.config[attribute];
       if (nameserver) {
         nameservers.push({
-          label: this.translate.instant('Nameserver {n}', { n: n + 1 }),
+          label: this.translate.instant(labels[index]),
           value: nameserver,
         });
       }
