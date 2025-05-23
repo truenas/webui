@@ -26,18 +26,3 @@ ix-dataset-details-panel {
     margin-top: -12px;
   }
 }
-
-.empty-wrapper {
-  align-items: center;
-  box-sizing: border-box;
-  display: flex;
-  flex: 1 1 100%;
-  flex-direction: row;
-  max-width: 100%;
-  padding: 16px;
-  place-content: center;
-
-  ix-empty {
-    margin: 32px 0;
-  }
-}

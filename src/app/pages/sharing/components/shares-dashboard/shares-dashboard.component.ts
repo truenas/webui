@@ -1,6 +1,15 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { sharesEmptyConfig } from 'app/constants/empty-configs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { Role } from 'app/enums/role.enum';
+import { EmptyConfig } from 'app/interfaces/empty-config.interface';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { sharesDashboardElements } from 'app/pages/sharing/components/shares-dashboard/shares-dashboard.elements';
 import { IscsiCardComponent } from './iscsi-card/iscsi-card.component';
 import { NfsCardComponent } from './nfs-card/nfs-card.component';
@@ -17,8 +26,29 @@ import { SmbCardComponent } from './smb-card/smb-card.component';
     SmbCardComponent,
     NfsCardComponent,
     IscsiCardComponent,
+    EmptyComponent,
+    TranslateModule,
+    PageHeaderComponent,
   ],
 })
 export class SharesDashboardComponent {
   protected readonly searchableElements = sharesDashboardElements;
+
+  protected readonly requiredRoles = [Role.PoolWrite];
+
+  emptyConfig: EmptyConfig = {
+    ...sharesEmptyConfig,
+    button: {
+      label: this.translate.instant('Create Pool'),
+      action: () => this.router.navigate(['/storage', 'create']),
+    },
+  };
+
+  readonly pools = toSignal(this.api.call('pool.query'), { initialValue: null });
+
+  constructor(
+    private api: ApiService,
+    private translate: TranslateService,
+    private router: Router,
+  ) {}
 }

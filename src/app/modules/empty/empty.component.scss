@@ -1,6 +1,18 @@
+@import 'scss-imports/variables';
+
 :host ::ng-deep {
   ix-missing-access-wrapper {
     width: 100%;
+  }
+
+  a {
+    color: var(--primary);
+    text-decoration: underline;
+  }
+
+  p,
+  .empty-message {
+    margin: 10px 0;
   }
 }
 
@@ -9,16 +21,24 @@
   display: flex;
   flex: 1;
   flex-direction: column;
-  height: 100%;
+  height: initial;
   justify-content: center;
-  padding: 15px;
+  margin: 8px;
+  padding: 8px;
 }
 
 .empty-page {
   align-items: center;
   color: var(--fg2);
+  display: flex;
+  gap: 16px;
   margin: auto 24px;
-  max-width: 300px;
+  max-width: 100%;
+
+  @media (max-width: $breakpoint-sm) {
+    display: block;
+    text-align: center;
+  }
 
   .icon-div {
     text-align: center;
@@ -43,11 +63,11 @@
   .empty-title {
     font-size: inherit;
     margin-bottom: 10px;
-    text-align: center;
   }
 
   .empty-message {
     font-size: 0.875rem;
+    line-height: 28px;
     margin-bottom: 10px;
   }
 
@@ -72,9 +92,9 @@
       .icon {
         align-items: center;
         display: inline-flex;
-        font-size: 150px;
-        height: 150px;
-        width: auto;
+        font-size: 100px;
+        height: 100px;
+        width: 100px;
 
         &.logo {
           font-size: unset;
@@ -88,13 +108,8 @@
       font-size: 16px;
       margin-bottom: 20px;
     }
-
-    .empty-message {
-      margin-bottom: 20px;
-    }
   }
 
   button.empty-action {
-    width: 100%;
-  }
-}
+    margin-top: 15px;
+  }}

@@ -7,24 +7,29 @@
   ></ix-search-input1>
 </div>
 
-<ix-table
-  class="backups"
-  [ixUiSearch]="searchableElements.elements.tasks"
-  [ix-table-empty]="!(dataProvider()?.currentPageCount$ | async)"
-  [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider()?.emptyType$ | async)"
->
-  <thead
-    ix-table-head
-    [columns]="columns"
-    [dataProvider]="dataProvider()"
-  ></thead>
+@if (!(dataProvider()?.currentPageCount$ | async) && !(dataProvider().isLoading$ | async)) {
+  <ix-empty [conf]="emptyConfig"></ix-empty>
+} @else {
+  <ix-table
+    class="backups"
+    [ixUiSearch]="searchableElements.elements.tasks"
+    [ix-table-empty]="!(dataProvider()?.currentPageCount$ | async)"
+    [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider()?.emptyType$ | async)"
+  >
+    <thead
+      ix-table-head
+      [columns]="columns"
+      [dataProvider]="dataProvider()"
+    ></thead>
 
-  <tbody
-    ix-table-body
-    [columns]="columns"
-    [dataProvider]="dataProvider()"
-    [isLoading]="!!(dataProvider().isLoading$ | async)"
-    (expanded)="expanded($event)"
-  ></tbody>
-</ix-table>
-<ix-table-pager [dataProvider]="dataProvider()"></ix-table-pager>
+    <tbody
+      ix-table-body
+      [columns]="columns"
+      [dataProvider]="dataProvider()"
+      [isLoading]="!!(dataProvider().isLoading$ | async)"
+      (expanded)="expanded($event)"
+    ></tbody>
+  </ix-table>
+
+  <ix-table-pager [dataProvider]="dataProvider()"></ix-table-pager>
+}

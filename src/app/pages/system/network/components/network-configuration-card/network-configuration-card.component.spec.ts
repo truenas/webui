@@ -71,23 +71,23 @@ describe('NetworkConfigurationCardComponent', () => {
   });
 
   it('shows nameservers assigned via settings', () => {
-    const nameserversSection = spectator.query(byText('Nameservers'))!.parentElement!;
-    const nameserverItems = nameserversSection.querySelectorAll('mat-list-item');
+    const dnsServersSection = spectator.query(byText('DNS Servers'))!.parentElement!;
+    const dnsServerItems = dnsServersSection.querySelectorAll('mat-list-item');
 
-    expect(nameserverItems).toHaveLength(3);
-    expect(nameserverItems[0]).toHaveText('Nameserver 1');
-    expect(nameserverItems[0]).toHaveText('8.8.8.8');
-    expect(nameserverItems[1]).toHaveText('Nameserver 2');
-    expect(nameserverItems[1]).toHaveText('8.8.4.4');
+    expect(dnsServerItems).toHaveLength(3);
+    expect(dnsServerItems[0]).toHaveText('Primary');
+    expect(dnsServerItems[0]).toHaveText('8.8.8.8');
+    expect(dnsServerItems[1]).toHaveText('Secondary');
+    expect(dnsServerItems[1]).toHaveText('8.8.4.4');
   });
 
   it('separately shows nameservers obtained via DHCP and not settings', () => {
-    const nameserversSection = spectator.query(byText('Nameservers'))!.parentElement!;
-    const nameserverItems = nameserversSection.querySelectorAll('mat-list-item');
+    const dnsServersSection = spectator.query(byText('DNS Servers'))!.parentElement!;
+    const dnsServerItems = dnsServersSection.querySelectorAll('mat-list-item');
 
-    expect(nameserverItems).toHaveLength(3);
-    expect(nameserverItems[2]).toHaveText('Nameserver (DHCP)');
-    expect(nameserverItems[2]).toHaveText('8.8.1.1');
+    expect(dnsServerItems).toHaveLength(3);
+    expect(dnsServerItems[2]).toHaveText('Nameserver (DHCP)');
+    expect(dnsServerItems[2]).toHaveText('8.8.1.1');
   });
 
   it('shows IPv4 addresses', () => {
@@ -107,7 +107,8 @@ describe('NetworkConfigurationCardComponent', () => {
   });
 
   it('shows config details', () => {
-    const detailsList = spectator.queryAll('.details-list li');
+    const detailsList = spectator.queryAll('.details-list mat-list-item');
+
     const detailsItems = detailsList.reduce((items, element) => {
       const label = element.querySelector('.label')!.textContent!;
       const value = element.querySelector('.value')!.textContent!;

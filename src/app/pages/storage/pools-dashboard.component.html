@@ -13,16 +13,18 @@
     {{ 'Disks' | translate }}
   </a>
 
-  <a
-    *ixRequiresRoles="requiredRoles"
-    mat-button
-    color="primary"
-    ixTest="create-pool"
-    [ixUiSearch]="searchableElements.elements.createPool"
-    [routerLink]="['/storage', 'create']"
-  >
-    {{ 'Create Pool' | translate }}
-  </a>
+  @if (!hasNoPools() && !arePoolsLoading()) {
+    <a
+      *ixRequiresRoles="requiredRoles"
+      mat-button
+      color="primary"
+      ixTest="create-pool"
+      [ixUiSearch]="searchableElements.elements.createPool"
+      [routerLink]="['/storage', 'create']"
+    >
+      {{ 'Create Pool' | translate }}
+    </a>
+  }
 </ix-page-header>
 
 <div [ixUiSearch]="searchableElements.elements.storageDashboard">
@@ -40,7 +42,10 @@
 
   @if (hasNoPools() && !arePoolsLoading()) {
     <div class="entity-empty-wrapper">
-      <ix-empty [conf]="entityEmptyConf" [requiredRoles]="requiredRoles"></ix-empty>
+      <ix-empty
+        [conf]="emptyConfig"
+        [requiredRoles]="requiredRoles"
+      ></ix-empty>
     </div>
   }
 
