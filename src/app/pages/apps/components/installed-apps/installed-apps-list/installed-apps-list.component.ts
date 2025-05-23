@@ -22,6 +22,7 @@ import { injectParams } from 'ngxtension/inject-params';
 import {
   combineLatest, filter, forkJoin, Observable, switchMap,
 } from 'rxjs';
+import { installedAppsEmptyConfig } from 'app/constants/empty-configs';
 import { AppState } from 'app/enums/app-state.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
@@ -233,8 +234,7 @@ export class InstalledAppsListComponent implements OnInit {
     switch (type) {
       case EmptyType.FirstUse:
       case EmptyType.NoPageData:
-        this.entityEmptyConf.title = this.translate.instant(helptextApps.message.noInstalledApps);
-        this.entityEmptyConf.message = this.translate.instant('Applications you install will automatically appear here. Click below and browse available apps to get started.');
+        this.entityEmptyConf = { ...installedAppsEmptyConfig };
         this.entityEmptyConf.button = {
           label: this.translate.instant('Check Available Apps'),
           action: () => this.redirectToAvailableApps(),
