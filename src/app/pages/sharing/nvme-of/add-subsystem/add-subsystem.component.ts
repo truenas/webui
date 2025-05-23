@@ -6,10 +6,13 @@ import {
   MatStep, MatStepLabel, MatStepper, MatStepperNext, MatStepperPrevious,
 } from '@angular/material/stepper';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   finalize, forkJoin, map, Observable, switchMap,
+  tap,
 } from 'rxjs';
+import { ServiceName } from 'app/enums/service-name.enum';
 import { NvmeOfHost, NvmeOfPort, NvmeOfSubsystem } from 'app/interfaces/nvme-of.interface';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import {
@@ -22,6 +25,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { AppState } from 'app/store';
+import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 
 @UntilDestroy()
 @Component({
@@ -65,6 +70,7 @@ export class AddSubsystemComponent {
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
     private nvmeOfService: NvmeOfService,
+    private store$: Store<AppState>,
   ) {}
 
   protected onSubmit(): void {
@@ -76,6 +82,7 @@ export class AddSubsystemComponent {
           this.nvmeOfService.associateHosts(subsystem, this.form.value.allowedHosts),
         ]).pipe(
           map(() => subsystem),
+          tap(() => this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.NvmeOf }))),
         );
       }),
       finalize(() => this.isLoading.set(false)),
