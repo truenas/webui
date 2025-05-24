@@ -33,6 +33,15 @@ export const selectJob = (id: number): MemoizedSelector<object, Job | undefined>
   (jobs) => jobs.find((job) => job.id === id),
 );
 
+export function selectJobWithCallId(
+  uuid: string,
+): MemoizedSelector<object, Job | undefined> {
+  return createSelector(
+    selectJobs,
+    (jobs) => jobs.find((job) => job.message_ids.includes(uuid)) || undefined,
+  );
+}
+
 export const selectIsJobPanelOpen = createSelector(
   selectJobState,
   (state) => state.isPanelOpen,

@@ -30,7 +30,6 @@ import { FirstTimeWarningService } from 'app/services/first-time-warning.service
   templateUrl: './failover-card.component.html',
   styleUrls: [
     '../../general-settings/common-settings-card.scss',
-    './failover-card.component.scss',
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [

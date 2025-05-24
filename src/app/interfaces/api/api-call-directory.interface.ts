@@ -74,6 +74,7 @@ import {
   ContainerImage, DeleteContainerImageParams,
 } from 'app/interfaces/container-image.interface';
 import { CoreDownloadQuery, CoreDownloadResponse } from 'app/interfaces/core-download.interface';
+import { CoreOptions } from 'app/interfaces/core-options.interface';
 import {
   CountManualSnapshotsParams,
   EligibleManualSnapshotsCount,
@@ -435,6 +436,7 @@ export interface ApiCallDirectory {
   'core.resize_shell': { params: ResizeShellRequest; response: void };
   'core.subscribe': { params: [name: ApiEventMethod]; response: void };
   'core.unsubscribe': { params: [id: string]; response: void };
+  'core.set_options': { params: CoreOptions; response: CoreOptions };
 
   // Cronjob
   'cronjob.create': { params: [CronjobUpdate]; response: Cronjob };
