@@ -1,6 +1,7 @@
 {
   "": "",
   "A dataset is a logical container within a pool used to organize your files and folders. <br>\n After you create a pool, this page will list all your datasets.": "",
+  "Add NVME-oF Share": "",
   "Allow All Except": "",
   "Allow all except: {activities}": "",
   "Applications you install will automatically appear here.\n <br> Click below and browse available apps to get started.": "",
@@ -118,6 +119,7 @@
   "Number of previous passwords to remember. Must be between 1 and 10.": "",
   "Number of seconds before timeout. To view the AD  connection status, open the interface <i>Task Manager</i>.": "",
   "Number of VDEVs": "",
+  "NVME-oF Subsystems": "",
   "of": "",
   "Off by default. When set, <a href=\"https://www.samba.org/samba/docs/current/man-html/smbd.8.html\" target=\"_blank\">smbd(8)</a> attempts to authenticate users with the insecure and vulnerable NTLMv1 encryption. This setting allows backward compatibility with older versions of Windows, but is not recommended and should not be used on untrusted networks.": "",
   "Once an enclosure is selected, all other VDEV creation steps will limit disk selection options to disks in the selected enclosure. If the enclosure selection is changed, all disk selections will be reset.": "",
