@@ -56,7 +56,7 @@ export type ApiMethod = ApiCallMethod | ApiJobMethod | ApiEventMethod;
 
 export interface ApiEvent<T = unknown> {
   collection: ApiCallMethod | ApiJobMethod | ApiEventMethod;
-  fields: T & { message_ids: string[] };
+  fields: T;
   id: number | string;
   msg: CollectionChangeType.Changed
     | CollectionChangeType.Added

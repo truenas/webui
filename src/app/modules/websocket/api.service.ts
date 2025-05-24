@@ -147,9 +147,8 @@ export class ApiService {
   private callMethod<M extends ApiCallMethod | ApiJobMethod>(
     method: M,
     params?: unknown[],
-    callUuid?: string,
   ): Observable<unknown> {
-    const uuid = callUuid || UUID.UUID();
+    const uuid = UUID.UUID();
     return of(uuid).pipe(
       switchMap(() => {
         performance.mark(`${method} - ${uuid} - start`);
