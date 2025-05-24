@@ -9,20 +9,21 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { HostFormComponent } from 'app/pages/sharing/nvme-of/host-form/host-form.component';
+import { HostFormComponent } from 'app/pages/sharing/nvme-of/hosts/host-form/host-form.component';
 
 describe('HostFormComponent', () => {
   let spectator: Spectator<HostFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
   let api: ApiService;
+  const savedHost = { id: 1 } as NvmeOfHost;
   const slideInGetData = jest.fn(() => undefined);
   const createComponent = createComponentFactory({
     component: HostFormComponent,
     providers: [
       mockApi([
-        mockCall('nvmet.host.create'),
-        mockCall('nvmet.host.update'),
+        mockCall('nvmet.host.create', savedHost),
+        mockCall('nvmet.host.update', savedHost),
         mockCall('nvmet.host.generate_key', '123456'),
         mockCall('nvmet.host.dhchap_hash_choices', ['SHA-256', 'SHA-512']),
         mockCall('nvmet.host.dhchap_dhgroup_choices', ['2048-BIT', '4096-BIT']),
@@ -75,7 +76,7 @@ describe('HostFormComponent', () => {
       dhchap_hash: 'SHA-512',
     }]);
     expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({
-      response: true,
+      response: savedHost,
       error: null,
     });
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
