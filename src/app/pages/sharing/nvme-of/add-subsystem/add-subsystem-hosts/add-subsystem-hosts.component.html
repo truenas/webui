@@ -1,0 +1,46 @@
+<div class="controls">
+  <h5>{{ 'Allowed Hosts' | translate }}</h5>
+
+  <ix-add-host-menu
+    [subsystemHosts]="hostsControl().value"
+    (hostSelected)="onHostAdded($event)"
+  ></ix-add-host-menu>
+</div>
+
+@if (!hostsControl().value.length) {
+  <div class="no-hosts">
+    {{ helptext.addHost | translate }}
+  </div>
+}
+@else {
+  <ul class="host-list">
+    @for (host of hostsControl().value; track host.id) {
+      <li>
+        <span class="host">
+          <span class="host-description">
+            {{ host.hostnqn }}
+
+            @if (host.dhchap_key) {
+              <ix-icon
+                name="mdi-key"
+                class="key-icon"
+                [matTooltip]="helptext.hasHostAuthentication | translate"
+              ></ix-icon>
+            }
+          </span>
+
+          <span class="host-actions">
+            <button
+              mat-icon-button
+              [ixTest]="['remove-host-association', host.hostnqn]"
+              (click)="onRemoveHost(host)"
+            >
+              <ix-icon class="icon" name="clear"></ix-icon>
+            </button>
+          </span>
+        </span>
+      </li>
+    }
+  </ul>
+}
+
