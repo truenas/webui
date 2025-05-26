@@ -84,6 +84,7 @@ describe('AdditionalDetailsSectionComponent', () => {
       expect(spectator.inject(UserFormStore).updateUserConfig).toHaveBeenCalledWith({
         full_name: '',
         email: null,
+        shell: '/usr/bin/bash',
         group_create: true,
         groups: [],
         home: '',
@@ -110,6 +111,7 @@ describe('AdditionalDetailsSectionComponent', () => {
       expect(spectator.inject(UserFormStore).updateUserConfig).toHaveBeenLastCalledWith({
         full_name: 'Editable field',
         email: 'editable@truenas.local',
+        shell: '/usr/bin/bash',
         group_create: true,
         groups: [],
         home: '',
