@@ -21,7 +21,7 @@ import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/pa
 import { UserFormStore } from 'app/pages/credentials/new-users/user-form/user.store';
 import { UserStigPasswordOption } from 'app/pages/credentials/users/user-form/user-form.component';
 
-@UntilDestroy()
+@UntilDestroy({ arrayName: 'subscriptions' })
 @Component({
   selector: 'ix-auth-section',
   templateUrl: './auth-section.component.html',
