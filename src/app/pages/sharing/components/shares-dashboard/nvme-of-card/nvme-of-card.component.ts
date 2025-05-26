@@ -11,10 +11,12 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { filter, switchMap } from 'rxjs';
+import { nvmeOfEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -35,7 +37,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceExtraActionsComponent } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-extra-actions.component';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { AddSubsystemComponent } from 'app/pages/sharing/nvme-of/add-subsystem/add-subsystem.component';
-import { NvmeOfConfigurationComponent } from 'app/pages/sharing/nvme-of/nvme-of-configuration/nvme-of-configuration.component';
 import { NvmeOfSubsystemDetails } from 'app/pages/sharing/nvme-of/services/nvme-of-subsystem-details.interface';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
 import { SubsystemDeleteDialogComponent } from 'app/pages/sharing/nvme-of/subsystem-details-header/subsystem-delete-dialog/subsystem-delete-dialog.component';
@@ -66,6 +67,7 @@ import { selectService } from 'app/store/services/services.selectors';
     TranslateModule,
     AsyncPipe,
     RouterLink,
+    EmptyComponent,
   ],
 })
 export class NvmeOfCardComponent implements OnInit {
@@ -127,13 +129,6 @@ export class NvmeOfCardComponent implements OnInit {
     }),
     actionsWithMenuColumn({
       actions: [
-        // TODO: add edit action once logic is implemented
-        // {
-        //   iconName: iconMarker('edit'),
-        //   tooltip: this.translate.instant('Edit'),
-        //   disabled: () => of(this.isLoading()),
-        //   onClick: () => this.doEdit(),
-        // },
         {
           iconName: iconMarker('mdi-delete'),
           tooltip: this.translate.instant('Delete'),
@@ -146,6 +141,8 @@ export class NvmeOfCardComponent implements OnInit {
     uniqueRowTag: (row) => 'nvmeof-subsys-' + row.name,
     ariaLabels: (row) => [row.name, this.translate.instant('Subsystem')],
   });
+
+  protected readonly emptyConfig = nvmeOfEmptyConfig;
 
   constructor(
     private slideIn: SlideIn,
@@ -188,9 +185,5 @@ export class NvmeOfCardComponent implements OnInit {
       ).subscribe(() => {
         this.nvmeOfStore.initialize();
       });
-  }
-
-  openGlobalConfiguration(): void {
-    this.slideIn.open(NvmeOfConfigurationComponent);
   }
 }
