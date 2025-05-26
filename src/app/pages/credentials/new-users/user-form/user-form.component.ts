@@ -87,7 +87,7 @@ export class UserFormComponent implements OnInit {
     return !this.editingUser();
   }
 
-  formValues = computed(() => {
+  protected readonly formValues = computed(() => {
     return {
       ...this.form.value,
       ...this.allowedAccessSection().form.value,
@@ -96,7 +96,7 @@ export class UserFormComponent implements OnInit {
     };
   });
 
-  homeCreateWarning = computed<TranslatedString>(() => {
+  protected homeCreateWarning = computed<TranslatedString>(() => {
     const homeCreate = this.formValues().home_create;
     const home = this.formValues().home;
     const homeMode = this.formValues().home_mode;

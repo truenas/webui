@@ -142,6 +142,12 @@ describe('UserFormComponent', () => {
     ],
   });
 
+  it('checks used components', () => {
+    expect(AllowedAccessSectionComponent).toBeTruthy();
+    expect(AuthSectionComponent).toBeTruthy();
+    expect(AdditionalDetailsSectionComponent).toBeTruthy();
+  });
+
   describe('adding user', () => {
     beforeEach(() => {
       spectator = createComponent();
