@@ -1,5 +1,4 @@
 import { computed, Injectable } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import { produce } from 'immer';
@@ -39,14 +38,9 @@ const initialState: EnclosureState = {
 @UntilDestroy()
 @Injectable()
 export class EnclosureStore extends ComponentStore<EnclosureState> {
-  readonly stateAsSignal = toSignal(
-    this.state$,
-    { initialValue: initialState },
-  );
-
-  readonly isLoading = computed(() => this.stateAsSignal().isLoading);
+  readonly isLoading = computed(() => this.state().isLoading);
   readonly selectedSlot = computed(() => {
-    const selectedSlotNumber = this.stateAsSignal().selectedSlotNumber;
+    const selectedSlotNumber = this.state().selectedSlotNumber;
     const selectedEnclosure = this.selectedEnclosure();
     if (selectedSlotNumber === null || !selectedEnclosure) {
       return null;
@@ -57,7 +51,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
   });
 
   readonly selectedEnclosure = computed<DashboardEnclosure | undefined>(() => {
-    const state = this.stateAsSignal();
+    const state = this.state();
     return state.enclosures[state.selectedEnclosureIndex];
   });
 
@@ -66,9 +60,9 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
     return Object.values(slots);
   });
 
-  readonly selectedView = computed(() => this.stateAsSignal().selectedView);
-  readonly selectedSide = computed(() => this.stateAsSignal().selectedSide);
-  readonly enclosures = computed(() => this.stateAsSignal().enclosures);
+  readonly selectedView = computed(() => this.state().selectedView);
+  readonly selectedSide = computed(() => this.state().selectedSide);
+  readonly enclosures = computed(() => this.state().enclosures);
 
   readonly poolColors = computed<Record<string, string>>(() => {
     const enclosures = this.enclosures();
