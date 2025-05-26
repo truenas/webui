@@ -37,6 +37,7 @@ import {
   map,
   switchMap,
 } from 'rxjs/operators';
+import { datasetEmptyConfig } from 'app/constants/empty-configs';
 import { DetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
@@ -60,7 +61,6 @@ import { TreeDataSource } from 'app/modules/ix-tree/tree-datasource';
 import { TreeFlattener } from 'app/modules/ix-tree/tree-flattener';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetDetailsPanelComponent } from 'app/pages/datasets/components/dataset-details-panel/dataset-details-panel.component';
 import { datasetManagementElements } from 'app/pages/datasets/components/dataset-management/dataset-management.elements';
@@ -115,7 +115,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
 
   error = toSignal(this.datasetStore.error$);
 
-  emptyConf = computed<EmptyConfig>(() => {
+  emptyConfig = computed<EmptyConfig>(() => {
     const error = this.error();
 
     const apiError = extractApiErrorDetails(error);
@@ -133,16 +133,9 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     }
 
     return {
-      type: EmptyType.NoPageData,
-      large: true,
-      title: this.translate.instant('No Datasets'),
-      message: `${this.translate.instant(
-        "It seems you haven't configured pools yet.",
-      )} ${this.translate.instant(
-        'Please click the button below to create a pool.',
-      )}` as TranslatedString,
+      ...datasetEmptyConfig,
       button: {
-        label: this.translate.instant('Create pool'),
+        label: this.translate.instant('Create Pool'),
         action: () => this.createPool(),
       },
     };

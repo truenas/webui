@@ -9,19 +9,17 @@ import { Router, RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
+import { storageEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
-import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { StorageDashboardDisk } from 'app/interfaces/disk.interface';
-import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { DashboardPoolComponent } from 'app/pages/storage/components/dashboard-pool/dashboard-pool.component';
 import { ImportPoolComponent } from 'app/pages/storage/components/import-pool/import-pool.component';
 import { UnusedResourcesComponent } from 'app/pages/storage/components/unused-resources/unused-resources.component';
@@ -57,17 +55,10 @@ export class PoolsDashboardComponent implements OnInit {
 
   rootDatasets: Record<string, Dataset> = {};
 
-  entityEmptyConf: EmptyConfig = {
-    type: EmptyType.NoPageData,
-    large: true,
-    title: this.translate.instant('No Pools'),
-    message: `${this.translate.instant(
-      'It seems you haven\'t configured pools yet.',
-    )} ${this.translate.instant(
-      'Please click the button below to create a pool.',
-    )}` as TranslatedString,
+  protected readonly emptyConfig = {
+    ...storageEmptyConfig,
     button: {
-      label: this.translate.instant('Create pool'),
+      label: this.translate.instant('Create Pool'),
       action: () => this.router.navigate(['/storage', 'create']),
     },
   };

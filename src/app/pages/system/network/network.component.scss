@@ -14,7 +14,7 @@ div.content {
     gap: 8px;
   }
 
-  @media #{$media-lt-md} {
+  @media #{$media-lt-lg} {
     flex-direction: column;
 
     .right-column,

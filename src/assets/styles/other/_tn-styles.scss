@@ -699,6 +699,11 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   .mat-mdc-card {
     border-radius: 0;
+
+    ix-empty .empty-page {
+      margin: 0;
+      width: 100%;
+    }
   }
 
   ix-confirm-dialog pre,

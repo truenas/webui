@@ -1,5 +1,8 @@
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { Pool } from 'app/interfaces/pool.interface';
 import {
   CloudBackupCardComponent,
 } from 'app/pages/data-protection/cloud-backup/cloud-backup-card/cloud-backup-card.component';
@@ -22,7 +25,12 @@ describe('DataProtectionDashboardComponent', () => {
         ReplicationTaskCardComponent,
       ),
     ],
-    providers: [],
+    providers: [
+      mockAuth(),
+      mockApi([
+        mockCall('pool.query', () => [{ id: 1 }] as Pool[]),
+      ]),
+    ],
     imports: [],
   });
 

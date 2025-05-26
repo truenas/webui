@@ -1,5 +1,11 @@
+@let empty = !(dataProvider.currentPageCount$ | async) && !(dataProvider.isLoading$ | async);
+
 <ix-page-header>
-  <ix-search-input1 [value]="filterString" (search)="onListFiltered($event)"></ix-search-input1>
+  <ix-search-input1
+    [value]="filterString"
+    [disabled]="empty"
+    (search)="onListFiltered($event)"
+  ></ix-search-input1>
 
   <ix-table-columns-selector
     [columnPreferencesKey]="'replicationList'"
@@ -19,81 +25,86 @@
   </button>
 </ix-page-header>
 
-<ix-table
-  class="table"
-  [ixUiSearch]="searchableElements.elements.tasks"
-  [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
-  [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
->
-  <thead
-    ix-table-head
-    [columns]="columns"
-    [dataProvider]="dataProvider"
-  ></thead>
-  <tbody
-    ix-table-body
-    [columns]="columns"
-    [dataProvider]="dataProvider"
-    [isLoading]="!!(dataProvider.isLoading$ | async)"
+@if (empty) {
+  <ix-empty [conf]="emptyConfig"></ix-empty>
+} @else {
+  <ix-table
+    class="table"
+    [ixUiSearch]="searchableElements.elements.tasks"
+    [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
+    [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
   >
-    <ng-template let-task ix-table-details-row [dataProvider]="dataProvider">
-      <ix-table-details-row [hiddenColumns]="hiddenColumns" [row]="task">
-        <div class="table-details-row-actions">
-          @if (!task.job || task.job.state !== jobState.Running) {
+    <thead
+      ix-table-head
+      [columns]="columns"
+      [dataProvider]="dataProvider"
+    ></thead>
+    <tbody
+      ix-table-body
+      [columns]="columns"
+      [dataProvider]="dataProvider"
+      [isLoading]="!!(dataProvider.isLoading$ | async)"
+    >
+      <ng-template let-task ix-table-details-row [dataProvider]="dataProvider">
+        <ix-table-details-row [hiddenColumns]="hiddenColumns" [row]="task">
+          <div class="table-details-row-actions">
+            @if (!task.job || task.job.state !== jobState.Running) {
+              <button
+                *ixRequiresRoles="requiredRoles"
+                mat-button
+                [ixTest]="[task.id, 'run_now']"
+                (click)="runNow(task)"
+              >
+                <ix-icon name="play_arrow"></ix-icon>
+                <span>{{ 'Run Now' | translate }}</span>
+              </button>
+            }
+
             <button
               *ixRequiresRoles="requiredRoles"
               mat-button
-              [ixTest]="[task.id, 'run_now']"
-              (click)="runNow(task)"
+              [ixTest]="[task.id, 'restore']"
+              (click)="restore(task)"
             >
-              <ix-icon name="play_arrow"></ix-icon>
-              <span>{{ 'Run Now' | translate }}</span>
+              <ix-icon name="restore"></ix-icon>
+              <span>{{ 'Restore' | translate }}</span>
             </button>
-          }
 
-          <button
-            *ixRequiresRoles="requiredRoles"
-            mat-button
-            [ixTest]="[task.id, 'restore']"
-            (click)="restore(task)"
-          >
-            <ix-icon name="restore"></ix-icon>
-            <span>{{ 'Restore' | translate }}</span>
-          </button>
+            @if (task.has_encrypted_dataset_keys) {
+              <button
+                *ixRequiresRoles="requiredRoles"
+                mat-button
+                [ixTest]="[task.id, 'download']"
+                (click)="downloadKeys(task)"
+              >
+                <ix-icon name="mdi-download"></ix-icon>
+                <span>{{ 'Download Keys' | translate }}</span>
+              </button>
+            }
 
-          @if (task.has_encrypted_dataset_keys) {
+            <button
+              mat-button
+              [ixTest]="[task.id, 'edit']"
+              (click)="openForm(task)"
+            >
+              <ix-icon name="edit"></ix-icon>
+              <span>{{ 'Edit' | translate }}</span>
+            </button>
+
             <button
               *ixRequiresRoles="requiredRoles"
               mat-button
-              [ixTest]="[task.id, 'download']"
-              (click)="downloadKeys(task)"
+              [ixTest]="[task.id, 'delete']"
+              (click)="doDelete(task)"
             >
-              <ix-icon name="mdi-download"></ix-icon>
-              <span>{{ 'Download Keys' | translate }}</span>
+              <ix-icon name="mdi-delete"></ix-icon>
+              <span>{{ 'Delete' | translate }}</span>
             </button>
-          }
+          </div>
+        </ix-table-details-row>
+      </ng-template>
+    </tbody>
+  </ix-table>
 
-          <button
-            mat-button
-            [ixTest]="[task.id, 'edit']"
-            (click)="openForm(task)"
-          >
-            <ix-icon name="edit"></ix-icon>
-            <span>{{ 'Edit' | translate }}</span>
-          </button>
-
-          <button
-            *ixRequiresRoles="requiredRoles"
-            mat-button
-            [ixTest]="[task.id, 'delete']"
-            (click)="doDelete(task)"
-          >
-            <ix-icon name="mdi-delete"></ix-icon>
-            <span>{{ 'Delete' | translate }}</span>
-          </button>
-        </div>
-      </ix-table-details-row>
-    </ng-template>
-  </tbody>
-</ix-table>
-<ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>
+  <ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>
+}

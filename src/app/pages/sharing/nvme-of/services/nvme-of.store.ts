@@ -107,4 +107,15 @@ export class NvmeOfStore extends ComponentStore<NvmeOfState> {
       }),
     );
   });
+
+  reloadHosts = this.effect((trigger$) => {
+    return trigger$.pipe(
+      switchMap(() => {
+        return this.api.call('nvmet.host.query').pipe(
+          this.errorHandler.withErrorHandler(),
+          tap((hosts) => this.patchState({ hosts })),
+        );
+      }),
+    );
+  });
 }

@@ -31,6 +31,7 @@ describe('StorjProviderFormComponent', () => {
     expect(values).toEqual({
       'Access Key ID': 'my-key-id',
       'Secret Access Key': 'my-secret-key',
+      Endpoint: 'https://gateway.storjshare.io',
     });
   });
 
@@ -44,6 +45,7 @@ describe('StorjProviderFormComponent', () => {
     expect(values).toEqual({
       access_key_id: 'updated-key-id',
       secret_access_key: 'updated-secret-key',
+      endpoint: 'https://gateway.storjshare.io',
     });
   });
 });

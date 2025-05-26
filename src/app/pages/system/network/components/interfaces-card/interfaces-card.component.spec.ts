@@ -45,9 +45,10 @@ describe('InterfacesCardComponent', () => {
       id: 'eno2',
       name: 'eno2',
       type: NetworkInterfaceType.Physical,
-      aliases: [],
+      aliases: [] as string[],
       state: {
         link_state: LinkState.Down,
+        permanent_link_address: 'ac:1f:6b:ca:32:24',
       },
     },
     {
@@ -107,10 +108,10 @@ describe('InterfacesCardComponent', () => {
 
   it('shows table with network interfaces', async () => {
     expect(await table.getCellTexts()).toEqual([
-      ['', 'Name', 'IP Addresses', ''],
-      ['', 'eno1', '84.23.23.1/24', ''],
-      ['', 'eno2', '', ''],
-      ['', 'vlan1', '', ''],
+      ['', 'Name', 'IP Addresses', 'MAC Address', ''],
+      ['', 'eno1', '84.23.23.1/24', '', ''],
+      ['', 'eno2', '', 'ac:1f:6b:ca:32:24', ''],
+      ['', 'vlan1', '', '', ''],
     ]);
   });
 

@@ -1,7 +1,8 @@
 @if (!isLoading && dataSource.data.length === 0) {
-  <div class="empty-wrapper">
-    <ix-empty [conf]="emptyConf()" [requiredRoles]="requiredRoles"></ix-empty>
-  </div>
+  <ix-empty
+    [conf]="emptyConfig()"
+    [requiredRoles]="requiredRoles"
+  ></ix-empty>
 } @else {
   <div class="container">
     <div class="table-container">
