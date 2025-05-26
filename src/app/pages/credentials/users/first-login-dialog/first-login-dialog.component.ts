@@ -12,6 +12,7 @@ import { map } from 'rxjs';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { ChangePasswordFormComponent } from 'app/modules/layout/topbar/change-password-dialog/change-password-form/change-password-form.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { TwoFactorComponent } from 'app/pages/two-factor-auth/two-factor.component';
 
 @UntilDestroy()
@@ -38,7 +39,11 @@ export class FirstLoginDialog {
     map((config) => config.secret_configured),
   ));
 
-  constructor(private authService: AuthService) {}
+  protected isStigEnabled = toSignal(this.api.call('system.security.config').pipe(
+    map((config) => config.enable_gpos_stig),
+  ));
+
+  constructor(private authService: AuthService, private api: ApiService) {}
 
   passwordChanged(): void {
     this.authService.wasOneTimePasswordChanged$.next(true);
