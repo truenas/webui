@@ -15,7 +15,6 @@ export const helptextApps = {
     loading: T('Loading...'),
     notRunning: T('Applications are not running'),
     noSearchResults: T('No Search Results.'),
-    noInstalledApps: T('No Applications Installed'),
   },
 
   dockerRegistries: {

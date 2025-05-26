@@ -110,11 +110,11 @@ describe('DatasetsManagementComponent', () => {
     expect(spectator.query(EmptyComponent)!.conf).toEqual(
       expect.objectContaining({
         type: 'no_page_data',
+        icon: 'ix-dataset-root',
         title: 'No Datasets',
-        message: "It seems you haven't configured pools yet. Please click the button below to create a pool.",
         large: true,
         button: expect.objectContaining({
-          label: 'Create pool',
+          label: 'Create Pool',
         }),
       }),
     );
