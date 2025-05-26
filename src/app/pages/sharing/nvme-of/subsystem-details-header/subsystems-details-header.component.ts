@@ -65,8 +65,4 @@ export class SubsystemsDetailsHeaderComponent {
         this.subsystemRemoved.emit();
       });
   }
-
-  editSubsystem(): void {
-    throw new Error('Not implemented');
-  }
 }

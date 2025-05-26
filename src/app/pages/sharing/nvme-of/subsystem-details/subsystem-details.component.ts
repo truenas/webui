@@ -1,6 +1,9 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { NvmeOfSubsystemDetails } from 'app/pages/sharing/nvme-of/services/nvme-of-subsystem-details.interface';
 import {
+  SubsystemDetailsCardComponent,
+} from 'app/pages/sharing/nvme-of/subsystem-details/subsystem-details-card/subsystem-details-card.component';
+import {
   SubsystemHostsCardComponent,
 } from 'app/pages/sharing/nvme-of/subsystem-details/subsystem-hosts-card/subsystem-hosts-card.component';
 import {
@@ -15,6 +18,7 @@ import {
   imports: [
     SubsystemPortsCardComponent,
     SubsystemHostsCardComponent,
+    SubsystemDetailsCardComponent,
   ],
 })
 export class SubsystemDetailsComponent {

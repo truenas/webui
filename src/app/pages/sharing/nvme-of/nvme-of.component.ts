@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, computed, OnInit,
+  ChangeDetectionStrategy, Component, effect, OnInit,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -53,31 +53,7 @@ import {
 export class NvmeOfComponent implements OnInit {
   protected readonly subsystems = this.nvmeOfStore.subsystems;
 
-  protected dataProvider = computed<ArrayDataProvider<NvmeOfSubsystemDetails>>(() => {
-    const subsystems = this.subsystems();
-    const isLoading = this.isLoading();
-
-    const dataProvider = new ArrayDataProvider<NvmeOfSubsystemDetails>();
-    dataProvider.setEmptyType(EmptyType.None);
-    if (isLoading) {
-      dataProvider.setEmptyType(EmptyType.Loading);
-      return dataProvider;
-    }
-
-    dataProvider.setRows(subsystems);
-    dataProvider.setSorting({
-      active: 0,
-      direction: SortDirection.Asc,
-      propertyName: 'name',
-    });
-    if (!subsystems.length) {
-      dataProvider.setEmptyType(EmptyType.NoPageData);
-    } else {
-      dataProvider.expandedRow = subsystems[0];
-    }
-
-    return dataProvider;
-  });
+  protected dataProvider = new ArrayDataProvider<NvmeOfSubsystemDetails>();
 
   protected readonly isLoading = this.nvmeOfStore.isLoading;
   protected readonly searchableElements = nvmeOfElements;
@@ -86,14 +62,39 @@ export class NvmeOfComponent implements OnInit {
   constructor(
     private nvmeOfStore: NvmeOfStore,
     private slideIn: SlideIn,
-  ) {}
+  ) {
+    this.setupDataProvider();
+  }
 
   ngOnInit(): void {
     this.nvmeOfStore.initialize();
   }
 
+  private setupDataProvider(): void {
+    this.dataProvider.setSorting({
+      active: 0,
+      direction: SortDirection.Asc,
+      propertyName: 'name',
+    });
+
+    effect(() => {
+      const subsystems = this.subsystems();
+      const isLoading = this.isLoading();
+
+      this.dataProvider.setRows(subsystems);
+
+      if (!isLoading) {
+        if (!subsystems.length) {
+          this.dataProvider.setEmptyType(EmptyType.NoPageData);
+        } else {
+          this.dataProvider.expandedRow = subsystems[0];
+        }
+      }
+    });
+  }
+
   protected onFilter(query: string): void {
-    this.dataProvider().setFilter({
+    this.dataProvider.setFilter({
       list: this.subsystems(),
       query,
       columnKeys: ['name'],
@@ -113,6 +114,6 @@ export class NvmeOfComponent implements OnInit {
 
   protected onSubsystemRemoved(): void {
     this.nvmeOfStore.initialize();
-    this.dataProvider().expandedRow = null;
+    this.dataProvider.expandedRow = null;
   }
 }

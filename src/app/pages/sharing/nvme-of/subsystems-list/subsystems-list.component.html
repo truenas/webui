@@ -1,5 +1,5 @@
 <mat-card>
-  <ix-fake-progress-bar [loading]="!!(dataProvider().isLoading$ | async)"></ix-fake-progress-bar>
+  <ix-fake-progress-bar [loading]="isLoading()"></ix-fake-progress-bar>
   <mat-toolbar-row>
     <h3>{{ 'Subsystems' | translate }}</h3>
 
@@ -21,7 +21,6 @@
         ix-table-body
         [columns]="columns"
         [dataProvider]="dataProvider()"
-        [isLoading]="!!(dataProvider().isLoading$ | async)"
         (expanded)="expanded($event)"
       >
         <ng-template
@@ -33,6 +32,9 @@
         </ng-template>
       </tbody>
     </ix-table>
-    <ix-table-pager [dataProvider]="dataProvider()"></ix-table-pager>
+
+    @if (!isLoading()) {
+      <ix-table-pager [dataProvider]="dataProvider()"></ix-table-pager>
+    }
   </mat-card-content>
 </mat-card>

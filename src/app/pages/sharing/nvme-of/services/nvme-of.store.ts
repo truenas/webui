@@ -57,10 +57,7 @@ export class NvmeOfStore extends ComponentStore<NvmeOfState> {
   initialize = this.effect((trigger$) => {
     return trigger$.pipe(
       tap(() => {
-        this.patchState({
-          ...initialState,
-          isLoading: true,
-        });
+        this.patchState({ isLoading: true });
       }),
       switchMap(() => {
         return forkJoin([

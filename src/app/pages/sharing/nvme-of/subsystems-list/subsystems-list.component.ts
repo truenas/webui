@@ -47,6 +47,7 @@ import { NvmeOfSubsystemDetails } from 'app/pages/sharing/nvme-of/services/nvme-
 })
 export class SubsystemsListComponent {
   readonly isMobileView = input<boolean>();
+  readonly isLoading = input(false);
   readonly toggleShowMobileDetails = output<boolean>();
   readonly dataProvider = input.required<ArrayDataProvider<NvmeOfSubsystemDetails>>();
   readonly search = output<string>();
