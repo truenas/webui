@@ -6,9 +6,9 @@ import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
   name: 'ixNetworkSpeed',
 })
 export class NetworkSpeedPipe implements PipeTransform {
-  transform(value: number): string {
+  transform(value: number, unit: 'b' | 'B' = 'b'): string {
     return this.translate.instant('{bits}/s', {
-      bits: buildNormalizedFileSize(value, 'b', 10),
+      bits: buildNormalizedFileSize(value, unit, 10),
     });
   }
 
