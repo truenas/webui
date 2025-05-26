@@ -13,8 +13,8 @@ import { Role } from 'app/enums/role.enum';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { ReadOnlyComponent } from 'app/modules/forms/ix-forms/components/readonly-badge/readonly-badge.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { SlideInOverlayRef } from 'app/modules/overlay-slide-ins/slide-in-overlay-ref';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @UntilDestroy()
@@ -51,7 +51,7 @@ export class ModalHeaderComponent implements AfterViewInit {
   constructor(
     private translate: TranslateService,
     private slideIn: SlideIn,
-    private slideInRef: SlideInRef<unknown, false>,
+    private slideInRef: SlideInOverlayRef,
     private authService: AuthService,
   ) {}
 
