@@ -146,7 +146,10 @@ export class AlertServiceComponent implements OnInit {
   }
 
   setAlertServiceForEdit(alertService: AlertService): void {
-    this.commonForm.patchValue(alertService);
+    this.commonForm.patchValue({
+      ...alertService,
+      type: alertService.attributes.type,
+    });
 
     setTimeout(() => {
       this.alertServiceForm.setValues(alertService.attributes);
