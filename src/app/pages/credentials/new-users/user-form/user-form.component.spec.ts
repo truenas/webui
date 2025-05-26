@@ -12,6 +12,7 @@ import { allCommands } from 'app/constants/all-commands.constant';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { Choices } from 'app/interfaces/choices.interface';
 import { Group } from 'app/interfaces/group.interface';
+import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { AdditionalDetailsSectionComponent } from 'app/pages/credentials/new-users/user-form/additional-details-section/additional-details-section.component';
@@ -44,7 +45,7 @@ describe('UserFormComponent', () => {
       id: 101,
     },
     groups: [101],
-    immutable: false,
+    immutable: true,
   } as User;
 
   let spectator: Spectator<UserFormComponent>;
@@ -126,7 +127,10 @@ describe('UserFormComponent', () => {
         updateUserConfig: jest.fn(),
         updateSetupDetails: jest.fn(),
         createUser: jest.fn(),
-        isNewUser: jest.fn(),
+        updateUser: jest.fn(),
+        nextUid: jest.fn(() => 1001),
+        isNewUser: jest.fn(() => true),
+        isStigMode: jest.fn(() => false),
       }),
       mockProvider(ErrorHandlerService),
       mockProvider(SlideInRef, slideInRef),
@@ -171,6 +175,11 @@ describe('UserFormComponent', () => {
 
     it('checks initial value', () => {
       expect(spectator.component.isNewUser).toBe(false);
+    });
+
+    it('checks username field is disabled when user immutable', async () => {
+      const usernameField = await loader.getHarness(IxInputHarness.with({ label: 'Username' }));
+      expect(await usernameField.isDisabled()).toBeTruthy();
     });
 
     it('shows download ssh key button', async () => {

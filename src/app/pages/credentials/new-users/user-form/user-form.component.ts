@@ -107,19 +107,19 @@ export class UserFormComponent implements OnInit {
       if (!homeCreate && this.editingUser().home !== home) {
         return this.translate.instant(
           'Operation will change permissions on path: {path}',
-          { path: '\'' + this.formValues().home + '\'' },
+          { path: `'${home}'` },
         );
       }
       if (!homeCreate && !!homeMode && this.userFormStore.homeModeOldValue() !== homeMode) {
         return this.translate.instant(
           'Operation will change permissions on path: {path}',
-          { path: '\'' + this.formValues().home + '\'' },
+          { path: `'${home}'` },
         );
       }
     } else if (!homeCreate && home !== defaultHomePath) {
       return this.translate.instant(
         'With this configuration, the existing directory {path} will be used as a home directory without creating a new directory for the user.',
-        { path: '\'' + this.formValues().home + '\'' },
+        { path: `'${home}'` },
       );
     }
     return '';
@@ -134,14 +134,15 @@ export class UserFormComponent implements OnInit {
     private dialog: DialogService,
     private translate: TranslateService,
     private downloadService: DownloadService,
-  ) {}
+  ) {
+    this.setupUsernameUpdate();
+  }
 
   ngOnInit(): void {
     this.setupForm();
   }
 
   private setupForm(): void {
-    this.setupUsernameUpdate();
     this.listenForAllFormsValidity();
     this.userFormStore.isNewUser.set(this.isNewUser);
 

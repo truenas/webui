@@ -145,7 +145,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
 
         if (this.editingUser()?.home && !isEmptyHomeDirectory(this.editingUser()?.home)) {
           this.storageService.filesystemStat(this.editingUser().home)
-            .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
+            .pipe(take(1), this.errorHandler.withErrorHandler(), untilDestroyed(this))
             .subscribe((stat) => {
               const homeMode = stat.mode.toString(8).substring(2, 5);
               this.form.patchValue({ home_mode: homeMode });

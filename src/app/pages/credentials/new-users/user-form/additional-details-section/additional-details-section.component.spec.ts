@@ -10,6 +10,8 @@ import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { User } from 'app/interfaces/user.interface';
 import { DetailsItemHarness } from 'app/modules/details-table/details-item/details-item.harness';
 import { DetailsTableHarness } from 'app/modules/details-table/details-table.harness';
+import { EditableHarness } from 'app/modules/forms/editable/editable.harness';
+import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AdditionalDetailsSectionComponent } from 'app/pages/credentials/new-users/user-form/additional-details-section/additional-details-section.component';
 import { UserFormStore } from 'app/pages/credentials/new-users/user-form/user.store';
@@ -98,15 +100,13 @@ describe('AdditionalDetailsSectionComponent', () => {
     });
 
     it('fill editables with custom value', async () => {
-      const values = {
+      await (await loader.getHarness(DetailsTableHarness)).setValues({
         'Full Name': 'Editable field',
         Email: 'editable@truenas.local',
         Groups: 'Not Set',
         Shell: 'bash',
         UID: 1234,
-      };
-
-      await (await loader.getHarness(DetailsTableHarness)).setValues(values);
+      });
 
       expect(spectator.inject(UserFormStore).updateUserConfig).toHaveBeenLastCalledWith({
         full_name: 'Editable field',
@@ -141,6 +141,7 @@ describe('AdditionalDetailsSectionComponent', () => {
         Groups: 'Not Set',
         'Home Directory': '/home/test',
         Shell: '/usr/bin/bash',
+        // TODO: Investigate why UID is 'Next Available' instead of 1004
         UID: 'Next Available',
       });
 
@@ -153,6 +154,26 @@ describe('AdditionalDetailsSectionComponent', () => {
       const homeInput = await loader.getHarness(DetailsItemHarness.with({ label: 'Home Directory' }));
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('sharing.smb.query', [[['enabled', '=', true], ['home', '=', true]]]);
       expect(await homeInput.getValueText()).toBe('/home/test');
+    });
+
+    it('check uid field is disabled', async () => {
+      const editables = await loader.getHarness(DetailsTableHarness);
+      expect(await editables.getValues()).toEqual({
+        'Full Name': 'test',
+        Email: 'Not Set',
+        Groups: 'Not Set',
+        'Home Directory': '/home/test',
+        Shell: '/usr/bin/bash',
+        UID: 'Next Available',
+      });
+
+      const uidField = await editables.getHarnessForItem('UID', EditableHarness);
+      await uidField.open();
+
+      spectator.detectChanges();
+
+      const uidInput = await loader.getHarness(IxInputHarness.with({ selector: '[aria-label="UID"]' }));
+      expect(await uidInput.isDisabled()).toBeTruthy();
     });
   });
 
