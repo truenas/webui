@@ -889,3 +889,16 @@ mat-tab-nav-panel {
     }
   }
 }
+
+.slide-in-wrapper .mat-mdc-card {
+  border: none;
+  box-shadow: none;
+}
+
+.overlay-slide-in-panel.normal {
+  width: 750px;
+}
+
+.overlay-slide-in-panel.wide {
+  width: 900px;
+}
