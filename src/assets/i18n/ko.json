@@ -1,6 +1,7 @@
 {
   "": "",
   "A dataset is a logical container within a pool used to organize your files and folders. <br>\n After you create a pool, this page will list all your datasets.": "",
+  "Add NVME-oF Share": "",
   "All hosts are allowed.": "",
   "Allow All Except": "",
   "Allow all except: {activities}": "",
@@ -41,6 +42,7 @@
   "No Shares": "",
   "No static routes configured": "",
   "NQN": "",
+  "NVME-oF Subsystems": "",
   "Only allow: {activities}": "",
   "Optimized for Linux and Unix systems, offering deeper integration in those environments. <br>\n Choose NFS if you're working primarily with Linux servers or need efficient file access in Unix-based workflows.": "",
   "Pending Update": "",
