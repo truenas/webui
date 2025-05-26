@@ -213,13 +213,10 @@ export class AlertServiceComponent implements OnInit {
   }
 
   private generatePayload(): AlertServiceEdit {
-    const type = this.commonForm.value.type;
-    const commonFormValue = this.commonForm.value;
-
-    delete commonFormValue.type;
+    const { type, ...rest } = this.commonForm.value;
 
     return {
-      ...commonFormValue,
+      ...rest,
       attributes: {
         type,
         ...this.alertServiceForm.getSubmitAttributes(),
