@@ -61,7 +61,6 @@ export class AuthSectionComponent implements OnInit {
     sshpubkey_file: [null as File[]],
     stig_password: [''],
     show_password: [false],
-    locked: [false],
   });
 
   protected readonly tooltips = {
@@ -144,7 +143,6 @@ export class AuthSectionComponent implements OnInit {
     );
 
     this.subscriptions.push(
-      this.form.controls.locked.disabledWhile(this.form.controls.password_disabled.value$),
       this.form.controls.password.disabledWhile(this.form.controls.password_disabled.value$),
       this.form.controls.password_conf.disabledWhile(this.form.controls.password_disabled.value$),
     );

@@ -118,10 +118,9 @@ export class UserFormStore extends ComponentStore<UserFormState> {
     let payload = { ...state.userConfig };
     const oneTimePassword = this.state().setupDetails.stigPassword === UserStigPasswordOption.OneTimePassword;
     payload = {
-      ...payload,
+      username: payload.username,
       full_name: payload.full_name || payload.username,
       home: payload.home || defaultHomePath,
-      locked: false,
       shell: payload.shell || '/usr/sbin/nologin',
       smb: state.setupDetails.allowedAccess.smbAccess,
       ssh_password_enabled: payload.ssh_password_enabled || false,
