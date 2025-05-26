@@ -94,4 +94,16 @@ export class NvmeOfService {
       toArray(),
     );
   }
+
+  removeHostAssociation(subsystem: { id: number }, host: NvmeOfHost): Observable<unknown> {
+    return this.api.call('nvmet.host_subsys.query', [[['subsys_id', '=', subsystem.id], ['host_id', '=', host.id]]]).pipe(
+      switchMap((connection) => {
+        if (connection.length === 0) {
+          return of(undefined);
+        }
+
+        return this.api.call('nvmet.host_subsys.delete', [connection[0].id]);
+      }),
+    );
+  }
 }

@@ -10,6 +10,7 @@ import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { NvmeOfCardComponent } from 'app/pages/sharing/components/shares-dashboard/nvme-of-card/nvme-of-card.component';
 import { sharesDashboardElements } from 'app/pages/sharing/components/shares-dashboard/shares-dashboard.elements';
 import { IscsiCardComponent } from './iscsi-card/iscsi-card.component';
 import { NfsCardComponent } from './nfs-card/nfs-card.component';
@@ -26,6 +27,7 @@ import { SmbCardComponent } from './smb-card/smb-card.component';
     SmbCardComponent,
     NfsCardComponent,
     IscsiCardComponent,
+    NvmeOfCardComponent,
     EmptyComponent,
     TranslateModule,
     PageHeaderComponent,
