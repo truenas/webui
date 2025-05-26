@@ -1,0 +1,51 @@
+:host {
+  animation: slide-in 0.2s ease forwards;
+  background-color: var(--bg2);
+  box-shadow: -4px 0 12px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow-x: hidden;
+  padding: 0 20px;
+  width: 100%;
+}
+
+:host(.slide-out) {
+  animation: slide-out 0.2s ease-in-out forwards;
+}
+
+.slide-in-wrapper {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+  width: 100%;
+
+  > * {
+    box-sizing: border-box;
+    flex: 1 0 auto;
+    width: 100%;
+  }
+}
+
+
+@keyframes slide-in {
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-out {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(100%);
+  }
+}
