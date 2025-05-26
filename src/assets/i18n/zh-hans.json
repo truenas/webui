@@ -258,6 +258,7 @@
   "NVMe-oF": "",
   "NVMe-oF Global Configuration": "",
   "NVME-oF Subsystems": "",
+  "NVMe-oF Subsystems define logical groupings of NVMe namespaces accessible over a network using the NVMe over Fabrics protocol. <br>\n Each subsystem includes a unique identifier (NQN), mapped storage devices, and access controls, enabling efficient, high-performance remote storage connectivity.": "",
   "Once enabled one or more ports may be configured with RDMA selected as the transport. Requires RDMA-capable system and network equipment.": "",
   "Once enabled, deduplication settings cannot be reverted. Use caution and be certain that you have adequate data backups before activating this feature.": "",
   "One-Time Password": "",

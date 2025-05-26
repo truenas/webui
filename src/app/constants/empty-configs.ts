@@ -101,6 +101,14 @@ export const iscsiCardEmptyConfig = {
  Ideal for virtual machines or applications that require direct disk-level access.`),
 } as EmptyConfig;
 
+export const nvmeOfCardEmptyConfig = {
+  type: EmptyType.NoPageData,
+  icon: iconMarker('folder_shared'),
+  large: true,
+  message: T(`NVMe-oF Subsystems define logical groupings of NVMe namespaces accessible over a network using the NVMe over Fabrics protocol. <br>
+ Each subsystem includes a unique identifier (NQN), mapped storage devices, and access controls, enabling efficient, high-performance remote storage connectivity.`),
+} as EmptyConfig;
+
 export const installedAppsEmptyConfig = {
   type: EmptyType.NoPageData,
   title: T('No Applications Installed'),

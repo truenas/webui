@@ -718,6 +718,7 @@
   "NVMe-oF Expansion Shelves": "",
   "NVMe-oF Global Configuration": "",
   "NVME-oF Subsystems": "",
+  "NVMe-oF Subsystems define logical groupings of NVMe namespaces accessible over a network using the NVMe over Fabrics protocol. <br>\n Each subsystem includes a unique identifier (NQN), mapped storage devices, and access controls, enabling efficient, high-performance remote storage connectivity.": "",
   "Offload Read": "",
   "Offload Write": "",
   "Ok": "",

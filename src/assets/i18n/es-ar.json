@@ -38,6 +38,7 @@
   "NVMe-oF": "",
   "NVMe-oF Global Configuration": "",
   "NVME-oF Subsystems": "",
+  "NVMe-oF Subsystems define logical groupings of NVMe namespaces accessible over a network using the NVMe over Fabrics protocol. <br>\n Each subsystem includes a unique identifier (NQN), mapped storage devices, and access controls, enabling efficient, high-performance remote storage connectivity.": "",
   "Only allow: {activities}": "",
   "Optimized for Linux and Unix systems, offering deeper integration in those environments. <br>\n Choose NFS if you're working primarily with Linux servers or need efficient file access in Unix-based workflows.": "",
   "Post Init": "",
