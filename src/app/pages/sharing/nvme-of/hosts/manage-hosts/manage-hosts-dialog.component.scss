@@ -1,0 +1,14 @@
+.header {
+  align-items: center;
+
+  button {
+    margin-left: auto;
+  }
+}
+
+.controls {
+  border-top: 1px solid var(--lines);
+  margin-top: 16px;
+  padding-top: 12px;
+  text-align: right;
+}

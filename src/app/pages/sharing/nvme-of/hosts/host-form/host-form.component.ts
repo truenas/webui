@@ -90,7 +90,7 @@ export class HostFormComponent implements OnInit {
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
     private formErrorHandler: FormErrorHandlerService,
-    public slideInRef: SlideInRef<NvmeOfHost, boolean>,
+    public slideInRef: SlideInRef<NvmeOfHost | undefined, NvmeOfHost | null>,
   ) {}
 
   ngOnInit(): void {
@@ -164,7 +164,7 @@ export class HostFormComponent implements OnInit {
       this.errorHandler.withErrorHandler(),
       untilDestroyed(this),
     ).subscribe({
-      next: () => {
+      next: (savedHost) => {
         this.snackbar.success(
           this.isNew()
             ? this.translate.instant('Host Created')
@@ -172,7 +172,7 @@ export class HostFormComponent implements OnInit {
         );
 
         this.slideInRef.close({
-          response: true,
+          response: savedHost,
           error: null,
         });
       },

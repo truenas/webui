@@ -25,5 +25,16 @@
     &::marker {
       color: var(--alt-fg1);
     }
+
+    .host {
+      align-items: center;
+      display: flex;
+      justify-content: space-between;
+
+      .icon {
+        height: 20px;
+        width: 20px;
+      }
+    }
   }
 }

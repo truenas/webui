@@ -28,6 +28,7 @@ import { ServiceSnmpComponent } from 'app/pages/services/components/service-snmp
 import { ServiceSshComponent } from 'app/pages/services/components/service-ssh/service-ssh.component';
 import { ServiceUpsComponent } from 'app/pages/services/components/service-ups/service-ups.component';
 import { GlobalTargetConfigurationComponent } from 'app/pages/sharing/iscsi/global-target-configuration/global-target-configuration.component';
+import { NvmeOfConfigurationComponent } from 'app/pages/sharing/nvme-of/nvme-of-configuration/nvme-of-configuration.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
 import { ServicesService } from 'app/services/services.service';
@@ -112,6 +113,9 @@ export class ServiceActionsCellComponent {
 
   configureService(): void {
     switch (this.service().service) {
+      case ServiceName.NvmeOf:
+        this.slideIn.open(NvmeOfConfigurationComponent);
+        break;
       case ServiceName.Iscsi:
         this.slideIn.open(GlobalTargetConfigurationComponent);
         break;
