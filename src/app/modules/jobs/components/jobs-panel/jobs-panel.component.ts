@@ -35,6 +35,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { ErrorParserService } from 'app/services/errors/error-parser.service';
+import { FailedJobError } from 'app/services/errors/error.classes';
 
 @UntilDestroy()
 @Component({
@@ -94,7 +95,7 @@ export class JobsPanelComponent {
     this.dialogRef.close();
     if (job.error) {
       // Do not replace with showErrorModal, because it also reports to Sentry
-      const errorReport = this.errorParser.parseError(job.error);
+      const errorReport = this.errorParser.parseError(new FailedJobError(job));
       this.dialog.error(errorReport || {
         title: this.translate.instant('Error'),
         message: this.translate.instant('An unknown error occurred'),
