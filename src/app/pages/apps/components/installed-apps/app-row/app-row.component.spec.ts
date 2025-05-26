@@ -89,7 +89,7 @@ describe('AppRowComponent', () => {
     expect(spectator.query('.cell-cpu')).toHaveText('90%');
     expect(spectator.query('.cell-ram')).toHaveText('80 MiB');
     expect(spectator.query('.cell-io')).toHaveText('1 KiB - 2 KiB');
-    expect(spectator.query('.cell-network')).toHaveText('768 b/s - 1.02 kb/s');
+    expect(spectator.query('.cell-network')).toHaveText('768 B/s - 1.02 kB/s');
   });
 
   describe('actions', () => {
