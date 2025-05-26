@@ -40,11 +40,11 @@ import { UserStigPasswordOption } from 'app/pages/credentials/users/user-form/us
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AuthSectionComponent implements OnInit {
-  isNewUser = this.userStore.isNewUser;
-  sshAccessEnabled = this.userStore.sshAccess;
-  smbAccessEnabled = this.userStore.smbAccess;
-  isStigMode = this.userStore.isStigMode;
-  subscriptions: Subscription[] = [];
+  protected isNewUser = this.userStore.isNewUser;
+  protected sshAccessEnabled = this.userStore.sshAccess;
+  protected smbAccessEnabled = this.userStore.smbAccess;
+  protected isStigMode = this.userStore.isStigMode;
+  protected subscriptions: Subscription[] = [];
 
   form = this.fb.group({
     password: ['', this.validatorsService.validateOnCondition(

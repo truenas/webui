@@ -172,6 +172,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
               : undefined,
             email: this.form.value.email,
             uid: this.form.value.uid,
+            shell: this.form.value.shell,
           });
           this.userFormStore.updateSetupDetails({
             defaultPermissions: this.form.value.default_permissions,

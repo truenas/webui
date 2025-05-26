@@ -233,9 +233,8 @@ export class UserFormComponent implements OnInit {
   }
 
   protected onSubmit(): void {
-    // TODO: password related fields are impacted if
-    // UserStigPasswordOption.OneTimePassword is used as value for `stig_password`
     const payload = { ...this.formValues() };
+
     this.getHomeCreateConfirmation().pipe(
       filter(Boolean),
       switchMap(() => this.submitUserRequest(payload)),

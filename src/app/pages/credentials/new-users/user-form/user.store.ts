@@ -102,7 +102,7 @@ export class UserFormStore extends ComponentStore<UserFormState> {
   }
 
   private generateOneTimePasswordIfNeeded(user: User): Observable<User> {
-    if (this.isNewUser && this.state().setupDetails.stigPassword === UserStigPasswordOption.OneTimePassword) {
+    if (this.isNewUser() && this.state().setupDetails.stigPassword === UserStigPasswordOption.OneTimePassword) {
       return this.api.call('auth.generate_onetime_password', [{ username: this.userConfig()?.username }]).pipe(
         switchMap((password) => {
           this.matDialog.open(OneTimePasswordCreatedDialog, { data: password });
@@ -115,9 +115,10 @@ export class UserFormStore extends ComponentStore<UserFormState> {
 
   createUser(): Observable<User> {
     const state = this.state();
+    const oneTimePassword = state.setupDetails.stigPassword === UserStigPasswordOption.OneTimePassword;
     let payload = { ...state.userConfig };
-    const oneTimePassword = this.state().setupDetails.stigPassword === UserStigPasswordOption.OneTimePassword;
     payload = {
+      ...payload,
       username: payload.username,
       full_name: payload.full_name || payload.username,
       home: payload.home || defaultHomePath,

@@ -1,6 +1,7 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { allCommands } from 'app/constants/all-commands.constant';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { Choices } from 'app/interfaces/choices.interface';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { UserFormStore } from 'app/pages/credentials/new-users/user-form/user.store';
@@ -17,6 +18,10 @@ describe('UserFormStore', () => {
         mockCall('user.get_next_uid', 1004),
         mockCall('user.create'),
         mockCall('user.update'),
+        mockCall('user.shell_choices', {
+          '/usr/bin/bash': 'bash',
+          '/usr/bin/zsh': 'zsh',
+        } as Choices),
       ]),
     ],
   });
