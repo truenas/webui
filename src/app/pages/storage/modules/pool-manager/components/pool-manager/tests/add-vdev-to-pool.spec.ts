@@ -120,6 +120,11 @@ describe('AddVdevsComponent – Add Vdev to existing pool', () => {
               size: 20 * GiB,
               type: DiskType.Hdd,
             },
+            {
+              devname: 'sda8',
+              size: 30 * GiB,
+              type: DiskType.Hdd,
+            },
           ] as DetailsDisk[],
         }),
         mockCall('enclosure2.query', [] as Enclosure[]),
@@ -165,15 +170,17 @@ describe('AddVdevsComponent – Add Vdev to existing pool', () => {
       'Disk Size': '',
       Layout: TopologyItemType.Mirror,
       'Number of VDEVs': '--',
-      'Treat Disk Size as Minimum': false,
       Width: '--',
     });
 
     await wizard.fillStep({
       'Disk Size': '20 GiB (HDD)',
-      'Treat Disk Size as Minimum': true,
       Width: '2',
       'Number of VDEVs': '1',
+    });
+
+    await wizard.fillStep({
+      'Treat Disk Size as Minimum': true,
     });
 
     expect(await wizard.getExistingConfigurationPreviewSummary()).toMatchObject({
@@ -191,7 +198,6 @@ describe('AddVdevsComponent – Add Vdev to existing pool', () => {
     await wizard.fillStep({
       Layout: 'Stripe',
       'Disk Size': '20 GiB (HDD)',
-      'Treat Disk Size as Minimum': true,
       Width: '1',
     });
 
@@ -219,7 +225,6 @@ describe('AddVdevsComponent – Add Vdev to existing pool', () => {
     await wizard.fillStep({
       Layout: 'Mirror',
       'Disk Size': '20 GiB (HDD)',
-      'Treat Disk Size as Minimum': true,
       Width: '3',
       'Number of VDEVs': '1',
     });

@@ -23,6 +23,7 @@ import { jobIndicatorPressed } from 'app/store/topbar/topbar.actions';
 @UntilDestroy()
 @Component({
   selector: 'ix-jobs-indicator',
+  styleUrls: ['./jobs-indicator.component.scss'],
   templateUrl: './jobs-indicator.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [

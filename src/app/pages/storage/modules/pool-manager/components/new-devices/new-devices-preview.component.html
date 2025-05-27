@@ -4,7 +4,6 @@
   </mat-card-header>
   <mat-card-content>
     <div>
-
       @for (category of topology$ | async | keyvalue; track category.key) {
         <div class="details-item">
           <span class="label">
@@ -14,8 +13,11 @@
             {{ category.value | ixTopologyCategoryDescription: !isLimitedToOneLayout(category.key | cast) : category.key === vDevType.Spare }}
           </span>
         </div>
+      } @empty {
+       <div class="no-new-devices">
+         {{ 'No new devices added yet.' | translate }}
+       </div>
       }
-
     </div>
   </mat-card-content>
 </mat-card>

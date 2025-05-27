@@ -15,10 +15,12 @@ import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { VirtualizationGlobalConfig, VirtualizationGlobalConfigUpdate } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxIpInputWithNetmaskComponent } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import {
+  IxSlideToggleComponent,
+} from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
 import {
   ModalHeaderComponent,
 } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
@@ -45,8 +47,8 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TranslateModule,
     IxFieldsetComponent,
     IxSelectComponent,
-    IxCheckboxComponent,
     IxIpInputWithNetmaskComponent,
+    IxSlideToggleComponent,
   ],
 })
 export class GlobalConfigFormComponent implements OnInit {

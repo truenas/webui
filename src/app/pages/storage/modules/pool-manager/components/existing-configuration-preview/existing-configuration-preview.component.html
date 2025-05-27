@@ -6,7 +6,7 @@
     <div>
       <div class="details-item">
         <span class="label">{{ 'Name' | translate }}:</span>
-        <span class="value">{{ name() || unknownProp }}</span>
+        <span class="value">{{ name() }}</span>
       </div>
       @for (category of poolTopology | keyvalue; track category) {
         <div class="details-item">
