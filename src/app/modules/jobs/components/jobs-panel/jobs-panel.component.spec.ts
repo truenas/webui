@@ -173,7 +173,11 @@ describe('JobsPanelComponent', () => {
   it('shows an error report when user clicks on a failed job', () => {
     spectator.click(byText('replication.run'));
 
-    expect(spectator.inject(DialogService).error).toHaveBeenCalled();
+    expect(spectator.inject(DialogService).error).toHaveBeenCalledWith({
+      message: 'Some error',
+      title: 'FAILED',
+      stackTrack: undefined,
+    });
   });
 
   it('shows a job in progress dialog when user clicks on an active job', () => {

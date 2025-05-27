@@ -13,7 +13,12 @@ import {
   tap,
 } from 'rxjs';
 import { ServiceName } from 'app/enums/service-name.enum';
+import { helptextNvmeOf } from 'app/helptext/sharing/nvme-of/nvme-of';
 import { NvmeOfHost, NvmeOfPort, NvmeOfSubsystem } from 'app/interfaces/nvme-of.interface';
+import { DetailsItemComponent } from 'app/modules/details-table/details-item/details-item.component';
+import { DetailsTableComponent } from 'app/modules/details-table/details-table.component';
+import { EditableComponent } from 'app/modules/forms/editable/editable.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import {
   UseIxIconsInStepperComponent,
@@ -23,6 +28,12 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import {
+  AddSubsystemHostsComponent,
+} from 'app/pages/sharing/nvme-of/add-subsystem/add-subsystem-hosts/add-subsystem-hosts.component';
+import {
+  AddSubsystemPortsComponent,
+} from 'app/pages/sharing/nvme-of/add-subsystem/add-subsystem-ports/add-subsystem-ports.component';
 import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
@@ -31,6 +42,7 @@ import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 @UntilDestroy()
 @Component({
   selector: 'ix-add-subsystem',
+  styleUrls: ['./add-subsystem.component.scss'],
   templateUrl: './add-subsystem.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
@@ -47,6 +59,12 @@ import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
     TestDirective,
     IxInputComponent,
     MatStepperPrevious,
+    IxCheckboxComponent,
+    AddSubsystemHostsComponent,
+    AddSubsystemPortsComponent,
+    DetailsItemComponent,
+    DetailsTableComponent,
+    EditableComponent,
   ],
 })
 export class AddSubsystemComponent {
@@ -54,13 +72,16 @@ export class AddSubsystemComponent {
 
   protected form = this.formBuilder.group({
     name: ['', Validators.required],
+    subnqn: [''],
     ana: [false],
 
-    allowAnyHost: [false],
+    allowAnyHost: [true],
     allowedHosts: [[] as NvmeOfHost[]],
 
     ports: [[] as NvmeOfPort[]],
   });
+
+  protected readonly helptext = helptextNvmeOf;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -102,6 +123,7 @@ export class AddSubsystemComponent {
     const values = this.form.value;
     const payload = {
       name: values.name,
+      subnqn: values.subnqn || null,
       allow_any_host: values.allowAnyHost,
       ana: values.ana,
     };

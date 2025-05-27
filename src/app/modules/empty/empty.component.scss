@@ -67,8 +67,13 @@
 
   .empty-message {
     font-size: 0.875rem;
-    line-height: 28px;
+    line-height: 21px;
     margin-bottom: 10px;
+    margin-top: 5px;
+
+    ::ng-deep > p:first-child {
+      margin-top: 0;
+    }
   }
 
 
@@ -92,9 +97,8 @@
       .icon {
         align-items: center;
         display: inline-flex;
-        font-size: 100px;
-        height: 100px;
-        width: 100px;
+        height: 90px;
+        width: 90px;
 
         &.logo {
           font-size: unset;
