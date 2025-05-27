@@ -12,10 +12,32 @@
         <ng-template matStepLabel>{{ 'What To Share' | translate }}</ng-template>
 
         <ix-input
+          class="name-input"
           formControlName="name"
           [required]="true"
           [label]="'Subsystem Name' | translate"
         ></ix-input>
+
+        <ix-details-table>
+          <ix-details-item
+            [label]="'NQN' | translate"
+            [tooltip]="helptext.subsystemNqn | translate"
+          >
+            <ix-editable>
+              <div view>
+                {{ form.value.subnqn || ('Generate from global settings' | translate) }}
+              </div>
+
+              <div edit>
+                <ix-input
+                  class="nqn-input"
+                  formControlName="subnqn"
+                  aria-label="NQN"
+                ></ix-input>
+              </div>
+            </ix-editable>
+          </ix-details-item>
+        </ix-details-table>
 
         <div class="step-buttons">
           <button
@@ -32,7 +54,24 @@
       <mat-step>
         <ng-template matStepLabel>{{ 'Access' | translate }}</ng-template>
 
-        <div class="step-buttons">
+        <ix-add-subsystem-ports
+          class="ports-block"
+          [portsControl]="form.controls.ports"
+        ></ix-add-subsystem-ports>
+
+        <ix-checkbox
+          formControlName="allowAnyHost"
+          [label]="'Allow any host to connect' | translate"
+        ></ix-checkbox>
+
+        @if (!form.value.allowAnyHost) {
+          <ix-add-subsystem-hosts
+            class="hosts-block"
+            [hostsControl]="form.controls.allowedHosts"
+          ></ix-add-subsystem-hosts>
+        }
+
+        <div class="step-buttons last-step-buttons">
           <button
             mat-button
             matStepperPrevious

@@ -1,4 +1,4 @@
-@let empty = !(dataProvider().currentPageCount$ | async) && !(dataProvider().isLoading$ | async);
+@let empty = !(dataProvider().currentPageCount$ | async) && !isLoading();
 
 <mat-card>
   <ix-fake-progress-bar [loading]="!!(dataProvider().isLoading$ | async)"></ix-fake-progress-bar>

@@ -1,7 +1,7 @@
 <ix-page-header [loading]="pools() === null"></ix-page-header>
 
 @if (pools()?.length === 0 && pools() !== null) {
-    <ix-empty
+  <ix-empty
     [conf]="emptyConfig"
     [requiredRoles]="requiredRoles"
   ></ix-empty>

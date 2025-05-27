@@ -42,37 +42,37 @@ export const sharesEmptyConfig = {
 
 export const cloudSyncTaskEmptyConfig = {
   type: EmptyType.NoPageData,
-  icon: iconMarker('security'),
+  icon: iconMarker('mdi-cloud-outline'),
   message: T('Sync data to a popular cloud storage provider, such as: Google Drive and Photos, Dropbox, Amazon S3 and many others.'),
   large: true,
 } as EmptyConfig;
 
 export const cloudBackupTaskEmptyConfig = {
   type: EmptyType.NoPageData,
-  icon: iconMarker('security'),
+  icon: iconMarker('ix-true-cloud'),
   message: T('Back up to the decentralized network provided by Storj in partnership with TrueNAS.'),
   large: true,
 } as EmptyConfig;
 
 export const snapshotTaskEmptyConfig = {
   type: EmptyType.NoPageData,
-  icon: iconMarker('security'),
-  message: T(`Automatically create point-in-time snapshots of selected datasets at regular intervals.
- <br> These snapshots help preserve data states for recovery, backup, and versioning purposes,
- ensuring minimal data loss in case of accidental deletion or corruption.`),
+  icon: iconMarker('mdi-file-multiple-outline'),
+  message: T(`<p>Automatically create point-in-time snapshots of selected datasets at regular intervals.</p>
+<p>These snapshots help preserve data states for recovery, backup, and versioning purposes,
+ ensuring minimal data loss in case of accidental deletion or corruption.</p>`),
   large: true,
 } as EmptyConfig;
 
 export const rsyncTaskEmptyConfig = {
   type: EmptyType.NoPageData,
-  icon: iconMarker('security'),
+  icon: iconMarker('mdi-desktop-classic'),
   message: T('Best if you\'re syncing with a generic system that lacks ZFS capabilities.'),
   large: true,
 } as EmptyConfig;
 
 export const replicationTaskEmptyConfig = {
   type: EmptyType.NoPageData,
-  icon: iconMarker('security'),
+  icon: iconMarker('ix-replication'),
   message: T('Best if you\'re syncing with another TrueNAS or ZFS system — enables advanced features not available with other methods.'),
   large: true,
 } as EmptyConfig;
@@ -81,32 +81,32 @@ export const smbCardEmptyConfig = {
   type: EmptyType.NoPageData,
   icon: iconMarker('ix-smb-share'),
   large: true,
-  message: T(`Well supported by all major operating systems, allows for easy authentication and authorization.
- <br> Choose SMB for easy file sharing across mixed operating systems, especially in home or office networks.`),
+  message: T(`<p>Well supported by all major operating systems, allows for easy authentication and authorization.</p>
+<p>Choose SMB for easy file sharing across mixed operating systems, especially in home or office networks.</p>`),
 } as EmptyConfig;
 
 export const nfsCardEmptyConfig = {
   type: EmptyType.NoPageData,
   icon: iconMarker('ix-nfs-share'),
   large: true,
-  message: T(`Optimized for Linux and Unix systems, offering deeper integration in those environments. <br>
- Choose NFS if you're working primarily with Linux servers or need efficient file access in Unix-based workflows.`),
+  message: T(`<p>Optimized for Linux and Unix systems, offering deeper integration in those environments. </p>
+<p>Choose NFS if you're working primarily with Linux servers or need efficient file access in Unix-based workflows.</p>`),
 } as EmptyConfig;
 
 export const iscsiCardEmptyConfig = {
   type: EmptyType.NoPageData,
   icon: iconMarker('ix-iscsi-share'),
   large: true,
-  message: T(`Provides raw block storage over the network, appearing as a local disk on the client. <br>
- Ideal for virtual machines or applications that require direct disk-level access.`),
+  message: T(`<p>Raw block storage over the network, appearing as a local disk on the client.</p>
+<p>Ideal for virtual machines or applications that require direct disk-level access.</p>`),
 } as EmptyConfig;
 
-export const nvmeOfCardEmptyConfig = {
+export const nvmeOfEmptyConfig = {
   type: EmptyType.NoPageData,
-  icon: iconMarker('folder_shared'),
+  icon: iconMarker('ix-nvme-share'),
   large: true,
-  message: T(`NVMe-oF Subsystems define logical groupings of NVMe namespaces accessible over a network using the NVMe over Fabrics protocol. <br>
- Each subsystem includes a unique identifier (NQN), mapped storage devices, and access controls, enabling efficient, high-performance remote storage connectivity.`),
+  message: T(`<p>High-performance block storage over TCP and other protocols, using the NVMe across a network.</p>
+<p>Compared to iSCSI, NVMe-oF offers significantly lower latency and higher throughput.</p>`),
 } as EmptyConfig;
 
 export const installedAppsEmptyConfig = {

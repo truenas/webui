@@ -11,7 +11,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { filter, switchMap } from 'rxjs';
-import { nvmeOfCardEmptyConfig } from 'app/constants/empty-configs';
+import { nvmeOfEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
@@ -39,7 +39,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceExtraActionsComponent } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-extra-actions.component';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { AddSubsystemComponent } from 'app/pages/sharing/nvme-of/add-subsystem/add-subsystem.component';
-import { NvmeOfConfigurationComponent } from 'app/pages/sharing/nvme-of/nvme-of-configuration/nvme-of-configuration.component';
 import { NvmeOfSubsystemDetails } from 'app/pages/sharing/nvme-of/services/nvme-of-subsystem-details.interface';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
 import { SubsystemDeleteDialogComponent } from 'app/pages/sharing/nvme-of/subsystem-details-header/subsystem-delete-dialog/subsystem-delete-dialog.component';
@@ -79,7 +78,7 @@ import { selectService } from 'app/store/services/services.selectors';
 export class NvmeOfCardComponent implements OnInit {
   requiredRoles = [Role.SharingNvmeTargetWrite];
   protected readonly isLoading = this.nvmeOfStore.isLoading;
-  protected readonly emptyConfig = nvmeOfCardEmptyConfig;
+  protected readonly emptyConfig = nvmeOfEmptyConfig;
 
   protected service$ = this.store$.select(selectService(ServiceName.NvmeOf));
 
@@ -135,13 +134,6 @@ export class NvmeOfCardComponent implements OnInit {
     }),
     actionsWithMenuColumn({
       actions: [
-        // TODO: add edit action once logic is implemented
-        // {
-        //   iconName: iconMarker('edit'),
-        //   tooltip: this.translate.instant('Edit'),
-        //   disabled: () => of(this.isLoading()),
-        //   onClick: () => this.doEdit(),
-        // },
         {
           iconName: iconMarker('mdi-delete'),
           tooltip: this.translate.instant('Delete'),
@@ -196,9 +188,5 @@ export class NvmeOfCardComponent implements OnInit {
       ).subscribe(() => {
         this.nvmeOfStore.initialize();
       });
-  }
-
-  openGlobalConfiguration(): void {
-    this.slideIn.open(NvmeOfConfigurationComponent);
   }
 }
