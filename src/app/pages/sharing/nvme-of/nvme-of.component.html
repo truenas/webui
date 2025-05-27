@@ -30,6 +30,7 @@
     #masterList
     master
     [dataProvider]="dataProvider()"
+    [isLoading]="isLoading()"
     [isMobileView]="masterDetailView.isMobileView()"
     (toggleShowMobileDetails)="masterDetailView.toggleShowMobileDetails($event)"
     (search)="onFilter($event)"
