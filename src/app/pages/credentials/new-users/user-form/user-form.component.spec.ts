@@ -1,19 +1,27 @@
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import {
   FormControl, FormGroup, ReactiveFormsModule,
 } from '@angular/forms';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { User } from '@sentry/angular';
 import { MockComponents, MockInstance } from 'ng-mocks';
 import { allCommands } from 'app/constants/all-commands.constant';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { Choices } from 'app/interfaces/choices.interface';
 import { Group } from 'app/interfaces/group.interface';
+import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
+import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { AdditionalDetailsSectionComponent } from 'app/pages/credentials/new-users/user-form/additional-details-section/additional-details-section.component';
 import { AllowedAccessSectionComponent } from 'app/pages/credentials/new-users/user-form/allowed-access-section/allowed-access-section.component';
 import { AuthSectionComponent } from 'app/pages/credentials/new-users/user-form/auth-section/auth-section.component';
 import { UserFormComponent } from 'app/pages/credentials/new-users/user-form/user-form.component';
 import { UserFormStore } from 'app/pages/credentials/new-users/user-form/user.store';
+import { selectUsers } from 'app/pages/credentials/users/store/user.selectors';
+import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 describe('UserFormComponent', () => {
@@ -37,10 +45,11 @@ describe('UserFormComponent', () => {
       id: 101,
     },
     groups: [101],
-    immutable: false,
+    immutable: true,
   } as User;
 
   let spectator: Spectator<UserFormComponent>;
+  let loader: HarnessLoader;
 
   const slideInRef: SlideInRef<undefined, unknown> = {
     close: jest.fn(),
@@ -60,7 +69,7 @@ describe('UserFormComponent', () => {
     password: new FormControl(),
     password_conf: new FormControl(),
     password_disabled: new FormControl(false),
-    allow_ssh_login_with_password: new FormControl(false),
+    ssh_password_enabled: new FormControl(false),
     ssh_key: new FormControl(''),
     stig_password: new FormControl(''),
     show_password: new FormControl(false),
@@ -118,16 +127,35 @@ describe('UserFormComponent', () => {
         updateUserConfig: jest.fn(),
         updateSetupDetails: jest.fn(),
         createUser: jest.fn(),
-        isNewUser: jest.fn(),
+        updateUser: jest.fn(),
+        nextUid: jest.fn(() => 1001),
+        isNewUser: jest.fn(() => true),
+        isStigMode: jest.fn(() => false),
       }),
       mockProvider(ErrorHandlerService),
       mockProvider(SlideInRef, slideInRef),
+      provideMockStore({
+        selectors: [{
+          selector: selectUsers,
+          value: [],
+        }],
+      }),
+      mockProvider(DownloadService, {
+        downloadBlob: jest.fn(),
+      }),
     ],
+  });
+
+  it('checks used components', () => {
+    expect(AllowedAccessSectionComponent).toBeTruthy();
+    expect(AuthSectionComponent).toBeTruthy();
+    expect(AdditionalDetailsSectionComponent).toBeTruthy();
   });
 
   describe('adding user', () => {
     beforeEach(() => {
       spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
     it('checks initial value', () => {
@@ -142,10 +170,28 @@ describe('UserFormComponent', () => {
           mockProvider(SlideInRef, { ...slideInRef, getData: () => mockUser }),
         ],
       });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
     it('checks initial value', () => {
       expect(spectator.component.isNewUser).toBe(false);
+    });
+
+    it('checks username field is disabled when user immutable', async () => {
+      const usernameField = await loader.getHarness(IxInputHarness.with({ label: 'Username' }));
+      expect(await usernameField.isDisabled()).toBeTruthy();
+    });
+
+    it('shows download ssh key button', async () => {
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({
+        Username: 'test-user',
+      });
+
+      const downloadButton = await loader.getHarness(MatButtonHarness.with({ text: 'Download Authorized Keys' }));
+      await downloadButton.click();
+
+      expect(spectator.inject(DownloadService).downloadBlob).toHaveBeenCalledWith(new Blob(), 'test-user_public_key_rsa');
     });
   });
 

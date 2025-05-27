@@ -32,28 +32,32 @@
     </div>
   </mat-toolbar-row>
 
-  <ix-table
-    class="table"
-    [ix-table-empty]="!(dataProvider().currentPageCount$ | async)"
-    [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider().emptyType$ | async)"
-  >
-    <thead
-      ix-table-head
-      [columns]="columns"
-      [dataProvider]="dataProvider()"
-    ></thead>
-    <tbody
-      ix-table-body
-      [columns]="columns"
-      [dataProvider]="dataProvider()"
-      [isLoading]="!!(dataProvider().isLoading$ | async)"
-    ></tbody>
-  </ix-table>
+  @if (!(dataProvider().currentPageCount$ | async) && !(dataProvider().isLoading$ | async)) {
+    <ix-empty [conf]="emptyConfig"></ix-empty>
+  } @else {
+    <ix-table
+      class="table"
+      [ix-table-empty]="!(dataProvider().currentPageCount$ | async)"
+      [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider().emptyType$ | async)"
+    >
+      <thead
+        ix-table-head
+        [columns]="columns"
+        [dataProvider]="dataProvider()"
+      ></thead>
+      <tbody
+        ix-table-body
+        [columns]="columns"
+        [dataProvider]="dataProvider()"
+        [isLoading]="!!(dataProvider().isLoading$ | async)"
+      ></tbody>
+    </ix-table>
 
-  <ix-table-pager-show-more
-    [pageSize]="4"
-    [dataProvider]="dataProvider()"
-    [ixTestOverride]="['nvme-of']"
-    [routerLink]="['/sharing', 'nvme-of']"
-  ></ix-table-pager-show-more>
+    <ix-table-pager-show-more
+      [pageSize]="4"
+      [dataProvider]="dataProvider()"
+      [ixTestOverride]="['nvme-of']"
+      [routerLink]="['/sharing', 'nvme-of']"
+    ></ix-table-pager-show-more>
+  }
 </mat-card>
