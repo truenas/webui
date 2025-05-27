@@ -14,4 +14,13 @@ Requires RDMA-capable system and network equipment.'),
   dhKeyExchangeTooltip: T('Diffie–Hellman key exchange is used in addition to CHAP for authentication.'),
 
   onlyStaticIpsShown: T('Only interfaces with static IPs are shown.'),
+
+  noPortsWarning: T('No ports are associated with this subsystem. It will not be accessible.'),
+  noHostsWarning: T('No hosts are allowed to access this subsystem. It will not be accessible.'),
+  hasHostAuthentication: T('Host authentication is enabled'),
+
+  addHost: T('Select hosts you want to be able to access the subsystem.'),
+  addPort: T('Select ports this subsystem will be accessible on.'),
+
+  subsystemNqn: T('The NVMe Qualified Name (NQN) is used to identify the subsystem. Leave blank to generate NQN using the base NQN from global settings.'),
 };

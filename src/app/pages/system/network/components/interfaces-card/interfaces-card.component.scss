@@ -1,7 +1,17 @@
+@import 'scss-imports/variables';
+
 .interfaces-table {
   ::ng-deep tr td:first-child,
   ::ng-deep tr th:first-child {
     width: 30px;
+  }
+
+  ::ng-deep {
+    .wider-column {
+      @media (max-width: $breakpoint-tablet) {
+        width: 150px;
+      }
+    }
   }
 
   ix-interface-status-icon {

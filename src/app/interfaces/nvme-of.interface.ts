@@ -22,12 +22,21 @@ export interface NvmeOfSubsystem {
   qix_max: number | null;
   ieee_oui: string | null;
   ana: boolean | null;
-}
 
-export interface NvmeOfSubsystemDetails extends NvmeOfSubsystem {
-  hosts: SubsystemHostAssociation[];
-  ports: SubsystemPortAssociation[];
-  namespaces: NvmeOfNamespace[];
+  /**
+   * List of ids. Only populated with extra.options.verbose
+   */
+  ports: number[] | null;
+
+  /**
+   * List of ids. Only populated with extra.options.verbose
+   */
+  hosts: number[] | null;
+
+  /**
+   * List of ids. Only populated with extra.options.verbose
+   */
+  namespaces: number[] | null;
 }
 
 export type UpdateNvmeOfSubsystem = Partial<Omit<NvmeOfSubsystem, 'id'>>;
@@ -103,6 +112,8 @@ export interface SubsystemPortAssociation {
   id: number;
   port: NvmeOfPort;
   subsystem: NvmeOfSubsystem;
+  subsys_id: number;
+  port_id: number;
 }
 
 export interface AssociateSubsystemPort {
@@ -114,6 +125,8 @@ export interface SubsystemHostAssociation {
   id: number;
   host: NvmeOfHost;
   subsystem: NvmeOfSubsystem;
+  subsys_id: number;
+  host_id: number;
 }
 
 export interface AssociateSubsystemHost {

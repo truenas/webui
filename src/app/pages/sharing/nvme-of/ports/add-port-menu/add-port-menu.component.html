@@ -1,0 +1,52 @@
+@if (noPortsExist()) {
+  <button
+    mat-button
+    type="button"
+    [ixTest]="'add-port'"
+    (click)="openPortForm()"
+  >
+    {{ 'Add' | translate }}
+  </button>
+}
+@else {
+  <button
+    mat-button
+    type="button"
+    [ixTest]="'add-port'"
+    [matMenuTriggerFor]="addMenu"
+  >
+    {{ 'Add' | translate }}
+
+    <ix-icon name="mdi-menu-down"></ix-icon>
+  </button>
+
+  <mat-menu #addMenu="matMenu">
+    @for (port of unusedPorts(); track port.id) {
+      <button
+        mat-menu-item
+        [ixTest]="['add-port', port.addr_trtype, port.addr_traddr, port.addr_trsvcid]"
+        (click)="selectPort(port)"
+      >
+        <ix-port-description [port]="port"></ix-port-description>
+      </button>
+    }
+
+    <mat-divider></mat-divider>
+
+    <button
+      mat-menu-item
+      ixTest="create-new-port"
+      (click)="openPortForm()"
+    >
+      {{ 'Create New' | translate }}
+    </button>
+
+    <button
+      mat-menu-item
+      ixTest="manage-ports"
+      (click)="onManagePorts()"
+    >
+      {{ 'Manage Ports' | translate }}
+    </button>
+  </mat-menu>
+}

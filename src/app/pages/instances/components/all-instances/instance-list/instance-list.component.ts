@@ -12,6 +12,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { injectParams } from 'ngxtension/inject-params';
 import { distinctUntilChanged, tap } from 'rxjs';
+import { instancesEmptyConfig } from 'app/constants/empty-configs';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
@@ -87,12 +88,7 @@ export class InstanceListComponent {
         large: false,
       };
     }
-    return {
-      type: EmptyType.NoPageData,
-      title: this.translate.instant('No instances'),
-      message: this.translate.instant('Instances you create will automatically appear here.'),
-      large: true,
-    };
+    return instancesEmptyConfig;
   });
 
   constructor(

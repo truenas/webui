@@ -28,6 +28,7 @@ export class StorjProviderFormComponent extends BaseProviderFormComponent implem
   form = this.formBuilder.group({
     access_key_id: ['', Validators.required],
     secret_access_key: ['', Validators.required],
+    endpoint: ['https://gateway.storjshare.io'],
   });
 
   ngAfterViewInit(): void {
