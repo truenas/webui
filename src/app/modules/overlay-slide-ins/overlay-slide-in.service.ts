@@ -1,38 +1,47 @@
 import {
   Overlay,
-  OverlayRef,
   OverlayConfig,
 } from '@angular/cdk/overlay';
 import {
   ComponentPortal,
 } from '@angular/cdk/portal';
 import {
-  ComponentRef,
   Injectable,
   Injector,
   Type,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { UUID } from 'angular2-uuid';
+import { Subject } from 'rxjs';
 import { OverlayContainerComponent } from 'app/modules/overlay-slide-ins/components/overlay-container/overlay-container.component';
 import { SlideInOverlayRef } from 'app/modules/overlay-slide-ins/slide-in-overlay-ref';
 import { SLIDE_IN_DATA } from 'app/modules/overlay-slide-ins/slide-in.tokens';
 
-interface OverlayInstance {
-  overlayRef: OverlayRef;
-  containerRef: ComponentRef<OverlayContainerComponent>;
+interface OverlayInstance<T> {
+  overlayId: string;
+  slideInRef: SlideInOverlayRef;
+  component: Type<T>;
+  config: { data?: unknown; wide?: boolean };
+  close$: Subject<T | undefined>;
 }
 
 @UntilDestroy()
 @Injectable({ providedIn: 'root' })
 export class OverlaySlideInService {
-  private overlays: OverlayInstance[] = [];
+  private overlays: OverlayInstance<unknown>[] = [];
 
   constructor(
     private overlay: Overlay,
     private injector: Injector,
   ) {}
 
-  open<C, T = unknown>(component: Type<C>, config: { data?: unknown; wide?: boolean } = {}): SlideInOverlayRef<T> {
+  open<C, T = unknown>(
+    component: Type<C>,
+    config: { data?: unknown; wide?: boolean } = {},
+    id?: string,
+  ): SlideInOverlayRef<T> {
+    const overlayId = id || (UUID.UUID());
+
     const overlayRef = this.overlay.create(this.getOverlayConfig());
     const containerPortal = new ComponentPortal(OverlayContainerComponent);
     const containerRef = overlayRef.attach(containerPortal);
@@ -40,18 +49,28 @@ export class OverlaySlideInService {
     const panelElement = overlayRef.overlayElement;
     panelElement.classList.remove('wide', 'normal');
     panelElement.classList.add(config.wide ? 'wide' : 'normal');
-    const slideInRef = new SlideInOverlayRef<T>(overlayRef, containerRef);
+
+    const previousOverlay = this.overlays.find(
+      (overlayItem) => overlayItem.overlayId === overlayId,
+    );
+    let close$ = previousOverlay?.close$ as Subject<T | undefined>;
+    if (!close$) {
+      close$ = new Subject<T | undefined>();
+    }
+    const slideInRef = new SlideInOverlayRef<T>(overlayRef, containerRef, close$);
 
     const injector = this.createInjector(config.data, slideInRef);
     const contentPortal = new ComponentPortal(component, null, injector);
     containerRef.instance.portalOutlet.attach(contentPortal);
 
-    this.overlays.push({ overlayRef, containerRef });
+    this.overlays.push({
+      overlayId, slideInRef, component, config, close$,
+    });
 
     overlayRef.backdropClick().pipe(untilDestroyed(this)).subscribe(() => slideInRef.close());
 
     overlayRef.detachments().pipe(untilDestroyed(this)).subscribe(() => {
-      this.overlays = this.overlays.filter((overlayItem) => overlayItem.overlayRef !== overlayRef);
+      this.overlays = this.overlays.filter((overlayItem) => overlayItem.overlayId !== overlayId);
     });
 
     return slideInRef;
@@ -61,19 +80,23 @@ export class OverlaySlideInService {
     const lastOverlay = this.overlays[this.overlays.length - 1];
     if (!lastOverlay) return;
 
-    const { overlayRef, containerRef } = lastOverlay;
+    const { slideInRef: slideInRefPrev } = lastOverlay;
 
-    const slideInRef = new SlideInOverlayRef<T>(overlayRef, containerRef);
+    const slideInRef = new SlideInOverlayRef<T>(
+      slideInRefPrev.overlayRef,
+      slideInRefPrev.containerRef,
+      lastOverlay.close$ as Subject<T | undefined>,
+    );
     const injector = this.createInjector(config.data, slideInRef);
     const contentPortal = new ComponentPortal(component, null, injector);
 
-    containerRef.instance.startCloseAnimation().then(() => {
-      containerRef.instance.portalOutlet.detach();
-      containerRef.instance.resetAnimation();
-      const panelElement = lastOverlay.overlayRef.overlayElement;
+    slideInRefPrev.containerRef.instance.startCloseAnimation().then(() => {
+      slideInRefPrev.containerRef.instance.portalOutlet.detach();
+      slideInRefPrev.containerRef.instance.resetAnimation();
+      const panelElement = slideInRefPrev.overlayRef.overlayElement;
       panelElement.classList.remove('wide', 'normal');
       panelElement.classList.add(config.wide ? 'wide' : 'normal');
-      containerRef.instance.portalOutlet.attach(contentPortal);
+      slideInRefPrev.containerRef.instance.portalOutlet.attach(contentPortal);
     });
   }
 
@@ -86,7 +109,7 @@ export class OverlaySlideInService {
     });
   }
 
-  private createInjector(data: unknown, ref: SlideInOverlayRef<unknown>): Injector {
+  private createInjector(data: unknown, ref: SlideInOverlayRef): Injector {
     return Injector.create({
       providers: [
         { provide: SlideInOverlayRef, useValue: ref },
