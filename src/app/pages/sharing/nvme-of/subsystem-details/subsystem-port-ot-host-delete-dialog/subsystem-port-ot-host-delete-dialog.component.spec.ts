@@ -44,7 +44,7 @@ describe('SubsystemPortOrHostDeleteDialogComponent', () => {
     });
 
     it('closes with force: false when confirmed', async () => {
-      const button = await loader.getHarness(MatButtonHarness.with({ text: /Continue/i }));
+      const button = await loader.getHarness(MatButtonHarness.with({ text: /Delete/i }));
       await button.click();
 
       expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({
