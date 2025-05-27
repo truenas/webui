@@ -1,3 +1,4 @@
+@let empty = !(dataProvider().currentPageCount$ | async) && !isLoading();
 <mat-card>
   <ix-fake-progress-bar [loading]="!!(dataProvider().isLoading$ | async)"></ix-fake-progress-bar>
   <mat-toolbar-row>
@@ -8,31 +9,34 @@
     </div>
   </mat-toolbar-row>
   <mat-card-content>
-    <ix-table
-      [ix-table-empty]="!(dataProvider().currentPageCount$ | async)"
-      [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider().emptyType$ | async)"
-    >
-      <thead
-        ix-table-head
-        [columns]="columns"
-        [dataProvider]="dataProvider()"
-      ></thead>
-      <tbody
-        ix-table-body
-        [columns]="columns"
-        [dataProvider]="dataProvider()"
-        [isLoading]="!!(dataProvider().isLoading$ | async)"
-        (expanded)="expanded($event)"
+    @if (empty) {
+      <ix-empty [conf]="emptyConfig"></ix-empty>
+    } @else {
+      <ix-table
+        [ix-table-empty]="!(dataProvider().currentPageCount$ | async)"
+        [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider().emptyType$ | async)"
       >
-        <ng-template
-          ix-table-cell
-          [columnIndex]="4"
+        <thead
+          ix-table-head
+          [columns]="columns"
           [dataProvider]="dataProvider()"
+        ></thead>
+        <tbody
+          ix-table-body
+          [columns]="columns"
+          [dataProvider]="dataProvider()"
+          (expanded)="expanded($event)"
         >
-          <ix-icon name="mdi-chevron-right"></ix-icon>
-        </ng-template>
-      </tbody>
-    </ix-table>
+          <ng-template
+            ix-table-cell
+            [columnIndex]="4"
+            [dataProvider]="dataProvider()"
+          >
+            <ix-icon name="mdi-chevron-right"></ix-icon>
+          </ng-template>
+        </tbody>
+      </ix-table>
+    }
     <ix-table-pager [dataProvider]="dataProvider()"></ix-table-pager>
   </mat-card-content>
 </mat-card>

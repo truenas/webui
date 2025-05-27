@@ -6,6 +6,8 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { nvmeOfEmptyConfig } from 'app/constants/empty-configs';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -43,15 +45,19 @@ import { NvmeOfSubsystemDetails } from 'app/pages/sharing/nvme-of/services/nvme-
     IxIconComponent,
     IxTableEmptyDirective,
     IxTablePagerComponent,
+    EmptyComponent,
   ],
 })
 export class SubsystemsListComponent {
   readonly isMobileView = input<boolean>();
+  readonly isLoading = input(false);
   readonly toggleShowMobileDetails = output<boolean>();
   readonly dataProvider = input.required<ArrayDataProvider<NvmeOfSubsystemDetails>>();
   readonly search = output<string>();
 
   filterString = '';
+
+  protected readonly emptyConfig = nvmeOfEmptyConfig;
 
   protected columns = createTable<NvmeOfSubsystemDetails>([
     textColumn({
