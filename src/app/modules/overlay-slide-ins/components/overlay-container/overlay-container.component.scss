@@ -4,7 +4,7 @@
   box-shadow: -4px 0 12px rgba(0, 0, 0, 0.3);
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: calc(100vh - 48px);
   overflow-x: hidden;
   padding: 0 20px;
   width: 100%;

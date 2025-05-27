@@ -103,8 +103,9 @@ export class OverlaySlideInService {
   private getOverlayConfig(): OverlayConfig {
     return new OverlayConfig({
       hasBackdrop: true,
-      backdropClass: 'cdk-overlay-dark-backdrop',
-      positionStrategy: this.overlay.position().global().top('0').right('0'),
+      backdropClass: !this.overlays.length ? 'custom-overlay-backdrop' : 'custom-overlay-nobackdrop',
+      positionStrategy: this.overlay.position().global().top('48px').right('0'),
+      height: 'calc(100% - 48px)',
       panelClass: 'overlay-slide-in-panel',
     });
   }
