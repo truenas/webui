@@ -1,11 +1,15 @@
 @let empty = !(dataProvider().currentPageCount$ | async) && !isLoading();
+
 <mat-card>
   <ix-fake-progress-bar [loading]="!!(dataProvider().isLoading$ | async)"></ix-fake-progress-bar>
   <mat-toolbar-row>
     <h3>{{ 'Subsystems' | translate }}</h3>
 
     <div class="actions action-icon">
-      <ix-search-input1 (search)="onListFiltered($event)"></ix-search-input1>
+      <ix-search-input1
+        [disabled]="empty"
+        (search)="onListFiltered($event)"
+      ></ix-search-input1>
     </div>
   </mat-toolbar-row>
   <mat-card-content>
@@ -25,8 +29,18 @@
           ix-table-body
           [columns]="columns"
           [dataProvider]="dataProvider()"
+          [isLoading]="!!(dataProvider().isLoading$ | async)"
           (expanded)="expanded($event)"
         >
+          <ng-template
+            let-subsystem
+            ix-table-cell
+            [columnIndex]="0"
+            [dataProvider]="dataProvider()"
+          >
+            <ix-subsystem-name-cell [subsystem]="subsystem"></ix-subsystem-name-cell>
+          </ng-template>
+
           <ng-template
             ix-table-cell
             [columnIndex]="4"
@@ -36,7 +50,10 @@
           </ng-template>
         </tbody>
       </ix-table>
+
+      <ix-table-pager
+        [dataProvider]="dataProvider()"
+      ></ix-table-pager>
     }
-    <ix-table-pager [dataProvider]="dataProvider()"></ix-table-pager>
   </mat-card-content>
 </mat-card>

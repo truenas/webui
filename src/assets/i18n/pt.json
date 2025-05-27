@@ -3173,6 +3173,7 @@
   "This pool has an encrypted root dataset which is locked. Do you want to unlock it?": "",
   "This process continues in the background after closing this dialog.": "",
   "This session is current and cannot be terminated": "",
+  "This subsystem is currently not usable due to missing required configuration.": "",
   "This system cannot communicate externally.": "",
   "This system is not licensed for HA.": "",
   "This system will restart when the update completes.": "",

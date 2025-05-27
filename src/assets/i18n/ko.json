@@ -72,6 +72,7 @@
   "System is up to date!": "",
   "The NVMe Qualified Name (NQN) is used to identify the subsystem. Leave blank to generate NQN using the base NQN from global settings.": "",
   "This page will help you protect your data by syncing it with other systems on the cloud. <br>\n But first, you need to create a storage pool to get started.": "",
+  "This subsystem is currently not usable due to missing required configuration.": "",
   "Update Available": "",
   "Update Profile": "",
   "Update Summary for {version}": "",

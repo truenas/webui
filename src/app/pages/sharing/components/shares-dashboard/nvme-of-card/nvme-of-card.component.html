@@ -50,7 +50,16 @@
         [columns]="columns"
         [dataProvider]="dataProvider()"
         [isLoading]="!!(dataProvider().isLoading$ | async)"
-      ></tbody>
+      >
+        <ng-template
+          let-subsystem
+          ix-table-cell
+          [columnIndex]="0"
+          [dataProvider]="dataProvider()"
+        >
+          <ix-subsystem-name-cell [subsystem]="subsystem"></ix-subsystem-name-cell>
+        </ng-template>
+      </tbody>
     </ix-table>
 
     <ix-table-pager-show-more
