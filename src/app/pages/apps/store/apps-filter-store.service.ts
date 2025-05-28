@@ -67,6 +67,10 @@ export class AppsFilterStore extends ComponentStore<AppsFilterState> {
       if (state.filter.sort === AppsFiltersSort.LastUpdate) {
         return this.sortAppsByLastUpdate(filteredApps);
       }
+      if (state.filter.sort === AppsFiltersSort.PopularityRank) {
+        return this.sortAppsByPopularityRank(filteredApps);
+      }
+
       return this.sortAppsByCategory(
         filteredApps,
         state.searchQuery.length ? [] : recommendedApps,
@@ -249,6 +253,19 @@ export class AppsFilterStore extends ComponentStore<AppsFilterState> {
     });
 
     return appsByCategory;
+  }
+
+  private sortAppsByPopularityRank(filteredApps: AvailableApp[]): AppsByCategory[] {
+    const sortedApps = [...filteredApps].sort((a, b) => {
+      return (b.popularity_rank ?? -Infinity) - (a.popularity_rank ?? -Infinity);
+    });
+
+    return [{
+      title: this.translate.instant('Most Popular'),
+      apps: sortedApps,
+      totalApps: sortedApps.length,
+      category: this.translate.instant('Most Popular 2'),
+    }];
   }
 
   private sortAppsByCategory(
