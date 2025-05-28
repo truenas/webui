@@ -1,7 +1,7 @@
 @let empty = !(dataProvider().currentPageCount$ | async) && !isLoading();
 
 <mat-card>
-  <ix-fake-progress-bar [loading]="!!(dataProvider().isLoading$ | async)"></ix-fake-progress-bar>
+  <ix-fake-progress-bar [loading]="isLoading()"></ix-fake-progress-bar>
   <mat-toolbar-row>
     <h3>{{ 'Subsystems' | translate }}</h3>
 
@@ -29,25 +29,24 @@
           ix-table-body
           [columns]="columns"
           [dataProvider]="dataProvider()"
-          [isLoading]="!!(dataProvider().isLoading$ | async)"
           (expanded)="expanded($event)"
         >
-          <ng-template
-            let-subsystem
-            ix-table-cell
-            [columnIndex]="0"
-            [dataProvider]="dataProvider()"
-          >
-            <ix-subsystem-name-cell [subsystem]="subsystem"></ix-subsystem-name-cell>
-          </ng-template>
+        <ng-template
+          let-subsystem
+          ix-table-cell
+          [columnIndex]="0"
+          [dataProvider]="dataProvider()"
+        >
+          <ix-subsystem-name-cell [subsystem]="subsystem"></ix-subsystem-name-cell>
+        </ng-template>
 
-          <ng-template
-            ix-table-cell
-            [columnIndex]="4"
-            [dataProvider]="dataProvider()"
-          >
-            <ix-icon name="mdi-chevron-right"></ix-icon>
-          </ng-template>
+        <ng-template
+          ix-table-cell
+          [columnIndex]="4"
+          [dataProvider]="dataProvider()"
+        >
+          <ix-icon name="mdi-chevron-right"></ix-icon>
+        </ng-template>
         </tbody>
       </ix-table>
 
