@@ -1,6 +1,6 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
-import { NvmeOfSubsystemDetails } from 'app/pages/sharing/nvme-of/services/nvme-of-subsystem-details.interface';
+import { NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.interface';
 import {
   SubsystemDetailsComponent,
 } from 'app/pages/sharing/nvme-of/subsystem-details/subsystem-details.component';

@@ -1,21 +1,26 @@
 import {
   computed, Injectable, signal,
 } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { ComponentStore } from '@ngrx/component-store';
 import {
-  combineLatest, Observable, switchMap, tap,
+  combineLatest, Observable, of, switchMap, tap,
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { User, UserUpdate } from 'app/interfaces/user.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { OneTimePasswordCreatedDialog } from 'app/pages/credentials/users/one-time-password-created-dialog/one-time-password-created-dialog.component';
+import { UserStigPasswordOption } from 'app/pages/credentials/users/user-form/user-form.component';
 
-const defaultHomePath = '/var/empty';
+export const defaultHomePath = '/var/empty';
 
 export interface UserFormSetupDetails {
   allowedAccess: AllowedAccessConfig;
   defaultPermissions: boolean;
   role: Role | 'prompt';
+  stigPassword: UserStigPasswordOption;
+  homeModeOldValue: string;
 }
 
 export interface AllowedAccessConfig {
@@ -45,6 +50,8 @@ const initialState: UserFormState = {
     },
     defaultPermissions: true,
     role: 'prompt',
+    stigPassword: UserStigPasswordOption.DisablePassword,
+    homeModeOldValue: '',
   },
 };
 
@@ -52,6 +59,7 @@ const initialState: UserFormState = {
 export class UserFormStore extends ComponentStore<UserFormState> {
   readonly isStigMode = computed(() => this.state().isStigMode);
   readonly nextUid = computed(() => this.state().nextUid);
+  readonly homeModeOldValue = computed(() => this.state().setupDetails.homeModeOldValue);
 
   readonly smbAccess = computed(() => this.state().setupDetails.allowedAccess.smbAccess);
   readonly shellAccess = computed(() => this.state().setupDetails.allowedAccess.shellAccess);
@@ -74,6 +82,7 @@ export class UserFormStore extends ComponentStore<UserFormState> {
 
   constructor(
     private api: ApiService,
+    private matDialog: MatDialog,
   ) {
     super(initialState);
   }
@@ -92,24 +101,63 @@ export class UserFormStore extends ComponentStore<UserFormState> {
     );
   }
 
+  private generateOneTimePasswordIfNeeded(user: User): Observable<User> {
+    if (this.isNewUser() && this.state().setupDetails.stigPassword === UserStigPasswordOption.OneTimePassword) {
+      return this.api.call('auth.generate_onetime_password', [{ username: this.userConfig()?.username }]).pipe(
+        switchMap((password) => {
+          this.matDialog.open(OneTimePasswordCreatedDialog, { data: password });
+          return of(user);
+        }),
+      );
+    }
+    return of(user);
+  }
+
   createUser(): Observable<User> {
     const state = this.state();
-    let user = { ...state.userConfig };
-    user = {
-      ...user,
-      full_name: user.full_name || user.username,
-      home: user.home || defaultHomePath,
-      locked: false,
-      shell: '/usr/sbin/nologin',
+    const oneTimePassword = state.setupDetails.stigPassword === UserStigPasswordOption.OneTimePassword;
+    let payload = { ...state.userConfig };
+    payload = {
+      ...payload,
+      username: payload.username,
+      full_name: payload.full_name || payload.username,
+      home: payload.home || defaultHomePath,
+      shell: payload.shell || '/usr/sbin/nologin',
       smb: state.setupDetails.allowedAccess.smbAccess,
-      ssh_password_enabled: false,
-      sudo_commands: [] as string[],
-      sudo_commands_nopasswd: [] as string[],
-      group_create: true,
-      uid: this.nextUid(),
+      ssh_password_enabled: payload.ssh_password_enabled || false,
+      sudo_commands: payload.sudo_commands || [] as string[],
+      sudo_commands_nopasswd: payload.sudo_commands_nopasswd || [] as string[],
+      group_create: payload.group_create || true,
+      uid: payload.uid || this.nextUid(),
+      password: oneTimePassword || payload.password_disabled ? null : payload.password,
+      random_password: oneTimePassword,
     };
 
-    return this.api.call('user.create', [user]);
+    if (!oneTimePassword) {
+      delete payload.random_password;
+    }
+
+    return this.api.call('user.create', [payload]).pipe(
+      switchMap((user) => this.generateOneTimePasswordIfNeeded(user)),
+    );
+  }
+
+  updateUser(id: number, payload: UserUpdate): Observable<User> {
+    if (payload.home_create) {
+      return this.api.call('user.update', [id,
+        {
+          home_create: true,
+          home: payload.home,
+        },
+      ]).pipe(
+        switchMap(() => {
+          delete payload.home_create;
+          delete payload.home;
+          return this.api.call('user.update', [id, payload]);
+        }),
+      );
+    }
+    return this.api.call('user.update', [id, payload]);
   }
 
   updateUserConfig = this.updater((state, userConfig: UserUpdate) => {

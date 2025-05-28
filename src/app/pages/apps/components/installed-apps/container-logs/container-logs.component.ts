@@ -48,7 +48,7 @@ export class ContainerLogsComponent implements OnInit {
   defaultTailLines = 500;
 
   private logsChangedListener: Subscription;
-  logs: AppContainerLog[] = [];
+  protected logs = signal<AppContainerLog[]>([]);
 
   constructor(
     private api: ApiService,
@@ -88,7 +88,7 @@ export class ContainerLogsComponent implements OnInit {
           return;
         }
 
-        this.logs = [];
+        this.logs.set([]);
         this.isLoading.set(true);
       }),
       switchMap((details: LogsDetailsDialog['form']['value']) => {
@@ -105,7 +105,7 @@ export class ContainerLogsComponent implements OnInit {
         this.isLoading.set(false);
 
         if (log && log.msg !== 'nosub') {
-          this.logs.push(log);
+          this.logs.set([...this.logs(), log]);
           this.scrollToBottom();
         }
       },

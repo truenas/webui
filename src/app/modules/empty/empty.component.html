@@ -21,7 +21,7 @@
         <h3 class="empty-title">{{ conf().title | translate }}</h3>
       }
       @if (conf().message && !conf().compact) {
-        <p class="empty-message" [innerHTML]="conf().message | translate"></p>
+        <div class="empty-message" [innerHTML]="conf().message | translate"></div>
       }
 
       <ng-content></ng-content>
