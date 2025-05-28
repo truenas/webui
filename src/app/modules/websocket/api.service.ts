@@ -85,9 +85,17 @@ export class ApiService {
   /**
    * Use this method when you want to start a job, but don't care about the progress or result.
    * Use `job` otherwise.
+   * Returns: The call UUID <string> that can be used to track the associated job
+   * from `core.get_jobs` or `Store<JobSlice>`
    */
-  startJob<M extends ApiJobMethod>(method: M, params?: ApiJobParams<M>): Observable<number> {
-    return this.callMethod(method, params);
+  startJob<M extends ApiJobMethod>(method: M, params?: ApiJobParams<M>): string {
+    const uuid = UUID.UUID();
+    this.wsHandler.scheduleCall({
+      id: uuid,
+      method,
+      params: params as unknown[] ?? [],
+    });
+    return uuid;
   }
 
   /**
@@ -143,7 +151,7 @@ export class ApiService {
     method: M,
     params?: ApiJobParams<M>,
     callUuid?: string
-  ): Observable<number>;
+  ): Observable<ApiJobResponse<M>>;
   private callMethod<M extends ApiCallMethod | ApiJobMethod>(
     method: M,
     params?: unknown[],
@@ -152,6 +160,7 @@ export class ApiService {
     return of(uuid).pipe(
       switchMap(() => {
         performance.mark(`${method} - ${uuid} - start`);
+
         this.wsHandler.scheduleCall({
           id: uuid,
           method,
