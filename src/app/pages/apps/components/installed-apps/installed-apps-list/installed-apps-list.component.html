@@ -1,3 +1,4 @@
+@let empty = (dataSource.length && !filteredApps.length) || (!dataSource.length && !isLoading());
 
 <div class="table-header">
   <h2>{{ 'Applications' | translate }}</h2>
@@ -21,13 +22,16 @@
 
   <ix-search-input1
     [maxLength]="100"
-    [disabled]="!dataSource.length"
+    [disabled]="empty"
     [value]="filterString"
     (search)="onSearch($event)"
   ></ix-search-input1>
 </div>
 
-<div
+@if (empty) {
+  <ix-empty [conf]="entityEmptyConf"></ix-empty>
+} @else {
+  <div
   class="sticky-header"
   matSort
   matSortActive="application"
@@ -112,12 +116,7 @@
           (keydown.enter)="viewDetails(app)"
         ></ix-app-row>
       }
-
-      @if ((dataSource.length && !filteredApps.length) || (!dataSource.length && !isLoading())) {
-        <div class="no-apps">
-          <ix-empty [conf]="entityEmptyConf"></ix-empty>
-        </div>
-      }
     </div>
   </div>
 </div>
+}

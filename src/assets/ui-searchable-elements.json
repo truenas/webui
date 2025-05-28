@@ -4201,7 +4201,7 @@
   {
     "hierarchy": [
       "System",
-      "General Settings",
+      "Advanced Settings",
       "NTP Server"
     ],
     "synonyms": [
@@ -4211,7 +4211,7 @@
     "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
-      "general"
+      "advanced"
     ],
     "routerLink": null,
     "anchor": "ntp-card",
@@ -4221,7 +4221,7 @@
   {
     "hierarchy": [
       "System",
-      "General Settings",
+      "Advanced Settings",
       "NTP Server",
       "Add NTP Server"
     ],
@@ -4236,7 +4236,7 @@
     "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
-      "general"
+      "advanced"
     ],
     "routerLink": null,
     "anchor": "add-ntp-server",
@@ -5475,7 +5475,7 @@
   {
     "hierarchy": [
       "Network",
-      "Global Configuration Settings"
+      "Network Configuration Settings"
     ],
     "synonyms": [
       "Hostname",
@@ -5498,17 +5498,17 @@
       "network"
     ],
     "routerLink": null,
-    "anchor": "global-configuration-settings",
+    "anchor": "network-configuration-settings",
     "triggerAnchor": null,
     "section": "ui"
   },
   {
     "hierarchy": [
       "Network",
-      "Global Configuration"
+      "Network Configuration"
     ],
     "synonyms": [
-      "Network Configuration",
+      "Global Configuration",
       "Network Settings"
     ],
     "requiredRoles": [],
@@ -5518,7 +5518,7 @@
       "network"
     ],
     "routerLink": null,
-    "anchor": "global-configuration",
+    "anchor": "network-configuration",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -5621,30 +5621,6 @@
     ],
     "routerLink": null,
     "anchor": "manual-update",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "Update",
-      "Check for Updates"
-    ],
-    "synonyms": [
-      "Upgrade",
-      "Update System",
-      "Update Software",
-      "Check for Software Updates",
-      "Download Updates"
-    ],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/system",
-      "update"
-    ],
-    "routerLink": null,
-    "anchor": "check-for-updates",
     "triggerAnchor": null,
     "section": "ui"
   },

@@ -1,0 +1,30 @@
+.header {
+  align-items: center;
+
+  button {
+    margin-left: auto;
+  }
+}
+
+.port {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+
+  .port-actions {
+    display: flex;
+
+    .icon {
+      height: 20px;
+      width: 20px;
+    }
+  }
+}
+
+.controls {
+  border-top: 1px solid var(--lines);
+  margin-top: 16px;
+  padding-top: 12px;
+  text-align: right;
+}

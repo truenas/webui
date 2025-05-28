@@ -125,5 +125,9 @@
 </div>
 
 <div class="hint">
-  {{ 'You can select multiple items with the Ctrl and Shift keys.' | translate }}
+  @if (isMacOs) {
+    {{ 'You can select multiple items with the Command and Shift keys.' | translate }}
+  } @else {
+    {{ 'You can select multiple items with the Ctrl and Shift keys.' | translate }}
+  }
 </div>

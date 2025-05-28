@@ -160,11 +160,9 @@ describe('PoolManagerComponent – unsetting on fewer disks', () => {
 
     expect(await wizard.getStepValues()).toMatchObject({
       Width: '',
-      'Number of VDEVs': '',
+      'Number of VDEVs': '--',
     });
-    expect(await wizard.getConfigurationPreviewSummary()).toMatchObject({
-      'Data:': 'None',
-    });
+    expect(Object.keys(await wizard.getConfigurationPreviewSummary())).not.toContain('Data');
   });
 
   it('unsets previously selected fields when due to changes in enclosure settings there not enough disks', async () => {
@@ -192,9 +190,7 @@ describe('PoolManagerComponent – unsetting on fewer disks', () => {
       Enclosure: 'Second Enclosure',
     });
 
-    expect(await wizard.getConfigurationPreviewSummary()).toMatchObject({
-      'Data:': 'None',
-    });
+    expect(Object.keys(await wizard.getConfigurationPreviewSummary())).not.toContain('Data');
 
     await wizard.clickNext();
     expect(await wizard.getStepValues()).toMatchObject({
@@ -232,16 +228,14 @@ describe('PoolManagerComponent – unsetting on fewer disks', () => {
 
     await exportedPoolCheckbox.uncheck();
 
-    expect(await wizard.getConfigurationPreviewSummary()).toMatchObject({
-      'Data:': 'None',
-    });
+    expect(Object.keys(await wizard.getConfigurationPreviewSummary())).not.toContain('Data');
 
     await wizard.clickNext();
     await wizard.clickNext();
 
     expect(await wizard.getStepValues()).toMatchObject({
       'Disk Size': '',
-      Width: '',
+      Width: '--',
     });
   });
 

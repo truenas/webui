@@ -4,11 +4,11 @@ export const helptextGlobal = {
   sysUpdateMessage: T('A system update is in progress. It might have been launched in another window or by an external source like TrueCommand.'),
   sysUpdateMessagePt2: T('This system will restart when the update completes.'),
 
-  human_readable: {
-    suggestion_tooltip: T('This field accepts human-readable input (Ex. 50 GiB, 500M, 2 TB). \
+  humanReadable: {
+    suggestionTooltip: T('This field accepts human-readable input (Ex. 50 GiB, 500M, 2 TB). \
   If units are not specified, the value defaults to'),
 
-    suggestion_label: T('(Examples: 500 KiB, 500M, 2 TB)'),
+    suggestionLabel: T('(Examples: 500 KiB, 500M, 2 TB)'),
   },
 
   noLogDialog: {

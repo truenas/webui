@@ -18,20 +18,36 @@
   </button>
 </ix-page-header>
 
-<nav mat-tab-nav-bar [tabPanel]="tabPanel">
-  @for (link of navLinks; track link.label) {
-    <a
-      #rla="routerLinkActive"
-      mat-tab-link
-      routerLinkActive
-      [ixTest]="link.label"
-      [routerLink]="link.path"
-      [active]="rla.isActive"
-    >
-      {{ link.label | translate }}
-    </a>
-  }
-</nav>
-<mat-tab-nav-panel #tabPanel>
-  <router-outlet></router-outlet>
-</mat-tab-nav-panel>
+@let subsystem = dataProvider.expandedRow;
+@let showDetails = !masterList.filterString || subsystem.name.toLowerCase().includes(masterList.filterString.toLowerCase());
+
+<ix-master-detail-view
+  #masterDetailView="masterDetailViewContext"
+  [selectedItem]="subsystem"
+  [showDetails]="showDetails"
+>
+  <ix-subsystems-list
+    #masterList
+    master
+    [dataProvider]="dataProvider"
+    [isLoading]="isLoading()"
+    [isMobileView]="masterDetailView.isMobileView()"
+    (toggleShowMobileDetails)="masterDetailView.toggleShowMobileDetails($event)"
+    (search)="onFilter($event)"
+  ></ix-subsystems-list>
+
+  <div detail-header class="detail-header">
+    @if (subsystem) {
+      <ix-subsystems-details-header
+        [subsystem]="subsystem"
+        (subsystemRemoved)="onSubsystemRemoved()"
+      ></ix-subsystems-details-header>
+    }
+  </div>
+
+  <ng-container detail>
+    @if (subsystem) {
+      <ix-subsystem-details [subsystem]="subsystem"></ix-subsystem-details>
+    }
+  </ng-container>
+</ix-master-detail-view>

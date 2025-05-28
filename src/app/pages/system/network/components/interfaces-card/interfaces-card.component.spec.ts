@@ -45,9 +45,10 @@ describe('InterfacesCardComponent', () => {
       id: 'eno2',
       name: 'eno2',
       type: NetworkInterfaceType.Physical,
-      aliases: [],
+      aliases: [] as string[],
       state: {
         link_state: LinkState.Down,
+        permanent_link_address: 'ac:1f:6b:ca:32:24',
       },
     },
     {
@@ -107,10 +108,10 @@ describe('InterfacesCardComponent', () => {
 
   it('shows table with network interfaces', async () => {
     expect(await table.getCellTexts()).toEqual([
-      ['', 'Name', 'IP Addresses', ''],
-      ['', 'eno1', '84.23.23.1/24', ''],
-      ['', 'eno2', '', ''],
-      ['', 'vlan1', '', ''],
+      ['', 'Name', 'IP Addresses', 'MAC Address', ''],
+      ['', 'eno1', '84.23.23.1/24', '', ''],
+      ['', 'eno2', '', 'ac:1f:6b:ca:32:24', ''],
+      ['', 'vlan1', '', '', ''],
     ]);
   });
 
@@ -153,7 +154,7 @@ describe('InterfacesCardComponent', () => {
   it('resets a network interface when Reset icon is pressed on a physical interface', async () => {
     const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
     await menu.open();
-    await menu.clickItem({ text: 'Refresh' });
+    await menu.clickItem({ text: 'Reset configuration' });
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
       title: 'Reset Configuration',
@@ -164,7 +165,7 @@ describe('InterfacesCardComponent', () => {
   });
 
   it('disables Add and Delete buttons on HA systems', async () => {
-    spectator.setInput('isHaEnabled', true);
+    spectator.setInput('isHaLicensed', true);
 
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     expect(await addButton.isDisabled()).toBe(true);

@@ -1,4 +1,4 @@
-import { Required } from 'utility-types';
+import { Required, Overwrite } from 'utility-types';
 import { NvmeOfAddressFamily, NvmeOfNamespaceDeviceType, NvmeOfTransportType } from 'app/enums/nvme-of.enum';
 
 export interface NvmeOfGlobalConfig {
@@ -22,6 +22,21 @@ export interface NvmeOfSubsystem {
   qix_max: number | null;
   ieee_oui: string | null;
   ana: boolean | null;
+
+  /**
+   * List of ids. Only populated with extra.options.verbose
+   */
+  ports: number[] | null;
+
+  /**
+   * List of ids. Only populated with extra.options.verbose
+   */
+  hosts: number[] | null;
+
+  /**
+   * List of ids. Only populated with extra.options.verbose
+   */
+  namespaces: number[] | null;
 }
 
 export type UpdateNvmeOfSubsystem = Partial<Omit<NvmeOfSubsystem, 'id'>>;
@@ -84,7 +99,7 @@ export type DeleteNamespaceParams = [
 export interface NvmeOfHost {
   id: number;
   hostnqn: string;
-  dhchap: string | null;
+  dhchap_key: string | null;
   dhchap_ctrl_key: string | null;
   dhchap_dhgroup: string | null;
   dhchap_hash: string | null;
@@ -97,6 +112,8 @@ export interface SubsystemPortAssociation {
   id: number;
   port: NvmeOfPort;
   subsystem: NvmeOfSubsystem;
+  subsys_id: number;
+  port_id: number;
 }
 
 export interface AssociateSubsystemPort {
@@ -108,9 +125,34 @@ export interface SubsystemHostAssociation {
   id: number;
   host: NvmeOfHost;
   subsystem: NvmeOfSubsystem;
+  subsys_id: number;
+  host_id: number;
 }
 
 export interface AssociateSubsystemHost {
   host_id: number;
   subsys_id: number;
+}
+
+export type GenerateNvmeHostParams = [
+  dhchap_hash: string,
+  nqn?: string,
+];
+
+export type NvmeOfSubsystemDetails = Overwrite<NvmeOfSubsystem, {
+  hosts: NvmeOfHost[];
+  ports: NvmeOfPort[];
+  namespaces: NvmeOfNamespace[];
+}>;
+
+export enum PortOrHostDeleteType {
+  Port = 'port',
+  Host = 'host',
+}
+
+export interface PortOrHostDeleteDialogData {
+  type: PortOrHostDeleteType;
+  item: NvmeOfPort | NvmeOfHost;
+  name: string;
+  subsystemsInUse: NvmeOfSubsystemDetails[];
 }

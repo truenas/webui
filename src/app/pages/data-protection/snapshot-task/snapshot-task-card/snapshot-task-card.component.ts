@@ -9,11 +9,13 @@ import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { filter, map, switchMap } from 'rxjs';
+import { snapshotTaskEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -62,11 +64,13 @@ import { TaskService } from 'app/services/task.service';
     UiSearchDirective,
     TranslateModule,
     AsyncPipe,
+    EmptyComponent,
   ],
 })
 export class SnapshotTaskCardComponent implements OnInit {
   protected readonly requiredRoles = [Role.SnapshotTaskWrite];
   protected readonly uiSearchableElement = snapshotTaskCardElements;
+  protected readonly emptyConfig = snapshotTaskEmptyConfig;
 
   dataProvider: AsyncDataProvider<PeriodicSnapshotTaskUi>;
 

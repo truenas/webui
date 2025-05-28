@@ -80,19 +80,16 @@
           <ix-input
             [formControlName]="nameserver1.fcName"
             [label]="nameserver1.label | translate"
-            [tooltip]="nameserver1.tooltip | translate"
           ></ix-input>
 
           <ix-input
             [formControlName]="nameserver2.fcName"
             [label]="nameserver2.label | translate"
-            [tooltip]="nameserver2.tooltip | translate"
           ></ix-input>
 
           <ix-input
             [formControlName]="nameserver3.fcName"
             [label]="nameserver3.label | translate"
-            [tooltip]="nameserver3.tooltip | translate"
           ></ix-input>
         </ix-fieldset>
         <ix-fieldset
@@ -129,7 +126,6 @@
               class="outbound-network-value"
               [formControlName]="outboundNetworkValue.fcName"
               [label]="outboundNetworkValue.label | translate"
-              [tooltip]="outboundNetworkValue.tooltip | translate"
               [options]="outboundNetworkValue.options"
               [multiple]="true"
             ></ix-select>

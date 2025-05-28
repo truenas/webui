@@ -3,6 +3,7 @@
 :host ::ng-deep {
   mat-list-item {
     height: inherit !important;
+    padding: 0;
   }
 }
 
@@ -16,23 +17,14 @@
 }
 
 .columns {
-  display: flex;
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 0.5fr 1fr;
   min-height: 100px;
   overflow: auto;
 
   @media (max-width: $breakpoint-tablet) {
     display: block;
-  }
-
-  .first-column {
-    flex-grow: 1;
-    margin-right: 30px;
-    max-width: 35%;
-
-    @media (max-width: $breakpoint-tablet) {
-      margin-right: 0;
-      max-width: 100%;
-    }
   }
 }
 
@@ -65,4 +57,8 @@
   .value {
     font-weight: 500;
   }
+}
+
+ul {
+  padding: 0 16px;
 }

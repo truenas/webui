@@ -52,8 +52,7 @@ span.code {
 
 /* MENUS */
 .mat-mdc-menu-item {
-  height: 36px !important;
-  line-height: 36px !important;
+  min-height: 36px !important;
 }
 
 .mat-mdc-menu-item.sticky-bottom,
@@ -718,11 +717,6 @@ body {
     border-bottom: solid 1px var(--lines);
   }
 
-  .mat-mdc-menu-item {
-    height: inherit !important;
-    min-height: inherit;
-  }
-
   .mdc-linear-progress__buffer-bar {
     background-color: var(--primary);
     opacity: 0.5;
@@ -873,6 +867,7 @@ mat-list-item {
     flex-wrap: wrap;
     max-width: fill-available;
     white-space: pre-wrap;
+    word-break: break-all;
     word-wrap: break-word;
   }
 }

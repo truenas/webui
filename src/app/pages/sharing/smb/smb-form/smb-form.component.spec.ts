@@ -170,7 +170,16 @@ describe('SmbFormComponent', () => {
       }),
       mockProvider(Router),
       mockProvider(LoaderService),
-      mockProvider(FilesystemService),
+      mockProvider(FilesystemService, {
+        getTopLevelDatasetsNodes: jest.fn(() => {
+          return of([
+            {
+              path: 'pool',
+              name: 'pool',
+            },
+          ]);
+        }),
+      }),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
           afterClosed: () => of(true),
@@ -459,7 +468,7 @@ describe('SmbFormComponent', () => {
       });
 
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
-        helptextSharingSmb.restarted_smb_dialog.message,
+        helptextSharingSmb.restartedSmbDialog.message,
       );
 
       const sharePath = await (await loader.getHarness(

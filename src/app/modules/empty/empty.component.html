@@ -8,26 +8,30 @@
       <ix-icon class="icon" [name]="getIcon()" [fullSize]="true"></ix-icon>
     </div>
   }
+
   @if (isLoading()) {
     <div>
       <mat-spinner [diameter]="40"></mat-spinner>
     </div>
   }
+
   @if (!isLoading()) {
     <div>
-      <h3 class="empty-title">{{ conf().title }}</h3>
-      @if (conf().message && !conf().compact) {
-        <p class="empty-message">
-          @if (conf().message; as message) {
-            {{ message }}
-          }
-        </p>
+      @if (conf().title) {
+        <h3 class="empty-title">{{ conf().title | translate }}</h3>
       }
+      @if (conf().message && !conf().compact) {
+        <div class="empty-message" [innerHTML]="conf().message | translate"></div>
+      }
+
+      <ng-content></ng-content>
+
       @if (conf().button && !conf().compact) {
         <button
           *ixRequiresRoles="requiredRoles()"
-          class="empty-action"
           mat-button
+          class="empty-action"
+          color="primary"
           [ixTest]="conf().button?.label"
           (click)="doAction()"
         >

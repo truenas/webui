@@ -1,9 +1,15 @@
+@let empty = !(dataProvider.currentPageCount$ | async) && !(dataProvider.isLoading$ | async);
+
 <mat-card>
   <ix-fake-progress-bar [loading]="!!(dataProvider.isLoading$ | async)"></ix-fake-progress-bar>
   <mat-toolbar-row>
     <h3>{{ 'NFS' | translate }}</h3>
     <div class="actions action-icon">
-      <ix-search-input1 [value]="filterString" (search)="onListFiltered($event)"></ix-search-input1>
+      <ix-search-input1
+        [value]="filterString"
+        [disabled]="empty"
+        (search)="onListFiltered($event)"
+      ></ix-search-input1>
 
       <a mat-button ixTest="nfs-sessions" routerLink="/sharing/nfs/sessions">
         {{ 'NFS Sessions' | translate }}
@@ -27,23 +33,29 @@
       </button>
     </div>
   </mat-toolbar-row>
+
   <mat-card-content [ixUiSearch]="searchableElements.elements.nfs">
-    <ix-table
-      [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
-      [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
-    >
-      <thead
-        ix-table-head
-        [columns]="columns"
-        [dataProvider]="dataProvider"
-      ></thead>
-      <tbody
-        ix-table-body
-        [columns]="columns"
-        [dataProvider]="dataProvider"
-        [isLoading]="!!(dataProvider.isLoading$ | async)"
-      ></tbody>
-    </ix-table>
-    <ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>
+    @if (empty) {
+      <ix-empty [conf]="emptyConfig"></ix-empty>
+    } @else {
+      <ix-table
+        [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
+        [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
+      >
+        <thead
+          ix-table-head
+          [columns]="columns"
+          [dataProvider]="dataProvider"
+        ></thead>
+        <tbody
+          ix-table-body
+          [columns]="columns"
+          [dataProvider]="dataProvider"
+          [isLoading]="!!(dataProvider.isLoading$ | async)"
+        ></tbody>
+      </ix-table>
+
+      <ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>
+    }
   </mat-card-content>
 </mat-card>

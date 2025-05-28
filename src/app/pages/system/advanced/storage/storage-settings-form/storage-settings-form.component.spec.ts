@@ -151,4 +151,16 @@ describe('StorageSettingsFormComponent', () => {
     const warning = await loader.getHarness(WarningHarness);
     expect(await warning.getText()).toBe(helptextSystemAdvanced.storageSettings.smbRebootWarning);
   });
+
+  it('closes the form with no requests if no changes were made', async () => {
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    await saveButton.click();
+
+    expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({
+      response: false,
+      error: null,
+    });
+    expect(api.call).not.toHaveBeenCalledWith('pool.resilver.update', expect.anything());
+    expect(api.job).not.toHaveBeenCalledWith('systemdataset.update', expect.anything());
+  });
 });

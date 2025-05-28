@@ -17,6 +17,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 /**
  * Editable component that allows inline editing of a value.
  *
+ * You may want to use it with ix-details-table.
+ *
  * @example
  * ```html
  * <ix-editable>
@@ -45,6 +47,16 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 })
 export class EditableComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly emptyValue = input(this.translate.instant('Not Set'));
+
+  /**
+   * Disabled prevents editable from being opened, but still communicated to the user that it can be.
+   */
+  readonly disabled = input(false);
+
+  /**
+   * Readonly just shows value as text.
+   */
+  readonly readonly = input(false);
 
   readonly closed = output();
 

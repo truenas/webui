@@ -105,9 +105,9 @@ describe('NetworkConfigurationComponent', () => {
       'NetBIOS-NS': false,
       mDNS: true,
       'WS-Discovery': true,
-      'Nameserver 1': '',
-      'Nameserver 2': '',
-      'Nameserver 3': '',
+      Primary: '',
+      Secondary: '',
+      Tertiary: '',
       'IPv4 Default Gateway': '192.168.30.2',
       'IPv6 Default Gateway': '',
       'Inherit domain from DHCP': false,
@@ -133,13 +133,15 @@ describe('NetworkConfigurationComponent', () => {
       'NetBIOS-NS': true,
       mDNS: true,
       'WS-Discovery': true,
-      'Nameserver 1': '',
-      'Nameserver 2': '',
-      'Nameserver 3': '',
+      Primary: '',
+      Secondary: '',
+      Tertiary: '',
       'IPv4 Default Gateway': '',
       'IPv6 Default Gateway': '',
       'HTTP Proxy': '',
       'Host Name Database': [],
+      'Outbound Activity': 'Allow Specific',
+      Services: ['Cloud sync'],
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -149,8 +151,8 @@ describe('NetworkConfigurationComponent', () => {
       'network.configuration.update',
       [{
         activity: {
-          activities: [],
-          type: NetworkActivityType.Deny,
+          activities: ['cloud_sync'],
+          type: NetworkActivityType.Allow,
         },
         domain: 'local',
         domains: [],

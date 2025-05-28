@@ -29,14 +29,9 @@ export const helptextNetworkConfiguration = {
   ipv6gatewayTooltip: T('Enter an IPv6 address. This overrides the default\
  gateway provided by DHCP.'),
 
-  nameserver1Label: T('Nameserver 1'),
-  nameserver1Tooltip: T('Primary DNS server.'),
-
-  nameserver2Label: T('Nameserver 2'),
-  nameserver2Tooltip: T('Secondary DNS server.'),
-
-  nameserver3Label: T('Nameserver 3'),
-  nameserver3Tooltip: T('Third DNS server.'),
+  nameserver1Label: T('Primary'),
+  nameserver2Label: T('Secondary'),
+  nameserver3Label: T('Tertiary'),
 
   httpproxyLabel: T('HTTP Proxy'),
   httpproxyTooltip: T('When using a proxy, enter the proxy information for \
@@ -83,15 +78,18 @@ export const helptextNetworkConfiguration = {
       label: T('Deny All'),
       tooltip: T('This system cannot communicate externally.'),
     },
-    specific: {
+    allowSpecific: {
       label: T('Allow Specific'),
       tooltip: T('Define the system services that are allowed to \
 communicate externally. All other external traffic is restricted.'),
     },
+    denySpecific: {
+      placeholder: T('Allow All Except'),
+      tooltip: T('Define the system services that are NOT allowed to \
+communicate externally. All other external traffic will be allowed.'),
+    },
   },
   outboundNetworkValue: {
-    label: T('Allowed Services'),
-    tooltip: T('Select the system services that will be allowed to \
-communicate externally.'),
+    label: T('Services'),
   },
 };
