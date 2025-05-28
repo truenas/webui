@@ -47,8 +47,8 @@ describe('AppNetworkInfoComponent', () => {
 
   it('checks in-out rows', () => {
     const inOutRows = spectator.queryAll('.in-out-row');
-    expect(inOutRows[0]).toHaveText('In: 123 b/s');
-    expect(inOutRows[1]).toHaveText('Out: 456 b/s');
+    expect(inOutRows[0]).toHaveText('In: 984 b/s');
+    expect(inOutRows[1]).toHaveText('Out: 3.65 kb/s');
   });
 
   it('should generate correct network chart data', () => {
