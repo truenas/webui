@@ -36,7 +36,7 @@ describe('VirtualizationDevicesStore', () => {
   });
 
   it('should have default empty state', () => {
-    expect(spectator.service.stateAsSignal()).toEqual({
+    expect(spectator.service.state()).toEqual({
       isLoading: false,
       devices: [],
     });
@@ -46,7 +46,7 @@ describe('VirtualizationDevicesStore', () => {
     spectator.service.loadDevices();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalled();
-    expect(spectator.service.stateAsSignal()).toEqual({
+    expect(spectator.service.state()).toEqual({
       devices,
       isLoading: false,
     });

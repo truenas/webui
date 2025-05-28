@@ -1,5 +1,4 @@
 import { computed, Injectable } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { ComponentStore } from '@ngrx/component-store';
 import { groupBy, keyBy, sortBy } from 'lodash-es';
 import {
@@ -35,24 +34,19 @@ const initialState: PoolsDashboardState = {
 
 @Injectable()
 export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
-  readonly stateAsSignal = toSignal(
-    this.state$,
-    { initialValue: initialState },
-  );
-
-  readonly pools = computed(() => this.stateAsSignal().pools);
-  readonly arePoolsLoading = computed(() => this.stateAsSignal().arePoolsLoading);
-  readonly isLoadingPoolDetails = computed(() => this.stateAsSignal().isLoadingPoolDetails);
-  readonly disks = computed(() => this.stateAsSignal().disks);
+  readonly pools = computed(() => this.state().pools);
+  readonly arePoolsLoading = computed(() => this.state().arePoolsLoading);
+  readonly isLoadingPoolDetails = computed(() => this.state().isLoadingPoolDetails);
+  readonly disks = computed(() => this.state().disks);
 
   readonly rootDatasets$ = this.select((state) => state.rootDatasets);
 
   readonly disksByPool = computed<Record<string, StorageDashboardDisk[]>>(() => {
-    return groupBy(this.stateAsSignal().disks, (disk) => disk.pool);
+    return groupBy(this.state().disks, (disk) => disk.pool);
   });
 
   scrubForPool(pool: Pool): ScrubTask | undefined {
-    return this.stateAsSignal().scrubs.find((scrub) => scrub.pool === pool.id);
+    return this.state().scrubs.find((scrub) => scrub.pool === pool.id);
   }
 
   constructor(
