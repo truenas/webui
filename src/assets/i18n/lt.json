@@ -2227,6 +2227,7 @@
   "If set, the secret that this TrueNAS will present to the host when the host is connecting (Bi-Directional Authentication).": "",
   "If set, the user home directory is checked for a <b>.tlslogin</b> file which contains one or more PEM-encoded certificates. If not found, the user is prompted for password authentication.": "",
   "If set, the value will be used to override the default DNS domain name for NFSv4. Specifies the \"Domain\" idmapd.conf setting.": "",
+  "If something isn’t working correctly, it may be better to use the “Report a bug” option. This way you’ll automatically get status updates as we fix it.": "",
   "If the <i>Hex key</i> type is chosen, an encryption key will be auto-generated.": "",
   "If the destination system has  snapshots but they do not have any data in common with the source  snapshots, destroy all destination snapshots and do a full replication.  <b>Warning:</b> enabling this option can cause data loss or excessive  data transfer if the replication is misconfigured.": "",
   "If the IPMI out-of-band management interface is on a different VLAN from the management network, enter the IPMI VLAN.": "",

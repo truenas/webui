@@ -1114,6 +1114,7 @@
   "If checked, disks of the selected size or larger will be used. If unchecked, only disks of the selected size will be used.": "",
   "If set, the secret that this TrueNAS will present to the host when the host is connecting (Bi-Directional Authentication).": "",
   "If set, the value will be used to override the default DNS domain name for NFSv4. Specifies the \"Domain\" idmapd.conf setting.": "",
+  "If something isn’t working correctly, it may be better to use the “Report a bug” option. This way you’ll automatically get status updates as we fix it.": "",
   "If you can't use QR code, use this text code instead": "",
   "Ignore Builtin": "",
   "Ignore List": "",
