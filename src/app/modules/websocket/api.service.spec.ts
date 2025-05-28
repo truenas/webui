@@ -121,12 +121,17 @@ describe('ApiService', () => {
   });
 
   describe('startJob', () => {
-    it('should schedule a call to start a job and return call id', () => {
+    it('should schedule a call to start a job and return call id', async () => {
       const uuid = 'fakeUUID10';
       jest.spyOn(UUID, 'UUID').mockReturnValue(uuid);
-      const response = spectator.service.startJob('boot.attach', ['something', {}]);
+      responses$.next({
+        id: uuid,
+        jsonrpc: '2.0',
+        result: true,
+      });
+      const response = await firstValueFrom(spectator.service.startJob('boot.attach', ['something', {}]));
 
-      expect(response).toBe(uuid);
+      expect(response).toBeTruthy();
       expect(wsHandler.scheduleCall).toHaveBeenCalledWith({
         id: expect.any(String),
         method: 'boot.attach',

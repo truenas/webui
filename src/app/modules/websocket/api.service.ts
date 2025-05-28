@@ -88,14 +88,8 @@ export class ApiService {
    * Returns: The call UUID <string> that can be used to track the associated job
    * from `core.get_jobs` or `Store<JobSlice>`
    */
-  startJob<M extends ApiJobMethod>(method: M, params?: ApiJobParams<M>): string {
-    const uuid = UUID.UUID();
-    this.wsHandler.scheduleCall({
-      id: uuid,
-      method,
-      params: params as unknown[] ?? [],
-    });
-    return uuid;
+  startJob<M extends ApiJobMethod>(method: M, params?: ApiJobParams<M>): Observable<ApiJobResponse<M>> {
+    return this.callMethod(method, params);
   }
 
   /**

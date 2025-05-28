@@ -58,6 +58,12 @@ import {
 } from 'app/interfaces/virtualization.interface';
 import { AttachTicketParams, CreateNewTicket, NewTicketResponse } from 'app/modules/feedback/interfaces/file-ticket.interface';
 
+export interface DefaultApiJobResponse {
+  id: string;
+  jsonrpc: '2.0';
+  result: boolean;
+}
+
 export interface ApiJobDirectory {
   // Active Directory
   'activedirectory.update': { params: [ActiveDirectoryUpdate]; response: ActiveDirectoryConfig };
@@ -67,7 +73,7 @@ export interface ApiJobDirectory {
   'audit.export': { params: [ExportParams<AuditEntry>]; response: string };
 
   // Boot
-  'boot.attach': { params: [disk: string, params: { expand?: boolean }]; response: void };
+  'boot.attach': { params: [disk: string, params: { expand?: boolean }]; response: DefaultApiJobResponse };
   'boot.replace': { params: [oldDisk: string, newDisk: string]; response: void };
   'boot.scrub': { params: void; response: void };
 
