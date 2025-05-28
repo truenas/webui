@@ -65,7 +65,7 @@ export class SubsystemNamespacesCardComponent {
       data: namespace,
     })
       .pipe(
-        filter((response) => response.response),
+        filter((response) => Boolean(response.response)),
         untilDestroyed(this),
       )
       .subscribe(() => {
