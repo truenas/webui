@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { UUID } from 'angular2-uuid';
 import { environment } from 'environments/environment';
 import {
   BehaviorSubject,
@@ -187,6 +188,12 @@ export class WebSocketHandlerService {
 
     performance.mark('WS Connected');
     performance.measure('Establishing WS connection', 'WS Init', 'WS Connected');
+
+    this.scheduleCall({
+      method: 'core.set_options',
+      params: [{ legacy_jobs: false }],
+      id: UUID.UUID(),
+    });
   }
 
   scheduleCall(payload: ApiCall): void {

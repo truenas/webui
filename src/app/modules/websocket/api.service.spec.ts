@@ -1,4 +1,6 @@
+import { TestBed } from '@angular/core/testing';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { UUID } from 'angular2-uuid';
 import {
   BehaviorSubject,
@@ -6,11 +8,14 @@ import {
 } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import {
-  ApiEventTyped,
   IncomingMessage,
   JsonRpcError,
 } from 'app/interfaces/api-message.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { Pool } from 'app/interfaces/pool.interface';
+import {
+  JobSlice, selectJobs,
+} from 'app/modules/jobs/store/job.selectors';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SubscriptionManagerService } from 'app/modules/websocket/subscription-manager.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
@@ -20,16 +25,32 @@ describe('ApiService', () => {
   let spectator: SpectatorService<ApiService>;
   let wsHandler: WebSocketHandlerService;
   const responses$ = new BehaviorSubject<IncomingMessage | null>(null);
+  let mockStore$: MockStore<JobSlice>;
+
+  const jobUpdate = {
+    method: 'boot.attach',
+    state: JobState.Finished,
+    time_finished: {
+      $date: 123456789,
+    },
+  } as Job;
 
   const createService = createServiceFactory({
     service: ApiService,
     providers: [
       mockProvider(WebSocketHandlerService, {
         responses$,
-        scheduleCall: jest.fn(),
       }),
       mockProvider(SubscriptionManagerService, {
         subscribe: jest.fn(() => of()),
+      }),
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectJobs,
+            value: [jobUpdate],
+          },
+        ],
       }),
     ],
   });
@@ -37,7 +58,7 @@ describe('ApiService', () => {
   beforeEach(() => {
     spectator = createService();
     wsHandler = spectator.inject(WebSocketHandlerService);
-
+    mockStore$ = TestBed.inject<MockStore<JobSlice>>(MockStore<JobSlice>);
     jest.spyOn(spectator.service.clearSubscriptions$, 'next');
 
     jest.clearAllMocks();
@@ -100,22 +121,27 @@ describe('ApiService', () => {
   });
 
   describe('startJob', () => {
-    const uuid = 'fakeUUID';
-    const mockJobId = 1234;
-
     beforeEach(() => {
-      jest.spyOn(UUID, 'UUID').mockReturnValue(uuid);
       responses$.next({
+        id: 'dummy',
         jsonrpc: '2.0',
-        id: uuid,
-        result: mockJobId,
+        result: null,
       });
     });
-
-    it('should schedule a call to start a job and return job id', async () => {
+    it('should schedule a call to start a job and return call id', async () => {
+      const uuid = 'fakeUUID10';
+      jest.spyOn(UUID, 'UUID').mockReturnValue(uuid);
+      const updatedJobUpdate = {
+        ...jobUpdate,
+        message_ids: [uuid],
+        time_finished: undefined,
+        id: 123,
+      } as Job;
+      mockStore$.overrideSelector(selectJobs, [updatedJobUpdate]);
+      mockStore$.refreshState();
       const response = await firstValueFrom(spectator.service.startJob('boot.attach', ['something', {}]));
 
-      expect(response).toBe(1234);
+      expect(response).toBe(123);
       expect(wsHandler.scheduleCall).toHaveBeenCalledWith({
         id: expect.any(String),
         method: 'boot.attach',
@@ -125,93 +151,48 @@ describe('ApiService', () => {
   });
 
   describe('job', () => {
-    const uuid = 'fakeUUID';
-    const mockJobId = 1234;
-    const jobUpdate = {
-      id: mockJobId,
-      method: 'boot.attach',
-      state: JobState.Finished,
-      time_finished: {
-        $date: 123456789,
-      },
-    };
-
-    beforeEach(() => {
-      jest.spyOn(UUID, 'UUID').mockReturnValue(uuid);
-
-      jest.spyOn(wsHandler, 'scheduleCall').mockImplementation((call) => {
-        if (call.method === 'boot.attach') {
-          responses$.next({
-            jsonrpc: '2.0',
-            id: uuid,
-            result: mockJobId,
-          });
-        } else if (call.method === 'core.get_jobs') {
-          responses$.next({
-            jsonrpc: '2.0',
-            id: uuid,
-            result: [
-              jobUpdate,
-            ],
-          });
-        }
+    it('should subscribe to job updates by observing job from the store', async () => {
+      const fakeUuid5 = 'fakeUUID5';
+      const mockJobId5 = 5;
+      jest.spyOn(UUID, 'UUID').mockReturnValue(fakeUuid5);
+      const updatedJobUpdate = {
+        ...jobUpdate,
+        id: mockJobId5,
+        message_ids: [fakeUuid5],
+        time_finished: undefined,
+      } as Job;
+      mockStore$.overrideSelector(selectJobs, [updatedJobUpdate]);
+      mockStore$.refreshState();
+      const update = await firstValueFrom(spectator.service.job('boot.attach', ['something', {}]));
+      responses$.next({
+        jsonrpc: '2.0',
+        id: fakeUuid5,
+        result: mockJobId5,
       });
-    });
 
-    it('should schedule a call to start a job', async () => {
-      await firstValueFrom(spectator.service.startJob('boot.attach', ['something', {}]));
-
-      expect(wsHandler.scheduleCall).toHaveBeenCalledWith({
-        id: expect.any(String),
-        method: 'boot.attach',
-        params: ['something', {}],
-      });
-    });
-
-    it('should subscribe to job updates by calling subscription manager for core.get_jobs', async () => {
-      await firstValueFrom(spectator.service.job('boot.attach', ['something', {}]));
-
-      expect(spectator.inject(SubscriptionManagerService).subscribe).toHaveBeenCalledWith('core.get_jobs');
-    });
-
-    it('should also call core.get_jobs in case job completes too quickly', async () => {
-      await firstValueFrom(spectator.service.job('boot.attach', ['something', {}]));
-
-      expect(wsHandler.scheduleCall).toHaveBeenCalledWith({
-        id: expect.any(String),
-        method: 'core.get_jobs',
-        params: [[['id', '=', mockJobId]]],
-      });
-    });
-
-    it('should return a job update when it is received', async () => {
-      jest.spyOn(spectator.service, 'subscribe').mockReturnValue(of({
-        id: mockJobId,
-        fields: jobUpdate,
-      } as ApiEventTyped<'core.get_jobs'>));
-
-      const response = await firstValueFrom(spectator.service.job('boot.attach', ['something', {}]));
-      expect(response).toEqual(jobUpdate);
+      expect(update).toEqual(updatedJobUpdate);
     });
 
     it('should throw on a failed job', async () => {
-      const faileJobUpdate = {
-        id: mockJobId,
+      const mockJobId4 = 1237;
+      const fakeUuid6 = 'fakeUUID6';
+      jest.spyOn(UUID, 'UUID').mockReturnValue(fakeUuid6);
+      const failedJobUpdate = {
+        id: mockJobId4,
         method: 'boot.attach',
+        message_ids: [fakeUuid6],
         state: JobState.Failed,
         time_finished: {
           $date: 123456789,
         },
       };
 
-      jest.spyOn(spectator.service, 'subscribe').mockReturnValue(of({
-        id: mockJobId,
-        fields: faileJobUpdate,
-      } as ApiEventTyped<'core.get_jobs'>));
+      mockStore$.overrideSelector(selectJobs, [failedJobUpdate as Job]);
+      mockStore$.refreshState();
 
       await expect(firstValueFrom(spectator.service.job('boot.attach'))).rejects.toBeInstanceOf(FailedJobError);
       await expect(firstValueFrom(spectator.service.job('boot.attach'))).rejects.toMatchObject({
-        job: faileJobUpdate,
+        job: failedJobUpdate,
       });
     });
   });
