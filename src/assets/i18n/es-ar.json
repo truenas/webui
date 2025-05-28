@@ -96,6 +96,7 @@
   "Sync data to a popular cloud storage provider, such as: Google Drive and Photos, Dropbox, Amazon S3 and many others.": "",
   "The NVMe Qualified Name (NQN) is used to identify the subsystem. Leave blank to generate NQN using the base NQN from global settings.": "",
   "This page will help you protect your data by syncing it with other systems on the cloud. <br>\n But first, you need to create a storage pool to get started.": "",
+  "This subsystem is currently not usable due to missing required configuration.": "",
   "Used for advanced routing, e.g., sending traffic to a specific network via a non-default gateway.": "",
   "\n              It looks like your session has been inactive for more than {lifetime} seconds.<br>\n              For security reasons we will log you out at {time}.\n            ": "\nParece que tu sesión estuvo inactiva durante más de {lifetime} segundos.<br>\nPor razones de seguridad, vamos a cerrar tu sesión a las {time}.\n",
   " as of {dateTime}": " a partir de {dateTime}",

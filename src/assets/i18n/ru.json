@@ -383,6 +383,7 @@
   "The TrueNAS controllers do not have the same quantity of disks.": "",
   "The URI used to provision an OTP. The URI (which contains the secret) is encoded in a QR Code.   To set up an OTP app like Google Authenticator, use the app to scan the QR code or enter the secret manually   into the app. The URI is produced by the system when Two-Factor Authentication is first activated.": "",
   "This page will help you protect your data by syncing it with other systems on the cloud. <br>\n But first, you need to create a storage pool to get started.": "",
+  "This subsystem is currently not usable due to missing required configuration.": "",
   "TrueNAS is Free and <a href=\"https://github.com/truenas/\" target=\"_blank\">Open Source</a> software, which is provided as-is with no warranty.": "",
   "TrueNAS maintains a cache of users and groups for API consumers (including the WebUI). This is a convenience feature that may be disabled if the domain contains large numbers of users and groups or if the caching generates excessive load on the domain controller.": "",
   "TrueNAS recommends that the sync setting always  be left to the default of \"Standard\" or increased to \"Always\". The \"Disabled\" setting should  not be used in production and only where data roll back by few seconds  in case of crash or power loss is not a concern.": "",
