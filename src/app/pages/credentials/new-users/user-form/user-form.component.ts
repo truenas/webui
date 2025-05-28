@@ -120,17 +120,21 @@ export class UserFormComponent implements OnInit {
     // TODO: Add controls for sudo related values
 
     if (this.editingUser()) {
+      const {
+        uid, username, email, full_name: fullName, smb, shell, home,
+      } = this.editingUser();
+
       this.userFormStore.updateUserConfig({
-        username: this.editingUser().username,
-        email: this.editingUser().email,
-        full_name: this.editingUser().full_name,
-        smb: this.editingUser().smb,
-        shell: this.editingUser().shell,
-        home: this.editingUser().home,
-        uid: this.editingUser().uid,
+        username,
+        email,
+        full_name: fullName,
+        smb,
+        shell,
+        home,
+        uid,
       });
       this.form.patchValue({
-        username: this.editingUser().username,
+        username,
       });
     }
   }

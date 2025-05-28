@@ -8,8 +8,9 @@ import { MatCheckbox } from '@angular/material/checkbox';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { isEqual } from 'lodash-es';
 import {
-  debounceTime, filter, map,
+  debounceTime, distinctUntilChanged, filter, map,
   Observable,
   of,
   take,
@@ -103,14 +104,22 @@ export class AdditionalDetailsSectionComponent {
   ) {
     effect(() => {
       if (!this.isNewUser()) {
+        const {
+          full_name: fullName, email, group_create: groupCreate, groups, home, home_create: homeCreate, uid,
+        } = this.userFormStore.userConfig();
+
+        if (typeof uid !== 'number' || uid < 0) {
+          return;
+        }
+
         this.form.patchValue({
-          full_name: this.userFormStore.userConfig().full_name,
-          email: this.userFormStore.userConfig().email,
-          group_create: this.userFormStore.userConfig().group_create,
-          groups: this.userFormStore.userConfig().groups,
-          home: this.userFormStore.userConfig().home,
-          create_home_directory: this.userFormStore.userConfig().home_create,
-          uid: this.userFormStore.userConfig().uid,
+          full_name: fullName,
+          email,
+          group_create: groupCreate,
+          groups,
+          home,
+          create_home_directory: homeCreate,
+          uid,
         }, { emitEvent: false });
 
         this.form.controls.uid.disable();
@@ -118,6 +127,7 @@ export class AdditionalDetailsSectionComponent {
       }
     });
     this.form.valueChanges.pipe(
+      distinctUntilChanged((prev, curr) => isEqual(prev, curr)),
       untilDestroyed(this),
     ).subscribe({
       next: () => {
@@ -125,7 +135,7 @@ export class AdditionalDetailsSectionComponent {
           group_create: this.form.value.group_create,
           home_create: this.form.value.create_home_directory,
           full_name: this.form.value.full_name,
-          groups: this.form.value.groups.map((grp) => (+grp)),
+          groups: this.form.value.groups?.map((grp) => (+grp)) || [],
           home: this.form.value.home,
           email: this.form.value.email,
           uid: this.form.value.uid,
