@@ -10,13 +10,12 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { injectParams } from 'ngxtension/inject-params';
 import { of } from 'rxjs';
-import { roleNames } from 'app/enums/role.enum';
 import { User } from 'app/interfaces/user.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { ApiDataProvider } from 'app/modules/ix-table/classes/api-data-provider/api-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
+import { templateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
@@ -26,6 +25,7 @@ import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-c
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
 import { UsersSearchComponent } from 'app/pages/credentials/new-users/all-users/users-search/users-search.component';
+import { UserAccessCellComponent } from './user-access-cell/user-access-cell.component';
 
 @UntilDestroy()
 @Component({
@@ -44,7 +44,7 @@ import { UsersSearchComponent } from 'app/pages/credentials/new-users/all-users/
     IxTableCellDirective,
     NgTemplateOutlet,
     UsersSearchComponent,
-    IxIconComponent,
+    UserAccessCellComponent,
   ],
 })
 export class UserListComponent {
@@ -75,7 +75,7 @@ export class UserListComponent {
       title: this.translate.instant('Full Name'),
       propertyName: 'full_name',
     }),
-    textColumn({
+    templateColumn({
       title: this.translate.instant('Access'),
       propertyName: 'roles',
     }),
@@ -129,11 +129,5 @@ export class UserListComponent {
     this.navigateToDetails(row);
     if (!row || !this.isMobileView()) return;
     this.toggleShowMobileDetails.emit(true);
-  }
-
-  getRoles(user: User): string {
-    return user.roles
-      .map((role) => this.translate.instant(roleNames.get(role) || role))
-      .join(', ');
   }
 }
