@@ -7,7 +7,6 @@
     <div class="actions action-icon">
       <ix-search-input1
         [value]="filterString"
-        [disabled]="empty"
         (search)="onListFiltered($event)"
       ></ix-search-input1>
 
@@ -36,7 +35,7 @@
 
   <mat-card-content [ixUiSearch]="searchableElements.elements.nfs">
     @if (empty) {
-      <ix-empty [conf]="emptyConfig"></ix-empty>
+      <ix-empty [conf]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async, emptyConfig)"></ix-empty>
     } @else {
       <ix-table
         [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
