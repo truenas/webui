@@ -30,7 +30,11 @@ describe('EditableComponent', () => {
     nameControl.setValue('Robert');
     spectator = createHost(
       `
-        <ix-editable [emptyValue]="emptyValue">
+        <ix-editable
+          [emptyValue]="emptyValue"
+          [readonly]="readonly"
+          [disabled]="disabled"
+        >
           <div view>
             {{ nameControl.value }}
           </div>
@@ -43,6 +47,8 @@ describe('EditableComponent', () => {
       {
         hostProps: {
           nameControl,
+          readonly: false,
+          disabled: false,
           emptyValue: 'Not Set',
         },
       },
@@ -79,6 +85,18 @@ describe('EditableComponent', () => {
       await trigger.click();
 
       expect(await editable.isOpen()).toBe(true);
+    });
+
+    it('applies readonly class when editable is readonly', () => {
+      spectator.setHostInput({ readonly: true });
+
+      expect(spectator.query('.edit-trigger')).toHaveClass('readonly');
+    });
+
+    it('applies disabled class when editable is disabled', () => {
+      spectator.setHostInput({ disabled: true });
+
+      expect(spectator.query('.edit-trigger')).toHaveClass('disabled');
     });
   });
 

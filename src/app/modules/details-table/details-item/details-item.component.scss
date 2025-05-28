@@ -5,6 +5,11 @@
 .key-column {
   max-width: 50%;
   padding-right: 12px;
+  white-space: nowrap;
+}
+
+.value-column {
+  width: 100%;
 }
 
 .key-column,

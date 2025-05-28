@@ -1,9 +1,12 @@
 @if (!isOpen()) {
   <button
     class="edit-trigger"
+    type="button"
     [ixTest]="[valueAsText(), 'edit']"
     [attr.aria-label]="ariaLabel()"
     [class.edit-trigger-empty]="isEmpty()"
+    [class.readonly]="readonly()"
+    [class.disabled]="disabled()"
     (click)="open()"
   >
     <div #triggerValue (cdkObserveContent)="checkVisibleValue()">

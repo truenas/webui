@@ -18,7 +18,7 @@
   </button>
 </ix-page-header>
 
-@let subsystem = dataProvider().expandedRow;
+@let subsystem = dataProvider.expandedRow;
 @let showDetails = !masterList.filterString || subsystem.name.toLowerCase().includes(masterList.filterString.toLowerCase());
 
 <ix-master-detail-view
@@ -29,7 +29,8 @@
   <ix-subsystems-list
     #masterList
     master
-    [dataProvider]="dataProvider()"
+    [dataProvider]="dataProvider"
+    [isLoading]="isLoading()"
     [isMobileView]="masterDetailView.isMobileView()"
     (toggleShowMobileDetails)="masterDetailView.toggleShowMobileDetails($event)"
     (search)="onFilter($event)"

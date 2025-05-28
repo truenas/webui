@@ -867,6 +867,7 @@ mat-list-item {
     flex-wrap: wrap;
     max-width: fill-available;
     white-space: pre-wrap;
+    word-break: break-all;
     word-wrap: break-word;
   }
 }

@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, input, OnChanges, output,
+  ChangeDetectionStrategy, Component, input, OnChanges, output, signal,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -48,9 +48,11 @@ export class DiskSizeSelectsComponent implements OnChanges {
   protected sizeDisksMap: DiskTypeSizeMap = { [DiskType.Hdd]: {}, [DiskType.Ssd]: {} };
   protected compareSizeAndTypeWith = isEqual;
 
+  protected canSelectLargerDisk = signal(false);
+
   protected form = this.formBuilder.nonNullable.group({
     sizeAndType: [[null, null] as [number | null, DiskType | null], Validators.required],
-    treatDiskSizeAsMinimum: [{ value: false, disabled: true }],
+    treatDiskSizeAsMinimum: [false],
   });
 
   constructor(
@@ -94,9 +96,12 @@ export class DiskSizeSelectsComponent implements OnChanges {
   private setControlRelations(): void {
     this.form.controls.sizeAndType
       .valueChanges
-      .pipe(filter(Boolean), untilDestroyed(this))
+      .pipe(untilDestroyed(this))
       .subscribe(() => {
-        this.form.controls.treatDiskSizeAsMinimum.enable();
+        const canSelectLargerDisk = this.selectedDiskSize
+          && this.inventory().some((disk) => disk.size > this.selectedDiskSize);
+
+        this.canSelectLargerDisk.set(canSelectLargerDisk);
       });
   }
 

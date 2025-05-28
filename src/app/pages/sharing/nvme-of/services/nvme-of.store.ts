@@ -4,9 +4,9 @@ import { tapResponse } from '@ngrx/operators';
 import { forkJoin, switchMap, tap } from 'rxjs';
 import {
   NvmeOfHost, NvmeOfNamespace, NvmeOfPort, NvmeOfSubsystem,
+  NvmeOfSubsystemDetails,
 } from 'app/interfaces/nvme-of.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { NvmeOfSubsystemDetails } from 'app/pages/sharing/nvme-of/services/nvme-of-subsystem-details.interface';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export interface NvmeOfState {
@@ -34,9 +34,9 @@ export class NvmeOfStore extends ComponentStore<NvmeOfState> {
     return state.subsystems.map((subsystem) => {
       return {
         ...subsystem,
-        hosts: state.hosts.filter((host) => subsystem.hosts.includes(host.id)),
-        ports: state.ports.filter((port) => subsystem.ports.includes(port.id)),
-        namespaces: state.namespaces.filter((namespace) => subsystem.namespaces.includes(namespace.id)),
+        hosts: state.hosts?.filter((host) => subsystem.hosts?.includes(host.id)) || [],
+        ports: state.ports?.filter((port) => subsystem.ports?.includes(port.id)) || [],
+        namespaces: state.namespaces?.filter((namespace) => subsystem.namespaces?.includes(namespace.id)) || [],
       };
     });
   });
@@ -57,10 +57,7 @@ export class NvmeOfStore extends ComponentStore<NvmeOfState> {
   initialize = this.effect((trigger$) => {
     return trigger$.pipe(
       tap(() => {
-        this.patchState({
-          ...initialState,
-          isLoading: true,
-        });
+        this.patchState({ isLoading: true });
       }),
       switchMap(() => {
         return forkJoin([
