@@ -1,8 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
-import { User } from '@sentry/angular';
 import { Role } from 'app/enums/role.enum';
+import { User } from 'app/interfaces/user.interface';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { mockUsers } from 'app/pages/credentials/new-users/all-users/testing/mock-user-api-data-provider';
 import { UserAccessCellComponent } from 'app/pages/credentials/new-users/all-users/user-list/user-access-cell/user-access-cell.component';
@@ -26,9 +26,7 @@ describe('UserAccessCellComponent', () => {
   }
 
   it('shows "Full Admin" when user has full admin role', async () => {
-    setupTest({
-      roles: [Role.FullAdmin],
-    });
+    setupTest(mockUser);
     expect(await loader.getHarness(IxIconHarness.with({ name: 'ix-truenas-logo-mark' }))).toBeTruthy();
     expect(spectator.query('span')!.textContent).toBe('Full Admin');
   });
