@@ -12,6 +12,10 @@
     place-content: flex-end;
     width: inherit;
 
+    > *:empty {
+      display: none;
+    }
+
     @media (min-width: $breakpoint-min-mobile) and (max-width: $breakpoint-min-mobile) {
       display: flex;
       flex-wrap: wrap;

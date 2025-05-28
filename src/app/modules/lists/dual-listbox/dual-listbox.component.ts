@@ -1,5 +1,7 @@
 import { NgClass, NgStyle } from '@angular/common';
-import { Component, ChangeDetectionStrategy, input } from '@angular/core';
+import {
+  Component, ChangeDetectionStrategy, input, IterableDiffers,
+} from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatListModule } from '@angular/material/list';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -8,6 +10,7 @@ import { AngularDualListBoxModule, DualListComponent } from 'angular-dual-listbo
 import { MarkedIcon } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { DetectBrowserService } from 'app/services/detect-browser.service';
 
 @Component({
   selector: 'ix-dual-listbox',
@@ -30,6 +33,15 @@ export class DualListBoxComponent extends DualListComponent {
   sourceName = input.required<string>();
   targetName = input.required<string>();
   listItemIcon = input<MarkedIcon | null>(null);
+
+  protected isMacOs = this.detectBrowser.isMacOs();
+
+  constructor(
+    private detectBrowser: DetectBrowserService,
+    differs: IterableDiffers,
+  ) {
+    super(differs);
+  }
 
   moveAll(): void {
     this.selectAll(this.available);

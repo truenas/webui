@@ -165,7 +165,6 @@ describe('PoolManagerComponent – wizard step reset', () => {
       'Disk Size': '',
       Layout: '',
       'Number of VDEVs': '',
-      'Treat Disk Size as Minimum': false,
       Width: '',
     });
     await wizard.clickNext();
@@ -183,7 +182,6 @@ describe('PoolManagerComponent – wizard step reset', () => {
     expect(await wizard.getStepValues()).toStrictEqual({
       'Disk Size': '',
       Layout: '',
-      'Treat Disk Size as Minimum': false,
       Width: '',
     });
     await wizard.clickNext();
@@ -213,16 +211,13 @@ describe('PoolManagerComponent – wizard step reset', () => {
     await resetCacheButton.click();
     expect(await wizard.getStepValues()).toStrictEqual({
       'Disk Size': '',
-      'Treat Disk Size as Minimum': false,
       Width: '',
     });
 
-    expect(await wizard.getConfigurationPreviewSummary()).toMatchObject({
-      'Data:': 'None',
-      'Log:': 'None',
-      'Spare:': 'None',
-      'Cache:': 'None',
-      'Dedup:': 'None',
+    expect(await wizard.getConfigurationPreviewSummary()).toEqual({
+      'Name:': 'None',
+      'Encryption:': 'None',
+      'Total Raw Capacity:': '0 B',
     });
   });
 });

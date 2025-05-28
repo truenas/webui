@@ -7,6 +7,7 @@ import {
 } from '@angular/material/card';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { omitBy } from 'lodash-es';
 import { map } from 'rxjs';
 import { VDevType, vdevTypeLabels } from 'app/enums/v-dev-type.enum';
 import { isTopologyLimitedToOneLayout } from 'app/helpers/storage.helper';
@@ -47,11 +48,14 @@ export class ConfigurationPreviewComponent {
 
   protected topology$ = this.store.topology$.pipe(
     map((topology) => {
-      const newTopology = { ...topology };
-      if (this.store.isUsingDraidLayout(newTopology)) {
-        delete newTopology.spare;
-      }
-      return newTopology;
+      // Remove empty vdevs and spare vdevs if using DRAID layout
+      return omitBy(topology, (value, key) => {
+        if ((key as VDevType) === VDevType.Spare && this.store.isUsingDraidLayout(topology)) {
+          return true;
+        }
+
+        return value.vdevs.length === 0;
+      });
     }),
   );
 
