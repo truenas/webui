@@ -6,8 +6,10 @@ import {
   ComponentPortal,
 } from '@angular/cdk/portal';
 import {
+  computed,
   Injectable,
   Injector,
+  signal,
   Type,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -28,7 +30,8 @@ interface OverlayInstance<T> {
 @UntilDestroy()
 @Injectable({ providedIn: 'root' })
 export class OverlaySlideInService {
-  private overlays: OverlayInstance<unknown>[] = [];
+  private overlays = signal<OverlayInstance<unknown>[]>([]);
+  openOverlays = computed(() => this.overlays()?.length);
 
   constructor(
     private overlay: Overlay,
@@ -50,7 +53,7 @@ export class OverlaySlideInService {
     panelElement.classList.remove('wide', 'normal');
     panelElement.classList.add(config.wide ? 'wide' : 'normal');
 
-    const previousOverlay = this.overlays.find(
+    const previousOverlay = this.overlays().find(
       (overlayItem) => overlayItem.overlayId === overlayId,
     );
     let close$ = previousOverlay?.close$ as Subject<T | undefined>;
@@ -63,21 +66,26 @@ export class OverlaySlideInService {
     const contentPortal = new ComponentPortal(component, null, injector);
     containerRef.instance.portalOutlet.attach(contentPortal);
 
-    this.overlays.push({
-      overlayId, slideInRef, component, config, close$,
+    this.overlays.set([
+      ...this.overlays(),
+      {
+        overlayId, slideInRef, component, config, close$,
+      },
+    ]);
+
+    overlayRef.backdropClick().pipe(untilDestroyed(this)).subscribe(() => {
+      slideInRef.close();
     });
 
-    overlayRef.backdropClick().pipe(untilDestroyed(this)).subscribe(() => slideInRef.close());
-
     overlayRef.detachments().pipe(untilDestroyed(this)).subscribe(() => {
-      this.overlays = this.overlays.filter((overlayItem) => overlayItem.overlayId !== overlayId);
+      this.overlays.set(this.overlays().filter((overlayItem) => overlayItem.overlayId !== overlayId));
     });
 
     return slideInRef;
   }
 
   swap<T>(component: Type<T>, config: { data?: unknown; wide?: boolean } = {}): void {
-    const lastOverlay = this.overlays[this.overlays.length - 1];
+    const lastOverlay = this.overlays()[this.overlays().length - 1];
     if (!lastOverlay) return;
 
     const { slideInRef: slideInRefPrev } = lastOverlay;
@@ -103,7 +111,7 @@ export class OverlaySlideInService {
   private getOverlayConfig(): OverlayConfig {
     return new OverlayConfig({
       hasBackdrop: true,
-      backdropClass: !this.overlays.length ? 'custom-overlay-backdrop' : 'custom-overlay-nobackdrop',
+      backdropClass: !this.overlays().length ? 'custom-overlay-backdrop' : 'custom-overlay-nobackdrop',
       positionStrategy: this.overlay.position().global().top('48px').right('0'),
       height: 'calc(100% - 48px)',
       panelClass: 'overlay-slide-in-panel',

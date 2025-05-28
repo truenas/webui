@@ -1,16 +1,16 @@
 :host {
   display: block;
-  overflow-x: hidden;
-  position: sticky;
+  left: 0;
+  position: absolute;
   top: 0;
   width: 100%;
-  z-index: 20000;
 }
 
 .ix-slidein-title-bar {
   align-content: center;
   align-items: center;
   background-color: var(--bg2);
+  border-bottom: 2px solid var(--lines);
   display: flex;
   height: 75px;
   justify-content: space-between;
@@ -22,19 +22,27 @@
 
 .ix-form-title {
   color: var(--fg1);
-  margin-left: 20px;
   word-break: break-all;
+}
+
+.title-left-margin {
+  margin-left: 20px;
 }
 
 #ix-close-icon {
   color: var(--fg1);
   cursor: pointer;
-  margin-right: 20px;
+  margin-left: 20px;
 
   &:focus {
     border-radius: 50%;
     outline: 1.5px solid var(--primary);
   }
+
+}
+
+.icon-margin-right {
+  margin-right: 20px;
 }
 
 mat-progress-bar {

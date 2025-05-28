@@ -1,12 +1,12 @@
 :host {
   animation: slide-in 0.2s ease forwards;
   background-color: var(--bg2);
-  box-shadow: -4px 0 12px rgba(0, 0, 0, 0.3);
+  box-shadow: -4px 0 12px rgba(0, 0, 0, 0.3); // default overlay backdrop background
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 48px);
-  overflow-x: hidden;
-  padding: 0 20px;
+  height: calc(100vh - 48px - 75px); // 100vh - topbarHeight - modalHeaderHeight
+  padding: 0 10px;
+  padding-top: 75px;
   width: 100%;
 }
 
