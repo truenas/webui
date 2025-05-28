@@ -1,5 +1,6 @@
 {
   "": "",
+  "{type} is currently in use by the following subsystems:": "",
   "<p>Automatically create point-in-time snapshots of selected datasets at regular intervals.</p>\n<p>These snapshots help preserve data states for recovery, backup, and versioning purposes,\n ensuring minimal data loss in case of accidental deletion or corruption.</p>": "",
   "<p>High-performance block storage over TCP and other protocols, using the NVMe across a network.</p>\n<p>Compared to iSCSI, NVMe-oF offers significantly lower latency and higher throughput.</p>": "",
   "<p>Optimized for Linux and Unix systems, offering deeper integration in those environments. </p>\n<p>Choose NFS if you're working primarily with Linux servers or need efficient file access in Unix-based workflows.</p>": "",
@@ -16,6 +17,7 @@
   "Also use Diffie–Hellman key exchange for additional security": "",
   "Applications you install will automatically appear here.\n <br> Click below and browse available apps to get started.": "",
   "Apply Pending Update": "",
+  "Are you sure you want to delete {type}: {name}?": "",
   "Are you sure you want to delete subsystem {subsys}?": "",
   "Are you sure you want to stop {serviceName}?": "",
   "Associated Hosts": "",
@@ -24,6 +26,7 @@
   "Best if you're syncing with a generic system that lacks ZFS capabilities.": "",
   "Best if you're syncing with another TrueNAS or ZFS system — enables advanced features not available with other methods.": "",
   "Define the system services that are NOT allowed to communicate externally. All other external traffic will be allowed.": "",
+  "Delete Anyway": "",
   "Delete Subsystem": "",
   "DH Group": "",
   "Diffie–Hellman key exchange is used in addition to CHAP for authentication.": "",

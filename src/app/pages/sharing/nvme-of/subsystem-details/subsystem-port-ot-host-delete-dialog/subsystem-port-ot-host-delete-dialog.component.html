@@ -1,0 +1,37 @@
+<h1 mat-dialog-title>
+  {{ 'Delete' | translate }} {{ type }}
+</h1>
+
+<div mat-dialog-content>
+  <p class="message">
+    {{
+      'Are you sure you want to delete {type}: {name}?' | translate: { type, name: data.name }
+    }}
+  </p>
+
+  @if (data.subsystemsInUse?.length) {
+    <p class="message">
+      {{ '{type} is currently in use by the following subsystems:' | translate: { type } }}
+    </p>
+    <ul>
+      @for (subsystem of data.subsystemsInUse; track subsystem.name) {
+        <li>{{ subsystem.name }}</li>
+      }
+    </ul>
+  }
+</div>
+
+<ix-form-actions mat-dialog-actions class="form-actions">
+  <button mat-button ixTest="cancel" [matDialogClose]="{ confirmed: false }">
+    {{ 'Cancel' | translate }}
+  </button>
+  <button
+    *ixRequiresRoles="requiredRoles"
+    mat-button
+    color="warn"
+    ixTest="delete"
+    (click)="delete()"
+  >
+    {{ data.subsystemsInUse?.length > 0 ? ('Delete Anyway' | translate) : ('Delete' | translate) }}
+  </button>
+</ix-form-actions>

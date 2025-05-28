@@ -1,6 +1,7 @@
 import { SpectatorHost, createHostFactory } from '@ngneat/spectator/jest';
-import { NvmeOfHost, NvmeOfNamespace, NvmeOfPort } from 'app/interfaces/nvme-of.interface';
-import { NvmeOfSubsystemDetails } from 'app/pages/sharing/nvme-of/services/nvme-of-subsystem-details.interface';
+import {
+  NvmeOfHost, NvmeOfNamespace, NvmeOfPort, NvmeOfSubsystemDetails,
+} from 'app/interfaces/nvme-of.interface';
 import { SubSystemNameCellComponent } from './subsystem-name-cell.component';
 
 describe('SubSystemNameCellComponent', () => {

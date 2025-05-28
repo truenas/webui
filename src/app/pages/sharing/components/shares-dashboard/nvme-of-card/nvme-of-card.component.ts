@@ -16,6 +16,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
+import { NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
@@ -39,7 +40,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceExtraActionsComponent } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-extra-actions.component';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { AddSubsystemComponent } from 'app/pages/sharing/nvme-of/add-subsystem/add-subsystem.component';
-import { NvmeOfSubsystemDetails } from 'app/pages/sharing/nvme-of/services/nvme-of-subsystem-details.interface';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
 import { SubsystemDeleteDialogComponent } from 'app/pages/sharing/nvme-of/subsystem-details-header/subsystem-delete-dialog/subsystem-delete-dialog.component';
 import { SubSystemNameCellComponent } from 'app/pages/sharing/nvme-of/subsystems-list/subsystem-name-cell/subsystem-name-cell.component';
@@ -177,7 +177,7 @@ export class NvmeOfCardComponent implements OnInit {
     )
       .afterClosed()
       .pipe(
-        filter(({ confirmed }: { confirmed: boolean; force: boolean }) => confirmed),
+        filter((data: { confirmed: boolean; force: boolean }) => data?.confirmed),
         switchMap(({ force }) => {
           return this.api.call('nvmet.subsys.delete', [row.id, { force }]).pipe(
             this.loader.withLoader(),
