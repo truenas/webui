@@ -3,7 +3,7 @@
     [label]="'Set font size' | translate"
     [min]="10"
     [max]="20"
-    [value]="fontSize"
+    [value]="fontSize()"
     (valueChange)="onFontSizeChanged($event)"
   ></ix-toolbar-slider>
 
@@ -22,7 +22,7 @@
   <div
     #logContainer
     class="logs"
-    [style.font-size]="fontSize + 'px'"
+    [style.font-size]="fontSize() + 'px'"
   >
     @if (isLoading()) {
       <mat-spinner class="spinner" [diameter]="40"></mat-spinner>
