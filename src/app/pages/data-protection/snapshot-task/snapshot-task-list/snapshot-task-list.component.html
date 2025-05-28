@@ -30,7 +30,9 @@
 
 <div class="table-container">
   @if (empty) {
-    <ix-empty [conf]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async, emptyConfig)"></ix-empty>
+    <ix-empty
+      [conf]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async, emptyConfig)"
+    ></ix-empty>
   } @else {
     <ix-table
       class="table"

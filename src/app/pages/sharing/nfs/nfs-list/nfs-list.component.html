@@ -35,7 +35,9 @@
 
   <mat-card-content [ixUiSearch]="searchableElements.elements.nfs">
     @if (empty) {
-      <ix-empty [conf]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async, emptyConfig)"></ix-empty>
+      <ix-empty
+        [conf]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async, emptyConfig)"
+      ></ix-empty>
     } @else {
       <ix-table
         [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
