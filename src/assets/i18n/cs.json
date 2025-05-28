@@ -2622,6 +2622,7 @@
   "Plain (No Encryption)": "",
   "Platform": "",
   "Please accept the terms of service for the given ACME Server.": "",
+  "Please confirm": "",
   "Please describe:\n1. Steps to reproduce\n2. Expected Result\n3. Actual Result\n\nPlease use English for your report.": "",
   "Please enter Host NQN first.": "",
   "Please specify the name of the image to pull. Format for the name is \"registry/repo/image\"": "",
