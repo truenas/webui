@@ -85,11 +85,12 @@ export class ApiService {
   /**
    * Use this method when you want to start a job, but don't care about the progress or result.
    * Use `job` otherwise.
-   * Returns: The call UUID <string> that can be used to track the associated job
-   * from `core.get_jobs` or `Store<JobSlice>`
    */
-  startJob<M extends ApiJobMethod>(method: M, params?: ApiJobParams<M>): Observable<ApiJobResponse<M>> {
-    return this.callMethod(method, params);
+  startJob<M extends ApiJobMethod>(method: M, params?: ApiJobParams<M>): Observable<number> {
+    return this.job(method, params).pipe(
+      take(1),
+      map((job) => job.id),
+    );
   }
 
   /**

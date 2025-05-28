@@ -121,17 +121,27 @@ describe('ApiService', () => {
   });
 
   describe('startJob', () => {
+    beforeEach(() => {
+      responses$.next({
+        id: 'dummy',
+        jsonrpc: '2.0',
+        result: null,
+      });
+    });
     it('should schedule a call to start a job and return call id', async () => {
       const uuid = 'fakeUUID10';
       jest.spyOn(UUID, 'UUID').mockReturnValue(uuid);
-      responses$.next({
-        id: uuid,
-        jsonrpc: '2.0',
-        result: true,
-      });
+      const updatedJobUpdate = {
+        ...jobUpdate,
+        message_ids: [uuid],
+        time_finished: undefined,
+        id: 123,
+      } as Job;
+      mockStore$.overrideSelector(selectJobs, [updatedJobUpdate]);
+      mockStore$.refreshState();
       const response = await firstValueFrom(spectator.service.startJob('boot.attach', ['something', {}]));
 
-      expect(response).toBeTruthy();
+      expect(response).toBe(123);
       expect(wsHandler.scheduleCall).toHaveBeenCalledWith({
         id: expect.any(String),
         method: 'boot.attach',
