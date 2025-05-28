@@ -264,7 +264,7 @@ export class AppsFilterStore extends ComponentStore<AppsFilterState> {
       title: this.translate.instant('Most Popular'),
       apps: sortedApps,
       totalApps: sortedApps.length,
-      category: this.translate.instant('Most Popular 2'),
+      category: this.translate.instant('Most Popular'),
     }];
   }
 
