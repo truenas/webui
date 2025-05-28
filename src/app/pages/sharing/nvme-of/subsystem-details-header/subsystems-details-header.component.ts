@@ -10,10 +10,10 @@ import {
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
+import { NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { NvmeOfSubsystemDetails } from 'app/pages/sharing/nvme-of/services/nvme-of-subsystem-details.interface';
 import {
   SubsystemDeleteDialogComponent,
 } from 'app/pages/sharing/nvme-of/subsystem-details-header/subsystem-delete-dialog/subsystem-delete-dialog.component';
@@ -53,7 +53,7 @@ export class SubsystemsDetailsHeaderComponent {
     )
       .afterClosed()
       .pipe(
-        filter(({ confirmed }: { confirmed: boolean; force: boolean }) => confirmed),
+        filter((data: { confirmed: boolean; force: boolean }) => data?.confirmed),
         switchMap(({ force }) => {
           return this.api.call('nvmet.subsys.delete', [this.subsystem().id, { force }]).pipe(
             this.loader.withLoader(),
