@@ -30,8 +30,8 @@ describe('AlertServiceListComponent', () => {
     {
       id: 1,
       name: 'SNMP Trap',
-      type: 'SNMPTrap',
       attributes: {
+        type: 'SNMPTrap',
         port: 162,
       },
       enabled: true,

@@ -76,10 +76,11 @@ export class AlertServiceListComponent implements OnInit {
     }),
     textColumn({
       title: this.translate.instant('Type'),
-      propertyName: 'type',
-      getValue: (service) => this.translate.instant(
-        alertServiceNames.find((alertService) => alertService.value === service.type)?.label || '',
-      ),
+      getValue: (service) => {
+        return this.translate.instant(
+          alertServiceNames.find((alertService) => alertService.value === service.attributes.type)?.label || '',
+        );
+      },
     }),
     textColumn({
       title: this.translate.instant('Level'),
@@ -150,7 +151,7 @@ export class AlertServiceListComponent implements OnInit {
 
   protected onListFiltered(query: string): void {
     this.filterString = query;
-    this.dataProvider.setFilter({ list: this.alertServices, query, columnKeys: ['name', 'type', 'level'] });
+    this.dataProvider.setFilter({ list: this.alertServices, query, columnKeys: ['name', 'level'] });
   }
 
   protected columnsChange(columns: typeof this.columns): void {
