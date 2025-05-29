@@ -20,6 +20,7 @@ describe('FirstLoginDialogComponent', () => {
   const mockTwoFactorConfig$ = new BehaviorSubject({ secret_configured: false });
   const mockWasOneTimePasswordChanged$ = new BehaviorSubject(false);
   const mockIsOtpwUser$ = new BehaviorSubject(true);
+  const mockIsLocalUser$ = new BehaviorSubject(true);
 
   const createComponent = createComponentFactory({
     component: FirstLoginDialogComponent,
@@ -29,6 +30,7 @@ describe('FirstLoginDialogComponent', () => {
         wasOneTimePasswordChanged$: mockWasOneTimePasswordChanged$,
         isOtpwUser$: mockIsOtpwUser$.asObservable(),
         userTwoFactorConfig$: mockTwoFactorConfig$.asObservable(),
+        isLocalUser$: mockIsLocalUser$.asObservable(),
       }),
       provideMockStore(),
       mockProvider(MatDialogRef),
@@ -108,5 +110,14 @@ describe('FirstLoginDialogComponent', () => {
     spectator.component.passwordChanged();
 
     expect(passwordChangedSpy).toHaveBeenCalledWith(true);
+  });
+
+  it('does not show password cahnge when non-local user', () => {
+    mockIsOtpwUser$.next(true);
+    spectator.detectChanges();
+    expect(spectator.query(ChangePasswordFormComponent)).toExist();
+    mockIsLocalUser$.next(false);
+    spectator.detectChanges();
+    expect(spectator.query(ChangePasswordFormComponent)).not.toExist();
   });
 });
