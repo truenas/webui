@@ -34,6 +34,7 @@ import { TwoFactorComponent } from 'app/pages/two-factor-auth/two-factor.compone
 })
 export class FirstLoginDialogComponent {
   isOtpwUser = toSignal(this.authService.isOtpwUser$);
+  isLocalUser = toSignal(this.authService.isLocalUser$);
   wasOneTimePasswordChanged = toSignal(this.authService.wasOneTimePasswordChanged$);
   userTwoFactorAuthConfigured = toSignal(this.authService.userTwoFactorConfig$.pipe(
     map((config) => config.secret_configured),
