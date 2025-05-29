@@ -184,6 +184,7 @@
   "I/O Bus": "",
   "If ANA is active then referrals will always be generated between the peer ports on each TrueNAS controller node.": "",
   "If set, the secret that this TrueNAS will present to the host when the host is connecting (Bi-Directional Authentication).": "",
+  "If something isn’t working correctly, it may be better to use the “Report a bug” option. This way you’ll automatically get status updates as we fix it.": "",
   "Immutable": "",
   "Import completed": "",
   "Import ISO": "",
