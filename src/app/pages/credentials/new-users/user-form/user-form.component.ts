@@ -234,7 +234,7 @@ export class UserFormComponent implements OnInit {
   }
 
   protected onSubmit(): void {
-    const payload = { ...this.formValues() };
+    const payload = { ...this.userFormStore.userConfig() };
 
     this.getHomeCreateConfirmation().pipe(
       filter(Boolean),
