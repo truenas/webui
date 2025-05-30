@@ -32,16 +32,16 @@ import { TwoFactorComponent } from 'app/pages/two-factor-auth/two-factor.compone
   ],
 })
 export class FirstLoginDialog {
-  isOtpwUser = toSignal(this.authService.isOtpwUser$);
-  isLocalUser = toSignal(this.authService.isLocalUser$);
-  wasOneTimePasswordChanged = toSignal(this.authService.wasOneTimePasswordChanged$);
-  userTwoFactorAuthConfigured = toSignal(this.authService.userTwoFactorConfig$.pipe(
+  protected isOtpwUser = toSignal(this.authService.isOtpwUser$);
+  protected isLocalUser = toSignal(this.authService.isLocalUser$);
+  protected wasOneTimePasswordChanged = toSignal(this.authService.wasOneTimePasswordChanged$);
+  protected userTwoFactorAuthConfigured = toSignal(this.authService.userTwoFactorConfig$.pipe(
     map((config) => config.secret_configured),
   ));
 
   constructor(private authService: AuthService) {}
 
-  passwordChanged(): void {
+  protected passwordChanged(): void {
     this.authService.wasOneTimePasswordChanged$.next(true);
   }
 }

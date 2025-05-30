@@ -106,8 +106,12 @@ describe('FirstLoginDialogComponent', () => {
   it('calls passwordChanged when password is updated', () => {
     const authService = spectator.inject(AuthService);
     const passwordChangedSpy = jest.spyOn(authService.wasOneTimePasswordChanged$, 'next');
+    mockIsOtpwUser$.next(true);
+    mockIsLocalUser$.next(true);
+    spectator.detectChanges();
 
-    spectator.component.passwordChanged();
+    const passwordChangedForm = spectator.query(ChangePasswordFormComponent);
+    passwordChangedForm.passwordUpdated.emit();
 
     expect(passwordChangedSpy).toHaveBeenCalledWith(true);
   });
