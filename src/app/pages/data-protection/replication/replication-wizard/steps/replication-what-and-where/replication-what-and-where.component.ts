@@ -39,7 +39,6 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
 import {
   forbiddenAsyncValues,
 } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -190,7 +189,6 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     private errorParser: ErrorParserService,
     private errorHandler: ErrorHandlerService,
     public slideInRef: SlideInRef<ReplicationTask, ReplicationTask>,
-    private slideIn: SlideIn,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
@@ -410,7 +408,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   }
 
   openAdvanced(): void {
-    this.slideIn.open?.(
+    this.slideInRef.swap?.(
       ReplicationFormComponent,
       { wide: true },
     );
