@@ -72,7 +72,7 @@ describe('HostFormComponent', () => {
       hostnqn: 'nqn.2014-08.org',
       dhchap_key: '1234567890',
       dhchap_ctrl_key: '111222',
-      dhchap_dhgroup: '4096-BIT',
+      dhchap_dhgroup: '2048-BIT',
       dhchap_hash: 'SHA-512',
     }]);
     expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({

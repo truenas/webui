@@ -40,7 +40,12 @@ export const jobReducer = createReducer(
     id: job.id,
     changes: job,
   }, state)),
-  on(jobRemoved, (state, { id }) => adapter.removeOne(id, state)),
+  on(jobRemoved, (state, { id }) => adapter.updateOne({
+    id,
+    changes: {
+      removed: true,
+    },
+  }, state)),
   on(jobAborted, (state, { job }) => adapter.updateOne({
     id: job.id,
     changes: {

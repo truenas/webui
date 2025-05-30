@@ -3,12 +3,14 @@ import {
   ChangeDetectionStrategy, Component, OnInit,
 } from '@angular/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatDialogClose, MatDialogContent, MatDialogTitle } from '@angular/material/dialog';
+import {
+  MatDialog, MatDialogClose, MatDialogContent, MatDialogTitle,
+} from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { filter, map } from 'rxjs/operators';
+import { filter, map, switchMap } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
-import { NvmeOfHost } from 'app/interfaces/nvme-of.interface';
+import { NvmeOfHost, PortOrHostDeleteDialogData, PortOrHostDeleteType } from 'app/interfaces/nvme-of.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -31,6 +33,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { HostFormComponent } from 'app/pages/sharing/nvme-of/hosts/host-form/host-form.component';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
+import { SubsystemPortOrHostDeleteDialogComponent } from 'app/pages/sharing/nvme-of/subsystem-details/subsystem-port-ot-host-delete-dialog/subsystem-port-ot-host-delete-dialog.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 interface NvmeOfHostAndUsage extends NvmeOfHost {
@@ -116,6 +119,7 @@ export class ManageHostsDialog implements OnInit {
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private loader: LoaderService,
+    private matDialog: MatDialog,
   ) {}
 
   ngOnInit(): void {
@@ -146,12 +150,33 @@ export class ManageHostsDialog implements OnInit {
   }
 
   onDelete(host: NvmeOfHostAndUsage): void {
-    this.api.call('nvmet.host.delete', [host.id]).pipe(
-      this.loader.withLoader(),
-      this.errorHandler.withErrorHandler(),
-      untilDestroyed(this),
-    ).subscribe(() => {
-      this.nvmeOfStore.reloadHosts();
-    });
+    const subsystemsInUse = this.nvmeOfStore?.subsystems?.()
+      .filter((subsystem) => subsystem.hosts.some((subSystemHost) => subSystemHost.id === host.id)) || [];
+
+    this.matDialog.open(
+      SubsystemPortOrHostDeleteDialogComponent,
+      {
+        data: {
+          type: PortOrHostDeleteType.Host,
+          item: host,
+          name: host.hostnqn,
+          subsystemsInUse,
+        } as PortOrHostDeleteDialogData,
+        minWidth: '500px',
+      },
+    )
+      .afterClosed()
+      .pipe(
+        filter((data: { confirmed: boolean; force: boolean }) => !!data?.confirmed),
+        switchMap(({ force }) => {
+          return this.api.call('nvmet.host.delete', [host.id, { force }]).pipe(
+            this.errorHandler.withErrorHandler(),
+            this.loader.withLoader(),
+          );
+        }),
+        untilDestroyed(this),
+      ).subscribe(() => {
+        this.nvmeOfStore.reloadHosts();
+      });
   }
 }

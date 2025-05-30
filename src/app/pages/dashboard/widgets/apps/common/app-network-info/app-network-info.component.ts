@@ -41,12 +41,12 @@ export class AppNetworkInfoComponent {
     return [...this.initialNetworkStats, ...cachedStats].slice(-60);
   });
 
-  readonly incomingTraffic = computed(() => {
-    return this.stats()?.value?.networks?.reduce((sum, stats) => sum + stats.rx_bytes, 0) || 0;
+  readonly incomingTrafficBits = computed(() => {
+    return (this.stats()?.value?.networks?.reduce((sum, stats) => sum + stats.rx_bytes, 0) || 0) * 8;
   });
 
-  readonly outgoingTraffic = computed(() => {
-    return this.stats()?.value?.networks?.reduce((sum, stats) => sum + stats.tx_bytes, 0) || 0;
+  readonly outgoingTrafficBits = computed(() => {
+    return (this.stats()?.value?.networks?.reduce((sum, stats) => sum + stats.tx_bytes, 0) || 0) * 8;
   });
 
   protected networkChartData = computed<ChartData<'line'>>(() => {

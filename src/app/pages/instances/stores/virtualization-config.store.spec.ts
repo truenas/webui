@@ -32,7 +32,7 @@ describe('VirtualizationConfigStore', () => {
   });
 
   it('should have default empty state', () => {
-    expect(spectator.service.stateAsSignal()).toEqual({
+    expect(spectator.service.state()).toEqual({
       isLoading: false,
       config: null,
     });
@@ -42,7 +42,7 @@ describe('VirtualizationConfigStore', () => {
     spectator.service.initialize();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalled();
-    expect(spectator.service.stateAsSignal()).toEqual({
+    expect(spectator.service.state()).toEqual({
       isLoading: false,
       config,
     });
