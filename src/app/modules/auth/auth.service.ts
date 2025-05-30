@@ -67,6 +67,11 @@ export class AuthService {
     map((user) => user.account_attributes.includes(AccountAttribute.Otpw)),
   );
 
+  isLocalUser$: Observable<boolean> = this.user$.pipe(
+    filter(Boolean),
+    map((user) => user.account_attributes.includes(AccountAttribute.Local)),
+  );
+
   isPasswordChangeRequired$: Observable<boolean> = this.user$.pipe(
     filter(Boolean),
     map((user) => user.account_attributes.includes(AccountAttribute.PasswordChangeRequired)),
