@@ -42,7 +42,7 @@ export class SlideIn {
 
   closeAll(): void {
     for (const slideInInstance of this.slideInInstances()) {
-      slideInInstance.slideInRef.close(undefined);
+      slideInInstance.slideInRef.close({ response: false, error: undefined });
     }
   }
 
@@ -85,7 +85,7 @@ export class SlideIn {
     containerRef.instance.portalOutlet.attach(contentPortal);
 
     cdkOverlayRef.backdropClick().pipe(untilDestroyed(this)).subscribe(() => {
-      slideInRef.close(undefined);
+      slideInRef.close({ response: false as R, error: undefined });
     });
 
     cdkOverlayRef.detachments().pipe(untilDestroyed(this)).subscribe(() => {
