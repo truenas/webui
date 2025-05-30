@@ -5,7 +5,6 @@ import {
 } from '@angular/cdk/overlay';
 import {
   ComponentPortal,
-  ComponentType,
 } from '@angular/cdk/portal';
 import {
   ComponentRef,
@@ -59,7 +58,7 @@ export class SlideIn {
     this.addCssClassForWidth(cdkOverlayRef.overlayElement, options.wide);
 
     const close$ = this.getCloseSubject<SlideInResponse<R>>(cdkOverlayRef, containerRef);
-    const slideInInstance = {
+    const slideInInstance: SlideInInstance<D, R> = {
       slideInId,
       component,
       containerRef,
@@ -68,53 +67,73 @@ export class SlideIn {
       needConfirmation: undefined,
       data: options.data,
       slideInRef: undefined,
-    } as SlideInInstance<D, R>;
+    };
 
-    const slideInRef = this.createSlideInRef(slideInInstance);
+    this.createContentPortal(slideInInstance);
+    this.updateSlideInInstances(slideInInstance);
 
-    this.slideInInstances.set([
-      ...this.slideInInstances(),
-      {
-        ...slideInInstance,
-        slideInRef,
-      },
-    ]);
-
-    const injector = this.createInjector(slideInRef);
-    const contentPortal = new ComponentPortal(component as unknown as ComponentType<unknown>, null, injector);
-    containerRef.instance.portalOutlet.attach(contentPortal);
-
-    cdkOverlayRef.backdropClick().pipe(untilDestroyed(this)).subscribe(() => {
-      slideInRef.close({ response: false as R, error: undefined });
-    });
-
-    cdkOverlayRef.detachments().pipe(untilDestroyed(this)).subscribe(() => {
-      this.slideInInstances.set(this.slideInInstances().filter((slideInItem) => slideInItem.slideInId !== slideInId));
-    });
+    this.handleOverlayEvents(cdkOverlayRef, slideInInstance);
 
     return close$;
   }
 
   private swap<D, R>(component: ComponentInSlideIn<D, R>, config: { data?: D; wide?: boolean } = {}): void {
-    const lastSlideIn = this.slideInInstances()[this.slideInInstances().length - 1];
+    const lastSlideIn = this.slideInInstances().at(-1);
     if (!lastSlideIn) return;
 
-    const { cdkOverlayRef: prevOverlayRef, containerRef: prevContainerRef } = lastSlideIn;
-
-    const slideInRef = this.createSlideInRef(lastSlideIn);
-    const injector = this.createInjector(slideInRef);
-    const contentPortal = new ComponentPortal(component as unknown as ComponentType<unknown>, null, injector);
-
-    prevContainerRef.instance.startCloseAnimation().pipe(
+    lastSlideIn.component = component;
+    lastSlideIn.containerRef.instance.startCloseAnimation().pipe(
       untilDestroyed(this),
     ).subscribe({
       next: () => {
-        prevContainerRef.instance.portalOutlet.detach();
-        prevContainerRef.instance.resetAnimation();
-        this.addCssClassForWidth(prevOverlayRef.overlayElement, config.wide);
-        prevContainerRef.instance.portalOutlet.attach(contentPortal);
+        lastSlideIn.containerRef.instance.portalOutlet.detach();
+        lastSlideIn.containerRef.instance.resetAnimation();
+        this.addCssClassForWidth(lastSlideIn.cdkOverlayRef.overlayElement, config.wide);
+        this.createContentPortal(lastSlideIn);
+        this.updateSlideInInstances(lastSlideIn);
       },
     });
+  }
+
+  private handleOverlayEvents<D, R>(overlay: OverlayRef, instance: SlideInInstance<D, R>): void {
+    overlay.backdropClick().pipe(untilDestroyed(this)).subscribe(() => {
+      instance.slideInRef.close({ response: false as R, error: undefined });
+    });
+
+    overlay.detachments().pipe(untilDestroyed(this)).subscribe(() => {
+      this.slideInInstances.set(
+        this.slideInInstances().filter((slideInItem) => slideInItem.slideInId !== instance.slideInId),
+      );
+    });
+  }
+
+  private updateSlideInInstances<D, R>(slideInInstance: SlideInInstance<D, R>): void {
+    const isInstanceExists = this.slideInInstances().some(
+      (instance) => instance.slideInId === slideInInstance.slideInId,
+    );
+    let updatedInstances: SlideInInstance<unknown, unknown>[];
+    if (isInstanceExists) {
+      updatedInstances = this.slideInInstances().map(
+        (instance) => ({
+          ...instance,
+          slideInRef: instance.slideInId === slideInInstance.slideInId
+            ? instance.slideInRef
+            : slideInInstance.slideInRef,
+        }),
+      );
+    } else {
+      updatedInstances = [...this.slideInInstances(), slideInInstance];
+    }
+    this.slideInInstances.set(updatedInstances);
+  }
+
+  private createContentPortal<D, R>(slideInInstance: SlideInInstance<D, R>): void {
+    slideInInstance.slideInRef = this.createSlideInRef(slideInInstance);
+
+    const injector = this.createInjector(slideInInstance.slideInRef);
+    slideInInstance.containerRef.instance.portalOutlet.attach(
+      new ComponentPortal(slideInInstance.component, null, injector),
+    );
   }
 
   private getCloseSubject<R>(
