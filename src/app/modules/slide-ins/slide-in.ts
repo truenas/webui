@@ -40,7 +40,8 @@ export class SlideIn {
   ) {}
 
   closeAll(): void {
-    for (const slideInInstance of this.slideInInstances()) {
+    for (const slideInInstance of this.slideInInstances().reverse()) {
+      slideInInstance.slideInRef.requireConfirmationWhen(undefined);
       slideInInstance.slideInRef.close({ response: false, error: undefined });
     }
   }
