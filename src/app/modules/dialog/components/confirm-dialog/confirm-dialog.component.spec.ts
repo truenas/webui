@@ -39,7 +39,7 @@ describe('ConfirmDialogComponent', () => {
     });
 
     it('shows dialog title', () => {
-      expect(spectator.query('h1')).toHaveText(options.title);
+      expect(spectator.query('h1')).toHaveText(options.title!);
     });
 
     it('shows dialog message', () => {
@@ -163,6 +163,31 @@ describe('ConfirmDialogComponent', () => {
         confirmed: false,
         secondaryCheckbox: false,
       });
+    });
+  });
+
+  describe('default title', () => {
+    const optionsWithoutTitle = {
+      message: 'Are you sure you want to launch nukes?',
+      buttonText: 'Launch',
+      cancelText: 'Do not launch',
+      confirmationCheckboxText: 'Yeah whatever',
+    } as ConfirmOptions;
+
+    beforeEach(() => {
+      spectator = createComponent({
+        providers: [
+          {
+            provide: MAT_DIALOG_DATA,
+            useValue: optionsWithoutTitle,
+          },
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('shows default title when none is provided', () => {
+      expect(spectator.query('h1')).toHaveText('Please confirm');
     });
   });
 

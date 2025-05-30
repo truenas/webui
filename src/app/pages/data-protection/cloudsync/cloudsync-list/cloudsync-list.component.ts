@@ -299,7 +299,6 @@ export class CloudSyncListComponent implements OnInit {
 
   doDelete(row: CloudSyncTaskUi): void {
     this.dialogService.confirm({
-      title: this.translate.instant('Confirmation'),
       message: this.translate.instant('Delete Cloud Sync Task <b>"{name}"</b>?', {
         name: row.description,
       }),

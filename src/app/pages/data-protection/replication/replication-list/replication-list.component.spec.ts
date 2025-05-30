@@ -188,7 +188,6 @@ describe('ReplicationListComponent', () => {
     await runNowButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
-      title: 'Run Now',
       message: 'Replicate «pewl - pewl» now?',
       hideCheckbox: true,
     });
@@ -220,7 +219,6 @@ describe('ReplicationListComponent', () => {
     await deleteButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
-      title: 'Confirmation',
       message: 'Delete Replication Task <b>"pewl - pewl"</b>?',
       buttonColor: 'warn',
       buttonText: 'Delete',

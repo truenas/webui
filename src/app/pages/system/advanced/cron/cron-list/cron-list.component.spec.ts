@@ -131,7 +131,6 @@ describe('CronListComponent', () => {
     await runNowButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
-      title: 'Run Now',
       message: 'Run this job now?',
       hideCheckbox: true,
     });
