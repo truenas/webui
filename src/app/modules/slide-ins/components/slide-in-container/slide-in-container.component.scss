@@ -1,7 +1,7 @@
 :host {
   animation: slide-in 0.2s ease forwards;
   background-color: var(--bg2);
-  box-shadow: -4px 0 12px rgba(0, 0, 0, 0.3); // default overlay backdrop background
+  box-shadow: -4px 0 12px rgba(0, 0, 0, 0.3); // default cdk-overlay backdrop background
   display: flex;
   flex-direction: column;
   height: calc(100vh - 48px - 75px); // 100vh - topbarHeight - modalHeaderHeight

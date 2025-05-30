@@ -1,151 +1,215 @@
-import { Injectable } from '@angular/core';
-import { UntilDestroy } from '@ngneat/until-destroy';
-import { ComponentStore } from '@ngrx/component-store';
+import {
+  Overlay,
+  OverlayConfig,
+  OverlayRef,
+} from '@angular/cdk/overlay';
+import {
+  ComponentPortal,
+  ComponentType,
+} from '@angular/cdk/portal';
+import {
+  ComponentRef,
+  computed,
+  Injectable,
+  Injector,
+  signal,
+} from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
+import { cloneDeep } from 'lodash-es';
 import {
-  Observable, Subject, take, tap, timer,
+  filter, Observable, of, Subject, switchMap,
 } from 'rxjs';
-import {
-  ComponentInSlideIn,
-  ComponentSerialized,
-  IncomingSlideInComponent,
-  SlideInComponent,
-  SlideInResponse,
-  SlideInState,
-} from 'app/modules/slide-ins/slide-in.interface';
-import { FocusService } from 'app/services/focus.service';
+import { DialogService } from 'app/modules/dialog/dialog.service';
+import { SlideInContainerComponent } from 'app/modules/slide-ins/components/slide-in-container/slide-in-container.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ComponentInSlideIn, SlideInInstance, SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
 
 @UntilDestroy()
 // eslint-disable-next-line angular-file-naming/service-filename-suffix
-@Injectable({
-  providedIn: 'root',
-})
-export class SlideIn extends ComponentStore<SlideInState> {
-  readonly components$: Observable<ComponentSerialized[]> = this.select(
-    (state) => this.getAliveComponents(state.components),
-  );
+@Injectable({ providedIn: 'root' })
+export class SlideIn {
+  private slideInInstances = signal<SlideInInstance<unknown, unknown>[]>([]);
+  readonly openSlideIns = computed(() => this.slideInInstances()?.length);
 
-  readonly isTopComponentWide$ = this.select((state) => {
-    return !!(this.getAliveComponents(state.components).pop()?.wide);
-  });
+  constructor(
+    private cdkOverlay: Overlay,
+    private injector: Injector,
+    private dialogService: DialogService,
+    private translate: TranslateService,
+  ) {}
 
-  constructor(private focusService: FocusService) {
-    super({ components: new Map() });
-    this.initialize();
+  closeAll(): void {
+    for (const slideInInstance of this.slideInInstances()) {
+      slideInInstance.slideInRef.close(undefined);
+    }
   }
-
-  initialize = this.effect((trigger$) => {
-    return trigger$.pipe(
-      tap(() => {
-        this.setState(() => {
-          return {
-            components: new Map(),
-          };
-        });
-      }),
-    );
-  });
-
-  private pushComponentToStore = this.updater((state, componentInfo: SlideInComponent) => {
-    const newMap = new Map(state.components);
-    const componentId = UUID.UUID();
-    newMap.set(componentId, {
-      ...componentInfo,
-    });
-    return {
-      components: newMap,
-    };
-  });
 
   open<D, R>(
     component: ComponentInSlideIn<D, R>,
-    options?: { wide?: boolean; data?: D },
+    options: { data?: D; wide?: boolean } = {},
   ): Observable<SlideInResponse<R>> {
-    const close$ = new Subject<SlideInResponse<R>>();
-    this.pushComponentToStore({
+    const slideInId = UUID.UUID();
+
+    const cdkOverlayRef = this.cdkOverlay.create(this.getOverlayConfig());
+    const containerPortal = new ComponentPortal(SlideInContainerComponent);
+    const containerRef = cdkOverlayRef.attach(containerPortal);
+
+    this.addCssClassForWidth(cdkOverlayRef.overlayElement, options.wide);
+
+    const close$ = this.getCloseSubject<SlideInResponse<R>>(cdkOverlayRef, containerRef);
+    const slideInInstance = {
+      slideInId,
       component,
-      wide: options?.wide || false,
-      data: options?.data,
+      containerRef,
+      cdkOverlayRef,
       close$,
-      isComponentAlive: true,
+      needConfirmation: undefined,
+      data: options.data,
+      slideInRef: undefined,
+    } as SlideInInstance<D, R>;
+
+    const slideInRef = this.createSlideInRef(slideInInstance);
+
+    this.slideInInstances.set([
+      ...this.slideInInstances(),
+      {
+        ...slideInInstance,
+        slideInRef,
+      },
+    ]);
+
+    const injector = this.createInjector(slideInRef);
+    const contentPortal = new ComponentPortal(component as unknown as ComponentType<unknown>, null, injector);
+    containerRef.instance.portalOutlet.attach(contentPortal);
+
+    cdkOverlayRef.backdropClick().pipe(untilDestroyed(this)).subscribe(() => {
+      slideInRef.close(undefined);
     });
-    this.focusService.captureCurrentFocus();
-    return close$.asObservable().pipe(tap(() => this.focusService.restoreFocus()));
+
+    cdkOverlayRef.detachments().pipe(untilDestroyed(this)).subscribe(() => {
+      this.slideInInstances.set(this.slideInInstances().filter((slideInItem) => slideInItem.slideInId !== slideInId));
+    });
+
+    return close$;
   }
 
-  popComponent = this.updater((state, id: string) => {
-    const newMap = new Map(state.components);
-    newMap.set(id, { ...newMap.get(id), isComponentAlive: false });
-    this.focusOnTheCloseButton();
-    return {
-      components: newMap,
-    };
-  });
+  swap<D, R>(component: ComponentInSlideIn<D, R>, config: { data?: D; wide?: boolean } = {}): void {
+    const lastSlideIn = this.slideInInstances()[this.slideInInstances().length - 1];
+    if (!lastSlideIn) return;
 
-  closeLast = this.updater((state) => {
-    const newMap = new Map(state.components);
-    const lastComponent = this.getAliveComponents(newMap).pop();
-    if (!lastComponent) {
-      return state;
+    const { cdkOverlayRef: prevOverlayRef, containerRef: prevContainerRef } = lastSlideIn;
+
+    const slideInRef = this.createSlideInRef(lastSlideIn);
+    const injector = this.createInjector(slideInRef);
+    const contentPortal = new ComponentPortal(component as unknown as ComponentType<unknown>, null, injector);
+
+    prevContainerRef.instance.startCloseAnimation().pipe(
+      untilDestroyed(this),
+    ).subscribe({
+      next: () => {
+        prevContainerRef.instance.portalOutlet.detach();
+        prevContainerRef.instance.resetAnimation();
+        this.addCssClassForWidth(prevOverlayRef.overlayElement, config.wide);
+        prevContainerRef.instance.portalOutlet.attach(contentPortal);
+      },
+    });
+  }
+
+  private getCloseSubject<R>(
+    cdkOverlayRef: OverlayRef,
+    containerRef: ComponentRef<SlideInContainerComponent>,
+  ): Subject<R | undefined> {
+    const close$ = new Subject<R | undefined>();
+    close$.pipe(
+      switchMap(() => containerRef.instance.startCloseAnimation()),
+      untilDestroyed(this),
+    ).subscribe({
+      next: () => {
+        cdkOverlayRef.dispose();
+      },
+    });
+    return close$;
+  }
+
+  private addCssClassForWidth(panelElement: HTMLElement, wide: boolean): void {
+    panelElement.classList.remove('wide', 'normal');
+    panelElement.classList.add(wide ? 'wide' : 'normal');
+  }
+
+  private getOverlayConfig(): OverlayConfig {
+    return new OverlayConfig({
+      hasBackdrop: true,
+      backdropClass: !this.slideInInstances().length ? 'custom-slide-in-backdrop' : 'custom-slide-in-nobackdrop',
+      positionStrategy: this.cdkOverlay.position().global().top('48px').right('0'),
+      height: 'calc(100% - 48px)',
+      panelClass: 'slide-in-panel',
+    });
+  }
+
+  private createInjector<D, R>(ref: SlideInRef<D, R>): Injector {
+    return Injector.create({
+      providers: [
+        { provide: SlideInRef<D, R>, useValue: ref },
+      ],
+      parent: this.injector,
+    });
+  }
+
+  private showConfirmDialog(): Observable<boolean> {
+    return this.dialogService.confirm({
+      title: this.translate.instant('Unsaved Changes'),
+      message: this.translate.instant('You have unsaved changes. Are you sure you want to close?'),
+      cancelText: this.translate.instant('No'),
+      buttonText: this.translate.instant('Yes'),
+      buttonColor: 'warn',
+      hideCheckbox: true,
+    });
+  }
+
+  private createSlideInRef<D, R>(slideInInstance: SlideInInstance<D, R>): SlideInRef<D, R> {
+    return {
+      close: (response: SlideInResponse<R>): void => {
+        (!response?.response ? this.canCloseSlideIn(slideInInstance.needConfirmation) : of(true)).pipe(
+          filter(Boolean),
+          untilDestroyed(this),
+        ).subscribe({
+          next: () => {
+            slideInInstance.close$.next(response);
+            slideInInstance.close$.complete();
+          },
+        });
+      },
+      swap: (component: ComponentInSlideIn<D, R>, options?: { wide?: boolean; data?: unknown }): void => {
+        this.canCloseSlideIn(slideInInstance.needConfirmation).pipe(
+          filter(Boolean),
+          untilDestroyed(this),
+        ).subscribe({
+          next: () => {
+            this.swap(
+              component,
+              options,
+            );
+          },
+        });
+      },
+      getData: (): D | undefined => {
+        return cloneDeep(slideInInstance.data);
+      },
+      requireConfirmationWhen: (needConfirmation: () => Observable<boolean>): void => {
+        slideInInstance.needConfirmation = needConfirmation;
+      },
+    } as SlideInRef<D, R>;
+  }
+
+  private canCloseSlideIn(needConfirmation: () => Observable<boolean>): Observable<boolean> {
+    if (!needConfirmation) {
+      return of(true);
     }
 
-    const id = lastComponent.id;
-    newMap.set(id, { ...newMap.get(id), isComponentAlive: false });
-    this.focusOnTheCloseButton();
-    return {
-      components: newMap,
-    };
-  });
-
-  closeAll = this.updater(() => {
-    this.focusOnTheCloseButton();
-    return {
-      components: new Map(),
-    };
-  });
-
-  swapComponent = this.updater((state, swapInfo: IncomingSlideInComponent) => {
-    const newMap = new Map(state.components);
-    const popped = newMap.get(swapInfo.swapComponentId);
-    const close$ = popped.close$;
-    const componentId = UUID.UUID();
-    newMap.set(componentId, {
-      component: swapInfo.component,
-      wide: swapInfo.wide,
-      data: swapInfo.data,
-      close$,
-      isComponentAlive: true,
-    });
-    newMap.set(swapInfo.swapComponentId, {
-      ...popped,
-      isComponentAlive: false,
-    });
-    this.focusOnTheCloseButton();
-    return {
-      components: newMap,
-    };
-  });
-
-  mapToSerializedArray(map: Map<string, SlideInComponent>): ComponentSerialized[] {
-    return Array.from(map, ([id, componentInfo]) => {
-      return {
-        id,
-        component: componentInfo.component,
-        close$: componentInfo.close$,
-        wide: componentInfo.wide,
-        data: componentInfo.data,
-        isComponentAlive: componentInfo.isComponentAlive,
-      } as ComponentSerialized;
-    });
-  }
-
-  getAliveComponents(components: Map<string, SlideInComponent>): ComponentSerialized[] {
-    return this.mapToSerializedArray(components).filter(
-      (component) => component.isComponentAlive,
+    return needConfirmation().pipe(
+      switchMap((shouldConfirm) => (shouldConfirm ? this.showConfirmDialog() : of(true))),
     );
-  }
-
-  private focusOnTheCloseButton(): void {
-    timer(100).pipe(take(1)).subscribe(() => this.focusService.focusElementById('ix-close-icon'));
   }
 }

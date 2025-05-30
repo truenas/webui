@@ -39,7 +39,7 @@ import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-b
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
-import { OverlaySlideInService } from 'app/modules/overlay-slide-ins/overlay-slide-in.service';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -155,7 +155,7 @@ export class ReplicationTaskCardComponent implements OnInit {
   });
 
   constructor(
-    private overlaySlideIn: OverlaySlideInService,
+    private overlaySlideIn: SlideIn,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
     private api: ApiService,
@@ -204,14 +204,14 @@ export class ReplicationTaskCardComponent implements OnInit {
   }
 
   addReplicationTask(): void {
-    this.overlaySlideIn.open<ReplicationWizardComponent, ReplicationTask>(ReplicationWizardComponent).afterClosed$.pipe(
+    this.overlaySlideIn.open(ReplicationWizardComponent).pipe(
       filter((response) => !!response),
       untilDestroyed(this),
     ).subscribe(() => this.getReplicationTasks());
   }
 
   editReplicationTask(row: ReplicationTask): void {
-    this.overlaySlideIn.open(ReplicationFormComponent, { wide: true, data: row }).afterClosed$
+    this.overlaySlideIn.open(ReplicationFormComponent, { wide: true, data: row })
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => this.getReplicationTasks());
   }

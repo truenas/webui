@@ -39,8 +39,8 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
 import {
   forbiddenAsyncValues,
 } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
-import { OverlaySlideInService } from 'app/modules/overlay-slide-ins/overlay-slide-in.service';
-import { SlideInOverlayRef } from 'app/modules/overlay-slide-ins/slide-in-overlay-ref';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -189,12 +189,12 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     private cdr: ChangeDetectorRef,
     private errorParser: ErrorParserService,
     private errorHandler: ErrorHandlerService,
-    public slideInRef: SlideInOverlayRef,
-    private slideIn: OverlaySlideInService,
+    public slideInRef: SlideInRef<ReplicationTask, ReplicationTask>,
+    private slideIn: SlideIn,
   ) {
-    // this.slideInRef.requireConfirmationWhen(() => {
-    //   return of(this.form.dirty);
-    // });
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
   }
 
   ngOnInit(): void {

@@ -42,8 +42,8 @@ import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { createTable } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { OverlaySlideInService } from 'app/modules/overlay-slide-ins/overlay-slide-in.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -177,7 +177,7 @@ export class ReplicationListComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private api: ApiService,
     private translate: TranslateService,
-    private slideIn: OverlaySlideInService,
+    private slideIn: SlideIn,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
     private matDialog: MatDialog,
@@ -252,26 +252,22 @@ export class ReplicationListComponent implements OnInit {
 
   openForm(row?: ReplicationTask): void {
     if (row) {
-      this.slideIn.open<ReplicationFormComponent, { response: unknown; error: unknown }>(
+      this.slideIn.open(
         ReplicationFormComponent,
         { data: row, wide: true },
-      ).afterClosed$
-        .pipe(
-          filter((response: { response: unknown; error: unknown }) => !!response.response),
-          untilDestroyed(this),
-        ).subscribe({
-          next: () => {
-            this.getReplicationTasks();
-          },
-        });
+      ).pipe(
+        filter((response) => !!response.response),
+        untilDestroyed(this),
+      ).subscribe({
+        next: () => {
+          this.getReplicationTasks();
+        },
+      });
     } else {
-      this.slideIn.open<ReplicationWizardComponent, { response: unknown; error: unknown }>(
-        ReplicationWizardComponent,
-      ).afterClosed$
-        .pipe(
-          filter((response: { response: unknown; error: unknown }) => !!response.response),
-          untilDestroyed(this),
-        ).subscribe(() => this.getReplicationTasks());
+      this.slideIn.open(ReplicationWizardComponent).pipe(
+        filter((response) => !!response.response),
+        untilDestroyed(this),
+      ).subscribe(() => this.getReplicationTasks());
     }
   }
 

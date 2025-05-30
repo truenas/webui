@@ -17,7 +17,6 @@ import { JobState } from 'app/enums/job-state.enum';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { BackupTile } from 'app/interfaces/cloud-backup.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { OverlaySlideInService } from 'app/modules/overlay-slide-ins/overlay-slide-in.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
@@ -125,7 +124,6 @@ export class WidgetBackupComponent implements OnInit {
     public translate: TranslateService,
     private cdr: ChangeDetectorRef,
     private slideIn: SlideIn,
-    private overlaySlideIn: OverlaySlideInService,
     private widgetResourcesService: WidgetResourcesService,
   ) {}
 
@@ -178,7 +176,7 @@ export class WidgetBackupComponent implements OnInit {
   }
 
   addReplicationTask(): void {
-    this.overlaySlideIn.open(ReplicationWizardComponent).afterClosed$.pipe(
+    this.slideIn.open(ReplicationWizardComponent).pipe(
       filter((response) => !!response),
       untilDestroyed(this),
     ).subscribe(() => this.getBackups());

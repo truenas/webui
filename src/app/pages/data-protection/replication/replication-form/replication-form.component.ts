@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit, signal, viewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, viewChild,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -21,10 +21,8 @@ import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
-import { OverlaySlideInService } from 'app/modules/overlay-slide-ins/overlay-slide-in.service';
-import { SlideInOverlayRef } from 'app/modules/overlay-slide-ins/slide-in-overlay-ref';
-import { SLIDE_IN_DATA } from 'app/modules/overlay-slide-ins/slide-in.tokens';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -84,6 +82,8 @@ export class ReplicationFormComponent implements OnInit {
 
   protected isLoading = signal(false);
 
+  protected existingReplication: ReplicationTask;
+
   sourceNodeProvider: TreeNodeProvider;
   targetNodeProvider: TreeNodeProvider;
 
@@ -107,19 +107,18 @@ export class ReplicationFormComponent implements OnInit {
     private replicationService: ReplicationService,
     private keychainCredentials: KeychainCredentialService,
     private authService: AuthService,
-    public slideInRef: SlideInOverlayRef,
-    @Inject(SLIDE_IN_DATA) protected existingReplication: ReplicationTask,
-    private slideIn: OverlaySlideInService,
+    public slideInRef: SlideInRef<ReplicationTask, ReplicationTask | false>,
   ) {
-    // this.slideInRef.requireConfirmationWhen(() => {
-    //   return of(Boolean(
-    //     this.generalSection()?.form?.dirty
-    //     || this.transportSection()?.form?.dirty
-    //     || this.sourceSection()?.form?.dirty
-    //     || this.targetSection()?.form?.dirty
-    //     || this.scheduleSection()?.form?.dirty,
-    //   ));
-    // });
+    this.existingReplication = this.slideInRef.getData();
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(Boolean(
+        this.generalSection()?.form?.dirty
+        || this.transportSection()?.form?.dirty
+        || this.sourceSection()?.form?.dirty
+        || this.targetSection()?.form?.dirty
+        || this.scheduleSection()?.form?.dirty,
+      ));
+    });
   }
 
   ngOnInit(): void {
@@ -203,7 +202,7 @@ export class ReplicationFormComponent implements OnInit {
   }
 
   onSwitchToWizard(): void {
-    this.slideIn.swap?.(
+    this.slideInRef.swap?.(
       ReplicationWizardComponent,
     );
   }

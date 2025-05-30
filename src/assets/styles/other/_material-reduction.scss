@@ -895,15 +895,15 @@ mat-tab-nav-panel {
   box-shadow: none;
 }
 
-.overlay-slide-in-panel.normal {
+.slide-in-panel.normal {
   width: 750px;
 }
 
-.overlay-slide-in-panel.wide {
+.slide-in-panel.wide {
   width: 900px;
 }
 
-.custom-overlay-backdrop {
+.custom-slide-in-backdrop {
   background: rgba(0, 0, 0, 0.32); // same as cdk-overlay-dark-backdrop
   height: calc(100% - 48px) !important;
   left: 0;
@@ -912,7 +912,7 @@ mat-tab-nav-panel {
   width: 100%;
 }
 
-.custom-overlay-nobackdrop {
+.custom-slide-in-nobackdrop {
   height: calc(100% - 48px) !important;
   left: 0;
   position: fixed;

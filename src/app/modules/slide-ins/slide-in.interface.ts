@@ -1,41 +1,25 @@
-import { ComponentType } from '@angular/cdk/portal';
-import { Type } from '@angular/core';
-import { Subject } from 'rxjs';
+import { OverlayRef } from '@angular/cdk/overlay';
+import { ComponentRef, Type } from '@angular/core';
+import { Observable, Subject } from 'rxjs';
+import { SlideInContainerComponent } from 'app/modules/slide-ins/components/slide-in-container/slide-in-container.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 
-export interface IncomingSlideInComponent {
-  component: ComponentType<unknown>;
-  wide: boolean;
-  data: unknown;
-  swapComponentId?: string;
-}
-
-export interface SlideInState {
-  components: Map<string, SlideInComponent>;
-}
-
-export interface SlideInComponent {
-  component: Type<unknown>;
-  close$: Subject<SlideInResponse>;
-  wide: boolean;
-  data: unknown;
-  isComponentAlive?: boolean;
-}
-
-export interface SlideInResponse<T = unknown> {
-  response: T;
-  error: unknown;
-}
-
-export interface ComponentSerialized {
-  id: string;
-  component: Type<unknown>;
-  close$: Subject<SlideInResponse>;
-  data?: unknown;
-  wide?: boolean;
-  isComponentAlive?: boolean;
+export interface SlideInInstance<D, R> {
+  slideInId: string;
+  slideInRef: SlideInRef<D, R>;
+  component: ComponentInSlideIn<D, R>;
+  containerRef: ComponentRef<SlideInContainerComponent>;
+  cdkOverlayRef: OverlayRef;
+  close$: Subject<SlideInResponse<R>>;
+  data: D;
+  needConfirmation: () => Observable<boolean>;
 }
 
 export type ComponentInSlideIn<D, R> = Type<{
   slideInRef: SlideInRef<D, R>;
 }>;
+
+export interface SlideInResponse<T = unknown> {
+  response: T;
+  error: unknown;
+}

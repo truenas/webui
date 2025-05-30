@@ -2,28 +2,29 @@ import { CdkPortalOutlet } from '@angular/cdk/portal';
 import {
   ChangeDetectionStrategy, Component, ElementRef, ViewChild,
 } from '@angular/core';
+import { Observable } from 'rxjs';
 
 @Component({
-  selector: 'ix-overlay-container',
-  templateUrl: './overlay-container.component.html',
-  styleUrl: './overlay-container.component.scss',
+  selector: 'ix-slide-in-container',
+  templateUrl: './slide-in-container.component.html',
+  styleUrl: './slide-in-container.component.scss',
   standalone: true,
   imports: [
     CdkPortalOutlet,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class OverlayContainerComponent {
+export class SlideInContainerComponent {
   @ViewChild(CdkPortalOutlet, { static: true }) portalOutlet!: CdkPortalOutlet;
   constructor(private host: ElementRef<HTMLElement>) {}
 
-  startCloseAnimation(): Promise<void> {
+  startCloseAnimation(): Observable<void> {
     this.host.nativeElement.classList.add('slide-out');
-
-    return new Promise((resolve): void => {
+    return new Observable((subscriber): void => {
       const onAnimationEnd = (): void => {
         this.host.nativeElement.removeEventListener('animationend', onAnimationEnd);
-        resolve();
+        subscriber.next();
+        subscriber.complete();
       };
       this.host.nativeElement.addEventListener('animationend', onAnimationEnd);
     });

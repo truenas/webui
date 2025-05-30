@@ -36,9 +36,9 @@ import {
   UseIxIconsInStepperComponent,
 } from 'app/modules/ix-icon/use-ix-icons-in-stepper/use-ix-icons-in-stepper.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { SlideInOverlayRef } from 'app/modules/overlay-slide-ins/slide-in-overlay-ref';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ReplicationWizardData } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard-data.interface';
@@ -93,11 +93,11 @@ export class ReplicationWizardComponent {
     private loader: LoaderService,
     private snackbar: SnackbarService,
     private authService: AuthService,
-    private slideInRef: SlideInOverlayRef,
+    public slideInRef: SlideInRef<undefined, ReplicationTask | false>,
   ) {
-    // this.slideInRef.requireConfirmationWhen(() => {
-    //   return of(Boolean(this.whatAndWhere()?.form?.dirty || this.when()?.form?.dirty));
-    // });
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(Boolean(this.whatAndWhere()?.form?.dirty || this.when()?.form?.dirty));
+    });
   }
 
   getSteps(): [
