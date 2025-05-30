@@ -6,10 +6,12 @@ import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { MiddlewareAuditEntry } from 'app/interfaces/audit/middleware-audit-entry.interface';
 import { SmbAuditEntry } from 'app/interfaces/audit/smb-audit-entry.interface';
 import { SudoAuditEntry } from 'app/interfaces/audit/sudo-audit-entry.interface';
+import { SystemAuditEntry } from 'app/interfaces/audit/system-audit-entry.interface';
 import { credentialTypeLabels } from 'app/interfaces/credential-type.interface';
 
 export function getLogImportantData(log: AuditEntry, translate: TranslateService): string {
   const service = log.service;
+
   switch (service) {
     case AuditService.Middleware:
       return getMiddlewareLogImportantData(log, translate);
@@ -17,6 +19,8 @@ export function getLogImportantData(log: AuditEntry, translate: TranslateService
       return getSmbLogImportantData(log, translate);
     case AuditService.Sudo:
       return getSudoLogImportantData(log, translate);
+    case AuditService.System:
+      return getSystemLogImportantData(log, translate);
     default:
       assertUnreachable(service);
       return ' - ';
@@ -57,6 +61,22 @@ function getSudoLogImportantData(log: SudoAuditEntry, translate: TranslateServic
       return translate.instant(T('Command: {command}'), { command: log.event_data?.sudo.accept.command });
     case AuditEvent.Reject:
       return translate.instant(T('Command: {command}'), { command: log.event_data?.sudo.reject.command });
+    default:
+      assertUnreachable(event);
+      return ' - ';
+  }
+}
+
+function getSystemLogImportantData(log: SystemAuditEntry, translate: TranslateService): string {
+  const event = log.event;
+  switch (event) {
+    case AuditEvent.Generic:
+    case AuditEvent.Escalation:
+      return translate.instant(T('Command: {command}'), { command: log.event_data?.proctitle ?? '-' });
+    case AuditEvent.Login:
+      return translate.instant(T('UID: {uid}'), { uid: log.event_data?.auid ?? '-' });
+    case AuditEvent.Credential:
+      return translate.instant(T('Command: {command}'), { command: log.event_data?.exe ?? '-' });
     default:
       assertUnreachable(event);
       return ' - ';
