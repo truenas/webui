@@ -1,5 +1,4 @@
 :host {
-  animation: slide-in 0.2s ease forwards;
   background-color: var(--bg2);
   box-shadow: -4px 0 12px rgba(0, 0, 0, 0.3); // default cdk-overlay backdrop background
   display: flex;
@@ -7,11 +6,9 @@
   height: calc(100vh - 48px - 75px); // 100vh - topbarHeight - modalHeaderHeight
   padding: 0 10px;
   padding-top: 75px;
-  width: 100%;
-}
-
-:host(.slide-out) {
-  animation: slide-out 0.2s ease-in-out forwards;
+  position: fixed;
+  right: 0;
+  width: 750px;
 }
 
 .slide-in-wrapper {
@@ -26,26 +23,5 @@
     box-sizing: border-box;
     flex: 1 0 auto;
     width: 100%;
-  }
-}
-
-
-@keyframes slide-in {
-  from {
-    transform: translateX(100%);
-  }
-
-  to {
-    transform: translateX(0);
-  }
-}
-
-@keyframes slide-out {
-  from {
-    transform: translateX(0);
-  }
-
-  to {
-    transform: translateX(100%);
   }
 }

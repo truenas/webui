@@ -896,14 +896,6 @@ mat-tab-nav-panel {
   box-shadow: none;
 }
 
-.slide-in-panel.normal {
-  width: 750px;
-}
-
-.slide-in-panel.wide {
-  width: 900px;
-}
-
 .custom-slide-in-backdrop {
   background: rgba(0, 0, 0, 0.32); // same as cdk-overlay-dark-backdrop
   height: calc(100% - 48px) !important;

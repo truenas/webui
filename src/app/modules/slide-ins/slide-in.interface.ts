@@ -12,6 +12,7 @@ export interface SlideInInstance<D, R> {
   cdkOverlayRef: OverlayRef;
   close$: Subject<SlideInResponse<R>>;
   data: D;
+  wide: boolean;
   needConfirmation: () => Observable<boolean>;
 }
 

@@ -55,8 +55,6 @@ export class SlideIn {
     const containerPortal = new ComponentPortal(SlideInContainerComponent);
     const containerRef = cdkOverlayRef.attach(containerPortal);
 
-    this.addCssClassForWidth(cdkOverlayRef.overlayElement, options.wide);
-
     const close$ = this.getCloseSubject<SlideInResponse<R>>(cdkOverlayRef, containerRef);
     const slideInInstance: SlideInInstance<D, R> = {
       slideInId,
@@ -64,6 +62,7 @@ export class SlideIn {
       containerRef,
       cdkOverlayRef,
       close$,
+      wide: Boolean(options.wide),
       needConfirmation: undefined,
       data: options.data,
       slideInRef: undefined,
@@ -77,20 +76,18 @@ export class SlideIn {
     return close$;
   }
 
-  private swap<D, R>(component: ComponentInSlideIn<D, R>, config: { data?: D; wide?: boolean } = {}): void {
-    const lastSlideIn = this.slideInInstances().at(-1);
-    if (!lastSlideIn) return;
+  private swap<D, R>(component: ComponentInSlideIn<D, R>, options: { data?: D; wide?: boolean } = {}): void {
+    const prevInstance = this.slideInInstances().at(-1);
+    if (!prevInstance) return;
 
-    lastSlideIn.component = component;
-    lastSlideIn.containerRef.instance.startCloseAnimation().pipe(
+    prevInstance.component = component;
+    prevInstance.wide = Boolean(options.wide);
+    prevInstance.containerRef.instance.animateClose().pipe(
       untilDestroyed(this),
     ).subscribe({
       next: () => {
-        lastSlideIn.containerRef.instance.portalOutlet.detach();
-        lastSlideIn.containerRef.instance.resetAnimation();
-        this.addCssClassForWidth(lastSlideIn.cdkOverlayRef.overlayElement, config.wide);
-        this.createContentPortal(lastSlideIn);
-        this.updateSlideInInstances(lastSlideIn);
+        this.createContentPortal(prevInstance);
+        this.updateSlideInInstances(prevInstance);
       },
     });
   }
@@ -131,6 +128,8 @@ export class SlideIn {
     slideInInstance.slideInRef = this.createSlideInRef(slideInInstance);
 
     const injector = this.createInjector(slideInInstance.slideInRef);
+    slideInInstance.containerRef.instance.portalOutlet.detach();
+    slideInInstance.containerRef.instance.makeWide(slideInInstance.wide);
     slideInInstance.containerRef.instance.portalOutlet.attach(
       new ComponentPortal(slideInInstance.component, null, injector),
     );
@@ -142,7 +141,7 @@ export class SlideIn {
   ): Subject<R | undefined> {
     const close$ = new Subject<R | undefined>();
     close$.pipe(
-      switchMap(() => containerRef.instance.startCloseAnimation()),
+      switchMap(() => containerRef.instance.animateClose()),
       untilDestroyed(this),
     ).subscribe({
       next: () => {
@@ -150,11 +149,6 @@ export class SlideIn {
       },
     });
     return close$;
-  }
-
-  private addCssClassForWidth(panelElement: HTMLElement, wide: boolean): void {
-    panelElement.classList.remove('wide', 'normal');
-    panelElement.classList.add(wide ? 'wide' : 'normal');
   }
 
   private getOverlayConfig(): OverlayConfig {
