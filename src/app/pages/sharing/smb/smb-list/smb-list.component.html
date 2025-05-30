@@ -11,7 +11,6 @@
     <div class="actions action-icon">
       <ix-search-input1
         [value]="filterString"
-        [disabled]="empty"
         (search)="onListFiltered($event)"
       ></ix-search-input1>
 
@@ -39,7 +38,9 @@
   </mat-toolbar-row>
   <mat-card-content>
     @if (empty) {
-      <ix-empty [conf]="emptyConfig"></ix-empty>
+      <ix-empty
+        [conf]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async, emptyConfig)"
+      ></ix-empty>
     } @else {
       <ix-table
         [ixUiSearch]="searchableElements.elements.smbList"
