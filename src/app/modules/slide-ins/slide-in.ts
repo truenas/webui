@@ -95,7 +95,7 @@ export class SlideIn {
     return close$;
   }
 
-  swap<D, R>(component: ComponentInSlideIn<D, R>, config: { data?: D; wide?: boolean } = {}): void {
+  private swap<D, R>(component: ComponentInSlideIn<D, R>, config: { data?: D; wide?: boolean } = {}): void {
     const lastSlideIn = this.slideInInstances()[this.slideInInstances().length - 1];
     if (!lastSlideIn) return;
 
