@@ -155,7 +155,7 @@ export class ReplicationTaskCardComponent implements OnInit {
   });
 
   constructor(
-    private overlaySlideIn: SlideIn,
+    private slideIn: SlideIn,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
     private api: ApiService,
@@ -204,14 +204,14 @@ export class ReplicationTaskCardComponent implements OnInit {
   }
 
   addReplicationTask(): void {
-    this.overlaySlideIn.open(ReplicationWizardComponent).pipe(
+    this.slideIn.open(ReplicationWizardComponent, { wide: true }).pipe(
       filter((response) => !!response),
       untilDestroyed(this),
     ).subscribe(() => this.getReplicationTasks());
   }
 
   editReplicationTask(row: ReplicationTask): void {
-    this.overlaySlideIn.open(ReplicationFormComponent, { wide: true, data: row })
+    this.slideIn.open(ReplicationFormComponent, { wide: true, data: row })
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => this.getReplicationTasks());
   }
