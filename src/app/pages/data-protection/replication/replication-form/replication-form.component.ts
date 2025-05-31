@@ -204,6 +204,7 @@ export class ReplicationFormComponent implements OnInit {
   onSwitchToWizard(): void {
     this.slideInRef.swap?.(
       ReplicationWizardComponent,
+      { wide: true },
     );
   }
 
