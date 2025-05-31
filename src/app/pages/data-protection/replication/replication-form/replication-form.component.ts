@@ -82,7 +82,7 @@ export class ReplicationFormComponent implements OnInit {
 
   protected isLoading = signal(false);
 
-  protected existingReplication: ReplicationTask;
+  protected existingReplication: ReplicationTask | undefined;
 
   sourceNodeProvider: TreeNodeProvider;
   targetNodeProvider: TreeNodeProvider;
@@ -107,7 +107,7 @@ export class ReplicationFormComponent implements OnInit {
     private replicationService: ReplicationService,
     private keychainCredentials: KeychainCredentialService,
     private authService: AuthService,
-    public slideInRef: SlideInRef<ReplicationTask, ReplicationTask | false>,
+    public slideInRef: SlideInRef<ReplicationTask | undefined, ReplicationTask | false>,
   ) {
     this.existingReplication = this.slideInRef.getData();
     this.slideInRef.requireConfirmationWhen(() => {
