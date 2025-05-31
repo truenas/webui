@@ -50,31 +50,35 @@ export class SlideIn {
     component: ComponentInSlideIn<D, R>,
     options: { data?: D; wide?: boolean } = {},
   ): Observable<SlideInResponse<R>> {
-    const slideInId = UUID.UUID();
+    return this.animateOutTopComponent().pipe(
+      switchMap(() => {
+        const slideInId = UUID.UUID();
 
-    const cdkOverlayRef = this.cdkOverlay.create(this.getOverlayConfig());
-    const containerPortal = new ComponentPortal(SlideInContainerComponent);
-    const containerRef = cdkOverlayRef.attach(containerPortal);
+        const cdkOverlayRef = this.cdkOverlay.create(this.getOverlayConfig());
+        const containerPortal = new ComponentPortal(SlideInContainerComponent);
+        const containerRef = cdkOverlayRef.attach(containerPortal);
 
-    const close$ = this.getCloseSubject<SlideInResponse<R>>(cdkOverlayRef, containerRef);
-    const slideInInstance: SlideInInstance<D, R> = {
-      slideInId,
-      component,
-      containerRef,
-      cdkOverlayRef,
-      close$,
-      wide: Boolean(options.wide),
-      needConfirmation: undefined,
-      data: options.data,
-      slideInRef: undefined,
-    };
+        const close$ = this.getCloseSubject<SlideInResponse<R>>(cdkOverlayRef, containerRef, slideInId);
 
-    this.createContentPortal(slideInInstance);
-    this.updateSlideInInstances(slideInInstance);
+        const slideInInstance: SlideInInstance<D, R> = {
+          slideInId,
+          component,
+          containerRef,
+          cdkOverlayRef,
+          close$,
+          wide: Boolean(options.wide),
+          needConfirmation: undefined,
+          data: options.data,
+          slideInRef: undefined,
+        };
 
-    this.handleOverlayEvents(cdkOverlayRef, slideInInstance);
+        this.handleOverlayEvents(cdkOverlayRef, slideInInstance);
+        this.createContentPortal(slideInInstance);
+        this.updateSlideInInstances(slideInInstance);
 
-    return close$;
+        return close$;
+      }),
+    );
   }
 
   private swap<D, R>(component: ComponentInSlideIn<D, R>, options: { data?: D; wide?: boolean } = {}): void {
@@ -83,25 +87,36 @@ export class SlideIn {
 
     prevInstance.component = component;
     prevInstance.wide = Boolean(options.wide);
-    prevInstance.containerRef.instance.animateClose().pipe(
+    prevInstance.containerRef.instance.slideOut().pipe(
       untilDestroyed(this),
     ).subscribe({
       next: () => {
         this.createContentPortal(prevInstance);
         this.updateSlideInInstances(prevInstance);
+        prevInstance.containerRef.instance.slideIn();
       },
     });
+  }
+
+  private animateOutTopComponent(): Observable<void> {
+    const topComponent = this.slideInInstances().at(-1);
+    if (!topComponent) {
+      return of(undefined);
+    }
+    return topComponent.containerRef.instance.slideOut();
+  }
+
+  private animateInTopComponent(): Observable<void> {
+    const topComponent = this.slideInInstances().at(-1);
+    if (!topComponent) {
+      return of(undefined);
+    }
+    return topComponent.containerRef.instance.slideIn();
   }
 
   private handleOverlayEvents<D, R>(overlay: OverlayRef, instance: SlideInInstance<D, R>): void {
     overlay.backdropClick().pipe(untilDestroyed(this)).subscribe(() => {
       instance.slideInRef.close({ response: false as R, error: undefined });
-    });
-
-    overlay.detachments().pipe(untilDestroyed(this)).subscribe(() => {
-      this.slideInInstances.set(
-        this.slideInInstances().filter((slideInItem) => slideInItem.slideInId !== instance.slideInId),
-      );
     });
   }
 
@@ -139,14 +154,19 @@ export class SlideIn {
   private getCloseSubject<R>(
     cdkOverlayRef: OverlayRef,
     containerRef: ComponentRef<SlideInContainerComponent>,
+    slideInId: string,
   ): Subject<R | undefined> {
     const close$ = new Subject<R | undefined>();
     close$.pipe(
-      switchMap(() => containerRef.instance.animateClose()),
+      switchMap(() => containerRef.instance.slideOut()),
       untilDestroyed(this),
     ).subscribe({
       next: () => {
         cdkOverlayRef.dispose();
+        this.slideInInstances.set(
+          this.slideInInstances().filter((slideInItem) => slideInItem.slideInId !== slideInId),
+        );
+        this.animateInTopComponent();
       },
     });
     return close$;

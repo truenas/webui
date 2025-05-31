@@ -1,33 +1,48 @@
 import {
   animate, keyframes, style, transition, trigger,
   AnimationEvent,
+  state,
 } from '@angular/animations';
 import { CdkPortalOutlet } from '@angular/cdk/portal';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, HostBinding, HostListener, ViewChild,
 } from '@angular/core';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { Observable, Subject, take } from 'rxjs';
 
-const enterTransition = transition(':enter', [
-  animate(
-    '150ms ease-out',
-    keyframes([
-      style({ transform: 'translateX(100%)', offset: 0 }),
-      style({ transform: 'translateX(0)', offset: 1 }),
-    ]),
-  ),
+const slideInOutTrigger = trigger('slideInOut', [
+  state('visible', style({ transform: 'translateX(0%)' })),
+  state('hidden', style({ transform: 'translateX(100%)' })),
+  transition('visible => hidden', [
+    animate(
+      '150ms ease-in',
+      keyframes([
+        style({ transform: 'translateX(0)', offset: 0 }),
+        style({ transform: 'translateX(100%)', offset: 1 }),
+      ]),
+    ),
+  ]),
+  transition('hidden => visible', [
+    animate(
+      '150ms ease-out',
+      keyframes([
+        style({ transform: 'translateX(100%)', offset: 0 }),
+        style({ transform: 'translateX(0)', offset: 1 }),
+      ]),
+    ),
+  ]),
+  transition('void => *', [
+    animate(
+      '150ms ease-out',
+      keyframes([
+        style({ transform: 'translateX(100%)', offset: 0 }),
+        style({ transform: 'translateX(0)', offset: 1 }),
+      ]),
+    ),
+  ]),
 ]);
 
-const leaveTransition = transition(':leave', [
-  animate(
-    '150ms ease-in',
-    keyframes([
-      style({ transform: 'translateX(0)', offset: 0 }),
-      style({ transform: 'translateX(100%)', offset: 1 }),
-    ]),
-  ),
-]);
-
+@UntilDestroy()
 @Component({
   selector: 'ix-slide-in-container',
   templateUrl: './slide-in-container.component.html',
@@ -37,40 +52,46 @@ const leaveTransition = transition(':leave', [
     CdkPortalOutlet,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  animations: [
-    trigger('slideInOut', [
-      enterTransition,
-      leaveTransition,
-    ]),
-  ],
+  animations: [slideInOutTrigger],
 })
 export class SlideInContainerComponent {
   @ViewChild(CdkPortalOutlet, { static: true }) readonly portalOutlet!: CdkPortalOutlet;
-  private animationDone$ = new Subject<void>();
 
-  @HostBinding('@slideInOut') private animationState = 'in';
-  @HostBinding('style.width') private width = '750px';
-  @HostBinding('style.max-width') private maxWidth = '750px';
+  private readonly whenHidden$ = new Subject<void>();
+
+  private readonly whenVisible$ = new Subject<void>();
+
+  @HostBinding('@slideInOut') private animationState: 'visible' | 'hidden' = 'visible';
+  @HostBinding('style.width') private width = '480px';
+  @HostBinding('style.max-width') private maxWidth = '480px';
 
   @HostListener('@slideInOut.done', ['$event'])
-  private onAnimationDone(event: AnimationEvent): void {
-    if (event.toState === 'void') {
-      this.animationDone$.next();
-      this.animationState = 'in';
+  onAnimationDone(event: AnimationEvent): void {
+    if (event.toState === 'visible') {
+      this.whenVisible$.next();
+    }
+    if (event.toState === 'hidden') {
+      this.whenHidden$.next();
     }
   }
 
   constructor(private cdr: ChangeDetectorRef) {}
 
-  animateClose(): Observable<void> {
-    this.animationState = 'void';
+  slideOut(): Observable<void> {
+    this.animationState = 'hidden';
     this.cdr.markForCheck();
-    return this.animationDone$.asObservable().pipe(take(1));
+    return this.whenHidden$.pipe(take(1));
+  }
+
+  slideIn(): Observable<void> {
+    this.animationState = 'visible';
+    this.cdr.markForCheck();
+    return this.whenVisible$.pipe(take(1));
   }
 
   makeWide(wide: boolean): void {
-    this.width = wide ? '900px' : '500px';
-    this.maxWidth = wide ? '900px' : '500px';
+    this.width = wide ? '800px' : '480px';
+    this.maxWidth = wide ? '800px' : '480px';
     this.cdr.markForCheck();
   }
 }
