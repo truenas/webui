@@ -63,6 +63,6 @@ export class ModalHeaderComponent<D, R> {
   ) {}
 
   close(): void {
-    this.slideInRef.close(undefined);
+    this.slideInRef.close({ response: false as R, error: null });
   }
 }
