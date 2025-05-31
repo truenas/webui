@@ -417,9 +417,7 @@ export class NetworkComponent implements OnInit {
           data: {
             interface: interfaces[0],
           },
-        }).pipe(
-          filter((response) => !!response?.response),
-        );
+        });
         this.handleSlideInClosed(slideInRef$);
       });
   }
