@@ -35,7 +35,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
   standalone: true,
 })
-export class ModalHeaderComponent<D, R> {
+export class ModalHeaderComponent {
   readonly title = input<string>('');
   readonly loading = input<boolean>();
   readonly disableClose = input(false);
@@ -57,12 +57,12 @@ export class ModalHeaderComponent<D, R> {
 
   constructor(
     private translate: TranslateService,
-    private slideInRef: SlideInRef<D, R>,
+    private slideInRef: SlideInRef<unknown, false>,
     private authService: AuthService,
     private slideIn: SlideIn,
   ) {}
 
   close(): void {
-    this.slideInRef.close({ response: false as R, error: null });
+    this.slideInRef.close({ response: false, error: null });
   }
 }
