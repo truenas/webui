@@ -188,7 +188,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     private cdr: ChangeDetectorRef,
     private errorParser: ErrorParserService,
     private errorHandler: ErrorHandlerService,
-    public slideInRef: SlideInRef<unknown, unknown>,
+    public slideInRef: SlideInRef<ReplicationTask, ReplicationTask>,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);

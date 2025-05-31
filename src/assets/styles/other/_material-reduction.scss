@@ -890,3 +890,25 @@ mat-tab-nav-panel {
     }
   }
 }
+
+.slide-in-wrapper .mat-mdc-card {
+  border: none;
+  box-shadow: none;
+}
+
+.custom-slide-in-backdrop {
+  background: rgba(0, 0, 0, 0.32); // same as cdk-overlay-dark-backdrop
+  height: calc(100% - 48px) !important;
+  left: 0;
+  position: fixed;
+  top: 48px !important;
+  width: 100%;
+}
+
+.custom-slide-in-nobackdrop {
+  height: calc(100% - 48px) !important;
+  left: 0;
+  position: fixed;
+  top: 48px !important;
+  width: 100%;
+}

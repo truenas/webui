@@ -177,7 +177,7 @@ export class WidgetBackupComponent implements OnInit {
 
   addReplicationTask(): void {
     this.slideIn.open(ReplicationWizardComponent, { wide: true }).pipe(
-      filter((response) => !!response.response),
+      filter((response) => !!response),
       untilDestroyed(this),
     ).subscribe(() => this.getBackups());
   }
