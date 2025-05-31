@@ -10,8 +10,9 @@ import { MatCheckbox } from '@angular/material/checkbox';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { isEqual } from 'lodash-es';
 import {
-  debounceTime, filter, map,
+  debounceTime, distinctUntilChanged, filter, map,
   Observable,
   of,
   take,
@@ -158,7 +159,10 @@ export class AdditionalDetailsSectionComponent implements OnInit {
       }
     });
     this.form.valueChanges
-      .pipe(untilDestroyed(this))
+      .pipe(
+        distinctUntilChanged((prev, curr) => isEqual(prev, curr)),
+        untilDestroyed(this),
+      )
       .subscribe({
         next: () => {
           this.userFormStore.updateUserConfig({
