@@ -21,8 +21,16 @@
 - **Line Length**: Maximum 120 characters
 - **Prefer**: Signals over @Output, standalone components, OnPush change detection
 - **Error Handling**: Throw Error objects only, use explicit error types
-- **Testing**: Cover all happy paths, write Jest tests, prefer to use spectator and Angular harnesses. When mocking, provide minimally sufficient number of properties in the object.
+
+## Testing Guidelines
+- Cover main happy paths.
+- Write tests using Jest and Spectator. 
+- You MUST use harnesses over spectator when possible, including native Angular harnesses and our custom harnesses like IxFormHarness or IxIconHarness. 
+- Never rely on ixTest attributes for locating elements.
+- When mocking data, always provide minimally sufficient number of properties in the object and use `as Interface` casting. Do NOT provide full objects.
+- When mocking services, `mockProvider(MyService)` without mocking specific methods is usually enough.
 
 ## Branch and Commit Guidelines
 - Branch naming: `NAS-<issue number>` (e.g., `NAS-12345`)
-- Commit messages: `NAS-<issue number>: <description>`
+- Commit messages: `NAS-<issue number>: <description>`. 
+- Keep commit message short (to one line).

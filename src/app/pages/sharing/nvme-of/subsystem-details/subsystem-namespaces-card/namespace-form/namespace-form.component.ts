@@ -39,11 +39,11 @@ export class NamespaceFormComponent {
     this.existingNamespace.set(this.slideInRef.getData().namespace);
   }
 
-  get subsystemId(): number {
+  protected get subsystemId(): number {
     return this.slideInRef.getData().subsystemId;
   }
 
-  onSubmit(newNamespace: NamespaceChanges): void {
+  protected onSubmit(newNamespace: NamespaceChanges): void {
     const payload = {
       ...newNamespace,
       subsys_id: this.subsystemId,
