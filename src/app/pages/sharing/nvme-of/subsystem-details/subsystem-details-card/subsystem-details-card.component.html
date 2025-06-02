@@ -1,0 +1,56 @@
+<mat-card class="card">
+  <mat-card-header>
+    <h3 mat-card-title>{{ 'Details' | translate }}</h3>
+  </mat-card-header>
+  <mat-card-content>
+    <ix-details-table [formGroup]="form">
+      <ix-details-item [label]="'Name' | translate">
+        <ix-editable
+          editableSaveOnEnter
+          [readonly]="!(hasRole$ | async)"
+          [disabled]="isSaving()"
+          (closed)="updateField('name')"
+        >
+          <div view>
+            {{ subsystem().name }}
+          </div>
+
+          <div edit>
+            <ix-input
+              formControlName="name"
+              [attr.aria-label]="'Name' | translate"
+            ></ix-input>
+          </div>
+        </ix-editable>
+      </ix-details-item>
+
+      <ix-details-item [label]="'NQN' | translate">
+        <ix-editable
+          editableSaveOnEnter
+          [readonly]="!(hasRole$ | async)"
+          [disabled]="isSaving()"
+          (closed)="updateField('subnqn')"
+        >
+          <div view>
+            {{ subsystem().subnqn }}
+          </div>
+
+          <div edit>
+            <ix-textarea
+              formControlName="subnqn"
+              aria-label="NQN"
+            ></ix-textarea>
+          </div>
+        </ix-editable>
+
+        <a
+          class="copy-link"
+          ixTest="copy-link"
+          (click)="copyNqn()"
+        >
+          {{ 'Copy' | translate }}
+        </a>
+      </ix-details-item>
+    </ix-details-table>
+  </mat-card-content>
+</mat-card>

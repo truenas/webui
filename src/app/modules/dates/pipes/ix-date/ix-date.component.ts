@@ -9,6 +9,7 @@ import { LocaleService } from 'app/modules/language/locale.service';
 
 @Component({
   selector: 'ix-date',
+  styleUrls: ['./ix-date.component.scss'],
   templateUrl: './ix-date.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [

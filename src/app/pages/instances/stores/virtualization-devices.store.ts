@@ -1,5 +1,5 @@
 import { computed, Injectable } from '@angular/core';
-import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import {
@@ -25,9 +25,8 @@ const initialState: VirtualizationInstanceDeviceState = {
 @UntilDestroy()
 @Injectable()
 export class VirtualizationDevicesStore extends ComponentStore<VirtualizationInstanceDeviceState> {
-  readonly stateAsSignal = toSignal(this.state$, { initialValue: initialState });
-  readonly isLoading = computed(() => this.stateAsSignal().isLoading);
-  readonly devices = computed(() => this.stateAsSignal().devices);
+  readonly isLoading = computed(() => this.state().isLoading);
+  readonly devices = computed(() => this.state().devices);
   private readonly selectedInstance = this.instanceStore.selectedInstance;
   constructor(
     private api: ApiService,

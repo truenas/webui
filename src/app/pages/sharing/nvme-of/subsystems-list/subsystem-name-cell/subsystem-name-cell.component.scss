@@ -1,0 +1,9 @@
+@import 'mixins/text';
+
+:host {
+  @include line-clamp(2);
+
+  align-items: center;
+  display: flex;
+  gap: 4px;
+}

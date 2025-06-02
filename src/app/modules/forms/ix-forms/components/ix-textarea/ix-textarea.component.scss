@@ -26,10 +26,11 @@
   flex-direction: row;
   font-size: 12px;
   position: relative;
+  width: 100%;
 
   textarea {
     max-height: 250px;
-    min-height: 14px;
+    min-height: 85px;
     overflow-y: auto;
     resize: vertical;
   }

@@ -7,6 +7,7 @@ import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { nvmeOfEmptyConfig } from 'app/constants/empty-configs';
+import { NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
@@ -22,7 +23,7 @@ import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-c
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
-import { NvmeOfSubsystemDetails } from 'app/pages/sharing/nvme-of/services/nvme-of-subsystem-details.interface';
+import { SubSystemNameCellComponent } from 'app/pages/sharing/nvme-of/subsystems-list/subsystem-name-cell/subsystem-name-cell.component';
 
 @UntilDestroy()
 @Component({
@@ -45,6 +46,7 @@ import { NvmeOfSubsystemDetails } from 'app/pages/sharing/nvme-of/services/nvme-
     IxIconComponent,
     IxTableEmptyDirective,
     IxTablePagerComponent,
+    SubSystemNameCellComponent,
     EmptyComponent,
   ],
 })
@@ -54,15 +56,13 @@ export class SubsystemsListComponent {
   readonly toggleShowMobileDetails = output<boolean>();
   readonly dataProvider = input.required<ArrayDataProvider<NvmeOfSubsystemDetails>>();
   readonly search = output<string>();
+  protected readonly emptyConfig = nvmeOfEmptyConfig;
 
   filterString = '';
 
-  protected readonly emptyConfig = nvmeOfEmptyConfig;
-
   protected columns = createTable<NvmeOfSubsystemDetails>([
-    textColumn({
+    templateColumn({
       title: this.translate.instant('Name'),
-      propertyName: 'name',
     }),
     textColumn({
       title: this.translate.instant('Namespaces'),

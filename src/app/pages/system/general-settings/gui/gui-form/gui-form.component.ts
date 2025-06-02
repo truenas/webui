@@ -1,6 +1,5 @@
 import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef, Component, computed, Inject,
+  ChangeDetectionStrategy, Component, computed, Inject,
   OnInit,
   signal,
 } from '@angular/core';
@@ -27,7 +26,6 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { WithManageCertificatesLinkComponent } from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { ipValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -73,8 +71,8 @@ export class GuiFormComponent implements OnInit {
   formGroup = this.fb.nonNullable.group({
     theme: ['', [Validators.required]],
     ui_certificate: ['', [Validators.required]],
-    ui_address: [[] as string[], [ipValidator('ipv4')]],
-    ui_v6address: [[] as string[], [ipValidator('ipv6')]],
+    ui_address: [[] as string[]],
+    ui_v6address: [[] as string[]],
     ui_port: [null as number | null, [Validators.required, Validators.min(1), Validators.max(65535)]],
     ui_httpsport: [null as number | null, [Validators.required, Validators.min(1), Validators.max(65535)]],
     ui_httpsprotocols: [[] as string[], [Validators.required]],
@@ -105,7 +103,6 @@ export class GuiFormComponent implements OnInit {
     private fb: FormBuilder,
     private sysGeneralService: SystemGeneralService,
     private themeService: ThemeService,
-    private cdr: ChangeDetectorRef,
     private api: ApiService,
     private wsManager: WebSocketHandlerService,
     private wsStatus: WebSocketStatusService,

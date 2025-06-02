@@ -1,5 +1,4 @@
 import { computed, Injectable } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
@@ -33,12 +32,11 @@ const initialState: VirtualizationInstancesState = {
 @UntilDestroy()
 @Injectable()
 export class VirtualizationInstancesStore extends ComponentStore<VirtualizationInstancesState> {
-  readonly stateAsSignal = toSignal(this.state$, { initialValue: initialState });
-  readonly isLoading = computed(() => this.stateAsSignal().isLoading);
-  readonly selectedInstance = computed(() => this.stateAsSignal().selectedInstance);
-  readonly selectedInstanceId = computed(() => this.stateAsSignal().selectedInstanceId);
+  readonly isLoading = computed(() => this.state().isLoading);
+  readonly selectedInstance = computed(() => this.state().selectedInstance);
+  readonly selectedInstanceId = computed(() => this.state().selectedInstanceId);
   readonly instances = computed(() => {
-    return this.stateAsSignal().instances?.filter((instance) => !!instance) ?? [];
+    return this.state().instances?.filter((instance) => !!instance) ?? [];
   });
 
   private readonly destroySubscription$ = new Subject<void>();
