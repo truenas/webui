@@ -10,7 +10,7 @@ import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 export class EmptyService {
   constructor(private translate: TranslateService) { }
 
-  defaultEmptyConfig(type?: EmptyType | null, defaultConfig?: EmptyConfig): EmptyConfig {
+  defaultEmptyConfig(type?: EmptyType | null): EmptyConfig {
     switch (type) {
       case EmptyType.Loading:
         return {
@@ -27,7 +27,7 @@ export class EmptyService {
       case EmptyType.NoSearchResults:
         return noSearchResultsConfig;
       default:
-        return defaultConfig || {
+        return {
           title: this.translate.instant('No records have been added yet'),
           type: EmptyType.NoPageData,
           large: true,
