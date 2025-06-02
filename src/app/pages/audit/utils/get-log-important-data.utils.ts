@@ -72,6 +72,13 @@ function getSystemLogImportantData(log: SystemAuditEntry, translate: TranslateSe
   switch (event) {
     case AuditEvent.Generic:
     case AuditEvent.Escalation:
+    case AuditEvent.Privileged:
+    case AuditEvent.Export:
+    case AuditEvent.Identity:
+    case AuditEvent.TimeChange:
+    case AuditEvent.ModuleLoad:
+    case AuditEvent.Service:
+    case AuditEvent.TtyRecord:
       return translate.instant(T('Command: {command}'), { command: log.event_data?.proctitle ?? '-' });
     case AuditEvent.Login:
       return translate.instant(T('UID: {uid}'), { uid: log.event_data?.auid ?? '-' });

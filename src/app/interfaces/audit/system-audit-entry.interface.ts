@@ -80,8 +80,50 @@ export interface SystemEscalationEntry extends BaseSystemAuditEntry {
   event_data: EscalationSystemEventData;
 }
 
+export interface PrivilegedEntry extends BaseSystemAuditEntry {
+  event: AuditEvent.Privileged;
+  event_data: EscalationSystemEventData;
+}
+
+export interface ExportEntry extends BaseSystemAuditEntry {
+  event: AuditEvent.Export;
+  event_data: EscalationSystemEventData;
+}
+
+export interface IdentityEntry extends BaseSystemAuditEntry {
+  event: AuditEvent.Identity;
+  event_data: EscalationSystemEventData;
+}
+
+export interface TimeChangeEntry extends BaseSystemAuditEntry {
+  event: AuditEvent.TimeChange;
+  event_data: EscalationSystemEventData;
+}
+
+export interface ModuleLoadEntry extends BaseSystemAuditEntry {
+  event: AuditEvent.ModuleLoad;
+  event_data: EscalationSystemEventData;
+}
+
+export interface ServiceEntry extends BaseSystemAuditEntry {
+  event: AuditEvent.Service;
+  event_data: EscalationSystemEventData;
+}
+
+export interface TtyRecordEntry extends BaseSystemAuditEntry {
+  event: AuditEvent.TtyRecord;
+  event_data: EscalationSystemEventData;
+}
+
 export type SystemAuditEntry =
   | SystemGenericEntry
   | SystemLoginEntry
   | SystemCredentialEntry
-  | SystemEscalationEntry;
+  | SystemEscalationEntry
+  | ExportEntry
+  | PrivilegedEntry
+  | IdentityEntry
+  | TimeChangeEntry
+  | ModuleLoadEntry
+  | ServiceEntry
+  | TtyRecordEntry;

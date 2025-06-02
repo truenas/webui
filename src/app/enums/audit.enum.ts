@@ -31,6 +31,13 @@ export enum AuditEvent {
   Login = 'LOGIN',
   Credential = 'CREDENTIAL',
   Escalation = 'ESCALATION',
+  Privileged = 'privileged',
+  Export = 'export',
+  Identity = 'identity',
+  TimeChange = 'time-change',
+  ModuleLoad = 'module-load',
+  Service = 'service',
+  TtyRecord = 'tty_record',
 }
 
 export const auditServiceLabels = new Map<AuditService, string>([
@@ -64,4 +71,11 @@ export const auditEventLabels = new Map<AuditEvent, string>([
   [AuditEvent.Generic, T('Generic')],
   [AuditEvent.Credential, T('Credential')],
   [AuditEvent.Escalation, T('Escalation')],
+  [AuditEvent.Privileged, T('Privileged')],
+  [AuditEvent.Export, T('Export')],
+  [AuditEvent.Identity, T('Identity')],
+  [AuditEvent.TimeChange, T('Time Change')],
+  [AuditEvent.ModuleLoad, T('Module Load')],
+  [AuditEvent.Service, T('Service')],
+  [AuditEvent.TtyRecord, T('TTY Record')],
 ]);
