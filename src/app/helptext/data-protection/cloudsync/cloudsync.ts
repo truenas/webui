@@ -31,6 +31,11 @@ export const helptextCloudSync = {
   encryptionLabel: T('Server Side Encryption'),
   encryptionTooltip: T('Choose <i>AES-256</i> or <i>None</i>.'),
 
+  chunkSizeLabel: T('Upload Chunk Size (MiB)'),
+  chunkSizeTooltip: T('Files are split into chunks of this size before upload.\
+ Up to «--transfers» chunks can be in progress at one time. The single largest file\
+ being transferred must fit into no more than 10,000 chunks.'),
+
   storageClassLabel: T('Storage Class'),
   storageClassTooltip: T('Classification for each S3 object. Choose a\
  class based on the specific use case or performance requirements.\

@@ -27,6 +27,8 @@ export interface Job<R = unknown, A = unknown[]> {
   state: JobState;
   time_finished: ApiTimestamp | null;
   time_started: ApiTimestamp;
+  removed: boolean;
+  message_ids: string[];
 }
 
 export interface JobProgress {

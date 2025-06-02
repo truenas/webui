@@ -25,7 +25,8 @@ export const helptextSystemSupport = {
   review: {
     message: {
       placeholder: T('Share your thoughts on our product\'s features, usability, or any suggestions for improvement.'),
-      placeholderAdditional: T('Any part of TrueNAS that you like in particular?'),
+      placeholderHighRating: T('Any part of TrueNAS that you like in particular?'),
+      placeholderLowRating: T('If something isn’t working correctly, it may be better to use the “Report a bug” option. This way you’ll automatically get status updates as we fix it.'),
     },
     voteForNewFeatures: T('You can also vote for new features <a target="_blank" href="https://forums.truenas.com/feature-requests">on our forum.</a>'),
   },

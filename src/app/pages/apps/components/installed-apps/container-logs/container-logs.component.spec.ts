@@ -1,7 +1,6 @@
-import { Location } from '@angular/common';
 import { fakeAsync } from '@angular/core/testing';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   Spectator, SpectatorFactory, createComponentFactory, mockProvider,
 } from '@ngneat/spectator/jest';
@@ -53,8 +52,8 @@ describe('ContainerLogsComponent', () => {
       spectator = createComponent();
     });
 
-    it('cancelling the dialog should call back method', fakeAsync(() => {
-      expect(spectator.inject(Location).back).toHaveBeenCalled();
+    it('cancelling the dialog returns user to installed apps with app selected', fakeAsync(() => {
+      expect(spectator.inject(Router).navigate).toHaveBeenCalled();
     }));
   });
 
@@ -68,7 +67,7 @@ describe('ContainerLogsComponent', () => {
         MockComponent(ToolbarSliderComponent),
       ],
       providers: [
-        mockProvider(Location),
+        mockProvider(Router),
         mockProvider(MatDialog, {
           open: jest.fn(() => ({
             afterClosed: jest.fn(() => {

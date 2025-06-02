@@ -31,7 +31,6 @@ import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.servic
 @UntilDestroy()
 @Component({
   selector: 'ix-port-form',
-  styleUrls: ['./port-form.component.scss'],
   templateUrl: './port-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
