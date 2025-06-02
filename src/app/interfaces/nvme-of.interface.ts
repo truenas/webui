@@ -83,7 +83,7 @@ export interface NvmeOfNamespace {
 export type UpdateNvmeOfNamespace = Pick<
   Partial<NvmeOfNamespace>,
   'nsid' | 'device_type' | 'device_path' | 'filesize' | 'enabled'
-> & { subsys_id: number };
+> & { subsys_id?: number };
 export type CreateNvmeOfNamespace = Required<UpdateNvmeOfNamespace, 'device_type' | 'device_path' | 'subsys_id'>;
 
 export type DeleteNamespaceParams = [

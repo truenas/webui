@@ -3,21 +3,21 @@ import {
 } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { uniqBy } from 'lodash-es';
 import { filter } from 'rxjs';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   NamespaceDescriptionComponent,
 } from 'app/pages/sharing/nvme-of/namespaces/namespace-description/namespace-description.component';
+import { NamespaceChanges } from 'app/pages/sharing/nvme-of/namespaces/namespace-form/namespace-changes.interface';
 import {
-  NamespaceDialogComponent,
-} from 'app/pages/sharing/nvme-of/namespaces/namespace-dialog/namespace-dialog.component';
-import { NewNamespace } from 'app/pages/sharing/nvme-of/namespaces/namespace-dialog/new-namespace.interface';
+  NamespaceFormComponent,
+} from 'app/pages/sharing/nvme-of/namespaces/namespace-form/namespace-form.component';
 
 @UntilDestroy()
 @Component({
@@ -37,22 +37,25 @@ import { NewNamespace } from 'app/pages/sharing/nvme-of/namespaces/namespace-dia
   ],
 })
 export class AddSubsystemNamespacesComponent {
-  namespacesControl = input.required<FormControl<NewNamespace[]>>();
+  namespacesControl = input.required<FormControl<NamespaceChanges[]>>();
 
   constructor(
-    private matDialog: MatDialog,
+    private slideIn: SlideIn,
     private cdr: ChangeDetectorRef,
   ) {}
 
-  protected get namespaces(): NewNamespace[] {
+  protected get namespaces(): NamespaceChanges[] {
     return this.namespacesControl()?.value || [];
   }
 
   protected onAddNamespace(): void {
-    this.matDialog.open(NamespaceDialogComponent, { minWidth: '400px' }).afterClosed()
-      .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe((newNamespace: NewNamespace) => {
-        const newNamespaces = [...this.namespaces, newNamespace];
+    this.slideIn.open(NamespaceFormComponent)
+      .pipe(
+        filter((response) => Boolean(response.response)),
+        untilDestroyed(this),
+      )
+      .subscribe((response) => {
+        const newNamespaces = [...this.namespaces, response.response];
         this.namespacesControl().setValue(uniqBy(newNamespaces, 'device_path'));
 
         this.cdr.markForCheck();

@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { NamespaceDialogComponent } from './namespace-dialog.component';
+import { NamespaceFormComponent } from 'app/pages/sharing/nvme-of/namespaces/namespace-form/namespace-form.component';
 
 describe('NamespaceDialogComponent', () => {
-  let component: NamespaceDialogComponent;
-  let fixture: ComponentFixture<NamespaceDialogComponent>;
+  let component: NamespaceFormComponent;
+  let fixture: ComponentFixture<NamespaceFormComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [NamespaceDialogComponent],
+      imports: [NamespaceFormComponent],
     })
       .compileComponents();
 
-    fixture = TestBed.createComponent(NamespaceDialogComponent);
+    fixture = TestBed.createComponent(NamespaceFormComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

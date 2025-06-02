@@ -40,7 +40,7 @@ import {
 import {
   AddSubsystemPortsComponent,
 } from 'app/pages/sharing/nvme-of/add-subsystem/add-subsystem-ports/add-subsystem-ports.component';
-import { NewNamespace } from 'app/pages/sharing/nvme-of/namespaces/namespace-dialog/new-namespace.interface';
+import { NamespaceChanges } from 'app/pages/sharing/nvme-of/namespaces/namespace-form/namespace-changes.interface';
 import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
 import { getNamespaceType } from 'app/pages/sharing/nvme-of/utils/namespace.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -83,7 +83,7 @@ export class AddSubsystemComponent {
     name: ['', Validators.required],
     subnqn: [''],
     ana: [false],
-    namespaces: [[] as NewNamespace[]],
+    namespaces: [[] as NamespaceChanges[]],
 
     allowAnyHost: [true],
     allowedHosts: [[] as NvmeOfHost[]],
@@ -148,7 +148,7 @@ export class AddSubsystemComponent {
     return this.api.call('nvmet.subsys.create', [payload]);
   }
 
-  private createNamespaces(subsystem: NvmeOfSubsystem, namespaceConfigs: NewNamespace[]): Observable<unknown>[] {
+  private createNamespaces(subsystem: NvmeOfSubsystem, namespaceConfigs: NamespaceChanges[]): Observable<unknown>[] {
     return namespaceConfigs.map((config) => {
       const deviceType = getNamespaceType(config.device_path);
       const payload: CreateNvmeOfNamespace = {

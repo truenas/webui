@@ -25,7 +25,7 @@ import {
   AddSubsystemPortsComponent,
 } from 'app/pages/sharing/nvme-of/add-subsystem/add-subsystem-ports/add-subsystem-ports.component';
 import { AddSubsystemComponent } from 'app/pages/sharing/nvme-of/add-subsystem/add-subsystem.component';
-import { NewNamespace } from 'app/pages/sharing/nvme-of/namespaces/namespace-dialog/new-namespace.interface';
+import { NamespaceChanges } from 'app/pages/sharing/nvme-of/namespaces/namespace-form/namespace-changes.interface';
 import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
 
 describe('AddSubsystemComponent', () => {
@@ -92,7 +92,7 @@ describe('AddSubsystemComponent', () => {
     ]);
 
     const addNamespaces = spectator.query(AddSubsystemNamespacesComponent);
-    const namespaces: NewNamespace[] = [
+    const namespaces: NamespaceChanges[] = [
       {
         id: 'temp-1',
         device_path: '/dev/zvol/pool/zvol1',

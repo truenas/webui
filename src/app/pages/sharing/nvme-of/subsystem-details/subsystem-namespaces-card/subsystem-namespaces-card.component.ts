@@ -5,7 +5,6 @@ import { MatButton, MatIconButton } from '@angular/material/button';
 import {
   MatCard, MatCardContent, MatCardHeader, MatCardTitle,
 } from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -15,6 +14,7 @@ import { NvmeOfNamespace, NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -22,9 +22,8 @@ import {
   NamespaceDescriptionComponent,
 } from 'app/pages/sharing/nvme-of/namespaces/namespace-description/namespace-description.component';
 import {
-  NamespaceDialogComponent,
-} from 'app/pages/sharing/nvme-of/namespaces/namespace-dialog/namespace-dialog.component';
-import { NewNamespace } from 'app/pages/sharing/nvme-of/namespaces/namespace-dialog/new-namespace.interface';
+  NamespaceFormComponent,
+} from 'app/pages/sharing/nvme-of/namespaces/namespace-form/namespace-form.component';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -56,7 +55,7 @@ export class SubsystemNamespacesCardComponent {
   constructor(
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
-    private matDialog: MatDialog,
+    private slideIn: SlideIn,
     private nvmeOfStore: NvmeOfStore,
     private dialogService: DialogService,
     private snackbar: SnackbarService,
@@ -65,13 +64,12 @@ export class SubsystemNamespacesCardComponent {
   ) {}
 
   protected onAddNamespace(): void {
-    this.matDialog.open(NamespaceDialogComponent, { minWidth: '400px' })
-      .afterClosed()
+    this.slideIn.open(NamespaceFormComponent)
       .pipe(
-        filter(Boolean),
-        switchMap((newNamespace: NewNamespace) => {
+        filter((response) => Boolean(response.response)),
+        switchMap((response) => {
           return this.api.call('nvmet.namespace.create', [{
-            ...newNamespace,
+            ...response.response,
             subsys_id: this.subsystem().id,
           }]).pipe(
             this.loader.withLoader(),
@@ -86,11 +84,38 @@ export class SubsystemNamespacesCardComponent {
       });
   }
 
+  protected onEditNamespace(namespace: NvmeOfNamespace): void {
+    this.slideIn.open(NamespaceFormComponent, { data: namespace })
+      .pipe(
+        filter((response) => Boolean(response.response)),
+        switchMap((response) => {
+          const newNamespace = response.response;
+          return this.api.call('nvmet.namespace.update', [
+            namespace.id,
+            {
+              device_type: newNamespace.device_type,
+              device_path: newNamespace.device_path,
+              filesize: newNamespace.filesize,
+            },
+          ]).pipe(
+            this.loader.withLoader(),
+            this.errorHandler.withErrorHandler(),
+          );
+        }),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        this.snackbar.success(this.translate.instant('Namespace updated.'));
+        this.nvmeOfStore.initialize();
+      });
+  }
+
   protected onDeleteNamespace(namespace: NvmeOfNamespace): void {
     this.dialogService.confirm({
       title: this.translate.instant('Please Confirm'),
       message: this.translate.instant('Are you sure you want to delete this namespace?'),
       buttonColor: 'warn',
+      buttonText: this.translate.instant('Delete'),
     })
       .pipe(
         filter(Boolean),

@@ -33,11 +33,20 @@
               <span class="namespace-actions">
                 <button
                   mat-icon-button
+                  [ixTest]="['edit-namespace', namespace.device_path]"
+                  [matTooltip]="'Edit namespace' | translate"
+                  (click)="onEditNamespace(namespace)"
+                >
+                  <ix-icon name="edit"></ix-icon>
+                </button>
+
+                <button
+                  mat-icon-button
                   [ixTest]="['delete-namespace', namespace.device_path]"
                   [matTooltip]="'Delete namespace' | translate"
                   (click)="onDeleteNamespace(namespace)"
                 >
-                  <ix-icon class="icon" name="clear"></ix-icon>
+                  <ix-icon name="mdi-delete"></ix-icon>
                 </button>
               </span>
             </span>
