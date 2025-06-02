@@ -38,6 +38,7 @@ export class ConfirmDialog {
   isSecondaryCheckboxChecked = false;
 
   private readonly defaultOptions = {
+    title: this.translate.instant('Please confirm'),
     buttonText: this.translate.instant('Continue'),
     cancelText: this.translate.instant('Cancel'),
     hideCheckbox: false,
