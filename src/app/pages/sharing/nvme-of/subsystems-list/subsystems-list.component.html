@@ -10,7 +10,7 @@
     </div>
   </mat-toolbar-row>
   <mat-card-content>
-    @if ((dataProvider().emptyType$ | async) === EmptyType.NoPageData) {
+    @if ((dataProvider().emptyType$ | async) === EmptyType.NoPageData && !(dataProvider().currentPageCount$ | async)) {
       <ix-empty [conf]="emptyConfig"></ix-empty>
     } @else {
       <ix-table

@@ -27,7 +27,7 @@
 </ix-page-header>
 
 <div class="table-container">
-  @if ((dataProvider.emptyType$ | async) === EmptyType.NoPageData) {
+  @if ((dataProvider.emptyType$ | async) === EmptyType.NoPageData && !(dataProvider.currentPageCount$ | async)) {
     <ix-empty [conf]="emptyConfig"></ix-empty>
   } @else {
     <ix-table
