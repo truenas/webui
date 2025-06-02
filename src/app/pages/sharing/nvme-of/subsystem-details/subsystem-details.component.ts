@@ -4,6 +4,9 @@ import {
   SubsystemHostsCardComponent,
 } from 'app/pages/sharing/nvme-of/subsystem-details/subsystem-hosts-card/subsystem-hosts-card.component';
 import {
+  SubsystemNamespacesCardComponent,
+} from 'app/pages/sharing/nvme-of/subsystem-details/subsystem-namespaces-card/subsystem-namespaces-card.component';
+import {
   SubsystemPortsCardComponent,
 } from 'app/pages/sharing/nvme-of/subsystem-details/subsystem-ports-card/subsystem-ports-card.component';
 
@@ -15,6 +18,7 @@ import {
   imports: [
     SubsystemPortsCardComponent,
     SubsystemHostsCardComponent,
+    SubsystemNamespacesCardComponent,
   ],
 })
 export class SubsystemDetailsComponent {

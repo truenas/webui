@@ -7,10 +7,12 @@
 - Run tests for changed files: `yarn test:changed`
 - Run specific test: `yarn test src/app/path/to/file.spec.ts`
 - Lint code: `yarn lint` or `yarn lint:fix` to auto-fix issues
-- TypeScript checks: `yarn strict-null-checks`
+- Run `yarn ui remote -i <some_ip>` to prepare UI for being served. Re-run this command after running `yarn build`.
+- Ignore strict null check, i.e. don't run: `yarn strict-null-checks`
 
 ## Code Style Guidelines
 - **Angular Component Naming**: Use kebab-case with prefix `ix-` (e.g., `ix-my-component`)
+- **Own components**: Use ix-icon instead of mat-icon, use ix-form related components like ix-input instead of standard Angular Material components.
 - **Templates**: Use Angular embedded control syntax (e.g. @if, @for) instead of ngIf, ngFor.
 - **File Naming**: Kebab-case with specific suffixes (.component.ts, .service.ts, etc.)
 - **Functions/Variables**: Use camelCase, Observable variables end with `$`

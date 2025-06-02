@@ -1,6 +1,15 @@
 <mat-card class="card">
   <mat-card-header>
     <h3 mat-card-title>{{ 'Namespaces' | translate }}</h3>
+
+    <button
+      mat-button
+      type="button"
+      ixTest="add-namespace"
+      (click)="onAddNamespace()"
+    >
+      {{ 'Add' | translate }}
+    </button>
   </mat-card-header>
   <mat-card-content>
     @if (!subsystem().namespaces.length) {
@@ -15,21 +24,13 @@
         </div>
       </div>
     } @else {
-      <ul class="namespaces-list">
+      <ul class="namespace-list">
         @for (namespace of subsystem().namespaces; track namespace.id) {
           <li>
             <span class="namespace">
               <ix-namespace-description [namespace]="namespace"></ix-namespace-description>
 
               <span class="namespace-actions">
-                <button
-                  mat-icon-button
-                  [ixTest]="['edit-namespace', namespace.device_path]"
-                  [matTooltip]="'Edit namespace' | translate"
-                  (click)="onEditNamespace(namespace)"
-                >
-                  <ix-icon class="icon" name="edit"></ix-icon>
-                </button>
                 <button
                   mat-icon-button
                   [ixTest]="['delete-namespace', namespace.device_path]"

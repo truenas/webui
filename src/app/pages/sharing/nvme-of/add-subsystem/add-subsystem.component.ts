@@ -14,7 +14,9 @@ import {
 } from 'rxjs';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextNvmeOf } from 'app/helptext/sharing/nvme-of/nvme-of';
-import { NvmeOfHost, NvmeOfPort, NvmeOfSubsystem } from 'app/interfaces/nvme-of.interface';
+import {
+  CreateNvmeOfNamespace, NvmeOfHost, NvmeOfPort, NvmeOfSubsystem,
+} from 'app/interfaces/nvme-of.interface';
 import { DetailsItemComponent } from 'app/modules/details-table/details-item/details-item.component';
 import { DetailsTableComponent } from 'app/modules/details-table/details-table.component';
 import { EditableComponent } from 'app/modules/forms/editable/editable.component';
@@ -32,9 +34,15 @@ import {
   AddSubsystemHostsComponent,
 } from 'app/pages/sharing/nvme-of/add-subsystem/add-subsystem-hosts/add-subsystem-hosts.component';
 import {
+  AddSubsystemNamespacesComponent,
+
+} from 'app/pages/sharing/nvme-of/add-subsystem/add-subsystem-namespaces/add-subsystem-namespaces.component';
+import {
   AddSubsystemPortsComponent,
 } from 'app/pages/sharing/nvme-of/add-subsystem/add-subsystem-ports/add-subsystem-ports.component';
+import { NewNamespace } from 'app/pages/sharing/nvme-of/namespaces/namespace-dialog/new-namespace.interface';
 import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
+import { getNamespaceType } from 'app/pages/sharing/nvme-of/utils/namespace.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
@@ -61,6 +69,7 @@ import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
     MatStepperPrevious,
     IxCheckboxComponent,
     AddSubsystemHostsComponent,
+    AddSubsystemNamespacesComponent,
     AddSubsystemPortsComponent,
     DetailsItemComponent,
     DetailsTableComponent,
@@ -74,6 +83,7 @@ export class AddSubsystemComponent {
     name: ['', Validators.required],
     subnqn: [''],
     ana: [false],
+    namespaces: [[] as NewNamespace[]],
 
     allowAnyHost: [true],
     allowedHosts: [[] as NvmeOfHost[]],
@@ -98,10 +108,17 @@ export class AddSubsystemComponent {
     this.isLoading.set(true);
     this.createSubsystem().pipe(
       switchMap((subsystem) => {
-        return forkJoin([
+        const operations = [
           this.nvmeOfService.associatePorts(subsystem, this.form.value.ports),
           this.nvmeOfService.associateHosts(subsystem, this.form.value.allowedHosts),
-        ]).pipe(
+        ];
+
+        // Add namespaces if any are configured
+        if (this.form.value.namespaces?.length) {
+          operations.push(...this.createNamespaces(subsystem, this.form.value.namespaces));
+        }
+
+        return forkJoin(operations).pipe(
           map(() => subsystem),
           tap(() => this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.NvmeOf }))),
         );
@@ -129,5 +146,17 @@ export class AddSubsystemComponent {
     };
 
     return this.api.call('nvmet.subsys.create', [payload]);
+  }
+
+  private createNamespaces(subsystem: NvmeOfSubsystem, namespaceConfigs: NewNamespace[]): Observable<unknown>[] {
+    return namespaceConfigs.map((config) => {
+      const deviceType = getNamespaceType(config.device_path);
+      const payload: CreateNvmeOfNamespace = {
+        subsys_id: subsystem.id,
+        device_type: deviceType,
+        device_path: config.device_path,
+      };
+      return this.api.call('nvmet.namespace.create', [payload]);
+    });
   }
 }

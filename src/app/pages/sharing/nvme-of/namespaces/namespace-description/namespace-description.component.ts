@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { nvmeOfNamespaceTypeLabels } from 'app/enums/nvme-of.enum';
-import { NvmeOfNamespace } from 'app/interfaces/nvme-of.interface';
+import { nvmeOfNamespaceTypeLabels, NvmeOfNamespaceType } from 'app/enums/nvme-of.enum';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 
 @Component({
@@ -15,7 +14,7 @@ import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
   ],
 })
 export class NamespaceDescriptionComponent {
-  namespace = input.required<NvmeOfNamespace>();
+  namespace = input.required<{ device_type: NvmeOfNamespaceType; device_path: string }>();
 
   protected readonly typeLabels = nvmeOfNamespaceTypeLabels;
 }

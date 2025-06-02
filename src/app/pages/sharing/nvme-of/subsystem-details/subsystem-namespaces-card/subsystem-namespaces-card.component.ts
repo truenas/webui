@@ -1,10 +1,11 @@
 import {
   ChangeDetectionStrategy, Component, input,
 } from '@angular/core';
-import { MatIconButton } from '@angular/material/button';
+import { MatButton, MatIconButton } from '@angular/material/button';
 import {
   MatCard, MatCardContent, MatCardHeader, MatCardTitle,
 } from '@angular/material/card';
+import { MatDialog } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -14,14 +15,16 @@ import { NvmeOfNamespace, NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   NamespaceDescriptionComponent,
 } from 'app/pages/sharing/nvme-of/namespaces/namespace-description/namespace-description.component';
-import { NamespaceFormComponent } from 'app/pages/sharing/nvme-of/namespaces/namespace-form/namespace-form.component';
+import {
+  NamespaceDialogComponent,
+} from 'app/pages/sharing/nvme-of/namespaces/namespace-dialog/namespace-dialog.component';
+import { NewNamespace } from 'app/pages/sharing/nvme-of/namespaces/namespace-dialog/new-namespace.interface';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -42,6 +45,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     NamespaceDescriptionComponent,
     MatTooltip,
     TestDirective,
+    MatButton,
   ],
 })
 export class SubsystemNamespacesCardComponent {
@@ -52,7 +56,7 @@ export class SubsystemNamespacesCardComponent {
   constructor(
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
-    private slideIn: SlideIn,
+    private matDialog: MatDialog,
     private nvmeOfStore: NvmeOfStore,
     private dialogService: DialogService,
     private snackbar: SnackbarService,
@@ -60,16 +64,24 @@ export class SubsystemNamespacesCardComponent {
     private loader: LoaderService,
   ) {}
 
-  protected onEditNamespace(namespace: NvmeOfNamespace): void {
-    this.slideIn.open(NamespaceFormComponent, {
-      data: namespace,
-    })
+  protected onAddNamespace(): void {
+    this.matDialog.open(NamespaceDialogComponent, { minWidth: '400px' })
+      .afterClosed()
       .pipe(
-        filter((response) => Boolean(response.response)),
+        filter(Boolean),
+        switchMap((newNamespace: NewNamespace) => {
+          return this.api.call('nvmet.namespace.create', [{
+            ...newNamespace,
+            subsys_id: this.subsystem().id,
+          }]).pipe(
+            this.loader.withLoader(),
+            this.errorHandler.withErrorHandler(),
+          );
+        }),
         untilDestroyed(this),
       )
       .subscribe(() => {
-        this.snackbar.success(this.translate.instant('Namespace updated.'));
+        this.snackbar.success(this.translate.instant('Namespace created.'));
         this.nvmeOfStore.initialize();
       });
   }
