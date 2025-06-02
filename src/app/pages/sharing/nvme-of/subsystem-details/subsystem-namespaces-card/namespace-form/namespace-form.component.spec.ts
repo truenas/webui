@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { NamespaceFormComponent } from 'app/pages/sharing/nvme-of/namespaces/namespace-form/namespace-form.component';
+import { NamespaceFormComponent } from './namespace-form.component';
 
-describe('NamespaceDialogComponent', () => {
+describe('NamespaceFormComponent', () => {
   let component: NamespaceFormComponent;
   let fixture: ComponentFixture<NamespaceFormComponent>;
 

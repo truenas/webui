@@ -25,7 +25,7 @@ import {
   AddSubsystemPortsComponent,
 } from 'app/pages/sharing/nvme-of/add-subsystem/add-subsystem-ports/add-subsystem-ports.component';
 import { AddSubsystemComponent } from 'app/pages/sharing/nvme-of/add-subsystem/add-subsystem.component';
-import { NamespaceChanges } from 'app/pages/sharing/nvme-of/namespaces/namespace-form/namespace-changes.interface';
+import { NamespaceChanges } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/namespace-changes.interface';
 import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
 
 describe('AddSubsystemComponent', () => {

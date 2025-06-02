@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, computed, OnInit, signal,
+  ChangeDetectionStrategy, Component, computed, input, OnChanges, OnInit, output,
 } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -12,6 +12,7 @@ import { datasetsRootNode, zvolsRootNode } from 'app/constants/basic-root-nodes.
 import { NvmeOfNamespaceType } from 'app/enums/nvme-of.enum';
 import { NvmeOfNamespace } from 'app/interfaces/nvme-of.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import {
   IxButtonGroupComponent,
@@ -19,12 +20,12 @@ import {
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { translateOptions } from 'app/modules/translate/translate.helper';
-import { NamespaceChanges } from 'app/pages/sharing/nvme-of/namespaces/namespace-form/namespace-changes.interface';
+import { NamespaceChanges } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/namespace-changes.interface';
 import { FilesystemService } from 'app/services/filesystem.service';
 
 enum FormNamespaceType {
@@ -50,9 +51,9 @@ const typeOptions: Option[] = [
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-namespace-dialog',
-  templateUrl: './namespace-form.component.html',
-  styleUrl: './namespace-form.component.scss',
+  selector: 'ix-base-namespace-form',
+  templateUrl: './base-namespace-form.component.html',
+  styleUrl: './base-namespace-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     IxExplorerComponent,
@@ -69,7 +70,12 @@ const typeOptions: Option[] = [
     IxInputComponent,
   ],
 })
-export class NamespaceFormComponent implements OnInit {
+export class BaseNamespaceFormComponent implements OnInit, OnChanges {
+  namespace = input<NvmeOfNamespace>();
+  error = input<unknown>(null);
+
+  submitted = output<NamespaceChanges>();
+
   protected readonly zvolsRootNode = [zvolsRootNode];
   protected readonly zvolProvider = this.filesystemService.getFilesystemNodeProvider({
     zvolsOnly: true,
@@ -79,9 +85,7 @@ export class NamespaceFormComponent implements OnInit {
   protected readonly directoryProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
   protected readonly fileProvider = this.filesystemService.getFilesystemNodeProvider();
 
-  private existingNamespace = signal<NvmeOfNamespace | null>(null);
-
-  protected isNew = computed(() => !this.existingNamespace());
+  protected isNew = computed(() => !this.namespace());
 
   protected form = this.formBuilder.group({
     device_type: [FormNamespaceType.Zvol],
@@ -98,21 +102,23 @@ export class NamespaceFormComponent implements OnInit {
     private formBuilder: NonNullableFormBuilder,
     private translate: TranslateService,
     private filesystemService: FilesystemService,
-    public slideInRef: SlideInRef<NvmeOfNamespace | undefined, NamespaceChanges>,
     protected formatter: IxFormatterService,
+    private formErrorHandler: FormErrorHandlerService,
   ) {
     this.clearPathOnTypeChanges();
   }
 
+  ngOnChanges(changes: IxSimpleChanges<BaseNamespaceFormComponent>): void {
+    if (changes.error && changes.error.currentValue) {
+      this.formErrorHandler.handleValidationErrors(this.error(), this.form);
+    }
+  }
+
   ngOnInit(): void {
-    const existingNamespace = this.slideInRef.getData();
-
-    if (existingNamespace) {
-      this.existingNamespace.set(existingNamespace);
-
+    if (this.namespace()) {
       this.form.patchValue({
-        ...existingNamespace,
-        device_type: existingNamespace.device_type === NvmeOfNamespaceType.Zvol
+        ...this.namespace(),
+        device_type: this.namespace().device_type === NvmeOfNamespaceType.Zvol
           ? FormNamespaceType.Zvol
           : FormNamespaceType.ExistingFile,
       });
@@ -127,21 +133,20 @@ export class NamespaceFormComponent implements OnInit {
       case FormNamespaceType.Zvol:
         path = value.device_path.replace('/dev/zvol/', 'zvol/');
         break;
-      case FormNamespaceType.NewFile:
-        path = `${value.device_path}/${value.filename}`;
+      case FormNamespaceType.NewFile: {
+        const directory = value.device_path.replace(/\/$/, '');
+        path = `${directory}/${value.filename}`;
         break;
+      }
       default:
         path = value.device_path;
         break;
     }
 
-    this.slideInRef.close({
-      response: {
-        device_path: path,
-        device_type: value.device_type === FormNamespaceType.Zvol ? NvmeOfNamespaceType.Zvol : NvmeOfNamespaceType.File,
-        filesize: value.device_type === FormNamespaceType.NewFile ? value.filesize : undefined,
-      },
-      error: null,
+    this.submitted.emit({
+      device_path: path,
+      device_type: value.device_type === FormNamespaceType.Zvol ? NvmeOfNamespaceType.Zvol : NvmeOfNamespaceType.File,
+      filesize: value.device_type === FormNamespaceType.NewFile ? value.filesize : undefined,
     });
   }
 

@@ -12,12 +12,12 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
+  AddSubsystemNamespaceComponent,
+} from 'app/pages/sharing/nvme-of/add-subsystem/add-subsystem-namespaces/add-subsystem-namespace/add-subsystem-namespace.component';
+import { NamespaceChanges } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/namespace-changes.interface';
+import {
   NamespaceDescriptionComponent,
 } from 'app/pages/sharing/nvme-of/namespaces/namespace-description/namespace-description.component';
-import { NamespaceChanges } from 'app/pages/sharing/nvme-of/namespaces/namespace-form/namespace-changes.interface';
-import {
-  NamespaceFormComponent,
-} from 'app/pages/sharing/nvme-of/namespaces/namespace-form/namespace-form.component';
 
 @UntilDestroy()
 @Component({
@@ -49,7 +49,7 @@ export class AddSubsystemNamespacesComponent {
   }
 
   protected onAddNamespace(): void {
-    this.slideIn.open(NamespaceFormComponent)
+    this.slideIn.open(AddSubsystemNamespaceComponent)
       .pipe(
         filter((response) => Boolean(response.response)),
         untilDestroyed(this),

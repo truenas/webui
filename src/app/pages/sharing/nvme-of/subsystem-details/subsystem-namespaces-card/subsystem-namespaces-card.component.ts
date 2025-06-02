@@ -21,10 +21,10 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import {
   NamespaceDescriptionComponent,
 } from 'app/pages/sharing/nvme-of/namespaces/namespace-description/namespace-description.component';
+import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
 import {
   NamespaceFormComponent,
-} from 'app/pages/sharing/nvme-of/namespaces/namespace-form/namespace-form.component';
-import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
+} from 'app/pages/sharing/nvme-of/subsystem-details/subsystem-namespaces-card/namespace-form/namespace-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
@@ -64,48 +64,30 @@ export class SubsystemNamespacesCardComponent {
   ) {}
 
   protected onAddNamespace(): void {
-    this.slideIn.open(NamespaceFormComponent)
+    this.slideIn.open(NamespaceFormComponent, {
+      data: { subsystemId: this.subsystem().id },
+    })
       .pipe(
         filter((response) => Boolean(response.response)),
-        switchMap((response) => {
-          return this.api.call('nvmet.namespace.create', [{
-            ...response.response,
-            subsys_id: this.subsystem().id,
-          }]).pipe(
-            this.loader.withLoader(),
-            this.errorHandler.withErrorHandler(),
-          );
-        }),
         untilDestroyed(this),
       )
       .subscribe(() => {
-        this.snackbar.success(this.translate.instant('Namespace created.'));
         this.nvmeOfStore.initialize();
       });
   }
 
   protected onEditNamespace(namespace: NvmeOfNamespace): void {
-    this.slideIn.open(NamespaceFormComponent, { data: namespace })
+    this.slideIn.open(NamespaceFormComponent, {
+      data: {
+        namespace,
+        subsystemId: this.subsystem().id,
+      },
+    })
       .pipe(
         filter((response) => Boolean(response.response)),
-        switchMap((response) => {
-          const newNamespace = response.response;
-          return this.api.call('nvmet.namespace.update', [
-            namespace.id,
-            {
-              device_type: newNamespace.device_type,
-              device_path: newNamespace.device_path,
-              filesize: newNamespace.filesize,
-            },
-          ]).pipe(
-            this.loader.withLoader(),
-            this.errorHandler.withErrorHandler(),
-          );
-        }),
         untilDestroyed(this),
       )
       .subscribe(() => {
-        this.snackbar.success(this.translate.instant('Namespace updated.'));
         this.nvmeOfStore.initialize();
       });
   }
