@@ -178,7 +178,6 @@ export class CronListComponent implements OnInit {
 
   runNow(row: CronjobRow): void {
     this.dialog.confirm({
-      title: this.translate.instant('Run Now'),
       message: this.translate.instant('Run this job now?'),
       hideCheckbox: true,
     }).pipe(

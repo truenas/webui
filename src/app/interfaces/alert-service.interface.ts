@@ -5,8 +5,10 @@ export interface AlertServiceEdit {
   enabled?: boolean;
   level?: AlertLevel;
   name?: string;
-  type?: AlertServiceType;
-  attributes?: Record<string, string | number | boolean | number[] | string[] | null>;
+  attributes?: {
+    type?: AlertServiceType;
+    [key: string]: string | number | boolean | string[] | number[] | null | undefined;
+  };
 }
 
 export interface AlertService extends AlertServiceEdit {

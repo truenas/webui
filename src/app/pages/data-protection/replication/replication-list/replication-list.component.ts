@@ -214,7 +214,6 @@ export class ReplicationListComponent implements OnInit {
 
   runNow(row: ReplicationTask): void {
     this.dialogService.confirm({
-      title: this.translate.instant('Run Now'),
       message: this.translate.instant('Replicate «{name}» now?', { name: row.name }),
       hideCheckbox: true,
     }).pipe(
@@ -272,7 +271,6 @@ export class ReplicationListComponent implements OnInit {
 
   doDelete(row: ReplicationTask): void {
     this.dialogService.confirm({
-      title: this.translate.instant('Confirmation'),
       message: this.translate.instant('Delete Replication Task <b>"{name}"</b>?', {
         name: row.name,
       }),
