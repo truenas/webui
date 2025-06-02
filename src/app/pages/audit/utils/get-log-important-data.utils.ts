@@ -77,16 +77,26 @@ function getSystemLogImportantData(log: SystemAuditEntry, translate: TranslateSe
     case AuditEvent.Identity:
     case AuditEvent.TimeChange:
     case AuditEvent.ModuleLoad:
-    case AuditEvent.Service:
-    case AuditEvent.TtyRecord:
-      return translate.instant(T('Command: {command}'), { command: log.event_data?.proctitle ?? '-' });
     case AuditEvent.Login:
-      return translate.instant(T('UID: {uid}'), { uid: log.event_data?.auid ?? '-' });
+      return translate.instant(T('Command: {command}'), {
+        command: log.event_data?.proctitle ?? '-',
+      });
+
     case AuditEvent.Credential:
-      return translate.instant(T('Command: {command}'), { command: log.event_data?.exe ?? '-' });
+      return translate.instant(
+        T('Action: {actionName} | User: {user}'),
+        { path: log.event_data?.auth_action ?? '-', user: log.event_data?.username ?? '-' },
+      );
+
+    case AuditEvent.Service:
+      return translate.instant(T('Action: {actionName}'), { actionName: log.event_data?.service_action ?? '-' });
+
+    case AuditEvent.TtyRecord:
+      return translate.instant(T('User: {userName}'), { user: log.event_data?.tty_record?.username ?? '-' });
+
     default:
       assertUnreachable(event);
-      return ' - ';
+      return '-';
   }
 }
 

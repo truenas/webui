@@ -1,13 +1,46 @@
 import { AuditEvent, AuditService } from 'app/enums/audit.enum';
 import { AuditVersions, BaseAuditEntry } from 'app/interfaces/audit/audit.interface';
 
+export interface EscalationPath {
+  name: string | null;
+  inode: number;
+  dev: string;
+  mode: string;
+  ouid: number;
+  ogid: number;
+  rdev: string;
+}
+
+export interface SyscallData {
+  success: boolean;
+  exit: number;
+  ppid: number;
+  pid: number;
+  auid: number;
+  uid: number;
+  gid: number;
+  euid: number;
+  suid: number;
+  fsuid: number;
+  egid: number;
+  sgid: number;
+  fsgid: number;
+  tty: string | null;
+  ses: number;
+  key: string | null;
+  SYSCALL: string;
+  AUID: string | null;
+  UID: string;
+  GID: string;
+}
+
 export interface GenericSystemEventData {
   audit_msg_id_str: string;
   proctitle: string | null;
-  syscall: Record<string, string> | null;
+  syscall: SyscallData | null;
   cwd: string | null;
-  paths: Record<string, string>[];
-  raw_lines: string[];
+  paths: EscalationPath[];
+  raw_lines: string[] | null;
 }
 
 export interface LoginSystemEventData {
@@ -16,7 +49,7 @@ export interface LoginSystemEventData {
   tty: string | null;
   'old-ses': number;
   ses: number;
-  syscall: Record<string, string | number | boolean | null>;
+  syscall: SyscallData;
   proctitle: string;
 }
 
@@ -29,26 +62,31 @@ export interface CredentialSystemEventData {
   hostname: string | null;
   addr: string | null;
   terminal: string;
+  username: string | null;
+}
+
+export interface ServiceSystemEventData {
+  service_action: string;
+  subj: string;
+  unit: string;
+  comm: string;
+  exe: string;
+}
+
+export interface TtyRecordData {
+  pid: number;
+  uid: number;
+  ses: number;
+  major: number;
+  minor: number;
+  comm: string;
+  data: string;
   username: string;
 }
 
-export interface EscalationSystemEventData {
-  audit_msg_id_str: string;
-  proctitle: string;
-  syscall: Record<string, string | number | boolean | null>;
-  cwd: string;
-  paths: EscalationPath[];
-  raw_lines: string[] | null;
-}
-
-export interface EscalationPath {
-  name: string;
-  inode: number;
-  dev: string;
-  mode: string;
-  ouid: number;
-  ogid: number;
-  rdev: string;
+export interface TtyRecordEventData {
+  event_type: string;
+  tty_record: TtyRecordData;
 }
 
 export interface AuditSystemServiceData {
@@ -77,42 +115,42 @@ export interface SystemCredentialEntry extends BaseSystemAuditEntry {
 
 export interface SystemEscalationEntry extends BaseSystemAuditEntry {
   event: AuditEvent.Escalation;
-  event_data: EscalationSystemEventData;
+  event_data: GenericSystemEventData;
 }
 
 export interface PrivilegedEntry extends BaseSystemAuditEntry {
   event: AuditEvent.Privileged;
-  event_data: EscalationSystemEventData;
+  event_data: GenericSystemEventData;
 }
 
 export interface ExportEntry extends BaseSystemAuditEntry {
   event: AuditEvent.Export;
-  event_data: EscalationSystemEventData;
+  event_data: GenericSystemEventData;
 }
 
 export interface IdentityEntry extends BaseSystemAuditEntry {
   event: AuditEvent.Identity;
-  event_data: EscalationSystemEventData;
+  event_data: GenericSystemEventData;
 }
 
 export interface TimeChangeEntry extends BaseSystemAuditEntry {
   event: AuditEvent.TimeChange;
-  event_data: EscalationSystemEventData;
+  event_data: GenericSystemEventData;
 }
 
 export interface ModuleLoadEntry extends BaseSystemAuditEntry {
   event: AuditEvent.ModuleLoad;
-  event_data: EscalationSystemEventData;
+  event_data: GenericSystemEventData;
 }
 
 export interface ServiceEntry extends BaseSystemAuditEntry {
   event: AuditEvent.Service;
-  event_data: EscalationSystemEventData;
+  event_data: ServiceSystemEventData;
 }
 
 export interface TtyRecordEntry extends BaseSystemAuditEntry {
   event: AuditEvent.TtyRecord;
-  event_data: EscalationSystemEventData;
+  event_data: TtyRecordEventData;
 }
 
 export type SystemAuditEntry =
