@@ -93,7 +93,7 @@ describe('UserAccessCardComponent', () => {
 
   it('should display API keys count', () => {
     const apiKeysSection = spectator.query('.content-wrapper:nth-child(7)');
-    expect(apiKeysSection).toHaveText('Api Keys: 2 keys');
+    expect(apiKeysSection).toHaveText('API Keys: 2 keys');
   });
 
   it('should display Shell Access status', () => {
