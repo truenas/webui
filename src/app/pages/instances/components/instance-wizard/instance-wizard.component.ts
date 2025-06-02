@@ -584,6 +584,10 @@ export class InstanceWizardComponent implements OnInit {
       ...(this.isContainer() ? { environment: this.environmentVariablesPayload } : null),
     } as CreateVirtualizationInstance;
 
+    if (payload.source_type !== VirtualizationSource.Image) {
+      delete payload.image;
+    }
+
     if (this.isVm()) {
       payload.secure_boot = values.secure_boot;
       payload.root_disk_io_bus = values.root_disk_io_bus;
