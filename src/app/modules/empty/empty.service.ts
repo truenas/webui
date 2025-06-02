@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { noSearchResultsConfig } from 'app/constants/empty-configs';
+import {
+  errorsConfig, loadingConfig, noItemsConfig, noSearchResultsConfig,
+} from 'app/constants/empty-configs';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 
@@ -13,25 +15,13 @@ export class EmptyService {
   defaultEmptyConfig(type?: EmptyType | null): EmptyConfig {
     switch (type) {
       case EmptyType.Loading:
-        return {
-          type: EmptyType.Loading,
-          large: false,
-          title: this.translate.instant('Loading...'),
-        };
+        return loadingConfig;
       case EmptyType.Errors:
-        return {
-          type: EmptyType.Errors,
-          large: true,
-          title: this.translate.instant('Cannot retrieve response'),
-        };
+        return errorsConfig;
       case EmptyType.NoSearchResults:
         return noSearchResultsConfig;
       default:
-        return {
-          title: this.translate.instant('No records have been added yet'),
-          type: EmptyType.NoPageData,
-          large: true,
-        };
+        return noItemsConfig;
     }
   }
 }
