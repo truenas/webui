@@ -212,7 +212,6 @@ describe('CloudSyncListComponent', () => {
     await deleteButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
-      title: 'Confirmation',
       message: 'Delete Cloud Sync Task <b>"custom-cloudlist"</b>?',
       buttonColor: 'warn',
       buttonText: 'Delete',

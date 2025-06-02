@@ -137,7 +137,6 @@ export class NfsCardComponent implements OnInit {
 
   doDelete(nfs: NfsShare): void {
     this.dialogService.confirm({
-      title: this.translate.instant('Confirmation'),
       message: this.translate.instant('Are you sure you want to delete NFS Share <b>"{path}"</b>?', { path: nfs.path }),
       buttonColor: 'warn',
       buttonText: this.translate.instant('Delete'),
