@@ -43,11 +43,13 @@
   display: flex;
   flex-direction: column;
   flex-grow: 1;
+  flex-wrap: wrap;
   margin-left: 16px;
 
   .header {
     align-items: center;
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     margin-bottom: 12px;
 

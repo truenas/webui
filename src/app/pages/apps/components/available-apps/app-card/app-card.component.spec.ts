@@ -43,7 +43,7 @@ describe('AppCardComponent', () => {
     expect(spectator.query('.name')).toContainText('SETI@home');
   });
 
-  it('shows app popularity rank', () => {
+  it('shows app popularity', () => {
     expect(spectator.query('.popularity-rank')).toContainText('99');
   });
 
