@@ -410,45 +410,60 @@ export class InstanceWizardComponent {
   }
 
   private getPayload(): CreateVirtualizationInstance {
-    const devices = this.getDevicesPayload();
-    const values = this.form.getRawValue();
-
-    let sourceType = VirtualizationSource.Image;
-    if (values.volume_type === VolumeContentType.Iso) {
-      sourceType = VirtualizationSource.Iso;
-    } else if (values.volume_type === VolumeContentType.Block) {
-      sourceType = VirtualizationSource.Volume;
-    }
+    const form = this.form.getRawValue();
+    const sourceType = this.resolveSourceType(form.source_type, form.volume_type);
 
     const payload = {
-      devices,
+      devices: this.getDevicesPayload(),
       autostart: true,
-      instance_type: values.instance_type,
-      enable_vnc: this.isVm() ? values.enable_vnc : false,
-      vnc_port: this.isVm() && values.enable_vnc ? values.vnc_port || defaultVncPort : null,
-      name: values.name,
-      cpu: values.cpu,
-      memory: values.memory || null,
-      image: values.source_type === VirtualizationSource.Image ? values.image : null,
-      storage_pool: values.storage_pool,
-      // TODO: Messy, clean up on API side.
+      instance_type: form.instance_type,
+      name: form.name,
+      cpu: form.cpu,
+      memory: form.memory || null,
+      storage_pool: form.storage_pool,
       source_type: sourceType,
-      iso_volume: values.volume_type === VolumeContentType.Iso ? values.volume : null,
-      volume: values.volume_type === VolumeContentType.Block ? values.volume : null,
-      ...(this.isContainer() ? { environment: this.environmentVariablesPayload } : null),
+      ...(sourceType === VirtualizationSource.Image && { image: form.image }),
+      ...(this.isContainer() && { environment: this.environmentVariablesPayload }),
     } as CreateVirtualizationInstance;
 
     if (this.isVm()) {
-      payload.secure_boot = values.secure_boot;
-      payload.root_disk_io_bus = values.root_disk_io_bus;
-      payload.root_disk_size = values.root_disk_size;
-
-      if (values.enable_vnc) {
-        payload.vnc_password = values.vnc_password;
-      }
+      this.extendVmPayload(payload, form, sourceType);
     }
 
     return payload;
+  }
+
+  private resolveSourceType(
+    sourceType: VirtualizationSource,
+    volumeType: VolumeContentType | null,
+  ): VirtualizationSource {
+    if (sourceType === VirtualizationSource.Image) return VirtualizationSource.Image;
+    if (volumeType === VolumeContentType.Iso) return VirtualizationSource.Iso;
+    if (volumeType === VolumeContentType.Block) return VirtualizationSource.Volume;
+    return sourceType;
+  }
+
+  private extendVmPayload(
+    payload: CreateVirtualizationInstance,
+    form: ReturnType<typeof this.form.getRawValue>,
+    sourceType: VirtualizationSource,
+  ): void {
+    Object.assign(payload, {
+      secure_boot: form.secure_boot,
+      root_disk_io_bus: form.root_disk_io_bus,
+      root_disk_size: form.root_disk_size,
+      enable_vnc: form.enable_vnc,
+      vnc_port: form.enable_vnc ? form.vnc_port || defaultVncPort : null,
+      ...(form.enable_vnc && { vnc_password: form.vnc_password }),
+    });
+
+    if (sourceType !== VirtualizationSource.Image) {
+      if (form.volume_type === VolumeContentType.Iso) {
+        payload.iso_volume = form.volume;
+      } else if (form.volume_type === VolumeContentType.Block) {
+        payload.volume = form.volume;
+      }
+    }
   }
 
   private getNicDevicesOptions(nicType: VirtualizationNicType): Observable<Option[]> {
