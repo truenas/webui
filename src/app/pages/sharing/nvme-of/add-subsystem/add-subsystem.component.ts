@@ -148,13 +148,14 @@ export class AddSubsystemComponent {
     return this.api.call('nvmet.subsys.create', [payload]);
   }
 
-  private createNamespaces(subsystem: NvmeOfSubsystem, namespaceConfigs: NamespaceChanges[]): Observable<unknown>[] {
-    return namespaceConfigs.map((config) => {
-      const deviceType = getNamespaceType(config.device_path);
+  private createNamespaces(subsystem: NvmeOfSubsystem, namespaces: NamespaceChanges[]): Observable<unknown>[] {
+    return namespaces.map((namespace) => {
+      const deviceType = getNamespaceType(namespace.device_path);
       const payload: CreateNvmeOfNamespace = {
         subsys_id: subsystem.id,
         device_type: deviceType,
-        device_path: config.device_path,
+        filesize: namespace.filesize,
+        device_path: namespace.device_path,
       };
       return this.api.call('nvmet.namespace.create', [payload]);
     });
