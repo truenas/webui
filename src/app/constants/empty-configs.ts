@@ -125,3 +125,28 @@ export const instancesEmptyConfig = {
   large: true,
   message: T('Instances you create will automatically appear here.'),
 } as EmptyConfig;
+
+export const noSearchResultsConfig = {
+  type: EmptyType.NoSearchResults,
+  title: T('No Search Results.'),
+  message: T('No matching results found'),
+  large: true,
+} as EmptyConfig;
+
+export const loadingConfig = {
+  type: EmptyType.Loading,
+  large: false,
+  title: T('Loading...'),
+} as EmptyConfig;
+
+export const errorsConfig = {
+  type: EmptyType.Errors,
+  large: true,
+  title: T('Cannot retrieve response'),
+} as EmptyConfig;
+
+export const noItemsConfig = {
+  title: T('No records have been added yet'),
+  type: EmptyType.NoPageData,
+  large: true,
+} as EmptyConfig;
