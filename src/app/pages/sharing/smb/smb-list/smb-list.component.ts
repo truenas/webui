@@ -15,6 +15,7 @@ import {
 import { smbCardEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { shared } from 'app/helptext/sharing';
@@ -87,6 +88,7 @@ export class SmbListComponent implements OnInit {
   protected readonly requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
   protected readonly searchableElements = smbListElements;
   protected readonly emptyConfig = smbCardEmptyConfig;
+  protected readonly EmptyType = EmptyType;
 
   service$ = this.store$.select(selectService(ServiceName.Cifs));
 
