@@ -1,5 +1,3 @@
-@let empty = !(dataProvider.currentPageCount$ | async) && !(dataProvider.isLoading$ | async);
-
 <mat-card>
   <ix-fake-progress-bar [loading]="!!(dataProvider.isLoading$ | async)"></ix-fake-progress-bar>
   <mat-toolbar-row>
@@ -11,7 +9,6 @@
     <div class="actions action-icon">
       <ix-search-input1
         [value]="filterString"
-        [disabled]="empty"
         (search)="onListFiltered($event)"
       ></ix-search-input1>
 
@@ -38,7 +35,7 @@
     </div>
   </mat-toolbar-row>
   <mat-card-content>
-    @if (empty) {
+    @if ((dataProvider.emptyType$ | async) === EmptyType.NoPageData && !(dataProvider.currentPageCount$ | async)) {
       <ix-empty [conf]="emptyConfig"></ix-empty>
     } @else {
       <ix-table
