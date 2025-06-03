@@ -109,7 +109,7 @@ describe('TunableListComponent', () => {
     ],
     providers: [
       mockProvider(SlideIn, {
-        open: jest.fn(() => of({ response: true, error: null })),
+        open: jest.fn(() => of({ response: true })),
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),

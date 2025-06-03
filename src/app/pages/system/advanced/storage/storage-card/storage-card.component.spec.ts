@@ -38,7 +38,7 @@ describe('StorageCardComponent', () => {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
       }),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of({ response: true, error: null })),
+        open: jest.fn(() => of({ response: true })),
       }),
     ],
   });

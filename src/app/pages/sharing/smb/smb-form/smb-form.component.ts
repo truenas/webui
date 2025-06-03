@@ -537,11 +537,11 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
               );
             }
             this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Cifs }));
-            this.slideInRef.close({ response: true, error: null });
+            this.slideInRef.close({ response: true });
           });
         } else {
           this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Cifs }));
-          this.slideInRef.close({ response: true, error: null });
+          this.slideInRef.close({ response: true });
         }
       },
       error: (error: unknown) => {

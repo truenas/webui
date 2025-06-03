@@ -112,7 +112,7 @@ export class SystemSecurityFormComponent implements OnInit {
           this.authService.clearAuthToken();
         }
 
-        this.slideInRef.close({ response: true, error: null });
+        this.slideInRef.close({ response: true });
         this.snackbar.success(this.translate.instant('System Security Settings Updated.'));
       });
   }

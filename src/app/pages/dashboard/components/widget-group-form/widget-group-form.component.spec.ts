@@ -101,7 +101,6 @@ describe('WidgetGroupFormComponent', () => {
       await submitBtn.click();
       const ref = spectator.inject(SlideInRef);
       expect(ref.close).toHaveBeenCalledWith({
-        error: false,
         response: {
           layout: WidgetGroupLayout.Halves,
           slots: [
@@ -149,7 +148,6 @@ describe('WidgetGroupFormComponent', () => {
       await submitBtn.click();
 
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({
-        error: false,
         response: {
           layout: WidgetGroupLayout.Halves,
           slots: [

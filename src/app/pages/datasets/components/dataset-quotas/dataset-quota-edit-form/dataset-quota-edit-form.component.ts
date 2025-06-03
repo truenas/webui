@@ -211,7 +211,7 @@ export class DatasetQuotaEditFormComponent implements OnInit {
       next: () => {
         this.snackbar.success(this.translate.instant('Quotas updated'));
         this.isFormLoading.set(false);
-        this.slideInRef.close({ response: true, error: null });
+        this.slideInRef.close({ response: true });
       },
       error: (error: unknown) => {
         this.isFormLoading.set(false);

@@ -370,7 +370,7 @@ export class NetworkConfigurationComponent implements OnInit {
         next: () => {
           this.isFormLoading.set(false);
           this.store$.dispatch(systemInfoUpdated());
-          this.slideInRef.close({ response: true, error: null });
+          this.slideInRef.close({ response: true });
         },
         error: (error: unknown) => {
           this.isFormLoading.set(false);

@@ -69,6 +69,6 @@ export class ModalHeaderComponent implements AfterViewInit {
   }
 
   close(): void {
-    this.slideInRef.close({ response: false, error: null });
+    this.slideInRef.close({ response: false });
   }
 }
