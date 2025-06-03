@@ -31,13 +31,13 @@ export enum AuditEvent {
   Login = 'LOGIN',
   Credential = 'CREDENTIAL',
   Escalation = 'ESCALATION',
-  Privileged = 'privileged',
-  Export = 'export',
-  Identity = 'identity',
-  TimeChange = 'time-change',
-  ModuleLoad = 'module-load',
-  Service = 'service',
-  TtyRecord = 'tty_record',
+  Privileged = 'PRIVILEGED',
+  Export = 'EXPORT',
+  Identity = 'IDENTITY',
+  TimeChange = 'TIME-CHANGE',
+  ModuleLoad = 'MODULE-LOAD',
+  Service = 'SERVICE',
+  TtyRecord = 'TTY_RECORD',
 }
 
 export const auditServiceLabels = new Map<AuditService, string>([
