@@ -14,6 +14,7 @@ import { filter, tap } from 'rxjs';
 import { nfsCardEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { shared } from 'app/helptext/sharing';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
@@ -79,6 +80,7 @@ export class NfsListComponent implements OnInit {
   requiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
   protected readonly searchableElements = nfsListElements;
   protected readonly emptyConfig = nfsCardEmptyConfig;
+  protected readonly EmptyType = EmptyType;
 
   filterString = '';
   dataProvider: AsyncDataProvider<NfsShare>;
