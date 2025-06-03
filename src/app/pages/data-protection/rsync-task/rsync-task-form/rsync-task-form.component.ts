@@ -228,7 +228,7 @@ export class RsyncTaskFormComponent implements OnInit {
           this.snackbar.success(this.translate.instant('Task updated'));
         }
         this.isLoading.set(false);
-        this.slideInRef.close({ response: task, error: null });
+        this.slideInRef.close({ response: task });
       },
       error: (error: unknown) => {
         this.isLoading.set(false);

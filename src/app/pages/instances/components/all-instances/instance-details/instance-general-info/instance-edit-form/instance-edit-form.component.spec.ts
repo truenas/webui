@@ -138,7 +138,6 @@ describe('InstanceEditFormComponent', () => {
           vnc_port: 9000,
           vnc_password: 'testing',
         },
-        error: false,
       });
     });
   });

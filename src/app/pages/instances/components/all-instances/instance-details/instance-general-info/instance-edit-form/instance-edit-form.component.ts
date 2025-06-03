@@ -142,7 +142,7 @@ export class InstanceEditFormComponent {
       .subscribe({
         next: (response) => {
           this.snackbar.success(this.translate.instant('Instance updated'));
-          this.slideInRef.close({ error: false, response: response.result });
+          this.slideInRef.close({ response: response.result });
         },
         error: (error: unknown) => {
           this.formErrorHandler.handleValidationErrors(error, this.form);

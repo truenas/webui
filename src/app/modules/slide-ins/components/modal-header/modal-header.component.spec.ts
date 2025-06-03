@@ -55,7 +55,7 @@ describe('ModalHeader2Component', () => {
   it('shows a working close button when only 1 component is in the queue', async () => {
     const closeButton = await loader.getHarness(MatButtonHarness.with({ selector: '#ix-close-icon' }));
     await closeButton.click();
-    expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: false, error: null });
+    expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: false });
     const icon = spectator.query(IxIconComponent)!;
     expect(icon.name()).toBe('cancel');
   });
@@ -77,7 +77,7 @@ describe('ModalHeader2Component', () => {
     spectator.detectChanges();
     const closeButton = await loader.getHarness(MatButtonHarness.with({ selector: '#ix-close-icon' }));
     await closeButton.click();
-    expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: false, error: null });
+    expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: false });
     const icon = spectator.query(IxIconComponent)!;
     expect(icon.name()).toBe('mdi-chevron-left');
   });

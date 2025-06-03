@@ -225,7 +225,7 @@ export class GuiFormComponent implements OnInit {
         title: this.translate.instant(helptext.restartTitle),
         message: this.translate.instant(helptext.restartMessage),
       }).pipe(
-        tap(() => this.slideInRef.close({ response: true, error: null })),
+        tap(() => this.slideInRef.close({ response: true })),
         filter(Boolean),
         untilDestroyed(this),
       ).subscribe(() => {
@@ -259,7 +259,7 @@ export class GuiFormComponent implements OnInit {
         });
       });
     } else {
-      this.slideInRef.close({ response: true, error: null });
+      this.slideInRef.close({ response: true });
     }
   }
 

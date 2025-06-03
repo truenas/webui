@@ -117,7 +117,7 @@ export class GlobalTargetConfigurationComponent implements OnInit {
         complete: () => {
           this.isLoading.set(false);
           this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Iscsi }));
-          this.slideInRef.close({ response: true, error: null });
+          this.slideInRef.close({ response: true });
           this.snackbar.success(this.translate.instant('Settings saved.'));
         },
         error: (error: unknown) => {

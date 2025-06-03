@@ -276,7 +276,7 @@ export class CloudBackupFormComponent implements OnInit {
           this.snackbar.success(this.translate.instant('Task updated'));
         }
         this.isLoading.set(false);
-        this.slideInRef.close({ response, error: null });
+        this.slideInRef.close({ response });
       },
       error: (error: unknown) => {
         this.isLoading.set(false);

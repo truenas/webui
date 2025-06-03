@@ -166,7 +166,7 @@ describe('RsyncTaskFormComponent', () => {
         times: false,
         user: 'steven',
       }]);
-      expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
+      expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask });
     });
   });
 
@@ -235,7 +235,7 @@ describe('RsyncTaskFormComponent', () => {
           delayupdates: true,
         },
       ]);
-      expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
+      expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask });
     });
 
     it('shows SSH fields and saves them when Rsync Mode is SSH and Connect using SSH private key stored in user\'s home directory', async () => {

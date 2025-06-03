@@ -24,7 +24,7 @@ export interface SlideInComponent {
 
 export interface SlideInResponse<T = unknown> {
   response: T;
-  error: unknown;
+  error?: unknown;
 }
 
 export interface ComponentSerialized {
