@@ -134,6 +134,6 @@ export class EditableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private canClose(): boolean {
-    return this.controls().every((control) => control.valid);
+    return this.controls().every((control) => control.errors === null || Object.keys(control.errors).length === 0);
   }
 }
