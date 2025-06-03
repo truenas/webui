@@ -49,9 +49,7 @@ export class AppComponent implements OnInit {
     this.router.events.pipe(untilDestroyed(this)).subscribe((event) => {
       // save currenturl
       if (event instanceof NavigationEnd) {
-        if (!this.isAuthenticated) {
-          this.slideIn.closeAll();
-        }
+        this.slideIn.closeAll();
         const navigation = this.router.getCurrentNavigation();
         if (this.isAuthenticated && event.url !== '/signin' && !navigation?.extras?.skipLocationChange) {
           this.window.sessionStorage.setItem('redirectUrl', event.url);
