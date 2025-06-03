@@ -22,5 +22,5 @@ export type ComponentInSlideIn<D, R> = Type<{
 
 export interface SlideInResponse<T = unknown> {
   response: T;
-  error: unknown;
+  error?: unknown;
 }
