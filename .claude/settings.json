@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep:*)",
+      "Bash(yarn test:*)",
+      "Bash(yarn lint:*)",
+      "Bash(npx eslint:*)",
+      "Bash(yarn build:*)",
+      "Bash(npx tsc:*)",
+      "Bash(yarn ui remote:*)",
+      "Bash(yarn eslint:*)",
+      "Bash(ls *)",
+      "Bash(find *)",
+      "Bash(sed *)"
+    ],
+    "deny": []
+  },
+  "includeCoAuthoredBy": false,
+  "enableAllProjectMcpServers": false
+}

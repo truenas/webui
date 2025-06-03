@@ -254,7 +254,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
           this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Nfs }));
         }
         this.isLoading.set(false);
-        this.slideInRef.close({ response: createdDataset, error: null });
+        this.slideInRef.close({ response: createdDataset });
         if (shouldGoToEditor) {
           this.router.navigate(['/', 'datasets', 'acl', 'edit'], {
             queryParams: { path: createdDataset.mountpoint },

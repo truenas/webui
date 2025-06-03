@@ -125,7 +125,7 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
         if (!isEqual(this.twoFactorConfig, payload) && payload.enabled) {
           this.router.navigate(['/two-factor-auth']);
         }
-        this.slideInRef.close({ response: true, error: null });
+        this.slideInRef.close({ response: true });
       }),
       catchError((error: unknown) => {
         this.isFormLoading.set(false);

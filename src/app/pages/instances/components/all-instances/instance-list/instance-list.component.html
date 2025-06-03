@@ -1,5 +1,3 @@
-@let empty = instances() !== undefined && !filteredInstances().length && !isLoading();
-
 <div class="table-header">
   @if (checkedInstances.length > 0) {
     <ix-instance-list-bulk-actions
@@ -17,13 +15,12 @@
 
   <ix-search-input1
     [maxLength]="100"
-    [disabled]="empty"
     [value]="searchQuery()"
     (search)="onSearch($event)"
   ></ix-search-input1>
 </div>
 
-@if (empty) {
+@if (instances() !== undefined && !filteredInstances().length && !isLoading()) {
   <ix-empty [conf]="emptyConfig()"></ix-empty>
 } @else {
   <div class="instances">

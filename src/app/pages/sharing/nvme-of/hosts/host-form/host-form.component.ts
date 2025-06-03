@@ -173,7 +173,6 @@ export class HostFormComponent implements OnInit {
 
         this.slideInRef.close({
           response: savedHost,
-          error: null,
         });
       },
       error: (error: unknown) => {

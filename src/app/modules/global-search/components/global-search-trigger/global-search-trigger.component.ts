@@ -80,6 +80,10 @@ export class GlobalSearchTriggerComponent implements AfterViewInit {
 
   @HostListener('document:keydown.escape')
   private detachOverlayAndFocusMainContent(): void {
+    if (!this.overlayRef?.hasAttached()) {
+      return;
+    }
+
     this.detachOverlay();
     this.focusService.focusFirstFocusableElement(document.querySelector('main'));
   }

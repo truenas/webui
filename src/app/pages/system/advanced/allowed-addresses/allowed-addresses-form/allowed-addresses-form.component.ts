@@ -130,7 +130,7 @@ export class AllowedAddressesFormComponent implements OnInit {
       }),
       switchMap(() => this.handleServiceRestart()),
       tap(() => {
-        this.slideInRef.close({ response: true, error: null });
+        this.slideInRef.close({ response: true });
       }),
       untilDestroyed(this),
     ).subscribe({

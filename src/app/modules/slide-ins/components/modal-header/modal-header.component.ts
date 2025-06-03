@@ -63,6 +63,6 @@ export class ModalHeaderComponent {
   ) {}
 
   close(): void {
-    this.slideInRef.close({ response: false, error: null });
+    this.slideInRef.close({ response: false });
   }
 }

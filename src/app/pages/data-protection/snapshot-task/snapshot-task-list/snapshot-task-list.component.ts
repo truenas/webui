@@ -12,6 +12,7 @@ import {
 import { snapshotTaskEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -84,6 +85,7 @@ export class SnapshotTaskListComponent implements OnInit {
   filterString = '';
   dataProvider: AsyncDataProvider<PeriodicSnapshotTaskUi>;
   protected readonly emptyConfig = snapshotTaskEmptyConfig;
+  protected readonly EmptyType = EmptyType;
 
   protected columns = createTable<PeriodicSnapshotTaskUi>([
     textColumn({

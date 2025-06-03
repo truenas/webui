@@ -13,6 +13,7 @@ import {
 import { cloudSyncTaskEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
@@ -87,6 +88,7 @@ import { AppState } from 'app/store';
 export class CloudSyncListComponent implements OnInit {
   protected readonly searchableElements = cloudSyncListElements;
   protected readonly emptyConfig = cloudSyncTaskEmptyConfig;
+  protected readonly EmptyType = EmptyType;
 
   cloudSyncTasks: CloudSyncTaskUi[] = [];
   filterString = '';
@@ -299,7 +301,6 @@ export class CloudSyncListComponent implements OnInit {
 
   doDelete(row: CloudSyncTaskUi): void {
     this.dialogService.confirm({
-      title: this.translate.instant('Confirmation'),
       message: this.translate.instant('Delete Cloud Sync Task <b>"{name}"</b>?', {
         name: row.description,
       }),

@@ -12,6 +12,7 @@ import {
 import { rsyncTaskEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { RsyncTask } from 'app/interfaces/rsync-task.interface';
@@ -82,6 +83,7 @@ export class RsyncTaskListComponent implements OnInit {
   protected readonly requiredRoles = [Role.SnapshotTaskWrite];
   protected readonly searchableElements = rsyncTaskListElements;
   protected readonly emptyConfig = rsyncTaskEmptyConfig;
+  protected readonly EmptyType = EmptyType;
 
   dataProvider: AsyncDataProvider<RsyncTask>;
   filterString = '';

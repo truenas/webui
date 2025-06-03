@@ -114,7 +114,6 @@ export class AddSubsystemComponent {
         this.snackbar.success(this.translate.instant('New subsystem added'));
         this.slideInRef.close({
           response: subsystem,
-          error: null,
         });
       });
   }

@@ -100,7 +100,7 @@ export class CloudSyncWizardComponent {
       next: (response) => {
         this.snackbarService.success(this.translate.instant('Task created'));
         this.isLoading$.next(false);
-        this.slideInRef.close({ response, error: null });
+        this.slideInRef.close({ response });
 
         this.cdr.markForCheck();
       },

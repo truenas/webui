@@ -7,6 +7,7 @@ import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { nvmeOfEmptyConfig } from 'app/constants/empty-configs';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -57,6 +58,7 @@ export class SubsystemsListComponent {
   readonly dataProvider = input.required<ArrayDataProvider<NvmeOfSubsystemDetails>>();
   readonly search = output<string>();
   protected readonly emptyConfig = nvmeOfEmptyConfig;
+  protected readonly EmptyType = EmptyType;
 
   filterString = '';
 

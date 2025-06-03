@@ -43,7 +43,7 @@ describe('SystemSecurityCardComponent', () => {
         mockCall('system.security.config', fakeSystemSecurityConfig),
       ]),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of({ response: true, error: null })),
+        open: jest.fn(() => of({ response: true })),
       }),
     ],
   });

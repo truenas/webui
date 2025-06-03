@@ -167,7 +167,7 @@ export class ReplicationWizardComponent {
       untilDestroyed(this),
     ).subscribe((createdReplication) => {
       this.cdr.markForCheck();
-      this.slideInRef.close({ response: createdReplication, error: null });
+      this.slideInRef.close({ response: createdReplication });
     });
   }
 

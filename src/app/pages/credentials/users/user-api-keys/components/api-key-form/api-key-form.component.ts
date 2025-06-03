@@ -162,7 +162,7 @@ export class ApiKeyFormComponent implements OnInit {
       .subscribe({
         next: ({ key }) => {
           this.isLoading.set(false);
-          this.slideInRef.close({ response: true, error: null });
+          this.slideInRef.close({ response: true });
 
           if (key) {
             this.matDialog.open(KeyCreatedDialog, { data: key });

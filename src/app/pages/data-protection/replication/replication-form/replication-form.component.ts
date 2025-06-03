@@ -191,7 +191,7 @@ export class ReplicationFormComponent implements OnInit {
                 : this.translate.instant('Replication task saved.'),
             );
             this.isLoading.set(false);
-            this.slideInRef.close({ response, error: null });
+            this.slideInRef.close({ response });
           },
           error: (error: unknown) => {
             this.isLoading.set(false);

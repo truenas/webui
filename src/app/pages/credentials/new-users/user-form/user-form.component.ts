@@ -234,7 +234,7 @@ export class UserFormComponent implements OnInit {
   }
 
   protected onSubmit(): void {
-    const payload = { ...this.formValues() };
+    const payload = { ...this.userFormStore.userConfig() };
 
     this.getHomeCreateConfirmation().pipe(
       filter(Boolean),
@@ -248,7 +248,7 @@ export class UserFormComponent implements OnInit {
       next: (user) => {
         this.isFormLoading.set(false);
         if (user) {
-          this.slideInRef.close({ error: undefined, response: user });
+          this.slideInRef.close({ response: user });
         }
       },
     });

@@ -168,7 +168,7 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
         complete: () => {
           this.snackbar.success(this.translate.instant('Cloud Backup Restored Successfully'));
           this.isLoading.set(false);
-          this.slideInRef.close({ response: true, error: null });
+          this.slideInRef.close({ response: true });
         },
         error: (error: unknown) => {
           this.isLoading.set(false);
