@@ -18,7 +18,6 @@ import {
   SessionExpiringDialogOptions,
 } from 'app/modules/dialog/components/session-expiring-dialog/session-expiring-dialog.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { AppState } from 'app/store';
@@ -45,7 +44,6 @@ export class SessionTimeoutService {
     private tokenLastUsedService: TokenLastUsedService,
     private wsStatus: WebSocketStatusService,
     @Inject(WINDOW) private window: Window,
-    private slideIn: SlideIn,
   ) {
     this.resumeBound = this.resume.bind(this);
 
@@ -81,7 +79,6 @@ export class SessionTimeoutService {
             this.wsStatus.setReconnectAllowed(false);
             this.router.navigate(['/signin']);
             this.dialogService.closeAllDialogs();
-            this.slideIn.closeAll();
             this.snackbar.open(
               this.translate.instant('Token expired'),
               this.translate.instant('Close'),
