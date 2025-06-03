@@ -1,6 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { FormControl } from '@angular/forms';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatStepperHarness, MatStepperNextHarness } from '@angular/material/stepper/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
@@ -36,6 +36,7 @@ describe('AddSubsystemComponent', () => {
   const createComponent = createComponentFactory({
     component: AddSubsystemComponent,
     imports: [
+      ReactiveFormsModule,
       MockComponents(
         AddSubsystemHostsComponent,
         AddSubsystemNamespacesComponent,
@@ -67,44 +68,46 @@ describe('AddSubsystemComponent', () => {
     const firstStep = (await stepper.getSteps({ selected: true }))[0];
     const name = await firstStep.getHarness(IxInputHarness.with({ label: 'Subsystem Name' }));
     await name.setValue('subsystem1');
+    await spectator.fixture.whenStable();
+    await spectator.fixture.whenRenderingDone();
 
     const details = await firstStep.getHarness(DetailsTableHarness);
     await details.setValues({
       NQN: 'my-nqn',
     });
 
+    // Namespaces
+    const addNamespaces = spectator.query(AddSubsystemNamespacesComponent);
+    const namespaces = [
+      {
+        device_path: '/dev/zvol/pool/zvol1',
+        device_type: NvmeOfNamespaceType.Zvol,
+      },
+      {
+        device_path: '/mnt/pool/file.img',
+        device_type: NvmeOfNamespaceType.File,
+      },
+    ] as NamespaceChanges[];
+    (addNamespaces.namespacesControl as unknown as FormControl).setValue(namespaces);
+
     const nextButton = await firstStep.getHarness(MatStepperNextHarness.with({ text: 'Next' }));
     await nextButton.click();
 
     const secondStep = (await stepper.getSteps({ selected: true }))[0];
-    const allowAnyHost = await secondStep.getHarness(IxCheckboxHarness.with({ label: 'Allow any host to connect' }));
-    await allowAnyHost.setValue(false);
 
-    // Ports, hosts, and namespaces are set here
+    // Ports, hosts
     const addPorts = spectator.query(AddSubsystemPortsComponent);
     (addPorts.portsControl as unknown as FormControl).setValue([
       { id: 100 } as NvmeOfPort,
     ]);
 
+    const allowAnyHost = await secondStep.getHarness(IxCheckboxHarness.with({ label: 'Allow any host to connect' }));
+    await allowAnyHost.setValue(false);
+
     const addHosts = spectator.query(AddSubsystemHostsComponent);
     (addHosts.hostsControl as unknown as FormControl).setValue([
       { id: 200 } as NvmeOfHost,
     ]);
-
-    const addNamespaces = spectator.query(AddSubsystemNamespacesComponent);
-    const namespaces: NamespaceChanges[] = [
-      {
-        id: 'temp-1',
-        device_path: '/dev/zvol/pool/zvol1',
-        device_type: NvmeOfNamespaceType.Zvol,
-      },
-      {
-        id: 'temp-2',
-        device_path: '/mnt/pool/file.img',
-        device_type: NvmeOfNamespaceType.File,
-      },
-    ];
-    (addNamespaces.namespacesControl as unknown as FormControl).setValue(namespaces);
 
     const saveButton = await secondStep.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
@@ -120,7 +123,6 @@ describe('AddSubsystemComponent', () => {
     expect(spectator.inject(NvmeOfService).associatePorts).toHaveBeenCalledWith(newSubsystem, [{ id: 100 }]);
     expect(spectator.inject(NvmeOfService).associateHosts).toHaveBeenCalledWith(newSubsystem, [{ id: 200 }]);
 
-    // Verify namespace creation calls
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nvmet.namespace.create', [{
       subsys_id: 7,
       device_type: NvmeOfNamespaceType.Zvol,

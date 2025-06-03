@@ -94,7 +94,7 @@ describe('SubsystemNamespacesCardComponent', () => {
     });
 
     it('has a delete button that makes an API call to delete a namespace', async () => {
-      const deleteButton = await loader.getHarness(IxIconHarness.with({ name: 'clear' }));
+      const deleteButton = await loader.getHarness(IxIconHarness.with({ name: 'mdi-delete' }));
       await deleteButton.click();
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({

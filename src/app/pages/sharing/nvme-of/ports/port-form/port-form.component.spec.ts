@@ -9,7 +9,6 @@ import { NvmeOfPort } from 'app/interfaces/nvme-of.interface';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { PortFormComponent } from 'app/pages/sharing/nvme-of/ports/port-form/port-form.component';
 import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
@@ -31,7 +30,6 @@ describe('PortFormComponent', () => {
           '10.220.8.2': '10.220.8.2',
         }),
       ]),
-      mockProvider(SnackbarService),
       mockProvider(NvmeOfService, {
         getSupportedTransports: jest.fn(() => of([
           NvmeOfTransportType.Tcp,
@@ -70,7 +68,6 @@ describe('PortFormComponent', () => {
       response: newPort,
       error: null,
     });
-    expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
   });
 
   it('only shows supported transports in the Transport Type select', async () => {
