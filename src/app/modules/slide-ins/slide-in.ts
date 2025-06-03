@@ -81,12 +81,12 @@ export class SlideIn {
     );
   }
 
-  private swap<D, R>(component: ComponentInSlideIn<D, R>, options: { data?: D; wide?: boolean } = {}): void {
+  private swap<D, R>(component: ComponentInSlideIn<D, R>, wide = false): void {
     const prevInstance = this.slideInInstances().at(-1);
     if (!prevInstance) return;
 
     prevInstance.component = component;
-    prevInstance.wide = Boolean(options.wide);
+    prevInstance.wide = wide;
     prevInstance.containerRef.instance.slideOut().pipe(
       untilDestroyed(this),
     ).subscribe({
@@ -215,7 +215,7 @@ export class SlideIn {
           },
         });
       },
-      swap: (component: ComponentInSlideIn<D, R>, options?: { wide?: boolean; data?: unknown }): void => {
+      swap: (component: ComponentInSlideIn<D, R>, wide = false): void => {
         this.canCloseSlideIn(slideInInstance.needConfirmation).pipe(
           filter(Boolean),
           untilDestroyed(this),
@@ -223,7 +223,7 @@ export class SlideIn {
           next: () => {
             this.swap(
               component,
-              options,
+              wide,
             );
           },
         });
