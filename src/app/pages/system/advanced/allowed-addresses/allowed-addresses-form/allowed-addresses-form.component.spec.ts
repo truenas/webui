@@ -114,8 +114,8 @@ describe('AllowedAddressesComponent', () => {
       await form.fillForm({ 'IP Address/Subnet': '192.168.1.0/24' });
 
       const warning = spectator.query(WarningComponent);
-      expect(warning.color).toBe('red');
-      expect(warning.message).toBe(
+      expect(warning.color()).toBe('red');
+      expect(warning.message()).toBe(
         'Make sure to add your current IP address to the list. Otherwise you will lose access to TrueNAS UI.',
       );
     });

@@ -587,6 +587,7 @@
   "Macvlan": "",
   "Macvlan NICs": "",
   "Main menu": "",
+  "Make sure to add your current IP address to the list. Otherwise you will lose access to TrueNAS UI.": "",
   "Manage Hosts": "",
   "Manage Ports": "",
   "Manage Volumes": "",

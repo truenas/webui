@@ -65,6 +65,7 @@
   "Key For Host To Present": "",
   "Key For TrueNAS To Present (Optional)": "",
   "MAC Address": "",
+  "Make sure to add your current IP address to the list. Otherwise you will lose access to TrueNAS UI.": "",
   "Manage Hosts": "",
   "Manage Ports": "",
   "Migrate existing applications": "",
