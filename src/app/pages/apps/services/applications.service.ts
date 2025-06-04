@@ -11,7 +11,7 @@ import {
   App, AppStartQueryParams, AppUpgradeParams,
 } from 'app/interfaces/app.interface';
 import { AppUpgradeSummary } from 'app/interfaces/application.interface';
-import { AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface';
+import { AppsFiltersSort, AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -155,7 +155,9 @@ export class ApplicationsService {
       );
     }
 
-    const secondOption = filters.sort ? { order_by: [filters.sort] } : {};
+    const secondOption = filters.sort && filters.sort !== AppsFiltersSort.PopularityRank
+      ? { order_by: [filters.sort] }
+      : {};
 
     return this.api.call(endPoint, [firstOption, secondOption]).pipe(filterIgnoredApps());
   }
