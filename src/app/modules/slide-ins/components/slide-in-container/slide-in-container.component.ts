@@ -3,12 +3,15 @@ import {
   AnimationEvent,
   state,
 } from '@angular/animations';
-import { CdkPortalOutlet } from '@angular/cdk/portal';
+import { CdkPortalOutlet, ComponentPortal } from '@angular/cdk/portal';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, HostBinding, HostListener, ViewChild,
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { Observable, Subject, take } from 'rxjs';
+import {
+  Observable, Subject, take,
+} from 'rxjs';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 
 const slideInOutTrigger = trigger('slideInOut', [
   state('visible', style({ transform: 'translateX(0%)' })),
@@ -55,7 +58,7 @@ const slideInOutTrigger = trigger('slideInOut', [
   animations: [slideInOutTrigger],
 })
 export class SlideInContainerComponent {
-  @ViewChild(CdkPortalOutlet, { static: true }) readonly portalOutlet!: CdkPortalOutlet;
+  @ViewChild(CdkPortalOutlet, { static: true }) private readonly portalOutlet!: CdkPortalOutlet;
 
   private readonly whenHidden$ = new Subject<void>();
 
@@ -66,7 +69,7 @@ export class SlideInContainerComponent {
   @HostBinding('style.max-width') private maxWidth = '480px';
 
   @HostListener('@slideInOut.done', ['$event'])
-  onAnimationDone(event: AnimationEvent): void {
+  private onAnimationDone(event: AnimationEvent): void {
     if (event.toState === 'visible') {
       this.whenVisible$.next();
     }
@@ -93,5 +96,15 @@ export class SlideInContainerComponent {
     this.width = wide ? '800px' : '480px';
     this.maxWidth = wide ? '800px' : '480px';
     this.cdr.markForCheck();
+  }
+
+  detachPortal(): void {
+    this.portalOutlet.detach();
+  }
+
+  attachPortal<D, R>(portal: ComponentPortal<{
+    slideInRef: SlideInRef<D, R>;
+  }>): void {
+    this.portalOutlet.attach(portal);
   }
 }

@@ -144,9 +144,9 @@ export class SlideIn {
     slideInInstance.slideInRef = this.createSlideInRef(slideInInstance);
 
     const injector = this.createInjector(slideInInstance.slideInRef);
-    slideInInstance.containerRef.instance.portalOutlet.detach();
+    slideInInstance.containerRef.instance.detachPortal();
     slideInInstance.containerRef.instance.makeWide(slideInInstance.wide);
-    slideInInstance.containerRef.instance.portalOutlet.attach(
+    slideInInstance.containerRef.instance.attachPortal(
       new ComponentPortal(slideInInstance.component, null, injector),
     );
   }
