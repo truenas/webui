@@ -202,7 +202,7 @@ export class ReplicationFormComponent implements OnInit {
   }
 
   onSwitchToWizard(): void {
-    this.slideInRef.swap?.(ReplicationWizardComponent, true);
+    this.slideInRef.swap?.(ReplicationWizardComponent, { wide: true });
   }
 
   private getPayload(): ReplicationCreate {

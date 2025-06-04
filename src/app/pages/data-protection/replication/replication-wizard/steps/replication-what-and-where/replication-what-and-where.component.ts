@@ -408,7 +408,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   }
 
   openAdvanced(): void {
-    this.slideInRef.swap?.(ReplicationFormComponent, true);
+    this.slideInRef.swap?.(ReplicationFormComponent, { wide: true });
   }
 
   getSnapshots(): void {

@@ -130,7 +130,7 @@ describe('CloudSyncWhatAndWhenComponent', () => {
       title: 'Switch to Advanced Options',
       hideCheckbox: true,
     });
-    expect(slideInRef.swap).toHaveBeenCalledWith(CloudSyncFormComponent, true);
+    expect(slideInRef.swap).toHaveBeenCalledWith(CloudSyncFormComponent, { wide: true });
   });
 
   it('checks payload when use invalid s3 credentials', async () => {

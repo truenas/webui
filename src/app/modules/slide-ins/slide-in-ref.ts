@@ -12,7 +12,7 @@ export class SlideInRef<D, R> {
    * have the same purpose and return the same response type e.g, form to wizard and
    * wizard to form.
    */
-  swap?: (component: ComponentInSlideIn<D, R>, wide?: boolean) => void;
+  swap?: (component: ComponentInSlideIn<D, R>, options?: { wide?: boolean }) => void;
   getData: () => D;
   requireConfirmationWhen: (confirm: () => Observable<boolean>) => void;
 }

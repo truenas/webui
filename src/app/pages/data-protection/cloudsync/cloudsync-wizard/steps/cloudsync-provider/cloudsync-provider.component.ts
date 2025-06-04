@@ -141,7 +141,7 @@ export class CloudSyncProviderComponent implements OnInit {
   }
 
   openAdvanced(): void {
-    this.slideInRef.swap?.(CloudSyncFormComponent, true);
+    this.slideInRef.swap?.(CloudSyncFormComponent, { wide: true });
   }
 
   private setFormEvents(): void {
