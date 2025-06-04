@@ -69,7 +69,7 @@
   "Identity": "Identità",
   "If ANA is active then referrals will always be generated between the peer ports on each TrueNAS controller node.": "Se ANA è attivo, i referral verranno sempre generati tra le porte peer su ogni nodo controller TrueNAS.",
   "If set, the secret that this TrueNAS will present to the host when the host is connecting (Bi-Directional Authentication).": "Se impostato, il segreto che questo TrueNAS presenterà all'host durante la connessione (Autenticazione Bidirezionale).",
-  "If something isn’t working correctly, it may be better to use the "Report a bug" option. This way you’ll automatically get status updates as we fix it.": "Se qualcosa non funziona correttamente, è preferibile usare l'opzione 'Segnala un bug'. Riceverai automaticamente aggiornamenti sullo stato mentre risolviamo.",
+  "If something isn’t working correctly, it may be better to use the 'Report a bug' option. This way you’ll automatically get status updates as we fix it.": "Se qualcosa non funziona correttamente, è preferibile usare l'opzione 'Segnala un bug'. Riceverai automaticamente aggiornamenti sullo stato mentre risolviamo.",
   "Install Update": "Installa aggiornamento",
   "Installed Version": "Versione installata",
   "Key For Host To Present": "Chiave da presentare dall'host",
