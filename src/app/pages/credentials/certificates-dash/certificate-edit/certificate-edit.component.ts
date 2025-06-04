@@ -150,7 +150,7 @@ export class CertificateEditComponent implements OnInit {
         complete: () => {
           this.isLoading = false;
           this.cdr.markForCheck();
-          this.slideInRef.close({ response: true, error: null });
+          this.slideInRef.close({ response: true });
         },
         error: (error: unknown) => {
           this.isLoading = false;

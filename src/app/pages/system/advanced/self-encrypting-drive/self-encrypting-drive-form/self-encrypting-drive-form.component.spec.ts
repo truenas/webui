@@ -28,7 +28,7 @@ describe('SedFormComponent', () => {
         mockCall('system.advanced.sed_global_password', '123'),
       ]),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of({ response: true, error: null })),
+        open: jest.fn(() => of({ response: true })),
         components$: of([]),
       }),
       mockProvider(SlideInRef, {

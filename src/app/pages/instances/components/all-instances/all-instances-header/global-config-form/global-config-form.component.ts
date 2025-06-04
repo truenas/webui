@@ -133,7 +133,6 @@ export class GlobalConfigFormComponent implements OnInit {
         this.snackbar.success(this.translate.instant('Virtualization settings updated'));
         this.slideInRef.close({
           response: true,
-          error: false,
         });
       });
   }

@@ -100,7 +100,6 @@ export class InstanceProxyFormComponent implements OnInit {
           this.snackbar.success(this.translate.instant('Proxy saved'));
           this.slideInRef.close({
             response: true,
-            error: false,
           });
           this.isLoading.set(false);
         },

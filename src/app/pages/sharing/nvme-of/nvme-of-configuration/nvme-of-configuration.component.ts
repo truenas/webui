@@ -103,7 +103,6 @@ export class NvmeOfConfigurationComponent implements OnInit {
       this.snackbar.success(this.translate.instant('Global configuration updated.'));
       this.slideInRef.close({
         response: true,
-        error: null,
       });
     });
   }

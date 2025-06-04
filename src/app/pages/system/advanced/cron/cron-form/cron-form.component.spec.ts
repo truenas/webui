@@ -69,7 +69,7 @@ describe('CronFormComponent', () => {
         ],
       }),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of({ response: true, error: null })),
+        open: jest.fn(() => of({ response: true })),
         components$: of([]),
       }),
       mockProvider(UserService, {

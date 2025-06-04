@@ -126,7 +126,7 @@ export class ImportPoolComponent implements OnInit {
         untilDestroyed(this),
       )
       .subscribe(([datasets, shouldTryUnlocking]) => {
-        this.slideInRef.close({ response: true, error: null });
+        this.slideInRef.close({ response: true });
         this.snackbar.success(this.translate.instant('Pool imported successfully.'));
         if (shouldTryUnlocking) {
           this.router.navigate(['/datasets', datasets[0].id, 'unlock']);

@@ -106,7 +106,7 @@ export class ImportCertificateComponent {
         complete: () => {
           this.isLoading.set(false);
           this.snackbar.success(this.translate.instant('Certificate has been created.'));
-          this.slideInRef.close({ response: true, error: null });
+          this.slideInRef.close({ response: true });
         },
         error: (error: unknown) => {
           this.isLoading.set(false);

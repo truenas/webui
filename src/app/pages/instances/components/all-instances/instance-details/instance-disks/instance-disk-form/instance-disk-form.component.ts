@@ -154,7 +154,6 @@ export class InstanceDiskFormComponent implements OnInit {
         complete: () => {
           this.snackbar.success(this.translate.instant('Disk saved'));
           this.slideInRef.close({
-            error: false,
             response: true,
           });
           this.isLoading.set(false);

@@ -164,6 +164,6 @@ export class AccessFormComponent implements OnInit {
 
   private showSuccessNotificationAndClose(): void {
     this.snackbar.success(this.translate.instant('Settings saved'));
-    this.slideInRef.close({ response: true, error: null });
+    this.slideInRef.close({ response: true });
   }
 }
