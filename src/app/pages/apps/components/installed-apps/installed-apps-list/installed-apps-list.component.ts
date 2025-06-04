@@ -219,7 +219,7 @@ export class InstalledAppsListComponent implements OnInit {
 
   toggleAppsChecked(checked: boolean): void {
     if (checked) {
-      this.dataSource.forEach((app) => this.selection.select(app.id));
+      this.filteredApps.forEach((app) => this.selection.select(app.id));
     } else {
       this.selection.clear();
     }

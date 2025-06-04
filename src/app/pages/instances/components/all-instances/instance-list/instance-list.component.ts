@@ -124,7 +124,7 @@ export class InstanceListComponent {
 
   toggleAllChecked(checked: boolean): void {
     if (checked) {
-      this.instances().forEach((instance) => this.selection.select(instance.id));
+      this.filteredInstances().forEach((instance) => this.selection.select(instance.id));
     } else {
       this.selection.clear();
     }
