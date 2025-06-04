@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
+import { MatDialog } from '@angular/material/dialog';
 import {
   MatStep, MatStepLabel, MatStepper, MatStepperNext, MatStepperPrevious,
 } from '@angular/material/stepper';
@@ -9,7 +10,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  finalize, forkJoin, map, Observable, switchMap,
+  catchError,
+  finalize, forkJoin, map, Observable, of, switchMap,
   tap,
 } from 'rxjs';
 import { ServiceName } from 'app/enums/service-name.enum';
@@ -19,6 +21,7 @@ import {
 } from 'app/interfaces/nvme-of.interface';
 import { DetailsItemComponent } from 'app/modules/details-table/details-item/details-item.component';
 import { DetailsTableComponent } from 'app/modules/details-table/details-table.component';
+import { SubsystemPartiallyCreatedDialogComponent } from 'app/modules/dialog/components/subsystem-partially-created-dialog/subsystem-partially-created-dialog.component';
 import { EditableComponent } from 'app/modules/forms/editable/editable.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -102,37 +105,62 @@ export class AddSubsystemComponent {
     private errorHandler: ErrorHandlerService,
     private nvmeOfService: NvmeOfService,
     private store$: Store<AppState>,
+    private matDialog: MatDialog,
   ) {}
 
   protected onSubmit(): void {
     this.isLoading.set(true);
+
     this.createSubsystem().pipe(
-      switchMap((subsystem) => {
-        const operations = [
-          this.nvmeOfService.associatePorts(subsystem, this.form.value.ports),
-          this.nvmeOfService.associateHosts(subsystem, this.form.value.allowedHosts),
-        ];
-
-        // Add namespaces if any are configured
-        if (this.form.value.namespaces?.length) {
-          operations.push(...this.createNamespaces(subsystem, this.form.value.namespaces));
-        }
-
-        return forkJoin(operations).pipe(
-          map(() => subsystem),
-          tap(() => this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.NvmeOf }))),
-        );
-      }),
+      switchMap((subsystem) => this.createRelatedEntities(subsystem).pipe(
+        map((relatedErrors) => ({ subsystem, relatedErrors })),
+      )),
+      tap(() => this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.NvmeOf }))),
       finalize(() => this.isLoading.set(false)),
       this.errorHandler.withErrorHandler(),
       untilDestroyed(this),
-    )
-      .subscribe((subsystem) => {
-        this.snackbar.success(this.translate.instant('New subsystem added'));
-        this.slideInRef.close({
-          response: subsystem,
-        });
-      });
+    ).subscribe(({ subsystem, relatedErrors }) => {
+      if (subsystem && relatedErrors) {
+        this.matDialog.open(SubsystemPartiallyCreatedDialogComponent, {
+          data: {
+            subsystem,
+            relatedErrors,
+          },
+        }).afterClosed().pipe(untilDestroyed(this)).subscribe();
+      }
+
+      this.snackbar.success(this.translate.instant('New subsystem added'));
+      this.slideInRef.close({ response: subsystem });
+    });
+  }
+
+  private createRelatedEntities(subsystem: NvmeOfSubsystem): Observable<string[]> {
+    const errors: string[] = [];
+
+    const withErrorHandling = (source$: Observable<unknown>, label: string): Observable<unknown> => {
+      return source$.pipe(
+        catchError((err: unknown) => {
+          const message = err instanceof Error ? err.message : String(err);
+          errors.push(this.translate.instant('{label} Error: {error}', { label, error: message }));
+          return of(null);
+        }),
+      );
+    };
+
+    const operations: Observable<unknown>[] = [
+      withErrorHandling(this.nvmeOfService.associatePorts(subsystem, this.form.value.ports), this.translate.instant('Ports')),
+      withErrorHandling(this.nvmeOfService.associateHosts(subsystem, this.form.value.allowedHosts), this.translate.instant('Hosts')),
+    ];
+
+    if (this.form.value.namespaces?.length) {
+      const namespaceOps = this.createNamespaces(subsystem, this.form.value.namespaces)
+        .map((ns$) => withErrorHandling(ns$, 'Namespaces'));
+      operations.push(...namespaceOps);
+    }
+
+    return forkJoin(operations).pipe(
+      map(() => errors),
+    );
   }
 
   private createSubsystem(): Observable<NvmeOfSubsystem> {
