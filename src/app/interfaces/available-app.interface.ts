@@ -16,6 +16,7 @@ export interface AvailableApp {
   latest_version: string;
   latest_app_version: string;
   icon_url: string;
+  popularity_rank: number;
   train: string;
   catalog: string;
   last_update: ApiTimestamp;
