@@ -1,5 +1,5 @@
 import { Required, Overwrite } from 'utility-types';
-import { NvmeOfAddressFamily, NvmeOfNamespaceDeviceType, NvmeOfTransportType } from 'app/enums/nvme-of.enum';
+import { NvmeOfAddressFamily, NvmeOfNamespaceType, NvmeOfTransportType } from 'app/enums/nvme-of.enum';
 
 export interface NvmeOfGlobalConfig {
   id: number;
@@ -71,7 +71,7 @@ export interface NvmeOfNamespace {
   id: number;
   nsid: number | null;
   subsystem: NvmeOfSubsystem;
-  device_type: NvmeOfNamespaceDeviceType;
+  device_type: NvmeOfNamespaceType;
   device_path: string;
   filesize: number | null;
   device_uuid: string;
@@ -83,7 +83,7 @@ export interface NvmeOfNamespace {
 export type UpdateNvmeOfNamespace = Pick<
   Partial<NvmeOfNamespace>,
   'nsid' | 'device_type' | 'device_path' | 'filesize' | 'enabled'
-> & { subsys_id: number };
+> & { subsys_id?: number };
 export type CreateNvmeOfNamespace = Required<UpdateNvmeOfNamespace, 'device_type' | 'device_path' | 'subsys_id'>;
 
 export type DeleteNamespaceParams = [

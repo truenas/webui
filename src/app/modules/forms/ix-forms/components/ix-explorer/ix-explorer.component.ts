@@ -280,7 +280,7 @@ export class IxExplorerComponent implements ControlValueAccessor {
 
   private setInitialNodes(): void {
     const roots = this.rootNodes();
-    this.nodes.set(roots);
+    this.nodes.set([...roots]);
   }
 
   private updateInputValue(): void {

@@ -1,3 +1,5 @@
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+
 export enum NvmeOfTransportType {
   Tcp = 'TCP',
   Rdma = 'RDMA',
@@ -16,7 +18,12 @@ export enum NvmeOfAddressFamily {
   FibreChannel = 'FC',
 }
 
-export enum NvmeOfNamespaceDeviceType {
+export enum NvmeOfNamespaceType {
   Zvol = 'ZVOL',
   File = 'FILE',
 }
+
+export const nvmeOfNamespaceTypeLabels = new Map<NvmeOfNamespaceType, string>([
+  [NvmeOfNamespaceType.Zvol, 'Zvol'],
+  [NvmeOfNamespaceType.File, T('File')],
+]);

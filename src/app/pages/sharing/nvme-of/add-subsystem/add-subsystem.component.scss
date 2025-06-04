@@ -16,10 +16,15 @@
 }
 
 .hosts-block,
+.namespaces-block,
 .ports-block {
   display: block;
   margin-bottom: 25px;
   margin-top: 10px;
+}
+
+.namespaces-block {
+  margin-top: 25px;
 }
 
 .hosts-block {

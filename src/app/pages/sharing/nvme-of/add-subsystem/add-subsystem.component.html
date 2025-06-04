@@ -39,6 +39,11 @@
           </ix-details-item>
         </ix-details-table>
 
+        <ix-add-subsystem-namespaces
+          class="namespaces-block"
+          [namespacesControl]="form.controls.namespaces"
+        ></ix-add-subsystem-namespaces>
+
         <div class="step-buttons">
           <button
             mat-button
@@ -54,11 +59,6 @@
       <mat-step>
         <ng-template matStepLabel>{{ 'Access' | translate }}</ng-template>
 
-        <ix-add-subsystem-ports
-          class="ports-block"
-          [portsControl]="form.controls.ports"
-        ></ix-add-subsystem-ports>
-
         <ix-checkbox
           formControlName="allowAnyHost"
           [label]="'Allow any host to connect' | translate"
@@ -70,6 +70,11 @@
             [hostsControl]="form.controls.allowedHosts"
           ></ix-add-subsystem-hosts>
         }
+
+        <ix-add-subsystem-ports
+          class="ports-block"
+          [portsControl]="form.controls.ports"
+        ></ix-add-subsystem-ports>
 
         <div class="step-buttons last-step-buttons">
           <button
