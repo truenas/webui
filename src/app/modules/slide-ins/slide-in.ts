@@ -19,6 +19,7 @@ import { UUID } from 'angular2-uuid';
 import { cloneDeep } from 'lodash-es';
 import {
   filter, Observable, of, Subject, switchMap,
+  tap,
 } from 'rxjs';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SlideInContainerComponent } from 'app/modules/slide-ins/components/slide-in-container/slide-in-container.component';
@@ -159,16 +160,15 @@ export class SlideIn {
     const close$ = new Subject<R | undefined>();
     close$.pipe(
       switchMap(() => containerRef.instance.slideOut()),
-      untilDestroyed(this),
-    ).subscribe({
-      next: () => {
+      tap(() => {
         cdkOverlayRef.dispose();
         this.slideInInstances.set(
           this.slideInInstances().filter((slideInItem) => slideInItem.slideInId !== slideInId),
         );
-        this.animateInTopComponent();
-      },
-    });
+      }),
+      switchMap(() => this.animateInTopComponent()),
+      untilDestroyed(this),
+    ).subscribe();
     return close$;
   }
 
