@@ -9,7 +9,7 @@ export class WebSocketConnection {
   }
 
   get closed(): boolean {
-    return this.ws$?.closed ?? false;
+    return this.ws$?.closed ?? true;
   }
 
   constructor(
