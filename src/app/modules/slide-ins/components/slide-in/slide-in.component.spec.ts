@@ -187,7 +187,7 @@ describe('SlideInComponent', () => {
     const backdrop = spectator.query('.ix-slide-in2-background')!;
     backdrop.dispatchEvent(new Event('click'));
     spectator.detectChanges();
-    expect(close$.next).toHaveBeenCalledWith({ response: false, error: null });
+    expect(close$.next).toHaveBeenCalledWith({ response: false });
     expect(close$.complete).toHaveBeenCalled();
     tick(305);
     expect(spectator.inject(SlideIn).popComponent).toHaveBeenCalledWith('id');

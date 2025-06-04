@@ -769,7 +769,7 @@ export class ZvolFormComponent implements OnInit {
 
   private handleZvolCreateUpdate(dataset: Dataset): void {
     this.isLoading = false;
-    this.slideInRef.close({ response: dataset, error: null });
+    this.slideInRef.close({ response: dataset });
 
     this.snackbar.success(
       this.isNew

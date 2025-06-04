@@ -226,7 +226,7 @@ export class TargetFormComponent implements OnInit {
     ).subscribe({
       next: (response) => {
         this.isLoading.set(false);
-        this.slideInRef.close({ response, error: null });
+        this.slideInRef.close({ response });
       },
       error: (error: unknown) => {
         this.isLoading.set(false);

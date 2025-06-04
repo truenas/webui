@@ -101,7 +101,7 @@ export class SlideInComponent implements OnInit, OnDestroy {
       untilDestroyed(this),
     ).subscribe({
       next: () => {
-        this.componentInfo().close$.next({ response: false, error: null });
+        this.componentInfo().close$.next({ response: false });
         this.componentInfo().close$.complete();
         this.closeSlideIn();
       },

@@ -6,7 +6,7 @@ interface BaseSudoAuditEntry extends BaseAuditEntry {
   service_data: AuditSudoServiceData;
 }
 
-export interface SudoEventData<T extends 'accept' | 'reject' > {
+export interface SudoEventData<T extends 'accept' | 'reject'> {
   sudo: Record<T, {
     uuid: string;
     ttyname: string;

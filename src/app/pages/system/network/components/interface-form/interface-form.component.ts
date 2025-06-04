@@ -295,7 +295,7 @@ export class InterfaceFormComponent implements OnInit {
             });
           }
 
-          this.slideInRef.close({ response: true, error: null });
+          this.slideInRef.close({ response: true });
           this.isLoading.set(false);
           this.snackbar.success(this.translate.instant('Network interface updated'));
         });

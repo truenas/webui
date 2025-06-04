@@ -196,6 +196,6 @@ describe('ReplicationWizardComponent', () => {
     }]);
 
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Replication task created.');
-    expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
+    expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask });
   });
 });

@@ -98,7 +98,6 @@ describe('AddSubsystemComponent', () => {
     expect(spectator.inject(NvmeOfService).associateHosts).toHaveBeenCalledWith(newSubsystem, [{ id: 200 }]);
     expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({
       response: newSubsystem,
-      error: null,
     });
   });
 });

@@ -61,7 +61,7 @@ describe('ImportCertificateComponent', () => {
     }]);
 
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
-    expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: true, error: null });
+    expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: true });
   });
 
   it('imports certificate without password', async () => {
@@ -85,6 +85,6 @@ describe('ImportCertificateComponent', () => {
     }]);
 
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
-    expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: true, error: null });
+    expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: true });
   });
 });
