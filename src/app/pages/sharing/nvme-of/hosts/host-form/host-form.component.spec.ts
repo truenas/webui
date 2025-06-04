@@ -75,7 +75,6 @@ describe('HostFormComponent', () => {
     }]);
     expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({
       response: savedHost,
-      error: null,
     });
   });
 

@@ -155,7 +155,7 @@ export class DatasetQuotaAddFormComponent {
         next: () => {
           this.snackbar.success(this.translate.instant('Quotas added'));
           this.isLoading.set(false);
-          this.slideInRef.close({ response: true, error: null });
+          this.slideInRef.close({ response: true });
         },
         error: (error: unknown) => {
           this.isLoading.set(false);

@@ -66,7 +66,6 @@ describe('PortFormComponent', () => {
     }]);
     expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({
       response: newPort,
-      error: null,
     });
   });
 

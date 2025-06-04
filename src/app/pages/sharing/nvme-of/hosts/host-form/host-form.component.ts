@@ -164,7 +164,6 @@ export class HostFormComponent implements OnInit {
       next: (savedHost) => {
         this.slideInRef.close({
           response: savedHost,
-          error: null,
         });
       },
       error: (error: unknown) => {

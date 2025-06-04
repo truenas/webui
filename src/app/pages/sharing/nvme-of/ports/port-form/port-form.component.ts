@@ -122,7 +122,6 @@ export class PortFormComponent implements OnInit {
       next: (port) => {
         this.slideInRef.close({
           response: port,
-          error: null,
         });
       },
       error: (error: unknown) => {

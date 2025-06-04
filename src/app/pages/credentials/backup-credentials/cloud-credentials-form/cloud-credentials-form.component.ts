@@ -170,7 +170,7 @@ export class CloudCredentialsFormComponent implements OnInit {
               ? this.translate.instant('Cloud credential added.')
               : this.translate.instant('Cloud credential updated.'),
           );
-          this.slideInRef.close({ response, error: null });
+          this.slideInRef.close({ response });
         },
         error: (error: unknown) => {
           // TODO: Errors for nested provider form will be shown in a modal. Can be improved.

@@ -4,6 +4,7 @@ export enum AuditService {
   Smb = 'SMB',
   Middleware = 'MIDDLEWARE',
   Sudo = 'SUDO',
+  System = 'SYSTEM',
 }
 
 export enum AuditEvent {
@@ -23,15 +24,27 @@ export enum AuditEvent {
   Authentication = 'AUTHENTICATION',
   MethodCall = 'METHOD_CALL',
   Accept = 'ACCEPT',
+  Generic = 'GENERIC',
   Reject = 'REJECT',
   Reboot = 'REBOOT',
   Logout = 'LOGOUT',
+  Login = 'LOGIN',
+  Credential = 'CREDENTIAL',
+  Escalation = 'ESCALATION',
+  Privileged = 'PRIVILEGED',
+  Export = 'EXPORT',
+  Identity = 'IDENTITY',
+  TimeChange = 'TIME-CHANGE',
+  ModuleLoad = 'MODULE-LOAD',
+  Service = 'SERVICE',
+  TtyRecord = 'TTY_RECORD',
 }
 
 export const auditServiceLabels = new Map<AuditService, string>([
   [AuditService.Smb, T('SMB')],
   [AuditService.Middleware, T('Middleware')],
   [AuditService.Sudo, T('Sudo')],
+  [AuditService.System, T('System')],
 ]);
 
 export const auditEventLabels = new Map<AuditEvent, string>([
@@ -54,4 +67,15 @@ export const auditEventLabels = new Map<AuditEvent, string>([
   [AuditEvent.Reject, T('Reject')],
   [AuditEvent.Reboot, T('Reboot')],
   [AuditEvent.Logout, T('Logout')],
+  [AuditEvent.Login, T('Login')],
+  [AuditEvent.Generic, T('Generic')],
+  [AuditEvent.Credential, T('Credential')],
+  [AuditEvent.Escalation, T('Escalation')],
+  [AuditEvent.Privileged, T('Privileged')],
+  [AuditEvent.Export, T('Export')],
+  [AuditEvent.Identity, T('Identity')],
+  [AuditEvent.TimeChange, T('Time Change')],
+  [AuditEvent.ModuleLoad, T('Module Load')],
+  [AuditEvent.Service, T('Service')],
+  [AuditEvent.TtyRecord, T('TTY Record')],
 ]);

@@ -137,7 +137,6 @@ describe('AddSubsystemComponent', () => {
 
     expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({
       response: newSubsystem,
-      error: null,
     });
   });
 });

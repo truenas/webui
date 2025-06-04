@@ -133,7 +133,7 @@ describe('NetworkComponent', () => {
       mockProvider(SlideIn, {
         popComponent: jest.fn(),
         isTopComponentWide$: of(false),
-        open: jest.fn(() => of({ response: true, error: null })),
+        open: jest.fn(() => of({ response: true })),
         components$: of([]),
       }),
     ],
