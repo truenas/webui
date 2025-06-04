@@ -133,9 +133,7 @@ describe('InterfaceFormComponent', () => {
         ],
       }),
       mockProvider(DialogService),
-      mockProvider(SlideIn, {
-        components$: of([]),
-      }),
+      mockProvider(SlideIn),
       mockProvider(SystemGeneralService, {
         getProductType: () => ProductType.Enterprise,
       }),

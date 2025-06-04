@@ -209,7 +209,7 @@ describe('ReplicationFormComponent', () => {
 
       expect(
         slideInRef.swap,
-      ).toHaveBeenCalledWith(ReplicationWizardComponent, { wide: true });
+      ).toHaveBeenCalledWith(ReplicationWizardComponent, true);
     });
 
     it('creates a new replication task', async () => {

@@ -60,9 +60,7 @@ describe('LocalizationCardComponent', () => {
           return ['2023-03-31', '05:17:49'];
         },
       }),
-      mockProvider(SlideIn, {
-        components$: of([]),
-      }),
+      mockProvider(SlideIn),
     ],
   });
 

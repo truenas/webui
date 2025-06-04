@@ -200,7 +200,6 @@ describe('CloudSyncFormComponent', () => {
       ]),
       mockProvider(SlideIn, {
         open: jest.fn(() => of()),
-        components$: of([]),
       }),
       mockProvider(FilesystemService),
       mockProvider(SlideInRef, slideInRef),

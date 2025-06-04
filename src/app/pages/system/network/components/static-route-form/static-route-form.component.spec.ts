@@ -3,7 +3,6 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { StaticRoute } from 'app/interfaces/static-route.interface';
@@ -44,7 +43,6 @@ describe('StaticRouteFormComponent', () => {
       ]),
       mockProvider(SlideIn, {
         open: jest.fn(),
-        components$: of([]),
       }),
       mockProvider(FormErrorHandlerService),
       mockProvider(SlideInRef, slideInRef),

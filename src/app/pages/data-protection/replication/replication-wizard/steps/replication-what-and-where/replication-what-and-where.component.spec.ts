@@ -207,6 +207,6 @@ describe('ReplicationWhatAndWhereComponent', () => {
     await advancedButton.click();
     expect(
       slideInRef.swap,
-    ).toHaveBeenCalledWith(ReplicationFormComponent, { wide: true });
+    ).toHaveBeenCalledWith(ReplicationFormComponent, true);
   });
 });
