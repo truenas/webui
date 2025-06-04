@@ -1,4 +1,3 @@
-import { AnimationEvent } from '@angular/animations';
 import { CdkPortalOutlet, ComponentPortal } from '@angular/cdk/portal';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
@@ -39,9 +38,12 @@ describe('SlideInContainerComponent', () => {
       return Promise.resolve();
     });
 
-    spectator.component.onAnimationDone({
-      toState: 'visible',
-    } as AnimationEvent);
+    const hostElement = spectator.fixture.nativeElement as HTMLElement;
+
+    hostElement.dispatchEvent(new CustomEvent('@slideInOut.done', {
+      detail: { toState: 'visible' },
+    }));
+    spectator.detectChanges();
   });
 
   it('should emit whenHidden$ on slideOut', () => {
@@ -50,9 +52,12 @@ describe('SlideInContainerComponent', () => {
       return Promise.resolve();
     });
 
-    spectator.component.onAnimationDone({
-      toState: 'hidden',
-    } as AnimationEvent);
+    const hostElement = spectator.fixture.nativeElement as HTMLElement;
+
+    hostElement.dispatchEvent(new CustomEvent('@slideInOut.done', {
+      detail: { toState: 'hidden' },
+    }));
+    spectator.detectChanges();
   });
 
   it('should set width and max-width to 800px when makeWide(true) is called', () => {
