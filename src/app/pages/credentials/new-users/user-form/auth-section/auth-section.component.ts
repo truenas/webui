@@ -71,6 +71,7 @@ export class AuthSectionComponent implements OnInit {
     password: helptextUsers.passwordTooltip,
     password_edit: helptextUsers.passwordTooltip,
     password_conf_edit: helptextUsers.passwordTooltip,
+    sshpubkey: helptextUsers.publicKeyTooltip,
   };
 
   protected stigPasswordOptions$ = of([
@@ -103,14 +104,15 @@ export class AuthSectionComponent implements OnInit {
       if (this.isNewUser()) {
         this.form.patchValue({ show_password: true });
       }
-    });
 
-    if (this.editingUser()) {
-      this.form.patchValue({
-        sshpubkey: this.editingUser().sshpubkey || '',
-        ssh_password_enabled: this.editingUser().ssh_password_enabled || false,
-      });
-    }
+      if (this.editingUser()) {
+        this.form.patchValue({
+          password_disabled: this.editingUser().password_disabled || false,
+          sshpubkey: this.editingUser().sshpubkey || '',
+          ssh_password_enabled: this.editingUser().ssh_password_enabled || false,
+        });
+      }
+    });
 
     this.form.valueChanges.pipe(
       untilDestroyed(this),

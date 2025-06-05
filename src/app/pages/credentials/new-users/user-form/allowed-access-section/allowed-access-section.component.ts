@@ -8,13 +8,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { Role, roleNames } from 'app/enums/role.enum';
-import { helptextUsers } from 'app/helptext/account/user-form';
 import { User } from 'app/interfaces/user.interface';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxFileInputComponent } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { UserFormStore } from 'app/pages/credentials/new-users/user-form/user.store';
@@ -34,9 +30,6 @@ const defaultRole = 'prompt';
     IxFieldsetComponent,
     ReactiveFormsModule,
     TranslateModule,
-    IxCheckboxComponent,
-    IxTextareaComponent,
-    IxFileInputComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -59,10 +52,6 @@ export class AllowedAccessSectionComponent {
     role: [defaultRole],
   });
 
-  protected readonly tooltips = {
-    sshpubkey: helptextUsers.publicKeyTooltip,
-  };
-
   constructor(
     private fb: FormBuilder,
     private userFormStore: UserFormStore,
@@ -73,8 +62,8 @@ export class AllowedAccessSectionComponent {
     ).subscribe({
       next: (sshAccess) => {
         if (sshAccess) {
-          this.form.controls.shell_access.disable();
           this.form.controls.shell_access.setValue(true);
+          this.form.controls.shell_access.disable();
         } else {
           this.form.controls.shell_access.enable();
         }
