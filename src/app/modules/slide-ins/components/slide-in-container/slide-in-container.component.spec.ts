@@ -1,17 +1,7 @@
 import { CdkPortalOutlet, ComponentPortal } from '@angular/cdk/portal';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { SlideInContainerComponent } from 'app/modules/slide-ins/components/slide-in-container/slide-in-container.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-
-@Component({
-  template: '',
-  selector: 'ix-mock-slide-in',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-})
-class MockSlideInComponent<D, R> {
-  slideInRef!: SlideInRef<D, R>;
-}
+import { MockSlideInComponent } from 'app/modules/slide-ins/test-utils/mock-slide-in.component';
 
 describe('SlideInContainerComponent', () => {
   let spectator: Spectator<SlideInContainerComponent>;
