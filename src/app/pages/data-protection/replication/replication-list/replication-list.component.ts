@@ -253,21 +253,22 @@ export class ReplicationListComponent implements OnInit {
 
   openForm(row?: ReplicationTask): void {
     if (row) {
-      this.slideIn.open(ReplicationFormComponent, { data: row, wide: true })
-        .pipe(
-          filter((response) => !!response.response),
-          untilDestroyed(this),
-        ).subscribe({
-          next: () => {
-            this.getReplicationTasks();
-          },
-        });
+      this.slideIn.open(
+        ReplicationFormComponent,
+        { data: row, wide: true },
+      ).pipe(
+        filter((response) => !!response.response),
+        untilDestroyed(this),
+      ).subscribe({
+        next: () => {
+          this.getReplicationTasks();
+        },
+      });
     } else {
-      this.slideIn.open(ReplicationWizardComponent, { wide: true })
-        .pipe(
-          filter((response) => !!response.response),
-          untilDestroyed(this),
-        ).subscribe(() => this.getReplicationTasks());
+      this.slideIn.open(ReplicationWizardComponent).pipe(
+        filter((response) => !!response.response),
+        untilDestroyed(this),
+      ).subscribe(() => this.getReplicationTasks());
     }
   }
 

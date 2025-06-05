@@ -97,9 +97,7 @@ describe('IdmapFormComponent', () => {
           },
         } as IdmapBackendOptions),
       }),
-      mockProvider(SlideIn, {
-        components$: of([]),
-      }),
+      mockProvider(SlideIn),
       mockProvider(Router),
       mockProvider(SnackbarService),
       mockProvider(DialogService, {

@@ -24,7 +24,6 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import { InterfaceStatusIconComponent } from 'app/modules/interface-status-icon/interface-status-icon.component';
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
-import { SlideInComponent } from 'app/modules/slide-ins/components/slide-in/slide-in.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { InterfaceFormComponent } from 'app/pages/system/network/components/interface-form/interface-form.component';
@@ -81,7 +80,6 @@ describe('NetworkComponent', () => {
     ],
     declarations: [
       InterfacesCardComponent,
-      SlideInComponent,
       InterfaceFormComponent,
       MockComponents(
         NetworkConfigurationCardComponent,
@@ -131,10 +129,7 @@ describe('NetworkComponent', () => {
       }),
       mockProvider(SlideInRef, slideInRef),
       mockProvider(SlideIn, {
-        popComponent: jest.fn(),
-        isTopComponentWide$: of(false),
         open: jest.fn(() => of({ response: true })),
-        components$: of([]),
       }),
     ],
   });

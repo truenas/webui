@@ -84,7 +84,6 @@ describe('RsyncTaskFormComponent', () => {
       ]),
       mockProvider(SlideIn, {
         open: jest.fn(() => of()),
-        components$: of([]),
       }),
       mockProvider(FilesystemService),
       mockProvider(UserService, {
