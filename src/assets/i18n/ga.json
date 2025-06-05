@@ -164,6 +164,7 @@
   "Used for advanced routing, e.g., sending traffic to a specific network via a non-default gateway.": "",
   "Used In Subsystems": "",
   "User: {userName}": "",
+  "View": "",
   "What To Share": "",
   "You can select multiple items with the Command and Shift keys.": "",
   "\n              It looks like your session has been inactive for more than {lifetime} seconds.<br>\n              For security reasons we will log you out at {time}.\n            ": "\n              Tá an chuma ar an scéal go bhfuil do sheisiún neamhghníomhach le níos mó ná {lifetime} soicind.<br>\n               Ar chúiseanna slándála, déanfaimid tú a logáil amach ag {time}.\n              ",
