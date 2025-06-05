@@ -15,10 +15,6 @@
           [required]="true"
         ></ix-input>
         <ix-input
-          formControlName="comments"
-          [label]="helptext.commentsLabel | translate"
-        ></ix-input>
-        <ix-input
           formControlName="volsize"
           [label]="helptext.sizeLabel | translate"
           [tooltip]="helptext.sizeTooltip | translate"
@@ -31,27 +27,6 @@
           [label]="helptext.forceSizeLabel | translate"
           [tooltip]="helptext.forceSizeTooltip | translate"
         ></ix-checkbox>
-        <ix-select
-          formControlName="sync"
-          [label]="helptext.syncLabel | translate"
-          [tooltip]="helptext.syncTooltip | translate"
-          [options]="syncOptions$"
-          [required]="true"
-        ></ix-select>
-        <ix-select
-          formControlName="compression"
-          [label]="helptext.compressionLabel | translate"
-          [tooltip]="helptext.compressionTooltip | translate"
-          [options]="compressionOptions$"
-          [required]="true"
-        ></ix-select>
-        <ix-select
-          formControlName="deduplication"
-          [label]="helptext.deduplicationLabel | translate"
-          [tooltip]="helptext.deduplicationTooltip | translate"
-          [options]="deduplicationOptions$"
-          [required]="true"
-        ></ix-select>
         @if (form.controls.sparse.enabled) {
           <ix-checkbox
             formControlName="sparse"
@@ -59,29 +34,142 @@
             [tooltip]="helptext.sparseTooltip | translate"
           ></ix-checkbox>
         }
-        <ix-select
-          formControlName="readonly"
-          [label]="helptext.readonlyLabel | translate"
-          [tooltip]="helptext.readonlyTooltip | translate"
-          [options]="readonlyOptions$"
-          [required]="true"
-        ></ix-select>
-        @if (form.controls.volblocksize.enabled) {
-          <ix-select
-            formControlName="volblocksize"
-            [label]="helptext.volblocksizeLabel | translate"
-            [tooltip]="helptext.volblocksizeTooltip | translate"
-            [options]="volblocksizeOptions$"
-            [required]="true"
-          ></ix-select>
-        }
-        <ix-select
-          formControlName="snapdev"
-          [label]="'Snapdev' | translate"
-          [tooltip]="'Controls whether the volume snapshot devices under /dev/zvol/⟨pool⟩  are hidden or visible. The default value is hidden.' | translate"
-          [options]="snapdevOptions$"
-          [required]="true"
-        ></ix-select>
+      </ix-fieldset>
+
+      <ix-fieldset [title]="'Additional Settings' | translate">
+        <ix-details-table>
+          <ix-details-item 
+            [label]="helptext.commentsLabel | translate"
+          >
+            <ix-editable>
+              <div view>
+                {{ form.value.comments }}
+              </div>
+              <div edit>
+                <ix-input
+                  formControlName="comments"
+                  [attr.aria-label]="helptext.commentsLabel | translate"
+                ></ix-input>
+              </div>
+            </ix-editable>
+          </ix-details-item>
+
+          <ix-details-item 
+            [label]="helptext.syncLabel | translate"
+            [tooltip]="helptext.syncTooltip | translate"
+          >
+            <ix-editable>
+              <div view>
+                {{ getSyncDisplayValue() }}
+              </div>
+              <div edit>
+                <ix-select
+                  formControlName="sync"
+                  [attr.aria-label]="helptext.syncLabel | translate"
+                  [options]="syncOptions$"
+                  [required]="true"
+                ></ix-select>
+              </div>
+            </ix-editable>
+          </ix-details-item>
+
+          <ix-details-item 
+            [label]="helptext.compressionLabel | translate"
+            [tooltip]="helptext.compressionTooltip | translate"
+          >
+            <ix-editable>
+              <div view>
+                {{ getCompressionDisplayValue() }}
+              </div>
+              <div edit>
+                <ix-select
+                  formControlName="compression"
+                  [attr.aria-label]="helptext.compressionLabel | translate"
+                  [options]="compressionOptions$"
+                  [required]="true"
+                ></ix-select>
+              </div>
+            </ix-editable>
+          </ix-details-item>
+
+          <ix-details-item 
+            [label]="helptext.deduplicationLabel | translate"
+            [tooltip]="helptext.deduplicationTooltip | translate"
+          >
+            <ix-editable>
+              <div view>
+                {{ getDeduplicationDisplayValue() }}
+              </div>
+              <div edit>
+                <ix-select
+                  formControlName="deduplication"
+                  [attr.aria-label]="helptext.deduplicationLabel | translate"
+                  [options]="deduplicationOptions$"
+                  [required]="true"
+                ></ix-select>
+              </div>
+            </ix-editable>
+          </ix-details-item>
+
+          <ix-details-item 
+            [label]="helptext.readonlyLabel | translate"
+            [tooltip]="helptext.readonlyTooltip | translate"
+          >
+            <ix-editable>
+              <div view>
+                {{ getReadonlyDisplayValue() }}
+              </div>
+              <div edit>
+                <ix-select
+                  formControlName="readonly"
+                  [attr.aria-label]="helptext.readonlyLabel | translate"
+                  [options]="readonlyOptions$"
+                  [required]="true"
+                ></ix-select>
+              </div>
+            </ix-editable>
+          </ix-details-item>
+
+          @if (form.controls.volblocksize.enabled) {
+            <ix-details-item 
+              [label]="helptext.volblocksizeLabel | translate"
+              [tooltip]="helptext.volblocksizeTooltip | translate"
+            >
+              <ix-editable>
+                <div view>
+                  {{ getVolblocksizeDisplayValue() }}
+                </div>
+                <div edit>
+                  <ix-select
+                    formControlName="volblocksize"
+                    [attr.aria-label]="helptext.volblocksizeLabel | translate"
+                    [options]="volblocksizeOptions$"
+                    [required]="true"
+                  ></ix-select>
+                </div>
+              </ix-editable>
+            </ix-details-item>
+          }
+
+          <ix-details-item 
+            [label]="'Snapdev' | translate"
+            [tooltip]="'Controls whether the volume snapshot devices under /dev/zvol/⟨pool⟩  are hidden or visible. The default value is hidden.' | translate"
+          >
+            <ix-editable>
+              <div view>
+                {{ getSnapdevDisplayValue() }}
+              </div>
+              <div edit>
+                <ix-select
+                  formControlName="snapdev"
+                  [attr.aria-label]="'Snapdev' | translate"
+                  [options]="snapdevOptions$"
+                  [required]="true"
+                ></ix-select>
+              </div>
+            </ix-editable>
+          </ix-details-item>
+        </ix-details-table>
       </ix-fieldset>
       @if (isNew) {
         <ix-fieldset [title]="helptext.encryption.title | translate">

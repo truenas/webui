@@ -11,6 +11,8 @@ import { DatasetRecordSize, DatasetType } from 'app/enums/dataset.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { DetailsItemHarness } from 'app/modules/details-table/details-item/details-item.harness';
+import { EditableHarness } from 'app/modules/forms/editable/editable.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -140,18 +142,13 @@ describe('ZvolFormComponent', () => {
     it('adds a new zvol when new form is saved', fakeAsync(async (): Promise<void> => {
       spectator.tick();
 
+      // Fill basic form fields
       await form.fillForm(
         {
           'Zvol name': 'new zvol',
-          Comments: 'comments text',
           'Size for this zvol': '2 GiB',
-          Sync: 'Standard',
-          'Compression level': 'lz4 (recommended)',
-          'ZFS Deduplication': 'Verify',
           Sparse: true,
           'Inherit (non-encrypted)': false,
-          'Read-only': 'On',
-          Snapdev: 'Visible',
           'Encryption Type': 'Passphrase',
           Algorithm: 'AES-128-CCM',
           pbkdf2iters: 500000,
@@ -159,6 +156,26 @@ describe('ZvolFormComponent', () => {
           'Confirm Passphrase': '12345678',
         },
       );
+
+      // Fill editable fields
+      const editableHarnesses = await loader.getAllHarnesses(EditableHarness);
+      const editableHarnessesMap = new Map<string, EditableHarness>();
+      
+      for (const harness of editableHarnesses) {
+        const detailsItem = await harness.ancestor('ix-details-item');
+        if (detailsItem) {
+          const label = await detailsItem.locatorFor('.key-column')();
+          const labelText = await label.text();
+          editableHarnessesMap.set(labelText.trim(), harness);
+        }
+      }
+
+      await editableHarnessesMap.get('Comments')?.setFirstControlValue('comments text');
+      await editableHarnessesMap.get('Sync')?.setFirstControlValue('STANDARD');
+      await editableHarnessesMap.get('Compression level')?.setFirstControlValue('LZ4');
+      await editableHarnessesMap.get('ZFS Deduplication')?.setFirstControlValue('VERIFY');
+      await editableHarnessesMap.get('Read-only')?.setFirstControlValue('ON');
+      await editableHarnessesMap.get('Snapdev')?.setFirstControlValue('VISIBLE');
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
@@ -222,5 +239,35 @@ describe('ZvolFormComponent', () => {
 
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     }));
+  });
+
+  describe('display value methods', () => {
+    beforeEach(async () => {
+      spectator = createComponent({
+        providers: [
+          mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ isNew: true, parentId: 'test pool' })) }),
+        ],
+      });
+    });
+
+    it('returns correct display values for form options', () => {
+      spectator.tick();
+      
+      spectator.component.form.patchValue({
+        sync: 'STANDARD',
+        compression: 'LZ4',
+        deduplication: 'OFF',
+        readonly: 'OFF',
+        volblocksize: '16K',
+        snapdev: 'HIDDEN',
+      });
+
+      expect(spectator.component.getSyncDisplayValue()).toBe('Standard');
+      expect(spectator.component.getCompressionDisplayValue()).toBe('lz4 (recommended)');
+      expect(spectator.component.getDeduplicationDisplayValue()).toBe('Off');
+      expect(spectator.component.getReadonlyDisplayValue()).toBe('Off');
+      expect(spectator.component.getVolblocksizeDisplayValue()).toBe('16 KiB');
+      expect(spectator.component.getSnapdevDisplayValue()).toBe('Hidden');
+    });
   });
 });

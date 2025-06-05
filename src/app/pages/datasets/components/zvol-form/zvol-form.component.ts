@@ -21,6 +21,9 @@ import { helptextZvol } from 'app/helptext/storage/volumes/zvol-form';
 import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { DetailsItemComponent } from 'app/modules/details-table/details-item/details-item.component';
+import { DetailsTableComponent } from 'app/modules/details-table/details-table.component';
+import { EditableComponent } from 'app/modules/forms/editable/editable.component';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -94,6 +97,9 @@ interface ZvolFormData {
     MatButton,
     TestDirective,
     TranslateModule,
+    DetailsTableComponent,
+    DetailsItemComponent,
+    EditableComponent,
   ],
 })
 export class ZvolFormComponent implements OnInit {
@@ -765,6 +771,42 @@ export class ZvolFormComponent implements OnInit {
       }
     }
     this.form.controls.readonly.setValue(readonlyValue);
+  }
+
+  getSyncDisplayValue(): string {
+    const value = this.form.value.sync;
+    const option = this.syncOptions.find((opt) => opt.value === value);
+    return option ? this.translate.instant(option.label) : value || '';
+  }
+
+  getCompressionDisplayValue(): string {
+    const value = this.form.value.compression;
+    const option = this.compressionOptions.find((opt) => opt.value === value);
+    return option ? this.translate.instant(option.label) : value || '';
+  }
+
+  getDeduplicationDisplayValue(): string {
+    const value = this.form.value.deduplication;
+    const option = this.deduplicationOptions.find((opt) => opt.value === value);
+    return option ? this.translate.instant(option.label) : value || '';
+  }
+
+  getReadonlyDisplayValue(): string {
+    const value = this.form.value.readonly;
+    const option = this.readonlyOptions.find((opt) => opt.value === value);
+    return option ? this.translate.instant(option.label) : value || '';
+  }
+
+  getVolblocksizeDisplayValue(): string {
+    const value = this.form.value.volblocksize;
+    const option = this.volblocksizeOptions.find((opt) => opt.value === value);
+    return option ? option.label : value || '';
+  }
+
+  getSnapdevDisplayValue(): string {
+    const value = this.form.value.snapdev;
+    const option = this.snapdevOptions.find((opt) => opt.value === value);
+    return option ? this.translate.instant(option.label) : value || '';
   }
 
   private handleZvolCreateUpdate(dataset: Dataset): void {
