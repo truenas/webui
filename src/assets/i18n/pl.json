@@ -226,6 +226,7 @@
   "Lower": "",
   "Mac Address": "",
   "MAC Address": "",
+  "Make sure to add your current IP address to the list. Otherwise you will lose access to TrueNAS UI.": "",
   "Manage Hosts": "",
   "Manage Ports": "",
   "Map to the same GID in the instance": "",
