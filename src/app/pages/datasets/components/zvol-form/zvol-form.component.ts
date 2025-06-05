@@ -20,7 +20,10 @@ import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { helptextZvol } from 'app/helptext/storage/volumes/zvol-form';
 import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { DetailsItemComponent } from 'app/modules/details-table/details-item/details-item.component';
+import { DetailsTableComponent } from 'app/modules/details-table/details-table.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EditableComponent } from 'app/modules/forms/editable/editable.component';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -94,6 +97,9 @@ interface ZvolFormData {
     MatButton,
     TestDirective,
     TranslateModule,
+    EditableComponent,
+    DetailsTableComponent,
+    DetailsItemComponent,
   ],
 })
 export class ZvolFormComponent implements OnInit {
@@ -216,6 +222,10 @@ export class ZvolFormComponent implements OnInit {
   readonly algorithmOptions$ = this.api.call('pool.dataset.encryption_algorithm_choices').pipe(
     map((algorithms) => Object.keys(algorithms).map((algorithm) => ({ label: algorithm, value: algorithm }))),
   );
+
+  getOptionLabel(options: Option[], value: unknown): string {
+    return options.find((option) => option.value === value)?.label ?? String(value ?? '');
+  }
 
   constructor(
     public formatter: IxFormatterService,

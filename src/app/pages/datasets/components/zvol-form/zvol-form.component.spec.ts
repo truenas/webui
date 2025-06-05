@@ -10,6 +10,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DatasetRecordSize, DatasetType } from 'app/enums/dataset.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
+import { DetailsTableHarness } from 'app/modules/details-table/details-table.harness';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -22,6 +23,7 @@ describe('ZvolFormComponent', () => {
   let loader: HarnessLoader;
   let spectator: Spectator<ZvolFormComponent>;
   let form: IxFormHarness;
+  let details: DetailsTableHarness;
 
   const slideInRef: SlideInRef<{ isNew: boolean; parentId: string } | undefined, unknown> = {
     close: jest.fn(),
@@ -135,30 +137,32 @@ describe('ZvolFormComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
+      details = await loader.getHarness(DetailsTableHarness);
     });
 
     it('adds a new zvol when new form is saved', fakeAsync(async (): Promise<void> => {
       spectator.tick();
 
-      await form.fillForm(
-        {
-          'Zvol name': 'new zvol',
-          Comments: 'comments text',
-          'Size for this zvol': '2 GiB',
-          Sync: 'Standard',
-          'Compression level': 'lz4 (recommended)',
-          'ZFS Deduplication': 'Verify',
-          Sparse: true,
-          'Inherit (non-encrypted)': false,
-          'Read-only': 'On',
-          Snapdev: 'Visible',
-          'Encryption Type': 'Passphrase',
-          Algorithm: 'AES-128-CCM',
-          pbkdf2iters: 500000,
-          Passphrase: '12345678',
-          'Confirm Passphrase': '12345678',
-        },
-      );
+      await form.fillForm({
+        'Zvol name': 'new zvol',
+        'Size for this zvol': '2 GiB',
+        Sparse: true,
+        'Inherit (non-encrypted)': false,
+        'Encryption Type': 'Passphrase',
+        Algorithm: 'AES-128-CCM',
+        pbkdf2iters: 500000,
+        Passphrase: '12345678',
+        'Confirm Passphrase': '12345678',
+      });
+
+      await details.setValues({
+        Comments: 'comments text',
+        Sync: 'Standard',
+        'Compression level': 'lz4 (recommended)',
+        'ZFS Deduplication': 'Verify',
+        'Read-only': 'On',
+        Snapdev: 'Visible',
+      });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
@@ -197,6 +201,7 @@ describe('ZvolFormComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
+      details = await loader.getHarness(DetailsTableHarness);
     });
 
     it('saves updated zvol when form opened for edit is saved', fakeAsync(async (): Promise<void> => {
