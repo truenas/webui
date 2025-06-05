@@ -1,0 +1,12 @@
+<button
+  *ixRequiresRoles="requiredRoles"
+  mat-button
+  type="button"
+  class="create-btn"
+  ixTest="create-dataset"
+  [disabled]="disabled"
+  (click)="onCreateDataset()"
+>
+  <ix-icon name="create_new_folder"></ix-icon>
+  {{ 'Create Dataset' | translate }}
+</button>

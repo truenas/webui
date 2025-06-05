@@ -33,6 +33,9 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
+import {
+  IxExplorerCreateDatasetComponent
+} from 'app/modules/forms/ix-forms/components/ix-explorer/create-dataset/create-dataset.component';
 
 @UntilDestroy()
 @Component({
@@ -57,6 +60,7 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
     TranslateModule,
     CastPipe,
     AsyncPipe,
+    IxExplorerCreateDatasetComponent,
   ],
 })
 export class IxDynamicFormItemComponent implements OnInit {

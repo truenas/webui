@@ -152,9 +152,12 @@
             [label]="explorerSchema.title ? (explorerSchema.title | translate) : ''"
             [tooltip]="explorerSchema.tooltip ? (explorerSchema.tooltip | translate) : ''"
             [required]="explorerSchema.required || false"
-            [canCreateDataset]="!isEditMode()"
             [nodeProvider]="explorerSchema.nodeProvider"
-          ></ix-explorer>
+          >
+            @if (!isEditMode()) {
+              <ix-explorer-create-dataset></ix-explorer-create-dataset>
+            }
+          </ix-explorer>
         }
 
         @case (DynamicFormSchemaType.Checkbox) {

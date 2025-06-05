@@ -63,23 +63,7 @@
   </tree-root>
 </div>
 
-@if (canCreateDataset()) {
-  <div class="create-dataset-container">
-    <button
-      *ixRequiresRoles="requiredRoles"
-      mat-button
-      type="button"
-      class="create-dataset-btn"
-      ixTest="create-dataset"
-      [disabled]="createDatasetDisabled"
-      (click)="createDataset()"
-    >
-      <ix-icon name="create_new_folder"></ix-icon>
-      {{ 'Create Dataset' | translate }}
-    </button>
-  </div>
-}
-
+<ng-content></ng-content>
 
 @if (loadingError(); as loadingError) {
   <mat-error class="loading-error">

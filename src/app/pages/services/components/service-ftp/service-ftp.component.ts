@@ -37,6 +37,9 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
+import {
+  IxExplorerCreateDatasetComponent
+} from 'app/modules/forms/ix-forms/components/ix-explorer/create-dataset/create-dataset.component';
 
 @UntilDestroy()
 @Component({
@@ -63,6 +66,7 @@ import { SystemGeneralService } from 'app/services/system-general.service';
     TestDirective,
     TranslateModule,
     AsyncPipe,
+    IxExplorerCreateDatasetComponent,
   ],
 })
 export class ServiceFtpComponent implements OnInit {

@@ -17,6 +17,9 @@ import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-forma
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IscsiService } from 'app/services/iscsi.service';
+import {
+  IxExplorerCreateDatasetComponent
+} from 'app/modules/forms/ix-forms/components/ix-explorer/create-dataset/create-dataset.component';
 
 @UntilDestroy()
 @Component({
@@ -29,6 +32,7 @@ import { IscsiService } from 'app/services/iscsi.service';
     IxSelectComponent,
     IxExplorerComponent,
     TranslateModule,
+    IxExplorerCreateDatasetComponent,
   ],
 })
 export class ExtentWizardStepComponent implements OnInit {

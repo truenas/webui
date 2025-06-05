@@ -41,6 +41,9 @@ import { UserFormStore } from 'app/pages/credentials/new-users/user-form/user.st
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { StorageService } from 'app/services/storage.service';
+import {
+  IxExplorerCreateDatasetComponent
+} from 'app/modules/forms/ix-forms/components/ix-explorer/create-dataset/create-dataset.component';
 
 @UntilDestroy()
 @Component({
@@ -62,6 +65,7 @@ import { StorageService } from 'app/services/storage.service';
     DetailsItemComponent,
     EditableComponent,
     IxSelectComponent,
+    IxExplorerCreateDatasetComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

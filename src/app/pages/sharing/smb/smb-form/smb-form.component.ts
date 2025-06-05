@@ -46,6 +46,7 @@ import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-ch
 import { ChipsProvider } from 'app/modules/forms/ix-forms/components/ix-chips/chips-provider';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
+import { IxExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/create-dataset/create-dataset.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
@@ -80,6 +81,7 @@ import { selectService } from 'app/store/services/services.selectors';
     ReactiveFormsModule,
     IxFieldsetComponent,
     IxExplorerComponent,
+    IxExplorerCreateDatasetComponent,
     IxInputComponent,
     IxSelectComponent,
     IxCheckboxComponent,

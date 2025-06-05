@@ -4,8 +4,6 @@ import {
   Component, computed, effect, input, signal, Signal, viewChild,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
 import { MatError, MatHint } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import {
@@ -14,26 +12,23 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
+  BehaviorSubject,
   firstValueFrom, Observable, of,
 } from 'rxjs';
 import { catchError, filter } from 'rxjs/operators';
 import { datasetsRootNode } from 'app/constants/basic-root-nodes.constant';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
-import { Role } from 'app/enums/role.enum';
 import { zvolPath } from 'app/helpers/storage.helper';
-import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
-import { CreateDatasetDialog } from 'app/modules/forms/ix-forms/components/ix-explorer/create-dataset-dialog/create-dataset-dialog.component';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ErrorParserService } from 'app/services/errors/error-parser.service';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 
 @UntilDestroy()
 @Component({
@@ -44,17 +39,15 @@ import { ErrorParserService } from 'app/services/errors/error-parser.service';
   imports: [
     IxLabelComponent,
     MatInput,
-    MatButton,
-    IxIconComponent,
     TreeModule,
     MatError,
     IxErrorsComponent,
     MatHint,
     TranslateModule,
-    RequiresRolesDirective,
     TestDirective,
     ReactiveFormsModule,
     TestOverrideDirective,
+    IxIconComponent,
   ],
   hostDirectives: [
     { ...registeredDirectiveConfig },
@@ -71,13 +64,9 @@ export class IxExplorerComponent implements ControlValueAccessor {
   readonly nodeProvider = input.required<TreeNodeProvider>();
   // TODO: Come up with a system of extendable controls.
   // TODO: Add support for zvols.
-  readonly canCreateDataset = input(false);
-  readonly createDatasetProps = input<Omit<DatasetCreate, 'name'>>({});
 
   // TODO: Should be private, but it's used directly in tests
   readonly tree = viewChild.required(TreeComponent);
-
-  protected readonly requiredRoles = [Role.DatasetWrite];
 
   inputValue = '';
   value: string | string[];
@@ -90,11 +79,7 @@ export class IxExplorerComponent implements ControlValueAccessor {
 
   readonly ExplorerNodeType = ExplorerNodeType;
 
-  get createDatasetDisabled(): boolean {
-    return !this.parentDatasetName(Array.isArray(this.value) ? this.value[0] : this.value).length
-      || !this.tree().treeModel.selectedLeafNodes.every((node: TreeNode<ExplorerNodeData>) => node.data.isMountpoint)
-      || this.isDisabled;
-  }
+  readonly lastSelectedNode$ = new BehaviorSubject<ExplorerNodeData[]>([]);
 
   private toggleExpandNodeFn = (
     tree: TreeModel,
@@ -134,7 +119,6 @@ export class IxExplorerComponent implements ControlValueAccessor {
   constructor(
     public controlDirective: NgControl,
     private cdr: ChangeDetectorRef,
-    private matDialog: MatDialog,
     private translate: TranslateService,
     private errorParser: ErrorParserService,
   ) {
@@ -174,6 +158,7 @@ export class IxExplorerComponent implements ControlValueAccessor {
   }
 
   onNodeSelect(event: { node: TreeNode<ExplorerNodeData> }): void {
+    console.log('onnodeselect', event.node);
     if (!event.node.id) {
       return;
     }
@@ -206,8 +191,12 @@ export class IxExplorerComponent implements ControlValueAccessor {
     return this.translate.instant(
       'Highlighted path is {node}. Press \'Space\' to {expand}. Press \'Enter\' to {select}.',
       {
-        expand: node?.isExpanded ? 'Collapse' : 'Expand',
-        select: node?.isSelected ? 'Unselect' : 'Select',
+        expand: node?.isExpanded
+          ? this.translate.instant('Collapse')
+          : this.translate.instant('Expand'),
+        select: node?.isSelected
+          ? this.translate.instant('Deselect')
+          : this.translate.instant('Select'),
         node: node.data.path.replace(/.{1}/g, '$&,').replace(/\//g, 'slash'),
       },
     );
@@ -246,29 +235,14 @@ export class IxExplorerComponent implements ControlValueAccessor {
     return path?.replace('/mnt/', '') || '';
   }
 
-  createDataset(): void {
-    this.matDialog.open(CreateDatasetDialog, {
-      data: {
-        parentId: this.parentDatasetName(Array.isArray(this.value) ? this.value[0] : this.value),
-        dataset: this.createDatasetProps(),
-      },
-    }).afterClosed()
-      .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe((dataset: Dataset) => {
-        const parentNode = this.tree().treeModel.selectedLeafNodes[0] as TreeNode<ExplorerNodeData>;
-        if (parentNode?.isExpanded) {
-          parentNode.collapse();
-        }
+  getActiveNode(): TreeNode<ExplorerNodeData> | undefined {
+    return this.tree().treeModel.getActiveNode();
+  }
 
-        // This code is necessary to make sure that newly created dataset appears
-        // in the tree if tree has already been expanded.
-        parentNode.data.children = null;
-        parentNode.treeModel.update();
-        parentNode.expand();
-
-        this.writeValue(dataset.mountpoint);
-        this.onChange(this.value);
-      });
+  refreshNode(node: TreeNode<ExplorerNodeData>): void {
+    node.data.children = null;
+    node.treeModel.update();
+    node.expand();
   }
 
   /**

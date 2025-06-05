@@ -40,6 +40,9 @@ import {
   VolumesDialogOptions,
 } from 'app/pages/instances/components/common/volumes-dialog/volumes-dialog.component';
 import { FilesystemService } from 'app/services/filesystem.service';
+import {
+  IxExplorerCreateDatasetComponent
+} from 'app/modules/forms/ix-forms/components/ix-explorer/create-dataset/create-dataset.component';
 
 interface InstanceDiskFormOptions {
   instance: VirtualizationInstance;
@@ -65,6 +68,7 @@ interface InstanceDiskFormOptions {
     MatButton,
     IxSelectComponent,
     TestDirective,
+    IxExplorerCreateDatasetComponent,
   ],
 })
 export class InstanceDiskFormComponent implements OnInit {

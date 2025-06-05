@@ -62,6 +62,9 @@ import { FilesystemService } from 'app/services/filesystem.service';
 import { StorageService } from 'app/services/storage.service';
 import { UserService } from 'app/services/user.service';
 import { AppState } from 'app/store';
+import {
+  IxExplorerCreateDatasetComponent
+} from 'app/modules/forms/ix-forms/components/ix-explorer/create-dataset/create-dataset.component';
 
 const defaultHomePath = '/var/empty';
 
@@ -97,6 +100,7 @@ export enum UserStigPasswordOption {
     MatButton,
     TestDirective,
     TranslateModule,
+    IxExplorerCreateDatasetComponent,
   ],
 })
 export class OldUserFormComponent implements OnInit {

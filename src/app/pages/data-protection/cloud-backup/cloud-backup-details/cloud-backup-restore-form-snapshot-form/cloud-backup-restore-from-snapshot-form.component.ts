@@ -31,6 +31,7 @@ import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
+import { IxExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/create-dataset/create-dataset.component';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -56,6 +57,7 @@ import { FilesystemService } from 'app/services/filesystem.service';
     IxFieldsetComponent,
     IxRadioGroupComponent,
     IxExplorerComponent,
+    IxExplorerCreateDatasetComponent,
     IxInputComponent,
     FormActionsComponent,
     RequiresRolesDirective,

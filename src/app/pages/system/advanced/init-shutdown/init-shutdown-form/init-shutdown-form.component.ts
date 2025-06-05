@@ -29,6 +29,9 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
+import {
+  IxExplorerCreateDatasetComponent
+} from 'app/modules/forms/ix-forms/components/ix-explorer/create-dataset/create-dataset.component';
 
 @UntilDestroy({ arrayName: 'subscriptions' })
 @Component({
@@ -51,6 +54,7 @@ import { FilesystemService } from 'app/services/filesystem.service';
     TestDirective,
     TranslateModule,
     AsyncPipe,
+    IxExplorerCreateDatasetComponent,
   ],
 })
 export class InitShutdownFormComponent implements OnInit {

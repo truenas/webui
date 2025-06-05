@@ -37,6 +37,9 @@ import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IscsiService } from 'app/services/iscsi.service';
+import {
+  IxExplorerCreateDatasetComponent
+} from 'app/modules/forms/ix-forms/components/ix-explorer/create-dataset/create-dataset.component';
 
 @UntilDestroy()
 @Component({
@@ -60,6 +63,7 @@ import { IscsiService } from 'app/services/iscsi.service';
     TestDirective,
     TranslateModule,
     TranslateOptionsPipe,
+    IxExplorerCreateDatasetComponent,
   ],
 })
 export class ExtentFormComponent implements OnInit {
