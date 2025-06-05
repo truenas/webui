@@ -7,7 +7,7 @@
   ></ix-label>
 }
 
-<div class="input-container" [class.disabled]="isDisabled">
+<div class="input-container" [class.disabled]="isDisabled()">
   <input
     #input
     matInput
@@ -16,13 +16,13 @@
     [value]="inputValue"
     [ixTest]="controlDirective.name"
     [required]="required()"
-    [disabled]="isDisabled"
+    [disabled]="isDisabled()"
     [attr.aria-label]="'Enter path for {label}.{multiple}' | translate: { label: label(), multiple: multiple() ? ' Use commas to separate multiple values.' : '' }"
     (change)="onInputChanged(input.value)"
     (blur)="onTouch()"
   />
 </div>
-<div class="tree-container" [class.disabled]="isDisabled" [attr.aria-label]="label()">
+<div class="tree-container" [class.disabled]="isDisabled()" [attr.aria-label]="label()">
   <tree-root
     #tree
     [nodes]="nodes()"

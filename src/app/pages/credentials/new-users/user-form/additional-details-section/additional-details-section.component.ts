@@ -29,6 +29,9 @@ import { EditableComponent } from 'app/modules/forms/editable/editable.component
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { ChipsProvider } from 'app/modules/forms/ix-forms/components/ix-chips/chips-provider';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
+import {
+  ExplorerCreateDatasetComponent,
+} from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -41,9 +44,6 @@ import { UserFormStore } from 'app/pages/credentials/new-users/user-form/user.st
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { StorageService } from 'app/services/storage.service';
-import {
-  IxExplorerCreateDatasetComponent
-} from 'app/modules/forms/ix-forms/components/ix-explorer/create-dataset/create-dataset.component';
 
 @UntilDestroy()
 @Component({
@@ -65,7 +65,7 @@ import {
     DetailsItemComponent,
     EditableComponent,
     IxSelectComponent,
-    IxExplorerCreateDatasetComponent,
+    ExplorerCreateDatasetComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

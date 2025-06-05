@@ -63,6 +63,9 @@ import {
   IxCheckboxListComponent,
 } from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.component';
 import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
+import {
+  ExplorerCreateDatasetComponent,
+} from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import {
   IxFormGlossaryComponent,
@@ -104,9 +107,6 @@ import {
 import { defaultVncPort } from 'app/pages/instances/instances.constants';
 import { VirtualizationConfigStore } from 'app/pages/instances/stores/virtualization-config.store';
 import { FilesystemService } from 'app/services/filesystem.service';
-import {
-  IxExplorerCreateDatasetComponent
-} from 'app/modules/forms/ix-forms/components/ix-explorer/create-dataset/create-dataset.component';
 
 interface NicDeviceOption {
   control: FormControl<boolean>;
@@ -141,7 +141,7 @@ interface NicDeviceOption {
     IxIconGroupComponent,
     MatIconButton,
     IxIconComponent,
-    IxExplorerCreateDatasetComponent,
+    ExplorerCreateDatasetComponent,
   ],
   templateUrl: './instance-wizard.component.html',
   styleUrls: ['./instance-wizard.component.scss'],

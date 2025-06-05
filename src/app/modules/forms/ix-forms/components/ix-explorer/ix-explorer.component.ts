@@ -9,13 +9,12 @@ import { MatInput } from '@angular/material/input';
 import {
   IActionMapping, ITreeOptions, KEYS, TREE_ACTIONS, TreeComponent, TreeModel, TreeModule,
 } from '@bugsplat/angular-tree-component';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  BehaviorSubject,
   firstValueFrom, Observable, of,
 } from 'rxjs';
-import { catchError, filter } from 'rxjs/operators';
+import { catchError } from 'rxjs/operators';
 import { datasetsRootNode } from 'app/constants/basic-root-nodes.constant';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { zvolPath } from 'app/helpers/storage.helper';
@@ -24,11 +23,11 @@ import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-erro
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ErrorParserService } from 'app/services/errors/error-parser.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 
 @UntilDestroy()
 @Component({
@@ -62,15 +61,13 @@ export class IxExplorerComponent implements ControlValueAccessor {
   readonly required = input<boolean>(false);
   readonly rootNodes = input<ExplorerNodeData[]>([datasetsRootNode]);
   readonly nodeProvider = input.required<TreeNodeProvider>();
-  // TODO: Come up with a system of extendable controls.
-  // TODO: Add support for zvols.
 
   // TODO: Should be private, but it's used directly in tests
   readonly tree = viewChild.required(TreeComponent);
 
-  inputValue = '';
-  value: string | string[];
-  isDisabled = false;
+  protected inputValue = '';
+  protected value: string | string[];
+  readonly isDisabled = signal(false);
   readonly nodes = signal<ExplorerNodeData[]>([]);
   readonly loadingError = signal<string | null>(null);
 
@@ -79,7 +76,7 @@ export class IxExplorerComponent implements ControlValueAccessor {
 
   readonly ExplorerNodeType = ExplorerNodeType;
 
-  readonly lastSelectedNode$ = new BehaviorSubject<ExplorerNodeData[]>([]);
+  readonly lastSelectedNode = signal<TreeNode<ExplorerNodeData> | null>(null);
 
   private toggleExpandNodeFn = (
     tree: TreeModel,
@@ -153,15 +150,16 @@ export class IxExplorerComponent implements ControlValueAccessor {
   }
 
   setDisabledState?(isDisabled: boolean): void {
-    this.isDisabled = isDisabled || this.readonly();
+    this.isDisabled.set(isDisabled || this.readonly());
     this.cdr.markForCheck();
   }
 
   onNodeSelect(event: { node: TreeNode<ExplorerNodeData> }): void {
-    console.log('onnodeselect', event.node);
     if (!event.node.id) {
       return;
     }
+
+    this.lastSelectedNode.set(event.node);
 
     if (this.multiple()) {
       this.selectTreeNodes([
@@ -182,6 +180,10 @@ export class IxExplorerComponent implements ControlValueAccessor {
       );
     } else {
       this.selectTreeNodes([]);
+    }
+
+    if (event.node.id === this.lastSelectedNode()?.id) {
+      this.lastSelectedNode.set(null);
     }
 
     this.onSelectionChanged();
@@ -218,6 +220,7 @@ export class IxExplorerComponent implements ControlValueAccessor {
     this.value = newValue;
     this.updateInputValue();
     this.onChange(newValue);
+    this.cdr.markForCheck();
   }
 
   onInputChanged(inputValue: string): void {
@@ -229,14 +232,6 @@ export class IxExplorerComponent implements ControlValueAccessor {
 
   isPathSelected(path: string): boolean {
     return typeof this.value === 'string' ? this.value === path : this.value?.some((content: string) => content === path);
-  }
-
-  parentDatasetName(path: string): string {
-    return path?.replace('/mnt/', '') || '';
-  }
-
-  getActiveNode(): TreeNode<ExplorerNodeData> | undefined {
-    return this.tree().treeModel.getActiveNode();
   }
 
   refreshNode(node: TreeNode<ExplorerNodeData>): void {

@@ -730,6 +730,7 @@
   "Deleted {n, plural, one {# snapshot} other {# snapshots} }": "",
   "Deleting exporter": "",
   "Descriptor": "",
+  "Deselect": "",
   "Desired – encrypt transport if supported by client during session negotiation": "",
   "Destroy the ZFS filesystem for pool data. This is a permanent operation. You will be       unable to re-mount data from the exported pool.": "",
   "details": "",

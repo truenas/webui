@@ -20,7 +20,9 @@
               [rootNodes]="zvolsRootNode"
               [required]="true"
               [nodeProvider]="zvolProvider"
-            ></ix-explorer>
+            >
+              <ix-explorer-create-zvol></ix-explorer-create-zvol>
+            </ix-explorer>
           }
 
           @case (FormNamespaceType.ExistingFile) {

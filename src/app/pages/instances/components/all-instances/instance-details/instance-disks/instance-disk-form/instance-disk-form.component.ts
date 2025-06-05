@@ -25,6 +25,9 @@ import {
   VirtualizationVolume,
 } from 'app/interfaces/virtualization.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import {
+  ExplorerCreateDatasetComponent,
+} from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -40,9 +43,6 @@ import {
   VolumesDialogOptions,
 } from 'app/pages/instances/components/common/volumes-dialog/volumes-dialog.component';
 import { FilesystemService } from 'app/services/filesystem.service';
-import {
-  IxExplorerCreateDatasetComponent
-} from 'app/modules/forms/ix-forms/components/ix-explorer/create-dataset/create-dataset.component';
 
 interface InstanceDiskFormOptions {
   instance: VirtualizationInstance;
@@ -68,7 +68,7 @@ interface InstanceDiskFormOptions {
     MatButton,
     IxSelectComponent,
     TestDirective,
-    IxExplorerCreateDatasetComponent,
+    ExplorerCreateDatasetComponent,
   ],
 })
 export class InstanceDiskFormComponent implements OnInit {

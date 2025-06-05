@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, Host, input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Host,
+  input,
+  computed,
+} from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { NgControl } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -15,48 +23,57 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 @UntilDestroy()
 @Component({
   selector: 'ix-explorer-create-dataset',
-  templateUrl: './create-dataset.component.html',
-  styleUrls: ['./create-dataset.component.scss'],
+  templateUrl: './explorer-create-dataset.component.html',
+  styleUrls: ['./explorer-create-dataset.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [MatButton, IxIconComponent, TranslateModule, RequiresRolesDirective, TestDirective],
+  imports: [
+    MatButton,
+    IxIconComponent,
+    TranslateModule,
+    RequiresRolesDirective,
+    TestDirective,
+  ],
 })
-export class IxExplorerCreateDatasetComponent {
+export class ExplorerCreateDatasetComponent {
   readonly datasetProps = input<Omit<DatasetCreate, 'name'>>({});
 
   protected readonly requiredRoles = [Role.DatasetWrite];
 
+  protected isButtonDisabled = computed(() => {
+    const isMountpointSelected = this.explorer.lastSelectedNode()?.data.isMountpoint;
+    return this.explorer.isDisabled() || !isMountpointSelected || !this.parent();
+  });
+
+  private explorerValue = toSignal<string | string[]>(this.ngControl.valueChanges, { initialValue: null });
+
   constructor(
     @Host() private explorer: IxExplorerComponent,
     private matDialog: MatDialog,
-  ) {
-  }
+    private ngControl: NgControl,
+  ) {}
 
-  protected get disabled(): boolean {
-    const node = this.explorer.getActiveNode();
-    return !node?.data.isMountpoint || this.explorer.isDisabled;
-  }
+  private parent = computed(() => {
+    const value = this.explorerValue();
+    const selected = Array.isArray(value) ? value[0] : value;
+    return selected ? selected.replace(/^(\/mnt\/?)/, '') : null;
+  });
 
   protected onCreateDataset(): void {
-    const selected = Array.isArray(this.explorer.value) ? this.explorer.value[0] : this.explorer.value;
     this.matDialog.open(CreateDatasetDialog, {
       data: {
-        parentId: this.explorer.parentDatasetName(selected),
+        parentId: this.parent(),
         dataset: this.datasetProps(),
       },
     }).afterClosed().pipe(
       filter(Boolean),
       untilDestroyed(this),
     ).subscribe((dataset: Dataset) => {
-      const node = this.explorer.getActiveNode();
-      if (node?.isExpanded) {
-        node.collapse();
-      }
+      const node = this.explorer.lastSelectedNode();
       if (node) {
         this.explorer.refreshNode(node);
       }
-      this.explorer.writeValue(dataset.mountpoint);
-      this.explorer.onChange(this.explorer.value);
+      this.ngControl.control.setValue(dataset.mountpoint);
     });
   }
 }

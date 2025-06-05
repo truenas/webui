@@ -27,8 +27,8 @@ import { UserComboboxProvider } from 'app/modules/forms/ix-forms/classes/user-co
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
+import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
-import { IxExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/create-dataset/create-dataset.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxIpInputWithNetmaskComponent } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
@@ -64,7 +64,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     ReactiveFormsModule,
     IxFieldsetComponent,
     IxExplorerComponent,
-    IxExplorerCreateDatasetComponent,
+    ExplorerCreateDatasetComponent,
     IxInputComponent,
     IxCheckboxComponent,
     IxComboboxComponent,

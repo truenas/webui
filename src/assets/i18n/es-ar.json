@@ -34,6 +34,7 @@
   "Define the system services that are NOT allowed to communicate externally. All other external traffic will be allowed.": "",
   "Delete Anyway": "",
   "Delete namespace": "",
+  "Deselect": "",
   "DH Group": "",
   "Edit namespace": "",
   "Edit Namespace": "",
