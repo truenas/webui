@@ -1,7 +1,6 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component,
   computed,
-  effect,
   input,
   OnInit,
 } from '@angular/core';
@@ -117,69 +116,69 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
   ) {
-    effect(() => {
-      if (this.editingUser()) {
-        const user = this.editingUser();
+    if (this.editingUser()) {
+      const user = this.editingUser();
 
-        this.form.patchValue({
-          full_name: user.full_name,
-          email: user.email,
-          groups: user.groups,
-          home: user.home,
-          uid: user.uid,
-          group: user.group?.id,
-          sudo_commands: this.form.value.sudo_commands_all ? [allCommands] : this.form.value.sudo_commands,
-          sudo_commands_nopasswd: this.form.value.sudo_commands_nopasswd_all
-            ? [allCommands]
-            : this.form.value.sudo_commands_nopasswd,
-        }, { emitEvent: false });
+      this.form.patchValue({
+        full_name: user.full_name,
+        email: user.email,
+        groups: user.groups,
+        home: user.home,
+        uid: user.uid,
+        group: user.group?.id,
+        sudo_commands: this.form.value.sudo_commands_all ? [allCommands] : this.form.value.sudo_commands,
+        sudo_commands_nopasswd: this.form.value.sudo_commands_nopasswd_all
+          ? [allCommands]
+          : this.form.value.sudo_commands_nopasswd,
+      }, { emitEvent: false });
 
-        this.form.controls.uid.disable();
-        this.form.controls.group_create.disable();
+      this.form.controls.uid.disable();
+      this.form.controls.group_create.disable();
 
-        if (user.immutable) {
-          this.form.controls.group.disable();
-          this.form.controls.home_mode.disable();
-          this.form.controls.home.disable();
-          this.form.controls.home_create.disable();
-        }
-
-        if (this.editingUser()?.home && !isEmptyHomeDirectory(this.editingUser()?.home)) {
-          this.storageService.filesystemStat(this.editingUser().home)
-            .pipe(take(1), this.errorHandler.withErrorHandler(), untilDestroyed(this))
-            .subscribe((stat) => {
-              const homeMode = stat.mode.toString(8).substring(2, 5);
-              this.form.patchValue({ home_mode: homeMode });
-              this.userFormStore.updateSetupDetails({ homeModeOldValue: homeMode });
-            });
-        } else {
-          this.form.patchValue({ home_mode: '700' });
-          this.form.controls.home_mode.disable();
-        }
+      if (user.immutable) {
+        this.form.controls.group.disable();
+        this.form.controls.home_mode.disable();
+        this.form.controls.home.disable();
+        this.form.controls.home_create.disable();
       }
-    });
+
+      if (this.editingUser()?.home && !isEmptyHomeDirectory(this.editingUser()?.home)) {
+        this.storageService.filesystemStat(this.editingUser().home)
+          .pipe(take(1), this.errorHandler.withErrorHandler(), untilDestroyed(this))
+          .subscribe((stat) => {
+            const homeMode = stat.mode.toString(8).substring(2, 5);
+            this.form.patchValue({ home_mode: homeMode });
+            this.userFormStore.updateSetupDetails({ homeModeOldValue: homeMode });
+          });
+      } else {
+        this.form.patchValue({ home_mode: '700' });
+        this.form.controls.home_mode.disable();
+      }
+    }
     this.form.valueChanges
       .pipe(
         distinctUntilChanged((prev, curr) => isEqual(prev, curr)),
         untilDestroyed(this),
       )
       .subscribe({
-        next: () => {
+        next: (values) => {
           this.userFormStore.updateUserConfig({
-            group_create: this.form.value.group_create,
-            home_create: this.form.value.home_create,
-            full_name: this.form.value.full_name,
-            groups: this.form.value.groups.map((grp) => (+grp)),
-            home: this.form.value.home,
-            home_mode: this.userFormStore.homeModeOldValue() !== this.form.value.home_mode
-              ? this.form.value.home_mode
+            group_create: values.group_create,
+            home_create: values.home_create,
+            full_name: values.full_name,
+            groups: values.groups.map((grp) => (+grp)),
+            home: values.home,
+            home_mode: this.userFormStore.homeModeOldValue() !== values.home_mode
+              ? values.home_mode
               : undefined,
-            email: this.form.value.email,
-            uid: this.form.value.uid,
-            shell: this.form.value.shell,
+            email: values.email,
+            uid: values.uid,
+            shell: values.shell,
+            sudo_commands: values.sudo_commands_all ? [allCommands] : values.sudo_commands,
+            sudo_commands_nopasswd: values.sudo_commands_nopasswd_all ? [allCommands] : values.sudo_commands_nopasswd,
           });
           this.userFormStore.updateSetupDetails({
-            defaultPermissions: this.form.value.default_permissions,
+            defaultPermissions: values.default_permissions,
           });
         },
       });

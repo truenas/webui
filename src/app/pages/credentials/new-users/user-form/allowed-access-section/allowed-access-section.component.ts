@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, effect, input,
+} from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { FormBuilder } from '@ngneat/reactive-forms';
@@ -6,8 +8,13 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { Role, roleNames } from 'app/enums/role.enum';
+import { helptextUsers } from 'app/helptext/account/user-form';
+import { User } from 'app/interfaces/user.interface';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxFileInputComponent } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { UserFormStore } from 'app/pages/credentials/new-users/user-form/user.store';
@@ -27,10 +34,16 @@ const defaultRole = 'prompt';
     IxFieldsetComponent,
     ReactiveFormsModule,
     TranslateModule,
+    IxCheckboxComponent,
+    IxTextareaComponent,
+    IxFileInputComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AllowedAccessSectionComponent {
+  editingUser = input<User>();
+  protected sshAccessEnabled = this.userFormStore.sshAccess;
+
   protected readonly roles$ = of([
     { label: this.translate.instant('Select Role'), value: defaultRole },
     { label: roleNames.get(Role.FullAdmin), value: Role.FullAdmin },
@@ -45,6 +58,10 @@ export class AllowedAccessSectionComponent {
     shell_access: [false],
     role: [defaultRole],
   });
+
+  protected readonly tooltips = {
+    sshpubkey: helptextUsers.publicKeyTooltip,
+  };
 
   constructor(
     private fb: FormBuilder,
@@ -65,20 +82,26 @@ export class AllowedAccessSectionComponent {
     });
 
     this.form.valueChanges.pipe(untilDestroyed(this)).subscribe({
-      next: () => {
+      next: (values) => {
         this.userFormStore.setAllowedAccessConfig({
-          smbAccess: this.form.controls.smb_access.value,
-          truenasAccess: this.form.controls.truenas_access.value,
-          sshAccess: this.form.controls.ssh_access.value,
-          shellAccess: this.form.controls.shell_access.value,
+          smbAccess: values.smb_access,
+          truenasAccess: values.truenas_access,
+          sshAccess: values.ssh_access,
+          shellAccess: values.shell_access,
         });
-
-        if (this.form.controls.truenas_access.value) {
-          this.userFormStore.updateSetupDetails({
-            role: defaultRole,
-          });
-        }
       },
+    });
+
+    effect(() => {
+      if (this.editingUser()) {
+        this.form.patchValue({
+          truenas_access: !!this.editingUser().roles.length,
+          shell_access: this.editingUser().shell !== '/usr/bin/nologin',
+          smb_access: this.editingUser().smb,
+          ssh_access: !!this.editingUser().sshpubkey || this.editingUser().ssh_password_enabled,
+          role: this.editingUser().roles.length > 0 ? this.editingUser().roles[0] : defaultRole,
+        });
+      }
     });
   }
 }
