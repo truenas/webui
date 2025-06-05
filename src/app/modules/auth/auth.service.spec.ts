@@ -14,6 +14,7 @@ import { TestScheduler } from 'rxjs/testing';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { AccountAttribute } from 'app/enums/account-attribute.enum';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -47,6 +48,10 @@ describe('AuthService', () => {
     privilege: {
       webui_access: true,
     },
+    account_attributes: [
+      AccountAttribute.Local,
+      AccountAttribute.PasswordChangeRequired,
+    ],
   } as LoggedInUser;
 
   const mockWsStatus = new WebSocketStatusService();
@@ -65,6 +70,10 @@ describe('AuthService', () => {
           response_type: LoginExResponseType.Success,
           user_info: {
             privilege: { webui_access: true },
+            account_attributes: [
+              AccountAttribute.Local,
+              AccountAttribute.PasswordChangeRequired,
+            ],
           },
         } as LoginExResponse),
       ]),
@@ -167,6 +176,23 @@ describe('AuthService', () => {
       );
       expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('auth.me');
       expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('auth.generate_token');
+    });
+    it('emits correct isLocalUser$', () => {
+      timer$.next(0);
+
+      const obs$ = spectator.service.login('dummy', 'dummy');
+      testScheduler.run(({ expectObservable }) => {
+        expectObservable(obs$).toBe(
+          '(a|)',
+          { a: LoginResult.Success },
+        );
+        expectObservable(spectator.service.isLocalUser$).toBe('a', {
+          a: true,
+        });
+        expectObservable(spectator.service.isPasswordChangeRequired$).toBe('a', {
+          a: true,
+        });
+      });
     });
   });
 
