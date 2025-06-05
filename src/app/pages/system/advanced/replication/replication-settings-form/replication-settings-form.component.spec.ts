@@ -33,7 +33,7 @@ describe('ReplicationSettingsFormComponent', () => {
         requireConfirmationWhen: jest.fn(),
       }),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of({ response: true, error: null })),
+        open: jest.fn(() => of({ response: true })),
         components$: of([]),
       }),
       mockProvider(SystemGeneralService),

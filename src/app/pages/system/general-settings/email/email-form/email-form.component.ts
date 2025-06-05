@@ -211,7 +211,7 @@ export class EmailFormComponent implements OnInit {
         next: () => {
           this.isLoading.set(false);
           this.snackbar.success(this.translate.instant('Email settings updated.'));
-          this.slideInRef.close({ response: true, error: null });
+          this.slideInRef.close({ response: true });
         },
         error: (error: unknown) => {
           this.isLoading.set(false);

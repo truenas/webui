@@ -78,7 +78,7 @@ export class LicenseComponent {
     this.api.call('system.license_update', [license]).pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isFormLoading = false;
-        this.slideInRef.close({ response: true, error: null });
+        this.slideInRef.close({ response: true });
         this.cdr.markForCheck();
         this.dialogService
           .confirm({

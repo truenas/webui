@@ -169,7 +169,7 @@ export class LocalizationFormComponent implements OnInit {
         this.store$.dispatch(generalConfigUpdated());
         this.store$.dispatch(systemInfoUpdated());
         this.isFormLoading.set(false);
-        this.slideInRef.close({ response: true, error: null });
+        this.slideInRef.close({ response: true });
         this.langService.setLanguage(values.language);
         this.setTimeOptions(payload.timezone);
       },

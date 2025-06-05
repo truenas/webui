@@ -130,7 +130,7 @@ export class ScrubFormComponent {
           this.snackbar.success(this.translate.instant('Scrub settings updated'));
         }
         this.isLoading.set(false);
-        this.slideInRef.close({ response: true, error: null });
+        this.slideInRef.close({ response: true });
       },
       error: (error: unknown) => {
         this.isLoading.set(false);

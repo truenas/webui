@@ -243,7 +243,7 @@ describe('CloudCredentialsFormComponent', () => {
             s3attribute: 's3 value',
           },
         }]);
-        expect(slideInRef.close).toHaveBeenCalledWith({ response: fakeCloudSyncCredential, error: null });
+        expect(slideInRef.close).toHaveBeenCalledWith({ response: fakeCloudSyncCredential });
         expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
       });
 
@@ -328,7 +328,7 @@ describe('CloudCredentialsFormComponent', () => {
           },
         },
       ]);
-      expect(slideInRef.close).toHaveBeenCalledWith({ response: fakeCloudSyncCredential, error: null });
+      expect(slideInRef.close).toHaveBeenCalledWith({ response: fakeCloudSyncCredential });
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
     });
   });

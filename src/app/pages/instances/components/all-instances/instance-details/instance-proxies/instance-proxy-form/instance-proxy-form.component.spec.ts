@@ -61,7 +61,6 @@ describe('InstanceProxyFormComponent', () => {
 
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({
         response: true,
-        error: false,
       });
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('virt.instance.device_add', ['my-instance', {
@@ -136,7 +135,6 @@ describe('InstanceProxyFormComponent', () => {
 
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({
         response: true,
-        error: false,
       });
     });
   });

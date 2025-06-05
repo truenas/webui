@@ -233,7 +233,7 @@ export class SshConnectionFormComponent implements OnInit {
       next: (newCredential) => {
         this.isLoading.set(false);
         this.snackbar.success(this.translate.instant('SSH Connection saved'));
-        this.slideInRef.close({ response: newCredential, error: null });
+        this.slideInRef.close({ response: newCredential });
       },
       error: (error: unknown) => {
         this.isLoading.set(false);

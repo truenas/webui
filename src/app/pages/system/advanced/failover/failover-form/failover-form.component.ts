@@ -118,7 +118,6 @@ export class FailoverFormComponent {
 
           this.slideInRef.close({
             response: true,
-            error: null,
           });
         },
         error: (error: unknown) => {

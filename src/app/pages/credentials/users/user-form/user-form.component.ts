@@ -400,7 +400,7 @@ export class OldUserFormComponent implements OnInit {
             this.store$.dispatch(userChanged({ user }));
           }
           this.isFormLoading.set(false);
-          this.slideInRef.close({ response: user, error: null });
+          this.slideInRef.close({ response: user });
         },
         error: (error: unknown) => {
           this.isFormLoading.set(false);

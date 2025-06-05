@@ -151,7 +151,7 @@ export class DiskBulkEditComponent {
           });
 
           if (isSuccessful) {
-            this.slideInRef.close({ response: true, error: null });
+            this.slideInRef.close({ response: true });
             this.snackbarService.success(successText);
           }
         },

@@ -139,7 +139,7 @@ export class CertificateAcmeAddComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
-          this.slideInRef.close({ response: true, error: null });
+          this.slideInRef.close({ response: true });
           this.snackbar.success(this.translate.instant('ACME Certificate Created'));
         },
         complete: () => {
