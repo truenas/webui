@@ -1,0 +1,36 @@
+<div class="section-header">
+  <h5>{{ 'Namespaces' | translate }}</h5>
+  <button
+    mat-button
+    type="button"
+    ixTest="add-namespace"
+    (click)="onAddNamespace()"
+  >
+    {{ 'Add' | translate }}
+  </button>
+</div>
+
+@if (!namespaces.length) {
+  <div class="empty-state">
+    {{ 'Select files or zvols to expose.' | translate }}
+  </div>
+} @else {
+  <div class="namespaces-list">
+    @for (namespace of namespaces; track namespace; let i = $index) {
+      <div class="namespace">
+        <ix-namespace-description [namespace]="namespace"></ix-namespace-description>
+
+        <div class="namespace-actions">
+          <button
+            mat-icon-button
+            ixTest="delete-namespace"
+            [matTooltip]="'Remove namespace' | translate"
+            (click)="onDeleteNamespace(i)"
+          >
+            <ix-icon name="clear"></ix-icon>
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+}

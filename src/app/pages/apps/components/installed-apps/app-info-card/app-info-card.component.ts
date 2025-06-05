@@ -16,7 +16,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import ipRegex from 'ip-regex';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import {
-  filter, map, switchMap, take, tap,
+  filter, switchMap, tap,
 } from 'rxjs';
 import { appImagePlaceholder, customApp } from 'app/constants/catalog.constants';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -220,14 +220,7 @@ export class AppInfoCardComponent {
         untilDestroyed(this),
       )
       .subscribe(() => {
-        this.installedAppsStore.installedApps$.pipe(
-          map((apps) => !apps.length),
-          filter(Boolean),
-          take(1),
-          untilDestroyed(this),
-        ).subscribe(() => {
-          this.router.navigate(['/apps', 'installed'], { state: { hideMobileDetails: true } });
-        });
+        this.router.navigate(['/apps', 'installed'], { state: { hideMobileDetails: true } });
       });
   }
 

@@ -43,21 +43,38 @@
   display: flex;
   flex-direction: column;
   flex-grow: 1;
+  flex-wrap: wrap;
   margin-left: 16px;
 
   .header {
     align-items: center;
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     margin-bottom: 12px;
 
     .name {
+      align-items: center;
       color: var(--fg1);
+      display: flex;
       font-family: var(--font-family-header);
       font-size: 1.3em;
+      gap: 8px;
       line-height: 1.3em;
       margin-top: 1px;
       text-transform: capitalize;
+    }
+
+    .popularity-rank {
+      align-items: center;
+      color: var(--fg2);
+      display: flex;
+      font-size: small;
+      gap: 2px;
+
+      ix-icon {
+        width: 14px;
+      }
     }
   }
 

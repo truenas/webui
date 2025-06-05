@@ -8,7 +8,7 @@ import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { omit } from 'lodash-es';
 import { finalize, switchMap } from 'rxjs';
 import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
@@ -26,7 +26,6 @@ import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-te
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -86,8 +85,6 @@ export class HostFormComponent implements OnInit {
   constructor(
     private api: ApiService,
     private formBuilder: NonNullableFormBuilder,
-    private snackbar: SnackbarService,
-    private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
     private formErrorHandler: FormErrorHandlerService,
     public slideInRef: SlideInRef<NvmeOfHost | undefined, NvmeOfHost | null>,
@@ -165,12 +162,6 @@ export class HostFormComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe({
       next: (savedHost) => {
-        this.snackbar.success(
-          this.isNew()
-            ? this.translate.instant('Host Created')
-            : this.translate.instant('Host Updated'),
-        );
-
         this.slideInRef.close({
           response: savedHost,
         });
