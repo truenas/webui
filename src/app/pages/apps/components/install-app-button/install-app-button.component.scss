@@ -1,0 +1,13 @@
+button {
+  width: 100%;
+}
+
+::ng-deep {
+  ix-missing-access-wrapper {
+    width: 100%;
+
+    button {
+      width: 100%;
+    }
+  }
+}

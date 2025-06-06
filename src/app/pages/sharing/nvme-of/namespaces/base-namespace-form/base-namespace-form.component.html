@@ -18,7 +18,6 @@
               formControlName="device_path"
               [label]="'Path To Zvol' | translate"
               [rootNodes]="zvolsRootNode"
-              [required]="true"
               [nodeProvider]="zvolProvider"
             ></ix-explorer>
           }
@@ -28,7 +27,6 @@
               formControlName="device_path"
               [label]="'Path To File' | translate"
               [rootNodes]="datasetsRootNode"
-              [required]="true"
               [nodeProvider]="fileProvider"
             ></ix-explorer>
           }
@@ -38,7 +36,6 @@
               formControlName="device_path"
               [label]="'Parent Directory' | translate"
               [rootNodes]="datasetsRootNode"
-              [required]="true"
               [nodeProvider]="directoryProvider"
             ></ix-explorer>
 

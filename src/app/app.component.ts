@@ -1,11 +1,15 @@
 import {
   ChangeDetectionStrategy, Component, Inject, OnInit,
 } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Title } from '@angular/platform-browser';
 import { Router, NavigationEnd, RouterOutlet } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { filter, tap } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
+import { AuthService } from 'app/modules/auth/auth.service';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LayoutService } from 'app/modules/layout/layout.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { PingService } from 'app/modules/websocket/ping.service';
@@ -28,10 +32,19 @@ export class AppComponent implements OnInit {
     private detectBrowser: DetectBrowserService,
     private layoutService: LayoutService,
     private pingService: PingService,
+    private authService: AuthService,
+    private dialog: DialogService,
+    private snackbar: MatSnackBar,
+    private translate: TranslateService,
     @Inject(WINDOW) private window: Window,
     private slideIn: SlideIn,
   ) {
     this.wsStatus.isAuthenticated$.pipe(untilDestroyed(this)).subscribe((isAuthenticated) => {
+      if (!isAuthenticated && this.isAuthenticated) {
+        this.logOutExpiredUser();
+        return;
+      }
+
       this.isAuthenticated = isAuthenticated;
     });
     this.title.setTitle('TrueNAS - ' + this.window.location.hostname);
@@ -61,6 +74,17 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this.setupScrollToTopOnNavigation();
+  }
+
+  private logOutExpiredUser(): void {
+    this.authService.clearAuthToken();
+    this.router.navigate(['/signin']);
+    this.snackbar.open(
+      this.translate.instant('Session expired'),
+      this.translate.instant('Close'),
+      { duration: 4000, verticalPosition: 'bottom' },
+    );
+    this.dialog.closeAllDialogs();
   }
 
   private setFavicon(isDarkMode: boolean): void {
