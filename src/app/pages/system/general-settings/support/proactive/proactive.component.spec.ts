@@ -6,7 +6,6 @@ import {
   createComponentFactory, mockProvider,
   Spectator,
 } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -55,9 +54,7 @@ describe('ProactiveComponent', () => {
         mockCall('support.is_available_and_enabled', true),
       ]),
       mockProvider(FormErrorHandlerService),
-      mockProvider(SlideIn, {
-        components$: of([]),
-      }),
+      mockProvider(SlideIn),
       mockProvider(DialogService),
       mockProvider(SlideInRef, slideInRef),
     ],

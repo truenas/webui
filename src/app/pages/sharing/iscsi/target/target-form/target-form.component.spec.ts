@@ -79,9 +79,7 @@ describe('TargetFormComponent', () => {
           },
         ],
       }),
-      mockProvider(SlideIn, {
-        components$: of([]),
-      }),
+      mockProvider(SlideIn),
       mockProvider(DialogService),
       mockProvider(FibreChannelService, {
         loadTargetPort: jest.fn(() => of(null)),

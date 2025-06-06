@@ -43,9 +43,7 @@ describe('WidgetGroupFormComponent', () => {
     providers: [
       mockAuth(),
       mockProvider(SlideInRef, slideInRef),
-      mockProvider(SlideIn, {
-        components$: of([]),
-      }),
+      mockProvider(SlideIn),
       mockProvider(FormErrorHandlerService),
       mockProvider(SnackbarService),
     ],
