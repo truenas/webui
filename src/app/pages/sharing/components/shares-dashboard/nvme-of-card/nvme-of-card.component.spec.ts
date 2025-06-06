@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
+import { Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
@@ -14,7 +15,6 @@ import { ServiceStatus } from 'app/enums/service-status.enum';
 import { NvmeOfHost, NvmeOfNamespace, NvmeOfPort } from 'app/interfaces/nvme-of.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -118,7 +118,7 @@ describe('NvmeOfCardComponent', () => {
   });
 
   // Unskip below tests once the functionality is implemented (edit + delete)
-  it.skip('shows confirmation to delete NVME-oF Share when Delete button is pressed', async () => {
+  it('shows confirmation to delete NVME-oF Share when Delete button is pressed', async () => {
     const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
     await menu.open();
     await menu.clickItem({ text: 'Delete' });
@@ -128,11 +128,13 @@ describe('NvmeOfCardComponent', () => {
   });
 
   // remove once the above tests are unskipped
-  it('[temp] shows confirmation to delete NVME-oF Share when Delete button is pressed', async () => {
-    const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 4);
-    await deleteIcon.click();
+  it('[temp] navigates to shares list when view is clicked', async () => {
+    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
+    await menu.open();
+    const router = spectator.inject(Router);
+    jest.spyOn(router, 'navigate');
+    await menu.clickItem({ text: 'View' });
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(SubsystemDeleteDialogComponent, expect.anything());
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nvmet.subsys.delete', [1, { force: true }]);
+    expect(router.navigate).toHaveBeenCalledWith(['/sharing/nvme-of', 'subsys-1']);
   });
 });

@@ -7,4 +7,9 @@ export const nvmeOfRoutes: Routes = [
     component: NvmeOfComponent,
     data: { title: 'NVMe-oF', breadcrumb: null },
   },
+  {
+    path: ':name',
+    component: NvmeOfComponent,
+    data: { title: 'NVMe-oF', breadcrumb: null },
+  },
 ];

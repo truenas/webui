@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy, Component, effect, OnInit,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
+import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs';
@@ -62,6 +63,7 @@ export class NvmeOfComponent implements OnInit {
   constructor(
     private nvmeOfStore: NvmeOfStore,
     private slideIn: SlideIn,
+    private activatedRoute: ActivatedRoute,
   ) {
     this.setupDataProvider();
   }
@@ -87,7 +89,10 @@ export class NvmeOfComponent implements OnInit {
         if (!subsystems.length) {
           this.dataProvider.setEmptyType(EmptyType.NoPageData);
         } else {
-          this.dataProvider.expandedRow = subsystems[0];
+          const routeSelectedRow = subsystems.find(
+            (subsystem) => subsystem.name === this.activatedRoute.snapshot.paramMap.get('name'),
+          );
+          this.dataProvider.expandedRow = routeSelectedRow || subsystems[0];
         }
       }
     });
