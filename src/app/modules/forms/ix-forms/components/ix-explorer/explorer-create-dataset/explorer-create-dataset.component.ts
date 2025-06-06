@@ -1,7 +1,6 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  Host,
   input,
   computed,
 } from '@angular/core';
@@ -48,7 +47,7 @@ export class ExplorerCreateDatasetComponent {
   private explorerValue = toSignal<string | string[]>(this.ngControl.valueChanges, { initialValue: null });
 
   constructor(
-    @Host() private explorer: IxExplorerComponent,
+    private explorer: IxExplorerComponent,
     private matDialog: MatDialog,
     private ngControl: NgControl,
   ) {}

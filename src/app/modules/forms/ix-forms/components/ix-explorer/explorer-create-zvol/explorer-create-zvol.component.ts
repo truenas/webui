@@ -1,5 +1,5 @@
 import {
-  AfterViewInit, ChangeDetectionStrategy, Component, computed, Host, signal,
+  AfterViewInit, ChangeDetectionStrategy, Component, computed, signal,
 } from '@angular/core';
 import { NgControl } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -42,7 +42,7 @@ export class ExplorerCreateZvolComponent implements AfterViewInit {
   protected explorerValue = signal<string | string[]>('');
 
   constructor(
-    @Host() private explorer: IxExplorerComponent,
+    private explorer: IxExplorerComponent,
     private slideIn: SlideIn,
     private ngControl: NgControl,
   ) {}
