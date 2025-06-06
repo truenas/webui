@@ -1,5 +1,6 @@
 {
   "": "",
+  "Configuring apps": "",
   "If something isn’t working correctly, it may be better to use the “Report a bug” option. This way you’ll automatically get status updates as we fix it.": "",
   "Make sure to add your current IP address to the list. Otherwise you will lose access to TrueNAS UI.": "",
   "\n              It looks like your session has been inactive for more than {lifetime} seconds.<br>\n              For security reasons we will log you out at {time}.\n            ": "\nSembra che la tua sessione sia stata inattiva per più di {lifetime} secondi.<br>\nPer motivi di sicurezza, verrai disconnesso alle {time}.",
@@ -1005,7 +1006,6 @@
   "Configured for simultaneous use with SMB and NFS on the same dataset.": "Configurato per l'uso simultaneo con SMB e NFS sullo stesso dataset.",
   "Configuring NFS exports of root-level datasets may lead to storage reconfiguration issues. Consider creating a dataset instead.": "La configurazione delle esportazioni NFS di dataset di livello root può portare a problemi di riconfigurazione dell'archiviazione. Considera invece la creazione di un dataset.",
   "Configuring SMB exports of root-level datasets may lead to storage reconfiguration issues. Consider creating a dataset instead.": "La configurazione delle esportazioni SMB di dataset di livello root può portare a problemi di riconfigurazione dell'archiviazione. Considera invece la creazione di un dataset.",
-  "Configuring...": "Configurazione in corso...",
   "Confirm": "Conferma",
   "Confirm changes to <i>Group</i>. To prevent errors, changes to the <i>Group</i> are submitted only when this box is set.": "Conferma le modifiche a <i>Gruppo</i>. Per prevenire errori, le modifiche al <i>Gruppo</i> vengono inviate solo quando questa casella è selezionata.",
   "Confirm changes to <i>User</i>. To prevent errors, changes to the <i>User</i> are submitted only when this box is set.": "Conferma le modifiche a <i>Utente</i>. Per prevenire errori, le modifiche all'<i>Utente</i> vengono inviate solo quando questa casella è selezionata.",
