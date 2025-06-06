@@ -3,7 +3,6 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { KerberosConfig } from 'app/interfaces/kerberos-config.interface';
@@ -39,9 +38,7 @@ describe('KerberosSettingsComponent', () => {
         } as KerberosConfig),
         mockCall('kerberos.update'),
       ]),
-      mockProvider(SlideIn, {
-        components$: of([]),
-      }),
+      mockProvider(SlideIn),
       mockProvider(FormErrorHandlerService),
       mockProvider(DialogService),
       mockProvider(SlideInRef, slideInRef),

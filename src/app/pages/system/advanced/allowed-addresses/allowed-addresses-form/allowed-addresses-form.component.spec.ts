@@ -43,7 +43,6 @@ describe('AllowedAddressesComponent', () => {
       ]),
       mockProvider(SlideIn, {
         open: jest.fn(() => of()),
-        components$: of([]),
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),

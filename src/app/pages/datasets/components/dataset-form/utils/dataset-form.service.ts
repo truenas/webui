@@ -3,14 +3,13 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   Observable, of, OperatorFunction, pipe,
 } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 import { maxDatasetNesting, maxDatasetPath } from 'app/constants/dataset.constants';
 import { inherit } from 'app/enums/with-inherit.enum';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { ApiService } from 'app/modules/websocket/api.service';
 
 @Injectable({
@@ -21,7 +20,6 @@ export class DatasetFormService {
     private dialog: DialogService,
     private api: ApiService,
     private translate: TranslateService,
-    private slideIn: SlideIn,
   ) {}
 
   checkAndWarnForLengthAndDepth(path: string): Observable<boolean> {
@@ -35,7 +33,6 @@ export class DatasetFormService {
             this.translate.instant(helptextDatasetForm.pathWarningTitle),
             this.translate.instant(helptextDatasetForm.pathIsTooDeepWarning),
           ).pipe(
-            tap(() => this.slideIn.closeLast()),
             map(() => false),
           );
         }
@@ -44,7 +41,6 @@ export class DatasetFormService {
             this.translate.instant(helptextDatasetForm.pathWarningTitle),
             this.translate.instant(helptextDatasetForm.pathIsTooLongWarning),
           ).pipe(
-            tap(() => this.slideIn.closeLast()),
             map(() => false),
           );
         }

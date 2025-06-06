@@ -79,9 +79,7 @@ describe('ServiceSmbComponent', () => {
           ] as User[],
         ),
       ]),
-      mockProvider(SlideIn, {
-        components$: of([]),
-      }),
+      mockProvider(SlideIn),
       mockProvider(FormErrorHandlerService),
       mockProvider(Router),
       mockProvider(DialogService),

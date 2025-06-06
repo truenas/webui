@@ -49,7 +49,6 @@ describe('AccessFormComponent', () => {
       ]),
       mockProvider(SlideIn, {
         open: jest.fn(() => of(true)),
-        components$: of([]),
       }),
       mockProvider(SystemGeneralService, {
         isEnterprise: jest.fn(() => true),

@@ -41,7 +41,6 @@ describe('ConsoleFormComponent', () => {
       ]),
       mockProvider(SlideIn, {
         open: jest.fn(() => of({ response: true })),
-        components$: of([]),
       }),
       mockProvider(FormErrorHandlerService),
       mockProvider(DialogService),

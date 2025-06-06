@@ -7,7 +7,6 @@ import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
-import { of } from 'rxjs';
 import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Certificate } from 'app/interfaces/certificate.interface';
@@ -63,9 +62,7 @@ describe('CertificateEditComponent', () => {
         mockJob('certificate.update'),
       ]),
       mockProvider(MatDialog),
-      mockProvider(SlideIn, {
-        components$: of([]),
-      }),
+      mockProvider(SlideIn),
       mockProvider(SlideInRef, slideInRef),
       mockProvider(DialogService),
       mockAuth(),
@@ -191,7 +188,6 @@ describe('CertificateEditComponent', () => {
 
       expect(slideInRef.swap).toHaveBeenCalledWith(
         CertificateAcmeAddComponent,
-        { data: spectator.component.certificate },
       );
     });
   });

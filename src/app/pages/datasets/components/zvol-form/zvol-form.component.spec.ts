@@ -4,7 +4,6 @@ import { fakeAsync } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DatasetRecordSize, DatasetType } from 'app/enums/dataset.enum';
@@ -116,9 +115,7 @@ describe('ZvolFormComponent', () => {
           'AES-256-GCM': 'AES-256-GCM',
         }),
       ]),
-      mockProvider(SlideIn, {
-        components$: of([]),
-      }),
+      mockProvider(SlideIn),
       mockProvider(DialogService),
       mockProvider(SlideInRef, slideInRef),
       mockProvider(FilesystemService),

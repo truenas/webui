@@ -106,7 +106,6 @@ describe('CloudBackupFormComponent', () => {
       ]),
       mockProvider(SlideIn, {
         open: jest.fn(() => of()),
-        components$: of([]),
       }),
       mockProvider(CloudCredentialService, {
         getCloudSyncCredentials: jest.fn(() => of([googlePhotosCreds, storjCreds])),

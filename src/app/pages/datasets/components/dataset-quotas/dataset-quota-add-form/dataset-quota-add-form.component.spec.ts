@@ -43,9 +43,7 @@ describe('DatasetQuotaAddFormComponent', () => {
         ]),
         groupQueryDsCache: () => of(),
       }),
-      mockProvider(SlideIn, {
-        components$: of([]),
-      }),
+      mockProvider(SlideIn),
       mockProvider(DialogService),
       mockProvider(SlideInRef, slideInRef),
       mockAuth(),

@@ -93,9 +93,7 @@ describe('ActiveDirectoryComponent', () => {
         })),
       }),
       mockProvider(SnackbarService),
-      mockProvider(SlideIn, {
-        components$: of([]),
-      }),
+      mockProvider(SlideIn),
       mockProvider(SlideInRef, slideInRef),
       mockAuth(),
     ],
