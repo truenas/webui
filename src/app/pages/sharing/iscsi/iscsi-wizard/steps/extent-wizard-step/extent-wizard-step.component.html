@@ -28,8 +28,9 @@
       [tooltip]="helptextSharingIscsi.datasetTooltip | translate"
       [required]="true"
       [nodeProvider]="fileNodeProvider"
-      [canCreateDataset]="true"
-    ></ix-explorer>
+    >
+      <ix-explorer-create-dataset></ix-explorer-create-dataset>
+    </ix-explorer>
 
     <ix-input
       formControlName="volsize"

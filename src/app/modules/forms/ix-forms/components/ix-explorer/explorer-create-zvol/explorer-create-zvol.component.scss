@@ -1,0 +1,13 @@
+:host {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.create-btn {
+  background: inherit !important;
+  font-size: 12px;
+
+  &:hover {
+    background: inherit !important;
+  }
+}

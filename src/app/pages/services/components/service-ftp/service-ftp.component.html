@@ -79,8 +79,9 @@
                   [label]="'Path' | translate"
                   [tooltip]="helptext.anonpathTooltip | translate"
                   [nodeProvider]="treeNodeProvider"
-                  [canCreateDataset]="true"
-                ></ix-explorer>
+                >
+                  <ix-explorer-create-dataset></ix-explorer-create-dataset>
+                </ix-explorer>
               }
 
               <ix-checkbox

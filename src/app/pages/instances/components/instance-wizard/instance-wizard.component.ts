@@ -63,6 +63,9 @@ import {
   IxCheckboxListComponent,
 } from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.component';
 import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
+import {
+  ExplorerCreateDatasetComponent,
+} from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import {
   IxFormGlossaryComponent,
@@ -138,6 +141,7 @@ interface NicDeviceOption {
     IxIconGroupComponent,
     MatIconButton,
     IxIconComponent,
+    ExplorerCreateDatasetComponent,
   ],
   templateUrl: './instance-wizard.component.html',
   styleUrls: ['./instance-wizard.component.scss'],

@@ -91,17 +91,3 @@
   color: var(--primary);
 }
 
-.create-dataset-container {
-  background: var(--bg2);
-  display: flex;
-  justify-content: flex-end;
-}
-
-.create-dataset-btn {
-  background: inherit !important;
-  font-size: 12px;
-}
-
-button.create-dataset-btn:hover {
-  background: inherit !important;
-}

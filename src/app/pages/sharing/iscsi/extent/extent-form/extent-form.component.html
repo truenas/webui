@@ -84,8 +84,11 @@
                 [label]="helptext.extent.pathLabel | translate"
                 [tooltip]="helptext.extent.pathTooltip | translate"
                 [required]="true"
-                [canCreateDataset]="isNew"
-              ></ix-explorer>
+              >
+                @if (isNew) {
+                  <ix-explorer-create-dataset></ix-explorer-create-dataset>
+                }
+              </ix-explorer>
 
               <ix-input
                 formControlName="filesize"

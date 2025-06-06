@@ -3,6 +3,7 @@
   "Also delete the underlying file – {name}": "",
   "Configuring apps": "",
   "Delete Namespace": "",
+  "Deselect": "",
   "If something isn’t working correctly, it may be better to use the “Report a bug” option. This way you’ll automatically get status updates as we fix it.": "",
   "Make sure to add your current IP address to the list. Otherwise you will lose access to TrueNAS UI.": "",
   "Session expired": "",
