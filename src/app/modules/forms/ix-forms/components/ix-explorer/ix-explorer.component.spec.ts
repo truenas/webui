@@ -1,8 +1,5 @@
-import { HarnessLoader } from '@angular/cdk/testing';
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { EventEmitter } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import {
   TreeComponent,
   TreeModel,
@@ -11,13 +8,12 @@ import {
 import { IDTypeDictionary } from '@bugsplat/angular-tree-component/lib/defs/api';
 import { FormControl } from '@ngneat/reactive-forms';
 import { SpectatorHost } from '@ngneat/spectator';
-import { createHostFactory, mockProvider } from '@ngneat/spectator/jest';
+import { createHostFactory } from '@ngneat/spectator/jest';
 import { MockInstance, MockModule } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
-import { Dataset } from 'app/interfaces/dataset.interface';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 
@@ -48,7 +44,6 @@ describe.skip('IxExplorerComponent', () => {
   const fakeNodeProvider = jest.fn(() => of([]));
 
   let spectator: SpectatorHost<IxExplorerComponent>;
-  let loader: HarnessLoader;
   const formControl = new FormControl<string | string[]>();
   const createHost = createHostFactory({
     component: IxExplorerComponent,
@@ -87,7 +82,6 @@ describe.skip('IxExplorerComponent', () => {
         },
       },
     );
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     (mockTreeMock.setState as jest.Mock).mockClear();
     (mockTreeMock.getState as jest.Mock).mockClear();
   });
@@ -247,7 +241,6 @@ describe.skip('IxExplorerComponent', () => {
       expect(formControl.value).toEqual(['/mnt/new2']);
     });
   });
-
 
   describe('disabling', () => {
     it('disables input and explorer when form control is disabled', () => {
