@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, effect, input,
+} from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { FormBuilder } from '@ngneat/reactive-forms';
@@ -6,6 +8,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { Role, roleNames } from 'app/enums/role.enum';
+import { User } from 'app/interfaces/user.interface';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -31,6 +34,9 @@ const defaultRole = 'prompt';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AllowedAccessSectionComponent {
+  editingUser = input<User>();
+  protected sshAccessEnabled = this.userFormStore.sshAccess;
+
   protected readonly roles$ = of([
     { label: this.translate.instant('Select Role'), value: defaultRole },
     { label: roleNames.get(Role.FullAdmin), value: Role.FullAdmin },
@@ -56,8 +62,8 @@ export class AllowedAccessSectionComponent {
     ).subscribe({
       next: (sshAccess) => {
         if (sshAccess) {
-          this.form.controls.shell_access.disable();
           this.form.controls.shell_access.setValue(true);
+          this.form.controls.shell_access.disable();
         } else {
           this.form.controls.shell_access.enable();
         }
@@ -65,20 +71,26 @@ export class AllowedAccessSectionComponent {
     });
 
     this.form.valueChanges.pipe(untilDestroyed(this)).subscribe({
-      next: () => {
+      next: (values) => {
         this.userFormStore.setAllowedAccessConfig({
-          smbAccess: this.form.controls.smb_access.value,
-          truenasAccess: this.form.controls.truenas_access.value,
-          sshAccess: this.form.controls.ssh_access.value,
-          shellAccess: this.form.controls.shell_access.value,
+          smbAccess: values.smb_access,
+          truenasAccess: values.truenas_access,
+          sshAccess: values.ssh_access,
+          shellAccess: values.shell_access,
         });
-
-        if (this.form.controls.truenas_access.value) {
-          this.userFormStore.updateSetupDetails({
-            role: defaultRole,
-          });
-        }
       },
+    });
+
+    effect(() => {
+      if (this.editingUser()) {
+        this.form.patchValue({
+          truenas_access: !!this.editingUser().roles.length,
+          shell_access: this.editingUser().shell !== '/usr/bin/nologin',
+          smb_access: this.editingUser().smb,
+          ssh_access: !!this.editingUser().sshpubkey || this.editingUser().ssh_password_enabled,
+          role: this.editingUser().roles.length > 0 ? this.editingUser().roles[0] : defaultRole,
+        });
+      }
     });
   }
 }

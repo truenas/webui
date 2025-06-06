@@ -170,11 +170,12 @@ export class UserFormStore extends ComponentStore<UserFormState> {
     };
   });
 
-  setAllowedAccessConfig = this.updater((state, config: AllowedAccessConfig) => {
+  setAllowedAccessConfig = this.updater((state, allowedAccess: AllowedAccessConfig) => {
     return {
       ...state,
-      allowedAccess: {
-        ...config,
+      setupDetails: {
+        ...state.setupDetails,
+        allowedAccess,
       },
     };
   });

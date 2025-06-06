@@ -86,6 +86,9 @@ describe('AuthSectionComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      spectator.setInput('editingUser', {
+
+      });
       isNewUser.set(false);
     });
 
