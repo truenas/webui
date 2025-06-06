@@ -113,7 +113,7 @@ export class DatasetDetailsPanelComponent {
 
   onAddZvol(): void {
     const slideInRef$ = this.slideIn.open(ZvolFormComponent, {
-      data: { isNew: true, parentId: this.dataset().id },
+      data: { isNew: true, parentOrZvolId: this.dataset().id },
     });
     this.handleSlideInClosed(slideInRef$);
   }

@@ -3,13 +3,13 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 export const helptextZvol = {
   addTitle: T('Add Zvol'),
   editTitle: T('Edit Zvol'),
-  nameLabel: T('Zvol name'),
+  nameLabel: T('Name'),
   nameTooltip: T('Keep the zvol name short. Using a zvol name longer\
  than 63 characters can prevent accessing the zvol as a device.'),
 
   commentsLabel: T('Comments'),
 
-  sizeLabel: T('Size for this zvol'),
+  sizeLabel: T('Size'),
   sizeTooltip: T('Specify a size and value such as <i>10 GiB</i>.'),
 
   forceSizeLabel: T('Force size'),
@@ -25,7 +25,7 @@ export const helptextZvol = {
  for data writes to complete, and <i>Disabled</i> never\
  waits for writes to complete.'),
 
-  compressionLabel: T('Compression level'),
+  compressionLabel: T('Compression'),
   compressionTooltip: T('Encode information in less space than the \
  original data occupies. It is recommended to choose a compression algorithm \
  that balances disk performance with the amount of saved space.<br> <i>LZ4</i> is \
@@ -64,7 +64,7 @@ export const helptextZvol = {
   },
 
   encryption: {
-    title: T('Encryption Options'),
+    title: T('Encryption'),
     inheritLabel: T('Inherit'),
     inheritNotEncrypted: T('Inherit (non-encrypted)'),
     inheritEncrypted: T('Inherit (encrypted)'),

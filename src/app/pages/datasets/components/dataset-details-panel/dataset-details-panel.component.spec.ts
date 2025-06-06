@@ -124,7 +124,7 @@ describe('DatasetDetailsPanelComponent', () => {
     await addZvolButton.click();
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
       ZvolFormComponent,
-      { data: { parentId: 'root/parent/child', isNew: true } },
+      { data: { parentOrZvolId: 'root/parent/child', isNew: true } },
     );
   });
 

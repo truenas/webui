@@ -131,7 +131,7 @@ export class DatasetDetailsCardComponent {
 
   editZvol(): void {
     this.slideIn.open(ZvolFormComponent, {
-      data: { isNew: false, parentId: this.dataset().id },
+      data: { isNew: false, parentOrZvolId: this.dataset().id },
     }).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
