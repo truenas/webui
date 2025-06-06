@@ -135,15 +135,15 @@ export class NvmeOfCardComponent implements OnInit {
     actionsWithMenuColumn({
       actions: [
         {
-          iconName: iconMarker('mdi-delete'),
-          tooltip: this.translate.instant('Delete'),
-          onClick: (row) => this.doDelete(row),
-          requiredRoles: this.requiredRoles,
-        },
-        {
           iconName: iconMarker('visibility'),
           tooltip: this.translate.instant('View'),
           onClick: (row) => this.router.navigate(['/sharing/nvme-of', row.name]),
+          requiredRoles: this.requiredRoles,
+        },
+        {
+          iconName: iconMarker('mdi-delete'),
+          tooltip: this.translate.instant('Delete'),
+          onClick: (row) => this.doDelete(row),
           requiredRoles: this.requiredRoles,
         },
       ],
