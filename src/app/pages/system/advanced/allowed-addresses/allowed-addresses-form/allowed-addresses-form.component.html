@@ -6,27 +6,38 @@
 <mat-card>
   <mat-card-content>
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-      <ix-list
-        formArrayName="addresses"
-        [formArray]="form.controls.addresses"
-        [empty]="form.controls.addresses.controls.length === 0"
-        [label]="'Allowed IP Addresses' | translate"
-        [tooltip]="helpText.allowedIpAddresses.tooltip | translate"
-        (add)="addAddress()"
-      >
-        @for (network of form.controls.addresses.controls; track network; let i = $index) {
-          <ix-list-item
-            [label]="'Allowed IP Addresses' | translate"
-            (delete)="removeAddress(i)"
-          >
-            <ix-input
-              [formControlName]="i"
-              [label]="'IP Address/Subnet' | translate"
-              [required]="true"
-            ></ix-input>
-          </ix-list-item>
+      <ix-fieldset>
+        <ix-list
+          class="addresses"
+          formArrayName="addresses"
+          [formArray]="form.controls.addresses"
+          [empty]="form.controls.addresses.controls.length === 0"
+          [label]="'Allowed IP Addresses' | translate"
+          [tooltip]="helptext.allowedIpAddresses.tooltip | translate"
+          (add)="addAddress()"
+        >
+          @for (network of form.controls.addresses.controls; track network; let i = $index) {
+            <ix-list-item
+              [label]="'Allowed IP Addresses' | translate"
+              (delete)="removeAddress(i)"
+            >
+              <ix-input
+                [formControlName]="i"
+                [label]="'IP Address/Subnet' | translate"
+                [required]="true"
+              ></ix-input>
+            </ix-list-item>
+          }
+        </ix-list>
+
+        @if (isLockoutWarningShown()) {
+          <ix-warning
+            color="red"
+            class="lockout-warning"
+            [message]="helptext.allowedIpAddresses.lockoutWarning | translate"
+          ></ix-warning>
         }
-      </ix-list>
+      </ix-fieldset>
 
       <ix-form-actions>
         <button

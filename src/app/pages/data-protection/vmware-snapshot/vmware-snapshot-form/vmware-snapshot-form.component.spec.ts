@@ -72,9 +72,7 @@ describe('VmwareSnapshotFormComponent', () => {
         mockCall('vmware.create'),
         mockCall('vmware.update'),
       ]),
-      mockProvider(SlideIn, {
-        components$: of([]),
-      }),
+      mockProvider(SlideIn),
       mockProvider(FormErrorHandlerService),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),

@@ -92,8 +92,8 @@ export class ReplicationWizardComponent {
     private translate: TranslateService,
     private loader: LoaderService,
     private snackbar: SnackbarService,
-    public slideInRef: SlideInRef<undefined, ReplicationTask | undefined>,
     private authService: AuthService,
+    public slideInRef: SlideInRef<undefined, ReplicationTask | undefined>,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(Boolean(this.whatAndWhere()?.form?.dirty || this.when()?.form?.dirty));

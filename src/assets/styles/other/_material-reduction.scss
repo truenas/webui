@@ -890,3 +890,18 @@ mat-tab-nav-panel {
     }
   }
 }
+
+.slide-in-wrapper .mat-mdc-card {
+  border: none;
+  box-shadow: none;
+  margin: 0;
+}
+
+.custom-slide-in-backdrop {
+  background: rgba(0, 0, 0, 0.75);
+  top: 48px !important;
+}
+
+.custom-slide-in-nobackdrop {
+  top: 48px !important;
+}

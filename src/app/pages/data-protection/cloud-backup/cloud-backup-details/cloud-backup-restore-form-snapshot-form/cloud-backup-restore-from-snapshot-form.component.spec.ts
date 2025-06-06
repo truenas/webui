@@ -47,7 +47,6 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
       ]),
       mockProvider(SlideIn, {
         open: jest.fn(() => of()),
-        components$: of([]),
       }),
       mockProvider(SlideInRef, slideInRef),
       mockProvider(FilesystemService),
