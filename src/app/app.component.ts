@@ -11,6 +11,7 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LayoutService } from 'app/modules/layout/layout.service';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { PingService } from 'app/modules/websocket/ping.service';
 import { DetectBrowserService } from 'app/services/detect-browser.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
@@ -36,6 +37,7 @@ export class AppComponent implements OnInit {
     private snackbar: MatSnackBar,
     private translate: TranslateService,
     @Inject(WINDOW) private window: Window,
+    private slideIn: SlideIn,
   ) {
     this.wsStatus.isAuthenticated$.pipe(untilDestroyed(this)).subscribe((isAuthenticated) => {
       if (!isAuthenticated && this.isAuthenticated) {
@@ -60,6 +62,7 @@ export class AppComponent implements OnInit {
     this.router.events.pipe(untilDestroyed(this)).subscribe((event) => {
       // save currenturl
       if (event instanceof NavigationEnd) {
+        this.slideIn.closeAll();
         const navigation = this.router.getCurrentNavigation();
         if (this.isAuthenticated && event.url !== '/signin' && !navigation?.extras?.skipLocationChange) {
           this.window.sessionStorage.setItem('redirectUrl', event.url);

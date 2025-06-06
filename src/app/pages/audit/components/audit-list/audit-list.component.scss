@@ -29,6 +29,8 @@
   margin-top: -5px;
 
   ix-icon {
+    position: relative;
+    top: 2px;
     width: 15px;
 
     &.error-color {

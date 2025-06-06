@@ -74,6 +74,7 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
     { label: this.translate.instant('Category'), value: null },
     { label: this.translate.instant('App Name'), value: AppsFiltersSort.Title },
     { label: this.translate.instant('Updated Date'), value: AppsFiltersSort.LastUpdate },
+    { label: this.translate.instant('Popularity'), value: AppsFiltersSort.PopularityRank },
   ]);
 
   categoriesProvider$: ChipsProvider = (query: string) => this.applicationsStore.appsCategories$.pipe(

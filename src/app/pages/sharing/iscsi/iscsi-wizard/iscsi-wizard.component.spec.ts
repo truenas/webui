@@ -58,9 +58,7 @@ describe('IscsiWizardComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockProvider(SlideIn, {
-        components$: of([]),
-      }),
+      mockProvider(SlideIn),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),

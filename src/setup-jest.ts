@@ -31,7 +31,7 @@ import {
   MissingTranslationHandler, TranslateCompiler, TranslateLoader, TranslateModule, TranslateFakeLoader,
 } from '@ngx-translate/core';
 import failOnConsole from 'jest-fail-on-console';
-import { MockProvider } from 'ng-mocks';
+import { MockComponent, MockProvider } from 'ng-mocks';
 import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
 import {
   Observable,
@@ -172,6 +172,9 @@ defineGlobalsInjections({
     }),
     StoreModule.forRoot({}),
     EffectsModule.forRoot([]),
+  ],
+  declarations: [
+    MockComponent(ModalHeaderComponent),
   ],
   providers: [
     MockProvider(HighContrastModeDetector),
