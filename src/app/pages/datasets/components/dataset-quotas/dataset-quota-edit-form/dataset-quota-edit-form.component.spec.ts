@@ -3,7 +3,6 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
@@ -42,9 +41,7 @@ describe('DatasetQuotaEditFormComponent', () => {
         } as DatasetQuota]),
         mockCall('pool.dataset.set_quota'),
       ]),
-      mockProvider(SlideIn, {
-        components$: of([]),
-      }),
+      mockProvider(SlideIn),
       mockProvider(DialogService),
       mockProvider(IxFormatterService, {
         memorySizeFormatting: jest.fn(() => '500 KiB'),

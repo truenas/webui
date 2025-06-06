@@ -71,9 +71,7 @@ describe('LdapComponent', () => {
           { id: 2, realm: 'Realm 2' },
         ] as KerberosRealm[]),
       ]),
-      mockProvider(SlideIn, {
-        components$: of([]),
-      }),
+      mockProvider(SlideIn),
       mockProvider(SystemGeneralService, {
         refreshDirServicesCache: jest.fn(() => of(null)),
         getCertificates: () => of([

@@ -1,9 +1,9 @@
 :host {
   display: block;
-  position: sticky;
+  left: 0;
+  position: absolute;
   top: 0;
   width: 100%;
-  z-index: 20000;
 }
 
 .ix-slidein-title-bar {
@@ -14,8 +14,6 @@
   display: flex;
   height: 75px;
   justify-content: space-between;
-  margin: 0 -20px;
-  padding: 30px;
 
   &.has-many-components {
     justify-content: flex-start;
@@ -27,20 +25,23 @@
   word-break: break-all;
 }
 
+.title-left-margin {
+  margin-left: 30px;
+}
+
 #ix-close-icon {
   color: var(--fg1);
   cursor: pointer;
+  margin-left: 20px;
 
   &:focus {
     border-radius: 50%;
     outline: 1.5px solid var(--primary);
   }
+
 }
 
-mat-progress-bar {
-  bottom: 0;
-  left: -20px;
-  position: absolute;
-  width: calc(100% + 40px);
-  z-index: 10005;
+.icon-margin-right {
+  margin-right: 20px;
 }
+

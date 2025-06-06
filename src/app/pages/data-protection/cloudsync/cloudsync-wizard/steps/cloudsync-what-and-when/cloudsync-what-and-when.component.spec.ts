@@ -47,9 +47,7 @@ describe('CloudSyncWhatAndWhenComponent', () => {
         mockCall('cloudsync.credentials.query', [googlePhotosCreds]),
         mockCall('cloudsync.providers', [googlePhotosProvider]),
       ]),
-      mockProvider(SlideIn, {
-        components$: of([]),
-      }),
+      mockProvider(SlideIn),
       mockProvider(DatasetService),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({

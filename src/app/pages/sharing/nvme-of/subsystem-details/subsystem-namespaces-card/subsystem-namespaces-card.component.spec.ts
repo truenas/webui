@@ -1,18 +1,16 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { NvmeOfNamespaceType } from 'app/enums/nvme-of.enum';
 import { helptextNvmeOf } from 'app/helptext/sharing/nvme-of/nvme-of';
 import { NvmeOfNamespace, NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
 import { NamespaceDescriptionComponent } from 'app/pages/sharing/nvme-of/namespaces/namespace-description/namespace-description.component';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
+import { DeleteNamespaceDialogComponent } from 'app/pages/sharing/nvme-of/subsystem-details/subsystem-namespaces-card/delete-namespace-dialog/delete-namespace-dialog.component';
 import { SubsystemNamespacesCardComponent } from 'app/pages/sharing/nvme-of/subsystem-details/subsystem-namespaces-card/subsystem-namespaces-card.component';
 
 describe('SubsystemNamespacesCardComponent', () => {
@@ -24,16 +22,14 @@ describe('SubsystemNamespacesCardComponent', () => {
       NamespaceDescriptionComponent,
     ],
     providers: [
-      mockApi([
-        mockCall('nvmet.namespace.delete'),
-      ]),
-      mockProvider(DialogService, {
-        confirm: jest.fn(() => of(true)),
+      mockProvider(MatDialog, {
+        open: jest.fn(() => ({
+          afterClosed: () => of(true),
+        } as MatDialogRef<unknown>)),
       }),
       mockProvider(SlideIn, {
         open: jest.fn(() => of({ response: true, error: null })),
       }),
-      mockProvider(SnackbarService),
       mockProvider(NvmeOfStore, {
         initialize: jest.fn(),
       }),
@@ -64,21 +60,23 @@ describe('SubsystemNamespacesCardComponent', () => {
   });
 
   describe('has namespaces', () => {
+    const namespaces = [
+      {
+        id: 1,
+        device_type: NvmeOfNamespaceType.File,
+        device_path: '/mnt/dozer/testfile',
+      },
+      {
+        id: 2,
+        device_type: NvmeOfNamespaceType.Zvol,
+        device_path: '/dev/zvol/testpool/testzvol',
+      },
+    ] as NvmeOfNamespace[];
+
     beforeEach(() => {
       initComponent({
         name: 'Test Subsystem',
-        namespaces: [
-          {
-            id: 1,
-            device_type: NvmeOfNamespaceType.File,
-            device_path: '/mnt/dozer/testfile',
-          },
-          {
-            id: 2,
-            device_type: NvmeOfNamespaceType.Zvol,
-            device_path: '/dev/zvol/testpool/testzvol',
-          },
-        ] as NvmeOfNamespace[],
+        namespaces,
       });
     });
 
@@ -93,18 +91,16 @@ describe('SubsystemNamespacesCardComponent', () => {
       expect(secondNamespace).toHaveText('Zvol\n—\n/dev/zvol/testpool/testzvol');
     });
 
-    it('has a delete button that makes an API call to delete a namespace', async () => {
+    it('opens delete namespace dialog when delete button is pressed', async () => {
       const deleteButton = await loader.getHarness(IxIconHarness.with({ name: 'mdi-delete' }));
       await deleteButton.click();
 
-      expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
-        title: 'Please Confirm',
-        message: 'Are you sure you want to delete this namespace?',
-      }));
-
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nvmet.namespace.delete', [1]);
-      expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
-
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
+        DeleteNamespaceDialogComponent,
+        {
+          data: namespaces[0],
+        },
+      );
       expect(spectator.inject(NvmeOfStore).initialize).toHaveBeenCalled();
     });
   });
