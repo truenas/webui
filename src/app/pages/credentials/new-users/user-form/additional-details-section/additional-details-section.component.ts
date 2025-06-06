@@ -101,11 +101,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     sudo_commands_nopasswd_all: [false],
   });
 
-  shellOptions$: Observable<Option[]> = this.api.call('user.shell_choices').pipe(
-    choicesToOptions(),
-    take(1),
-    untilDestroyed(this),
-  );
+  shellOptions$: Observable<Option[]>;
 
   constructor(
     private storageService: StorageService,
@@ -126,6 +122,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
         home: user.home,
         uid: user.uid,
         group: user.group?.id,
+        shell: user.shell,
         sudo_commands: this.form.value.sudo_commands_all ? [allCommands] : this.form.value.sudo_commands,
         sudo_commands_nopasswd: this.form.value.sudo_commands_nopasswd_all
           ? [allCommands]

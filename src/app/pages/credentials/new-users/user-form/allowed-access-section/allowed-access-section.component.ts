@@ -85,7 +85,7 @@ export class AllowedAccessSectionComponent {
       if (this.editingUser()) {
         this.form.patchValue({
           truenas_access: !!this.editingUser().roles.length,
-          shell_access: this.editingUser().shell !== '/usr/bin/nologin',
+          shell_access: this.editingUser().shell !== '/usr/sbin/nologin',
           smb_access: this.editingUser().smb,
           ssh_access: !!this.editingUser().sshpubkey || this.editingUser().ssh_password_enabled,
           role: this.editingUser().roles.length > 0 ? this.editingUser().roles[0] : defaultRole,

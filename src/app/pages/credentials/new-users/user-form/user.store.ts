@@ -120,10 +120,11 @@ export class UserFormStore extends ComponentStore<UserFormState> {
     payload = {
       ...payload,
       username: payload.username,
+      email: payload.email,
       full_name: payload.full_name || payload.username,
       home: payload.home || defaultHomePath,
-      shell: payload.shell || '/usr/sbin/nologin',
-      smb: state.setupDetails.allowedAccess.smbAccess,
+      shell: payload.shell,
+      smb: state.setupDetails.allowedAccess.smbAccess || false,
       ssh_password_enabled: payload.ssh_password_enabled || false,
       sudo_commands: payload.sudo_commands || [] as string[],
       sudo_commands_nopasswd: payload.sudo_commands_nopasswd || [] as string[],

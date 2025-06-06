@@ -92,6 +92,8 @@ describe('AdditionalDetailsSectionComponent', () => {
         home: '',
         home_mode: '700',
         home_create: false,
+        sudo_commands: [],
+        sudo_commands_nopasswd: [],
         uid: null,
       });
       expect(spectator.inject(UserFormStore).updateSetupDetails).toHaveBeenCalledWith({
@@ -112,6 +114,8 @@ describe('AdditionalDetailsSectionComponent', () => {
         full_name: 'Editable field',
         email: 'editable@truenas.local',
         shell: '/usr/bin/bash',
+        sudo_commands: [],
+        sudo_commands_nopasswd: [],
         group_create: true,
         groups: [],
         home: '',

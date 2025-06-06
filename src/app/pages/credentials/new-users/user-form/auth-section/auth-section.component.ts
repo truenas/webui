@@ -41,7 +41,7 @@ import { UserStigPasswordOption } from 'app/pages/credentials/users/user-form/us
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AuthSectionComponent implements OnInit {
-  protected editingUser = input<User>();
+  editingUser = input<User>();
   protected isNewUser = computed(() => !this.editingUser());
   protected sshAccessEnabled = this.userFormStore.sshAccess;
   protected smbAccessEnabled = this.userFormStore.smbAccess;
