@@ -9,6 +9,7 @@
   "Action: {actionName}": "",
   "Action: {actionName} | User: {user}": "",
   "Add Namespace": "",
+  "Additional Options": "",
   "Are you sure you want to delete this namespace?": "",
   "Delete namespace": "",
   "Edit namespace": "",
@@ -996,7 +997,6 @@
   "Compress": "压缩",
   "Compress Connections": "压缩连接",
   "Compression": "压缩",
-  "Compression level": "压缩级别",
   "Compression Level": "压缩级别",
   "Computer Account OU": "计算机账户组织单位",
   "Config Email": "配置邮箱",
@@ -4186,7 +4186,6 @@
   "Similar Apps": "相似的应用",
   "Site Name": "站点名称",
   "Size": "大小",
-  "Size for this zvol": "此 zvol 的大小",
   "Size in GiB of refreservation to set on ZFS dataset  where the audit databases are stored. The refreservation specifies the  minimum amount of space guaranteed to the dataset, and counts against  the space available for other datasets in the zpool where the audit  dataset is located.": "在存储审计数据库的 ZFS 数据集上设置的 refreservation 大小（以 GiB 为单位）。refreservation 指定了保证给该数据集的最小空间量，并计入存储审计数据集所在的 zpool 中其他数据集可用空间的计算。",
   "Size in GiB of the maximum amount of space that may be  consumed by the dataset where the audit dabases are stored.": "存储审计数据库的数据集可能消耗的最大空间大小（以 GiB 为单位）。",
   "Skip": "跳过",
@@ -5314,6 +5313,5 @@
   "Zvol": "Zvol",
   "Zvol «{name}» updated.": "Zvol «{name}» 已更新。",
   "Zvol Details": "Zvol详情",
-  "Zvol name": "Zvol名称",
   "Zvol Space Management": "Zvol空间管理"
 }

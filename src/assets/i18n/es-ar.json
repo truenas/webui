@@ -16,6 +16,7 @@
   "Action: {actionName} | User: {user}": "",
   "Add Namespace": "",
   "Add NVME-oF Share": "",
+  "Additional Options": "",
   "Allow All Except": "",
   "Allow all except: {activities}": "",
   "Allow any host to connect": "",
@@ -1077,7 +1078,6 @@
   "Compress": "Comprimir",
   "Compress Connections": "Comprimir conexiones",
   "Compression": "Compresión",
-  "Compression level": "Nivel de compresión",
   "Compression Level": "Nivel de compresión",
   "Computer Account OU": "Cuenta de computadora OU",
   "Config Email": "Configurar correo",
@@ -4197,7 +4197,6 @@
   "Similar Apps": "Apps similares",
   "Site Name": "Nombre del sitio",
   "Size": "Tamaño",
-  "Size for this zvol": "Tamaño para este zvol",
   "Size in GiB of refreservation to set on ZFS dataset  where the audit databases are stored. The refreservation specifies the  minimum amount of space guaranteed to the dataset, and counts against  the space available for other datasets in the zpool where the audit  dataset is located.": "Tamaño en GiB de la reserva de referencia que se debe establecer en el conjunto de datos de ZFS donde se almacenan las bases de datos de auditoría. La reserva de referencia especifica la cantidad mínima de espacio garantizada para el conjunto de datos y se tiene en cuenta en el espacio disponible para otros conjuntos de datos en el zpool donde se encuentra el conjunto de datos de auditoría.",
   "Size in GiB of the maximum amount of space that may be  consumed by the dataset where the audit dabases are stored.": "Tamaño en GiB de la cantidad máxima de espacio que puede consumir el conjunto de datos donde se almacenan las bases de datos de auditoría.",
   "Skip": "Omitir",
@@ -5314,6 +5313,5 @@
   "Zvol": "Zvol",
   "Zvol «{name}» updated.": "Se actualizó el zvol «{name}».",
   "Zvol Details": "Detalles de Zvol",
-  "Zvol name": "Nombre del zvol",
   "Zvol Space Management": "Gestión del espacio zvol"
 }

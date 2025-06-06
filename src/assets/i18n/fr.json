@@ -98,6 +98,7 @@
   "Add Target": "",
   "Add Trusted Platform Module": "",
   "Additional Details": "",
+  "Additional Options": "",
   "Address Pool": "",
   "Address Pools": "",
   "Admins": "",
@@ -1927,7 +1928,6 @@
   "Completed Jobs": "Jobs terminés",
   "Completely replicate the selected dataset. The target dataset will have all of the source dataset's properties, child datasets, clones and snapshots that match the specified naming schema. Set Snapshot Name Regular Expression to .* to replicate all snapshots.": "Répliquer complètement le dataset sélectionné. Le dataset cible aura toutes les propriétés du dataset source, les datasets enfants, les clones et les instantanés qui correspondent au schéma de nommage spécifié. Définissez l'expression régulière du nom de l'instantané sur .* pour répliquer tous les instantanés.",
   "Compress": "Compresser",
-  "Compression level": "Niveau de compression",
   "Compression Level": "Niveau de compression",
   "Computer Account OU": "Compte d’ordinateur OU",
   "Config Email": "Configurer l'e-mail",
@@ -4413,7 +4413,6 @@
   "Similar Apps": "Applications similaires",
   "Site Name": "Nom du site",
   "Size": "Taille",
-  "Size for this zvol": "Taille pour ce zvol",
   "Size in GiB of refreservation to set on ZFS dataset  where the audit databases are stored. The refreservation specifies the  minimum amount of space guaranteed to the dataset, and counts against  the space available for other datasets in the zpool where the audit  dataset is located.": "Taille en Gio de la réfreservation à définir sur le dataset ZFS où les bases de données d'audit sont stockées. La refreservation spécifie la quantité minimale d'espace garantie pour le dataset et est prise en compte dans l'espace disponible pour les autres datasets dans le zpool où se trouve le dataset d'audit.",
   "Size in GiB of the maximum amount of space that may be  consumed by the dataset where the audit dabases are stored.": "Taille en GiB de la quantité maximale d'espace pouvant être consommée par le dataset dans lequel les bases de données d'audit sont stockées.",
   "Skip": "Passer",
@@ -5314,6 +5313,5 @@
   "Zvol": "Zvol",
   "Zvol «{name}» updated.": "Zvol «{name}» mis à jour.",
   "Zvol Details": "Détails zvol",
-  "Zvol name": "Nom du zvol",
   "Zvol Space Management": "Gestion de l'espace Zvol"
 }

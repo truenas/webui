@@ -236,6 +236,7 @@
   "Additional hosts to be appended to <i>/etc/hosts</i>. Separate entries by pressing <code>Enter</code>. Hosts defined here are  still accessible by name even when DNS is not available. See  <a href=\"https://man7.org/linux/man-pages/man5/hosts.5.html\" target=\"_blank\">hosts(5)</a>  for additional information.": "",
   "Additional Kerberos application settings. See the \"appdefaults\" section of <a href=\"https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf.html\" target=\"_blank\">[krb.conf(5)]</a>. for available settings and usage syntax.": "",
   "Additional Kerberos library settings. See the \"libdefaults\" section of <a href=\"https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf.html\" target=\"_blank\">[krb.conf(5)]</a>. for available settings and usage syntax.": "",
+  "Additional Options": "",
   "Additional options for <a href=\"https://arthurdejong.org/nss-pam-ldapd/nslcd.conf.5\" target=\"_blank\">nslcd.conf</a>.": "",
   "Admin Password": "",
   "Admin Server": "",
@@ -4187,7 +4188,6 @@
   "Completely replicate the selected dataset. The target dataset will have all of the source dataset's properties, child datasets, clones and snapshots that match the specified naming schema. Set Snapshot Name Regular Expression to .* to replicate all snapshots.": "選択したデータセットを完全に複製します。ターゲットデータセットには、指定した命名スキーマに一致するソース データセットのプロパティ、子データセット、クローン、スナップショットがすべて含まれます。すべてのスナップショットを複製するには、スナップショット名の正規表現を .* に設定します。",
   "Compress": "圧縮",
   "Compression": "圧縮",
-  "Compression level": "圧縮レベル",
   "Compression Level": "圧縮レベル",
   "Config Service": "サービスの構成",
   "Configuration": "構成",
@@ -5001,7 +5001,6 @@
   "Sign-in to a Docker registry": "Dockerレジストリにサインインする",
   "Signup": "サインアップ",
   "Size": "サイズ",
-  "Size for this zvol": "Zvolのサイズ",
   "SMB": "SMB",
   "SMB Group": "SMBグループ",
   "SMB Name": "SMB名",
@@ -5314,6 +5313,5 @@
   "ZFS L2ARC read-cache that can be used with fast devices to accelerate read operations.": "ZFS L2ARC リードキャッシュは、高速なデバイスと共に使用することで、読み込み操作を高速化することができます。",
   "ZFS LOG device that can improve speeds of synchronous writes. Optional write-cache that can be removed.": "ZFS LOGデバイスは、同期書き込みの速度を向上させることができる。オプションのライトキャッシュは削除可能。",
   "ZFS Replication to another TrueNAS": "別の TrueNAS への ZFS レプリケーション",
-  "Zvol": "Zvol",
-  "Zvol name": "Zvol 名"
+  "Zvol": "Zvol"
 }

@@ -4,26 +4,27 @@ import { fakeAsync } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { DatasetRecordSize, DatasetType } from 'app/enums/dataset.enum';
+import {
+  DatasetRecordSize, DatasetSnapdev, DatasetSync, DatasetType,
+} from 'app/enums/dataset.enum';
+import { DeduplicationSetting } from 'app/enums/deduplication-setting.enum';
+import { OnOff } from 'app/enums/on-off.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { DetailsTableHarness } from 'app/modules/details-table/details-table.harness';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
-import { FilesystemService } from 'app/services/filesystem.service';
 
 describe('ZvolFormComponent', () => {
   let loader: HarnessLoader;
   let spectator: Spectator<ZvolFormComponent>;
   let form: IxFormHarness;
-  let details: DetailsTableHarness;
+  let mainDetails: DetailsTableHarness;
 
   const slideInRef: SlideInRef<{ isNew: boolean; parentId: string } | undefined, unknown> = {
     close: jest.fn(),
@@ -118,12 +119,8 @@ describe('ZvolFormComponent', () => {
           'AES-256-GCM': 'AES-256-GCM',
         }),
       ]),
-      mockProvider(SlideIn, {
-        components$: of([]),
-      }),
       mockProvider(DialogService),
       mockProvider(SlideInRef, slideInRef),
-      mockProvider(FilesystemService),
       mockAuth(),
     ],
   });
@@ -132,36 +129,43 @@ describe('ZvolFormComponent', () => {
     beforeEach(async () => {
       spectator = createComponent({
         providers: [
-          mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ isNew: true, parentId: 'test pool' })) }),
+          mockProvider(SlideInRef, {
+            ...slideInRef,
+            getData: jest.fn(() => ({ isNew: true, parentOrZvolId: 'test pool' })),
+          }),
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      details = await loader.getHarness(DetailsTableHarness);
+      mainDetails = await loader.getHarness(DetailsTableHarness);
     });
 
-    it('adds a new zvol when new form is saved', fakeAsync(async (): Promise<void> => {
+    it('adds a new zvol when new form is saved', fakeAsync(async () => {
       spectator.tick();
 
       await form.fillForm({
-        'Zvol name': 'new zvol',
-        'Size for this zvol': '2 GiB',
+        Name: 'new zvol',
+        Size: '2 GiB',
         Sparse: true,
         'Inherit (non-encrypted)': false,
         'Encryption Type': 'Passphrase',
-        Algorithm: 'AES-128-CCM',
-        pbkdf2iters: 500000,
         Passphrase: '12345678',
         'Confirm Passphrase': '12345678',
       });
 
-      await details.setValues({
+      await mainDetails.setValues({
         Comments: 'comments text',
         Sync: 'Standard',
-        'Compression level': 'lz4 (recommended)',
+        Compression: 'lz4 (recommended)',
         'ZFS Deduplication': 'Verify',
         'Read-only': 'On',
         Snapdev: 'Visible',
+      });
+
+      const encryptionDetails = (await loader.getAllHarnesses(DetailsTableHarness))[1];
+      await encryptionDetails.setValues({
+        Algorithm: 'AES-128-CCM',
+        pbkdf2iters: 500000,
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -173,12 +177,12 @@ describe('ZvolFormComponent', () => {
         compression: 'LZ4',
         volsize: 2147500032,
         force_size: false,
-        sync: 'STANDARD',
-        deduplication: 'VERIFY',
+        sync: DatasetSync.Standard,
+        deduplication: DeduplicationSetting.Verify,
         sparse: true,
         volblocksize: '16K',
-        readonly: 'ON',
-        snapdev: 'VISIBLE',
+        readonly: OnOff.On,
+        snapdev: DatasetSnapdev.Visible,
         inherit_encryption: false,
         encryption: true,
         encryption_options: {
@@ -186,7 +190,7 @@ describe('ZvolFormComponent', () => {
           passphrase: '12345678',
           pbkdf2iters: '500000',
         },
-        type: 'VOLUME',
+        type: DatasetType.Volume,
       }]);
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     }));
@@ -196,19 +200,22 @@ describe('ZvolFormComponent', () => {
     beforeEach(async () => {
       spectator = createComponent({
         providers: [
-          mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ isNew: false, parentId: 'test pool' })) }),
+          mockProvider(SlideInRef, {
+            ...slideInRef,
+            getData: jest.fn(() => ({ isNew: false, parentOrZvolId: 'test pool' })),
+          }),
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      details = await loader.getHarness(DetailsTableHarness);
+      mainDetails = await loader.getHarness(DetailsTableHarness);
     });
 
-    it('saves updated zvol when form opened for edit is saved', fakeAsync(async (): Promise<void> => {
+    it('saves updated zvol when form opened for edit is saved', fakeAsync(async () => {
       spectator.tick();
 
       await form.fillForm({
-        'Size for this zvol': '2 GiB',
+        Size: '2 GiB',
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));

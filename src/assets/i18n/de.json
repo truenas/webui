@@ -289,6 +289,7 @@
   "Additional hosts to be appended to <i>/etc/hosts</i>. Separate entries by pressing <code>Enter</code>. Hosts defined here are  still accessible by name even when DNS is not available. See  <a href=\"https://man7.org/linux/man-pages/man5/hosts.5.html\" target=\"_blank\">hosts(5)</a>  for additional information.": "",
   "Additional Kerberos application settings. See the \"appdefaults\" section of <a href=\"https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf.html\" target=\"_blank\">[krb.conf(5)]</a>. for available settings and usage syntax.": "",
   "Additional Kerberos library settings. See the \"libdefaults\" section of <a href=\"https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf.html\" target=\"_blank\">[krb.conf(5)]</a>. for available settings and usage syntax.": "",
+  "Additional Options": "",
   "Additional options for <a href=\"https://arthurdejong.org/nss-pam-ldapd/nslcd.conf.5\" target=\"_blank\">nslcd.conf</a>.": "",
   "Additional Parameters String": "",
   "Address Pool": "",
@@ -4357,7 +4358,6 @@
   "Compatibility": "Kompatibilität",
   "Complete the Upgrade": "Upgrade fertigstellen",
   "Compress": "Komprimieren",
-  "Compression level": "Kompressionslevel",
   "Configure": "Konfigurieren",
   "Configure ACL": "Konfiguriere AVL",
   "Confirm": "Bestätigen",
@@ -5134,7 +5134,6 @@
   "Shutdown Command": "Shutdown-Befehl",
   "Shutdown Timer": "Timer zum Herunterfahren",
   "Size": "Größe",
-  "Size for this zvol": "Größe für dieses ZVOL",
   "SMB Service": "SMB Dienst",
   "SMTP port number. Typically <i>25,465</i> (secure SMTP), or <i>587</i> (submission).": "SMTP-Portnummer. In der Regel <i>25,465</i> (sicheres SMTP) oder <i>587</i> (Einreichung).",
   "Snapshot Lifetime": "Snapshot-Lebensdauer",
@@ -5314,6 +5313,5 @@
   "Years": "Jahre",
   "You have left the domain.": "Sie haben die Domäne verlassen.",
   "ZFS Deduplication": "ZFS Deduplikation",
-  "ZFS Filesystem": "ZFS Dateisystem",
-  "Zvol name": "ZVOL Name"
+  "ZFS Filesystem": "ZFS Dateisystem"
 }
