@@ -104,8 +104,6 @@ describe('UserPasswordCardComponent', () => {
   });
 
   it('generates Generate One-Time Password when Generate One-Time Password button is pressed', async () => {
-    spectator.component.isStigMode.set(true);
-
     const button = await loader.getHarness(MatButtonHarness.with({ text: /Generate One-Time Password/ }));
     await button.click();
 
