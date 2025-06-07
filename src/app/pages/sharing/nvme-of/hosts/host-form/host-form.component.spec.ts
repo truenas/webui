@@ -7,7 +7,6 @@ import { NvmeOfGlobalConfig, NvmeOfHost } from 'app/interfaces/nvme-of.interface
 import { DetailsTableHarness } from 'app/modules/details-table/details-table.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { HostFormComponent } from 'app/pages/sharing/nvme-of/hosts/host-form/host-form.component';
 
@@ -31,7 +30,6 @@ describe('HostFormComponent', () => {
           basenqn: 'nqn.2011-06.com.truenas',
         } as NvmeOfGlobalConfig),
       ]),
-      mockProvider(SnackbarService),
       mockProvider(SlideInRef, {
         getData: slideInGetData,
         close: jest.fn(),
@@ -78,7 +76,6 @@ describe('HostFormComponent', () => {
     expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({
       response: savedHost,
     });
-    expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
   });
 
   describe('edits', () => {

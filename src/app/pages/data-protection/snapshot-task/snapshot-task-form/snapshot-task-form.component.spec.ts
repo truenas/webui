@@ -70,9 +70,7 @@ describe('SnapshotTaskComponent', () => {
         mockCall('pool.snapshottask.update'),
       ]),
       mockProvider(DialogService),
-      mockProvider(SlideIn, {
-        components$: of([]),
-      }),
+      mockProvider(SlideIn),
       mockProvider(StorageService, {
         getDatasetNameOptions: jest.fn(() => of([
           { label: 'test', value: 'test' },

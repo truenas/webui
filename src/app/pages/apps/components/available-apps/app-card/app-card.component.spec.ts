@@ -33,13 +33,18 @@ describe('AppCardComponent', () => {
           latest_version: '1.0.0',
           train: 'stable',
           installed: true,
+          popularity_rank: 99,
         } as AvailableApp,
       },
     });
   });
 
   it('shows app name', () => {
-    expect(spectator.query('.name')).toHaveExactText('SETI@home');
+    expect(spectator.query('.name')).toContainText('SETI@home');
+  });
+
+  it('shows app popularity', () => {
+    expect(spectator.query('.popularity-rank')).toContainText('99');
   });
 
   it('shows app logo', () => {

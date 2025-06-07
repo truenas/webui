@@ -11,6 +11,9 @@ import {
   SubsystemHostsCardComponent,
 } from 'app/pages/sharing/nvme-of/subsystem-details/subsystem-hosts-card/subsystem-hosts-card.component';
 import {
+  SubsystemNamespacesCardComponent,
+} from 'app/pages/sharing/nvme-of/subsystem-details/subsystem-namespaces-card/subsystem-namespaces-card.component';
+import {
   SubsystemPortsCardComponent,
 } from 'app/pages/sharing/nvme-of/subsystem-details/subsystem-ports-card/subsystem-ports-card.component';
 
@@ -23,6 +26,7 @@ describe('SubsystemDetailsComponent', () => {
     imports: [
       MockComponents(
         SubsystemDetailsCardComponent,
+        SubsystemNamespacesCardComponent,
         SubsystemPortsCardComponent,
         SubsystemHostsCardComponent,
       ),
@@ -37,6 +41,12 @@ describe('SubsystemDetailsComponent', () => {
 
   it('shows details card', () => {
     const card = spectator.query(SubsystemDetailsCardComponent);
+    expect(card).toBeTruthy();
+    expect(card.subsystem).toBe(subsystem);
+  });
+
+  it('shows namespaces card', () => {
+    const card = spectator.query(SubsystemNamespacesCardComponent);
     expect(card).toBeTruthy();
     expect(card.subsystem).toBe(subsystem);
   });
