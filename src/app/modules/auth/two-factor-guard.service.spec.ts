@@ -147,7 +147,7 @@ describe('TwoFactorGuardService', () => {
     );
     expect(isAllowedSecondCheck).toBe(true);
 
-    expect(spectator.inject(MatDialog).open).not.toHaveBeenCalledWith(PasswordChangeRequiredDialog);
+    expect(spectator.inject(MatDialog).open).not.toHaveBeenCalledWith(PasswordChangeRequiredDialogComponent);
   });
 
   it('shows password change required dialog when user must change password', async () => {
