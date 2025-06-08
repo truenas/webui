@@ -15,6 +15,7 @@ import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AccountAttribute } from 'app/enums/account-attribute.enum';
+import { AuthMechanism } from 'app/enums/auth-mechanism.enum';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -76,6 +77,11 @@ describe('AuthService', () => {
             ],
           },
         } as LoginExResponse),
+        mockCall('auth.mechanism_choices', [
+          AuthMechanism.PasswordPlain,
+          AuthMechanism.TokenPlain,
+          AuthMechanism.OtpToken,
+        ]),
       ]),
       {
         provide: WebSocketStatusService,

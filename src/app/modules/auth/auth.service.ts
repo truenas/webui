@@ -9,6 +9,7 @@ import {
   Observable,
   of,
   ReplaySubject,
+  Subject,
   Subscription,
   switchMap,
   take,
@@ -16,6 +17,7 @@ import {
   timer,
 } from 'rxjs';
 import { AccountAttribute } from 'app/enums/account-attribute.enum';
+import { AuthMechanism } from 'app/enums/auth-mechanism.enum';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { Role } from 'app/enums/role.enum';
 import { filterAsync } from 'app/helpers/operators/filter-async.operator';
@@ -60,7 +62,7 @@ export class AuthService {
   private generateTokenSubscription: Subscription | null;
 
   readonly user$ = this.loggedInUser$.asObservable();
-  readonly isTokenAllowed$ = new BehaviorSubject<boolean>(false);
+  private readonly checkIsTokenAllowed$ = new Subject<void>();
 
   isOtpwUser$: Observable<boolean> = this.user$.pipe(
     filter(Boolean),
@@ -229,7 +231,7 @@ export class AuthService {
           this.wsStatus.setLoginStatus(true);
           this.window.sessionStorage.setItem('loginBannerDismissed', 'true');
           if (result?.authenticator === AuthenticatorLoginLevel.Level1) {
-            this.isTokenAllowed$.next(true);
+            this.checkIsTokenAllowed$.next();
             return this.authToken$.pipe(
               take(1),
               map(() => LoginResult.Success),
@@ -248,7 +250,9 @@ export class AuthService {
   }
 
   private setupPeriodicTokenGeneration(): void {
-    this.isTokenAllowed$.pipe(
+    this.checkIsTokenAllowed$.pipe(
+      switchMap(() => this.api.call('auth.mechanism_choices')),
+      map((choices) => choices.includes(AuthMechanism.TokenPlain)),
       filter(Boolean),
       filterAsync(() => this.wsStatus.isAuthenticated$),
     ).subscribe(() => {
