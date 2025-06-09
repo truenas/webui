@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {
   AbstractControl, ValidationErrors,
 } from '@angular/forms';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
@@ -15,8 +16,8 @@ import { ApiService } from 'app/modules/websocket/api.service';
   providedIn: 'root',
 })
 export class SmbValidationService {
-  private nameExistsError = 'Share with this name already exists';
-  private invalidCharactersError = 'Share name contains the following invalid characters:';
+  private nameExistsError = T('Share with this name already exists');
+  private invalidCharactersError = T('Share name contains the following invalid characters');
 
   constructor(
     private api: ApiService,
@@ -91,7 +92,7 @@ export class SmbValidationService {
     }
 
     if (errorText.includes(this.invalidCharactersError)) {
-      return `${this.translate.instant(this.invalidCharactersError)} ${errorText.split(this.invalidCharactersError)[1].trim()}`;
+      return `${this.translate.instant(this.invalidCharactersError)}: ${errorText.split(this.invalidCharactersError)[1].trim()}`;
     }
 
     return errorText.trim();

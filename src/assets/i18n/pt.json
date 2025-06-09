@@ -2768,6 +2768,8 @@
   "SFTP Log Facility": "",
   "SFTP Log Level": "",
   "Share Attached": "",
+  "Share name contains the following invalid characters": "",
+  "Share with this name already exists": "",
   "Shares allow you to make your data accessible over the network. <br>\n You’ll need a pool and a dataset that you want to share.": "",
   "Sharing": "",
   "Sharing FTP Read": "",

@@ -112,6 +112,8 @@
   "Select hosts you want to be able to access the subsystem.": "",
   "Select ports this subsystem will be accessible on.": "",
   "Session expired": "",
+  "Share name contains the following invalid characters": "",
+  "Share with this name already exists": "",
   "Shares allow you to make your data accessible over the network. <br>\n You’ll need a pool and a dataset that you want to share.": "",
   "Sharing iSCSI Auth Read": "",
   "Sharing iSCSI Auth Write": "",
