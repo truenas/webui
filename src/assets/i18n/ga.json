@@ -15,6 +15,7 @@
   "Add NVME-oF Share": "",
   "Add Port": "",
   "Add Subsystem": "",
+  "Additional Options": "",
   "All hosts are allowed.": "",
   "Allow All Except": "",
   "Allow all except: {activities}": "",
@@ -1107,7 +1108,6 @@
   "Compress": "Comhbhrúigh",
   "Compress Connections": "Comhbhrúigh Naisc",
   "Compression": "Comhbhrú",
-  "Compression level": "Leibhéal comhbhrúite",
   "Compression Level": "Leibhéal Comhbhrú",
   "Computer Account OU": "Cuntas Ríomhaire OU",
   "Config Email": "Ríomhphost Cumraíochta",
@@ -4217,7 +4217,6 @@
   "Similar Apps": "Apps cosúla",
   "Site Name": "Ainm an tSuímh",
   "Size": "Méid",
-  "Size for this zvol": "Méid don zvol seo",
   "Size in GiB of refreservation to set on ZFS dataset  where the audit databases are stored. The refreservation specifies the  minimum amount of space guaranteed to the dataset, and counts against  the space available for other datasets in the zpool where the audit  dataset is located.": "Méid an áirithinte i GiB le socrú ar thacar sonraí ZFS ina stóráiltear na bunachair shonraí iniúchta. Sonraíonn an t-áirithint an t-íosmhéid spáis a ráthaítear don tacar sonraí, agus déantar é a chomhaireamh in aghaidh an spáis atá ar fáil do thacair sonraí eile sa zpool ina bhfuil an tacar sonraí iniúchta suite.",
   "Size in GiB of the maximum amount of space that may be  consumed by the dataset where the audit dabases are stored.": "Méid i GiB an t-uasmhéid spáis a fhéadfaidh an tacar sonraí a chaitheamh ina bhfuil na dabaseanna iniúchta stóráilte.",
   "Skip": "Scipeáil",
@@ -5318,6 +5317,5 @@
   "Zvol": "Roghnaigh",
   "Zvol «{name}» updated.": "Zvol «{name}» nuashonraithe.",
   "Zvol Details": "Roghnaigh Mionsonraí",
-  "Zvol name": "Roghnaigh mé",
   "Zvol Space Management": "Roghnaigh Bainistíocht Spáis"
 }
