@@ -2410,6 +2410,8 @@
   "Log Path": "",
   "Log VDEVs": "",
   "Logged In To Outlook": "",
+  "Logging in at the current URL is not possible.": "",
+  "Logging in at the current URL is not possible.<br>To login, please navigate to: {links}": "",
   "Logging in...": "",
   "Logging Level": "",
   "Logical Block Size": "",

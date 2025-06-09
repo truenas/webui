@@ -268,6 +268,8 @@
   "List": "",
   "Local user accounts using NTLM authentication are not permitted when TrueNAS is running in an enhanced security mode.": "",
   "Locked by parent": "",
+  "Logging in at the current URL is not possible.": "",
+  "Logging in at the current URL is not possible.<br>To login, please navigate to: {links}": "",
   "Login": "",
   "Longer passwords are more secure. Try using a phrase or a mix of words and numbers.": "",
   "Lower": "",

@@ -2581,6 +2581,8 @@
   "Logged In To Jira": "",
   "Logged In To Outlook": "",
   "Logged In To Provider": "",
+  "Logging in at the current URL is not possible.": "",
+  "Logging in at the current URL is not possible.<br>To login, please navigate to: {links}": "",
   "Logging in...": "",
   "Logging Level": "",
   "Logical Block Size": "",

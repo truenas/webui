@@ -58,6 +58,8 @@
   "Identity": "",
   "If something isn’t working correctly, it may be better to use the “Report a bug” option. This way you’ll automatically get status updates as we fix it.": "",
   "Locked by parent": "",
+  "Logging in at the current URL is not possible.": "",
+  "Logging in at the current URL is not possible.<br>To login, please navigate to: {links}": "",
   "Login": "",
   "MAC Address": "",
   "Make sure to add your current IP address to the list. Otherwise you will lose access to TrueNAS UI.": "",

@@ -5,6 +5,8 @@
   "{name} VDEVs": "",
   "Additional Options": "",
   "Existing user password will not be removed": "",
+  "Logging in at the current URL is not possible.": "",
+  "Logging in at the current URL is not possible.<br>To login, please navigate to: {links}": "",
   "User will be encouraged to choose their own password after they login for the first time if they don't have a password.": "",
   "\n              It looks like your session has been inactive for more than {lifetime} seconds.<br>\n              For security reasons we will log you out at {time}.\n            ": "\n你的会话似乎已超过 {lifetime} 秒处于非活动状态。<br>\n 出于安全原因，我们将在 {time} 后注销你的会话。\n",
   " as of {dateTime}": "截至 {dateTime}",
