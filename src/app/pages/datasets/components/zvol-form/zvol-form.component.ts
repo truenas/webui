@@ -237,26 +237,26 @@ export class ZvolFormComponent implements OnInit {
         untilDestroyed(this),
       ).subscribe({
         next: ([parents]) => {
-          const parent = parents[0];
-          if (parent.encrypted) {
+          const parentOrZvol = parents[0];
+          if (parentOrZvol.encrypted) {
             this.form.controls.encryption.setValue(true);
             this.form.controls.encryption.disable();
           }
 
-          this.namesInUse = parent.children?.map((child) => {
+          this.namesInUse = parentOrZvol.children?.map((child) => {
             return /[^/]*$/.exec(child.name)[0];
           }) || [];
 
-          this.inheritEncryptionProperties(parent);
+          this.inheritEncryptionProperties(parentOrZvol);
 
           this.addMinimumBlocksizeWarning();
 
-          this.setReadonlyField(parent);
+          this.setReadonlyField(parentOrZvol);
 
-          if (parent?.type === DatasetType.Filesystem) {
-            this.inheritFileSystemProperties(parent);
+          if (parentOrZvol?.type === DatasetType.Filesystem) {
+            this.inheritFileSystemProperties(parentOrZvol);
           } else {
-            let parentDatasetId: string | string[] = parent.name.split('/');
+            let parentDatasetId: string | string[] = parentOrZvol.name.split('/');
             parentDatasetId.pop();
             parentDatasetId = parentDatasetId.join('/');
 
@@ -268,11 +268,11 @@ export class ZvolFormComponent implements OnInit {
                 this.form.controls.sparse.disable();
                 this.form.controls.volblocksize.disable();
 
-                this.copyParentProperties(parent);
-                this.inheritSyncSource(parent, parentDataset);
-                this.inheritCompression(parent, parentDataset);
-                this.inheritDeduplication(parent, parentDataset);
-                this.inheritSnapdev(parent, parentDataset);
+                this.copyParentProperties(parentOrZvol);
+                this.inheritSyncSource(parentOrZvol, parentDataset);
+                this.inheritCompression(parentOrZvol, parentDataset);
+                this.inheritDeduplication(parentOrZvol, parentDataset);
+                this.inheritSnapdev(parentOrZvol, parentDataset);
 
                 this.cdr.markForCheck();
               },

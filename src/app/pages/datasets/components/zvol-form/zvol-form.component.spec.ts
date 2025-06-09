@@ -1,6 +1,5 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { fakeAsync } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
@@ -13,6 +12,7 @@ import { DeduplicationSetting } from 'app/enums/deduplication-setting.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
+import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { DetailsTableHarness } from 'app/modules/details-table/details-table.harness';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
@@ -32,6 +32,75 @@ describe('ZvolFormComponent', () => {
     getData: jest.fn(() => undefined),
   };
 
+  const dataset = {
+    id: 'test pool',
+    type: DatasetType.Filesystem,
+    name: 'test pool',
+    pool: 'test pool',
+    encrypted: false,
+    children: [] as Dataset[],
+    deduplication: {
+      parsed: 'off',
+      rawvalue: 'off',
+      value: 'OFF',
+      source: ZfsPropertySource.Default,
+    },
+    sync: {
+      parsed: 'standard',
+      rawvalue: 'standard',
+      value: 'STANDARD',
+      source: ZfsPropertySource.Default,
+    },
+    compression: {
+      parsed: 'lz4',
+      rawvalue: 'lz4',
+      value: 'LZ4',
+      source: ZfsPropertySource.Local,
+    },
+    readonly: {
+      parsed: false,
+      rawvalue: 'off',
+      value: 'OFF',
+      source: ZfsPropertySource.Default,
+    },
+    key_format: {
+      parsed: 'none',
+      rawvalue: 'none',
+      value: null,
+      source: ZfsPropertySource.Default,
+    },
+    encryption_algorithm: {
+      parsed: 'off',
+      rawvalue: 'off',
+      value: null,
+      source: ZfsPropertySource.Default,
+    },
+    pbkdf2iters: {
+      parsed: '0',
+      rawvalue: '0',
+      value: '0',
+      source: ZfsPropertySource.Default,
+    },
+    snapdev: {
+      parsed: 'hidden',
+      rawvalue: 'hidden',
+      value: 'HIDDEN',
+      source: ZfsPropertySource.Default,
+    },
+    volblocksize: {
+      parsed: 65536,
+      rawvalue: '65536',
+      value: '64K',
+      source: ZfsPropertySource.Default,
+    },
+    volsize: {
+      parsed: 65536,
+      rawvalue: '65536',
+      value: '64K',
+      source: ZfsPropertySource.Default,
+    },
+  } as Dataset;
+
   const createComponent = createComponentFactory({
     component: ZvolFormComponent,
     imports: [
@@ -42,74 +111,16 @@ describe('ZvolFormComponent', () => {
         mockCall('pool.dataset.create'),
         mockCall('pool.dataset.update'),
         mockCall('pool.dataset.recommended_zvol_blocksize', '16K' as DatasetRecordSize),
-        mockCall('pool.dataset.query', [{
-          id: 'test pool',
-          type: DatasetType.Filesystem,
-          name: 'test pool',
-          pool: 'test pool',
-          encrypted: false,
-          children: [] as Dataset[],
-          deduplication: {
-            parsed: 'off',
-            rawvalue: 'off',
-            value: 'OFF',
-            source: ZfsPropertySource.Default,
-          },
-          sync: {
-            parsed: 'standard',
-            rawvalue: 'standard',
-            value: 'STANDARD',
-            source: ZfsPropertySource.Default,
-          },
-          compression: {
-            parsed: 'lz4',
-            rawvalue: 'lz4',
-            value: 'LZ4',
-            source: ZfsPropertySource.Local,
-          },
-          readonly: {
-            parsed: false,
-            rawvalue: 'off',
-            value: 'OFF',
-            source: ZfsPropertySource.Default,
-          },
-          key_format: {
-            parsed: 'none',
-            rawvalue: 'none',
-            value: null,
-            source: ZfsPropertySource.Default,
-          },
-          encryption_algorithm: {
-            parsed: 'off',
-            rawvalue: 'off',
-            value: null,
-            source: ZfsPropertySource.Default,
-          },
-          pbkdf2iters: {
-            parsed: '0',
-            rawvalue: '0',
-            value: '0',
-            source: ZfsPropertySource.Default,
-          },
-          snapdev: {
-            parsed: 'hidden',
-            rawvalue: 'hidden',
-            value: 'HIDDEN',
-            source: ZfsPropertySource.Default,
-          },
-          volblocksize: {
-            parsed: 65536,
-            rawvalue: '65536',
-            value: '64K',
-            source: ZfsPropertySource.Default,
-          },
-          volsize: {
-            parsed: 65536,
-            rawvalue: '65536',
-            value: '64K',
-            source: ZfsPropertySource.Default,
-          },
-        }] as Dataset[]),
+        mockCall('pool.dataset.query', (params) => {
+          if ((params[0][0] as QueryFilter<Dataset>)[2] === 'parentId') {
+            return [dataset];
+          }
+
+          return [{
+            ...dataset,
+            type: DatasetType.Volume,
+          }];
+        }),
         mockCall('pool.dataset.encryption_algorithm_choices', {
           'AES-128-CCM': 'AES-128-CCM',
           'AES-192-CCM': 'AES-192-CCM',
@@ -131,7 +142,7 @@ describe('ZvolFormComponent', () => {
         providers: [
           mockProvider(SlideInRef, {
             ...slideInRef,
-            getData: jest.fn(() => ({ isNew: true, parentOrZvolId: 'test pool' })),
+            getData: jest.fn(() => ({ isNew: true, parentOrZvolId: 'parentId' })),
           }),
         ],
       });
@@ -140,9 +151,7 @@ describe('ZvolFormComponent', () => {
       mainDetails = await loader.getHarness(DetailsTableHarness);
     });
 
-    it('adds a new zvol when new form is saved', fakeAsync(async () => {
-      spectator.tick();
-
+    it('adds a new zvol when new form is saved', async () => {
       await form.fillForm({
         Name: 'new zvol',
         Size: '2 GiB',
@@ -172,7 +181,7 @@ describe('ZvolFormComponent', () => {
       await saveButton.click();
 
       expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('pool.dataset.create', [{
-        name: 'test pool/new zvol',
+        name: 'parentId/new zvol',
         comments: 'comments text',
         compression: 'LZ4',
         volsize: 2147500032,
@@ -193,7 +202,7 @@ describe('ZvolFormComponent', () => {
         type: DatasetType.Volume,
       }]);
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
-    }));
+    });
   });
 
   describe('edits zvol', () => {
@@ -202,18 +211,33 @@ describe('ZvolFormComponent', () => {
         providers: [
           mockProvider(SlideInRef, {
             ...slideInRef,
-            getData: jest.fn(() => ({ isNew: false, parentOrZvolId: 'test pool' })),
+            getData: jest.fn(() => ({ isNew: false, parentOrZvolId: 'zvolId' })),
           }),
         ],
       });
+
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
       mainDetails = await loader.getHarness(DetailsTableHarness);
     });
 
-    it('saves updated zvol when form opened for edit is saved', fakeAsync(async () => {
-      spectator.tick();
+    it('shows values for the zvol when form opened for edit', async () => {
+      expect(await form.getValues()).toEqual({
+        Name: 'test pool',
+        'Force size': false,
+        Size: '64 KiB',
+      });
+      expect(await mainDetails.getValues()).toEqual({
+        Comments: 'Not Set',
+        Compression: 'lz4 (recommended)',
+        'Read-only': 'Inherit (off)',
+        Snapdev: 'Inherit (hidden)',
+        Sync: 'Inherit (standard)',
+        'ZFS Deduplication': 'Inherit (off)',
+      });
+    });
 
+    it('saves updated zvol when form opened for edit is saved', async () => {
       await form.fillForm({
         Size: '2 GiB',
       });
@@ -221,18 +245,18 @@ describe('ZvolFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('pool.dataset.update', ['test pool', {
+      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('pool.dataset.update', ['zvolId', {
         comments: '',
-        compression: 'INHERIT',
-        deduplication: 'INHERIT',
+        compression: 'LZ4',
+        deduplication: 'OFF',
         force_size: false,
         readonly: 'INHERIT',
         snapdev: 'INHERIT',
-        sync: 'INHERIT',
+        sync: 'STANDARD',
         volsize: 2147483648,
       }]);
 
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
-    }));
+    });
   });
 });
