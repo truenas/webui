@@ -14,6 +14,7 @@ import { OneTimePasswordCreatedDialog } from 'app/pages/credentials/users/one-ti
 import { UserStigPasswordOption } from 'app/pages/credentials/users/user-form/user-form.component';
 
 export const defaultHomePath = '/var/empty';
+export const defaultRole = 'prompt';
 
 export interface UserFormSetupDetails {
   allowedAccess: AllowedAccessConfig;

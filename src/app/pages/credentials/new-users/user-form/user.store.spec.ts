@@ -55,6 +55,8 @@ describe('UserFormStore', () => {
       username: 'operator',
       full_name: 'Operator',
       password: 'password123',
+      email: 'operator@truenas.local',
+      shell: '/usr/bin/zsh',
     });
     spectator.service.createUser();
 
@@ -63,7 +65,8 @@ describe('UserFormStore', () => {
       group_create: true,
       home: '/var/empty',
       password: 'password123',
-      shell: '/usr/sbin/nologin',
+      email: 'operator@truenas.local',
+      shell: '/usr/bin/zsh',
       smb: true,
       ssh_password_enabled: false,
       sudo_commands: [],

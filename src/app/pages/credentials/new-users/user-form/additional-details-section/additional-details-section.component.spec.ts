@@ -162,6 +162,7 @@ describe('AdditionalDetailsSectionComponent', () => {
 
     it('check uid field is disabled', async () => {
       const editables = await loader.getHarness(DetailsTableHarness);
+
       expect(await editables.getValues()).toEqual({
         'Full Name': 'test',
         Email: 'Not Set',

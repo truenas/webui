@@ -28,7 +28,7 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { AdditionalDetailsSectionComponent } from 'app/pages/credentials/new-users/user-form/additional-details-section/additional-details-section.component';
 import { AllowedAccessSectionComponent } from 'app/pages/credentials/new-users/user-form/allowed-access-section/allowed-access-section.component';
 import { AuthSectionComponent } from 'app/pages/credentials/new-users/user-form/auth-section/auth-section.component';
-import { defaultHomePath, UserFormStore } from 'app/pages/credentials/new-users/user-form/user.store';
+import { defaultHomePath, defaultRole, UserFormStore } from 'app/pages/credentials/new-users/user-form/user.store';
 import { selectUsers } from 'app/pages/credentials/users/store/user.selectors';
 import { UserStigPasswordOption } from 'app/pages/credentials/users/user-form/user-form.component';
 import { DownloadService } from 'app/services/download.service';
@@ -145,7 +145,6 @@ export class UserFormComponent implements OnInit {
 
   private setupForm(): void {
     this.listenForAllFormsValidity();
-    this.userFormStore.isNewUser.set(this.isNewUser);
 
     if (this.editingUser()) {
       this.setupEditUserForm(this.editingUser());
@@ -180,12 +179,12 @@ export class UserFormComponent implements OnInit {
     });
 
     this.userFormStore.updateSetupDetails({
-      role: user.roles.length > 0 ? user.roles[0] : 'prompt',
+      role: user?.roles?.length > 0 ? user.roles[0] : defaultRole,
     });
 
     this.userFormStore.setAllowedAccessConfig({
       smbAccess: user.smb,
-      truenasAccess: user.roles.length > 0,
+      truenasAccess: user.roles?.length > 0,
       sshAccess: user.ssh_password_enabled,
       shellAccess: !!user.shell,
     });
