@@ -3,6 +3,7 @@ import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import {
+  EMPTY,
   filter,
   map,
   merge,
@@ -16,6 +17,7 @@ import {
   takeUntil,
   throwError,
 } from 'rxjs';
+import { ApiErrorName } from 'app/enums/api.enum';
 import { isErrorResponse } from 'app/helpers/api.helper';
 import { applyApiEvent } from 'app/helpers/operators/apply-api-event.operator';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
@@ -177,6 +179,11 @@ export class ApiService {
   ): OperatorFunction<SuccessfulResponse | ErrorResponse, SuccessfulResponse> {
     return switchMap((message: SuccessfulResponse | ErrorResponse) => {
       if (isErrorResponse(message)) {
+        if (message?.error?.data?.errname === ApiErrorName.NotAuthenticated) {
+          this.wsStatus.setLoginStatus(false);
+          return EMPTY;
+        }
+
         return throwError(() => new ApiCallError(message.error));
       }
 
