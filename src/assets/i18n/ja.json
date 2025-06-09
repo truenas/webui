@@ -5318,3 +5318,4 @@
   "ZFS LOG device that can improve speeds of synchronous writes. Optional write-cache that can be removed.": "ZFS LOGデバイスは、同期書き込みの速度を向上させることができる。オプションのライトキャッシュは削除可能。",
   "ZFS Replication to another TrueNAS": "別の TrueNAS への ZFS レプリケーション",
   "Zvol": "Zvol"
+}
