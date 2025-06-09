@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, computed, input, OnChanges, OnInit, output,
 } from '@angular/core';
-import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
@@ -88,7 +88,7 @@ export class BaseNamespaceFormComponent implements OnInit, OnChanges {
 
   protected form = this.formBuilder.group({
     device_type: [FormNamespaceType.Zvol],
-    device_path: [''],
+    device_path: ['', Validators.required],
     filename: [''],
     filesize: [null as number | null],
   });

@@ -7,10 +7,12 @@ import {
 } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -41,7 +43,6 @@ describe('AllowedAddressesComponent', () => {
       ]),
       mockProvider(SlideIn, {
         open: jest.fn(() => of()),
-        components$: of([]),
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -87,5 +88,35 @@ describe('AllowedAddressesComponent', () => {
     expect(api.call).toHaveBeenCalledWith('system.general.update', [
       { ui_allowlist: ['192.168.1.0/24'] },
     ]);
+  });
+
+  describe('warnings', () => {
+    it('does not show a warning when user already has allowed IPs and adds more', async () => {
+      expect(spectator.query(WarningComponent)).not.toExist();
+
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({ 'IP Address/Subnet': '192.168.1.0/24' });
+
+      expect(spectator.query(WarningComponent)).not.toExist();
+    });
+
+    it('shows a warning when user changes form from no addresses to some addresses', async () => {
+      const mockedApi = spectator.inject(MockApiService);
+      mockedApi.mockCall('system.general.config', {
+        ui_allowlist: [],
+      } as SystemGeneralConfig);
+      spectator.component.ngOnInit();
+
+      expect(spectator.query(WarningComponent)).not.toExist();
+
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({ 'IP Address/Subnet': '192.168.1.0/24' });
+
+      const warning = spectator.query(WarningComponent);
+      expect(warning.color()).toBe('red');
+      expect(warning.message()).toBe(
+        'Make sure to add your current IP address to the list. Otherwise you will lose access to TrueNAS UI.',
+      );
+    });
   });
 });

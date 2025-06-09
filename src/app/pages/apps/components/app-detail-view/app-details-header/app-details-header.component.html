@@ -5,32 +5,7 @@
   <div class="app-image-holder">
     <ix-app-card-logo [url]="app()?.icon_url"></ix-app-card-logo>
   </div>
-  @if (selectedPool()) {
-    <button
-      *ixRequiresRoles="requiredRoles"
-      mat-button
-      color="primary"
-      [ixTest]="[app()?.name, 'install']"
-      [disabled]="!app()"
-      (click)="navigateToInstallPage()"
-    >
-      @if (app()?.installed) {
-        {{ 'Install Another Instance' | translate }}
-      } @else {
-        {{ 'Install' | translate }}
-      }
-    </button>
-  } @else {
-    <button
-      *ixRequiresRoles="dockerUpdateRequiredRoles"
-      mat-button
-      color="primary"
-      ixTest="setup-pool"
-      (click)="showChoosePoolModal()"
-    >
-      {{ 'Setup Pool To Install' | translate }}
-    </button>
-  }
+  <ix-install-app-button [app]="app()"></ix-install-app-button>
 </div>
 
 <div class="app-info">

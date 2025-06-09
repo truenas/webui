@@ -1,0 +1,31 @@
+<h1 mat-dialog-title>{{ 'Delete Namespace' | translate }}</h1>
+<div mat-dialog-content class="message">
+  <p>
+    {{ 'Are you sure you want to delete this namespace?' | translate }}
+  </p>
+
+  @if (isFile) {
+    <ix-checkbox
+      [formControl]="removeFileControl"
+      [label]="('Also delete the underlying file – {name}' | translate: { name: namespace.device_path })"
+    ></ix-checkbox>
+  } @else {
+    <p>
+      {{ 'Underlying Zvol will not be deleted.' | translate }}
+    </p>
+  }
+</div>
+
+<ix-form-actions mat-dialog-actions>
+  <button
+    mat-button
+    ixTest="cancel"
+    [matDialogClose]="false"
+  >{{ 'Cancel' | translate }}</button>
+  <button
+    mat-button
+    color="warn"
+    ixTest="delete"
+    (click)="onDelete()"
+  >{{ 'Delete' | translate }}</button>
+</ix-form-actions>

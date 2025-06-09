@@ -28,7 +28,6 @@ describe('KernelFormComponent', () => {
       ]),
       mockProvider(SlideIn, {
         open: jest.fn(() => of({ response: true })),
-        components$: of([]),
       }),
       mockProvider(SlideInRef, {
         close: jest.fn(),

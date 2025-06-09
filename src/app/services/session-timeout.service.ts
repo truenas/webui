@@ -80,7 +80,7 @@ export class SessionTimeoutService {
             this.router.navigate(['/signin']);
             this.dialogService.closeAllDialogs();
             this.snackbar.open(
-              this.translate.instant('Token expired'),
+              this.translate.instant('Session expired'),
               this.translate.instant('Close'),
               { duration: 4000, verticalPosition: 'bottom' },
             );
