@@ -1,5 +1,6 @@
 {
   "": "",
+  "Additional Options": "",
   "DH Group": "",
   "DH-CHAP key to be used to authenticate the host.": "",
   "Don't use DH key exchange.": "",
@@ -1114,7 +1115,6 @@
   "Compress": "Сжатие",
   "Compress Connections": "Сжатие соединения",
   "Compression": "Сжатие",
-  "Compression level": "Степень сжатия",
   "Compression Level": "Сжатие",
   "Computer Account OU": "Подразделение компьютерной учётной записи",
   "Config Email": "Настройка эл. почты",
@@ -4239,7 +4239,6 @@
   "Similar Apps": "Похожие приложения",
   "Site Name": "Имя сайта",
   "Size": "Размер",
-  "Size for this zvol": "Размер этого тома ZFS",
   "Size in GiB of refreservation to set on ZFS dataset  where the audit databases are stored. The refreservation specifies the  minimum amount of space guaranteed to the dataset, and counts against  the space available for other datasets in the zpool where the audit  dataset is located.": "Размер в ГиБ обновления для набора данных ZFS, в котором хранятся базы данных аудита. При обновлении задается минимальный объём пространства, гарантированного для набора данных, и учитывается пространство, доступное для других наборов данных в пуле ZFS, где находится набор данных аудита.",
   "Size in GiB of the maximum amount of space that may be  consumed by the dataset where the audit dabases are stored.": "Размер в ГиБ максимального пространства, которое может быть использовано набором данных, в котором хранятся базы данных аудита.",
   "Skip": "Пропустить",
@@ -5318,6 +5317,5 @@
   "Zvol": "Том ZFS",
   "Zvol «{name}» updated.": "Том ZFS «{name}» обновлён.",
   "Zvol Details": "Подробности тома ZFS",
-  "Zvol name": "Имя тома ZFS",
   "Zvol Space Management": "Управление пространством тома ZFS"
 }

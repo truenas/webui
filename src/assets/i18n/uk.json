@@ -198,6 +198,7 @@
   "Additional Details": "",
   "Additional Domains:": "",
   "Additional Hardware": "",
+  "Additional Options": "",
   "Additional Parameters String": "",
   "Address Pool": "",
   "Address Pools": "",
@@ -3178,7 +3179,6 @@
   "Complete the Upgrade": "Завершити оновлення",
   "Completely replicate the selected dataset. The target dataset will have all of the source dataset's properties, child datasets, clones and snapshots that match the specified naming schema. Set Snapshot Name Regular Expression to .* to replicate all snapshots.": "Повністю скопіюйте вибраний набір даних. Цільовий набір даних матиме всі властивості вихідного набору даних, дочірні набори даних, клони та знімки, які відповідають указаній схемі іменування. Установіть регулярний вираз імені знімка на .*, щоб відтворити всі знімки.",
   "Compress": "Стиснення",
-  "Compression level": "Ступінь стиснення",
   "Compression Level": "Рівень стиснення",
   "Config Service": "Налаштувати сервіс",
   "Configuration Preview": "Попередній перегляд конфігурації",
@@ -4757,7 +4757,6 @@
   "Silver / Gold Coverage Customers can enable iXsystems Proactive Support. This  automatically emails iXsystems when certain conditions occur on this TrueNAS system. The iX Support  Team will promptly communicate with the Contacts saved below to quickly resolve any issue that may  have occurred on the system.": "Клієнти з покриттям Silver/Gold можуть включити Проактивну підтримку iXsystems. Це автоматично відправляє iXsystems електронні листи, коли у цій системі TrueNAS виникають певні умови. Служба підтримки iX швидко зв'яжеться з контактами, збереженими нижче, щоб швидко вирішити будь-яку проблему, яка могла виникнути в системі.",
   "Similar Apps": "Схожі програми",
   "Size": "Розмір",
-  "Size for this zvol": "Розмір цього Zvol",
   "Slot": "Слот",
   "SMB": "SMB",
   "SMB - Client Account": "SMB - Обліковий запис клієнта",
@@ -5318,6 +5317,5 @@
   "zstd-7 (very slow)": "zstd-7 (дуже повільний)",
   "zstd-fast (default level, 1)": "zstd-fast (рівень за замовчуванням, 1)",
   "Zvol": "Zvol",
-  "Zvol Details": "Деталі ZVOL",
-  "Zvol name": "Ім'я ZVOL"
+  "Zvol Details": "Деталі ZVOL"
 }
