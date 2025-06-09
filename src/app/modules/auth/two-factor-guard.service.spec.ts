@@ -126,6 +126,7 @@ describe('TwoFactorGuardService', () => {
     getGlobalTwoFactorConfig.mockReturnValue(of({ enabled: true } as GlobalTwoFactorConfig));
     userTwoFactorConfig$.next({ secret_configured: false } as UserTwoFactorConfig);
     isOtpwUser$.next(true);
+    isPasswordChangeRequired$.next(true);
 
     const isAllowed = await firstValueFrom(
       spectator.service.canActivateChild({} as ActivatedRouteSnapshot, { url: '/dashboard' } as RouterStateSnapshot),
@@ -140,11 +141,19 @@ describe('TwoFactorGuardService', () => {
       panelClass: 'full-screen-modal',
       disableClose: true,
     });
+
+    const isAllowedSecondCheck = await firstValueFrom(
+      spectator.service.canActivateChild({} as ActivatedRouteSnapshot, { url: '/dashboard2' } as RouterStateSnapshot),
+    );
+    expect(isAllowedSecondCheck).toBe(true);
+
+    expect(spectator.inject(MatDialog).open).not.toHaveBeenCalledWith(PasswordChangeRequiredDialogComponent);
   });
 
   it('shows password change required dialog when user must change password', async () => {
     isAuthenticated$.next(true);
     isOtpwUser$.next(false);
+    wasOneTimePasswordChanged$.next(false);
     getGlobalTwoFactorConfig.mockReturnValue(of({ enabled: true } as GlobalTwoFactorConfig));
     userTwoFactorConfig$.next({ secret_configured: true } as UserTwoFactorConfig);
     hasRole$.next(true);
