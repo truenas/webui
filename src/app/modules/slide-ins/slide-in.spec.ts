@@ -2,12 +2,12 @@ import { Overlay, OverlayPositionBuilder, OverlayRef } from '@angular/cdk/overla
 import { ComponentRef, Injector, ValueProvider } from '@angular/core';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { of, Subject } from 'rxjs';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SlideInContainerComponent } from 'app/modules/slide-ins/components/slide-in-container/slide-in-container.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { MockSlideInComponent } from 'app/modules/slide-ins/test-utils/mock-slide-in.component';
 import { MockSlideIn2Component } from 'app/modules/slide-ins/test-utils/mock-slide-in2.component';
+import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 
 describe('SlideIn Service', () => {
   let spectator: SpectatorService<SlideIn>;
@@ -20,8 +20,8 @@ describe('SlideIn Service', () => {
   const createService = createServiceFactory({
     service: SlideIn,
     providers: [
-      mockProvider(DialogService, {
-        confirm: jest.fn(() => of(true)),
+      mockProvider(UnsavedChangesService, {
+        showConfirmDialog: jest.fn(() => of(true)),
       }),
       mockProvider(Overlay),
       mockProvider(Injector),

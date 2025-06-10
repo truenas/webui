@@ -1,7 +1,7 @@
 import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, output, viewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, output, ViewChild, viewChild,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatCard } from '@angular/material/card';
@@ -14,7 +14,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { combineLatest, of } from 'rxjs';
+import { combineLatest, Observable, of } from 'rxjs';
 import {
   filter, map, switchMap, tap,
 } from 'rxjs/operators';
@@ -29,6 +29,7 @@ import {
 } from 'app/modules/ix-icon/use-ix-icons-in-stepper/use-ix-icons-in-stepper.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
 import {
@@ -89,6 +90,9 @@ import { ReviewWizardStepComponent } from './steps/9-review-wizard-step/review-w
   ],
 })
 export class PoolManagerWizardComponent implements OnInit, OnDestroy {
+  @ViewChild('generalStep') generalStep: GeneralWizardStepComponent;
+  @ViewChild('enclosureStep') enclosureStep: EnclosureWizardStepComponent;
+
   protected existingPool: Pool | null = null;
 
   readonly stepChanged = output<PoolCreationWizardStep>();
@@ -114,6 +118,10 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
     return Boolean(this.state.encryption);
   }
 
+  get isFormDirty(): boolean {
+    return this.generalStep?.form?.dirty || this.enclosureStep?.form?.dirty;
+  }
+
   constructor(
     private store: PoolManagerStore,
     private systemStore$: Store<AppState>,
@@ -127,6 +135,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
     private dialogService: DialogService,
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
+    private unsavedChangesService: UnsavedChangesService,
   ) {}
 
   ngOnInit(): void {
@@ -139,6 +148,10 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.addVdevsStore.resetStoreToInitialState();
     this.store.resetStoreToInitialState();
+  }
+
+  canDeactivate(): Observable<boolean> {
+    return this.generalStep.form.dirty ? this.unsavedChangesService.showConfirmDialog() : of(true);
   }
 
   loadExistingPoolDetails(): void {
