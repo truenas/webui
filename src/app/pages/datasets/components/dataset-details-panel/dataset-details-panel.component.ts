@@ -100,7 +100,7 @@ export class DatasetDetailsPanelComponent {
 
   onAddZvol(): void {
     this.slideIn.open(ZvolFormComponent, {
-      data: { isNew: true, parentId: this.dataset().id },
+      data: { isNew: true, parentOrZvolId: this.dataset().id },
     }).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),

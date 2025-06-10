@@ -1,6 +1,12 @@
 {
   "": "",
+  "{label} Error: {error}": "",
+  "Additional Options": "",
   "Deselect": "",
+  "However, we could not create some related items:": "",
+  "Please create related items manually.": "",
+  "Saved Partially": "",
+  "Subsystem \"{name}\" has been created.": "",
   "\n              It looks like your session has been inactive for more than {lifetime} seconds.<br>\n              For security reasons we will log you out at {time}.\n            ": "\nSembra che la tua sessione sia stata inattiva per più di {lifetime} secondi.<br>\nPer motivi di sicurezza, verrai disconnesso alle {time}.",
   " as of {dateTime}": " al {dateTime}",
   " bytes.": " byte.",
@@ -970,7 +976,6 @@
   "Compress": "Comprimi",
   "Compress Connections": "Comprimi connessioni",
   "Compression": "Compressione",
-  "Compression level": "Livello di compressione",
   "Compression Level": "Livello di compressione",
   "Computer Account OU": "OU dell'account del computer",
   "Config Email": "Configura email",
@@ -4187,7 +4192,6 @@
   "Similar Apps": "App simili",
   "Site Name": "Nome sito",
   "Size": "Dimensione",
-  "Size for this zvol": "Dimensione per questo zvol",
   "Size in GiB of refreservation to set on ZFS dataset  where the audit databases are stored. The refreservation specifies the  minimum amount of space guaranteed to the dataset, and counts against  the space available for other datasets in the zpool where the audit  dataset is located.": "Dimensione in GiB della riserva di aggiornamento da impostare sul dataset ZFS in cui sono memorizzati i database di audit. La riserva di aggiornamento specifica la quantità minima di spazio garantita al dataset e viene conteggiata rispetto allo spazio disponibile per altri dataset nel pool ZFS in cui si trova il dataset di audit.",
   "Size in GiB of the maximum amount of space that may be  consumed by the dataset where the audit dabases are stored.": "Dimensione in GiB della quantità massima di spazio che può essere consumata dal dataset in cui sono memorizzati i database di audit.",
   "Skip": "Salta",
@@ -5319,6 +5323,5 @@
   "Zvol": "Zvol",
   "Zvol «{name}» updated.": "Zvol «{name}» aggiornato.",
   "Zvol Details": "Dettagli Zvol",
-  "Zvol name": "Nome Zvol",
   "Zvol Space Management": "Gestione spazio Zvol"
 }

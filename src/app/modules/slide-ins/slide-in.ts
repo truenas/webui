@@ -18,7 +18,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import { cloneDeep } from 'lodash-es';
 import {
-  filter, Observable, of, Subject, switchMap,
+  filter, Observable, of, share, Subject, switchMap,
+  take,
   tap,
 } from 'rxjs';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -51,7 +52,7 @@ export class SlideIn {
     component: ComponentInSlideIn<D, R>,
     options: { data?: D; wide?: boolean } = {},
   ): Observable<SlideInResponse<R>> {
-    return this.animateOutTopComponent().pipe(
+    const open$ = this.animateOutTopComponent().pipe(
       switchMap(() => {
         const slideInId = UUID.UUID();
 
@@ -79,7 +80,12 @@ export class SlideIn {
 
         return close$;
       }),
+      share(),
     );
+
+    open$.pipe(untilDestroyed(this)).subscribe();
+
+    return open$.pipe(take(1));
   }
 
   private swap<D, R>(component: ComponentInSlideIn<D, R>, options: { wide?: boolean }): void {
