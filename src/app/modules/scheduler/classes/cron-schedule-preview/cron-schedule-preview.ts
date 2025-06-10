@@ -1,3 +1,4 @@
+import { TZDate } from '@date-fns/tz';
 import { Cron } from 'croner';
 import {
   addDays, addMinutes,
@@ -7,7 +8,6 @@ import {
   setMinutes,
   subMinutes,
 } from 'date-fns';
-import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
 
 export interface CronSchedulerPreviewOptions {
   crontab: string;
@@ -46,9 +46,9 @@ export class CronSchedulePreview {
         continue;
       }
 
-      const machineToUtc = zonedTimeToUtc(exampleDate, timezone);
+      const machineToUtc = new TZDate(exampleDate, timezone);
 
-      const utcToLocal = utcToZonedTime(machineToUtc, Intl.DateTimeFormat().resolvedOptions().timeZone);
+      const utcToLocal = machineToUtc.withTimeZone(Intl.DateTimeFormat().resolvedOptions().timeZone);
 
       nextRuns.push(utcToLocal);
       i = i + 1;

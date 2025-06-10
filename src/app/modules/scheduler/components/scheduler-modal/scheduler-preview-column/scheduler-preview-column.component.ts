@@ -8,13 +8,13 @@ import {
 import { MatIconButton } from '@angular/material/button';
 import { MatCalendar, MatCalendarCellClassFunction } from '@angular/material/datepicker';
 import { MatDialogClose } from '@angular/material/dialog';
+import { TZDate } from '@date-fns/tz';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   getDate, isBefore,
   startOfMonth, differenceInCalendarMonths,
 } from 'date-fns';
-import { utcToZonedTime } from 'date-fns-tz';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CronSchedulePreview } from 'app/modules/scheduler/classes/cron-schedule-preview/cron-schedule-preview';
 import { SchedulerDateExamplesComponent } from 'app/modules/scheduler/components/scheduler-modal/scheduler-date-examples/scheduler-date-examples.component';
@@ -56,7 +56,7 @@ export class SchedulerPreviewColumnComponent implements OnChanges, OnInit {
 
   get startDate(): Date {
     if (!this.calendar().activeDate || differenceInCalendarMonths(this.calendar().activeDate, new Date()) < 1) {
-      return utcToZonedTime(new Date(), this.timezone());
+      return new TZDate(new Date(), this.timezone());
     }
 
     return startOfMonth(this.calendar().activeDate);

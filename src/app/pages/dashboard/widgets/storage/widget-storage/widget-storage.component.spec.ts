@@ -1,7 +1,7 @@
 import { PercentPipe } from '@angular/common';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { format } from 'date-fns-tz';
+import { format } from 'date-fns';
 import { MockDirective } from 'ng-mocks';
 import { BaseChartDirective } from 'ng2-charts';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';

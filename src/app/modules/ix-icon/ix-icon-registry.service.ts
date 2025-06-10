@@ -1,7 +1,7 @@
-import { DOCUMENT } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import {
   ErrorHandler, Inject, Injectable, Optional,
+  DOCUMENT,
 } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';

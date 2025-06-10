@@ -1,4 +1,4 @@
-import { DOCUMENT, KeyValuePipe } from '@angular/common';
+import { KeyValuePipe } from '@angular/common';
 import {
   Component,
   OnChanges,
@@ -8,6 +8,7 @@ import {
   ChangeDetectorRef,
   input,
   viewChild,
+  DOCUMENT,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardTitle, MatCardContent } from '@angular/material/card';
@@ -18,7 +19,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import {
-  add, isToday, sub,
+  add, Duration, isToday, sub,
 } from 'date-fns';
 import { cloneDeep } from 'lodash-es';
 import {

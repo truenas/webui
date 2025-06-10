@@ -202,7 +202,7 @@ export class ServiceNfsComponent implements OnInit {
       this.api.call('rdma.capable_protocols'),
       this.store$.select(selectIsEnterprise).pipe(take(1)),
     ]).pipe(
-      map(([capableProtocols, isEnterprise]) => {
+      map(([capableProtocols, isEnterprise]): void => {
         const hasRdmaSupport = capableProtocols.includes(RdmaProtocolName.Nfs) && isEnterprise;
         if (hasRdmaSupport) {
           this.form.controls.rdma.enable();

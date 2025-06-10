@@ -5,11 +5,11 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import {
+  ITreeState,
   TreeComponent,
   TreeModel,
   TreeModule,
 } from '@bugsplat/angular-tree-component';
-import { IDTypeDictionary } from '@bugsplat/angular-tree-component/lib/defs/api';
 import { FormControl } from '@ngneat/reactive-forms';
 import { SpectatorHost } from '@ngneat/spectator';
 import { createHostFactory, mockProvider } from '@ngneat/spectator/jest';
@@ -23,17 +23,13 @@ import { CreateDatasetDialog } from 'app/modules/forms/ix-forms/components/ix-ex
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 
-// TODO: Update when fix is ready
-// See https://github.com/help-me-mom/ng-mocks/issues/10503
-
-// eslint-disable-next-line jest/no-disabled-tests
-describe.skip('IxExplorerComponent', () => {
+describe('IxExplorerComponent', () => {
   const mockTreeMock = {
     selectedLeafNodeIds: {},
     get selectedLeafNodes(): unknown[] {
       return [];
     },
-    setState(newState: { selectedLeafNodeIds: IDTypeDictionary }) {
+    setState(newState: ITreeState) {
       this.selectedLeafNodeIds = newState.selectedLeafNodeIds;
     },
     getState() {
