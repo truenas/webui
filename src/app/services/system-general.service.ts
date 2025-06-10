@@ -40,7 +40,7 @@ export class SystemGeneralService {
 
   loadProductType(): Observable<void> {
     return this.getProductType$.pipe(
-      map((productType) => {
+      map((productType): void => {
         this.productType = productType;
         return undefined;
       }),

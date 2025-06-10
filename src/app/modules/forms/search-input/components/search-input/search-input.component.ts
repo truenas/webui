@@ -3,6 +3,7 @@ import {
   Component, input, model,
   OnChanges, output, viewChild,
 } from '@angular/core';
+import { User } from '@sentry/angular';
 import { FilterPreset, QueryFilters } from 'app/interfaces/query-api.interface';
 import { AdvancedSearchComponent } from 'app/modules/forms/search-input/components/advanced-search/advanced-search.component';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
@@ -30,7 +31,7 @@ export class SearchInputComponent<T> implements OnChanges {
   readonly runSearch = output();
 
   // TODO: Outside of scope for this component. Solve elsewhere.
-  readonly advancedSearch = viewChild('advancedSearch', { read: AdvancedSearchComponent });
+  readonly advancedSearch = viewChild('advancedSearch', { read: AdvancedSearchComponent<User> });
 
   ngOnChanges(): void {
     this.selectModeFromQuery();

@@ -4,7 +4,7 @@ import {
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { Actions, ofType } from '@ngrx/effects';
 import { TranslateService } from '@ngx-translate/core';
-import { format } from 'date-fns-tz';
+import { format } from 'date-fns';
 import { distinctUntilChanged } from 'rxjs';
 import { invalidDate } from 'app/constants/invalid-date';
 import { WINDOW } from 'app/helpers/window.helper';
