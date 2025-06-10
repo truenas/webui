@@ -1,7 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatDialog } from '@angular/material/dialog';
-import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
@@ -21,7 +20,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { NvmeOfCardComponent } from 'app/pages/sharing/components/shares-dashboard/nvme-of-card/nvme-of-card.component';
 import { ServiceExtraActionsComponent } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-extra-actions.component';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
-import { NvmeOfConfigurationComponent } from 'app/pages/sharing/nvme-of/nvme-of-configuration/nvme-of-configuration.component';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
 import { SubsystemDeleteDialogComponent } from 'app/pages/sharing/nvme-of/subsystem-details-header/subsystem-delete-dialog/subsystem-delete-dialog.component';
 import { selectServices } from 'app/store/services/services.selectors';
@@ -108,29 +106,9 @@ describe('NvmeOfCardComponent', () => {
     expect(cells).toEqual(expectedRows);
   });
 
-  // Unskip below tests once the functionality is implemented (edit + delete)
-  it.skip('shows form to edit an existing NVME-oF Share when Edit button is pressed', async () => {
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Edit' });
-
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(NvmeOfConfigurationComponent);
-  });
-
-  // Unskip below tests once the functionality is implemented (edit + delete)
-  it.skip('shows confirmation to delete NVME-oF Share when Delete button is pressed', async () => {
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Delete' });
-
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(SubsystemDeleteDialogComponent, expect.anything());
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nvmet.subsys.delete', [1, { force: true }]);
-  });
-
-  // remove once the above tests are unskipped
-  it('[temp] shows confirmation to delete NVME-oF Share when Delete button is pressed', async () => {
-    const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 4);
-    await deleteIcon.click();
+  it('shows confirmation to delete NVME-oF Share when Delete button is pressed', async () => {
+    const deleteButton = await table.getHarnessInRow(IxIconHarness.with({ name: 'mdi-delete' }), 'subsys-1');
+    await deleteButton.click();
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(SubsystemDeleteDialogComponent, expect.anything());
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nvmet.subsys.delete', [1, { force: true }]);

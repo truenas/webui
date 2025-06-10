@@ -105,7 +105,7 @@ export const nvmeOfEmptyConfig = {
   type: EmptyType.NoPageData,
   icon: iconMarker('ix-nvme-share'),
   large: true,
-  message: T(`<p>High-performance block storage over TCP and other protocols, using the NVMe across a network.</p>
+  message: T(`<p>Raw block storage using NVMe over Fabrics (e.g. NVMe/TCP), appearing as a local disk on the client.</p>
 <p>Compared to iSCSI, NVMe-oF offers significantly lower latency and higher throughput.</p>`),
 } as EmptyConfig;
 

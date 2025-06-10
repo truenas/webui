@@ -112,15 +112,17 @@ export class AddSubsystemComponent {
     this.isLoading.set(true);
 
     this.createSubsystem().pipe(
-      switchMap((subsystem) => this.createRelatedEntities(subsystem).pipe(
-        map((relatedErrors) => ({ subsystem, relatedErrors })),
-      )),
+      switchMap((subsystem) => {
+        return this.createRelatedEntities(subsystem).pipe(
+          map((relatedErrors) => ({ subsystem, relatedErrors })),
+        );
+      }),
       tap(() => this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.NvmeOf }))),
       finalize(() => this.isLoading.set(false)),
       this.errorHandler.withErrorHandler(),
       untilDestroyed(this),
     ).subscribe(({ subsystem, relatedErrors }) => {
-      if (subsystem && relatedErrors) {
+      if (subsystem && relatedErrors?.length) {
         this.matDialog.open(SubsystemPartiallyCreatedDialogComponent, {
           data: {
             subsystem,
