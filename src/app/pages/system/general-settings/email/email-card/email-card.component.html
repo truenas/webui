@@ -22,8 +22,8 @@
         <span *ixWithLoadingState="emailConfigState() as emailConfig" class="value">
           {{
             !emailConfig?.oauth?.client_id
-              ? helptext.send_mail_method.smtp.placeholder
-              : helptext.send_mail_method[emailConfig?.oauth?.provider]?.placeholder
+              ? helptext.sendMailMethod.smtp.label
+              : helptext.sendMailMethod[emailConfig?.oauth?.provider]?.label
           }}
         </span>
       </mat-list-item>

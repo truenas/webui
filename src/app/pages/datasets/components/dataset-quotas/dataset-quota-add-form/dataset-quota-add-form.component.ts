@@ -64,32 +64,32 @@ export class DatasetQuotaAddFormComponent {
 
   get dataQuotaLabel(): string {
     if (this.quotaType === DatasetQuotaType.User) {
-      return this.translate.instant(helptextQuotas.users.dataQuota.placeholder)
-        + this.translate.instant(helptextGlobal.human_readable.suggestion_label);
+      return this.translate.instant(helptextQuotas.users.dataQuota.label)
+        + this.translate.instant(helptextGlobal.humanReadable.suggestionLabel);
     }
 
-    return this.translate.instant(helptextQuotas.groups.data_quota.placeholder)
-      + this.translate.instant(helptextGlobal.human_readable.suggestion_label);
+    return this.translate.instant(helptextQuotas.groups.dataQuota.label)
+      + this.translate.instant(helptextGlobal.humanReadable.suggestionLabel);
   }
 
   get objectQuotaLabel(): string {
     return this.quotaType === DatasetQuotaType.User
-      ? helptextQuotas.users.objQuota.placeholder
-      : helptextQuotas.groups.obj_quota.placeholder;
+      ? helptextQuotas.users.objQuota.label
+      : helptextQuotas.groups.objectQuota.label;
   }
 
   get dataQuotaTooltip(): string {
     return this.quotaType === DatasetQuotaType.User
       ? this.translate.instant(helptextQuotas.users.dataQuota.tooltip)
       + ' ' + this.translate.instant(helptextQuotas.fieldAcceptsTooltip)
-      : this.translate.instant(helptextQuotas.groups.data_quota.tooltip)
+      : this.translate.instant(helptextQuotas.groups.dataQuota.tooltip)
         + ' ' + this.translate.instant(helptextQuotas.fieldAcceptsTooltip);
   }
 
   get objectQuotaTooltip(): string {
     return this.quotaType === DatasetQuotaType.User
       ? helptextQuotas.users.objQuota.tooltip
-      : helptextQuotas.groups.obj_quota.tooltip;
+      : helptextQuotas.groups.objectQuota.tooltip;
   }
 
   form = this.formBuilder.nonNullable.group({
@@ -155,7 +155,7 @@ export class DatasetQuotaAddFormComponent {
         next: () => {
           this.snackbar.success(this.translate.instant('Quotas added'));
           this.isLoading.set(false);
-          this.slideInRef.close({ response: true, error: null });
+          this.slideInRef.close({ response: true });
         },
         error: (error: unknown) => {
           this.isLoading.set(false);

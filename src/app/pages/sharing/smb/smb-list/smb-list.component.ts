@@ -12,13 +12,16 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   filter, of, take, tap,
 } from 'rxjs';
+import { smbCardEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { shared } from 'app/helptext/sharing';
 import { SmbShare } from 'app/interfaces/smb-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
@@ -55,6 +58,7 @@ import { selectService } from 'app/store/services/services.selectors';
 @Component({
   selector: 'ix-smb-list',
   templateUrl: './smb-list.component.html',
+  styleUrls: ['./smb-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatCard,
@@ -77,11 +81,14 @@ import { selectService } from 'app/store/services/services.selectors';
     TranslateModule,
     AsyncPipe,
     RouterLink,
+    EmptyComponent,
   ],
 })
 export class SmbListComponent implements OnInit {
   protected readonly requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
   protected readonly searchableElements = smbListElements;
+  protected readonly emptyConfig = smbCardEmptyConfig;
+  protected readonly EmptyType = EmptyType;
 
   service$ = this.store$.select(selectService(ServiceName.Cifs));
 
@@ -128,7 +135,6 @@ export class SmbListComponent implements OnInit {
         {
           iconName: iconMarker('share'),
           tooltip: this.translate.instant('Edit Share ACL'),
-          requiredRoles: this.requiredRoles,
           onClick: (row) => {
             if (row.locked) {
               this.lockedPathDialog(row.path);
@@ -154,7 +160,6 @@ export class SmbListComponent implements OnInit {
         {
           iconName: iconMarker('security'),
           tooltip: this.translate.instant('Edit Filesystem ACL'),
-          requiredRoles: this.requiredRoles,
           disabled: (row) => of(isRootShare(row.path)),
           onClick: (row) => {
             if (row.locked) {
@@ -175,7 +180,7 @@ export class SmbListComponent implements OnInit {
           onClick: (row) => {
             this.dialog.confirm({
               title: this.translate.instant('Unshare {name}', { name: row.name }),
-              message: this.translate.instant(shared.delete_share_message),
+              message: this.translate.instant(shared.deleteShareMessage),
               buttonText: this.translate.instant('Unshare'),
               buttonColor: 'warn',
             }).pipe(

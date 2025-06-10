@@ -76,6 +76,7 @@ export class NetworkComponent implements OnInit {
   readonly checkinTimeoutField = viewChild<NgModel>('checkinTimeoutField');
 
   isHaEnabled = false;
+  isHaLicensed = false;
   hasPendingChanges = false;
   checkinWaiting = false;
   checkinTimeout = 60;
@@ -185,6 +186,7 @@ export class NetworkComponent implements OnInit {
       this.store$.select(selectHaStatus).pipe(filter(Boolean)),
     ]).pipe(untilDestroyed(this)).subscribe(([isHa, { hasHa }]) => {
       this.isHaEnabled = isHa && hasHa;
+      this.isHaLicensed = isHa;
       this.cdr.markForCheck();
     });
   }
@@ -235,8 +237,8 @@ export class NetworkComponent implements OnInit {
       if (isAfterInterfaceCommit) {
         this.hasPendingChanges = false;
         this.dialogService.warn(
-          this.translate.instant(this.helptext.network_reconnection_issue),
-          this.translate.instant(this.helptext.network_reconnection_issue_text),
+          this.translate.instant(this.helptext.networkReconnectionIssue),
+          this.translate.instant(this.helptext.networkReconnectionIssueText),
         );
       }
     }
@@ -274,10 +276,10 @@ export class NetworkComponent implements OnInit {
         }
         this.dialogService
           .confirm({
-            title: this.translate.instant(helptextInterfaces.commit_changes_title),
-            message: this.translate.instant(helptextInterfaces.commit_changes_warning),
+            title: this.translate.instant(helptextInterfaces.commitChangesTitle),
+            message: this.translate.instant(helptextInterfaces.commitChangesWarning),
             hideCheckbox: false,
-            buttonText: this.translate.instant(helptextInterfaces.commit_button),
+            buttonText: this.translate.instant(helptextInterfaces.commitButton),
           })
           .pipe(untilDestroyed(this))
           .subscribe((confirm: boolean) => {
@@ -307,13 +309,13 @@ export class NetworkComponent implements OnInit {
     if (this.affectedServices.length > 0) {
       this.dialogService
         .confirm({
-          title: this.translate.instant(helptextInterfaces.services_restarted.title),
-          message: this.translate.instant(helptextInterfaces.services_restarted.message, {
+          title: this.translate.instant(helptextInterfaces.servicesRestarted.title),
+          message: this.translate.instant(helptextInterfaces.servicesRestarted.message, {
             uniqueIPs: this.uniqueIps.join(', '),
             affectedServices: this.affectedServices.join(', '),
           }),
           hideCheckbox: true,
-          buttonText: this.translate.instant(helptextInterfaces.services_restarted.button),
+          buttonText: this.translate.instant(helptextInterfaces.servicesRestarted.button),
         })
         .pipe(filter(Boolean), untilDestroyed(this))
         .subscribe(() => {
@@ -322,10 +324,10 @@ export class NetworkComponent implements OnInit {
     } else {
       this.dialogService
         .confirm({
-          title: this.translate.instant(helptextInterfaces.checkin_title),
-          message: this.translate.instant(helptextInterfaces.checkin_message),
+          title: this.translate.instant(helptextInterfaces.checkinTitle),
+          message: this.translate.instant(helptextInterfaces.checkinMessage),
           hideCheckbox: true,
-          buttonText: this.translate.instant(helptextInterfaces.checkin_button),
+          buttonText: this.translate.instant(helptextInterfaces.checkinButton),
         })
         .pipe(filter(Boolean), untilDestroyed(this))
         .subscribe(() => {
@@ -346,7 +348,7 @@ export class NetworkComponent implements OnInit {
         this.store$.dispatch(networkInterfacesChanged({ commit: true, checkIn: true }));
 
         this.snackbar.success(
-          this.translate.instant(helptextInterfaces.checkin_complete_message),
+          this.translate.instant(helptextInterfaces.checkinCompleteMessage),
         );
         this.hasPendingChanges = false;
         this.checkinWaiting = false;
@@ -359,10 +361,10 @@ export class NetworkComponent implements OnInit {
   rollbackPendingChanges(): void {
     this.dialogService
       .confirm({
-        title: this.translate.instant(helptextInterfaces.rollback_changes_title),
-        message: this.translate.instant(helptextInterfaces.rollback_changes_warning),
+        title: this.translate.instant(helptextInterfaces.revertChangesTitle),
+        message: this.translate.instant(helptextInterfaces.revertChangesWarning),
         hideCheckbox: false,
-        buttonText: this.translate.instant(helptextInterfaces.rollback_button),
+        buttonText: this.translate.instant(helptextInterfaces.revertChangesButton),
       })
       .pipe(untilDestroyed(this))
       .subscribe((confirm: boolean) => {
@@ -383,7 +385,7 @@ export class NetworkComponent implements OnInit {
             this.hasPendingChanges = false;
             this.checkinWaiting = false;
             this.snackbar.success(
-              this.translate.instant(helptextInterfaces.changes_rolled_back),
+              this.translate.instant(helptextInterfaces.changesRolledBack),
             );
             this.cdr.markForCheck();
           });

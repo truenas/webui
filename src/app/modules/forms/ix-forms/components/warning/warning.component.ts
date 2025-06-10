@@ -14,5 +14,5 @@ import { TranslateModule } from '@ngx-translate/core';
 })
 export class WarningComponent {
   readonly message = input.required<string>();
-  readonly color = input<'green' | 'orange'>('orange');
+  readonly color = input<'green' | 'orange' | 'red'>('orange');
 }

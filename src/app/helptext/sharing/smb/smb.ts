@@ -1,7 +1,7 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const helptextSharingSmb = {
-  root_level_warning: T(
+  rootLevelWarning: T(
     'Configuring SMB exports of root-level datasets\
  may lead to storage reconfiguration issues.\
  Consider creating a dataset instead.',
@@ -9,27 +9,27 @@ export const helptextSharingSmb = {
 
   shareAclDescription: T('The SMB share ACL defines access rights for users of this SMB share up to, but not beyond, the access granted by filesystem ACLs.'),
 
-  placeholder_path: T('Path'),
-  tooltip_path: T('Select pool, dataset, or directory to share.'),
-  placeholder_name: T('Name'),
+  pathLabel: T('Path'),
+  pathTooltip: T('Select pool, dataset, or directory to share.'),
+  nameLabel: T('Name'),
 
-  placeholder_comment: T('Description'),
+  commentLabel: T('Description'),
 
-  placeholder_enabled: T('Enabled'),
-  tooltip_enabled_audit_log: T(
+  enabledLabel: T('Enabled'),
+  auditLogTooltip: T(
     'Controls whether audit messages will be generated for the share. \
 <br><br> <b>Note</b>: Auditing may not be enabled if SMB1 support is enabled for the server.',
   ),
-  tooltip_watch_list: T(
+  watchListTooltip: T(
     'List of groups for which to generate audit messages. Keep this list empty to Watch All.',
   ),
-  tooltip_ignore_list: T(
+  ignoreListTooltip: T(
     'List of groups to ignore when auditing. If conflict arises between Watch List and Ignore List \
  (based on user group membership), then Watch List will take precedence and ops will be audited.',
   ),
 
-  placeholder_home: T('Use as Home Share'),
-  tooltip_home: T(
+  homeLabel: T('Use as Home Share'),
+  homeTooltip: T(
     'Legacy feature. <br><br>Allows the share to host user home \
  directories. Each user is given a personal home directory when \
  connecting to the share which is not accessible by other users. This \
@@ -37,43 +37,43 @@ export const helptextSharingSmb = {
  as the home share.',
   ),
 
-  placeholder_purpose: T('Purpose'),
-  tooltip_purpose: T(
+  purposeLabel: T('Purpose'),
+  purposeTooltip: T(
     'Select a preset configuration for the share. This\
  applies predetermined values and disables changing some share options.',
   ),
 
-  placeholder_timemachine: T('Time Machine'),
-  tooltip_timemachine: T('Enable Time Machine backups on this share.'),
+  timemachineLabel: T('Time Machine'),
+  timemachineTooltip: T('Enable Time Machine backups on this share.'),
 
-  placeholder_timemachine_quota: T('Time Machine Quota'),
-  tooltip_timemachine_quota: T('Number of bytes'),
+  timemachineQuotaLabel: T('Time Machine Quota'),
+  timemachineQuotaTooltip: T('Number of bytes'),
 
-  placeholder_afp: T('Legacy AFP Compatibility'),
-  tooltip_afp: T(
+  afpLabel: T('Legacy AFP Compatibility'),
+  afpTooltip: T(
     'This controls how the SMB share reads and writes data. Leave unset for the share to behave like a normal SMB share and set for the share to behave like the deprecated Apple Filing Protocol (AFP). This should only be set when this share originated as an AFP sharing configuration. This is not required for pure SMB shares or MacOS SMB clients.',
   ),
-  afpDialog_title: T('Warning'),
-  afpDialog_message: T(
+  afpWarningTitle: T('Warning'),
+  afpWarningMessage: T(
     'This option controls how metadata and alternate data streams read write to disks. Only enable this when the share configuration was migrated from the deprecated Apple Filing Protocol (AFP). Do not attempt to force a previous AFP share to behave like a pure SMB share or file corruption can occur.',
   ),
-  afpDialog_button: T('I understand'),
+  afpDialogButton: T('I understand'),
 
-  placeholder_acl: T('Enable ACL'),
-  tooltip_acl: T('Enable ACL support for the SMB share.'),
+  aclLabel: T('Enable ACL'),
+  aclTooltip: T('Enable ACL support for the SMB share.'),
 
-  placeholder_ro: T('Export Read Only'),
-  tooltip_ro: T('Prohibits writes to this share.'),
+  readOnlyLabel: T('Export Read Only'),
+  readOnlyTooltip: T('Prohibits writes to this share.'),
 
-  placeholder_browsable: T('Browsable to Network Clients'),
-  tooltip_browsable: T(
+  browsableLabel: T('Browsable to Network Clients'),
+  browsableTooltip: T(
     'Determine whether this share name is included\
  when browsing shares. Home shares are only visible to the owner\
  regardless of this setting.',
   ),
 
-  placeholder_recyclebin: T('Export Recycle Bin'),
-  tooltip_recyclebin: T('Select to enable. Deleted files from the same \
+  recyclebinLabel: T('Export Recycle Bin'),
+  recyclebinTooltip: T('Select to enable. Deleted files from the same \
     dataset move to a <b>Recycle Bin</b> in that dataset and do not take any \
     additional space. Recycle bin is for access over SMB protocol only.\
     The files are renamed to a per-user subdirectory within \
@@ -82,8 +82,8 @@ export const helptextSharingSmb = {
     dataset if we have nested datasets. Because of (2) there is no \
     automatic deletion based on file size.'),
 
-  placeholder_guestok: T('Allow Guest Access'),
-  tooltip_guestok: T(
+  guestokLabel: T('Allow Guest Access'),
+  guestokTooltip: T(
     'Legacy feature. <br><br>Privileges are the same as the guest account. \
  Guest access is disabled by default in Windows 10 version 1709 and \
  Windows Server version 1903. Additional client-side configuration is \
@@ -96,17 +96,16 @@ export const helptextSharingSmb = {
  for more details.',
   ),
 
-  placeholder_abe: T('Access Based Share Enumeration'),
-  tooltip_abe: T(
+  abeLabel: T('Access Based Share Enumeration'),
+  abeTooltip: T(
     'Restrict share visibility to users with read or write access\
  to the share. See the <a href="https://www.samba.org/samba/docs/current/man-html/smb.conf.5.html"\
  target=_blank>smb.conf</a> manual page.',
   ),
 
-  placeholder_hostsallow: T('Hosts Allow'),
-
-  placeholder_hostsdeny: T('Hosts Deny'),
-  tooltip_hostsdeny: T(
+  hostsallowLabel: T('Hosts Allow'),
+  hostsdenyLabel: T('Hosts Deny'),
+  hostsdenyTooltip: T(
     'Enter a list of denied hostnames or IP addresses.\
  Separate entries by pressing <code>Enter</code>. \
  If neither *Hosts Allow* or *Hosts Deny* contains \
@@ -121,35 +120,35 @@ export const helptextSharingSmb = {
  then allow it.',
   ),
 
-  placeholder_shadowcopy: T('Enable Shadow Copies'),
-  tooltip_shadowcopy: T(
+  shadowcopyLabel: T('Enable Shadow Copies'),
+  shadowcopyTooltip: T(
     'Export ZFS snapshots as\
  <a href="https://docs.microsoft.com/en-us/windows/desktop/vss/shadow-copies-and-shadow-copy-sets"\
  target=_blank>Shadow Copies</a> for VSS clients.',
   ),
 
-  placeholder_aapl_name_mangling: T('Use Apple-style Character Encoding'),
-  tooltip_aapl_name_mangling: T(
+  aaplNameManglingLabel: T('Use Apple-style Character Encoding'),
+  aaplNameManglingTooltip: T(
     'By default, Samba uses a hashing algorithm for NTFS illegal \
  characters. Enabling this option translates NTFS illegal characters to the Unicode private range.',
   ),
 
-  placeholder_streams: T('Enable Alternate Data Streams'),
-  tooltip_streams: T(
+  streamsLabel: T('Enable Alternate Data Streams'),
+  streamsTooltip: T(
     'Allows multiple \
  <a href="http://www.ntfs.com/ntfs-multiple.htm">NTFS data streams</a>. \
  Disabling this option causes macOS to write streams to files on the filesystem.',
   ),
 
-  placeholder_durablehandle: T('Enable SMB2/3 Durable Handles'),
-  tooltip_durablehandle: T(
+  durablehandleLabel: T('Enable SMB2/3 Durable Handles'),
+  durablehandleTooltip: T(
     'Allow using open file handles that can withstand short disconnections. \
  Support for POSIX byte-range locks in Samba is also disabled. This option is not recommended when \
  configuring multi-protocol or local access to files.',
   ),
 
-  placeholder_fsrvp: T('Enable FSRVP'),
-  tooltip_fsrvp: T(
+  fsrvpLabel: T('Enable FSRVP'),
+  fsrvpTooltip: T(
     'Enable support for the File Server Remote VSS Protocol \
  (<a href="https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-fsrvp" target="_blank">FSRVP</a>). \
  This protocol allows RPC clients to manage snapshots for a specific SMB share. \
@@ -158,8 +157,8 @@ export const helptextSharingSmb = {
  this prefix for an RPC user to delete it.',
   ),
 
-  placeholder_path_suffix: T('Path Suffix'),
-  tooltip_path_suffix: T(
+  pathSuffixLabel: T('Path Suffix'),
+  pathSuffixTooltip: T(
     'Appends a suffix to the share connection path. \
  This is used to provide unique shares on a per-user, per-computer, or per-IP address basis. \
  Suffixes can contain a macro. See the \
@@ -167,22 +166,22 @@ export const helptextSharingSmb = {
  a list of supported macros. The connectpath **must** be preset before a client connects.',
   ),
 
-  placeholder_auxsmbconf: T('Additional Parameters String'),
-  tooltip_auxsmbconf: T('String of additional smb4.conf parameters not covered by the system\'s API.'),
+  auxsmbconfLabel: T('Additional Parameters String'),
+  auxsmbconfTooltip: T('String of additional smb4.conf parameters not covered by the system\'s API.'),
 
-  restarted_smb_dialog: {
+  restartedSmbDialog: {
     title: T('SMB Service'),
     message: T('The SMB service has been restarted.'),
   },
 
-  ae_perm_tooltip: T(
+  aePermTooltip: T(
     'Predefined permission combinations:<br><i>Read</i>:\
  Read access and Execute permission on the object (RX).<br><i>Change</i>: Read\
  access, Execute permission, Write access, and Delete object (RXWD).<br><i>Full</i>:\
  Read access, Execute permission, Write access, Delete object, change Permissions, and take Ownership (RXWDPO).<br><br>\
  For more details, see <a href="https://www.samba.org/samba/docs/current/man-html/smbcacls.1.html" target="_blank">smbacls(1)</a>.',
   ),
-  ae_type_tooltip: T(
+  aeTypeTooltip: T(
     'How permissions are applied to the share.\
  <i>Allowed</i> denies all permissions by default except those that are manually defined.\
  <i>Denied</i> allows all permissions by default except those that are manually defined.',

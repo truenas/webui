@@ -4,9 +4,10 @@ import {
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { finalize } from 'rxjs';
+import { finalize, forkJoin } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextNvmeOf } from 'app/helptext/sharing/nvme-of/nvme-of';
@@ -19,13 +20,13 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
   selector: 'ix-nvme-of-configuration',
   templateUrl: './nvme-of-configuration.component.html',
-  styleUrls: ['./nvme-configuration.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ModalHeaderComponent,
@@ -40,6 +41,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     MatButton,
     RequiresRolesDirective,
     TestDirective,
+    MatTooltip,
   ],
 })
 export class NvmeOfConfigurationComponent implements OnInit {
@@ -60,6 +62,7 @@ export class NvmeOfConfigurationComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
+    private nvmeOfService: NvmeOfService,
   ) {}
 
   protected readonly helptext = helptextNvmeOf;
@@ -71,12 +74,19 @@ export class NvmeOfConfigurationComponent implements OnInit {
   private loadConfiguration(): void {
     this.isLoading.set(true);
 
-    this.api.call('nvmet.global.config').pipe(
+    forkJoin([
+      this.api.call('nvmet.global.config'),
+      this.nvmeOfService.isRdmaEnabled(),
+    ]).pipe(
       this.errorHandler.withErrorHandler(),
       finalize(() => this.isLoading.set(false)),
       untilDestroyed(this),
-    ).subscribe((config) => {
+    ).subscribe(([config, isRdmaEnabled]) => {
       this.form.patchValue(config);
+
+      if (!isRdmaEnabled) {
+        this.form.controls.rdma.disable();
+      }
     });
   }
 
@@ -93,7 +103,6 @@ export class NvmeOfConfigurationComponent implements OnInit {
       this.snackbar.success(this.translate.instant('Global configuration updated.'));
       this.slideInRef.close({
         response: true,
-        error: null,
       });
     });
   }

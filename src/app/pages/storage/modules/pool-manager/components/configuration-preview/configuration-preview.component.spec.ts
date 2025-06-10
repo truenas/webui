@@ -108,14 +108,12 @@ describe('ConfigurationPreviewComponent', () => {
     });
   });
 
-  it('shows description for every vdev type in topology', async () => {
+  it('shows description for non-empty vdev types in topology', async () => {
     expect(await configurationPreview.getItems()).toMatchObject({
       'Data:': '2 × STRIPE | 3 × 2 GiB (HDD)',
       'Cache:': '2 × 5 GiB (HDD)',
-      'Dedup:': 'None',
       'Log:': '2 × RAIDZ1 | 3 × 3 GiB (HDD)',
       'Spare:': '3 × 3 GiB (HDD)',
-      'Metadata:': 'None',
     });
   });
 

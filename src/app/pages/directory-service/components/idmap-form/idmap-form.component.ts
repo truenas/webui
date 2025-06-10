@@ -251,7 +251,7 @@ export class IdmapFormComponent implements OnInit {
       .subscribe({
         next: () => {
           this.isLoading.set(false);
-          this.slideInRef.close({ response: true, error: null });
+          this.slideInRef.close({ response: true });
         },
         error: (error: unknown) => {
           this.formErrorHandler.handleValidationErrors(error, this.form);
@@ -338,8 +338,8 @@ export class IdmapFormComponent implements OnInit {
 
   private askAndClearCache(): Observable<unknown> {
     return this.dialogService.confirm({
-      title: this.translate.instant(helptextIdmap.idmap.clear_cache_dialog.title),
-      message: this.translate.instant(helptextIdmap.idmap.clear_cache_dialog.message),
+      title: this.translate.instant(helptextIdmap.idmap.clearCacheDialog.title),
+      message: this.translate.instant(helptextIdmap.idmap.clearCacheDialog.message),
       hideCheckbox: true,
     }).pipe(
       switchMap((confirmed) => {
@@ -350,14 +350,14 @@ export class IdmapFormComponent implements OnInit {
         return this.dialogService.jobDialog(
           this.api.job('idmap.clear_idmap_cache'),
           {
-            title: this.translate.instant(helptextIdmap.idmap.clear_cache_dialog.job_title),
+            title: this.translate.instant(helptextIdmap.idmap.clearCacheDialog.jobTitle),
           },
         )
           .afterClosed()
           .pipe(
             tap(() => {
               this.snackbar.success(
-                this.translate.instant(helptextIdmap.idmap.clear_cache_dialog.success_msg),
+                this.translate.instant(helptextIdmap.idmap.clearCacheDialog.successMessage),
               );
             }),
           );

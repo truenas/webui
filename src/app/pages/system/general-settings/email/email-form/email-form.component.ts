@@ -88,15 +88,15 @@ export class EmailFormComponent implements OnInit {
 
   readonly sendMethodOptions$ = of([
     {
-      label: helptextSystemEmail.send_mail_method.smtp.placeholder,
+      label: helptextSystemEmail.sendMailMethod.smtp.label,
       value: MailSendMethod.Smtp,
     },
     {
-      label: helptextSystemEmail.send_mail_method.gmail.placeholder,
+      label: helptextSystemEmail.sendMailMethod.gmail.label,
       value: MailSendMethod.Gmail,
     },
     {
-      label: helptextSystemEmail.send_mail_method.outlook.placeholder,
+      label: helptextSystemEmail.sendMailMethod.outlook.label,
       value: MailSendMethod.Outlook,
     },
   ]);
@@ -211,7 +211,7 @@ export class EmailFormComponent implements OnInit {
         next: () => {
           this.isLoading.set(false);
           this.snackbar.success(this.translate.instant('Email settings updated.'));
-          this.slideInRef.close({ response: true, error: null });
+          this.slideInRef.close({ response: true });
         },
         error: (error: unknown) => {
           this.isLoading.set(false);

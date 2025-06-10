@@ -112,9 +112,9 @@ export class ExtentFormComponent implements OnInit {
     Role.SharingWrite,
   ];
 
-  readonly rpms$ = of(this.helptext.extent_form_enum_rpm);
-  readonly types$ = of(this.helptext.extent_form_enum_type);
-  readonly blocksizes$ = of(this.helptext.extent_form_enum_blocksize);
+  readonly rpms$ = of(this.helptext.extent.rpmOptions);
+  readonly types$ = of(this.helptext.extent.typeOptions);
+  readonly blocksizes$ = of(this.helptext.extent.blocksizeOptions);
   readonly disks$ = combineLatest([
     this.iscsiService.getExtentDevices().pipe(choicesToOptions()),
     this.extentDiskBeingEdited$,
@@ -201,7 +201,7 @@ export class ExtentFormComponent implements OnInit {
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isLoading.set(false);
-        this.slideInRef.close({ response: true, error: null });
+        this.slideInRef.close({ response: true });
       },
       error: (error: unknown) => {
         this.isLoading.set(false);

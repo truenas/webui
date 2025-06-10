@@ -12,6 +12,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   catchError, EMPTY, filter, map, of, switchMap, tap,
 } from 'rxjs';
+import { rsyncTaskEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
@@ -19,6 +20,7 @@ import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { Job } from 'app/interfaces/job.interface';
 import { RsyncTask, RsyncTaskUi, RsyncTaskUpdate } from 'app/interfaces/rsync-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -67,10 +69,12 @@ import { AppState } from 'app/store';
     IxTableBodyComponent,
     TranslateModule,
     AsyncPipe,
+    EmptyComponent,
   ],
 })
 export class RsyncTaskCardComponent implements OnInit {
   protected readonly requiredRoles = [Role.SnapshotTaskWrite];
+  protected readonly emptyConfig = rsyncTaskEmptyConfig;
 
   rsyncTasks: RsyncTaskUi[] = [];
   dataProvider: AsyncDataProvider<RsyncTaskUi>;

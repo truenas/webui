@@ -4,13 +4,13 @@
     <div class="in-out-row">
       <span>{{ 'In' | translate }}:</span>
       <span *ixWithLoadingState="stats() as stats">
-        {{ incomingTraffic() | ixNetworkSpeed }}
+        {{ incomingTrafficBits() | ixNetworkSpeed }}
       </span>
     </div>
     <div class="in-out-row">
       <span>{{ 'Out' | translate }}:</span>
       <span *ixWithLoadingState="stats() as stats">
-        {{ outgoingTraffic() | ixNetworkSpeed }}
+        {{ outgoingTrafficBits() | ixNetworkSpeed }}
       </span>
     </div>
   </div>

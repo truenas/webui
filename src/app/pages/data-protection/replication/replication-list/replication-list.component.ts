@@ -7,14 +7,17 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { filter, switchMap, tap } from 'rxjs';
+import { replicationTaskEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { Job } from 'app/interfaces/job.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -82,6 +85,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     IxTablePagerComponent,
     TranslateModule,
     AsyncPipe,
+    EmptyComponent,
   ],
 })
 export class ReplicationListComponent implements OnInit {
@@ -91,6 +95,8 @@ export class ReplicationListComponent implements OnInit {
   readonly jobState = JobState;
   protected readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
   protected readonly searchableElements = replicationListElements;
+  protected readonly emptyConfig = replicationTaskEmptyConfig;
+  protected readonly EmptyType = EmptyType;
 
   columns = createTable<ReplicationTask>([
     textColumn({
@@ -210,7 +216,6 @@ export class ReplicationListComponent implements OnInit {
 
   runNow(row: ReplicationTask): void {
     this.dialogService.confirm({
-      title: this.translate.instant('Run Now'),
       message: this.translate.instant('Replicate «{name}» now?', { name: row.name }),
       hideCheckbox: true,
     }).pipe(
@@ -248,27 +253,27 @@ export class ReplicationListComponent implements OnInit {
 
   openForm(row?: ReplicationTask): void {
     if (row) {
-      this.slideIn.open(ReplicationFormComponent, { data: row, wide: true })
-        .pipe(
-          filter((response) => !!response.response),
-          untilDestroyed(this),
-        ).subscribe({
-          next: () => {
-            this.getReplicationTasks();
-          },
-        });
+      this.slideIn.open(
+        ReplicationFormComponent,
+        { data: row, wide: true },
+      ).pipe(
+        filter((response) => !!response.response),
+        untilDestroyed(this),
+      ).subscribe({
+        next: () => {
+          this.getReplicationTasks();
+        },
+      });
     } else {
-      this.slideIn.open(ReplicationWizardComponent, { wide: true })
-        .pipe(
-          filter((response) => !!response.response),
-          untilDestroyed(this),
-        ).subscribe(() => this.getReplicationTasks());
+      this.slideIn.open(ReplicationWizardComponent).pipe(
+        filter((response) => !!response.response),
+        untilDestroyed(this),
+      ).subscribe(() => this.getReplicationTasks());
     }
   }
 
   doDelete(row: ReplicationTask): void {
     this.dialogService.confirm({
-      title: this.translate.instant('Confirmation'),
       message: this.translate.instant('Delete Replication Task <b>"{name}"</b>?', {
         name: row.name,
       }),

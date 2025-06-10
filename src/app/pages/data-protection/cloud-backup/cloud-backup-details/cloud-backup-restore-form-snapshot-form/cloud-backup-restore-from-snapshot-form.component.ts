@@ -10,6 +10,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { map, of } from 'rxjs';
+import { datasetsRootNode, slashRootNode } from 'app/constants/basic-root-nodes.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetPreset } from 'app/enums/dataset.enum';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
@@ -89,6 +90,15 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
     includedPaths: [[] as string[]],
   });
 
+  protected get includedPathsRootNodes(): ExplorerNodeData[] {
+    return this.form.controls.subFolder.value
+      ? [{ ...datasetsRootNode, path: this.form.controls.subFolder.value, name: this.form.controls.subFolder.value }]
+      : [{ ...datasetsRootNode, path: this.backupMntPath, name: this.backupMntPath }];
+  }
+
+  protected readonly rootDatasetNode: ExplorerNodeData = datasetsRootNode;
+  protected readonly slashRootNode: ExplorerNodeData = slashRootNode;
+
   protected isLoading = signal(false);
 
   createDatasetProps: Omit<DatasetCreate, 'name'> = {
@@ -158,7 +168,7 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
         complete: () => {
           this.snackbar.success(this.translate.instant('Cloud Backup Restored Successfully'));
           this.isLoading.set(false);
-          this.slideInRef.close({ response: true, error: null });
+          this.slideInRef.close({ response: true });
         },
         error: (error: unknown) => {
           this.isLoading.set(false);

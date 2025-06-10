@@ -8,7 +8,7 @@
         matTooltipPosition="right"
         ixTest="toggle-sidenav"
         [attr.aria-label]="'Toggle Sidenav' | translate"
-        [matTooltip]="tooltips.toggle_collapse | translate"
+        [matTooltip]="tooltips.toggleCollapse | translate"
         (click)="onSidenavIndicatorPressed()"
       >
         <ix-icon name="menu"></ix-icon>
@@ -40,7 +40,7 @@
             mat-icon-button
             class="topbar-button-right"
             ixTest="reboot-info"
-            [matTooltip]="tooltips.reboot_info | translate"
+            [matTooltip]="tooltips.rebootInfo | translate"
             (click)="showRebootInfoDialog()"
           >
             <ix-icon class="movement" name="update"></ix-icon>

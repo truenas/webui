@@ -10,8 +10,15 @@
     } @else {
       @if (port(); as port) {
         <p>{{ 'Port' | translate }}: {{ port.port }}</p>
-        <p>{{ 'Controller A WWPN' | translate }}: {{ port.wwpn }}</p>
-        <p>{{ 'Controller B WWPN' | translate }}: {{ port.wwpn_b }}</p>
+
+        <ng-container *isHa="true">
+          <p>{{ 'Controller A WWPN' | translate }}: {{ port.wwpn }}</p>
+          <p>{{ 'Controller B WWPN' | translate }}: {{ port.wwpn_b }}</p>
+        </ng-container>
+
+        <ng-container *isHa="false">
+          <p>{{ 'WWPN' | translate }}: {{ port.wwpn }}</p>
+        </ng-container>
       } @else {
         <p>{{ 'No associated Fibre Channel port' | translate }}</p>
       }

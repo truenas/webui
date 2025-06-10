@@ -33,7 +33,6 @@ import { haSettingsUpdated } from 'app/store/ha-info/ha-info.actions';
 @Component({
   selector: 'ix-failover-form',
   templateUrl: './failover-form.component.html',
-  styleUrls: ['./failover-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     IxFieldsetComponent,
@@ -119,7 +118,6 @@ export class FailoverFormComponent {
 
           this.slideInRef.close({
             response: true,
-            error: null,
           });
         },
         error: (error: unknown) => {

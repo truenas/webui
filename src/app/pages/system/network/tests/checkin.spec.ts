@@ -24,7 +24,6 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import { InterfaceStatusIconComponent } from 'app/modules/interface-status-icon/interface-status-icon.component';
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
-import { SlideInComponent } from 'app/modules/slide-ins/components/slide-in/slide-in.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { InterfaceFormComponent } from 'app/pages/system/network/components/interface-form/interface-form.component';
@@ -50,6 +49,9 @@ describe('NetworkComponent', () => {
     id: '1',
     type: NetworkInterfaceType.Physical,
     name: 'eno1',
+    state: {
+      permanent_link_address: 'ac:1f:6b:ca:32:24',
+    },
     aliases: [
       {
         address: '192.168.238.12',
@@ -78,7 +80,6 @@ describe('NetworkComponent', () => {
     ],
     declarations: [
       InterfacesCardComponent,
-      SlideInComponent,
       InterfaceFormComponent,
       MockComponents(
         NetworkConfigurationCardComponent,
@@ -128,10 +129,7 @@ describe('NetworkComponent', () => {
       }),
       mockProvider(SlideInRef, slideInRef),
       mockProvider(SlideIn, {
-        popComponent: jest.fn(),
-        isTopComponentWide$: of(false),
-        open: jest.fn(() => of({ response: true, error: null })),
-        components$: of([]),
+        open: jest.fn(() => of({ response: true })),
       }),
     ],
   });
@@ -161,7 +159,7 @@ describe('NetworkComponent', () => {
     expect(api.call).toHaveBeenCalledWith('interface.has_pending_changes');
     expect(api.call).toHaveBeenCalledWith('interface.checkin_waiting');
 
-    expect(spectator.query('.pending-changes-card')).toContainText(helptextInterfaces.pending_changes_text);
+    expect(spectator.query('.pending-changes-card')).toContainText(helptextInterfaces.pendingChangesText);
   });
 
   it('reverts changes when user presses Revert Changes', async () => {
@@ -184,11 +182,11 @@ describe('NetworkComponent', () => {
     expect(api.call).toHaveBeenCalledWith('interface.commit', [{ checkin_timeout: 60 }]);
 
     expect(spectator.query('.pending-changes-card'))
-      .toContainText(helptextInterfaces.pending_checkin_text.replace('{x}', '60'));
+      .toContainText(helptextInterfaces.pendingCheckinText.replace('{x}', '60'));
     tick(1000);
     spectator.detectChanges();
     expect(spectator.query('.pending-changes-card'))
-      .toContainText(helptextInterfaces.pending_checkin_text.replace('{x}', '59'));
+      .toContainText(helptextInterfaces.pendingCheckinText.replace('{x}', '59'));
     discardPeriodicTasks();
   }));
 
@@ -214,6 +212,6 @@ describe('NetworkComponent', () => {
 
     expect(api.call).toHaveBeenCalledWith('interface.cancel_rollback');
 
-    expect(spectator.query('.pending-changes-card')).toContainText(helptextInterfaces.pending_changes_text);
+    expect(spectator.query('.pending-changes-card')).toContainText(helptextInterfaces.pendingChangesText);
   }));
 });

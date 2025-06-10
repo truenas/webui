@@ -66,17 +66,22 @@ export class FileReviewComponent {
     take_screenshot: [true],
   });
 
-  protected readonly voteForNewFeaturesText = helptext.review.vote_for_new_features;
+  protected readonly voteForNewFeaturesText = helptext.review.voteForNewFeatures;
   protected readonly acceptedFiles = ticketAcceptedFiles;
 
   protected get messagePlaceholderText(): TranslatedString {
-    if (this.form.controls.rating.value !== maxRatingValue) {
-      return this.translate.instant(helptext.review.message.placeholder);
+    const rating = this.form.controls.rating.value;
+    const baseText = this.translate.instant(helptext.review.message.placeholder);
+
+    if ((rating !== maxRatingValue && rating > 2) || !rating) {
+      return baseText;
     }
 
-    return this.translate.instant(helptext.review.message.placeholder)
-      + '\n\n'
-      + this.translate.instant(helptext.review.message.placeholder_additional) as TranslatedString;
+    const extra = rating <= 2
+      ? this.translate.instant(helptext.review.message.placeholderLowRating)
+      : this.translate.instant(helptext.review.message.placeholderHighRating);
+
+    return `${baseText}\n\n${extra}` as TranslatedString;
   }
 
   constructor(

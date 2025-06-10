@@ -92,8 +92,8 @@ export class ReplicationWizardComponent {
     private translate: TranslateService,
     private loader: LoaderService,
     private snackbar: SnackbarService,
-    public slideInRef: SlideInRef<undefined, ReplicationTask | undefined>,
     private authService: AuthService,
+    public slideInRef: SlideInRef<undefined, ReplicationTask | undefined>,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(Boolean(this.whatAndWhere()?.form?.dirty || this.when()?.form?.dirty));
@@ -167,7 +167,7 @@ export class ReplicationWizardComponent {
       untilDestroyed(this),
     ).subscribe((createdReplication) => {
       this.cdr.markForCheck();
-      this.slideInRef.close({ response: createdReplication, error: null });
+      this.slideInRef.close({ response: createdReplication });
     });
   }
 
@@ -454,8 +454,8 @@ export class ReplicationWizardComponent {
           .some((snapshots: string[]) => snapshots.length > 0);
         if (hasBadSnapshots) {
           return this.dialogService.confirm({
-            title: this.translate.instant(helptextReplicationWizard.clearSnapshotDialog_title),
-            message: this.translate.instant(helptextReplicationWizard.clearSnapshotDialog_content),
+            title: this.translate.instant(helptextReplicationWizard.clearSnapshotDialogTitle),
+            message: this.translate.instant(helptextReplicationWizard.clearSnapshotDialogContent),
           }).pipe(
             switchMap((dialogResult) => {
               replicationPayload.allow_from_scratch = dialogResult;

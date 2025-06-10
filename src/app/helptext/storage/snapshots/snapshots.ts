@@ -24,30 +24,30 @@ export const helptextSnapshots = {
  rollback action. The rollback is canceled when the safety check finds \
  additional snapshots that are directly related to the dataset being rolled back.'),
 
-  rollback_dataset_placeholder: T('Newer Intermediate, Child, and Clone'),
-  rollback_dataset_tooltip: T('Stops the rollback when the safety check \
+  rollbackDatasetLabel: T('Newer Intermediate, Child, and Clone'),
+  rollbackDatasetTooltip: T('Stops the rollback when the safety check \
  finds any related intermediate, child dataset, or clone snapshots that \
  are newer than the rollback snapshot.'),
 
-  rollback_recursive_placeholder: T('Newer Clone'),
-  rollback_recursive_tooltip: T('Stops the rollback when the safety \
+  rollbackRecursiveLabel: T('Newer Clone'),
+  rollbackRecursiveTooltip: T('Stops the rollback when the safety \
  check finds any related clone snapshots that are newer than the \
  rollback snapshot.'),
 
-  rollback_recursive_clones_placeholder: T('No Safety Check (CAUTION)'),
-  rollback_recursive_clones_tooltip: T('The rollback will destroy any \
+  rollbackRecursiveClonesLabel: T('No Safety Check (CAUTION)'),
+  rollbackRecursiveClonesTooltip: T('The rollback will destroy any \
  related intermediate, child dataset, and cloned snapshots that are \
  newer than the rollback snapshot.'),
 
   rollbackConfirm: T('Confirm'),
 
-  extra_cols: {
-    title_show: T('Show Extra Columns'),
-    title_hide: T('Hide Extra Columns'),
+  extraColumns: {
+    show: T('Show Extra Columns'),
+    hide: T('Hide Extra Columns'),
 
-    message_show: T('Showing extra columns in the table is useful for data filtering, but can cause performance issues.'),
-    message_hide: T('Hidden columns are not available for sorting or filtering. Hiding columns improves performance.'),
-    button_show: T('Show'),
-    button_hide: T('Hide'),
+    showMessage: T('Showing extra columns in the table is useful for data filtering, but can cause performance issues.'),
+    hideMessage: T('Hidden columns are not available for sorting or filtering. Hiding columns improves performance.'),
+    showButton: T('Show'),
+    hideButton: T('Hide'),
   },
 };

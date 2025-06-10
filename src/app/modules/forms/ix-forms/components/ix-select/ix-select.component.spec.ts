@@ -27,7 +27,7 @@ describe('IxSelectComponent', () => {
     ],
   });
 
-  describe('ix-select', () => {
+  describe('rendering', () => {
     beforeEach(() => {
       control = new FormControl('', { nonNullable: true });
       options$ = of([
@@ -43,6 +43,8 @@ describe('IxSelectComponent', () => {
           [tooltip]="tooltip"
           [options]="options"
           [showSelectAll]="showSelectAll"
+          [emptyValue]="emptyValue"
+          [emptyLabel]="emptyLabel"
         ></ix-select>`,
         {
           hostProps: {
@@ -52,6 +54,8 @@ describe('IxSelectComponent', () => {
             tooltip: undefined,
             options: undefined,
             showSelectAll: undefined,
+            emptyValue: null,
+            emptyLabel: '--',
           },
         },
       );
@@ -81,6 +85,21 @@ describe('IxSelectComponent', () => {
       // because there is no way to select an empty value anyway.
       expect(label.required()).toBe(false);
       expect(label.tooltip()).toBe('Select group to use.');
+    });
+
+    it('shows an empty label and value for non-required selects', async () => {
+      spectator.setHostInput({ options: options$ });
+      spectator.setHostInput('emptyLabel', 'Select Group');
+      spectator.setHostInput('emptyValue', 0);
+
+      const select = await loader.getHarness(IxSelectHarness);
+      const options = await select.getOptionLabels();
+
+      expect(options[0]).toBe('Select Group');
+
+      await select.setValue('Select Group');
+
+      expect(control.value).toBe(0);
     });
 
     it('shows loader while options are loading', fakeAsync(() => {
@@ -124,7 +143,6 @@ describe('IxSelectComponent', () => {
 
     it('shows \'No options\' if options length === 0', async () => {
       spectator.setHostInput('options', of<SelectOption[]>([]));
-      spectator.component.ngOnChanges();
 
       const select = await (await loader.getHarness(IxSelectHarness)).getSelectHarness();
       await select.open();
@@ -137,7 +155,6 @@ describe('IxSelectComponent', () => {
       jest.spyOn(console, 'error').mockImplementation();
 
       spectator.setHostInput('options', throwError(() => new Error('Some Error')));
-      spectator.component.ngOnChanges();
 
       const select = await (await loader.getHarness(IxSelectHarness)).getSelectHarness();
       await select.open();
@@ -153,8 +170,6 @@ describe('IxSelectComponent', () => {
         { label: 'GRL', value: 'Greenland', disabled: true },
       ]));
 
-      spectator.component.ngOnChanges();
-
       const select = await (await loader.getHarness(IxSelectHarness)).getSelectHarness();
       await select.open();
       const options = await select.getOptions();
@@ -168,7 +183,6 @@ describe('IxSelectComponent', () => {
         { label: 'GBR', value: 'Great Britain' },
         { label: 'GRL', value: 'Greenland', tooltip: 'Not really green.' },
       ]));
-      spectator.component.ngOnChanges();
 
       const select = await (await loader.getHarness(IxSelectHarness)).getSelectHarness();
       await select.open();
@@ -224,6 +238,31 @@ describe('IxSelectComponent', () => {
 
       expect(control.value).toBe('');
       expect(await select.getValue()).toEqual([]);
+    });
+  });
+
+  describe('special cases', () => {
+    it('only subscribes once to options observable', () => {
+      const options1$ = of([]);
+      jest.spyOn(options1$, 'subscribe');
+
+      spectator = createHost(
+        '<ix-select [formControl]="control" [options]="options$"></ix-select>',
+        {
+          hostProps: {
+            control,
+            options$: options1$,
+          },
+        },
+      );
+
+      // One subscription in the component and another in the template.
+      expect(options1$.subscribe).toHaveBeenCalledTimes(2);
+
+      const options2$ = of([]);
+      spectator.setHostInput('options$', options2$);
+      // Unchanged
+      expect(options1$.subscribe).toHaveBeenCalledTimes(2);
     });
   });
 });

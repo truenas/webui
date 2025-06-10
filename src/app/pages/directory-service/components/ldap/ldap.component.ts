@@ -168,7 +168,7 @@ export class LdapComponent implements OnInit {
       .subscribe({
         next: () => {
           this.snackbar.success(this.translate.instant('LDAP configuration updated'));
-          this.slideInRef.close({ response: true, error: null });
+          this.slideInRef.close({ response: true });
         },
         complete: () => {
           this.isLoading = false;

@@ -10,8 +10,10 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   EMPTY, catchError, filter, map, switchMap, tap,
 } from 'rxjs';
+import { cloudSyncTaskEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
@@ -19,6 +21,7 @@ import { helptextCloudSync } from 'app/helptext/data-protection/cloudsync/clouds
 import { CloudSyncTask, CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -79,10 +82,13 @@ import { AppState } from 'app/store';
     IxTablePagerComponent,
     TranslateModule,
     AsyncPipe,
+    EmptyComponent,
   ],
 })
 export class CloudSyncListComponent implements OnInit {
   protected readonly searchableElements = cloudSyncListElements;
+  protected readonly emptyConfig = cloudSyncTaskEmptyConfig;
+  protected readonly EmptyType = EmptyType;
 
   cloudSyncTasks: CloudSyncTaskUi[] = [];
   filterString = '';
@@ -238,8 +244,8 @@ export class CloudSyncListComponent implements OnInit {
 
   dryRun(row: CloudSyncTaskUi): void {
     this.dialogService.confirm({
-      title: this.translate.instant(helptextCloudSync.dry_run_title),
-      message: this.translate.instant(helptextCloudSync.dry_run_dialog),
+      title: this.translate.instant(helptextCloudSync.dryRunTitle),
+      message: this.translate.instant(helptextCloudSync.dryRunDialog),
       hideCheckbox: true,
     }).pipe(
       filter(Boolean),
@@ -295,7 +301,6 @@ export class CloudSyncListComponent implements OnInit {
 
   doDelete(row: CloudSyncTaskUi): void {
     this.dialogService.confirm({
-      title: this.translate.instant('Confirmation'),
       message: this.translate.instant('Delete Cloud Sync Task <b>"{name}"</b>?', {
         name: row.description,
       }),

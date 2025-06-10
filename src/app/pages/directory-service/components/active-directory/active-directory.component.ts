@@ -156,7 +156,7 @@ export class ActiveDirectoryComponent implements OnInit {
         return;
       }
 
-      this.slideInRef.close({ response: true, error: null });
+      this.slideInRef.close({ response: true });
     });
   }
 
@@ -177,7 +177,7 @@ export class ActiveDirectoryComponent implements OnInit {
         untilDestroyed(this),
       )
       .subscribe({
-        next: () => this.slideInRef.close({ response: true, error: null }),
+        next: () => this.slideInRef.close({ response: true }),
         complete: () => {
           this.isLoading.set(false);
         },

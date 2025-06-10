@@ -77,19 +77,19 @@ export class DatasetQuotaEditFormComponent implements OnInit {
   }
 
   private getUserDataQuotaLabel(): string {
-    return this.translate.instant(helptextQuotas.users.dataQuota.placeholder)
-      + this.translate.instant(helptextGlobal.human_readable.suggestion_label);
+    return this.translate.instant(helptextQuotas.users.dataQuota.label)
+      + this.translate.instant(helptextGlobal.humanReadable.suggestionLabel);
   }
 
   private getGroupDataQuotaLabel(): string {
-    return this.translate.instant(helptextQuotas.groups.data_quota.placeholder)
-      + this.translate.instant(helptextGlobal.human_readable.suggestion_label);
+    return this.translate.instant(helptextQuotas.groups.dataQuota.label)
+      + this.translate.instant(helptextGlobal.humanReadable.suggestionLabel);
   }
 
   get objectQuotaLabel(): string {
     return this.quotaType === DatasetQuotaType.User
-      ? helptextQuotas.users.objQuota.placeholder
-      : helptextQuotas.groups.obj_quota.placeholder;
+      ? helptextQuotas.users.objQuota.label
+      : helptextQuotas.groups.objectQuota.label;
   }
 
   get dataQuotaTooltip(): string {
@@ -100,20 +100,20 @@ export class DatasetQuotaEditFormComponent implements OnInit {
 
   private getUserDataQuotaTooltip(): string {
     return this.translate.instant(helptextQuotas.users.dataQuota.tooltip)
-      + this.translate.instant(helptextGlobal.human_readable.suggestion_tooltip)
+      + this.translate.instant(helptextGlobal.humanReadable.suggestionTooltip)
       + this.translate.instant(' bytes.');
   }
 
   private getGroupDataQuotaTooltip(): string {
-    return this.translate.instant(helptextQuotas.groups.data_quota.tooltip)
-      + this.translate.instant(helptextGlobal.human_readable.suggestion_tooltip)
+    return this.translate.instant(helptextQuotas.groups.dataQuota.tooltip)
+      + this.translate.instant(helptextGlobal.humanReadable.suggestionTooltip)
       + this.translate.instant(' bytes.');
   }
 
   get objectQuotaTooltip(): string {
     return this.quotaType === DatasetQuotaType.User
       ? helptextQuotas.users.objQuota.tooltip
-      : helptextQuotas.groups.obj_quota.tooltip;
+      : helptextQuotas.groups.objectQuota.tooltip;
   }
 
   form = this.formBuilder.group({
@@ -211,7 +211,7 @@ export class DatasetQuotaEditFormComponent implements OnInit {
       next: () => {
         this.snackbar.success(this.translate.instant('Quotas updated'));
         this.isFormLoading.set(false);
-        this.slideInRef.close({ response: true, error: null });
+        this.slideInRef.close({ response: true });
       },
       error: (error: unknown) => {
         this.isFormLoading.set(false);

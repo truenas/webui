@@ -24,6 +24,7 @@ import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtual
 const instance = {
   id: 'my-instance',
   name: 'agi_instance',
+  autostart: false,
   status: VirtualizationStatus.Running,
   type: VirtualizationType.Container,
 } as VirtualizationInstance;
@@ -86,9 +87,14 @@ describe('InstanceRowComponent', () => {
       expect(cells[2]).toHaveText('Running');
     });
 
+    it('shows autostart value', () => {
+      const cells = spectator.queryAll('.cell');
+      expect(cells[3]).toHaveText('No');
+    });
+
     it('shows instance type', () => {
       const cells = spectator.queryAll('.cell');
-      expect(cells[3]).toHaveText('Container');
+      expect(cells[4]).toHaveText('Container');
     });
 
     it('shows Stop and Restart button when instance is Running', async () => {

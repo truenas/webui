@@ -28,6 +28,7 @@ describe('SigninComponent', () => {
   const loginBanner$ = new BehaviorSubject<string>('');
   const isTokenWithinTimeline$ = new BehaviorSubject<boolean>(true);
   const isReconnectAllowed$ = new BehaviorSubject<boolean>(false);
+  const isFailoverRestart$ = new BehaviorSubject<boolean>(false);
 
   const createComponent = createComponentFactory({
     component: SigninComponent,
@@ -52,7 +53,7 @@ describe('SigninComponent', () => {
     ],
     providers: [
       mockProvider(DialogService, {
-        fullScreenDialog: jest.fn(),
+        fullScreenDialog: jest.fn(() => of()),
       }),
       mockProvider(AuthService, {
         hasAuthToken: true,
@@ -64,6 +65,8 @@ describe('SigninComponent', () => {
         isConnected$,
         isReconnectAllowed$,
         setReconnectAllowed: jest.fn(),
+        isFailoverRestart$,
+        setFailoverStatus: jest.fn(),
       }),
     ],
   });
@@ -144,6 +147,14 @@ describe('SigninComponent', () => {
       spectator.detectChanges();
 
       expect(spectator.inject(DialogService).fullScreenDialog).toHaveBeenCalled();
+    });
+
+    it('checks signin store is initialized when isFailoverStart$ is true', () => {
+      isFailoverRestart$.next(true);
+      spectator.detectChanges();
+
+      expect(spectator.inject(SigninStore, true).init).toHaveBeenCalled();
+      expect(spectator.inject(WebSocketStatusService).setFailoverStatus).toHaveBeenCalledWith(false);
     });
   });
 });

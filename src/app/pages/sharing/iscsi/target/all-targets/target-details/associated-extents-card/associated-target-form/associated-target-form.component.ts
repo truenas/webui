@@ -61,8 +61,8 @@ export class AssociatedTargetFormComponent {
   extents$ = of(this.data.extents).pipe(idNameArrayToOptions());
 
   readonly tooltips = {
-    lunid: helptextIscsi.associated_target_tooltip_lunid,
-    extent: helptextIscsi.associated_target_tooltip_extent,
+    lunid: helptextIscsi.lunidTooltip,
+    extent: helptextIscsi.existingExtentTooltip,
   };
 
   protected readonly requiredRoles = [

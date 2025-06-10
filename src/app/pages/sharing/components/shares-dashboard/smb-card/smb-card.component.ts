@@ -12,12 +12,14 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   map, filter, switchMap, BehaviorSubject, of,
 } from 'rxjs';
+import { smbCardEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { LoadingMap, accumulateLoadingState } from 'app/helpers/operators/accumulate-loading-state.helper';
 import { SmbShare, SmbSharesec } from 'app/interfaces/smb-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -70,11 +72,13 @@ import { selectService } from 'app/store/services/services.selectors';
     TranslateModule,
     AsyncPipe,
     RouterLink,
+    EmptyComponent,
   ],
 })
 export class SmbCardComponent implements OnInit {
   requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
   loadingMap$ = new BehaviorSubject<LoadingMap>(new Map());
+  protected readonly emptyConfig = smbCardEmptyConfig;
 
   service$ = this.store$.select(selectService(ServiceName.Cifs));
 
@@ -109,14 +113,12 @@ export class SmbCardComponent implements OnInit {
           iconName: iconMarker('share'),
           tooltip: this.translate.instant('Edit Share ACL'),
           onClick: (row) => this.doShareAclEdit(row),
-          requiredRoles: this.requiredRoles,
         },
         {
           iconName: iconMarker('security'),
           tooltip: this.translate.instant('Edit Filesystem ACL'),
           disabled: (row) => of(isRootShare(row.path)),
           onClick: (row) => this.doFilesystemAclEdit(row),
-          requiredRoles: this.requiredRoles,
         },
         {
           iconName: iconMarker('edit'),
@@ -166,7 +168,6 @@ export class SmbCardComponent implements OnInit {
 
   doDelete(smb: SmbShare): void {
     this.dialogService.confirm({
-      title: this.translate.instant('Confirmation'),
       message: this.translate.instant('Are you sure you want to delete SMB Share <b>"{name}"</b>?', { name: smb.name }),
       buttonText: this.translate.instant('Delete'),
       buttonColor: 'warn',

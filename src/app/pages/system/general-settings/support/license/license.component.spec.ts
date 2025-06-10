@@ -40,9 +40,7 @@ describe('LicenseComponent', () => {
       mockApi([
         mockCall('system.license_update'),
       ]),
-      mockProvider(SlideIn, {
-        components$: of([]),
-      }),
+      mockProvider(SlideIn),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of()),
       }),
@@ -87,8 +85,8 @@ describe('LicenseComponent', () => {
     await saveButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
-      title: helptext.update_license.reload_dialog_title,
-      message: helptext.update_license.reload_dialog_message,
+      title: helptext.updateLicense.reloadDialogTitle,
+      message: helptext.updateLicense.reloadDialogMessage,
     }));
 
     expect(spectator.inject<Window>(WINDOW).location.reload).toHaveBeenCalled();

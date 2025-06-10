@@ -131,12 +131,12 @@ export class ReplicationWhenComponent implements OnInit, OnChanges, SummaryProvi
 
     if (values.schedule_method === ScheduleMethod.Cron) {
       summary.push({
-        label: this.translate.instant(helptextReplicationWizard.schedule_method_placeholder),
+        label: this.translate.instant(helptextReplicationWizard.scheduleMethodLabel),
         value: this.translate.instant('Run On a Schedule'),
       });
     } else {
       summary.push({
-        label: this.translate.instant(helptextReplicationWizard.schedule_method_placeholder),
+        label: this.translate.instant(helptextReplicationWizard.scheduleMethodLabel),
         value: this.translate.instant('Run Once'),
       });
     }

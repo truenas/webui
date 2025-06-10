@@ -2,7 +2,6 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { KerberosKeytab } from 'app/interfaces/kerberos-config.interface';
@@ -36,9 +35,7 @@ describe('KerberosKeytabsFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockProvider(SlideIn, {
-        components$: of([]),
-      }),
+      mockProvider(SlideIn),
       mockProvider(StorageService),
       mockProvider(DialogService),
       mockProvider(SlideInRef, slideInRef),

@@ -24,6 +24,7 @@ import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/s
 import {
   GlobalTargetConfigurationComponent,
 } from 'app/pages/sharing/iscsi/global-target-configuration/global-target-configuration.component';
+import { NvmeOfConfigurationComponent } from 'app/pages/sharing/nvme-of/nvme-of-configuration/nvme-of-configuration.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UrlOptionsService } from 'app/services/url-options.service';
 
@@ -81,6 +82,9 @@ export class ServiceExtraActionsComponent {
 
   configureService(service: Service): void {
     switch (service.service) {
+      case ServiceName.NvmeOf:
+        this.slideIn.open(NvmeOfConfigurationComponent);
+        break;
       case ServiceName.Iscsi:
         this.slideIn.open(GlobalTargetConfigurationComponent);
         break;

@@ -152,6 +152,9 @@ export class StorageSettingsFormComponent implements OnInit {
 
     if (requests.length === 0) {
       // No changes made
+      this.slideInRef.close({
+        response: false,
+      });
       return;
     }
 
@@ -165,7 +168,7 @@ export class StorageSettingsFormComponent implements OnInit {
       .subscribe({
         complete: () => {
           this.snackbar.success(this.translate.instant('Storage Settings Updated.'));
-          this.slideInRef.close({ response: true, error: null });
+          this.slideInRef.close({ response: true });
         },
         error: (error: unknown) => {
           this.formErrorHandler.handleValidationErrors(error, this.form);

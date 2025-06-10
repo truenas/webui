@@ -1,0 +1,21 @@
+.section-header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 9px;
+}
+
+.empty-state {
+  font-style: italic;
+}
+
+.namespace {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+
+  ix-icon {
+    height: 20px;
+    width: 20px;
+  }
+}

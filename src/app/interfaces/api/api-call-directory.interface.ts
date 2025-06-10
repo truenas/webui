@@ -74,6 +74,7 @@ import {
   ContainerImage, DeleteContainerImageParams,
 } from 'app/interfaces/container-image.interface';
 import { CoreDownloadQuery, CoreDownloadResponse } from 'app/interfaces/core-download.interface';
+import { CoreOptions } from 'app/interfaces/core-options.interface';
 import {
   CountManualSnapshotsParams,
   EligibleManualSnapshotsCount,
@@ -177,12 +178,23 @@ import {
 } from 'app/interfaces/nfs-share.interface';
 import { CreateNtpServer, NtpServer } from 'app/interfaces/ntp-server.interface';
 import {
+  AssociateSubsystemHost,
+  AssociateSubsystemPort,
+  CreateNvmeOfHost,
   CreateNvmeOfNamespace,
   CreateNvmeOfPort,
-  CreateNvmeOfSubsystem, DeleteNamespaceParams,
+  CreateNvmeOfSubsystem,
+  DeleteNamespaceParams, GenerateNvmeHostParams,
   NvmeOfGlobalConfig,
-  NvmeOfGlobalConfigUpdate, NvmeOfNamespace, NvmeOfPort,
-  NvmeOfSubsystem, NvmeOfTransportParams, UpdateNvmeOfNamespace, UpdateNvmeOfPort, UpdateNvmeOfSubsystem,
+  NvmeOfGlobalConfigUpdate, NvmeOfHost,
+  NvmeOfNamespace,
+  NvmeOfPort,
+  NvmeOfSubsystem,
+  NvmeOfTransportParams, SubsystemHostAssociation,
+  SubsystemPortAssociation, UpdateNvmeOfHost,
+  UpdateNvmeOfNamespace,
+  UpdateNvmeOfPort,
+  UpdateNvmeOfSubsystem,
 } from 'app/interfaces/nvme-of.interface';
 import { MapOption } from 'app/interfaces/option.interface';
 import {
@@ -424,6 +436,7 @@ export interface ApiCallDirectory {
   'core.resize_shell': { params: ResizeShellRequest; response: void };
   'core.subscribe': { params: [name: ApiEventMethod]; response: void };
   'core.unsubscribe': { params: [id: string]; response: void };
+  'core.set_options': { params: CoreOptions; response: CoreOptions };
 
   // Cronjob
   'cronjob.create': { params: [CronjobUpdate]; response: Cronjob };
@@ -639,10 +652,12 @@ export interface ApiCallDirectory {
   'nfs.update': { params: [NfsConfigUpdate]; response: NfsConfig };
 
   // NVMe-oF
-  'nvmet.global.config': { params: [void]; response: NvmeOfGlobalConfig };
+  'nvmet.global.config': { params: void; response: NvmeOfGlobalConfig };
   'nvmet.global.update': { params: [NvmeOfGlobalConfigUpdate]; response: NvmeOfGlobalConfig };
+  'nvmet.global.rdma_enabled': { params: void; response: boolean };
+  'nvmet.global.ana_enabled': { params: void; response: boolean };
 
-  'nvmet.subsys.query': { params: QueryParams<NvmeOfSubsystem>; response: NvmeOfSubsystem[] };
+  'nvmet.subsys.query': { params: QueryParams<NvmeOfSubsystem, { extra: { verbose: boolean } }>; response: NvmeOfSubsystem[] };
   'nvmet.subsys.create': { params: [CreateNvmeOfSubsystem]; response: NvmeOfSubsystem };
   'nvmet.subsys.update': { params: [id: number, update: UpdateNvmeOfSubsystem]; response: NvmeOfSubsystem };
   'nvmet.subsys.delete': { params: [id: number, { force: boolean }?]; response: void };
@@ -652,7 +667,23 @@ export interface ApiCallDirectory {
   'nvmet.port.update': { params: [id: number, update: UpdateNvmeOfPort]; response: NvmeOfPort };
   'nvmet.port.delete': { params: [id: number, { force: boolean }?]; response: void };
 
-  'nvmet.namespace.query': { params: QueryParams<NvmeOfNamespace>; response: NvmeOfNamespace };
+  'nvmet.port_subsys.query': { params: QueryParams<SubsystemPortAssociation>; response: SubsystemPortAssociation[] };
+  'nvmet.port_subsys.create': { params: [AssociateSubsystemPort]; response: void };
+  'nvmet.port_subsys.delete': { params: [id: number]; response: void };
+
+  'nvmet.host.query': { params: QueryParams<NvmeOfHost>; response: NvmeOfHost[] };
+  'nvmet.host.create': { params: [CreateNvmeOfHost]; response: NvmeOfHost };
+  'nvmet.host.update': { params: [id: number, update: UpdateNvmeOfHost]; response: NvmeOfHost };
+  'nvmet.host.delete': { params: [id: number, { force: boolean }?]; response: void };
+  'nvmet.host.generate_key': { params: GenerateNvmeHostParams; response: string };
+  'nvmet.host.dhchap_dhgroup_choices': { params: void; response: string[] };
+  'nvmet.host.dhchap_hash_choices': { params: void; response: string[] };
+
+  'nvmet.host_subsys.query': { params: QueryParams<SubsystemHostAssociation>; response: SubsystemHostAssociation[] };
+  'nvmet.host_subsys.create': { params: [AssociateSubsystemHost]; response: void };
+  'nvmet.host_subsys.delete': { params: [id: number]; response: void };
+
+  'nvmet.namespace.query': { params: QueryParams<NvmeOfNamespace>; response: NvmeOfNamespace[] };
   'nvmet.namespace.create': { params: [CreateNvmeOfNamespace]; response: NvmeOfNamespace };
   'nvmet.namespace.update': { params: [id: number, update: UpdateNvmeOfNamespace]; response: NvmeOfNamespace };
   'nvmet.namespace.delete': { params: DeleteNamespaceParams; response: void };
@@ -674,7 +705,7 @@ export interface ApiCallDirectory {
   'pool.dataset.processes': { params: [datasetId: string]; response: Process[] };
   'pool.dataset.promote': { params: [id: string]; response: void };
   'pool.dataset.query': { params: QueryParams<Dataset, ExtraDatasetQueryOptions>; response: Dataset[] };
-  'pool.dataset.recommended_zvol_blocksize': { params: [name: string]; response: DatasetRecordSize };
+  'pool.dataset.recommended_zvol_blocksize': { params: [pool: string]; response: DatasetRecordSize };
   'pool.dataset.recordsize_choices': { params: void; response: string[] };
   'pool.dataset.set_quota': { params: [dataset: string, quotas: SetDatasetQuota[]]; response: void };
   'pool.dataset.update': { params: [id: string, update: DatasetUpdate]; response: Dataset };

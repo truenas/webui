@@ -9,11 +9,14 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   Observable, filter, switchMap, take, tap,
 } from 'rxjs';
+import { snapshotTaskEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -71,6 +74,7 @@ import { TaskService } from 'app/services/task.service';
     IxTablePagerComponent,
     TranslateModule,
     AsyncPipe,
+    EmptyComponent,
   ],
 })
 export class SnapshotTaskListComponent implements OnInit {
@@ -80,6 +84,8 @@ export class SnapshotTaskListComponent implements OnInit {
   snapshotTasks: PeriodicSnapshotTaskUi[] = [];
   filterString = '';
   dataProvider: AsyncDataProvider<PeriodicSnapshotTaskUi>;
+  protected readonly emptyConfig = snapshotTaskEmptyConfig;
+  protected readonly EmptyType = EmptyType;
 
   protected columns = createTable<PeriodicSnapshotTaskUi>([
     textColumn({

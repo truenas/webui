@@ -98,7 +98,7 @@ export class PullImageFormComponent {
       .subscribe({
         next: () => {
           this.isFormLoading.set(false);
-          this.slideInRef.close({ response: true, error: null });
+          this.slideInRef.close({ response: true });
         },
         error: (error: unknown) => {
           this.isFormLoading.set(false);

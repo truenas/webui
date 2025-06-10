@@ -10,6 +10,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   debounceTime, distinctUntilChanged, map, of,
 } from 'rxjs';
+import { slashRootNode } from 'app/constants/basic-root-nodes.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { CloudsyncTransferSetting, cloudsyncTransferSettingLabels } from 'app/enums/cloudsync-transfer-setting.enum';
@@ -80,6 +81,8 @@ export class CloudBackupFormComponent implements OnInit {
   get isNewBucketOptionSelected(): boolean {
     return this.form.value.bucket === newOption;
   }
+
+  protected readonly slashRootNode = slashRootNode;
 
   get title(): string {
     return this.isNew
@@ -273,7 +276,7 @@ export class CloudBackupFormComponent implements OnInit {
           this.snackbar.success(this.translate.instant('Task updated'));
         }
         this.isLoading.set(false);
-        this.slideInRef.close({ response, error: null });
+        this.slideInRef.close({ response });
       },
       error: (error: unknown) => {
         this.isLoading.set(false);

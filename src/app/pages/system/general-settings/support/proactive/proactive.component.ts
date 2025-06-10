@@ -99,10 +99,10 @@ export class ProactiveComponent implements OnInit {
       .subscribe({
         next: () => {
           this.isLoading.set(false);
-          this.slideInRef.close({ response: true, error: null });
+          this.slideInRef.close({ response: true });
 
           this.snackbar.success(
-            this.translate.instant(helptext.proactive.dialog_message),
+            this.translate.instant(helptext.proactive.dialogMessage),
           );
         },
         error: (error: unknown) => {
@@ -146,8 +146,8 @@ export class ProactiveComponent implements OnInit {
     this.isFormDisabled = true;
     this.form.disable();
     this.dialogService.warn(
-      helptext.proactive.dialog_unavailable_title,
-      helptext.proactive.dialog_unavailable_warning,
+      helptext.proactive.dialogUnavailableTitle,
+      helptext.proactive.dialogUnavailableWarning,
     );
   }
 

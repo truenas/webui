@@ -19,6 +19,7 @@ import { ServiceSnmpComponent } from 'app/pages/services/components/service-snmp
 import { ServiceSshComponent } from 'app/pages/services/components/service-ssh/service-ssh.component';
 import { ServiceUpsComponent } from 'app/pages/services/components/service-ups/service-ups.component';
 import { GlobalTargetConfigurationComponent } from 'app/pages/sharing/iscsi/global-target-configuration/global-target-configuration.component';
+import { NvmeOfConfigurationComponent } from 'app/pages/sharing/nvme-of/nvme-of-configuration/nvme-of-configuration.component';
 
 describe('ServiceActionsCellComponent', () => {
   let spectator: SpectatorHost<ServiceActionsCellComponent>;
@@ -97,6 +98,15 @@ describe('ServiceActionsCellComponent', () => {
   });
 
   describe('edit', () => {
+    it('should open NVMe-oF global configuration form', async () => {
+      setup({ service: ServiceName.NvmeOf, state: ServiceStatus.Stopped });
+
+      const editIcon = await loader.getHarness(IxIconHarness.with({ name: 'edit' }));
+      await editIcon.click();
+
+      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(NvmeOfConfigurationComponent);
+    });
+
     it('should open iSCSI global configuration form', async () => {
       setup({ service: ServiceName.Iscsi, state: ServiceStatus.Stopped });
 

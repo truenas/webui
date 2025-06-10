@@ -140,7 +140,7 @@ export class CustomAppFormComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe({
       next: () => {
-        this.slideInRef.close({ response: true, error: null });
+        this.slideInRef.close({ response: true });
         if (this.existingApp) {
           this.router.navigate(['/apps', 'installed', this.existingApp.metadata.train, this.existingApp.name]);
         } else {

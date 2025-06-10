@@ -1,12 +1,15 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import {
+  EMPTY,
   filter,
   map,
   merge,
   Observable,
   of,
+  OperatorFunction,
   startWith,
   Subject,
   switchMap,
@@ -14,6 +17,7 @@ import {
   takeUntil,
   throwError,
 } from 'rxjs';
+import { ApiErrorName } from 'app/enums/api.enum';
 import { isErrorResponse } from 'app/helpers/api.helper';
 import { applyApiEvent } from 'app/helpers/operators/apply-api-event.operator';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
@@ -31,6 +35,7 @@ import {
   SuccessfulResponse,
 } from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { JobSlice, selectJobWithCallId } from 'app/modules/jobs/store/job.selectors';
 import { SubscriptionManagerService } from 'app/modules/websocket/subscription-manager.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { ApiCallError } from 'app/services/errors/error.classes';
@@ -41,6 +46,8 @@ import { WebSocketStatusService } from 'app/services/websocket-status.service';
 })
 export class ApiService {
   readonly clearSubscriptions$ = new Subject<void>();
+
+  private store$: Store<JobSlice> = inject<Store<JobSlice>>(Store<JobSlice>);
 
   constructor(
     protected wsHandler: WebSocketHandlerService,
@@ -82,7 +89,10 @@ export class ApiService {
    * Use `job` otherwise.
    */
   startJob<M extends ApiJobMethod>(method: M, params?: ApiJobParams<M>): Observable<number> {
-    return this.callMethod(method, params);
+    return this.job(method, params).pipe(
+      take(1),
+      map((job) => job.id),
+    );
   }
 
   /**
@@ -92,16 +102,23 @@ export class ApiService {
     method: M,
     params?: ApiJobParams<M>,
   ): Observable<Job<ApiJobResponse<M>>> {
-    return this.callMethod(method, params).pipe(
-      switchMap((jobId: number) => {
-        return merge(
-          this.subscribeToJobUpdates(jobId),
-          // Get job status here for jobs that complete too fast.
-          this.call('core.get_jobs', [[['id', '=', jobId]]]).pipe(map((jobs) => jobs[0])),
-        )
-          .pipe(observeJob());
-      }),
-      takeUntil(this.clearSubscriptions$),
+    const uuid = UUID.UUID();
+    this.wsHandler.scheduleCall({
+      id: uuid,
+      method,
+      params: params as unknown[] ?? [],
+    });
+    const callResponse$ = this.wsHandler.responses$.pipe(
+      filter((message) => 'id' in message && message.id === uuid),
+      this.getErrorSwitchMap(method, uuid),
+      map((message) => message.result),
+      take(1),
+    );
+    return this.store$.pipe(
+      select(selectJobWithCallId(uuid)),
+      filter((job): job is Job<ApiJobResponse<M>> => !!job),
+      observeJob(),
+      takeUntil(merge(this.clearSubscriptions$, callResponse$)),
     ) as Observable<Job<ApiJobResponse<M>>>;
   }
 
@@ -122,13 +139,25 @@ export class ApiService {
     this.clearSubscriptions$.next();
   }
 
-  private callMethod<M extends ApiCallMethod>(method: M, params?: ApiCallParams<M>): Observable<ApiCallResponse<M>>;
-  private callMethod<M extends ApiJobMethod>(method: M, params?: ApiJobParams<M>): Observable<number>;
-  private callMethod<M extends ApiCallMethod | ApiJobMethod>(method: M, params?: unknown[]): Observable<unknown> {
+  private callMethod<M extends ApiCallMethod>(
+    method: M,
+    params?: ApiCallParams<M>,
+    callUuid?: string
+  ): Observable<ApiCallResponse<M>>;
+  private callMethod<M extends ApiJobMethod>(
+    method: M,
+    params?: ApiJobParams<M>,
+    callUuid?: string
+  ): Observable<ApiJobResponse<M>>;
+  private callMethod<M extends ApiCallMethod | ApiJobMethod>(
+    method: M,
+    params?: unknown[],
+  ): Observable<unknown> {
     const uuid = UUID.UUID();
     return of(uuid).pipe(
       switchMap(() => {
         performance.mark(`${method} - ${uuid} - start`);
+
         this.wsHandler.scheduleCall({
           id: uuid,
           method,
@@ -138,26 +167,29 @@ export class ApiService {
           filter((message) => 'id' in message && message.id === uuid),
         );
       }),
-      switchMap((message: SuccessfulResponse | ErrorResponse) => {
-        if (isErrorResponse(message)) {
-          return throwError(() => new ApiCallError(message.error));
-        }
-
-        performance.mark(`${method} - ${uuid} - end`);
-        performance.measure(method, `${method} - ${uuid} - start`, `${method} - ${uuid} - end`);
-        return of(message);
-      }),
-
+      this.getErrorSwitchMap(method, uuid),
       map((message) => message.result),
       take(1),
     );
   }
 
-  private subscribeToJobUpdates(jobId: number): Observable<Job> {
-    return this.subscribe('core.get_jobs').pipe(
-      filter((apiEvent) => apiEvent.id === jobId),
-      map((apiEvent) => apiEvent.fields),
-      takeUntil(this.clearSubscriptions$),
-    );
+  private getErrorSwitchMap(
+    method: string,
+    uuid: string,
+  ): OperatorFunction<SuccessfulResponse | ErrorResponse, SuccessfulResponse> {
+    return switchMap((message: SuccessfulResponse | ErrorResponse) => {
+      if (isErrorResponse(message)) {
+        if (message?.error?.data?.errname === ApiErrorName.NotAuthenticated) {
+          this.wsStatus.setLoginStatus(false);
+          return EMPTY;
+        }
+
+        return throwError(() => new ApiCallError(message.error));
+      }
+
+      performance.mark(`${method} - ${uuid} - end`);
+      performance.measure(method, `${method} - ${uuid} - start`, `${method} - ${uuid} - end`);
+      return of(message);
+    });
   }
 }

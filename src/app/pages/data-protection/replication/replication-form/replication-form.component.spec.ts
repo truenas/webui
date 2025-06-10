@@ -233,7 +233,7 @@ describe('ReplicationFormComponent', () => {
         auto: true,
         sudo: false,
       }]);
-      expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
+      expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask });
     });
 
     it('shows eligible snapshots message', fakeAsync(() => {
@@ -293,7 +293,7 @@ describe('ReplicationFormComponent', () => {
           sudo: false,
         },
       ]);
-      expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
+      expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask });
     });
   });
 
@@ -355,7 +355,7 @@ describe('ReplicationFormComponent', () => {
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
         buttonText: 'Use Sudo For ZFS Commands',
         hideCheckbox: true,
-        message: helptextReplicationWizard.sudo_warning,
+        message: helptextReplicationWizard.sudoWarning,
         title: 'Sudo Enabled',
       });
     }));

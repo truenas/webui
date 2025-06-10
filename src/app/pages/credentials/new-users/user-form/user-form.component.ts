@@ -1,30 +1,39 @@
 import {
-  ChangeDetectionStrategy, Component, OnInit, signal,
+  ChangeDetectionStrategy, Component, computed, OnInit, signal,
   viewChild,
 } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { tooltips } from '@codemirror/view';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateModule } from '@ngx-translate/core';
+import { Store } from '@ngrx/store';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  catchError, combineLatest, distinctUntilChanged, filter, map, of,
+  catchError, combineLatest, distinctUntilChanged, filter, map, Observable, of,
   startWith,
+  switchMap,
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
-import { User } from 'app/interfaces/user.interface';
+import { isEmptyHomeDirectory } from 'app/helpers/user.helper';
+import { User, UserUpdate } from 'app/interfaces/user.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { forbiddenValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { AdditionalDetailsSectionComponent } from 'app/pages/credentials/new-users/user-form/additional-details-section/additional-details-section.component';
 import { AllowedAccessSectionComponent } from 'app/pages/credentials/new-users/user-form/allowed-access-section/allowed-access-section.component';
 import { AuthSectionComponent } from 'app/pages/credentials/new-users/user-form/auth-section/auth-section.component';
-import { UserFormStore } from 'app/pages/credentials/new-users/user-form/user.store';
+import { defaultHomePath, UserFormStore } from 'app/pages/credentials/new-users/user-form/user.store';
+import { selectUsers } from 'app/pages/credentials/users/store/user.selectors';
+import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UserService } from 'app/services/user.service';
+import { AppState } from 'app/store';
 
 @UntilDestroy()
 @Component({
@@ -78,61 +87,104 @@ export class UserFormComponent implements OnInit {
     return !this.editingUser();
   }
 
+  protected readonly formValues = computed(() => {
+    return {
+      ...this.form.value,
+      ...this.allowedAccessSection().form.value,
+      ...this.authSection().form.value,
+      ...this.additionalDetailsSection().form.value,
+    };
+  });
+
+  protected homeCreateWarning = computed<TranslatedString>(() => {
+    const homeCreate = this.formValues().home_create;
+    const home = this.formValues().home;
+    const homeMode = this.formValues().home_mode;
+    if (this.editingUser()) {
+      if (this.editingUser().immutable || isEmptyHomeDirectory(home)) {
+        return '';
+      }
+      if (!homeCreate && this.editingUser().home !== home) {
+        return this.translate.instant(
+          'Operation will change permissions on path: {path}',
+          { path: `'${home}'` },
+        );
+      }
+      if (!homeCreate && !!homeMode && this.userFormStore.homeModeOldValue() !== homeMode) {
+        return this.translate.instant(
+          'Operation will change permissions on path: {path}',
+          { path: `'${home}'` },
+        );
+      }
+    } else if (!homeCreate && home !== defaultHomePath) {
+      return this.translate.instant(
+        'With this configuration, the existing directory {path} will be used as a home directory without creating a new directory for the user.',
+        { path: `'${home}'` },
+      );
+    }
+    return '';
+  });
+
   constructor(
     private formBuilder: NonNullableFormBuilder,
     public slideInRef: SlideInRef<User | undefined, User>,
     private userFormStore: UserFormStore,
     private errorHandler: ErrorHandlerService,
-  ) {}
+    private store$: Store<AppState>,
+    private dialog: DialogService,
+    private translate: TranslateService,
+    private downloadService: DownloadService,
+  ) {
+    this.setupUsernameUpdate();
+  }
 
   ngOnInit(): void {
-    this.setupUsernameUpdate();
+    this.setupForm();
+  }
+
+  private setupForm(): void {
     this.listenForAllFormsValidity();
     this.userFormStore.isNewUser.set(this.isNewUser);
 
-    // TODO: Handle changes for `sshpubkey_file` input to set values on sshpubkey
-    // TODO: Handle changes on `home` input to set the value of `home_mode` input
-    // TODO: Handle changes on `home_create` field to set the value for `home_mode` field
-    // TODO: if editing user, handle setting values for `home_mode` depending on whether
-    // `home` value is previously set or not
-    // TODO: Handle setting disableWhile for
-    // `locked` when `password_disabled`
-    // `password` when `password_disabled`
-    // `password_conf` when `password_disabled`
-    // `group` when `group_create`
-    // `sudo_commands` when `sudo_commands_all`
-    // `sudo_commands_nopasswd` when `sudo_commands_nopasswd_all`
-
-    // TODO: If editing user, set form values and
-    // if `user.immutable` is true for the user being edited
-    // disable `group`, `home_mode`, `home`, `home_create` and `username`
-    // if `user.builtin` is true, disable `smb`
-    // set names already in user validator for `username`
-
-    // TODO: if creating a new user,
-    // set names already in user validator for `username`
-    // set home share path by calling `sharing.smb.query`
-
-    // TODO: set tooltips for sections
-
-    // TODO: Add create home options warnings
-
-    // TODO: Add controls for sudo related values
-
     if (this.editingUser()) {
-      this.userFormStore.updateUserConfig({
-        username: this.editingUser().username,
-        email: this.editingUser().email,
-        full_name: this.editingUser().full_name,
-        smb: this.editingUser().smb,
-        shell: this.editingUser().shell,
-        home: this.editingUser().home,
-        uid: this.editingUser().uid,
-      });
-      this.form.patchValue({
-        username: this.editingUser().username,
-      });
+      this.setupEditUserForm(this.editingUser());
     }
+  }
+
+  private setupEditUserForm(user: User): void {
+    this.userFormStore.updateUserConfig({
+      username: user.username,
+      email: user.email,
+      full_name: user.full_name,
+      smb: user.smb,
+      home: user.home,
+      uid: user.uid,
+      group: user?.group?.id,
+      groups: user?.groups,
+      password_disabled: user?.password_disabled,
+      sshpubkey: user?.sshpubkey,
+      ssh_password_enabled: user?.ssh_password_enabled,
+    });
+
+    this.form.patchValue({
+      username: user.username,
+    });
+
+    if (user.immutable) {
+      this.form.controls.username.disable();
+    }
+
+    this.setNamesInUseValidator(user.username);
+  }
+
+  private setNamesInUseValidator(currentName?: string): void {
+    this.store$.select(selectUsers).pipe(untilDestroyed(this)).subscribe((users) => {
+      let forbiddenNames = users.map((user) => user.username);
+      if (currentName) {
+        forbiddenNames = forbiddenNames.filter((name) => name !== currentName);
+      }
+      this.form.controls.username.addValidators(forbiddenValues(forbiddenNames));
+    });
   }
 
   private setupUsernameUpdate(): void {
@@ -156,18 +208,37 @@ export class UserFormComponent implements OnInit {
     });
   }
 
-  protected onSubmit(): void {
-    // TODO: password related fields are impacted if
-    // UserStigPasswordOption.OneTimePassword is used as value for `stig_password`
+  private getHomeCreateConfirmation(): Observable<boolean> {
+    if (this.homeCreateWarning()) {
+      return this.dialog.confirm({
+        title: this.translate.instant('Warning!'),
+        message: this.homeCreateWarning(),
+      });
+    }
+    return of(true);
+  }
 
-    // TODO: If updating an existing user, and home properties are set,
-    // two update calls should be made. First one to set `home_create:true` with the `home` value
-    // second one that removes the `home` and `home_create` values from the payload and updates the rest of the user
+  protected onDownloadSshPublicKey(): void {
+    const name = this.form.value.username;
+    const key = this.formValues().sshpubkey;
+    const blob = new Blob([key], { type: 'text/plain' });
+    this.downloadService.downloadBlob(blob, `${name}_public_key_rsa`);
+  }
 
-    // TODO: Add option to download ssh public key entered with a button next to the save button
-
+  private submitUserRequest(payload: UserUpdate): Observable<User> {
     this.isFormLoading.set(true);
-    this.userFormStore.createUser().pipe(
+
+    return this.editingUser()
+      ? this.userFormStore.updateUser(this.editingUser().id, payload)
+      : this.userFormStore.createUser();
+  }
+
+  protected onSubmit(): void {
+    const payload = { ...this.userFormStore.userConfig() };
+
+    this.getHomeCreateConfirmation().pipe(
+      filter(Boolean),
+      switchMap(() => this.submitUserRequest(payload)),
       catchError((error: unknown) => {
         this.errorHandler.showErrorModal(error);
         return of(undefined);
@@ -177,13 +248,10 @@ export class UserFormComponent implements OnInit {
       next: (user) => {
         this.isFormLoading.set(false);
         if (user) {
-          this.slideInRef.close({ error: undefined, response: user });
+          this.slideInRef.close({ response: user });
         }
       },
     });
-
-    // TODO: Add function to generate one time password from middleware using `auth.generate_onetime_password`
-    // after the user create request is submitted
   }
 
   private listenForAllFormsValidity(): void {

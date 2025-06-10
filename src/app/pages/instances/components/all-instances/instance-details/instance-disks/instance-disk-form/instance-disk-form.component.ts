@@ -10,6 +10,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { filter, Observable, of } from 'rxjs';
+import { slashRootNode } from 'app/constants/basic-root-nodes.constant';
 import {
   DiskIoBus,
   diskIoBusLabels,
@@ -79,6 +80,8 @@ export class InstanceDiskFormComponent implements OnInit {
     destination: ['', Validators.required],
     io_bus: [DiskIoBus.Nvme, Validators.required],
   });
+
+  protected readonly slashRootNode = slashRootNode;
 
   protected isNew = computed(() => !this.existingDisk());
 
@@ -151,7 +154,6 @@ export class InstanceDiskFormComponent implements OnInit {
         complete: () => {
           this.snackbar.success(this.translate.instant('Disk saved'));
           this.slideInRef.close({
-            error: false,
             response: true,
           });
           this.isLoading.set(false);

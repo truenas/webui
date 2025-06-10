@@ -144,7 +144,7 @@ export class SyslogFormComponent implements OnInit {
         this.snackbar.success(this.translate.instant('Settings saved'));
         this.store$.dispatch(advancedConfigUpdated());
         this.isFormLoading.set(false);
-        this.slideInRef.close({ response: true, error: null });
+        this.slideInRef.close({ response: true });
       }),
       catchError((error: unknown) => {
         this.isFormLoading.set(false);

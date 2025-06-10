@@ -193,7 +193,7 @@ export class SupportCardComponent implements OnInit {
           tap({
             complete: () => {
               this.snackbar.success(
-                this.translate.instant(helptext.is_production_dialog.message),
+                this.translate.instant(helptext.isProductionDialog.message),
               );
             },
           }),

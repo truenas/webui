@@ -1,7 +1,7 @@
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 
 export interface ConfirmOptions {
-  title: TranslatedString;
+  title?: TranslatedString;
   message: TranslatedString;
   hideCheckbox?: boolean;
   buttonText?: TranslatedString;

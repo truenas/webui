@@ -77,9 +77,7 @@ describe('ServiceNfsComponent', () => {
           },
         ],
       }),
-      mockProvider(SlideIn, {
-        components$: of([]),
-      }),
+      mockProvider(SlideIn),
       mockProvider(FormErrorHandlerService),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),

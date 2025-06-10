@@ -13,6 +13,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   EMPTY, catchError, filter, map, of, switchMap, tap,
 } from 'rxjs';
+import { cloudSyncTaskEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
@@ -21,6 +22,7 @@ import { helptextCloudSync } from 'app/helptext/data-protection/cloudsync/clouds
 import { CloudSyncTaskUi, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -71,10 +73,12 @@ import { AppState } from 'app/store';
     IxTableBodyComponent,
     TranslateModule,
     AsyncPipe,
+    EmptyComponent,
   ],
 })
 export class CloudSyncTaskCardComponent implements OnInit {
   protected readonly requiredRoles = [Role.CloudSyncWrite];
+  protected readonly emptyConfig = cloudSyncTaskEmptyConfig;
 
   cloudSyncTasks: CloudSyncTaskUi[] = [];
   dataProvider: AsyncDataProvider<CloudSyncTaskUi>;
@@ -279,8 +283,8 @@ export class CloudSyncTaskCardComponent implements OnInit {
 
   dryRun(row: CloudSyncTaskUi): void {
     this.dialogService.confirm({
-      title: this.translate.instant(helptextCloudSync.dry_run_title),
-      message: this.translate.instant(helptextCloudSync.dry_run_dialog),
+      title: this.translate.instant(helptextCloudSync.dryRunTitle),
+      message: this.translate.instant(helptextCloudSync.dryRunDialog),
       hideCheckbox: true,
     }).pipe(
       filter(Boolean),

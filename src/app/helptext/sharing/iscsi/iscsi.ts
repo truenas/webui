@@ -113,135 +113,138 @@ export const helptextIscsi = {
  and network environment have Remote Direct Memory Access (RDMA)-capable hardware.'),
   },
 
-  fieldset_extent_basic: T('Basic Info'),
-  fieldset_extent_type: T('Type'),
-  fieldset_extent_options: T('Compatibility'),
+  fieldsetExtentBasic: T('Basic Info'),
+  fieldsetExtentType: T('Type'),
+  fieldsetExtentOptions: T('Compatibility'),
 
-  extent_placeholder_name: T('Name'),
-  extent_tooltip_name: T(
-    'Name of the extent. If the <i>Extent size</i> is not <i>0</i>,\
+  extent: {
+    nameLabel: T('Name'),
+    nameTooltip: T(
+      'Name of the extent. If the <i>Extent size</i> is not <i>0</i>,\
  it cannot be an existing file within the pool or dataset.',
-  ),
+    ),
 
-  extent_placeholder_type: T('Extent Type'),
-  extent_tooltip_type: T('<i>Device</i> provides virtual storage access to zvols, zvol snapshots, or physical devices.\
+    typeLabel: T('Extent Type'),
+    typeTooltip: T('<i>Device</i> provides virtual storage access to zvols, zvol snapshots, or physical devices.\
   <i>File</i> provides virtual storage access to a single file.'),
 
-  extent_placeholder_disk: T('Device'),
-  extent_tooltip_disk: T(
-    'Only appears if <i>Device</i> is selected. Select the\
+    deviceLabel: T('Device'),
+    deviceTooltip: T(
+      'Only appears if <i>Device</i> is selected. Select the\
  unused zvol or zvol snapshot.',
-  ),
+    ),
 
-  extent_placeholder_serial: T('Serial'),
-  extent_tooltip_serial: T(
-    'Unique LUN ID. The default is generated from\
+    serialLabel: T('Serial'),
+    serialTooltip: T(
+      'Unique LUN ID. The default is generated from\
  the MAC address of the system.',
-  ),
+    ),
 
-  extent_placeholder_path: T('Path to the Extent'),
-  extent_tooltip_path: T('Browse to an existing file. Create a new file by browsing to a\
+    pathLabel: T('Path to the Extent'),
+    pathTooltip: T('Browse to an existing file. Create a new file by browsing to a\
  dataset and appending /<i>(filename.ext)</i> to the path.'),
 
-  extent_placeholder_filesize: T('Filesize'),
-  extent_tooltip_filesize: T('Entering <i>0</i> uses the actual file size and requires that the\
+    filesizeLabel: T('Filesize'),
+    filesizeTooltip: T('Entering <i>0</i> uses the actual file size and requires that the\
  file already exists. Otherwise, specify the file size for the new file.'),
 
-  extent_placeholder_blocksize: T('Logical Block Size'),
-  extent_tooltip_blocksize: T(
-    'Leave at the default of 512 unless the initiator\
+    blocksizeLabel: T('Logical Block Size'),
+    blocksizeTooltip: T(
+      'Leave at the default of 512 unless the initiator\
  requires a different block size.',
-  ),
+    ),
 
-  extent_placeholder_pblocksize: T('Disable Physical Block Size Reporting'),
-  extent_tooltip_pblocksize: T(
-    'Set if the initiator does not support physical block size values\
+    disablePhysicalBlockSizeLabel: T('Disable Physical Block Size Reporting'),
+    disablePhysicalBlockSizeTooltip: T(
+      'Set if the initiator does not support physical block size values\
  over 4K (MS SQL).',
-  ),
+    ),
 
-  extent_placeholder_avail_threshold: T('Available Space Threshold (%)'),
-  extent_tooltip_avail_threshold: T('Only appears if a <i>File</i> or \
+    thresholdLabel: T('Available Space Threshold (%)'),
+    thresholdTooltip: T('Only appears if a <i>File</i> or \
  zvol is selected. When the specified percentage of free space is reached,\
  the system issues an alert.'),
 
-  extent_placeholder_comment: T('Description'),
-  extent_tooltip_comment: T('Notes about this extent.'),
+    commentLabel: T('Description'),
 
-  extent_placeholder_insecure_tpc: T('Enable TPC'),
-  extent_tooltip_insecure_tpc: T(
-    'Set to allow an initiator to bypass normal access\
+    tpcLabel: T('Enable TPC'),
+    tpcTooltip: T(
+      'Set to allow an initiator to bypass normal access\
  control and access any scannable target. This allows\
  <a\
  href="https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2012-R2-and-2012/cc771254(v=ws.11)"\
  target="_blank">xcopy</a> operations which are\
  otherwise blocked by access control.',
-  ),
+    ),
 
-  extent_placeholder_xen: T('Xen initiator compat mode'),
-  extent_tooltip_xen: T('Set when using Xen as the iSCSI initiator.'),
+    xenLabel: T('Xen initiator compat mode'),
+    xenTooltip: T('Set when using Xen as the iSCSI initiator.'),
 
-  extent_placeholder_rpm: T('LUN RPM'),
-  extent_tooltip_rpm: T(
-    'Do <b>NOT</b> change this setting when using Windows\
+    rpmLabel: T('LUN RPM'),
+    rpmTooltip: T(
+      'Do <b>NOT</b> change this setting when using Windows\
  as the initiator. Only needs to be changed in large\
  environments where the number of systems using a\
  specific RPM is needed for accurate reporting\
  statistics.',
-  ),
+    ),
 
-  extent_placeholder_ro: T('Read-only'),
-  extent_tooltip_ro: T(
-    'Set to prevent the initiator from initializing this\
+    readOnlyLabel: T('Read-only'),
+    readOnlyTooltip: T(
+      'Set to prevent the initiator from initializing this\
  LUN.',
-  ),
+    ),
 
-  extent_placeholder_enabled: T('Enabled'),
-  extent_tooltip_enabled: T('Set to enable the iSCSI extent.'),
+    enabledLabel: T('Enabled'),
+    enabledTooltip: T('Set to enable the iSCSI extent.'),
 
-  extent_form_enum_rpm: [
-    { label: 'UNKNOWN', value: 'UNKNOWN' },
-    { label: 'SSD', value: 'SSD' },
-    { label: '5400', value: '5400' },
-    { label: '7200', value: '7200' },
-    { label: '10000', value: '10000' },
-    { label: '15000', value: '15000' },
-  ],
+    rpmOptions: [
+      { label: 'UNKNOWN', value: 'UNKNOWN' },
+      { label: 'SSD', value: 'SSD' },
+      { label: '5400', value: '5400' },
+      { label: '7200', value: '7200' },
+      { label: '10000', value: '10000' },
+      { label: '15000', value: '15000' },
+    ],
 
-  extent_form_enum_type: [
-    { label: T('Device'), value: IscsiExtentType.Disk },
-    { label: T('File'), value: IscsiExtentType.File },
-  ],
+    typeOptions: [
+      { label: T('Device'), value: IscsiExtentType.Disk },
+      { label: T('File'), value: IscsiExtentType.File },
+    ],
 
-  extent_form_enum_blocksize: [
-    { label: '512', value: 512 },
-    { label: '1024', value: 1024 },
-    { label: '2048', value: 2048 },
-    { label: '4096', value: 4096 },
-  ] as Option[],
+    blocksizeOptions: [
+      { label: '512', value: 512 },
+      { label: '1024', value: 1024 },
+      { label: '2048', value: 2048 },
+      { label: '4096', value: 4096 },
+    ] as Option[],
+  },
 
-  authaccess_tooltip_tag: T(
-    'Allow different groups to be configured\
+  authaccess: {
+    tagTooltip: T(
+      'Allow different groups to be configured\
  with different authentication profiles.\
  Example: all users with a group ID of\
  <i>1</i> will inherit the authentication profile\
  associated with Group <i>1</i>.',
-  ),
+    ),
 
-  authaccess_tooltip_user: T(
-    'User account to create for CHAP authentication with the user on the\
+    userTooltip: T(
+      'User account to create for CHAP authentication with the user on the\
  remote system. Many initiators use the initiator name as the user name.',
-  ),
+    ),
 
-  authaccess_tooltip_peeruser: T(
-    'Only entered when configuring mutual CHAP. Usually the same value\
+    peeruserTooltip: T(
+      'Only entered when configuring mutual CHAP. Usually the same value\
  as <i>User</i>.',
-  ),
-  authaccess_tooltip_peersecret: T(
-    'Mutual secret password. Required when Peer User is set. Must be\
+    ),
+    peersecretTooltip: T(
+      'Mutual secret password. Required when Peer User is set. Must be\
  different than the <i>Secret</i>.',
-  ),
+    ),
+  },
 
-  associated_target_tooltip_lunid: T(
+  lunidTooltip: T(
     'Select the value or enter a value between\
  <i>0</i> and <i>1023</i>. Some initiators\
  expect a value below <i>256</i>. Leave\
@@ -249,36 +252,36 @@ export const helptextIscsi = {
  the next available ID.',
   ),
 
-  associated_target_tooltip_extent: T('Select an existing extent.'),
+  existingExtentTooltip: T('Select an existing extent.'),
 
-  name_placeholder: T('Name'),
-  name_tooltip: T('Keep the name short and only lowercase. Using a name longer than 63 characters can prevent accessing the block device. Allowed characters: letters, numbers, period (.), dash (-), and colon (:).'),
+  nameLabel: T('Name'),
+  nameTooltip: T('Keep the name short and only lowercase. Using a name longer than 63 characters can prevent accessing the block device. Allowed characters: letters, numbers, period (.), dash (-), and colon (:).'),
 
-  disk_placeholder: T('Device'),
-  disk_tooltip: T('Select the unused zvol or zvol snapshot. Select\
+  diskName: T('Device'),
+  diskTooltip: T('Select the unused zvol or zvol snapshot. Select\
  <i>Create New</i> to create a new zvol.'),
 
-  dataset_placeholder: T('Pool/Dataset'),
-  dataset_tooltip: T('Browse to an existing pool or dataset to store the new zvol.'),
+  datasetLabel: T('Pool/Dataset'),
+  datasetTooltip: T('Browse to an existing pool or dataset to store the new zvol.'),
 
-  volsize_placeholder: T('Size'),
-  volsize_tooltip: T('Specify the size of the new zvol.'),
+  sizeLabel: T('Size'),
+  sizeTooltip: T('Specify the size of the new zvol.'),
 
-  usefor_placeholder: T('Sharing Platform'),
-  usefor_tooltip: T('Choose the platform that will use this share. The associated options are applied to this share.'),
+  useforLabel: T('Sharing Platform'),
+  useforTooltip: T('Choose the platform that will use this share. The associated options are applied to this share.'),
 
-  target_placeholder: T('Target'),
-  target_tooltip: T('Create a new Target or choose an existing target for this share.'),
+  targetLabel: T('Target'),
+  targetTooltip: T('Create a new Target or choose an existing target for this share.'),
 
-  portal_placeholder: T('Portal'),
-  portal_tooltip: T('Select an existing portal or choose <i>Create New</i> to configure a new portal.'),
+  portalLabel: T('Portal'),
+  portalTooltip: T('Select an existing portal or choose <i>Create New</i> to configure a new portal.'),
 
-  initiators_placeholder: T('Initiators'),
-  initiators_tooltip: T('Leave blank to allow all or enter a list of initiator hostnames. \
+  initiatorsLabel: T('Initiators'),
+  initiatorsTooltip: T('Leave blank to allow all or enter a list of initiator hostnames. \
    Separate entries by pressing <code>Enter</code>.'),
 
-  auth_network: {
-    placeholder: T('Authorized Networks'),
+  authNetwork: {
+    label: T('Authorized Networks'),
     tooltip: T('Network addresses allowed to use this initiator. Leave blank to allow all \
      networks or list network addresses with a CIDR mask. Separate entries by pressing \
      <code>Enter</code>.'),

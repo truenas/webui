@@ -66,7 +66,7 @@ export class TwoFactorGuardService implements CanActivateChild {
           return this.openFullScreenDialog(FirstLoginDialog);
         }
 
-        if (isPasswordChangeRequired && !wasRequiredPasswordChanged) {
+        if (isPasswordChangeRequired && !wasRequiredPasswordChanged && !wasOtpChanged) {
           return this.openFullScreenDialog(PasswordChangeRequiredDialog);
         }
 

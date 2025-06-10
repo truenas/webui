@@ -126,7 +126,7 @@ describe('SshConnectionFormComponent', () => {
           username: 'root',
         },
       }]);
-      expect(closeSlideInRef).toHaveBeenCalledWith({ response: existingConnection, error: null });
+      expect(closeSlideInRef).toHaveBeenCalledWith({ response: existingConnection });
     });
   });
 
@@ -163,14 +163,14 @@ describe('SshConnectionFormComponent', () => {
           existing_key_id: 2,
         },
         manual_setup: {
-          connect_timeout: '20',
+          connect_timeout: 20,
           host: 'truenas.com',
           port: 23,
           remote_host_key: 'ssh-rsaNew',
           username: 'john',
         },
       }]);
-      expect(closeSlideInRef).toHaveBeenCalledWith({ response: existingConnection, error: null });
+      expect(closeSlideInRef).toHaveBeenCalledWith({ response: existingConnection });
     });
 
     it('saves new SSH connection added using semi-automatic setup', async () => {
@@ -229,7 +229,7 @@ describe('SshConnectionFormComponent', () => {
       const values = await form.getValues();
       expect(values['Remote Host Key']).toBe('ssh-rsaAREMOTE');
       expect(api.call).toHaveBeenCalledWith('keychaincredential.remote_ssh_host_key_scan', [{
-        connect_timeout: '30',
+        connect_timeout: 30,
         host: 'remote.com',
         port: 24,
       }]);

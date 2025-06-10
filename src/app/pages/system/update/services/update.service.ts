@@ -14,7 +14,7 @@ import { Package } from 'app/pages/system/update/interfaces/package.interface';
 export class UpdateService {
   updatesAvailable$ = new BehaviorSubject<boolean>(false);
   updateDownloaded$ = new BehaviorSubject<boolean>(false);
-  isLoading$ = new BehaviorSubject<boolean>(false);
+  isLoading$ = new BehaviorSubject<boolean>(true);
   error$ = new BehaviorSubject<boolean>(false);
   generalUpdateError$ = new BehaviorSubject<string | undefined>(undefined);
   packages$ = new BehaviorSubject<Package[]>([]);

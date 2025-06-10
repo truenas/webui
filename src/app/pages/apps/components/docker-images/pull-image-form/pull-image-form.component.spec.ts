@@ -34,9 +34,7 @@ describe('PullImageFormComponent', () => {
       mockApi([
         mockJob('app.image.pull'),
       ]),
-      mockProvider(SlideIn, {
-        components$: of([]),
-      }),
+      mockProvider(SlideIn),
       mockProvider(SlideInRef, slideInRef),
       mockProvider(FormErrorHandlerService),
       mockProvider(DialogService, {

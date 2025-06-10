@@ -1,0 +1,32 @@
+.name-input {
+  margin-top: 0;
+}
+
+.nqn-input {
+  width: auto;
+}
+
+.step-buttons {
+  display: flex;
+  gap: 6px;
+}
+
+.last-step-buttons {
+  margin-top: 30px;
+}
+
+.hosts-block,
+.namespaces-block,
+.ports-block {
+  display: block;
+  margin-bottom: 25px;
+  margin-top: 10px;
+}
+
+.namespaces-block {
+  margin-top: 25px;
+}
+
+.hosts-block {
+  margin-top: 15px;
+}

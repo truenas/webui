@@ -9,6 +9,26 @@
   padding: 0 5px;
   vertical-align: top;
 
+  &.readonly {
+    background-color: transparent;
+    cursor: default;
+    padding: 0 1px;
+    pointer-events: none;
+
+    .edit-trigger-icon {
+      display: none;
+    }
+  }
+
+  &.disabled {
+    cursor: not-allowed;
+    pointer-events: none;
+
+    .edit-trigger-icon {
+      opacity: 0.2;
+    }
+  }
+
   &.edit-trigger-empty {
     font-style: italic;
   }

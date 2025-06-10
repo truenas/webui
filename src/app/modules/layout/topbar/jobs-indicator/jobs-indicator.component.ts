@@ -23,6 +23,7 @@ import { jobIndicatorPressed } from 'app/store/topbar/topbar.actions';
 @UntilDestroy()
 @Component({
   selector: 'ix-jobs-indicator',
+  styleUrls: ['./jobs-indicator.component.scss'],
   templateUrl: './jobs-indicator.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
@@ -37,7 +38,7 @@ import { jobIndicatorPressed } from 'app/store/topbar/topbar.actions';
   ],
 })
 export class JobsIndicatorComponent implements OnInit {
-  tooltips = helptextTopbar.mat_tooltips;
+  tooltips = helptextTopbar.tooltips;
 
   jobBadgeCount$ = this.store$.select(selectRunningJobsCount);
   isJobPanelOpen$ = this.store$.select(selectIsJobPanelOpen);

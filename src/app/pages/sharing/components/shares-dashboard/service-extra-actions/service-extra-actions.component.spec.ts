@@ -39,6 +39,23 @@ describe('ServiceExtraActionsComponent', () => {
     menu = await loader.getHarness(MatMenuHarness);
   }
 
+  it('shows a menu with available actions for NVME-oF', async () => {
+    await setupTest({
+      id: 1,
+      service: ServiceName.NvmeOf,
+      state: ServiceStatus.Stopped,
+      enable: false,
+    } as Service);
+
+    expect(menu).toExist();
+    await menu.open();
+
+    const items = await menu.getItems();
+    expect(items).toHaveLength(2);
+    expect(await items[0].getText()).toBe('Turn On Service');
+    expect(await items[1].getText()).toBe('Config Service');
+  });
+
   it('shows a menu with available actions for NFS', async () => {
     await setupTest({
       id: 1,

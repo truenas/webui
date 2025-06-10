@@ -146,7 +146,10 @@ export class AlertServiceComponent implements OnInit {
   }
 
   setAlertServiceForEdit(alertService: AlertService): void {
-    this.commonForm.patchValue(alertService);
+    this.commonForm.patchValue({
+      ...alertService,
+      type: alertService.attributes.type,
+    });
 
     setTimeout(() => {
       this.alertServiceForm.setValues(alertService.attributes);
@@ -199,7 +202,7 @@ export class AlertServiceComponent implements OnInit {
           this.isLoading = false;
           this.cdr.detectChanges();
           this.snackbar.success(this.translate.instant('Alert service saved'));
-          this.slideInRef.close({ response: true, error: null });
+          this.slideInRef.close({ response: true });
         },
         error: (error: unknown) => {
           this.isLoading = false;
@@ -210,9 +213,14 @@ export class AlertServiceComponent implements OnInit {
   }
 
   private generatePayload(): AlertServiceEdit {
+    const { type, ...rest } = this.commonForm.value;
+
     return {
-      ...this.commonForm.value,
-      attributes: this.alertServiceForm.getSubmitAttributes(),
+      ...rest,
+      attributes: {
+        type,
+        ...this.alertServiceForm.getSubmitAttributes(),
+      },
     };
   }
 
