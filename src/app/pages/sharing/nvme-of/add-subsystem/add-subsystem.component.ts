@@ -126,7 +126,7 @@ export class AddSubsystemComponent {
             subsystem,
             relatedErrors,
           },
-        }).afterClosed().pipe(untilDestroyed(this)).subscribe();
+        });
       }
 
       this.snackbar.success(this.translate.instant('New subsystem added'));

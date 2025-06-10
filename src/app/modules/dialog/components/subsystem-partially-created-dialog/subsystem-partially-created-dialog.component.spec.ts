@@ -13,8 +13,17 @@ describe('SubsystemPartiallyCreatedDialogComponent', () => {
   const mockSubsystem = {
     id: 1,
     name: 'test-subsystem',
-    nqn: 'nqn.2023-01.io.truenas:test-subsystem',
-  } as unknown as NvmeOfSubsystem;
+    subnqn: 'nqn.2023-01.io.truenas:test-subsystem',
+    serial: '1234567890',
+    allow_any_host: true,
+    pi_enable: null,
+    qix_max: null,
+    ieee_oui: null,
+    ana: null,
+    ports: [1, 2],
+    hosts: [1, 2],
+    namespaces: [1, 2],
+  } as NvmeOfSubsystem;
 
   const mockErrors = [
     'Ports Error: Port 7000 already in use.',
