@@ -70,7 +70,7 @@ describe('ExplorerCreateZvolComponent', () => {
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ZvolFormComponent, {
       data: {
         isNew: true,
-        parentId: 'test-pool',
+        parentOrZvolId: 'test-pool',
       },
     });
 
