@@ -2,14 +2,14 @@ import {
   ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
-import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AuditService } from 'app/enums/audit.enum';
 import { Role } from 'app/enums/role.enum';
-import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
+import { ServiceName, serviceNames, ServiceOperation } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { Service } from 'app/interfaces/service.interface';
@@ -24,7 +24,9 @@ import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/s
 import {
   GlobalTargetConfigurationComponent,
 } from 'app/pages/sharing/iscsi/global-target-configuration/global-target-configuration.component';
-import { NvmeOfConfigurationComponent } from 'app/pages/sharing/nvme-of/nvme-of-configuration/nvme-of-configuration.component';
+import {
+  NvmeOfConfigurationComponent,
+} from 'app/pages/sharing/nvme-of/nvme-of-configuration/nvme-of-configuration.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UrlOptionsService } from 'app/services/url-options.service';
 
@@ -119,7 +121,7 @@ export class ServiceExtraActionsComponent {
   }
 
   private startService(service: Service): void {
-    this.api.job('service.start', [service.service, { silent: false }])
+    this.api.job('service.control', [ServiceOperation.Start, service.service, { silent: false }])
       .pipe(
         observeJob(),
         this.loader.withLoader(),
@@ -132,7 +134,7 @@ export class ServiceExtraActionsComponent {
   }
 
   private stopService(service: Service): void {
-    this.api.job('service.stop', [service.service, { silent: false }])
+    this.api.job('service.control', [ServiceOperation.Stop, service.service, { silent: false }])
       .pipe(
         observeJob(),
         this.loader.withLoader(),

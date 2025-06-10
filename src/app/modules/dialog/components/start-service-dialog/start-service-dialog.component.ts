@@ -10,7 +10,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Observable, forkJoin, filter } from 'rxjs';
-import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
+import { ServiceName, serviceNames, ServiceOperation } from 'app/enums/service-name.enum';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { Service } from 'app/interfaces/service.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -95,7 +95,7 @@ export class StartServiceDialog implements OnInit {
 
     if (result.start) {
       requests.push(
-        this.api.job('service.start', [this.serviceName, { silent: false }]).pipe(observeJob()),
+        this.api.job('service.control', [ServiceOperation.Start, this.serviceName, { silent: false }]).pipe(observeJob()),
       );
     }
 

@@ -163,7 +163,7 @@ describe('SmbFormComponent', () => {
         mockCall('filesystem.stat', {
           acl: true,
         } as FileSystemStat),
-        mockJob('service.restart', fakeSuccessfulJob()),
+        mockJob('service.control', fakeSuccessfulJob()),
         mockCall('sharing.smb.presets', { ...presets }),
       ]),
       mockProvider(SlideIn),

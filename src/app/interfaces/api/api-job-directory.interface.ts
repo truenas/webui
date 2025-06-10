@@ -1,5 +1,5 @@
 import { DockerConfig, DockerConfigUpdate } from 'app/enums/docker-config.interface';
-import { ServiceName } from 'app/enums/service-name.enum';
+import { ServiceName, ServiceOperation } from 'app/enums/service-name.enum';
 import { SetAcl } from 'app/interfaces/acl.interface';
 import { ActiveDirectoryConfig, LeaveActiveDirectory } from 'app/interfaces/active-directory-config.interface';
 import { ActiveDirectoryUpdate } from 'app/interfaces/active-directory.interface';
@@ -44,6 +44,7 @@ import {
   UpdatePool,
 } from 'app/interfaces/pool.interface';
 import { RebootParams } from 'app/interfaces/reboot.interface';
+import { ServiceControlOptions } from 'app/interfaces/service.interface';
 import { ShutdownParams } from 'app/interfaces/shutdown.interface';
 import { SystemDatasetConfig, SystemDatasetUpdate } from 'app/interfaces/system-dataset-config.interface';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
@@ -172,11 +173,9 @@ export interface ApiJobDirectory {
   'rsynctask.run': { params: [id: number]; response: null };
 
   // Service
-  'service.restart': { params: [ServiceName]; response: boolean };
-  'service.start': { params: [ServiceName, { silent: boolean }]; response: boolean };
-  'service.stop': {
-    params: [ServiceName, { silent: boolean }];
-    response: boolean; // False indicates that service has been stopped.
+  'service.control': {
+    params: [operation: ServiceOperation, service: ServiceName, options?: ServiceControlOptions];
+    response: boolean;
   };
 
   // Support

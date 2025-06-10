@@ -32,8 +32,7 @@ describe('ServiceActionsCellComponent', () => {
       mockAuth(),
       mockApi([
         mockCall('service.update', 1),
-        mockJob('service.start', fakeSuccessfulJob()),
-        mockJob('service.stop', fakeSuccessfulJob()),
+        mockJob('service.control', fakeSuccessfulJob()),
       ]),
       mockProvider(SlideIn, {
         open: jest.fn(() => of()),
@@ -83,7 +82,7 @@ describe('ServiceActionsCellComponent', () => {
 
     await startIcon.click();
 
-    expect(api.job).toHaveBeenCalledWith('service.start', [ServiceName.Ftp, { silent: false }]);
+    expect(api.job).toHaveBeenCalledWith('service.control', ['START', ServiceName.Ftp, { silent: false }]);
   });
 
   it('shows "Stop Service" icon when service is running', async () => {
@@ -94,7 +93,7 @@ describe('ServiceActionsCellComponent', () => {
 
     await stopIcon.click();
 
-    expect(api.job).toHaveBeenCalledWith('service.stop', [ServiceName.Ftp, { silent: false }]);
+    expect(api.job).toHaveBeenCalledWith('service.control', ['STOP', ServiceName.Ftp]);
   });
 
   describe('edit', () => {

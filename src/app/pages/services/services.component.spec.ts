@@ -13,7 +13,7 @@ import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { NavigateAndHighlightService } from 'app/directives/navigate-and-interact/navigate-and-highlight.service';
-import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
+import { ServiceName, serviceNames, ServiceOperation } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -68,8 +68,7 @@ describe('ServicesComponent', () => {
       mockAuth(),
       mockApi([
         mockCall('service.update', 1),
-        mockJob('service.start', fakeSuccessfulJob()),
-        mockJob('service.stop', fakeSuccessfulJob()),
+        mockJob('service.control', fakeSuccessfulJob()),
       ]),
       mockProvider(DialogService),
       mockProvider(SlideIn, {
@@ -212,7 +211,7 @@ describe('ServicesComponent', () => {
     );
     await startServiceButton.click();
 
-    expect(api.job).toHaveBeenCalledWith('service.start', [ServiceName.Ftp, { silent: false }]);
+    expect(api.job).toHaveBeenCalledWith('service.control', [ServiceOperation.Start, ServiceName.Ftp, { silent: false }]);
   });
 
   it('should change service autostart state when checkbox is ticked', async () => {

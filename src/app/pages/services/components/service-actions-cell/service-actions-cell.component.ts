@@ -10,7 +10,7 @@ import {
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AuditService } from 'app/enums/audit.enum';
-import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
+import { ServiceName, serviceNames, ServiceOperation } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { Service } from 'app/interfaces/service.interface';
@@ -95,7 +95,7 @@ export class ServiceActionsCellComponent {
   }
 
   startService(): void {
-    this.api.job('service.start', [this.service().service, { silent: false }]).pipe(
+    this.api.job('service.control', [ServiceOperation.Start, this.service().service, { silent: false }]).pipe(
       observeJob(),
       this.loader.withLoader(),
       this.errorHandler.withErrorHandler(),
@@ -159,7 +159,7 @@ export class ServiceActionsCellComponent {
   }
 
   private stopService(): void {
-    this.api.job('service.stop', [this.service().service, { silent: false }]).pipe(
+    this.api.job('service.control', [ServiceOperation.Stop, this.service().service]).pipe(
       observeJob(),
       this.loader.withLoader(),
       this.errorHandler.withErrorHandler(),
