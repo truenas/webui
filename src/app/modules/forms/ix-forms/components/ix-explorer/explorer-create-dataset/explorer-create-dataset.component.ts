@@ -35,7 +35,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class ExplorerCreateDatasetComponent {
-  readonly datasetProps = input<Omit<DatasetCreate, 'name'>>({});
+  readonly datasetProperties = input<Omit<DatasetCreate, 'name'>>({});
 
   protected readonly requiredRoles = [Role.DatasetWrite];
 
@@ -62,7 +62,7 @@ export class ExplorerCreateDatasetComponent {
     this.matDialog.open(CreateDatasetDialog, {
       data: {
         parentId: this.parent(),
-        dataset: this.datasetProps(),
+        dataset: this.datasetProperties(),
       },
     }).afterClosed().pipe(
       filter(Boolean),

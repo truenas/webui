@@ -68,7 +68,7 @@ describe('ExplorerCreateDatasetComponent', () => {
   beforeEach(() => {
     spectator = createComponent({
       props: {
-        datasetProps,
+        datasetProperties: datasetProps,
       },
     });
 
