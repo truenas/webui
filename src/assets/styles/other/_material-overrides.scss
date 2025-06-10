@@ -94,6 +94,7 @@ html .ix-dark {
   --mat-stepper-header-label-text-font: var(--font-family-body);
   --mat-stepper-header-label-text-size: 14px;
 
+  --mat-checkbox-unselected-icon-color: var(--fg2);
   --mat-checkbox-label-text-color: var(--fg1);
   --mdc-checkbox-unselected-icon-color: var(--primary);
   --mdc-checkbox-selected-checkmark-color: var(--fg1);
@@ -135,6 +136,13 @@ html .ix-dark {
   --mat-sidenav-content-text-color: var(--fg1);
   --mat-list-list-item-label-text-color: var(--fg2);
   --mat-list-list-item-hover-label-text-color: var(--fg1);
+  --mat-dialog-subhead-color: var(--fg2);
+  --mat-dialog-supporting-text-color: var(--fg2);
+  --mat-button-toggle-selected-state-text-color: var(--primary);
+  --mat-slide-toggle-label-text-color: var(--fg1);
+  --mat-checkbox-disabled-selected-icon-color: var(--grey);
+  --mat-checkbox-disabled-unselected-icon-color: var(--grey);
+  --mat-form-field-filled-container-color: transparent;
 
   .mat-mdc-slide-toggle {
     --mat-switch-label-text-color: var(--fg2);
@@ -150,10 +158,12 @@ html .ix-dark {
     --mdc-form-field-label-text-tracking: normal;
     --mdc-form-field-label-text-size: inherit;
     --mdc-form-field-label-text-font: var(--font-family-body);
+    --mat-checkbox-label-text-color: var(--fg2);
   }
 
   .mat-mdc-slide-toggle {
     --mdc-form-field-label-text-color: var(--fg2);
+    --mat-slide-toggle-label-text-color: var(--fg2);
   }
 
   .mat-mdc-checkbox {
@@ -177,6 +187,13 @@ html .ix-dark {
       --mdc-checkbox-disabled-selected-icon-color: #9c9c9c;
       --mdc-checkbox-disabled-unselected-icon-color: #9c9c9c;
       --mdc-checkbox-unselected-focus-icon-color: var(--fg2);
+      --mat-checkbox-unselected-icon-color: var(--fg2);
+      --mat-checkbox-unselected-hover-icon-color: var(--fg1);
+      --mat-checkbox-unselected-focus-icon-color: var(--fg1);
+      --mat-checkbox-selected-icon-color: var(--primary);
+      --mat-checkbox-selected-hover-icon-color: var(--primary);
+      --mat-checkbox-selected-focus-icon-color: var(--primary);
+      --mat-checkbox-selected-checkmark-color: var(--fg1);
     }
   }
 
