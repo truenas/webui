@@ -3,7 +3,7 @@
   display: flex;
 
   &.has-cell {
-    border: 2px solid transparent;
+    border: 1px solid transparent;
     border-radius: 20px;
     font-weight: bold;
     gap: 6px;
@@ -25,7 +25,7 @@
   }
 
   &.stopped {
-    border-color: var(--red);
-    color: var(--red);
+    border-color: var(--grey);
+    color: var(--grey);
   }
 }
