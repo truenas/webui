@@ -43,6 +43,7 @@
   "Add Port": "",
   "Add Subsystem": "",
   "Additional Details": "",
+  "Additional Options": "",
   "All hosts are allowed.": "",
   "Allow Access": "",
   "Allow All Except": "",
@@ -1359,7 +1360,6 @@
   "Compress": "Kompresuj",
   "Compress Connections": "Kompresuj połączenia",
   "Compression": "Kompresja",
-  "Compression level": "Poziom kompresji",
   "Compression Level": "Poziom kompresji",
   "Computer Account OU": "OU konta komputera",
   "Config Email": "Konfiguracja e-mail",
@@ -4285,7 +4285,6 @@
   "Similar Apps": "Podobne aplikacje",
   "Site Name": "Nazwa witryny",
   "Size": "Rozmiar",
-  "Size for this zvol": "Rozmiar dla tego ZVOL",
   "Size in GiB of refreservation to set on ZFS dataset  where the audit databases are stored. The refreservation specifies the  minimum amount of space guaranteed to the dataset, and counts against  the space available for other datasets in the zpool where the audit  dataset is located.": "Rozmiar w GiB dla opcji refreservation ustawionej na dataset ZFS, w którym przechowywane są bazy danych audytu. Refreservation określa minimalną ilość miejsca gwarantowaną dla datasetu i pomniejsza dostępne miejsce dla innych datasetów w puli ZFS, w której znajduje się dataset audytu.",
   "Size in GiB of the maximum amount of space that may be  consumed by the dataset where the audit dabases are stored.": "Maksymalny rozmiar w GiB datasetu, w którym przechowywane są bazy danych audytu.",
   "Skip": "Pomiń",
@@ -5323,6 +5322,5 @@
   "Zvol": "Zvol",
   "Zvol «{name}» updated.": "Zvol «{name}» został zaktualizowany.",
   "Zvol Details": "Szczegóły Zvol",
-  "Zvol name": "Nazwa Zvol",
   "Zvol Space Management": "Zarządzanie przestrzenią Zvol"
 }

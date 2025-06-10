@@ -53,6 +53,7 @@
   "Add Subsystem": "",
   "Add Target": "",
   "Additional Details": "",
+  "Additional Options": "",
   "Alert Read": "",
   "Alert Write": "",
   "All hosts are allowed.": "",
@@ -1453,7 +1454,6 @@
   "Completely replicate the selected dataset. The target dataset will have all of the source dataset's properties, child datasets, clones and snapshots that match the specified naming schema. Set Snapshot Name Regular Expression to .* to replicate all snapshots.": "De geselecteerde dataset volledig repliceren. <br>De doeldataset heeft alle eigenschappen, onderliggende datasets, klonen en momentopnamen van de brondataset die overeenkomen met het opgegeven naamgevingsschema. <br>Momentopname reguliere expressie instellen op .* om alle momentopnamen te repliceren.",
   "Compress": "Comprimeren",
   "Compress Connections": "Verbindingen comprimeren",
-  "Compression level": "Compressieniveau",
   "Compression Level": "Compressieniveau",
   "Computer Account OU": "Computeraccount OU",
   "Config Email": "E-mail configureren",
@@ -4320,7 +4320,6 @@
   "Similar Apps": "Vergelijkbare apps",
   "Site Name": "Site-naam",
   "Size": "Grootte",
-  "Size for this zvol": "Grootte voor dit ZVol",
   "Size in GiB of refreservation to set on ZFS dataset  where the audit databases are stored. The refreservation specifies the  minimum amount of space guaranteed to the dataset, and counts against  the space available for other datasets in the zpool where the audit  dataset is located.": "Grootte in GB van de referentie die moet worden ingesteld op de ZFS-dataset waar de auditdatabases zijn opgeslagen. De herreservering specificeert de minimale hoeveelheid ruimte die gegarandeerd is voor de dataset, en telt mee met de beschikbare ruimte voor andere datasets in de zpool waar de auditdataset zich bevindt.",
   "Size in GiB of the maximum amount of space that may be  consumed by the dataset where the audit dabases are stored.": "Grootte in GB van de referentie die moet worden ingesteld op de ZFS-dataset waar de auditdatabases zijn opgeslagen. De herreservering specificeert de minimale hoeveelheid ruimte die gegarandeerd is voor de dataset, en telt mee met de beschikbare ruimte voor andere datasets in de zpool waar de auditdataset zich bevindt.",
   "Skip": "Overslaan",
@@ -5323,6 +5322,5 @@
   "Zvol": "ZVol",
   "Zvol «{name}» updated.": "Zvol «{name}» is geüpdatet.",
   "Zvol Details": "ZVol details",
-  "Zvol name": "ZVol naam",
   "Zvol Space Management": "Zvol ruimtebeheer"
 }
