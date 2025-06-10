@@ -64,7 +64,7 @@ export class ExplorerCreateZvolComponent implements AfterViewInit {
     this.slideIn.open(ZvolFormComponent, {
       data: {
         isNew: true,
-        parentId: this.parent(),
+        parentOrZvolId: this.parent(),
       },
     }).pipe(
       filter((response) => Boolean(response.response)),
