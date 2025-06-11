@@ -7,6 +7,38 @@
 <mat-card>
   <mat-card-content>
     <form class="ix-form-container" [formGroup]="form" (submit)="submit()">
+      @if (!hasSmbUsers()) {
+        <div class="smb-users-warning">
+          <p class="title">
+            <ix-icon name="warning"></ix-icon>
+
+            <span>
+              {{ 'Looks like you don’t have any users who’ll be able to access this share.' | translate}}
+            </span>
+          </p>
+
+          <p>{{ 'You can:' | translate }}</p>
+
+          <ul>
+            <li>
+              <a ixTest="go-to-users-page" (click)="closeForm(['/credentials', 'users'])">
+                {{ 'Create a new user' | translate }}
+              </a>
+            </li>
+            <li>
+              <a ixTest="go-to-directory-services-page" (click)="closeForm(['/credentials', 'directory-services'])">
+                {{ 'Configure Directory Services' | translate }}
+              </a>
+            </li>
+            <li>
+              <span (click)="hasSmbUsers.set(true)">
+                {{ 'Ignore the error and add users later.' | translate }}
+              </span>
+            </li>
+          </ul>
+        </div>
+      }
+
       <ix-fieldset [title]="'Basic' | translate">
         <ix-explorer
           formControlName="path"
