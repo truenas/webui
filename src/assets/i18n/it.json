@@ -1,6 +1,5 @@
 {
   "": "",
-  "{group}": "",
   "{label} Error: {error}": "",
   "Additional Options": "",
   "Configure Directory Services": "",
@@ -11,7 +10,6 @@
   "Logging in at the current URL is not possible.": "",
   "Logging in at the current URL is not possible.<br>To login, please navigate to: {links}": "",
   "Looks like you don’t have any users who’ll be able to access this share.": "",
-  "New {name} group": "",
   "New {username} group": "",
   "Please create related items manually.": "",
   "Saved Partially": "",

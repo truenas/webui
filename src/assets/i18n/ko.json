@@ -1,6 +1,5 @@
 {
   "": "",
-  "{group}": "",
   "{label} Error: {error}": "",
   "Action: {actionName}": "",
   "Action: {actionName} | User: {user}": "",
@@ -34,7 +33,6 @@
   "Namespace created.": "",
   "Namespace deleted.": "",
   "Namespace updated.": "",
-  "New {name} group": "",
   "New {username} group": "",
   "New File": "",
   "Parent Directory": "",

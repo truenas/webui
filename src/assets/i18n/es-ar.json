@@ -1,6 +1,5 @@
 {
   "": "",
-  "{group}": "",
   "{label} Error: {error}": "",
   "{license} Contract,": "",
   "{name} VDEVs": "",
@@ -79,7 +78,6 @@
   "Namespace deleted.": "",
   "Namespace updated.": "",
   "Network Configuration Settings": "",
-  "New {name} group": "",
   "New {username} group": "",
   "New File": "",
   "No Data Protection Tasks": "",

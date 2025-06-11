@@ -76,14 +76,14 @@ export class AdditionalDetailsSectionComponent implements OnInit {
   protected shellAccessEnabled = this.userFormStore.shellAccess;
   protected hasSharingRole = computed(() => this.userFormStore.role()?.includes(Role.SharingAdmin));
   protected homeDirectoryEmptyValue = computed(() => {
-    if (this.editingUser()?.home === '/var/empty') {
-      return this.translate.instant('None');
+    if (this.editingUser()) {
+      if (this.editingUser()?.home === '/var/empty') {
+        return this.translate.instant('None');
+      }
+      return this.editingUser()?.home || '';
     }
 
-    if (this.form.value.group_create) {
-      return this.translate.instant('New {name} group', { name: this.username() });
-    }
-    return this.form.value.home;
+    return this.translate.instant('Not Set');
   });
 
   readonly groupOptions$ = this.api.call('group.query', [[['local', '=', true]]]).pipe(

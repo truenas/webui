@@ -1,7 +1,6 @@
 {
   "": "",
   "...": "",
-  "{group}": "",
   "{label} Error: {error}": "",
   "{n, plural, one {Pool in Enclosure} other {Pools in Enclosure} }": "",
   "{name} VDEVs": "",
@@ -13,7 +12,6 @@
   "Logging in at the current URL is not possible.": "",
   "Logging in at the current URL is not possible.<br>To login, please navigate to: {links}": "",
   "Looks like you don’t have any users who’ll be able to access this share.": "",
-  "New {name} group": "",
   "New {username} group": "",
   "Please create related items manually.": "",
   "Saved Partially": "",

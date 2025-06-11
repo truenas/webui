@@ -1,6 +1,5 @@
 {
   "": "",
-  "{group}": "",
   "{label} Error: {error}": "",
   "Additional Options": "",
   "Configure Directory Services": "",
@@ -28,7 +27,6 @@
   "Multicast DNS. Uses the system <i>Hostname</i> to  advertise enabled and running services. For example, this controls if  the server appears under <i>Network</i> on MacOS clients.": "",
   "Must match Windows workgroup name.  When this is unconfigured and Active Directory or LDAP are active,  TrueNAS will detect and set the correct workgroup from these services.": "",
   "NAA": "",
-  "New {name} group": "",
   "New {username} group": "",
   "Number of password-based key derivation function 2 (PBKDF2) iterations to use for reducing vulnerability      to brute-force attacks. Entering a number larger than <i>100000</i> is required. See      <a href=\"https://en.wikipedia.org/wiki/PBKDF2\" target=\"_blank\">PBKDF2</a> for more details.": "",
   "Number of previous passwords to remember. Must be between 1 and 10.": "",
