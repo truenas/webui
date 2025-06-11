@@ -48,11 +48,9 @@ import {
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ZvolFormData } from 'app/pages/datasets/components/zvol-form/zvol-form.interface';
-import { getDatasetLabel } from 'app/pages/datasets/utils/dataset.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
@@ -196,7 +194,6 @@ export class ZvolFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private formErrorHandler: FormErrorHandlerService,
     private errorHandler: ErrorHandlerService,
-    protected snackbar: SnackbarService,
     // TODO: Separate parentId and zvolId
     public slideInRef: SlideInRef<{ isNew: boolean; parentOrZvolId: string }, Dataset>,
   ) {
@@ -727,11 +724,5 @@ export class ZvolFormComponent implements OnInit {
   private handleZvolCreateUpdate(dataset: Dataset): void {
     this.isLoading.set(false);
     this.slideInRef.close({ response: dataset });
-
-    this.snackbar.success(
-      this.isNew
-        ? this.translate.instant('Switched to new zvol «{name}».', { name: getDatasetLabel(dataset) })
-        : this.translate.instant('Zvol «{name}» updated.', { name: getDatasetLabel(dataset) }),
-    );
   }
 }

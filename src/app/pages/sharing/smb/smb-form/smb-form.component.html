@@ -46,10 +46,12 @@
           [tooltip]="helptextSharingSmb.pathTooltip | translate"
           [label]="helptextSharingSmb.pathLabel | translate"
           [nodeProvider]="treeNodeProvider"
-          [canCreateDataset]="isNew"
-          [createDatasetProps]="createDatasetProps"
           [rootNodes]="rootNodes()"
-        ></ix-explorer>
+        >
+          @if (isNew) {
+            <ix-explorer-create-dataset [datasetProperties]="createDatasetProps"></ix-explorer-create-dataset>
+          }
+        </ix-explorer>
 
         <ix-input
           formControlName="name"

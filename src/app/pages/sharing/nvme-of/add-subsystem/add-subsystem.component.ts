@@ -45,7 +45,6 @@ import {
 } from 'app/pages/sharing/nvme-of/add-subsystem/add-subsystem-ports/add-subsystem-ports.component';
 import { NamespaceChanges } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/namespace-changes.interface';
 import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
-import { getNamespaceType } from 'app/pages/sharing/nvme-of/utils/namespace.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
@@ -177,10 +176,9 @@ export class AddSubsystemComponent {
 
   private createNamespaces(subsystem: NvmeOfSubsystem, namespaces: NamespaceChanges[]): Observable<unknown>[] {
     return namespaces.map((namespace) => {
-      const deviceType = getNamespaceType(namespace.device_path);
       const payload: CreateNvmeOfNamespace = {
         subsys_id: subsystem.id,
-        device_type: deviceType,
+        device_type: namespace.device_type,
         filesize: namespace.filesize,
         device_path: namespace.device_path,
       };

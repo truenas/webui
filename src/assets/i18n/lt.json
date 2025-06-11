@@ -1364,6 +1364,7 @@
   "Descriptive identifier for this certificate.": "",
   "Descriptive name for the replication.": "",
   "Descriptor": "",
+  "Deselect": "",
   "Desired – encrypt transport if supported by client during session negotiation": "",
   "Destination": "",
   "Destination dataset does not contain any snapshots that can be used as a basis for the incremental changes in the snapshots being sent. The snapshots in the destination dataset will be deleted and the replication will begin with a complete initial copy.": "",
