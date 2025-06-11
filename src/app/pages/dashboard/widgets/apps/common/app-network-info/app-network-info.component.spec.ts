@@ -55,7 +55,7 @@ describe('AppNetworkInfoComponent', () => {
     const chartData = spectator.component.networkStats();
 
     expect(chartData).toHaveLength(60);
-    expect(chartData[chartData.length - 1]).toEqual([123, 456]);
+    expect(chartData[chartData.length - 1]).toEqual([984, 3648]);
     expect(chartData[chartData.length - 2]).toEqual([0, 0]);
     expect(chartData[chartData.length - 3]).toEqual([0, 0]);
   });
