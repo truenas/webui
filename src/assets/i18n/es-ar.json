@@ -159,6 +159,7 @@
   "Used for advanced routing, e.g., sending traffic to a specific network via a non-default gateway.": "",
   "User will be encouraged to choose their own password after they login for the first time if they don't have a password.": "",
   "User: {userName}": "",
+  "View": "",
   "You can select multiple items with the Command and Shift keys.": "",
   "You can:": "",
   "\n              It looks like your session has been inactive for more than {lifetime} seconds.<br>\n              For security reasons we will log you out at {time}.\n            ": "\nParece que tu sesión estuvo inactiva durante más de {lifetime} segundos.<br>\nPor razones de seguridad, vamos a cerrar tu sesión a las {time}.\n",

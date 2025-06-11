@@ -8,7 +8,7 @@
     ></ix-add-port-menu>
   </mat-card-header>
   <mat-card-content>
-    @if (!subsystem().ports.length) {
+    @if (!subsystem().ports?.length) {
       <div class="no-ports-warning">
         <ix-icon
           name="mdi-alert"
