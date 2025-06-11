@@ -9,7 +9,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { isEqual } from 'lodash-es';
 import {
   debounceTime, distinctUntilChanged, filter, map,
@@ -67,8 +67,20 @@ import { StorageService } from 'app/services/storage.service';
 })
 export class AdditionalDetailsSectionComponent implements OnInit {
   editingUser = input<User>();
+  protected username = computed(() => this.userFormStore?.userConfig().username ?? '');
+  protected sshAccessEnabled = this.userFormStore.sshAccess;
   protected shellAccessEnabled = this.userFormStore.shellAccess;
   protected hasSharingRole = computed(() => this.userFormStore.role()?.includes(Role.SharingAdmin));
+  protected homeDirectoryEmptyValue = computed(() => {
+    if (this.editingUser()?.home === '/var/empty') {
+      return this.translate.instant('None');
+    }
+
+    if (this.form.value.group_create) {
+      return this.translate.instant('New {name} group', { name: this.username() });
+    }
+    return this.form.value.home;
+  });
 
   readonly groupOptions$ = this.api.call('group.query', [[['local', '=', true]]]).pipe(
     map((groups) => groups.map((group) => ({ label: group.group, value: group.id }))),
@@ -112,6 +124,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     private userFormStore: UserFormStore,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
+    private translate: TranslateService,
   ) {
     this.form.valueChanges
       .pipe(
@@ -182,8 +195,8 @@ export class AdditionalDetailsSectionComponent implements OnInit {
       this.form.controls.home_create.disable();
     }
 
-    if (this.editingUser()?.home && !isEmptyHomeDirectory(this.editingUser()?.home)) {
-      this.storageService.filesystemStat(this.editingUser().home)
+    if (user?.home && !isEmptyHomeDirectory(user.home)) {
+      this.storageService.filesystemStat(user.home)
         .pipe(take(1), this.errorHandler.withErrorHandler(), untilDestroyed(this))
         .subscribe((stat) => {
           const homeMode = stat.mode.toString(8).substring(2, 5);

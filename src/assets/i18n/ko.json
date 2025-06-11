@@ -1,5 +1,6 @@
 {
   "": "",
+  "{group}": "",
   "{type} is currently in use by the following subsystems:": "",
   "<p>Automatically create point-in-time snapshots of selected datasets at regular intervals.</p>\n<p>These snapshots help preserve data states for recovery, backup, and versioning purposes,\n ensuring minimal data loss in case of accidental deletion or corruption.</p>": "",
   "<p>High-performance block storage over TCP and other protocols, using the NVMe across a network.</p>\n<p>Compared to iSCSI, NVMe-oF offers significantly lower latency and higher throughput.</p>": "",
@@ -51,6 +52,8 @@
   "Manage Ports": "",
   "Namespaces": "",
   "Network Configuration Settings": "",
+  "New {name} group": "",
+  "New {username} group": "",
   "No Data Protection Tasks": "",
   "No hosts are allowed to access this subsystem. It will not be accessible.": "",
   "No new devices added yet.": "",

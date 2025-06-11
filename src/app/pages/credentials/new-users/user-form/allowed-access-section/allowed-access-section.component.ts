@@ -78,6 +78,9 @@ export class AllowedAccessSectionComponent {
           sshAccess: values.ssh_access,
           shellAccess: values.shell_access,
         });
+        this.userFormStore.updateSetupDetails({
+          role: values.role as Role,
+        });
       },
     });
 

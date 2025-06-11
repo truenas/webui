@@ -61,6 +61,7 @@ describe('AdditionalDetailsSectionComponent', () => {
         isNewUser: jest.fn(() => false),
         shellAccess: jest.fn(() => false),
         homeModeOldValue: jest.fn(() => ''),
+        userConfig: jest.fn(() => ({})),
       }),
       mockApi([
         mockCall('user.shell_choices', {
@@ -146,7 +147,7 @@ describe('AdditionalDetailsSectionComponent', () => {
         'Home Directory': '/home/test',
         Shell: '/usr/bin/bash',
         // TODO: Investigate why UID is 'Next Available' instead of 1004
-        UID: 'Next Available',
+        UID: '{uid}',
       });
 
       expect(spectator.inject(UserFormStore).updateSetupDetails).toHaveBeenCalledWith({

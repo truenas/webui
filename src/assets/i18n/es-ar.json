@@ -1,5 +1,6 @@
 {
   "": "",
+  "{group}": "",
   "{license} Contract,": "",
   "{name} VDEVs": "",
   "{seconds}s": "",
@@ -46,6 +47,8 @@
   "Manage Hosts": "",
   "Metadata (Special) Small Block Size": "",
   "Network Configuration Settings": "",
+  "New {name} group": "",
+  "New {username} group": "",
   "No Data Protection Tasks": "",
   "No new devices added yet.": "",
   "No Shares": "",

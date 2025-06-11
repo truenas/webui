@@ -178,15 +178,15 @@ export class UserFormComponent implements OnInit {
       sudo_commands_nopasswd: user.sudo_commands_nopasswd,
     });
 
-    this.userFormStore.updateSetupDetails({
-      role: user?.roles?.length > 0 ? user.roles[0] : defaultRole,
-    });
+    const role = user.roles?.length > 0 ? user.roles[0] : defaultRole;
+
+    this.userFormStore.updateSetupDetails({ role });
 
     this.userFormStore.setAllowedAccessConfig({
       smbAccess: user.smb,
       truenasAccess: user.roles?.length > 0,
-      sshAccess: user.ssh_password_enabled,
-      shellAccess: !!user.shell,
+      sshAccess: user.ssh_password_enabled || !!user.sshpubkey,
+      shellAccess: user.shell !== '/usr/sbin/nologin',
     });
 
     this.setNamesInUseValidator(user.username);
