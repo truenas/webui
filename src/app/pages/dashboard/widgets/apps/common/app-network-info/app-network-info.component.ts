@@ -42,11 +42,11 @@ export class AppNetworkInfoComponent {
   });
 
   readonly incomingTrafficBits = computed(() => {
-    return (this.stats()?.value?.networks?.reduce((sum, stats) => sum + stats.rx_bytes, 0) || 0) * 8;
+    return (this.stats()?.value?.networks?.reduce((sum, stats) => sum + this.bytesToBits(stats.rx_bytes), 0) || 0);
   });
 
   readonly outgoingTrafficBits = computed(() => {
-    return (this.stats()?.value?.networks?.reduce((sum, stats) => sum + stats.tx_bytes, 0) || 0) * 8;
+    return (this.stats()?.value?.networks?.reduce((sum, stats) => sum + this.bytesToBits(stats.tx_bytes), 0) || 0);
   });
 
   protected networkChartData = computed<ChartData<'line'>>(() => {
@@ -86,13 +86,20 @@ export class AppNetworkInfoComponent {
   ) {
     effect(() => {
       const networkStats = this.stats()?.value?.networks;
-      const incomingTraffic = networkStats?.reduce((sum, stats) => sum + stats.rx_bytes, 0);
-      const outgoingTraffic = networkStats?.reduce((sum, stats) => sum + stats.tx_bytes, 0);
+      const incomingTraffic = networkStats?.reduce((sum, stats) => sum + this.bytesToBits(stats.rx_bytes), 0);
+      const outgoingTraffic = networkStats?.reduce((sum, stats) => sum + this.bytesToBits(stats.tx_bytes), 0);
       if (networkStats && incomingTraffic && outgoingTraffic) {
         this.cachedNetworkStats.update((cachedStats) => {
           return [...cachedStats, [incomingTraffic, outgoingTraffic]].slice(-60);
         });
       }
     });
+  }
+
+  private bytesToBits(bytes: number): number {
+    if (bytes == null) {
+      return 0;
+    }
+    return bytes * 8;
   }
 }

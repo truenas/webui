@@ -55,7 +55,6 @@ export class UserDetailsRowComponent implements OnInit {
   readonly delete = output<number>();
 
   loggedInUser = toSignal(this.authService.user$.pipe(filter(Boolean)));
-
   isStigMode = signal<boolean>(false);
 
   protected readonly Role = Role;

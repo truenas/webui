@@ -705,7 +705,7 @@ export interface ApiCallDirectory {
   'pool.dataset.processes': { params: [datasetId: string]; response: Process[] };
   'pool.dataset.promote': { params: [id: string]; response: void };
   'pool.dataset.query': { params: QueryParams<Dataset, ExtraDatasetQueryOptions>; response: Dataset[] };
-  'pool.dataset.recommended_zvol_blocksize': { params: [name: string]; response: DatasetRecordSize };
+  'pool.dataset.recommended_zvol_blocksize': { params: [pool: string]; response: DatasetRecordSize };
   'pool.dataset.recordsize_choices': { params: void; response: string[] };
   'pool.dataset.set_quota': { params: [dataset: string, quotas: SetDatasetQuota[]]; response: void };
   'pool.dataset.update': { params: [id: string, update: DatasetUpdate]; response: Dataset };

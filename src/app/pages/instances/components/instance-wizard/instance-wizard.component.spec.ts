@@ -26,6 +26,9 @@ import { Job } from 'app/interfaces/job.interface';
 import { VirtualizationGlobalConfig, VirtualizationInstance, VirtualizationVolume } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
+import {
+  ExplorerCreateDatasetComponent,
+} from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxIconGroupHarness } from 'app/modules/forms/ix-forms/components/ix-icon-group/ix-icon-group.harness';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
@@ -61,6 +64,7 @@ describe('InstanceWizardComponent', () => {
     component: InstanceWizardComponent,
     declarations: [
       MockComponent(PageHeaderComponent),
+      MockComponent(ExplorerCreateDatasetComponent),
     ],
     providers: [
       mockAuth(),

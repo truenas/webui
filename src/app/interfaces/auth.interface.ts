@@ -5,6 +5,7 @@ export enum LoginExResponseType {
   AuthErr = 'AUTH_ERR',
   Expired = 'EXPIRED',
   OtpRequired = 'OTP_REQUIRED',
+  Redirect = 'REDIRECT',
 }
 
 export enum LoginExMechanism {
@@ -33,6 +34,11 @@ export interface LoginExpiredResponse {
   response_type: LoginExResponseType.Expired;
 }
 
+export interface LoginRedirectResponse {
+  response_type: LoginExResponseType.Redirect;
+  urls: string[];
+}
+
 export interface LoginOtpRequiredResponse {
   response_type: LoginExResponseType.OtpRequired;
   username: string;
@@ -42,6 +48,7 @@ export type LoginExResponse =
   | LoginSuccessResponse
   | LoginAuthErrorResponse
   | LoginExpiredResponse
+  | LoginRedirectResponse
   | LoginOtpRequiredResponse;
 
 export type LoginExQuery =

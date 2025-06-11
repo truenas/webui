@@ -158,7 +158,7 @@ describe('DatasetDetailsCardComponent', () => {
       await editZvolButton.click();
       expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
         ZvolFormComponent,
-        { data: { isNew: false, parentId: 'pool/child' } },
+        { data: { isNew: false, parentOrZvolId: 'pool/child' } },
       );
     });
   });
