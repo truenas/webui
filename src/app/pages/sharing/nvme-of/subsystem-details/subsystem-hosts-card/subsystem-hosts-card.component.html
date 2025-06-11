@@ -4,8 +4,8 @@
 
     <ix-add-host-menu
       [subsystem]="subsystem()"
-      (hostSelected)="onHostAdded($event)"
-      (allowAllHostsSelected)="onAllowAllHostsSelected()"
+      (hostSelected)="hostAdded($event)"
+      (allowAllHostsSelected)="allowAllHostsSelected()"
     ></ix-add-host-menu>
   </mat-card-header>
   <mat-card-content>
@@ -44,7 +44,7 @@
                   mat-icon-button
                   [ixTest]="['remove-host-association', host.hostnqn]"
                   [matTooltip]="'Remove host from the subsystem' | translate"
-                  (click)="onRemoveAssociation(host)"
+                  (click)="removeAssociation(host)"
                 >
                   <ix-icon class="icon" name="mdi-link-variant-off"></ix-icon>
                 </button>

@@ -52,7 +52,7 @@ export class SubsystemHostsCardComponent {
     private nvmeOfStore: NvmeOfStore,
   ) {}
 
-  protected onHostAdded(host: NvmeOfHost): void {
+  protected hostAdded(host: NvmeOfHost): void {
     const subsystem = this.subsystem();
 
     const disallowAll$ = subsystem.allow_any_host
@@ -73,7 +73,7 @@ export class SubsystemHostsCardComponent {
       });
   }
 
-  protected onAllowAllHostsSelected(): void {
+  protected allowAllHostsSelected(): void {
     const subsystem = this.subsystem();
 
     this.nvmeOfService.updateSubsystem(subsystem, { allow_any_host: true })
@@ -95,7 +95,7 @@ export class SubsystemHostsCardComponent {
       });
   }
 
-  protected onRemoveAssociation(host: NvmeOfHost): void {
+  protected removeAssociation(host: NvmeOfHost): void {
     this.nvmeOfService.removeHostAssociation(this.subsystem(), host)
       .pipe(
         this.loader.withLoader(),
