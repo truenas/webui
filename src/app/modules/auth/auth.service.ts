@@ -150,12 +150,22 @@ export class AuthService implements OnDestroy {
     this.setupTokenUpdate();
   }
 
-  login(username: string, password: string, otp: string | null = null): Observable<LoginResult> {
-    return (otp
+  login(
+    username: string,
+    password: string,
+  otp: string | null = null,
+  ): Observable<{ loginResult: LoginResult; loginResponse: LoginExResponse }> {
+    const loginCall$ = otp
       ? this.api.call('auth.login_ex_continue', [{ mechanism: LoginExMechanism.OtpToken, otp_token: otp }])
-      : this.api.call('auth.login_ex', [{ mechanism: LoginExMechanism.PasswordPlain, username, password }])
-    ).pipe(
-      switchMap((loginResult) => this.processLoginResult(loginResult)),
+      : this.api.call('auth.login_ex', [{ mechanism: LoginExMechanism.PasswordPlain, username, password }]);
+
+    return loginCall$.pipe(
+      switchMap((result) => this.processLoginResult(result).pipe(
+        map((loginResult) => ({
+          loginResponse: result,
+          loginResult,
+        })),
+      )),
     );
   }
 
@@ -319,6 +329,11 @@ export class AuthService implements OnDestroy {
         if (result.response_type === LoginExResponseType.OtpRequired) {
           return of(LoginResult.NoOtp);
         }
+
+        if (result.response_type === LoginExResponseType.Redirect) {
+          return of(LoginResult.Redirect);
+        }
+
         return of(LoginResult.IncorrectDetails);
       }),
     );

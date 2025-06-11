@@ -75,7 +75,7 @@ export class SetAdminPasswordFormComponent {
       switchMap(() => this.authService.login(username, password)),
       untilDestroyed(this),
     ).subscribe({
-      next: (loginResult) => {
+      next: ({ loginResult }) => {
         this.signinStore.setLoadingState(false);
 
         if (loginResult === LoginResult.Success) {
