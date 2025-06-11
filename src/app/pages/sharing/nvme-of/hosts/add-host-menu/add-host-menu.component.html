@@ -44,9 +44,19 @@
     <button
       mat-menu-item
       ixTest="manage-hosts"
-      (click)="onManageHosts()"
+      (click)="manageHosts()"
     >
       {{ 'Manage Hosts' | translate }}
     </button>
+
+    @if (subsystem()?.id && (subsystem()?.hosts?.length > 0 || !subsystem()?.allow_any_host)) {
+      <button
+        mat-menu-item
+        ixTest="allow-all-hosts"
+        (click)="allowAllHosts()"
+      >
+        {{ 'Allow all hosts' | translate }}
+      </button>
+    }
   </mat-menu>
 }

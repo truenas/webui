@@ -4,6 +4,8 @@
   "{label} Error: {error}": "",
   "{n, plural, one {Pool in Enclosure} other {Pools in Enclosure} }": "",
   "{name} VDEVs": "",
+  "All hosts are now allowed": "",
+  "Allow all hosts": "",
   "Configure Directory Services": "",
   "Create a new user": "",
   "Deselect": "",

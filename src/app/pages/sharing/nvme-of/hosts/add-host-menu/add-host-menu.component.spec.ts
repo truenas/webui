@@ -6,7 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { NvmeOfHost } from 'app/interfaces/nvme-of.interface';
+import { NvmeOfHost, NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.interface';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { AddHostMenuComponent } from 'app/pages/sharing/nvme-of/hosts/add-host-menu/add-host-menu.component';
 import { HostFormComponent } from 'app/pages/sharing/nvme-of/hosts/host-form/host-form.component';
@@ -51,7 +51,9 @@ describe('AddHostMenuComponent', () => {
   beforeEach(() => {
     spectator = createComponent({
       props: {
-        subsystemHosts: [],
+        subsystem: {
+          hosts: [],
+        } as NvmeOfSubsystemDetails,
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -69,7 +71,7 @@ describe('AddHostMenuComponent', () => {
   describe('some hosts exist in the system', () => {
     beforeEach(() => {
       allHosts.set([usedHost, unusedHost]);
-      spectator.setInput('subsystemHosts', [usedHost]);
+      spectator.setInput('subsystem', { id: 1, hosts: [usedHost] });
     });
 
     it('lists available hosts that are not used in current subsystem', async () => {
@@ -77,7 +79,7 @@ describe('AddHostMenuComponent', () => {
       await menu.open();
 
       const items = await menu.getItems();
-      expect(items).toHaveLength(3);
+      expect(items).toHaveLength(4);
       expect(await items[0].getText()).toBe('iqn.2023-12.com.example:host1');
     });
 
@@ -88,6 +90,17 @@ describe('AddHostMenuComponent', () => {
       await menu.clickItem({ text: 'iqn.2023-12.com.example:host1' });
 
       expect(spectator.component.hostSelected.emit).toHaveBeenCalledWith(unusedHost);
+    });
+
+    it('emits (allowAllHostsSelected) when allowAllHosts() is called', async () => {
+      jest.spyOn(spectator.component.allowAllHostsSelected, 'emit');
+
+      const menu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Add' }));
+      await menu.open();
+
+      await menu.clickItem({ text: 'Allow all hosts' });
+
+      expect(spectator.component.allowAllHostsSelected.emit).toHaveBeenCalled();
     });
 
     it('has create new button that opens host form and emits (hostSelected) with new host', async () => {

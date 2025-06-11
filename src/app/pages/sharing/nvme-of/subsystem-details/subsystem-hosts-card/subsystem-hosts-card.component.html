@@ -3,12 +3,13 @@
     <h3 mat-card-title>{{ 'Associated Hosts' | translate }}</h3>
 
     <ix-add-host-menu
-      [subsystemHosts]="subsystem().hosts"
+      [subsystem]="subsystem()"
       (hostSelected)="onHostAdded($event)"
+      (allowAllHostsSelected)="onAllowAllHostsSelected()"
     ></ix-add-host-menu>
   </mat-card-header>
   <mat-card-content>
-    @if (subsystem().allow_any_host) {
+    @if (subsystem().allow_any_host && !subsystem().hosts.length) {
       {{ 'All hosts are allowed.' | translate }}
     } @else if (!subsystem().hosts.length) {
       <div class="no-hosts-warning">

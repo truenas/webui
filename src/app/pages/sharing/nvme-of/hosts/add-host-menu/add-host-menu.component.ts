@@ -9,7 +9,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { sortBy } from 'lodash-es';
 import { filter } from 'rxjs/operators';
-import { NvmeOfHost } from 'app/interfaces/nvme-of.interface';
+import { NvmeOfHost, NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -34,15 +34,16 @@ import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
   ],
 })
 export class AddHostMenuComponent {
-  subsystemHosts = input.required<NvmeOfHost[]>();
+  subsystem = input.required<NvmeOfSubsystemDetails>();
   hostSelected = output<NvmeOfHost>();
+  allowAllHostsSelected = output();
 
   protected allHosts = this.nvmeOfStore.hosts;
 
   protected noHostsExist = computed(() => !this.allHosts().length);
 
   protected unusedHosts = computed(() => {
-    const usedHostIds = this.subsystemHosts().map((host) => host.id);
+    const usedHostIds = this.subsystem().hosts.map((host) => host.id);
     const unusedHosts = this.allHosts().filter((host) => !usedHostIds.includes(host.id));
     return sortBy(unusedHosts, ['hostnqn']);
   });
@@ -69,9 +70,13 @@ export class AddHostMenuComponent {
     this.hostSelected.emit(host);
   }
 
-  protected onManageHosts(): void {
+  protected manageHosts(): void {
     this.matDialog.open(ManageHostsDialog, {
       minWidth: '450px',
     });
+  }
+
+  protected allowAllHosts(): void {
+    this.allowAllHostsSelected.emit();
   }
 }
