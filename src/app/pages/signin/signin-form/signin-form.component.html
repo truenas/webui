@@ -34,7 +34,7 @@
     </button>
     @if (isLastLoginAttemptFailed) {
       <div class="error">
-        <p>{{ lastLoginError }}</p>
+        <p [innerHTML]="lastLoginError"></p>
       </div>
     }
   }

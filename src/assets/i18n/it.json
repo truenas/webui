@@ -7,6 +7,8 @@
   "Deselect": "",
   "However, we could not create some related items:": "",
   "Ignore the error and add users later.": "",
+  "Logging in at the current URL is not possible.": "",
+  "Logging in at the current URL is not possible.<br>To login, please navigate to: {links}": "",
   "Looks like you don’t have any users who’ll be able to access this share.": "",
   "Please create related items manually.": "",
   "Saved Partially": "",

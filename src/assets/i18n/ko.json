@@ -23,6 +23,8 @@
   "However, we could not create some related items:": "",
   "Identity": "",
   "Ignore the error and add users later.": "",
+  "Logging in at the current URL is not possible.": "",
+  "Logging in at the current URL is not possible.<br>To login, please navigate to: {links}": "",
   "Login": "",
   "Looks like you don’t have any users who’ll be able to access this share.": "",
   "Make sure to add your current IP address to the list. Otherwise you will lose access to TrueNAS UI.": "",

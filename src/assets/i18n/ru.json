@@ -18,6 +18,8 @@
   "Ignore the error and add users later.": "",
   "Incus": "",
   "Inquiry": "",
+  "Logging in at the current URL is not possible.": "",
+  "Logging in at the current URL is not possible.<br>To login, please navigate to: {links}": "",
   "Looks like you don’t have any users who’ll be able to access this share.": "",
   "Method of snapshot transfer:<ul>  <li><i>SSH</i> is supported by most systems. It requires a previously  created connection in <b>System > SSH Connections</b>.</li>  <li><i>SSH+NETCAT</i> uses SSH to establish a connection to the  destination system, then uses  <a href=\"https://github.com/truenas/py-libzfs\"  target=\"_blank\">py-libzfs</a> to send an unencrypted data stream for  higher transfer speeds. This only works when replicating to a  TrueNAS, or other system with <i>py-libzfs</i> installed.</li>  <li><i>LOCAL</i> efficiently replicates snapshots to another dataset on  the same system without using the network.</li>  <li><i>LEGACY</i> uses the legacy replication engine from FreeNAS 11.2  and earlier.</li></ul>": "",
   "Move existing keys from the current key server to a new key server.  To switch to a different key server, key synchronization must be <i>Enabled</i>, then  enable this setting, update the key server connection configuration, and click <b>SAVE</b>.": "",

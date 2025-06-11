@@ -85,6 +85,8 @@
   "Installed Version": "",
   "Key For Host To Present": "",
   "Key For TrueNAS To Present (Optional)": "",
+  "Logging in at the current URL is not possible.": "",
+  "Logging in at the current URL is not possible.<br>To login, please navigate to: {links}": "",
   "Login": "",
   "Looks like you don’t have any users who’ll be able to access this share.": "",
   "MAC Address": "",
