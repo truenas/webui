@@ -12,12 +12,12 @@
   }
 
   &.running {
-    border-color: var(--green);
-    color: var(--green);
+    border-color: var(--status-active);
+    color: var(--status-active);
   }
 
   &.stopped {
-    border-color: var(--grey);
-    color: var(--grey);
+    border-color: var(--status-inactive);
+    color: var(--status-inactive);
   }
 }
