@@ -106,7 +106,6 @@ describe('CloudBackupFormComponent', () => {
       ]),
       mockProvider(SlideIn, {
         open: jest.fn(() => of()),
-        components$: of([]),
       }),
       mockProvider(CloudCredentialService, {
         getCloudSyncCredentials: jest.fn(() => of([googlePhotosCreds, storjCreds])),
@@ -182,7 +181,7 @@ describe('CloudBackupFormComponent', () => {
         absolute_paths: false,
         transfer_setting: CloudsyncTransferSetting.Default,
       }]);
-      expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
+      expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask });
     });
 
     it('adds a new cloud backup task when new form is saved', async () => {
@@ -231,7 +230,7 @@ describe('CloudBackupFormComponent', () => {
         absolute_paths: true,
         transfer_setting: CloudsyncTransferSetting.FastStorage,
       }]);
-      expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
+      expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask });
     });
   });
 
@@ -314,7 +313,7 @@ describe('CloudBackupFormComponent', () => {
         snapshot: false,
         transfer_setting: CloudsyncTransferSetting.Performance,
       }]);
-      expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
+      expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask });
     });
   });
 });

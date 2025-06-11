@@ -40,9 +40,7 @@ describe('LicenseComponent', () => {
       mockApi([
         mockCall('system.license_update'),
       ]),
-      mockProvider(SlideIn, {
-        components$: of([]),
-      }),
+      mockProvider(SlideIn),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of()),
       }),

@@ -82,6 +82,8 @@ export class ReplicationFormComponent implements OnInit {
 
   protected isLoading = signal(false);
 
+  protected existingReplication: ReplicationTask | undefined;
+
   sourceNodeProvider: TreeNodeProvider;
   targetNodeProvider: TreeNodeProvider;
 
@@ -91,8 +93,6 @@ export class ReplicationFormComponent implements OnInit {
   sshCredentials: KeychainSshCredentials[] = [];
 
   protected readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
-
-  protected existingReplication: ReplicationTask | undefined;
 
   constructor(
     private api: ApiService,
@@ -191,7 +191,7 @@ export class ReplicationFormComponent implements OnInit {
                 : this.translate.instant('Replication task saved.'),
             );
             this.isLoading.set(false);
-            this.slideInRef.close({ response, error: null });
+            this.slideInRef.close({ response });
           },
           error: (error: unknown) => {
             this.isLoading.set(false);
@@ -202,10 +202,7 @@ export class ReplicationFormComponent implements OnInit {
   }
 
   onSwitchToWizard(): void {
-    this.slideInRef.swap?.(
-      ReplicationWizardComponent,
-      { wide: true },
-    );
+    this.slideInRef.swap?.(ReplicationWizardComponent, { wide: true });
   }
 
   private getPayload(): ReplicationCreate {

@@ -34,8 +34,7 @@ describe('TunableFormComponent', () => {
         }),
       ]),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of({ response: true, error: null })),
-        components$: of([]),
+        open: jest.fn(() => of({ response: true })),
       }),
       mockProvider(FormErrorHandlerService),
       mockProvider(SlideInRef, {

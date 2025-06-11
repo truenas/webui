@@ -160,7 +160,6 @@ export class WidgetGroupFormComponent {
     }
     this.slideInRef.close({
       response: this.group(),
-      error: false,
     });
   }
 

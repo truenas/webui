@@ -187,7 +187,7 @@ export class SnapshotTaskFormComponent implements OnInit {
           this.snackbar.success(this.translate.instant('Task updated'));
         }
         this.isLoading.set(false);
-        this.slideInRef.close({ response: true, error: null });
+        this.slideInRef.close({ response: true });
       },
       error: (error: unknown) => {
         this.isLoading.set(false);

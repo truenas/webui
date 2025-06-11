@@ -10,6 +10,7 @@ import { filter, switchMap, tap } from 'rxjs';
 import { replicationTaskEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
@@ -95,6 +96,7 @@ export class ReplicationListComponent implements OnInit {
   protected readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
   protected readonly searchableElements = replicationListElements;
   protected readonly emptyConfig = replicationTaskEmptyConfig;
+  protected readonly EmptyType = EmptyType;
 
   columns = createTable<ReplicationTask>([
     textColumn({
@@ -251,21 +253,22 @@ export class ReplicationListComponent implements OnInit {
 
   openForm(row?: ReplicationTask): void {
     if (row) {
-      this.slideIn.open(ReplicationFormComponent, { data: row, wide: true })
-        .pipe(
-          filter((response) => !!response.response),
-          untilDestroyed(this),
-        ).subscribe({
-          next: () => {
-            this.getReplicationTasks();
-          },
-        });
+      this.slideIn.open(
+        ReplicationFormComponent,
+        { data: row, wide: true },
+      ).pipe(
+        filter((response) => !!response.response),
+        untilDestroyed(this),
+      ).subscribe({
+        next: () => {
+          this.getReplicationTasks();
+        },
+      });
     } else {
-      this.slideIn.open(ReplicationWizardComponent, { wide: true })
-        .pipe(
-          filter((response) => !!response.response),
-          untilDestroyed(this),
-        ).subscribe(() => this.getReplicationTasks());
+      this.slideIn.open(ReplicationWizardComponent).pipe(
+        filter((response) => !!response.response),
+        untilDestroyed(this),
+      ).subscribe(() => this.getReplicationTasks());
     }
   }
 

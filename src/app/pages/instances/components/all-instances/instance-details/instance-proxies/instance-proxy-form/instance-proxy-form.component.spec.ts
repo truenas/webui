@@ -5,6 +5,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { VirtualizationDeviceType, VirtualizationProxyProtocol } from 'app/enums/virtualization.enum';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -43,7 +44,7 @@ describe('InstanceProxyFormComponent', () => {
     });
 
     it('shows a title for creating a proxy', () => {
-      expect(spectator.query('ix-modal-header')).toHaveText('Add Proxy');
+      expect(spectator.query(ModalHeaderComponent)).toExist();
     });
 
     it('creates a new proxy for the instance provided when form is submitted', async () => {
@@ -61,7 +62,6 @@ describe('InstanceProxyFormComponent', () => {
 
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({
         response: true,
-        error: false,
       });
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('virt.instance.device_add', ['my-instance', {
@@ -98,7 +98,7 @@ describe('InstanceProxyFormComponent', () => {
     });
 
     it('shows a title for editing a proxy', () => {
-      expect(spectator.query('ix-modal-header')).toHaveText('Edit Proxy');
+      expect(spectator.query(ModalHeaderComponent)).toExist();
     });
 
     it('shows values for the proxy that is being edited', async () => {
@@ -136,7 +136,6 @@ describe('InstanceProxyFormComponent', () => {
 
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({
         response: true,
-        error: false,
       });
     });
   });

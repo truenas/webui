@@ -45,6 +45,7 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { ChipsProvider } from 'app/modules/forms/ix-forms/components/ix-chips/chips-provider';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
+import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -52,6 +53,7 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -71,6 +73,7 @@ import { selectService } from 'app/store/services/services.selectors';
 @UntilDestroy()
 @Component({
   selector: 'ix-smb-form',
+  styleUrls: ['./smb-form.component.scss'],
   templateUrl: './smb-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
@@ -80,6 +83,7 @@ import { selectService } from 'app/store/services/services.selectors';
     ReactiveFormsModule,
     IxFieldsetComponent,
     IxExplorerComponent,
+    ExplorerCreateDatasetComponent,
     IxInputComponent,
     IxSelectComponent,
     IxCheckboxComponent,
@@ -89,16 +93,18 @@ import { selectService } from 'app/store/services/services.selectors';
     MatButton,
     TestDirective,
     TranslateModule,
+    IxIconComponent,
   ],
 })
 export class SmbFormComponent implements OnInit, AfterViewInit {
   private existingSmbShare: SmbShare | undefined;
-  defaultSmbShare: SmbShare | undefined;
+  private defaultSmbShare: SmbShare | undefined;
 
   protected isLoading = signal(false);
-  isAdvancedMode = false;
-  namesInUse: string[] = [];
-  readonly helptextSharingSmb = helptextSharingSmb;
+  protected hasSmbUsers = signal(true);
+  protected isAdvancedMode = false;
+  private namesInUse: string[] = [];
+  protected readonly helptextSharingSmb = helptextSharingSmb;
   protected readonly requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
   private wasStripAclWarningShown = false;
 
@@ -269,6 +275,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.setupPurposeControl();
+    this.checkForSmbUsersWarning();
 
     this.setupAndApplyPurposePresets()
       .pipe(
@@ -410,7 +417,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   setupAndApplyPurposePresets(): Observable<SmbPresets> {
     return this.api.call('sharing.smb.presets').pipe(
       tap((presets) => {
-        const nonClusterPresets = Object.entries(presets).reduce(
+        const nonClusterPresets = Object.entries(presets || {}).reduce(
           (acc, [presetName, preset]) => {
             if (!preset.cluster) {
               acc[presetName] = preset;
@@ -537,11 +544,11 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
               );
             }
             this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Cifs }));
-            this.slideInRef.close({ response: true, error: null });
+            this.slideInRef.close({ response: true });
           });
         } else {
           this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Cifs }));
-          this.slideInRef.close({ response: true, error: null });
+          this.slideInRef.close({ response: true });
         }
       },
       error: (error: unknown) => {
@@ -612,5 +619,22 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
         );
       }),
     );
+  }
+
+  closeForm(routerLink?: string[]): void {
+    this.slideInRef.close({ response: false });
+
+    if (routerLink) {
+      this.router.navigate(routerLink);
+    }
+  }
+
+  private checkForSmbUsersWarning(): void {
+    this.smbValidationService.checkForSmbUsersWarning().pipe(
+      filter(Boolean),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.hasSmbUsers.set(false);
+    });
   }
 }

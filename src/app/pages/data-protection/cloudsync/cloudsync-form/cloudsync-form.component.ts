@@ -775,7 +775,7 @@ export class CloudSyncFormComponent implements OnInit {
           this.snackbar.success(this.translate.instant('Task updated'));
         }
         this.isLoading = false;
-        this.slideInRef.close({ response, error: null });
+        this.slideInRef.close({ response });
       },
       error: (error: unknown) => {
         this.isLoading = false;
@@ -786,15 +786,12 @@ export class CloudSyncFormComponent implements OnInit {
   }
 
   onSwitchToWizard(): void {
-    this.slideInRef.swap?.(
-      CloudSyncWizardComponent,
-      { wide: true },
-    );
+    this.slideInRef.swap?.(CloudSyncWizardComponent, { wide: true });
   }
 
   goToManageCredentials(): void {
     this.router.navigate(['/', 'credentials', 'backup-credentials']);
-    this.slideInRef.close({ response: false, error: null });
+    this.slideInRef.close({ response: false });
   }
 
   private getInitialData(): void {

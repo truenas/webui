@@ -18,6 +18,9 @@ import { helptextServiceFtp } from 'app/helptext/services/components/service-ftp
 import { FtpConfigUpdate } from 'app/interfaces/ftp-config.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import {
+  ExplorerCreateDatasetComponent,
+} from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -63,6 +66,7 @@ import { SystemGeneralService } from 'app/services/system-general.service';
     TestDirective,
     TranslateModule,
     AsyncPipe,
+    ExplorerCreateDatasetComponent,
   ],
 })
 export class ServiceFtpComponent implements OnInit {
@@ -168,7 +172,7 @@ export class ServiceFtpComponent implements OnInit {
         next: () => {
           this.isFormLoading.set(false);
           this.snackbar.success(this.translate.instant('Service configuration saved'));
-          this.slideInRef.close({ response: true, error: null });
+          this.slideInRef.close({ response: true });
         },
         error: (error: unknown) => {
           this.isFormLoading.set(false);

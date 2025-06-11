@@ -126,7 +126,7 @@ describe('SshConnectionFormComponent', () => {
           username: 'root',
         },
       }]);
-      expect(closeSlideInRef).toHaveBeenCalledWith({ response: existingConnection, error: null });
+      expect(closeSlideInRef).toHaveBeenCalledWith({ response: existingConnection });
     });
   });
 
@@ -170,7 +170,7 @@ describe('SshConnectionFormComponent', () => {
           username: 'john',
         },
       }]);
-      expect(closeSlideInRef).toHaveBeenCalledWith({ response: existingConnection, error: null });
+      expect(closeSlideInRef).toHaveBeenCalledWith({ response: existingConnection });
     });
 
     it('saves new SSH connection added using semi-automatic setup', async () => {

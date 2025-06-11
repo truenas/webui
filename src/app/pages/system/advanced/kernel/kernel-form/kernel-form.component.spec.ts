@@ -27,8 +27,7 @@ describe('KernelFormComponent', () => {
         mockCall('system.advanced.update'),
       ]),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of({ response: true, error: null })),
-        components$: of([]),
+        open: jest.fn(() => of({ response: true })),
       }),
       mockProvider(SlideInRef, {
         close: jest.fn(),

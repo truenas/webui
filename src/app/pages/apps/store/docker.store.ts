@@ -90,7 +90,7 @@ export class DockerStore extends ComponentStore<DockerConfigState> {
 
     return this.dialogService.jobDialog(
       this.api.job('docker.update', [payload]),
-      { title: this.translate.instant('Configuring...') },
+      { title: this.translate.instant('Configuring apps') },
     )
       .afterClosed()
       .pipe(this.errorHandler.withErrorHandler());

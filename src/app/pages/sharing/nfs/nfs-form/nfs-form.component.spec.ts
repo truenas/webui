@@ -82,9 +82,7 @@ describe('NfsFormComponent', () => {
         } as NfsConfig),
       ]),
       mockAuth(),
-      mockProvider(SlideIn, {
-        components$: of([]),
-      }),
+      mockProvider(SlideIn),
       mockProvider(FilesystemService),
       mockProvider(UserService, {
         userQueryDsCache: () => of([

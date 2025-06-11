@@ -24,7 +24,6 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
@@ -84,7 +83,6 @@ export class PortFormComponent implements OnInit {
     private api: ApiService,
     private nvmeOfService: NvmeOfService,
     private formBuilder: NonNullableFormBuilder,
-    private snackbar: SnackbarService,
     private translate: TranslateService,
     private formErrorHandler: FormErrorHandlerService,
     public slideInRef: SlideInRef<NvmeOfPort | undefined, NvmeOfPort | null>,
@@ -122,15 +120,8 @@ export class PortFormComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe({
       next: (port) => {
-        this.snackbar.success(
-          this.isNew()
-            ? this.translate.instant('Port Created')
-            : this.translate.instant('Port Updated'),
-        );
-
         this.slideInRef.close({
           response: port,
-          error: null,
         });
       },
       error: (error: unknown) => {

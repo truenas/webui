@@ -36,7 +36,6 @@ describe('IscsiComponent', () => {
       mockAuth(),
       mockApi(),
       mockProvider(SlideIn, {
-        components$: [],
         open: jest.fn(() => of()),
       }),
     ],

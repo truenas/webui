@@ -18,6 +18,9 @@ import { helptextInitShutdown } from 'app/helptext/system/init-shutdown';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import {
+  ExplorerCreateDatasetComponent,
+} from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -51,6 +54,7 @@ import { FilesystemService } from 'app/services/filesystem.service';
     TestDirective,
     TranslateModule,
     AsyncPipe,
+    ExplorerCreateDatasetComponent,
   ],
 })
 export class InitShutdownFormComponent implements OnInit {
@@ -145,7 +149,7 @@ export class InitShutdownFormComponent implements OnInit {
           this.snackbar.success(this.translate.instant('Init/Shutdown Script updated'));
         }
         this.isFormLoading.set(false);
-        this.slideInRef.close({ response: true, error: null });
+        this.slideInRef.close({ response: true });
       },
       error: (error: unknown) => {
         this.isFormLoading.set(false);

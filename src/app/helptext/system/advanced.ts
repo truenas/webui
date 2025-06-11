@@ -105,6 +105,7 @@ simultaneously.'),
   allowedIpAddresses: {
     tooltip: T('You may enter a specific IP address (e.g., 192.168.1.1) for individual access, or use an \
  IP address with a subnet mask (e.g., 192.168.1.0/24) to define a range of addresses.'),
+    lockoutWarning: T('Make sure to add your current IP address to the list. Otherwise you will lose access to TrueNAS UI.'),
   },
 
   storageSettings: {

@@ -27,6 +27,7 @@ import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-
 import { createTable } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { PortFormComponent } from 'app/pages/sharing/nvme-of/ports/port-form/port-form.component';
@@ -125,6 +126,7 @@ export class ManagePortsDialog implements OnInit {
     private errorHandler: ErrorHandlerService,
     private loader: LoaderService,
     private matDialog: MatDialog,
+    private snackbar: SnackbarService,
   ) {}
 
   ngOnInit(): void {
@@ -139,6 +141,7 @@ export class ManagePortsDialog implements OnInit {
         untilDestroyed(this),
       )
       .subscribe(() => {
+        this.snackbar.success(this.translate.instant('Port Added'));
         this.nvmeOfStore.reloadPorts();
       });
   }
@@ -150,6 +153,7 @@ export class ManagePortsDialog implements OnInit {
         untilDestroyed(this),
       )
       .subscribe(() => {
+        this.snackbar.success(this.translate.instant('Port Updated'));
         this.nvmeOfStore.reloadPorts();
       });
   }

@@ -26,6 +26,9 @@ import { Job } from 'app/interfaces/job.interface';
 import { VirtualizationGlobalConfig, VirtualizationInstance, VirtualizationVolume } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
+import {
+  ExplorerCreateDatasetComponent,
+} from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxIconGroupHarness } from 'app/modules/forms/ix-forms/components/ix-icon-group/ix-icon-group.harness';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
@@ -61,6 +64,7 @@ describe('InstanceWizardComponent', () => {
     component: InstanceWizardComponent,
     declarations: [
       MockComponent(PageHeaderComponent),
+      MockComponent(ExplorerCreateDatasetComponent),
     ],
     providers: [
       mockAuth(),
@@ -218,7 +222,6 @@ describe('InstanceWizardComponent', () => {
         name: 'new',
         autostart: true,
         cpu: '1-2',
-        iso_volume: null,
         instance_type: VirtualizationType.Container,
         devices: [
           {
@@ -242,9 +245,6 @@ describe('InstanceWizardComponent', () => {
         source_type: VirtualizationSource.Image,
         storage_pool: 'poolio',
         environment: {},
-        enable_vnc: false,
-        vnc_port: null,
-        volume: null,
       }]);
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
@@ -287,12 +287,8 @@ describe('InstanceWizardComponent', () => {
         memory: GiB,
         source_type: VirtualizationSource.Image,
         storage_pool: 'poolio',
-        enable_vnc: false,
-        vnc_port: null,
-        iso_volume: null,
         instance_type: VirtualizationType.Container,
         environment: {},
-        volume: null,
       }]);
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
@@ -384,8 +380,6 @@ describe('InstanceWizardComponent', () => {
         cpu: '1-2',
         root_disk_io_bus: DiskIoBus.Nvme,
         instance_type: VirtualizationType.Vm,
-        iso_volume: null,
-        image_os: null,
         devices: [
           {
             dev_type: VirtualizationDeviceType.Disk,
@@ -410,7 +404,6 @@ describe('InstanceWizardComponent', () => {
         root_disk_size: 9,
         vnc_password: 'testing',
         secure_boot: true,
-        volume: null,
       }]);
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
@@ -449,7 +442,6 @@ describe('InstanceWizardComponent', () => {
         root_disk_io_bus: DiskIoBus.VirtioBlk,
         instance_type: VirtualizationType.Vm,
         devices: [],
-        image: null,
         image_os: ImageOs.Windows,
         iso_volume: 'myiso.iso',
         source_type: VirtualizationSource.Iso,
@@ -459,7 +451,6 @@ describe('InstanceWizardComponent', () => {
         memory: 1073741824,
         vnc_port: null,
         root_disk_size: 10,
-        volume: null,
       }]);
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
@@ -496,9 +487,6 @@ describe('InstanceWizardComponent', () => {
         root_disk_io_bus: DiskIoBus.Nvme,
         instance_type: VirtualizationType.Vm,
         devices: [],
-        image: null,
-        image_os: null,
-        iso_volume: null,
         source_type: VirtualizationSource.Volume,
         enable_vnc: false,
         secure_boot: false,

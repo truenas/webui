@@ -15,6 +15,7 @@ Requires RDMA-capable system and network equipment.'),
 
   onlyStaticIpsShown: T('Only interfaces with static IPs are shown.'),
 
+  noNamespacesWarning: T('This subsystem has no namespaces.'),
   noPortsWarning: T('No ports are associated with this subsystem. It will not be accessible.'),
   noHostsWarning: T('No hosts are allowed to access this subsystem. It will not be accessible.'),
   hasHostAuthentication: T('Host authentication is enabled'),

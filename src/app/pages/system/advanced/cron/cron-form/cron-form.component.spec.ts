@@ -69,8 +69,7 @@ describe('CronFormComponent', () => {
         ],
       }),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of({ response: true, error: null })),
-        components$: of([]),
+        open: jest.fn(() => of({ response: true })),
       }),
       mockProvider(UserService, {
         userQueryDsCache: () => of([

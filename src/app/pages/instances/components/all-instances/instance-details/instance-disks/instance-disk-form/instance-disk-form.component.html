@@ -32,8 +32,11 @@
             [label]="'Source' | translate"
             [required]="true"
             [nodeProvider]="datasetProvider"
-            [canCreateDataset]="isNew()"
-          ></ix-explorer>
+          >
+            @if (isNew()) {
+              <ix-explorer-create-dataset></ix-explorer-create-dataset>
+            }
+          </ix-explorer>
         }
 
         @if (form.controls.io_bus.enabled) {

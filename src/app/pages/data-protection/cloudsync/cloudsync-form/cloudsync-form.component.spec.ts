@@ -200,7 +200,6 @@ describe('CloudSyncFormComponent', () => {
       ]),
       mockProvider(SlideIn, {
         open: jest.fn(() => of()),
-        components$: of([]),
       }),
       mockProvider(FilesystemService),
       mockProvider(SlideInRef, slideInRef),
@@ -248,7 +247,7 @@ describe('CloudSyncFormComponent', () => {
         transfer_mode: TransferMode.Copy,
         transfers: 4,
       }]);
-      expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
+      expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask });
     });
   });
 
@@ -334,7 +333,7 @@ describe('CloudSyncFormComponent', () => {
         transfer_mode: TransferMode.Copy,
         transfers: 10,
       }]);
-      expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
+      expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask });
     });
 
     it('checks payload when use invalid s3 credentials', async () => {

@@ -12,8 +12,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { injectParams } from 'ngxtension/inject-params';
 import { distinctUntilChanged, tap } from 'rxjs';
-import { instancesEmptyConfig } from 'app/constants/empty-configs';
-import { EmptyType } from 'app/enums/empty-type.enum';
+import { instancesEmptyConfig, noSearchResultsConfig } from 'app/constants/empty-configs';
 import { WINDOW } from 'app/helpers/window.helper';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
@@ -81,12 +80,7 @@ export class InstanceListComponent {
 
   protected readonly emptyConfig = computed<EmptyConfig>(() => {
     if (this.searchQuery()?.length && !this.filteredInstances()?.length) {
-      return {
-        type: EmptyType.NoSearchResults,
-        title: this.translate.instant('No Search Results.'),
-        message: this.translate.instant('No matching results found'),
-        large: false,
-      };
+      return noSearchResultsConfig;
     }
     return instancesEmptyConfig;
   });
@@ -117,7 +111,7 @@ export class InstanceListComponent {
 
   toggleAllChecked(checked: boolean): void {
     if (checked) {
-      this.instances().forEach((instance) => this.selection.select(instance.id));
+      this.filteredInstances().forEach((instance) => this.selection.select(instance.id));
     } else {
       this.selection.clear();
     }

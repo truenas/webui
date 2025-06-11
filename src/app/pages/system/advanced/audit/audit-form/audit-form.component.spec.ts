@@ -36,8 +36,7 @@ describe('AuditFormComponent', () => {
         mockCall('audit.update'),
       ]),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of({ response: true, error: null })),
-        components$: of([]),
+        open: jest.fn(() => of({ response: true })),
       }),
       mockProvider(DialogService),
       provideMockStore(),

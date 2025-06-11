@@ -17,9 +17,11 @@ import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { helptextSystemGeneral } from 'app/helptext/system/general';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
+import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { ipv4or6OptionalCidrValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -44,21 +46,27 @@ import { generalConfigUpdated } from 'app/store/system-config/system-config.acti
     IxListComponent,
     IxListItemComponent,
     IxInputComponent,
+    WarningComponent,
     FormActionsComponent,
     RequiresRolesDirective,
     MatButton,
     TestDirective,
     TranslateModule,
+    IxFieldsetComponent,
   ],
 })
 export class AllowedAddressesFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.SystemGeneralWrite];
-  protected readonly helpText = helptextSystemAdvanced;
+  protected readonly helptext = helptextSystemAdvanced;
 
   protected isFormLoading = signal(true);
-  form = this.fb.nonNullable.group({
+  protected initiallyHadNoAddresses = signal(false);
+
+  protected form = this.fb.nonNullable.group({
     addresses: this.fb.nonNullable.array<string>([]),
   });
+
+  protected isLockoutWarningShown = signal(false);
 
   constructor(
     private fb: FormBuilder,
@@ -78,16 +86,25 @@ export class AllowedAddressesFormComponent implements OnInit {
   ngOnInit(): void {
     this.api.call('system.general.config').pipe(untilDestroyed(this)).subscribe({
       next: (config) => {
+        this.initiallyHadNoAddresses.set(config.ui_allowlist.length === 0);
         config.ui_allowlist.forEach(() => {
           this.addAddress();
         });
         this.form.controls.addresses.patchValue(config.ui_allowlist);
         this.isFormLoading.set(false);
+
+        this.warnWhenAddressesAreAdded();
       },
       error: (error: unknown) => {
         this.isFormLoading.set(false);
         this.errorHandler.showErrorModal(error);
       },
+    });
+  }
+
+  private warnWhenAddressesAreAdded(): void {
+    this.form.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+      this.isLockoutWarningShown.set(this.initiallyHadNoAddresses() && Boolean(this.form.value.addresses.length));
     });
   }
 
@@ -130,7 +147,7 @@ export class AllowedAddressesFormComponent implements OnInit {
       }),
       switchMap(() => this.handleServiceRestart()),
       tap(() => {
-        this.slideInRef.close({ response: true, error: null });
+        this.slideInRef.close({ response: true });
       }),
       untilDestroyed(this),
     ).subscribe({

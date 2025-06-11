@@ -30,6 +30,7 @@ import { DatasetCreate } from 'app/interfaces/dataset.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -56,6 +57,7 @@ import { FilesystemService } from 'app/services/filesystem.service';
     IxFieldsetComponent,
     IxRadioGroupComponent,
     IxExplorerComponent,
+    ExplorerCreateDatasetComponent,
     IxInputComponent,
     FormActionsComponent,
     RequiresRolesDirective,
@@ -168,7 +170,7 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
         complete: () => {
           this.snackbar.success(this.translate.instant('Cloud Backup Restored Successfully'));
           this.isLoading.set(false);
-          this.slideInRef.close({ response: true, error: null });
+          this.slideInRef.close({ response: true });
         },
         error: (error: unknown) => {
           this.isLoading.set(false);

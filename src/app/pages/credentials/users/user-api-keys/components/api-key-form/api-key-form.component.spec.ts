@@ -78,7 +78,7 @@ describe('ApiKeyFormComponent', () => {
       username: 'root',
       expires_at: null,
     }]);
-    expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: true, error: null });
+    expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: true });
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(KeyCreatedDialog, {
       data: 'generated-key',
     });
@@ -122,7 +122,7 @@ describe('ApiKeyFormComponent', () => {
       reset: false,
       expires_at: null,
     }]);
-    expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: true, error: null });
+    expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: true });
     expect(spectator.inject(MatDialog).open).not.toHaveBeenCalledWith(KeyCreatedDialog, {
       data: 'generated-key',
     });
@@ -168,7 +168,7 @@ describe('ApiKeyFormComponent', () => {
         $date: parseISO('2024-12-22T00:00:00Z').getTime(),
       },
     }]);
-    expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: true, error: null });
+    expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: true });
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(KeyCreatedDialog, {
       data: 'generated-key',
     });

@@ -160,7 +160,7 @@ export class AppsSettingsComponent implements OnInit {
         next: () => {
           this.isFormLoading.set(false);
           this.snackbar.success(this.translate.instant('Settings saved'));
-          this.slideInRef.close({ response: true, error: null });
+          this.slideInRef.close({ response: true });
         },
         error: (error: unknown) => {
           this.isFormLoading.set(false);

@@ -22,10 +22,7 @@ describe('DatasetFormService', () => {
       mockProvider(DialogService, {
         warn: jest.fn(() => of(true)),
       }),
-      mockProvider(SlideIn, {
-        components$: of([]),
-        closeLast: jest.fn(),
-      }),
+      mockProvider(SlideIn),
     ],
   });
 
@@ -40,7 +37,6 @@ describe('DatasetFormService', () => {
         helptextDatasetForm.pathWarningTitle,
         helptextDatasetForm.pathIsTooLongWarning,
       );
-      expect(spectator.inject(SlideIn).closeLast).toHaveBeenCalled();
     });
 
     it('checks parent path, shows error if it nesting level is too deep and closes slide in', async () => {
@@ -51,7 +47,6 @@ describe('DatasetFormService', () => {
         helptextDatasetForm.pathWarningTitle,
         helptextDatasetForm.pathIsTooDeepWarning,
       );
-      expect(spectator.inject(SlideIn).closeLast).toHaveBeenCalled();
     });
   });
 

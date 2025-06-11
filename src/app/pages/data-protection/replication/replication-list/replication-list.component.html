@@ -1,9 +1,6 @@
-@let empty = !(dataProvider.currentPageCount$ | async) && !(dataProvider.isLoading$ | async);
-
 <ix-page-header>
   <ix-search-input1
     [value]="filterString"
-    [disabled]="empty"
     (search)="onListFiltered($event)"
   ></ix-search-input1>
 
@@ -25,7 +22,7 @@
   </button>
 </ix-page-header>
 
-@if (empty) {
+@if ((dataProvider.emptyType$ | async) === EmptyType.NoPageData && !(dataProvider.currentPageCount$ | async)) {
   <ix-empty [conf]="emptyConfig"></ix-empty>
 } @else {
   <ix-table

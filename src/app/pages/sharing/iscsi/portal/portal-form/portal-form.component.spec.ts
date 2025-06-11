@@ -4,7 +4,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IscsiAuthMethod } from 'app/enums/iscsi.enum';
@@ -58,9 +57,7 @@ describe('PortalFormComponent', () => {
         mockCall('iscsi.portal.create'),
         mockCall('iscsi.portal.update'),
       ]),
-      mockProvider(SlideIn, {
-        components$: of([]),
-      }),
+      mockProvider(SlideIn),
       mockProvider(DialogService),
       provideMockStore(),
       mockProvider(SlideInRef, slideInRef),
