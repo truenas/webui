@@ -1,8 +1,13 @@
 {
   "": "",
+  "{label} Error: {error}": "",
   "Additional Options": "",
+  "However, we could not create some related items:": "",
   "Logging in at the current URL is not possible.": "",
   "Logging in at the current URL is not possible.<br>To login, please navigate to: {links}": "",
+  "Please create related items manually.": "",
+  "Saved Partially": "",
+  "Subsystem \"{name}\" has been created.": "",
   "\n              It looks like your session has been inactive for more than {lifetime} seconds.<br>\n              For security reasons we will log you out at {time}.\n            ": "\nSembra che la tua sessione sia stata inattiva per più di {lifetime} secondi.<br>\nPer motivi di sicurezza, verrai disconnesso alle {time}.",
   " as of {dateTime}": " al {dateTime}",
   " bytes.": " byte.",
