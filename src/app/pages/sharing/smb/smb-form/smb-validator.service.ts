@@ -2,13 +2,13 @@ import { Injectable } from '@angular/core';
 import {
   AbstractControl, ValidationErrors,
 } from '@angular/forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
   Observable, catchError, debounceTime, distinctUntilChanged, of, switchMap, take,
 } from 'rxjs';
 import { extractApiErrorDetails } from 'app/helpers/api.helper';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 
 @UntilDestroy()
@@ -16,18 +16,15 @@ import { ApiService } from 'app/modules/websocket/api.service';
   providedIn: 'root',
 })
 export class SmbValidationService {
-  private noSmbUsersError = this.translate.instant('TrueNAS server must be joined to Active Directory or have at least one local SMB user before creating an SMB share');
-  private nameExistsError = this.translate.instant('Share with this name already exists');
-  private wasNoSmbUsersWarningShown = false;
+  private nameExistsError = T('Share with this name already exists');
+  private invalidCharactersError = T('Share name contains the following invalid characters');
 
   constructor(
     private api: ApiService,
-    private dialogService: DialogService,
     private translate: TranslateService,
   ) { }
 
   validate = (originalName?: string): (control: AbstractControl<string>) => Observable<ValidationErrors | null> => {
-    this.wasNoSmbUsersWarningShown = false;
     return (control: AbstractControl<string>): Observable<ValidationErrors | null> => {
       return control.valueChanges.pipe(
         debounceTime(300),
@@ -38,7 +35,7 @@ export class SmbValidationService {
             return of(null);
           }
 
-          return this.api.call('sharing.smb.share_precheck', [{ name: value }]).pipe(
+          return this.runPreCheck(value).pipe(
             switchMap((response) => this.handleError(response)),
             catchError((error: unknown) => this.handleError(error)),
           );
@@ -46,6 +43,22 @@ export class SmbValidationService {
       );
     };
   };
+
+  checkForSmbUsersWarning(): Observable<boolean> {
+    return this.runPreCheck().pipe(
+      switchMap((response) => this.handleSmbUsersError(response)),
+      catchError((error: unknown) => this.handleSmbUsersError(error)),
+      take(1),
+    );
+  }
+
+  private isNoSmbUsersError(errorText: string): boolean {
+    return errorText.toLowerCase().includes('sharing.smb.share_precheck:');
+  }
+
+  private runPreCheck(name = ' '): Observable<ValidationErrors | null> {
+    return this.api.call('sharing.smb.share_precheck', [{ name }]);
+  }
 
   private handleError(error: unknown): Observable<ValidationErrors | null> {
     if (error === null) {
@@ -55,8 +68,7 @@ export class SmbValidationService {
     const apiError = extractApiErrorDetails(error);
     const errorText = this.extractError(apiError?.reason || '');
 
-    if (errorText === this.noSmbUsersError) {
-      this.showNoSmbUsersWarning();
+    if (!errorText.length) {
       return of(null);
     }
 
@@ -64,34 +76,25 @@ export class SmbValidationService {
       customValidator: {
         message: errorText,
       },
-      preCheckFailed: true,
     });
   }
 
-  private showNoSmbUsersWarning(): void {
-    if (this.wasNoSmbUsersWarningShown) {
-      return;
-    }
-    this.wasNoSmbUsersWarningShown = true;
-    this.dialogService
-      .confirm({
-        title: this.translate.instant('Warning'),
-        message: this.noSmbUsersError,
-        hideCheckbox: true,
-        buttonText: this.translate.instant('Close'),
-        hideCancel: true,
-      })
-      .pipe(untilDestroyed(this))
-      .subscribe();
+  private handleSmbUsersError(error: unknown): Observable<boolean> {
+    const errorText = extractApiErrorDetails(error)?.reason || '';
+    return of(this.isNoSmbUsersError(errorText));
   }
 
   private extractError(error: string): string {
-    if (error.includes(this.noSmbUsersError)) {
-      return this.translate.instant(this.noSmbUsersError);
-    }
-    if (error.includes(this.nameExistsError)) {
+    const errorText = error.replace('[EINVAL] sharing.smb.share_precheck: TrueNAS server must be joined to a directory service or have at least one local SMB user before creating an SMB share.', '');
+
+    if (errorText.includes(this.nameExistsError)) {
       return this.translate.instant(this.nameExistsError);
     }
-    return error;
+
+    if (errorText.includes(this.invalidCharactersError)) {
+      return `${this.translate.instant(this.invalidCharactersError)}: ${errorText.split(this.invalidCharactersError)[1].trim()}`;
+    }
+
+    return errorText.trim();
   }
 }
