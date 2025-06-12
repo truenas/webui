@@ -107,9 +107,9 @@ export class AuthSectionComponent implements OnInit {
 
       if (this.editingUser()) {
         this.form.patchValue({
-          password_disabled: this.editingUser().password_disabled || false,
-          sshpubkey: this.editingUser().sshpubkey || '',
-          ssh_password_enabled: this.editingUser().ssh_password_enabled || false,
+          password_disabled: this.editingUser().password_disabled,
+          sshpubkey: this.editingUser().sshpubkey,
+          ssh_password_enabled: this.editingUser().ssh_password_enabled,
         });
       }
     });

@@ -62,8 +62,8 @@ export class AllowedAccessSectionComponent {
     ).subscribe({
       next: (sshAccess) => {
         if (sshAccess) {
-          this.form.controls.shell_access.setValue(true);
           this.form.controls.shell_access.disable();
+          this.form.controls.shell_access.setValue(true);
         } else {
           this.form.controls.shell_access.enable();
         }

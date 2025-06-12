@@ -15,7 +15,9 @@ import {
   debounceTime, distinctUntilChanged, filter, map,
   Observable,
   of,
+  tap,
   take,
+  withLatestFrom,
 } from 'rxjs';
 import { allCommands } from 'app/constants/all-commands.constant';
 import { Role } from 'app/enums/role.enum';
@@ -40,7 +42,7 @@ import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-vali
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { UserFormStore } from 'app/pages/credentials/new-users/user-form/user.store';
+import { defaultHomePath, UserFormStore } from 'app/pages/credentials/new-users/user-form/user.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { StorageService } from 'app/services/storage.service';
@@ -73,7 +75,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
   editingUser = input<User>();
   protected username = computed(() => this.userFormStore?.userConfig().username ?? '');
   protected sshAccessEnabled = this.userFormStore.sshAccess;
-  protected shellAccessEnabled = this.userFormStore.shellAccess;
+  protected shellAccessEnabled = computed(() => this.userFormStore.shellAccess());
   protected hasSharingRole = computed(() => this.userFormStore.role()?.includes(Role.SharingAdmin));
   protected homeDirectoryEmptyValue = computed(() => {
     if (this.editingUser()) {
@@ -90,6 +92,12 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     map((groups) => groups.map((group) => ({ label: group.group, value: group.id }))),
   );
 
+  protected readonly roleGroupMap = new Map<Role, string>([
+    [Role.FullAdmin, 'builtin_administrators'],
+    [Role.SharingAdmin, 'truenas_sharing_administrators'],
+    [Role.ReadonlyAdmin, 'truenas_readonly_administrators'],
+  ]);
+
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
 
   groupsProvider: ChipsProvider = (query: string) => {
@@ -105,7 +113,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     group_create: [true],
     groups: [[] as number[]],
     email: [null as string, [emailValidator()]],
-    home: [''],
+    home: [defaultHomePath],
     home_mode: ['700'],
     home_create: [false],
     default_permissions: [true],
@@ -157,6 +165,30 @@ export class AdditionalDetailsSectionComponent implements OnInit {
           });
         },
       });
+
+    this.userFormStore.state$.pipe(
+      map((state) => state.setupDetails.role),
+      distinctUntilChanged(),
+      withLatestFrom(this.groupOptions$),
+      tap(([selectedRole, groupOptions]) => {
+        if (selectedRole === 'prompt') {
+          this.form.patchValue({ group: null }, { emitEvent: false });
+          return;
+        }
+
+        const groupLabel = this.roleGroupMap.get(selectedRole);
+        const groupId = groupOptions.find((group) => group.label === groupLabel)?.value;
+        if (groupId) {
+          if (this.editingUser()?.groups?.length) {
+            const groups = [...this.form.value.groups, groupId];
+            this.form.patchValue({ groups }, { emitEvent: false });
+          } else {
+            this.form.patchValue({ groups: [groupId] }, { emitEvent: false });
+          }
+        }
+      }),
+      untilDestroyed(this),
+    ).subscribe();
 
     effect(() => {
       if (this.editingUser()) {

@@ -120,16 +120,10 @@ export class UserFormStore extends ComponentStore<UserFormState> {
     let payload = { ...state.userConfig };
     payload = {
       ...payload,
-      username: payload.username,
-      email: payload.email,
       full_name: payload.full_name || payload.username,
-      home: payload.home || defaultHomePath,
-      shell: payload.shell,
-      smb: state.setupDetails.allowedAccess.smbAccess || false,
-      ssh_password_enabled: payload.ssh_password_enabled || false,
+      smb: payload.smb,
       sudo_commands: payload.sudo_commands || [] as string[],
       sudo_commands_nopasswd: payload.sudo_commands_nopasswd || [] as string[],
-      group_create: payload.group_create || true,
       uid: payload.uid || this.nextUid(),
       password: oneTimePassword || payload.password_disabled ? null : payload.password,
       random_password: oneTimePassword,
