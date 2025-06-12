@@ -128,7 +128,6 @@ describe('UserFormComponent', () => {
         updateSetupDetails: jest.fn(),
         createUser: jest.fn(),
         updateUser: jest.fn(),
-        nextUid: jest.fn(() => 1001),
         isNewUser: jest.fn(() => true),
         isStigMode: jest.fn(() => false),
       }),

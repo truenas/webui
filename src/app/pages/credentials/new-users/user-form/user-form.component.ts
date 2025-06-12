@@ -60,7 +60,6 @@ import { AppState } from 'app/store';
 })
 export class UserFormComponent implements OnInit {
   protected isStigMode = this.userFormStore.isStigMode;
-  protected nextUid = this.userFormStore.nextUid;
   protected editingUser = signal<User>(this.slideInRef.getData());
 
   protected isFormLoading = signal<boolean>(false);

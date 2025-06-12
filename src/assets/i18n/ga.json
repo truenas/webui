@@ -182,6 +182,8 @@
   "Upload Chunk Size (MiB)": "",
   "Used for advanced routing, e.g., sending traffic to a specific network via a non-default gateway.": "",
   "Used In Subsystems": "",
+  "User locked": "",
+  "User unlocked": "",
   "User will be encouraged to choose their own password after they login for the first time if they don't have a password.": "",
   "User: {userName}": "",
   "View": "",

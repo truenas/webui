@@ -7,18 +7,24 @@ import {
   MatCard, MatCardActions, MatCardContent, MatCardHeader,
   MatCardTitle,
 } from '@angular/material/card';
-import { Router } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { filter, switchMap, tap } from 'rxjs';
+import { filter, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role, roleNames } from 'app/enums/role.enum';
 import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import {
+  ApiKeyFormComponent,
+} from 'app/pages/credentials/users/user-api-keys/components/api-key-form/api-key-form.component';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UrlOptionsService } from 'app/services/url-options.service';
 
 @UntilDestroy()
@@ -39,6 +45,7 @@ import { UrlOptionsService } from 'app/services/url-options.service';
     NgClass,
     RequiresRolesDirective,
     TestDirective,
+    RouterLink,
   ],
 })
 export class UserAccessCardComponent {
@@ -71,32 +78,32 @@ export class UserAccessCardComponent {
       .join(', ') || null;
   });
 
+  protected canAddApiKeys = computed(() => {
+    // TODO: Matches condition in api-key-form, but may not be correct.
+    return this.user().roles.length && this.user().local;
+  });
+
   constructor(
-    private router: Router,
     private translate: TranslateService,
     private urlOptions: UrlOptionsService,
     private api: ApiService,
     private loader: LoaderService,
     private dialogService: DialogService,
+    private errorHandler: ErrorHandlerService,
+    private snackbar: SnackbarService,
+    private slideIn: SlideIn,
   ) {}
 
-  viewApiKeys(): void {
-    this.router.navigate(['/credentials/users/api-keys'], {
-      queryParams: { userName: this.user().username },
-    });
-  }
-
-  viewLogs(): void {
-    const url = this.urlOptions.buildUrl('/system/audit', {
+  protected get auditLink(): string {
+    return this.urlOptions.buildUrl('/system/audit', {
       searchQuery: {
         isBasicQuery: false,
         filters: [['username', '=', this.user().username]],
       },
     });
-    this.router.navigateByUrl(url);
   }
 
-  toggleLockStatus(): void {
+  protected toggleLockStatus(): void {
     const { locked, username, id } = this.user();
     const message = locked
       ? this.translate.instant('Are you sure you want to unlock "{user}" user?', { user: username })
@@ -110,11 +117,27 @@ export class UserAccessCardComponent {
       hideCheckbox: true,
     }).pipe(
       filter(Boolean),
-      tap(() => this.loader.open()),
-      switchMap(() => this.api.call('user.update', [id, { locked: !locked }])),
+      switchMap(() => {
+        return this.api.call('user.update', [id, { locked: !locked }]).pipe(
+          this.loader.withLoader(),
+          this.errorHandler.withErrorHandler(),
+        );
+      }),
       untilDestroyed(this),
-    ).subscribe({
-      complete: () => this.loader.close(),
+    ).subscribe(() => {
+      this.snackbar.success(
+        locked
+          ? this.translate.instant('User unlocked')
+          : this.translate.instant('User locked'),
+      );
     });
+  }
+
+  protected onAddApiKey(): void {
+    this.slideIn
+      .open(ApiKeyFormComponent, { data: { username: this.user().username } })
+      .pipe(untilDestroyed(this)).subscribe(() => {
+        // TODO: Reload single record once routing is in.
+      });
   }
 }

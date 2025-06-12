@@ -160,6 +160,8 @@
   "Underlying Zvol will not be deleted.": "",
   "Upload Chunk Size (MiB)": "",
   "Used for advanced routing, e.g., sending traffic to a specific network via a non-default gateway.": "",
+  "User locked": "",
+  "User unlocked": "",
   "User will be encouraged to choose their own password after they login for the first time if they don't have a password.": "",
   "User: {userName}": "",
   "View": "",
