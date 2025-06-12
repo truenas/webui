@@ -57,7 +57,7 @@ describe('NvmeOfConfigurationComponent', () => {
 
     expect(formValues).toEqual({
       'Base NQN': 'iqn.2005-10.org.freenas:ctl',
-      'Enable Asymmetric Namespace Access': true,
+      'Enable Asymmetric Namespace Access (ANA)': true,
       'Enable Remote Direct Memory Access (RDMA)': true,
       'Generate Cross-port Referrals for Ports On This System': false,
     });
@@ -66,7 +66,7 @@ describe('NvmeOfConfigurationComponent', () => {
   it('saves form values when Save is pressed', async () => {
     await form.fillForm({
       'Base NQN': 'new.2005-10.org.freenas:ctl',
-      'Enable Asymmetric Namespace Access': true,
+      'Enable Asymmetric Namespace Access (ANA)': true,
       'Enable Remote Direct Memory Access (RDMA)': true,
       'Generate Cross-port Referrals for Ports On This System': false,
     });

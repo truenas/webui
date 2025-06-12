@@ -6,7 +6,7 @@ import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatToolbarRow } from '@angular/material/toolbar';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -135,6 +135,12 @@ export class NvmeOfCardComponent implements OnInit {
     actionsWithMenuColumn({
       actions: [
         {
+          iconName: iconMarker('visibility'),
+          tooltip: this.translate.instant('View'),
+          onClick: (row) => this.router.navigate(['/sharing/nvme-of', row.name]),
+          requiredRoles: this.requiredRoles,
+        },
+        {
           iconName: iconMarker('mdi-delete'),
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
@@ -157,6 +163,7 @@ export class NvmeOfCardComponent implements OnInit {
     private api: ApiService,
     private loader: LoaderService,
     private errorHandler: ErrorHandlerService,
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
