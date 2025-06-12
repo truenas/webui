@@ -5,6 +5,7 @@ import { Choices } from 'app/interfaces/choices.interface';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { UserFormStore } from 'app/pages/credentials/new-users/user-form/user.store';
+import { UserStigPasswordOption } from 'app/pages/credentials/users/user-form/user-form.component';
 
 describe('UserFormStore', () => {
   let spectator: SpectatorService<UserFormStore>;
@@ -31,7 +32,23 @@ describe('UserFormStore', () => {
   });
 
   it('checks initial value', () => {
-    expect(spectator.service.state()).toBe(2);
+    expect(spectator.service.state()).toBe({
+      isStigMode: false,
+      nextUid: null,
+      setupDetails: {
+        allowedAccess: {
+          shellAccess: false,
+          smbAccess: true,
+          sshAccess: false,
+          truenasAccess: false,
+        },
+        defaultPermissions: true,
+        homeModeOldValue: '',
+        role: null,
+        stigPassword: UserStigPasswordOption.DisablePassword,
+      },
+      userConfig: null,
+    });
   });
 
   it('loads next uid and stig mode', () => {
