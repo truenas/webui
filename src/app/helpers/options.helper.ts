@@ -5,6 +5,21 @@ export function mapToOptions<T>(optionMap: Map<T, string>, translate: TranslateS
   return Array.from(optionMap.entries()).map(([value, label]) => ({ label: translate.instant(label), value }));
 }
 
+export function mapToOptionsWithTooltips<T>(
+  optionMap: Map<T, string>,
+  tooltipMap: Map<T, string>,
+  translate: TranslateService,
+): Option<T>[] {
+  return Array.from(optionMap.entries()).map(([value, label]) => {
+    const rawTooltip = tooltipMap.get(value);
+    return {
+      label: translate.instant(label),
+      value,
+      tooltip: rawTooltip ? translate.instant(rawTooltip) : undefined,
+    };
+  });
+}
+
 /**
  * @usage
  * valueToLabel(options)(value)

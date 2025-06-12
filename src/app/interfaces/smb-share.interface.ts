@@ -1,3 +1,4 @@
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { NfsAclTag } from 'app/enums/nfs-acl.enum';
 import { SmbSharesecPermission, SmbSharesecType } from 'app/enums/smb-sharesec.enum';
 
@@ -6,7 +7,6 @@ export interface SmbShare {
   abe: boolean;
   acl: boolean;
   browsable: boolean;
-  cluster_volname: string;
   comment: string;
   durablehandle: boolean;
   enabled: boolean;
@@ -34,16 +34,40 @@ export interface SmbShare {
     watch_list?: string[];
     ignore_list?: string[];
   };
+  options: {
+    purpose: SmbPresetType;
+  } & Partial<Omit<SmbShareUpdate, 'path' | 'name' | 'enabled' | 'comment'>>;
 }
 
 export enum SmbPresetType {
-  NoPresets = 'NO_PRESET',
-  DefaultShareParameters = 'DEFAULT_SHARE',
-  MultiUserTimeMachine = 'ENHANCED_TIMEMACHINE',
-  MultiProtocolShares = 'MULTI_PROTOCOL_NFS',
-  PrivateSmbDatasets = 'PRIVATE_DATASETS',
-  SmbWorm = 'WORM_DROPBOX',
+  DefaultShare = 'DEFAULT_SHARE',
+  LegacyShare = 'LEGACY_SHARE',
+  TimeMachineShare = 'TIMEMACHINE_SHARE',
+  MultiProtocolShare = 'MULTIPROTOCOL_SHARE',
+  TimeLockedShare = 'TIME_LOCKED_SHARE',
+  PrivateDatasetsShare = 'PRIVATE_DATASETS_SHARE',
+  ExternalShare = 'EXTERNAL_SHARE',
 }
+
+export const smbPresetTypeLabels = new Map<SmbPresetType, string>([
+  [SmbPresetType.DefaultShare, T('Default Share')],
+  [SmbPresetType.LegacyShare, T('Legacy Share')],
+  [SmbPresetType.TimeMachineShare, T('Time Machine Share')],
+  [SmbPresetType.MultiProtocolShare, T('Multi-Protocol Share')],
+  [SmbPresetType.TimeLockedShare, T('Time Locked Share')],
+  [SmbPresetType.PrivateDatasetsShare, T('Private Datasets Share')],
+  [SmbPresetType.ExternalShare, T('External Share')],
+]);
+
+export const smbPresetTooltips = new Map<SmbPresetType, string>([
+  [SmbPresetType.DefaultShare, T('Set the SMB share for best compatibility with common SMB clients.')],
+  [SmbPresetType.LegacyShare, T('Set the SMB share for compatibility with older TrueNAS versions. Automated backend migrations use this to help the administrator move to better-supported share settings. It should not be used for new SMB shares.')],
+  [SmbPresetType.TimeMachineShare, T('The SMB share is presented to MacOS clients as a time machine target. NOTE: aapl_extensions must be set in the global smb.config')],
+  [SmbPresetType.MultiProtocolShare, T('The SMB share is configured for multi-protocol access. Set this if the path is shared through NFS, FTP, or used by containers or apps. NOTE: This setting can reduce SMB share performance because it turns off some SMB features for safer interoperability with external processes.')],
+  [SmbPresetType.TimeLockedShare, T('The SMB share makes files read-only through the SMB protocol after the set graceperiod ends. WARNING: This setting does not work if the path is accessed locally or if another SMB share without the TIMELOCKED_SHARE purpose uses the same path. WARNING: This setting might not meet regulatory requirements for write-once storage.')],
+  [SmbPresetType.PrivateDatasetsShare, T('The server uses the specified dataset_naming_schema in options to make a new ZFS dataset when the client connects. The server uses this dataset as the share path during the SMB session.')],
+  [SmbPresetType.ExternalShare, T('The SMB share is a DFS proxy to a share hosted on an external SMB server.')],
+]);
 
 export interface SmbPreset {
   cluster: boolean;
@@ -72,4 +96,11 @@ export interface SmbSharesecAce {
 
 export type SmbShareUpdate = {
   timemachine_quota?: number;
-} & Partial<Omit<SmbShare, 'id' | 'locked' | 'vuid'>>;
+  afp?: boolean;
+  auto_snapshot?: boolean;
+  auto_dataset_creation?: boolean;
+  dataset_naming_schema?: string | null;
+  grace_period?: number;
+  auto_quota?: number;
+  remote_path?: string[] | null;
+} & Partial<Omit<SmbShare, 'id' | 'locked'>>;

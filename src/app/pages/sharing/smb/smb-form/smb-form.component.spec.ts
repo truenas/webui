@@ -17,7 +17,9 @@ import { JsonRpcError } from 'app/interfaces/api-message.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { Group } from 'app/interfaces/group.interface';
 import { Service } from 'app/interfaces/service.interface';
-import { SmbPresets, SmbPresetType, SmbShare } from 'app/interfaces/smb-share.interface';
+import {
+  SmbPresetType, smbPresetTypeLabels, SmbShare,
+} from 'app/interfaces/smb-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
@@ -36,42 +38,44 @@ import { FilesystemService } from 'app/services/filesystem.service';
 import { AppState } from 'app/store';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { selectServices } from 'app/store/services/services.selectors';
-import { SmbFormComponent } from './smb-form.component';
+import { presetEnabledFields, SmbFormComponent } from './smb-form.component';
 
 describe('SmbFormComponent', () => {
   const existingShare = {
     id: 1,
-    purpose: SmbPresetType.MultiUserTimeMachine,
-    path: '/mnt/pool123/ds222',
-    path_suffix: '%U',
-    auxsmbconf: 'Aux SMB Conf',
-    home: false,
+    purpose: 'Legacy Share',
     name: 'ds222',
-    comment: '',
-    ro: false,
-    browsable: true,
-    recyclebin: true,
-    guestok: true,
-    hostsallow: ['host1'],
-    hostsdeny: ['host2'],
-    aapl_name_mangling: false,
-    abe: true,
-    acl: false,
-    durablehandle: true,
-    streams: true,
-    timemachine: true,
-    shadowcopy: true,
-    fsrvp: false,
-    enabled: true,
-    cluster_volname: '',
-    locked: false,
+    path: '/mnt/pool123/ds222',
     path_local: '/mnt/pool123/ds222',
     audit: {
       enable: true,
       watch_list: [] as string[],
       ignore_list: [] as string[],
     },
-  } as SmbShare;
+    options: {
+      purpose: 'Legacy Share',
+      path_suffix: '%U',
+      auxsmbconf: 'Aux SMB Conf',
+      home: false,
+      comment: '',
+      ro: false,
+      browsable: true,
+      recyclebin: true,
+      guestok: true,
+      hostsallow: ['host1'],
+      hostsdeny: ['host2'],
+      aapl_name_mangling: false,
+      abe: true,
+      acl: false,
+      durablehandle: true,
+      streams: true,
+      timemachine: true,
+      shadowcopy: true,
+      fsrvp: false,
+      enabled: true,
+      locked: false,
+    },
+  } as unknown as SmbShare;
 
   const slideInRef: SlideInRef<{ existingSmbShare?: SmbShare; defaultSmbShare?: SmbShare } | undefined, unknown> = {
     close: jest.fn(),
@@ -107,36 +111,6 @@ describe('SmbFormComponent', () => {
     ignore_list: 'Ignore List',
   };
 
-  const presets: SmbPresets = {
-    NO_PRESET: {
-      verbose_name: 'No presets',
-      cluster: false,
-      params: {},
-    },
-    ENHANCED_TIMEMACHINE: {
-      verbose_name: 'Multi-user time machine',
-      cluster: false,
-      params: {
-        auxsmbconf: 'Aux SMB Conf',
-        path_suffix: '%U',
-        timemachine: true,
-      },
-    },
-    PRIVATE_DATASETS: {
-      verbose_name: 'Private SMB Datasets and Shares',
-      cluster: false,
-      params: {
-        auxsmbconf: 'Aux SMB Conf',
-        path_suffix: '%U',
-      },
-    },
-    CLUSTER_PRESET: {
-      verbose_name: 'This will not be shown',
-      cluster: true,
-      params: {},
-    },
-  };
-
   let spectator: Spectator<SmbFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
@@ -163,7 +137,6 @@ describe('SmbFormComponent', () => {
           acl: true,
         } as FileSystemStat),
         mockCall('service.restart'),
-        mockCall('sharing.smb.presets', { ...presets }),
       ]),
       mockProvider(SlideIn),
       mockProvider(Router),
@@ -211,6 +184,10 @@ describe('SmbFormComponent', () => {
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
       api = spectator.inject(ApiService);
+
+      await form.fillForm({
+        Purpose: 'Legacy Share',
+      });
     });
 
     it('shows values of existing share when editing', async () => {
@@ -227,9 +204,6 @@ describe('SmbFormComponent', () => {
         existingShareWithLabels[formLabels[key]] = existingShare[key as keyof SmbShare];
       });
 
-      existingShareWithLabels[formLabels.purpose] = (
-        presets[existingShareWithLabels[formLabels.purpose] as string].verbose_name
-      );
       expect(values).toMatchObject(existingShareWithLabels);
     });
 
@@ -246,7 +220,7 @@ describe('SmbFormComponent', () => {
       } else {
         await aaplNameManglingCheckbox.setValue(true);
       }
-      expect(spectator.inject(DialogService).confirm).toHaveBeenNthCalledWith(2, {
+      expect(spectator.inject(DialogService).confirm).toHaveBeenNthCalledWith(1, {
         title: helptextSharingSmb.manglingDialog.title,
         message: helptextSharingSmb.manglingDialog.message,
         hideCheckbox: true,
@@ -265,6 +239,10 @@ describe('SmbFormComponent', () => {
       mockStore$ = spectator.inject(MockStore);
       store$ = spectator.inject(Store);
       jest.spyOn(store$, 'dispatch');
+
+      await form.fillForm({
+        Purpose: 'Legacy Share',
+      });
     });
 
     it('shows all the fields when Advanced Options button is pressed', async () => {
@@ -272,6 +250,7 @@ describe('SmbFormComponent', () => {
       await advancedButton.click();
 
       const fields = Object.keys(await form.getControlHarnessesDict());
+
       Object.values(formLabels).forEach((label) => {
         expect(fields).toContain(label);
       });
@@ -281,9 +260,13 @@ describe('SmbFormComponent', () => {
       const purposeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Purpose' }));
       const optionLabels = await purposeSelect.getOptionLabels();
       expect(optionLabels).toEqual([
-        'No presets',
-        'Multi-user time machine',
-        'Private SMB Datasets and Shares',
+        'Default Share',
+        'Legacy Share',
+        'Time Machine Share',
+        'Multi-Protocol Share',
+        'Time Locked Share',
+        'Private Datasets Share',
+        'External Share',
       ]);
     });
 
@@ -292,23 +275,29 @@ describe('SmbFormComponent', () => {
       await advancedButton.click();
 
       const purposeSelect = await loader.getHarness(IxSelectHarness.with({ label: formLabels.purpose }));
-
       const labels = await purposeSelect.getOptionLabels();
-      const presetKeys = Object.keys(presets);
       form = await loader.getHarness(IxFormHarness);
       const fields = await form.getControlHarnessesDict();
 
-      for (let i = 0; i < labels.length; i++) {
-        await purposeSelect.setValue(labels[i]);
-        // eslint-disable-next-line no-restricted-syntax, guard-for-in
-        for (const param in presets[presetKeys[i]].params) {
-          const expectedValue = presets[presetKeys[i]].params[param as keyof SmbShare];
-          const value = await fields[formLabels[param]].getValue();
+      for (const label of labels) {
+        await purposeSelect.setValue(label);
+
+        const presetKey = Object.entries(smbPresetTypeLabels)
+          .find(([, value]) => value === label)?.[0] as SmbPresetType;
+        const presetFields = presetEnabledFields[presetKey] ?? [];
+
+        for (const field of presetFields) {
+          const controlLabel = formLabels[field];
+          const expectedValue = (await form.getControl(field)).getValue();
+
+          const control = fields[controlLabel];
+          if (!control) continue;
+
+          const value = await control.getValue();
           expect(value).toStrictEqual(expectedValue);
-          expect(await fields[formLabels[param]].isDisabled()).toBeTruthy();
+          expect(await control.isDisabled()).toBeTruthy();
         }
       }
-      expect(true).toBeTruthy();
     });
 
     it('should show confirmation warning when afp is checked', async () => {
@@ -353,7 +342,7 @@ describe('SmbFormComponent', () => {
       await pathControl.setValue('/mnt/pool2/ds22');
 
       const purposeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Purpose' }));
-      await purposeSelect.setValue(presets.NO_PRESET.verbose_name);
+      await purposeSelect.setValue('Default Share');
       const aclCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: formLabels.acl }));
       await (await aclCheckbox.getMatCheckboxHarness()).uncheck();
 
@@ -371,7 +360,7 @@ describe('SmbFormComponent', () => {
       await advancedButton.click();
 
       const purposeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Purpose' }));
-      await purposeSelect.setValue(presets.PRIVATE_DATASETS.verbose_name);
+      await purposeSelect.setValue('Private Datasets Share');
 
       const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
       await pathControl.setValue('/mnt/pool2/ds22');
@@ -407,7 +396,7 @@ describe('SmbFormComponent', () => {
         }
       });
 
-      attrs[formLabels.purpose] = presets[attrs[formLabels.purpose] as string].verbose_name;
+      attrs[formLabels.purpose] = attrs[formLabels.purpose] as string;
       attrs[formLabels.name] = 'ds223';
       attrs[formLabels.hostsallow] = ['host11'];
       attrs[formLabels.hostsdeny] = ['host22'];
@@ -426,32 +415,39 @@ describe('SmbFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(api.call).toHaveBeenCalledWith('sharing.smb.create', [{
-        path: '/mnt/pool123/ds222',
+      expect(api.call).toHaveBeenNthCalledWith(6, 'sharing.smb.create', [{
         name: 'ds223',
-        purpose: SmbPresetType.MultiUserTimeMachine,
+        path: '/mnt/pool123/ds222',
+        purpose: 'LEGACY_SHARE',
         comment: '',
         enabled: true,
-        acl: false,
         ro: false,
         browsable: true,
-        guestok: true,
-        abe: true,
-        hostsallow: ['host11'],
-        hostsdeny: ['host22'],
-        home: false,
-        afp: false,
-        shadowcopy: true,
-        recyclebin: true,
-        aapl_name_mangling: false,
-        streams: true,
-        durablehandle: true,
-        fsrvp: false,
-        timemachine_quota: 0,
+        abe: false,
         audit: {
-          enable: true,
+          enable: false,
           watch_list: [],
           ignore_list: [],
+        },
+        options: {
+          aapl_name_mangling: false,
+          acl: false,
+          afp: false,
+          auxsmbconf: '',
+          durablehandle: false,
+          fsrvp: false,
+          guestok: false,
+          home: false,
+          hostsallow: ['host11'],
+          hostsdeny: ['host22'],
+          path_suffix: '',
+          purpose: 'LEGACY_SHARE',
+          recyclebin: false,
+          shadowcopy: false,
+          streams: false,
+          timemachine: false,
+          timemachine_quota: 0,
+          vuid: '',
         },
       }]);
 
@@ -505,7 +501,7 @@ describe('SmbFormComponent', () => {
         }
       });
 
-      attrs[formLabels.purpose] = presets[attrs[formLabels.purpose] as string].verbose_name;
+      attrs[formLabels.purpose] = attrs[formLabels.purpose] as string;
       attrs[formLabels.name] = 'ds223';
       attrs[formLabels.hostsallow] = ['host11'];
       attrs[formLabels.hostsdeny] = ['host22'];
@@ -524,32 +520,39 @@ describe('SmbFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(api.call).toHaveBeenCalledWith('sharing.smb.create', [{
-        path: '/mnt/pool123/ds222',
+      expect(api.call).toHaveBeenNthCalledWith(6, 'sharing.smb.create', [{
         name: 'ds223',
-        purpose: SmbPresetType.MultiUserTimeMachine,
+        abe: false,
+        path: '/mnt/pool123/ds222',
+        purpose: 'LEGACY_SHARE',
         comment: '',
-        enabled: true,
-        acl: false,
-        ro: false,
         browsable: true,
-        guestok: true,
-        abe: true,
-        hostsallow: ['host11'],
-        hostsdeny: ['host22'],
-        home: false,
-        afp: false,
-        shadowcopy: true,
-        recyclebin: true,
-        aapl_name_mangling: false,
-        streams: true,
-        durablehandle: true,
-        fsrvp: false,
-        timemachine_quota: 0,
+        enabled: true,
+        ro: false,
         audit: {
-          enable: true,
+          enable: false,
           watch_list: [],
           ignore_list: [],
+        },
+        options: {
+          aapl_name_mangling: false,
+          acl: false,
+          afp: false,
+          auxsmbconf: '',
+          durablehandle: false,
+          fsrvp: false,
+          guestok: false,
+          home: false,
+          hostsallow: ['host11'],
+          hostsdeny: ['host22'],
+          path_suffix: '',
+          purpose: 'LEGACY_SHARE',
+          recyclebin: false,
+          shadowcopy: false,
+          streams: false,
+          timemachine: false,
+          timemachine_quota: 0,
+          vuid: '',
         },
       }]);
 
@@ -634,8 +637,6 @@ describe('SmbFormComponent', () => {
             return of({ ...existingShare });
           case 'filesystem.stat':
             return of({ acl: true } as FileSystemStat);
-          case 'sharing.smb.presets':
-            return of({ ...presets });
           case 'sharing.smb.create':
             return throwError(() => new ApiCallError({
               data: {
@@ -661,7 +662,7 @@ describe('SmbFormComponent', () => {
         }
       });
 
-      attrs[formLabels.purpose] = presets[attrs[formLabels.purpose] as string].verbose_name;
+      attrs[formLabels.purpose] = attrs[formLabels.purpose] as string;
       attrs[formLabels.name] = 'ds223';
       attrs[formLabels.hostsallow] = ['host11'];
       attrs[formLabels.hostsdeny] = ['host22'];
