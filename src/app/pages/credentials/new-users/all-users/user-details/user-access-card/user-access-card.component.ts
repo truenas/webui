@@ -24,6 +24,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import {
   ApiKeyFormComponent,
 } from 'app/pages/credentials/users/user-api-keys/components/api-key-form/api-key-form.component';
+import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UrlOptionsService } from 'app/services/url-options.service';
 
@@ -56,17 +57,14 @@ export class UserAccessCardComponent {
   protected readonly lockUserText = this.translate.instant('Lock User');
 
   readonly sshAccessStatus = computed<string | null>(() => {
-    const keySet = this.translate.instant('Key set');
-    const passwordLoginEnabled = this.translate.instant('Password login enabled');
-
     if (this.user().sshpubkey && this.user().ssh_password_enabled) {
-      return `${keySet}, ${passwordLoginEnabled}`;
+      return this.translate.instant('SSH Key Set & Password Login Enabled');
     }
     if (this.user().sshpubkey) {
-      return keySet;
+      return this.translate.instant('SSH Key Set');
     }
     if (this.user().ssh_password_enabled) {
-      return passwordLoginEnabled;
+      return this.translate.instant('SSH Password Login Enabled');
     }
 
     return null;
@@ -92,6 +90,7 @@ export class UserAccessCardComponent {
     private errorHandler: ErrorHandlerService,
     private snackbar: SnackbarService,
     private slideIn: SlideIn,
+    private downloadService: DownloadService,
   ) {}
 
   protected get auditLink(): string {
@@ -131,6 +130,13 @@ export class UserAccessCardComponent {
           : this.translate.instant('User locked'),
       );
     });
+  }
+
+  protected onDownloadSshPublicKey(): void {
+    const name = this.user().username;
+    const key = this.user().sshpubkey;
+    const blob = new Blob([key], { type: 'text/plain' });
+    this.downloadService.downloadBlob(blob, `${name}_public_key_rsa`);
   }
 
   protected onAddApiKey(): void {

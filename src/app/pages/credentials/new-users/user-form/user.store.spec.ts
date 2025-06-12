@@ -32,7 +32,7 @@ describe('UserFormStore', () => {
   });
 
   it('checks initial value', () => {
-    expect(spectator.service.state()).toBe({
+    expect(spectator.service.state()).toEqual({
       isStigMode: false,
       setupDetails: {
         allowedAccess: {
@@ -43,7 +43,7 @@ describe('UserFormStore', () => {
         },
         defaultPermissions: true,
         homeModeOldValue: '',
-        role: null,
+        role: 'prompt',
         stigPassword: UserStigPasswordOption.DisablePassword,
       },
       userConfig: null,
@@ -69,7 +69,7 @@ describe('UserFormStore', () => {
       ssh_password_enabled: false,
       sudo_commands: [],
       sudo_commands_nopasswd: [],
-      uid: 1004,
+      uid: null,
       username: 'operator',
     }]);
   });

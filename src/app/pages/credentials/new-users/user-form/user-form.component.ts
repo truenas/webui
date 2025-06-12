@@ -30,7 +30,6 @@ import { AllowedAccessSectionComponent } from 'app/pages/credentials/new-users/u
 import { AuthSectionComponent } from 'app/pages/credentials/new-users/user-form/auth-section/auth-section.component';
 import { defaultHomePath, UserFormStore } from 'app/pages/credentials/new-users/user-form/user.store';
 import { selectUsers } from 'app/pages/credentials/users/store/user.selectors';
-import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UserService } from 'app/services/user.service';
 import { AppState } from 'app/store';
@@ -132,7 +131,6 @@ export class UserFormComponent implements OnInit {
     private store$: Store<AppState>,
     private dialog: DialogService,
     private translate: TranslateService,
-    private downloadService: DownloadService,
   ) {
     this.setupUsernameUpdate();
   }
@@ -215,13 +213,6 @@ export class UserFormComponent implements OnInit {
       });
     }
     return of(true);
-  }
-
-  protected onDownloadSshPublicKey(): void {
-    const name = this.form.value.username;
-    const key = this.formValues().sshpubkey;
-    const blob = new Blob([key], { type: 'text/plain' });
-    this.downloadService.downloadBlob(blob, `${name}_public_key_rsa`);
   }
 
   private submitUserRequest(payload: UserUpdate): Observable<User> {

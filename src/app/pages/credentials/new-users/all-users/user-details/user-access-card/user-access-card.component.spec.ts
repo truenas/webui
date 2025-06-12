@@ -16,12 +16,14 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import {
   ApiKeyFormComponent,
 } from 'app/pages/credentials/users/user-api-keys/components/api-key-form/api-key-form.component';
+import { DownloadService } from 'app/services/download.service';
 import { UserAccessCardComponent } from './user-access-card.component';
 
 const mockUser = {
   id: 1,
   username: 'testuser',
   locked: false,
+  local: true,
   password_disabled: false,
   ssh_password_enabled: true,
   sshpubkey: 'ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA...',
@@ -54,6 +56,9 @@ describe('UserAccessCardComponent', () => {
       ]),
       mockProvider(SlideIn, {
         open: jest.fn(() => of({})),
+      }),
+      mockProvider(DownloadService, {
+        downloadBlob: jest.fn(),
       }),
     ],
   });
@@ -102,7 +107,7 @@ describe('UserAccessCardComponent', () => {
 
   it('should display SSH access status', () => {
     const sshSection = spectator.query('.content-wrapper:nth-child(9)');
-    expect(sshSection).toHaveText('Key set, Password login enabled');
+    expect(sshSection).toHaveText('SSH Key Set & Password Login Enabled');
   });
 
   it('has a Search Logs link that takes user to the audit page', () => {
@@ -143,13 +148,23 @@ describe('UserAccessCardComponent', () => {
         api_keys: [],
       });
 
-      spectator.click(byText('Add API Key'));
+      spectator.click(spectator.query(byText('Add API Key')));
 
       expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ApiKeyFormComponent, {
         data: {
           username: mockUser.username,
         },
       });
+    });
+
+    it('downloads ssh key when Download Key link is clicked', () => {
+      const downloadLink = spectator.query(byText('Download Key'));
+      spectator.click(downloadLink);
+
+      expect(spectator.inject(DownloadService).downloadBlob).toHaveBeenCalledWith(
+        new Blob([mockUser.sshpubkey], { type: 'text/plain' }),
+        `${mockUser.username}_public_key_rsa`,
+      );
     });
   });
 });
