@@ -117,7 +117,6 @@ describe('AddSubsystemComponent', () => {
         name: 'subsystem1',
         subnqn: 'my-nqn',
         allow_any_host: false,
-        ana: null,
       },
     ]);
     expect(spectator.inject(NvmeOfService).associatePorts).toHaveBeenCalledWith(newSubsystem, [{ id: 100 }]);
