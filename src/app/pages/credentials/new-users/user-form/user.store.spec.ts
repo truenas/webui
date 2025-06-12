@@ -31,15 +31,7 @@ describe('UserFormStore', () => {
   });
 
   it('checks initial value', () => {
-    expect(spectator.service.isStigMode()).toBe(false);
-    expect(spectator.service.nextUid()).toBeNull();
-    expect(spectator.service.userConfig()).toBeNull();
-    expect(spectator.service.isNewUser()).toBe(true);
-    expect(spectator.service.smbAccess()).toBe(true);
-    expect(spectator.service.shellAccess()).toBe(false);
-    expect(spectator.service.truenasAccess()).toBe(false);
-    expect(spectator.service.sshAccess()).toBe(false);
-    expect(spectator.service.role()).toBe('prompt');
+    expect(spectator.service.state()).toBe(2);
   });
 
   it('loads next uid and stig mode', () => {

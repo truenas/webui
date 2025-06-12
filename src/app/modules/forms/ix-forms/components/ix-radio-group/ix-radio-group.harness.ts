@@ -45,4 +45,10 @@ export class IxRadioGroupHarness extends ComponentHarness implements IxFormContr
 
     return inputState.every((control) => !!control);
   }
+
+  async getOptionLabels(): Promise<string[]> {
+    const harness = await this.getMatRadioGroupHarness();
+    const radioButtons = await harness.getRadioButtons();
+    return Promise.all(radioButtons.map((button) => button.getLabelText()));
+  }
 }
