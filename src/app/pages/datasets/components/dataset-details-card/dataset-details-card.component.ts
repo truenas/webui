@@ -29,7 +29,7 @@ import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form
 import { DeleteDatasetDialog } from 'app/pages/datasets/components/delete-dataset-dialog/delete-dataset-dialog.component';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
+import { getDatasetLabel, isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
@@ -135,6 +135,11 @@ export class DatasetDetailsCardComponent {
     }).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
-    ).subscribe(() => this.datasetStore.datasetUpdated());
+    ).subscribe(({ response }) => {
+      this.snackbar.success(
+        this.translate.instant('Zvol «{name}» updated.', { name: getDatasetLabel(response) }),
+      );
+      this.datasetStore.datasetUpdated();
+    });
   }
 }

@@ -10,7 +10,7 @@
   <mat-card-content>
     @if (subsystem().allow_any_host) {
       {{ 'All hosts are allowed.' | translate }}
-    } @else if (!subsystem().hosts.length) {
+    } @else if (!subsystem().hosts?.length) {
       <div class="no-hosts-warning">
         <ix-icon
           name="mdi-alert"

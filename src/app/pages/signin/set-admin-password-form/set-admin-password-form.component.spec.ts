@@ -34,7 +34,9 @@ describe('SetAdminPasswordFormComponent', () => {
         handleSuccessfulLogin: jest.fn(),
       }),
       mockProvider(AuthService, {
-        login: jest.fn(() => of(LoginResult.Success)),
+        login: jest.fn(() => of({
+          loginResult: LoginResult.Success,
+        })),
       }),
     ],
   });

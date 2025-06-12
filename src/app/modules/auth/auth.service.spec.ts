@@ -111,7 +111,14 @@ describe('AuthService', () => {
       testScheduler.run(({ expectObservable }) => {
         expectObservable(obs$).toBe(
           '(a|)',
-          { a: LoginResult.Success },
+          {
+            a: {
+              loginResult: LoginResult.Success,
+              loginResponse: expect.objectContaining({
+                response_type: LoginExResponseType.Success,
+              }),
+            },
+          },
         );
         expectObservable(spectator.service.authToken$).toBe(
           'd',
@@ -166,7 +173,14 @@ describe('AuthService', () => {
       testScheduler.run(({ expectObservable }) => {
         expectObservable(obs$).toBe(
           '(a|)',
-          { a: LoginResult.Success },
+          {
+            a: {
+              loginResult: LoginResult.Success,
+              loginResponse: expect.objectContaining({
+                response_type: LoginExResponseType.Success,
+              }),
+            },
+          },
         );
       });
 
@@ -185,7 +199,14 @@ describe('AuthService', () => {
       testScheduler.run(({ expectObservable }) => {
         expectObservable(obs$).toBe(
           '(a|)',
-          { a: LoginResult.Success },
+          {
+            a: {
+              loginResult: LoginResult.Success,
+              loginResponse: expect.objectContaining({
+                response_type: LoginExResponseType.Success,
+              }),
+            },
+          },
         );
         expectObservable(spectator.service.isLocalUser$).toBe('a', {
           a: true,
