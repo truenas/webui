@@ -84,7 +84,6 @@ export class AddSubsystemComponent {
   protected form = this.formBuilder.group({
     name: ['', Validators.required],
     subnqn: [''],
-    ana: [false],
     namespaces: [[] as NamespaceChanges[]],
 
     allowAnyHost: [true],
@@ -170,7 +169,6 @@ export class AddSubsystemComponent {
       name: values.name,
       subnqn: values.subnqn || null,
       allow_any_host: values.allowAnyHost,
-      ana: values.ana,
     };
 
     return this.api.call('nvmet.subsys.create', [payload]);
