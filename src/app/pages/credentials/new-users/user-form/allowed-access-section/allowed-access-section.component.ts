@@ -45,7 +45,7 @@ export class AllowedAccessSectionComponent {
   ]);
 
   form = this.fb.group({
-    smb_access: [true],
+    smb: [true],
     truenas_access: [false],
     ssh_access: [false],
     shell_access: [false],
@@ -73,7 +73,7 @@ export class AllowedAccessSectionComponent {
     this.form.value$.pipe(untilDestroyed(this)).subscribe({
       next: (values) => {
         this.userFormStore.setAllowedAccessConfig({
-          smbAccess: values.smb_access,
+          smbAccess: values.smb,
           truenasAccess: values.truenas_access,
           sshAccess: values.ssh_access,
           shellAccess: values.shell_access,
@@ -89,7 +89,7 @@ export class AllowedAccessSectionComponent {
         this.form.patchValue({
           truenas_access: !!this.editingUser().roles.length,
           shell_access: this.editingUser().shell !== '/usr/sbin/nologin',
-          smb_access: this.editingUser().smb,
+          smb: this.editingUser().smb,
           ssh_access: !!this.editingUser().sshpubkey || this.editingUser().ssh_password_enabled,
           role: this.editingUser().roles.length > 0 ? this.editingUser().roles[0] : defaultRole,
         });

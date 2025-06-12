@@ -57,18 +57,16 @@ describe('UserFormStore', () => {
       password: 'password123',
       email: 'operator@truenas.local',
       shell: '/usr/bin/zsh',
+      smb: true,
     });
     spectator.service.createUser();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('user.create', [{
       full_name: 'Operator',
-      group_create: true,
-      home: '/var/empty',
       password: 'password123',
       email: 'operator@truenas.local',
       shell: '/usr/bin/zsh',
       smb: true,
-      ssh_password_enabled: false,
       sudo_commands: [],
       sudo_commands_nopasswd: [],
       uid: 1004,
