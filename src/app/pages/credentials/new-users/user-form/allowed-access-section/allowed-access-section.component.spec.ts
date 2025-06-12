@@ -37,7 +37,7 @@ describe('AllowedAccessSectionComponent', () => {
         sshAccess: false,
         shellAccess: false,
       });
-      expect(spectator.inject(UserFormStore).updateSetupDetails).not.toHaveBeenCalledWith({
+      expect(spectator.inject(UserFormStore).updateSetupDetails).toHaveBeenCalledWith({
         role: 'prompt',
       });
     });

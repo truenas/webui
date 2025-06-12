@@ -95,7 +95,7 @@ describe('AuthSectionComponent', () => {
     it('checks initial value', () => {
       expect(spectator.inject(UserFormStore).updateUserConfig).toHaveBeenCalledWith({
         password: '',
-        password_disabled: undefined,
+        password_disabled: false,
         ssh_password_enabled: false,
         sshpubkey: '',
       });

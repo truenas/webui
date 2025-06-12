@@ -184,9 +184,9 @@ export class UserFormComponent implements OnInit {
 
     this.userFormStore.setAllowedAccessConfig({
       smbAccess: user.smb,
-      truenasAccess: user.roles?.length > 0,
-      sshAccess: user.ssh_password_enabled || !!user.sshpubkey,
+      truenasAccess: user.roles?.length > 0 || user.groups.length > 0,
       shellAccess: user.shell !== '/usr/sbin/nologin',
+      sshAccess: user.ssh_password_enabled || !!user.sshpubkey,
     });
 
     this.setNamesInUseValidator(user.username);
@@ -265,6 +265,8 @@ export class UserFormComponent implements OnInit {
     if (!payload.password) {
       delete payload.password;
     }
+
+    console.info('Submitting user form with payload:', payload, values);
 
     this.getHomeCreateConfirmation().pipe(
       filter(Boolean),

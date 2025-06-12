@@ -10,7 +10,6 @@ import { MatCheckbox } from '@angular/material/checkbox';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { isEqual } from 'lodash-es';
 import {
   debounceTime, distinctUntilChanged, filter, map,
   Observable,
@@ -139,10 +138,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     private translate: TranslateService,
   ) {
     this.form.valueChanges
-      .pipe(
-        distinctUntilChanged((prev, curr) => isEqual(prev, curr)),
-        untilDestroyed(this),
-      )
+      .pipe(untilDestroyed(this))
       .subscribe({
         next: (values) => {
           this.userFormStore.updateUserConfig({
@@ -172,18 +168,17 @@ export class AdditionalDetailsSectionComponent implements OnInit {
       withLatestFrom(this.groupOptions$),
       tap(([selectedRole, groupOptions]) => {
         if (selectedRole === 'prompt') {
-          this.form.patchValue({ group: null }, { emitEvent: false });
           return;
         }
 
         const groupLabel = this.roleGroupMap.get(selectedRole);
         const groupId = groupOptions.find((group) => group.label === groupLabel)?.value;
         if (groupId) {
-          if (this.editingUser()?.groups?.length) {
+          if (this.editingUser()) {
             const groups = [...this.form.value.groups, groupId];
-            this.form.patchValue({ groups }, { emitEvent: false });
+            this.form.patchValue({ groups });
           } else {
-            this.form.patchValue({ groups: [groupId] }, { emitEvent: false });
+            this.form.patchValue({ groups: [groupId] });
           }
         }
       }),
@@ -219,7 +214,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
       sudo_commands_nopasswd: this.form.value.sudo_commands_nopasswd_all
         ? [allCommands]
         : this.form.value.sudo_commands_nopasswd,
-    }, { emitEvent: false });
+    });
 
     this.form.controls.uid.disable();
     this.form.controls.group_create.disable();

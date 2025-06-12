@@ -70,7 +70,7 @@ export class AllowedAccessSectionComponent {
       },
     });
 
-    this.form.valueChanges.pipe(untilDestroyed(this)).subscribe({
+    this.form.value$.pipe(untilDestroyed(this)).subscribe({
       next: (values) => {
         this.userFormStore.setAllowedAccessConfig({
           smbAccess: values.smb_access,

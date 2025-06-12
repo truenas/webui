@@ -114,7 +114,7 @@ export class AuthSectionComponent implements OnInit {
       }
     });
 
-    this.form.valueChanges.pipe(
+    this.form.value$.pipe(
       untilDestroyed(this),
     ).subscribe({
       next: (values) => {
