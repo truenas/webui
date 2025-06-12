@@ -38,7 +38,7 @@ describe('ServiceExtraActionsComponent', () => {
     menu = await loader.getHarness(MatMenuHarness);
   }
 
-  it('shows a menu with available actions for NVME-oF', async () => {
+  it('shows a menu with available actions for NVMe-oF', async () => {
     await setupTest({
       id: 1,
       service: ServiceName.NvmeOf,
