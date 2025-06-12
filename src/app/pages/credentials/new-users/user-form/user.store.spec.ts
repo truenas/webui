@@ -32,7 +32,7 @@ describe('UserFormStore', () => {
   });
 
   it('checks initial value', () => {
-    expect(spectator.service.state()).toBe({
+    expect(spectator.service.state()).toEqual({
       isStigMode: false,
       nextUid: null,
       setupDetails: {
