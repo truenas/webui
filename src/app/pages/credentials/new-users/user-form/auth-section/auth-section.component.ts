@@ -1,10 +1,12 @@
 import {
-  ChangeDetectionStrategy, Component, OnInit,
+  ChangeDetectionStrategy, Component, effect, OnInit,
 } from '@angular/core';
-import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import {
+  from, of, Subscription, switchMap,
+} from 'rxjs';
 import { helptextUsers } from 'app/helptext/account/user-form';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -22,11 +24,11 @@ import { UserStigPasswordOption } from 'app/pages/credentials/users/user-form/us
   imports: [
     ReactiveFormsModule,
     IxInputComponent,
-    IxCheckboxComponent,
     IxFieldsetComponent,
     TranslateModule,
-    IxTextareaComponent,
     IxRadioGroupComponent,
+    IxCheckboxComponent,
+    IxTextareaComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -35,13 +37,16 @@ export class AuthSectionComponent implements OnInit {
   protected sshAccess = this.userStore.sshAccess;
   protected smbAccess = this.userStore.smbAccess;
   protected isStigMode = this.userStore.isStigMode;
+  protected subscriptions: Subscription[] = [];
 
   form = this.formBuilder.group({
     password: [''],
     password_disabled: [false],
+    stig_password: ['' as UserStigPasswordOption],
+    show_password: [false],
     ssh_password_enabled: [false],
     sshpubkey: [''],
-    stig_password: [''],
+    sshpubkey_file: [null as File[]],
   });
 
   protected readonly tooltips = {
@@ -66,19 +71,29 @@ export class AuthSectionComponent implements OnInit {
   ]);
 
   constructor(
-    private formBuilder: NonNullableFormBuilder,
+    private formBuilder: FormBuilder,
     private userStore: UserFormStore,
     private translate: TranslateService,
   ) {
+    effect(() => {
+      const smbAccess = this.smbAccess();
+      if (smbAccess) {
+        this.form.controls.password_disabled.disable();
+      } else {
+        this.form.controls.password_disabled.enable();
+      }
+
+      if (this.isNewUser()) {
+        this.form.patchValue({ show_password: true });
+      }
+    });
     this.form.valueChanges.pipe(
       untilDestroyed(this),
     ).subscribe({
       next: () => {
         this.userStore.updateUserConfig({
           ssh_password_enabled: this.form.controls.ssh_password_enabled.value,
-          password_disabled: this.smbAccess()
-            ? false
-            : this.form.value.password_disabled,
+          password_disabled: this.form.value.password_disabled,
           password: this.form.value.password,
           sshpubkey: this.form.value.sshpubkey,
         });
@@ -87,31 +102,18 @@ export class AuthSectionComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.setPasswordFieldRelations();
+    this.form.controls.password_disabled.disable();
+    this.setControlHandlers();
   }
 
-  private setPasswordFieldRelations(): void {
-    this.form.controls.password_disabled.valueChanges.pipe(
+  private setControlHandlers(): void {
+    this.form.controls.sshpubkey_file.valueChanges.pipe(
+      switchMap((files: File[]) => {
+        return !files?.length ? of('') : from(files[0].text());
+      }),
       untilDestroyed(this),
-    ).subscribe((isDisabled) => {
-      if (isDisabled) {
-        this.form.controls.password.disable();
-        this.form.controls.ssh_password_enabled.disable({ emitEvent: false });
-      } else {
-        this.form.controls.password.enable();
-        this.form.controls.ssh_password_enabled.enable({ emitEvent: false });
-      }
-    });
-
-    this.form.controls.ssh_password_enabled.valueChanges.pipe(
-      untilDestroyed(this),
-    ).subscribe((sshPasswordEnabled) => {
-      if (sshPasswordEnabled) {
-        this.form.controls.password_disabled.disable({ emitEvent: false });
-        this.form.controls.password_disabled.setValue(false, { emitEvent: false });
-      } else {
-        this.form.controls.password_disabled.enable({ emitEvent: false });
-      }
+    ).subscribe((key) => {
+      this.form.controls.sshpubkey.setValue(key);
     });
   }
 }

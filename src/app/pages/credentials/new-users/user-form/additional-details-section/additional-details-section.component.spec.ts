@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
 import { allCommands } from 'app/constants/all-commands.constant';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -61,6 +62,8 @@ describe('AdditionalDetailsSectionComponent', () => {
         isNewUser: jest.fn(() => false),
         shellAccess: jest.fn(() => false),
         homeModeOldValue: jest.fn(() => ''),
+        userConfig: jest.fn(() => ({})),
+        state$: of(),
       }),
       mockApi([
         mockCall('user.shell_choices', {
@@ -89,9 +92,11 @@ describe('AdditionalDetailsSectionComponent', () => {
         shell: '/usr/bin/bash',
         group_create: true,
         groups: [],
-        home: '',
+        home: '/var/empty',
         home_mode: '700',
         home_create: false,
+        sudo_commands: [],
+        sudo_commands_nopasswd: [],
         uid: null,
       });
       expect(spectator.inject(UserFormStore).updateSetupDetails).toHaveBeenCalledWith({
@@ -104,7 +109,6 @@ describe('AdditionalDetailsSectionComponent', () => {
         'Full Name': 'Editable field',
         Email: 'editable@truenas.local',
         Groups: 'Not Set',
-        Shell: 'bash',
         UID: 1234,
       });
 
@@ -112,9 +116,11 @@ describe('AdditionalDetailsSectionComponent', () => {
         full_name: 'Editable field',
         email: 'editable@truenas.local',
         shell: '/usr/bin/bash',
+        sudo_commands: [],
+        sudo_commands_nopasswd: [],
         group_create: true,
         groups: [],
-        home: '',
+        home: '/var/empty',
         home_mode: '700',
         home_create: false,
         uid: '1234',
@@ -140,9 +146,7 @@ describe('AdditionalDetailsSectionComponent', () => {
         Email: 'Not Set',
         Groups: 'Not Set',
         'Home Directory': '/home/test',
-        Shell: '/usr/bin/bash',
-        // TODO: Investigate why UID is 'Next Available' instead of 1004
-        UID: 'Next Available',
+        UID: '1004',
       });
 
       expect(spectator.inject(UserFormStore).updateSetupDetails).toHaveBeenCalledWith({
@@ -158,13 +162,13 @@ describe('AdditionalDetailsSectionComponent', () => {
 
     it('check uid field is disabled', async () => {
       const editables = await loader.getHarness(DetailsTableHarness);
+
       expect(await editables.getValues()).toEqual({
         'Full Name': 'test',
         Email: 'Not Set',
         Groups: 'Not Set',
         'Home Directory': '/home/test',
-        Shell: '/usr/bin/bash',
-        UID: 'Next Available',
+        UID: '1004',
       });
 
       const uidField = await editables.getHarnessForItem('UID', EditableHarness);

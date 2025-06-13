@@ -15,6 +15,7 @@ import { OneTimePasswordCreatedDialog } from 'app/pages/credentials/users/one-ti
 import { UserStigPasswordOption } from 'app/pages/credentials/users/user-form/user-form.component';
 
 export const defaultHomePath = '/var/empty';
+export const defaultRole = 'prompt' as Role;
 
 export interface UserFormSetupDetails {
   allowedAccess: AllowedAccessConfig;
@@ -120,15 +121,10 @@ export class UserFormStore extends ComponentStore<UserFormState> {
     let payload = { ...state.userConfig };
     payload = {
       ...payload,
-      username: payload.username,
       full_name: payload.full_name || payload.username,
-      home: payload.home || defaultHomePath,
-      shell: payload.shell || '/usr/sbin/nologin',
-      smb: state.setupDetails.allowedAccess.smbAccess,
-      ssh_password_enabled: payload.ssh_password_enabled || false,
+      smb: payload.smb,
       sudo_commands: payload.sudo_commands || [] as string[],
       sudo_commands_nopasswd: payload.sudo_commands_nopasswd || [] as string[],
-      group_create: payload.group_create || true,
       uid: payload.uid || this.nextUid(),
       password: oneTimePassword || payload.password_disabled ? null : payload.password,
       random_password: oneTimePassword,

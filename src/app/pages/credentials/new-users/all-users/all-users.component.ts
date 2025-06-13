@@ -13,6 +13,7 @@ import {
 } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { CollectionChangeType } from 'app/enums/api.enum';
+import { QueryParams } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
 import { ApiDataProvider } from 'app/modules/ix-table/classes/api-data-provider/api-data-provider';
 import { PaginationServerSide } from 'app/modules/ix-table/classes/api-data-provider/pagination-server-side.class';
@@ -47,8 +48,9 @@ import { UserListComponent } from 'app/pages/credentials/new-users/all-users/use
   ],
 })
 export class AllUsersComponent implements OnInit, OnDestroy {
+  private defaultParams = [[['OR', [['builtin', '=', false], ['username', '=', 'root']]]]] as QueryParams<User>;
   protected dataProvider: Signal<ApiDataProvider<'user.query'>> = computed(() => {
-    const dataProvider = new ApiDataProvider(this.api, 'user.query');
+    const dataProvider = new ApiDataProvider(this.api, 'user.query', this.defaultParams);
     dataProvider.paginationStrategy = new PaginationServerSide();
     dataProvider.sortingStrategy = new SortingServerSide();
     dataProvider.setSorting({
@@ -80,7 +82,10 @@ export class AllUsersComponent implements OnInit, OnDestroy {
   }
 
   private subscribeToUserChanges(): void {
-    combineLatest([this.api.subscribe('user.query').pipe(startWith(null)), this.dataProvider().currentPage$]).pipe(
+    combineLatest([
+      this.api.subscribe('user.query').pipe(startWith(null)),
+      this.dataProvider().currentPage$,
+    ]).pipe(
       tap(([event, users]) => {
         switch (event?.msg) {
           case CollectionChangeType.Changed:

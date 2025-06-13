@@ -28,8 +28,9 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { AdditionalDetailsSectionComponent } from 'app/pages/credentials/new-users/user-form/additional-details-section/additional-details-section.component';
 import { AllowedAccessSectionComponent } from 'app/pages/credentials/new-users/user-form/allowed-access-section/allowed-access-section.component';
 import { AuthSectionComponent } from 'app/pages/credentials/new-users/user-form/auth-section/auth-section.component';
-import { defaultHomePath, UserFormStore } from 'app/pages/credentials/new-users/user-form/user.store';
+import { defaultHomePath, defaultRole, UserFormStore } from 'app/pages/credentials/new-users/user-form/user.store';
 import { selectUsers } from 'app/pages/credentials/users/store/user.selectors';
+import { UserStigPasswordOption } from 'app/pages/credentials/users/user-form/user-form.component';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UserService } from 'app/services/user.service';
@@ -144,7 +145,6 @@ export class UserFormComponent implements OnInit {
 
   private setupForm(): void {
     this.listenForAllFormsValidity();
-    this.userFormStore.isNewUser.set(this.isNewUser);
 
     if (this.editingUser()) {
       this.setupEditUserForm(this.editingUser());
@@ -152,20 +152,6 @@ export class UserFormComponent implements OnInit {
   }
 
   private setupEditUserForm(user: User): void {
-    this.userFormStore.updateUserConfig({
-      username: user.username,
-      email: user.email,
-      full_name: user.full_name,
-      smb: user.smb,
-      home: user.home,
-      uid: user.uid,
-      group: user?.group?.id,
-      groups: user?.groups,
-      password_disabled: user?.password_disabled,
-      sshpubkey: user?.sshpubkey,
-      ssh_password_enabled: user?.ssh_password_enabled,
-    });
-
     this.form.patchValue({
       username: user.username,
     });
@@ -173,6 +159,35 @@ export class UserFormComponent implements OnInit {
     if (user.immutable) {
       this.form.controls.username.disable();
     }
+
+    this.userFormStore.updateUserConfig({
+      username: user.username,
+      email: user.email,
+      full_name: user.full_name,
+      smb: user.smb,
+      home: user.home,
+      uid: user.uid,
+      group: user.group.id,
+      groups: user.groups,
+      password_disabled: user.password_disabled,
+      sshpubkey: user.sshpubkey,
+      ssh_password_enabled: user.ssh_password_enabled,
+      shell: user.shell,
+      locked: user.locked,
+      sudo_commands: user.sudo_commands,
+      sudo_commands_nopasswd: user.sudo_commands_nopasswd,
+    });
+
+    const role = user.roles?.length > 0 ? user.roles[0] : defaultRole;
+
+    this.userFormStore.updateSetupDetails({ role });
+
+    this.userFormStore.setAllowedAccessConfig({
+      smbAccess: user.smb,
+      truenasAccess: user.roles?.length > 0 || user.groups.length > 0,
+      shellAccess: user.shell !== '/usr/sbin/nologin',
+      sshAccess: user.ssh_password_enabled || !!user.sshpubkey,
+    });
 
     this.setNamesInUseValidator(user.username);
   }
@@ -234,7 +249,24 @@ export class UserFormComponent implements OnInit {
   }
 
   protected onSubmit(): void {
-    const payload = { ...this.userFormStore.userConfig() };
+    const values = { ...this.formValues() };
+    let payload = { ...this.userFormStore.userConfig() };
+
+    const disablePassword = this.isStigMode() && this.isNewUser
+      ? values.stig_password === UserStigPasswordOption.DisablePassword
+      : values.password_disabled;
+
+    payload = {
+      ...payload,
+      locked: disablePassword ? false : payload.locked,
+      password_disabled: disablePassword,
+    };
+
+    if (!payload.password) {
+      delete payload.password;
+    }
+
+    console.info('Submitting user form with payload:', payload, values);
 
     this.getHomeCreateConfirmation().pipe(
       filter(Boolean),

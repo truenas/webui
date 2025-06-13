@@ -37,6 +37,7 @@
   "Namespace created.": "",
   "Namespace deleted.": "",
   "Namespace updated.": "",
+  "New {username} group": "",
   "New File": "",
   "NVMe-oF Subsystems": "",
   "Once enabled one or more ports may be configured with RDMA selected as the transport. Requires an Enterprise license, RDMA-capable system and network equipment.": "",

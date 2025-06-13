@@ -27,11 +27,62 @@ describe('AllowedAccessSectionComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
-
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  // TODO: Test showing current values when editing a user
+  describe('when new user', () => {
+    it('checks form controls', async () => {
+      const smbAccessCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'SMB Access' }));
+      expect(await smbAccessCheckbox.isChecked()).toBe(true);
+
+      const truenasAccessCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'TrueNAS Access' }));
+      expect(await truenasAccessCheckbox.isChecked()).toBe(false);
+
+      const sshAccessCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'SSH Access' }));
+      expect(await sshAccessCheckbox.isChecked()).toBe(false);
+
+      const shellAccessCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'Shell Access' }));
+      expect(await shellAccessCheckbox.isChecked()).toBe(false);
+    });
+  });
+
+  describe('when existing user', () => {
+    beforeEach(() => {
+      spectator.setInput('editingUser', {
+        username: 'test',
+        smb: true,
+        shell: '/usr/bin/bash',
+        sshpubkey: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC...',
+        roles: [Role.FullAdmin],
+        ssh_password_enabled: true,
+      });
+    });
+
+    it('checks form controls', async () => {
+      const sshAccessCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'SSH Access' }));
+      expect(await sshAccessCheckbox.isChecked()).toBe(true);
+
+      const smbAccessCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'SMB Access' }));
+      expect(await smbAccessCheckbox.isChecked()).toBe(true);
+
+      const shellAccessCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'Shell Access' }));
+      expect(await shellAccessCheckbox.isChecked()).toBe(true);
+
+      const truenasAccessCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'TrueNAS Access' }));
+      expect(await truenasAccessCheckbox.isChecked()).toBe(true);
+    });
+
+    it('updates allowed access config on form changes', () => {
+      spectator.detectChanges();
+
+      expect(spectator.inject(UserFormStore).setAllowedAccessConfig).toHaveBeenCalledWith({
+        smbAccess: true,
+        truenasAccess: true,
+        sshAccess: true,
+        shellAccess: true,
+      });
+    });
+  });
 
   it('updates store when allowed access checkboxes are changed', async () => {
     const smbCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'SMB Access' }));
