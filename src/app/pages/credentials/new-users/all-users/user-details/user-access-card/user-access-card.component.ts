@@ -1,4 +1,3 @@
-import { NgClass } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
@@ -19,7 +18,7 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { UrlOptionsService } from 'app/services/url-options.service';
+import { UserLastActionComponent } from 'app/pages/credentials/new-users/all-users/user-details/user-last-action/user-last-action.component';
 
 @UntilDestroy()
 @Component({
@@ -36,9 +35,9 @@ import { UrlOptionsService } from 'app/services/url-options.service';
     MatCardActions,
     MatCardContent,
     TranslateModule,
-    NgClass,
     RequiresRolesDirective,
     TestDirective,
+    UserLastActionComponent,
   ],
 })
 export class UserAccessCardComponent {
@@ -65,6 +64,10 @@ export class UserAccessCardComponent {
     return null;
   });
 
+  readonly noShellAccess = computed(() => {
+    return this.user().shell === '/usr/bin/nologin' || this.user().shell === '/usr/sbin/nologin';
+  });
+
   readonly rolesAccessStatus = computed<string | null>(() => {
     return this.user().roles
       .map((role) => this.translate.instant(roleNames.get(role) || role))
@@ -74,7 +77,6 @@ export class UserAccessCardComponent {
   constructor(
     private router: Router,
     private translate: TranslateService,
-    private urlOptions: UrlOptionsService,
     private api: ApiService,
     private loader: LoaderService,
     private dialogService: DialogService,
@@ -84,16 +86,6 @@ export class UserAccessCardComponent {
     this.router.navigate(['/credentials/users/api-keys'], {
       queryParams: { userName: this.user().username },
     });
-  }
-
-  viewLogs(): void {
-    const url = this.urlOptions.buildUrl('/system/audit', {
-      searchQuery: {
-        isBasicQuery: false,
-        filters: [['username', '=', this.user().username]],
-      },
-    });
-    this.router.navigateByUrl(url);
   }
 
   toggleLockStatus(): void {

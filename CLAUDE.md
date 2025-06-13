@@ -1,7 +1,7 @@
 # CLAUDE.md - Guidelines for TrueNAS WebUI Project
 
 ## Build and Test Commands
-- Run `yarn ui reset` to create the environment file before building.
+- Run `yarn ui reset` once to create the environment file. This must be done before running tests or building the UI.
 - Build: `yarn build` or `yarn build:prod` for production
 - Start dev server: `yarn start`
 - Run all tests: `yarn test`

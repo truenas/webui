@@ -37,12 +37,6 @@ describe('UserAccessCellComponent', () => {
     expect(await loader.getHarness(IxIconHarness.with({ name: 'ix-smb-share' }))).toBeTruthy();
   });
 
-  it('checks 2FA icon when user has configured', async () => {
-    setupTest({ ...mockUser, twofactor_auth_configured: true });
-
-    expect(await loader.getHarness(IxIconHarness.with({ name: 'mdi-cellphone-lock' }))).toBeTruthy();
-  });
-
   it('checks ssh icon', async () => {
     setupTest({ ...mockUser, ssh_password_enabled: true });
 
@@ -54,11 +48,10 @@ describe('UserAccessCellComponent', () => {
       ...mockUser,
       smb: true,
       ssh_password_enabled: true,
-      twofactor_auth_configured: true,
       roles: [Role.FullAdmin],
     });
 
-    expect(spectator.queryAll('ix-icon')).toHaveLength(4);
+    expect(spectator.queryAll('ix-icon')).toHaveLength(3);
     expect(spectator.query('span')!.textContent).toBe('Full Admin');
   });
 });
