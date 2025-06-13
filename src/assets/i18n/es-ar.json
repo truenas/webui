@@ -92,6 +92,7 @@
   "Once enabled one or more ports may be configured with RDMA selected as the transport. Requires an Enterprise license, RDMA-capable system and network equipment.": "",
   "Only allow: {activities}": "",
   "Parent Directory": "",
+  "Password change is required": "",
   "Path To File": "",
   "Path To Zvol": "",
   "Please confirm": "",

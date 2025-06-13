@@ -23,6 +23,7 @@ import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-h
 import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
+import { TablePagination } from 'app/modules/ix-table/interfaces/table-pagination.interface';
 import { createTable } from 'app/modules/ix-table/utils';
 import { UsersSearchComponent } from 'app/pages/credentials/new-users/all-users/users-search/users-search.component';
 import { UserAccessCellComponent } from './user-access-cell/user-access-cell.component';
@@ -57,6 +58,11 @@ export class UserListComponent {
   // TODO: NAS-135333 - Handle case after url linking is implemented to decide when no to show selected user
   readonly isSelectedUserVisible$ = of(true);
   readonly dataProvider = input.required<ApiDataProvider<'user.query'>>();
+
+  protected readonly pagination: TablePagination = {
+    pageSize: 50,
+    pageNumber: 1,
+  };
 
   protected columns = createTable<User>([
     textColumn({

@@ -20,7 +20,6 @@ import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/for
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { OneTimePasswordCreatedDialog } from 'app/pages/credentials/users/one-time-password-created-dialog/one-time-password-created-dialog.component';
@@ -39,7 +38,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     MatCardContent,
     TranslateModule,
     FormatDateTimePipe,
-    YesNoPipe,
     MatCardActions,
     RequiresRolesDirective,
     TestDirective,

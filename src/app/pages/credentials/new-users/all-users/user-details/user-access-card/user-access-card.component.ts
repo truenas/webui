@@ -1,6 +1,7 @@
 import { NgClass } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, computed, input,
+  output,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
@@ -17,8 +18,10 @@ import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { ApiKeyFormComponent } from 'app/pages/credentials/users/user-api-keys/components/api-key-form/api-key-form.component';
 import { UrlOptionsService } from 'app/services/url-options.service';
 
 @UntilDestroy()
@@ -43,6 +46,7 @@ import { UrlOptionsService } from 'app/services/url-options.service';
 })
 export class UserAccessCardComponent {
   user = input.required<User>();
+  reloadUsers = output();
 
   protected readonly Role = Role;
   protected readonly unlockUserText = this.translate.instant('Unlock User');
@@ -78,12 +82,20 @@ export class UserAccessCardComponent {
     private api: ApiService,
     private loader: LoaderService,
     private dialogService: DialogService,
+    private slideIn: SlideIn,
   ) {}
 
-  viewApiKeys(): void {
-    this.router.navigate(['/credentials/users/api-keys'], {
-      queryParams: { userName: this.user().username },
-    });
+  handleApiKeys(hasApiKeys: boolean): void {
+    if (hasApiKeys) {
+      this.router.navigate(['/credentials/users/api-keys'], {
+        queryParams: { userName: this.user().username },
+      });
+    } else {
+      this.slideIn.open(ApiKeyFormComponent).pipe(
+        filter((response) => !!response.response),
+        untilDestroyed(this),
+      ).subscribe(() => this.reloadUsers.emit());
+    }
   }
 
   viewLogs(): void {
