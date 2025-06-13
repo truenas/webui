@@ -94,7 +94,7 @@ export class ServiceActionsCellComponent {
     this.router.navigate(this.sessionsUrl());
   }
 
-  startService(): void {
+  protected startService(): void {
     this.api.job('service.control', [ServiceOperation.Start, this.service().service, { silent: false }]).pipe(
       observeJob(),
       this.loader.withLoader(),
@@ -105,7 +105,7 @@ export class ServiceActionsCellComponent {
     });
   }
 
-  stopServiceClicked(): void {
+  protected stopServiceClicked(): void {
     this.confirmStop().pipe(
       filter(Boolean),
       take(1),
@@ -184,6 +184,7 @@ export class ServiceActionsCellComponent {
           message,
           hideCheckbox: true,
           buttonText: this.translate.instant('Stop'),
+          buttonColor: 'warn',
         });
       }),
       untilDestroyed(this),
