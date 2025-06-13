@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { UnsavedFormGuard } from 'app/modules/unsaved-changes/unsaved-form.guard';
 import { AddVdevsComponent } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/add-vdevs.component';
 import { PoolsDashboardComponent } from 'app/pages/storage/pools-dashboard.component';
 
@@ -17,6 +18,7 @@ export const storageRoutes: Routes = [
         path: 'create',
         loadComponent: () => import('./modules/pool-manager/components/pool-manager/pool-manager.component').then((module) => module.PoolManagerComponent),
         data: { title: T('Pool Creation Wizard'), breadcrumb: T('Pool Creation Wizard') },
+        canDeactivate: [UnsavedFormGuard],
       },
       {
         path: ':poolId/vdevs',

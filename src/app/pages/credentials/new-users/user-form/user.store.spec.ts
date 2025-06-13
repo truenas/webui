@@ -43,7 +43,7 @@ describe('UserFormStore', () => {
         },
         defaultPermissions: true,
         homeModeOldValue: '',
-        role: 'prompt',
+        role: null,
         stigPassword: UserStigPasswordOption.DisablePassword,
       },
       userConfig: null,
