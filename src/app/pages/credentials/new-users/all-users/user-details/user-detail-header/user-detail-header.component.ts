@@ -33,7 +33,7 @@ export class UserDetailHeaderComponent {
   user = input.required<User>();
 
   protected readonly Role = Role;
-  loggedInUser = toSignal(this.authService.user$.pipe(filter(Boolean)));
+  protected loggedInUser = toSignal(this.authService.user$.pipe(filter(Boolean)));
 
   constructor(
     private authService: AuthService,
@@ -41,14 +41,14 @@ export class UserDetailHeaderComponent {
     private matDialog: MatDialog,
   ) {}
 
-  doEdit(): void {
+  protected doEdit(): void {
     this.slideIn
       .open(UserFormComponent, { data: this.user() })
       .pipe(untilDestroyed(this))
       .subscribe();
   }
 
-  doDelete(): void {
+  protected doDelete(): void {
     this.matDialog
       .open(DeleteUserDialog, { data: this.user() })
       .afterClosed()

@@ -65,7 +65,7 @@ export class DeleteUserDialog implements OnInit {
     this.checkIfLastGroupMember();
   }
 
-  onDelete(): void {
+  protected onDelete(): void {
     this.api.call('user.delete', [this.user.id, { delete_group: this.deleteGroupCheckbox.value }])
       .pipe(
         this.loader.withLoader(),

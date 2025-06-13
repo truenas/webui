@@ -31,7 +31,7 @@ export class AllUsersHeaderComponent {
     private router: Router,
   ) {}
 
-  doAdd(): void {
+  protected doAdd(): void {
     this.slideIn.open(UserFormComponent, { wide: false }).pipe(
       filter(({ response }) => !!response),
       untilDestroyed(this),

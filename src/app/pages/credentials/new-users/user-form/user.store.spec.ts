@@ -34,7 +34,6 @@ describe('UserFormStore', () => {
   it('checks initial value', () => {
     expect(spectator.service.state()).toEqual({
       isStigMode: false,
-      nextUid: null,
       setupDetails: {
         allowedAccess: {
           shellAccess: false,
@@ -49,13 +48,6 @@ describe('UserFormStore', () => {
       },
       userConfig: null,
     });
-  });
-
-  it('loads next uid and stig mode', () => {
-    spectator.service.initialize();
-
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('system.security.config');
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('user.get_next_uid');
   });
 
   it('checks payload on submit', () => {
@@ -77,7 +69,7 @@ describe('UserFormStore', () => {
       ssh_password_enabled: false,
       sudo_commands: [],
       sudo_commands_nopasswd: [],
-      uid: 1004,
+      uid: null,
       username: 'operator',
     }]);
   });

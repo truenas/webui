@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { Router } from '@angular/router';
+import { byText } from '@ngneat/spectator';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -10,15 +10,20 @@ import { Role } from 'app/enums/role.enum';
 import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { LoaderService } from 'app/modules/loader/loader.service';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { UrlOptionsService } from 'app/services/url-options.service';
+import {
+  ApiKeyFormComponent,
+} from 'app/pages/credentials/users/user-api-keys/components/api-key-form/api-key-form.component';
+import { DownloadService } from 'app/services/download.service';
 import { UserAccessCardComponent } from './user-access-card.component';
 
 const mockUser = {
   id: 1,
   username: 'testuser',
   locked: false,
+  local: true,
   password_disabled: false,
   ssh_password_enabled: true,
   sshpubkey: 'ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA...',
@@ -41,16 +46,20 @@ describe('UserAccessCardComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockProvider(Router),
       mockProvider(ApiService),
-      mockProvider(LoaderService),
+      mockProvider(SnackbarService),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
       mockApi([
         mockCall('user.update'),
       ]),
-      mockProvider(UrlOptionsService),
+      mockProvider(SlideIn, {
+        open: jest.fn(() => of({})),
+      }),
+      mockProvider(DownloadService, {
+        downloadBlob: jest.fn(),
+      }),
     ],
   });
 
@@ -91,11 +100,6 @@ describe('UserAccessCardComponent', () => {
     expect(rolesSection).toHaveText('TrueNAS Access: Full Admin');
   });
 
-  it('should display API keys count', () => {
-    const apiKeysSection = spectator.query('.content-wrapper:nth-child(7)');
-    expect(apiKeysSection).toHaveText('API Keys: 2 keys');
-  });
-
   it('should display Shell Access status', () => {
     const apiKeysSection = spectator.query('.content-wrapper:nth-child(8)');
     expect(apiKeysSection).toHaveText('Shell Access: /bin/bash');
@@ -103,18 +107,19 @@ describe('UserAccessCardComponent', () => {
 
   it('should display SSH access status', () => {
     const sshSection = spectator.query('.content-wrapper:nth-child(9)');
-    expect(sshSection).toHaveText('Key set, Password login enabled');
+    expect(sshSection).toHaveText('SSH Key Set & Password Login Enabled');
   });
 
-  it('should call viewLogs when Search Logs link is clicked', () => {
-    const spy = jest.spyOn(spectator.component, 'viewLogs');
-    const viewLogsLink = spectator.query('.last-login a')!;
-    expect(viewLogsLink).toHaveText('Search Logs');
-    spectator.click(viewLogsLink);
-    expect(spy).toHaveBeenCalled();
+  it('has a Search Logs link that takes user to the audit page', () => {
+    const link = spectator.query(byText('Search Logs'));
+
+    expect(link).toHaveAttribute(
+      'href',
+      '/system/audit/%7B%22searchQuery%22:%7B%22isBasicQuery%22:false,%22filters%22:%5B%5B%22username%22,%22%3D%22,%22testuser%22%5D%5D%7D%7D',
+    );
   });
 
-  it('should open lock/unlock dialog when button is clicked', async () => {
+  it('should lock/unlock user when corresponding button is clicked', async () => {
     const lockButton = await loader.getHarness(MatButtonHarness.with({ text: 'Lock User' }));
     await lockButton.click();
 
@@ -122,15 +127,44 @@ describe('UserAccessCardComponent', () => {
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('user.update', [mockUser.id, {
       locked: true,
     }]);
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
   });
 
-  it('should navigate to API keys page when "View API Keys" link is clicked', () => {
-    const spy = jest.spyOn(spectator.inject(Router), 'navigate');
-    const addApiKeyLink = spectator.query('.content-wrapper:nth-child(7) a')!;
-    spectator.click(addApiKeyLink);
+  describe('API Keys', () => {
+    it('shows API keys count', () => {
+      const apiKeysSection = spectator.query('.content-wrapper:nth-child(7)');
+      expect(apiKeysSection).toHaveText('API Keys: 2 keys');
+    });
 
-    expect(spy).toHaveBeenCalledWith(['/credentials/users/api-keys'], {
-      queryParams: { userName: mockUser.username },
+    it('has an View API keys link that takes user to API keys page', () => {
+      const link = spectator.query(byText('View API Keys'));
+
+      expect(link).toHaveAttribute('href', '/credentials/users/api-keys?userName=testuser');
+    });
+
+    it('shows an Add API Key link that opens the form to add the key', () => {
+      spectator.setInput('user', {
+        ...mockUser,
+        api_keys: [],
+      });
+
+      spectator.click(spectator.query(byText('Add API Key')));
+
+      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ApiKeyFormComponent, {
+        data: {
+          username: mockUser.username,
+        },
+      });
+    });
+
+    it('downloads ssh key when Download Key link is clicked', () => {
+      const downloadLink = spectator.query(byText('Download Key'));
+      spectator.click(downloadLink);
+
+      expect(spectator.inject(DownloadService).downloadBlob).toHaveBeenCalledWith(
+        new Blob([mockUser.sshpubkey], { type: 'text/plain' }),
+        `${mockUser.username}_public_key_rsa`,
+      );
     });
   });
 });

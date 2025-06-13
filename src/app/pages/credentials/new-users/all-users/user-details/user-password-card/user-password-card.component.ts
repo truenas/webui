@@ -65,7 +65,7 @@ export class UserPasswordCardComponent {
     private errorHandler: ErrorHandlerService,
   ) {}
 
-  generateOneTimePassword(): void {
+  protected generateOneTimePassword(): void {
     const { username } = this.user();
 
     this.dialogService.confirm({
