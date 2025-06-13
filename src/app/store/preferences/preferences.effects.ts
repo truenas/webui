@@ -17,6 +17,7 @@ import {
   preferencesLoaded, preferredColumnsUpdated,
   shownNewIndicatorKeysUpdated,
   themeNotFound,
+  terminalFontSizeUpdated,
   updateRebootAfterManualUpdate,
 } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -68,6 +69,7 @@ export class PreferencesEffects {
       builtinGroupsToggled,
       localizationFormSubmitted,
       lifetimeTokenUpdated,
+      terminalFontSizeUpdated,
       guiFormSubmitted,
       updateRebootAfterManualUpdate,
       autoRefreshReportsToggled,

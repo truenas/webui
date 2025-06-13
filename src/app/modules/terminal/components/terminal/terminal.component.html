@@ -1,26 +1,6 @@
 <ix-page-header>
   @if (shellConnected) {
-    <div class="font-size-controls">
-      <span>{{ 'Font Size:' | translate }}</span>
-      <button
-        ixTest="decrease-font-size"
-        mat-icon-button
-        [attr.aria-label]="'Decrease font size' | translate"
-        [disabled]="fontSize <= minFontSize"
-        (click)="changeFontSize(-1)"
-      >
-        <ix-icon name="remove"></ix-icon>
-      </button>
-      <button
-        mat-icon-button
-        ixTest="increase-font-size"
-        [attr.aria-label]="'Increase font size' | translate"
-        [disabled]="fontSize >= maxFontSize"
-        (click)="changeFontSize(1)"
-      >
-        <ix-icon name="add"></ix-icon>
-      </button>
-    </div>
+    <ix-terminal-font-size (fontSizeChanged)="onFontSizeChanged($event)"></ix-terminal-font-size>
   } @else {
     <button mat-button color="primary" ixTest="reconnect" (click)="reconnect()">
       {{ 'Reconnect' | translate }}

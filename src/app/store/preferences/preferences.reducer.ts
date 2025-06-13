@@ -9,6 +9,7 @@ import {
   builtinGroupsToggled,
   builtinUsersToggled, dashboardStateUpdated, guiFormClosedWithoutSaving, guiFormSubmitted,
   lifetimeTokenUpdated,
+  terminalFontSizeUpdated,
   localizationFormSubmitted, noPreferencesFound,
   preferencesLoaded, preferredColumnsUpdated, shownNewIndicatorKeysUpdated, themeChangedInGuiForm,
   themeNotFound,
@@ -62,6 +63,7 @@ export const preferencesReducer = createReducer(
     language,
   })),
   on(lifetimeTokenUpdated, (state, { lifetime }) => updatePreferences(state, { lifetime })),
+  on(terminalFontSizeUpdated, (state, { fontSize }) => updatePreferences(state, { terminalFontSize: fontSize })),
 
   on(builtinUsersToggled, (state) => updatePreferences(state, {
     hideBuiltinUsers: !state.preferences?.hideBuiltinUsers,
