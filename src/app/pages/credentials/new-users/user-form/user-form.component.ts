@@ -297,7 +297,7 @@ export class UserFormComponent implements OnInit {
     const statusObservables = forms.map((formGroup) => formGroup.statusChanges.pipe(
       startWith(formGroup.status),
       distinctUntilChanged(),
-      map((status) => status !== 'VALID'),
+      map(() => formGroup.invalid),
     ));
 
     combineLatest(statusObservables).pipe(

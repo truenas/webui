@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { UnsavedFormGuard } from 'app/modules/unsaved-changes/unsaved-form.guard';
 import { AllInstancesComponent } from 'app/pages/instances/components/all-instances/all-instances.component';
 import {
   InstanceConsoleComponent,
@@ -26,6 +27,7 @@ export const instancesRoutes: Routes = [{
     {
       path: 'new',
       component: InstanceWizardComponent,
+      canDeactivate: [UnsavedFormGuard],
       data: { title: T('Add Instances') },
     },
     {

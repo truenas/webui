@@ -1,11 +1,10 @@
 import {
   ChangeDetectionStrategy, Component, effect, input,
 } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
+import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatCheckbox } from '@angular/material/checkbox';
-import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { Role, roleNames } from 'app/enums/role.enum';
 import { User } from 'app/interfaces/user.interface';
@@ -13,9 +12,7 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { UserFormStore } from 'app/pages/credentials/new-users/user-form/user.store';
-
-const defaultRole = 'prompt';
+import { defaultRole, UserFormStore } from 'app/pages/credentials/new-users/user-form/user.store';
 
 @UntilDestroy()
 @Component({
@@ -38,39 +35,58 @@ export class AllowedAccessSectionComponent {
   protected sshAccessEnabled = this.userFormStore.sshAccess;
 
   protected readonly roles$ = of([
-    { label: this.translate.instant('Select Role'), value: defaultRole },
     { label: roleNames.get(Role.FullAdmin), value: Role.FullAdmin },
     { label: roleNames.get(Role.SharingAdmin), value: Role.SharingAdmin },
     { label: roleNames.get(Role.ReadonlyAdmin), value: Role.ReadonlyAdmin },
   ]);
 
-  form = this.fb.group({
+  form = this.formBuilder.group({
     smb: [true],
     truenas_access: [false],
     ssh_access: [false],
     shell_access: [false],
-    role: [defaultRole],
+    role: [null as Role | null],
   });
 
+  protected get hasTrueNasAccess(): boolean {
+    return this.form.controls.truenas_access.value;
+  }
+
   constructor(
-    private fb: FormBuilder,
+    private formBuilder: NonNullableFormBuilder,
     private userFormStore: UserFormStore,
-    private translate: TranslateService,
   ) {
+    this.setFieldRelations();
+    this.updateStoreOnChanges();
+  }
+
+  private setFieldRelations(): void {
     this.form.controls.ssh_access.valueChanges.pipe(
       untilDestroyed(this),
     ).subscribe({
       next: (sshAccess) => {
         if (sshAccess) {
-          this.form.controls.shell_access.disable();
           this.form.controls.shell_access.setValue(true);
+          this.form.controls.shell_access.disable();
         } else {
           this.form.controls.shell_access.enable();
         }
       },
     });
 
-    this.form.value$.pipe(untilDestroyed(this)).subscribe({
+    this.form.controls.truenas_access.valueChanges.pipe(untilDestroyed(this)).subscribe((hasAccess) => {
+      if (hasAccess) {
+        this.form.controls.role.setValidators([Validators.required]);
+      } else {
+        this.form.controls.role.clearValidators();
+      }
+
+      this.form.controls.role.updateValueAndValidity();
+    });
+  }
+
+  private updateStoreOnChanges(): void {
+    this.form.valueChanges.pipe(untilDestroyed(this)).subscribe({
       next: (values) => {
         this.userFormStore.setAllowedAccessConfig({
           smbAccess: values.smb,
@@ -78,8 +94,9 @@ export class AllowedAccessSectionComponent {
           sshAccess: values.ssh_access,
           shellAccess: values.shell_access,
         });
+
         this.userFormStore.updateSetupDetails({
-          role: values.role as Role,
+          role: values.truenas_access ? values.role : null,
         });
       },
     });
