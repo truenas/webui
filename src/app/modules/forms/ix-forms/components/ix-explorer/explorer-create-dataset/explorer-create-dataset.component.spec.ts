@@ -75,10 +75,14 @@ describe('ExplorerCreateDatasetComponent', () => {
     jest.spyOn(fakeControl.control, 'setValue');
 
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+
+    fakeControl.control.setValue('/mnt/test');
   });
 
   it('opens CreateDatasetDialog when Create Dataset button is pressed', async () => {
     const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Dataset' }));
+    expect(await createButton.isDisabled()).toBeFalsy();
+
     await createButton.click();
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(CreateDatasetDialog, {

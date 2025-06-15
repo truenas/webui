@@ -3,8 +3,8 @@ import {
   Component,
   input,
   computed,
+  signal, AfterViewInit,
 } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { NgControl } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -34,7 +34,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     TestDirective,
   ],
 })
-export class ExplorerCreateDatasetComponent {
+export class ExplorerCreateDatasetComponent implements AfterViewInit {
   readonly datasetProperties = input<Omit<DatasetCreate, 'name'>>({});
 
   protected readonly requiredRoles = [Role.DatasetWrite];
@@ -44,13 +44,20 @@ export class ExplorerCreateDatasetComponent {
     return this.explorer.isDisabled() || !isMountpointSelected || !this.parent();
   });
 
-  private explorerValue = toSignal<string | string[]>(this.ngControl.valueChanges, { initialValue: null });
+  protected explorerValue = signal<string | string[]>('');
 
   constructor(
     private explorer: IxExplorerComponent,
     private matDialog: MatDialog,
     private ngControl: NgControl,
   ) {}
+
+  ngAfterViewInit(): void {
+    // TODO: Unclear why this is needed, but control in `ngControl` is empty for some reason in constructor.
+    this.ngControl.control?.valueChanges?.pipe(untilDestroyed(this))?.subscribe((value: string | string[]) => {
+      this.explorerValue.set(value);
+    });
+  }
 
   private parent = computed(() => {
     const value = this.explorerValue();
@@ -72,7 +79,7 @@ export class ExplorerCreateDatasetComponent {
       if (node) {
         this.explorer.refreshNode(node);
       }
-      this.ngControl.control.setValue(dataset.mountpoint);
+      this.ngControl?.control?.setValue(dataset.mountpoint);
     });
   }
 }
