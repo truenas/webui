@@ -2,7 +2,7 @@ import { FormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { ImgFallbackModule } from 'ngx-img-fallback';
-import { AppUpgradeDialog } from 'app/pages/apps/components/installed-apps/app-upgrade-dialog/app-upgrade-dialog.component';
+import { AppUpdateDialog } from 'app/pages/apps/components/installed-apps/app-update-dialog/app-update-dialog.component';
 
 const fakeAppInfo = {
   name: 'elastic-search',
@@ -30,10 +30,10 @@ const fakeUpgradeSummary = {
   upgrade_human_version: '8.7.0_1.0.2',
 };
 
-describe('AppUpgradeDialogComponent', () => {
-  let spectator: Spectator<AppUpgradeDialog>;
+describe('AppUpdateDialog', () => {
+  let spectator: Spectator<AppUpdateDialog>;
   const createComponent = createComponentFactory({
-    component: AppUpgradeDialog,
+    component: AppUpdateDialog,
     imports: [
       FormsModule,
       ImgFallbackModule,

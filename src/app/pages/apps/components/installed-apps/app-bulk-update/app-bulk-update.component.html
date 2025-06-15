@@ -1,8 +1,8 @@
-<h1 matDialogTitle>{{ 'Upgrade' | translate }}</h1>
+<h1 matDialogTitle>{{ 'Update' | translate }}</h1>
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   <p>
     <strong>
-      {{ 'The following { n, plural, one {application} other {# applications} } will be upgraded. Are you sure you want to proceed?' | translate: { n: bulkItems.size } }}
+      {{ 'The following { n, plural, one {application} other {# applications} } will be updated. Are you sure you want to proceed?' | translate: { n: bulkItems.size } }}
     </strong>
   </p>
 
@@ -41,7 +41,7 @@
           @if(isItemExpanded(bulkItem)) {
             <ix-select
               [formControlName]="bulkItem.key"
-              [label]="'Version to be upgraded to' | translate"
+              [label]="'Version to be updated to' | translate"
               [required]="true"
               [options]="optionsMap.get(bulkItem.key)"
             ></ix-select>
@@ -80,10 +80,10 @@
       mat-button
       type="submit"
       color="primary"
-      ixTest="upgrade"
+      ixTest="update"
       [disabled]="form.invalid || bulkItems.size === 0"
     >
-      {{ 'Upgrade' | translate }}
+      {{ 'Update' | translate }}
     </button>
     <button mat-button type="button" matDialogClose ixTest="cancel">
       {{ 'Cancel' | translate }}

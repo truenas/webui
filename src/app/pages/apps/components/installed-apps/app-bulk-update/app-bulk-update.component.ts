@@ -39,9 +39,9 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-app-bulk-upgrade',
-  templateUrl: './app-bulk-upgrade.component.html',
-  styleUrls: ['./app-bulk-upgrade.component.scss'],
+  selector: 'ix-app-bulk-update',
+  templateUrl: './app-bulk-update.component.html',
+  styleUrls: ['./app-bulk-update.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
@@ -63,7 +63,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     MatButton,
   ],
 })
-export class AppBulkUpgradeComponent {
+export class AppBulkUpdateComponent {
   readonly expandedItems = signal<string[]>([]);
 
   form = this.formBuilder.group<Record<string, string>>({});
@@ -80,7 +80,7 @@ export class AppBulkUpgradeComponent {
     private formBuilder: FormBuilder,
     private api: ApiService,
     private translate: TranslateService,
-    private dialogRef: MatDialogRef<AppBulkUpgradeComponent>,
+    private dialogRef: MatDialogRef<AppBulkUpdateComponent>,
     private appService: ApplicationsService,
     private snackbar: SnackbarService,
     private errorHandler: ErrorHandlerService,
@@ -160,7 +160,7 @@ export class AppBulkUpgradeComponent {
       .subscribe(() => {
         this.dialogRef.close();
         this.snackbar.success(
-          this.translate.instant('Upgrading Apps. Please check on the progress in Task Manager.'),
+          this.translate.instant('Updating Apps. Please check on the progress in Task Manager.'),
         );
       });
   }

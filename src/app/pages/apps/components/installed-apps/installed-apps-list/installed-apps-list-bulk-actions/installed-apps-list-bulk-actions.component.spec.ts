@@ -60,13 +60,13 @@ describe('InstalledAppsListBulkActionsComponent', () => {
     expect(stopSpy).toHaveBeenCalled();
   });
 
-  it('emits bulkUpgrade after actions', async () => {
-    const upgradeSpy = jest.spyOn(spectator.component.bulkUpgrade, 'emit');
+  it('emits bulkUpdate after actions', async () => {
+    const updateSpy = jest.spyOn(spectator.component.bulkUpdate, 'emit');
 
     await menu.open();
-    await menu.clickItem({ text: 'Upgrade All Selected' });
+    await menu.clickItem({ text: 'Update All Selected' });
 
-    expect(upgradeSpy).toHaveBeenCalled();
+    expect(updateSpy).toHaveBeenCalled();
   });
 
   it('emits bulkDelete after actions', async () => {

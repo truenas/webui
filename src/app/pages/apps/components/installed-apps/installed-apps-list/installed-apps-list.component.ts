@@ -44,7 +44,7 @@ import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AppDeleteDialog } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.component';
 import { AppDeleteDialogInputData, AppDeleteDialogOutputData } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.interface';
-import { AppBulkUpgradeComponent } from 'app/pages/apps/components/installed-apps/app-bulk-upgrade/app-bulk-upgrade.component';
+import { AppBulkUpdateComponent } from 'app/pages/apps/components/installed-apps/app-bulk-update/app-bulk-update.component';
 import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
 import { InstalledAppsListBulkActionsComponent } from 'app/pages/apps/components/installed-apps/installed-apps-list/installed-apps-list-bulk-actions/installed-apps-list-bulk-actions.component';
 import { installedAppsElements } from 'app/pages/apps/components/installed-apps/installed-apps.elements';
@@ -370,11 +370,11 @@ export class InstalledAppsListComponent implements OnInit {
     this.toggleAppsChecked(false);
   }
 
-  onBulkUpgrade(updateAll = false): void {
+  onBulkUpdate(updateAll = false): void {
     const apps = this.dataSource.filter((app) => (
       updateAll ? app.upgrade_available : this.selection.isSelected(app.id)
     ));
-    this.matDialog.open(AppBulkUpgradeComponent, { data: apps })
+    this.matDialog.open(AppBulkUpdateComponent, { data: apps })
       .afterClosed()
       .pipe(untilDestroyed(this))
       .subscribe(() => {

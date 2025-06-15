@@ -20,7 +20,7 @@ import { SearchInput1Component } from 'app/modules/forms/search-input1/search-in
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AppDeleteDialog } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.component';
-import { AppBulkUpgradeComponent } from 'app/pages/apps/components/installed-apps/app-bulk-upgrade/app-bulk-upgrade.component';
+import { AppBulkUpdateComponent } from 'app/pages/apps/components/installed-apps/app-bulk-update/app-bulk-update.component';
 import { AppDetailsPanelComponent } from 'app/pages/apps/components/installed-apps/app-details-panel/app-details-panel.component';
 import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
 import { InstalledAppsListBulkActionsComponent } from 'app/pages/apps/components/installed-apps/installed-apps-list/installed-apps-list-bulk-actions/installed-apps-list-bulk-actions.component';
@@ -167,7 +167,7 @@ describe('InstalledAppsListComponent', () => {
     expect(applicationsService.restartApplication).toHaveBeenCalledWith('test-app-1');
   });
 
-  it('starts sereral applications', async () => {
+  it('starts several applications', async () => {
     const selectAll = await loader.getHarness(MatCheckboxHarness.with({ selector: '[ixTest="select-all-app"]' }));
     await selectAll.check();
     spectator.query(InstalledAppsListBulkActionsComponent)!.bulkStart.emit();
@@ -175,7 +175,7 @@ describe('InstalledAppsListComponent', () => {
     expect(applicationsService.startApplication).toHaveBeenCalledWith('test-app-2');
   });
 
-  it('stops sereral applications', async () => {
+  it('stops several applications', async () => {
     const selectAll = await loader.getHarness(MatCheckboxHarness.with({ selector: '[ixTest="select-all-app"]' }));
     await selectAll.check();
     spectator.query(InstalledAppsListBulkActionsComponent)!.bulkStop.emit();
@@ -183,15 +183,15 @@ describe('InstalledAppsListComponent', () => {
     expect(applicationsService.stopApplication).toHaveBeenCalledWith('test-app-1');
   });
 
-  it('upgrades sereral applications', async () => {
+  it('updates several applications', async () => {
     const selectAll = await loader.getHarness(MatCheckboxHarness.with({ selector: '[ixTest="select-all-app"]' }));
     await selectAll.check();
-    spectator.query(InstalledAppsListBulkActionsComponent)!.bulkUpgrade.emit();
+    spectator.query(InstalledAppsListBulkActionsComponent)!.bulkUpdate.emit();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(AppBulkUpgradeComponent, { data: apps });
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(AppBulkUpdateComponent, { data: apps });
   });
 
-  it('removes sereral applications', async () => {
+  it('removes several applications', async () => {
     jest.spyOn(spectator.inject(MatDialog), 'open').mockReturnValue({
       afterClosed: () => of({ removeVolumes: true, removeImages: true }),
     } as MatDialogRef<unknown>);

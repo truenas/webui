@@ -33,13 +33,13 @@ const appVersion121 = {
       { name: 'Port Forwarding' },
       { name: 'Health Check' },
       { name: 'Workload Details' },
-      { name: 'Scaling/Upgrade Policy' },
+      { name: 'Scaling/Update Policy' },
       { name: 'Restart Policy' },
       { name: 'IPFS Configuration' },
     ],
     questions: [
       {
-        group: 'Scaling/Upgrade Policy',
+        group: 'Scaling/Update Policy',
         label: 'Update Strategy',
         schema: {
           default: 'RollingUpdate',

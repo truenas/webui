@@ -47,7 +47,7 @@ export const helptextApps = {
 
   apps: {
     deleting: T('Deleting...'),
-    upgrading: T('Upgrading...'),
+    upgrading: T('Updating...'),
 
     rollbackDialog: {
       version: {
