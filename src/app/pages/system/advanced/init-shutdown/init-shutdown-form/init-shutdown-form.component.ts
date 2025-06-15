@@ -127,7 +127,7 @@ export class InitShutdownFormComponent implements OnInit {
     }
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     const values = this.form.value;
 
     this.isFormLoading.set(true);

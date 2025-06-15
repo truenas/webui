@@ -172,7 +172,7 @@ export class AcmednsFormComponent implements OnInit {
     return { key: schema.key, variables };
   }
 
-  onAuthenticatorTypeChanged(event: DnsAuthenticatorType): void {
+  protected onAuthenticatorTypeChanged(event: DnsAuthenticatorType): void {
     this.dnsAuthenticatorList.forEach((auth) => {
       if (auth.key === event) {
         auth.variables.forEach((variable) => {
@@ -196,7 +196,7 @@ export class AcmednsFormComponent implements OnInit {
     });
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     const values = {
       name: this.form.value.name,
       attributes: this.form.value.attributes,

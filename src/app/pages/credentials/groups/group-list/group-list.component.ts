@@ -133,7 +133,7 @@ export class GroupListComponent implements OnInit {
     }),
   );
 
-  get emptyConfigService(): EmptyService {
+  protected get emptyConfigService(): EmptyService {
     return this.emptyService;
   }
 
@@ -152,20 +152,20 @@ export class GroupListComponent implements OnInit {
     this.setDefaultSort();
   }
 
-  toggleBuiltins(): void {
+  protected toggleBuiltins(): void {
     this.store$.dispatch(builtinGroupsToggled());
   }
 
-  doAdd(): void {
+  protected doAdd(): void {
     this.slideIn.open(GroupFormComponent);
   }
 
-  onListFiltered(query: string): void {
+  protected onListFiltered(query: string): void {
     this.filterString = query;
     this.dataProvider.setFilter({ list: this.groups, query, columnKeys: ['group', 'gid'] });
   }
 
-  handleDeletedGroup(id: number): void {
+  protected handleDeletedGroup(id: number): void {
     this.store$.dispatch(groupRemoved({ id }));
   }
 
