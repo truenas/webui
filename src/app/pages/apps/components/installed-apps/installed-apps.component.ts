@@ -66,7 +66,7 @@ export class InstalledAppsComponent {
     this.installedAppsList().stop(name);
   }
 
-  onBulkUpgrade(updateAll = false): void {
-    this.installedAppsList().onBulkUpgrade(updateAll);
+  onBulkUpdate(updateAll = false): void {
+    this.installedAppsList().onBulkUpdate(updateAll);
   }
 }

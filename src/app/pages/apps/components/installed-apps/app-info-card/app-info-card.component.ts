@@ -24,7 +24,7 @@ import { AppState } from 'app/enums/app-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextApps } from 'app/helptext/apps/apps';
-import { AppUpgradeDialogConfig } from 'app/interfaces/app-upgrade-dialog-config.interface';
+import { AppUpdateDialogConfig } from 'app/interfaces/app-upgrade-dialog-config.interface';
 import { App } from 'app/interfaces/app.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -38,7 +38,7 @@ import { AppDeleteDialog } from 'app/pages/apps/components/app-delete-dialog/app
 import { AppDeleteDialogInputData, AppDeleteDialogOutputData } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.interface';
 import { CustomAppFormComponent } from 'app/pages/apps/components/custom-app-form/custom-app-form.component';
 import { AppRollbackModalComponent } from 'app/pages/apps/components/installed-apps/app-rollback-modal/app-rollback-modal.component';
-import { AppUpgradeDialog } from 'app/pages/apps/components/installed-apps/app-upgrade-dialog/app-upgrade-dialog.component';
+import { AppUpdateDialog } from 'app/pages/apps/components/installed-apps/app-update-dialog/app-update-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { AppVersionPipe } from 'app/pages/dashboard/widgets/apps/common/utils/app-version.pipe';
@@ -152,14 +152,14 @@ export class AppInfoCardComponent {
     this.appService.getAppUpgradeSummary(name).pipe(
       this.loader.withLoader(),
       switchMap(
-        (summary) => this.matDialog.open(AppUpgradeDialog, {
+        (summary) => this.matDialog.open(AppUpdateDialog, {
           width: '50vw',
           minWidth: '500px',
           maxWidth: '750px',
           data: {
             appInfo: this.app(),
             upgradeSummary: summary,
-          } as AppUpgradeDialogConfig,
+          } as AppUpdateDialogConfig,
         }).afterClosed(),
       ),
       filter(Boolean),

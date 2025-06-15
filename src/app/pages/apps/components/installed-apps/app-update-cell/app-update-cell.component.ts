@@ -35,7 +35,7 @@ export class AppUpdateCellComponent {
   protected getVersionMsg(version: string): string {
     return this.translate.instant(
       '{version} is available!',
-      { version: this.appVersionPipe.transform(version) || 'Upgrade' },
+      { version: this.appVersionPipe.transform(version) || 'Update' },
     );
   }
 }
