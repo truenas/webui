@@ -19,7 +19,6 @@ import {
   AclTemplateCreateParams,
   AclTemplateCreateResponse,
 } from 'app/interfaces/acl.interface';
-import { ActiveDirectoryConfig } from 'app/interfaces/active-directory-config.interface';
 import { AdvancedConfig, AdvancedConfigUpdate } from 'app/interfaces/advanced-config.interface';
 import { AlertService, AlertServiceEdit } from 'app/interfaces/alert-service.interface';
 import {
@@ -124,8 +123,6 @@ import { FtpConfig, FtpConfigUpdate } from 'app/interfaces/ftp-config.interface'
 import {
   CreateGroup, DeleteGroupParams, Group, UpdateGroup,
 } from 'app/interfaces/group.interface';
-import { IdmapBackendOptions } from 'app/interfaces/idmap-backend-options.interface';
-import { Idmap, IdmapUpdate } from 'app/interfaces/idmap.interface';
 import {
   CreateInitShutdownScript,
   InitShutdownScript,
@@ -161,7 +158,6 @@ import {
   SshKeyPair,
 } from 'app/interfaces/keychain-credential.interface';
 import { KmipConfig } from 'app/interfaces/kmip-config.interface';
-import { LdapConfig } from 'app/interfaces/ldap-config.interface';
 import { MailConfig, MailConfigUpdate } from 'app/interfaces/mail-config.interface';
 import {
   NetworkConfiguration,
@@ -313,10 +309,6 @@ export interface ApiCallDirectory {
   'acme.dns.authenticator.delete': { params: [id: number]; response: boolean };
   'acme.dns.authenticator.query': { params: void; response: DnsAuthenticator[] };
   'acme.dns.authenticator.update': { params: [number, UpdateDnsAuthenticator]; response: DnsAuthenticator };
-
-  // Active Directory
-  'activedirectory.config': { params: void; response: ActiveDirectoryConfig };
-  'activedirectory.nss_info_choices': { params: void; response: string[] };
 
   // Alert
   'alert.dismiss': { params: string[]; response: void };
@@ -523,13 +515,6 @@ export interface ApiCallDirectory {
   'group.query': { params: QueryParams<Group>; response: Group[] };
   'group.update': { params: [number, UpdateGroup]; response: number };
 
-  // Idmap
-  'idmap.backend_options': { params: void; response: IdmapBackendOptions };
-  'idmap.create': { params: [IdmapUpdate]; response: Idmap };
-  'idmap.delete': { params: [id: number]; response: boolean };
-  'idmap.query': { params: QueryParams<Idmap>; response: Idmap[] };
-  'idmap.update': { params: [id: number, update: IdmapUpdate]; response: Idmap };
-
   // Initshutdownscript
   'initshutdownscript.create': { params: [CreateInitShutdownScript]; response: InitShutdownScript };
   'initshutdownscript.delete': { params: [id: number]; response: boolean };
@@ -637,11 +622,6 @@ export interface ApiCallDirectory {
   'docker.config': { params: void; response: DockerConfig };
   'docker.status': { params: void; response: DockerStatusData };
   'docker.nvidia_present': { params: void; response: boolean };
-
-  // LDAP
-  'ldap.config': { params: void; response: LdapConfig };
-  'ldap.schema_choices': { params: void; response: string[] };
-  'ldap.ssl_choices': { params: void; response: string[] };
 
   // Mail
   'mail.config': { params: void; response: MailConfig };
