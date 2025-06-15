@@ -207,7 +207,7 @@ describe('ServicesComponent', () => {
     const startServiceButton = await table.getHarnessInCell(
       IxIconHarness.with({ name: 'mdi-play-circle' }),
       serviceIndex,
-      3,
+      1,
     );
     await startServiceButton.click();
 

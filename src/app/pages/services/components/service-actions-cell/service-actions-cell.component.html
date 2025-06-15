@@ -19,30 +19,6 @@
     </a>
   }
 
-  @if (!isRunning()) {
-    <button
-      *ixRequiresRoles="requiredRoles()"
-      mat-icon-button
-      [ixTest]="[uniqueRowTag(), 'start-service']"
-      [attr.aria-label]="'Start Service' | translate"
-      (click)="$event.stopPropagation(); startService()"
-    >
-      <ix-icon name="mdi-play-circle"></ix-icon>
-    </button>
-  }
-
-  @if (isRunning()) {
-    <button
-      *ixRequiresRoles="requiredRoles()"
-      mat-icon-button
-      [ixTest]="[uniqueRowTag(), 'stop-service']"
-      [attr.aria-label]="'Stop Service' | translate"
-      (click)="$event.stopPropagation(); stopServiceClicked()"
-    >
-      <ix-icon name="mdi-stop-circle"></ix-icon>
-    </button>
-  }
-
   <button
     *ixRequiresRoles="requiredRoles()"
     mat-icon-button
