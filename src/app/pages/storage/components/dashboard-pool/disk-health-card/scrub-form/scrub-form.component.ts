@@ -104,7 +104,7 @@ export class ScrubFormComponent {
     });
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     const values = {
       ...this.form.value,
       pool: this.poolId,

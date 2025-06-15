@@ -98,7 +98,7 @@ export class ServicesComponent implements OnInit {
   error = false;
   loading = true;
 
-  get emptyConfig(): EmptyType {
+  protected get emptyConfig(): EmptyType {
     switch (true) {
       case this.loading:
         return EmptyType.Loading;
@@ -126,7 +126,7 @@ export class ServicesComponent implements OnInit {
     this.getData();
   }
 
-  onListFiltered(query: string): void {
+  protected onListFiltered(query: string): void {
     this.filterString = query;
     this.dataProvider.setFilter({
       list: this.services,

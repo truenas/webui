@@ -92,7 +92,7 @@ export class IscsiComponent {
     private license: LicenseService,
   ) {}
 
-  openWizard(): void {
+  protected openWizard(): void {
     this.slideIn.open(IscsiWizardComponent)
       .pipe(
         filter((response) => !!response.response),
@@ -103,7 +103,7 @@ export class IscsiComponent {
       });
   }
 
-  openGlobalTargetConfiguration(): void {
+  protected openGlobalTargetConfiguration(): void {
     this.slideIn.open(GlobalTargetConfigurationComponent);
   }
 

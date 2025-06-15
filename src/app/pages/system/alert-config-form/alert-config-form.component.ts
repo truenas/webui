@@ -133,7 +133,7 @@ export class AlertConfigFormComponent implements OnInit {
       });
   }
 
-  onCategoryChanged(category: AlertCategory): void {
+  protected onCategoryChanged(category: AlertCategory): void {
     this.selectedCategory = category;
   }
 

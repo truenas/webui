@@ -176,11 +176,11 @@ export class AuthorizedAccessFormComponent implements OnInit {
     }
   }
 
-  isPeerUserSet(): boolean {
+  protected isPeerUserSet(): boolean {
     return Boolean(this.form?.value?.peeruser);
   }
 
-  setAccessForEdit(access: IscsiAuthAccess): void {
+  protected setAccessForEdit(access: IscsiAuthAccess): void {
     this.form.patchValue({
       ...access,
       secret_confirm: access.secret,
@@ -188,7 +188,7 @@ export class AuthorizedAccessFormComponent implements OnInit {
     });
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     const values = this.form.getRawValue();
     const payload = {
       tag: values.tag,

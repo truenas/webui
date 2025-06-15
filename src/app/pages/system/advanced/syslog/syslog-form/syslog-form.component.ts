@@ -120,7 +120,7 @@ export class SyslogFormComponent implements OnInit {
     this.loadForm();
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     const { ...values } = this.form.value;
     let configUpdate: Partial<AdvancedConfigUpdate> = {
       syslog_transport: values.syslog_transport || undefined,

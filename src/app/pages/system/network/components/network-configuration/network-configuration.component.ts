@@ -324,7 +324,7 @@ export class NetworkConfigurationComponent implements OnInit {
       });
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     const values = { ...this.form.value };
     let activity: NetworkConfigurationActivity;
 

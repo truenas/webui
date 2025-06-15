@@ -64,7 +64,7 @@ export class SetAdminPasswordFormComponent {
     private signinStore: SigninStore,
   ) { }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     const { username, password } = this.form.getRawValue();
     this.signinStore.setLoadingState(true);
 

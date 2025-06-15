@@ -232,7 +232,7 @@ export class SmbListComponent implements OnInit {
     });
   }
 
-  setDefaultSort(): void {
+  private setDefaultSort(): void {
     this.dataProvider.setSorting({
       active: 0,
       direction: SortDirection.Asc,
@@ -240,7 +240,7 @@ export class SmbListComponent implements OnInit {
     });
   }
 
-  doAdd(): void {
+  protected doAdd(): void {
     this.slideIn.open(SmbFormComponent).pipe(
       take(1),
       filter((response) => !!response.response),
@@ -252,7 +252,7 @@ export class SmbListComponent implements OnInit {
     });
   }
 
-  onListFiltered(query: string): void {
+  protected onListFiltered(query: string): void {
     this.filterString = query;
     this.dataProvider.setFilter({
       query,
@@ -261,7 +261,7 @@ export class SmbListComponent implements OnInit {
     this.cdr.markForCheck();
   }
 
-  columnsChange(columns: typeof this.columns): void {
+  protected columnsChange(columns: typeof this.columns): void {
     this.columns = [...columns];
     this.cdr.detectChanges();
     this.cdr.markForCheck();

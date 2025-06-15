@@ -98,7 +98,7 @@ export class KmipComponent implements OnInit {
     this.loadKmipConfig();
   }
 
-  onSyncKeysPressed(): void {
+  protected onSyncKeysPressed(): void {
     this.isLoading.set(true);
     this.api.call('kmip.sync_keys').pipe(untilDestroyed(this)).subscribe({
       next: () => {
@@ -115,7 +115,7 @@ export class KmipComponent implements OnInit {
     });
   }
 
-  onClearSyncKeysPressed(): void {
+  protected onClearSyncKeysPressed(): void {
     this.isLoading.set(true);
     this.api.call('kmip.clear_sync_pending_keys').pipe(untilDestroyed(this)).subscribe({
       next: () => {
@@ -132,7 +132,7 @@ export class KmipComponent implements OnInit {
     });
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     this.dialogService.jobDialog(
       this.api.job('kmip.update', [this.form.value as KmipConfigUpdate]),
       { title: this.translate.instant(helptextSystemKmip.jobDialog.title) },

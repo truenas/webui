@@ -99,7 +99,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-  activateTabFromUrl(): void {
+  protected activateTabFromUrl(): void {
     const subpath = this.route.snapshot?.url[0]?.path;
     const tabFound = this.allTabs.find((tab) => (tab.value as string) === subpath);
     this.updateActiveTab(tabFound || this.allTabs[0]);
@@ -113,7 +113,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-  activateTab(activeTab: ReportTab): void {
+  protected activateTab(activeTab: ReportTab): void {
     const reportCategories = activeTab.value === ReportType.Disk
       ? this.diskReports
       : this.otherReports.filter(
@@ -186,7 +186,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
    * @param list Report[]
    * @returns Report[]
    */
-  flattenReports(list: Report[]): Report[] {
+  protected flattenReports(list: Report[]): Report[] {
     const result: Report[] = [];
     list.forEach((report) => {
       // With identifiers

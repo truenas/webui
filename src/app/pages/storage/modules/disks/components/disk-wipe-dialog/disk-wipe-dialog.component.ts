@@ -78,7 +78,7 @@ export class DiskWipeDialog {
     return this.translate.instant('Wipe Disk {name}', { name: this.data.diskName });
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     this.dialogService.confirm({
       title: this.title,
       message: this.translate.instant('Wipe this disk?'),

@@ -62,7 +62,7 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
   globalTwoFactorEnabled: boolean;
   showQrCodeWarning = false;
 
-  get global2FaMsg(): string {
+  protected get global2FaMsg(): string {
     if (!this.globalTwoFactorEnabled) {
       return this.translate.instant(helptext2fa.globallyDisabled);
     }
@@ -104,7 +104,7 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
     this.window.localStorage.setItem('showQr2FaWarning', 'false');
   }
 
-  loadTwoFactorConfigs(): void {
+  protected loadTwoFactorConfigs(): void {
     this.isDataLoading.set(true);
     forkJoin([
       this.authService.userTwoFactorConfig$.pipe(take(1)),
@@ -120,7 +120,7 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
       });
   }
 
-  renewSecretOrEnable2Fa(): void {
+  protected renewSecretOrEnable2Fa(): void {
     this.getConfirmation().pipe(
       filter(Boolean),
       switchMap(() => this.renewSecretForUser()),
@@ -130,7 +130,7 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
     ).subscribe();
   }
 
-  getProvisioningUriSecret(uri: string): string | null {
+  protected getProvisioningUriSecret(uri: string): string | null {
     const url = new URL(uri);
     const params = new URLSearchParams(url.search);
 

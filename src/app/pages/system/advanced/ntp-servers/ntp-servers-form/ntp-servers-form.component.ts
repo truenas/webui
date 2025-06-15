@@ -100,7 +100,7 @@ export class NtpServersFormComponent implements OnInit {
   /**
    * @param server Skip argument to add new server.
    */
-  setupForm(server: NtpServer): void {
+  protected setupForm(server: NtpServer): void {
     this.formGroup.patchValue({
       address: server.address,
       burst: server.burst,
@@ -111,7 +111,7 @@ export class NtpServersFormComponent implements OnInit {
     });
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     const values = this.formGroup.getRawValue();
     const body: CreateNtpServer = {
       address: values.address,

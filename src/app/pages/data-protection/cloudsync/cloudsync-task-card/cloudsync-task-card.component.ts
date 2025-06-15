@@ -189,7 +189,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
     this.dataProvider.load();
   }
 
-  doDelete(cloudsyncTask: CloudSyncTaskUi): void {
+  protected doDelete(cloudsyncTask: CloudSyncTaskUi): void {
     this.dialogService.confirm({
       title: this.translate.instant('Confirmation'),
       message: this.translate.instant('Delete Cloud Sync Task <b>"{name}"</b>?', {
@@ -211,7 +211,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
     });
   }
 
-  onAdd(): void {
+  protected onAdd(): void {
     this.slideIn.open(CloudSyncWizardComponent, { wide: true }).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
@@ -222,7 +222,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
     });
   }
 
-  onEdit(row?: CloudSyncTaskUi): void {
+  protected onEdit(row?: CloudSyncTaskUi): void {
     this.slideIn.open(CloudSyncFormComponent, { wide: true, data: row }).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
@@ -231,7 +231,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
     });
   }
 
-  runNow(row: CloudSyncTaskUi): void {
+  protected runNow(row: CloudSyncTaskUi): void {
     this.dialogService.confirm({
       title: this.translate.instant('Run Now'),
       message: this.translate.instant('Run «{name}» Cloud Sync now?', { name: row.description }),
@@ -258,7 +258,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
     });
   }
 
-  stopCloudSyncTask(row: CloudSyncTaskUi): void {
+  protected stopCloudSyncTask(row: CloudSyncTaskUi): void {
     this.dialogService
       .confirm({
         title: this.translate.instant('Stop'),
@@ -281,7 +281,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
       });
   }
 
-  dryRun(row: CloudSyncTaskUi): void {
+  protected dryRun(row: CloudSyncTaskUi): void {
     this.dialogService.confirm({
       title: this.translate.instant(helptextCloudSync.dryRunTitle),
       message: this.translate.instant(helptextCloudSync.dryRunDialog),
@@ -306,7 +306,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
     });
   }
 
-  restore(row: CloudSyncTaskUi): void {
+  protected restore(row: CloudSyncTaskUi): void {
     this.matDialog
       .open(CloudSyncRestoreDialog, { data: row.id })
       .afterClosed()

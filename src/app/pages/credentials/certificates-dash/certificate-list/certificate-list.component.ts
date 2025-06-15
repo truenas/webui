@@ -137,11 +137,11 @@ export class CertificateListComponent implements OnInit {
     this.getCertificates();
   }
 
-  getCertificates(): void {
+  protected getCertificates(): void {
     this.dataProvider.load();
   }
 
-  setDefaultSort(): void {
+  private setDefaultSort(): void {
     this.dataProvider.setSorting({
       active: 1,
       direction: SortDirection.Asc,
@@ -149,7 +149,7 @@ export class CertificateListComponent implements OnInit {
     });
   }
 
-  doImport(): void {
+  protected doImport(): void {
     this.slideIn.open(ImportCertificateComponent).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
@@ -158,7 +158,7 @@ export class CertificateListComponent implements OnInit {
     });
   }
 
-  doEdit(certificate: Certificate): void {
+  protected doEdit(certificate: Certificate): void {
     this.slideIn.open(CertificateEditComponent, {
       wide: true,
       data: certificate,
@@ -170,7 +170,7 @@ export class CertificateListComponent implements OnInit {
     });
   }
 
-  doDelete(certificate: Certificate): void {
+  protected doDelete(certificate: Certificate): void {
     this.dialogService.confirm({
       title: this.translate.instant('Delete Certificate'),
       message: this.translate.instant('Are you sure you want to delete "{name}"?', { name: certificate.name }),
@@ -199,7 +199,7 @@ export class CertificateListComponent implements OnInit {
     });
   }
 
-  doDownload(certificate: Certificate): void {
+  protected doDownload(certificate: Certificate): void {
     const isCsr = certificate.cert_type_CSR;
     const path = isCsr ? certificate.csr_path : certificate.certificate_path;
     const fileName = `${certificate.name}.${isCsr ? 'csr' : 'crt'}`;

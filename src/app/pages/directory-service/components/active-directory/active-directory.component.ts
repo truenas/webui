@@ -124,11 +124,11 @@ export class ActiveDirectoryComponent implements OnInit {
     this.loadFormValues();
   }
 
-  onAdvancedModeToggled(): void {
+  protected onAdvancedModeToggled(): void {
     this.isAdvancedMode = !this.isAdvancedMode;
   }
 
-  onRebuildCachePressed(): void {
+  protected onRebuildCachePressed(): void {
     this.isLoading.set(true);
     this.dialogService
       .jobDialog(this.systemGeneralService.refreshDirServicesCache())
@@ -149,7 +149,7 @@ export class ActiveDirectoryComponent implements OnInit {
       });
   }
 
-  onLeaveDomainPressed(): void {
+  protected onLeaveDomainPressed(): void {
     const dialog = this.matDialog.open(LeaveDomainDialog);
     dialog.afterClosed().pipe(untilDestroyed(this)).subscribe((leftDomain) => {
       if (!leftDomain) {
@@ -160,7 +160,7 @@ export class ActiveDirectoryComponent implements OnInit {
     });
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     this.isLoading.set(true);
     const values = {
       ...this.form.value,

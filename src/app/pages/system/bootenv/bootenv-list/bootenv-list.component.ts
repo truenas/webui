@@ -186,11 +186,11 @@ export class BootEnvironmentListComponent implements OnInit {
     ariaLabels: (row) => [row.id, this.translate.instant('Boot Environment')],
   });
 
-  get selectedBootenvs(): BootEnvironmentUi[] {
+  protected get selectedBootenvs(): BootEnvironmentUi[] {
     return this.bootenvs.filter((bootenv) => bootenv.selected);
   }
 
-  get selectionHasItems(): boolean {
+  protected get selectionHasItems(): boolean {
     return this.selectedBootenvs.some((bootenv) => !bootenv.active && !bootenv.activated);
   }
 
@@ -224,25 +224,25 @@ export class BootEnvironmentListComponent implements OnInit {
     });
   }
 
-  handleSlideInClosed(slideInRef$: Observable<SlideInResponse<boolean>>): void {
+  protected handleSlideInClosed(slideInRef$: Observable<SlideInResponse<boolean>>): void {
     slideInRef$.pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(() => this.refresh());
   }
 
-  openBootenvStats(): void {
+  protected openBootenvStats(): void {
     this.matDialog.open(BootenvStatsDialog);
   }
 
-  doClone(bootenv: BootEnvironment): void {
+  protected doClone(bootenv: BootEnvironment): void {
     const slideInRef$ = this.slideIn.open(BootEnvironmentFormComponent, {
       data: bootenv.id,
     });
     this.handleSlideInClosed(slideInRef$);
   }
 
-  doScrub(): void {
+  protected doScrub(): void {
     this.dialogService.confirm({
       title: this.translate.instant('Scrub'),
       message: this.translate.instant('Start the scrub now?'),
@@ -261,7 +261,7 @@ export class BootEnvironmentListComponent implements OnInit {
     });
   }
 
-  doDelete(bootenvs: BootEnvironmentUi[]): void {
+  protected doDelete(bootenvs: BootEnvironmentUi[]): void {
     bootenvs.forEach((bootenv) => delete bootenv.selected);
     const data = bootenvs.filter((bootenv) => !bootenv.active && !bootenv.activated);
     this.matDialog.open(BootPoolDeleteDialog, { data })
@@ -270,7 +270,7 @@ export class BootEnvironmentListComponent implements OnInit {
       .subscribe(() => this.refresh());
   }
 
-  doActivate(bootenv: BootEnvironmentUi): void {
+  protected doActivate(bootenv: BootEnvironmentUi): void {
     this.dialogService.confirm({
       title: this.translate.instant('Activate'),
       message: this.translate.instant('Activate this Boot Environment?'),
@@ -287,7 +287,7 @@ export class BootEnvironmentListComponent implements OnInit {
     ).subscribe(() => this.refresh());
   }
 
-  toggleKeep(bootenv: BootEnvironmentUi): void {
+  protected toggleKeep(bootenv: BootEnvironmentUi): void {
     if (!bootenv.keep) {
       this.dialogService.confirm({
         title: this.translate.instant('Keep'),

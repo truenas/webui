@@ -148,11 +148,11 @@ export class SnapshotTaskCardComponent implements OnInit {
     this.getSnapshotTasks();
   }
 
-  getSnapshotTasks(): void {
+  protected getSnapshotTasks(): void {
     this.dataProvider.load();
   }
 
-  doDelete(snapshotTask: PeriodicSnapshotTaskUi): void {
+  protected doDelete(snapshotTask: PeriodicSnapshotTaskUi): void {
     this.dialogService.confirm({
       title: this.translate.instant('Confirmation'),
       message: this.translate.instant('Delete Periodic Snapshot Task <b>"{value}"</b>?', {
@@ -174,7 +174,7 @@ export class SnapshotTaskCardComponent implements OnInit {
     });
   }
 
-  openForm(row?: PeriodicSnapshotTaskUi): void {
+  protected openForm(row?: PeriodicSnapshotTaskUi): void {
     this.slideIn.open(SnapshotTaskFormComponent, { data: row, wide: true }).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
@@ -183,7 +183,7 @@ export class SnapshotTaskCardComponent implements OnInit {
     });
   }
 
-  private onChangeEnabledState(snapshotTask: PeriodicSnapshotTaskUi): void {
+  protected onChangeEnabledState(snapshotTask: PeriodicSnapshotTaskUi): void {
     this.api
       .call('pool.snapshottask.update', [snapshotTask.id, { enabled: !snapshotTask.enabled } as PeriodicSnapshotTaskUi])
       .pipe(untilDestroyed(this))

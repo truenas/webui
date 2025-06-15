@@ -157,7 +157,7 @@ export class SmbCardComponent implements OnInit {
     this.dataProvider.load();
   }
 
-  openForm(row?: SmbShare): void {
+  protected openForm(row?: SmbShare): void {
     this.slideIn.open(SmbFormComponent, { data: { existingSmbShare: row } }).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
@@ -166,7 +166,7 @@ export class SmbCardComponent implements OnInit {
     });
   }
 
-  doDelete(smb: SmbShare): void {
+  protected doDelete(smb: SmbShare): void {
     this.dialogService.confirm({
       message: this.translate.instant('Are you sure you want to delete SMB Share <b>"{name}"</b>?', { name: smb.name }),
       buttonText: this.translate.instant('Delete'),
@@ -185,7 +185,7 @@ export class SmbCardComponent implements OnInit {
     });
   }
 
-  doShareAclEdit(row: SmbShare): void {
+  protected doShareAclEdit(row: SmbShare): void {
     if (row.locked) {
       this.showLockedPathDialog(row.path);
     } else {
@@ -209,7 +209,7 @@ export class SmbCardComponent implements OnInit {
     }
   }
 
-  doFilesystemAclEdit(row: SmbShare): void {
+  protected doFilesystemAclEdit(row: SmbShare): void {
     if (row.locked) {
       this.showLockedPathDialog(row.path);
     } else {
@@ -245,7 +245,7 @@ export class SmbCardComponent implements OnInit {
     });
   }
 
-  setDefaultSort(): void {
+  protected setDefaultSort(): void {
     this.dataProvider.setSorting({
       active: 0,
       direction: SortDirection.Asc,

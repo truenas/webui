@@ -522,7 +522,7 @@ export class ZvolFormComponent implements OnInit {
     return data;
   }
 
-  addSubmit(): void {
+  protected addSubmit(): void {
     this.isLoading.set(true);
     const data: ZvolFormData = this.getPayload(this.form.value);
 
@@ -587,7 +587,7 @@ export class ZvolFormComponent implements OnInit {
     });
   }
 
-  editSubmit(): void {
+  protected editSubmit(): void {
     this.isLoading.set(true);
     this.api.call('pool.dataset.query', [[['id', '=', this.parentOrZvolId]]]).pipe(untilDestroyed(this)).subscribe({
       next: (datasets) => {

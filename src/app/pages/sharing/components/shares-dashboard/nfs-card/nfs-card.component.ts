@@ -126,7 +126,7 @@ export class NfsCardComponent implements OnInit {
     this.dataProvider.load();
   }
 
-  openForm(row?: NfsShare): void {
+  protected openForm(row?: NfsShare): void {
     this.slideIn.open(NfsFormComponent, { data: { existingNfsShare: row } }).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
@@ -135,7 +135,7 @@ export class NfsCardComponent implements OnInit {
     });
   }
 
-  doDelete(nfs: NfsShare): void {
+  protected doDelete(nfs: NfsShare): void {
     this.dialogService.confirm({
       message: this.translate.instant('Are you sure you want to delete NFS Share <b>"{path}"</b>?', { path: nfs.path }),
       buttonColor: 'warn',
@@ -171,7 +171,7 @@ export class NfsCardComponent implements OnInit {
     });
   }
 
-  setDefaultSort(): void {
+  protected setDefaultSort(): void {
     this.dataProvider.setSorting({
       active: 0,
       direction: SortDirection.Asc,

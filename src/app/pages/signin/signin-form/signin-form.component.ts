@@ -107,7 +107,7 @@ export class SigninFormComponent implements OnInit {
     });
   }
 
-  async login(): Promise<void> {
+  protected async login(): Promise<void> {
     if (await firstValueFrom(this.signinStore.isLoading$)) {
       return;
     }

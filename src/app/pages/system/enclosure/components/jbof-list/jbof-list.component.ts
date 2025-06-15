@@ -100,7 +100,7 @@ export class JbofListComponent implements OnInit {
     ariaLabels: (row) => [row.mgmt_username, this.translate.instant('JBOF')],
   });
 
-  get emptyConfigService(): EmptyService {
+  protected get emptyConfigService(): EmptyService {
     return this.emptyService;
   }
 
@@ -126,14 +126,14 @@ export class JbofListComponent implements OnInit {
     });
   }
 
-  openForm(jbof?: Jbof): void {
+  protected openForm(jbof?: Jbof): void {
     this.slideIn.open(JbofFormComponent, { data: jbof }).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(() => this.getJbofs());
   }
 
-  doDelete(jbof: Jbof): void {
+  protected doDelete(jbof: Jbof): void {
     this.dialogService.confirm({
       title: this.translate.instant('Delete'),
       message: this.translate.instant('Are you sure you want to delete this item?'),
@@ -158,7 +158,7 @@ export class JbofListComponent implements OnInit {
     });
   }
 
-  getJbofs(): void {
+  protected getJbofs(): void {
     this.dataProvider.load();
     this.updateAvailableJbof();
   }
@@ -172,7 +172,7 @@ export class JbofListComponent implements OnInit {
     });
   }
 
-  onListFiltered(query: string): void {
+  protected onListFiltered(query: string): void {
     this.filterString = query;
     this.dataProvider.setFilter({ query, columnKeys: ['mgmt_username', 'description'] });
   }

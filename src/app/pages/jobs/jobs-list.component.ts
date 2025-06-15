@@ -142,7 +142,7 @@ export class JobsListComponent implements OnInit {
     });
   }
 
-  onTabChange(tab: JobTab): void {
+  protected onTabChange(tab: JobTab): void {
     this.selectedIndex = tab;
     switch (this.selectedIndex) {
       case JobTab.Failed:

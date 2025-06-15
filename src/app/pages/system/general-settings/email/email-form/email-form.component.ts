@@ -177,7 +177,7 @@ export class EmailFormComponent implements OnInit {
     }
   }
 
-  onSendTestEmailPressed(): void {
+  protected onSendTestEmailPressed(): void {
     this.api.call('mail.local_administrator_email')
       .pipe(
         this.errorHandler.withErrorHandler(),
@@ -197,11 +197,11 @@ export class EmailFormComponent implements OnInit {
       });
   }
 
-  onLoggedIn(credentials: unknown): void {
+  protected onLoggedIn(credentials: unknown): void {
     this.oauthCredentials = credentials as MailOauthConfig;
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     this.isLoading.set(true);
     const update = this.prepareConfigUpdate();
 

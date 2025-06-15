@@ -171,7 +171,7 @@ export class ReplicationListComponent implements OnInit {
     ariaLabels: (row) => [row.name, this.translate.instant('Replication Task')],
   });
 
-  get hiddenColumns(): Column<ReplicationTask, ColumnComponent<ReplicationTask>>[] {
+  protected get hiddenColumns(): Column<ReplicationTask, ColumnComponent<ReplicationTask>>[] {
     return this.columns.filter((column) => column?.hidden);
   }
 
@@ -202,7 +202,7 @@ export class ReplicationListComponent implements OnInit {
     });
   }
 
-  setDefaultSort(): void {
+  protected setDefaultSort(): void {
     this.dataProvider.setSorting({
       active: 1,
       direction: SortDirection.Asc,
@@ -210,11 +210,11 @@ export class ReplicationListComponent implements OnInit {
     });
   }
 
-  getReplicationTasks(): void {
+  protected getReplicationTasks(): void {
     this.dataProvider.load();
   }
 
-  runNow(row: ReplicationTask): void {
+  protected runNow(row: ReplicationTask): void {
     this.dialogService.confirm({
       message: this.translate.instant('Replicate «{name}» now?', { name: row.name }),
       hideCheckbox: true,
@@ -242,7 +242,7 @@ export class ReplicationListComponent implements OnInit {
     });
   }
 
-  restore(row: ReplicationTask): void {
+  protected restore(row: ReplicationTask): void {
     const dialog = this.matDialog.open(ReplicationRestoreDialog, {
       data: row.id,
     });
@@ -251,7 +251,7 @@ export class ReplicationListComponent implements OnInit {
       .subscribe(() => this.getReplicationTasks());
   }
 
-  openForm(row?: ReplicationTask): void {
+  protected openForm(row?: ReplicationTask): void {
     if (row) {
       this.slideIn.open(
         ReplicationFormComponent,
@@ -272,7 +272,7 @@ export class ReplicationListComponent implements OnInit {
     }
   }
 
-  doDelete(row: ReplicationTask): void {
+  protected doDelete(row: ReplicationTask): void {
     this.dialogService.confirm({
       message: this.translate.instant('Delete Replication Task <b>"{name}"</b>?', {
         name: row.name,
@@ -293,18 +293,18 @@ export class ReplicationListComponent implements OnInit {
     });
   }
 
-  onListFiltered(query: string): void {
+  protected onListFiltered(query: string): void {
     this.filterString = query;
     this.dataProvider.setFilter({ query, columnKeys: ['name'] });
   }
 
-  columnsChange(columns: typeof this.columns): void {
+  protected columnsChange(columns: typeof this.columns): void {
     this.columns = [...columns];
     this.cdr.detectChanges();
     this.cdr.markForCheck();
   }
 
-  downloadKeys(row: ReplicationTask): void {
+  protected downloadKeys(row: ReplicationTask): void {
     const fileName = `${row.name}_encryption_keys.json`;
     this.download.coreDownload({
       fileName,

@@ -14,7 +14,7 @@ export class ShellComponent implements TerminalConfiguration {
   protected readonly searchableElements = shellElements;
   connectionData = {};
 
-  get conf(): typeof this {
+  protected get conf(): typeof this {
     return this;
   }
 }

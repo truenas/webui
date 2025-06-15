@@ -202,36 +202,36 @@ export class SnapshotTaskListComponent implements OnInit {
     });
   }
 
-  getSnapshotTasks(): void {
+  protected getSnapshotTasks(): void {
     this.dataProvider.load();
   }
 
-  columnsChange(columns: typeof this.columns): void {
+  protected columnsChange(columns: typeof this.columns): void {
     this.columns = [...columns];
     this.cdr.detectChanges();
     this.cdr.markForCheck();
   }
 
-  onListFiltered(query: string): void {
+  protected onListFiltered(query: string): void {
     this.filterString = query;
     this.dataProvider.setFilter({ list: this.snapshotTasks, query, columnKeys: ['dataset', 'naming_schema'] });
   }
 
-  doAdd(): void {
+  protected doAdd(): void {
     this.slideIn.open(SnapshotTaskFormComponent, { wide: true }).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(() => this.getSnapshotTasks());
   }
 
-  doEdit(row: PeriodicSnapshotTaskUi): void {
+  protected doEdit(row: PeriodicSnapshotTaskUi): void {
     this.slideIn.open(SnapshotTaskFormComponent, { wide: true, data: row }).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(() => this.getSnapshotTasks());
   }
 
-  doDelete(snapshotTask: PeriodicSnapshotTaskUi): void {
+  protected doDelete(snapshotTask: PeriodicSnapshotTaskUi): void {
     this.dialogService.confirm({
       title: this.translate.instant('Confirmation'),
       message: this.translate.instant('Delete Periodic Snapshot Task <b>"{value}"</b>?', {

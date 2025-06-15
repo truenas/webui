@@ -112,7 +112,7 @@ export class ReportingExportersFormComponent implements OnInit {
     this.handleTypeChange();
   }
 
-  handleTypeChange(): void {
+  private handleTypeChange(): void {
     this.form.controls.type.valueChanges.pipe(untilDestroyed(this)).subscribe({
       next: (value) => {
         this.onExporterTypeChanged(value as ReportingExporterType);
@@ -147,11 +147,11 @@ export class ReportingExportersFormComponent implements OnInit {
     });
   }
 
-  getExportersSchemas(): Observable<ReportingExporterSchema[]> {
+  protected getExportersSchemas(): Observable<ReportingExporterSchema[]> {
     return this.api.call('reporting.exporters.exporter_schemas');
   }
 
-  setExporterTypeOptions(schemas: ReportingExporterSchema[]): void {
+  protected setExporterTypeOptions(schemas: ReportingExporterSchema[]): void {
     this.exporterTypeOptions$ = of(
       schemas.map((schema) => ({
         label: ignoreTranslation(schema.key),
@@ -160,7 +160,7 @@ export class ReportingExportersFormComponent implements OnInit {
     );
   }
 
-  createExporterControls(schemas: ReportingExporterSchema[]): void {
+  protected createExporterControls(schemas: ReportingExporterSchema[]): void {
     for (const schema of schemas) {
       for (const input of schema.schema) {
         this.form.controls.attributes.addControl(
@@ -182,18 +182,18 @@ export class ReportingExportersFormComponent implements OnInit {
     this.onExporterTypeChanged(null);
   }
 
-  parseSchemaForDynamicSchema(schema: ReportingExporterSchema): DynamicFormSchemaNode[] {
+  protected parseSchemaForDynamicSchema(schema: ReportingExporterSchema): DynamicFormSchemaNode[] {
     return schema.schema
       .filter((input) => !input.const)
       .map((input) => getDynamicFormSchemaNode(input));
   }
 
-  parseSchemaForExporterList(schema: ReportingExporterSchema): ReportingExporterList {
+  protected parseSchemaForExporterList(schema: ReportingExporterSchema): ReportingExporterList {
     const variables = schema.schema.map((input) => input._name_);
     return { key: schema.key, variables };
   }
 
-  onExporterTypeChanged(type: ReportingExporterType | null): void {
+  protected onExporterTypeChanged(type: ReportingExporterType | null): void {
     for (const list of this.reportingExporterList) {
       if (list.key === type) {
         for (const variable of list.variables) {

@@ -143,7 +143,7 @@ export class CloudCredentialsCardComponent implements OnInit {
     });
   }
 
-  doAdd(): void {
+  protected doAdd(): void {
     this.slideIn.open(CloudCredentialsFormComponent)
       .pipe(filter((response) => !!response.response), untilDestroyed(this))
       .subscribe(() => {
@@ -151,7 +151,7 @@ export class CloudCredentialsCardComponent implements OnInit {
       });
   }
 
-  doEdit(credential: CloudSyncCredential): void {
+  protected doEdit(credential: CloudSyncCredential): void {
     const close$ = this.slideIn.open(
       CloudCredentialsFormComponent,
       {
@@ -165,7 +165,7 @@ export class CloudCredentialsCardComponent implements OnInit {
     });
   }
 
-  doDelete(credential: CloudSyncCredential): void {
+  protected doDelete(credential: CloudSyncCredential): void {
     this.dialog
       .confirm({
         title: this.translate.instant('Delete Cloud Credential'),

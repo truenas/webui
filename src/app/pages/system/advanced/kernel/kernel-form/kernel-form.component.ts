@@ -78,13 +78,13 @@ export class KernelFormComponent implements OnInit {
     this.setupForm();
   }
 
-  setupForm(): void {
+  protected setupForm(): void {
     this.form.patchValue({
       debugkernel: this.debugkernel,
     });
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     const values = this.form.value;
     const commonBody = {
       debugkernel: values.debugkernel,

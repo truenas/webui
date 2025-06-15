@@ -91,7 +91,7 @@ export class KerberosKeytabsFormComponent implements OnInit {
     }
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     const values = this.form.getRawValue();
 
     const fReader: FileReader = new FileReader();

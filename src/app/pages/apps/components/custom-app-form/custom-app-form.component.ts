@@ -55,7 +55,7 @@ export class CustomAppFormComponent implements OnInit {
     custom_compose_config_string: ['\n\n', Validators.required],
   });
 
-  get isNew(): boolean {
+  protected get isNew(): boolean {
     return !this.existingApp;
   }
 
