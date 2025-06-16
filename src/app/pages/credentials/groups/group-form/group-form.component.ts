@@ -120,7 +120,7 @@ export class GroupFormComponent implements OnInit {
     this.getPrivilegesList();
   }
 
-  readonly privilegesProvider: ChipsProvider = (query: string) => {
+  protected readonly privilegesProvider: ChipsProvider = (query: string) => {
     return this.api.call('privilege.query', []).pipe(
       map((privileges) => {
         const chips = privileges.map((privilege) => privilege.name);
@@ -129,7 +129,7 @@ export class GroupFormComponent implements OnInit {
     );
   };
 
-  setupForm(): void {
+  protected setupForm(): void {
     this.setFormRelations();
 
     if (this.editingGroup) {
@@ -157,7 +157,7 @@ export class GroupFormComponent implements OnInit {
     }
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     const values = this.form.value;
     const commonBody = {
       name: values.name,

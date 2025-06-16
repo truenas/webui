@@ -44,15 +44,15 @@ import { InstalledAppsListComponent } from 'app/pages/apps/components/installed-
 export class InstalledAppsComponent {
   readonly installedAppsList = viewChild.required(InstalledAppsListComponent);
 
-  get selectedApp(): App | undefined {
+  protected get selectedApp(): App | undefined {
     return this.installedAppsList().selectedApp;
   }
 
-  get appsUpdateAvailable(): number {
+  protected get appsUpdateAvailable(): number {
     return this.installedAppsList().appsUpdateAvailable;
   }
 
-  get hasUpdates(): boolean {
+  protected get hasUpdates(): boolean {
     return this.installedAppsList().hasUpdates;
   }
 
@@ -66,7 +66,7 @@ export class InstalledAppsComponent {
     this.installedAppsList().stop(name);
   }
 
-  onBulkUpdate(updateAll = false): void {
+  protected onBulkUpdate(updateAll = false): void {
     this.installedAppsList().onBulkUpdate(updateAll);
   }
 }

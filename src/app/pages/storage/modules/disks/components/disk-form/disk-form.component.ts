@@ -141,7 +141,7 @@ export class DiskFormComponent implements OnInit {
     return transformedValue;
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     const valuesDiskUpdate: DiskUpdate = this.prepareUpdate(this.form.value);
 
     this.isLoading.set(true);

@@ -142,7 +142,7 @@ export class AlertServiceListComponent implements OnInit {
     });
   }
 
-  addAlertService(): void {
+  protected addAlertService(): void {
     this.slideIn.open(AlertServiceComponent).pipe(
       filter(Boolean),
       untilDestroyed(this),
@@ -160,14 +160,14 @@ export class AlertServiceListComponent implements OnInit {
     this.cdr.markForCheck();
   }
 
-  private editAlertService(row: AlertService): void {
+  protected editAlertService(row: AlertService): void {
     this.slideIn.open(AlertServiceComponent, { data: row }).pipe(
       filter(Boolean),
       untilDestroyed(this),
     ).subscribe(() => this.getAlertServices());
   }
 
-  private confirmDeleteAlertService(alertService: AlertService): void {
+  protected confirmDeleteAlertService(alertService: AlertService): void {
     this.dialogService.confirm({
       title: this.translate.instant('Confirmation'),
       message: this.translate.instant('Delete Alert Service <b>"{name}"</b>?', {
@@ -181,7 +181,7 @@ export class AlertServiceListComponent implements OnInit {
     ).subscribe(() => this.getAlertServices());
   }
 
-  private getAlertServices(): void {
+  protected getAlertServices(): void {
     this.dataProvider.load();
   }
 }

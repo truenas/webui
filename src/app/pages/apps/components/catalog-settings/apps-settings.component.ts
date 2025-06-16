@@ -130,7 +130,7 @@ export class AppsSettingsComponent implements OnInit {
       });
   }
 
-  addAddressPool(): void {
+  protected addAddressPool(): void {
     const control = this.fb.nonNullable.group({
       base: ['', [Validators.required, ipv4or6cidrValidator()]],
       size: [null as number | null, [Validators.required]],
@@ -139,11 +139,11 @@ export class AppsSettingsComponent implements OnInit {
     this.form.controls.address_pools.push(control);
   }
 
-  removeAddressPool(index: number): void {
+  protected removeAddressPool(index: number): void {
     this.form.controls.address_pools.removeAt(index);
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     const values = this.form.getRawValue();
 
     this.isFormLoading.set(true);
