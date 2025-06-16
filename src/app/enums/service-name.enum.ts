@@ -25,3 +25,10 @@ export enum RdmaProtocolName {
   Nfs = 'NFS',
   Iser = 'ISER',
 }
+
+export enum ServiceOperation {
+  Start = 'START',
+  Stop = 'STOP',
+  Restart = 'RESTART',
+  Reload = 'RELOAD',
+}

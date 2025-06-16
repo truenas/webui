@@ -231,7 +231,7 @@ import { Service } from 'app/interfaces/service.interface';
 import { ResizeShellRequest } from 'app/interfaces/shell.interface';
 import { SmbConfig, SmbConfigUpdate } from 'app/interfaces/smb-config.interface';
 import {
-  SmbPresets, SmbShare, SmbSharesec, SmbSharesecAce, SmbShareUpdate,
+  SmbShare, SmbSharesec, SmbSharesecAce, SmbShareUpdate,
 } from 'app/interfaces/smb-share.interface';
 import { SmbStatus } from 'app/interfaces/smb-status.interface';
 import { SnmpConfig, SnmpConfigUpdate } from 'app/interfaces/snmp-config.interface';
@@ -768,12 +768,6 @@ export interface ApiCallDirectory {
 
   // Service
   'service.query': { params: QueryParams<Service>; response: Service[] };
-  'service.restart': { params: [ServiceName]; response: boolean };
-  'service.start': { params: [ServiceName, { silent: boolean }]; response: boolean };
-  'service.stop': {
-    params: [ServiceName, { silent: boolean }];
-    response: boolean; // False indicates that service has been stopped.
-  };
   'service.update': { params: [number | ServiceName, Partial<Service>]; response: number };
 
   // Sharing
@@ -784,7 +778,6 @@ export interface ApiCallDirectory {
   'sharing.smb.create': { params: [SmbShareUpdate]; response: SmbShare };
   'sharing.smb.delete': { params: [id: number]; response: boolean };
   'sharing.smb.getacl': { params: [{ share_name: string }]; response: SmbSharesec };
-  'sharing.smb.presets': { params: void; response: SmbPresets };
   'sharing.smb.query': { params: QueryParams<SmbShare>; response: SmbShare[] };
   'sharing.smb.setacl': { params: [{ share_name: string; share_acl: SmbSharesecAce[] }]; response: SmbSharesec };
   'sharing.smb.share_precheck': { params: [{ name: string }]; response: null | { reason: string } };

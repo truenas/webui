@@ -1,44 +1,32 @@
 import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  OnInit, signal,
+  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal,
 } from '@angular/core';
-import {
-  Validators, ReactiveFormsModule, NonNullableFormBuilder,
-} from '@angular/forms';
+import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { isEqual } from 'lodash-es';
-import { Observable, of } from 'rxjs';
 import {
-  debounceTime,
-  filter,
-  map,
-  switchMap,
-  take,
-  tap,
+  endWith, Observable, of,
+} from 'rxjs';
+import {
+  debounceTime, filter, map, switchMap, take, tap,
 } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetPreset } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
-import { ServiceName } from 'app/enums/service-name.enum';
+import { ServiceName, ServiceOperation } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { extractApiErrorDetails } from 'app/helpers/api.helper';
 import { mapToOptionsWithTooltips } from 'app/helpers/options.helper';
 import { helptextSharingSmb } from 'app/helptext/sharing';
 import { DatasetCreate } from 'app/interfaces/dataset.interface';
 import {
-  smbPresetTooltips,
-  SmbPresetType,
-  smbPresetTypeLabels,
-  SmbShare, SmbShareUpdate,
+  smbPresetTooltips, SmbPresetType, smbPresetTypeLabels, SmbShare, SmbShareUpdate,
 } from 'app/interfaces/smb-share.interface';
 import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -619,15 +607,19 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
   restartCifsService = (): Observable<boolean> => {
     this.loader.open();
-    return this.api.call('service.restart', [ServiceName.Cifs]).pipe(
-      tap(() => {
-        this.loader.close();
-        this.snackbar.success(
-          this.translate.instant(
-            helptextSharingSmb.restartedSmbDialog.message,
-          ),
-        );
+    return this.api.job('service.control', [ServiceOperation.Restart, ServiceName.Cifs, { silent: false }]).pipe(
+      tap({
+        complete: () => {
+          this.loader.close();
+          this.snackbar.success(
+            this.translate.instant(
+              helptextSharingSmb.restartedSmbDialog.message,
+            ),
+          );
+        },
       }),
+      endWith(true),
+      filter((job) => job === true),
     );
   };
 

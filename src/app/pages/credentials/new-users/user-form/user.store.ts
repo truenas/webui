@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ComponentStore } from '@ngrx/component-store';
+import { merge } from 'lodash-es';
 import {
   combineLatest, Observable, of, switchMap, tap,
 } from 'rxjs';
@@ -18,7 +19,7 @@ export const defaultHomePath = '/var/empty';
 export interface UserFormSetupDetails {
   allowedAccess: AllowedAccessConfig;
   defaultPermissions: boolean;
-  role: Role | 'prompt';
+  role: Role | null;
   stigPassword: UserStigPasswordOption;
   homeModeOldValue: string;
 }
@@ -49,7 +50,7 @@ const initialState: UserFormState = {
       shellAccess: false,
     },
     defaultPermissions: true,
-    role: 'prompt',
+    role: null,
     stigPassword: UserStigPasswordOption.DisablePassword,
     homeModeOldValue: '',
   },
@@ -171,12 +172,11 @@ export class UserFormStore extends ComponentStore<UserFormState> {
   });
 
   setAllowedAccessConfig = this.updater((state, config: AllowedAccessConfig) => {
-    return {
-      ...state,
-      allowedAccess: {
-        ...config,
+    return merge({}, state, {
+      setupDetails: {
+        allowedAccess: config,
       },
-    };
+    });
   });
 
   updateSetupDetails = this.updater((state, setupDetails: Partial<UserFormSetupDetails>) => {
