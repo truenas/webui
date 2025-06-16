@@ -1,5 +1,7 @@
 {
   "": "",
+  "Last Action": "",
+  "See Logs": "",
   "SSH Key Set": "",
   "SSH Key Set & Password Login Enabled": "",
   "SSH Password Login Enabled": "",
@@ -2527,7 +2529,6 @@
   "Last 24 hours": "지난 24시간",
   "Last 3 days": "지난 3일",
   "Last Change": "마지막 변경",
-  "Last Login": "마지막 로그인",
   "Last month": "지난 달",
   "Last Page": "마지막 페이지",
   "Last Password Change": "마지막 비밀번호 변경",
@@ -3839,7 +3840,6 @@
   "Search Documentation for «{value}»": "«{value}»에 대한 문서 검색",
   "Search Images": "이미지 검색",
   "Search Input Fields": "검색어 입력 칸",
-  "Search Logs": "기록 검색",
   "Search or enter value": "검색 또는 값 입력",
   "Search Results for «{query}»": "«{query}» 검색 결과",
   "Search UI": "UI에서 검색",

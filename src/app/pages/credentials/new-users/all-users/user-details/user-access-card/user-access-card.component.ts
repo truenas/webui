@@ -1,4 +1,3 @@
-import { NgClass } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
@@ -21,6 +20,7 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { UserLastActionComponent } from 'app/pages/credentials/new-users/all-users/user-details/user-last-action/user-last-action.component';
 import {
   ApiKeyFormComponent,
 } from 'app/pages/credentials/users/user-api-keys/components/api-key-form/api-key-form.component';
@@ -43,9 +43,9 @@ import { UrlOptionsService } from 'app/services/url-options.service';
     MatCardActions,
     MatCardContent,
     TranslateModule,
-    NgClass,
     RequiresRolesDirective,
     TestDirective,
+    UserLastActionComponent,
     RouterLink,
   ],
 })
@@ -70,6 +70,10 @@ export class UserAccessCardComponent {
     return null;
   });
 
+  readonly noShellAccess = computed(() => {
+    return this.user().shell === '/usr/bin/nologin' || this.user().shell === '/usr/sbin/nologin';
+  });
+
   readonly rolesAccessStatus = computed<string | null>(() => {
     return this.user().roles
       .map((role) => this.translate.instant(roleNames.get(role) || role))
@@ -83,7 +87,6 @@ export class UserAccessCardComponent {
 
   constructor(
     private translate: TranslateService,
-    private urlOptions: UrlOptionsService,
     private api: ApiService,
     private loader: LoaderService,
     private dialogService: DialogService,
@@ -91,6 +94,7 @@ export class UserAccessCardComponent {
     private snackbar: SnackbarService,
     private slideIn: SlideIn,
     private downloadService: DownloadService,
+    private urlOptions: UrlOptionsService,
   ) {}
 
   protected get auditLink(): string {

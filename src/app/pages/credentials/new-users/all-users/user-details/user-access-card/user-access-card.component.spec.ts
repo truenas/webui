@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { byText } from '@ngneat/spectator';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
+import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -13,11 +14,12 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { UserAccessCardComponent } from 'app/pages/credentials/new-users/all-users/user-details/user-access-card/user-access-card.component';
+import { UserLastActionComponent } from 'app/pages/credentials/new-users/all-users/user-details/user-last-action/user-last-action.component';
 import {
   ApiKeyFormComponent,
 } from 'app/pages/credentials/users/user-api-keys/components/api-key-form/api-key-form.component';
 import { DownloadService } from 'app/services/download.service';
-import { UserAccessCardComponent } from './user-access-card.component';
 
 const mockUser = {
   id: 1,
@@ -43,6 +45,9 @@ describe('UserAccessCardComponent', () => {
     component: UserAccessCardComponent,
     imports: [
       IxIconComponent,
+    ],
+    declarations: [
+      MockComponent(UserLastActionComponent),
     ],
     providers: [
       mockAuth(),
@@ -75,51 +80,47 @@ describe('UserAccessCardComponent', () => {
     expect(spectator.query('h3')).toHaveText('Access');
   });
 
-  it('should show last login section', () => {
-    expect(spectator.query('.last-login')).toHaveText('Last Login: N/A');
+  it('contains last action component', () => {
+    expect(spectator.query(UserLastActionComponent)).toBeTruthy();
   });
 
   it('should display password availability', () => {
-    const passwordSection = spectator.query('.content-wrapper:nth-child(3)');
+    const passwordSection = spectator.query('.content-wrapper:nth-of-type(2)');
     expect(passwordSection).toHaveText('Has Password');
     expect(passwordSection).toContainText('Change Required');
   });
 
   it('should display 2FA access status', () => {
-    const passwordSection = spectator.query('.content-wrapper:nth-child(4)');
+    const passwordSection = spectator.query('.content-wrapper:nth-of-type(3)');
     expect(passwordSection).toHaveText('Has Two-Factor Authentication');
   });
 
   it('should display SMB access status', () => {
-    const passwordSection = spectator.query('.content-wrapper:nth-child(5)');
+    const passwordSection = spectator.query('.content-wrapper:nth-of-type(5)');
     expect(passwordSection).toHaveText('Has SMB Access');
   });
 
   it('should display roles', () => {
-    const rolesSection = spectator.query('.content-wrapper:nth-child(6)');
+    const rolesSection = spectator.query('.content-wrapper:nth-of-type(6)');
     expect(rolesSection).toHaveText('TrueNAS Access: Full Admin');
   });
 
+  it('should display API keys count', () => {
+    const apiKeysSection = spectator.query('.content-wrapper:nth-of-type(7)');
+    expect(apiKeysSection).toHaveText('API Keys: 2 keys');
+  });
+
   it('should display Shell Access status', () => {
-    const apiKeysSection = spectator.query('.content-wrapper:nth-child(8)');
+    const apiKeysSection = spectator.query('.content-wrapper:nth-of-type(8)');
     expect(apiKeysSection).toHaveText('Shell Access: /bin/bash');
   });
 
   it('should display SSH access status', () => {
-    const sshSection = spectator.query('.content-wrapper:nth-child(9)');
+    const sshSection = spectator.query('.content-wrapper:nth-of-type(9)');
     expect(sshSection).toHaveText('SSH Key Set & Password Login Enabled');
   });
 
-  it('has a Search Logs link that takes user to the audit page', () => {
-    const link = spectator.query(byText('Search Logs'));
-
-    expect(link).toHaveAttribute(
-      'href',
-      '/system/audit/%7B%22searchQuery%22:%7B%22isBasicQuery%22:false,%22filters%22:%5B%5B%22username%22,%22%3D%22,%22testuser%22%5D%5D%7D%7D',
-    );
-  });
-
-  it('should lock/unlock user when corresponding button is clicked', async () => {
+  it('should open lock/unlock dialog when button is clicked', async () => {
     const lockButton = await loader.getHarness(MatButtonHarness.with({ text: 'Lock User' }));
     await lockButton.click();
 
@@ -132,7 +133,7 @@ describe('UserAccessCardComponent', () => {
 
   describe('API Keys', () => {
     it('shows API keys count', () => {
-      const apiKeysSection = spectator.query('.content-wrapper:nth-child(7)');
+      const apiKeysSection = spectator.query('.content-wrapper:nth-child(8)');
       expect(apiKeysSection).toHaveText('API Keys: 2 keys');
     });
 
