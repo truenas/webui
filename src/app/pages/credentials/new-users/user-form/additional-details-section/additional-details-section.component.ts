@@ -167,7 +167,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
       distinctUntilChanged(),
       withLatestFrom(this.groupOptions$),
       tap(([selectedRole, groupOptions]) => {
-        if (selectedRole === 'prompt') {
+        if (selectedRole == null) {
           return;
         }
 

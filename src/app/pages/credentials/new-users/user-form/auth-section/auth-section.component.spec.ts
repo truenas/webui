@@ -4,7 +4,6 @@ import { signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
-import { IxFileInputHarness } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.harness';
 import { IxRadioGroupHarness } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.harness';
 import { IxTextareaHarness } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
@@ -73,9 +72,10 @@ describe('AuthSectionComponent', () => {
     it('disables password field when Disable Password is ticked', async () => {
       await form.fillForm({ 'Disable Password': true });
 
-      expect(await loader.getHarness(IxCheckboxHarness.with({ label: 'Allow SSH Login with Password (not recommended)' }))).toBeTruthy();
-      expect(await loader.getHarness(IxTextareaHarness.with({ label: 'Public SSH Keys' }))).toBeTruthy();
-      expect(await loader.getHarness(IxFileInputHarness.with({ label: 'Upload SSH Key' }))).toBeTruthy();
+      expect(await form.getDisabledState()).toEqual({
+        Password: true,
+        'Disable Password': false,
+      });
     });
 
     it('checks stig mode fields when "STIG Mode" is true', async () => {
@@ -86,32 +86,6 @@ describe('AuthSectionComponent', () => {
 
       const value = await password.getValue();
       expect(value).toBe('Generate Temporary One-Time Password');
-    });
-  });
-
-  describe('when editing user', () => {
-    beforeEach(() => {
-      spectator = createComponent();
-      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      spectator.setInput('editingUser', {});
-      isNewUser.set(false);
-      smbAccess.set(false);
-      sshAccess.set(false);
-      isStigMode.set(false);
-    });
-
-    it('checks initial value', async () => {
-      expect(spectator.inject(UserFormStore).updateUserConfig).toHaveBeenCalledWith({
-        password: '',
-        password_disabled: false,
-        ssh_password_enabled: false,
-        sshpubkey: '',
-      });
-
-      expect(await form.getDisabledState()).toEqual({
-        'Change Password': true,
-        'Disable Password': false,
-      });
     });
 
     it('does not show "Disable Password" when smbAccess is enabled', async () => {
