@@ -36,7 +36,7 @@ export const preferencesReducer = createReducer(
   initialState,
 
   on(dashboardStateLoaded, dashboardStateUpdated, (state, { dashboardState }) => ({ ...state, dashboardState })),
-  on(noDashboardStateFound, (state) => ({ ...state, dashboardState: null as string | null })),
+  on(noDashboardStateFound, (state) => ({ ...state, dashboardState: null as DashConfigItem[] | null })),
   on(adminUiInitialized, () => ({ ...initialState, areLoaded: false })),
   on(preferencesLoaded, (state, { preferences }) => ({ ...state, preferences, areLoaded: true })),
   on(noPreferencesFound, (state) => ({ ...state, preferences: defaultPreferences, areLoaded: true })),

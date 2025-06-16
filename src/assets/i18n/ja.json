@@ -209,7 +209,6 @@
   "Alert Write": "",
   "Alerts could not be loaded": "",
   "Alias": "",
-  "All Host CPUs": "",
   "ALL Initiators Allowed": "",
   "All Users": "",
   "Allow All": "",
@@ -238,7 +237,6 @@
   "Allowed IP Addressed": "",
   "Allowed IP Addresses Settings": "",
   "Allowed Sudo Commands (No Password)": "",
-  "Also delete the underlying file – {name}": "",
   "Also use Diffie–Hellman key exchange for additional security": "",
   "Always": "",
   "Always Chroot": "",
@@ -5260,6 +5258,5 @@
   "ZFS Errors": "ZFSエラー",
   "ZFS L2ARC read-cache that can be used with fast devices to accelerate read operations.": "ZFS L2ARC リードキャッシュは、高速なデバイスと共に使用することで、読み込み操作を高速化することができます。",
   "ZFS LOG device that can improve speeds of synchronous writes. Optional write-cache that can be removed.": "ZFS LOGデバイスは、同期書き込みの速度を向上させることができる。オプションのライトキャッシュは削除可能。",
-  "ZFS Replication to another TrueNAS": "別の TrueNAS への ZFS レプリケーション",
-  "Zvol": "Zvol"
+  "ZFS Replication to another TrueNAS": "別の TrueNAS への ZFS レプリケーション"
 }
