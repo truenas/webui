@@ -22,4 +22,5 @@ export const defaultPreferences: Preferences = {
   autoRefreshReports: false,
   lifetime: 300,
   language: defaultLanguage,
+  terminalFontSize: 14,
 };
