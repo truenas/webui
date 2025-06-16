@@ -25,15 +25,13 @@ describe('AllUsersHeaderComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  describe('elements visibility', () => {
-    it('should render Create New User button and open create user form', async () => {
-      const createNewUserButton = await loader.getHarness(MatButtonHarness.with({ text: /Add/ }));
-      await createNewUserButton.click();
+  it('should render Create New User button and open create user form', async () => {
+    const createNewUserButton = await loader.getHarness(MatButtonHarness.with({ text: /Add/ }));
+    await createNewUserButton.click();
 
-      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
-        UserFormComponent,
-        { wide: false },
-      );
-    });
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
+      UserFormComponent,
+      { wide: false },
+    );
   });
 });
