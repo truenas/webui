@@ -533,6 +533,7 @@ export class InstanceWizardComponent implements OnInit {
   protected onSubmit(): void {
     this.createInstance().pipe(untilDestroyed(this)).subscribe({
       next: (instance) => {
+        this.form.markAsPristine();
         this.snackbar.success(this.translate.instant('Instance created'));
         this.router.navigate(['/instances', 'view', instance?.id]);
       },

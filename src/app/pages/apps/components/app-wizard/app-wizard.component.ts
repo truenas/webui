@@ -175,7 +175,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
   }
 
   canDeactivate(): Observable<boolean> {
-    const hasChanges = !isEqual(this.initialFormValue, this.form.getRawValue());
+    const hasChanges = !isEqual(this.initialFormValue, this.form.getRawValue()) && this.form.dirty;
 
     return hasChanges ? this.unsavedChangesService.showConfirmDialog() : of(true);
   }
@@ -309,6 +309,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
   }
 
   onSuccess(): void {
+    this.form.markAsPristine();
     this.dialogService.closeAllDialogs();
     this.router.navigate(['/apps/installed', this.train, this.appId]);
   }
