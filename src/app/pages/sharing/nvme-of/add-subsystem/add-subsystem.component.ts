@@ -45,7 +45,6 @@ import {
 } from 'app/pages/sharing/nvme-of/add-subsystem/add-subsystem-ports/add-subsystem-ports.component';
 import { NamespaceChanges } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/namespace-changes.interface';
 import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
-import { getNamespaceType } from 'app/pages/sharing/nvme-of/utils/namespace.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
@@ -85,7 +84,6 @@ export class AddSubsystemComponent {
   protected form = this.formBuilder.group({
     name: ['', Validators.required],
     subnqn: [''],
-    ana: [false],
     namespaces: [[] as NamespaceChanges[]],
 
     allowAnyHost: [true],
@@ -112,15 +110,17 @@ export class AddSubsystemComponent {
     this.isLoading.set(true);
 
     this.createSubsystem().pipe(
-      switchMap((subsystem) => this.createRelatedEntities(subsystem).pipe(
-        map((relatedErrors) => ({ subsystem, relatedErrors })),
-      )),
+      switchMap((subsystem) => {
+        return this.createRelatedEntities(subsystem).pipe(
+          map((relatedErrors) => ({ subsystem, relatedErrors })),
+        );
+      }),
       tap(() => this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.NvmeOf }))),
       finalize(() => this.isLoading.set(false)),
       this.errorHandler.withErrorHandler(),
       untilDestroyed(this),
     ).subscribe(({ subsystem, relatedErrors }) => {
-      if (subsystem && relatedErrors) {
+      if (subsystem && relatedErrors?.length) {
         this.matDialog.open(SubsystemPartiallyCreatedDialogComponent, {
           data: {
             subsystem,
@@ -169,7 +169,6 @@ export class AddSubsystemComponent {
       name: values.name,
       subnqn: values.subnqn || null,
       allow_any_host: values.allowAnyHost,
-      ana: values.ana,
     };
 
     return this.api.call('nvmet.subsys.create', [payload]);
@@ -177,10 +176,9 @@ export class AddSubsystemComponent {
 
   private createNamespaces(subsystem: NvmeOfSubsystem, namespaces: NamespaceChanges[]): Observable<unknown>[] {
     return namespaces.map((namespace) => {
-      const deviceType = getNamespaceType(namespace.device_path);
       const payload: CreateNvmeOfNamespace = {
         subsys_id: subsystem.id,
-        device_type: deviceType,
+        device_type: namespace.device_type,
         filesize: namespace.filesize,
         device_path: namespace.device_path,
       };

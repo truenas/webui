@@ -3,7 +3,7 @@
     <div class="toolbar-row-title">
       <a [ixTest]="['nvme-of', 'open-in-new']" [routerLink]="['/sharing', 'nvme-of']">
         <h3 class="card-title">
-          {{ 'NVME-oF Subsystems' | translate }}
+          {{ 'NVMe-oF Subsystems' | translate }}
           <ix-icon name="open_in_new" class="title-icon"></ix-icon>
         </h3>
       </a>
@@ -19,7 +19,7 @@
         *ixRequiresRoles="requiredRoles"
         mat-button
         [ixTest]="['nvme-of-share', 'add']"
-        [attr.aria-label]="'Add NVME-oF Share' | translate"
+        [attr.aria-label]="'Add NVMe-oF Share' | translate"
         (click)="openForm()"
       >
         {{ 'Add' | translate }}

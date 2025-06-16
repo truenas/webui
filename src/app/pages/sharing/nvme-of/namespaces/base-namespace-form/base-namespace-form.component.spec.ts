@@ -3,9 +3,13 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
+import { MockComponent } from 'ng-mocks';
 import { MiB } from 'app/constants/bytes.constant';
 import { NvmeOfNamespaceType } from 'app/enums/nvme-of.enum';
 import { NvmeOfNamespace } from 'app/interfaces/nvme-of.interface';
+import {
+  ExplorerCreateZvolComponent,
+} from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-zvol/explorer-create-zvol.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -22,6 +26,7 @@ describe('BaseNamespaceFormComponent', () => {
     component: BaseNamespaceFormComponent,
     imports: [
       ReactiveFormsModule,
+      MockComponent(ExplorerCreateZvolComponent),
     ],
     providers: [
       mockProvider(FormErrorHandlerService),

@@ -63,6 +63,9 @@ import {
   IxCheckboxListComponent,
 } from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.component';
 import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
+import {
+  ExplorerCreateDatasetComponent,
+} from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import {
   IxFormGlossaryComponent,
@@ -88,6 +91,7 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
+import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { InstanceNicMacDialog } from 'app/pages/instances/components/common/instance-nics-mac-addr-dialog/instance-nic-mac-dialog.component';
 import {
@@ -138,6 +142,7 @@ interface NicDeviceOption {
     IxIconGroupComponent,
     MatIconButton,
     IxIconComponent,
+    ExplorerCreateDatasetComponent,
   ],
   templateUrl: './instance-wizard.component.html',
   styleUrls: ['./instance-wizard.component.scss'],
@@ -302,6 +307,7 @@ export class InstanceWizardComponent implements OnInit {
     protected configStore: VirtualizationConfigStore,
     private authService: AuthService,
     private filesystem: FilesystemService,
+    private unsavedChangesService: UnsavedChangesService,
   ) {
     this.configStore.initialize();
 
@@ -331,6 +337,10 @@ export class InstanceWizardComponent implements OnInit {
     });
     this.setupBridgedNicDevices2();
     this.setupMacVlanNicDevices2();
+  }
+
+  canDeactivate(): Observable<boolean> {
+    return this.form.dirty ? this.unsavedChangesService.showConfirmDialog() : of(true);
   }
 
   private setupBridgedNicDevices2(): void {

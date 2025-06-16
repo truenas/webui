@@ -1,7 +1,8 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createHostFactory, mockProvider, SpectatorHost } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
@@ -31,8 +32,7 @@ describe('ServiceActionsCellComponent', () => {
       mockAuth(),
       mockApi([
         mockCall('service.update', 1),
-        mockCall('service.start'),
-        mockCall('service.stop'),
+        mockJob('service.control', fakeSuccessfulJob()),
       ]),
       mockProvider(SlideIn, {
         open: jest.fn(() => of()),
@@ -82,7 +82,7 @@ describe('ServiceActionsCellComponent', () => {
 
     await startIcon.click();
 
-    expect(api.call).toHaveBeenCalledWith('service.start', [ServiceName.Ftp, { silent: false }]);
+    expect(api.job).toHaveBeenCalledWith('service.control', ['START', ServiceName.Ftp, { silent: false }]);
   });
 
   it('shows "Stop Service" icon when service is running', async () => {
@@ -93,7 +93,7 @@ describe('ServiceActionsCellComponent', () => {
 
     await stopIcon.click();
 
-    expect(api.call).toHaveBeenCalledWith('service.stop', [ServiceName.Ftp, { silent: false }]);
+    expect(api.job).toHaveBeenCalledWith('service.control', ['STOP', ServiceName.Ftp]);
   });
 
   describe('edit', () => {

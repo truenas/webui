@@ -31,8 +31,11 @@
             [required]="true"
             [tooltip]="tooltips.script | translate"
             [nodeProvider]="treeNodeProvider"
-            [canCreateDataset]="isNew"
-          ></ix-explorer>
+          >
+            @if (isNew) {
+              <ix-explorer-create-dataset></ix-explorer-create-dataset>
+            }
+          </ix-explorer>
         }
 
         <ix-select

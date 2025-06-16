@@ -23,6 +23,7 @@
           </div>
         </ng-template>
         <ix-general-wizard-step
+          #generalStep
           [isAddingVdevs]="!!existingPool"
           [pool]="existingPool"
         ></ix-general-wizard-step>
@@ -48,6 +49,7 @@
             </div>
           </ng-template>
           <ix-enclosure-wizard-step
+            #enclosureStep
             [isStepActive]="activeStep === PoolCreationWizardStep.EnclosureOptions"
             [stepWarning]="getTopLevelWarningForStep(PoolCreationWizardStep.EnclosureOptions)"
           ></ix-enclosure-wizard-step>
