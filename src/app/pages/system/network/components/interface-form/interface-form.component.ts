@@ -252,7 +252,7 @@ export class InterfaceFormComponent implements OnInit {
     this.disableVlanParentInterface();
   }
 
-  addStaticIpAddress(): void {
+  protected addStaticIpAddress(): void {
     this.form.controls.aliases.push(this.formBuilder.group({
       address: ['', [Validators.required, ipv4or6cidrValidator()]],
       failover_address: ['', [
@@ -272,11 +272,11 @@ export class InterfaceFormComponent implements OnInit {
     }));
   }
 
-  removeStaticIpAddress(index: number): void {
+  protected removeStaticIpAddress(index: number): void {
     this.form.controls.aliases.removeAt(index);
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     this.isLoading.set(true);
     const params = this.prepareSubmitParams();
 

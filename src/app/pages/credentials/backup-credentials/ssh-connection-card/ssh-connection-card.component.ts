@@ -119,19 +119,19 @@ export class SshConnectionCardComponent implements OnInit {
     });
   }
 
-  doAdd(): void {
+  protected doAdd(): void {
     this.slideIn.open(SshConnectionFormComponent)
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => this.getCredentials());
   }
 
-  doEdit(credential: KeychainSshCredentials): void {
+  protected doEdit(credential: KeychainSshCredentials): void {
     this.slideIn.open(SshConnectionFormComponent, { data: credential })
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => this.getCredentials());
   }
 
-  doDelete(credential: KeychainSshCredentials): void {
+  protected doDelete(credential: KeychainSshCredentials): void {
     this.dialog
       .confirm({
         title: this.translate.instant('Delete SSH Connection'),

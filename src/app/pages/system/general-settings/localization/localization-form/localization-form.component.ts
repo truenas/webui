@@ -132,14 +132,14 @@ export class LocalizationFormComponent implements OnInit {
     }
   }
 
-  setTimeOptions(tz: string): void {
+  protected setTimeOptions(tz: string): void {
     const timeOptions = this.localeService.getTimeFormatOptions(tz);
     this.timeFormat.options = of(timeOptions);
     const dateOptions = this.localeService.getDateFormatOptions(tz);
     this.dateFormat.options = of(dateOptions);
   }
 
-  setupForm(): void {
+  protected setupForm(): void {
     this.setTimeOptions(this.localizationSettings.timezone);
     this.formGroup.patchValue({
       language: this.localizationSettings.language,
@@ -150,7 +150,7 @@ export class LocalizationFormComponent implements OnInit {
     });
   }
 
-  submit(): void {
+  protected submit(): void {
     const values = this.formGroup.getRawValue();
     this.isFormLoading.set(true);
     this.window.localStorage.setItem('language', values.language);

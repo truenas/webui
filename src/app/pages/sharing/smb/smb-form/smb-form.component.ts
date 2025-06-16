@@ -137,7 +137,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     );
   }
 
-  hasHostAllowDenyChanged(hostsallow: string[], hostsdeny: string[]): boolean {
+  protected hasHostAllowDenyChanged(hostsallow: string[], hostsdeny: string[]): boolean {
     return (
       !isEqual(this.existingSmbShare?.hostsallow, hostsallow)
       || !isEqual(this.existingSmbShare?.hostsdeny, hostsdeny)
@@ -352,7 +352,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
       });
   }
 
-  setNameFromPath(): void {
+  protected setNameFromPath(): void {
     const pathControl = this.form.controls.path;
     if (!pathControl.value) {
       return;
@@ -370,7 +370,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     this.cdr.markForCheck();
   }
 
-  checkAndShowStripAclWarning(path: string, aclValue: boolean): void {
+  protected checkAndShowStripAclWarning(path: string, aclValue: boolean): void {
     if (this.wasStripAclWarningShown || !path || aclValue) {
       return;
     }
@@ -385,7 +385,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
       });
   }
 
-  setValuesFromPreset(preset: string): void {
+  protected setValuesFromPreset(preset: string): void {
     if (!this.presets?.[preset]) {
       return;
     }
@@ -403,7 +403,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   /**
    * @returns Observable<void> to allow setting warnings for values changes once default or previous preset is applied
    */
-  setupAndApplyPurposePresets(): Observable<SmbPresets> {
+  protected setupAndApplyPurposePresets(): Observable<SmbPresets> {
     return this.api.call('sharing.smb.presets').pipe(
       tap((presets) => {
         const nonClusterPresets = Object.entries(presets || {}).reduce(
@@ -431,7 +431,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     );
   }
 
-  showStripAclWarning(): void {
+  protected showStripAclWarning(): void {
     this.dialogService
       .confirm({
         title: this.translate.instant(helptextSharingSmb.stripACLDialog.title),
@@ -444,7 +444,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
       .subscribe();
   }
 
-  clearPresets(): void {
+  protected clearPresets(): void {
     for (const item of this.presetFields) {
       // eslint-disable-next-line no-restricted-syntax
       this.form.get(item)?.enable();
@@ -452,7 +452,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     this.presetFields = [];
   }
 
-  setSmbShareForEdit(share: SmbShare): void {
+  protected setSmbShareForEdit(share: SmbShare): void {
     this.title = helptextSharingSmb.formTitleEdit;
     const index = this.namesInUse.findIndex((name) => name === share.name);
     if (index >= 0) {
@@ -461,7 +461,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     this.form.patchValue(share);
   }
 
-  afpConfirmEnable(value: boolean): void {
+  protected afpConfirmEnable(value: boolean): void {
     if (!value) {
       return;
     }
@@ -482,7 +482,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
       });
   }
 
-  submit(): void {
+  protected submit(): void {
     const smbShare = this.form.value as SmbShareUpdate;
 
     if (!smbShare.timemachine_quota) {
@@ -551,7 +551,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     });
   }
 
-  restartCifsServiceIfNecessary(): Observable<boolean> {
+  protected restartCifsServiceIfNecessary(): Observable<boolean> {
     return this.promptIfRestartRequired().pipe(
       switchMap((shouldRestart) => {
         if (shouldRestart) {
@@ -562,7 +562,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     );
   }
 
-  promptIfRestartRequired(): Observable<boolean> {
+  protected promptIfRestartRequired(): Observable<boolean> {
     return this.store$.select(selectService(ServiceName.Cifs)).pipe(
       filter((service) => !!service),
       map((service) => service.state === ServiceStatus.Running),
@@ -602,7 +602,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     );
   };
 
-  shouldRedirectToAclEdit(): Observable<boolean> {
+  protected shouldRedirectToAclEdit(): Observable<boolean> {
     const sharePath: string = this.form.controls.path.value;
     const datasetId = sharePath.replace('/mnt/', '');
     return this.api.call('filesystem.stat', [sharePath]).pipe(
@@ -614,7 +614,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     );
   }
 
-  closeForm(routerLink?: string[]): void {
+  protected closeForm(routerLink?: string[]): void {
     this.slideInRef.close({ response: false });
 
     if (routerLink) {

@@ -199,7 +199,7 @@ export class TargetFormComponent implements OnInit {
     });
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     const values = this.form.getRawValue();
 
     this.isLoading.set(true);
@@ -235,7 +235,7 @@ export class TargetFormComponent implements OnInit {
     });
   }
 
-  addGroup(): void {
+  protected addGroup(): void {
     this.form.controls.groups.push(
       this.formBuilder.group({
         portal: new FormControl(null as number | null, Validators.required),
@@ -246,17 +246,17 @@ export class TargetFormComponent implements OnInit {
     );
   }
 
-  deleteGroup(index: number): void {
+  protected deleteGroup(index: number): void {
     this.form.controls.groups.removeAt(index);
   }
 
-  addNetwork(): void {
+  protected addNetwork(): void {
     this.form.controls.auth_networks.push(
       this.formBuilder.control(''),
     );
   }
 
-  deleteNetwork(index: number): void {
+  protected deleteNetwork(index: number): void {
     this.form.controls.auth_networks.removeAt(index);
   }
 

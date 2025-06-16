@@ -88,11 +88,11 @@ export class PoolsDashboardComponent implements OnInit {
     this.store.loadDashboard();
   }
 
-  getDisksByPool(pool: Pool): StorageDashboardDisk[] {
+  protected getDisksByPool(pool: Pool): StorageDashboardDisk[] {
     return this.store.disksByPool()[pool.name] || [];
   }
 
-  onImportPool(): void {
+  protected onImportPool(): void {
     this.slideIn.open(ImportPoolComponent).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),

@@ -170,19 +170,19 @@ export class PortalListComponent implements OnInit {
     });
   }
 
-  doAdd(): void {
+  protected doAdd(): void {
     this.slideIn.open(PortalFormComponent).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(() => this.refresh());
   }
 
-  onListFiltered(query: string): void {
+  protected onListFiltered(query: string): void {
     this.filterString = query;
     this.dataProvider.setFilter({ query, columnKeys: ['comment'] });
   }
 
-  columnsChange(columns: typeof this.columns): void {
+  protected columnsChange(columns: typeof this.columns): void {
     this.columns = [...columns];
     this.cdr.detectChanges();
     this.cdr.markForCheck();
