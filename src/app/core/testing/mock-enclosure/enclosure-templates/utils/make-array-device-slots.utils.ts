@@ -18,20 +18,20 @@ export function makeArrayDeviceSlots(
       drive_bay_number: slot,
       descriptor: `slot${slot.toString().padStart(2, '0')}`,
       status: EnclosureStatus.Ok,
-      dev: null as null,
+      dev: null,
       supports_identify_light: options.supportsIdentifyLight ?? false,
-      drive_bay_light_status: null as null,
-      size: null as null,
-      model: null as null,
-      serial: null as null,
-      type: null as null,
-      rotationrate: null as null,
-      pool_info: null as null,
+      drive_bay_light_status: null,
+      size: null,
+      model: null,
+      serial: null,
+      type: null,
+      rotationrate: null,
+      pool_info: null,
       is_front: options.is_front ?? false,
       is_top: options.is_top ?? false,
       is_rear: options.is_rear ?? false,
       is_internal: options.is_internal ?? false,
-    };
+    } as DashboardEnclosureSlot;
   });
 
   return keyBy(slots, 'drive_bay_number');

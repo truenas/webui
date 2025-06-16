@@ -30,8 +30,8 @@ export const groupsInitialState: GroupsState = adapter.getInitialState({
 export const groupReducer = createReducer(
   groupsInitialState,
 
-  on(builtinGroupsToggled, (state) => ({ ...state, isLoading: true, error: null as null })),
-  on(groupPageEntered, (state) => ({ ...state, isLoading: true, error: null as null })),
+  on(builtinGroupsToggled, (state) => ({ ...state, isLoading: true, error: null as string | null })),
+  on(groupPageEntered, (state) => ({ ...state, isLoading: true, error: null as string | null })),
   on(groupsLoaded, (state, { groups }) => adapter.setAll(groups, { ...state, isLoading: false })),
   on(groupsNotLoaded, (state, { error }) => ({ ...state, error, isLoading: false })),
 

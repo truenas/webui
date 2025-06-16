@@ -29,8 +29,8 @@ export const usersInitialState: UsersState = adapter.getInitialState({
 export const userReducer = createReducer(
   usersInitialState,
 
-  on(builtinUsersToggled, (state) => ({ ...state, isLoading: true, error: null as null })),
-  on(userPageEntered, (state) => ({ ...state, isLoading: true, error: null as null })),
+  on(builtinUsersToggled, (state) => ({ ...state, isLoading: true, error: null as string | null })),
+  on(userPageEntered, (state) => ({ ...state, isLoading: true, error: null as string | null })),
   on(usersLoaded, (state, { users }) => adapter.setAll(users, { ...state, isLoading: false })),
   on(usersNotLoaded, (state, { error }) => ({ ...state, error, isLoading: false })),
 

@@ -26,7 +26,7 @@ export const snapshotsInitialState: SnapshotsState = adapter.getInitialState({
 export const snapshotReducer = createReducer(
   snapshotsInitialState,
 
-  on(snapshotPageEntered, (state) => ({ ...state, isLoading: true, error: null as null })),
+  on(snapshotPageEntered, (state) => ({ ...state, isLoading: true, error: null as string | null })),
   on(snapshotsLoaded, (state, { snapshots }) => adapter.setAll(snapshots, { ...state, isLoading: false })),
   on(snapshotsNotLoaded, (state, { error }) => ({ ...state, error, isLoading: false })),
 
