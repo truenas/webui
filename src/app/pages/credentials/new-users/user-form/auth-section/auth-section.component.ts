@@ -41,7 +41,7 @@ export class AuthSectionComponent implements OnInit {
     password_disabled: [false],
     ssh_password_enabled: [false],
     sshpubkey: [''],
-    stig_password: [''],
+    stig_password: [UserStigPasswordOption.DisablePassword],
   });
 
   protected readonly tooltips = {
