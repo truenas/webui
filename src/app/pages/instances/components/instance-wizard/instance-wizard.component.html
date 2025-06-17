@@ -1,4 +1,4 @@
-<ix-page-header [pageTitle]="'Create Instance' | translate">
+<ix-page-header [pageTitle]="'Create Container' | translate">
   @if (!(hasRequiredRoles | async)) {
     <ix-readonly-badge></ix-readonly-badge>
   }
@@ -7,8 +7,7 @@
 <div class="container">
   <form class="form" [formGroup]="form" (submit)="onSubmit()">
     <ix-form-section
-      [label]="'Instance Configuration' | translate"
-      [help]="instancesHelptext.virtualizationMethodTooltip | translate"
+      [label]="'Container Configuration' | translate"
     >
       <ix-input
         formControlName="name"
@@ -17,14 +16,15 @@
         [hint]="instancesHelptext.nameHint | translate"
       ></ix-input>
 
-      <ix-icon-group
-        formControlName="instance_type"
-        [label]="instancesHelptext.virtualizationMethodLabel | translate"
-        [tooltip]="instancesHelptext.virtualizationMethodTooltip | translate"
-        [required]="true"
-        [options]="virtualizationTypeIcons"
-        [showLabels]="true"
-      ></ix-icon-group>
+      @if (false) {
+        <ix-icon-group
+          formControlName="instance_type"
+          [label]="instancesHelptext.virtualizationMethodLabel | translate"
+          [required]="true"
+          [options]="virtualizationTypeIcons"
+          [showLabels]="true"
+        ></ix-icon-group>
+      }
 
       @if (isVm()) {
         <ix-radio-group

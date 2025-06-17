@@ -7,6 +7,10 @@ export interface TerminalConfiguration {
 }
 
 export type TerminalConnectionData =
+  // VMs
+  | {
+    vm_id: number;
+  }
   // Virtualization instances
   | {
     virt_instance_id: string;
