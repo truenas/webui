@@ -3,18 +3,18 @@ import {
   ChangeDetectionStrategy, Component, OnInit,
   viewChild, OnDestroy,
   signal,
-  computed,
-  Signal,
 } from '@angular/core';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { injectParams } from 'ngxtension/inject-params';
 import {
   combineLatest, filter, startWith, tap,
 } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { CollectionChangeType } from 'app/enums/api.enum';
+import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { User } from 'app/interfaces/user.interface';
-import { ApiDataProvider } from 'app/modules/ix-table/classes/api-data-provider/api-data-provider';
 import { PaginationServerSide } from 'app/modules/ix-table/classes/api-data-provider/pagination-server-side.class';
 import { SortingServerSide } from 'app/modules/ix-table/classes/api-data-provider/sorting-server-side.class';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
@@ -26,6 +26,7 @@ import { allUsersElements } from 'app/pages/credentials/new-users/all-users/all-
 import { UserDetailHeaderComponent } from 'app/pages/credentials/new-users/all-users/user-details/user-detail-header/user-detail-header.component';
 import { UserDetailsComponent } from 'app/pages/credentials/new-users/all-users/user-details/user-details.component';
 import { UserListComponent } from 'app/pages/credentials/new-users/all-users/user-list/user-list.component';
+import { UsersDataProvider } from 'app/pages/credentials/new-users/all-users/users-data-provider';
 
 @UntilDestroy()
 @Component({
@@ -47,50 +48,67 @@ import { UserListComponent } from 'app/pages/credentials/new-users/all-users/use
   ],
 })
 export class AllUsersComponent implements OnInit, OnDestroy {
-  protected dataProvider: Signal<ApiDataProvider<'user.query'>> = computed(() => {
-    const dataProvider = new ApiDataProvider(this.api, 'user.query');
-    dataProvider.paginationStrategy = new PaginationServerSide();
-    dataProvider.sortingStrategy = new SortingServerSide();
-    dataProvider.setSorting({
-      propertyName: 'uid',
-      direction: SortDirection.Asc,
-      active: 1,
-    });
-    dataProvider.currentPage$.pipe(filter(Boolean), untilDestroyed(this)).subscribe((users) => {
-      dataProvider.expandedRow = this.masterDetailView().isMobileView() ? null : users[0];
-    });
-    dataProvider.load();
-    return dataProvider;
-  });
+  protected dataProvider: UsersDataProvider; // Used in template
+  private readonly userName = injectParams('id'); // Only used in TS
 
-  protected readonly searchableElements = allUsersElements;
-  protected readonly masterDetailView = viewChild.required(MasterDetailViewComponent);
-  protected readonly selectedUser = signal<User>(null);
+  protected readonly searchableElements = allUsersElements; // Used in template
+  protected readonly masterDetailView = viewChild.required(MasterDetailViewComponent); // Used in template
+  protected readonly selectedUser = signal<User>(null); // Used in template
+
+  private navigationInProgress = false; // Only used in TS
 
   constructor(
     private api: ApiService,
+    private router: Router,
   ) { }
 
   ngOnInit(): void {
+    this.createDataProvider();
     this.subscribeToUserChanges();
   }
 
   ngOnDestroy(): void {
-    this.dataProvider().unsubscribe();
+    this.dataProvider.unsubscribe();
+  }
+
+  private createDataProvider(): void {
+    this.dataProvider = new UsersDataProvider(this.api);
+    this.dataProvider.paginationStrategy = new PaginationServerSide();
+    this.dataProvider.sortingStrategy = new SortingServerSide();
+    this.dataProvider.setSorting({
+      propertyName: 'uid',
+      direction: SortDirection.Asc,
+      active: 1,
+    });
+
+    // Set priority username if provided via URL
+    const urlUsername = this.userName();
+    if (urlUsername) {
+      this.dataProvider.setPriorityUsername(urlUsername);
+    }
+
+    this.dataProvider.currentPage$.pipe(filter(Boolean), untilDestroyed(this)).subscribe((users: User[]) => {
+      this.dataProvider.expandedRow = this.masterDetailView().isMobileView() ? null : users[0];
+      this.handleInitialUserSelection(users);
+    });
+    this.dataProvider.load();
   }
 
   private subscribeToUserChanges(): void {
-    combineLatest([this.api.subscribe('user.query').pipe(startWith(null)), this.dataProvider().currentPage$]).pipe(
-      tap(([event, users]) => {
+    combineLatest([
+      this.api.subscribe('user.query').pipe(startWith(null)),
+      this.dataProvider.currentPage$,
+    ]).pipe(
+      tap(([event, users]: [ApiEvent<User> | null, User[]]) => {
         switch (event?.msg) {
           case CollectionChangeType.Changed:
-            this.dataProvider().currentPage$.next(
-              users.map((item) => (item.id === event.id ? { ...item, ...event?.fields } : item)),
+            this.dataProvider.currentPage$.next(
+              users.map((item: User) => (item.id === event.id ? { ...item, ...event.fields } : item)),
             );
             break;
           case CollectionChangeType.Removed:
           case CollectionChangeType.Added:
-            this.dataProvider().load();
+            this.dataProvider.load();
             break;
           default:
             break;
@@ -98,5 +116,41 @@ export class AllUsersComponent implements OnInit, OnDestroy {
       }),
       untilDestroyed(this),
     ).subscribe();
+  }
+
+  protected onUserSelected(user: User): void { // Used in template
+    if (!user || this.navigationInProgress) {
+      return;
+    }
+
+    this.navigationInProgress = true;
+    this.selectedUser.set(user);
+
+    // Navigate to the user-specific URL
+    this.router.navigate(['/credentials', 'users-new', 'view', user.username]).finally(() => {
+      this.navigationInProgress = false;
+    });
+  }
+
+  private handleInitialUserSelection(users: User[]): void {
+    if (this.navigationInProgress || !users.length) {
+      return;
+    }
+
+    const urlUsername = this.userName();
+
+    if (urlUsername) {
+      // Find user from current page (priority user will be first if URL matches)
+      const targetUser = users.find((user) => user.username === urlUsername);
+      if (targetUser) {
+        this.selectedUser.set(targetUser);
+      } else {
+        // URL user not found, select first user
+        this.selectedUser.set(users[0]);
+      }
+    } else {
+      // No user in URL, select first user
+      this.selectedUser.set(users[0]);
+    }
   }
 }

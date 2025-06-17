@@ -15,9 +15,9 @@ import { SearchInputComponent } from 'app/modules/forms/search-input/components/
 import { SearchProperty } from 'app/modules/forms/search-input/types/search-property.interface';
 import { AdvancedSearchQuery, SearchQuery } from 'app/modules/forms/search-input/types/search-query.interface';
 import { booleanProperty, searchProperties, textProperty } from 'app/modules/forms/search-input/utils/search-properties.utils';
-import { ApiDataProvider } from 'app/modules/ix-table/classes/api-data-provider/api-data-provider';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { UsersDataProvider } from 'app/pages/credentials/new-users/all-users/users-data-provider';
 
 @UntilDestroy()
 @Component({
@@ -36,18 +36,18 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class UsersSearchComponent implements OnInit {
-  protected readonly advancedSearchPlaceholder = this.translate.instant('Username = "root" AND "Built in" = "Yes"');
+  protected readonly advancedSearchPlaceholder = this.translate.instant('Username = "root" AND "Built in" = "Yes"'); // Used in template
 
-  readonly dataProvider = input.required<ApiDataProvider<'user.query'>>();
+  readonly dataProvider = input.required<UsersDataProvider>(); // Used across components
 
-  protected readonly searchQuery = signal<SearchQuery<User>>({
+  protected readonly searchQuery = signal<SearchQuery<User>>({ // Used in template
     query: '',
     isBasicQuery: true,
   });
 
-  protected readonly searchProperties = signal<SearchProperty<User>[]>([]);
+  protected readonly searchProperties = signal<SearchProperty<User>[]>([]); // Used in template
 
-  protected userPresets: FilterPreset<User>[] = [
+  protected userPresets: FilterPreset<User>[] = [ // Used in template
     {
       label: this.translate.instant('Show Builtin Users'),
       query: [['builtin', '=', true]],
@@ -174,7 +174,7 @@ export class UsersSearchComponent implements OnInit {
     ]));
   }
 
-  protected onSearch(query: SearchQuery<User>): void {
+  protected onSearch(query: SearchQuery<User>): void { // Used in template
     if (!query) {
       return;
     }
