@@ -15,6 +15,7 @@ const esmPatterns = [
   'delaunator',
   'cheerio',
   'robust-predicates',
+  '@angular/.*',
 ];
 
 module.exports = {
@@ -27,7 +28,11 @@ module.exports = {
   coverageDirectory: 'coverage/webui',
   moduleDirectories: ['node_modules', 'src'],
   cacheDirectory: "<rootDir>/.jest/cache",
-  moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths || {}),
+  moduleNameMapper: {
+    ...pathsToModuleNameMapper(compilerOptions.paths || {}),
+    '^lodash-es$': 'lodash',
+    '^lodash-es/(.*)$': 'lodash/$1',
+  },
   testPathIgnorePatterns: [
     '<rootDir>/dist/',
   ],
