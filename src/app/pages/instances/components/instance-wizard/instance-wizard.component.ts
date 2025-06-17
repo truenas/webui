@@ -403,8 +403,8 @@ export class InstanceWizardComponent {
       devices,
       autostart: true,
       instance_type: values.instance_type,
-      enable_vnc: this.isVm() ? values.enable_vnc : false,
-      vnc_port: this.isVm() && values.enable_vnc ? values.vnc_port || defaultVncPort : null,
+      // enable_vnc: this.isVm() ? values.enable_vnc : false,
+      // vnc_port: this.isVm() && values.enable_vnc ? values.vnc_port || defaultVncPort : null,
       name: values.name,
       cpu: values.cpu,
       memory: values.memory || null,
@@ -412,7 +412,7 @@ export class InstanceWizardComponent {
       // TODO: Messy, clean up on API side.
       source_type: sourceType,
       iso_volume: values.volume_type === VolumeContentType.Iso ? values.volume : null,
-      volume: values.volume_type === VolumeContentType.Block ? values.volume : null,
+      // volume: values.volume_type === VolumeContentType.Block ? values.volume : null,
       ...(this.isContainer() ? { environment: this.environmentVariablesPayload } : null),
     } as CreateVirtualizationInstance;
 

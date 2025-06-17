@@ -10,13 +10,6 @@ export const instancesHelptext = {
   name_tooltip: T('Specify a unique name for the container.'),
 
   instance_type_placeholder: T('Virtualization Method'),
-  instance_type_tooltip: T('<b>Why choose Container?</b><br />\
-Containers offer lightweight, \
-efficient virtualization by sharing the host OS kernel, \
-providing faster startup times and reduced resource usage compared to VMs. \
-Ideal for scalable applications.<br /><br />\
-<b>Why choose VM?</b><br />\
-Choose a VM for full OS isolation, kernel independence, and running diverse OS types.'),
 
   cpu_memory_tooltip: T('<b>CPU Configuration</b><br />Enter the number of cores. Alternatively, use multiple values\
  or ranges to set the CPU topology.<br />Example: 1-2, 5, 9-11.'),

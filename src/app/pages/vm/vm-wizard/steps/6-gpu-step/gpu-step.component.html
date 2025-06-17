@@ -1,0 +1,34 @@
+<form [formGroup]="form">
+  <ix-checkbox
+    formControlName="hide_from_msr"
+    [label]="'Hide from MSR' | translate"
+  ></ix-checkbox>
+
+  <ix-checkbox
+    formControlName="ensure_display_device"
+    [label]="'Ensure Display Device' | translate"
+    [tooltip]="helptext.ensure_display_device.tooltip | translate"
+  ></ix-checkbox>
+
+  <ix-select
+    formControlName="gpus"
+    [label]="'GPUs' | translate"
+    [options]="gpuOptions$"
+    [multiple]="true"
+  ></ix-select>
+
+  <ix-form-actions>
+    <button
+      mat-button
+      matStepperPrevious
+      ixTest="back"
+    >{{ 'Back' | translate }}</button>
+    <button
+      mat-button
+      matStepperNext
+      color="primary"
+      ixTest="next"
+      [disabled]="form.invalid"
+    >{{ 'Next' | translate }}</button>
+  </ix-form-actions>
+</form>
