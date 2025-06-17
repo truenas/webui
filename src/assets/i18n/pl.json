@@ -77,7 +77,6 @@
   "Boot From": "",
   "Browse to the exported key file that can be used to unlock this      dataset.": "",
   "Built in": "",
-  "Built-In": "",
   "By default, accounts inside instances are mapped to a special private range of UIDs and GIDs to perform security isolation for the containers.  This range starts at 2147000001.  <br>  You can use this dialog to control mapping manually.": "",
   "By default, Samba uses a hashing algorithm for NTFS illegal  characters. Enabling this option translates NTFS illegal characters to the Unicode private range.": "",
   "by parent": "",

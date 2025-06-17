@@ -24,7 +24,5 @@ export class UserAccessCellComponent {
       .join(', ');
   });
 
-  protected readonly hasApiKeys = computed(() => Boolean(this.user().api_keys?.length));
-
   constructor(private translate: TranslateService) {}
 }

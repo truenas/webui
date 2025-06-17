@@ -1,5 +1,5 @@
-import { getUserType, isEmptyHomeDirectory } from './user.helper';
 import { TranslateService } from '@ngx-translate/core';
+import { getUserType, isEmptyHomeDirectory } from './user.helper';
 
 describe('UserHelper', () => {
   describe('isEmptyHomeDirectory', () => {
