@@ -90,7 +90,7 @@ export class AuditFormComponent implements OnInit {
     this.loadForm();
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     const configUpdate = this.form.value as AuditConfig;
     this.isFormLoading.set(true);
     this.api.call('audit.update', [configUpdate]).pipe(

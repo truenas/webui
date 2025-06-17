@@ -117,7 +117,6 @@
     "@types/mime-types": "~2.1.1",
     "@types/node": "^18.19.1",
     "@types/randomcolor": "~0.5.9",
-    "@types/sanitize-html": "~2.15.0",
     "@types/svg-sprite": "~0.0.39",
     "@types/vinyl": "~2.0.12",
     "@uiw/codemirror-theme-material": "~4.23.6",

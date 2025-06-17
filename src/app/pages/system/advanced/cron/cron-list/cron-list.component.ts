@@ -122,7 +122,7 @@ export class CronListComponent implements OnInit {
     ariaLabels: (row) => [row.command, this.translate.instant('Cron Job')],
   });
 
-  get hiddenColumns(): Column<CronjobRow, ColumnComponent<CronjobRow>>[] {
+  protected get hiddenColumns(): Column<CronjobRow, ColumnComponent<CronjobRow>>[] {
     return this.columns.filter((column) => column?.hidden);
   }
 
@@ -156,11 +156,11 @@ export class CronListComponent implements OnInit {
     });
   }
 
-  getCronJobs(): void {
+  protected getCronJobs(): void {
     this.dataProvider.load();
   }
 
-  doAdd(): void {
+  protected doAdd(): void {
     this.slideIn.open(CronFormComponent)
       .pipe(filter((response) => !!response.response), untilDestroyed(this))
       .subscribe(() => {
@@ -168,7 +168,7 @@ export class CronListComponent implements OnInit {
       });
   }
 
-  doEdit(row: CronjobRow): void {
+  protected doEdit(row: CronjobRow): void {
     this.slideIn.open(CronFormComponent, { data: row })
       .pipe(filter((response) => !!response.response), untilDestroyed(this))
       .subscribe(() => {
@@ -176,7 +176,7 @@ export class CronListComponent implements OnInit {
       });
   }
 
-  runNow(row: CronjobRow): void {
+  protected runNow(row: CronjobRow): void {
     this.dialog.confirm({
       message: this.translate.instant('Run this job now?'),
       hideCheckbox: true,
@@ -198,7 +198,7 @@ export class CronListComponent implements OnInit {
     });
   }
 
-  doDelete(row: CronjobRow): void {
+  protected doDelete(row: CronjobRow): void {
     this.matDialog.open(CronDeleteDialog, {
       data: row,
     }).afterClosed()
@@ -208,12 +208,12 @@ export class CronListComponent implements OnInit {
       });
   }
 
-  onListFiltered(query: string): void {
+  protected onListFiltered(query: string): void {
     this.filterString = query;
     this.dataProvider.setFilter({ query, columnKeys: ['user'] });
   }
 
-  columnsChange(columns: typeof this.columns): void {
+  protected columnsChange(columns: typeof this.columns): void {
     this.columns = [...columns];
     this.cdr.detectChanges();
     this.cdr.markForCheck();

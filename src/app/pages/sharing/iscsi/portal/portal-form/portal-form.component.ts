@@ -126,17 +126,17 @@ export class PortalFormComponent implements OnInit {
     });
   }
 
-  onAdd(): void {
+  protected onAdd(): void {
     this.form.controls.ip.push(this.fb.control('', [Validators.required, ipValidator('all')]));
     this.listen.push({ ip: '' } as IscsiInterface);
   }
 
-  onDelete(index: number): void {
+  protected onDelete(index: number): void {
     this.form.controls.ip.removeAt(index);
     this.listen.splice(index, 1);
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     const values = this.form.value;
     const params = {
       comment: values.comment,

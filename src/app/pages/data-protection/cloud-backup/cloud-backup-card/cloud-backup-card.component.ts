@@ -171,7 +171,7 @@ export class CloudBackupCardComponent implements OnInit {
     this.dataProvider.load();
   }
 
-  runNow(row: CloudBackup): void {
+  protected runNow(row: CloudBackup): void {
     this.dialogService.confirm({
       title: this.translate.instant('Run Now'),
       message: this.translate.instant('Run «{name}» Cloud Backup now?', { name: row.description }),
@@ -196,7 +196,7 @@ export class CloudBackupCardComponent implements OnInit {
     });
   }
 
-  openForm(row?: CloudBackup): void {
+  protected openForm(row?: CloudBackup): void {
     this.slideIn.open(CloudBackupFormComponent, { data: row, wide: true })
       .pipe(
         filter((response) => !!response.response),
@@ -208,7 +208,7 @@ export class CloudBackupCardComponent implements OnInit {
       });
   }
 
-  doDelete(row: CloudBackup): void {
+  protected doDelete(row: CloudBackup): void {
     this.dialogService.confirm({
       title: this.translate.instant('Confirmation'),
       message: this.translate.instant('Delete Cloud Backup <b>"{name}"</b>?', {

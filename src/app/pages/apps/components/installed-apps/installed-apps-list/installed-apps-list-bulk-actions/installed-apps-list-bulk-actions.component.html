@@ -39,11 +39,11 @@
     <button
       *ixRequiresRoles="requiredRoles"
       mat-menu-item
-      ixTest="upgrade-selected"
-      [disabled]="isBulkUpgradeDisabled()"
-      (click)="bulkUpgrade.emit()"
+      ixTest="update-selected"
+      [disabled]="isBulkUpdateDisabled()"
+      (click)="bulkUpdate.emit()"
     >
-      <span>{{ 'Upgrade All Selected' | translate }}</span>
+      <span>{{ 'Update All Selected' | translate }}</span>
     </button>
     <button
       *ixRequiresRoles="requiredRoles"
