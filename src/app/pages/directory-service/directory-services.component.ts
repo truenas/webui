@@ -105,7 +105,7 @@ export class DirectoryServicesComponent implements OnInit {
     this.refreshCards();
   }
 
-  refreshCards(): void {
+  protected refreshCards(): void {
     forkJoin([
       this.api.call('directoryservices.get_state'),
       this.api.call('activedirectory.config'),
@@ -181,7 +181,7 @@ export class DirectoryServicesComponent implements OnInit {
       });
   }
 
-  onAdvancedSettingsOpened(expansionPanel: CdkAccordionItem): void {
+  protected onAdvancedSettingsOpened(expansionPanel: CdkAccordionItem): void {
     // Immediately show additional setting, so that user knows what they are.
     expansionPanel.open();
     this.dialog.confirm({
@@ -196,28 +196,28 @@ export class DirectoryServicesComponent implements OnInit {
       });
   }
 
-  openActiveDirectoryForm(): void {
+  protected openActiveDirectoryForm(): void {
     this.slideIn.open(ActiveDirectoryComponent, { wide: true }).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(() => this.refreshCards());
   }
 
-  openLdapForm(): void {
+  protected openLdapForm(): void {
     this.slideIn.open(LdapComponent, { wide: true }).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(() => this.refreshCards());
   }
 
-  openKerberosSettingsForm(): void {
+  protected openKerberosSettingsForm(): void {
     this.slideIn.open(KerberosSettingsComponent).pipe(
       filter(Boolean),
       untilDestroyed(this),
     ).subscribe(() => this.refreshCards());
   }
 
-  refreshTables(): void {
+  protected refreshTables(): void {
     if (this.idmapListComponent()) {
       this.idmapListComponent().getIdmaps();
     }
@@ -232,7 +232,7 @@ export class DirectoryServicesComponent implements OnInit {
   /**
    * All this does is provide correct typing in ng-template
    */
-  typeCard(card: DataCard): DataCard {
+  protected typeCard(card: DataCard): DataCard {
     return card;
   }
 }

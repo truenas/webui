@@ -154,7 +154,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     );
   }
 
-  hasHostAllowDenyChanged(hostsallow: string[], hostsdeny: string[]): boolean {
+  protected hasHostAllowDenyChanged(hostsallow: string[], hostsdeny: string[]): boolean {
     return (
       !isEqual(this.existingSmbShare?.hostsallow, hostsallow)
       || !isEqual(this.existingSmbShare?.hostsdeny, hostsdeny)
@@ -373,7 +373,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
       });
   }
 
-  setNameFromPath(): void {
+  protected setNameFromPath(): void {
     const pathControl = this.form.controls.path;
     if (!pathControl.value) {
       return;
@@ -391,7 +391,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     this.cdr.markForCheck();
   }
 
-  checkAndShowStripAclWarning(path: string, aclValue: boolean): void {
+  protected checkAndShowStripAclWarning(path: string, aclValue: boolean): void {
     if (this.wasStripAclWarningShown || !path || aclValue) {
       return;
     }
@@ -422,7 +422,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     this.cdr.markForCheck();
   }
 
-  showStripAclWarning(): void {
+  protected showStripAclWarning(): void {
     this.dialogService
       .confirm({
         title: this.translate.instant(helptextSharingSmb.stripACLDialog.title),
@@ -447,7 +447,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     });
   }
 
-  setSmbShareForEdit(share: SmbShare): void {
+  protected setSmbShareForEdit(share: SmbShare): void {
     this.title = helptextSharingSmb.formTitleEdit;
 
     const index = this.namesInUse.findIndex((name) => name === share.name);
@@ -464,7 +464,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     this.form.patchValue(flatShare);
   }
 
-  afpConfirmEnable(value: boolean): void {
+  protected afpConfirmEnable(value: boolean): void {
     if (!value) {
       return;
     }
@@ -485,7 +485,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
       });
   }
 
-  submit(): void {
+  protected submit(): void {
     const smbShare = this.form.value as SmbShareUpdate;
     const purpose = smbShare.purpose;
     const presetFields = presetEnabledFields[purpose] ?? [];
@@ -572,7 +572,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     });
   }
 
-  restartCifsServiceIfNecessary(): Observable<boolean> {
+  protected restartCifsServiceIfNecessary(): Observable<boolean> {
     return this.promptIfRestartRequired().pipe(
       switchMap((shouldRestart) => {
         if (shouldRestart) {
@@ -583,7 +583,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     );
   }
 
-  promptIfRestartRequired(): Observable<boolean> {
+  protected promptIfRestartRequired(): Observable<boolean> {
     return this.store$.select(selectService(ServiceName.Cifs)).pipe(
       filter((service) => !!service),
       map((service) => service.state === ServiceStatus.Running),
@@ -623,7 +623,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     );
   };
 
-  shouldRedirectToAclEdit(): Observable<boolean> {
+  protected shouldRedirectToAclEdit(): Observable<boolean> {
     const sharePath: string = this.form.controls.path.value;
     const datasetId = sharePath.replace('/mnt/', '');
     return this.api.call('filesystem.stat', [sharePath]).pipe(
@@ -635,7 +635,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     );
   }
 
-  closeForm(routerLink?: string[]): void {
+  protected closeForm(routerLink?: string[]): void {
     this.slideInRef.close({ response: false });
 
     if (routerLink) {

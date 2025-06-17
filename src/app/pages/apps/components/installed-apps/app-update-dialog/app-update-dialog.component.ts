@@ -18,7 +18,7 @@ import { appImagePlaceholder } from 'app/constants/catalog.constants';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
-import { AppUpgradeDialogConfig } from 'app/interfaces/app-upgrade-dialog-config.interface';
+import { AppUpdateDialogConfig } from 'app/interfaces/app-upgrade-dialog-config.interface';
 import { ChartContainerImage } from 'app/interfaces/app.interface';
 import { AppUpgradeSummary } from 'app/interfaces/application.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -32,9 +32,9 @@ type Version = Omit<AppUpgradeSummary, 'upgrade_version' | 'image_update_availab
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-app-upgrade-dialog',
-  styleUrls: ['./app-upgrade-dialog.component.scss'],
-  templateUrl: './app-upgrade-dialog.component.html',
+  selector: 'ix-app-update-dialog',
+  styleUrls: ['./app-update-dialog.component.scss'],
+  templateUrl: './app-update-dialog.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatDialogContent,
@@ -55,8 +55,8 @@ type Version = Omit<AppUpgradeSummary, 'upgrade_version' | 'image_update_availab
     RequiresRolesDirective,
   ],
 })
-export class AppUpgradeDialog {
-  dialogConfig: AppUpgradeDialogConfig;
+export class AppUpdateDialog {
+  dialogConfig: AppUpdateDialogConfig;
   imagePlaceholder = appImagePlaceholder;
   helptext = helptextApps;
   versionOptions = new Map<string, Version>();
@@ -66,12 +66,12 @@ export class AppUpgradeDialog {
   protected readonly requiredRoles = [Role.AppsWrite];
 
   constructor(
-    public dialogRef: MatDialogRef<AppUpgradeDialog>,
+    public dialogRef: MatDialogRef<AppUpdateDialog>,
     private loader: LoaderService,
     private errorHandler: ErrorHandlerService,
     private appService: ApplicationsService,
     public dialogService: DialogService,
-    @Inject(MAT_DIALOG_DATA) public data: AppUpgradeDialogConfig,
+    @Inject(MAT_DIALOG_DATA) public data: AppUpdateDialogConfig,
   ) {
     this.dialogConfig = data;
 

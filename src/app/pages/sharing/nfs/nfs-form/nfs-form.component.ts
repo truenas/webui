@@ -165,7 +165,7 @@ export class NfsFormComponent implements OnInit {
     this.defaultNfsShare = this.slideInRef.getData()?.defaultNfsShare;
   }
 
-  setNfsShareForEdit(share: NfsShare): void {
+  protected setNfsShareForEdit(share: NfsShare): void {
     share.networks.forEach(() => this.addNetworkControl());
     share.hosts.forEach(() => this.addHostControl());
     this.form.patchValue(share);
@@ -183,27 +183,27 @@ export class NfsFormComponent implements OnInit {
     }
   }
 
-  addNetworkControl(): void {
+  protected addNetworkControl(): void {
     this.form.controls.networks.push(this.formBuilder.control('', [Validators.required, ipv4or6cidrValidator()]));
   }
 
-  removeNetworkControl(index: number): void {
+  protected removeNetworkControl(index: number): void {
     this.form.controls.networks.removeAt(index);
   }
 
-  addHostControl(): void {
+  protected addHostControl(): void {
     this.form.controls.hosts.push(this.formBuilder.control('', Validators.required));
   }
 
-  removeHostControl(index: number): void {
+  protected removeHostControl(index: number): void {
     this.form.controls.hosts.removeAt(index);
   }
 
-  toggleAdvancedMode(): void {
+  protected toggleAdvancedMode(): void {
     this.isAdvancedMode = !this.isAdvancedMode;
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     const nfsShare = { ...this.form.value } as NfsShareUpdate;
 
     if (!this.isEnterprise()) {

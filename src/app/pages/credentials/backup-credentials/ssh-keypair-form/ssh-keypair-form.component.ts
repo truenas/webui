@@ -120,7 +120,7 @@ export class SshKeypairFormComponent implements OnInit {
     });
   }
 
-  onGenerateButtonPressed(): void {
+  protected onGenerateButtonPressed(): void {
     this.api.call('keychaincredential.generate_ssh_key_pair')
       .pipe(
         this.loader.withLoader(),
@@ -135,7 +135,7 @@ export class SshKeypairFormComponent implements OnInit {
       });
   }
 
-  onDownloadKey(keyType: 'private_key' | 'public_key'): void {
+  protected onDownloadKey(keyType: 'private_key' | 'public_key'): void {
     const name = this.form.value.name;
     const key = this.form.controls[keyType].value;
     const filename = `${name}_${keyType}_rsa`;
@@ -143,7 +143,7 @@ export class SshKeypairFormComponent implements OnInit {
     this.download.downloadBlob(blob, filename);
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     const values = this.form.value;
     const commonBody: KeychainCredentialUpdate = {
       name: values.name,

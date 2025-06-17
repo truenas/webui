@@ -18,7 +18,7 @@ import { BulkListItemComponent } from 'app/modules/lists/bulk-list-item/bulk-lis
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { AppBulkUpgradeComponent } from 'app/pages/apps/components/installed-apps/app-bulk-upgrade/app-bulk-upgrade.component';
+import { AppBulkUpdateComponent } from 'app/pages/apps/components/installed-apps/app-bulk-update/app-bulk-update.component';
 
 const fakeAppOne = {
   name: 'test-app-one',
@@ -70,12 +70,12 @@ const fakeUpgradeSummary: AppUpgradeSummary = {
   upgrade_human_version: '24.0.6_15.3.36',
 };
 
-describe('AppBulkUpgradeComponent', () => {
-  let spectator: Spectator<AppBulkUpgradeComponent>;
+describe('AppBulkUpdateComponent', () => {
+  let spectator: Spectator<AppBulkUpdateComponent>;
   let loader: HarnessLoader;
 
   const createComponent = createComponentFactory({
-    component: AppBulkUpgradeComponent,
+    component: AppBulkUpdateComponent,
     imports: [
       ReactiveFormsModule,
       ImgFallbackModule,
@@ -109,7 +109,7 @@ describe('AppBulkUpgradeComponent', () => {
 
   it('checks dialog confirmation text', () => {
     expect(spectator.fixture.nativeElement).toHaveText(
-      'The following 2 applications will be upgraded. Are you sure you want to proceed?',
+      'The following 2 applications will be updated. Are you sure you want to proceed?',
     );
   });
 
@@ -122,10 +122,10 @@ describe('AppBulkUpgradeComponent', () => {
       ['test-app-two'],
     ]];
 
-    const updatedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Upgrade' }));
+    const updatedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Update' }));
     await updatedButton.click();
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('core.bulk', jobArguments);
-    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Upgrading Apps. Please check on the progress in Task Manager.');
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Updating Apps. Please check on the progress in Task Manager.');
   });
 });

@@ -149,7 +149,7 @@ export class CloudCredentialsFormComponent implements OnInit {
     }
   }
 
-  onSubmit(): boolean {
+  protected onSubmit(): boolean {
     this.isLoading.set(true);
 
     this.providerForm.beforeSubmit()
@@ -182,7 +182,7 @@ export class CloudCredentialsFormComponent implements OnInit {
     return false;
   }
 
-  onVerify(): void {
+  protected onVerify(): void {
     this.isLoading.set(true);
 
     this.providerForm.beforeSubmit()
