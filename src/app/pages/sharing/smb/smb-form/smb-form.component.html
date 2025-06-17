@@ -166,7 +166,10 @@
             ></ix-checkbox>
           }
 
-          @if (form.controls.timemachine_quota.enabled && form.value.timemachine) {
+          @if (
+            (form.controls.timemachine_quota.enabled && form.value.timemachine && form.controls.timemachine.enabled) ||
+            (form.controls.timemachine_quota.enabled && !form.controls.timemachine.enabled)
+          ) {
             <ix-input
               formControlName="timemachine_quota"
               [label]="helptextSharingSmb.timemachineQuotaLabel | translate"

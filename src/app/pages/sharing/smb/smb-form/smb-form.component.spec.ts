@@ -34,12 +34,13 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { RestartSmbDialog } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
+import { presetEnabledFields } from 'app/pages/sharing/smb/smb-form/smb-form-presets';
 import { ApiCallError } from 'app/services/errors/error.classes';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { AppState } from 'app/store';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { selectServices } from 'app/store/services/services.selectors';
-import { presetEnabledFields, SmbFormComponent } from './smb-form.component';
+import { SmbFormComponent } from './smb-form.component';
 
 describe('SmbFormComponent', () => {
   const existingShare = {

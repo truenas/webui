@@ -50,6 +50,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { RestartSmbDialog } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
+import { presetEnabledFields } from 'app/pages/sharing/smb/smb-form/smb-form-presets';
 import { SmbValidationService } from 'app/pages/sharing/smb/smb-form/smb-validator.service';
 import { getRootDatasetsValidator } from 'app/pages/sharing/utils/root-datasets-validator';
 import { DatasetService } from 'app/services/dataset/dataset.service';
@@ -58,25 +59,6 @@ import { UserService } from 'app/services/user.service';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectService } from 'app/store/services/services.selectors';
-
-export const presetEnabledFields: Partial<Record<SmbPresetType, (keyof SmbShareUpdate)[]>> = {
-  [SmbPresetType.LegacyShare]: [
-    'recyclebin', 'path_suffix', 'hostsallow', 'hostsdeny', 'guestok', 'streams',
-    'durablehandle', 'shadowcopy', 'fsrvp', 'home', 'acl', 'afp', 'timemachine',
-    'timemachine_quota', 'aapl_name_mangling', 'auxsmbconf', 'vuid',
-  ],
-  [SmbPresetType.DefaultShare]: ['aapl_name_mangling'],
-  [SmbPresetType.TimeMachineShare]: [
-    'timemachine_quota', 'vuid', 'auto_snapshot',
-    'auto_dataset_creation', 'dataset_naming_schema',
-  ],
-  [SmbPresetType.MultiProtocolShare]: ['aapl_name_mangling'],
-  [SmbPresetType.TimeLockedShare]: ['grace_period', 'aapl_name_mangling'],
-  [SmbPresetType.PrivateDatasetsShare]: [
-    'dataset_naming_schema', 'auto_quota', 'aapl_name_mangling',
-  ],
-  [SmbPresetType.ExternalShare]: ['remote_path'],
-};
 
 @UntilDestroy()
 @Component({
@@ -486,7 +468,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   }
 
   protected submit(): void {
-    const smbShare = this.form.value as SmbShareUpdate;
+    const smbShare = { ...this.form.value } as SmbShareUpdate;
     const purpose = smbShare.purpose;
     const presetFields = presetEnabledFields[purpose] ?? [];
 
