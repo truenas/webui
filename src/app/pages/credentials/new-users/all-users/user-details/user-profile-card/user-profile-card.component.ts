@@ -7,7 +7,7 @@ import {
 } from '@angular/material/card';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { isEmptyHomeDirectory } from 'app/helpers/user.helper';
+import { getUserType, isEmptyHomeDirectory } from 'app/helpers/user.helper';
 import { User } from 'app/interfaces/user.interface';
 
 @UntilDestroy()
@@ -31,16 +31,7 @@ export class UserProfileCardComponent {
     private translate: TranslateService,
   ) {}
 
-  protected type = computed(() => {
-    if (this.user().builtin) {
-      return this.translate.instant('Built-In');
-    }
-    if (this.user().local) {
-      return this.translate.instant('Local');
-    }
-
-    return this.translate.instant('Directory Services');
-  });
+  protected type = computed(() => getUserType(this.user(), this.translate));
 
   protected hasHomeDirectory = computed(() => {
     return !isEmptyHomeDirectory(this.user().home);

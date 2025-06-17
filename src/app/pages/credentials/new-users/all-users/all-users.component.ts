@@ -52,10 +52,11 @@ export class AllUsersComponent implements OnInit, OnDestroy {
     dataProvider.paginationStrategy = new PaginationServerSide();
     dataProvider.sortingStrategy = new SortingServerSide();
     dataProvider.setSorting({
-      propertyName: 'uid',
+      propertyName: 'username',
       direction: SortDirection.Asc,
-      active: 1,
+      active: 0,
     });
+    dataProvider.setParams([[['builtin', '=', false]]]);
     dataProvider.currentPage$.pipe(filter(Boolean), untilDestroyed(this)).subscribe((users) => {
       dataProvider.expandedRow = this.masterDetailView().isMobileView() ? null : users[0];
     });

@@ -17,7 +17,6 @@ import { ApiDataProvider } from 'app/modules/ix-table/classes/api-data-provider/
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { templateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
 import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
@@ -26,6 +25,7 @@ import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-
 import { createTable } from 'app/modules/ix-table/utils';
 import { UsersSearchComponent } from 'app/pages/credentials/new-users/all-users/users-search/users-search.component';
 import { UserAccessCellComponent } from './user-access-cell/user-access-cell.component';
+import { getUserType } from 'app/helpers/user.helper';
 
 @UntilDestroy()
 @Component({
@@ -64,20 +64,18 @@ export class UserListComponent {
       propertyName: 'username',
     }),
     textColumn({
-      title: this.translate.instant('UID'),
-      propertyName: 'uid',
-    }),
-    yesNoColumn({
-      title: this.translate.instant('Built in'),
-      propertyName: 'builtin',
-    }),
-    textColumn({
       title: this.translate.instant('Full Name'),
       propertyName: 'full_name',
+    }),
+    textColumn({
+      title: this.translate.instant('Type'),
+      propertyName: 'builtin',
+      getValue: (user) => getUserType(user, this.translate),
     }),
     templateColumn({
       title: this.translate.instant('Access'),
       propertyName: 'roles',
+      disableSorting: true,
     }),
   ], {
     uniqueRowTag: (row) => 'user-' + row.username,

@@ -1,4 +1,5 @@
-import { isEmptyHomeDirectory } from './user.helper';
+import { getUserType, isEmptyHomeDirectory } from './user.helper';
+import { TranslateService } from '@ngx-translate/core';
 
 describe('UserHelper', () => {
   describe('isEmptyHomeDirectory', () => {
@@ -19,6 +20,24 @@ describe('UserHelper', () => {
 
     it('should return true for /usr/empty path', () => {
       expect(isEmptyHomeDirectory('/usr/empty')).toBe(true);
+    });
+  });
+
+  describe('getUserType', () => {
+    const translate = {
+      instant: (label: string) => label,
+    } as TranslateService;
+
+    it('returns Built-In for builtin users', () => {
+      expect(getUserType({ builtin: true, local: false }, translate)).toBe('Built-In');
+    });
+
+    it('returns Local for local users', () => {
+      expect(getUserType({ builtin: false, local: true }, translate)).toBe('Local');
+    });
+
+    it('returns Directory Services for others', () => {
+      expect(getUserType({ builtin: false, local: false }, translate)).toBe('Directory Services');
     });
   });
 });
