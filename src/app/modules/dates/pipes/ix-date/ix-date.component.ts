@@ -1,5 +1,6 @@
 import {
-  ChangeDetectionStrategy, Component, input,
+  ChangeDetectionStrategy, Component, computed, input,
+  signal,
 } from '@angular/core';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TZDate } from '@date-fns/tz';
@@ -22,21 +23,21 @@ export class IxDateComponent {
   /** Date must be in browser timezone */
   readonly date = input.required<number | Date>();
 
-  machineTimezone: string;
+  machineTimezone = signal<string>(undefined);
   defaultTz: string = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-  get machineTime(): Date {
+  protected machineTime = computed(() => {
     const utc = new TZDate(this.date().toString(), this.defaultTz);
-    return utc.withTimeZone(this.machineTimezone);
-  }
+    return utc.withTimeZone(this.machineTimezone());
+  });
 
-  get isTimezoneDifference(): boolean {
-    return this.machineTime < this.date() || this.machineTime > this.date();
-  }
+  protected isTimezoneDifference = computed(() => {
+    return this.machineTime() < this.date() || this.machineTime() > this.date();
+  });
 
   constructor(
     private localeService: LocaleService,
   ) {
-    this.machineTimezone = this.localeService.timezone;
+    this.machineTimezone.set(this.localeService.timezone);
   }
 }
