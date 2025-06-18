@@ -145,7 +145,7 @@ export class DatasetQuotaEditFormComponent implements OnInit {
     this.setupEditQuotaForm();
   }
 
-  protected setupEditQuotaForm(): void {
+  private setupEditQuotaForm(): void {
     this.updateForm();
   }
 
@@ -170,7 +170,7 @@ export class DatasetQuotaEditFormComponent implements OnInit {
     ).subscribe();
   }
 
-  protected getQuota(id: number): Observable<DatasetQuota[]> {
+  private getQuota(id: number): Observable<DatasetQuota[]> {
     const params = [['id', '=', id] as QueryFilter<DatasetQuota>] as QueryParams<DatasetQuota>;
     return this.api.call('pool.dataset.get_quota', [this.datasetId, this.quotaType, params]);
   }

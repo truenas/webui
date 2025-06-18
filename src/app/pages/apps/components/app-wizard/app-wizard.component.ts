@@ -198,7 +198,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
     return !section.schema.every((item) => !this.form.controls[item.controlName].invalid);
   }
 
-  loadApplicationForCreation(): void {
+  private loadApplicationForCreation(): void {
     this.isNew = true;
     this.isLoading = true;
     this.appService
@@ -235,7 +235,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
     this.appSchemaService.deleteFormListItem(event);
   }
 
-  getFieldsHiddenOnForm(data: unknown, deleteField$: Subject<string>, path = ''): void {
+  private getFieldsHiddenOnForm(data: unknown, deleteField$: Subject<string>, path = ''): void {
     if (path) {
       // eslint-disable-next-line no-restricted-syntax
       const formField = this.form.get(path) as CustomUntypedFormField;
@@ -272,7 +272,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
     deleteField$.complete();
   }
 
-  saveData(data: ChartFormValues): void {
+  private saveData(data: ChartFormValues): void {
     let job$: Observable<Job<App>>;
 
     if (this.isNew) {

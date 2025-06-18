@@ -110,7 +110,7 @@ export class ManualUpdateFormComponent implements OnInit {
     this.getUserPrefs();
   }
 
-  getUserPrefs(): void {
+  private getUserPrefs(): void {
     this.store$.pipe(waitForPreferences).pipe(
       tap((userPrefs) => {
         if (userPrefs.rebootAfterManualUpdate === undefined) {
@@ -122,13 +122,13 @@ export class ManualUpdateFormComponent implements OnInit {
     ).subscribe(noop);
   }
 
-  getVersionNoFromSysInfo(): void {
+  private getVersionNoFromSysInfo(): void {
     this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((sysInfo) => {
       this.currentVersion = sysInfo.version;
     });
   }
 
-  setPoolOptions(): void {
+  private setPoolOptions(): void {
     this.api.call('pool.query').pipe(untilDestroyed(this)).subscribe((pools) => {
       if (!pools) {
         return;
@@ -144,7 +144,7 @@ export class ManualUpdateFormComponent implements OnInit {
     });
   }
 
-  checkHaLicenseAndUpdateStatus(): void {
+  private checkHaLicenseAndUpdateStatus(): void {
     if (this.systemService.isEnterprise) {
       this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)).subscribe((isHaLicensed) => {
         this.isHaLicensed = isHaLicensed;
@@ -157,7 +157,7 @@ export class ManualUpdateFormComponent implements OnInit {
     }
   }
 
-  checkForUpdateRunning(): void {
+  private checkForUpdateRunning(): void {
     this.api.call('core.get_jobs', [[['method', '=', 'failover.upgrade'], ['state', '=', JobState.Running]]])
       .pipe(untilDestroyed(this)).subscribe({
         next: (jobs) => {
@@ -206,7 +206,7 @@ export class ManualUpdateFormComponent implements OnInit {
     this.setupAndOpenUpdateJobDialog(value.updateFile, value.filelocation);
   }
 
-  setupAndOpenUpdateJobDialog(files: FileList, fileLocation: string): void {
+  private setupAndOpenUpdateJobDialog(files: FileList, fileLocation: string): void {
     if (!files.length) {
       return;
     }
@@ -265,7 +265,7 @@ export class ManualUpdateFormComponent implements OnInit {
     }).pipe(untilDestroyed(this)).subscribe();
   }
 
-  handleUpdateSuccess(): void {
+  private handleUpdateSuccess(): void {
     if (this.isHaLicensed) {
       this.finishHaUpdate();
     } else {

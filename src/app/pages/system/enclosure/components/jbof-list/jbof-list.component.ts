@@ -158,7 +158,7 @@ export class JbofListComponent implements OnInit {
     });
   }
 
-  protected getJbofs(): void {
+  private getJbofs(): void {
     this.dataProvider.load();
     this.updateAvailableJbof();
   }

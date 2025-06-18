@@ -116,7 +116,7 @@ export class IxErrorsComponent implements OnChanges {
    * @param error The name of the error on control e.g., 'required'
    * @returns A default error message for the error type
    */
-  getDefaultError(error: DefaultValidationError): string {
+  private getDefaultError(error: DefaultValidationError): string {
     const errors = this.control().errors || {};
     switch (error) {
       case DefaultValidationError.Min:

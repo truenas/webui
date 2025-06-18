@@ -73,7 +73,7 @@ export class AlertSettings2Component implements OnInit {
     this.handleSearchControl();
   }
 
-  loadCategories(): void {
+  private loadCategories(): void {
     this.api.call('alert.list_categories').pipe(
       untilDestroyed(this),
     ).subscribe({
@@ -85,7 +85,7 @@ export class AlertSettings2Component implements OnInit {
     });
   }
 
-  loadClassesConfig(): void {
+  private loadClassesConfig(): void {
     this.api.call('alertclasses.config').pipe(
       untilDestroyed(this),
     ).subscribe({
@@ -96,7 +96,7 @@ export class AlertSettings2Component implements OnInit {
     });
   }
 
-  loadPolicyOptions(): void {
+  private loadPolicyOptions(): void {
     this.api.call('alert.list_policies').pipe(
       untilDestroyed(this),
     ).subscribe({

@@ -71,7 +71,7 @@ export class CloudSyncWizardComponent {
     ));
   }
 
-  createTask(payload: CloudSyncTaskUpdate): Observable<CloudSyncTask> {
+  private createTask(payload: CloudSyncTaskUpdate): Observable<CloudSyncTask> {
     return this.api.call('cloudsync.create', [payload]);
   }
 
@@ -111,7 +111,7 @@ export class CloudSyncWizardComponent {
     });
   }
 
-  updateDescriptionValue(): void {
+  private updateDescriptionValue(): void {
     const provider = this.existingCredential.provider.type;
 
     const whatAndWhen = this.whatAndWhen();

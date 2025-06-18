@@ -179,7 +179,7 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
       });
   }
 
-  getSnapshotNodeProvider(): TreeNodeProvider {
+  private getSnapshotNodeProvider(): TreeNodeProvider {
     return (node: TreeNode<ExplorerNodeData>) => {
       return this.api.call(
         'cloud_backup.list_snapshot_directory',

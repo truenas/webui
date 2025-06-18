@@ -113,7 +113,7 @@ export class AppBulkUpdateComponent {
     return this.expandedItems().includes(row.key);
   }
 
-  getUpgradeSummary(name: string, version?: string): void {
+  private getUpgradeSummary(name: string, version?: string): void {
     this.loadingMap.set(name, true);
     this.appService
       .getAppUpgradeSummary(name, version)

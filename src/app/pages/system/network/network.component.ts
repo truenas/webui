@@ -149,7 +149,7 @@ export class NetworkComponent implements OnInit {
     });
   }
 
-  protected async loadCheckinStatus(): Promise<void> {
+  private async loadCheckinStatus(): Promise<void> {
     if (!await firstValueFrom(this.authService.hasRole(Role.NetworkInterfaceWrite))) {
       return;
     }
@@ -336,7 +336,7 @@ export class NetworkComponent implements OnInit {
     }
   }
 
-  protected finishCheckin(): void {
+  private finishCheckin(): void {
     this.api
       .call('interface.checkin')
       .pipe(

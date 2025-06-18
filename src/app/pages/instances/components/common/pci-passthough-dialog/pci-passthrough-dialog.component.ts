@@ -147,7 +147,7 @@ export class PciPassthroughDialog implements OnInit {
     ]);
   }
 
-  protected filterTable(): void {
+  private filterTable(): void {
     const filteredDevices = this.devices().filter((device) => {
       const searchQuery = this.filterForm.getRawValue().searchQuery.toLowerCase();
       const type = this.filterForm.get('type')?.value;
