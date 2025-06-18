@@ -79,12 +79,12 @@ export class BaseNamespaceFormComponent implements OnInit, OnChanges {
 
   submitted = output<NamespaceChanges>();
 
-  protected readonly zvolsRootNode = [zvolsRootNode];
+  protected readonly zvolsRootNode = [{ ...zvolsRootNode }];
   protected readonly zvolProvider = this.filesystemService.getFilesystemNodeProvider({
     zvolsOnly: true,
   });
 
-  protected readonly datasetsRootNode = [datasetsRootNode];
+  protected readonly datasetsRootNode = [{ ...datasetsRootNode }];
   protected readonly directoryProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
   protected readonly fileProvider = this.filesystemService.getFilesystemNodeProvider();
 
