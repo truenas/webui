@@ -4,23 +4,8 @@ const { compilerOptions } = require('./tsconfig');
 // Deliberately set to not UTC.
 process.env.TZ = 'Europe/Kiev';
 
-const esmPatterns = [
-  '.*\\.mjs$',
-  'is-cidr',
-  'ip-regex',
-  'cidr-regex',
-  'lodash-es',
-  'internmap',
-  'd3',
-  'delaunator',
-  'cheerio',
-  'robust-predicates',
-  '@angular/.*',
-];
-
 module.exports = {
   preset: 'jest-preset-angular',
-  globalSetup: 'jest-preset-angular/global-setup',
   setupFilesAfterEnv: ['<rootDir>/src/setup-jest.ts'],
   collectCoverage: false,
   collectCoverageFrom: ["./src/**/*.ts"],
@@ -30,17 +15,12 @@ module.exports = {
   cacheDirectory: "<rootDir>/.jest/cache",
   moduleNameMapper: {
     ...pathsToModuleNameMapper(compilerOptions.paths || {}),
-    ...esmPatterns.reduce((acc, pattern) => {
-      acc[`^${pattern}$`] = pattern;
-      acc[`^${pattern}/(.*)$`] = `${pattern}/$1`;
-      return acc;
-    }, {}),
   },
   testPathIgnorePatterns: [
     '<rootDir>/dist/',
   ],
   transformIgnorePatterns: [
-    `node_modules/(?!(${esmPatterns.join('|')}))`
+    'node_modules/(?!.*\\.mjs$|is-cidr|ip-regex|cidr-regex|lodash-es|internmap|d3|delaunator|cheerio|robust-predicates|@angular|@ngneat|@ngrx|@ngx-translate|ng-mocks|ngx-translate-messageformat-compiler)'
   ],
   reporters: [
     "default",

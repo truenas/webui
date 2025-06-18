@@ -46,7 +46,7 @@ describe('GlobalConfigFormComponent', () => {
           storage_pools: ['poolio'],
           bridge: 'bridge1',
           v4_network: '1.2.3.4/24',
-          v6_network: null,
+          v6_network: null as string | null,
         })),
       }),
       mockAuth(),
