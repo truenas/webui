@@ -1,4 +1,4 @@
-import { format } from 'date-fns';
+import { format } from 'date-fns-tz';
 import { MockPipe } from 'ng-mocks';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 

@@ -1,10 +1,9 @@
 import {
-  ChangeDetectionStrategy, Component, computed, input,
-  signal,
+  ChangeDetectionStrategy, Component, input,
 } from '@angular/core';
 import { MatTooltip } from '@angular/material/tooltip';
-import { TZDate } from '@date-fns/tz';
 import { TranslateModule } from '@ngx-translate/core';
+import { toZonedTime, fromZonedTime } from 'date-fns-tz';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { LocaleService } from 'app/modules/language/locale.service';
 
@@ -23,21 +22,21 @@ export class IxDateComponent {
   /** Date must be in browser timezone */
   readonly date = input.required<number | Date>();
 
-  machineTimezone = signal<string>(undefined);
+  machineTimezone: string;
   defaultTz: string = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-  protected machineTime = computed(() => {
-    const utc = new TZDate(this.date().toString(), this.defaultTz);
-    return utc.withTimeZone(this.machineTimezone());
-  });
+  get machineTime(): Date {
+    const utc = fromZonedTime(this.date(), this.defaultTz);
+    return toZonedTime(utc, this.machineTimezone);
+  }
 
-  protected isTimezoneDifference = computed(() => {
-    return this.machineTime() < this.date() || this.machineTime() > this.date();
-  });
+  get isTimezoneDifference(): boolean {
+    return this.machineTime < this.date() || this.machineTime > this.date();
+  }
 
   constructor(
     private localeService: LocaleService,
   ) {
-    this.machineTimezone.set(this.localeService.timezone);
+    this.machineTimezone = this.localeService.timezone;
   }
 }

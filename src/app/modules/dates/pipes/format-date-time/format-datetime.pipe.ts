@@ -4,11 +4,10 @@ import {
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { Actions, ofType } from '@ngrx/effects';
 import { TranslateService } from '@ngx-translate/core';
-import { format } from 'date-fns';
+import { format } from 'date-fns-tz';
 import { distinctUntilChanged } from 'rxjs';
 import { invalidDate } from 'app/constants/invalid-date';
 import { WINDOW } from 'app/helpers/window.helper';
-import { LocaleService } from 'app/modules/language/locale.service';
 import { localizationFormSubmitted } from 'app/store/preferences/preferences.actions';
 
 @UntilDestroy()
@@ -24,7 +23,6 @@ export class FormatDateTimePipe implements PipeTransform {
     private actions$: Actions,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
-    private localeService: LocaleService,
     @Inject(WINDOW) private window: Window,
   ) {
     this.checkFormatsFromLocalStorage();
@@ -76,13 +74,23 @@ export class FormatDateTimePipe implements PipeTransform {
     try {
       const localDate = date;
 
-      const normalizedDateFormat = this.localeService.formatDateTimeToDateFns(this.dateFormat);
-      const normalizedTimeFormat = this.localeService.formatDateTimeToDateFns(this.timeFormat);
-
-      if (normalizedDateFormat === ' ') {
-        return format(localDate, normalizedTimeFormat);
+      // Reason for below replacements: https://github.com/date-fns/date-fns/blob/master/docs/unicodeTokens.md
+      // TODO: Replace with formatDateTimeToDateFns in LocaleService
+      if (this.dateFormat) {
+        this.dateFormat = this.dateFormat
+          .replace('YYYY', 'yyyy')
+          .replace('YY', 'y')
+          .replace('DD', 'dd')
+          .replace('D', 'd')
+          .replace(' A', ' aa');
       }
-      return format(localDate, `${normalizedDateFormat} ${normalizedTimeFormat}`);
+      if (this.timeFormat) {
+        this.timeFormat = this.timeFormat.replace(' A', ' aa');
+      }
+      if (this.dateFormat === ' ') {
+        return format(localDate, this.timeFormat);
+      }
+      return format(localDate, `${this.dateFormat} ${this.timeFormat}`);
     } catch {
       return this.translate.instant(invalidDate);
     }
