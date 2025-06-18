@@ -5,6 +5,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { DatasetCaseSensitivity, DatasetPreset } from 'app/enums/dataset.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
+import { DetailsTableHarness } from 'app/modules/details-table/details-table.harness';
 import { IxFieldsetHarness } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.harness';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
@@ -52,9 +53,13 @@ describe('NameAndOptionsSectionComponent', () => {
         parent: parentDataset,
       });
 
-      const values = await form.getValues();
-      expect(values).toEqual({
-        'Parent Path': 'parent',
+      const details = await (await loader.getHarness(DetailsTableHarness)).getValues();
+      expect(details).toEqual({
+        'Parent Path:': 'parent',
+      });
+
+      const formValues = await form.getValues();
+      expect(formValues).toEqual({
         Name: '',
         'Dataset Preset': 'Generic',
       });
