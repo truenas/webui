@@ -48,14 +48,14 @@ import { UsersDataProvider } from 'app/pages/credentials/new-users/all-users/use
   ],
 })
 export class AllUsersComponent implements OnInit, OnDestroy {
-  protected dataProvider: UsersDataProvider; // Used in template
-  private readonly userName = injectParams('id'); // Only used in TS
+  protected dataProvider: UsersDataProvider;
+  private readonly userName = injectParams('id');
 
-  protected readonly searchableElements = allUsersElements; // Used in template
-  protected readonly masterDetailView = viewChild.required(MasterDetailViewComponent); // Used in template
-  protected readonly selectedUser = signal<User>(null); // Used in template
+  protected readonly searchableElements = allUsersElements;
+  protected readonly masterDetailView = viewChild.required(MasterDetailViewComponent);
+  protected readonly selectedUser = signal<User>(null);
 
-  private navigationInProgress = false; // Only used in TS
+  private navigationInProgress = false;
 
   constructor(
     private api: ApiService,
@@ -81,7 +81,6 @@ export class AllUsersComponent implements OnInit, OnDestroy {
       active: 1,
     });
 
-    // Set priority username if provided via URL
     const urlUsername = this.userName();
     if (urlUsername) {
       this.dataProvider.setPriorityUsername(urlUsername);
@@ -118,7 +117,7 @@ export class AllUsersComponent implements OnInit, OnDestroy {
     ).subscribe();
   }
 
-  protected onUserSelected(user: User): void { // Used in template
+  protected onUserSelected(user: User): void {
     if (!user || this.navigationInProgress) {
       return;
     }
@@ -126,7 +125,6 @@ export class AllUsersComponent implements OnInit, OnDestroy {
     this.navigationInProgress = true;
     this.selectedUser.set(user);
 
-    // Navigate to the user-specific URL
     this.router.navigate(['/credentials', 'users-new', 'view', user.username]).finally(() => {
       this.navigationInProgress = false;
     });
@@ -140,16 +138,13 @@ export class AllUsersComponent implements OnInit, OnDestroy {
     const urlUsername = this.userName();
 
     if (urlUsername) {
-      // Find user from current page (priority user will be first if URL matches)
       const targetUser = users.find((user) => user.username === urlUsername);
       if (targetUser) {
         this.selectedUser.set(targetUser);
       } else {
-        // URL user not found, select first user
         this.selectedUser.set(users[0]);
       }
     } else {
-      // No user in URL, select first user
       this.selectedUser.set(users[0]);
     }
   }

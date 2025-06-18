@@ -36,18 +36,18 @@ import { UsersDataProvider } from 'app/pages/credentials/new-users/all-users/use
   ],
 })
 export class UsersSearchComponent implements OnInit {
-  protected readonly advancedSearchPlaceholder = this.translate.instant('Username = "root" AND "Built in" = "Yes"'); // Used in template
+  protected readonly advancedSearchPlaceholder = this.translate.instant('Username = "root" AND "Built in" = "Yes"');
 
-  readonly dataProvider = input.required<UsersDataProvider>(); // Used across components
+  readonly dataProvider = input.required<UsersDataProvider>();
 
-  protected readonly searchQuery = signal<SearchQuery<User>>({ // Used in template
+  protected readonly searchQuery = signal<SearchQuery<User>>({
     query: '',
     isBasicQuery: true,
   });
 
-  protected readonly searchProperties = signal<SearchProperty<User>[]>([]); // Used in template
+  protected readonly searchProperties = signal<SearchProperty<User>[]>([]);
 
-  protected userPresets: FilterPreset<User>[] = [ // Used in template
+  protected userPresets: FilterPreset<User>[] = [
     {
       label: this.translate.instant('Show Builtin Users'),
       query: [['builtin', '=', true]],
@@ -174,7 +174,7 @@ export class UsersSearchComponent implements OnInit {
     ]));
   }
 
-  protected onSearch(query: SearchQuery<User>): void { // Used in template
+  protected onSearch(query: SearchQuery<User>): void {
     if (!query) {
       return;
     }

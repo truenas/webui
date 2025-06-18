@@ -47,15 +47,15 @@ import { UserAccessCellComponent } from './user-access-cell/user-access-cell.com
   ],
 })
 export class UserListComponent {
-  readonly isMobileView = input<boolean>(); // Used across components
-  readonly toggleShowMobileDetails = output<boolean>(); // Output - public by convention
-  readonly userSelected = output<User>(); // Output - public by convention
-  private readonly currentBatch = signal<User[]>([]); // Only used in TS
+  readonly isMobileView = input<boolean>();
+  readonly toggleShowMobileDetails = output<boolean>();
+  readonly userSelected = output<User>();
+  private readonly currentBatch = signal<User[]>([]);
   // TODO: NAS-135333 - Handle case after url linking is implemented to decide when no to show selected user
-  readonly isSelectedUserVisible$ = of(true); // Used across components
-  readonly dataProvider = input.required<UsersDataProvider>(); // Used across components
+  readonly isSelectedUserVisible$ = of(true);
+  readonly dataProvider = input.required<UsersDataProvider>();
 
-  protected columns = createTable<User>([ // Used in template
+  protected columns = createTable<User>([
     textColumn({
       title: this.translate.instant('Username'),
       propertyName: 'username',
@@ -108,7 +108,7 @@ export class UserListComponent {
     });
   }
 
-  private navigateToDetails(user: User): void { // Only used in TS
+  private navigateToDetails(user: User): void {
     if (user) {
       this.userSelected.emit(user);
     }
@@ -126,7 +126,7 @@ export class UserListComponent {
     }
   }
 
-  protected expanded(row: User): void { // Used in template
+  protected expanded(row: User): void {
     this.navigateToDetails(row);
     if (!row || !this.isMobileView()) return;
     this.toggleShowMobileDetails.emit(true);

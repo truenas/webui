@@ -151,8 +151,6 @@ export class UsersDataProvider extends ApiDataProvider<'user.query'> {
       return regularUsers;
     }
 
-    // Filter out the priority user if it somehow appears in regular results
-    // (this should not happen after the API filter is added, but safety measure)
     const filteredUsers = regularUsers.filter((user) => user.username !== priorityUser.username);
 
     return [priorityUser, ...filteredUsers];
