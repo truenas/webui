@@ -913,6 +913,8 @@
   "Error validating target name": "",
   "Error when loading similar apps.": "",
   "Error:": "",
+  "Errors in {field}: {messages}": "",
+  "Errors in the form: {messages}": "",
   "Escalation": "",
   "Est. Usable Raw Capacity": "",
   "Eula": "",

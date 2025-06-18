@@ -58,6 +58,8 @@
   "Enable Asymmetric Namespace Access (ANA)": "",
   "Enable Instances": "",
   "Enable Remote Direct Memory Access (RDMA)": "",
+  "Errors in {field}: {messages}": "",
+  "Errors in the form: {messages}": "",
   "Escalation": "",
   "Existing File": "",
   "Existing user password will not be removed": "",

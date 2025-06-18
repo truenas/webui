@@ -8,6 +8,8 @@
   "Create a new user": "",
   "Deselect": "",
   "Enable Asymmetric Namespace Access (ANA)": "",
+  "Errors in {field}: {messages}": "",
+  "Errors in the form: {messages}": "",
   "However, we could not create some related items:": "",
   "If ANA is active then referrals will always be generated between the peer ports on each TrueNAS controller node. This setting controls whether referrals will be generated for other ports within a controller node.": "",
   "Ignore the error and add users later.": "",

@@ -361,6 +361,8 @@
   "Encryption Root": "",
   "Encryption Standard": "",
   "Enterprise": "",
+  "Errors in {field}: {messages}": "",
+  "Errors in the form: {messages}": "",
   "Escalation": "",
   "Eula": "",
   "everyone@": "",
