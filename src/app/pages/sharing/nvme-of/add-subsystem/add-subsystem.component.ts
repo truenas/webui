@@ -84,7 +84,6 @@ export class AddSubsystemComponent {
   protected form = this.formBuilder.group({
     name: ['', Validators.required],
     subnqn: [''],
-    ana: [false],
     namespaces: [[] as NamespaceChanges[]],
 
     allowAnyHost: [true],
@@ -111,9 +110,11 @@ export class AddSubsystemComponent {
     this.isLoading.set(true);
 
     this.createSubsystem().pipe(
-      switchMap((subsystem) => this.createRelatedEntities(subsystem).pipe(
-        map((relatedErrors) => ({ subsystem, relatedErrors })),
-      )),
+      switchMap((subsystem) => {
+        return this.createRelatedEntities(subsystem).pipe(
+          map((relatedErrors) => ({ subsystem, relatedErrors })),
+        );
+      }),
       tap(() => this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.NvmeOf }))),
       finalize(() => this.isLoading.set(false)),
       this.errorHandler.withErrorHandler(),
@@ -173,7 +174,6 @@ export class AddSubsystemComponent {
       name: values.name,
       subnqn: values.subnqn || null,
       allow_any_host: values.allowAnyHost,
-      ana: values.ana,
     };
 
     return this.api.call('nvmet.subsys.create', [payload]);

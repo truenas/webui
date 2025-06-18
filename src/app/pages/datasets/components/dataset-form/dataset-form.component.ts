@@ -219,15 +219,15 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
     });
   }
 
-  toggleAdvancedMode(): void {
+  protected toggleAdvancedMode(): void {
     this.isAdvancedMode = !this.isAdvancedMode;
   }
 
-  onSwitchToAdvanced(): void {
+  protected onSwitchToAdvanced(): void {
     this.isAdvancedMode = true;
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     this.isLoading.set(true);
 
     const payload = this.preparePayload();

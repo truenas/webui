@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { UnsavedFormGuard } from 'app/modules/unsaved-changes/unsaved-form.guard';
 import { AppWizardComponent } from 'app/pages/apps/components/app-wizard/app-wizard.component';
 import { AppsScopeWrapperComponent } from 'app/pages/apps/components/apps-scope-wrapper.component';
 import { AvailableAppsComponent } from 'app/pages/apps/components/available-apps/available-apps.component';
@@ -58,6 +59,7 @@ export const appsRoutes: Routes = [
                 path: 'edit',
                 component: AppWizardComponent,
                 data: { breadcrumb: null },
+                canDeactivate: [UnsavedFormGuard],
               },
               {
                 path: 'shell/:containerId',
@@ -109,6 +111,7 @@ export const appsRoutes: Routes = [
               {
                 path: 'install',
                 component: AppWizardComponent,
+                canDeactivate: [UnsavedFormGuard],
               },
             ],
           },

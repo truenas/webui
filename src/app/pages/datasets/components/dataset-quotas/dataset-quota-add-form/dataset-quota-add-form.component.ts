@@ -145,7 +145,7 @@ export class DatasetQuotaAddFormComponent {
     this.datasetId = slideInRef.getData().datasetId;
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     this.isLoading.set(true);
 
     const quotas = this.getQuotas();

@@ -8,7 +8,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { of, throwError } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { mockCall, mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
@@ -162,7 +163,7 @@ describe('SmbFormComponent', () => {
         mockCall('filesystem.stat', {
           acl: true,
         } as FileSystemStat),
-        mockCall('service.restart'),
+        mockJob('service.control', fakeSuccessfulJob()),
         mockCall('sharing.smb.presets', { ...presets }),
       ]),
       mockProvider(SlideIn),

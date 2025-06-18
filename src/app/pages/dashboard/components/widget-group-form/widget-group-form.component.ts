@@ -131,7 +131,7 @@ export class WidgetGroupFormComponent {
     ).subscribe();
   }
 
-  selectedSlotChanged(slotIndex: SlotPosition): void {
+  protected selectedSlotChanged(slotIndex: SlotPosition): void {
     if (
       slotIndex === this.selectedSlot().slotPosition
       && this.selectedSlot().slotSize === layoutToSlotSizes[this.group().layout][slotIndex]
@@ -141,7 +141,7 @@ export class WidgetGroupFormComponent {
     this.updateSelectedSlot(slotIndex);
   }
 
-  updateSelectedSlot(slotPosition: SlotPosition): void {
+  protected updateSelectedSlot(slotPosition: SlotPosition): void {
     this.selectedSlot.update(() => {
       const group = this.group();
       return {
@@ -178,7 +178,7 @@ export class WidgetGroupFormComponent {
     });
   }
 
-  updateSlotValidation([slotPosition, errors]: [SlotPosition, ValidationErrors]): void {
+  protected updateSlotValidation([slotPosition, errors]: [SlotPosition, ValidationErrors]): void {
     this.validationErrors.update((validaitonErrors) => {
       const newErrors = [...validaitonErrors];
       newErrors[slotPosition] = errors;
@@ -186,7 +186,7 @@ export class WidgetGroupFormComponent {
     });
   }
 
-  updateSlotSettings(slot: WidgetGroupSlot<object>): void {
+  protected updateSlotSettings(slot: WidgetGroupSlot<object>): void {
     this.group.update((group) => {
       const newGroup: WidgetGroup = { layout: group.layout, slots: [] };
       const slotsCount = Math.max(layoutToSlotSizes[newGroup.layout].length, group.slots.length);

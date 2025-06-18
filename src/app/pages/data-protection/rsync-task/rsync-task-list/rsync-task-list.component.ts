@@ -255,13 +255,13 @@ export class RsyncTaskListComponent implements OnInit {
       .subscribe(() => this.refresh());
   }
 
-  private edit(row: RsyncTask): void {
+  protected edit(row: RsyncTask): void {
     this.slideIn.open(RsyncTaskFormComponent, { wide: true, data: row })
       .pipe(filter((response) => !!response.response), untilDestroyed(this))
       .subscribe(() => this.refresh());
   }
 
-  private delete(row: RsyncTask): void {
+  protected delete(row: RsyncTask): void {
     this.dialogService.confirm({
       title: this.translate.instant('Delete Task'),
       message: this.translate.instant('Are you sure you want to delete this task?'),
@@ -281,7 +281,7 @@ export class RsyncTaskListComponent implements OnInit {
       .subscribe(() => this.refresh());
   }
 
-  private refresh(): void {
+  protected refresh(): void {
     this.dataProvider.load();
   }
 }

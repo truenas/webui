@@ -2,9 +2,10 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { ServiceName } from 'app/enums/service-name.enum';
+import { ServiceName, ServiceOperation } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -21,8 +22,7 @@ describe('ServiceExtraActionsComponent', () => {
     providers: [
       mockAuth(),
       mockApi([
-        mockCall('service.start'),
-        mockCall('service.stop'),
+        mockJob('service.control', fakeSuccessfulJob()),
       ]),
       mockProvider(SnackbarService),
     ],
@@ -38,7 +38,7 @@ describe('ServiceExtraActionsComponent', () => {
     menu = await loader.getHarness(MatMenuHarness);
   }
 
-  it('shows a menu with available actions for NVME-oF', async () => {
+  it('shows a menu with available actions for NVMe-oF', async () => {
     await setupTest({
       id: 1,
       service: ServiceName.NvmeOf,
@@ -120,7 +120,7 @@ describe('ServiceExtraActionsComponent', () => {
     await menu.open();
     await menu.clickItem({ text: 'Turn Off Service' });
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('service.stop', [ServiceName.Cifs, { silent: false }]);
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('service.control', [ServiceOperation.Stop, ServiceName.Cifs, { silent: false }]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
   });
 
@@ -135,6 +135,6 @@ describe('ServiceExtraActionsComponent', () => {
     await menu.open();
     await menu.clickItem({ text: 'Turn On Service' });
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('service.start', [ServiceName.Cifs, { silent: false }]);
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('service.control', [ServiceOperation.Start, ServiceName.Cifs, { silent: false }]);
   });
 });
