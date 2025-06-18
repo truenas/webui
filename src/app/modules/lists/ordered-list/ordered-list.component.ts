@@ -111,7 +111,7 @@ export class OrderedListboxComponent implements ControlValueAccessor, OnInit {
     this.onChange(this.orderedValue);
   }
 
-  orderOptions(): void {
+  private orderOptions(): void {
     this.value.toReversed().forEach((value) => {
       const idx = this.items.findIndex((option) => option.value === value);
       this.items.unshift(...this.items.splice(idx, 1));

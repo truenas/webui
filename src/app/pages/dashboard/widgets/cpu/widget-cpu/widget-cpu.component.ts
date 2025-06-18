@@ -124,7 +124,7 @@ export class WidgetCpuComponent {
     return columns;
   }
 
-  protected getCpuParams(): CpuParams {
+  private getCpuParams(): CpuParams {
     const data = this.parseCpuData(this.cpuData());
     const usage = data[0].slice(1) as number[];
     const temps = data[1].slice(1) as number[];

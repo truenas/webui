@@ -96,7 +96,7 @@ export class CreateDatasetDialog implements OnInit {
       });
   }
 
-  loadParentDataset(): void {
+  private loadParentDataset(): void {
     this.isLoading$.next(true);
     const normalizedParentId = this.data.parentId.replace(/\/$/, '');
     this.api.call('pool.dataset.query', [[['id', '=', normalizedParentId]]]).pipe(

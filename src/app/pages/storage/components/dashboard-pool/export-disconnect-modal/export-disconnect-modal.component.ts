@@ -219,7 +219,7 @@ export class ExportDisconnectModalComponent implements OnInit {
       });
   }
 
-  handleDisconnectJobSuccess(value: Partial<{
+  private handleDisconnectJobSuccess(value: Partial<{
     destroy: boolean;
     cascade: boolean;
     confirm: boolean;

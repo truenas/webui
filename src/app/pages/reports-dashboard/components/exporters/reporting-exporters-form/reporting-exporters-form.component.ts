@@ -147,11 +147,11 @@ export class ReportingExportersFormComponent implements OnInit {
     });
   }
 
-  protected getExportersSchemas(): Observable<ReportingExporterSchema[]> {
+  private getExportersSchemas(): Observable<ReportingExporterSchema[]> {
     return this.api.call('reporting.exporters.exporter_schemas');
   }
 
-  protected setExporterTypeOptions(schemas: ReportingExporterSchema[]): void {
+  private setExporterTypeOptions(schemas: ReportingExporterSchema[]): void {
     this.exporterTypeOptions$ = of(
       schemas.map((schema) => ({
         label: ignoreTranslation(schema.key),
@@ -160,7 +160,7 @@ export class ReportingExportersFormComponent implements OnInit {
     );
   }
 
-  protected createExporterControls(schemas: ReportingExporterSchema[]): void {
+  private createExporterControls(schemas: ReportingExporterSchema[]): void {
     for (const schema of schemas) {
       for (const input of schema.schema) {
         this.form.controls.attributes.addControl(
@@ -188,12 +188,12 @@ export class ReportingExportersFormComponent implements OnInit {
       .map((input) => getDynamicFormSchemaNode(input));
   }
 
-  protected parseSchemaForExporterList(schema: ReportingExporterSchema): ReportingExporterList {
+  private parseSchemaForExporterList(schema: ReportingExporterSchema): ReportingExporterList {
     const variables = schema.schema.map((input) => input._name_);
     return { key: schema.key, variables };
   }
 
-  protected onExporterTypeChanged(type: ReportingExporterType | null): void {
+  private onExporterTypeChanged(type: ReportingExporterType | null): void {
     for (const list of this.reportingExporterList) {
       if (list.key === type) {
         for (const variable of list.variables) {

@@ -158,12 +158,12 @@ export class JbofListComponent implements OnInit {
     });
   }
 
-  protected getJbofs(): void {
+  private getJbofs(): void {
     this.dataProvider.load();
     this.updateAvailableJbof();
   }
 
-  updateAvailableJbof(): void {
+  private updateAvailableJbof(): void {
     forkJoin([
       this.api.call('jbof.query').pipe(map((jbofs) => jbofs.length)),
       this.api.call('jbof.licensed'),

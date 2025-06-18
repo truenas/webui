@@ -68,7 +68,7 @@ export class IxPermissionsComponent implements ControlValueAccessor {
     this.setPermissionsAndUpdateValue(value);
   }
 
-  setPermissionsAndUpdateValue(value = '000'): void {
+  private setPermissionsAndUpdateValue(value = '000'): void {
     if (value && this.formatRe.test(value)) {
       this.value = value;
     } else {
