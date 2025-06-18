@@ -103,7 +103,7 @@ export class IxFileInputComponent implements ControlValueAccessor {
   * @param files Array of files to add to the FileList
   * @returns FileList
   */
-  transformFiles(files: File[]): FileList {
+  private transformFiles(files: File[]): FileList {
     const dataTransfer = new ClipboardEvent('').clipboardData || new DataTransfer();
     for (let i = 0, len = files.length; i < len; i++) {
       dataTransfer.items.add(files[i]);

@@ -1,6 +1,7 @@
 {
   "": "",
   "Last Action": "",
+  "Parent Path:": "",
   "See Logs": "",
   "SSH Key Set": "",
   "SSH Key Set & Password Login Enabled": "",
@@ -3213,7 +3214,6 @@
   "Parent": "상위",
   "Parent Directory": "상위 디렉터리",
   "Parent Interface": "상위 인터페이스",
-  "Parent Path": "상위 경로",
   "Partition": "파티션",
   "Passive Controller": "패시브 컨트롤러",
   "Passphrase": "비밀구절",

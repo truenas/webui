@@ -234,7 +234,7 @@ export class ReportComponent implements OnInit, OnChanges {
     });
   }
 
-  initAutoRefresh(): void {
+  private initAutoRefresh(): void {
     this.autoRefreshTimer = timer(2000, refreshInterval).pipe(
       filter(() => this.autoRefreshEnabled),
       untilDestroyed(this),
@@ -272,7 +272,7 @@ export class ReportComponent implements OnInit, OnChanges {
     }
   }
 
-  formatTime(stamp: number): string {
+  private formatTime(stamp: number): string {
     const result = this.formatDateTimePipe.transform(new Date(stamp));
     return result.toLowerCase() !== this.translate.instant(invalidDate).toLowerCase() ? result : '';
   }
@@ -295,7 +295,7 @@ export class ReportComponent implements OnInit, OnChanges {
     this.clearLastEndDateForCurrentZoomLevel();
   }
 
-  clearLastEndDateForCurrentZoomLevel(): void {
+  private clearLastEndDateForCurrentZoomLevel(): void {
     Object.keys(this.lastEndDateForCurrentZoomLevel).forEach((key: ReportZoomLevel) => {
       this.lastEndDateForCurrentZoomLevel[key] = null;
     });
@@ -392,7 +392,7 @@ export class ReportComponent implements OnInit, OnChanges {
   }
 
   // Convert timespan to start/end options
-  convertTimeSpan(
+  private convertTimeSpan(
     timespan: ReportZoomLevel,
     direction = ReportStepDirection.Backward,
     currentDate?: number,
@@ -442,7 +442,7 @@ export class ReportComponent implements OnInit, OnChanges {
     };
   }
 
-  getTimespan(zoomLevel: ReportZoomLevel): Record<string, number> {
+  private getTimespan(zoomLevel: ReportZoomLevel): Record<string, number> {
     let durationUnit: keyof Duration;
     let value: number;
 
@@ -471,7 +471,7 @@ export class ReportComponent implements OnInit, OnChanges {
     return { [durationUnit]: value };
   }
 
-  fetchReportData(fetchParams: FetchReportParams): void {
+  private fetchReportData(fetchParams: FetchReportParams): void {
     const { report, identifier, rrdOptions } = fetchParams;
     // Report options
     const params = identifier ? { name: report.name, identifier } : { name: report.name };

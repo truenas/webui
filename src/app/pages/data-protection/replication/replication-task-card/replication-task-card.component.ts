@@ -210,7 +210,7 @@ export class ReplicationTaskCardComponent implements OnInit {
     ).subscribe(() => this.getReplicationTasks());
   }
 
-  protected editReplicationTask(row: ReplicationTask): void {
+  private editReplicationTask(row: ReplicationTask): void {
     this.slideIn.open(ReplicationFormComponent, { wide: true, data: row })
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => this.getReplicationTasks());

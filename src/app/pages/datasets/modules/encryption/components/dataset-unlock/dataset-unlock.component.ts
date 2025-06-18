@@ -131,7 +131,7 @@ export class DatasetUnlockComponent implements OnInit {
     });
   }
 
-  protected getEncryptionSummary(): void {
+  private getEncryptionSummary(): void {
     this.dialogService.jobDialog(
       this.api.job('pool.dataset.encryption_summary', [this.pk]),
       {
@@ -260,7 +260,7 @@ export class DatasetUnlockComponent implements OnInit {
       });
   }
 
-  protected openUnlockDialog(payload: DatasetUnlockParams, unlockResult: DatasetUnlockResult): void {
+  private openUnlockDialog(payload: DatasetUnlockParams, unlockResult: DatasetUnlockResult): void {
     const errors: { name: string; unlock_error: string }[] = [];
     let skipped: { name: string }[] = [];
     const unlock: { name: string }[] = [];
@@ -291,7 +291,7 @@ export class DatasetUnlockComponent implements OnInit {
     }
   }
 
-  protected openSummaryDialog(payload: DatasetUnlockParams, encryptionSummary: DatasetEncryptionSummary[]): void {
+  private openSummaryDialog(payload: DatasetUnlockParams, encryptionSummary: DatasetEncryptionSummary[]): void {
     const errors: DatasetEncryptionSummary[] = [];
     const unlock: DatasetEncryptionSummary[] = [];
     if (encryptionSummary) {

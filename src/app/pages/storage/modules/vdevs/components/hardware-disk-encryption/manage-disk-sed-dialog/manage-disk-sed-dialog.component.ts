@@ -86,7 +86,7 @@ export class ManageDiskSedDialog implements OnInit {
       });
   }
 
-  setNewPassword(password: string): void {
+  private setNewPassword(password: string): void {
     this.api.call('disk.update', [this.disk.identifier, { passwd: password }])
       .pipe(
         this.loader.withLoader(),

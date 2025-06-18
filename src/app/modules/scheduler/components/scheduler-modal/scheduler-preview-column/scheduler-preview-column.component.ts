@@ -86,7 +86,7 @@ export class SchedulerPreviewColumnComponent implements OnChanges, OnInit {
     return '';
   };
 
-  onCalendarUpdated(): void {
+  private onCalendarUpdated(): void {
     this.updatePreviewDates();
   }
 
