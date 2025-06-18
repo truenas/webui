@@ -21,7 +21,7 @@ import {
   mockR20, mockR20A, mockR20B,
   mockR30,
   mockR40,
-  mockR50, mockR50B, mockR50Bm,
+  mockR50, mockR50B, mockR50Bm, mockR60,
 } from 'app/core/testing/mock-enclosure/enclosure-templates/mock-r-series';
 import { mockX10, mockX20 } from 'app/core/testing/mock-enclosure/enclosure-templates/mock-x-series';
 import { DashboardEnclosure } from 'app/interfaces/enclosure.interface';
@@ -56,6 +56,7 @@ export const enclosureMocks: DashboardEnclosure[] = [
   mockR50,
   mockR50B,
   mockR50Bm,
+  mockR60,
 
   mockX10,
   mockX20,
