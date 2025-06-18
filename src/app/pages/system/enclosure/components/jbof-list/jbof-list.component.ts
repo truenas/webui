@@ -163,7 +163,7 @@ export class JbofListComponent implements OnInit {
     this.updateAvailableJbof();
   }
 
-  private updateAvailableJbof(): void {
+  updateAvailableJbof(): void {
     forkJoin([
       this.api.call('jbof.query').pipe(map((jbofs) => jbofs.length)),
       this.api.call('jbof.licensed'),
