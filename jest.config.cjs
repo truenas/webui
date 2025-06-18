@@ -30,8 +30,11 @@ module.exports = {
   cacheDirectory: "<rootDir>/.jest/cache",
   moduleNameMapper: {
     ...pathsToModuleNameMapper(compilerOptions.paths || {}),
-    '^lodash-es$': 'lodash',
-    '^lodash-es/(.*)$': 'lodash/$1',
+    ...esmPatterns.reduce((acc, pattern) => {
+      acc[`^${pattern}$`] = pattern;
+      acc[`^${pattern}/(.*)$`] = `${pattern}/$1`;
+      return acc;
+    }, {}),
   },
   testPathIgnorePatterns: [
     '<rootDir>/dist/',
