@@ -1,4 +1,3 @@
-import { TranslateService } from '@ngx-translate/core';
 import { getUserType, isEmptyHomeDirectory } from './user.helper';
 
 describe('UserHelper', () => {
@@ -24,20 +23,16 @@ describe('UserHelper', () => {
   });
 
   describe('getUserType', () => {
-    const translate = {
-      instant: (label: string) => label,
-    } as TranslateService;
-
     it('returns Built-In for builtin users', () => {
-      expect(getUserType({ builtin: true, local: false }, translate)).toBe('Built-In');
+      expect(getUserType({ builtin: true, local: false })).toBe('Built-In');
     });
 
     it('returns Local for local users', () => {
-      expect(getUserType({ builtin: false, local: true }, translate)).toBe('Local');
+      expect(getUserType({ builtin: false, local: true })).toBe('Local');
     });
 
     it('returns Directory Services for others', () => {
-      expect(getUserType({ builtin: false, local: false }, translate)).toBe('Directory Services');
+      expect(getUserType({ builtin: false, local: false })).toBe('Directory Services');
     });
   });
 });

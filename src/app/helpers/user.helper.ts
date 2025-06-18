@@ -1,4 +1,4 @@
-import { TranslateService } from '@ngx-translate/core';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { User } from 'app/interfaces/user.interface';
 
 export function isEmptyHomeDirectory(home: string): boolean {
@@ -7,16 +7,13 @@ export function isEmptyHomeDirectory(home: string): boolean {
     || home === '/usr/empty';
 }
 
-export function getUserType(
-  user: Pick<User, 'builtin' | 'local'>,
-  translate: TranslateService,
-): string {
+export function getUserType(user: Pick<User, 'builtin' | 'local'>): string {
   if (user.builtin) {
-    return translate.instant('Built-In');
+    return T('Built-In');
   }
   if (user.local) {
-    return translate.instant('Local');
+    return T('Local');
   }
 
-  return translate.instant('Directory Services');
+  return T('Directory Services');
 }

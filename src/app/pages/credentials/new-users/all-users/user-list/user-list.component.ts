@@ -70,7 +70,7 @@ export class UserListComponent {
     textColumn({
       title: this.translate.instant('Type'),
       propertyName: 'builtin',
-      getValue: (user) => getUserType(user, this.translate),
+      getValue: (user) => this.translate.instant(getUserType(user)),
     }),
     templateColumn({
       title: this.translate.instant('Access'),

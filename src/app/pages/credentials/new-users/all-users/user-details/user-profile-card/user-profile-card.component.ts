@@ -31,7 +31,7 @@ export class UserProfileCardComponent {
     private translate: TranslateService,
   ) {}
 
-  protected type = computed(() => getUserType(this.user(), this.translate));
+  protected type = computed(() => this.translate.instant(getUserType(this.user())));
 
   protected hasHomeDirectory = computed(() => {
     return !isEmptyHomeDirectory(this.user().home);
