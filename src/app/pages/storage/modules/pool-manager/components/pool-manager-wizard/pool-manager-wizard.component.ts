@@ -198,6 +198,8 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
         untilDestroyed(this),
       )
       .subscribe(() => {
+        this.generalStep?.form?.markAsPristine();
+        this.enclosureStep?.form?.markAsPristine();
         this.snackbar.success(this.translate.instant('Pool created successfully'));
         this.router.navigate(['/storage']);
       });
