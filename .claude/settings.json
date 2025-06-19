@@ -12,10 +12,9 @@
       "Bash(ls *)",
       "Bash(find *)",
       "Bash(sed *)",
-      "Bash(git add *)",
-      "Bash(git commit *)",
-      "Bash(git checkout -b *)",
-      "Bash(open \"https://github.com/truenas/webui/*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(open \"https://github.com/truenas/webui/:*)"
     ],
     "deny": []
   },
