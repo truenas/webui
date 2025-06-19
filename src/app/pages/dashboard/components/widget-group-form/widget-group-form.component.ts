@@ -141,7 +141,7 @@ export class WidgetGroupFormComponent {
     this.updateSelectedSlot(slotIndex);
   }
 
-  protected updateSelectedSlot(slotPosition: SlotPosition): void {
+  private updateSelectedSlot(slotPosition: SlotPosition): void {
     this.selectedSlot.update(() => {
       const group = this.group();
       return {

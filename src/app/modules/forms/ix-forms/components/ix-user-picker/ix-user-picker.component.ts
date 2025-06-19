@@ -312,7 +312,7 @@ export class IxUserPickerComponent implements ControlValueAccessor, OnInit {
     return result.response.username;
   }
 
-  listenForAddNew(): void {
+  private listenForAddNew(): void {
     this.controlDirective?.control?.valueChanges?.pipe(
       distinctUntilChanged(),
       filter((selectedOption) => selectedOption === newOption),

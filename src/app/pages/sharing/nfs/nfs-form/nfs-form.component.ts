@@ -165,7 +165,7 @@ export class NfsFormComponent implements OnInit {
     this.defaultNfsShare = this.slideInRef.getData()?.defaultNfsShare;
   }
 
-  protected setNfsShareForEdit(share: NfsShare): void {
+  private setNfsShareForEdit(share: NfsShare): void {
     share.networks.forEach(() => this.addNetworkControl());
     share.hosts.forEach(() => this.addHostControl());
     this.form.patchValue(share);

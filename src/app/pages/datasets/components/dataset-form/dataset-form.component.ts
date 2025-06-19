@@ -170,7 +170,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
       });
   }
 
-  setForNew(): void {
+  private setForNew(): void {
     this.isLoading.set(true);
 
     this.datasetFormService.checkAndWarnForLengthAndDepth(this.slideInData.datasetId).pipe(

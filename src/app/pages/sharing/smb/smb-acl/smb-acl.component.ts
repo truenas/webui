@@ -145,7 +145,7 @@ export class SmbAclComponent implements OnInit {
     }
   }
 
-  setSmbShareName(): void {
+  private setSmbShareName(): void {
     this.loadSmbAcl(this.shareName);
   }
 

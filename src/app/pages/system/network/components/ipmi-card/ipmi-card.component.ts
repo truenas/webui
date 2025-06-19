@@ -93,7 +93,7 @@ export class IpmiCardComponent implements OnInit {
     this.loadIpmiEntries();
   }
 
-  canOpen(ipmi: Ipmi): boolean {
+  private canOpen(ipmi: Ipmi): boolean {
     return ipmi.ip_address !== '0.0.0.0';
   }
 
@@ -105,7 +105,7 @@ export class IpmiCardComponent implements OnInit {
       ).subscribe(() => this.loadIpmiEntries());
   }
 
-  onOpen(ipmi: Ipmi): void {
+  private onOpen(ipmi: Ipmi): void {
     this.window.open(`https://${ipmi.ip_address}`);
   }
 
