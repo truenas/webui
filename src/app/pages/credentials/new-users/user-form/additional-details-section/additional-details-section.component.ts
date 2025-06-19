@@ -6,7 +6,6 @@ import {
   OnInit,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatCheckbox } from '@angular/material/checkbox';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
@@ -35,10 +34,10 @@ import {
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxPermissionsComponent } from 'app/modules/forms/ix-forms/components/ix-permissions/ix-permissions.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-validation/email-validation';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { UserFormStore } from 'app/pages/credentials/new-users/user-form/user.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -57,10 +56,9 @@ import { StorageService } from 'app/services/storage.service';
     IxInputComponent,
     IxCheckboxComponent,
     TranslateModule,
-    TestDirective,
     IxChipsComponent,
     IxExplorerComponent,
-    MatCheckbox,
+    IxPermissionsComponent,
     DetailsTableComponent,
     DetailsItemComponent,
     EditableComponent,
