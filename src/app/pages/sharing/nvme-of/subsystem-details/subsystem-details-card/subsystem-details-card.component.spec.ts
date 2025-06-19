@@ -3,12 +3,13 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { byText } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.interface';
 import { DetailsTableHarness } from 'app/modules/details-table/details-table.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
 import {
   SubsystemDetailsCardComponent,
@@ -19,6 +20,12 @@ describe('SubsystemDetailsCardComponent', () => {
   let loader: HarnessLoader;
   let details: DetailsTableHarness;
 
+  const subsystem = {
+    id: 1,
+    name: 'Test Subsystem',
+    subnqn: 'nqn.2014-08.org.nvmexpress:uuid:12345678',
+  } as NvmeOfSubsystemDetails;
+
   const createComponent = createComponentFactory({
     component: SubsystemDetailsCardComponent,
     providers: [
@@ -27,6 +34,9 @@ describe('SubsystemDetailsCardComponent', () => {
       ]),
       mockProvider(Clipboard, {
         copy: jest.fn(() => true),
+      }),
+      mockProvider(NvmeOfService, {
+        updateSubsystem: jest.fn(() => of(undefined)),
       }),
       mockProvider(SnackbarService),
       mockProvider(NvmeOfStore, {
@@ -39,11 +49,7 @@ describe('SubsystemDetailsCardComponent', () => {
   beforeEach(async () => {
     spectator = createComponent({
       props: {
-        subsystem: {
-          id: 1,
-          name: 'Test Subsystem',
-          subnqn: 'nqn.2014-08.org.nvmexpress:uuid:12345678',
-        } as NvmeOfSubsystemDetails,
+        subsystem,
       },
     });
 
@@ -65,7 +71,7 @@ describe('SubsystemDetailsCardComponent', () => {
       Name: 'Updated Subsystem',
     });
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nvmet.subsys.update', [1, { name: 'Updated Subsystem' }]);
+    expect(spectator.inject(NvmeOfService).updateSubsystem).toHaveBeenCalledWith(subsystem, { name: 'Updated Subsystem' });
     expect(spectator.inject(NvmeOfStore).initialize).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
   });
@@ -75,7 +81,7 @@ describe('SubsystemDetailsCardComponent', () => {
       NQN: 'nqn.2014-08.org.nvmexpress:uuid:11111111',
     });
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nvmet.subsys.update', [1, { subnqn: 'nqn.2014-08.org.nvmexpress:uuid:11111111' }]);
+    expect(spectator.inject(NvmeOfService).updateSubsystem).toHaveBeenCalledWith(subsystem, { subnqn: 'nqn.2014-08.org.nvmexpress:uuid:11111111' });
     expect(spectator.inject(NvmeOfStore).initialize).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
   });

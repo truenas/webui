@@ -34,15 +34,17 @@ import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
   ],
 })
 export class AddHostMenuComponent {
-  subsystemHosts = input.required<NvmeOfHost[]>();
+  hosts = input.required<NvmeOfHost[]>();
+  showAllowAnyHost = input(false);
   hostSelected = output<NvmeOfHost>();
+  allowAllHostsSelected = output();
 
   protected allHosts = this.nvmeOfStore.hosts;
 
   protected noHostsExist = computed(() => !this.allHosts().length);
 
   protected unusedHosts = computed(() => {
-    const usedHostIds = this.subsystemHosts().map((host) => host.id);
+    const usedHostIds = this.hosts().map((host) => host.id);
     const unusedHosts = this.allHosts().filter((host) => !usedHostIds.includes(host.id));
     return sortBy(unusedHosts, ['hostnqn']);
   });
@@ -69,9 +71,13 @@ export class AddHostMenuComponent {
     this.hostSelected.emit(host);
   }
 
-  protected onManageHosts(): void {
+  protected manageHosts(): void {
     this.matDialog.open(ManageHostsDialog, {
       minWidth: '450px',
     });
+  }
+
+  protected allowAllHosts(): void {
+    this.allowAllHostsSelected.emit();
   }
 }

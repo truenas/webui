@@ -4,6 +4,8 @@
   "<p>Raw block storage using NVMe over Fabrics (e.g. NVMe/TCP), appearing as a local disk on the client.</p>\n<p>Compared to iSCSI, NVMe-oF offers significantly lower latency and higher throughput.</p>": "",
   "Add NVMe-oF Share": "",
   "Additional Options": "",
+  "All hosts are now allowed": "",
+  "Allow all hosts": "",
   "Configure Directory Services": "",
   "Create a new user": "",
   "Deselect": "",

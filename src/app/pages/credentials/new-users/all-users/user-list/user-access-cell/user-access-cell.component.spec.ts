@@ -43,15 +43,22 @@ describe('UserAccessCellComponent', () => {
     expect(await loader.getHarness(IxIconHarness.with({ name: 'mdi-ssh' }))).toBeTruthy();
   });
 
+  it('shows API keys icon', async () => {
+    setupTest({ ...mockUser, api_keys: [1] });
+
+    expect(await loader.getHarness(IxIconHarness.with({ name: 'mdi-power-plug' }))).toBeTruthy();
+  });
+
   it('checks when everything is enabled', () => {
     setupTest({
       ...mockUser,
       smb: true,
       ssh_password_enabled: true,
+      api_keys: [1, 2],
       roles: [Role.FullAdmin],
     });
 
-    expect(spectator.queryAll('ix-icon')).toHaveLength(3);
+    expect(spectator.queryAll('ix-icon')).toHaveLength(4);
     expect(spectator.query('span')!.textContent).toBe('Full Admin');
   });
 });

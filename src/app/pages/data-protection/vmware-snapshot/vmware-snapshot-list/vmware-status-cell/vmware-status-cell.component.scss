@@ -9,17 +9,17 @@
   padding: 3px 8px;
 
   &.success {
-    border-color: var(--green);
-    color: var(--green);
+    border-color: var(--status-active);
+    color: var(--status-active);
   }
 
   &.pending {
-    border-color: var(--yellow);
-    color: var(--yellow);
+    border-color: var(--status-in-progress);
+    color: var(--status-in-progress);
   }
 
   &.error {
-    border-color: var(--red);
-    color: var(--red);
+    border-color: var(--status-error);
+    color: var(--status-error);
   }
 }
