@@ -7,7 +7,6 @@ import { Router } from '@angular/router';
 import { createRoutingFactory, mockProvider, SpectatorRouting } from '@ngneat/spectator/jest';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { suppressJsDomCssErrors } from 'app/core/testing/utils/suppress-jsdom-css-errors.utils';
 import { Group } from 'app/interfaces/group.interface';
 import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -78,8 +77,6 @@ describe('GroupMembersComponent', () => {
   });
 
   it('sends an update payload to websocket and closes modal when Save button is pressed', async () => {
-    suppressJsDomCssErrors();
-
     const userList = await loader.getHarness(MatListHarness.with({ selector: '[aria-label="All Users"]' }));
     const memberList = await loader.getHarness(MatListHarness.with({ selector: '[aria-label="Group Members"]' }));
     const users = await userList.getItems();
