@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy, Component, computed, input,
+  output,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
@@ -51,6 +52,7 @@ import { UrlOptionsService } from 'app/services/url-options.service';
 })
 export class UserAccessCardComponent {
   user = input.required<User>();
+  reloadUsers = output();
 
   protected readonly Role = Role;
   protected readonly unlockUserText = this.translate.instant('Unlock User');
@@ -148,6 +150,7 @@ export class UserAccessCardComponent {
       .open(ApiKeyFormComponent, { data: { username: this.user().username } })
       .pipe(untilDestroyed(this)).subscribe(() => {
         // TODO: Reload single record once routing is in.
+        this.reloadUsers.emit();
       });
   }
 }
