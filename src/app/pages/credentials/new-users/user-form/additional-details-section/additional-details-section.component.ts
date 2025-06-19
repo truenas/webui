@@ -73,6 +73,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
   editingUser = input<User>();
   protected shellAccessEnabled = this.userFormStore.shellAccess;
   protected hasSharingRole = computed(() => this.userFormStore.role()?.includes(Role.SharingAdmin));
+  private groupNameCache = new Map<number, string>();
 
   readonly groupOptions$ = this.api.call('group.query', [[['local', '=', true]]]).pipe(
     map((groups) => groups.map((group) => ({ label: group.group, value: group.id }))),
@@ -174,6 +175,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
             home_create: this.form.value.home_create,
             full_name: this.form.value.full_name,
             groups: this.form.value.groups.map((grp) => (+grp)),
+            group: this.form.value.group_create ? null : this.form.value.group,
             home: this.form.value.home,
             home_mode: this.userFormStore.homeModeOldValue() !== this.form.value.home_mode
               ? this.form.value.home_mode
@@ -196,6 +198,18 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     this.detectHomeDirectoryChanges();
     this.setHomeSharePath();
     this.listenValueChanges();
+  }
+
+  getGroupNameById(id: number): string {
+    if (!this.groupNameCache.has(id)) {
+      this.groupNameCache.set(id, '');
+
+      this.api.call('group.query', [[['id', '=', id]]]).pipe(
+        map((groups) => this.groupNameCache.set(id, groups[0]?.name || '')),
+        untilDestroyed(this),
+      ).subscribe();
+    }
+    return this.groupNameCache.get(id);
   }
 
   private listenValueChanges(): void {

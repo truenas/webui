@@ -7,6 +7,7 @@ import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Choices } from 'app/interfaces/choices.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
+import { Group } from 'app/interfaces/group.interface';
 import { User } from 'app/interfaces/user.interface';
 import { DetailsItemHarness } from 'app/modules/details-table/details-item/details-item.harness';
 import { DetailsTableHarness } from 'app/modules/details-table/details-table.harness';
@@ -66,7 +67,10 @@ describe('AdditionalDetailsSectionComponent', () => {
           '/usr/bin/bash': 'bash',
           '/usr/bin/zsh': 'zsh',
         } as Choices),
-        mockCall('group.query', []),
+        mockCall('group.query', [{
+          id: 101,
+          group: 'test-group',
+        }] as Group[]),
         mockCall('sharing.smb.query', []),
         mockCall('filesystem.stat', {
           mode: 16889,
@@ -86,6 +90,7 @@ describe('AdditionalDetailsSectionComponent', () => {
         full_name: '',
         email: null,
         shell: '/usr/bin/bash',
+        group: null,
         group_create: true,
         groups: [],
         home: '',
@@ -102,7 +107,7 @@ describe('AdditionalDetailsSectionComponent', () => {
       await (await loader.getHarness(DetailsTableHarness)).setValues({
         'Full Name': 'Editable field',
         Email: 'editable@truenas.local',
-        Groups: 'Not Set',
+        Groups: 'test-group',
         Shell: 'bash',
         UID: 1234,
       });
@@ -112,6 +117,7 @@ describe('AdditionalDetailsSectionComponent', () => {
         email: 'editable@truenas.local',
         shell: '/usr/bin/bash',
         group_create: true,
+        group: null,
         groups: [],
         home: '',
         home_mode: '700',
@@ -137,10 +143,10 @@ describe('AdditionalDetailsSectionComponent', () => {
       expect(values).toEqual({
         'Full Name': 'test',
         Email: 'Not Set',
-        Groups: 'Not Set',
+        Groups: 'Primary Group: 101',
         'Home Directory': '/home/test',
         Shell: '/usr/bin/bash',
-        UID: 'Next Available',
+        UID: '1004',
       });
 
       expect(spectator.inject(UserFormStore).updateSetupDetails).toHaveBeenCalledWith({
@@ -159,10 +165,10 @@ describe('AdditionalDetailsSectionComponent', () => {
       expect(await editables.getValues()).toEqual({
         'Full Name': 'test',
         Email: 'Not Set',
-        Groups: 'Not Set',
+        Groups: 'Primary Group: 101',
         'Home Directory': '/home/test',
         Shell: '/usr/bin/bash',
-        UID: 'Next Available',
+        UID: '1004',
       });
 
       const uidField = await editables.getHarnessForItem('UID', EditableHarness);

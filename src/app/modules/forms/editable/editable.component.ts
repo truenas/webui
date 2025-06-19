@@ -102,6 +102,15 @@ export class EditableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   isElementWithin(target: HTMLElement): boolean {
+    const allowedOverlaySelectors = [
+      '.mat-mdc-autocomplete-panel',
+      '.mat-mdc-select-panel',
+    ];
+
+    if (allowedOverlaySelectors.some((selector) => target.closest(selector))) {
+      return true;
+    }
+
     return this.elementRef.nativeElement.contains(target);
   }
 
