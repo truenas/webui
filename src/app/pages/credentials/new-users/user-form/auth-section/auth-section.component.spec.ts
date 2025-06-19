@@ -88,6 +88,14 @@ describe('AuthSectionComponent', () => {
       expect(value).toBe('Generate Temporary One-Time Password');
     });
 
+    it('defaults to "Disable Password" option in STIG mode', async () => {
+      isStigMode.set(true);
+
+      const password = await loader.getHarness(IxRadioGroupHarness.with({ label: 'Password' }));
+
+      expect(await password.getValue()).toBe('Disable Password');
+    });
+
     it('does not show "Disable Password" when smbAccess is enabled', async () => {
       smbAccess.set(true);
 
@@ -106,6 +114,15 @@ describe('AuthSectionComponent', () => {
         'Disable Password',
         'Generate Temporary One-Time Password',
       ]);
+    });
+
+    it('updates radio control value when STIG option is changed', async () => {
+      isStigMode.set(true);
+
+      const password = await loader.getHarness(IxRadioGroupHarness.with({ label: 'Password' }));
+      await password.setValue('Generate Temporary One-Time Password');
+
+      expect(await password.getValue()).toBe('Generate Temporary One-Time Password');
     });
 
     // TODO: Expand on test case for Generate Temporary One-Time Password.
