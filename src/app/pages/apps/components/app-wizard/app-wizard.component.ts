@@ -15,7 +15,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  isArray, isPlainObject, unset,
+  isArray, isEqual, isPlainObject, unset,
 } from 'lodash-es';
 import {
   BehaviorSubject, Observable, of, Subject, Subscription, timer,
@@ -62,6 +62,7 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DockerHubRateInfoDialog } from 'app/pages/apps/components/dockerhub-rate-limit-info-dialog/dockerhub-rate-limit-info-dialog.component';
 import { AppMetadataCardComponent } from 'app/pages/apps/components/installed-apps/app-metadata-card/app-metadata-card.component';
@@ -103,6 +104,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
   rootDynamicSection: DynamicWizardSchema[] = [];
   subscription = new Subscription();
   chartSchema: ChartSchema['schema'];
+  initialFormValue: ChartFormValues;
 
   forbiddenAppNames$ = this.appService.getAllApps().pipe(map((apps) => apps.map((app) => app.name)));
 
@@ -157,6 +159,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
     private api: ApiService,
     private authService: AuthService,
     private matDialog: MatDialog,
+    private unsavedChangesService: UnsavedChangesService,
   ) {}
 
   ngOnInit(): void {
@@ -169,6 +172,12 @@ export class AppWizardComponent implements OnInit, OnDestroy {
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
+  }
+
+  canDeactivate(): Observable<boolean> {
+    const hasChanges = !isEqual(this.initialFormValue, this.form.getRawValue()) && this.form.dirty;
+
+    return hasChanges ? this.unsavedChangesService.showConfirmDialog() : of(true);
   }
 
   onSectionClick(sectionName: string): void {
@@ -189,7 +198,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
     return !section.schema.every((item) => !this.form.controls[item.controlName].invalid);
   }
 
-  loadApplicationForCreation(): void {
+  private loadApplicationForCreation(): void {
     this.isNew = true;
     this.isLoading = true;
     this.appService
@@ -226,7 +235,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
     this.appSchemaService.deleteFormListItem(event);
   }
 
-  getFieldsHiddenOnForm(data: unknown, deleteField$: Subject<string>, path = ''): void {
+  private getFieldsHiddenOnForm(data: unknown, deleteField$: Subject<string>, path = ''): void {
     if (path) {
       // eslint-disable-next-line no-restricted-syntax
       const formField = this.form.get(path) as CustomUntypedFormField;
@@ -263,7 +272,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
     deleteField$.complete();
   }
 
-  saveData(data: ChartFormValues): void {
+  private saveData(data: ChartFormValues): void {
     let job$: Observable<Job<App>>;
 
     if (this.isNew) {
@@ -300,6 +309,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
   }
 
   onSuccess(): void {
+    this.form.markAsPristine();
     this.dialogService.closeAllDialogs();
     this.router.navigate(['/apps/installed', this.train, this.appId]);
   }
@@ -432,6 +442,8 @@ export class AppWizardComponent implements OnInit, OnDestroy {
         untilDestroyed(this),
       ).subscribe();
     }
+
+    this.initialFormValue = this.form.getRawValue();
   }
 
   private setAppForEdit(app: App): void {
@@ -463,6 +475,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
     });
 
     this.buildDynamicForm(app.version_details.schema);
+    this.initialFormValue = this.form.getRawValue();
   }
 
   private afterAppLoaded(): void {

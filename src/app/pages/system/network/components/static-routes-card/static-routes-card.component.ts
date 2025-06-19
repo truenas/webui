@@ -112,7 +112,7 @@ export class StaticRoutesCardComponent implements OnInit {
     this.getStaticRoutes();
   }
 
-  getStaticRoutes(): void {
+  private getStaticRoutes(): void {
     this.dataProvider.load();
   }
 

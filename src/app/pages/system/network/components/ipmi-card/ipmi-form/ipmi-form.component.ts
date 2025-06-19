@@ -126,7 +126,7 @@ export class IpmiFormComponent implements OnInit {
     }
   }
 
-  setIdIpmi(): void {
+  private setIdIpmi(): void {
     this.queryParams = [{
       'query-filters': [['id', '=', this.ipmiId]],
     }];
@@ -149,7 +149,7 @@ export class IpmiFormComponent implements OnInit {
     this.redirect.openWindow(`https://${this.managementIp}`);
   }
 
-  loadFormData(): void {
+  private loadFormData(): void {
     this.isLoading.set(true);
 
     forkJoin([
@@ -173,7 +173,7 @@ export class IpmiFormComponent implements OnInit {
       });
   }
 
-  createControllerOptions(node: string): void {
+  private createControllerOptions(node: string): void {
     const currentControllerLabel = (node === 'A') ? '1' : '2';
     const failoverControllerLabel = (node === 'A') ? '2' : '1';
     this.remoteControllerOptions = of([
@@ -199,7 +199,7 @@ export class IpmiFormComponent implements OnInit {
     });
   }
 
-  loadDataOnRemoteControllerChange(): void {
+  private loadDataOnRemoteControllerChange(): void {
     let isUsingRemote: boolean;
 
     this.form.controls.apply_remote.valueChanges

@@ -111,7 +111,7 @@ export class BootStatusListComponent implements OnInit {
     this.loadPoolInstance();
   }
 
-  loadPoolInstance(): void {
+  private loadPoolInstance(): void {
     this.api.call('boot.get_state').pipe(
       tap(() => this.isLoading.set(true)),
       untilDestroyed(this),

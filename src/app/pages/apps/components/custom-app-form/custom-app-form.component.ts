@@ -55,7 +55,7 @@ export class CustomAppFormComponent implements OnInit {
     custom_compose_config_string: ['\n\n', Validators.required],
   });
 
-  get isNew(): boolean {
+  protected get isNew(): boolean {
     return !this.existingApp;
   }
 
@@ -102,7 +102,7 @@ export class CustomAppFormComponent implements OnInit {
     });
   }
 
-  protected addForbiddenAppNamesValidator(): void {
+  private addForbiddenAppNamesValidator(): void {
     this.form.controls.release_name.setAsyncValidators(forbiddenAsyncValues(this.forbiddenAppNames$));
     this.form.controls.release_name.updateValueAndValidity();
   }

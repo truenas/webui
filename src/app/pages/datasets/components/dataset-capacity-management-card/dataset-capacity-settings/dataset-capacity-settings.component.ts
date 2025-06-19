@@ -143,7 +143,7 @@ export class DatasetCapacitySettingsComponent implements OnInit {
     return !!this.dataset && isRootDataset(this.dataset);
   }
 
-  setDatasetForEdit(dataset: DatasetDetails): void {
+  private setDatasetForEdit(dataset: DatasetDetails): void {
     this.oldValues = {
       refquota: dataset.refquota.parsed,
       refquota_warning: dataset.refquota_warning?.parsed ?? this.defaultQuotaWarning,

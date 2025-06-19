@@ -69,7 +69,7 @@ export class SmbOpenFilesComponent implements OnChanges {
     protected emptyService: EmptyService,
   ) {}
 
-  createProvider(): void {
+  private createProvider(): void {
     this.dataProvider = new AsyncDataProvider(of(this.files()));
     this.dataProvider.load();
   }

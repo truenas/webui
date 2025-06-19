@@ -112,30 +112,30 @@ export class VmwareSnapshotListComponent implements OnInit {
     });
   }
 
-  onListFiltered(query: string): void {
+  protected onListFiltered(query: string): void {
     this.filterString = query;
     this.dataProvider.setFilter({ query, columnKeys: ['hostname', 'datastore', 'filesystem', 'username'] });
   }
 
-  getSnapshotsData(): void {
+  private getSnapshotsData(): void {
     this.dataProvider.load();
   }
 
-  doAdd(): void {
+  protected doAdd(): void {
     this.slideIn.open(VmwareSnapshotFormComponent).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(() => this.getSnapshotsData());
   }
 
-  doEdit(snapshot: VmwareSnapshot): void {
+  protected doEdit(snapshot: VmwareSnapshot): void {
     this.slideIn.open(VmwareSnapshotFormComponent, { data: snapshot }).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(() => this.getSnapshotsData());
   }
 
-  doDelete(snapshot: VmwareSnapshot): void {
+  protected doDelete(snapshot: VmwareSnapshot): void {
     this.dialogService.confirm({
       title: this.translate.instant('Confirmation'),
       message: this.translate.instant('Are you sure you want to delete this snapshot?'),

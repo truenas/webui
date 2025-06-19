@@ -212,13 +212,13 @@ export class SnapshotListComponent implements OnInit {
     this.listenForShowExtraColumnsChange();
   }
 
-  listenForShowExtraColumnsChange(): void {
+  private listenForShowExtraColumnsChange(): void {
     this.showExtraColumnsControl.valueChanges
       .pipe(untilDestroyed(this))
       .subscribe(() => this.toggleExtraColumns());
   }
 
-  updateColumnVisibility(): void {
+  private updateColumnVisibility(): void {
     this.columns = this.columns.map((column) => {
       if (column.hasOwnProperty('hidden')) {
         column.hidden = !this.showExtraColumnsControl.value;
@@ -257,7 +257,7 @@ export class SnapshotListComponent implements OnInit {
     });
   }
 
-  getConfirmOptions(): ConfirmOptions {
+  private getConfirmOptions(): ConfirmOptions {
     if (!this.showExtraColumnsControl.value) {
       return {
         title: this.translate.instant(helptextSnapshots.extraColumns.hide),
@@ -275,7 +275,7 @@ export class SnapshotListComponent implements OnInit {
     };
   }
 
-  toggleExtraColumns(): void {
+  private toggleExtraColumns(): void {
     this.dialogService.confirm(this.getConfirmOptions())
       .pipe(take(1), untilDestroyed(this))
       .subscribe((confirmed) => {

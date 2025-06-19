@@ -1,7 +1,7 @@
 import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, output, viewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, output, ViewChild, viewChild,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatCard } from '@angular/material/card';
@@ -89,6 +89,9 @@ import { ReviewWizardStepComponent } from './steps/9-review-wizard-step/review-w
   ],
 })
 export class PoolManagerWizardComponent implements OnInit, OnDestroy {
+  @ViewChild('generalStep') generalStep: GeneralWizardStepComponent;
+  @ViewChild('enclosureStep') enclosureStep: EnclosureWizardStepComponent;
+
   protected existingPool: Pool | null = null;
 
   readonly stepChanged = output<PoolCreationWizardStep>();
@@ -112,6 +115,10 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
 
   get hasEncryption(): boolean {
     return Boolean(this.state.encryption);
+  }
+
+  get isFormDirty(): boolean {
+    return this.generalStep?.form?.dirty || this.enclosureStep?.form?.dirty;
   }
 
   constructor(
@@ -141,7 +148,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
     this.store.resetStoreToInitialState();
   }
 
-  loadExistingPoolDetails(): void {
+  private loadExistingPoolDetails(): void {
     this.addVdevsStore.pool$.pipe(
       filter(Boolean),
       tap((pool) => {
@@ -191,6 +198,8 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
         untilDestroyed(this),
       )
       .subscribe(() => {
+        this.generalStep?.form?.markAsPristine();
+        this.enclosureStep?.form?.markAsPristine();
         this.snackbar.success(this.translate.instant('Pool created successfully'));
         this.router.navigate(['/storage']);
       });
@@ -213,7 +222,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
     this.cdr.markForCheck();
   }
 
-  listenForStartOver(): void {
+  private listenForStartOver(): void {
     this.store.startOver$.pipe(untilDestroyed(this)).subscribe(() => {
       this.stepper().selectedIndex = 0;
       this.activatedSteps = {};
@@ -271,7 +280,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
     return payload;
   }
 
-  updatePool(): void {
+  private updatePool(): void {
     const payload: UpdatePool = {
       topology: topologyToPayload(this.state.topology),
       allow_duplicate_serials: this.state.diskSettings.allowNonUniqueSerialDisks,

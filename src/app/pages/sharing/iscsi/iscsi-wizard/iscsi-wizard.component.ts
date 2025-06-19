@@ -299,31 +299,35 @@ export class IscsiWizardComponent implements OnInit {
     });
   }
 
-  createZvol(payload: DatasetCreate): Promise<Dataset> {
+  private createZvol(payload: DatasetCreate): Promise<Dataset> {
     return lastValueFrom(this.api.call('pool.dataset.create', [payload]));
   }
 
-  createExtent(payload: IscsiExtentUpdate): Promise<IscsiExtent> {
+  private createExtent(payload: IscsiExtentUpdate): Promise<IscsiExtent> {
     return lastValueFrom(this.api.call('iscsi.extent.create', [payload]));
   }
 
-  createPortal(payload: IscsiPortalUpdate): Promise<IscsiPortal> {
+  private createPortal(payload: IscsiPortalUpdate): Promise<IscsiPortal> {
     return lastValueFrom(this.api.call('iscsi.portal.create', [payload]));
   }
 
-  createInitiator(payload: IscsiInitiatorGroupUpdate): Promise<IscsiInitiatorGroup> {
+  private createInitiator(payload: IscsiInitiatorGroupUpdate): Promise<IscsiInitiatorGroup> {
     return lastValueFrom(this.api.call('iscsi.initiator.create', [payload]));
   }
 
-  createTarget(payload: IscsiTargetUpdate): Promise<IscsiTarget> {
+  private createTarget(payload: IscsiTargetUpdate): Promise<IscsiTarget> {
     return lastValueFrom(this.api.call('iscsi.target.create', [payload]));
   }
 
-  createTargetFiberChannel(targetId: number, port: string, hostId: number): Promise<FibreChannelPort | null | true> {
+  private createTargetFiberChannel(
+    targetId: number,
+    port: string,
+    hostId: number,
+  ): Promise<FibreChannelPort | null | true> {
     return lastValueFrom(this.fcService.linkFiberChannelToTarget(targetId, port, hostId));
   }
 
-  createTargetExtent(payload: IscsiTargetExtentUpdate): Promise<IscsiTargetExtent> {
+  private createTargetExtent(payload: IscsiTargetExtentUpdate): Promise<IscsiTargetExtent> {
     return lastValueFrom(this.api.call('iscsi.targetextent.create', [payload]));
   }
 

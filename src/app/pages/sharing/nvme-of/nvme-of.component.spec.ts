@@ -2,26 +2,36 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { MockComponent } from 'ng-mocks';
+import { provideMockStore } from '@ngrx/store/testing';
+import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.interface';
+import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
+import {
+  NvmeOfHost, NvmeOfPort, NvmeOfSubsystemDetails,
+} from 'app/interfaces/nvme-of.interface';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import {
   NvmeOfConfigurationComponent,
 } from 'app/pages/sharing/nvme-of/nvme-of-configuration/nvme-of-configuration.component';
 import { NvmeOfComponent } from 'app/pages/sharing/nvme-of/nvme-of.component';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
+import { SubsystemNamespacesCardComponent } from 'app/pages/sharing/nvme-of/subsystem-details/subsystem-namespaces-card/subsystem-namespaces-card.component';
+import { SubsystemPortsCardComponent } from 'app/pages/sharing/nvme-of/subsystem-details/subsystem-ports-card/subsystem-ports-card.component';
 import { SubsystemsListComponent } from 'app/pages/sharing/nvme-of/subsystems-list/subsystems-list.component';
+import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 describe('NvmeOfComponent', () => {
   let spectator: Spectator<NvmeOfComponent>;
   let loader: HarnessLoader;
-  const subsystems = [] as NvmeOfSubsystemDetails[];
   const createComponent = createComponentFactory({
     component: NvmeOfComponent,
-    imports: [
-      MockComponent(SubsystemsListComponent),
+    declarations: [
+      MockComponents(
+        SubsystemsListComponent,
+        SubsystemNamespacesCardComponent,
+        SubsystemPortsCardComponent,
+      ),
     ],
     providers: [
       mockProvider(SlideIn, {
@@ -31,9 +41,25 @@ describe('NvmeOfComponent', () => {
       }),
       mockAuth(),
       mockProvider(NvmeOfStore, {
-        subsystems: () => subsystems,
+        subsystems: () => [{ id: 2 }] as NvmeOfSubsystemDetails[],
         isLoading: () => false,
+        ports: () => [] as NvmeOfPort[],
+        hosts: () => [] as NvmeOfHost[],
         initialize: jest.fn(),
+      }),
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectAdvancedConfig,
+            value: {
+              consolemenu: true,
+              serialconsole: true,
+              serialport: 'ttyS0',
+              serialspeed: '9600',
+              motd: 'Welcome back, commander',
+            } as AdvancedConfig,
+          },
+        ],
       }),
     ],
   });

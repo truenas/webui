@@ -23,7 +23,7 @@ export class BlankLayoutComponent implements OnInit {
     this.setCssVars(this.themeService.getActiveTheme());
   }
 
-  setCssVars(theme: Theme): void {
+  private setCssVars(theme: Theme): void {
     const palette = Object.keys(theme) as (keyof Theme)[];
     palette.splice(0, 6);
 
