@@ -43,6 +43,7 @@ export class SlideIn {
     for (const slideInInstance of this.slideInInstances().reverse()) {
       slideInInstance.slideInRef.requireConfirmationWhen(undefined);
       slideInInstance.slideInRef.close({ response: false, error: undefined });
+      slideInInstance.cdkOverlayRef.dispose();
     }
   }
 
