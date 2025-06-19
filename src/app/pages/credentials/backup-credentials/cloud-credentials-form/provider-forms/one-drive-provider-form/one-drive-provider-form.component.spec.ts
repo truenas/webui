@@ -57,8 +57,6 @@ describe('OneDriveProviderFormComponent', () => {
 
   it('show existing provider attributes when they are set as form values', async () => {
     spectator.component.getFormSetter$().next({
-      client_id: 'client',
-      client_secret: 'secret',
       token: 'token',
       drive_type: OneDriveType.Personal,
       drive_id: 'driveid',
@@ -66,9 +64,6 @@ describe('OneDriveProviderFormComponent', () => {
 
     const values = await form.getValues();
     expect(values).toEqual({
-      'OAuth Client ID': 'client',
-      'OAuth Client Secret': 'secret',
-
       'Access Token': 'token',
       'Drives List': '',
       'Drive Account Type': 'PERSONAL',
@@ -78,17 +73,13 @@ describe('OneDriveProviderFormComponent', () => {
 
   it('loads a list of OneDrive drives and populates Drives List select when oAuth flow is completed', async () => {
     const oauthComponent = spectator.query(OauthProviderComponent);
-    oauthComponent!.form.setValue({
-      client_id: 'newclient',
-      client_secret: 'newsecret',
-    });
     oauthComponent!.authenticated.emit({
       token: 'newtoken',
     });
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.onedrive_list_drives', [{
-      client_id: 'newclient',
-      client_secret: 'newsecret',
+      client_id: '',
+      client_secret: '',
       token: 'newtoken',
     }]);
 
@@ -102,12 +93,10 @@ describe('OneDriveProviderFormComponent', () => {
 
   it('updates Drive Account Type and ID when a drive is selected from Drives List', async () => {
     const oauthComponent = spectator.query(OauthProviderComponent);
-    oauthComponent!.form.setValue({
-      client_id: 'newclient',
-      client_secret: 'newsecret',
-    });
     oauthComponent!.authenticated.emit({
       token: 'newtoken',
+      client_id: 'newclient',
+      client_secret: 'newsecret',
     });
 
     const drivesSelect = await form.getControl('Drives List') as IxSelectHarness;
@@ -122,9 +111,6 @@ describe('OneDriveProviderFormComponent', () => {
 
   it('returns form attributes for submission when getSubmitAttributes() is called', async () => {
     await form.fillForm({
-      'OAuth Client ID': 'newclient',
-      'OAuth Client Secret': 'newsecret',
-
       'Access Token': 'newtoken',
       'Drive Account Type': 'PERSONAL',
       'Drive ID': 'driveid',
@@ -132,8 +118,8 @@ describe('OneDriveProviderFormComponent', () => {
 
     const values = spectator.component.getSubmitAttributes();
     expect(values).toEqual({
-      client_id: 'newclient',
-      client_secret: 'newsecret',
+      client_id: '',
+      client_secret: '',
       token: 'newtoken',
       drive_id: 'driveid',
       drive_type: OneDriveType.Personal,

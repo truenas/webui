@@ -4,6 +4,9 @@ import {
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { DetailsItemComponent } from 'app/modules/details-table/details-item/details-item.component';
+import { DetailsTableComponent } from 'app/modules/details-table/details-table.component';
+import { EditableComponent } from 'app/modules/forms/editable/editable.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -21,6 +24,9 @@ import {
     ReactiveFormsModule,
     TestDirective,
     IxInputComponent,
+    DetailsTableComponent,
+    DetailsItemComponent,
+    EditableComponent,
     TranslateModule,
   ],
 })
