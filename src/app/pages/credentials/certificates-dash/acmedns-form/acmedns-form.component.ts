@@ -90,7 +90,7 @@ export class AcmednsFormComponent implements OnInit {
 
   readonly helptext = helptext;
 
-  getAuthenticatorSchemas(): Observable<AuthenticatorSchema[]> {
+  private getAuthenticatorSchemas(): Observable<AuthenticatorSchema[]> {
     return this.api.call('acme.dns.authenticator.authenticator_schemas');
   }
 
@@ -167,7 +167,7 @@ export class AcmednsFormComponent implements OnInit {
       .map((input) => getDynamicFormSchemaNode(input));
   }
 
-  parseSchemaForDnsAuthList(schema: AuthenticatorSchema): DnsAuthenticatorList {
+  private parseSchemaForDnsAuthList(schema: AuthenticatorSchema): DnsAuthenticatorList {
     const variables = Object.values(schema.schema.properties).map((input) => input._name_);
     return { key: schema.key, variables };
   }

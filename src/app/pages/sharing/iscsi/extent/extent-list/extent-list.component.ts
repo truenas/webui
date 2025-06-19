@@ -164,7 +164,7 @@ export class ExtentListComponent implements OnInit {
     ).subscribe(() => this.refresh());
   }
 
-  protected showDeleteDialog(extent: IscsiExtent): void {
+  private showDeleteDialog(extent: IscsiExtent): void {
     this.matDialog.open(DeleteExtentDialog, { data: extent })
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))

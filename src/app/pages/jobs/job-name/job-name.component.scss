@@ -40,11 +40,11 @@
 
   ix-icon {
     &.success {
-      color: var(--green);
+      color: var(--status-active);
     }
 
     &.failed {
-      color: var(--red);
+      color: var(--status-error);
     }
 
     &.running {

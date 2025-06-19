@@ -130,7 +130,7 @@ export class TunableListComponent implements OnInit {
     });
   }
 
-  protected getTunables(): void {
+  private getTunables(): void {
     this.dataProvider.load();
   }
 

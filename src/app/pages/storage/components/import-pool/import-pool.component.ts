@@ -134,7 +134,7 @@ export class ImportPoolComponent implements OnInit {
       });
   }
 
-  protected checkIfUnlockNeeded(): Observable<[Dataset[], boolean]> {
+  private checkIfUnlockNeeded(): Observable<[Dataset[], boolean]> {
     return this.api.call(
       'pool.dataset.query',
       [[['name', '=', this.importablePools.find((importablePool) => importablePool.guid === this.formGroup.value.guid).name]]],

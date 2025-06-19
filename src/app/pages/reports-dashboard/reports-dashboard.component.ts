@@ -99,7 +99,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-  protected activateTabFromUrl(): void {
+  private activateTabFromUrl(): void {
     const subpath = this.route.snapshot?.url[0]?.path;
     const tabFound = this.allTabs.find((tab) => (tab.value as string) === subpath);
     this.updateActiveTab(tabFound || this.allTabs[0]);
@@ -113,7 +113,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-  protected activateTab(activeTab: ReportTab): void {
+  private activateTab(activeTab: ReportTab): void {
     const reportCategories = activeTab.value === ReportType.Disk
       ? this.diskReports
       : this.otherReports.filter(
@@ -186,7 +186,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
    * @param list Report[]
    * @returns Report[]
    */
-  protected flattenReports(list: Report[]): Report[] {
+  private flattenReports(list: Report[]): Report[] {
     const result: Report[] = [];
     list.forEach((report) => {
       // With identifiers
@@ -217,7 +217,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
     return result.sort((a, b) => a.identifiers?.[0]?.localeCompare(b.identifiers?.[0]));
   }
 
-  buildDiskMetrics(): void {
+  private buildDiskMetrics(): void {
     const metrics: Option[] = [];
 
     this.diskReports.forEach((item) => {

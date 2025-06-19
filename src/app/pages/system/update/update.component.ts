@@ -218,7 +218,7 @@ export class UpdateComponent implements OnInit {
       .subscribe(() => this.continueUpdate());
   }
 
-  protected continueUpdate(): void {
+  private continueUpdate(): void {
     switch (this.updateType) {
       case UpdateType.ApplyPending: {
         const message = this.isHaLicensed()
@@ -263,7 +263,7 @@ export class UpdateComponent implements OnInit {
       });
   }
 
-  protected startUpdate(): void {
+  private startUpdate(): void {
     this.updateService.error$.next(false);
     this.api.call('update.check_available').pipe(this.loader.withLoader(), untilDestroyed(this)).subscribe({
       next: (update) => {
@@ -338,7 +338,7 @@ export class UpdateComponent implements OnInit {
       });
   }
 
-  protected confirmAndUpdate(): void {
+  private confirmAndUpdate(): void {
     let downloadMsg;
     let confirmMsg;
 

@@ -155,7 +155,7 @@ export class AccessCardComponent implements OnInit {
     this.updateSessions();
   }
 
-  updateSessions(): void {
+  private updateSessions(): void {
     this.dataProvider.load();
   }
 
@@ -170,7 +170,7 @@ export class AccessCardComponent implements OnInit {
     ).subscribe();
   }
 
-  onTerminate(id: string): void {
+  private onTerminate(id: string): void {
     this.dialogService
       .confirm({
         title: this.translate.instant('Terminate session'),
@@ -217,7 +217,7 @@ export class AccessCardComponent implements OnInit {
     });
   }
 
-  getUsername(credentialsData: AuthSessionCredentialsData | undefined): string {
+  private getUsername(credentialsData: AuthSessionCredentialsData | undefined): string {
     if (credentialsData?.credentials_data) {
       return credentialsData.credentials_data.username || this.getUsername(credentialsData.credentials_data.parent);
     }

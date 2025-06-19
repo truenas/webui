@@ -142,7 +142,7 @@ export class ProactiveComponent implements OnInit {
       });
   }
 
-  protected supportUnavailable(): void {
+  private supportUnavailable(): void {
     this.isFormDisabled = true;
     this.form.disable();
     this.dialogService.warn(
@@ -151,7 +151,7 @@ export class ProactiveComponent implements OnInit {
     );
   }
 
-  protected patchFormValues(config: Partial<SupportConfig>, isEnabled: boolean): void {
+  private patchFormValues(config: Partial<SupportConfig>, isEnabled: boolean): void {
     const updateValues: Partial<SupportConfig> = {};
 
     Object.keys(config).forEach((key: keyof SupportConfig) => {

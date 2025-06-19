@@ -110,7 +110,7 @@ export class AcmeDnsAuthenticatorListComponent implements OnInit {
     this.getAuthenticators();
   }
 
-  getAuthenticators(): void {
+  private getAuthenticators(): void {
     this.dataProvider.load();
   }
 

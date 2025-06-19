@@ -270,7 +270,7 @@ export class BootEnvironmentListComponent implements OnInit {
       .subscribe(() => this.refresh());
   }
 
-  protected doActivate(bootenv: BootEnvironmentUi): void {
+  private doActivate(bootenv: BootEnvironmentUi): void {
     this.dialogService.confirm({
       title: this.translate.instant('Activate'),
       message: this.translate.instant('Activate this Boot Environment?'),
@@ -287,7 +287,7 @@ export class BootEnvironmentListComponent implements OnInit {
     ).subscribe(() => this.refresh());
   }
 
-  protected toggleKeep(bootenv: BootEnvironmentUi): void {
+  private toggleKeep(bootenv: BootEnvironmentUi): void {
     if (!bootenv.keep) {
       this.dialogService.confirm({
         title: this.translate.instant('Keep'),

@@ -155,7 +155,7 @@ export class OldUserListComponent implements OnInit {
     });
   }
 
-  getUsers(): void {
+  private getUsers(): void {
     this.store$.pipe(
       select(selectUsers),
       untilDestroyed(this),

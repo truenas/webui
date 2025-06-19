@@ -230,7 +230,9 @@ export class InstalledAppsListComponent implements OnInit {
     }
   }
 
-  showLoadStatus(type: EmptyType.FirstUse | EmptyType.NoPageData | EmptyType.Errors | EmptyType.NoSearchResults): void {
+  private showLoadStatus(
+    type: EmptyType.FirstUse | EmptyType.NoPageData | EmptyType.Errors | EmptyType.NoSearchResults,
+  ): void {
     switch (type) {
       case EmptyType.FirstUse:
       case EmptyType.NoPageData:
@@ -260,7 +262,7 @@ export class InstalledAppsListComponent implements OnInit {
     this.entityEmptyConf.type = type;
   }
 
-  loadInstalledApps(): void {
+  private loadInstalledApps(): void {
     this.cdr.markForCheck();
 
     combineLatest([

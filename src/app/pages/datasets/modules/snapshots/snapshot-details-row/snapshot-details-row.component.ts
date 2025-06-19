@@ -84,7 +84,7 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
     this.loader.close();
   }
 
-  getSnapshotInfo(): void {
+  private getSnapshotInfo(): void {
     this.api.call(
       'pool.snapshot.query',
       [
@@ -115,7 +115,7 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
       });
   }
 
-  doHoldOrRelease(): void {
+  private doHoldOrRelease(): void {
     const holdOrRelease = this.holdControl.value ? 'pool.snapshot.hold' : 'pool.snapshot.release';
     this.api.call(holdOrRelease, [this.snapshotInfo.name])
       .pipe(this.loader.withLoader(), untilDestroyed(this))

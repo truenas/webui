@@ -164,7 +164,7 @@ export class RsyncTaskCardComponent implements OnInit {
     this.getRsyncTasks();
   }
 
-  getRsyncTasks(): void {
+  private getRsyncTasks(): void {
     this.dataProvider.load();
   }
 
