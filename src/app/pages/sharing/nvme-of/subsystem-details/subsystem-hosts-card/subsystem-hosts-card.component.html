@@ -3,7 +3,8 @@
     <h3 mat-card-title>{{ 'Associated Hosts' | translate }}</h3>
 
     <ix-add-host-menu
-      [subsystem]="subsystem()"
+      [hosts]="subsystem().hosts"
+      [showAllowAnyHost]="!subsystem().allow_any_host"
       (hostSelected)="hostAdded($event)"
       (allowAllHostsSelected)="allowAllHostsSelected()"
     ></ix-add-host-menu>

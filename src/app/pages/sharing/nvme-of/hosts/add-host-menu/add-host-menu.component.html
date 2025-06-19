@@ -49,7 +49,7 @@
       {{ 'Manage Hosts' | translate }}
     </button>
 
-    @if (subsystem()?.id && (subsystem()?.hosts?.length > 0 || !subsystem()?.allow_any_host)) {
+    @if (showAllowAnyHost()) {
       <button
         mat-menu-item
         ixTest="allow-all-hosts"

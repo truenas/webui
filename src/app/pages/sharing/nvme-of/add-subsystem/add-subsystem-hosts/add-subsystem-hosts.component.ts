@@ -4,7 +4,7 @@ import { MatIconButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { helptextNvmeOf } from 'app/helptext/sharing/nvme-of/nvme-of';
-import { NvmeOfHost, NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.interface';
+import { NvmeOfHost } from 'app/interfaces/nvme-of.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AddHostMenuComponent } from 'app/pages/sharing/nvme-of/hosts/add-host-menu/add-host-menu.component';
@@ -25,10 +25,6 @@ import { AddHostMenuComponent } from 'app/pages/sharing/nvme-of/hosts/add-host-m
 })
 export class AddSubsystemHostsComponent {
   hostsControl = input.required<FormControl<NvmeOfHost[]>>();
-
-  get subsystem(): NvmeOfSubsystemDetails {
-    return { hosts: this.hostsControl()?.value } as NvmeOfSubsystemDetails;
-  }
 
   protected readonly helptext = helptextNvmeOf;
 

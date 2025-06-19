@@ -2,7 +2,8 @@
   <h5>{{ 'Allowed Hosts' | translate }}</h5>
 
   <ix-add-host-menu
-    [subsystem]="subsystem"
+    [hosts]="hostsControl().value"
+    [showAllowAnyHost]="false"
     (hostSelected)="onHostAdded($event)"
   ></ix-add-host-menu>
 </div>
