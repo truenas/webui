@@ -4,6 +4,25 @@ const { compilerOptions } = require('./tsconfig');
 // Deliberately set to not UTC.
 process.env.TZ = 'Europe/Kiev';
 
+const esmPatterns = [
+  '.*\\.mjs$',
+  'is-cidr',
+  'ip-regex', 
+  'cidr-regex',
+  'lodash-es',
+  'internmap',
+  'd3',
+  'delaunator',
+  'cheerio',
+  'robust-predicates',
+  '@angular',
+  '@ngneat',
+  '@ngrx',
+  '@ngx-translate',
+  'ng-mocks',
+  'ngx-translate-messageformat-compiler'
+];
+
 module.exports = {
   preset: 'jest-preset-angular',
   setupFilesAfterEnv: ['<rootDir>/src/setup-jest.ts'],
@@ -20,7 +39,7 @@ module.exports = {
     '<rootDir>/dist/',
   ],
   transformIgnorePatterns: [
-    'node_modules/(?!.*\\.mjs$|is-cidr|ip-regex|cidr-regex|lodash-es|internmap|d3|delaunator|cheerio|robust-predicates|@angular|@ngneat|@ngrx|@ngx-translate|ng-mocks|ngx-translate-messageformat-compiler)'
+    `node_modules/(?!${esmPatterns.join('|')})`
   ],
   reporters: [
     "default",
