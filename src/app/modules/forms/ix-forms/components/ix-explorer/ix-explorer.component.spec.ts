@@ -1,4 +1,3 @@
-/* eslint-disable sonarjs/no-skipped-test */
 import { EventEmitter } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import {
@@ -18,7 +17,7 @@ import { mntPath } from 'app/enums/mnt-path.enum';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 
-describe.skip('IxExplorerComponent', () => {
+describe('IxExplorerComponent', () => {
   const mockTreeMock = {
     selectedLeafNodeIds: {},
     get selectedLeafNodes(): unknown[] {
@@ -63,7 +62,7 @@ describe.skip('IxExplorerComponent', () => {
         [hint]="hint"
         [required]="required"
         [tooltip]="tooltip"
-        [roots]="[root]"
+        [rootNodes]="[root]"
         [multiple]="multiple"
       ></ix-explorer>`,
       {
@@ -74,7 +73,12 @@ describe.skip('IxExplorerComponent', () => {
           hint: undefined,
           required: false,
           tooltip: undefined,
-          root: mntPath,
+          root: {
+            hasChildren: true,
+            name: mntPath,
+            path: mntPath,
+            type: ExplorerNodeType.Directory,
+          },
           multiple: false,
         },
       },
@@ -92,7 +96,6 @@ describe.skip('IxExplorerComponent', () => {
           name: mntPath,
           path: mntPath,
           type: ExplorerNodeType.Directory,
-          isMountpoint: true,
         },
       ]);
     });
