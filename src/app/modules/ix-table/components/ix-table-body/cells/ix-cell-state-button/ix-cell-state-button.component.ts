@@ -176,8 +176,8 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> implements
     switch (this.state()) {
       case JobState.Pending:
       case JobState.Aborted:
-      case JobState.Running:
         return 'fn-theme-orange';
+      case JobState.Running:
       case JobState.Finished:
       case JobState.Success:
         return 'fn-theme-green';

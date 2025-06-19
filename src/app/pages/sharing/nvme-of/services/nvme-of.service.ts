@@ -5,7 +5,7 @@ import {
 } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { NvmeOfTransportType } from 'app/enums/nvme-of.enum';
-import { NvmeOfHost, NvmeOfPort } from 'app/interfaces/nvme-of.interface';
+import { NvmeOfHost, NvmeOfPort, NvmeOfSubsystem } from 'app/interfaces/nvme-of.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { LicenseService } from 'app/services/license.service';
 
@@ -105,5 +105,9 @@ export class NvmeOfService {
         return this.api.call('nvmet.host_subsys.delete', [connection[0].id]);
       }),
     );
+  }
+
+  updateSubsystem(subsystem: { id: number }, params: Partial<NvmeOfSubsystem>): Observable<NvmeOfSubsystem> {
+    return this.api.call('nvmet.subsys.update', [subsystem.id, { ...params }]);
   }
 }

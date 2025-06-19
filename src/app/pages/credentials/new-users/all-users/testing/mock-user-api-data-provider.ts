@@ -8,6 +8,7 @@ export const mockUsers = [
     id: 1,
     uid: 1,
     builtin: false,
+    local: true,
     username: 'john_doe',
     full_name: 'John Doe',
     locked: false,
@@ -20,6 +21,7 @@ export const mockUsers = [
     full_name: 'Jane Smith',
     locked: false,
     builtin: true,
+    local: false,
     roles: [Role.FullAdmin],
   },
 ] as User[];

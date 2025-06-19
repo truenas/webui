@@ -13,6 +13,7 @@ import {
 } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { CollectionChangeType } from 'app/enums/api.enum';
+import { QueryParams } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
 import { ApiDataProvider } from 'app/modules/ix-table/classes/api-data-provider/api-data-provider';
 import { PaginationServerSide } from 'app/modules/ix-table/classes/api-data-provider/pagination-server-side.class';
@@ -52,10 +53,11 @@ export class AllUsersComponent implements OnInit, OnDestroy {
     dataProvider.paginationStrategy = new PaginationServerSide();
     dataProvider.sortingStrategy = new SortingServerSide();
     dataProvider.setSorting({
-      propertyName: 'uid',
+      propertyName: 'username',
       direction: SortDirection.Asc,
-      active: 1,
+      active: 0,
     });
+    dataProvider.setParams([[['OR', [['builtin', '=', false], ['username', '=', 'root']]]]] as QueryParams<User>);
     dataProvider.currentPage$.pipe(filter(Boolean), untilDestroyed(this)).subscribe((users) => {
       dataProvider.expandedRow = this.masterDetailView().isMobileView() ? null : users[0];
     });
