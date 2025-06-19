@@ -16,7 +16,7 @@ describe('HostFormComponent', () => {
   let form: IxFormHarness;
   let api: ApiService;
   const savedHost = { id: 1 } as NvmeOfHost;
-  const slideInGetData = jest.fn((): undefined => undefined);
+  const slideInGetData = jest.fn((): NvmeOfHost | undefined => undefined);
   const createComponent = createComponentFactory({
     component: HostFormComponent,
     providers: [

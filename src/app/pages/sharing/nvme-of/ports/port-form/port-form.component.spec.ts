@@ -18,7 +18,7 @@ describe('PortFormComponent', () => {
   let loader: HarnessLoader;
   let form: IxFormHarness;
   const newPort = { id: 1 } as NvmeOfPort;
-  const slideInGetData = jest.fn((): undefined => undefined);
+  const slideInGetData = jest.fn((): NvmeOfPort | undefined => undefined);
   const createComponent = createComponentFactory({
     component: PortFormComponent,
     providers: [
