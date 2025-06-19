@@ -273,7 +273,6 @@
     "./src/app/interfaces/device-nested-data-node.interface.ts",
     "./src/app/interfaces/device.interface.ts",
     "./src/app/interfaces/dialog.interface.ts",
-    "./src/app/interfaces/directory-services-state.interface.ts",
     "./src/app/interfaces/dns-authenticator.interface.ts",
     "./src/app/interfaces/dockerhub-rate-limit.interface.ts",
     "./src/app/interfaces/ds-cache.interface.ts",

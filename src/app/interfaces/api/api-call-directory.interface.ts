@@ -86,7 +86,7 @@ import {
   Dataset, DatasetCreate, DatasetDetails, DatasetUpdate, ExtraDatasetQueryOptions,
 } from 'app/interfaces/dataset.interface';
 import { Device } from 'app/interfaces/device.interface';
-import { DirectoryServicesState } from 'app/interfaces/directory-services-state.interface';
+import { DirectoryServicesConfigResponse, DirectoryServicesStatus } from 'app/interfaces/directory-services.interfaces';
 import {
   Disk, DiskDetailsResponse,
   DiskTemperatureAgg,
@@ -450,7 +450,8 @@ export interface ApiCallDirectory {
   'device.get_info': { params: [{ type: DeviceType }]; response: Device[] };
 
   // Directory Services
-  'directoryservices.get_state': { params: void; response: DirectoryServicesState };
+  'directoryservices.status': { params: void; response: DirectoryServicesStatus };
+  'directoryservices.config': { params: void; response: DirectoryServicesConfigResponse };
 
   // Disk
   'disk.details': { params: [params: DiskDetailsParams]; response: DiskDetailsResponse };
