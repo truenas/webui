@@ -108,13 +108,13 @@ export class AdvancedSearchComponent<T> implements OnInit {
       create(): Diagnostic[] {
         return [] as Diagnostic[];
       },
-      update(diagnostic, transaction): Diagnostic[] {
+      update(diagnostics, transaction): Diagnostic[] {
         for (const effect of transaction.effects) {
           if (effect.is(setDiagnostics)) {
             return effect.value;
           }
         }
-        return diagnostic;
+        return diagnostics;
       },
     });
 
