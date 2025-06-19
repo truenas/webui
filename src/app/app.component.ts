@@ -77,6 +77,7 @@ export class AppComponent implements OnInit {
   }
 
   private logOutExpiredUser(): void {
+    this.slideIn.closeAll();
     this.authService.clearAuthToken();
     this.router.navigate(['/signin']);
     this.snackbar.open(
