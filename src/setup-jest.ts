@@ -1,5 +1,7 @@
 // eslint-disable-next-line max-classes-per-file
 import '@angular/compiler';
+import 'zone.js';
+import 'zone.js/testing';
 import { HighContrastModeDetector } from '@angular/cdk/a11y';
 import { APP_BASE_HREF } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
