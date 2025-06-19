@@ -11,7 +11,10 @@ import { User } from 'app/interfaces/user.interface';
 import { DetailsItemHarness } from 'app/modules/details-table/details-item/details-item.harness';
 import { DetailsTableHarness } from 'app/modules/details-table/details-table.harness';
 import { EditableHarness } from 'app/modules/forms/editable/editable.harness';
+import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
+import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
+import { IxPermissionsHarness } from 'app/modules/forms/ix-forms/components/ix-permissions/ix-permissions.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AdditionalDetailsSectionComponent } from 'app/pages/credentials/new-users/user-form/additional-details-section/additional-details-section.component';
 import { UserFormStore } from 'app/pages/credentials/new-users/user-form/user.store';
@@ -175,5 +178,80 @@ describe('AdditionalDetailsSectionComponent', () => {
     });
   });
 
-  // TODO: Add more tests
+  describe('home directory fields', () => {
+    it('disables permissions when home directory is empty', async () => {
+      spectator = createComponent({
+        props: { editingUser: { ...mockUser, home: '' } },
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+
+      const table = await loader.getHarness(DetailsTableHarness);
+      const homeEditable = await table.getHarnessForItem('Home Directory', EditableHarness);
+      await homeEditable.open();
+
+      const perms = await loader.getHarness(IxPermissionsHarness.with({ label: 'Home Directory Permissions' }));
+      expect(await perms.isDisabled()).toBe(true);
+    });
+
+    it('enables permissions after setting a home directory', async () => {
+      spectator = createComponent({
+        props: { editingUser: { ...mockUser, home: '' } },
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+
+      const table = await loader.getHarness(DetailsTableHarness);
+      const homeEditable = await table.getHarnessForItem('Home Directory', EditableHarness);
+      await homeEditable.open();
+
+      const explorer = await loader.getHarness(IxExplorerHarness.with({ label: 'Home Directory' }));
+      await explorer.setValue('/mnt/tank/user');
+      spectator.detectChanges();
+
+      const perms = await loader.getHarness(IxPermissionsHarness.with({ label: 'Home Directory Permissions' }));
+      expect(await perms.isDisabled()).toBe(false);
+    });
+
+    it('resets permissions when create home directory is checked', async () => {
+      spectator = createComponent({
+        props: { editingUser: mockUser },
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+
+      const table = await loader.getHarness(DetailsTableHarness);
+      const homeEditable = await table.getHarnessForItem('Home Directory', EditableHarness);
+      await homeEditable.open();
+
+      const perms = await loader.getHarness(IxPermissionsHarness.with({ label: 'Home Directory Permissions' }));
+      await perms.setValue('755');
+
+      const createCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Create Home Directory' }));
+      await createCheckbox.setValue(true);
+      spectator.detectChanges();
+
+      expect(await perms.getValue()).toBe('700');
+    });
+  });
+
+  describe('immutable user', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        props: { editingUser: { ...mockUser, immutable: true } },
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('disables home directory related fields', async () => {
+      const table = await loader.getHarness(DetailsTableHarness);
+      const homeEditable = await table.getHarnessForItem('Home Directory', EditableHarness);
+      await homeEditable.open();
+
+      const explorer = await loader.getHarness(IxExplorerHarness.with({ label: 'Home Directory' }));
+      const perms = await loader.getHarness(IxPermissionsHarness.with({ label: 'Home Directory Permissions' }));
+      const createCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Create Home Directory' }));
+
+      expect(await explorer.isDisabled()).toBe(true);
+      expect(await perms.isDisabled()).toBe(true);
+      expect(await createCheckbox.isDisabled()).toBe(true);
+    });
+  });
 });
