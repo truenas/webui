@@ -79,6 +79,7 @@
     "./src/app/enums/file-attribute.enum.ts",
     "./src/app/enums/file-ticket.enum.ts",
     "./src/app/enums/file-type.enum.ts",
+    "./src/app/enums/idmap.enum.ts",
     "./src/app/enums/init-shutdown-script-type.enum.ts",
     "./src/app/enums/init-shutdown-script-when.enum.ts",
     "./src/app/enums/ipmi.enum.ts",
