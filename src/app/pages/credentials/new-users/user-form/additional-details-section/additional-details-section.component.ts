@@ -125,6 +125,9 @@ export class AdditionalDetailsSectionComponent implements OnInit {
       if (this.editingUser()) {
         const user = this.editingUser();
 
+        this.form.controls.uid.disable();
+        this.form.controls.group_create.disable();
+
         this.form.patchValue({
           full_name: user.full_name,
           email: user.email,
@@ -137,9 +140,6 @@ export class AdditionalDetailsSectionComponent implements OnInit {
             ? [allCommands]
             : this.form.value.sudo_commands_nopasswd,
         }, { emitEvent: false });
-
-        this.form.controls.uid.disable();
-        this.form.controls.group_create.disable();
 
         if (user.immutable) {
           this.form.controls.group.disable();

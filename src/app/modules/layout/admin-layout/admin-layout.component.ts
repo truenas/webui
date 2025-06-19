@@ -153,7 +153,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     this.sessionTimeoutService.stop();
   }
 
-  listenForSidenavChanges(): void {
+  private listenForSidenavChanges(): void {
     this.sideNavs?.changes.pipe(untilDestroyed(this)).subscribe(() => {
       this.sidenavService.setSidenav(this.sideNavs.first);
     });

@@ -49,13 +49,13 @@ export class UseEnterpriseMarketingLinkComponent {
     return this.getCurrentMessage(lastMessageHash);
   }
 
-  getNextMessage(lastMessageHash: string | null): string {
+  private getNextMessage(lastMessageHash: string | null): string {
     const lastIndex = this.messages.findIndex((message) => hashMessage(message) === lastMessageHash);
     const nextIndex = lastIndex >= 0 ? (lastIndex + 1) % this.messages.length : 0;
     return this.messages[nextIndex];
   }
 
-  getCurrentMessage(lastMessageHash: string | null): string {
+  private getCurrentMessage(lastMessageHash: string | null): string {
     const currentIndex = this.messages.findIndex((message) => hashMessage(message) === lastMessageHash);
     return currentIndex >= 0 ? this.messages[currentIndex] : this.messages[0];
   }

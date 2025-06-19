@@ -161,7 +161,7 @@ export class CloudSyncListComponent implements OnInit {
     ariaLabels: (row) => [row.description, this.translate.instant('Cloud Sync Task')],
   });
 
-  get hiddenColumns(): Column<CloudSyncTaskUi, ColumnComponent<CloudSyncTaskUi>>[] {
+  protected get hiddenColumns(): Column<CloudSyncTaskUi, ColumnComponent<CloudSyncTaskUi>>[] {
     return this.columns.filter((column) => column?.hidden);
   }
 
@@ -191,11 +191,11 @@ export class CloudSyncListComponent implements OnInit {
     });
   }
 
-  getCloudSyncTasks(): void {
+  protected getCloudSyncTasks(): void {
     this.dataProvider.load();
   }
 
-  runNow(row: CloudSyncTaskUi): void {
+  protected runNow(row: CloudSyncTaskUi): void {
     this.dialogService.confirm({
       title: this.translate.instant('Run Now'),
       message: this.translate.instant('Run «{name}» Cloud Sync now?', { name: row.description }),
@@ -219,7 +219,7 @@ export class CloudSyncListComponent implements OnInit {
     });
   }
 
-  stopCloudSyncTask(row: CloudSyncTaskUi): void {
+  protected stopCloudSyncTask(row: CloudSyncTaskUi): void {
     this.dialogService
       .confirm({
         title: this.translate.instant('Stop'),
@@ -242,7 +242,7 @@ export class CloudSyncListComponent implements OnInit {
       });
   }
 
-  dryRun(row: CloudSyncTaskUi): void {
+  protected dryRun(row: CloudSyncTaskUi): void {
     this.dialogService.confirm({
       title: this.translate.instant(helptextCloudSync.dryRunTitle),
       message: this.translate.instant(helptextCloudSync.dryRunDialog),
@@ -265,7 +265,7 @@ export class CloudSyncListComponent implements OnInit {
     });
   }
 
-  restore(row: CloudSyncTaskUi): void {
+  protected restore(row: CloudSyncTaskUi): void {
     this.matDialog.open(CloudSyncRestoreDialog, { data: row.id })
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
@@ -277,7 +277,7 @@ export class CloudSyncListComponent implements OnInit {
       });
   }
 
-  openForm(row?: CloudSyncTaskUi): void {
+  protected openForm(row?: CloudSyncTaskUi): void {
     if (row) {
       this.slideIn.open(CloudSyncFormComponent, { data: row, wide: true }).pipe(
         filter((response) => !!response.response),
@@ -299,7 +299,7 @@ export class CloudSyncListComponent implements OnInit {
     }
   }
 
-  doDelete(row: CloudSyncTaskUi): void {
+  protected doDelete(row: CloudSyncTaskUi): void {
     this.dialogService.confirm({
       message: this.translate.instant('Delete Cloud Sync Task <b>"{name}"</b>?', {
         name: row.description,
@@ -323,12 +323,12 @@ export class CloudSyncListComponent implements OnInit {
     });
   }
 
-  onListFiltered(query: string): void {
+  protected onListFiltered(query: string): void {
     this.filterString = query;
     this.dataProvider.setFilter({ query, columnKeys: ['description'] });
   }
 
-  columnsChange(columns: typeof this.columns): void {
+  protected columnsChange(columns: typeof this.columns): void {
     this.columns = [...columns];
     this.cdr.detectChanges();
     this.cdr.markForCheck();

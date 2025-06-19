@@ -71,7 +71,7 @@ export class PullImageFormComponent {
     });
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     const values = this.form.getRawValue();
 
     const params: PullContainerImageParams = {

@@ -157,26 +157,26 @@ export class ExtentListComponent implements OnInit {
     });
   }
 
-  doAdd(): void {
+  protected doAdd(): void {
     this.slideIn.open(ExtentFormComponent, { wide: true }).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(() => this.refresh());
   }
 
-  showDeleteDialog(extent: IscsiExtent): void {
+  private showDeleteDialog(extent: IscsiExtent): void {
     this.matDialog.open(DeleteExtentDialog, { data: extent })
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => this.refresh());
   }
 
-  onListFiltered(query: string): void {
+  protected onListFiltered(query: string): void {
     this.filterString = query;
     this.dataProvider.setFilter({ query, columnKeys: ['name'] });
   }
 
-  columnsChange(columns: typeof this.columns): void {
+  protected columnsChange(columns: typeof this.columns): void {
     this.columns = [...columns];
     this.cdr.detectChanges();
     this.cdr.markForCheck();

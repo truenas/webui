@@ -232,7 +232,7 @@ export class CertificateSigningRequestsListComponent implements OnInit {
       .subscribe();
   }
 
-  doCreateAcmeCert(csr: Certificate): void {
+  private doCreateAcmeCert(csr: Certificate): void {
     this.slideIn.open(CertificateAcmeAddComponent, { data: csr }).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),

@@ -125,7 +125,7 @@ export class OldUserListComponent implements OnInit {
   filterString = '';
   users: User[] = [];
 
-  get emptyConfigService(): EmptyService {
+  protected get emptyConfigService(): EmptyService {
     return this.emptyService;
   }
 
@@ -155,7 +155,7 @@ export class OldUserListComponent implements OnInit {
     });
   }
 
-  getUsers(): void {
+  private getUsers(): void {
     this.store$.pipe(
       select(selectUsers),
       untilDestroyed(this),
@@ -171,19 +171,19 @@ export class OldUserListComponent implements OnInit {
     });
   }
 
-  toggleBuiltins(): void {
+  protected toggleBuiltins(): void {
     this.store$.dispatch(builtinUsersToggled());
   }
 
-  doAdd(): void {
+  protected doAdd(): void {
     this.slideIn.open(OldUserFormComponent, { wide: true });
   }
 
-  navigateToApiKeys(): void {
+  protected navigateToApiKeys(): void {
     this.router.navigate(['/credentials/users/api-keys']);
   }
 
-  onListFiltered(query: string): void {
+  protected onListFiltered(query: string): void {
     this.filterString = query;
     this.dataProvider.setFilter({ list: this.users, query, columnKeys: ['username', 'full_name', 'uid'] });
   }
@@ -196,7 +196,7 @@ export class OldUserListComponent implements OnInit {
     });
   }
 
-  handleDeletedUser(id: number): void {
+  protected handleDeletedUser(id: number): void {
     this.store$.dispatch(userRemoved({ id }));
   }
 }
