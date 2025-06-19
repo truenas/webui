@@ -46,7 +46,7 @@ export class TelegramServiceComponent extends BaseAlertServiceForm {
     };
   }
 
-  validateTelegramChatIds(control: AbstractControl): boolean {
+  private validateTelegramChatIds(control: AbstractControl): boolean {
     const chatIds = control.value as string[];
     return chatIds.every((chatId) => String(chatId).match(/^-?\d*$/));
   }

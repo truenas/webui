@@ -77,7 +77,7 @@ export class DiskBulkEditComponent {
     this.setFormDiskBulk(this.slideInRef.getData());
   }
 
-  setFormDiskBulk(selectedDisks: Disk[]): void {
+  private setFormDiskBulk(selectedDisks: Disk[]): void {
     const setForm: Required<DiskBulkEditComponent['form']['value']> = {
       disknames: [],
       hddstandby: '' as DiskStandby,
@@ -110,7 +110,7 @@ export class DiskBulkEditComponent {
     this.form.controls.disknames.disable();
   }
 
-  prepareDataSubmit(): [id: string, update: DiskUpdate][] {
+  private prepareDataSubmit(): [id: string, update: DiskUpdate][] {
     const data = { ...this.form.value };
 
     Object.keys(data).forEach((key) => {

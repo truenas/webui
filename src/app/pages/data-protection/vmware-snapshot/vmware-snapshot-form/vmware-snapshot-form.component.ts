@@ -130,7 +130,7 @@ export class VmwareSnapshotFormComponent implements OnInit {
     return !hostname || !username || !password;
   }
 
-  setSnapshotForEdit(): void {
+  private setSnapshotForEdit(): void {
     this.form.patchValue(this.editingSnapshot);
     this.onFetchDataStores();
   }

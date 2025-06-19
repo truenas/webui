@@ -136,12 +136,12 @@ export class WidgetGroupSlotFormComponent implements OnInit, AfterViewInit, OnCh
     private translate: TranslateService,
   ) { }
 
-  setupFormValueUpdates(): void {
+  private setupFormValueUpdates(): void {
     this.setupCategoryUpdates();
     this.setupTypeUpdates();
   }
 
-  setupCategoryUpdates(): void {
+  private setupCategoryUpdates(): void {
     this.categorySubscription = this.form.controls.category.valueChanges.pipe(untilDestroyed(this)).subscribe({
       next: (category) => {
         if (category === WidgetCategory.Empty) {
@@ -160,7 +160,7 @@ export class WidgetGroupSlotFormComponent implements OnInit, AfterViewInit, OnCh
     });
   }
 
-  setupTypeUpdates(): void {
+  private setupTypeUpdates(): void {
     this.typeSubscription = this.form.controls.type.valueChanges.pipe(untilDestroyed(this)).subscribe({
       next: (type) => {
         this.slot.update((slot) => {
@@ -197,7 +197,7 @@ export class WidgetGroupSlotFormComponent implements OnInit, AfterViewInit, OnCh
     this.refreshSettingsContainer();
   }
 
-  setValuesFromInput(): void {
+  private setValuesFromInput(): void {
     this.clearUpdates();
 
     const slotConfig = this.slotConfig();
@@ -218,7 +218,7 @@ export class WidgetGroupSlotFormComponent implements OnInit, AfterViewInit, OnCh
     this.setupFormValueUpdates();
   }
 
-  clearUpdates(): void {
+  private clearUpdates(): void {
     this.categorySubscription?.unsubscribe();
     this.typeSubscription?.unsubscribe();
     this.settingsContainer()?.clear();
@@ -277,7 +277,7 @@ export class WidgetGroupSlotFormComponent implements OnInit, AfterViewInit, OnCh
     this.settingsContainer().createComponent(settingsComponent, { injector: this.getInjector() });
   }
 
-  getInjector(): Injector {
+  private getInjector(): Injector {
     return Injector.create({
       providers: [
         {

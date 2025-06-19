@@ -103,7 +103,7 @@ export class CsrAddComponent {
     return this.identifierAndType()?.form?.value.create_type === CertificateCreateType.ImportCsr;
   }
 
-  getNewCsrSteps(): [
+  private getNewCsrSteps(): [
     CsrIdentifierAndTypeComponent,
     CsrOptionsComponent?,
     CsrSubjectComponent?,
@@ -112,7 +112,7 @@ export class CsrAddComponent {
     return [this.identifierAndType(), this.options(), this.subject(), this.constraints()];
   }
 
-  getImportCsrSteps(): [
+  private getImportCsrSteps(): [
     CsrIdentifierAndTypeComponent,
     CsrImportComponent?,
   ] {

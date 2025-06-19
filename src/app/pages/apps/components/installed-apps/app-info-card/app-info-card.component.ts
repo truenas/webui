@@ -204,7 +204,7 @@ export class AppInfoCardComponent {
       .subscribe((options) => this.executeDelete(name, options));
   }
 
-  executeDelete(name: string, options: AppDeleteDialogOutputData): void {
+  private executeDelete(name: string, options: AppDeleteDialogOutputData): void {
     this.dialogService.jobDialog(
       this.api.job('app.delete', [name, {
         remove_images: options.removeImages,

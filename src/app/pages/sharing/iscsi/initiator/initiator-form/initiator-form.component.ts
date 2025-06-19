@@ -161,7 +161,7 @@ export class InitiatorFormComponent implements OnInit {
     }
   }
 
-  protected setForm(): void {
+  private setForm(): void {
     this.api.call('iscsi.initiator.query', [[['id', '=', this.pk]]])
       .pipe(untilDestroyed(this))
       .subscribe({

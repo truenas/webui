@@ -103,7 +103,7 @@ export class DiskFormComponent implements OnInit {
     }
   }
 
-  setFormDisk(disk: Disk): void {
+  private setFormDisk(disk: Disk): void {
     this.existingDisk.set(disk);
     this.form.patchValue({ ...disk });
   }
@@ -123,7 +123,7 @@ export class DiskFormComponent implements OnInit {
       );
   }
 
-  prepareUpdate(value: DiskFormComponent['form']['value']): DiskUpdate {
+  private prepareUpdate(value: DiskFormComponent['form']['value']): DiskUpdate {
     const transformedValue = { ...value };
 
     if (transformedValue.passwd === '') {

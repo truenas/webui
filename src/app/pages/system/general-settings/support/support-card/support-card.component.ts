@@ -131,7 +131,7 @@ export class SupportCardComponent implements OnInit {
     this.productImageSrc.set(productImageUrl);
   }
 
-  parseLicenseInfo(licenseInfo: LicenseInfoInSupport): void {
+  private parseLicenseInfo(licenseInfo: LicenseInfoInSupport): void {
     if (licenseInfo.features.length === 0) {
       licenseInfo.featuresString = 'NONE';
     } else {
@@ -150,7 +150,7 @@ export class SupportCardComponent implements OnInit {
     licenseInfo.daysLeftinContract = this.daysTillExpiration(now, then);
   }
 
-  daysTillExpiration(now: Date, then: Date): number {
+  private daysTillExpiration(now: Date, then: Date): number {
     return Math.round((then.getTime() - now.getTime()) / oneDayMillis);
   }
 
@@ -166,7 +166,7 @@ export class SupportCardComponent implements OnInit {
     this.slideIn.open(ProactiveComponent, { wide: true });
   }
 
-  updateProductionStatus(newStatus: boolean): void {
+  private updateProductionStatus(newStatus: boolean): void {
     let request$: Observable<boolean | SetProductionStatusDialogResult>;
     if (newStatus) {
       request$ = this.matDialog.open(SetProductionStatusDialog).afterClosed().pipe(
