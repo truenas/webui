@@ -114,7 +114,7 @@ export class SnapshotRollbackDialog implements OnInit {
    * Needed only for 'snapshot.created' to use in text
    * Possibly can be removed
    */
-  getSnapshotCreationInfo(): void {
+  private getSnapshotCreationInfo(): void {
     this.api.call('pool.snapshot.query', [[['id', '=', this.snapshotName]]]).pipe(
       map((snapshots) => snapshots[0]),
       untilDestroyed(this),

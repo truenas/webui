@@ -211,7 +211,7 @@ export class IdmapFormComponent implements OnInit {
     }
   }
 
-  setIdmapForEdit(idmap: Idmap): void {
+  private setIdmapForEdit(idmap: Idmap): void {
     this.setEditingIdmapFormValues(idmap);
     this.form.controls.name.disable();
   }

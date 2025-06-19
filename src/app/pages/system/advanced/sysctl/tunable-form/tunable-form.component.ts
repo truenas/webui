@@ -102,13 +102,13 @@ export class TunableFormComponent implements OnInit {
     }
   }
 
-  setTunableForEdit(): void {
+  private setTunableForEdit(): void {
     this.form.patchValue(this.editingTunable);
     this.form.controls.type.disable();
     this.form.controls.var.disable();
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     this.isFormLoading.set(true);
 
     const request$ = this.isNew ? this.createTunable() : this.updateTunable();

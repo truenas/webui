@@ -339,7 +339,7 @@ export class InstanceWizardComponent implements OnInit {
     this.setupMacVlanNicDevices2();
   }
 
-  canDeactivate(): Observable<boolean> {
+  protected canDeactivate(): Observable<boolean> {
     return this.form.dirty ? this.unsavedChangesService.showConfirmDialog() : of(true);
   }
 
@@ -533,6 +533,7 @@ export class InstanceWizardComponent implements OnInit {
   protected onSubmit(): void {
     this.createInstance().pipe(untilDestroyed(this)).subscribe({
       next: (instance) => {
+        this.form.markAsPristine();
         this.snackbar.success(this.translate.instant('Instance created'));
         this.router.navigate(['/instances', 'view', instance?.id]);
       },
@@ -542,7 +543,7 @@ export class InstanceWizardComponent implements OnInit {
     });
   }
 
-  addEnvironmentVariable(): void {
+  protected addEnvironmentVariable(): void {
     const control = this.formBuilder.group({
       name: ['', Validators.required],
       value: ['', Validators.required],
@@ -551,7 +552,7 @@ export class InstanceWizardComponent implements OnInit {
     this.form.controls.environment_variables.push(control);
   }
 
-  removeEnvironmentVariable(index: number): void {
+  protected removeEnvironmentVariable(index: number): void {
     this.form.controls.environment_variables.removeAt(index);
   }
 

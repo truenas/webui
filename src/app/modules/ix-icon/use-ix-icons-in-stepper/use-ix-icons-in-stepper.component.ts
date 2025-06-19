@@ -32,7 +32,7 @@ export class UseIxIconsInStepperComponent implements AfterViewInit {
     this.stepper._iconOverrides = this.getIconOverrides();
   }
 
-  getIconOverrides(): Record<string, TemplateRef<MatStepperIconContext>> {
+  private getIconOverrides(): Record<string, TemplateRef<MatStepperIconContext>> {
     const stepperIcons = this.stepperIcons();
     if (!stepperIcons) {
       return {};

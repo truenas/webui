@@ -348,7 +348,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
       });
   }
 
-  loadReplicationTask(task: ReplicationTask): void {
+  private loadReplicationTask(task: ReplicationTask): void {
     if (!task) {
       return;
     }
@@ -379,7 +379,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     });
   }
 
-  clearReplicationTask(): void {
+  private clearReplicationTask(): void {
     this.form.patchValue({
       source_datasets_from: null,
       ssh_credentials_source: null,
@@ -471,7 +471,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     }
   }
 
-  checkCustomVisible(): void {
+  private checkCustomVisible(): void {
     const hideCustomRetention = this.form.value.schema_or_regex === SnapshotNamingOption.NameRegex
       && (this.form.value.custom_snapshots || this.form.value.source_datasets_from === DatasetSource.Remote);
 

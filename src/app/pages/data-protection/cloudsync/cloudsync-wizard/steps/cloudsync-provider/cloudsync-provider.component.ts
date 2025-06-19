@@ -82,7 +82,7 @@ export class CloudSyncProviderComponent implements OnInit {
     this.getExistingCredentials();
   }
 
-  getExistingCredentials(): void {
+  private getExistingCredentials(): void {
     this.loading.emit(true);
     this.cloudCredentialService.getCloudSyncCredentials()
       .pipe(
@@ -103,7 +103,7 @@ export class CloudSyncProviderComponent implements OnInit {
       });
   }
 
-  subToLoading(): void {
+  private subToLoading(): void {
     this.loading.subscribe((isLoading) => this.isLoading = isLoading);
   }
 
@@ -177,7 +177,7 @@ export class CloudSyncProviderComponent implements OnInit {
       });
   }
 
-  emitSelectedCredential(credsId: number): void {
+  private emitSelectedCredential(credsId: number): void {
     this.existingCredential = this.credentials.find((credential) => credential.id === credsId);
     this.save.emit(this.existingCredential);
     this.cdr.markForCheck();

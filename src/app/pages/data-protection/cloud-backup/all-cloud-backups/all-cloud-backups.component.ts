@@ -69,7 +69,7 @@ export class AllCloudBackupsComponent implements OnInit {
     ).subscribe();
   }
 
-  openForm(row?: CloudBackup): void {
+  protected openForm(row?: CloudBackup): void {
     this.slideIn.open(CloudBackupFormComponent, { data: row, wide: true })
       .pipe(
         filter((response) => !!response.response),

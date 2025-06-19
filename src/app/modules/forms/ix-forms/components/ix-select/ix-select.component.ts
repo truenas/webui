@@ -193,7 +193,7 @@ export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChange
     }
   }
 
-  unselectAll(): void {
+  private unselectAll(): void {
     this.value = [];
     this.onChange(this.value);
   }
@@ -207,7 +207,7 @@ export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChange
     this.updateSelectAllState();
   }
 
-  updateSelectAllState(): void {
+  private updateSelectAllState(): void {
     if (Array.isArray(this.value)) {
       if (this.value.length === 0) {
         this.selectAllState.checked = false;

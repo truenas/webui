@@ -139,11 +139,11 @@ export class SnapshotTaskFormComponent implements OnInit {
     }
   }
 
-  get isTimeMode(): boolean {
+  protected get isTimeMode(): boolean {
     return this.form.value.schedule === CronPresetValue.Hourly as string;
   }
 
-  setTaskForEdit(task: PeriodicSnapshotTask): void {
+  protected setTaskForEdit(task: PeriodicSnapshotTask): void {
     this.form.patchValue({
       ...task,
       begin: task.schedule.begin,
@@ -152,7 +152,7 @@ export class SnapshotTaskFormComponent implements OnInit {
     });
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     const values = this.form.value;
 
     const params = {

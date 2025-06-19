@@ -87,7 +87,7 @@ export class SystemSecurityFormComponent implements OnInit {
     }
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     const values = this.form.value as unknown as SystemSecurityConfig;
 
     if (values.password_complexity_ruleset) {

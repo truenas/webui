@@ -170,7 +170,7 @@ export class ExtentFormComponent implements OnInit {
     }
   }
 
-  setExtentForEdit(extent: IscsiExtent): void {
+  private setExtentForEdit(extent: IscsiExtent): void {
     this.form.patchValue(extent);
 
     if (extent.type === IscsiExtentType.Disk) {
@@ -178,7 +178,7 @@ export class ExtentFormComponent implements OnInit {
     }
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     const values = {
       ...this.form.value,
     } as IscsiExtentUpdate;

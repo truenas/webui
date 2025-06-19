@@ -54,7 +54,6 @@ describe('AdditionalDetailsSectionComponent', () => {
       mockProvider(FilesystemService),
       mockProvider(UserFormStore, {
         isStigMode: jest.fn(() => false),
-        nextUid: jest.fn(() => 1001),
         updateUserConfig: jest.fn(),
         updateSetupDetails: jest.fn(),
         role: jest.fn(() => 'prompt'),
@@ -141,7 +140,6 @@ describe('AdditionalDetailsSectionComponent', () => {
         Groups: 'Not Set',
         'Home Directory': '/home/test',
         Shell: '/usr/bin/bash',
-        // TODO: Investigate why UID is 'Next Available' instead of 1004
         UID: 'Next Available',
       });
 

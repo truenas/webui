@@ -11,7 +11,7 @@
 
   @if (selectedVersion?.available_versions_for_upgrade?.length) {
     <div class="resource">
-      <span>{{ 'Version to be upgraded to' | translate }}:</span>
+      <span>{{ 'Version to be updated to' | translate }}:</span>
       <mat-form-field class="form-element">
         <mat-select
           ixTest="versions"
@@ -67,10 +67,10 @@
       *ixRequiresRoles="requiredRoles"
       mat-button
       color="primary"
-      ixTest="upgrade"
+      ixTest="update"
       (click)="dialogRef.close(selectedVersionKey)"
     >
-      {{ 'Upgrade' | translate }}
+      {{ 'Update' | translate }}
     </button>
   </ix-form-actions>
 

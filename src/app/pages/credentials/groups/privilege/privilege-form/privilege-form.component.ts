@@ -149,7 +149,7 @@ export class PrivilegeFormComponent implements OnInit {
     }
   }
 
-  setPrivilegeForEdit(existingPrivilege: Privilege): void {
+  private setPrivilegeForEdit(existingPrivilege: Privilege): void {
     this.form.patchValue({
       ...existingPrivilege,
       local_groups: existingPrivilege.local_groups.map(

@@ -202,7 +202,7 @@ export class UpdateComponent implements OnInit {
     this.trainService.toggleAutoCheck(true);
   }
 
-  manualUpdate(): void {
+  protected manualUpdate(): void {
     this.updateType = UpdateType.Manual;
     this.saveConfigurationIfNecessary()
       .pipe(untilDestroyed(this))
@@ -211,14 +211,14 @@ export class UpdateComponent implements OnInit {
       });
   }
 
-  applyPendingUpdate(): void {
+  protected applyPendingUpdate(): void {
     this.updateType = UpdateType.ApplyPending;
     this.saveConfigurationIfNecessary()
       .pipe(untilDestroyed(this))
       .subscribe(() => this.continueUpdate());
   }
 
-  continueUpdate(): void {
+  private continueUpdate(): void {
     switch (this.updateType) {
       case UpdateType.ApplyPending: {
         const message = this.isHaLicensed()
@@ -240,7 +240,7 @@ export class UpdateComponent implements OnInit {
     }
   }
 
-  showRunningUpdate(jobId: number): void {
+  protected showRunningUpdate(jobId: number): void {
     const job$ = this.store$.pipe(
       select(selectJob(jobId)),
       observeJob(),
@@ -263,7 +263,7 @@ export class UpdateComponent implements OnInit {
       });
   }
 
-  startUpdate(): void {
+  private startUpdate(): void {
     this.updateService.error$.next(false);
     this.api.call('update.check_available').pipe(this.loader.withLoader(), untilDestroyed(this)).subscribe({
       next: (update) => {
@@ -325,7 +325,7 @@ export class UpdateComponent implements OnInit {
     });
   }
 
-  downloadUpdate(): void {
+  protected downloadUpdate(): void {
     this.api.call('core.get_jobs', [[['method', '=', 'update.update'], ['state', '=', JobState.Running]]])
       .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
       .subscribe((jobs) => {
@@ -338,7 +338,7 @@ export class UpdateComponent implements OnInit {
       });
   }
 
-  confirmAndUpdate(): void {
+  private confirmAndUpdate(): void {
     let downloadMsg;
     let confirmMsg;
 

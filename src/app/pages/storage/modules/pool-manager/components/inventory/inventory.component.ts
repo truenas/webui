@@ -63,7 +63,7 @@ export class InventoryComponent implements OnInit {
     return buildNormalizedFileSize(Number(size));
   }
 
-  orderBySize(a: KeyValue<string, DetailsDisk[]>, b: KeyValue<string, DetailsDisk[]>): number {
+  protected orderBySize(a: KeyValue<string, DetailsDisk[]>, b: KeyValue<string, DetailsDisk[]>): number {
     return Number(a.key) - Number(b.key);
   }
 }
