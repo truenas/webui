@@ -405,6 +405,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     ) {
       return;
     }
+
     this.api
       .call('filesystem.stat', [path])
       .pipe(untilDestroyed(this))
@@ -594,9 +595,11 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
       },
       error: (error: unknown) => {
         const apiError = extractApiErrorDetails(error);
+
         if (apiError?.reason?.includes('[ENOENT]') || apiError?.reason?.includes('[EXDEV]')) {
           this.dialogService.closeAllDialogs();
         }
+
         this.isLoading.set(false);
         this.formErrorHandler.handleValidationErrors(error, this.form, {}, 'smb-form-toggle-advanced-options');
       },
@@ -657,6 +660,11 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   private shouldRedirectToAclEdit(): Observable<boolean> {
     const sharePath: string = this.form.controls.path.value;
     const datasetId = sharePath.replace('/mnt/', '');
+
+    if (this.form.controls.purpose.value !== SmbPresetType.LegacyShare) {
+      return of(false);
+    }
+
     return this.api.call('filesystem.stat', [sharePath]).pipe(
       switchMap((stat) => {
         return of(
