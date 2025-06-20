@@ -20,6 +20,21 @@ export function mapToOptionsWithTooltips<T>(
   });
 }
 
+export function mapToOptionsWithHoverTooltips<T>(
+  optionMap: Map<T, string>,
+  tooltipMap: Map<T, string>,
+  translate: TranslateService,
+): Option<T>[] {
+  return Array.from(optionMap.entries()).map(([value, label]) => {
+    const rawTooltip = tooltipMap.get(value);
+    return {
+      label: translate.instant(label),
+      value,
+      hoverTooltip: rawTooltip ? translate.instant(rawTooltip) : undefined,
+    };
+  });
+}
+
 /**
  * @usage
  * valueToLabel(options)(value)

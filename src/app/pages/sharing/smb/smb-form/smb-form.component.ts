@@ -22,11 +22,13 @@ import { Role } from 'app/enums/role.enum';
 import { ServiceName, ServiceOperation } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { extractApiErrorDetails } from 'app/helpers/api.helper';
-import { mapToOptionsWithTooltips } from 'app/helpers/options.helper';
+import { mapToOptionsWithHoverTooltips } from 'app/helpers/options.helper';
 import { helptextSharingSmb } from 'app/helptext/sharing';
 import { DatasetCreate } from 'app/interfaces/dataset.interface';
+import { SelectOption } from 'app/interfaces/option.interface';
 import {
-  smbPresetTooltips, SmbPresetType, smbPresetTypeLabels, SmbShare, SmbShareUpdate,
+  smbPresetTooltips, SmbPresetType, smbPresetTypeLabels, SmbShare, SmbShareOptions, SmbShareUpdate,
+  TimeMachineSmbShareOptions,
 } from 'app/interfaces/smb-share.interface';
 import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -124,7 +126,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   });
 
   protected presetFields: (keyof SmbShare)[] = [];
-  protected purposeOptions$ = of(mapToOptionsWithTooltips(smbPresetTypeLabels, smbPresetTooltips, this.translate));
+  protected purposeOptions$: Observable<SelectOption<SmbPresetType>[]>;
 
   get hasAddedAllowDenyHosts(): boolean {
     const hostsallow = this.form.controls.hostsallow.value;
@@ -215,13 +217,13 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     fsrvp: [false],
     path_suffix: [''],
     auxsmbconf: [''],
-    vuid: [''],
+    vuid: ['', [this.validatorsService.uuid4()]],
     auto_snapshot: [false],
     auto_dataset_creation: [false],
     dataset_naming_schema: [''],
     grace_period: [900 as number],
     auto_quota: [null as number | null],
-    remote_path: [null as string[] | null],
+    remote_path: [[] as string[]],
     audit: this.formBuilder.group({
       enable: [false],
       watch_list: [[] as string[]],
@@ -256,6 +258,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     this.existingSmbShare = this.slideInRef.getData()?.existingSmbShare;
     this.defaultSmbShare = this.slideInRef.getData()?.defaultSmbShare;
     this.setupExplorerRootNodes();
+    this.purposeOptions$ = of(this.buildPurposeOptions());
   }
 
   private setupExplorerRootNodes(): void {
@@ -443,6 +446,10 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     };
     delete flatShare.options;
 
+    if (!flatShare.purpose) {
+      flatShare.purpose = SmbPresetType.LegacyShare;
+    }
+
     this.form.patchValue(flatShare);
   }
 
@@ -473,23 +480,27 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     const presetFields = presetEnabledFields[purpose] ?? [];
 
     if (purpose) {
-      smbShare.options = { purpose } as { [key: string]: unknown; purpose: SmbPresetType };
+      const options: Partial<SmbShareOptions> = { purpose } as SmbShareOptions;
 
       // Move related fields from root into `options` and delete them from root
       for (const field of presetFields) {
-        const value = smbShare[field];
+        const value = smbShare[field as keyof typeof smbShare];
         if (value !== undefined) {
-          (smbShare.options as Record<string, unknown>)[field] = value;
+          (options as Record<string, unknown>)[field as keyof SmbShareOptions] = value;
+          delete smbShare[field as keyof typeof smbShare];
         }
-        delete smbShare[field];
       }
+
+      smbShare.options = options as SmbShareOptions;
     }
+
+    const timeMachineOptions = smbShare.options as TimeMachineSmbShareOptions;
 
     if (
       presetFields.includes('timemachine_quota')
-      && (smbShare.options.timemachine_quota === null || smbShare.options.timemachine_quota === undefined)
+      && (timeMachineOptions.timemachine_quota === null || timeMachineOptions.timemachine_quota === undefined)
     ) {
-      smbShare.options.timemachine_quota = 0;
+      timeMachineOptions.timemachine_quota = 0;
     }
 
     let request$: Observable<SmbShare>;
@@ -632,5 +643,19 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     ).subscribe(() => {
       this.hasSmbUsers.set(false);
     });
+  }
+
+  private buildPurposeOptions(): SelectOption<SmbPresetType>[] {
+    const options = mapToOptionsWithHoverTooltips(
+      smbPresetTypeLabels,
+      smbPresetTooltips,
+      this.translate,
+    );
+
+    if (this.isNew) {
+      return options.filter((option) => option.value !== SmbPresetType.LegacyShare);
+    }
+
+    return options;
   }
 }

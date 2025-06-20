@@ -1,6 +1,11 @@
-import { SmbPresetType, SmbShareUpdate } from 'app/interfaces/smb-share.interface';
+import {
+  SmbPresetType,
+  SmbShareOptions,
+} from 'app/interfaces/smb-share.interface';
 
-export const presetEnabledFields: Partial<Record<SmbPresetType, (keyof SmbShareUpdate)[]>> = {
+export const presetEnabledFields: Partial<{
+  [K in SmbPresetType]: (keyof Extract<SmbShareOptions, { preset: K }>)[]
+}> = {
   [SmbPresetType.LegacyShare]: [
     'recyclebin', 'path_suffix', 'hostsallow', 'hostsdeny', 'guestok', 'streams',
     'durablehandle', 'shadowcopy', 'fsrvp', 'home', 'acl', 'afp', 'timemachine',

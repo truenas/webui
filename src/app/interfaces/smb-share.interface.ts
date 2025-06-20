@@ -34,9 +34,7 @@ export interface SmbShare {
     watch_list?: string[];
     ignore_list?: string[];
   };
-  options: {
-    purpose: SmbPresetType;
-  } & Partial<Omit<SmbShareUpdate, 'path' | 'name' | 'enabled' | 'comment'>>;
+  options: SmbShareOptions;
 }
 
 export enum SmbPresetType {
@@ -69,6 +67,73 @@ export const smbPresetTooltips = new Map<SmbPresetType, string>([
   [SmbPresetType.ExternalShare, T('The SMB share is a DFS proxy to a share hosted on an external SMB server.')],
 ]);
 
+export interface LegacySmbShareOptions {
+  purpose: SmbPresetType.LegacyShare;
+  recyclebin?: boolean;
+  path_suffix?: string;
+  hostsallow?: string[];
+  hostsdeny?: string[];
+  guestok?: boolean;
+  streams?: boolean;
+  durablehandle?: boolean;
+  shadowcopy?: boolean;
+  fsrvp?: boolean;
+  home?: boolean;
+  acl?: boolean;
+  afp?: boolean;
+  timemachine?: boolean;
+  timemachine_quota?: number;
+  aapl_name_mangling?: boolean;
+  auxsmbconf?: string;
+  vuid?: string;
+}
+
+export interface DefaultSmbShareOptions {
+  purpose: SmbPresetType.DefaultShare;
+  aapl_name_mangling?: boolean;
+}
+
+export interface TimeMachineSmbShareOptions {
+  purpose: SmbPresetType.TimeMachineShare;
+  timemachine_quota?: number;
+  vuid?: string;
+  auto_snapshot?: boolean;
+  auto_dataset_creation?: boolean;
+  dataset_naming_schema?: string | null;
+}
+
+export interface MultiProtocolSmbShareOptions {
+  purpose: SmbPresetType.MultiProtocolShare;
+  aapl_name_mangling?: boolean;
+}
+
+export interface TimeLockedSmbShareOptions {
+  purpose: SmbPresetType.TimeLockedShare;
+  grace_period?: number;
+  aapl_name_mangling?: boolean;
+}
+
+export interface PrivateDatasetsSmbShareOptions {
+  purpose: SmbPresetType.PrivateDatasetsShare;
+  dataset_naming_schema?: string | null;
+  auto_quota?: number;
+  aapl_name_mangling?: boolean;
+}
+
+export interface ExternalSmbShareOptions {
+  purpose: SmbPresetType.ExternalShare;
+  remote_path?: string[] | null;
+}
+
+export type SmbShareOptions =
+  | LegacySmbShareOptions
+  | DefaultSmbShareOptions
+  | TimeMachineSmbShareOptions
+  | MultiProtocolSmbShareOptions
+  | TimeLockedSmbShareOptions
+  | PrivateDatasetsSmbShareOptions
+  | ExternalSmbShareOptions;
+
 export interface SmbPreset {
   cluster: boolean;
   verbose_name: string;
@@ -94,13 +159,4 @@ export interface SmbSharesecAce {
   ae_who_str?: NfsAclTag.Everyone | number | null;
 }
 
-export type SmbShareUpdate = {
-  timemachine_quota?: number;
-  afp?: boolean;
-  auto_snapshot?: boolean;
-  auto_dataset_creation?: boolean;
-  dataset_naming_schema?: string | null;
-  grace_period?: number;
-  auto_quota?: number;
-  remote_path?: string[] | null;
-} & Partial<Omit<SmbShare, 'id' | 'locked'>>;
+export type SmbShareUpdate = Partial<Omit<SmbShare, 'id' | 'locked'>>;
