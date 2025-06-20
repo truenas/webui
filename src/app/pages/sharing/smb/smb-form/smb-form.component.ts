@@ -30,7 +30,7 @@ import { DatasetCreate } from 'app/interfaces/dataset.interface';
 import { SelectOption } from 'app/interfaces/option.interface';
 import {
   externalSmbSharePath,
-  smbPresetTooltips, SmbPresetType, smbPresetTypeLabels, SmbShare, SmbShareOptions, SmbShareUpdate,
+  smbPresetTooltips, SmbPresetType, smbPresetTypeLabels, SmbShareOptions, SmbShare,
   TimeMachineSmbShareOptions,
 } from 'app/interfaces/smb-share.interface';
 import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
@@ -510,7 +510,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   }
 
   protected submit(): void {
-    const smbShare = { ...this.form.value } as SmbShareUpdate;
+    const smbShare = { ...this.form.value } as SmbShare;
     const purpose = smbShare.purpose;
     const presetFields = presetEnabledFields[purpose] ?? [];
 

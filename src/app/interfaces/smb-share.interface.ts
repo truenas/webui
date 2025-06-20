@@ -160,5 +160,3 @@ export interface SmbSharesecAce {
   ae_who_sid?: string;
   ae_who_str?: NfsAclTag.Everyone | number | null;
 }
-
-export type SmbShareUpdate = Partial<Omit<SmbShare, 'id' | 'locked'>>;
