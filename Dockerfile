@@ -1,12 +1,12 @@
 ##NODE temporary builder image
-from node:22-bullseye as uibuilder
+FROM node:20-bookworm as uibuilder
 COPY ./ /src-ui
 WORKDIR /src-ui
 RUN yarn install --frozen-lockfile
 RUN yarn build:prod:aot
 
 #Download base image debian buster
-FROM debian:buster-slim
+FROM debian:bookworm-slim
 
 # Install packages
 #COPY docker/krb5.conf /etc/krb5.conf

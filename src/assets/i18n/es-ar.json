@@ -23,7 +23,6 @@
   "Allow all hosts": "",
   "Allow any host to connect": "",
   "Allowed Hosts": "",
-  "Also delete the underlying file – {name}": "",
   "An ACL is detected on the selected path but <i>Enable ACL</i> is not selected for this share.  ACLs should be stripped from the dataset prior to creating an SMB share.": "",
   "Applications you install will automatically appear here.\n <br> Click below and browse available apps to get started.": "",
   "Are you sure you want to delete {type}: {name}?": "",
