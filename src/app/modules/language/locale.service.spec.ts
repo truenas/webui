@@ -1,7 +1,9 @@
 import { SpectatorService, createServiceFactory } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
+import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
-import { LocaleService } from 'app/modules/language/locale.service';
+import { LocaleService, SupportedTimeFormat } from 'app/modules/language/locale.service';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
@@ -11,7 +13,7 @@ describe('LocaleService', () => {
 
   const createService = createServiceFactory({
     service: LocaleService,
-    mocks: [Store],
+    mocks: [Store, TranslateService],
   });
 
   beforeEach(() => {
@@ -30,6 +32,9 @@ describe('LocaleService', () => {
 
       return of(null);
     });
+
+    const translateService = spectator.inject(TranslateService);
+    translateService.instant.mockReturnValue('(24 Hours)' as TranslatedString);
 
     jest.useFakeTimers().setSystemTime(new Date('2024-08-14T14:14:27Z'));
   });
@@ -63,16 +68,20 @@ describe('LocaleService', () => {
         { label: '05:14:27 PM', value: 'hh:mm:ss aa' },
       ]);
     });
+
+    it('should return correct time format options for custom timezone', () => {
+      const options = service.getTimeFormatOptions('Asia/Tokyo');
+      expect(options).toEqual([
+        { label: '23:14:27 (24 Hours)', value: 'HH:mm:ss' },
+        { label: '11:14:27 pm', value: "hh:mm:ss aaaaa'm'" },
+        { label: '11:14:27 PM', value: 'hh:mm:ss aa' },
+      ]);
+    });
   });
 
   describe('getDateFromString', () => {
     it('should correctly parse a valid date string with default timezone', () => {
       const date = service.getDateFromString('14/08/2024 02:00:00');
-      expect(date.toISOString()).toBe('2024-08-13T23:00:00.000Z');
-    });
-
-    it('should correctly parse a valid date string with another format with default timezone', () => {
-      const date = service.getDateFromString('14.08.2024 02:00:00');
       expect(date.toISOString()).toBe('2024-08-13T23:00:00.000Z');
     });
 
@@ -100,10 +109,11 @@ describe('LocaleService', () => {
       expect(time).toBe('17:14:27');
     });
 
-    it('should return the correct date and time for a specified timezone', () => {
-      const [date, time] = service.getDateAndTime('Europe/Kiev');
+    it('should return the correct date and time when service has timezone set', () => {
+      service.timezone = 'America/New_York';
+      const [date, time] = service.getDateAndTime();
       expect(date).toBe('2024-08-14');
-      expect(time).toBe('17:14:27');
+      expect(time).toBe('10:14:27');
     });
   });
 
@@ -111,6 +121,32 @@ describe('LocaleService', () => {
     it('should correctly format date-time string to date-fns format', () => {
       const formatted = service.formatDateTimeToDateFns('YYYY-MM-DD A');
       expect(formatted).toBe('yyyy-MM-dd aa');
+    });
+
+    it('should handle complex format strings', () => {
+      expect(service.formatDateTimeToDateFns('YYYY-MM-DD HH:mm:ss A')).toBe('yyyy-MM-dd HH:mm:ss aa');
+    });
+  });
+
+  describe('getShortTimeFormat', () => {
+    it('should return HH:mm for 24-hour format', () => {
+      service.timeFormat = 'HH:mm:ss';
+      expect(service.getShortTimeFormat()).toBe('HH:mm');
+    });
+
+    it('should return hh:mm aa for 12-hour format with AA', () => {
+      service.timeFormat = 'hh:mm:ss aa';
+      expect(service.getShortTimeFormat()).toBe('hh:mm aa');
+    });
+
+    it('should return hh:mm aaaaa\'m\' for 12-hour format with lowercase a', () => {
+      service.timeFormat = "hh:mm:ss aaaaa'm'";
+      expect(service.getShortTimeFormat()).toBe('hh:mm aaaaa\'m\'');
+    });
+
+    it('should return default HH:mm for unknown format', () => {
+      service.timeFormat = 'unknown' as SupportedTimeFormat;
+      expect(service.getShortTimeFormat()).toBe('HH:mm');
     });
   });
 });

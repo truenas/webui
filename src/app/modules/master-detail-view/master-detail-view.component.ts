@@ -1,5 +1,4 @@
 import { BreakpointObserver, Breakpoints, BreakpointState } from '@angular/cdk/layout';
-import { DOCUMENT } from '@angular/common';
 import {
   Component, ChangeDetectionStrategy,
   AfterViewInit,
@@ -7,6 +6,7 @@ import {
   ChangeDetectorRef,
   Inject,
   input,
+  DOCUMENT,
 } from '@angular/core';
 import { NavigationStart, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';

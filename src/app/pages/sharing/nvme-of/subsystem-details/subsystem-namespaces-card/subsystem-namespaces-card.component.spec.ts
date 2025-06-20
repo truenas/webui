@@ -28,7 +28,7 @@ describe('SubsystemNamespacesCardComponent', () => {
         } as MatDialogRef<unknown>)),
       }),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of({ response: true, error: null })),
+        open: jest.fn(() => of({ response: true, error: null as string | null })),
       }),
       mockProvider(NvmeOfStore, {
         initialize: jest.fn(),

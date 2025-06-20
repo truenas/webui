@@ -23,7 +23,7 @@ describe('AllowedAddressesCardComponent', () => {
   let table: IxTableHarness;
   const componentRef: SlideInRef<unknown, unknown> = {
     close: jest.fn(),
-    getData: jest.fn(() => undefined),
+    getData: jest.fn((): undefined => undefined),
     requireConfirmationWhen: jest.fn(),
   };
 

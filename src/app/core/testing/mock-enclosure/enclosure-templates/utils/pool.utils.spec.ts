@@ -5,6 +5,7 @@ import {
   DashboardEnclosure, DashboardEnclosureSlot,
   Enclosure,
   EnclosureElement,
+  EnclosureSlotPoolInfo,
 } from 'app/interfaces/enclosure.interface';
 import { addPoolsToDisks, randomizeDiskStatuses } from './pool.utils';
 
@@ -108,7 +109,7 @@ describe('pool.utils', () => {
               ...enclosure.elements,
               [EnclosureElementType.ArrayDeviceSlot]: Object.values(
                 enclosure.elements[EnclosureElementType.ArrayDeviceSlot],
-              ).map((slot) => ({ ...slot, pool_info: undefined })),
+              ).map((slot) => ({ ...slot, pool_info: undefined as EnclosureSlotPoolInfo | null })),
             },
           };
         });
