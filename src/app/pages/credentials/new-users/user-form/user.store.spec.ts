@@ -64,6 +64,7 @@ describe('UserFormStore', () => {
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('user.create', [{
       full_name: 'Operator',
+      group_create: true,
       password: 'password123',
       email: 'operator@truenas.local',
       shell: '/usr/bin/zsh',
