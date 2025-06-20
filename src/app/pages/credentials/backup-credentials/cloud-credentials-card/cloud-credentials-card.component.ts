@@ -7,11 +7,14 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { switchMap, filter, tap } from 'rxjs';
+import {
+  switchMap, filter, tap, Observable,
+} from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
+import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
@@ -114,25 +117,27 @@ export class CloudCredentialsCardComponent implements OnInit {
     );
     this.dataProvider = new AsyncDataProvider<CloudSyncCredential>(credentials$);
     this.setDefaultSort();
-    this.getCredentials();
 
-    this.getProviders();
+    this.getProviders()
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.getCredentials();
+      });
   }
 
   getCredentials(): void {
     this.dataProvider.load();
   }
 
-  getProviders(): void {
-    this.cloudCredentialService
+  private getProviders(): Observable<CloudSyncProvider[]> {
+    return this.cloudCredentialService
       .getProviders()
       .pipe(
+        tap((providers) => {
+          providers.forEach((provider) => this.providers.set(provider.name, provider.title));
+        }),
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
-      )
-      .subscribe((providers) => {
-        providers.forEach((provider) => this.providers.set(provider.name, provider.title));
-      });
+      );
   }
 
   setDefaultSort(): void {

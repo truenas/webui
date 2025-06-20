@@ -157,7 +157,7 @@ export class InstanceWizardComponent implements OnInit {
 
   protected readonly diskIoBusOptions$ = of(mapToOptions(diskIoBusLabels, this.translate));
 
-  protected readonly slashRootNode = slashRootNode;
+  protected readonly slashRootNode = [slashRootNode];
 
   protected readonly proxyProtocols$ = of(mapToOptions(virtualizationProxyProtocolLabels, this.translate));
   protected readonly bridgedNicTypeLabel = virtualizationNicTypeLabels.get(VirtualizationNicType.Bridged);
