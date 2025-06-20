@@ -277,7 +277,7 @@
   "Amazon Web Services password. If the Secret Access Key cannot be  found or remembered, go to <i>My Account -> Security Credentials ->  Access Keys</i> and create a new key pair. Must be alphanumeric and  between 8 and 40 characters.": "",
   "Amount of disk space that can be used by the selected groups.  Entering <code>0</code> (zero) allows all disk space.": "",
   "Amount of disk space that can be used by the selected users.  Entering <code>0</code> (zero) allows all disk space to be used.": "",
-  "An ACL is detected on the selected path but <i>Enable ACL</i> is not selected for this share.  ACLs must be stripped from the dataset prior to creating an SMB share.": "",
+  "An ACL is detected on the selected path but <i>Enable ACL</i> is not selected for this share.  ACLs should be stripped from the dataset prior to creating an SMB share.": "",
   "An enclosure must be selected when 'Limit Pool to a Single Enclosure' is enabled.": "",
   "An error occurred while sending the review. Please try again later.": "",
   "An instance of this app already installed. Click the badge to see installed apps.": "",
