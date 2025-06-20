@@ -91,24 +91,9 @@ describe('SmbFormComponent', () => {
     purpose: 'Purpose',
     comment: 'Description',
     enabled: 'Enabled',
-    acl: 'Enable ACL',
     ro: 'Export Read Only',
     browsable: 'Browsable to Network Clients',
-    guestok: 'Allow Guest Access',
     abe: 'Access Based Share Enumeration',
-    hostsallow: 'Hosts Allow',
-    hostsdeny: 'Hosts Deny',
-    home: 'Use as Home Share',
-    timemachine: 'Time Machine',
-    afp: 'Legacy AFP Compatibility',
-    shadowcopy: 'Enable Shadow Copies',
-    recyclebin: 'Export Recycle Bin',
-    aapl_name_mangling: 'Use Apple-style Character Encoding',
-    streams: 'Enable Alternate Data Streams',
-    durablehandle: 'Enable SMB2/3 Durable Handles',
-    fsrvp: 'Enable FSRVP',
-    path_suffix: 'Path Suffix',
-    auxsmbconf: 'Additional Parameters String',
     watch_list: 'Watch List',
     ignore_list: 'Ignore List',
   };
@@ -243,7 +228,7 @@ describe('SmbFormComponent', () => {
       jest.spyOn(store$, 'dispatch');
 
       await form.fillForm({
-        Purpose: 'Legacy Share',
+        Purpose: 'Default Share',
       });
     });
 
@@ -263,7 +248,6 @@ describe('SmbFormComponent', () => {
       const optionLabels = await purposeSelect.getOptionLabels();
       expect(optionLabels).toEqual([
         'Default Share',
-        'Legacy Share',
         'Time Machine Share',
         'Multi-Protocol Share',
         'Time Locked Share',
@@ -289,8 +273,8 @@ describe('SmbFormComponent', () => {
         const presetFields = presetEnabledFields[presetKey] ?? [];
 
         for (const field of presetFields) {
-          const controlLabel = formLabels[field];
-          const expectedValue = (await form.getControl(field)).getValue();
+          const controlLabel = formLabels[field as string];
+          const expectedValue = (await form.getControl(field as string)).getValue();
 
           const control = fields[controlLabel];
           if (!control) continue;
@@ -420,7 +404,7 @@ describe('SmbFormComponent', () => {
       expect(api.call).toHaveBeenNthCalledWith(6, 'sharing.smb.create', [{
         name: 'ds223',
         path: '/mnt/pool123/ds222',
-        purpose: 'LEGACY_SHARE',
+        purpose: 'DEFAULT_SHARE',
         comment: '',
         enabled: true,
         ro: false,
@@ -443,7 +427,7 @@ describe('SmbFormComponent', () => {
           hostsallow: ['host11'],
           hostsdeny: ['host22'],
           path_suffix: '',
-          purpose: 'LEGACY_SHARE',
+          purpose: 'DEFAULT_SHARE',
           recyclebin: false,
           shadowcopy: false,
           streams: false,
@@ -526,7 +510,7 @@ describe('SmbFormComponent', () => {
         name: 'ds223',
         abe: false,
         path: '/mnt/pool123/ds222',
-        purpose: 'LEGACY_SHARE',
+        purpose: 'DEFAULT_SHARE',
         comment: '',
         browsable: true,
         enabled: true,
@@ -548,7 +532,7 @@ describe('SmbFormComponent', () => {
           hostsallow: ['host11'],
           hostsdeny: ['host22'],
           path_suffix: '',
-          purpose: 'LEGACY_SHARE',
+          purpose: 'DEFAULT_SHARE',
           recyclebin: false,
           shadowcopy: false,
           streams: false,

@@ -4,7 +4,7 @@ import {
 } from 'app/interfaces/smb-share.interface';
 
 export const presetEnabledFields: Partial<{
-  [K in SmbPresetType]: (keyof Extract<SmbShareOptions, { preset: K }>)[]
+  [T in SmbPresetType]: (keyof Extract<SmbShareOptions, { preset: T }>)[]
 }> = {
   [SmbPresetType.LegacyShare]: [
     'recyclebin', 'path_suffix', 'hostsallow', 'hostsdeny', 'guestok', 'streams',

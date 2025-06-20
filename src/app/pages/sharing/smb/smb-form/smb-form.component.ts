@@ -1,7 +1,9 @@
 import {
   AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal,
 } from '@angular/core';
-import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  AbstractControl, NonNullableFormBuilder, ReactiveFormsModule, Validators,
+} from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
@@ -27,6 +29,7 @@ import { helptextSharingSmb } from 'app/helptext/sharing';
 import { DatasetCreate } from 'app/interfaces/dataset.interface';
 import { SelectOption } from 'app/interfaces/option.interface';
 import {
+  externalSmbSharePath,
   smbPresetTooltips, SmbPresetType, smbPresetTypeLabels, SmbShare, SmbShareOptions, SmbShareUpdate,
   TimeMachineSmbShareOptions,
 } from 'app/interfaces/smb-share.interface';
@@ -94,6 +97,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
   protected isLoading = signal(false);
   protected hasSmbUsers = signal(true);
+  protected SmbPresetType = SmbPresetType;
   protected isAdvancedMode = false;
   private namesInUse: string[] = [];
   protected readonly helptextSharingSmb = helptextSharingSmb;
@@ -195,7 +199,12 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   form = this.formBuilder.group({
     path: ['', [Validators.required]],
     name: ['', Validators.required],
-    purpose: [SmbPresetType.DefaultShare as SmbPresetType | null],
+    purpose: [SmbPresetType.DefaultShare as SmbPresetType | null, [
+      this.validatorsService.customValidator(
+        (control: AbstractControl) => control.value !== SmbPresetType.LegacyShare,
+        this.translate.instant('Select a new purpose before saving.'),
+      ),
+    ]],
     comment: [''],
     enabled: [true],
     acl: [false],
@@ -217,13 +226,26 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     fsrvp: [false],
     path_suffix: [''],
     auxsmbconf: [''],
-    vuid: ['', [this.validatorsService.uuid4()]],
+    vuid: ['', [
+      this.validatorsService.withMessage(
+        Validators.pattern(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i),
+        this.translate.instant(this.translate.instant('Enter a valid UUID4 string.')),
+      ),
+    ]],
     auto_snapshot: [false],
     auto_dataset_creation: [false],
     dataset_naming_schema: [''],
     grace_period: [900 as number],
     auto_quota: [null as number | null],
-    remote_path: [[] as string[]],
+    remote_path: [[] as string[], [
+      Validators.required,
+      this.validatorsService.withMessage(
+        Validators.pattern(
+          /^(([a-zA-Z0-9.-]+|(?:\d{1,3}\.){3}\d{1,3})\\[a-zA-Z0-9$_.-]+)(,\s*([a-zA-Z0-9.-]+|(?:\d{1,3}\.){3}\d{1,3})\\[a-zA-Z0-9$_.-]+)*$/,
+        ),
+        this.translate.instant('Invalid remote path. Valid examples: SERVER\\SHARE or 192.168.0.1\\SHARE'),
+      ),
+    ]],
     audit: this.formBuilder.group({
       enable: [false],
       watch_list: [[] as string[]],
@@ -394,6 +416,12 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   setValuesFromPreset(preset: SmbPresetType): void {
     const enabledFields = presetEnabledFields[preset];
 
+    if (preset === SmbPresetType.ExternalShare) {
+      this.form.controls.path.patchValue(externalSmbSharePath, { emitEvent: false });
+    } else if (preset !== this.form.controls.purpose.value) {
+      this.form.controls.path.patchValue('', { emitEvent: false });
+    }
+
     if (!enabledFields) return;
 
     enabledFields.forEach((field) => {
@@ -448,6 +476,13 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
     if (!flatShare.purpose) {
       flatShare.purpose = SmbPresetType.LegacyShare;
+    }
+
+    if (share.purpose === SmbPresetType.LegacyShare) {
+      this.dialogService.warn(
+        this.translate.instant('Legacy Share'),
+        this.translate.instant('To save changes, choose a new purpose. Legacy shares cannot be edited without migrating.'),
+      );
     }
 
     this.form.patchValue(flatShare);

@@ -47,6 +47,8 @@ export enum SmbPresetType {
   ExternalShare = 'EXTERNAL_SHARE',
 }
 
+export const externalSmbSharePath = 'EXTERNAL';
+
 export const smbPresetTypeLabels = new Map<SmbPresetType, string>([
   [SmbPresetType.DefaultShare, T('Default Share')],
   [SmbPresetType.LegacyShare, T('Legacy Share')],
@@ -122,7 +124,7 @@ export interface PrivateDatasetsSmbShareOptions {
 
 export interface ExternalSmbShareOptions {
   purpose: SmbPresetType.ExternalShare;
-  remote_path?: string[] | null;
+  remote_path?: string[];
 }
 
 export type SmbShareOptions =

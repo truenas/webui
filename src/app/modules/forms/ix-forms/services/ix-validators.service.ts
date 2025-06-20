@@ -79,11 +79,4 @@ export class IxValidatorsService {
       message,
     );
   }
-
-  uuid4(message = this.translate.instant('Enter a valid UUID4 string.')): ValidatorFn {
-    return this.withMessage(
-      Validators.pattern(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i),
-      message,
-    );
-  }
 }
