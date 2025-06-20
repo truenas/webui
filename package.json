@@ -44,7 +44,7 @@
     "url": "https://jira.ixsystems.com"
   },
   "engines": {
-    "node": ">=22.0.0"
+    "node": ">=20.19.0"
   },
   "private": true,
   "dependencies": {
