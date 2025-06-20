@@ -18,7 +18,9 @@ import { JsonRpcError } from 'app/interfaces/api-message.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { Group } from 'app/interfaces/group.interface';
 import { Service } from 'app/interfaces/service.interface';
-import { SmbPresets, SmbPresetType, SmbShare } from 'app/interfaces/smb-share.interface';
+import {
+  SmbPresetType, smbPresetTypeLabels, SmbShare,
+} from 'app/interfaces/smb-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
@@ -32,6 +34,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { RestartSmbDialog } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
+import { presetEnabledFields } from 'app/pages/sharing/smb/smb-form/smb-form-presets';
 import { ApiCallError } from 'app/services/errors/error.classes';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { AppState } from 'app/store';
@@ -42,37 +45,39 @@ import { SmbFormComponent } from './smb-form.component';
 describe('SmbFormComponent', () => {
   const existingShare = {
     id: 1,
-    purpose: SmbPresetType.MultiUserTimeMachine,
-    path: '/mnt/pool123/ds222',
-    path_suffix: '%U',
-    auxsmbconf: 'Aux SMB Conf',
-    home: false,
+    purpose: 'Default Share',
     name: 'ds222',
-    comment: '',
-    ro: false,
-    browsable: true,
-    recyclebin: true,
-    guestok: true,
-    hostsallow: ['host1'],
-    hostsdeny: ['host2'],
-    aapl_name_mangling: false,
-    abe: true,
-    acl: false,
-    durablehandle: true,
-    streams: true,
-    timemachine: true,
-    shadowcopy: true,
-    fsrvp: false,
-    enabled: true,
-    cluster_volname: '',
-    locked: false,
+    path: '/mnt/pool123/ds222',
     path_local: '/mnt/pool123/ds222',
     audit: {
       enable: true,
       watch_list: [] as string[],
       ignore_list: [] as string[],
     },
-  } as SmbShare;
+    options: {
+      purpose: 'Default Share',
+      path_suffix: '%U',
+      auxsmbconf: 'Aux SMB Conf',
+      home: false,
+      comment: '',
+      ro: false,
+      browsable: true,
+      recyclebin: true,
+      guestok: true,
+      hostsallow: ['host1'],
+      hostsdeny: ['host2'],
+      aapl_name_mangling: false,
+      abe: true,
+      acl: false,
+      durablehandle: true,
+      streams: true,
+      timemachine: true,
+      shadowcopy: true,
+      fsrvp: false,
+      enabled: true,
+      locked: false,
+    },
+  } as unknown as SmbShare;
 
   const slideInRef: SlideInRef<{ existingSmbShare?: SmbShare; defaultSmbShare?: SmbShare } | undefined, unknown> = {
     close: jest.fn(),
@@ -86,56 +91,12 @@ describe('SmbFormComponent', () => {
     purpose: 'Purpose',
     comment: 'Description',
     enabled: 'Enabled',
-    acl: 'Enable ACL',
     ro: 'Export Read Only',
     browsable: 'Browsable to Network Clients',
-    guestok: 'Allow Guest Access',
     abe: 'Access Based Share Enumeration',
-    hostsallow: 'Hosts Allow',
-    hostsdeny: 'Hosts Deny',
-    home: 'Use as Home Share',
-    timemachine: 'Time Machine',
-    afp: 'Legacy AFP Compatibility',
-    shadowcopy: 'Enable Shadow Copies',
-    recyclebin: 'Export Recycle Bin',
     aapl_name_mangling: 'Use Apple-style Character Encoding',
-    streams: 'Enable Alternate Data Streams',
-    durablehandle: 'Enable SMB2/3 Durable Handles',
-    fsrvp: 'Enable FSRVP',
-    path_suffix: 'Path Suffix',
-    auxsmbconf: 'Additional Parameters String',
     watch_list: 'Watch List',
     ignore_list: 'Ignore List',
-  };
-
-  const presets: SmbPresets = {
-    NO_PRESET: {
-      verbose_name: 'No presets',
-      cluster: false,
-      params: {},
-    },
-    ENHANCED_TIMEMACHINE: {
-      verbose_name: 'Multi-user time machine',
-      cluster: false,
-      params: {
-        auxsmbconf: 'Aux SMB Conf',
-        path_suffix: '%U',
-        timemachine: true,
-      },
-    },
-    PRIVATE_DATASETS: {
-      verbose_name: 'Private SMB Datasets and Shares',
-      cluster: false,
-      params: {
-        auxsmbconf: 'Aux SMB Conf',
-        path_suffix: '%U',
-      },
-    },
-    CLUSTER_PRESET: {
-      verbose_name: 'This will not be shown',
-      cluster: true,
-      params: {},
-    },
   };
 
   let spectator: Spectator<SmbFormComponent>;
@@ -164,7 +125,6 @@ describe('SmbFormComponent', () => {
           acl: true,
         } as FileSystemStat),
         mockJob('service.control', fakeSuccessfulJob()),
-        mockCall('sharing.smb.presets', { ...presets }),
       ]),
       mockProvider(SlideIn),
       mockProvider(Router),
@@ -202,7 +162,69 @@ describe('SmbFormComponent', () => {
     ],
   });
 
-  describe('edit', () => {
+  describe('edit legacy share', () => {
+    beforeEach(async () => {
+      spectator = createComponent({
+        providers: [
+          mockProvider(SlideInRef, {
+            ...slideInRef,
+            getData: () => ({
+              existingSmbShare: { ...existingShare, purpose: 'LEGACY_SHARE' },
+            }),
+          }),
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+      api = spectator.inject(ApiService);
+
+      await form.fillForm({
+        Purpose: 'Legacy Share',
+      });
+    });
+
+    it('should show confirmation warning when afp is checked', async () => {
+      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
+      await advancedButton.click();
+      const afpCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Legacy AFP Compatibility' }));
+      await afpCheckbox.setValue(true);
+      expect(spectator.inject(DialogService).confirm).toHaveBeenLastCalledWith({
+        title: helptextSharingSmb.afpWarningTitle,
+        message: helptextSharingSmb.afpWarningMessage,
+        hideCheckbox: false,
+        buttonText: helptextSharingSmb.afpDialogButton,
+        hideCancel: false,
+      });
+    });
+
+    it('shows a warning when opening Legacy Share for editing', () => {
+      expect(spectator.inject(DialogService).warn).toHaveBeenLastCalledWith(
+        'Legacy Share',
+        'To save changes, choose a new purpose. Legacy shares cannot be edited without migrating.',
+      );
+    });
+
+    it('should show strip acl warning if acl is trivial when path changes', async () => {
+      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
+      await advancedButton.click();
+
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      await pathControl.setValue('/mnt/pool2/ds22');
+
+      const aclCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: formLabels.acl }));
+      await (await aclCheckbox.getMatCheckboxHarness()).uncheck();
+
+      expect(spectator.inject(DialogService).confirm).toHaveBeenLastCalledWith({
+        title: helptextSharingSmb.stripACLDialog.title,
+        message: helptextSharingSmb.stripACLDialog.message,
+        hideCheckbox: true,
+        buttonText: helptextSharingSmb.stripACLDialog.button,
+        hideCancel: true,
+      });
+    });
+  });
+
+  describe('edit default share', () => {
     beforeEach(async () => {
       spectator = createComponent({
         providers: [
@@ -212,6 +234,10 @@ describe('SmbFormComponent', () => {
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
       api = spectator.inject(ApiService);
+
+      await form.fillForm({
+        Purpose: 'Default Share',
+      });
     });
 
     it('shows values of existing share when editing', async () => {
@@ -228,9 +254,6 @@ describe('SmbFormComponent', () => {
         existingShareWithLabels[formLabels[key]] = existingShare[key as keyof SmbShare];
       });
 
-      existingShareWithLabels[formLabels.purpose] = (
-        presets[existingShareWithLabels[formLabels.purpose] as string].verbose_name
-      );
       expect(values).toMatchObject(existingShareWithLabels);
     });
 
@@ -247,7 +270,7 @@ describe('SmbFormComponent', () => {
       } else {
         await aaplNameManglingCheckbox.setValue(true);
       }
-      expect(spectator.inject(DialogService).confirm).toHaveBeenNthCalledWith(2, {
+      expect(spectator.inject(DialogService).confirm).toHaveBeenNthCalledWith(1, {
         title: helptextSharingSmb.manglingDialog.title,
         message: helptextSharingSmb.manglingDialog.message,
         hideCheckbox: true,
@@ -257,7 +280,7 @@ describe('SmbFormComponent', () => {
     });
   });
 
-  describe('smb form operations', () => {
+  describe('smb form operations (default share)', () => {
     beforeEach(async () => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -266,6 +289,10 @@ describe('SmbFormComponent', () => {
       mockStore$ = spectator.inject(MockStore);
       store$ = spectator.inject(Store);
       jest.spyOn(store$, 'dispatch');
+
+      await form.fillForm({
+        Purpose: 'Default Share',
+      });
     });
 
     it('shows all the fields when Advanced Options button is pressed', async () => {
@@ -273,6 +300,7 @@ describe('SmbFormComponent', () => {
       await advancedButton.click();
 
       const fields = Object.keys(await form.getControlHarnessesDict());
+
       Object.values(formLabels).forEach((label) => {
         expect(fields).toContain(label);
       });
@@ -282,9 +310,12 @@ describe('SmbFormComponent', () => {
       const purposeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Purpose' }));
       const optionLabels = await purposeSelect.getOptionLabels();
       expect(optionLabels).toEqual([
-        'No presets',
-        'Multi-user time machine',
-        'Private SMB Datasets and Shares',
+        'Default Share',
+        'Time Machine Share',
+        'Multi-Protocol Share',
+        'Time Locked Share',
+        'Private Datasets Share',
+        'External Share',
       ]);
     });
 
@@ -293,37 +324,29 @@ describe('SmbFormComponent', () => {
       await advancedButton.click();
 
       const purposeSelect = await loader.getHarness(IxSelectHarness.with({ label: formLabels.purpose }));
-
       const labels = await purposeSelect.getOptionLabels();
-      const presetKeys = Object.keys(presets);
       form = await loader.getHarness(IxFormHarness);
       const fields = await form.getControlHarnessesDict();
 
-      for (let i = 0; i < labels.length; i++) {
-        await purposeSelect.setValue(labels[i]);
-        // eslint-disable-next-line no-restricted-syntax, guard-for-in
-        for (const param in presets[presetKeys[i]].params) {
-          const expectedValue = presets[presetKeys[i]].params[param as keyof SmbShare];
-          const value = await fields[formLabels[param]].getValue();
+      for (const label of labels) {
+        await purposeSelect.setValue(label);
+
+        const presetKey = Object.entries(smbPresetTypeLabels)
+          .find(([, value]) => value === label)?.[0] as SmbPresetType;
+        const presetFields = presetEnabledFields[presetKey] ?? [];
+
+        for (const field of presetFields) {
+          const controlLabel = formLabels[field as string];
+          const expectedValue = (await form.getControl(field as string)).getValue();
+
+          const control = fields[controlLabel];
+          if (!control) continue;
+
+          const value = await control.getValue();
           expect(value).toStrictEqual(expectedValue);
-          expect(await fields[formLabels[param]].isDisabled()).toBeTruthy();
+          expect(await control.isDisabled()).toBeTruthy();
         }
       }
-      expect(true).toBeTruthy();
-    });
-
-    it('should show confirmation warning when afp is checked', async () => {
-      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
-      await advancedButton.click();
-      const afpCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: formLabels.afp }));
-      await afpCheckbox.setValue(true);
-      expect(spectator.inject(DialogService).confirm).toHaveBeenLastCalledWith({
-        title: helptextSharingSmb.afpWarningTitle,
-        message: helptextSharingSmb.afpWarningMessage,
-        hideCheckbox: false,
-        buttonText: helptextSharingSmb.afpDialogButton,
-        hideCancel: false,
-      });
     });
 
     it('should autofill name from path if name is empty', async () => {
@@ -336,57 +359,6 @@ describe('SmbFormComponent', () => {
       await pathControl.setValue('/mnt/pool2/ds22');
 
       expect(await nameControl.getValue()).toBe('ds22');
-
-      expect(spectator.inject(DialogService).confirm).toHaveBeenLastCalledWith({
-        title: helptextSharingSmb.stripACLDialog.title,
-        message: helptextSharingSmb.stripACLDialog.message,
-        hideCheckbox: true,
-        buttonText: helptextSharingSmb.stripACLDialog.button,
-        hideCancel: true,
-      });
-    });
-
-    it('should show strip acl warning if acl is trivial when path changes', async () => {
-      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
-      await advancedButton.click();
-
-      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
-      await pathControl.setValue('/mnt/pool2/ds22');
-
-      const purposeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Purpose' }));
-      await purposeSelect.setValue(presets.NO_PRESET.verbose_name);
-      const aclCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: formLabels.acl }));
-      await (await aclCheckbox.getMatCheckboxHarness()).uncheck();
-
-      expect(spectator.inject(DialogService).confirm).toHaveBeenLastCalledWith({
-        title: helptextSharingSmb.stripACLDialog.title,
-        message: helptextSharingSmb.stripACLDialog.message,
-        hideCheckbox: true,
-        buttonText: helptextSharingSmb.stripACLDialog.button,
-        hideCancel: true,
-      });
-    });
-
-    it('should show acl warning if acl is unchcekd and dataset is non-trivial', async () => {
-      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
-      await advancedButton.click();
-
-      const purposeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Purpose' }));
-      await purposeSelect.setValue(presets.PRIVATE_DATASETS.verbose_name);
-
-      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
-      await pathControl.setValue('/mnt/pool2/ds22');
-
-      const aclCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: formLabels.acl }));
-      await (await aclCheckbox.getMatCheckboxHarness()).uncheck();
-
-      expect(spectator.inject(DialogService).confirm).toHaveBeenLastCalledWith({
-        title: helptextSharingSmb.stripACLDialog.title,
-        message: helptextSharingSmb.stripACLDialog.message,
-        hideCheckbox: true,
-        buttonText: helptextSharingSmb.stripACLDialog.button,
-        hideCancel: true,
-      });
     });
 
     it('should submit the form with the correct value', async () => {
@@ -408,51 +380,31 @@ describe('SmbFormComponent', () => {
         }
       });
 
-      attrs[formLabels.purpose] = presets[attrs[formLabels.purpose] as string].verbose_name;
       attrs[formLabels.name] = 'ds223';
-      attrs[formLabels.hostsallow] = ['host11'];
-      attrs[formLabels.hostsdeny] = ['host22'];
       await form.fillForm({
         ...attrs,
-      });
-
-      expect(spectator.inject(DialogService).confirm).toHaveBeenLastCalledWith({
-        title: helptextSharingSmb.stripACLDialog.title,
-        message: helptextSharingSmb.stripACLDialog.message,
-        hideCheckbox: true,
-        buttonText: helptextSharingSmb.stripACLDialog.button,
-        hideCancel: true,
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(api.call).toHaveBeenCalledWith('sharing.smb.create', [{
-        path: '/mnt/pool123/ds222',
+      expect(api.call).toHaveBeenNthCalledWith(5, 'sharing.smb.create', [{
         name: 'ds223',
-        purpose: SmbPresetType.MultiUserTimeMachine,
+        path: '/mnt/pool123/ds222',
+        purpose: 'DEFAULT_SHARE',
         comment: '',
         enabled: true,
-        acl: false,
         ro: false,
         browsable: true,
-        guestok: true,
-        abe: true,
-        hostsallow: ['host11'],
-        hostsdeny: ['host22'],
-        home: false,
-        afp: false,
-        shadowcopy: true,
-        recyclebin: true,
-        aapl_name_mangling: false,
-        streams: true,
-        durablehandle: true,
-        fsrvp: false,
-        timemachine_quota: 0,
+        abe: false,
         audit: {
-          enable: true,
+          enable: false,
           watch_list: [],
           ignore_list: [],
+        },
+        options: {
+          aapl_name_mangling: false,
+          purpose: 'DEFAULT_SHARE',
         },
       }]);
 
@@ -474,16 +426,10 @@ describe('SmbFormComponent', () => {
         IxExplorerHarness.with({ label: formLabels.path }),
       )).getValue();
 
-      expect(api.call).toHaveBeenCalledWith('filesystem.stat', [sharePath]);
-
-      const homeShare = await (await loader.getHarness(
-        IxCheckboxHarness.with({ label: formLabels.home }),
-      )).getValue();
-
       expect(spectator.inject(Router).navigate)
         .toHaveBeenCalledWith(
           ['/', 'datasets', 'acl', 'edit'],
-          { queryParams: { homeShare, path: sharePath } },
+          { queryParams: { homeShare: false, path: sharePath } },
         );
     });
 
@@ -506,51 +452,31 @@ describe('SmbFormComponent', () => {
         }
       });
 
-      attrs[formLabels.purpose] = presets[attrs[formLabels.purpose] as string].verbose_name;
       attrs[formLabels.name] = 'ds223';
-      attrs[formLabels.hostsallow] = ['host11'];
-      attrs[formLabels.hostsdeny] = ['host22'];
       await form.fillForm({
         ...attrs,
-      });
-
-      expect(spectator.inject(DialogService).confirm).toHaveBeenLastCalledWith({
-        title: helptextSharingSmb.stripACLDialog.title,
-        message: helptextSharingSmb.stripACLDialog.message,
-        hideCheckbox: true,
-        buttonText: helptextSharingSmb.stripACLDialog.button,
-        hideCancel: true,
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(api.call).toHaveBeenCalledWith('sharing.smb.create', [{
-        path: '/mnt/pool123/ds222',
+      expect(api.call).toHaveBeenNthCalledWith(5, 'sharing.smb.create', [{
         name: 'ds223',
-        purpose: SmbPresetType.MultiUserTimeMachine,
+        abe: false,
+        path: '/mnt/pool123/ds222',
+        purpose: 'DEFAULT_SHARE',
         comment: '',
-        enabled: true,
-        acl: false,
-        ro: false,
         browsable: true,
-        guestok: true,
-        abe: true,
-        hostsallow: ['host11'],
-        hostsdeny: ['host22'],
-        home: false,
-        afp: false,
-        shadowcopy: true,
-        recyclebin: true,
-        aapl_name_mangling: false,
-        streams: true,
-        durablehandle: true,
-        fsrvp: false,
-        timemachine_quota: 0,
+        enabled: true,
+        ro: false,
         audit: {
-          enable: true,
+          enable: false,
           watch_list: [],
           ignore_list: [],
+        },
+        options: {
+          aapl_name_mangling: false,
+          purpose: 'DEFAULT_SHARE',
         },
       }]);
 
@@ -558,16 +484,10 @@ describe('SmbFormComponent', () => {
         IxExplorerHarness.with({ label: formLabels.path }),
       )).getValue();
 
-      expect(api.call).toHaveBeenCalledWith('filesystem.stat', [sharePath]);
-
-      const homeShare = await (await loader.getHarness(
-        IxCheckboxHarness.with({ label: formLabels.home }),
-      )).getValue();
-
       expect(spectator.inject(Router).navigate)
         .toHaveBeenCalledWith(
           ['/', 'datasets', 'acl', 'edit'],
-          { queryParams: { homeShare, path: sharePath } },
+          { queryParams: { homeShare: false, path: sharePath } },
         );
 
       expect(store$.dispatch).toHaveBeenCalledWith(checkIfServiceIsEnabled({ serviceName: ServiceName.Cifs }));
@@ -635,8 +555,6 @@ describe('SmbFormComponent', () => {
             return of({ ...existingShare });
           case 'filesystem.stat':
             return of({ acl: true } as FileSystemStat);
-          case 'sharing.smb.presets':
-            return of({ ...presets });
           case 'sharing.smb.create':
             return throwError(() => new ApiCallError({
               data: {
@@ -662,10 +580,7 @@ describe('SmbFormComponent', () => {
         }
       });
 
-      attrs[formLabels.purpose] = presets[attrs[formLabels.purpose] as string].verbose_name;
       attrs[formLabels.name] = 'ds223';
-      attrs[formLabels.hostsallow] = ['host11'];
-      attrs[formLabels.hostsdeny] = ['host22'];
       await form.fillForm({
         ...attrs,
       });
