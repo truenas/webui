@@ -62,7 +62,7 @@ export class TargetSectionComponent implements OnInit, OnChanges {
     lifetime_unit: [LifetimeUnit.Week, [Validators.required]],
   });
 
-  protected readonly emptyRootNode = emptyRootNode;
+  protected readonly emptyRootNode = [emptyRootNode];
 
   retentionPolicies$: Observable<Option[]>;
 
