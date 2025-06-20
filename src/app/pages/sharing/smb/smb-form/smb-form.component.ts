@@ -335,9 +335,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
   private setupMangleWarning(): void {
     this.form.controls.aapl_name_mangling.valueChanges.pipe(
-      filter(
-        (value) => value !== this.existingSmbShare?.aapl_name_mangling && !this.isNew,
-      ),
+      filter((value) => value !== this.existingSmbShare?.aapl_name_mangling && !this.isNew),
       take(1),
       switchMap(() => this.dialogService.confirm({
         title: this.translate.instant(helptextSharingSmb.manglingDialog.title),
@@ -687,7 +685,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
       this.translate,
     );
 
-    if (this.isNew) {
+    if (this.isNew || (!this.isNew && this.existingSmbShare.purpose !== SmbPresetType.LegacyShare)) {
       return options.filter((option) => option.value !== SmbPresetType.LegacyShare);
     }
 

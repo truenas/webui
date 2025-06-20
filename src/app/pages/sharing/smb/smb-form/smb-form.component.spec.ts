@@ -45,7 +45,7 @@ import { SmbFormComponent } from './smb-form.component';
 describe('SmbFormComponent', () => {
   const existingShare = {
     id: 1,
-    purpose: 'Legacy Share',
+    purpose: 'Default Share',
     name: 'ds222',
     path: '/mnt/pool123/ds222',
     path_local: '/mnt/pool123/ds222',
@@ -55,7 +55,7 @@ describe('SmbFormComponent', () => {
       ignore_list: [] as string[],
     },
     options: {
-      purpose: 'Legacy Share',
+      purpose: 'Default Share',
       path_suffix: '%U',
       auxsmbconf: 'Aux SMB Conf',
       home: false,
@@ -94,6 +94,7 @@ describe('SmbFormComponent', () => {
     ro: 'Export Read Only',
     browsable: 'Browsable to Network Clients',
     abe: 'Access Based Share Enumeration',
+    aapl_name_mangling: 'Use Apple-style Character Encoding',
     watch_list: 'Watch List',
     ignore_list: 'Ignore List',
   };
@@ -161,7 +162,50 @@ describe('SmbFormComponent', () => {
     ],
   });
 
-  describe('edit', () => {
+  describe('edit legacy share', () => {
+    beforeEach(async () => {
+      spectator = createComponent({
+        providers: [
+          mockProvider(SlideInRef, {
+            ...slideInRef,
+            getData: () => ({
+              existingSmbShare: { ...existingShare, purpose: 'LEGACY_SHARE' },
+            }),
+          }),
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+      api = spectator.inject(ApiService);
+
+      await form.fillForm({
+        Purpose: 'Legacy Share',
+      });
+    });
+
+    it('should show confirmation warning when afp is checked', async () => {
+      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
+      await advancedButton.click();
+      const afpCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Legacy AFP Compatibility' }));
+      await afpCheckbox.setValue(true);
+      expect(spectator.inject(DialogService).confirm).toHaveBeenLastCalledWith({
+        title: helptextSharingSmb.afpWarningTitle,
+        message: helptextSharingSmb.afpWarningMessage,
+        hideCheckbox: false,
+        buttonText: helptextSharingSmb.afpDialogButton,
+        hideCancel: false,
+      });
+    });
+
+    it('shows a warning when opening Legacy Share for editing', () => {
+      expect(spectator.inject(DialogService).warn).toHaveBeenLastCalledWith(
+        'Legacy Share',
+        'To save changes, choose a new purpose. Legacy shares cannot be edited without migrating.',
+      );
+    });
+  });
+
+  describe('edit default share', () => {
     beforeEach(async () => {
       spectator = createComponent({
         providers: [
@@ -173,7 +217,7 @@ describe('SmbFormComponent', () => {
       api = spectator.inject(ApiService);
 
       await form.fillForm({
-        Purpose: 'Legacy Share',
+        Purpose: 'Default Share',
       });
     });
 
@@ -217,7 +261,7 @@ describe('SmbFormComponent', () => {
     });
   });
 
-  describe('smb form operations', () => {
+  describe('smb form operations (default share)', () => {
     beforeEach(async () => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -284,20 +328,6 @@ describe('SmbFormComponent', () => {
           expect(await control.isDisabled()).toBeTruthy();
         }
       }
-    });
-
-    it('should show confirmation warning when afp is checked', async () => {
-      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
-      await advancedButton.click();
-      const afpCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: formLabels.afp }));
-      await afpCheckbox.setValue(true);
-      expect(spectator.inject(DialogService).confirm).toHaveBeenLastCalledWith({
-        title: helptextSharingSmb.afpWarningTitle,
-        message: helptextSharingSmb.afpWarningMessage,
-        hideCheckbox: false,
-        buttonText: helptextSharingSmb.afpDialogButton,
-        hideCancel: false,
-      });
     });
 
     it('should autofill name from path if name is empty', async () => {
@@ -382,10 +412,7 @@ describe('SmbFormComponent', () => {
         }
       });
 
-      attrs[formLabels.purpose] = attrs[formLabels.purpose] as string;
       attrs[formLabels.name] = 'ds223';
-      attrs[formLabels.hostsallow] = ['host11'];
-      attrs[formLabels.hostsdeny] = ['host22'];
       await form.fillForm({
         ...attrs,
       });
@@ -417,23 +444,7 @@ describe('SmbFormComponent', () => {
         },
         options: {
           aapl_name_mangling: false,
-          acl: false,
-          afp: false,
-          auxsmbconf: '',
-          durablehandle: false,
-          fsrvp: false,
-          guestok: false,
-          home: false,
-          hostsallow: ['host11'],
-          hostsdeny: ['host22'],
-          path_suffix: '',
           purpose: 'DEFAULT_SHARE',
-          recyclebin: false,
-          shadowcopy: false,
-          streams: false,
-          timemachine: false,
-          timemachine_quota: 0,
-          vuid: '',
         },
       }]);
 
@@ -457,14 +468,10 @@ describe('SmbFormComponent', () => {
 
       expect(api.call).toHaveBeenCalledWith('filesystem.stat', [sharePath]);
 
-      const homeShare = await (await loader.getHarness(
-        IxCheckboxHarness.with({ label: formLabels.home }),
-      )).getValue();
-
       expect(spectator.inject(Router).navigate)
         .toHaveBeenCalledWith(
           ['/', 'datasets', 'acl', 'edit'],
-          { queryParams: { homeShare, path: sharePath } },
+          { queryParams: { homeShare: false, path: sharePath } },
         );
     });
 
@@ -487,10 +494,7 @@ describe('SmbFormComponent', () => {
         }
       });
 
-      attrs[formLabels.purpose] = attrs[formLabels.purpose] as string;
       attrs[formLabels.name] = 'ds223';
-      attrs[formLabels.hostsallow] = ['host11'];
-      attrs[formLabels.hostsdeny] = ['host22'];
       await form.fillForm({
         ...attrs,
       });
@@ -522,23 +526,7 @@ describe('SmbFormComponent', () => {
         },
         options: {
           aapl_name_mangling: false,
-          acl: false,
-          afp: false,
-          auxsmbconf: '',
-          durablehandle: false,
-          fsrvp: false,
-          guestok: false,
-          home: false,
-          hostsallow: ['host11'],
-          hostsdeny: ['host22'],
-          path_suffix: '',
           purpose: 'DEFAULT_SHARE',
-          recyclebin: false,
-          shadowcopy: false,
-          streams: false,
-          timemachine: false,
-          timemachine_quota: 0,
-          vuid: '',
         },
       }]);
 
@@ -548,14 +536,10 @@ describe('SmbFormComponent', () => {
 
       expect(api.call).toHaveBeenCalledWith('filesystem.stat', [sharePath]);
 
-      const homeShare = await (await loader.getHarness(
-        IxCheckboxHarness.with({ label: formLabels.home }),
-      )).getValue();
-
       expect(spectator.inject(Router).navigate)
         .toHaveBeenCalledWith(
           ['/', 'datasets', 'acl', 'edit'],
-          { queryParams: { homeShare, path: sharePath } },
+          { queryParams: { homeShare: false, path: sharePath } },
         );
 
       expect(store$.dispatch).toHaveBeenCalledWith(checkIfServiceIsEnabled({ serviceName: ServiceName.Cifs }));
@@ -648,10 +632,7 @@ describe('SmbFormComponent', () => {
         }
       });
 
-      attrs[formLabels.purpose] = attrs[formLabels.purpose] as string;
       attrs[formLabels.name] = 'ds223';
-      attrs[formLabels.hostsallow] = ['host11'];
-      attrs[formLabels.hostsdeny] = ['host22'];
       await form.fillForm({
         ...attrs,
       });
