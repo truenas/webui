@@ -137,7 +137,7 @@ export class GuiFormComponent implements OnInit {
     });
   }
 
-  protected replaceHrefWhenWsConnected(href: string): void {
+  private replaceHrefWhenWsConnected(href: string): void {
     this.wsStatus.isConnected$.pipe(untilDestroyed(this)).subscribe((isConnected) => {
       if (isConnected) {
         this.loader.close();
@@ -192,7 +192,7 @@ export class GuiFormComponent implements OnInit {
     });
   }
 
-  protected getIsServiceRestartRequired(current: SystemGeneralConfig, next: SystemGeneralConfigUpdate): boolean {
+  private getIsServiceRestartRequired(current: SystemGeneralConfig, next: SystemGeneralConfigUpdate): boolean {
     const uiCertificateChanged = current.ui_certificate?.id !== next.ui_certificate;
     const httpPortChanged = current.ui_port !== next.ui_port;
     const httpsPortChanged = current.ui_httpsport !== next.ui_httpsport;

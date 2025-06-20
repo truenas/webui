@@ -118,6 +118,10 @@ const r50bm = {
   [EnclosureSide.Top]: 'assets/images/new-hardware/r50bm/r50bm-top.svg',
 };
 
+const r60 = {
+  [EnclosureSide.Front]: 'assets/images/new-hardware/r60/r60-front.svg',
+};
+
 const xSeries = {
   [EnclosureSide.Front]: 'assets/images/new-hardware/x-series/x-series-front.svg',
 };
@@ -157,6 +161,7 @@ export const supportedEnclosures: Record<string, EnclosureViews> = {
   [EnclosureModel.R50]: r50,
   [EnclosureModel.R50B]: r50b,
   [EnclosureModel.R50BM]: r50bm,
+  [EnclosureModel.R60]: r60,
   [EnclosureModel.X10]: xSeries,
   [EnclosureModel.X20]: xSeries,
 };

@@ -102,7 +102,7 @@ export class CustomAppFormComponent implements OnInit {
     });
   }
 
-  protected addForbiddenAppNamesValidator(): void {
+  private addForbiddenAppNamesValidator(): void {
     this.form.controls.release_name.setAsyncValidators(forbiddenAsyncValues(this.forbiddenAppNames$));
     this.form.controls.release_name.updateValueAndValidity();
   }

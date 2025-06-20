@@ -167,7 +167,7 @@ export class CloudBackupCardComponent implements OnInit {
     });
   }
 
-  getCloudBackups(): void {
+  private getCloudBackups(): void {
     this.dataProvider.load();
   }
 

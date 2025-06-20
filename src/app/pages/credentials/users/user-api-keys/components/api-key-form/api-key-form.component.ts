@@ -193,14 +193,14 @@ export class ApiKeyFormComponent implements OnInit {
       });
   }
 
-  protected setCurrentUsername(): void {
+  private setCurrentUsername(): void {
     const username = this.username();
     if (username) {
       this.form.patchValue({ username });
     }
   }
 
-  protected addForbiddenNamesValidator(): void {
+  private addForbiddenNamesValidator(): void {
     this.form.controls.name.setAsyncValidators(forbiddenAsyncValues(this.forbiddenNames$));
     this.form.controls.name.updateValueAndValidity();
   }

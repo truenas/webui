@@ -232,7 +232,7 @@ export class IdmapListComponent implements OnInit {
       });
   }
 
-  showActiveDirectoryForm(): void {
+  private showActiveDirectoryForm(): void {
     this.slideIn.open(ActiveDirectoryComponent, { wide: true }).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),

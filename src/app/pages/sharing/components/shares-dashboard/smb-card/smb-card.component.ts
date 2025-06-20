@@ -185,7 +185,7 @@ export class SmbCardComponent implements OnInit {
     });
   }
 
-  protected doShareAclEdit(row: SmbShare): void {
+  private doShareAclEdit(row: SmbShare): void {
     if (row.locked) {
       this.showLockedPathDialog(row.path);
     } else {
@@ -209,7 +209,7 @@ export class SmbCardComponent implements OnInit {
     }
   }
 
-  protected doFilesystemAclEdit(row: SmbShare): void {
+  private doFilesystemAclEdit(row: SmbShare): void {
     if (row.locked) {
       this.showLockedPathDialog(row.path);
     } else {

@@ -190,7 +190,7 @@ export class TargetFormComponent implements OnInit {
     }
   }
 
-  setTargetForEdit(target: IscsiTarget): void {
+  private setTargetForEdit(target: IscsiTarget): void {
     Object.values(target.groups).forEach(() => this.addGroup());
     Object.values(target.auth_networks).forEach(() => this.addNetwork());
 

@@ -1,4 +1,4 @@
-import { KeyValue, KeyValuePipe } from '@angular/common';
+import { KeyValuePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component, Inject,
@@ -19,7 +19,6 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { AppUpdateDialogConfig } from 'app/interfaces/app-upgrade-dialog-config.interface';
-import { ChartContainerImage } from 'app/interfaces/app.interface';
 import { AppUpgradeSummary } from 'app/interfaces/application.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -120,9 +119,5 @@ export class AppUpdateDialog {
 
   originalOrder(): number {
     return 0;
-  }
-
-  containerImagesOrder(a: KeyValue<string, ChartContainerImage>, b: KeyValue<string, ChartContainerImage>): number {
-    return a.value.id.localeCompare(b.value.id);
   }
 }

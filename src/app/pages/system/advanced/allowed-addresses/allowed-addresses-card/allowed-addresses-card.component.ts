@@ -119,7 +119,7 @@ export class AllowedAddressesCardComponent implements OnInit {
     ).subscribe();
   }
 
-  promptDeleteAllowedAddress(row: AllowedAddressRow): void {
+  private promptDeleteAllowedAddress(row: AllowedAddressRow): void {
     this.dialog
       .confirm({
         title: this.translate.instant('Delete Allowed Address'),

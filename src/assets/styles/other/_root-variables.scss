@@ -17,4 +17,8 @@
   --font-family-body: 'IBM Plex Sans', 'Helvetica Neue', sans-serif;
   --font-family-monospace: 'Inconsolata', 'Courier New', Courier, monospace;
   --primary-txt: #fff;
+  --status-active: var(--green);
+  --status-inactive: var(--grey);
+  --status-error: var(--red);
+  --status-in-progress: var(--yellow);
 }

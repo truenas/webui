@@ -22,6 +22,7 @@ describe('SubsystemHostsCardComponent', () => {
       mockProvider(NvmeOfService, {
         associateHosts: jest.fn(() => of(undefined)),
         removeHostAssociation: jest.fn(() => of(undefined)),
+        updateSubsystem: jest.fn(() => of(undefined)),
       }),
       mockProvider(NvmeOfStore, {
         initialize: jest.fn(),
@@ -121,5 +122,26 @@ describe('SubsystemHostsCardComponent', () => {
       subsystem.hosts[0],
     );
     expect(spectator.inject(NvmeOfStore).initialize).toHaveBeenCalled();
+  });
+
+  it('updates subsystem to allow all hosts when allowAllHostsSelected is emitted', () => {
+    const subsystem = {
+      allow_any_host: false,
+      hosts: [{ id: 1, hostnqn: 'nqn.2014-01.org' }],
+    } as NvmeOfSubsystemDetails;
+
+    spectator = createComponent({
+      props: { subsystem },
+    });
+
+    const addHostMenu = spectator.query(AddHostMenuComponent);
+    addHostMenu.allowAllHostsSelected.emit();
+
+    expect(spectator.inject(NvmeOfService).updateSubsystem).toHaveBeenCalledWith(
+      subsystem,
+      { allow_any_host: true },
+    );
+
+    expect(spectator.inject(NvmeOfService).removeHostAssociation).toHaveBeenCalledWith(subsystem, subsystem.hosts[0]);
   });
 });

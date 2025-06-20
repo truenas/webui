@@ -148,7 +148,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
     this.store.resetStoreToInitialState();
   }
 
-  loadExistingPoolDetails(): void {
+  private loadExistingPoolDetails(): void {
     this.addVdevsStore.pool$.pipe(
       filter(Boolean),
       tap((pool) => {
@@ -198,6 +198,8 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
         untilDestroyed(this),
       )
       .subscribe(() => {
+        this.generalStep?.form?.markAsPristine();
+        this.enclosureStep?.form?.markAsPristine();
         this.snackbar.success(this.translate.instant('Pool created successfully'));
         this.router.navigate(['/storage']);
       });
@@ -220,7 +222,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
     this.cdr.markForCheck();
   }
 
-  listenForStartOver(): void {
+  private listenForStartOver(): void {
     this.store.startOver$.pipe(untilDestroyed(this)).subscribe(() => {
       this.stepper().selectedIndex = 0;
       this.activatedSteps = {};
@@ -278,7 +280,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
     return payload;
   }
 
-  updatePool(): void {
+  private updatePool(): void {
     const payload: UpdatePool = {
       topology: topologyToPayload(this.state.topology),
       allow_duplicate_serials: this.state.diskSettings.allowNonUniqueSerialDisks,

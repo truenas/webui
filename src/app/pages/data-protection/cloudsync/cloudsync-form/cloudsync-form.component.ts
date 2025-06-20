@@ -114,7 +114,7 @@ export class CloudSyncFormComponent implements OnInit {
       : this.translate.instant('Edit Cloud Sync Task');
   }
 
-  protected readonly slashRootNode = slashRootNode;
+  protected readonly slashRootNode = [slashRootNode];
 
   get credentialsDependentControls(): FormControl[] {
     return [
@@ -246,11 +246,11 @@ export class CloudSyncFormComponent implements OnInit {
     this.editingTask = this.slideInRef.getData();
   }
 
-  getCredentialsList(): Observable<CloudSyncCredential[]> {
+  private getCredentialsList(): Observable<CloudSyncCredential[]> {
     return this.fetchCloudSyncCredentialsList();
   }
 
-  fetchCloudSyncCredentialsList(): Observable<CloudSyncCredential[]> {
+  private fetchCloudSyncCredentialsList(): Observable<CloudSyncCredential[]> {
     return this.cloudCredentialService.getCloudSyncCredentials().pipe(
       tap((credentials) => {
         this.credentialsList = credentials;
@@ -522,7 +522,7 @@ export class CloudSyncFormComponent implements OnInit {
     };
   }
 
-  handleCredentialsChange(credentials: number): void {
+  private handleCredentialsChange(credentials: number): void {
     this.credentialsDependentControls.forEach((control) => control.disable());
 
     if (credentials) {
@@ -578,12 +578,12 @@ export class CloudSyncFormComponent implements OnInit {
     }
   }
 
-  isCustomTransfers(transfers: number): boolean {
+  private isCustomTransfers(transfers: number): boolean {
     const transfersDefaultValues = this.transfersDefaultOptions.map((option) => option.value);
     return Boolean(transfers) && !transfersDefaultValues.includes(transfers);
   }
 
-  setTransfersOptions(isCustomTransfersSelected: boolean, customTransfers?: number): void {
+  private setTransfersOptions(isCustomTransfersSelected: boolean, customTransfers?: number): void {
     if (isCustomTransfersSelected) {
       const customOption = { label: this.translate.instant('Custom ({customTransfers})', { customTransfers }), value: customTransfers };
       this.transfersOptions$ = of([...this.transfersDefaultOptions, customOption, this.transfersCustomOption]);

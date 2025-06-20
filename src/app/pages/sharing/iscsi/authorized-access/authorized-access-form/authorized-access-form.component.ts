@@ -180,7 +180,7 @@ export class AuthorizedAccessFormComponent implements OnInit {
     return Boolean(this.form?.value?.peeruser);
   }
 
-  protected setAccessForEdit(access: IscsiAuthAccess): void {
+  private setAccessForEdit(access: IscsiAuthAccess): void {
     this.form.patchValue({
       ...access,
       secret_confirm: access.secret,

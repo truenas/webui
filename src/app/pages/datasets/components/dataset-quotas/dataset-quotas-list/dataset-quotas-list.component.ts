@@ -256,7 +256,7 @@ export class DatasetQuotasListComponent implements OnInit {
     this.cdr.markForCheck();
   };
 
-  checkInvalidQuotas(): void {
+  private checkInvalidQuotas(): void {
     this.api.call(
       'pool.dataset.get_quota',
       [this.datasetId, this.quotaType, this.invalidFilter],
@@ -310,7 +310,7 @@ export class DatasetQuotasListComponent implements OnInit {
     ).subscribe();
   }
 
-  setQuota(quotas: SetDatasetQuota[]): Observable<void> {
+  private setQuota(quotas: SetDatasetQuota[]): Observable<void> {
     return this.api.call('pool.dataset.set_quota', [this.datasetId, quotas]);
   }
 

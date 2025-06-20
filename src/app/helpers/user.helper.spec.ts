@@ -1,4 +1,4 @@
-import { isEmptyHomeDirectory } from './user.helper';
+import { getUserType, isEmptyHomeDirectory } from './user.helper';
 
 describe('UserHelper', () => {
   describe('isEmptyHomeDirectory', () => {
@@ -19,6 +19,20 @@ describe('UserHelper', () => {
 
     it('should return true for /usr/empty path', () => {
       expect(isEmptyHomeDirectory('/usr/empty')).toBe(true);
+    });
+  });
+
+  describe('getUserType', () => {
+    it('returns Built-In for builtin users', () => {
+      expect(getUserType({ builtin: true, local: false })).toBe('Built-In');
+    });
+
+    it('returns Local for local users', () => {
+      expect(getUserType({ builtin: false, local: true })).toBe('Local');
+    });
+
+    it('returns Directory Services for others', () => {
+      expect(getUserType({ builtin: false, local: false })).toBe('Directory Services');
     });
   });
 });

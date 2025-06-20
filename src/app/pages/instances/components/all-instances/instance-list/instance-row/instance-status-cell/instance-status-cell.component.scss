@@ -11,21 +11,21 @@
   }
 
   &.running {
-    border-color: var(--green);
-    color: var(--green);
+    border-color: var(--status-active);
+    color: var(--status-active);
   }
 
   &.unknown {
-    border-color: var(--yellow);
-    color: var(--yellow);
+    border-color: var(--status-in-progress);
+    color: var(--status-in-progress);
 
     mat-spinner::ng-deep circle {
-      stroke: var(--yellow);
+      stroke: var(--status-in-progress);
     }
   }
 
   &.stopped {
-    border-color: var(--grey);
-    color: var(--grey);
+    border-color: var(--status-inactive);
+    color: var(--status-inactive);
   }
 }
