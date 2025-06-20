@@ -78,6 +78,16 @@ describe('AuthSectionComponent', () => {
       });
     });
 
+    it('checks stig mode fields when "STIG Mode" is true', async () => {
+      isStigMode.set(true);
+
+      const password = await loader.getHarness(IxRadioGroupHarness.with({ label: 'Password' }));
+      await password.setValue('Generate Temporary One-Time Password');
+
+      const value = await password.getValue();
+      expect(value).toBe('Generate Temporary One-Time Password');
+    });
+
     it('does not show "Disable Password" when smbAccess is enabled', async () => {
       smbAccess.set(true);
 

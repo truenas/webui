@@ -48,8 +48,9 @@ import { UserListComponent } from 'app/pages/credentials/new-users/all-users/use
   ],
 })
 export class AllUsersComponent implements OnInit, OnDestroy {
+  private defaultParams = [[['OR', [['builtin', '=', false], ['username', '=', 'root']]]]] as QueryParams<User>;
   protected dataProvider: Signal<ApiDataProvider<'user.query'>> = computed(() => {
-    const dataProvider = new ApiDataProvider(this.api, 'user.query');
+    const dataProvider = new ApiDataProvider(this.api, 'user.query', this.defaultParams);
     dataProvider.paginationStrategy = new PaginationServerSide();
     dataProvider.sortingStrategy = new SortingServerSide();
     dataProvider.setSorting({
@@ -82,7 +83,10 @@ export class AllUsersComponent implements OnInit, OnDestroy {
   }
 
   private subscribeToUserChanges(): void {
-    combineLatest([this.api.subscribe('user.query').pipe(startWith(null)), this.dataProvider().currentPage$]).pipe(
+    combineLatest([
+      this.api.subscribe('user.query').pipe(startWith(null)),
+      this.dataProvider().currentPage$,
+    ]).pipe(
       tap(([event, users]) => {
         switch (event?.msg) {
           case CollectionChangeType.Changed:

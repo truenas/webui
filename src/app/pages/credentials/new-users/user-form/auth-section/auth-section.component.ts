@@ -22,11 +22,11 @@ import { UserStigPasswordOption } from 'app/pages/credentials/users/user-form/us
   imports: [
     ReactiveFormsModule,
     IxInputComponent,
-    IxCheckboxComponent,
     IxFieldsetComponent,
     TranslateModule,
-    IxTextareaComponent,
     IxRadioGroupComponent,
+    IxCheckboxComponent,
+    IxTextareaComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -41,7 +41,7 @@ export class AuthSectionComponent implements OnInit {
     password_disabled: [false],
     ssh_password_enabled: [false],
     sshpubkey: [''],
-    stig_password: [''],
+    stig_password: [UserStigPasswordOption.DisablePassword],
   });
 
   protected readonly tooltips = {

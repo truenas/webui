@@ -19,6 +19,7 @@
   "Logging in at the current URL is not possible.": "",
   "Logging in at the current URL is not possible.<br>To login, please navigate to: {links}": "",
   "Looks like you don’t have any users who’ll be able to access this share.": "",
+  "New {username} group": "",
   "NVMe-oF Subsystems": "",
   "Once enabled one or more ports may be configured with RDMA selected as the transport. Requires an Enterprise license, RDMA-capable system and network equipment.": "",
   "Parent Path:": "",
