@@ -232,7 +232,7 @@ export class AuthService {
           this.window.sessionStorage.setItem('loginBannerDismissed', 'true');
           if (result?.authenticator === AuthenticatorLoginLevel.Level1) {
             this.checkIsTokenAllowed$.next();
-            return this.authToken$.pipe(
+            return this.latestTokenGenerated$.pipe(
               take(1),
               map(() => LoginResult.Success),
             );
@@ -251,11 +251,14 @@ export class AuthService {
 
   private setupPeriodicTokenGeneration(): void {
     this.checkIsTokenAllowed$.pipe(
+      filterAsync(() => this.wsStatus.isAuthenticated$),
       switchMap(() => this.api.call('auth.mechanism_choices')),
       map((choices) => choices.includes(AuthMechanism.TokenPlain)),
-      filter(Boolean),
-      filterAsync(() => this.wsStatus.isAuthenticated$),
-    ).subscribe(() => {
+    ).subscribe((canGenerateToken) => {
+      if (!canGenerateToken) {
+        this.latestTokenGenerated$.next(null);
+        return;
+      }
       if (!this.generateTokenSubscription || this.generateTokenSubscription.closed) {
         this.generateTokenSubscription = timer(0, this.tokenRegenerationTimeMillis).pipe(
           switchMap(() => this.wsStatus.isAuthenticated$.pipe(take(1))),
