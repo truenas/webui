@@ -252,7 +252,12 @@ export class AuthService {
   private setupPeriodicTokenGeneration(): void {
     this.checkIsTokenAllowed$.pipe(
       filterAsync(() => this.wsStatus.isAuthenticated$),
-      switchMap(() => this.api.call('auth.mechanism_choices')),
+      switchMap(() => this.api.call('auth.mechanism_choices').pipe(
+        catchError((wsError: unknown) => {
+          console.error(wsError);
+          return of([]);
+        }),
+      )),
       map((choices) => choices.includes(AuthMechanism.TokenPlain)),
     ).subscribe((canGenerateToken) => {
       if (!canGenerateToken) {
