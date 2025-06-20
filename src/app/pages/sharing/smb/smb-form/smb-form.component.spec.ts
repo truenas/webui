@@ -203,6 +203,25 @@ describe('SmbFormComponent', () => {
         'To save changes, choose a new purpose. Legacy shares cannot be edited without migrating.',
       );
     });
+
+    it('should show strip acl warning if acl is trivial when path changes', async () => {
+      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
+      await advancedButton.click();
+
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      await pathControl.setValue('/mnt/pool2/ds22');
+
+      const aclCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: formLabels.acl }));
+      await (await aclCheckbox.getMatCheckboxHarness()).uncheck();
+
+      expect(spectator.inject(DialogService).confirm).toHaveBeenLastCalledWith({
+        title: helptextSharingSmb.stripACLDialog.title,
+        message: helptextSharingSmb.stripACLDialog.message,
+        hideCheckbox: true,
+        buttonText: helptextSharingSmb.stripACLDialog.button,
+        hideCancel: true,
+      });
+    });
   });
 
   describe('edit default share', () => {
@@ -340,57 +359,6 @@ describe('SmbFormComponent', () => {
       await pathControl.setValue('/mnt/pool2/ds22');
 
       expect(await nameControl.getValue()).toBe('ds22');
-
-      expect(spectator.inject(DialogService).confirm).toHaveBeenLastCalledWith({
-        title: helptextSharingSmb.stripACLDialog.title,
-        message: helptextSharingSmb.stripACLDialog.message,
-        hideCheckbox: true,
-        buttonText: helptextSharingSmb.stripACLDialog.button,
-        hideCancel: true,
-      });
-    });
-
-    it('should show strip acl warning if acl is trivial when path changes', async () => {
-      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
-      await advancedButton.click();
-
-      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
-      await pathControl.setValue('/mnt/pool2/ds22');
-
-      const purposeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Purpose' }));
-      await purposeSelect.setValue('Default Share');
-      const aclCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: formLabels.acl }));
-      await (await aclCheckbox.getMatCheckboxHarness()).uncheck();
-
-      expect(spectator.inject(DialogService).confirm).toHaveBeenLastCalledWith({
-        title: helptextSharingSmb.stripACLDialog.title,
-        message: helptextSharingSmb.stripACLDialog.message,
-        hideCheckbox: true,
-        buttonText: helptextSharingSmb.stripACLDialog.button,
-        hideCancel: true,
-      });
-    });
-
-    it('should show acl warning if acl is unchcekd and dataset is non-trivial', async () => {
-      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
-      await advancedButton.click();
-
-      const purposeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Purpose' }));
-      await purposeSelect.setValue('Private Datasets Share');
-
-      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
-      await pathControl.setValue('/mnt/pool2/ds22');
-
-      const aclCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: formLabels.acl }));
-      await (await aclCheckbox.getMatCheckboxHarness()).uncheck();
-
-      expect(spectator.inject(DialogService).confirm).toHaveBeenLastCalledWith({
-        title: helptextSharingSmb.stripACLDialog.title,
-        message: helptextSharingSmb.stripACLDialog.message,
-        hideCheckbox: true,
-        buttonText: helptextSharingSmb.stripACLDialog.button,
-        hideCancel: true,
-      });
     });
 
     it('should submit the form with the correct value', async () => {
@@ -417,18 +385,10 @@ describe('SmbFormComponent', () => {
         ...attrs,
       });
 
-      expect(spectator.inject(DialogService).confirm).toHaveBeenLastCalledWith({
-        title: helptextSharingSmb.stripACLDialog.title,
-        message: helptextSharingSmb.stripACLDialog.message,
-        hideCheckbox: true,
-        buttonText: helptextSharingSmb.stripACLDialog.button,
-        hideCancel: true,
-      });
-
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(api.call).toHaveBeenNthCalledWith(6, 'sharing.smb.create', [{
+      expect(api.call).toHaveBeenNthCalledWith(5, 'sharing.smb.create', [{
         name: 'ds223',
         path: '/mnt/pool123/ds222',
         purpose: 'DEFAULT_SHARE',
@@ -466,8 +426,6 @@ describe('SmbFormComponent', () => {
         IxExplorerHarness.with({ label: formLabels.path }),
       )).getValue();
 
-      expect(api.call).toHaveBeenCalledWith('filesystem.stat', [sharePath]);
-
       expect(spectator.inject(Router).navigate)
         .toHaveBeenCalledWith(
           ['/', 'datasets', 'acl', 'edit'],
@@ -499,18 +457,10 @@ describe('SmbFormComponent', () => {
         ...attrs,
       });
 
-      expect(spectator.inject(DialogService).confirm).toHaveBeenLastCalledWith({
-        title: helptextSharingSmb.stripACLDialog.title,
-        message: helptextSharingSmb.stripACLDialog.message,
-        hideCheckbox: true,
-        buttonText: helptextSharingSmb.stripACLDialog.button,
-        hideCancel: true,
-      });
-
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(api.call).toHaveBeenNthCalledWith(6, 'sharing.smb.create', [{
+      expect(api.call).toHaveBeenNthCalledWith(5, 'sharing.smb.create', [{
         name: 'ds223',
         abe: false,
         path: '/mnt/pool123/ds222',
@@ -533,8 +483,6 @@ describe('SmbFormComponent', () => {
       const sharePath = await (await loader.getHarness(
         IxExplorerHarness.with({ label: formLabels.path }),
       )).getValue();
-
-      expect(api.call).toHaveBeenCalledWith('filesystem.stat', [sharePath]);
 
       expect(spectator.inject(Router).navigate)
         .toHaveBeenCalledWith(

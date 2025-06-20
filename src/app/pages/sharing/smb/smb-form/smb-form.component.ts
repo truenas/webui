@@ -397,7 +397,12 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   }
 
   private checkAndShowStripAclWarning(path: string, aclValue: boolean): void {
-    if (this.wasStripAclWarningShown || !path || aclValue) {
+    if (
+      this.wasStripAclWarningShown
+      || !path
+      || aclValue
+      || this.form.controls.purpose.value !== SmbPresetType.LegacyShare
+    ) {
       return;
     }
     this.api
