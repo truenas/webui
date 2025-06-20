@@ -187,7 +187,7 @@ export class TopbarComponent implements OnInit {
     this.store$.dispatch(sidenavIndicatorPressed());
   }
 
-  updateInProgress(): void {
+  private updateInProgress(): void {
     this.systemGeneralService.updateRunning.emit('true');
     if (!this.updateNotificationSent) {
       this.showUpdateDialog();

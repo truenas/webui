@@ -55,7 +55,6 @@ describe('AdditionalDetailsSectionComponent', () => {
       mockProvider(FilesystemService),
       mockProvider(UserFormStore, {
         isStigMode: jest.fn(() => false),
-        nextUid: jest.fn(() => 1001),
         updateUserConfig: jest.fn(),
         updateSetupDetails: jest.fn(),
         role: jest.fn(() => 'prompt'),
@@ -147,6 +146,7 @@ describe('AdditionalDetailsSectionComponent', () => {
         Groups: 'Not Set',
         'Home Directory': '/home/test',
         UID: '1004',
+        Shell: '/usr/bin/bash',
       });
 
       expect(spectator.inject(UserFormStore).updateSetupDetails).toHaveBeenCalledWith({

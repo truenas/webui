@@ -24,4 +24,6 @@ export interface Preferences {
   lifetime: number;
 
   language: string;
+
+  terminalFontSize: number;
 }

@@ -24,7 +24,7 @@ import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-te
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
 
 @UntilDestroy()
@@ -65,11 +65,11 @@ export class SubsystemDetailsCardComponent implements OnChanges {
 
   constructor(
     private formBuilder: FormBuilder,
-    private api: ApiService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
     private formErrorHandler: FormErrorHandlerService,
     private nvmeOfStore: NvmeOfStore,
+    private nvmeOfService: NvmeOfService,
     private clipboard: Clipboard,
     private auth: AuthService,
   ) {}
@@ -98,7 +98,7 @@ export class SubsystemDetailsCardComponent implements OnChanges {
       [field]: this.form.value[field],
     };
 
-    this.api.call('nvmet.subsys.update', [this.subsystem().id, update])
+    this.nvmeOfService.updateSubsystem(this.subsystem(), update)
       .pipe(
         finalize(() => this.isSaving.set(false)),
         untilDestroyed(this),

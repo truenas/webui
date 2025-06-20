@@ -220,7 +220,7 @@ export class SshConnectionFormComponent implements OnInit {
       });
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     this.isLoading.set(true);
 
     const request$: Observable<KeychainCredential> = this.isNew

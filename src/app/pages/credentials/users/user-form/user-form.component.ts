@@ -383,7 +383,7 @@ export class OldUserFormComponent implements OnInit {
     }
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     const payload = this.getPayload();
 
     const homeCreateConfirmation$ = this.getHomeCreateConfirmation();
@@ -513,7 +513,7 @@ export class OldUserFormComponent implements OnInit {
     return this.api.call('user.update', [this.editingUser.id, payload]);
   }
 
-  onDownloadSshPublicKey(): void {
+  protected onDownloadSshPublicKey(): void {
     const name = this.form.controls.username.value;
     const key = this.form.controls.sshpubkey.value;
     const blob = new Blob([key], { type: 'text/plain' });

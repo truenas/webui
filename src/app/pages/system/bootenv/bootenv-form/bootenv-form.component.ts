@@ -77,7 +77,7 @@ export class BootEnvironmentFormComponent implements OnInit {
     this.formGroup.controls.source.disable();
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     this.isLoading.set(true);
     const cloneParams: BootenvCloneParams = [{
       id: String(this.currentName),

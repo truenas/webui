@@ -31,7 +31,6 @@ import { AuthSectionComponent } from 'app/pages/credentials/new-users/user-form/
 import { defaultHomePath, defaultRole, UserFormStore } from 'app/pages/credentials/new-users/user-form/user.store';
 import { selectUsers } from 'app/pages/credentials/users/store/user.selectors';
 import { UserStigPasswordOption } from 'app/pages/credentials/users/user-form/user-form.component';
-import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UserService } from 'app/services/user.service';
 import { AppState } from 'app/store';
@@ -61,7 +60,6 @@ import { AppState } from 'app/store';
 })
 export class UserFormComponent implements OnInit {
   protected isStigMode = this.userFormStore.isStigMode;
-  protected nextUid = this.userFormStore.nextUid;
   protected editingUser = signal<User>(this.slideInRef.getData());
 
   protected isFormLoading = signal<boolean>(false);
@@ -134,7 +132,6 @@ export class UserFormComponent implements OnInit {
     private store$: Store<AppState>,
     private dialog: DialogService,
     private translate: TranslateService,
-    private downloadService: DownloadService,
   ) {
     this.setupUsernameUpdate();
   }
@@ -231,13 +228,6 @@ export class UserFormComponent implements OnInit {
       });
     }
     return of(true);
-  }
-
-  protected onDownloadSshPublicKey(): void {
-    const name = this.form.value.username;
-    const key = this.formValues().sshpubkey;
-    const blob = new Blob([key], { type: 'text/plain' });
-    this.downloadService.downloadBlob(blob, `${name}_public_key_rsa`);
   }
 
   private submitUserRequest(payload: UserUpdate): Observable<User> {

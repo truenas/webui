@@ -51,7 +51,8 @@ describe('AddHostMenuComponent', () => {
   beforeEach(() => {
     spectator = createComponent({
       props: {
-        subsystemHosts: [],
+        hosts: [],
+        showAllowAnyHost: false,
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -69,7 +70,7 @@ describe('AddHostMenuComponent', () => {
   describe('some hosts exist in the system', () => {
     beforeEach(() => {
       allHosts.set([usedHost, unusedHost]);
-      spectator.setInput('subsystemHosts', [usedHost]);
+      spectator.setInput('hosts', [usedHost]);
     });
 
     it('lists available hosts that are not used in current subsystem', async () => {
@@ -88,6 +89,18 @@ describe('AddHostMenuComponent', () => {
       await menu.clickItem({ text: 'iqn.2023-12.com.example:host1' });
 
       expect(spectator.component.hostSelected.emit).toHaveBeenCalledWith(unusedHost);
+    });
+
+    it('emits (allowAllHostsSelected) when allowAllHosts() is called', async () => {
+      jest.spyOn(spectator.component.allowAllHostsSelected, 'emit');
+      spectator.setInput('showAllowAnyHost', true);
+
+      const menu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Add' }));
+      await menu.open();
+
+      await menu.clickItem({ text: 'Allow all hosts' });
+
+      expect(spectator.component.allowAllHostsSelected.emit).toHaveBeenCalled();
     });
 
     it('has create new button that opens host form and emits (hostSelected) with new host', async () => {

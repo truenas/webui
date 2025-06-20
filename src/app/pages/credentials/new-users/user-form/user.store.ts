@@ -34,14 +34,12 @@ export interface AllowedAccessConfig {
 
 export interface UserFormState {
   isStigMode: boolean;
-  nextUid: number;
   userConfig: UserUpdate;
   setupDetails: UserFormSetupDetails;
 }
 
 const initialState: UserFormState = {
   isStigMode: false,
-  nextUid: null as number,
   userConfig: null,
   setupDetails: {
     allowedAccess: {
@@ -60,7 +58,6 @@ const initialState: UserFormState = {
 @Injectable()
 export class UserFormStore extends ComponentStore<UserFormState> {
   readonly isStigMode = computed(() => this.state().isStigMode);
-  readonly nextUid = computed(() => this.state().nextUid);
   readonly homeModeOldValue = computed(() => this.state().setupDetails.homeModeOldValue);
 
   readonly smbAccess = computed(() => this.state().setupDetails.allowedAccess.smbAccess);
@@ -77,7 +74,6 @@ export class UserFormStore extends ComponentStore<UserFormState> {
     return trigger$.pipe(
       switchMap(() => combineLatest([
         this.setStigMode(),
-        this.setNextUserId(),
       ])),
     );
   });
@@ -94,12 +90,6 @@ export class UserFormStore extends ComponentStore<UserFormState> {
       tap((config: SystemSecurityConfig) => {
         this.patchState({ isStigMode: config.enable_gpos_stig });
       }),
-    );
-  }
-
-  private setNextUserId(): Observable<number> {
-    return this.api.call('user.get_next_uid').pipe(
-      tap((nextUid) => this.patchState({ nextUid })),
     );
   }
 
@@ -125,7 +115,8 @@ export class UserFormStore extends ComponentStore<UserFormState> {
       smb: payload.smb,
       sudo_commands: payload.sudo_commands || [] as string[],
       sudo_commands_nopasswd: payload.sudo_commands_nopasswd || [] as string[],
-      uid: payload.uid || this.nextUid(),
+      group_create: payload.group_create || true,
+      uid: payload.uid || null,
       password: oneTimePassword || payload.password_disabled ? null : payload.password,
       random_password: oneTimePassword,
     };

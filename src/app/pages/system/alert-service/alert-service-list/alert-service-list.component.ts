@@ -142,7 +142,7 @@ export class AlertServiceListComponent implements OnInit {
     });
   }
 
-  addAlertService(): void {
+  protected addAlertService(): void {
     this.slideIn.open(AlertServiceComponent).pipe(
       filter(Boolean),
       untilDestroyed(this),

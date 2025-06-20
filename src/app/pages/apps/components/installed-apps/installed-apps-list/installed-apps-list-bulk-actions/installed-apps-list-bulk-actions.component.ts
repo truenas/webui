@@ -37,7 +37,7 @@ export class InstalledAppsListBulkActionsComponent {
   readonly checkedApps = input.required<App[]>();
   readonly bulkStart = output();
   readonly bulkStop = output();
-  readonly bulkUpgrade = output();
+  readonly bulkUpdate = output();
   readonly bulkDelete = output();
 
   protected readonly requiredRoles = [Role.AppsWrite];
@@ -54,7 +54,7 @@ export class InstalledAppsListBulkActionsComponent {
     );
   });
 
-  protected isBulkUpgradeDisabled = computed(() => {
+  protected isBulkUpdateDisabled = computed(() => {
     return !this.checkedApps().some((app) => app.upgrade_available);
   });
 }

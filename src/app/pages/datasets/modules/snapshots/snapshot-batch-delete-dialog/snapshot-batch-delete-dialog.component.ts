@@ -78,7 +78,7 @@ export class SnapshotBatchDeleteDialog implements OnInit {
     this.dialogData = this.prepareDialogData();
   }
 
-  prepareDialogData(): SnapshotDialogData {
+  private prepareDialogData(): SnapshotDialogData {
     const datasets: string[] = [];
     const snapshots: Record<string, string[]> = {};
     this.snapshots.forEach((item) => {

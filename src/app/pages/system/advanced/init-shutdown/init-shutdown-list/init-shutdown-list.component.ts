@@ -130,19 +130,19 @@ export class InitShutdownListComponent implements OnInit {
     this.dataProvider.load();
   }
 
-  addScript(): void {
+  protected addScript(): void {
     this.slideIn.open(InitShutdownFormComponent)
       .pipe(filter((response) => !!response.response), untilDestroyed(this))
       .subscribe(() => this.dataProvider.load());
   }
 
-  editScript(script: InitShutdownScript): void {
+  private editScript(script: InitShutdownScript): void {
     this.slideIn.open(InitShutdownFormComponent, { data: script })
       .pipe(filter((response) => !!response.response), untilDestroyed(this))
       .subscribe(() => this.dataProvider.load());
   }
 
-  deleteScript(script: InitShutdownScript): void {
+  private deleteScript(script: InitShutdownScript): void {
     this.dialogService.confirm({
       title: this.translate.instant('Confirmation'),
       message: this.translate.instant('Are you sure you want to delete this script?'),
