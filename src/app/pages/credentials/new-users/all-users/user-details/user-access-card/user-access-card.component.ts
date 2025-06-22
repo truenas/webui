@@ -13,6 +13,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { filter, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role, roleNames } from 'app/enums/role.enum';
+import { hasShellAccess } from 'app/helpers/user.helper';
 import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -73,7 +74,7 @@ export class UserAccessCardComponent {
   });
 
   readonly noShellAccess = computed(() => {
-    return this.user().shell === '/usr/bin/nologin' || this.user().shell === '/usr/sbin/nologin';
+    return !hasShellAccess(this.user().shell);
   });
 
   readonly rolesAccessStatus = computed<string | null>(() => {
@@ -149,7 +150,6 @@ export class UserAccessCardComponent {
     this.slideIn
       .open(ApiKeyFormComponent, { data: { username: this.user().username } })
       .pipe(untilDestroyed(this)).subscribe(() => {
-        // TODO: Reload single record once routing is in.
         this.reloadUsers.emit();
       });
   }

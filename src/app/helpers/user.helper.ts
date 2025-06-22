@@ -17,3 +17,7 @@ export function getUserType(user: Pick<User, 'builtin' | 'local'>): string {
 
   return T('Directory Services');
 }
+
+export function hasShellAccess(shell: string): boolean {
+  return shell !== '/usr/bin/nologin' && shell !== '/usr/sbin/nologin';
+}
