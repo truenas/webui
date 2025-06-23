@@ -1,8 +1,15 @@
-import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatDialogRef } from '@angular/material/dialog';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { of } from 'rxjs';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { SystemRebootInfo } from 'app/interfaces/reboot-info.interface';
 import { RebootRequiredDialogComponent } from 'app/modules/dialog/components/reboot-required-dialog/reboot-required-dialog.component';
+import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
+import { RebootService } from 'app/services/reboot.service';
 import { selectCanFailover, selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import {
   selectOtherNodeRebootInfo,
@@ -27,6 +34,7 @@ const fakeOtherNodeRebootInfo: SystemRebootInfo = {
 
 describe('RebootRequiredDialogComponent', () => {
   let spectator: Spectator<RebootRequiredDialogComponent>;
+  let loader: HarnessLoader;
 
   const createComponent = createComponentFactory({
     component: RebootRequiredDialogComponent,
@@ -46,11 +54,16 @@ describe('RebootRequiredDialogComponent', () => {
           { selector: selectHaStatus, value: { reasons: [FailoverDisabledReason.MismatchNics] } },
         ],
       }),
+      mockProvider(RebootService, {
+        restartRemote: jest.fn(() => of(undefined)),
+      }),
+      mockProvider(MatDialogRef),
     ],
   });
 
   beforeEach(() => {
     spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
   it('shows failover warning when failover is unhealthy', () => {
@@ -62,7 +75,7 @@ describe('RebootRequiredDialogComponent', () => {
       .toContain('Network interfaces do not match between storage controllers.');
   });
 
-  it('shows reasons', () => {
+  it('shows reasons why reboot is required', () => {
     expect(
       spectator.queryAll('.reasons li').map((item) => item.textContent!.trim()),
     ).toEqual([
@@ -71,5 +84,16 @@ describe('RebootRequiredDialogComponent', () => {
       'Test Reason 3',
       'Test Reason 4',
     ]);
+  });
+
+  it('reboots another node and closes dialog when Reboot Standby Controller is pressed', async () => {
+    const confirmCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Confirm' }));
+    await confirmCheckbox.setValue(true);
+
+    const rebootRemoteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Reboot Standby Controller' }));
+    await rebootRemoteButton.click();
+
+    expect(spectator.inject(RebootService).restartRemote).toHaveBeenCalled();
+    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
   });
 });

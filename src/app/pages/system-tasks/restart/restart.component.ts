@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
@@ -39,6 +40,7 @@ export class RestartComponent implements OnInit {
     protected dialogService: DialogService,
     protected matDialog: MatDialog,
     private location: Location,
+    private authService: AuthService,
   ) {
   }
 
@@ -54,11 +56,13 @@ export class RestartComponent implements OnInit {
         this.dialogService.error(this.errorHandler.parseError(error))
           .pipe(untilDestroyed(this))
           .subscribe(() => {
+            this.authService.clearAuthToken();
             this.router.navigate(['/signin']);
           });
       },
       complete: () => { // show restart screen
         this.wsManager.prepareShutdown();
+        this.authService.clearAuthToken();
         this.wsManager.reconnect();
         setTimeout(() => {
           this.router.navigate(['/signin']);

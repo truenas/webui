@@ -31,7 +31,23 @@
     >
       <div class="user-avatar" [matTooltip]="audit.username">
         <div [innerHTML]="getUserAvatarForLog(audit)"></div>
-        <span>{{ audit.username }}</span>
+        <span>{{ audit.username || '-' }}</span>
+      </div>
+    </ng-template>
+
+    <ng-template
+      let-audit
+      ix-table-cell
+      [columnIndex]="4"
+      [dataProvider]="dataProvider()"
+    >
+      <div class="event-data" [matTooltip]="getEventDataForLog(audit) | translate">
+        @if (audit.success) {
+          <ix-icon name="mdi-check-circle"></ix-icon>
+        } @else {
+          <ix-icon class="error-color" name="mdi-close-circle"></ix-icon>
+        }
+        <span>{{ getEventDataForLog(audit) | translate }}</span>
       </div>
     </ng-template>
   </tbody>

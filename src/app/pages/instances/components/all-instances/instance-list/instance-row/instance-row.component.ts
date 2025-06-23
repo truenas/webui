@@ -24,6 +24,7 @@ import { InstanceStatusCellComponent } from 'app/pages/instances/components/all-
 import {
   StopOptionsDialogComponent, StopOptionsOperation,
 } from 'app/pages/instances/components/all-instances/instance-list/stop-options-dialog/stop-options-dialog.component';
+import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 @UntilDestroy()
@@ -62,6 +63,7 @@ export class InstanceRowComponent {
     private errorHandler: ErrorHandlerService,
     private matDialog: MatDialog,
     private snackbar: SnackbarService,
+    private instancesStore: VirtualizationInstancesStore,
   ) {}
 
   start(): void {
@@ -75,6 +77,7 @@ export class InstanceRowComponent {
       .pipe(this.errorHandler.catchError(), untilDestroyed(this))
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Instance started'));
+        this.instancesStore.selectInstance(this.instance().id);
       });
   }
 
@@ -98,6 +101,7 @@ export class InstanceRowComponent {
       )
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Instance stopped'));
+        this.instancesStore.selectInstance(this.instance().id);
       });
   }
 
@@ -121,6 +125,7 @@ export class InstanceRowComponent {
       )
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Instance restarted'));
+        this.instancesStore.selectInstance(this.instance().id);
       });
   }
 }

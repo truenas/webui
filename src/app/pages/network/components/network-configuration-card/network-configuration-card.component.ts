@@ -7,7 +7,7 @@ import { MatList, MatListItem } from '@angular/material/list';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Actions, ofType } from '@ngrx/effects';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import ipRegex from 'ip-regex';
 import { combineLatest, filter } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -94,16 +94,23 @@ export class NetworkConfigurationCardComponent implements OnInit {
   }
 
   get outboundNetwork(): string {
-    if (this.config.activity.type === NetworkActivityType.Deny) {
+    if (this.config.activity.activities.length === 0) {
+      if (this.config.activity.type === NetworkActivityType.Allow) {
+        return this.translate.instant('Deny All');
+      }
+
       return this.translate.instant('Allow All');
     }
 
-    if (this.config.activity.activities.length === 0) {
-      return this.translate.instant('Deny All');
+    if (this.config.activity.type === NetworkActivityType.Allow) {
+      return this.translate.instant(
+        'Only allow: {activities}',
+        { activities: this.config.activity.activities.join(', ') },
+      );
     }
 
     return this.translate.instant(
-      'Allow {activities}',
+      'Allow all except: {activities}',
       { activities: this.config.activity.activities.join(', ') },
     );
   }

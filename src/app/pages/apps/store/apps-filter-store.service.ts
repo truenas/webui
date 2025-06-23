@@ -59,10 +59,10 @@ export class AppsFilterStore extends ComponentStore<AppsFilterState> {
       const allApps: AvailableApp[] = state.filteredApps?.length ? [...state.filteredApps] : [...availableApps];
       const filteredApps: AvailableApp[] = allApps
         .filter((app) => this.doesAppContainString(state.searchQuery, app))
-        .sort(this.sortAppsByNameAndSearchQuery);
+        .sort(this.sortAppsByTitleAndSearchQuery);
 
-      if (state.filter.sort === AppsFiltersSort.Name) {
-        return this.sortAppsByName(filteredApps);
+      if (state.filter.sort === AppsFiltersSort.Title) {
+        return this.sortAppsByTitle(filteredApps);
       }
       if (state.filter.sort === AppsFiltersSort.LastUpdate) {
         return this.sortAppsByLastUpdate(filteredApps);
@@ -155,7 +155,7 @@ export class AppsFilterStore extends ComponentStore<AppsFilterState> {
     if (filter.categories.some((category) => category.includes(AppExtraCategory.All))) {
       request$ = this.appsService.getLatestApps({
         ...filter,
-        sort: AppsFiltersSort.Name,
+        sort: AppsFiltersSort.Title,
         categories: undefined,
       });
     }
@@ -205,16 +205,16 @@ export class AppsFilterStore extends ComponentStore<AppsFilterState> {
     });
   };
 
-  private sortAppsByName(filteredApps: AvailableApp[]): AppsByCategory[] {
+  private sortAppsByTitle(filteredApps: AvailableApp[]): AppsByCategory[] {
     const appsByCategory: AppsByCategory[] = [];
 
     const firstLetters = [
-      ...new Set<string>(filteredApps.map((app) => app.name.slice(0, 1).toUpperCase())),
+      ...new Set<string>(filteredApps.map((app) => app.title.slice(0, 1).toUpperCase())),
     ].sort((a, b) => a.localeCompare(b));
 
     firstLetters.forEach((firstLetter) => {
       const appsSortedByFirstLetter = filteredApps.filter(
-        (app) => app.name.toUpperCase().startsWith(firstLetter),
+        (app) => app.title.toUpperCase().startsWith(firstLetter),
       );
 
       appsByCategory.push({
@@ -238,7 +238,7 @@ export class AppsFilterStore extends ComponentStore<AppsFilterState> {
     updateDates.forEach((updateDate) => {
       const appsSortedByLastUpdateDate = filteredApps.filter(
         (app) => this.appsService.convertDateToRelativeDate(new Date(app.last_update?.$date)) === updateDate,
-      ).sort(this.sortAppsByNameAndSearchQuery);
+      ).sort(this.sortAppsByTitleAndSearchQuery);
 
       appsByCategory.push({
         title: updateDate.toString(),
@@ -266,14 +266,14 @@ export class AppsFilterStore extends ComponentStore<AppsFilterState> {
       ? categories.filter((category) => categoriesFilter.includes(category))
       : categories;
 
-    const filterAppsByNameAndTrain = (apps: AvailableApp[]): AvailableApp[] => apps.filter((app) => {
-      return filteredApps.some((filteredApp) => filteredApp.train === app.train && filteredApp.name === app.name);
+    const filterAppsByTitleAndTrain = (apps: AvailableApp[]): AvailableApp[] => apps.filter((app) => {
+      return filteredApps.some((filteredApp) => filteredApp.train === app.train && filteredApp.title === app.title);
     });
 
-    const filteredRecommendedApps = filterAppsByNameAndTrain(recommendedApps).map(
+    const filteredRecommendedApps = filterAppsByTitleAndTrain(recommendedApps).map(
       (app) => ({ ...app, categories: [...app.categories, AppExtraCategory.Recommended] }),
     );
-    const filteredLatestApps = filterAppsByNameAndTrain(latestApps).map(
+    const filteredLatestApps = filterAppsByTitleAndTrain(latestApps).map(
       (app) => ({ ...app, categories: [...app.categories, AppExtraCategory.NewAndUpdated] }),
     );
 
@@ -302,7 +302,7 @@ export class AppsFilterStore extends ComponentStore<AppsFilterState> {
     availableCategories.forEach((category) => {
       const categorizedApps = filteredApps.filter(
         (app) => app.categories.some((appCategory) => appCategory === category),
-      ).sort(this.sortAppsByNameAndSearchQuery);
+      ).sort(this.sortAppsByTitleAndSearchQuery);
 
       appsByCategory.push({
         title: category,
@@ -325,10 +325,10 @@ export class AppsFilterStore extends ComponentStore<AppsFilterState> {
     });
   }
 
-  private sortAppsByNameAndSearchQuery = (a: AvailableApp, b: AvailableApp): number => {
+  private sortAppsByTitleAndSearchQuery = (a: AvailableApp, b: AvailableApp): number => {
     const searchQuery = this.state().searchQuery;
-    const aStartsWithQuery = a.name.toLocaleLowerCase().startsWith(searchQuery);
-    const bStartsWithQuery = b.name.toLocaleLowerCase().startsWith(searchQuery);
+    const aStartsWithQuery = a.title.toLocaleLowerCase().startsWith(searchQuery);
+    const bStartsWithQuery = b.title.toLocaleLowerCase().startsWith(searchQuery);
 
     if (aStartsWithQuery && !bStartsWithQuery) {
       return -1;
@@ -336,6 +336,6 @@ export class AppsFilterStore extends ComponentStore<AppsFilterState> {
     if (!aStartsWithQuery && bStartsWithQuery) {
       return 1;
     }
-    return a.name.localeCompare(b.name);
+    return a.title.localeCompare(b.title);
   };
 }

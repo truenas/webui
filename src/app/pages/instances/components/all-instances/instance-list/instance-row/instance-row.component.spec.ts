@@ -19,6 +19,7 @@ import {
   StopOptionsDialogComponent,
   StopOptionsOperation,
 } from 'app/pages/instances/components/all-instances/instance-list/stop-options-dialog/stop-options-dialog.component';
+import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 
 const instance = {
   id: 'my-instance',
@@ -40,6 +41,10 @@ describe('InstanceRowComponent', () => {
       MockComponent(StopOptionsDialogComponent),
     ],
     providers: [
+      mockProvider(VirtualizationInstancesStore, {
+        selectedInstance: () => instance,
+        selectInstance: jest.fn(),
+      }),
       mockAuth(),
       mockApi([
         mockJob('virt.instance.restart', fakeSuccessfulJob()),

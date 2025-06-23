@@ -204,6 +204,14 @@
               [options]="encryptionOptions$"
             ></ix-select>
           }
+          @if (form.controls.chunk_size.enabled) {
+            <ix-input
+              formControlName="chunk_size"
+              type="number"
+              [label]="helptext.chunkSizeLabel | translate"
+              [tooltip]="helptext.chunkSizeTooltip | translate"
+            ></ix-input>
+          }
           <div class="advanced-title">
             {{ helptext.advanced_remote_options | translate }}
           </div>

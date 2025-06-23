@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
+import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -15,7 +15,9 @@ import { Role } from 'app/enums/role.enum';
 import { arrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextNetworkConfiguration } from 'app/helptext/network/configuration/configuration';
 import {
-  NetworkConfiguration, NetworkConfigurationActivity, NetworkConfigurationConfig, NetworkConfigurationUpdate,
+  NetworkConfiguration,
+  NetworkConfigurationActivity,
+  NetworkConfigurationUpdate,
 } from 'app/interfaces/network-configuration.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -35,6 +37,18 @@ import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { systemInfoUpdated } from 'app/store/system-info/system-info.actions';
+
+/**
+ * Additional options available in UI.
+ */
+enum SpecificActivityType {
+  AllowSpecific = 'ALLOW_SPECIFIC',
+  DenySpecific = 'DENY_SPECIFIC',
+}
+
+// eslint-disable-next-line @typescript-eslint/naming-convention
+export const UiNetworkActivityType = { ...NetworkActivityType, ...SpecificActivityType };
+export type UiNetworkActivityType = NetworkActivityType | SpecificActivityType;
 
 @UntilDestroy()
 @Component({
@@ -80,7 +94,7 @@ export class NetworkConfigurationComponent implements OnInit {
     nameserver3: [''],
     ipv4gateway: ['', ipv4Validator()],
     ipv6gateway: ['', ipv6Validator()],
-    outbound_network_activity: [NetworkActivityType.Deny],
+    outbound_network_activity: [UiNetworkActivityType.Deny as UiNetworkActivityType],
     outbound_network_value: [[] as string[]],
     httpproxy: [''],
     hosts: [[] as string[]],
@@ -184,18 +198,23 @@ export class NetworkConfigurationComponent implements OnInit {
       // I.e. selecting 'Allow All' will send Deny [], effectively allowing all services.
       {
         label: helptextNetworkConfiguration.outbound_network_activity.allow.placeholder,
-        value: NetworkActivityType.Deny,
+        value: UiNetworkActivityType.Deny,
         tooltip: helptextNetworkConfiguration.outbound_network_activity.allow.tooltip,
       },
       {
         label: helptextNetworkConfiguration.outbound_network_activity.deny.placeholder,
-        value: NetworkActivityType.Allow,
+        value: UiNetworkActivityType.Allow,
         tooltip: helptextNetworkConfiguration.outbound_network_activity.deny.tooltip,
       },
       {
-        label: helptextNetworkConfiguration.outbound_network_activity.specific.placeholder,
-        value: 'SPECIFIC',
-        tooltip: helptextNetworkConfiguration.outbound_network_activity.specific.tooltip,
+        label: helptextNetworkConfiguration.outbound_network_activity.allowSpecific.placeholder,
+        value: UiNetworkActivityType.AllowSpecific,
+        tooltip: helptextNetworkConfiguration.outbound_network_activity.allowSpecific.tooltip,
+      },
+      {
+        label: helptextNetworkConfiguration.outbound_network_activity.denySpecific.placeholder,
+        value: UiNetworkActivityType.DenySpecific,
+        tooltip: helptextNetworkConfiguration.outbound_network_activity.denySpecific.tooltip,
       },
     ]),
   };
@@ -203,7 +222,6 @@ export class NetworkConfigurationComponent implements OnInit {
   outboundNetworkValue = {
     fcName: 'outbound_network_value',
     label: helptextNetworkConfiguration.outbound_network_value.placeholder,
-    tooltip: helptextNetworkConfiguration.outbound_network_value.tooltip,
     options: this.api.call('network.configuration.activity_choices').pipe(arrayToOptions()),
     hidden: true,
   };
@@ -273,7 +291,7 @@ export class NetworkConfigurationComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (config: NetworkConfiguration) => {
-          const transformed: NetworkConfigurationConfig = {
+          const transformed = {
             hostname: config.hostname,
             hostname_b: config.hostname_b,
             hostname_virtual: config.hostname_virtual,
@@ -285,8 +303,8 @@ export class NetworkConfigurationComponent implements OnInit {
             nameserver3: config.nameserver3 || config.state.nameserver3,
             ipv4gateway: config.ipv4gateway || config.state.ipv4gateway,
             ipv6gateway: config.ipv6gateway || config.state.ipv6gateway,
-            outbound_network_activity: NetworkActivityType.Allow,
-            outbound_network_value: [],
+            outbound_network_activity: UiNetworkActivityType.Allow as UiNetworkActivityType,
+            outbound_network_value: [] as string[],
             httpproxy: config.httpproxy,
             hosts: config.hosts,
             netbios: config.service_announcement.netbios,
@@ -297,8 +315,10 @@ export class NetworkConfigurationComponent implements OnInit {
           if (config.activity) {
             if (config.activity.activities.length === 0) {
               transformed.outbound_network_activity = config.activity.type;
-            } else if (config.activity.type === NetworkActivityType.Allow) {
-              transformed.outbound_network_activity = 'SPECIFIC' as NetworkActivityType;
+            } else {
+              transformed.outbound_network_activity = config.activity.type === NetworkActivityType.Allow
+                ? UiNetworkActivityType.AllowSpecific
+                : UiNetworkActivityType.DenySpecific;
               transformed.outbound_network_value = config.activity.activities;
             }
           }
@@ -319,10 +339,16 @@ export class NetworkConfigurationComponent implements OnInit {
     const values = { ...this.form.value };
     let activity: NetworkConfigurationActivity;
 
-    if ([NetworkActivityType.Allow, NetworkActivityType.Deny].includes(values.outbound_network_activity)) {
+    if (values.outbound_network_activity === UiNetworkActivityType.Allow
+      || values.outbound_network_activity === UiNetworkActivityType.Deny) {
       activity = { type: values.outbound_network_activity, activities: [] };
     } else {
-      activity = { type: NetworkActivityType.Allow, activities: values.outbound_network_value };
+      activity = {
+        type: values.outbound_network_activity === SpecificActivityType.AllowSpecific
+          ? NetworkActivityType.Allow
+          : NetworkActivityType.Deny,
+        activities: values.outbound_network_value,
+      };
     }
 
     if (values.inherit_dhcp) {

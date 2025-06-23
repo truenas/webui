@@ -25,7 +25,6 @@ import {
 import {
   InstanceGeneralInfoComponent,
 } from 'app/pages/instances/components/all-instances/instance-details/instance-general-info/instance-general-info.component';
-import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 
 const instance = {
@@ -54,6 +53,7 @@ const instance = {
   secure_boot: true,
   root_disk_io_bus: DiskIoBus.Nvme,
   vnc_port: 9000,
+  storage_pool: 'dozer',
 } as VirtualizationInstance;
 
 describe('InstanceGeneralInfoComponent', () => {
@@ -74,10 +74,8 @@ describe('InstanceGeneralInfoComponent', () => {
           response: { id: 'updated_instance' },
         })),
       }),
-      mockProvider(VirtualizationDevicesStore, {
-        selectedInstance: jest.fn(),
-      }),
       mockProvider(VirtualizationInstancesStore, {
+        selectedInstance: jest.fn(),
         instanceUpdated: jest.fn(),
       }),
       mockApi([
@@ -108,12 +106,13 @@ describe('InstanceGeneralInfoComponent', () => {
 
   it('renders details in card', () => {
     const chartExtra = spectator.query('mat-card-content')!.querySelectorAll('p');
-    expect(chartExtra).toHaveLength(5);
+    expect(chartExtra).toHaveLength(6);
     expect(chartExtra[0]).toHaveText('Autostart: Yes');
     expect(chartExtra[1]).toHaveText('Base Image: Almalinux 8 amd64 (20241030_23:38)');
     expect(chartExtra[2]).toHaveText('CPU: 525');
     expect(chartExtra[3]).toHaveText('Memory: 125 MiB');
-    expect(chartExtra[4]).toHaveText('Secure Boot: Yes');
+    expect(chartExtra[4]).toHaveText('Pool: dozer');
+    expect(chartExtra[5]).toHaveText('Secure Boot: Yes');
   });
 
   it('renders correct values when CPU or Memory limit is not set', () => {
@@ -158,7 +157,7 @@ describe('InstanceGeneralInfoComponent', () => {
     );
     expect(spectator.inject(VirtualizationInstancesStore).instanceUpdated)
       .toHaveBeenCalledWith({ id: 'updated_instance' });
-    expect(spectator.inject(VirtualizationDevicesStore).selectInstance)
+    expect(spectator.inject(VirtualizationInstancesStore).selectInstance)
       .toHaveBeenCalledWith('updated_instance');
   });
 });

@@ -266,6 +266,7 @@ import {
   VirtualizationVolumeUpdate,
   VirtualizationPciChoices,
   CreateVirtualizationVolume,
+  VirtualizationImportIsoParams,
 } from 'app/interfaces/virtualization.interface';
 import {
   VmDevice, VmDeviceDelete, VmDeviceUpdate, VmDisplayDevice, VmPassthroughDeviceChoice, VmUsbPassthroughDeviceChoice,
@@ -909,6 +910,7 @@ export interface ApiCallDirectory {
   'virt.volume.query': { params: QueryParams<VirtualizationVolume>; response: VirtualizationVolume[] };
   'virt.volume.update': { params: VirtualizationVolumeUpdate; response: VirtualizationVolume };
   'virt.volume.delete': { params: [id: string]; response: true };
+  'virt.volume.import_iso': { params: VirtualizationImportIsoParams; response: VirtualizationVolume };
 
   // VM
   'vm.bootloader_options': { params: void; response: Choices };

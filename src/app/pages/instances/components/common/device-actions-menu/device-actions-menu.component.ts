@@ -19,6 +19,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { getDeviceDescription } from 'app/pages/instances/components/common/utils/get-device-description.utils';
 import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
+import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 @UntilDestroy()
@@ -42,11 +43,12 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 export class DeviceActionsMenuComponent {
   readonly device = input.required<VirtualizationDevice>();
   readonly showEdit = input(true);
+  readonly isDisabled = input(false);
 
   readonly edit = output();
 
   protected readonly canManage = computed(() => {
-    return !this.manageRestrictedExplanation();
+    return !this.manageRestrictedExplanation() && !this.isDisabled();
   });
 
   protected readonly manageRestrictedExplanation = computed(() => {
@@ -54,7 +56,7 @@ export class DeviceActionsMenuComponent {
       return this.translate.instant('This device is read-only and cannot be edited.');
     }
 
-    const isInstanceStopped = this.deviceStore.selectedInstance().status === VirtualizationStatus.Stopped;
+    const isInstanceStopped = this.instancesStore.selectedInstance().status === VirtualizationStatus.Stopped;
     if (this.device().dev_type === VirtualizationDeviceType.Tpm && !isInstanceStopped) {
       return this.translate.instant('This device cannot be edited while the instance is running.');
     }
@@ -67,6 +69,7 @@ export class DeviceActionsMenuComponent {
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
+    private instancesStore: VirtualizationInstancesStore,
     private snackbar: SnackbarService,
     private deviceStore: VirtualizationDevicesStore,
     private loader: AppLoaderService,
@@ -94,7 +97,7 @@ export class DeviceActionsMenuComponent {
   }
 
   private deleteDevice(): Observable<unknown> {
-    const selectedInstanceId = this.deviceStore.selectedInstance()?.id;
+    const selectedInstanceId = this.instancesStore.selectedInstance()?.id;
     if (!selectedInstanceId) {
       return NEVER;
     }

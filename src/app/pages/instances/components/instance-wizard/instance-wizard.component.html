@@ -137,7 +137,16 @@
       </ix-form-section>
     }
 
-    <ix-form-section [label]="'Disks' | translate">
+    <ix-form-section [label]="'Storage' | translate">
+      @if (!hasOnePool()) {
+        <ix-select
+          formControlName="storage_pool"
+          [label]="'Store At' | translate"
+          [required]="true"
+          [options]="poolOptions$"
+        ></ix-select>
+      }
+
       @if (isVm()) {
         <ix-select
           formControlName="root_disk_io_bus"
@@ -147,14 +156,12 @@
           [options]="diskIoBusOptions$"
         ></ix-select>
 
-        @if (form.value.source_type !== VirtualizationSource.Zvol) {
-          <ix-input
-            formControlName="root_disk_size"
-            type="number"
-            [required]="true"
-            [label]="'Root Disk Size (in GiB)' | translate"
-          ></ix-input>
-        }
+        <ix-input
+          formControlName="root_disk_size"
+          type="number"
+          [required]="true"
+          [label]="'Root Disk Size (in GiB)' | translate"
+        ></ix-input>
       }
 
       <ix-list

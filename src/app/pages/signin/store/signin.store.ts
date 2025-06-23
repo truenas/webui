@@ -77,7 +77,10 @@ export class SigninStore extends ComponentStore<SigninState> {
   setLoadingState = this.updater((state, isLoading: boolean) => ({ ...state, isLoading }));
 
   init = this.effect((trigger$: Observable<void>) => trigger$.pipe(
-    tap(() => this.setLoadingState(true)),
+    tap(() => {
+      this.setState(initialState);
+      this.setLoadingState(true);
+    }),
     switchMap(() => forkJoin([
       this.checkIfAdminPasswordSet(),
       this.checkForLoginBanner(),

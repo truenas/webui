@@ -26,8 +26,7 @@ export const helptextDatasetForm = {
  result in significant performance gains.'),
   dataset_form_dataset_preset_tooltip: T('Choose the type that matches the type of client\
  accessing the pool/dataset.'),
-  dataset_form_refquota_tooltip: T('<i>0</i> disables quotas. Specify a maximum allowed\
- space for this dataset.'),
+  dataset_form_refquota_tooltip: T('Specify a maximum allowed space for this dataset.'),
   acl_type_change_warning: T('Changes to ACL type affect how on-disk ZFS ACL is \
  written and read.\nWhen the ACL type is changed from POSIX to NFSv4, \
  no migration is performed for default and access ACLs encoded in the \

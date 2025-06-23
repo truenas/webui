@@ -45,6 +45,7 @@ export interface VirtualizationInstance {
   root_disk_io_bus: DiskIoBus;
   root_disk_size: number | null;
   userns_idmap?: UserNsIdmap;
+  storage_pool: string;
 }
 
 export interface VirtualizationAlias {
@@ -82,6 +83,7 @@ export interface CreateVirtualizationInstance {
   vnc_password?: string | null;
   zvol_path?: string | null;
   secure_boot: boolean;
+  storage_pool: string | null;
   volume?: string | null;
 }
 
@@ -215,10 +217,11 @@ export interface VirtualizationStopParams {
 }
 
 export interface VirtualizationGlobalConfigUpdate {
-  pool: string;
+  pool?: string;
   bridge?: string | null;
   v4_network?: string | null;
   v6_network?: string | null;
+  storage_pools: string[] | null;
 }
 
 export interface VirtualizationGlobalConfig {
@@ -229,6 +232,7 @@ export interface VirtualizationGlobalConfig {
   v6_network: string | null;
   dataset: string | null;
   state: VirtualizationGlobalState;
+  storage_pools: string[];
 }
 
 export interface VirtualizationNetwork {
@@ -274,13 +278,20 @@ export interface VirtualizationVolume {
   id: string;
   name: string;
   content_type: VolumeContentType;
-  storage_pool: string;
   created_at: string;
   type: string;
   config: {
     size: number;
   };
   used_by: string[];
+  storage_pool: string;
+}
+
+export interface VirtualizationImportIsoParams {
+  name: string;
+  iso_location?: string | null;
+  upload_iso: boolean;
+  storage_pool: string | null;
 }
 
 export interface CreateVirtualizationVolume {

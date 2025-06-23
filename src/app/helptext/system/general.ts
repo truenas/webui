@@ -79,7 +79,7 @@ export const helptextSystemGeneral = {
     tooltip: T('Select a language from the drop-down menu.'),
     hint: T('Languages other than <i>English</i> are provided by \
      the community and may be incomplete. \
-     <a href="https://github.com/truenas/webui/blob/master/TRANSLATING.md" target="_blank">Learn how to contribute.</a>'),
+     <a href="https://github.com/truenas/webui/blob/master/docs/contributing_translations.md" target="_blank">Learn how to contribute.</a>'),
   },
 
   stg_kbdmap: {
@@ -105,6 +105,7 @@ export const helptextSystemGeneral = {
   usage_collection: {
     label: T('Usage collection'),
     tooltip: T('Enable sending anonymous usage statistics to iXsystems.'),
+    stigModeTooltip: T('This option is disabled in STIG mode.'),
   },
 
   ui_consolemsg: {
