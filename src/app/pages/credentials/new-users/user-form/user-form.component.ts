@@ -14,7 +14,7 @@ import {
   switchMap,
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
-import { isEmptyHomeDirectory } from 'app/helpers/user.helper';
+import { hasShellAccess, isEmptyHomeDirectory } from 'app/helpers/user.helper';
 import { User, UserUpdate } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -82,9 +82,9 @@ export class UserFormComponent implements OnInit {
     ]],
   });
 
-  get isNewUser(): boolean {
+  protected isNewUser = computed(() => {
     return !this.editingUser();
-  }
+  });
 
   protected readonly formValues = computed(() => {
     return {
@@ -182,7 +182,7 @@ export class UserFormComponent implements OnInit {
     this.userFormStore.setAllowedAccessConfig({
       smbAccess: user.smb,
       truenasAccess: user.roles?.length > 0 || user.groups.length > 0,
-      shellAccess: user.shell !== '/usr/sbin/nologin',
+      shellAccess: hasShellAccess(user),
       sshAccess: user.ssh_password_enabled || !!user.sshpubkey,
     });
 
@@ -242,7 +242,7 @@ export class UserFormComponent implements OnInit {
     const values = { ...this.formValues() };
     let payload = { ...this.userFormStore.userConfig() };
 
-    const disablePassword = this.isStigMode() && this.isNewUser
+    const disablePassword = this.isStigMode() && this.isNewUser()
       ? values.stig_password === UserStigPasswordOption.DisablePassword
       : values.password_disabled;
 
@@ -255,8 +255,6 @@ export class UserFormComponent implements OnInit {
     if (!payload.password) {
       delete payload.password;
     }
-
-    console.info('Submitting user form with payload:', payload, values);
 
     this.getHomeCreateConfirmation().pipe(
       filter(Boolean),

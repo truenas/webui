@@ -18,6 +18,10 @@ export function getUserType(user: Pick<User, 'builtin' | 'local'>): string {
   return T('Directory Services');
 }
 
-export function hasShellAccess(shell: string): boolean {
-  return shell !== '/usr/bin/nologin' && shell !== '/usr/sbin/nologin';
+export function hasShellAccess(user: User): boolean {
+  return !['/usr/bin/nologin', '/usr/sbin/nologin'].includes(user.shell);
+}
+
+export function hasSshAccess(user: User): boolean {
+  return Boolean(user.sshpubkey || user.ssh_password_enabled);
 }

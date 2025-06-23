@@ -116,8 +116,6 @@ describe('AuthSectionComponent', () => {
       sshAccess.set(true);
     });
 
-    // TODO: Editing scenarios;
-
     it('shows SSH fields when SSH Access is enabled', async () => {
       expect(await loader.getHarness(IxTextareaHarness.with({ label: 'Public SSH Key' }))).toBeTruthy();
       expect(await loader.getHarness(IxCheckboxHarness.with({ label: 'Allow SSH Login with Password (not recommended)' }))).toBeTruthy();
@@ -153,6 +151,18 @@ describe('AuthSectionComponent', () => {
       expect(spectator.inject(UserFormStore).updateUserConfig).toHaveBeenCalledWith(expect.objectContaining({
         ssh_password_enabled: true,
       }));
+    });
+
+    it('shows current user SSH settings when editing a user', async () => {
+      spectator.setInput('editingUser', {
+        sshpubkey: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQ...',
+        ssh_password_enabled: true,
+      });
+
+      expect(await form.getValues()).toMatchObject({
+        'Public SSH Key': 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQ...',
+        'Allow SSH Login with Password (not recommended)': true,
+      });
     });
   });
 });

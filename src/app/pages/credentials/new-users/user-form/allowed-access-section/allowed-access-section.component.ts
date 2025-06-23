@@ -7,6 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { Role, roleNames } from 'app/enums/role.enum';
+import { hasShellAccess, hasSshAccess } from 'app/helpers/user.helper';
 import { User } from 'app/interfaces/user.interface';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
@@ -32,7 +33,7 @@ import { defaultRole, UserFormStore } from 'app/pages/credentials/new-users/user
 })
 export class AllowedAccessSectionComponent {
   editingUser = input<User>();
-  protected sshAccessEnabled = this.userFormStore.sshAccess;
+  protected sshAccess = this.userFormStore.sshAccess;
 
   protected readonly roles$ = of([
     { label: roleNames.get(Role.FullAdmin), value: Role.FullAdmin },
@@ -104,10 +105,10 @@ export class AllowedAccessSectionComponent {
     effect(() => {
       if (this.editingUser()) {
         this.form.patchValue({
-          truenas_access: !!this.editingUser().roles.length,
-          shell_access: this.editingUser().shell !== '/usr/sbin/nologin',
           smb: this.editingUser().smb,
-          ssh_access: !!this.editingUser().sshpubkey || this.editingUser().ssh_password_enabled,
+          truenas_access: !!this.editingUser().roles.length,
+          shell_access: hasShellAccess(this.editingUser()),
+          ssh_access: hasSshAccess(this.editingUser()),
           role: this.editingUser().roles.length > 0 ? this.editingUser().roles[0] : defaultRole,
         });
       }

@@ -24,7 +24,6 @@ describe('AdditionalDetailsSectionComponent', () => {
   let loader: HarnessLoader;
 
   const shellAccess = signal(false);
-
   const mockUser = {
     id: 69,
     uid: 1004,
@@ -60,15 +59,22 @@ describe('AdditionalDetailsSectionComponent', () => {
         isStigMode: jest.fn(() => false),
         updateUserConfig: jest.fn(),
         updateSetupDetails: jest.fn(),
-        role: jest.fn(() => 'prompt'),
+        role: jest.fn(() => null),
         isNewUser: jest.fn(() => false),
         homeModeOldValue: jest.fn(() => ''),
         userConfig: jest.fn(() => ({})),
-        state$: of(),
-        shellAccess,
+        shellAccess: jest.fn(() => shellAccess()),
+        state$: of({
+          setupDetails: {
+            allowedAccess: {
+              shellAccess: shellAccess(),
+            },
+          },
+        }),
       }),
       mockApi([
         mockCall('user.shell_choices', {
+          '/usr/sbin/nologin': 'nologin',
           '/usr/bin/bash': 'bash',
           '/usr/bin/zsh': 'zsh',
         } as Choices),
@@ -92,7 +98,7 @@ describe('AdditionalDetailsSectionComponent', () => {
       expect(spectator.inject(UserFormStore).updateUserConfig).toHaveBeenCalledWith({
         full_name: '',
         email: null,
-        shell: '/usr/bin/bash',
+        shell: '/usr/sbin/nologin',
         group_create: true,
         groups: [],
         home: '/var/empty',
@@ -118,7 +124,7 @@ describe('AdditionalDetailsSectionComponent', () => {
       expect(spectator.inject(UserFormStore).updateUserConfig).toHaveBeenLastCalledWith({
         full_name: 'Editable field',
         email: 'editable@truenas.local',
-        shell: '/usr/bin/bash',
+        shell: '/usr/sbin/nologin',
         sudo_commands: [],
         sudo_commands_nopasswd: [],
         group_create: true,
@@ -183,15 +189,16 @@ describe('AdditionalDetailsSectionComponent', () => {
       const uidInput = await loader.getHarness(IxInputHarness.with({ selector: '[aria-label="UID"]' }));
       expect(await uidInput.isDisabled()).toBeTruthy();
     });
-  });
 
-  it('checks first shell is selected when shell access is enabled', () => {
-    shellAccess.set(true);
-    spectator.detectChanges();
+    it('checks bash shell is selected when shell access is enabled', async () => {
+      shellAccess.set(true);
+      spectator.detectChanges();
 
-    expect(spectator.inject(UserFormStore).updateUserConfig).toHaveBeenCalledWith(expect.objectContaining({
-      shell: '/usr/bin/bash',
-    }));
+      const editables = await loader.getHarness(DetailsTableHarness);
+      expect(await editables.getValues()).toEqual(expect.objectContaining({
+        Shell: '/usr/bin/bash',
+      }));
+    });
   });
 
   // TODO: Add more tests

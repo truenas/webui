@@ -73,9 +73,7 @@ export class UserAccessCardComponent {
     return null;
   });
 
-  readonly noShellAccess = computed(() => {
-    return !hasShellAccess(this.user().shell);
-  });
+  readonly noShellAccess = computed(() => !hasShellAccess(this.user()));
 
   readonly rolesAccessStatus = computed<string | null>(() => {
     return this.user().roles

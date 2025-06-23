@@ -73,12 +73,12 @@ import { StorageService } from 'app/services/storage.service';
 export class AdditionalDetailsSectionComponent implements OnInit {
   editingUser = input<User>();
   protected username = computed(() => this.userFormStore?.userConfig().username ?? '');
-  protected sshAccessEnabled = this.userFormStore.sshAccess;
-  protected shellAccessEnabled = computed(() => this.userFormStore.shellAccess());
+  protected sshAccess = this.userFormStore.sshAccess;
+  protected shellAccess = this.userFormStore.shellAccess;
   protected hasSharingRole = computed(() => this.userFormStore.role()?.includes(Role.SharingAdmin));
   protected homeDirectoryEmptyValue = computed(() => {
     if (this.editingUser()) {
-      if (this.editingUser()?.home === '/var/empty') {
+      if (isEmptyHomeDirectory(this.editingUser()?.home)) {
         return this.translate.instant('None');
       }
       return this.editingUser()?.home || '';
@@ -254,6 +254,16 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     this.form.controls.groups.valueChanges.pipe(debounceTime(300), untilDestroyed(this)).subscribe((groups) => {
       this.updateShellOptions(this.form.value.group, groups);
     });
+
+    this.userFormStore.state$.pipe(
+      map((state) => state.setupDetails.allowedAccess.shellAccess),
+      distinctUntilChanged(),
+      untilDestroyed(this),
+    ).subscribe((shellAccess) => {
+      if (shellAccess) {
+        this.setFirstShellOption();
+      }
+    });
   }
 
   private updateShellOptions(group: number, groups: number[]): void {
@@ -265,7 +275,8 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     this.api.call('user.shell_choices', [Array.from(ids)])
       .pipe(choicesToOptions(), untilDestroyed(this))
       .subscribe((options) => {
-        this.shellOptions$ = of(options);
+        const sorted = options.toSorted((a, b) => a.label.localeCompare(b.label));
+        this.shellOptions$ = of(sorted);
         this.cdr.markForCheck();
       });
   }
@@ -275,6 +286,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
       choicesToOptions(),
       filter((shells) => !!shells.length),
       map((shells) => shells[0].value),
+      take(1),
       untilDestroyed(this),
     ).subscribe((firstShell: string) => {
       this.form.patchValue({ shell: firstShell });
