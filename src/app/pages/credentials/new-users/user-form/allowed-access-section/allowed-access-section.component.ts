@@ -49,10 +49,6 @@ export class AllowedAccessSectionComponent {
     role: [null as Role | null],
   });
 
-  protected get hasTrueNasAccess(): boolean {
-    return this.form.controls.truenas_access.value;
-  }
-
   constructor(
     private formBuilder: NonNullableFormBuilder,
     private userFormStore: UserFormStore,

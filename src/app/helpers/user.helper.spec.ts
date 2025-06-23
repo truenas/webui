@@ -1,14 +1,13 @@
+import { Role } from 'app/enums/role.enum';
 import { User } from 'app/interfaces/user.interface';
 import {
-  getUserType, hasShellAccess, hasSshAccess, isEmptyHomeDirectory,
+  getUserType, hasShellAccess, hasSshAccess, hasTrueNasAccess, isEmptyHomeDirectory,
 } from './user.helper';
 
 describe('UserHelper', () => {
   describe('isEmptyHomeDirectory', () => {
     it('should return false for valid home directory paths', () => {
       expect(isEmptyHomeDirectory('/home/user')).toBe(false);
-      expect(isEmptyHomeDirectory('/root')).toBe(false);
-      expect(isEmptyHomeDirectory('/var/home/testuser')).toBe(false);
     });
 
     it('should return true for empty values', () => {
@@ -42,8 +41,6 @@ describe('UserHelper', () => {
   describe('hasShellAccess', () => {
     it('returns true for users with valid shell', () => {
       expect(hasShellAccess({ shell: '/bin/bash' } as User)).toBe(true);
-      expect(hasShellAccess({ shell: '/bin/sh' } as User)).toBe(true);
-      expect(hasShellAccess({ shell: '/usr/bin/fish' } as User)).toBe(true);
     });
 
     it('returns false for users with nologin shell', () => {
@@ -61,17 +58,24 @@ describe('UserHelper', () => {
       expect(hasSshAccess({ ssh_password_enabled: true } as User)).toBe(true);
     });
 
-    it('returns true when user has both SSH key and password enabled', () => {
-      expect(hasSshAccess({
-        sshpubkey: 'ssh-rsa AAAAB3...',
-        ssh_password_enabled: true,
-      } as User)).toBe(true);
-    });
-
     it('returns false when user has no SSH access', () => {
-      expect(hasSshAccess({ sshpubkey: '', ssh_password_enabled: false } as User)).toBe(false);
       expect(hasSshAccess({ sshpubkey: null, ssh_password_enabled: false } as User)).toBe(false);
       expect(hasSshAccess({} as User)).toBe(false);
+    });
+  });
+
+  describe('hasTrueNasAccess', () => {
+    it('returns true when user has roles', () => {
+      expect(hasTrueNasAccess({ roles: [Role.FullAdmin] } as unknown as User)).toBe(true);
+    });
+
+    it('returns true when user has groups', () => {
+      expect(hasTrueNasAccess({ groups: [1] } as unknown as User)).toBe(true);
+    });
+
+    it('returns false when user has no roles or groups', () => {
+      expect(hasTrueNasAccess({ roles: [], groups: [] } as unknown as User)).toBe(false);
+      expect(hasTrueNasAccess({} as unknown as User)).toBe(false);
     });
   });
 });

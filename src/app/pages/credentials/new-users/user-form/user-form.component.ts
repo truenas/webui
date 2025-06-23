@@ -14,7 +14,9 @@ import {
   switchMap,
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
-import { hasShellAccess, isEmptyHomeDirectory } from 'app/helpers/user.helper';
+import {
+  hasShellAccess, hasSshAccess, hasTrueNasAccess, isEmptyHomeDirectory,
+} from 'app/helpers/user.helper';
 import { User, UserUpdate } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -181,9 +183,9 @@ export class UserFormComponent implements OnInit {
 
     this.userFormStore.setAllowedAccessConfig({
       smbAccess: user.smb,
-      truenasAccess: user.roles?.length > 0 || user.groups.length > 0,
+      truenasAccess: hasTrueNasAccess(user),
       shellAccess: hasShellAccess(user),
-      sshAccess: user.ssh_password_enabled || !!user.sshpubkey,
+      sshAccess: hasSshAccess(user),
     });
 
     this.setNamesInUseValidator(user.username);

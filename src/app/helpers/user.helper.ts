@@ -25,3 +25,7 @@ export function hasShellAccess(user: User): boolean {
 export function hasSshAccess(user: User): boolean {
   return Boolean(user.sshpubkey || user.ssh_password_enabled);
 }
+
+export function hasTrueNasAccess(user: User): boolean {
+  return Boolean(user.roles?.length > 0 || user.groups?.length > 0);
+}
