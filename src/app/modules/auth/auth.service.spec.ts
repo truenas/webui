@@ -9,12 +9,14 @@ import {
 import * as rxjs from 'rxjs';
 import {
   BehaviorSubject, firstValueFrom,
+  of,
 } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AccountAttribute } from 'app/enums/account-attribute.enum';
+import { AuthMechanism } from 'app/enums/auth-mechanism.enum';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -76,6 +78,11 @@ describe('AuthService', () => {
             ],
           },
         } as LoginExResponse),
+        mockCall('auth.mechanism_choices', [
+          AuthMechanism.PasswordPlain,
+          AuthMechanism.TokenPlain,
+          AuthMechanism.OtpToken,
+        ]),
       ]),
       {
         provide: WebSocketStatusService,
@@ -154,6 +161,53 @@ describe('AuthService', () => {
       );
       expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('auth.me');
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('auth.generate_token');
+    });
+
+    it('initializes auth session with triggers and without token with username/password OTP login', () => {
+      timer$.next(0);
+
+      const api = spectator.inject(ApiService);
+      jest.spyOn(api, 'call').mockImplementation((method) => {
+        if (method === 'auth.login_ex') {
+          return of({
+            authenticator: AuthenticatorLoginLevel.Level1,
+            response_type: LoginExResponseType.Success,
+            user_info: {
+              privilege: { webui_access: true },
+              account_attributes: [
+                AccountAttribute.Local,
+                AccountAttribute.PasswordChangeRequired,
+              ],
+            },
+          } as LoginExResponse);
+        }
+        if (method === 'auth.mechanism_choices') {
+          return of([
+            AuthMechanism.PasswordPlain,
+            AuthMechanism.OtpToken,
+          ]);
+        }
+        return of();
+      });
+
+      const obs$ = spectator.service.login('dummy', 'dummy');
+
+      testScheduler.run(({ expectObservable }) => {
+        expectObservable(obs$).toBe(
+          '(a|)',
+          {
+            a: expect.objectContaining({
+              loginResult: LoginResult.Success,
+            }),
+          },
+        );
+      });
+      expect(api.call).toHaveBeenCalledWith(
+        'auth.login_ex',
+        [{ mechanism: 'PASSWORD_PLAIN', username: 'dummy', password: 'dummy' }],
+      );
+      expect(api.call).not.toHaveBeenCalledWith('auth.me');
+      expect(api.call).not.toHaveBeenCalledWith('auth.generate_token');
     });
 
     it('initializes auth session with LEVEL_2 with no token support.', () => {
