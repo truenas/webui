@@ -9,6 +9,7 @@ import {
   Observable,
   of,
   ReplaySubject,
+  Subject,
   Subscription,
   switchMap,
   take,
@@ -16,6 +17,7 @@ import {
   timer,
 } from 'rxjs';
 import { AccountAttribute } from 'app/enums/account-attribute.enum';
+import { AuthMechanism } from 'app/enums/auth-mechanism.enum';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { Role } from 'app/enums/role.enum';
 import { filterAsync } from 'app/helpers/operators/filter-async.operator';
@@ -61,7 +63,7 @@ export class AuthService {
   private generateTokenSubscription: Subscription | null;
 
   readonly user$ = this.loggedInUser$.asObservable();
-  readonly isTokenAllowed$ = new BehaviorSubject<boolean>(false);
+  private readonly checkIsTokenAllowed$ = new Subject<void>();
 
   isOtpwUser$: Observable<boolean> = this.user$.pipe(
     filter(Boolean),
@@ -226,8 +228,8 @@ export class AuthService {
           this.wsStatus.setLoginStatus(true);
           this.window.sessionStorage.setItem('loginBannerDismissed', 'true');
           if (result?.authenticator === AuthenticatorLoginLevel.Level1) {
-            this.isTokenAllowed$.next(true);
-            return this.authToken$.pipe(
+            this.checkIsTokenAllowed$.next();
+            return this.latestTokenGenerated$.pipe(
               take(1),
               map(() => LoginResult.Success),
             );
@@ -245,10 +247,20 @@ export class AuthService {
   }
 
   private setupPeriodicTokenGeneration(): void {
-    this.isTokenAllowed$.pipe(
-      filter(Boolean),
+    this.checkIsTokenAllowed$.pipe(
       filterAsync(() => this.wsStatus.isAuthenticated$),
-    ).subscribe(() => {
+      switchMap(() => this.api.call('auth.mechanism_choices').pipe(
+        catchError((wsError: unknown) => {
+          console.error(wsError);
+          return of([]);
+        }),
+      )),
+      map((choices) => choices.includes(AuthMechanism.TokenPlain)),
+    ).subscribe((canGenerateToken) => {
+      if (!canGenerateToken) {
+        this.latestTokenGenerated$.next(null);
+        return;
+      }
       if (!this.generateTokenSubscription || this.generateTokenSubscription.closed) {
         this.generateTokenSubscription = timer(0, this.tokenRegenerationTimeMillis).pipe(
           switchMap(() => this.wsStatus.isAuthenticated$.pipe(take(1))),
