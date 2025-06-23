@@ -194,9 +194,9 @@ export const helptextSharingSmb = {
     title: T('Warning'),
     message: T(
       'An ACL is detected on the selected path but <i>Enable ACL</i> is not selected for this share. \
- ACLs must be stripped from the dataset prior to creating an SMB share.',
+ ACLs should be stripped from the dataset prior to creating an SMB share.',
     ),
-    button: T('Close'),
+    button: T('Continue'),
   },
 
   manglingDialog: {

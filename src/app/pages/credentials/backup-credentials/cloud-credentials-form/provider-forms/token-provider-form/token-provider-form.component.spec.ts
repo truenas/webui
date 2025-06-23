@@ -67,30 +67,24 @@ describe('TokenProviderFormComponent', () => {
 
     it('show existing provider attributes when they are set as form values', async () => {
       spectator.component.getFormSetter$().next({
-        client_id: 'client1234',
-        client_secret: 'secret1234',
         token: 'token1234',
       });
 
       const values = await form.getValues();
       expect(values).toEqual({
-        'OAuth Client ID': 'client1234',
-        'OAuth Client Secret': 'secret1234',
         Token: 'token1234',
       });
     });
 
     it('returns form attributes for submission when getSubmitAttributes() is called', async () => {
       await form.fillForm({
-        'OAuth Client ID': 'client1234',
-        'OAuth Client Secret': 'secret1234',
         Token: 'newtoken1234',
       });
 
       const values = spectator.component.getSubmitAttributes();
       expect(values).toEqual({
-        client_id: 'client1234',
-        client_secret: 'secret1234',
+        client_id: '',
+        client_secret: '',
         token: 'newtoken1234',
       });
     });

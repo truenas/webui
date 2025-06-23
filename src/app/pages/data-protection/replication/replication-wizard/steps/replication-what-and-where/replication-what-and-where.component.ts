@@ -75,20 +75,11 @@ import { ReplicationService } from 'app/services/replication.service';
 export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider {
   readonly customRetentionVisibleChange = output<boolean>();
 
-  sourceNodeProvider: TreeNodeProvider;
-  targetNodeProvider: TreeNodeProvider;
+  protected sourceNodeProvider: TreeNodeProvider;
+  protected targetNodeProvider: TreeNodeProvider;
 
-  protected get targetDatasetsRootNodes(): ExplorerNodeData[] {
-    return this.isRemoteTarget
-      ? [emptyRootNode]
-      : [datasetsRootNode];
-  }
-
-  protected get sourceDatasetsRootNodes(): ExplorerNodeData[] {
-    return this.isRemoteSource
-      ? [emptyRootNode]
-      : [datasetsRootNode];
-  }
+  protected targetDatasetsRootNodes: ExplorerNodeData[] = [];
+  protected sourceDatasetsRootNodes: ExplorerNodeData[] = [];
 
   readonly helptext = helptextReplicationWizard;
   readonly mntPath = mntPath;
@@ -648,6 +639,9 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
 
     this.sourceNodeProvider = !this.isRemoteSource ? localProvider : remoteProvider;
     this.targetNodeProvider = this.isRemoteTarget ? remoteProvider : localProvider;
+    this.targetDatasetsRootNodes = this.isRemoteTarget ? [emptyRootNode] : [datasetsRootNode];
+    this.sourceDatasetsRootNodes = this.isRemoteSource ? [emptyRootNode] : [datasetsRootNode];
+
     this.cdr.markForCheck();
   }
 }

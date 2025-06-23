@@ -82,7 +82,7 @@ export class CloudBackupFormComponent implements OnInit {
     return this.form.value.bucket === newOption;
   }
 
-  protected readonly slashRootNode = slashRootNode;
+  protected readonly slashRootNode = [slashRootNode];
 
   get title(): string {
     return this.isNew
