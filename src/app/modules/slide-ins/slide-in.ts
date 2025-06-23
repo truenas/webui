@@ -40,11 +40,15 @@ export class SlideIn {
   ) {}
 
   closeAll(): void {
-    for (const slideInInstance of this.slideInInstances().reverse()) {
-      slideInInstance.slideInRef.requireConfirmationWhen(undefined);
-      slideInInstance.slideInRef.close({ response: false, error: undefined });
-      slideInInstance.cdkOverlayRef.dispose();
+    const instances = [...this.slideInInstances()].reverse();
+
+    for (const instance of instances) {
+      instance.slideInRef.requireConfirmationWhen(undefined);
+      instance.cdkOverlayRef.dispose();
+      instance.slideInRef.close({ response: false, error: undefined });
     }
+
+    this.slideInInstances.set([]);
   }
 
   open<D, R>(
