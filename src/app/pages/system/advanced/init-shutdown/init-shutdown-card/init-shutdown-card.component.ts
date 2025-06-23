@@ -131,7 +131,7 @@ export class InitShutdownCardComponent implements OnInit {
     this.openForm();
   }
 
-  loadScripts(): void {
+  private loadScripts(): void {
     if (!this.dataProvider) {
       const scripts$ = this.api.call('initshutdownscript.query').pipe(untilDestroyed(this));
       this.dataProvider = new AsyncDataProvider<InitShutdownScript>(scripts$);

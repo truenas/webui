@@ -235,7 +235,7 @@ export class VDevsCardComponent implements OnInit, OnChanges {
   });
 
   // TODO: Unclear why this conversion is needed.
-  dashboardDiskToDisk(dashDisk: StorageDashboardDisk): Disk {
+  private dashboardDiskToDisk(dashDisk: StorageDashboardDisk): Disk {
     const output: EmptyDiskObject | Disk = {};
     const keys: string[] = Object.keys(dashDisk);
     keys.forEach((key: keyof StorageDashboardDisk) => {

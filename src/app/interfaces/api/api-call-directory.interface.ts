@@ -1,4 +1,5 @@
 import { AlertPolicy } from 'app/enums/alert-policy.enum';
+import { AuthMechanism } from 'app/enums/auth-mechanism.enum';
 import { CloudsyncTransferSetting } from 'app/enums/cloudsync-transfer-setting.enum';
 import { DatasetRecordSize, DatasetType } from 'app/enums/dataset.enum';
 import { DeviceType } from 'app/enums/device-type.enum';
@@ -381,6 +382,7 @@ export interface ApiCallDirectory {
   'auth.terminate_session': { params: [id: string]; response: void };
   'auth.twofactor.config': { params: void; response: GlobalTwoFactorConfig };
   'auth.twofactor.update': { params: [GlobalTwoFactorConfigUpdate]; response: GlobalTwoFactorConfig };
+  'auth.mechanism_choices': { params: void; response: AuthMechanism[] };
 
   // Boot
   'boot.detach': { params: [disk: string]; response: void };

@@ -3,20 +3,19 @@
   [formGroup]="form"
 >
   @if (parent() && !existing()) {
-    <ix-textarea
-      formControlName="parent"
-      [rows]="3"
-      [label]="'Parent Path' | translate"
-    ></ix-textarea>
+    <ix-details-table>
+      <ix-details-item [label]="'Parent Path:' | translate">
+        {{ parent()?.name }}
+      </ix-details-item>
+    </ix-details-table>
   }
 
-  <ix-textarea
+  <ix-input
     formControlName="name"
-    [rows]="3"
     [required]="true"
     [label]="'Name' | translate"
     [tooltip]="helptext.nameTooltip | translate"
-  ></ix-textarea>
+  ></ix-input>
 
   @if (!existing()) {
     <ix-select

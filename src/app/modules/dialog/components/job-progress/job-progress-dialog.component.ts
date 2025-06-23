@@ -188,7 +188,7 @@ export class JobProgressDialog<T> implements OnInit, AfterViewChecked {
     this.scrollBottom();
   }
 
-  scrollBottom(): void {
+  private scrollBottom(): void {
     const cardContainer = document.getElementsByClassName('job-dialog')[0];
     const logsContainer = cardContainer.getElementsByClassName('logs-container')[0];
     if (!logsContainer) {
@@ -214,7 +214,7 @@ export class JobProgressDialog<T> implements OnInit, AfterViewChecked {
    * websocket updates. The subscription id is used to unsubscribe form those real time
    * websocket updates at a later time. Unsubscription is not possible without this id
    */
-  getRealtimeLogs(): Subscription {
+  private getRealtimeLogs(): Subscription {
     this.realtimeLogsSubscribed = true;
     this.cdr.markForCheck();
     return this.api.subscribe(`filesystem.file_tail_follow:${this.job.logs_path}`)

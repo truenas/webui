@@ -11,7 +11,10 @@
       "Bash(yarn eslint:*)",
       "Bash(ls *)",
       "Bash(find *)",
-      "Bash(sed *)"
+      "Bash(sed *)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(open \"https://github.com/truenas/webui/:*)"
     ],
     "deny": []
   },

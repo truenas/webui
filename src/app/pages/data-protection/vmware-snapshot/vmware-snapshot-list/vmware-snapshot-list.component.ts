@@ -117,7 +117,7 @@ export class VmwareSnapshotListComponent implements OnInit {
     this.dataProvider.setFilter({ query, columnKeys: ['hostname', 'datastore', 'filesystem', 'username'] });
   }
 
-  protected getSnapshotsData(): void {
+  private getSnapshotsData(): void {
     this.dataProvider.load();
   }
 
