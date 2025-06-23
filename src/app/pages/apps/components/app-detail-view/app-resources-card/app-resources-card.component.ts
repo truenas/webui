@@ -43,7 +43,7 @@ export class AppResourcesCardComponent implements OnInit {
     this.getResourcesUsageUpdates();
   }
 
-  getResourcesUsageUpdates(): void {
+  private getResourcesUsageUpdates(): void {
     this.api.subscribe('reporting.realtime').pipe(
       map((event) => event.fields),
       throttleTime(2000),

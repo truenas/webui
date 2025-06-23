@@ -245,7 +245,7 @@ export class DiskListComponent implements OnInit {
     this.dataProvider.load();
   }
 
-  edit(disks: DiskUi[]): void {
+  protected edit(disks: DiskUi[]): void {
     const preparedDisks = this.prepareDisks(disks);
     let slideInRef$: Observable<SlideInResponse<boolean>>;
 
@@ -261,7 +261,7 @@ export class DiskListComponent implements OnInit {
     ).subscribe(() => this.dataProvider.load());
   }
 
-  wipe(disk: Disk): void {
+  protected wipe(disk: Disk): void {
     const exportedPool = this.unusedDisks.find((dev) => dev.devname === disk.devname)?.exported_zpool;
     const dialog = this.matDialog.open(DiskWipeDialog, {
       data: {

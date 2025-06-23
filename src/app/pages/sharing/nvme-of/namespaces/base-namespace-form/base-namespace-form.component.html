@@ -19,7 +19,9 @@
               [label]="'Path To Zvol' | translate"
               [rootNodes]="zvolsRootNode"
               [nodeProvider]="zvolProvider"
-            ></ix-explorer>
+            >
+              <ix-explorer-create-zvol></ix-explorer-create-zvol>
+            </ix-explorer>
           }
 
           @case (FormNamespaceType.ExistingFile) {

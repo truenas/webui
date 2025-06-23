@@ -12,7 +12,7 @@
     </button>
   </mat-card-header>
   <mat-card-content>
-    @if (!subsystem().namespaces.length) {
+    @if (!subsystem().namespaces?.length) {
       <div class="no-namespaces-warning">
         <ix-icon
           name="mdi-alert"

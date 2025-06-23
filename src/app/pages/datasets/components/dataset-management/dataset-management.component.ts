@@ -215,7 +215,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     }
   }
 
-  listenForLoading(): void {
+  private listenForLoading(): void {
     this.isLoading$.pipe(untilDestroyed(this)).subscribe((isLoading) => {
       this.isLoading = isLoading;
       this.cdr.markForCheck();
@@ -226,35 +226,35 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     });
   }
 
-  isSystemDataset(dataset: DatasetDetails): boolean {
+  protected isSystemDataset(dataset: DatasetDetails): boolean {
     return dataset.name.split('/').length === 1 && this.systemDataset() === dataset.name;
   }
 
-  treeHeaderScrolled(): void {
+  protected treeHeaderScrolled(): void {
     this.scrollSubject.next(this.ixTreeHeader()?.nativeElement?.scrollLeft || 0);
   }
 
-  datasetTreeScrolled(scrollLeft: number): void {
+  protected datasetTreeScrolled(scrollLeft: number): void {
     this.scrollSubject.next(scrollLeft);
   }
 
-  datasetTreeWidthChanged(event: ResizedEvent): void {
+  protected datasetTreeWidthChanged(event: ResizedEvent): void {
     this.treeWidthChange$.next(event);
   }
 
-  onSearch(query: string): void {
+  protected onSearch(query: string): void {
     this.dataSource.filter(query);
   }
 
-  closeMobileDetails(): void {
+  protected closeMobileDetails(): void {
     this.showMobileDetails = false;
   }
 
-  createPool(): void {
+  protected createPool(): void {
     this.router.navigate(['/storage', 'create']);
   }
 
-  viewDetails(dataset: DatasetDetails): void {
+  protected viewDetails(dataset: DatasetDetails): void {
     this.router.navigate(['/datasets', dataset.id]);
 
     if (this.isMobileView) {

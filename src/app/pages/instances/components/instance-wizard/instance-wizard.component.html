@@ -187,12 +187,13 @@
             @if (isContainer()) {
               <ix-explorer
                 formControlName="source"
-                [rootNodes]="[slashRootNode]"
+                [rootNodes]="slashRootNode"
                 [label]="instancesHelptext.disksSourceLabel | translate"
                 [required]="true"
                 [nodeProvider]="datasetProvider"
-                [canCreateDataset]="true"
-              ></ix-explorer>
+              >
+                <ix-explorer-create-dataset></ix-explorer-create-dataset>
+              </ix-explorer>
 
               <ix-input
                 formControlName="destination"

@@ -31,6 +31,9 @@ import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-ch
 import { ChipsProvider } from 'app/modules/forms/ix-forms/components/ix-chips/chips-provider';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
 import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
+import {
+  ExplorerCreateDatasetComponent,
+} from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxFileInputComponent } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.component';
@@ -97,6 +100,7 @@ export enum UserStigPasswordOption {
     MatButton,
     TestDirective,
     TranslateModule,
+    ExplorerCreateDatasetComponent,
   ],
 })
 export class OldUserFormComponent implements OnInit {
@@ -379,7 +383,7 @@ export class OldUserFormComponent implements OnInit {
     }
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     const payload = this.getPayload();
 
     const homeCreateConfirmation$ = this.getHomeCreateConfirmation();
@@ -509,7 +513,7 @@ export class OldUserFormComponent implements OnInit {
     return this.api.call('user.update', [this.editingUser.id, payload]);
   }
 
-  onDownloadSshPublicKey(): void {
+  protected onDownloadSshPublicKey(): void {
     const name = this.form.controls.username.value;
     const key = this.form.controls.sshpubkey.value;
     const blob = new Blob([key], { type: 'text/plain' });

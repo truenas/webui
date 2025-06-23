@@ -8,7 +8,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { of, throwError } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { mockCall, mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
@@ -162,7 +163,7 @@ describe('SmbFormComponent', () => {
         mockCall('filesystem.stat', {
           acl: true,
         } as FileSystemStat),
-        mockCall('service.restart'),
+        mockJob('service.control', fakeSuccessfulJob()),
         mockCall('sharing.smb.presets', { ...presets }),
       ]),
       mockProvider(SlideIn),
@@ -580,7 +581,7 @@ describe('SmbFormComponent', () => {
       jest.spyOn(api, 'call').mockImplementation((method) => {
         if (method === 'sharing.smb.share_precheck') {
           return throwError(() => new ApiCallError({
-            data: { reason: '[EEXIST] sharing.smb.share_precheck.name: Share with this name already exists.' },
+            data: { reason: '[EEXIST] sharing.smb.share_precheck.name: Share with this name already exists. [EINVAL] sharing.smb.share_precheck: TrueNAS server must be joined to a directory service or have at least one local SMB user before creating an SMB share.' },
           } as JsonRpcError));
         }
         return of(null);
@@ -591,6 +592,27 @@ describe('SmbFormComponent', () => {
       mockStore$ = spectator.inject(MockStore);
       store$ = spectator.inject(Store);
       jest.spyOn(store$, 'dispatch');
+    });
+
+    it('shows SMB users warning when there are no SMB users', () => {
+      spectator.component.ngOnInit();
+      spectator.detectChanges();
+
+      const warning = spectator.query('.smb-users-warning');
+      expect(warning).toBeTruthy();
+
+      expect(warning.textContent).toContain('Looks like you don’t have any users who’ll be able to access this share.');
+      expect(warning.textContent).toContain('Create a new user');
+      expect(warning.textContent).toContain('Configure Directory Services');
+      expect(warning.textContent).toContain('Ignore the error and add users later.');
+
+      const options = spectator.queryAll('ul li');
+
+      options[0].querySelector('a')?.click();
+      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/credentials', 'users']);
+
+      options[1].querySelector('a')?.click();
+      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/credentials', 'directory-services']);
     });
 
     it('should have error for duplicate share name', async () => {

@@ -23,7 +23,7 @@ export class IpAddressesCellComponent<T> extends ColumnComponent<T> {
     this.cdr.markForCheck();
   };
 
-  extractAddresses(row: NetworkInterface): string[] {
+  private extractAddresses(row: NetworkInterface): string[] {
     const addresses = this.aliasesToAddress(row.aliases);
 
     if (row.ipv4_dhcp || row.ipv6_auto) {

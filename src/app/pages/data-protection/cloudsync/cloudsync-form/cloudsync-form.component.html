@@ -95,7 +95,7 @@
           @if (form.controls.folder_destination.enabled) {
             <ix-explorer
               formControlName="folder_destination"
-              [rootNodes]="[slashRootNode]"
+              [rootNodes]="slashRootNode"
               [readonly]="!hasRequiredRoles()"
               [label]="helptext.folderLabel | translate"
               [tooltip]="helptext.folderTooltip | translate"
@@ -105,7 +105,7 @@
           @if (form.controls.folder_source.enabled) {
             <ix-explorer
               formControlName="folder_source"
-              [rootNodes]="[slashRootNode]"
+              [rootNodes]="slashRootNode"
               [readonly]="!hasRequiredRoles()"
               [label]="helptext.folderLabel | translate"
               [tooltip]="helptext.folderTooltip | translate"

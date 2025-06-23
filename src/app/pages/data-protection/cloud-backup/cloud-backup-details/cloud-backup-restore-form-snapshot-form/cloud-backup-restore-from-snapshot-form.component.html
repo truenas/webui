@@ -70,9 +70,9 @@
           [label]="'Target' | translate"
           [nodeProvider]="fileNodeProvider"
           [tooltip]="helptext.tooltips.target | translate"
-          [canCreateDataset]="true"
-          [createDatasetProps]="createDatasetProps"
-        ></ix-explorer>
+        >
+          <ix-explorer-create-dataset [datasetProperties]="createDatasetProps"></ix-explorer-create-dataset>
+        </ix-explorer>
       </ix-fieldset>
 
       <ix-form-actions>

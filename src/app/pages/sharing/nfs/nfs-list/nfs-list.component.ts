@@ -194,7 +194,7 @@ export class NfsListComponent implements OnInit {
     });
   }
 
-  setDefaultSort(): void {
+  private setDefaultSort(): void {
     this.dataProvider.setSorting({
       active: 0,
       direction: SortDirection.Asc,
@@ -202,7 +202,7 @@ export class NfsListComponent implements OnInit {
     });
   }
 
-  doAdd(): void {
+  protected doAdd(): void {
     this.slideIn.open(NfsFormComponent).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
@@ -213,7 +213,7 @@ export class NfsListComponent implements OnInit {
     });
   }
 
-  onListFiltered(query: string): void {
+  protected onListFiltered(query: string): void {
     this.filterString = query;
     this.dataProvider.setFilter({
       query,
@@ -222,7 +222,7 @@ export class NfsListComponent implements OnInit {
     this.cdr.markForCheck();
   }
 
-  columnsChange(columns: typeof this.columns): void {
+  protected columnsChange(columns: typeof this.columns): void {
     this.columns = [...columns];
     this.cdr.detectChanges();
     this.cdr.markForCheck();

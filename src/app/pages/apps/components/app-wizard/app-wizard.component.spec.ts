@@ -7,7 +7,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { mockProvider, createComponentFactory } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
-import { of } from 'rxjs';
+import { firstValueFrom, of } from 'rxjs';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ChartFormValue, App, ChartSchemaNodeConf } from 'app/interfaces/app.interface';
@@ -18,6 +18,7 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AppWizardComponent } from 'app/pages/apps/components/app-wizard/app-wizard.component';
 import { DockerHubRateInfoDialog } from 'app/pages/apps/components/dockerhub-rate-limit-info-dialog/dockerhub-rate-limit-info-dialog.component';
@@ -32,13 +33,13 @@ const appVersion121 = {
       { name: 'Port Forwarding' },
       { name: 'Health Check' },
       { name: 'Workload Details' },
-      { name: 'Scaling/Upgrade Policy' },
+      { name: 'Scaling/Update Policy' },
       { name: 'Restart Policy' },
       { name: 'IPFS Configuration' },
     ],
     questions: [
       {
-        group: 'Scaling/Upgrade Policy',
+        group: 'Scaling/Update Policy',
         label: 'Update Strategy',
         schema: {
           default: 'RollingUpdate',
@@ -292,6 +293,9 @@ describe('AppWizardComponent', () => {
           afterClosed: () => of({}),
         })),
       }),
+      mockProvider(UnsavedChangesService, {
+        showConfirmDialog: jest.fn(() => of(true)),
+      }),
       mockProvider(ApplicationsService, {
         getCatalogAppDetails: jest.fn(() => of(existingCatalogApp)),
         getApp: jest.fn(() => of([existingAppEdit])),
@@ -528,6 +532,31 @@ describe('AppWizardComponent', () => {
           error: null,
         },
       });
+    });
+  });
+
+  describe('canDeactivate', () => {
+    it('returns true if form is unchanged', async () => {
+      const unsavedChangesService = spectator.inject(UnsavedChangesService);
+      spectator.component.initialFormValue = spectator.component.form.getRawValue();
+
+      const result = await firstValueFrom(spectator.component.canDeactivate());
+      expect(result).toBe(true);
+
+      expect(unsavedChangesService.showConfirmDialog).not.toHaveBeenCalled();
+    });
+
+    it('calls showConfirmDialog if form is changed', async () => {
+      const unsavedChangesService = spectator.inject(UnsavedChangesService);
+      jest.spyOn(unsavedChangesService, 'showConfirmDialog').mockReturnValue(of(false));
+
+      spectator.component.initialFormValue = { release_name: 'America/Los_Angeles' };
+      spectator.component.form.patchValue({ release_name: 'Asia/Tokyo' });
+
+      const result = await firstValueFrom(spectator.component.canDeactivate());
+      expect(result).toBe(false);
+
+      expect(unsavedChangesService.showConfirmDialog).toHaveBeenCalled();
     });
   });
 });

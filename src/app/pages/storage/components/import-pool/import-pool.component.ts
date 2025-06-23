@@ -114,7 +114,7 @@ export class ImportPoolComponent implements OnInit {
     });
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     this.dialogService.jobDialog(
       this.api.job('pool.import_pool', [{ guid: this.formGroup.getRawValue().guid }]),
       { title: this.translate.instant('Importing Pool') },
@@ -134,7 +134,7 @@ export class ImportPoolComponent implements OnInit {
       });
   }
 
-  checkIfUnlockNeeded(): Observable<[Dataset[], boolean]> {
+  private checkIfUnlockNeeded(): Observable<[Dataset[], boolean]> {
     return this.api.call(
       'pool.dataset.query',
       [[['name', '=', this.importablePools.find((importablePool) => importablePool.guid === this.formGroup.value.guid).name]]],

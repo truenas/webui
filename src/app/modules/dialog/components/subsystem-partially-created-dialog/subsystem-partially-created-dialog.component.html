@@ -1,0 +1,33 @@
+<h1 mat-dialog-title>
+  <ix-icon name="warning"></ix-icon>
+  <span>
+    {{ 'Saved Partially' | translate }}
+  </span>
+</h1>
+
+<div mat-dialog-content>
+  <p>
+    {{ 'Subsystem "{name}" has been created.' | translate: { name: data.subsystem.name } }}<br>
+    {{ 'However, we could not create some related items:' | translate }}
+  </p>
+
+  <ul>
+    @for (error of data.relatedErrors; track error) {
+      <li>{{ error }}</li>
+    }
+  </ul>
+
+  <p>
+    {{ 'Please create related items manually.' | translate }}
+  </p>
+</div>
+
+<ix-form-actions mat-dialog-actions class="form-actions">
+  <button
+    mat-button
+    mat-dialog-close
+    ixTest="close-partial-failure-dialog"
+  >
+    {{ 'Close' | translate }}
+  </button>
+</ix-form-actions>

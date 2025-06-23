@@ -6,16 +6,16 @@ import { MatButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateModule } from '@ngx-translate/core';
-import { filter, Observable, take } from 'rxjs';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { filter, take } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
-import { Dataset, DatasetDetails } from 'app/interfaces/dataset.interface';
+import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { MobileBackButtonComponent } from 'app/modules/buttons/mobile-back-button/mobile-back-button.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DataProtectionCardComponent } from 'app/pages/datasets/components/data-protection-card/data-protection-card.component';
 import { DatasetCapacityManagementCardComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-management-card.component';
@@ -28,8 +28,7 @@ import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-
 import { ZfsEncryptionCardComponent } from 'app/pages/datasets/modules/encryption/components/zfs-encryption-card/zfs-encryption-card.component';
 import { PermissionsCardComponent } from 'app/pages/datasets/modules/permissions/containers/permissions-card/permissions-card.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { doesDatasetHaveShares, isIocageMounted } from 'app/pages/datasets/utils/dataset.utils';
-import { FilesystemService } from 'app/services/filesystem.service';
+import { doesDatasetHaveShares, getDatasetLabel, isIocageMounted } from 'app/pages/datasets/utils/dataset.utils';
 
 @UntilDestroy()
 @Component({
@@ -68,7 +67,8 @@ export class DatasetDetailsPanelComponent {
     private datasetStore: DatasetTreeStore,
     private router: Router,
     private slideIn: SlideIn,
-    private filesystem: FilesystemService,
+    private snackbar: SnackbarService,
+    private translate: TranslateService,
   ) { }
 
   protected readonly hasRoles = computed(() => {
@@ -87,35 +87,39 @@ export class DatasetDetailsPanelComponent {
 
   protected readonly isZvol = computed(() => this.dataset().type === DatasetType.Volume);
 
-  handleSlideInClosed(slideInRef$: Observable<SlideInResponse<Dataset>>): void {
-    slideInRef$.pipe(
+  onAddDataset(): void {
+    this.slideIn.open(DatasetFormComponent, {
+      wide: true, data: { isNew: true, datasetId: this.dataset().id },
+    }).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(({ response }) => {
-      this.datasetStore.datasetUpdated();
-
-      this.datasetStore.isLoading$.pipe(
-        filter((isLoading) => !isLoading),
-        take(1),
-        untilDestroyed(this),
-      ).subscribe(() => {
-        this.router.navigate(['/datasets', response.id]);
-      });
+      this.switchToNewDateset(response.id);
     });
-  }
-
-  onAddDataset(): void {
-    const slideInRef$ = this.slideIn.open(DatasetFormComponent, {
-      wide: true, data: { isNew: true, datasetId: this.dataset().id },
-    });
-    this.handleSlideInClosed(slideInRef$);
   }
 
   onAddZvol(): void {
-    const slideInRef$ = this.slideIn.open(ZvolFormComponent, {
-      data: { isNew: true, parentId: this.dataset().id },
+    this.slideIn.open(ZvolFormComponent, {
+      data: { isNew: true, parentOrZvolId: this.dataset().id },
+    }).pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe(({ response }) => {
+      this.snackbar.success(this.translate.instant('Switched to new zvol «{name}».', { name: getDatasetLabel(response) }));
+      this.switchToNewDateset(response.id);
     });
-    this.handleSlideInClosed(slideInRef$);
+  }
+
+  private switchToNewDateset(id: string): void {
+    this.datasetStore.datasetUpdated();
+
+    this.datasetStore.isLoading$.pipe(
+      filter((isLoading) => !isLoading),
+      take(1),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.router.navigate(['/datasets', id]);
+    });
   }
 
   onCloseMobileDetails(): void {

@@ -34,7 +34,18 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import {
   KeyCreatedDialog,
 } from 'app/pages/credentials/users/user-api-keys/components/key-created-dialog/key-created-dialog.component';
-import { UserService } from 'app/services/user.service';
+
+export interface ApiKeyParams {
+  /**
+   * Username of the user for whom the API key is being created or edited.
+   */
+  username?: string;
+
+  /**
+   * Whether the form is being used to edit an existing API key.
+   */
+  editingKey?: ApiKey;
+}
 
 @UntilDestroy()
 @Component({
@@ -114,29 +125,35 @@ export class ApiKeyFormComponent implements OnInit {
     private loader: LoaderService,
     private errorHandler: FormErrorHandlerService,
     private authService: AuthService,
-    private userService: UserService,
-    public slideInRef: SlideInRef<ApiKey | undefined, boolean>,
+    public slideInRef: SlideInRef<ApiKeyParams | undefined, boolean>,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
-    this.editingRow.set(slideInRef.getData());
   }
 
   ngOnInit(): void {
-    const editingRow = this.editingRow();
-    if (editingRow) {
+    const data = this.slideInRef.getData();
+    const { editingKey, username } = data || {};
+
+    if (editingKey) {
+      this.editingRow.set(editingKey);
       this.form.patchValue({
-        ...editingRow,
-        expires_at: editingRow.expires_at?.$date
-          ? new Date(editingRow.expires_at.$date)
+        ...editingKey,
+        expires_at: editingKey.expires_at?.$date
+          ? new Date(editingKey.expires_at.$date)
           : null,
-        nonExpiring: !editingRow.expires_at?.$date,
+        nonExpiring: !editingKey.expires_at?.$date,
       });
       this.form.controls.username.disable();
     } else {
       this.addForbiddenNamesValidator();
-      this.setCurrentUsername();
+
+      if (username) {
+        this.form.patchValue({ username });
+      } else {
+        this.setCurrentUsername();
+      }
     }
     this.handleNonExpiringChanges();
   }
@@ -176,14 +193,14 @@ export class ApiKeyFormComponent implements OnInit {
       });
   }
 
-  protected setCurrentUsername(): void {
+  private setCurrentUsername(): void {
     const username = this.username();
     if (username) {
       this.form.patchValue({ username });
     }
   }
 
-  protected addForbiddenNamesValidator(): void {
+  private addForbiddenNamesValidator(): void {
     this.form.controls.name.setAsyncValidators(forbiddenAsyncValues(this.forbiddenNames$));
     this.form.controls.name.updateValueAndValidity();
   }

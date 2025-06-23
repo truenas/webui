@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy, Component, input,
+  output,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -23,6 +24,7 @@ import { UserProfileCardComponent } from 'app/pages/credentials/new-users/all-us
 })
 export class UserDetailsComponent {
   user = input.required<User>();
+  reloadUsers = output();
 
   protected readonly searchableElements = userDetailsElements;
 }

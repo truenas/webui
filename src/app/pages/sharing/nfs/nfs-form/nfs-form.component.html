@@ -14,9 +14,11 @@
           [label]="'Path' | translate"
           [tooltip]="helptext.pathTooltip | translate"
           [nodeProvider]="treeNodeProvider"
-          [canCreateDataset]="isNew"
-          [createDatasetProps]="createDatasetProps"
-        ></ix-explorer>
+        >
+          @if (isNew) {
+            <ix-explorer-create-dataset [datasetProperties]="createDatasetProps"></ix-explorer-create-dataset>
+          }
+        </ix-explorer>
       </ix-fieldset>
 
       <ix-fieldset [title]="'General Options' | translate">

@@ -27,6 +27,7 @@ import { UserComboboxProvider } from 'app/modules/forms/ix-forms/classes/user-co
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
+import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -63,6 +64,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     ReactiveFormsModule,
     IxFieldsetComponent,
     IxExplorerComponent,
+    ExplorerCreateDatasetComponent,
     IxInputComponent,
     IxCheckboxComponent,
     IxComboboxComponent,
@@ -163,7 +165,7 @@ export class NfsFormComponent implements OnInit {
     this.defaultNfsShare = this.slideInRef.getData()?.defaultNfsShare;
   }
 
-  setNfsShareForEdit(share: NfsShare): void {
+  private setNfsShareForEdit(share: NfsShare): void {
     share.networks.forEach(() => this.addNetworkControl());
     share.hosts.forEach(() => this.addHostControl());
     this.form.patchValue(share);
@@ -181,27 +183,27 @@ export class NfsFormComponent implements OnInit {
     }
   }
 
-  addNetworkControl(): void {
+  protected addNetworkControl(): void {
     this.form.controls.networks.push(this.formBuilder.control('', [Validators.required, ipv4or6cidrValidator()]));
   }
 
-  removeNetworkControl(index: number): void {
+  protected removeNetworkControl(index: number): void {
     this.form.controls.networks.removeAt(index);
   }
 
-  addHostControl(): void {
+  protected addHostControl(): void {
     this.form.controls.hosts.push(this.formBuilder.control('', Validators.required));
   }
 
-  removeHostControl(index: number): void {
+  protected removeHostControl(index: number): void {
     this.form.controls.hosts.removeAt(index);
   }
 
-  toggleAdvancedMode(): void {
+  protected toggleAdvancedMode(): void {
     this.isAdvancedMode = !this.isAdvancedMode;
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     const nfsShare = { ...this.form.value } as NfsShareUpdate;
 
     if (!this.isEnterprise()) {

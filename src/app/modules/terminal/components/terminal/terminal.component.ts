@@ -3,7 +3,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef,
   Component, ElementRef, HostListener, input, OnDestroy, OnInit, Signal, viewChild,
 } from '@angular/core';
-import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -15,8 +15,8 @@ import { filter, take, tap } from 'rxjs/operators';
 import { ShellConnectedEvent } from 'app/interfaces/shell.interface';
 import { TerminalConfiguration } from 'app/interfaces/terminal.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { TerminalFontSizeComponent } from 'app/modules/terminal/components/font-size/terminal-font-size.component';
 import { XtermAttachAddon } from 'app/modules/terminal/xterm-attach-addon';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -33,12 +33,11 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatButton,
-    MatIconButton,
     TestDirective,
     NgStyle,
-    IxIconComponent,
     TranslateModule,
     PageHeaderComponent,
+    TerminalFontSizeComponent,
   ],
 })
 export class TerminalComponent implements OnInit, OnDestroy {
@@ -47,8 +46,6 @@ export class TerminalComponent implements OnInit, OnDestroy {
   private readonly container: Signal<ElementRef<HTMLElement>> = viewChild.required('terminal', { read: ElementRef });
 
   waitParentChanges = 300;
-  minFontSize = 10;
-  maxFontSize = 25;
   fontSize = 14;
   fontName = 'Inconsolata';
   defaultFontName = 'monospace';
@@ -118,7 +115,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
     }
   }
 
-  initShell(): void {
+  private initShell(): void {
     this.authService.getOneTimeToken().pipe(
       take(1),
       tap((token) => {
@@ -138,7 +135,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
     this.resizeTerm();
   }
 
-  initializeTerminal(): void {
+  private initializeTerminal(): void {
     this.xterm = new Terminal(this.terminalSettings);
 
     this.fitAddon = new FitAddon();
@@ -155,12 +152,12 @@ export class TerminalComponent implements OnInit, OnDestroy {
     });
   }
 
-  drawTerminal(): void {
+  private drawTerminal(): void {
     this.xterm.open(this.container().nativeElement);
     this.fitAddon.fit();
   }
 
-  updateTerminal(): void {
+  private updateTerminal(): void {
     if (this.shellConnected) {
       this.xterm.clear();
     }
@@ -173,7 +170,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
     this.xterm.loadAddon(this.attachAddon);
   }
 
-  resizeTerm(): boolean {
+  private resizeTerm(): boolean {
     this.xterm.options.fontSize = this.fontSize;
     this.fitAddon.fit();
     const size = this.fitAddon.proposeDimensions();
@@ -186,15 +183,13 @@ export class TerminalComponent implements OnInit, OnDestroy {
     return true;
   }
 
-  changeFontSize(step: number): void {
-    const newSize = this.fontSize + step;
-    if (newSize >= this.minFontSize && newSize <= this.maxFontSize) {
-      this.fontSize = newSize;
-      this.resizeTerm();
-    }
+  protected onFontSizeChanged(newSize: number): void {
+    this.fontSize = newSize;
+    this.terminalSettings.fontSize = newSize;
+    this.resizeTerm();
   }
 
-  initializeWebShell(): void {
+  private initializeWebShell(): void {
     this.shellService.connect(this.token, this.conf().connectionData);
 
     this.shellService.shellConnected$

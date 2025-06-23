@@ -75,20 +75,11 @@ import { ReplicationService } from 'app/services/replication.service';
 export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider {
   readonly customRetentionVisibleChange = output<boolean>();
 
-  sourceNodeProvider: TreeNodeProvider;
-  targetNodeProvider: TreeNodeProvider;
+  protected sourceNodeProvider: TreeNodeProvider;
+  protected targetNodeProvider: TreeNodeProvider;
 
-  protected get targetDatasetsRootNodes(): ExplorerNodeData[] {
-    return this.isRemoteTarget
-      ? [emptyRootNode]
-      : [datasetsRootNode];
-  }
-
-  protected get sourceDatasetsRootNodes(): ExplorerNodeData[] {
-    return this.isRemoteSource
-      ? [emptyRootNode]
-      : [datasetsRootNode];
-  }
+  protected targetDatasetsRootNodes: ExplorerNodeData[] = [];
+  protected sourceDatasetsRootNodes: ExplorerNodeData[] = [];
 
   readonly helptext = helptextReplicationWizard;
   readonly mntPath = mntPath;
@@ -348,7 +339,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
       });
   }
 
-  loadReplicationTask(task: ReplicationTask): void {
+  private loadReplicationTask(task: ReplicationTask): void {
     if (!task) {
       return;
     }
@@ -379,7 +370,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     });
   }
 
-  clearReplicationTask(): void {
+  private clearReplicationTask(): void {
     this.form.patchValue({
       source_datasets_from: null,
       ssh_credentials_source: null,
@@ -471,7 +462,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     }
   }
 
-  checkCustomVisible(): void {
+  private checkCustomVisible(): void {
     const hideCustomRetention = this.form.value.schema_or_regex === SnapshotNamingOption.NameRegex
       && (this.form.value.custom_snapshots || this.form.value.source_datasets_from === DatasetSource.Remote);
 
@@ -648,6 +639,9 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
 
     this.sourceNodeProvider = !this.isRemoteSource ? localProvider : remoteProvider;
     this.targetNodeProvider = this.isRemoteTarget ? remoteProvider : localProvider;
+    this.targetDatasetsRootNodes = this.isRemoteTarget ? [emptyRootNode] : [datasetsRootNode];
+    this.sourceDatasetsRootNodes = this.isRemoteSource ? [emptyRootNode] : [datasetsRootNode];
+
     this.cdr.markForCheck();
   }
 }

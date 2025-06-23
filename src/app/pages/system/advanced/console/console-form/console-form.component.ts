@@ -114,7 +114,7 @@ export class ConsoleFormComponent implements OnInit {
     );
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     this.isFormLoading.set(true);
     const values = this.form.value;
 

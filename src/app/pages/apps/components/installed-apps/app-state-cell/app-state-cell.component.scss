@@ -18,7 +18,7 @@
   }
 
   &.has-cell {
-    border: 2px solid transparent;
+    border: 1px solid transparent;
     border-radius: 20px;
     font-weight: bold;
     gap: 6px;
@@ -26,24 +26,28 @@
   }
 
   &.running {
-    border-color: var(--green);
-    color: var(--green);
+    border-color: var(--status-active);
+    color: var(--status-active);
   }
 
   &.starting,
   &.deploying,
   &.stopping {
-    border-color: var(--yellow);
-    color: var(--yellow);
+    border-color: var(--status-in-progress);
+    color: var(--status-in-progress);
 
     mat-spinner::ng-deep circle {
-      stroke: var(--yellow);
+      stroke: var(--status-in-progress);
     }
   }
 
-  &.stopped,
   &.crashed {
-    border-color: var(--red);
-    color: var(--red);
+    border-color: var(--status-error);
+    color: var(--status-error);
+  }
+
+  &.stopped {
+    border-color: var(--status-inactive);
+    color: var(--status-inactive);
   }
 }

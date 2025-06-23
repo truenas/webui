@@ -14,17 +14,17 @@ import {
   signal,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import { cloneDeep } from 'lodash-es';
 import {
-  filter, Observable, of, Subject, switchMap,
+  filter, Observable, of, share, Subject, switchMap,
+  take,
   tap,
 } from 'rxjs';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SlideInContainerComponent } from 'app/modules/slide-ins/components/slide-in-container/slide-in-container.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ComponentInSlideIn, SlideInInstance, SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
+import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 
 @UntilDestroy()
 // eslint-disable-next-line angular-file-naming/service-filename-suffix
@@ -36,8 +36,7 @@ export class SlideIn {
   constructor(
     private cdkOverlay: Overlay,
     private injector: Injector,
-    private dialogService: DialogService,
-    private translate: TranslateService,
+    private unsavedChangesService: UnsavedChangesService,
   ) {}
 
   closeAll(): void {
@@ -51,7 +50,7 @@ export class SlideIn {
     component: ComponentInSlideIn<D, R>,
     options: { data?: D; wide?: boolean } = {},
   ): Observable<SlideInResponse<R>> {
-    return this.animateOutTopComponent().pipe(
+    const open$ = this.animateOutTopComponent().pipe(
       switchMap(() => {
         const slideInId = UUID.UUID();
 
@@ -79,7 +78,12 @@ export class SlideIn {
 
         return close$;
       }),
+      share(),
     );
+
+    open$.pipe(untilDestroyed(this)).subscribe();
+
+    return open$.pipe(take(1));
   }
 
   private swap<D, R>(component: ComponentInSlideIn<D, R>, options: { wide?: boolean }): void {
@@ -191,17 +195,6 @@ export class SlideIn {
     });
   }
 
-  private showConfirmDialog(): Observable<boolean> {
-    return this.dialogService.confirm({
-      title: this.translate.instant('Unsaved Changes'),
-      message: this.translate.instant('You have unsaved changes. Are you sure you want to close?'),
-      cancelText: this.translate.instant('No'),
-      buttonText: this.translate.instant('Yes'),
-      buttonColor: 'warn',
-      hideCheckbox: true,
-    });
-  }
-
   private createSlideInRef<D, R>(slideInInstance: SlideInInstance<D, R>): SlideInRef<D, R> {
     return {
       close: (response: SlideInResponse<R>): void => {
@@ -243,7 +236,7 @@ export class SlideIn {
     }
 
     return needConfirmation().pipe(
-      switchMap((shouldConfirm) => (shouldConfirm ? this.showConfirmDialog() : of(true))),
+      switchMap((shouldConfirm) => (shouldConfirm ? this.unsavedChangesService.showConfirmDialog() : of(true))),
     );
   }
 }

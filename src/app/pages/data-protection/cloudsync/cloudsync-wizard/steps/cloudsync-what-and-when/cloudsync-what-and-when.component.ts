@@ -317,7 +317,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
     );
   }
 
-  getCloudCredentials(): Observable<CloudSyncCredential[]> {
+  private getCloudCredentials(): Observable<CloudSyncCredential[]> {
     return this.cloudCredentialService.getCloudSyncCredentials().pipe(
       tap((credentials) => {
         this.credentials = credentials;

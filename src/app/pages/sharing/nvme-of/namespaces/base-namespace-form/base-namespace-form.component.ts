@@ -17,6 +17,9 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import {
   IxButtonGroupComponent,
 } from 'app/modules/forms/ix-forms/components/ix-button-group/ix-button-group.component';
+import {
+  ExplorerCreateZvolComponent,
+} from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-zvol/explorer-create-zvol.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -67,6 +70,7 @@ const typeOptions: Option[] = [
     IxFieldsetComponent,
     IxButtonGroupComponent,
     IxInputComponent,
+    ExplorerCreateZvolComponent,
   ],
 })
 export class BaseNamespaceFormComponent implements OnInit, OnChanges {

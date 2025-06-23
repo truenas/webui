@@ -107,7 +107,7 @@ export class AccessFormComponent implements OnInit {
     });
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     this.authService.hasRole(this.requiredRoles)
       .pipe(
         filter(Boolean),
