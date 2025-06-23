@@ -1,6 +1,7 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { DetailsTableHarness } from 'app/modules/details-table/details-table.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import {
   OpenstackSwiftProviderFormComponent,
@@ -9,6 +10,7 @@ import {
 describe('OpenstackSwiftProviderFormComponent', () => {
   let spectator: Spectator<OpenstackSwiftProviderFormComponent>;
   let form: IxFormHarness;
+  let details: DetailsTableHarness;
   const createComponent = createComponentFactory({
     component: OpenstackSwiftProviderFormComponent,
     imports: [
@@ -19,6 +21,7 @@ describe('OpenstackSwiftProviderFormComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     form = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, IxFormHarness);
+    details = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, DetailsTableHarness);
   });
 
   it('show existing provider attributes when they are set as form values', async () => {
@@ -35,13 +38,16 @@ describe('OpenstackSwiftProviderFormComponent', () => {
       endpoint_type: 'internal',
     });
 
-    const values = await form.getValues();
-    expect(values).toEqual({
+    const formValues = await form.getValues();
+    expect(formValues).toEqual({
       'User Name': 'username',
       'API Key or Password': 'password',
       'Authentication URL': 'http://openstack.com/auth',
-      AuthVersion: 'Auto(vX)',
+    });
 
+    const detailValues = await details.getValues();
+    expect(detailValues).toEqual({
+      AuthVersion: 'Auto(vX)',
       'Tenant Name': 'tenant',
       'Tenant ID': '243',
       'Auth Token': 'token',
@@ -56,8 +62,10 @@ describe('OpenstackSwiftProviderFormComponent', () => {
       'User Name': 'johny',
       'API Key or Password': 'A12345',
       'Authentication URL': 'http://new.openstack.com/auth',
-      AuthVersion: 'v2',
+    });
 
+    await details.setValues({
+      AuthVersion: 'v2',
       'Tenant Name': 'john-tenant',
       'Tenant ID': '123',
       'Auth Token': 'T1234',
@@ -83,24 +91,24 @@ describe('OpenstackSwiftProviderFormComponent', () => {
   });
 
   it('shows and returns additional attributes when AuthVersion is v3', async () => {
-    await form.fillForm(
-      {
-        'User Name': 'johny',
-        'API Key or Password': 'A12345',
-        'Authentication URL': 'http://new.openstack.com/auth',
-        AuthVersion: 'v3',
+    await form.fillForm({
+      'User Name': 'johny',
+      'API Key or Password': 'A12345',
+      'Authentication URL': 'http://new.openstack.com/auth',
+    });
 
-        'Tenant Name': 'john-tenant',
-        'Tenant ID': '123',
-        'Auth Token': 'T1234',
-        'Region Name': 'Europe',
-        'Storage URL': 'http://new.openstack.com/storage',
-        'Endpoint Type': 'Public',
-        'User ID': 'johny-user',
-        'User Domain': 'accountants',
-        'Tenant Domain': 'tenant-domain',
-      },
-    );
+    await details.setValues({
+      AuthVersion: 'v3',
+      'Tenant Name': 'john-tenant',
+      'Tenant ID': '123',
+      'Auth Token': 'T1234',
+      'Region Name': 'Europe',
+      'Storage URL': 'http://new.openstack.com/storage',
+      'Endpoint Type': 'Public',
+      'User ID': 'johny-user',
+      'User Domain': 'accountants',
+      'Tenant Domain': 'tenant-domain',
+    });
 
     const values = spectator.component.getSubmitAttributes();
     expect(values).toMatchObject({
