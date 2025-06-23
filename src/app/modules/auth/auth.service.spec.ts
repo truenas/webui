@@ -195,7 +195,11 @@ describe('AuthService', () => {
       testScheduler.run(({ expectObservable }) => {
         expectObservable(obs$).toBe(
           '(a|)',
-          { a: LoginResult.Success },
+          {
+            a: expect.objectContaining({
+              loginResult: LoginResult.Success,
+            }),
+          },
         );
       });
       expect(api.call).toHaveBeenCalledWith(
