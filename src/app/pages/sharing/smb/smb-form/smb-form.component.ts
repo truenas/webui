@@ -485,7 +485,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     if (share.purpose === SmbPresetType.LegacyShare) {
       this.dialogService.warn(
         this.translate.instant('Legacy Share'),
-        this.translate.instant('To save changes, choose a new purpose. Legacy shares cannot be edited without migrating.'),
+        this.translate.instant('In order for share to be saved, it needs to be migrated. Please select a new share purpose to migrate the share.'),
       );
     }
 

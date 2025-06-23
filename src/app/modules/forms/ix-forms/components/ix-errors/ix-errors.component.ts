@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnChanges,
+  OnInit,
 } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
 import { MatError } from '@angular/material/form-field';
@@ -30,7 +31,7 @@ export const ixManualValidateError = 'ixManualValidateError';
     TranslateModule,
   ],
 })
-export class IxErrorsComponent implements OnChanges {
+export class IxErrorsComponent implements OnChanges, OnInit {
   readonly control = input.required<AbstractControl>();
   readonly label = input<string>();
 
@@ -87,26 +88,14 @@ export class IxErrorsComponent implements OnChanges {
         filter((status) => status !== 'PENDING'),
         untilDestroyed(this),
       ).subscribe(() => {
-        const newErrors: (string | null)[] = Object.keys(this.control().errors || []).map((error) => {
-          if (error === ixManualValidateError) {
-            return null;
-          }
-          const message = (this.control().errors?.[error] as SomeError)?.message as string;
-          if (message) {
-            return message;
-          }
-
-          return this.getDefaultError(error as DefaultValidationError);
-        });
-
-        this.messages = newErrors.filter((message) => !!message) as string[];
-
-        if (this.control().errors) {
-          this.control().markAllAsTouched();
-        }
-
-        this.cdr.markForCheck();
+        this.handleErrors();
       });
+    }
+  }
+
+  ngOnInit(): void {
+    if (this.control().errors) {
+      this.handleErrors();
     }
   }
 
@@ -167,5 +156,27 @@ export class IxErrorsComponent implements OnChanges {
   // TODO: Workaround for https://github.com/angular/angular/issues/56471
   protected trackMessage(message: string): string {
     return message;
+  }
+
+  private handleErrors(): void {
+    const newErrors: (string | null)[] = Object.keys(this.control().errors || []).map((error) => {
+      if (error === ixManualValidateError) {
+        return null;
+      }
+      const message = (this.control().errors?.[error] as SomeError)?.message as string;
+      if (message) {
+        return message;
+      }
+
+      return this.getDefaultError(error as DefaultValidationError);
+    });
+
+    this.messages = newErrors.filter((message) => !!message) as string[];
+
+    if (this.control().errors) {
+      this.control().markAllAsTouched();
+    }
+
+    this.cdr.markForCheck();
   }
 }

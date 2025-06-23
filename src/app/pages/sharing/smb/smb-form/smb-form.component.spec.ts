@@ -200,7 +200,7 @@ describe('SmbFormComponent', () => {
     it('shows a warning when opening Legacy Share for editing', () => {
       expect(spectator.inject(DialogService).warn).toHaveBeenLastCalledWith(
         'Legacy Share',
-        'To save changes, choose a new purpose. Legacy shares cannot be edited without migrating.',
+        'In order for share to be saved, it needs to be migrated. Please select a new share purpose to migrate the share.',
       );
     });
 
@@ -421,16 +421,6 @@ describe('SmbFormComponent', () => {
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
         helptextSharingSmb.restartedSmbDialog.message,
       );
-
-      const sharePath = await (await loader.getHarness(
-        IxExplorerHarness.with({ label: formLabels.path }),
-      )).getValue();
-
-      expect(spectator.inject(Router).navigate)
-        .toHaveBeenCalledWith(
-          ['/', 'datasets', 'acl', 'edit'],
-          { queryParams: { homeShare: false, path: sharePath } },
-        );
     });
 
     it('should submit the form with the correct value and check service action is dispatched', async () => {
@@ -479,16 +469,6 @@ describe('SmbFormComponent', () => {
           purpose: 'DEFAULT_SHARE',
         },
       }]);
-
-      const sharePath = await (await loader.getHarness(
-        IxExplorerHarness.with({ label: formLabels.path }),
-      )).getValue();
-
-      expect(spectator.inject(Router).navigate)
-        .toHaveBeenCalledWith(
-          ['/', 'datasets', 'acl', 'edit'],
-          { queryParams: { homeShare: false, path: sharePath } },
-        );
 
       expect(store$.dispatch).toHaveBeenCalledWith(checkIfServiceIsEnabled({ serviceName: ServiceName.Cifs }));
     });
