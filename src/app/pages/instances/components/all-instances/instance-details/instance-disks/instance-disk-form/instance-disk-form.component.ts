@@ -85,7 +85,7 @@ export class InstanceDiskFormComponent implements OnInit {
     io_bus: [DiskIoBus.Nvme, Validators.required],
   });
 
-  protected readonly slashRootNode = slashRootNode;
+  protected readonly slashRootNode = [slashRootNode];
 
   protected isNew = computed(() => !this.existingDisk());
 

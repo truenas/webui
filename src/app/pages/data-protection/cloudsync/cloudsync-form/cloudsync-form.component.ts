@@ -114,7 +114,7 @@ export class CloudSyncFormComponent implements OnInit {
       : this.translate.instant('Edit Cloud Sync Task');
   }
 
-  protected readonly slashRootNode = slashRootNode;
+  protected readonly slashRootNode = [slashRootNode];
 
   get credentialsDependentControls(): FormControl[] {
     return [
