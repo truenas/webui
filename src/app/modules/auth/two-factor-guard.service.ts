@@ -43,10 +43,10 @@ export class TwoFactorGuardService implements CanActivateChild {
       this.authService.isPasswordChangeRequired$.pipe(take(1)),
       this.authService.userTwoFactorConfig$.pipe(take(1)),
       this.authService.getGlobalTwoFactorConfig(),
-      this.authService.hasRole([Role.FullAdmin]).pipe(take(1)),
+      this.authService.hasRole([Role.FullAdmin]),
       this.authService.isOtpwUser$.pipe(take(1)),
-      this.authService.wasOneTimePasswordChanged$.asObservable().pipe(take(1)),
-      this.authService.wasRequiredPasswordChanged$.asObservable().pipe(take(1)),
+      this.authService.wasOneTimePasswordChanged$.asObservable(),
+      this.authService.wasRequiredPasswordChanged$.asObservable(),
       this.authService.isLocalUser$,
     ]).pipe(
       take(1),
@@ -62,15 +62,14 @@ export class TwoFactorGuardService implements CanActivateChild {
       ]) => {
         const shouldShowFirstLoginDialog = (
           (isOtpwUser && !wasOtpChanged && isLocalUser)
-          || (isOtpwUser && !userConfig.secret_configured)
-          || (!isOtpwUser && globalConfig.enabled && !userConfig.secret_configured)
+          || (globalConfig.enabled && !userConfig.secret_configured)
         );
 
         if (shouldShowFirstLoginDialog) {
           return this.openFullScreenDialog(FirstLoginDialogComponent);
         }
 
-        if (isPasswordChangeRequired && !wasRequiredPasswordChanged) {
+        if (isPasswordChangeRequired && !wasRequiredPasswordChanged && !wasOtpChanged) {
           return this.openFullScreenDialog(PasswordChangeRequiredDialogComponent);
         }
 
