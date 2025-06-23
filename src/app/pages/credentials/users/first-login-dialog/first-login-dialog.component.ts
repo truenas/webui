@@ -35,9 +35,17 @@ export class FirstLoginDialog {
   protected isOtpwUser = toSignal(this.authService.isOtpwUser$);
   protected isLocalUser = toSignal(this.authService.isLocalUser$);
   protected wasOneTimePasswordChanged = toSignal(this.authService.wasOneTimePasswordChanged$);
-  protected userTwoFactorAuthConfigured = toSignal(this.authService.userTwoFactorConfig$.pipe(
-    map((config) => config.secret_configured),
-  ));
+  protected userTwoFactorAuthConfigured = toSignal(
+    this.authService.userTwoFactorConfig$.pipe(
+      map((config) => config.secret_configured),
+    ),
+  );
+
+  protected isGlobalTwoFactorEnabled = toSignal(
+    this.authService.getGlobalTwoFactorConfig().pipe(
+      map((config) => config.enabled),
+    ),
+  );
 
   constructor(private authService: AuthService) {}
 
