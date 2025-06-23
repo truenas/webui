@@ -181,9 +181,7 @@ describe('AuthService', () => {
         expectObservable(obs$).toBe(
           '(a|)',
           {
-            a: expect.objectContaining({
-              loginResult: LoginResult.Success,
-            }),
+            a: LoginResult.Success,
           },
         );
       });
