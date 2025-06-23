@@ -68,7 +68,9 @@ describe('VmWizardComponent', () => {
       MockComponent(SummaryComponent),
     ],
     providers: [
-      mockProvider(SlideIn),
+      mockProvider(SlideIn, {
+        components$: of([]),
+      }),
       mockProvider(GpuService),
       mockProvider(VmGpuService),
       mockAuth(),

@@ -100,7 +100,9 @@ describe('DeviceFormComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(SlideIn),
+      mockProvider(SlideIn, {
+        components$: of([]),
+      }),
       mockProvider(FilesystemService),
       mockProvider(SlideInRef, slideInRef),
       mockProvider(VmService, {
