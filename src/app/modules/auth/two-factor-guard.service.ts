@@ -62,8 +62,7 @@ export class TwoFactorGuardService implements CanActivateChild {
       ]) => {
         const shouldShowFirstLoginDialog = (
           (isOtpwUser && !wasOtpChanged && isLocalUser)
-          || (isOtpwUser && !userConfig.secret_configured)
-          || (!isOtpwUser && globalConfig.enabled && !userConfig.secret_configured)
+          || (globalConfig.enabled && !userConfig.secret_configured)
         );
 
         if (shouldShowFirstLoginDialog) {
