@@ -1,11 +1,12 @@
 import {
-  ChangeDetectionStrategy, Component, OnInit,
+  ChangeDetectionStrategy, Component, effect, input, OnInit,
 } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { helptextUsers } from 'app/helptext/account/user-form';
+import { User } from 'app/interfaces/user.interface';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -22,15 +23,16 @@ import { UserStigPasswordOption } from 'app/pages/credentials/users/user-form/us
   imports: [
     ReactiveFormsModule,
     IxInputComponent,
-    IxCheckboxComponent,
     IxFieldsetComponent,
     TranslateModule,
-    IxTextareaComponent,
     IxRadioGroupComponent,
+    IxCheckboxComponent,
+    IxTextareaComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AuthSectionComponent implements OnInit {
+  editingUser = input<User>();
   protected isNewUser = this.userStore.isNewUser;
   protected sshAccess = this.userStore.sshAccess;
   protected smbAccess = this.userStore.smbAccess;
@@ -41,7 +43,7 @@ export class AuthSectionComponent implements OnInit {
     password_disabled: [false],
     ssh_password_enabled: [false],
     sshpubkey: [''],
-    stig_password: [''],
+    stig_password: [UserStigPasswordOption.DisablePassword],
   });
 
   protected readonly tooltips = {
@@ -75,7 +77,7 @@ export class AuthSectionComponent implements OnInit {
     ).subscribe({
       next: () => {
         this.userStore.updateUserConfig({
-          ssh_password_enabled: this.form.controls.ssh_password_enabled.value,
+          ssh_password_enabled: this.form.value.ssh_password_enabled,
           password_disabled: this.smbAccess()
             ? false
             : this.form.value.password_disabled,
@@ -83,6 +85,16 @@ export class AuthSectionComponent implements OnInit {
           sshpubkey: this.form.value.sshpubkey,
         });
       },
+    });
+
+    effect(() => {
+      if (this.editingUser()) {
+        this.form.patchValue({
+          password_disabled: this.editingUser().password_disabled,
+          ssh_password_enabled: this.editingUser().ssh_password_enabled,
+          sshpubkey: this.editingUser().sshpubkey,
+        });
+      }
     });
   }
 
