@@ -21,7 +21,7 @@ describe('FirstLoginDialogComponent', () => {
   const mockWasOneTimePasswordChanged$ = new BehaviorSubject(false);
   const mockIsOtpwUser$ = new BehaviorSubject(true);
   const mockIsLocalUser$ = new BehaviorSubject(true);
-
+  const global2faConfig$ = new BehaviorSubject({ enabled: true });
   const createComponent = createComponentFactory({
     component: FirstLoginDialogComponent,
     declarations: [MockComponents(ChangePasswordFormComponent, TwoFactorComponent)],
@@ -31,6 +31,9 @@ describe('FirstLoginDialogComponent', () => {
         isOtpwUser$: mockIsOtpwUser$.asObservable(),
         userTwoFactorConfig$: mockTwoFactorConfig$.asObservable(),
         isLocalUser$: mockIsLocalUser$.asObservable(),
+        getGlobalTwoFactorConfig: jest.fn(() => {
+          return global2faConfig$;
+        }),
       }),
       provideMockStore(),
       mockProvider(MatDialogRef),
@@ -123,5 +126,10 @@ describe('FirstLoginDialogComponent', () => {
     mockIsLocalUser$.next(false);
     spectator.detectChanges();
     expect(spectator.query(ChangePasswordFormComponent)).not.toExist();
+  });
+  it('does not show 2fa if password configured or 2fa not enabled', () => {
+    global2faConfig$.next({ enabled: false });
+    spectator.detectChanges();
+    expect(spectator.query(TwoFactorComponent)).not.toExist();
   });
 });
