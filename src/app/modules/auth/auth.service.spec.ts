@@ -50,6 +50,10 @@ describe('AuthService', () => {
     privilege: {
       webui_access: true,
     },
+    account_attributes: [
+      AccountAttribute.Local,
+      AccountAttribute.PasswordChangeRequired,
+    ],
   } as LoggedInUser;
 
   const mockWsStatus = new WebSocketStatusService();
@@ -68,6 +72,10 @@ describe('AuthService', () => {
           response_type: LoginExResponseType.Success,
           user_info: {
             privilege: { webui_access: true },
+            account_attributes: [
+              AccountAttribute.Local,
+              AccountAttribute.PasswordChangeRequired,
+            ],
           },
         } as LoginExResponse),
         mockCall('auth.mechanism_choices', [
@@ -220,6 +228,23 @@ describe('AuthService', () => {
       );
       expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('auth.me');
       expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('auth.generate_token');
+    });
+    it('emits correct isLocalUser$', () => {
+      timer$.next(0);
+
+      const obs$ = spectator.service.login('dummy', 'dummy');
+      testScheduler.run(({ expectObservable }) => {
+        expectObservable(obs$).toBe(
+          '(a|)',
+          { a: LoginResult.Success },
+        );
+        expectObservable(spectator.service.isLocalUser$).toBe('a', {
+          a: true,
+        });
+        expectObservable(spectator.service.isPasswordChangeRequired$).toBe('a', {
+          a: true,
+        });
+      });
     });
   });
 

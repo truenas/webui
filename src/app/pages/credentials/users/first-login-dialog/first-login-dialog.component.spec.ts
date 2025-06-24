@@ -20,7 +20,8 @@ describe('FirstLoginDialogComponent', () => {
   const mockTwoFactorConfig$ = new BehaviorSubject({ secret_configured: false });
   const mockWasOneTimePasswordChanged$ = new BehaviorSubject(false);
   const mockIsOtpwUser$ = new BehaviorSubject(true);
-
+  const mockIsLocalUser$ = new BehaviorSubject(true);
+  const global2faConfig$ = new BehaviorSubject({ enabled: true });
   const createComponent = createComponentFactory({
     component: FirstLoginDialogComponent,
     declarations: [MockComponents(ChangePasswordFormComponent, TwoFactorComponent)],
@@ -29,6 +30,10 @@ describe('FirstLoginDialogComponent', () => {
         wasOneTimePasswordChanged$: mockWasOneTimePasswordChanged$,
         isOtpwUser$: mockIsOtpwUser$.asObservable(),
         userTwoFactorConfig$: mockTwoFactorConfig$.asObservable(),
+        isLocalUser$: mockIsLocalUser$.asObservable(),
+        getGlobalTwoFactorConfig: jest.fn(() => {
+          return global2faConfig$;
+        }),
       }),
       provideMockStore(),
       mockProvider(MatDialogRef),
@@ -104,9 +109,27 @@ describe('FirstLoginDialogComponent', () => {
   it('calls passwordChanged when password is updated', () => {
     const authService = spectator.inject(AuthService);
     const passwordChangedSpy = jest.spyOn(authService.wasOneTimePasswordChanged$, 'next');
+    mockIsOtpwUser$.next(true);
+    mockIsLocalUser$.next(true);
+    spectator.detectChanges();
 
-    spectator.component.passwordChanged();
+    const passwordChangedForm = spectator.query(ChangePasswordFormComponent);
+    passwordChangedForm.passwordUpdated.emit();
 
     expect(passwordChangedSpy).toHaveBeenCalledWith(true);
+  });
+
+  it('does not show password cahnge when non-local user', () => {
+    mockIsOtpwUser$.next(true);
+    spectator.detectChanges();
+    expect(spectator.query(ChangePasswordFormComponent)).toExist();
+    mockIsLocalUser$.next(false);
+    spectator.detectChanges();
+    expect(spectator.query(ChangePasswordFormComponent)).not.toExist();
+  });
+  it('does not show 2fa if password configured or 2fa not enabled', () => {
+    global2faConfig$.next({ enabled: false });
+    spectator.detectChanges();
+    expect(spectator.query(TwoFactorComponent)).not.toExist();
   });
 });
