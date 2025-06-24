@@ -18,7 +18,6 @@ describe('AuthSectionComponent', () => {
   const smbAccess = signal(false);
   const sshAccess = signal(false);
   const isStigMode = signal(false);
-  const isNewUser = signal(true);
 
   const createComponent = createComponentFactory({
     component: AuthSectionComponent,
@@ -30,7 +29,6 @@ describe('AuthSectionComponent', () => {
         smbAccess,
         sshAccess,
         isStigMode,
-        isNewUser,
         updateUserConfig: jest.fn(),
         setAllowedAccessConfig: jest.fn(),
       }),
@@ -45,7 +43,6 @@ describe('AuthSectionComponent', () => {
     smbAccess.set(false);
     sshAccess.set(false);
     isStigMode.set(false);
-    isNewUser.set(true);
   });
 
   describe('password fields', () => {
@@ -78,6 +75,16 @@ describe('AuthSectionComponent', () => {
       });
     });
 
+    it('checks stig mode fields when "STIG Mode" is true', async () => {
+      isStigMode.set(true);
+
+      const password = await loader.getHarness(IxRadioGroupHarness.with({ label: 'Password' }));
+      await password.setValue('Generate Temporary One-Time Password');
+
+      const value = await password.getValue();
+      expect(value).toBe('Generate Temporary One-Time Password');
+    });
+
     it('does not show "Disable Password" when smbAccess is enabled', async () => {
       smbAccess.set(true);
 
@@ -105,8 +112,6 @@ describe('AuthSectionComponent', () => {
     beforeEach(() => {
       sshAccess.set(true);
     });
-
-    // TODO: Editing scenarios;
 
     it('shows SSH fields when SSH Access is enabled', async () => {
       expect(await loader.getHarness(IxTextareaHarness.with({ label: 'Public SSH Key' }))).toBeTruthy();
@@ -143,6 +148,18 @@ describe('AuthSectionComponent', () => {
       expect(spectator.inject(UserFormStore).updateUserConfig).toHaveBeenCalledWith(expect.objectContaining({
         ssh_password_enabled: true,
       }));
+    });
+
+    it('shows current user SSH settings when editing a user', async () => {
+      spectator.setInput('editingUser', {
+        sshpubkey: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQ...',
+        ssh_password_enabled: true,
+      });
+
+      expect(await form.getValues()).toMatchObject({
+        'Public SSH Key': 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQ...',
+        'Allow SSH Login with Password (not recommended)': true,
+      });
     });
   });
 });

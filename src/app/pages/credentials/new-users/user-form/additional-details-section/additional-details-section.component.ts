@@ -9,13 +9,14 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateModule } from '@ngx-translate/core';
-import { isEqual } from 'lodash-es';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   debounceTime, distinctUntilChanged, filter, map,
   Observable,
   of,
+  tap,
   take,
+  withLatestFrom,
 } from 'rxjs';
 import { allCommands } from 'app/constants/all-commands.constant';
 import { Role } from 'app/enums/role.enum';
@@ -40,7 +41,7 @@ import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-vali
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { UserFormStore } from 'app/pages/credentials/new-users/user-form/user.store';
+import { defaultHomePath, UserFormStore } from 'app/pages/credentials/new-users/user-form/user.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { StorageService } from 'app/services/storage.service';
@@ -71,13 +72,31 @@ import { StorageService } from 'app/services/storage.service';
 })
 export class AdditionalDetailsSectionComponent implements OnInit {
   editingUser = input<User>();
-  protected shellAccessEnabled = this.userFormStore.shellAccess;
+  protected username = computed(() => this.userFormStore?.userConfig().username ?? '');
+  protected sshAccess = this.userFormStore.sshAccess;
+  protected shellAccess = this.userFormStore.shellAccess;
   protected hasSharingRole = computed(() => this.userFormStore.role()?.includes(Role.SharingAdmin));
   private groupNameCache = new Map<number, string>();
+  protected homeDirectoryEmptyValue = computed(() => {
+    if (this.editingUser()) {
+      if (isEmptyHomeDirectory(this.editingUser()?.home)) {
+        return this.translate.instant('None');
+      }
+      return this.editingUser()?.home || '';
+    }
+
+    return this.translate.instant('Not Set');
+  });
 
   readonly groupOptions$ = this.api.call('group.query', [[['local', '=', true]]]).pipe(
     map((groups) => groups.map((group) => ({ label: group.group, value: group.id }))),
   );
+
+  protected readonly roleGroupMap = new Map<Role, string>([
+    [Role.FullAdmin, 'builtin_administrators'],
+    [Role.SharingAdmin, 'truenas_sharing_administrators'],
+    [Role.ReadonlyAdmin, 'truenas_readonly_administrators'],
+  ]);
 
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
 
@@ -94,7 +113,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     group_create: [true],
     groups: [[] as number[]],
     email: [null as string, [emailValidator()]],
-    home: [''],
+    home: [defaultHomePath],
     home_mode: ['700'],
     home_create: [false],
     default_permissions: [true],
@@ -107,11 +126,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     sudo_commands_nopasswd_all: [false],
   });
 
-  shellOptions$: Observable<Option[]> = this.api.call('user.shell_choices').pipe(
-    choicesToOptions(),
-    take(1),
-    untilDestroyed(this),
-  );
+  shellOptions$: Observable<Option[]>;
 
   constructor(
     private storageService: StorageService,
@@ -121,74 +136,62 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     private userFormStore: UserFormStore,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
+    private translate: TranslateService,
   ) {
-    effect(() => {
-      if (this.editingUser()) {
-        const user = this.editingUser();
-
-        this.form.controls.uid.disable();
-        this.form.controls.group_create.disable();
-
-        this.form.patchValue({
-          full_name: user.full_name,
-          email: user.email,
-          groups: user.groups,
-          home: user.home,
-          uid: user.uid,
-          group: user.group?.id,
-          sudo_commands: this.form.value.sudo_commands_all ? [allCommands] : this.form.value.sudo_commands,
-          sudo_commands_nopasswd: this.form.value.sudo_commands_nopasswd_all
-            ? [allCommands]
-            : this.form.value.sudo_commands_nopasswd,
-        }, { emitEvent: false });
-
-        if (user.immutable) {
-          this.form.controls.group.disable();
-          this.form.controls.home_mode.disable();
-          this.form.controls.home.disable();
-          this.form.controls.home_create.disable();
-        }
-
-        if (this.editingUser()?.home && !isEmptyHomeDirectory(this.editingUser()?.home)) {
-          this.storageService.filesystemStat(this.editingUser().home)
-            .pipe(take(1), this.errorHandler.withErrorHandler(), untilDestroyed(this))
-            .subscribe((stat) => {
-              const homeMode = stat.mode.toString(8).substring(2, 5);
-              this.form.patchValue({ home_mode: homeMode });
-              this.userFormStore.updateSetupDetails({ homeModeOldValue: homeMode });
-            });
-        } else {
-          this.form.patchValue({ home_mode: '700' });
-          this.form.controls.home_mode.disable();
-        }
-      }
-    });
     this.form.valueChanges
-      .pipe(
-        distinctUntilChanged((prev, curr) => isEqual(prev, curr)),
-        untilDestroyed(this),
-      )
+      .pipe(untilDestroyed(this))
       .subscribe({
-        next: () => {
+        next: (values) => {
           this.userFormStore.updateUserConfig({
-            group_create: this.form.value.group_create,
-            home_create: this.form.value.home_create,
-            full_name: this.form.value.full_name,
-            groups: this.form.value.groups.map((grp) => (+grp)),
-            group: this.form.value.group_create ? null : this.form.value.group,
-            home: this.form.value.home,
-            home_mode: this.userFormStore.homeModeOldValue() !== this.form.value.home_mode
-              ? this.form.value.home_mode
+            group_create: values.group_create,
+            home_create: values.home_create,
+            full_name: values.full_name,
+            groups: values.groups.map((grp) => (+grp)),
+            group: values.group_create ? null : values.group,
+            home: values.home,
+            home_mode: this.userFormStore.homeModeOldValue() !== values.home_mode
+              ? values.home_mode
               : undefined,
-            email: this.form.value.email,
-            uid: this.form.value.uid,
-            shell: this.form.value.shell,
+            email: values.email,
+            uid: values.uid,
+            shell: values.shell,
+            sudo_commands: values.sudo_commands_all ? [allCommands] : values.sudo_commands,
+            sudo_commands_nopasswd: values.sudo_commands_nopasswd_all ? [allCommands] : values.sudo_commands_nopasswd,
           });
           this.userFormStore.updateSetupDetails({
-            defaultPermissions: this.form.value.default_permissions,
+            defaultPermissions: values.default_permissions,
           });
         },
       });
+
+    this.userFormStore.state$.pipe(
+      map((state) => state.setupDetails.role),
+      distinctUntilChanged(),
+      withLatestFrom(this.groupOptions$),
+      tap(([selectedRole, groupOptions]) => {
+        if (selectedRole == null) {
+          return;
+        }
+
+        const groupLabel = this.roleGroupMap.get(selectedRole);
+        const groupId = groupOptions.find((group) => group.label === groupLabel)?.value;
+        if (groupId) {
+          if (this.editingUser()) {
+            const groups = [...this.form.value.groups, groupId];
+            this.form.patchValue({ groups });
+          } else {
+            this.form.patchValue({ groups: [groupId] });
+          }
+        }
+      }),
+      untilDestroyed(this),
+    ).subscribe();
+
+    effect(() => {
+      if (this.editingUser()) {
+        this.setupEditUserForm(this.editingUser());
+      }
+    });
   }
 
   ngOnInit(): void {
@@ -206,10 +209,50 @@ export class AdditionalDetailsSectionComponent implements OnInit {
 
       this.api.call('group.query', [[['id', '=', id]]]).pipe(
         map((groups) => this.groupNameCache.set(id, groups[0]?.name || '')),
+        take(1),
         untilDestroyed(this),
       ).subscribe();
     }
     return this.groupNameCache.get(id);
+  }
+
+  private setupEditUserForm(user: User): void {
+    this.form.patchValue({
+      full_name: user.full_name,
+      email: user.email,
+      groups: user.groups,
+      home: user.home,
+      uid: user.uid,
+      group: user.group?.id,
+      shell: user.shell,
+      sudo_commands: this.form.value.sudo_commands_all ? [allCommands] : this.form.value.sudo_commands,
+      sudo_commands_nopasswd: this.form.value.sudo_commands_nopasswd_all
+        ? [allCommands]
+        : this.form.value.sudo_commands_nopasswd,
+    });
+
+    this.form.controls.uid.disable();
+    this.form.controls.group_create.disable();
+
+    if (user.immutable) {
+      this.form.controls.group.disable();
+      this.form.controls.home_mode.disable();
+      this.form.controls.home.disable();
+      this.form.controls.home_create.disable();
+    }
+
+    if (user?.home && !isEmptyHomeDirectory(user.home)) {
+      this.storageService.filesystemStat(user.home)
+        .pipe(take(1), this.errorHandler.withErrorHandler(), untilDestroyed(this))
+        .subscribe((stat) => {
+          const homeMode = stat.mode.toString(8).substring(2, 5);
+          this.form.patchValue({ home_mode: homeMode });
+          this.userFormStore.updateSetupDetails({ homeModeOldValue: homeMode });
+        });
+    } else {
+      this.form.patchValue({ home_mode: '700' });
+      this.form.controls.home_mode.disable();
+    }
   }
 
   private listenValueChanges(): void {
@@ -226,6 +269,16 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     this.form.controls.groups.valueChanges.pipe(debounceTime(300), untilDestroyed(this)).subscribe((groups) => {
       this.updateShellOptions(this.form.value.group, groups);
     });
+
+    this.userFormStore.state$.pipe(
+      map((state) => state.setupDetails.allowedAccess.shellAccess),
+      distinctUntilChanged(),
+      untilDestroyed(this),
+    ).subscribe((shellAccess) => {
+      if (shellAccess) {
+        this.setFirstShellOption();
+      }
+    });
   }
 
   private updateShellOptions(group: number, groups: number[]): void {
@@ -237,7 +290,8 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     this.api.call('user.shell_choices', [Array.from(ids)])
       .pipe(choicesToOptions(), untilDestroyed(this))
       .subscribe((options) => {
-        this.shellOptions$ = of(options);
+        const sorted = options.toSorted((a, b) => a.label.localeCompare(b.label));
+        this.shellOptions$ = of(sorted);
         this.cdr.markForCheck();
       });
   }
@@ -247,6 +301,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
       choicesToOptions(),
       filter((shells) => !!shells.length),
       map((shells) => shells[0].value),
+      take(1),
       untilDestroyed(this),
     ).subscribe((firstShell: string) => {
       this.form.patchValue({ shell: firstShell });
@@ -280,7 +335,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
 
   private detectHomeDirectoryChanges(): void {
     this.form.controls.home.valueChanges.pipe(untilDestroyed(this)).subscribe((home) => {
-      if (isEmptyHomeDirectory(home) || this.editingUser().immutable) {
+      if (isEmptyHomeDirectory(home) || this.editingUser()?.immutable) {
         this.form.controls.home_mode.disable();
       } else {
         this.form.controls.home_mode.enable();
