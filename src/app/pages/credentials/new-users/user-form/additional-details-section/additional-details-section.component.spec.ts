@@ -98,7 +98,7 @@ describe('AdditionalDetailsSectionComponent', () => {
       expect(spectator.inject(UserFormStore).updateUserConfig).toHaveBeenCalledWith({
         full_name: '',
         email: null,
-        shell: '/usr/sbin/nologin',
+        shell: '/usr/bin/zsh',
         group_create: true,
         groups: [],
         home: '/var/empty',
@@ -124,7 +124,7 @@ describe('AdditionalDetailsSectionComponent', () => {
       expect(spectator.inject(UserFormStore).updateUserConfig).toHaveBeenLastCalledWith({
         full_name: 'Editable field',
         email: 'editable@truenas.local',
-        shell: '/usr/sbin/nologin',
+        shell: '/usr/bin/zsh',
         sudo_commands: [],
         sudo_commands_nopasswd: [],
         group_create: true,
@@ -134,6 +134,16 @@ describe('AdditionalDetailsSectionComponent', () => {
         home_create: false,
         uid: '1234',
       });
+    });
+
+    it('checks zsh shell is selected when shell access is enabled', async () => {
+      shellAccess.set(true);
+      spectator.detectChanges();
+
+      const editables = await loader.getHarness(DetailsTableHarness);
+      expect(await editables.getValues()).toEqual(expect.objectContaining({
+        Shell: '/usr/bin/zsh',
+      }));
     });
   });
 
@@ -149,6 +159,7 @@ describe('AdditionalDetailsSectionComponent', () => {
     });
 
     it('checks initial value when editing user', async () => {
+      shellAccess.set(true);
       const values = await (await loader.getHarness(DetailsTableHarness)).getValues();
 
       expect(values).toEqual({
@@ -157,6 +168,7 @@ describe('AdditionalDetailsSectionComponent', () => {
         Groups: 'Not Set',
         'Home Directory': '/home/test',
         UID: '1004',
+        Shell: '/usr/bin/bash',
       });
 
       expect(spectator.inject(UserFormStore).updateSetupDetails).toHaveBeenCalledWith({
@@ -188,16 +200,6 @@ describe('AdditionalDetailsSectionComponent', () => {
 
       const uidInput = await loader.getHarness(IxInputHarness.with({ selector: '[aria-label="UID"]' }));
       expect(await uidInput.isDisabled()).toBeTruthy();
-    });
-
-    it('checks bash shell is selected when shell access is enabled', async () => {
-      shellAccess.set(true);
-      spectator.detectChanges();
-
-      const editables = await loader.getHarness(DetailsTableHarness);
-      expect(await editables.getValues()).toEqual(expect.objectContaining({
-        Shell: '/usr/bin/bash',
-      }));
     });
   });
 
