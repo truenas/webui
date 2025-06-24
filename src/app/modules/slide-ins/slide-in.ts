@@ -39,6 +39,7 @@ export class SlideIn {
     private unsavedChangesService: UnsavedChangesService,
   ) {}
 
+  // TODO: Refactor this -> https://github.com/truenas/webui/pull/12168#pullrequestreview-2949579034
   closeAll(): void {
     const instances = [...this.slideInInstances()].reverse();
 
