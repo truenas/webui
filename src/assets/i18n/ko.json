@@ -1,10 +1,13 @@
 {
   "": "",
+  "700 or owner - all, others - none": "",
   "All hosts are now allowed": "",
   "Allow all hosts": "",
   "An ACL is detected on the selected path but <i>Enable ACL</i> is not selected for this share.  ACLs should be stripped from the dataset prior to creating an SMB share.": "",
   "Configure manually": "",
+  "Default Permissions": "",
   "Last Action": "",
+  "New {username} group": "",
   "Parent Path:": "",
   "Password change is required": "",
   "See Logs": "",

@@ -1,5 +1,8 @@
 {
   "": "",
+  "700 or owner - all, others - none": "",
+  "Default Permissions": "",
+  "New {username} group": "",
   "\n              It looks like your session has been inactive for more than {lifetime} seconds.<br>\n              For security reasons we will log you out at {time}.\n            ": "\nПохоже, что ваш сеанс была неактивна более {lifetime} секунд.<br>\nПо соображениям безопасности мы выйдем из системы в любое время.\n",
   " as of {dateTime}": " в {dateTime}",
   " bytes.": " байт(ов).",

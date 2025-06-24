@@ -6,7 +6,8 @@ import {
 } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import {
-  Observable, of, switchMap, take, forkJoin,
+  Observable, of, switchMap, take,
+  combineLatest,
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { AuthService } from 'app/modules/auth/auth.service';
@@ -38,7 +39,7 @@ export class TwoFactorGuardService implements CanActivateChild {
   }
 
   private checkTwoFactorAuth(state: RouterStateSnapshot): Observable<boolean> {
-    return forkJoin([
+    return combineLatest([
       this.authService.isPasswordChangeRequired$.pipe(take(1)),
       this.authService.userTwoFactorConfig$.pipe(take(1)),
       this.authService.getGlobalTwoFactorConfig(),
@@ -46,7 +47,9 @@ export class TwoFactorGuardService implements CanActivateChild {
       this.authService.isOtpwUser$.pipe(take(1)),
       this.authService.wasOneTimePasswordChanged$.asObservable().pipe(take(1)),
       this.authService.wasRequiredPasswordChanged$.asObservable().pipe(take(1)),
+      this.authService.isLocalUser$,
     ]).pipe(
+      take(1),
       switchMap(([
         isPasswordChangeRequired,
         userConfig,
@@ -55,11 +58,11 @@ export class TwoFactorGuardService implements CanActivateChild {
         isOtpwUser,
         wasOtpChanged,
         wasRequiredPasswordChanged,
+        isLocalUser,
       ]) => {
         const shouldShowFirstLoginDialog = (
-          (isOtpwUser && !wasOtpChanged)
-          || (isOtpwUser && !userConfig.secret_configured)
-          || (!isOtpwUser && globalConfig.enabled && !userConfig.secret_configured)
+          (isOtpwUser && !wasOtpChanged && isLocalUser)
+          || (globalConfig.enabled && !userConfig.secret_configured)
         );
 
         if (shouldShowFirstLoginDialog) {
