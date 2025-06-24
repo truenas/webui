@@ -232,6 +232,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     });
 
     this.form.controls.uid.disable();
+    this.form.controls.group_create.patchValue(false);
     this.form.controls.group_create.disable();
 
     if (user.immutable) {
