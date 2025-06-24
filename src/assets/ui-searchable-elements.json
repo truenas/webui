@@ -798,10 +798,9 @@
     "hierarchy": [
       "Credentials",
       "Users (WIP)",
-      "Create New User"
+      "Add User"
     ],
     "synonyms": [
-      "Add User",
       "Create User",
       "New User"
     ],
@@ -833,6 +832,79 @@
     ],
     "routerLink": null,
     "anchor": "users-list",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
+      "Users (WIP)",
+      "View API Keys"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/credentials/users-new"
+    ],
+    "routerLink": null,
+    "anchor": "view-api-keys",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
+      "Users (WIP)",
+      "Add API Key"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/credentials/users-new"
+    ],
+    "routerLink": null,
+    "anchor": "add-api-key",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
+      "Users (WIP)",
+      "Download Key"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/credentials/users-new"
+    ],
+    "routerLink": null,
+    "anchor": "download-key",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
+      "Users (WIP)",
+      "Toggle Lock Status"
+    ],
+    "synonyms": [
+      "Lock User",
+      "Unlock User"
+    ],
+    "requiredRoles": [
+      "ACCOUNT_WRITE"
+    ],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/credentials/users-new"
+    ],
+    "routerLink": null,
+    "anchor": "toggle-lock-status",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -884,6 +956,25 @@
     ],
     "routerLink": null,
     "anchor": "password-card",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
+      "Users (WIP)",
+      "Generate One-Time Password"
+    ],
+    "synonyms": [],
+    "requiredRoles": [
+      "ACCOUNT_WRITE"
+    ],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/credentials/users-new"
+    ],
+    "routerLink": null,
+    "anchor": "generate-one-time-password",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -2878,6 +2969,150 @@
     ],
     "routerLink": null,
     "anchor": "add-subsystem",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Shares",
+      "NVMe-oF",
+      "Copy NQN"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/sharing",
+      "nvme-of"
+    ],
+    "routerLink": null,
+    "anchor": "copy-nqn",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Shares",
+      "NVMe-oF",
+      "Details"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/sharing",
+      "nvme-of"
+    ],
+    "routerLink": null,
+    "anchor": "details",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Shares",
+      "NVMe-oF",
+      "Namespaces"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/sharing",
+      "nvme-of"
+    ],
+    "routerLink": null,
+    "anchor": "namespaces",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Shares",
+      "NVMe-oF",
+      "Ports"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/sharing",
+      "nvme-of"
+    ],
+    "routerLink": null,
+    "anchor": "ports",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Shares",
+      "NVMe-oF",
+      "Associated Hosts"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/sharing",
+      "nvme-of"
+    ],
+    "routerLink": null,
+    "anchor": "associated-hosts",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Shares",
+      "NVMe-oF",
+      "Add Host"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/sharing",
+      "nvme-of"
+    ],
+    "routerLink": null,
+    "anchor": "add-host",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Shares",
+      "NVMe-oF",
+      "Add Namespace"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/sharing",
+      "nvme-of"
+    ],
+    "routerLink": null,
+    "anchor": "add-namespace",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Shares",
+      "NVMe-oF",
+      "Add Port"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/sharing",
+      "nvme-of"
+    ],
+    "routerLink": null,
+    "anchor": "add-port",
     "triggerAnchor": null,
     "section": "ui"
   },
