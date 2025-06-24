@@ -109,7 +109,6 @@ export class AdditionalDetailsSectionComponent implements OnInit {
 
   readonly form = this.fb.group({
     full_name: ['' as string],
-
     group: [null as number],
     group_create: [true],
     groups: [[] as number[]],

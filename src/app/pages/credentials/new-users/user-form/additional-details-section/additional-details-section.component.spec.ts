@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { allCommands } from 'app/constants/all-commands.constant';
@@ -215,6 +216,9 @@ describe('AdditionalDetailsSectionComponent', () => {
       const homeEditable = await table.getHarnessForItem('Home Directory', EditableHarness);
       await homeEditable.open();
 
+      const checkbox = await loader.getAllHarnesses(MatCheckboxHarness.with({ label: /Default Permissions/ }));
+      await checkbox[0].uncheck();
+
       const perms = await loader.getHarness(IxPermissionsHarness.with({ label: 'Home Directory Permissions' }));
       expect(await perms.isDisabled()).toBe(true);
     });
@@ -229,9 +233,15 @@ describe('AdditionalDetailsSectionComponent', () => {
       const homeEditable = await table.getHarnessForItem('Home Directory', EditableHarness);
       await homeEditable.open();
 
+      const createCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Create Home Directory' }));
+      await createCheckbox.setValue(true);
+
       const explorer = await loader.getHarness(IxExplorerHarness.with({ label: 'Home Directory' }));
       await explorer.setValue('/mnt/tank/user');
       spectator.detectChanges();
+
+      const checkbox = await loader.getAllHarnesses(MatCheckboxHarness.with({ label: /Default Permissions/ }));
+      await checkbox[0].uncheck();
 
       const perms = await loader.getHarness(IxPermissionsHarness.with({ label: 'Home Directory Permissions' }));
       expect(await perms.isDisabled()).toBe(false);
@@ -246,6 +256,9 @@ describe('AdditionalDetailsSectionComponent', () => {
       const table = await loader.getHarness(DetailsTableHarness);
       const homeEditable = await table.getHarnessForItem('Home Directory', EditableHarness);
       await homeEditable.open();
+
+      const checkbox = await loader.getAllHarnesses(MatCheckboxHarness.with({ label: /Default Permissions/ }));
+      await checkbox[0].uncheck();
 
       const perms = await loader.getHarness(IxPermissionsHarness.with({ label: 'Home Directory Permissions' }));
       await perms.setValue('755');
@@ -271,12 +284,12 @@ describe('AdditionalDetailsSectionComponent', () => {
       const homeEditable = await table.getHarnessForItem('Home Directory', EditableHarness);
       await homeEditable.open();
 
-      const explorer = await loader.getHarness(IxExplorerHarness.with({ label: 'Home Directory' }));
-      const perms = await loader.getHarness(IxPermissionsHarness.with({ label: 'Home Directory Permissions' }));
+      const explorer = await loader.getHarnessOrNull(IxExplorerHarness.with({ label: 'Home Directory' }));
+      const perms = await loader.getHarnessOrNull(IxPermissionsHarness.with({ label: 'Home Directory Permissions' }));
       const createCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Create Home Directory' }));
 
-      expect(await explorer.isDisabled()).toBe(true);
-      expect(await perms.isDisabled()).toBe(true);
+      expect(explorer).toBeNull();
+      expect(perms).toBeNull();
       expect(await createCheckbox.isDisabled()).toBe(true);
     });
   });
