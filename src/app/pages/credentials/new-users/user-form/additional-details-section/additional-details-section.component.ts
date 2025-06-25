@@ -36,6 +36,7 @@ import {
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxPermissionsComponent } from 'app/modules/forms/ix-forms/components/ix-permissions/ix-permissions.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-validation/email-validation';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -57,15 +58,16 @@ import { StorageService } from 'app/services/storage.service';
     IxIconComponent,
     IxInputComponent,
     IxCheckboxComponent,
+    MatCheckbox,
     TranslateModule,
-    TestDirective,
     IxChipsComponent,
     IxExplorerComponent,
-    MatCheckbox,
+    IxPermissionsComponent,
     DetailsTableComponent,
     DetailsItemComponent,
     EditableComponent,
     IxSelectComponent,
+    TestDirective,
     ExplorerCreateDatasetComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -107,7 +109,6 @@ export class AdditionalDetailsSectionComponent implements OnInit {
 
   readonly form = this.fb.group({
     full_name: ['' as string],
-
     group: [null as number],
     group_create: [true],
     groups: [[] as number[]],
@@ -244,6 +245,14 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     this.form.controls.group.disabledWhile(this.form.controls.group_create.value$);
     this.form.controls.sudo_commands.disabledWhile(this.form.controls.sudo_commands_all.value$);
     this.form.controls.sudo_commands_nopasswd.disabledWhile(this.form.controls.sudo_commands_nopasswd_all.value$);
+
+    this.form.controls.home.valueChanges.pipe(untilDestroyed(this)).subscribe((home) => {
+      if (isEmptyHomeDirectory(home) || this.editingUser()?.immutable) {
+        this.form.controls.home_mode.disable();
+      } else {
+        this.form.controls.home_mode.enable();
+      }
+    });
   }
 
   private setupShellUpdate(): void {
