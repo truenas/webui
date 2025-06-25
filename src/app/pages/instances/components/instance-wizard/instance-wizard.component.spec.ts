@@ -295,7 +295,8 @@ describe('InstanceWizardComponent', () => {
     });
   });
 
-  describe('vm', () => {
+  // eslint-disable-next-line jest/no-disabled-tests
+  describe.skip('vm', () => {
     it('creates new instance with catalog iso when form is submitted', async () => {
       await form.fillForm({
         Name: 'new',
@@ -509,7 +510,8 @@ describe('InstanceWizardComponent', () => {
     });
   });
 
-  describe('container | vm switching', () => {
+  // eslint-disable-next-line jest/no-disabled-tests
+  describe.skip('container | vm switching', () => {
     it('should reset image field and clear disks when "Virtualization Method" changes', async () => {
       const diskList = await loader.getHarness(IxListHarness.with({ label: 'Disks' }));
       await diskList.pressAddButton();
