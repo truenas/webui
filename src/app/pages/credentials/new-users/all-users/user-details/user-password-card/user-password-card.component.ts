@@ -8,13 +8,13 @@ import {
   MatCardActions,
 } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
-import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { filter, of, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
+import { helptextUsers } from 'app/helptext/account/user-form';
 import { User } from 'app/interfaces/user.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
@@ -45,7 +45,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TestDirective,
     IxIconComponent,
     MatButton,
-    MatTooltip,
     UiSearchDirective,
   ],
 })
@@ -73,10 +72,7 @@ export class UserPasswordCardComponent {
 
     this.dialogService.confirm({
       title: this.translate.instant('Generate One-Time Password'),
-      message: this.translate.instant(
-        'Are you sure you want to generate a one-time password for "{username}" user?',
-        { username },
-      ),
+      message: this.translate.instant(helptextUsers.oneTimePasswordWarning),
       hideCheckbox: true,
     }).pipe(
       filter(Boolean),
