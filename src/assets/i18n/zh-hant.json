@@ -1187,6 +1187,8 @@
   "Error when loading similar apps.": "",
   "Error:": "",
   "Errors": "",
+  "Errors in {field}: {messages}": "",
+  "Errors in the form: {messages}": "",
   "Escalation": "",
   "Est. Usable Raw Capacity": "",
   "Establishing a connection requires  that one of the connection systems has open TCP ports. Choose which  system (<i>LOCAL</i> or <i>REMOTE</i>) will open ports. Consult your IT  department to determine which systems are allowed to open ports.": "",

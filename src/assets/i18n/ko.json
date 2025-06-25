@@ -6,6 +6,8 @@
   "An ACL is detected on the selected path but <i>Enable ACL</i> is not selected for this share.  ACLs should be stripped from the dataset prior to creating an SMB share.": "",
   "Configure manually": "",
   "Default Permissions": "",
+  "Errors in {field}: {messages}": "",
+  "Errors in the form: {messages}": "",
   "Last Action": "",
   "New {username} group": "",
   "Once generated, one time-password is only valid for one login within 24 hours and does not persist across reboots. User will be required to set new password after they log in.<br><br> Do you want to continue?": "",

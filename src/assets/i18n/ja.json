@@ -921,6 +921,8 @@
   "Environment Variable": "",
   "Environment Variables": "",
   "Error details for ": "",
+  "Errors in {field}: {messages}": "",
+  "Errors in the form: {messages}": "",
   "Escalation": "",
   "Event": "",
   "everyone@": "",

@@ -53,6 +53,8 @@
   "Enable Asymmetric Namespace Access (ANA)": "",
   "Enable Instances": "",
   "Encryption root means that dataset has its own encryption settings. Only encryption roots can be directly locked, unlocked, or have their keys changed. Child datasets will inherit encryption settings from the parent encryption root.": "",
+  "Errors in {field}: {messages}": "",
+  "Errors in the form: {messages}": "",
   "Escalation": "",
   "Existing File": "",
   "File Size": "",

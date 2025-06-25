@@ -187,6 +187,8 @@
   "Enter or paste the <a   href=\"https://help.victorops.com/knowledge-base/api/\"   target=\"_blank\">Splunk On-Call API key</a>.": "",
   "Enter or paste the <a   href=\"https://portal.victorops.com/public/api-docs.html#/Routing32Keys\"   target=\"_blank\">Splunk On-Call routing key</a>.": "",
   "Enterprise": "",
+  "Errors in {field}: {messages}": "",
+  "Errors in the form: {messages}": "",
   "Escalation": "",
   "Existing File": "",
   "Expert Support When You Need It": "",
