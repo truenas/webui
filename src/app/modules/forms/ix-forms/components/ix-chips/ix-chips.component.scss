@@ -1,3 +1,5 @@
+@import 'mixins/text';
+
 :host {
   color: var(--fg1);
   display: block;
@@ -24,6 +26,7 @@
   border-radius: 2px;
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   font-size: 12px;
   padding: 2px 8px;
   position: relative;
@@ -45,6 +48,17 @@
 .chip {
   display: flex;
   font-size: 11px;
+  height: inherit;
+  word-break: break-word;
+
+  &::ng-deep {
+    span {
+      overflow: hidden;
+      padding: 1px 0;
+      white-space: normal;
+      word-break: break-word;
+    }
+  }
 }
 
 .mat-standard-chip {
