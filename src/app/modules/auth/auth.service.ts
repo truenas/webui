@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
+import { environment } from 'environments/environment';
 import { LocalStorage } from 'ngx-webstorage';
 import {
   BehaviorSubject,
@@ -157,7 +158,8 @@ export class AuthService {
   }
 
   setQueryToken(token: string | null): void {
-    if (!token || this.window.location.protocol !== 'https:') {
+    const isSecure = this.window.location.protocol === 'https:' || !environment.production;
+    if (!token || !isSecure) {
       return;
     }
 
