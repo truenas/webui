@@ -3,18 +3,15 @@ import {
   Component, ChangeDetectionStrategy,
   output,
   input,
-  effect,
   signal,
 } from '@angular/core';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { injectParams } from 'ngxtension/inject-params';
 import { of } from 'rxjs';
 import { getUserType } from 'app/helpers/user.helper';
 import { User } from 'app/interfaces/user.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
-import { ApiDataProvider } from 'app/modules/ix-table/classes/api-data-provider/api-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { templateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
@@ -25,6 +22,7 @@ import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-c
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { TablePagination } from 'app/modules/ix-table/interfaces/table-pagination.interface';
 import { createTable } from 'app/modules/ix-table/utils';
+import { UsersDataProvider } from 'app/pages/credentials/new-users/all-users/users-data-provider';
 import { UsersSearchComponent } from 'app/pages/credentials/new-users/all-users/users-search/users-search.component';
 import { UserAccessCellComponent } from './user-access-cell/user-access-cell.component';
 
@@ -49,15 +47,13 @@ import { UserAccessCellComponent } from './user-access-cell/user-access-cell.com
   ],
 })
 export class UserListComponent {
-  readonly userName = injectParams('id');
-
   readonly isMobileView = input<boolean>();
   readonly toggleShowMobileDetails = output<boolean>();
   readonly userSelected = output<User>();
   protected readonly currentBatch = signal<User[]>([]);
   // TODO: NAS-135333 - Handle case after url linking is implemented to decide when no to show selected user
   readonly isSelectedUserVisible$ = of(true);
-  readonly dataProvider = input.required<ApiDataProvider<'user.query'>>();
+  readonly dataProvider = input.required<UsersDataProvider>();
 
   protected readonly pagination: TablePagination = {
     pageSize: 50,
@@ -93,21 +89,6 @@ export class UserListComponent {
     private translate: TranslateService,
     private searchDirectives: UiSearchDirectivesService,
   ) {
-    effect(() => {
-      const dataProvider = this.dataProvider();
-      if (!dataProvider) {
-        return;
-      }
-
-      dataProvider.currentPage$.pipe(
-        untilDestroyed(this),
-      ).subscribe({
-        next: (users) => {
-          this.currentBatch.set(users);
-          this.userSelected.emit(users[0]);
-        },
-      });
-    });
     setTimeout(() => {
       this.handlePendingGlobalSearchElement();
     });

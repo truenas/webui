@@ -2,20 +2,20 @@ import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, OnInit,
   viewChild, OnDestroy,
-  signal,
-  computed,
-  Signal,
+  effect,
 } from '@angular/core';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { injectParams } from 'ngxtension/inject-params';
 import {
-  combineLatest, filter, startWith, tap,
+  combineLatest, startWith, tap,
 } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { CollectionChangeType } from 'app/enums/api.enum';
+import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
-import { ApiDataProvider } from 'app/modules/ix-table/classes/api-data-provider/api-data-provider';
 import { PaginationServerSide } from 'app/modules/ix-table/classes/api-data-provider/pagination-server-side.class';
 import { SortingServerSide } from 'app/modules/ix-table/classes/api-data-provider/sorting-server-side.class';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
@@ -27,6 +27,7 @@ import { allUsersElements } from 'app/pages/credentials/new-users/all-users/all-
 import { UserDetailHeaderComponent } from 'app/pages/credentials/new-users/all-users/user-details/user-detail-header/user-detail-header.component';
 import { UserDetailsComponent } from 'app/pages/credentials/new-users/all-users/user-details/user-details.component';
 import { UserListComponent } from 'app/pages/credentials/new-users/all-users/user-list/user-list.component';
+import { UsersDataProvider } from 'app/pages/credentials/new-users/all-users/users-data-provider';
 
 @UntilDestroy()
 @Component({
@@ -48,55 +49,73 @@ import { UserListComponent } from 'app/pages/credentials/new-users/all-users/use
   ],
 })
 export class AllUsersComponent implements OnInit, OnDestroy {
-  private defaultParams = [[['OR', [['builtin', '=', false], ['username', '=', 'root']]]]] as QueryParams<User>;
-  protected dataProvider: Signal<ApiDataProvider<'user.query'>> = computed(() => {
-    const dataProvider = new ApiDataProvider(this.api, 'user.query', this.defaultParams);
-    dataProvider.paginationStrategy = new PaginationServerSide();
-    dataProvider.sortingStrategy = new SortingServerSide();
-    dataProvider.setSorting({
-      propertyName: 'username',
-      direction: SortDirection.Asc,
-      active: 0,
-    });
-    dataProvider.setParams([[['OR', [['builtin', '=', false], ['username', '=', 'root']]]]] as QueryParams<User>);
-    dataProvider.currentPage$.pipe(filter(Boolean), untilDestroyed(this)).subscribe((users) => {
-      dataProvider.expandedRow = this.masterDetailView().isMobileView() ? null : users[0];
-    });
-    dataProvider.load();
-    return dataProvider;
-  });
+  protected dataProvider: UsersDataProvider;
+  private readonly userName = injectParams('id');
 
   protected readonly searchableElements = allUsersElements;
   protected readonly masterDetailView = viewChild.required(MasterDetailViewComponent);
-  protected readonly selectedUser = signal<User>(null);
 
   constructor(
     private api: ApiService,
-  ) { }
+    private router: Router,
+  ) {
+    effect(() => {
+      const urlUsername = this.userName();
+      const selectedUserOnCurrentPage = this.dataProvider.getUserFromCurrentPage(urlUsername);
+      if (selectedUserOnCurrentPage) {
+        this.dataProvider.setExpandedRow(selectedUserOnCurrentPage);
+        return;
+      }
+      this.createDataProvider();
+    });
+  }
 
   ngOnInit(): void {
+    this.createDataProvider();
     this.subscribeToUserChanges();
   }
 
+  private createDataProvider(): void {
+    const urlUsername = this.userName();
+    const defaultParams = [[['OR', [['builtin', '=', false], ['username', '=', urlUsername || 'root']]]]] as QueryParams<User>;
+    if (!this.dataProvider) {
+      this.dataProvider = new UsersDataProvider(this.router, this.api, defaultParams);
+    }
+    this.dataProvider.paginationStrategy = new PaginationServerSide();
+    this.dataProvider.sortingStrategy = new SortingServerSide();
+    this.dataProvider.setSorting({
+      propertyName: 'uid',
+      direction: SortDirection.Asc,
+      active: 1,
+    });
+
+    if (urlUsername) {
+      this.dataProvider.setPriorityUsername(urlUsername);
+    }
+    this.dataProvider.load();
+  }
+
   ngOnDestroy(): void {
-    this.dataProvider().unsubscribe();
+    this.dataProvider.unsubscribe();
   }
 
   private subscribeToUserChanges(): void {
     combineLatest([
       this.api.subscribe('user.query').pipe(startWith(null)),
-      this.dataProvider().currentPage$,
+      this.dataProvider.currentPage$,
     ]).pipe(
-      tap(([event, users]) => {
+      tap(([event, users]: [ApiEvent<User> | null, User[]]) => {
         switch (event?.msg) {
           case CollectionChangeType.Changed:
-            this.dataProvider().currentPage$.next(
-              users.map((item) => (item.id === event.id ? { ...item, ...event?.fields } : item)),
+            this.dataProvider.currentPage$.next(
+              users.map((item: User) => (item.id === event.id ? { ...item, ...event?.fields } : item)),
             );
             break;
           case CollectionChangeType.Removed:
+            this.dataProvider.load();
+            break;
           case CollectionChangeType.Added:
-            this.dataProvider().load();
+            this.router.navigate(['credentials', 'users-new', 'view', event.fields.username]);
             break;
           default:
             break;
@@ -104,5 +123,13 @@ export class AllUsersComponent implements OnInit, OnDestroy {
       }),
       untilDestroyed(this),
     ).subscribe();
+  }
+
+  protected onUserSelected(user: User): void {
+    if (!user) {
+      return;
+    }
+
+    this.router.navigate(['/credentials', 'users-new', 'view', user.username]);
   }
 }
