@@ -104,7 +104,7 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
     this.window.localStorage.setItem('showQr2FaWarning', 'false');
   }
 
-  protected loadTwoFactorConfigs(): void {
+  private loadTwoFactorConfigs(): void {
     this.isDataLoading.set(true);
     forkJoin([
       this.authService.userTwoFactorConfig$.pipe(take(1)),

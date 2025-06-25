@@ -208,7 +208,7 @@ export class UserDetailsRowComponent implements OnInit {
       .subscribe();
   }
 
-  viewUserApiKeys(user: User): void {
+  private viewUserApiKeys(user: User): void {
     this.router.navigate(['/credentials/users/api-keys'], {
       queryParams: { userName: user.username },
     });

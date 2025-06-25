@@ -115,7 +115,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
     }
   }
 
-  initShell(): void {
+  private initShell(): void {
     this.authService.getOneTimeToken().pipe(
       take(1),
       tap((token) => {
@@ -135,7 +135,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
     this.resizeTerm();
   }
 
-  initializeTerminal(): void {
+  private initializeTerminal(): void {
     this.xterm = new Terminal(this.terminalSettings);
 
     this.fitAddon = new FitAddon();
@@ -152,12 +152,12 @@ export class TerminalComponent implements OnInit, OnDestroy {
     });
   }
 
-  drawTerminal(): void {
+  private drawTerminal(): void {
     this.xterm.open(this.container().nativeElement);
     this.fitAddon.fit();
   }
 
-  updateTerminal(): void {
+  private updateTerminal(): void {
     if (this.shellConnected) {
       this.xterm.clear();
     }
@@ -170,7 +170,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
     this.xterm.loadAddon(this.attachAddon);
   }
 
-  resizeTerm(): boolean {
+  private resizeTerm(): boolean {
     this.xterm.options.fontSize = this.fontSize;
     this.fitAddon.fit();
     const size = this.fitAddon.proposeDimensions();
@@ -189,7 +189,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
     this.resizeTerm();
   }
 
-  initializeWebShell(): void {
+  private initializeWebShell(): void {
     this.shellService.connect(this.token, this.conf().connectionData);
 
     this.shellService.shellConnected$

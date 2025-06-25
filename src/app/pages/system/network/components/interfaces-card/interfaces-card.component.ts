@@ -153,7 +153,7 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
     private networkService: NetworkService,
   ) {}
 
-  protected isPhysical(row: NetworkInterface): boolean {
+  private isPhysical(row: NetworkInterface): boolean {
     return row.type === NetworkInterfaceType.Physical;
   }
 

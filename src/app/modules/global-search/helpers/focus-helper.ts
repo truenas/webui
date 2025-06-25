@@ -1,5 +1,4 @@
-export function moveToNextFocusableElement(): void {
-  // TODO: Refactor to use WINDOW injection token.
+export function moveToNextFocusableElement(document: Document): void {
   const container = document.querySelector('.search-box-wrapper');
 
   if (!container) {
@@ -19,7 +18,7 @@ export function moveToNextFocusableElement(): void {
   (sortedElements[nextIndex] as HTMLElement)?.focus();
 }
 
-export function moveToPreviousFocusableElement(): void {
+export function moveToPreviousFocusableElement(document: Document): void {
   const container = document.querySelector('.search-box-wrapper');
 
   if (!container) {

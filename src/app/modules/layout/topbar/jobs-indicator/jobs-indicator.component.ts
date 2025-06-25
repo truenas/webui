@@ -57,7 +57,7 @@ export class JobsIndicatorComponent implements OnInit {
     this.store$.dispatch(jobIndicatorPressed());
   }
 
-  onJobPanelClosed(): void {
+  private onJobPanelClosed(): void {
     this.store$.dispatch(jobPanelClosed());
   }
 

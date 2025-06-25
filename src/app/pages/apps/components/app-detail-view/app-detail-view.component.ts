@@ -109,7 +109,7 @@ export class AppDetailViewComponent implements OnInit {
     });
   }
 
-  setLightbox(): void {
+  private setLightbox(): void {
     const app = this.app();
     const images = app?.screenshots?.map((image) => new ImageItem({ src: image, thumb: image }));
     if (!images) {

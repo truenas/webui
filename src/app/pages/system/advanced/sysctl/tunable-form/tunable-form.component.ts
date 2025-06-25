@@ -102,7 +102,7 @@ export class TunableFormComponent implements OnInit {
     }
   }
 
-  protected setTunableForEdit(): void {
+  private setTunableForEdit(): void {
     this.form.patchValue(this.editingTunable);
     this.form.controls.type.disable();
     this.form.controls.var.disable();

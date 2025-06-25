@@ -240,7 +240,7 @@ export class InterfaceFormComponent implements OnInit {
     }
   }
 
-  setInterfaceForEdit(nic: NetworkInterface): void {
+  private setInterfaceForEdit(nic: NetworkInterface): void {
     nic.aliases.forEach(() => this.addStaticIpAddress());
     this.form.patchValue({
       ...nic,

@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy, Component, computed, input,
+  output,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
@@ -12,6 +13,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { filter, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role, roleNames } from 'app/enums/role.enum';
+import { hasShellAccess } from 'app/helpers/user.helper';
 import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -51,6 +53,7 @@ import { UrlOptionsService } from 'app/services/url-options.service';
 })
 export class UserAccessCardComponent {
   user = input.required<User>();
+  reloadUsers = output();
 
   protected readonly Role = Role;
   protected readonly unlockUserText = this.translate.instant('Unlock User');
@@ -70,9 +73,7 @@ export class UserAccessCardComponent {
     return null;
   });
 
-  readonly noShellAccess = computed(() => {
-    return this.user().shell === '/usr/bin/nologin' || this.user().shell === '/usr/sbin/nologin';
-  });
+  readonly noShellAccess = computed(() => !hasShellAccess(this.user()));
 
   readonly rolesAccessStatus = computed<string | null>(() => {
     return this.user().roles
@@ -147,7 +148,7 @@ export class UserAccessCardComponent {
     this.slideIn
       .open(ApiKeyFormComponent, { data: { username: this.user().username } })
       .pipe(untilDestroyed(this)).subscribe(() => {
-        // TODO: Reload single record once routing is in.
+        this.reloadUsers.emit();
       });
   }
 }

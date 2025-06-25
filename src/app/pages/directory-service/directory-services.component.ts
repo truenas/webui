@@ -105,7 +105,7 @@ export class DirectoryServicesComponent implements OnInit {
     this.refreshCards();
   }
 
-  protected refreshCards(): void {
+  private refreshCards(): void {
     forkJoin([
       this.api.call('directoryservices.get_state'),
       this.api.call('activedirectory.config'),
@@ -210,14 +210,14 @@ export class DirectoryServicesComponent implements OnInit {
     ).subscribe(() => this.refreshCards());
   }
 
-  protected openKerberosSettingsForm(): void {
+  private openKerberosSettingsForm(): void {
     this.slideIn.open(KerberosSettingsComponent).pipe(
       filter(Boolean),
       untilDestroyed(this),
     ).subscribe(() => this.refreshCards());
   }
 
-  protected refreshTables(): void {
+  private refreshTables(): void {
     if (this.idmapListComponent()) {
       this.idmapListComponent().getIdmaps();
     }

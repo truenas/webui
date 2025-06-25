@@ -14,6 +14,7 @@ import {
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
+import { QueryParams } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
 import { PaginationServerSide } from 'app/modules/ix-table/classes/api-data-provider/pagination-server-side.class';
 import { SortingServerSide } from 'app/modules/ix-table/classes/api-data-provider/sorting-server-side.class';
@@ -72,7 +73,9 @@ export class AllUsersComponent implements OnInit, OnDestroy {
   }
 
   private createDataProvider(): void {
-    this.dataProvider = new UsersDataProvider(this.api);
+    const urlUsername = this.userName();
+    const defaultParams = [[['OR', [['builtin', '=', false], ['username', '=', urlUsername || 'root']]]]] as QueryParams<User>;
+    this.dataProvider = new UsersDataProvider(this.api, defaultParams);
     this.dataProvider.paginationStrategy = new PaginationServerSide();
     this.dataProvider.sortingStrategy = new SortingServerSide();
     this.dataProvider.setSorting({
@@ -81,14 +84,13 @@ export class AllUsersComponent implements OnInit, OnDestroy {
       active: 1,
     });
 
-    const urlUsername = this.userName();
     if (urlUsername) {
       this.dataProvider.setPriorityUsername(urlUsername);
     }
 
     this.dataProvider.currentPage$.pipe(filter(Boolean), untilDestroyed(this)).subscribe((users: User[]) => {
-      this.dataProvider.expandedRow = this.masterDetailView().isMobileView() ? null : users[0];
       this.handleInitialUserSelection(users);
+      this.dataProvider.expandedRow = this.masterDetailView().isMobileView() ? null : this.selectedUser();
     });
     this.dataProvider.load();
   }

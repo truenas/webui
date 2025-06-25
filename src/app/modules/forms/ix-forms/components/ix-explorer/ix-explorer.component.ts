@@ -204,7 +204,7 @@ export class IxExplorerComponent implements ControlValueAccessor {
     );
   }
 
-  onSelectionChanged(): void {
+  private onSelectionChanged(): void {
     let newValue: string[] | string = Object.entries(this.tree().treeModel.selectedLeafNodeIds)
       .filter(([, isSelected]) => isSelected)
       .map(([nodeId]) => nodeId);
@@ -249,7 +249,7 @@ export class IxExplorerComponent implements ControlValueAccessor {
 
   private setInitialNodes(): void {
     const roots = this.rootNodes();
-    this.nodes.set([...roots]);
+    this.nodes.set(roots.map((root) => ({ ...root })));
   }
 
   private updateInputValue(): void {

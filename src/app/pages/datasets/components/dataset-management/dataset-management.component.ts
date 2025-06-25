@@ -215,7 +215,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     }
   }
 
-  listenForLoading(): void {
+  private listenForLoading(): void {
     this.isLoading$.pipe(untilDestroyed(this)).subscribe((isLoading) => {
       this.isLoading = isLoading;
       this.cdr.markForCheck();

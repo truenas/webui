@@ -46,7 +46,7 @@ export class UnusedResourcesComponent implements OnInit {
     this.subscribeToDiskQuery();
   }
 
-  protected updateUnusedDisks(): void {
+  private updateUnusedDisks(): void {
     this.api.call('disk.details').pipe(
       this.errorHandler.withErrorHandler(),
       untilDestroyed(this),

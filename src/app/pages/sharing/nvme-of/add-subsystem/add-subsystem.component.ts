@@ -120,7 +120,7 @@ export class AddSubsystemComponent {
       this.errorHandler.withErrorHandler(),
       untilDestroyed(this),
     ).subscribe(({ subsystem, relatedErrors }) => {
-      if (subsystem && relatedErrors?.length) {
+      if (subsystem && relatedErrors?.length > 0) {
         this.matDialog.open(SubsystemPartiallyCreatedDialogComponent, {
           data: {
             subsystem,
@@ -149,8 +149,13 @@ export class AddSubsystemComponent {
 
     const operations: Observable<unknown>[] = [
       withErrorHandling(this.nvmeOfService.associatePorts(subsystem, this.form.value.ports), this.translate.instant('Ports')),
-      withErrorHandling(this.nvmeOfService.associateHosts(subsystem, this.form.value.allowedHosts), this.translate.instant('Hosts')),
     ];
+
+    if (!this.form.value.allowAnyHost) {
+      operations.push(
+        withErrorHandling(this.nvmeOfService.associateHosts(subsystem, this.form.value.allowedHosts), this.translate.instant('Hosts')),
+      );
+    }
 
     if (this.form.value.namespaces?.length) {
       const namespaceOps = this.createNamespaces(subsystem, this.form.value.namespaces)

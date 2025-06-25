@@ -132,7 +132,7 @@ export class LocalizationFormComponent implements OnInit {
     }
   }
 
-  protected setTimeOptions(tz: string): void {
+  private setTimeOptions(tz: string): void {
     const timeOptions = this.localeService.getTimeFormatOptions(tz);
     this.timeFormat.options = of(timeOptions);
     const dateOptions = this.localeService.getDateFormatOptions(tz);

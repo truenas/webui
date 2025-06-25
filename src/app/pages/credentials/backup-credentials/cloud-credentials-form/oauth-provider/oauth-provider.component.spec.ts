@@ -2,11 +2,13 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { byText } from '@ngneat/spectator';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { WINDOW } from 'app/helpers/window.helper';
 import { OauthMessage } from 'app/interfaces/oauth-message.interface';
 import { OauthButtonComponent } from 'app/modules/buttons/oauth-button/oauth-button.component';
+import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import {
   OauthProviderComponent, OauthProviderData,
@@ -75,6 +77,8 @@ describe('OauthProviderComponent', () => {
     const loginButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In To Provider' }));
     await loginButton.click();
 
+    spectator.click(spectator.query(byText('Configure manually')));
+
     const form = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, IxFormHarness);
     const values = await form.getValues();
 
@@ -104,5 +108,44 @@ describe('OauthProviderComponent', () => {
 
     expect(spectator.inject<Window>(WINDOW).removeEventListener)
       .toHaveBeenCalledWith('message', expect.any(Function), false);
+  });
+
+  describe('manual configuration', () => {
+    it('shows "Configure manually" link by default and hides oAuth input fields', async () => {
+      const configureLink = spectator.query(byText('Configure manually'));
+      expect(configureLink).toExist();
+      expect(configureLink).toHaveText('Configure manually');
+
+      const clientIdInput = await loader.getHarnessOrNull(IxInputHarness.with({ label: 'OAuth Client ID' }));
+      const clientSecretInput = await loader.getHarnessOrNull(IxInputHarness.with({ label: 'OAuth Client Secret' }));
+
+      expect(clientIdInput).toBeNull();
+      expect(clientSecretInput).toBeNull();
+    });
+
+    it('shows OAuth input fields when "Configure manually" is clicked', async () => {
+      const configureLink = spectator.query(byText('Configure manually'));
+      spectator.click(configureLink);
+
+      const clientIdInput = await loader.getHarness(IxInputHarness.with({ label: 'OAuth Client ID' }));
+      const clientSecretInput = await loader.getHarness(IxInputHarness.with({ label: 'OAuth Client Secret' }));
+
+      expect(clientIdInput).toExist();
+      expect(clientSecretInput).toExist();
+    });
+
+    it('hides manual configuration fields when OAuth login is successful', async () => {
+      const configureLink = spectator.query(byText('Configure manually'));
+      spectator.click(configureLink);
+
+      const loginButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In To Provider' }));
+      await loginButton.click();
+
+      const clientIdInput = await loader.getHarnessOrNull(IxInputHarness.with({ label: 'OAuth Client ID' }));
+      const clientSecretInput = await loader.getHarnessOrNull(IxInputHarness.with({ label: 'OAuth Client Secret' }));
+
+      expect(clientIdInput).toBeNull();
+      expect(clientSecretInput).toBeNull();
+    });
   });
 });

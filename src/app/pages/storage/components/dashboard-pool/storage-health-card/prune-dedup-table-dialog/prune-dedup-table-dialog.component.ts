@@ -100,7 +100,7 @@ export class PruneDedupTableDialog {
       });
   }
 
-  formatSliderAsPercentage(value: number): string {
+  protected formatSliderAsPercentage(value: number): string {
     return `${value}%`;
   }
 }
