@@ -1,5 +1,7 @@
 {
   "": "",
+  "Filter by Type": "",
+  "Hide Built-in Users": "",
   "New {username} group": "",
   "\n              It looks like your session has been inactive for more than {lifetime} seconds.<br>\n              For security reasons we will log you out at {time}.\n            ": "\nПохоже, что ваш сеанс была неактивна более {lifetime} секунд.<br>\nПо соображениям безопасности мы выйдем из системы в любое время.\n",
   " as of {dateTime}": " в {dateTime}",
@@ -4165,7 +4167,6 @@
   "Show All Users": "Показать всех пользователей",
   "Show Built-in Groups": "Показать встроенные группы",
   "Show Built-in Users": "Показать встроенных пользователей",
-  "Show Builtin Users": "Показать встроенных пользователей",
   "Show Console Messages": "Показывать консоль сообщений",
   "Show Events": "показать события",
   "Show Expander Status": "Показать расширенное состояние",
