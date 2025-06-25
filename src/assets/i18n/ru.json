@@ -1,6 +1,5 @@
 {
   "": "",
-  "Generate One-Time Password …": "",
   "New {username} group": "",
   "Once generated, one time-password is only valid for one login within 24 hours and does not persist across reboots. User will be required to set new password after they log in.<br><br> Do you want to continue?": "",
   "Read only client that supports directory listings from popular web servers like Apache and Nginx.": "",
