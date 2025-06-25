@@ -8,19 +8,18 @@ import {
   MatCardActions,
 } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
-import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { filter, of, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
+import { helptextUsers } from 'app/helptext/account/user-form';
 import { User } from 'app/interfaces/user.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { OneTimePasswordCreatedDialog } from 'app/pages/credentials/users/one-time-password-created-dialog/one-time-password-created-dialog.component';
@@ -39,13 +38,11 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     MatCardContent,
     TranslateModule,
     FormatDateTimePipe,
-    YesNoPipe,
     MatCardActions,
     RequiresRolesDirective,
     TestDirective,
     IxIconComponent,
     MatButton,
-    MatTooltip,
   ],
 })
 export class UserPasswordCardComponent {
@@ -70,10 +67,7 @@ export class UserPasswordCardComponent {
 
     this.dialogService.confirm({
       title: this.translate.instant('Generate One-Time Password'),
-      message: this.translate.instant(
-        'Are you sure you want to generate a one-time password for "{username}" user?',
-        { username },
-      ),
+      message: this.translate.instant(helptextUsers.oneTimePasswordWarning),
       hideCheckbox: true,
     }).pipe(
       filter(Boolean),

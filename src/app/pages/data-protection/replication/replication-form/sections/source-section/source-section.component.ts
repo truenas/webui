@@ -74,7 +74,7 @@ export class SourceSectionComponent implements OnChanges {
     hold_pending_snapshots: [false],
   });
 
-  protected readonly emptyRootNode = emptyRootNode;
+  protected readonly emptyRootNode = [emptyRootNode];
 
   readonly timeOptions$ = of(this.taskService.getTimeOptions());
   readonly snapshotNamingOptions$ = of(mapToOptions(snapshotNamingOptionNames, this.translate));

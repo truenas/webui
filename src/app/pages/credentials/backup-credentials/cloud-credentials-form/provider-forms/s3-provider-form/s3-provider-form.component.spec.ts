@@ -1,6 +1,7 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { DetailsTableHarness } from 'app/modules/details-table/details-table.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import {
   S3ProviderFormComponent,
@@ -9,6 +10,7 @@ import {
 describe('S3ProviderFormComponent', () => {
   let spectator: Spectator<S3ProviderFormComponent>;
   let form: IxFormHarness;
+  let details: DetailsTableHarness;
   const createComponent = createComponentFactory({
     component: S3ProviderFormComponent,
     imports: [
@@ -19,6 +21,7 @@ describe('S3ProviderFormComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     form = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, IxFormHarness);
+    details = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, DetailsTableHarness);
   });
 
   it('show existing provider attributes when they are set as form values', async () => {
@@ -32,17 +35,19 @@ describe('S3ProviderFormComponent', () => {
       skip_region: false,
     });
 
-    const values = await form.getValues();
-    expect(values).toEqual({
+    const formValues = await form.getValues();
+    expect(formValues).toEqual({
       'Access Key ID': '12345678',
-      'Endpoint URL': 'https://kms-fips.us-west-2.amazonaws.com',
-
-      'Maximum Upload Parts': '10000',
-      Region: 'us-west-2',
       'Secret Access Key': 'key',
-
       'Use Signature Version 2': true,
       'Disable Endpoint Region': false,
+    });
+
+    const detailValues = await details.getValues();
+    expect(detailValues).toEqual({
+      'Endpoint URL': 'https://kms-fips.us-west-2.amazonaws.com',
+      'Maximum Upload Parts': '10000',
+      Region: 'us-west-2',
     });
   });
 
@@ -50,13 +55,14 @@ describe('S3ProviderFormComponent', () => {
     await form.fillForm({
       'Access Key ID': '87654321',
       'Secret Access Key': 'secret',
+      'Use Signature Version 2': false,
+      'Disable Endpoint Region': true,
+    });
 
+    await details.setValues({
       'Maximum Upload Parts': 9000,
       Region: 'us-east-1',
       'Endpoint URL': 'https://new.us-west-2.amazonaws.com',
-
-      'Use Signature Version 2': false,
-      'Disable Endpoint Region': true,
     });
 
     const values = spectator.component.getSubmitAttributes();
