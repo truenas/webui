@@ -48,7 +48,7 @@ describe('AdditionalDetailsSectionComponent', () => {
     group: {
       id: 101,
     },
-    groups: [101],
+    groups: [102, 103],
     immutable: false,
   } as User;
 
@@ -83,10 +83,20 @@ describe('AdditionalDetailsSectionComponent', () => {
           '/usr/bin/bash': 'bash',
           '/usr/bin/zsh': 'zsh',
         } as Choices),
-        mockCall('group.query', [{
-          id: 101,
-          group: 'test-group',
-        }] as Group[]),
+        mockCall('group.query', [
+          {
+            id: 101,
+            group: 'test-group',
+          },
+          {
+            id: 102,
+            group: 'test-group-2',
+          },
+          {
+            id: 103,
+            group: 'test-group-3',
+          },
+        ] as Group[]),
         mockCall('sharing.smb.query', []),
         mockCall('filesystem.stat', {
           mode: 16889,
@@ -175,7 +185,7 @@ describe('AdditionalDetailsSectionComponent', () => {
       expect(values).toEqual({
         'Full Name': 'test',
         Email: 'Not Set',
-        Groups: 'Primary Group: test-group  Auxiliary Groups: test-group',
+        Groups: 'Primary Group: test-group  Auxiliary Groups: test-group-2, test-group-3',
         'Home Directory': '/home/test',
         UID: '1004',
         Shell: '/usr/bin/bash',
@@ -198,7 +208,7 @@ describe('AdditionalDetailsSectionComponent', () => {
       expect(await editables.getValues()).toEqual({
         'Full Name': 'test',
         Email: 'Not Set',
-        Groups: 'Primary Group: test-group  Auxiliary Groups: test-group',
+        Groups: 'Primary Group: test-group  Auxiliary Groups: test-group-2, test-group-3',
         'Home Directory': '/home/test',
         UID: '1004',
       });
@@ -296,9 +306,9 @@ describe('AdditionalDetailsSectionComponent', () => {
       const perms = await loader.getHarnessOrNull(IxPermissionsHarness.with({ label: 'Home Directory Permissions' }));
       const createCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Create Home Directory' }));
 
-      expect(explorer).toBeNull();
-      expect(perms).toBeNull();
+      expect(await explorer.isDisabled()).toBe(true);
       expect(await createCheckbox.isDisabled()).toBe(true);
+      expect(perms).toBeNull();
     });
   });
 });
