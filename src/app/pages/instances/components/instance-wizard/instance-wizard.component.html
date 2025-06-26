@@ -16,74 +16,22 @@
         [hint]="instancesHelptext.nameHint | translate"
       ></ix-input>
 
-      @if (false) {
-        <ix-icon-group
-          formControlName="instance_type"
-          [label]="instancesHelptext.virtualizationMethodLabel | translate"
+      <div class="image-field">
+        <ix-input
+          class="input"
+          formControlName="image"
+          [readonly]="true"
+          [label]="'Image' | translate"
           [required]="true"
-          [options]="virtualizationTypeIcons"
-          [showLabels]="true"
-        ></ix-icon-group>
-      }
+        ></ix-input>
 
-      @if (isVm()) {
-        <ix-radio-group
-          formControlName="source_type"
-          [label]="'VM Image Options' | translate"
-          [required]="true"
-          [options]="imageSourceTypeOptions$"
-        ></ix-radio-group>
-      }
-
-      @switch (form.value.source_type) {
-        @case (VirtualizationSource.Image) {
-          <div class="image-field">
-            <ix-input
-              class="input"
-              formControlName="image"
-              [readonly]="true"
-              [label]="'Image' | translate"
-              [required]="true"
-            ></ix-input>
-
-            <button
-              mat-button
-              ixTest="browse-images"
-              type="button"
-              (click)="onBrowseCatalogImages()"
-            >{{ 'Browse Catalog' | translate }}</button>
-          </div>
-        }
-
-        @case (VirtualizationSource.Zvol) {
-          <div class="image-field">
-            <ix-input
-              class="input"
-              formControlName="volume"
-              [readonly]="true"
-              [label]="'Volume' | translate"
-              [required]="true"
-            ></ix-input>
-
-            <button
-              mat-button
-              ixTest="browse-isos"
-              type="button"
-              (click)="onSelectRootVolume()"
-            >{{ 'Select Volume' | translate }}</button>
-          </div>
-
-          @if (form.value.volume_type === VolumeContentType.Iso) {
-            <ix-combobox
-              formControlName="image_os"
-              [label]="'OS Type' | translate"
-              [allowCustomValue]="true"
-              [tooltip]="instancesHelptext.osImage.tooltip| translate"
-              [provider]="imageOsProvider"
-            ></ix-combobox>
-          }
-        }
-      }
+        <button
+          mat-button
+          ixTest="browse-images"
+          type="button"
+          (click)="onBrowseCatalogImages()"
+        >{{ 'Browse Catalog' | translate }}</button>
+      </div>
     </ix-form-section>
 
     <ix-form-section
@@ -94,8 +42,7 @@
         formControlName="cpu"
         [label]="instancesHelptext.cpuLabel | translate"
         [tooltip]="instancesHelptext.cpuTooltip | translate"
-        [required]="isVm()"
-        [hint]="isContainer() ? (instancesHelptext.cpuHint | translate) : undefined"
+        [hint]="instancesHelptext.cpuHint | translate"
       ></ix-input>
 
       <ix-input
@@ -104,15 +51,13 @@
         [tooltip]="instancesHelptext.memoryTooltip | translate"
         [format]="formatter.memorySizeFormatting"
         [parse]="formatter.memorySizeParsing"
-        [required]="isVm()"
-        [hint]="isContainer() ? (instancesHelptext.memoryHint | translate) : undefined"
+        [hint]="instancesHelptext.memoryHint | translate"
       ></ix-input>
     </ix-form-section>
 
-    @if (isContainer()) {
-      <ix-form-section
-        [label]="'Environment' | translate"
-      >
+    <ix-form-section
+      [label]="'Environment' | translate"
+    >
         <ix-list
           formArrayName="environment_variables"
           [empty]="form.controls.environment_variables.controls.length === 0"
@@ -141,8 +86,7 @@
             </ix-list-item>
           }
         </ix-list>
-      </ix-form-section>
-    }
+    </ix-form-section>
 
     <ix-form-section [label]="'Storage' | translate">
       @if (!hasOnePool()) {
@@ -154,22 +98,6 @@
         ></ix-select>
       }
 
-      @if (isVm()) {
-        <ix-select
-          formControlName="root_disk_io_bus"
-          [label]="'Root Disk I/O Bus' | translate"
-          [tooltip]="instancesHelptext.ioBusTooltip | translate"
-          [required]="true"
-          [options]="diskIoBusOptions$"
-        ></ix-select>
-
-        <ix-input
-          formControlName="root_disk_size"
-          type="number"
-          [required]="true"
-          [label]="'Root Disk Size (in GiB)' | translate"
-        ></ix-input>
-      }
 
       <ix-list
         formArrayName="disks"
@@ -184,70 +112,31 @@
             [formGroupName]="i"
             (delete)="removeDisk(i)"
           >
-            @if (isContainer()) {
-              <ix-explorer
-                formControlName="source"
-                [rootNodes]="slashRootNode"
-                [label]="instancesHelptext.disksSourceLabel | translate"
-                [required]="true"
-                [nodeProvider]="datasetProvider"
-              >
-                <ix-explorer-create-dataset></ix-explorer-create-dataset>
-              </ix-explorer>
+            <ix-explorer
+              formControlName="source"
+              [rootNodes]="slashRootNode"
+              [label]="instancesHelptext.disksSourceLabel | translate"
+              [required]="true"
+              [nodeProvider]="datasetProvider"
+            >
+              <ix-explorer-create-dataset></ix-explorer-create-dataset>
+            </ix-explorer>
 
-              <ix-input
-                formControlName="destination"
-                [label]="instancesHelptext.disksDestinationLabel | translate"
-                [tooltip]="instancesHelptext.disksDestinationTooltip | translate"
-                [required]="true"
-              ></ix-input>
-            }
-
-            @if (isVm()) {
-              <div class="image-field">
-                <ix-input
-                  class="input"
-                  formControlName="source"
-                  [readonly]="true"
-                  [label]="'Volume' | translate"
-                  [required]="true"
-                ></ix-input>
-
-                <button
-                  mat-button
-                  ixTest="browse-isos"
-                  type="button"
-                  (click)="onSelectVolume(disk.controls.source)"
-                >{{ 'Select Volume' | translate }}</button>
-              </div>
-
-              <ix-select
-                formControlName="io_bus"
-                [label]="'I/O Bus' | translate"
-                [tooltip]="instancesHelptext.ioBusTooltip | translate"
-                [required]="true"
-                [options]="diskIoBusOptions$"
-              ></ix-select>
-            }
+            <ix-input
+              formControlName="destination"
+              [label]="instancesHelptext.disksDestinationLabel | translate"
+              [tooltip]="instancesHelptext.disksDestinationTooltip | translate"
+              [required]="true"
+            ></ix-input>
           </ix-list-item>
         }
       </ix-list>
 
-      @if (!isZvolSourceType && (bootFromOptions$ | async)?.length > 0) {
-        <ix-select
-          formControlName="boot_from"
-          [label]="'Boot From' | translate"
-          [tooltip]="instancesHelptext.bootFromTooltip | translate"
-          [required]="true"
-          [options]="bootFromOptions$"
-        ></ix-select>
-      }
     </ix-form-section>
 
-    @if (isContainer()) {
-      <ix-form-section
-        [label]="'Proxies' | translate"
-      >
+    <ix-form-section
+      [label]="'Proxies' | translate"
+    >
         <ix-list
           formArrayName="proxies"
           [empty]="form.controls.proxies.controls.length === 0"
@@ -301,8 +190,7 @@
             </ix-list-item>
           }
         </ix-list>
-      </ix-form-section>
-    }
+    </ix-form-section>
 
     <ix-form-section
       [label]="'Network' | translate"
@@ -393,80 +281,6 @@
       </ix-form-section>
     }
 
-    @if (isVm()) {
-      <ix-form-section [label]="'PCI Passthrough' | translate">
-        @if (form.value.pci_devices?.length) {
-          <p>{{ 'Selected Devices' | translate }}:</p>
-
-          <ul class="pci-devices">
-            @for (device of form.value.pci_devices; track device) {
-              <li>
-                <div class="device">
-                  {{ device.label }}
-
-                  <button
-                    mat-icon-button
-                    type="button"
-                    [ixTest]="['remove-pci', device.label]"
-                    (click)="removePciDevice(device.value)"
-                  >
-                    <ix-icon name="mdi-close"></ix-icon>
-                  </button>
-                </div>
-              </li>
-            }
-          </ul>
-        }
-
-        <button
-          mat-button
-          ixTest="add-pci"
-          type="button"
-          class="add-pci-button"
-          (click)="onAddPciPassthrough()"
-        >{{ 'Add PCI Passthrough' | translate }}</button>
-      </ix-form-section>
-    }
-
-    @if (isVm()) {
-      <ix-form-section [label]="'VNC' | translate">
-        <ix-checkbox
-          formControlName="enable_vnc"
-          [label]="instancesHelptext.enableVncLabel | translate"
-          [tooltip]="instancesHelptext.enableVncTooltip | translate"
-          [hint]="form.value.enable_vnc && instancesHelptext.vncHint | translate"
-        ></ix-checkbox>
-
-        @if (form.value.enable_vnc) {
-          <ix-input
-            formControlName="vnc_port"
-            type="number"
-            [label]="'VNC Port' | translate"
-          ></ix-input>
-
-          <ix-input
-            formControlName="vnc_password"
-            type="password"
-            [label]="'VNC Password' | translate"
-            [hint]="'VNC password is not cryptographically secure. You should not rely on it as a single authentication mechanism for your VMs.' | translate"
-          ></ix-input>
-        }
-      </ix-form-section>
-
-      <ix-form-section [label]="'Security' | translate">
-        <ix-checkbox
-          formControlName="tpm"
-          [label]="instancesHelptext.addTpmLabel | translate"
-          [tooltip]="instancesHelptext.addTpmTooltip | translate"
-        ></ix-checkbox>
-
-        <ix-checkbox
-          formControlName="secure_boot"
-          [label]="'Secure Boot' | translate"
-          [tooltip]="secureBootTooltip"
-        ></ix-checkbox>
-      </ix-form-section>
-    }
 
     <div class="actions">
       <button
