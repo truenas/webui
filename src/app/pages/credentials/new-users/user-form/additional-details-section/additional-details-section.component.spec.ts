@@ -160,7 +160,7 @@ describe('AdditionalDetailsSectionComponent', () => {
       expect(values).toEqual({
         'Full Name': 'test',
         Email: 'Not Set',
-        Groups: '101',
+        Groups: 'Primary Group: test-group  Auxiliary Groups: test-group',
         'Home Directory': '/home/test',
         UID: '1004',
       });
@@ -182,7 +182,7 @@ describe('AdditionalDetailsSectionComponent', () => {
       expect(await editables.getValues()).toEqual({
         'Full Name': 'test',
         Email: 'Not Set',
-        Groups: '101',
+        Groups: 'Primary Group: test-group  Auxiliary Groups: test-group',
         'Home Directory': '/home/test',
         UID: '1004',
       });

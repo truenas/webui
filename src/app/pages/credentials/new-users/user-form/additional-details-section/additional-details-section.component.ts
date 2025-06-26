@@ -38,7 +38,6 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-validation/email-validation';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { defaultHomePath, UserFormStore } from 'app/pages/credentials/new-users/user-form/user.store';
@@ -54,7 +53,6 @@ import { StorageService } from 'app/services/storage.service';
   imports: [
     ReactiveFormsModule,
     IxFieldsetComponent,
-    IxIconComponent,
     IxInputComponent,
     IxCheckboxComponent,
     TranslateModule,
@@ -203,17 +201,39 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     this.listenValueChanges();
   }
 
-  getGroupNameById(id: number): string {
+  protected getGroupNameById(id: number): string {
     if (!this.groupNameCache.has(id)) {
       this.groupNameCache.set(id, '');
 
       this.api.call('group.query', [[['id', '=', id]]]).pipe(
-        map((groups) => this.groupNameCache.set(id, groups[0]?.name || '')),
+        map((groups) => groups[0]?.group || groups[0]?.name || ''),
+        tap((name) => {
+          this.groupNameCache.set(id, name);
+          this.cdr.markForCheck();
+        }),
         take(1),
         untilDestroyed(this),
       ).subscribe();
     }
     return this.groupNameCache.get(id);
+  }
+
+  protected getPrimaryGroupName(): string {
+    if (this.form.controls.group_create.value) {
+      return this.translate.instant('New {username} group', { username: this.username() });
+    }
+
+    const id = this.form.controls.group.value;
+    const groupName = this.getGroupNameById(id) || String(id);
+    if (id && groupName) {
+      return this.translate.instant('Primary Group: {groupName}', { groupName });
+    }
+
+    return '';
+  }
+
+  protected getAuxGroupNames(): string[] {
+    return (this.form.controls.groups.value || []).map((id) => this.getGroupNameById(id) || String(id));
   }
 
   private setupEditUserForm(user: User): void {
