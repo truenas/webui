@@ -45,7 +45,6 @@ import { extractApiErrorDetails } from 'app/helpers/api.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
@@ -171,7 +170,6 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     private router: Router,
     protected translate: TranslateService,
     private errorHandler: ErrorHandlerService,
-    private dialogService: DialogService,
     private breakpointObserver: BreakpointObserver,
     private searchDirectives: UiSearchDirectivesService,
     @Inject(WINDOW) private window: Window,

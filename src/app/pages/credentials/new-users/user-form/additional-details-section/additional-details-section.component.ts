@@ -195,7 +195,9 @@ export class AdditionalDetailsSectionComponent implements OnInit {
 
   ngOnInit(): void {
     this.setupShellUpdate();
-    this.setFirstShellOption();
+    if (!this.editingUser()) {
+      this.setFirstShellOption();
+    }
     this.detectFullNameChanges();
     this.detectHomeDirectoryChanges();
     this.setHomeSharePath();
@@ -284,7 +286,8 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     this.api.call('user.shell_choices', [Array.from(ids)])
       .pipe(choicesToOptions(), untilDestroyed(this))
       .subscribe((options) => {
-        const sorted = options.toSorted((a, b) => a.label.localeCompare(b.label));
+        const filtered = options.filter((option) => !(option.value as string).includes('nologin'));
+        const sorted = filtered.toSorted((a, b) => a.label.localeCompare(b.label));
         this.shellOptions$ = of(sorted);
         this.cdr.markForCheck();
       });
@@ -293,12 +296,15 @@ export class AdditionalDetailsSectionComponent implements OnInit {
   private setFirstShellOption(): void {
     this.api.call('user.shell_choices', [this.form.value.groups]).pipe(
       choicesToOptions(),
-      filter((shells) => !!shells.length),
-      map((shells) => shells[0].value),
+      map((shells) => shells.filter((shell) => !(shell.value as string).includes('nologin'))),
+      filter((shells) => shells.length > 0),
       take(1),
       untilDestroyed(this),
-    ).subscribe((firstShell: string) => {
-      this.form.patchValue({ shell: firstShell });
+    ).subscribe((shells) => {
+      const defaultShell = (shells.find((shell) => shell.label.includes('zsh'))?.value || shells[0].value) as string;
+      if (!this.form.value.shell || this.form.value.shell.includes('nologin')) {
+        this.form.patchValue({ shell: defaultShell });
+      }
     });
   }
 
