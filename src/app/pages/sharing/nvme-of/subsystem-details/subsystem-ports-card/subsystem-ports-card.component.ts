@@ -8,6 +8,7 @@ import {
 import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { helptextNvmeOf } from 'app/helptext/sharing/nvme-of/nvme-of';
 import { NvmeOfPort, NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -18,6 +19,7 @@ import { AddPortMenuComponent } from 'app/pages/sharing/nvme-of/ports/add-port-m
 import { PortDescriptionComponent } from 'app/pages/sharing/nvme-of/ports/port-description/port-description.component';
 import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
+import { subsystemPortsCardElements } from 'app/pages/sharing/nvme-of/subsystem-details/subsystem-ports-card/subsystem-ports-card.elements';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
@@ -37,6 +39,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     AddPortMenuComponent,
     MatIconButton,
     TestDirective,
+    UiSearchDirective,
     MatTooltip,
   ],
 })
@@ -44,6 +47,8 @@ export class SubsystemPortsCardComponent {
   subsystem = input.required<NvmeOfSubsystemDetails>();
 
   protected helptext = helptextNvmeOf;
+
+  protected readonly searchableElements = subsystemPortsCardElements;
 
   constructor(
     private loader: LoaderService,

@@ -10,6 +10,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { helptextNvmeOf } from 'app/helptext/sharing/nvme-of/nvme-of';
 import { NvmeOfNamespace, NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -22,6 +23,7 @@ import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
 import {
   NamespaceFormComponent,
 } from 'app/pages/sharing/nvme-of/subsystem-details/subsystem-namespaces-card/namespace-form/namespace-form.component';
+import { subsystemNamespacesCardElements } from 'app/pages/sharing/nvme-of/subsystem-details/subsystem-namespaces-card/subsystem-namespaces-card.elements';
 import { DeleteNamespaceDialogComponent } from './delete-namespace-dialog/delete-namespace-dialog.component';
 
 @UntilDestroy()
@@ -41,6 +43,7 @@ import { DeleteNamespaceDialogComponent } from './delete-namespace-dialog/delete
     NamespaceDescriptionComponent,
     MatTooltip,
     TestDirective,
+    UiSearchDirective,
     MatButton,
   ],
 })
@@ -48,6 +51,8 @@ export class SubsystemNamespacesCardComponent {
   subsystem = input.required<NvmeOfSubsystemDetails>();
 
   protected readonly helptext = helptextNvmeOf;
+
+  protected readonly searchableElements = subsystemNamespacesCardElements;
 
   constructor(
     private slideIn: SlideIn,
