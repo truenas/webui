@@ -207,11 +207,11 @@ export class WebSocketHandlerService {
   }
 
   reconnect(): void {
-    if (this.wsConnection.closed) {
-      this.setupWebSocket();
-    } else {
+    if (!this.wsConnection.closed) {
       this.close();
     }
+
+    this.setupWebSocket();
   }
 
   close(): void {
