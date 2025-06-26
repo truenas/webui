@@ -12,6 +12,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { filter, of, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextUsers } from 'app/helptext/account/user-form';
 import { User } from 'app/interfaces/user.interface';
@@ -22,6 +23,7 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { userPasswordCardElements } from 'app/pages/credentials/new-users/all-users/user-details/user-password-card/user-password-card.elements';
 import { OneTimePasswordCreatedDialog } from 'app/pages/credentials/users/one-time-password-created-dialog/one-time-password-created-dialog.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -43,6 +45,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TestDirective,
     IxIconComponent,
     MatButton,
+    UiSearchDirective,
   ],
 })
 export class UserPasswordCardComponent {
@@ -51,6 +54,8 @@ export class UserPasswordCardComponent {
   protected readonly Role = Role;
 
   loggedInUser = toSignal(this.authService.user$.pipe(filter(Boolean)));
+
+  protected readonly searchableElements = userPasswordCardElements;
 
   constructor(
     private authService: AuthService,

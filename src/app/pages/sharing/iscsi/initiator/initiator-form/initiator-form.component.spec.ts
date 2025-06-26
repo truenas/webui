@@ -7,7 +7,6 @@ import { Router } from '@angular/router';
 import { createRoutingFactory, mockProvider, SpectatorRouting } from '@ngneat/spectator/jest';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { suppressJsDomCssErrors } from 'app/core/testing/utils/suppress-jsdom-css-errors.utils';
 import { IscsiGlobalSession } from 'app/interfaces/iscsi-global-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
@@ -68,8 +67,6 @@ describe('InitiatorFormComponent', () => {
   });
 
   it('sends an update payload to websocket and closes modal when Save button is pressed', async () => {
-    suppressJsDomCssErrors();
-
     spectator.setRouteParam('pk', '1');
 
     const availableList = await loader.getHarness(MatListHarness.with({ selector: '[aria-label="Connected Initiators"]' }));

@@ -12,6 +12,8 @@ import { NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
+import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
@@ -96,7 +98,10 @@ export class SubsystemsListComponent {
     protected emptyService: EmptyService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
-  ) { }
+    private searchDirectives: UiSearchDirectivesService,
+  ) {
+    setTimeout(() => this.handlePendingGlobalSearchElement(), searchDelayConst * 5);
+  }
 
   protected expanded(subsys: NvmeOfSubsystemDetails): void {
     if (this.isMobileView()) {
@@ -111,5 +116,13 @@ export class SubsystemsListComponent {
   protected onListFiltered(query: string): void {
     this.filterString = query;
     this.search.emit(query);
+  }
+
+  private handlePendingGlobalSearchElement(): void {
+    const pendingHighlightElement = this.searchDirectives.pendingUiHighlightElement;
+
+    if (pendingHighlightElement) {
+      this.searchDirectives.get(pendingHighlightElement)?.highlight(pendingHighlightElement);
+    }
   }
 }

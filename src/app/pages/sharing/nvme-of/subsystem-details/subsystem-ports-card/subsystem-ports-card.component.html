@@ -4,6 +4,7 @@
 
     <ix-add-port-menu
       [subsystemPorts]="subsystem().ports"
+      [ixUiSearch]="searchableElements.elements.addPort"
       (portSelected)="onPortAdded($event)"
     ></ix-add-port-menu>
   </mat-card-header>

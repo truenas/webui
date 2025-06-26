@@ -5,6 +5,7 @@
     <ix-add-host-menu
       [hosts]="subsystem().hosts"
       [showAllowAnyHost]="!subsystem().allow_any_host"
+      [ixUiSearch]="searchableElements.elements.addHost"
       (hostSelected)="hostAdded($event)"
       (allowAllHostsSelected)="allowAllHostsSelected()"
     ></ix-add-host-menu>
