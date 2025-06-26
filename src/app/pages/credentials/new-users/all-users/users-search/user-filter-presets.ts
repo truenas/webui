@@ -45,4 +45,9 @@ export class UserFilterPresets {
       query: [['builtin', '=', true]],
     };
   }
+
+  isBuiltinTogglePreset(label: string): boolean {
+    return label === this.translate.instant('Show Built-in Users')
+      || label === this.translate.instant('Hide Built-in Users');
+  }
 }
