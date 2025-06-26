@@ -22,6 +22,7 @@ import { allCommands } from 'app/constants/all-commands.constant';
 import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { isEmptyHomeDirectory } from 'app/helpers/user.helper';
+import { Group } from 'app/interfaces/group.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { User } from 'app/interfaces/user.interface';
 import { DetailsItemComponent } from 'app/modules/details-table/details-item/details-item.component';
@@ -204,46 +205,63 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     this.listenValueChanges();
   }
 
-  protected getGroupNameById(id: number): string {
-    if (!this.groupNameCache.has(id)) {
-      this.groupNameCache.set(id, '');
-
-      this.api.call('group.query', [[['id', '=', id]]]).pipe(
-        map((groups) => groups[0]?.group || groups[0]?.name || ''),
-        tap((name) => {
-          this.groupNameCache.set(id, name);
-          this.cdr.markForCheck();
-        }),
-        take(1),
-        untilDestroyed(this),
-      ).subscribe();
-    }
-    return this.groupNameCache.get(id);
-  }
-
   protected getPrimaryGroupName(): string {
     if (this.form.controls.group_create.value) {
       return this.translate.instant('New {username} group', { username: this.username() });
     }
 
     const id = this.form.controls.group.value;
-    const groupName = this.getGroupNameById(id) || String(id);
-    if (id && groupName) {
-      return this.translate.instant('Primary Group: {groupName}', { groupName });
+    if (id) {
+      return this.translate.instant('Primary Group: {groupName}', { groupName: this.groupNameCache.get(id) || String(id) });
     }
 
     return '';
   }
 
   protected getAuxGroupNames(): string[] {
-    return (this.form.controls.groups.value || []).map((id) => this.getGroupNameById(id) || String(id));
+    const ids = this.form.controls.groups.value || [];
+    return ids.map((id) => this.groupNameCache.get(id) || String(id));
+  }
+
+  protected ensureAllGroupNames(): void {
+    const ids = new Set<number>(this.form.controls.groups.value || []);
+    if (!this.form.controls.group_create.value) {
+      const id = this.form.controls.group.value;
+      if (id) {
+        ids.add(id);
+      }
+    }
+
+    this.resolveGroupNames(Array.from(ids));
+  }
+
+  private resolveGroupNames(ids: number[]): void {
+    const missingIds = ids.filter((groupId) => !this.groupNameCache.has(groupId));
+    if (!missingIds.length) {
+      return;
+    }
+
+    missingIds.forEach((missingId) => this.groupNameCache.set(missingId, ''));
+    (this.api.call('group.query', [[['id', 'in', missingIds]]]) as Observable<Group[]>).pipe(
+      take(1),
+      tap((groups) => {
+        groups.forEach((group) => {
+          const name = group.group || group.name;
+          this.groupNameCache.set(group.id, name);
+        });
+        this.cdr.markForCheck();
+      }),
+      untilDestroyed(this),
+    ).subscribe();
   }
 
   private setupEditUserForm(user: User): void {
+    const auxGroups = user.groups.filter((id) => id !== user.group?.id);
+
     this.form.patchValue({
       full_name: user.full_name,
       email: user.email,
-      groups: user.groups,
+      groups: auxGroups,
       home: user.home,
       uid: user.uid,
       group: user.group?.id,
@@ -277,6 +295,12 @@ export class AdditionalDetailsSectionComponent implements OnInit {
       this.form.patchValue({ home_mode: '700' });
       this.form.controls.home_mode.disable();
     }
+
+    const ids = [...auxGroups];
+    if (user.group?.id) {
+      ids.push(user.group.id);
+    }
+    this.resolveGroupNames(ids);
   }
 
   private listenValueChanges(): void {
