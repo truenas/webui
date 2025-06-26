@@ -13,6 +13,7 @@ import { of } from 'rxjs';
 import { getUserType } from 'app/helpers/user.helper';
 import { User } from 'app/interfaces/user.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
+import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
 import { ApiDataProvider } from 'app/modules/ix-table/classes/api-data-provider/api-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
@@ -108,9 +109,7 @@ export class UserListComponent {
         },
       });
     });
-    setTimeout(() => {
-      this.handlePendingGlobalSearchElement();
-    });
+    setTimeout(() => this.handlePendingGlobalSearchElement(), searchDelayConst * 5);
   }
 
   navigateToDetails(user: User): void {

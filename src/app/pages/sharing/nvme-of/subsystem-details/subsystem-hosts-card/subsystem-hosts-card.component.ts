@@ -8,6 +8,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { forkJoin, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { helptextNvmeOf } from 'app/helptext/sharing/nvme-of/nvme-of';
 import { NvmeOfSubsystemDetails, NvmeOfHost } from 'app/interfaces/nvme-of.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -17,6 +18,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AddHostMenuComponent } from 'app/pages/sharing/nvme-of/hosts/add-host-menu/add-host-menu.component';
 import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
+import { subsystemHostsCardElements } from 'app/pages/sharing/nvme-of/subsystem-details/subsystem-hosts-card/subsystem-hosts-card.elements';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
@@ -36,12 +38,15 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     AddHostMenuComponent,
     MatIconButton,
     TestDirective,
+    UiSearchDirective,
   ],
 })
 export class SubsystemHostsCardComponent {
   subsystem = input.required<NvmeOfSubsystemDetails>();
 
   protected helptext = helptextNvmeOf;
+
+  protected readonly searchableElements = subsystemHostsCardElements;
 
   constructor(
     private loader: LoaderService,
