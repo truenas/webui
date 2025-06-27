@@ -185,7 +185,6 @@ export class AdvancedSearchComponent<T> implements OnInit {
 
     const currentFilters = this.queryToApi.buildFilters(parsedQuery, this.properties());
 
-    // Identify properties in new filters
     const newFilterProperties = new Set<string>();
     newFilters.forEach((filter) => {
       if (Array.isArray(filter) && filter.length === 3) {
@@ -194,7 +193,6 @@ export class AdvancedSearchComponent<T> implements OnInit {
       }
     });
 
-    // Remove existing filters that conflict with new ones
     const nonConflictingFilters = currentFilters.filter((filter) => {
       if (Array.isArray(filter) && filter.length === 3) {
         const [property] = filter;
@@ -203,7 +201,6 @@ export class AdvancedSearchComponent<T> implements OnInit {
       return true;
     });
 
-    // Combine non-conflicting existing filters with new filters
     const mergedFilters = [...nonConflictingFilters, ...newFilters];
     return this.queryParser.formatFiltersToQuery(mergedFilters, this.properties());
   }
@@ -301,15 +298,12 @@ export class AdvancedSearchComponent<T> implements OnInit {
       if (Array.isArray(filter) && filter.length === 3) {
         const [property] = filter;
         const propertyKey = String(property);
-        // Always update the map with the latest filter (handles both new and conflicting properties)
         propertyMap.set(propertyKey, { filter, index });
       } else {
-        // Non-standard filter, add directly
         mergedFilters.push(filter);
       }
     });
 
-    // Add all non-conflicting and latest conflicting filters
     const standardFilters = Array.from(propertyMap.values())
       .sort((a, b) => a.index - b.index)
       .map(({ filter }) => filter);
