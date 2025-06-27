@@ -1,39 +1,47 @@
-##NODE temporary builder image
-FROM node:20-bookworm as uibuilder
+FROM debian:bookworm-slim
+
+# Install packages including Node.js prerequisites
+#COPY docker/krb5.conf /etc/krb5.conf
+RUN apt-get update && \
+	export DEBIAN_FRONTEND=noninteractive && apt-get -yq install  \
+	curl \
+	ca-certificates \
+	gnupg \
+	nginx \
+	&& apt-get clean
+
+# Install Node.js from NodeSource (LTS version >= 20.19)
+RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - && \
+    apt-get install -y nodejs
+
+# Install Yarn
+RUN npm install -g yarn
+
+# Build UI
 COPY ./ /src-ui
 WORKDIR /src-ui
 RUN yarn install --frozen-lockfile
 RUN yarn build:prod:aot
 
-#Download base image debian buster
-FROM debian:bookworm-slim
+# Copy built files to web directory
+RUN cp -r /src-ui/dist /var/www/webui
 
-# Install packages
-#COPY docker/krb5.conf /etc/krb5.conf
-RUN apt-get update && \
-	export DEBIAN_FRONTEND=noninteractive && apt-get -yq install  \
-	nginx \
-	&& apt-get clean
-
-#Remove any extra packages we don't need from the container
-# Also cleanup any random things we don't want to distribute
-RUN export SUDO_FORCE_REMOVE=yes \
-	&& apt autoremove -y || true \
-	&& apt autoclean \
+# Cleanup build artifacts and packages we don't need
+RUN rm -rf /src-ui \
+	&& npm uninstall -g yarn \
+	&& apt-get remove -y nodejs npm \
+	&& apt-get autoremove -y \
+	&& apt-get autoclean \
 	&& rm -rf /root/.cache \
 	&& rm -rf /usr/local/share/.cache \
-	&& rm -rf /usr/local/share/.config
+	&& rm -rf /usr/local/share/.config \
+	&& rm -rf /root/.npm
 
 # Overlay install
 COPY docker/start.sh /start.sh
 COPY docker/nginx.conf /etc/nginx/tn-nginx.conf
 
-# =========================
-# COPY OVER THE BUILDS FROM OTHER CONTAINERS
-# =========================
-# WebUI Build
-# Copy over site directory from the builder
-COPY --from=uibuilder /src-ui/dist /var/www/webui
+WORKDIR /
 
 # Configure Services and Port
 CMD ["/start.sh"]
