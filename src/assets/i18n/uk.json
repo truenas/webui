@@ -2690,7 +2690,6 @@
   "{days, plural, =1 {# day} other {# days}}": "{days, plural, =1 {# день} other {# дні}}",
   "{duration} remaining": "Залишилося {duration}",
   "{eligible} of {total} existing snapshots of dataset {dataset} would be replicated with this task.": "{eligible} із {total} наявних знімків набору даних {dataset} буде відтворено з цим завданням.",
-  "{email} via {server}": "{email} через {server}",
   "{failedCount} of {allCount, plural, =1 {# task} other {# tasks}} failed": "{failedCount} з {allCount, plural, =1 {# завдання} other {# завдань}} завершилися помилкою",
   "{field} is required": "{field} обовʼязкове",
   "{hours, plural, =1 {# hour} other {# hours}}": "{hours, plural, =1 {# година} other {# годин}}",

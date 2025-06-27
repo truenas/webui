@@ -1,4 +1,4 @@
-FROM debian:bookworm-slim
+FROM debian:buster-slim
 
 # Install packages including Node.js prerequisites
 #COPY docker/krb5.conf /etc/krb5.conf
