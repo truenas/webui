@@ -55,6 +55,7 @@ describe('UserFormStore', () => {
     spectator.service.updateUserConfig({
       username: 'operator',
       full_name: 'Operator',
+      group: 1001,
       password: 'password123',
       email: 'operator@truenas.local',
       shell: '/usr/bin/zsh',
@@ -64,10 +65,10 @@ describe('UserFormStore', () => {
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('user.create', [{
       full_name: 'Operator',
-      group_create: true,
       password: 'password123',
       email: 'operator@truenas.local',
       shell: '/usr/bin/zsh',
+      group: 1001,
       smb: true,
       sudo_commands: [],
       sudo_commands_nopasswd: [],

@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, effect, input, OnInit,
 } from '@angular/core';
-import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
@@ -33,13 +33,12 @@ import { UserStigPasswordOption } from 'app/pages/credentials/users/user-form/us
 })
 export class AuthSectionComponent implements OnInit {
   editingUser = input<User>();
-  protected isNewUser = this.userStore.isNewUser;
   protected sshAccess = this.userStore.sshAccess;
   protected smbAccess = this.userStore.smbAccess;
   protected isStigMode = this.userStore.isStigMode;
 
   form = this.formBuilder.group({
-    password: [''],
+    password: ['', [Validators.required]],
     password_disabled: [false],
     ssh_password_enabled: [false],
     sshpubkey: [''],
@@ -100,6 +99,11 @@ export class AuthSectionComponent implements OnInit {
 
   ngOnInit(): void {
     this.setPasswordFieldRelations();
+
+    if (this.editingUser()) {
+      this.form.controls.password.removeValidators([Validators.required]);
+      this.form.controls.password.reset();
+    }
   }
 
   private setPasswordFieldRelations(): void {

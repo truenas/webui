@@ -18,7 +18,6 @@ describe('AuthSectionComponent', () => {
   const smbAccess = signal(false);
   const sshAccess = signal(false);
   const isStigMode = signal(false);
-  const isNewUser = signal(true);
 
   const createComponent = createComponentFactory({
     component: AuthSectionComponent,
@@ -30,7 +29,6 @@ describe('AuthSectionComponent', () => {
         smbAccess,
         sshAccess,
         isStigMode,
-        isNewUser,
         updateUserConfig: jest.fn(),
         setAllowedAccessConfig: jest.fn(),
       }),
@@ -45,7 +43,6 @@ describe('AuthSectionComponent', () => {
     smbAccess.set(false);
     sshAccess.set(false);
     isStigMode.set(false);
-    isNewUser.set(true);
   });
 
   describe('password fields', () => {
