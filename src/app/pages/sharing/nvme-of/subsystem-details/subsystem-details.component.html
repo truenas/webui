@@ -1,8 +1,20 @@
 <div class="cards">
   <div class="scroll-window">
-    <ix-subsystem-details-card [subsystem]="subsystem()"></ix-subsystem-details-card>
-    <ix-subsystem-namespaces-card [subsystem]="subsystem()"></ix-subsystem-namespaces-card>
-    <ix-subsystem-ports-card [subsystem]="subsystem()"></ix-subsystem-ports-card>
-    <ix-subsystem-hosts-card [subsystem]="subsystem()"></ix-subsystem-hosts-card>
+    <ix-subsystem-details-card
+      [subsystem]="subsystem()"
+      [ixUiSearch]="searchableElements.elements.detailsCard"
+    ></ix-subsystem-details-card>
+    <ix-subsystem-namespaces-card
+      [subsystem]="subsystem()"
+      [ixUiSearch]="searchableElements.elements.namespacesCard"
+    ></ix-subsystem-namespaces-card>
+    <ix-subsystem-ports-card
+      [subsystem]="subsystem()"
+      [ixUiSearch]="searchableElements.elements.portsCard"
+    ></ix-subsystem-ports-card>
+    <ix-subsystem-hosts-card
+      [subsystem]="subsystem()"
+      [ixUiSearch]="searchableElements.elements.hostsCard"
+    ></ix-subsystem-hosts-card>
   </div>
 </div>

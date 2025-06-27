@@ -36,6 +36,7 @@ import {
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxPermissionsComponent } from 'app/modules/forms/ix-forms/components/ix-permissions/ix-permissions.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-validation/email-validation';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -57,15 +58,16 @@ import { StorageService } from 'app/services/storage.service';
     IxIconComponent,
     IxInputComponent,
     IxCheckboxComponent,
+    MatCheckbox,
     TranslateModule,
-    TestDirective,
     IxChipsComponent,
     IxExplorerComponent,
-    MatCheckbox,
+    IxPermissionsComponent,
     DetailsTableComponent,
     DetailsItemComponent,
     EditableComponent,
     IxSelectComponent,
+    TestDirective,
     ExplorerCreateDatasetComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -107,7 +109,6 @@ export class AdditionalDetailsSectionComponent implements OnInit {
 
   readonly form = this.fb.group({
     full_name: ['' as string],
-
     group: [null as number],
     group_create: [true],
     groups: [[] as number[]],
@@ -194,7 +195,9 @@ export class AdditionalDetailsSectionComponent implements OnInit {
 
   ngOnInit(): void {
     this.setupShellUpdate();
-    this.setFirstShellOption();
+    if (!this.editingUser()) {
+      this.setFirstShellOption();
+    }
     this.detectFullNameChanges();
     this.detectHomeDirectoryChanges();
     this.setHomeSharePath();
@@ -244,6 +247,14 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     this.form.controls.group.disabledWhile(this.form.controls.group_create.value$);
     this.form.controls.sudo_commands.disabledWhile(this.form.controls.sudo_commands_all.value$);
     this.form.controls.sudo_commands_nopasswd.disabledWhile(this.form.controls.sudo_commands_nopasswd_all.value$);
+
+    this.form.controls.home.valueChanges.pipe(untilDestroyed(this)).subscribe((home) => {
+      if (isEmptyHomeDirectory(home) || this.editingUser()?.immutable) {
+        this.form.controls.home_mode.disable();
+      } else {
+        this.form.controls.home_mode.enable();
+      }
+    });
   }
 
   private setupShellUpdate(): void {
@@ -275,7 +286,8 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     this.api.call('user.shell_choices', [Array.from(ids)])
       .pipe(choicesToOptions(), untilDestroyed(this))
       .subscribe((options) => {
-        const sorted = options.toSorted((a, b) => a.label.localeCompare(b.label));
+        const filtered = options.filter((option) => !(option.value as string).includes('nologin'));
+        const sorted = filtered.toSorted((a, b) => a.label.localeCompare(b.label));
         this.shellOptions$ = of(sorted);
         this.cdr.markForCheck();
       });
@@ -284,12 +296,15 @@ export class AdditionalDetailsSectionComponent implements OnInit {
   private setFirstShellOption(): void {
     this.api.call('user.shell_choices', [this.form.value.groups]).pipe(
       choicesToOptions(),
-      filter((shells) => !!shells.length),
-      map((shells) => shells[0].value),
+      map((shells) => shells.filter((shell) => !(shell.value as string).includes('nologin'))),
+      filter((shells) => shells.length > 0),
       take(1),
       untilDestroyed(this),
-    ).subscribe((firstShell: string) => {
-      this.form.patchValue({ shell: firstShell });
+    ).subscribe((shells) => {
+      const defaultShell = (shells.find((shell) => shell.label.includes('zsh'))?.value || shells[0].value) as string;
+      if (!this.form.value.shell || this.form.value.shell.includes('nologin')) {
+        this.form.patchValue({ shell: defaultShell });
+      }
     });
   }
 

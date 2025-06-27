@@ -6,8 +6,8 @@ export const allUsersHeaderElements = {
   anchorRouterLink: ['/credentials/users-new'],
   elements: {
     add: {
-      hierarchy: [T('Create New User')],
-      synonyms: [T('Add User'), T('Create User'), T('New User')],
+      hierarchy: [T('Add User')],
+      synonyms: [T('Create User'), T('New User')],
       anchor: 'add-user',
     },
   },
