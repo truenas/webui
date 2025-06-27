@@ -10,9 +10,9 @@ RUN apt-get update && \
 	nginx \
 	&& apt-get clean
 
-# Install Node.js from NodeSource (LTS version >= 20.19)
-RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - && \
-    apt-get install -y nodejs
+# Install Node.js from NodeSource (exact version 20.19)
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+    apt-get install -y nodejs=20.19.0-1nodesource1
 
 # Install Yarn
 RUN npm install -g yarn
@@ -29,7 +29,7 @@ RUN cp -r /src-ui/dist /var/www/webui
 # Cleanup build artifacts and packages we don't need
 RUN rm -rf /src-ui \
 	&& npm uninstall -g yarn \
-	&& apt-get remove -y nodejs npm \
+	&& apt-get remove -y nodejs \
 	&& apt-get autoremove -y \
 	&& apt-get autoclean \
 	&& rm -rf /root/.cache \
