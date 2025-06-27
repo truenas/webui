@@ -7,6 +7,12 @@ export const allUsersElements = {
   elements: {
     list: {
       hierarchy: [T('Users (WIP)')],
+      synonyms: [
+        T('Local Users'),
+        T('Users'),
+        T('User List'),
+        T('User Management'),
+      ],
       anchor: 'users-list',
     },
   },

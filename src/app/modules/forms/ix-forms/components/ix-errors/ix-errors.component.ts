@@ -1,3 +1,4 @@
+import { LiveAnnouncer } from '@angular/cdk/a11y';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnChanges,
   OnInit,
@@ -78,25 +79,53 @@ export class IxErrorsComponent implements OnChanges, OnInit {
   constructor(
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
+    private liveAnnouncer: LiveAnnouncer,
   ) {}
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     if ('control' in changes && this.control()) {
-      // This manually works around: https://github.com/angular/angular/issues/10816
-      this.statusChangeSubscription?.unsubscribe();
-      this.statusChangeSubscription = this.control().statusChanges.pipe(
-        filter((status) => status !== 'PENDING'),
-        untilDestroyed(this),
-      ).subscribe(() => {
-        this.handleErrors();
-      });
+      this.subscribeToControlStatusChanges();
     }
+  }
+
+  private subscribeToControlStatusChanges(): void {
+    // This manually works around: https://github.com/angular/angular/issues/10816
+    this.statusChangeSubscription?.unsubscribe();
+    this.statusChangeSubscription = this.control().statusChanges.pipe(
+      filter((status) => status !== 'PENDING'),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.handleErrors();
+    });
   }
 
   ngOnInit(): void {
     if (this.control().errors) {
       this.handleErrors();
     }
+  }
+
+  private handleErrors(): void {
+    const newErrors: (string | null)[] = Object.keys(this.control().errors || []).map((error) => {
+      if (error === ixManualValidateError) {
+        return null;
+      }
+      const message = (this.control().errors?.[error] as SomeError)?.message as string;
+      if (message) {
+        return message;
+      }
+
+      return this.getDefaultError(error as DefaultValidationError);
+    });
+
+    this.messages = newErrors.filter((message) => !!message) as string[];
+
+    if (this.control().errors) {
+      this.control().markAllAsTouched();
+    }
+
+    this.cdr.markForCheck();
+    this.announceErrors();
   }
 
   /**
@@ -158,25 +187,26 @@ export class IxErrorsComponent implements OnChanges, OnInit {
     return message;
   }
 
-  private handleErrors(): void {
-    const newErrors: (string | null)[] = Object.keys(this.control().errors || []).map((error) => {
-      if (error === ixManualValidateError) {
-        return null;
-      }
-      const message = (this.control().errors?.[error] as SomeError)?.message as string;
-      if (message) {
-        return message;
-      }
-
-      return this.getDefaultError(error as DefaultValidationError);
-    });
-
-    this.messages = newErrors.filter((message) => !!message) as string[];
-
-    if (this.control().errors) {
-      this.control().markAllAsTouched();
+  private announceErrors(): void {
+    const messages = [...this.messages];
+    const manualError = (
+      this.control().errors?.[ixManualValidateError] as { message: string } | undefined
+    )?.message;
+    if (manualError) {
+      messages.push(manualError);
     }
 
-    this.cdr.markForCheck();
+    if (messages.length) {
+      const messageToAnnounce = this.label()
+        ? this.translate.instant('Errors in {field}: {messages}', {
+          field: this.label(),
+          messages: messages.join(', '),
+        })
+        : this.translate.instant('Errors in the form: {messages}', {
+          messages: messages.join(', '),
+        });
+
+      this.liveAnnouncer.announce(messageToAnnounce);
+    }
   }
 }

@@ -9,7 +9,7 @@
       "Bash(npx tsc:*)",
       "Bash(yarn ui remote:*)",
       "Bash(yarn eslint:*)",
-      "Bash(ls *)",
+      "Bash(ls:*)",
       "Bash(find *)",
       "Bash(sed *)",
       "Bash(git add:*)",
