@@ -23,7 +23,16 @@ export function getDefaultPresets(translate: TranslateService): FilterPreset<Use
   ];
 }
 
-export function getActiveDirectoryPreset(translate: TranslateService): FilterPreset<User> {
+export function getActiveDirectoryTogglePreset(
+  translate: TranslateService,
+  isActiveDirectoryActive: boolean,
+): FilterPreset<User> {
+  if (isActiveDirectoryActive) {
+    return {
+      label: translate.instant('Show Active Directory'),
+      query: [['local', '=', false]],
+    };
+  }
   return {
     label: translate.instant('Hide Active Directory'),
     query: [['local', '=', true]],

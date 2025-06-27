@@ -24,7 +24,7 @@ import { ApiDataProvider } from 'app/modules/ix-table/classes/api-data-provider/
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { getDefaultPresets, getActiveDirectoryPreset, getBuiltinTogglePreset } from './users-search-presets';
+import { getDefaultPresets, getActiveDirectoryTogglePreset, getBuiltinTogglePreset } from './users-search-presets';
 
 enum UserType {
   Builtin = 'builtin',
@@ -69,6 +69,7 @@ export class UsersSearchComponent implements OnInit {
 
   protected readonly userPresets = signal<FilterPreset<User>[]>([]);
   private readonly isBuiltinFilterActive = signal<boolean>(false);
+  private readonly isActiveDirectoryFilterActive = signal<boolean>(false);
 
   private readonly userTypeOptionsSignal = computed(() => {
     const options: SelectOption[] = [
@@ -379,6 +380,7 @@ export class UsersSearchComponent implements OnInit {
   private updateBuiltinActiveState(): void {
     const currentQuery = this.searchQuery();
     let hasBuiltinTrue = false;
+    let hasLocalTrue = false;
 
     if (!currentQuery.isBasicQuery) {
       const advancedQuery = currentQuery as AdvancedSearchQuery<User>;
@@ -388,11 +390,15 @@ export class UsersSearchComponent implements OnInit {
           if (property === 'builtin' && operator === '=' && value === true) {
             hasBuiltinTrue = true;
           }
+          if (property === 'local' && operator === '=' && value === true) {
+            hasLocalTrue = true;
+          }
         }
       });
     }
 
     this.isBuiltinFilterActive.set(hasBuiltinTrue);
+    this.isActiveDirectoryFilterActive.set(hasLocalTrue);
     this.updateUserPresets();
   }
 
@@ -404,7 +410,8 @@ export class UsersSearchComponent implements OnInit {
 
     const isAdEnabled = this.isActiveDirectoryEnabled();
     if (isAdEnabled) {
-      presets.push(getActiveDirectoryPreset(this.translate));
+      const isActiveDirectoryActive = this.isActiveDirectoryFilterActive();
+      presets.push(getActiveDirectoryTogglePreset(this.translate, isActiveDirectoryActive));
     }
 
     this.userPresets.set(presets);
