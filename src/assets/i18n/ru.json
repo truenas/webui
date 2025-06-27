@@ -1,7 +1,6 @@
 {
   "": "",
   "Filter by Type": "",
-  "Hide Built-in Users": "",
   "New {username} group": "",
   "\n              It looks like your session has been inactive for more than {lifetime} seconds.<br>\n              For security reasons we will log you out at {time}.\n            ": "\nПохоже, что ваш сеанс была неактивна более {lifetime} секунд.<br>\nПо соображениям безопасности мы выйдем из системы в любое время.\n",
   " as of {dateTime}": " в {dateTime}",
@@ -2002,7 +2001,6 @@
   "From": "От",
   "From {task_begin} to {task_end}": "Из {task_begin} в {task_end}",
   "From a key file": "Из файла ключа",
-  "From Active Directory": "Из Active Directory",
   "From Email": "Из электронной почты",
   "From Name": "Из имени",
   "Front": "Передний",
@@ -2139,7 +2137,6 @@
   "Has API Access": "API доступен",
   "Has Host Authentication": "Имеет аутентификацию узла",
   "Has Password": "Запаролено",
-  "Has Shell Access": "Оболочка доступна",
   "Has SMB Access": "SMB доступен",
   "Has SSH Access": "SSH доступен",
   "Has Two-Factor Authentication": "Имеется двухфакторная аутентификация",

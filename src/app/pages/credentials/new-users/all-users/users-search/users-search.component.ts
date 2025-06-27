@@ -1,15 +1,13 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, input, signal, OnInit, inject, computed,
+  ChangeDetectionStrategy, Component, input, signal, OnInit, inject, computed, effect,
 } from '@angular/core';
-import { toObservable } from '@angular/core/rxjs-interop';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import {
-  filter, of, forkJoin,
-} from 'rxjs';
+import { of, map } from 'rxjs';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { Role, roleNames } from 'app/enums/role.enum';
 import { ParamsBuilder, ParamsBuilderGroup } from 'app/helpers/params-builder/params-builder.class';
@@ -20,13 +18,13 @@ import { User } from 'app/interfaces/user.interface';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { SearchInputComponent } from 'app/modules/forms/search-input/components/search-input/search-input.component';
 import { SearchProperty } from 'app/modules/forms/search-input/types/search-property.interface';
-import { AdvancedSearchQuery, BasicSearchQuery, SearchQuery } from 'app/modules/forms/search-input/types/search-query.interface';
+import { AdvancedSearchQuery, SearchQuery } from 'app/modules/forms/search-input/types/search-query.interface';
 import { booleanProperty, searchProperties, textProperty } from 'app/modules/forms/search-input/utils/search-properties.utils';
 import { ApiDataProvider } from 'app/modules/ix-table/classes/api-data-provider/api-data-provider';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { UserFilterPresets } from './user-filter-presets';
+import { getDefaultPresets, getActiveDirectoryPreset, getBuiltinTogglePreset } from './users-search-presets';
 
 enum UserType {
   Builtin = 'builtin',
@@ -87,34 +85,29 @@ export class UsersSearchComponent implements OnInit {
 
   protected readonly userTypeOptions$ = toObservable(this.userTypeOptionsSignal);
 
-  private readonly filterPresets = new UserFilterPresets(this.translate);
-
   private readonly api = inject(ApiService);
-  private readonly isActiveDirectoryEnabled = signal<boolean>(false);
+  private readonly isActiveDirectoryEnabled = toSignal(this.api.call('directoryservices.get_state').pipe(
+    map((state: DirectoryServicesState) => state.activedirectory !== DirectoryServiceState.Disabled),
+  ));
+
   private lastProcessedQuery = signal<SearchQuery<User> | null>(null);
 
   constructor(
     private translate: TranslateService,
   ) {
     this.updateBuiltinActiveState();
+
+    effect(() => {
+      const isAdEnabled = this.isActiveDirectoryEnabled();
+      if (isAdEnabled !== undefined) {
+        this.updateUserPresets();
+      }
+    });
   }
 
   ngOnInit(): void {
-    forkJoin([
-      this.api.call('directoryservices.get_state'),
-      this.dataProvider().currentPage$.pipe(filter(Boolean)),
-    ]).pipe(
-      untilDestroyed(this),
-    ).subscribe({
-      next: ([servicesState, users]: [DirectoryServicesState, User[]]) => {
-        this.isActiveDirectoryEnabled.set(servicesState.activedirectory !== DirectoryServiceState.Disabled);
-        this.updateBuiltinActiveState();
-        this.setSearchProperties(users);
-      },
-      error: (error: unknown) => {
-        console.error('Failed to load directory services state or users:', error);
-      },
-    });
+    this.updateBuiltinActiveState();
+    this.setSearchProperties(this.dataProvider().currentPage$.getValue());
   }
 
   private setSearchProperties(users: User[]): void {
@@ -205,20 +198,11 @@ export class UsersSearchComponent implements OnInit {
       return;
     }
 
-    console.info('Users search - onSearch called:', {
-      isBasicQuery: query.isBasicQuery,
-      query: query.isBasicQuery
-        ? (query as BasicSearchQuery).query
-        : (query as AdvancedSearchQuery<User>).filters,
-      selectedUserTypes: this.selectedUserTypes,
-    });
-
     this.searchQuery.set(query);
 
     if (query.isBasicQuery) {
       let params = new ParamsBuilder<User>();
 
-      // Add text search if provided
       if (query.query) {
         const term = `(?i)${query.query}`;
         params = params
@@ -226,22 +210,14 @@ export class UsersSearchComponent implements OnInit {
           .orFilter('full_name', '~', term);
       }
 
-      // Add user type filters
       const selectedTypes = this.selectedUserTypes;
       if (selectedTypes.length > 0 && selectedTypes.length < this.userTypeOptionsSignal().length) {
         params = this.addUserTypeFilters(params, selectedTypes);
       }
 
-      const finalParams = params.getParams();
-      console.info('Users search - Basic query params:', finalParams);
-
-      this.dataProvider().setParams(finalParams);
-    }
-
-    if (!query.isBasicQuery) {
+      this.dataProvider().setParams(params.getParams());
+    } else {
       const advancedFilters = (query as AdvancedSearchQuery<User>).filters;
-      console.info('Users search - Advanced query filters:', advancedFilters);
-
       this.dataProvider().setParams([advancedFilters]);
     }
 
@@ -249,56 +225,22 @@ export class UsersSearchComponent implements OnInit {
   }
 
   protected onUserTypeChange(selectedTypes: UserType[]): void {
-    console.info('Users search - User type filter changed:', {
-      previousTypes: this.selectedUserTypes,
-      newTypes: selectedTypes,
-    });
-
     this.selectedUserTypes = selectedTypes;
     this.onSearch(this.searchQuery());
   }
 
   private queriesEqual(query1: SearchQuery<User> | null, query2: SearchQuery<User>): boolean {
-    console.info('Users search - queriesEqual comparison:', {
-      query1: query1
-        ? {
-            isBasicQuery: query1.isBasicQuery,
-            content: query1.isBasicQuery
-              ? (query1 as BasicSearchQuery).query
-              : (query1 as AdvancedSearchQuery<User>).filters,
-          }
-        : null,
-      query2: {
-        isBasicQuery: query2.isBasicQuery,
-        content: query2.isBasicQuery
-          ? (query2 as BasicSearchQuery).query
-          : (query2 as AdvancedSearchQuery<User>).filters,
-      },
-    });
-
-    if (!query1) {
-      console.info('Users search - queriesEqual result: false (query1 is null)');
-      return false;
-    }
-
-    if (query1.isBasicQuery !== query2.isBasicQuery) {
-      console.info('Users search - queriesEqual result: false (different query types)');
+    if (!query1 || query1.isBasicQuery !== query2.isBasicQuery) {
       return false;
     }
 
     if (query1.isBasicQuery && query2.isBasicQuery) {
-      const result = query1.query === query2.query;
-      console.info('Users search - queriesEqual result:', result, '(basic query comparison)');
-      return result;
+      return query1.query === query2.query;
     }
 
-    // For advanced queries, compare filter arrays
     const advQuery1 = query1 as AdvancedSearchQuery<User>;
     const advQuery2 = query2 as AdvancedSearchQuery<User>;
-
-    const result = this.filtersEqual(advQuery1.filters, advQuery2.filters);
-    console.info('Users search - queriesEqual result:', result, '(advanced query comparison)');
-    return result;
+    return this.filtersEqual(advQuery1.filters, advQuery2.filters);
   }
 
   private filtersEqual(filters1: QueryFilters<User>, filters2: QueryFilters<User>): boolean {
@@ -383,21 +325,10 @@ export class UsersSearchComponent implements OnInit {
   }
 
   protected onQueryChange(query: SearchQuery<User>): void {
-    console.info('Users search - onQueryChange called with:', {
-      isBasicQuery: query.isBasicQuery,
-      content: query.isBasicQuery ? (query as BasicSearchQuery).query : (query as AdvancedSearchQuery<User>).filters,
-    });
-
-    // Fix conflicting builtin filters if they exist
     if (!query.isBasicQuery) {
       const originalQuery = query as AdvancedSearchQuery<User>;
-      query = this.removeConflictingBuiltinFilters(originalQuery);
+      query = this.removeConflictingFilters(originalQuery);
 
-      if (originalQuery !== query) {
-        console.info('Users search - Query was modified by conflict resolution');
-      }
-
-      // Check if query has actually changed using signal comparison
       const lastQuery = this.lastProcessedQuery();
       if (!this.queriesEqual(lastQuery, query)) {
         this.lastProcessedQuery.set(query);
@@ -411,58 +342,38 @@ export class UsersSearchComponent implements OnInit {
     this.updateBuiltinActiveState();
   }
 
-  private removeConflictingBuiltinFilters(query: AdvancedSearchQuery<User>): AdvancedSearchQuery<User> {
-    console.info('Users search - removeConflictingBuiltinFilters input:', query.filters);
-
+  private removeConflictingFilters(query: AdvancedSearchQuery<User>): AdvancedSearchQuery<User> {
     const builtinFilters: QueryFilter<User>[] = [];
+    const localFilters: QueryFilter<User>[] = [];
     const otherFilters: QueryFilters<User> = [];
 
-    // Separate builtin filters from other filters
-    query.filters.forEach((filterItem, index) => {
-      console.info(`Users search - Processing filter ${index}:`, filterItem);
-
+    query.filters.forEach((filterItem) => {
       if (Array.isArray(filterItem) && filterItem.length === 3) {
-        const [property, operator, value] = filterItem;
+        const [property] = filterItem;
         if (property === 'builtin') {
-          console.info('Users search - Found builtin filter:', { property, operator, value });
           builtinFilters.push(filterItem as QueryFilter<User>);
+        } else if (property === 'local') {
+          localFilters.push(filterItem as QueryFilter<User>);
         } else {
-          console.info('Users search - Found other filter:', { property, operator, value });
           otherFilters.push(filterItem);
         }
       } else {
-        console.info('Users search - Found non-standard filter:', filterItem);
         otherFilters.push(filterItem);
       }
     });
 
-    console.info('Users search - Separated filters:', {
-      builtinFilters,
-      otherFilters,
-      builtinCount: builtinFilters.length,
-    });
-
-    // Keep only the last builtin filter (most recent)
-    if (builtinFilters.length > 1) {
-      console.info('Users search - CONFLICT DETECTED: Multiple builtin filters found!', {
-        allBuiltinFilters: builtinFilters,
-        keepingLast: builtinFilters[builtinFilters.length - 1],
-      });
+    if (builtinFilters.length > 0) {
       otherFilters.push(builtinFilters[builtinFilters.length - 1]);
-    } else if (builtinFilters.length === 1) {
-      console.info('Users search - Single builtin filter found, keeping it:', builtinFilters[0]);
-      otherFilters.push(builtinFilters[0]);
-    } else {
-      console.info('Users search - No builtin filters found');
     }
 
-    const result = {
+    if (localFilters.length > 0) {
+      otherFilters.push(localFilters[localFilters.length - 1]);
+    }
+
+    return {
       ...query,
       filters: otherFilters,
     };
-
-    console.info('Users search - removeConflictingBuiltinFilters result:', result.filters);
-    return result;
   }
 
   private updateBuiltinActiveState(): void {
@@ -471,12 +382,13 @@ export class UsersSearchComponent implements OnInit {
 
     if (!currentQuery.isBasicQuery) {
       const advancedQuery = currentQuery as AdvancedSearchQuery<User>;
-      hasBuiltinTrue = advancedQuery.filters.some((filterItem) => {
+      advancedQuery.filters.forEach((filterItem) => {
         if (Array.isArray(filterItem) && filterItem.length === 3) {
           const [property, operator, value] = filterItem;
-          return property === 'builtin' && operator === '=' && value === true;
+          if (property === 'builtin' && operator === '=' && value === true) {
+            hasBuiltinTrue = true;
+          }
         }
-        return false;
       });
     }
 
@@ -485,14 +397,14 @@ export class UsersSearchComponent implements OnInit {
   }
 
   private updateUserPresets(): void {
-    const presets = [...this.filterPresets.getDefaultPresets()];
+    const presets = [...getDefaultPresets(this.translate)];
 
-    // Add single dynamic builtin toggle preset
-    const isActive = this.isBuiltinFilterActive();
-    presets.push(this.filterPresets.getBuiltinTogglePreset(isActive));
+    const isBuiltinActive = this.isBuiltinFilterActive();
+    presets.push(getBuiltinTogglePreset(this.translate, isBuiltinActive));
 
-    if (this.isActiveDirectoryEnabled()) {
-      presets.push(this.filterPresets.getActiveDirectoryPreset());
+    const isAdEnabled = this.isActiveDirectoryEnabled();
+    if (isAdEnabled) {
+      presets.push(getActiveDirectoryPreset(this.translate));
     }
 
     this.userPresets.set(presets);

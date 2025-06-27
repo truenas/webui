@@ -163,52 +163,27 @@ export class AdvancedSearchComponent<T> implements OnInit {
   }
 
   applyPreset(filters: QueryFilters<T>[], presetLabels: Set<string>): void {
-    console.info('🔧 Advanced Search - applyPreset called with:', {
-      filters,
-      presetLabels: Array.from(presetLabels),
-      flattenedFilters: filters.flat(),
-    });
-
     this.selectedPresetLabels.set(new Set(presetLabels));
 
     const currentQuery = this.editorView.state.doc.toString().trim();
     const newFilters = filters.flat();
-
-    console.info('🔧 Advanced Search - Smart preset application:', {
-      currentQuery,
-      newFilters,
-    });
-
-    // Smart merge: check if current query has conflicting properties
     const updatedQuery = this.smartMergePresetFilters(currentQuery, newFilters);
-
-    console.info('🔧 Advanced Search - Smart merge result:', {
-      originalQuery: currentQuery,
-      updatedQuery,
-      changed: currentQuery !== updatedQuery,
-    });
 
     this.replaceEditorContents(updatedQuery);
   }
 
   private smartMergePresetFilters(currentQuery: string, newFilters: QueryFilters<T>): string {
     if (!currentQuery.trim()) {
-      // No existing query, just format the new filters
-      const newQuery = this.queryParser.formatFiltersToQuery(newFilters, this.properties());
-      console.info('🔧 Advanced Search - No existing query, using preset directly:', newQuery);
-      return newQuery;
+      return this.queryParser.formatFiltersToQuery(newFilters, this.properties());
     }
 
-    // Parse current query to get existing filters
     const parsedQuery = this.queryParser.parseQuery(currentQuery);
     if (parsedQuery.hasErrors) {
-      console.info('🔧 Advanced Search - Current query has errors, appending preset');
       const presetQuery = this.queryParser.formatFiltersToQuery(newFilters, this.properties());
       return `${currentQuery} AND ${presetQuery}`;
     }
 
     const currentFilters = this.queryToApi.buildFilters(parsedQuery, this.properties());
-    console.info('🔧 Advanced Search - Current filters extracted:', currentFilters);
 
     // Identify properties in new filters
     const newFilterProperties = new Set<string>();
@@ -219,38 +194,18 @@ export class AdvancedSearchComponent<T> implements OnInit {
       }
     });
 
-    console.info('🔧 Advanced Search - New filter properties:', Array.from(newFilterProperties));
-
     // Remove existing filters that conflict with new ones
     const nonConflictingFilters = currentFilters.filter((filter) => {
       if (Array.isArray(filter) && filter.length === 3) {
         const [property] = filter;
-        const hasConflict = newFilterProperties.has(String(property));
-        if (hasConflict) {
-          console.info('🔧 Advanced Search - Removing conflicting filter:', {
-            property: String(property),
-            filter,
-          });
-        }
-        return !hasConflict;
+        return !newFilterProperties.has(String(property));
       }
       return true;
     });
 
     // Combine non-conflicting existing filters with new filters
     const mergedFilters = [...nonConflictingFilters, ...newFilters];
-    const mergedQuery = this.queryParser.formatFiltersToQuery(mergedFilters, this.properties());
-
-    console.info('🔧 Advanced Search - Smart merge details:', {
-      originalFilterCount: currentFilters.length,
-      nonConflictingCount: nonConflictingFilters.length,
-      newFilterCount: newFilters.length,
-      finalFilterCount: mergedFilters.length,
-      removedConflicts: currentFilters.length - nonConflictingFilters.length,
-      mergedQuery,
-    });
-
-    return mergedQuery;
+    return this.queryParser.formatFiltersToQuery(mergedFilters, this.properties());
   }
 
   protected onResetInput(): void {
@@ -268,10 +223,6 @@ export class AdvancedSearchComponent<T> implements OnInit {
 
   private onInputChanged(): void {
     this.queryInputValue = this.editorView.state.doc.toString();
-    console.info('🔧 Advanced Search - onInputChanged:', {
-      queryInputValue: this.queryInputValue,
-      timestamp: new Date().toISOString(),
-    });
     const parsedQuery = this.queryParser.parseQuery(this.queryInputValue);
 
     queueMicrotask(() => {
@@ -282,7 +233,6 @@ export class AdvancedSearchComponent<T> implements OnInit {
       this.recalculateActivePresetsFromRawQuery(this.queryInputValue);
 
       if (parsedQuery.hasErrors && this.queryInputValue?.length) {
-        console.info('🔧 Advanced Search - Query has errors:', parsedQuery.errors);
         this.errorMessages = parsedQuery.errors;
         this.editorView.dispatch({
           effects: setDiagnostics.of(
@@ -299,25 +249,11 @@ export class AdvancedSearchComponent<T> implements OnInit {
 
       const filters = this.queryToApi.buildFilters(parsedQuery, this.properties());
       const mergedFilters = this.mergeConflictingFilters(filters);
-
-      console.info('🔧 Advanced Search - Emitting filters from onInputChanged:', {
-        originalFilters: filters,
-        mergedFilters,
-        parsedQuery,
-        queryInputValue: this.queryInputValue,
-        conflictsFound: filters.length !== mergedFilters.length,
-      });
       this.paramsChange.emit(mergedFilters);
     });
   }
 
   private replaceEditorContents(contents: string): void {
-    const previousContents = this.editorView.state.doc.toString();
-    console.info('🔧 Advanced Search - replaceEditorContents:', {
-      previousContents,
-      newContents: contents,
-      timestamp: new Date().toISOString(),
-    });
     this.editorView.dispatch({
       changes: { from: 0, to: this.editorView.state.doc.length, insert: contents },
       selection: { anchor: contents.length },
@@ -335,17 +271,7 @@ export class AdvancedSearchComponent<T> implements OnInit {
     const normalizedQuery = this.normalize(query);
     const activeLabels = new Set<string>();
 
-    console.info('🔧 Advanced Search - recalculateActivePresetsFromRawQuery:', {
-      rawQuery: query,
-      normalizedQuery,
-      availablePresets: (this.filterPresets() || []).map((preset) => ({
-        label: preset.label,
-        query: preset.query,
-      })),
-    });
-
     if (!normalizedQuery || normalizedQuery.length < 2) {
-      console.info('🔧 Advanced Search - Query too short, clearing active presets');
       this.selectedPresetLabels.set(activeLabels);
       return;
     }
@@ -359,89 +285,40 @@ export class AdvancedSearchComponent<T> implements OnInit {
         return normalizedQuery.includes(filterExpr) || filterExpr.includes(normalizedQuery);
       });
 
-      console.info(`🔧 Advanced Search - Checking preset "${preset.label}":`, {
-        presetFilters,
-        hasPartialMatch,
-        normalizedQuery,
-        matches: presetFilters.map((filterExpr) => ({
-          filterExpr,
-          queryIncludesFilter: normalizedQuery.includes(filterExpr),
-          filterIncludesQuery: filterExpr.includes(normalizedQuery),
-        })),
-      });
-
       if (hasPartialMatch) {
         activeLabels.add(preset.label);
       }
     }
 
-    console.info('🔧 Advanced Search - Final active preset labels:', Array.from(activeLabels));
     this.selectedPresetLabels.set(activeLabels);
   }
 
   private mergeConflictingFilters(filters: QueryFilters<T>): QueryFilters<T> {
-    console.info('🔧 Advanced Search - mergeConflictingFilters input:', filters);
-
     const mergedFilters: QueryFilters<T> = [];
     const propertyMap = new Map<string, { filter: QueryFilters<T>[number]; index: number }>();
 
     filters.forEach((filter, index) => {
-      // Check if this is a simple filter array with [property, operator, value]
       if (Array.isArray(filter) && filter.length === 3) {
-        const [property, operator, value] = filter;
+        const [property] = filter;
         const propertyKey = String(property);
-
-        console.info(`🔧 Advanced Search - Processing filter ${index}:`, {
-          property: propertyKey,
-          operator,
-          value,
-          filter,
-        });
-
-        if (propertyMap.has(propertyKey)) {
-          // Conflict detected - keep the latest (current) filter
-          const existing = propertyMap.get(propertyKey);
-          if (!existing) return;
-          console.info('🔧 Advanced Search - CONFLICT DETECTED for property:', {
-            property: propertyKey,
-            existingFilter: existing?.filter,
-            newFilter: filter,
-            keepingLatest: filter,
-          });
-
-          // Update the map with the latest filter
-          propertyMap.set(propertyKey, { filter, index });
-        } else {
-          // No conflict, add to map
-          propertyMap.set(propertyKey, { filter, index });
-        }
+        // Always update the map with the latest filter (handles both new and conflicting properties)
+        propertyMap.set(propertyKey, { filter, index });
       } else {
         // Non-standard filter, add directly
-        console.info(`🔧 Advanced Search - Adding non-standard filter ${index}:`, filter);
         mergedFilters.push(filter);
       }
     });
 
     // Add all non-conflicting and latest conflicting filters
     const standardFilters = Array.from(propertyMap.values())
-      .sort((a, b) => a.index - b.index) // Maintain original order
+      .sort((a, b) => a.index - b.index)
       .map(({ filter }) => filter);
 
     mergedFilters.push(...(standardFilters as QueryFilters<T>));
-
-    console.info('🔧 Advanced Search - mergeConflictingFilters result:', {
-      originalCount: filters.length,
-      mergedCount: mergedFilters.length,
-      removedConflicts: filters.length - mergedFilters.length,
-      mergedFilters,
-    });
-
     return mergedFilters;
   }
 
   private normalize(value: string): string {
-    const result = value.replace(/["']/g, '').replace(/\s+/g, ' ').trim().toLowerCase();
-    console.info('🔧 Advanced Search - normalize:', { input: value, output: result });
-    return result;
+    return value.replace(/["']/g, '').replace(/\s+/g, ' ').trim().toLowerCase();
   }
 }
