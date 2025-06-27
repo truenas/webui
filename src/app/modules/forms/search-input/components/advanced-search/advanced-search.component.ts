@@ -165,25 +165,44 @@ export class AdvancedSearchComponent<T> implements OnInit {
   applyPreset(filters: QueryFilters<T>[], presetLabels: Set<string>): void {
     this.selectedPresetLabels.set(new Set(presetLabels));
 
-    const presetQuery = this.queryParser.formatFiltersToQuery(filters.flat(), this.properties());
     const currentQuery = this.editorView.state.doc.toString().trim();
+    const newFilters = filters.flat();
+    const updatedQuery = this.smartMergePresetFilters(currentQuery, newFilters);
 
-    const presetChunks = presetQuery
-      .split(/(?:\s+AND\s+|\s+OR\s+)/)
-      .map((chunk) => chunk.trim())
-      .filter(Boolean)
-      .filter((chunk) => !this.normalize(currentQuery).includes(this.normalize(chunk)));
+    this.replaceEditorContents(updatedQuery);
+  }
 
-    if (presetChunks.length === 0) return;
+  private smartMergePresetFilters(currentQuery: string, newFilters: QueryFilters<T>): string {
+    if (!currentQuery.trim()) {
+      return this.queryParser.formatFiltersToQuery(newFilters, this.properties());
+    }
 
-    const endsWithLogicalOperator = /\b(AND|OR)\s*$/i.test(currentQuery);
-    const operator = endsWithLogicalOperator ? ' ' : ' AND ';
+    const parsedQuery = this.queryParser.parseQuery(currentQuery);
+    if (parsedQuery.hasErrors) {
+      const presetQuery = this.queryParser.formatFiltersToQuery(newFilters, this.properties());
+      return `${currentQuery} AND ${presetQuery}`;
+    }
 
-    const mergedQuery = currentQuery
-      ? `${currentQuery}${operator}${presetChunks.join(' AND ')}`
-      : presetChunks.join(' AND ');
+    const currentFilters = this.queryToApi.buildFilters(parsedQuery, this.properties());
 
-    this.replaceEditorContents(mergedQuery);
+    const newFilterProperties = new Set<string>();
+    newFilters.forEach((filter) => {
+      if (Array.isArray(filter) && filter.length === 3) {
+        const [property] = filter;
+        newFilterProperties.add(String(property));
+      }
+    });
+
+    const nonConflictingFilters = currentFilters.filter((filter) => {
+      if (Array.isArray(filter) && filter.length === 3) {
+        const [property] = filter;
+        return !newFilterProperties.has(String(property));
+      }
+      return true;
+    });
+
+    const mergedFilters = [...nonConflictingFilters, ...newFilters];
+    return this.queryParser.formatFiltersToQuery(mergedFilters, this.properties());
   }
 
   protected onResetInput(): void {
@@ -226,7 +245,8 @@ export class AdvancedSearchComponent<T> implements OnInit {
       this.errorMessages = null;
 
       const filters = this.queryToApi.buildFilters(parsedQuery, this.properties());
-      this.paramsChange.emit(filters);
+      const mergedFilters = this.mergeConflictingFilters(filters);
+      this.paramsChange.emit(mergedFilters);
     });
   }
 
@@ -268,6 +288,28 @@ export class AdvancedSearchComponent<T> implements OnInit {
     }
 
     this.selectedPresetLabels.set(activeLabels);
+  }
+
+  private mergeConflictingFilters(filters: QueryFilters<T>): QueryFilters<T> {
+    const mergedFilters: QueryFilters<T> = [];
+    const propertyMap = new Map<string, { filter: QueryFilters<T>[number]; index: number }>();
+
+    filters.forEach((filter, index) => {
+      if (Array.isArray(filter) && filter.length === 3) {
+        const [property] = filter;
+        const propertyKey = String(property);
+        propertyMap.set(propertyKey, { filter, index });
+      } else {
+        mergedFilters.push(filter);
+      }
+    });
+
+    const standardFilters = Array.from(propertyMap.values())
+      .sort((a, b) => a.index - b.index)
+      .map(({ filter }) => filter);
+
+    mergedFilters.push(...(standardFilters as QueryFilters<T>));
+    return mergedFilters;
   }
 
   private normalize(value: string): string {
