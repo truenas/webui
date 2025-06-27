@@ -282,6 +282,7 @@ describe('VmWizardComponent', () => {
       cpuset: '',
       description: '',
       ensure_display_device: true,
+      enable_secure_boot: false,
       hide_from_msr: false,
       hyperv_enlightenments: false,
       memory: 4096,
