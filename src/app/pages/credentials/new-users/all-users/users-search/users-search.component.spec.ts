@@ -2,6 +2,8 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { AdvancedSearchHarness } from 'app/modules/forms/search-input/components/advanced-search/advanced-search.harness';
 import { SearchInputComponent } from 'app/modules/forms/search-input/components/search-input/search-input.component';
 import { SearchInputHarness } from 'app/modules/forms/search-input/components/search-input/search-input.harness';
@@ -17,6 +19,12 @@ describe('UsersSearchComponent', () => {
     imports: [
       SearchInputComponent,
     ],
+    providers: [mockApi([
+      mockCall('directoryservices.get_state', {
+        activedirectory: DirectoryServiceState.Healthy,
+        ldap: DirectoryServiceState.Disabled,
+      }),
+    ])],
   });
 
   beforeEach(() => {

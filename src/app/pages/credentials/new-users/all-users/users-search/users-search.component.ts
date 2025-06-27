@@ -403,15 +403,26 @@ export class UsersSearchComponent implements OnInit {
   }
 
   private updateUserPresets(): void {
-    const presets = [...getDefaultPresets(this.translate)];
+    const presets = getDefaultPresets().map((preset) => ({
+      ...preset,
+      label: this.translate.instant(preset.label),
+    }));
 
     const isBuiltinActive = this.isBuiltinFilterActive();
-    presets.push(getBuiltinTogglePreset(this.translate, isBuiltinActive));
+    const builtinPreset = getBuiltinTogglePreset(isBuiltinActive);
+    presets.push({
+      ...builtinPreset,
+      label: this.translate.instant(builtinPreset.label),
+    });
 
     const isAdEnabled = this.isActiveDirectoryEnabled();
     if (isAdEnabled) {
       const isActiveDirectoryActive = this.isActiveDirectoryFilterActive();
-      presets.push(getActiveDirectoryTogglePreset(this.translate, isActiveDirectoryActive));
+      const adPreset = getActiveDirectoryTogglePreset(isActiveDirectoryActive);
+      presets.push({
+        ...adPreset,
+        label: this.translate.instant(adPreset.label),
+      });
     }
 
     this.userPresets.set(presets);

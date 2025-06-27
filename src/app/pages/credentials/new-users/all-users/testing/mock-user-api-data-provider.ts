@@ -1,4 +1,4 @@
-import { of } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { User } from 'app/interfaces/user.interface';
 import { ApiDataProvider } from 'app/modules/ix-table/classes/api-data-provider/api-data-provider';
@@ -27,7 +27,7 @@ export const mockUsers = [
 ] as User[];
 
 export const mockUserApiDataProvider = {
-  currentPage$: of(mockUsers),
+  currentPage$: new BehaviorSubject(mockUsers),
   load: jest.fn(),
   setPagination: jest.fn(),
   setParams: jest.fn(),

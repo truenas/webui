@@ -1,53 +1,50 @@
-import { TranslateService } from '@ngx-translate/core';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { FilterPreset } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
 
-export function getDefaultPresets(translate: TranslateService): FilterPreset<User>[] {
+export function getDefaultPresets(): FilterPreset<User>[] {
   return [
     {
-      label: translate.instant('Has API Access'),
+      label: T('Has API Access'),
       query: [['api_keys', '!=', null]],
     },
     {
-      label: translate.instant('Has SMB Access'),
+      label: T('Has SMB Access'),
       query: [['smb', '=', true]],
     },
     {
-      label: translate.instant('Has Shell Access'),
+      label: T('Has Shell Access'),
       query: [['shell', '!=', null]],
     },
     {
-      label: translate.instant('Has SSH Access'),
+      label: T('Has SSH Access'),
       query: [['sshpubkey', '!=', null]],
     },
   ];
 }
 
-export function getActiveDirectoryTogglePreset(
-  translate: TranslateService,
-  isActiveDirectoryActive: boolean,
-): FilterPreset<User> {
+export function getActiveDirectoryTogglePreset(isActiveDirectoryActive: boolean): FilterPreset<User> {
   if (isActiveDirectoryActive) {
     return {
-      label: translate.instant('Show Active Directory'),
+      label: T('Show Active Directory'),
       query: [['local', '=', false]],
     };
   }
   return {
-    label: translate.instant('Hide Active Directory'),
+    label: T('Hide Active Directory'),
     query: [['local', '=', true]],
   };
 }
 
-export function getBuiltinTogglePreset(translate: TranslateService, isBuiltinActive: boolean): FilterPreset<User> {
+export function getBuiltinTogglePreset(isBuiltinActive: boolean): FilterPreset<User> {
   if (isBuiltinActive) {
     return {
-      label: translate.instant('Hide Built-in Users'),
+      label: T('Hide Built-in Users'),
       query: [['builtin', '=', false]],
     };
   }
   return {
-    label: translate.instant('Show Built-in Users'),
+    label: T('Show Built-in Users'),
     query: [['builtin', '=', true]],
   };
 }
