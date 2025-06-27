@@ -88,7 +88,10 @@ export class SelfEncryptingDriveCardComponent {
 
   onConfigure(): void {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
-      switchMap(() => this.slideIn.open(SelfEncryptingDriveFormComponent, { data: this.sedConfig })),
+      switchMap(() => this.slideIn.open(
+        SelfEncryptingDriveFormComponent,
+        { data: { sedPassword: this.sedConfig.sedPassword } },
+      )),
       filter((response) => !!response.response),
       tap(() => this.reloadConfig$.next()),
       untilDestroyed(this),

@@ -5071,7 +5071,6 @@
   "User Name": "사용자 이름",
   "User Obj": "User Obj",
   "User Object Quota": "사용자 객체 할당량",
-  "User passed to <i>camcontrol security -u</i> to unlock SEDs": "SED의 잠금을 해제하기 위해 <i>camcontrol security -u</i>을(를) 전달할 사용자",
   "User password": "사용자 비밀번호",
   "User Quota Manager": "사용자 할당량 관리자",
   "User Quotas": "사용자 할당량",

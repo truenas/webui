@@ -69,7 +69,7 @@ describe('SelfEncryptingDriveCardComponent', () => {
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
       SelfEncryptingDriveFormComponent,
       {
-        data: { sedPassword: '********', sedUser: 'admin' },
+        data: { sedPassword: '********' },
       },
     );
   });

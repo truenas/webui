@@ -5069,7 +5069,6 @@
   "User Name": "Имя пользователя",
   "User Obj": "Пользовательский объект",
   "User Object Quota": "Квота пользовательского объекта",
-  "User passed to <i>camcontrol security -u</i> to unlock SEDs": "Пользователь передаваемый в <i>camcontrol security -u</i>, чтобы разблокировать SED",
   "User password": "Пароль пользователя",
   "User Quota Manager": "Управление квотой пользователея",
   "User Quotas": "Квоты пользователя",

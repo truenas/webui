@@ -5229,7 +5229,6 @@
   "User Name": "Ім'я користувача",
   "User Obj": "Obj Користувачa",
   "User Object Quota": "Квота об'єкта користувача",
-  "User passed to <i>camcontrol security -u</i> to unlock SEDs": "Користувач який передається в <i>camcontrol security -u</i>, щоб розблокувати SED",
   "User Quotas": "Квоти користувача",
   "User-defined string used to decrypt the dataset. Can be used instead of an encryption key.<br>      WARNING: the passphrase is the only means to decrypt the information stored in this dataset. Be sure to create a      memorable passphrase or physically secure the passphrase.": "Визначений користувачем рядок, який використовується для розшифровки набору даних. Можна використовувати замість ключа шифрування.<br> ПОПЕРЕДЖЕННЯ: парольна фраза є єдиним засобом розшифрування інформації, що зберігається в цьому наборі даних. Обов’язково створіть парольну фразу, що запам’ятовується, або фізично захистіть її.",
   "Username": "Ім'я користувача",

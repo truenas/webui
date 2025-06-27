@@ -5095,7 +5095,6 @@
   "User Name": "Nazwa użytkownika",
   "User Obj": "Obiekt użytkownika",
   "User Object Quota": "Limit obiektu użytkownika",
-  "User passed to <i>camcontrol security -u</i> to unlock SEDs": "Użytkownik przekazany do <i>camcontrol security -u</i> w celu odblokowania SED",
   "User password": "Hasło użytkownika",
   "User Quota Manager": "Menedżer limitów użytkownika",
   "User Quotas": "Limity użytkownika",

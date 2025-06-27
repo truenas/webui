@@ -5246,7 +5246,6 @@
   "User domain - optional <a href=\"https://rclone.org/swift/#swift-region\" target=\"_blank\">(rclone documentation)</a>.": "ユーザーのドメイン - オプション <a href=\"https://rclone.org/swift/#swift-region\" target=\"_blank\">(rclone ドキュメント)</a>",
   "User ID and Groups": "ユーザーIDとグループ",
   "User ID to log in - optional - most swift systems use user and leave this blank <a href=\"https://rclone.org/swift/#swift-region\" target=\"_blank\">(rclone documentation)</a>.": "ログインするためのユーザーID - オプション - ほとんどのスイフトシステムは user を使用するため、空白のままにしておきます。 <a href=\"https://rclone.org/swift/#swift-region\" target=\"_blank\">(rclone ドキュメント)</a>",
-  "User passed to <i>camcontrol security -u</i> to unlock SEDs": "SEDのロックを解除するために<i>camcontrol security -u</i>を渡されたユーザー。",
   "User Quotas": "ユーザークォータ",
   "User-defined string used to decrypt the dataset. Can be used instead of an encryption key.<br>      WARNING: the passphrase is the only means to decrypt the information stored in this dataset. Be sure to create a      memorable passphrase or physically secure the passphrase.": "データセットの復号化に使用するユーザー定義の文字列。暗号化キーの代わりに使用できます。<br>      警告：パスフレーズは、このデータセットに保存されている情報を解読する唯一の手段で す。必ず覚えやすいパスフレーズを作成するか、パスフレーズを物理的に保護してください。",
   "Username": "ユーザー名",

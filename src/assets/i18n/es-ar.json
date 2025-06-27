@@ -5076,7 +5076,6 @@
   "User Name": "Nombre de usuario",
   "User Obj": "Obj de usuario",
   "User Object Quota": "Cupo de objeto de usuario",
-  "User passed to <i>camcontrol security -u</i> to unlock SEDs": "El usuario pasó a <i>camcontrol security -u</i> para desbloquear SED",
   "User password": "Contraseña del usuario",
   "User Quota Manager": "Administrador de cupos de usuarios",
   "User Quotas": "Cupos de usuario",
