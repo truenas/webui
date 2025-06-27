@@ -10,6 +10,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { async, finalize } from 'rxjs';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { NvmeOfSubsystemDetails, UpdateNvmeOfSubsystem } from 'app/interfaces/nvme-of.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
@@ -26,6 +27,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
+import { subsystemDetailsCardElements } from 'app/pages/sharing/nvme-of/subsystem-details/subsystem-details-card/subsystem-details-card.elements';
 
 @UntilDestroy()
 @Component({
@@ -48,6 +50,7 @@ import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
     IxTextareaComponent,
     EditableSaveOnEnterDirective,
     TestDirective,
+    UiSearchDirective,
     AsyncPipe,
   ],
 })
@@ -62,6 +65,8 @@ export class SubsystemDetailsCardComponent implements OnChanges {
   });
 
   protected hasRole$ = this.auth.hasRole(Role.SharingNvmeTargetWrite);
+
+  protected readonly searchableElements = subsystemDetailsCardElements;
 
   constructor(
     private formBuilder: FormBuilder,

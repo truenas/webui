@@ -12,6 +12,7 @@ import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { Choices } from 'app/interfaces/choices.interface';
 import { Group } from 'app/interfaces/group.interface';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { AdditionalDetailsSectionComponent } from 'app/pages/credentials/new-users/user-form/additional-details-section/additional-details-section.component';
 import { AllowedAccessSectionComponent } from 'app/pages/credentials/new-users/user-form/allowed-access-section/allowed-access-section.component';
@@ -151,8 +152,8 @@ describe('UserFormComponent', () => {
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
-    it('checks initial value', () => {
-      expect(spectator.component.isNewUser).toBe(true);
+    it('checks form title', () => {
+      expect(spectator.query(ModalHeaderComponent).title).toBe('Add User');
     });
   });
 
@@ -166,8 +167,8 @@ describe('UserFormComponent', () => {
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
-    it('checks initial value', () => {
-      expect(spectator.component.isNewUser).toBe(false);
+    it('checks form title', () => {
+      expect(spectator.query(ModalHeaderComponent).title).toBe('Edit User');
     });
 
     it('checks username field is disabled when user immutable', async () => {

@@ -163,6 +163,7 @@ a new application key, log in to the Backblaze account, go to the \
  <a href="https://developers.google.com/identity/protocols/oauth2" target="_blank">Google API Console</a>'),
   },
   http: {
+    explanation: T('Read only client that supports directory listings from popular web servers like Apache and Nginx.'),
     url: {
       tooltip: T('HTTP host URL.'),
     },
