@@ -26,12 +26,8 @@ RUN yarn build:prod:aot
 # Copy built files to web directory
 RUN cp -r /src-ui/dist /var/www/webui
 
-# Cleanup build artifacts and packages we don't need
+# Cleanup build artifacts
 RUN rm -rf /src-ui \
-	&& npm uninstall -g yarn \
-	&& apt-get remove -y nodejs \
-	&& apt-get autoremove -y \
-	&& apt-get autoclean \
 	&& rm -rf /root/.cache \
 	&& rm -rf /usr/local/share/.cache \
 	&& rm -rf /usr/local/share/.config \
