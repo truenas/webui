@@ -8,7 +8,7 @@ import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { format } from 'date-fns-tz';
+import { format } from 'date-fns';
 import {
   combineLatest, merge, Observable, of,
 } from 'rxjs';

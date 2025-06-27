@@ -88,7 +88,7 @@ describe('ReplicationFormComponent', () => {
     close: jest.fn(),
     requireConfirmationWhen: jest.fn(),
     swap: jest.fn(),
-    getData: jest.fn(() => undefined),
+    getData: jest.fn((): undefined => undefined),
   };
 
   const generalForm = new FormGroup({

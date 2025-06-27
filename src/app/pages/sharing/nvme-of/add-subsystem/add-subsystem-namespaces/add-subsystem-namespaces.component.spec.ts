@@ -37,7 +37,7 @@ describe('AddSubsystemNamespacesComponent', () => {
     ],
     providers: [
       mockProvider(SlideIn, {
-        open: jest.fn(() => of({ response: newNamespace, error: null })),
+        open: jest.fn(() => of({ response: newNamespace, error: null as string | null })),
       }),
     ],
   });

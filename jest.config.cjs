@@ -7,7 +7,7 @@ process.env.TZ = 'Europe/Kiev';
 const esmPatterns = [
   '.*\\.mjs$',
   'is-cidr',
-  'ip-regex',
+  'ip-regex', 
   'cidr-regex',
   'lodash-es',
   'internmap',
@@ -15,11 +15,16 @@ const esmPatterns = [
   'delaunator',
   'cheerio',
   'robust-predicates',
+  '@angular',
+  '@ngneat',
+  '@ngrx',
+  '@ngx-translate',
+  'ng-mocks',
+  'ngx-translate-messageformat-compiler'
 ];
 
 module.exports = {
   preset: 'jest-preset-angular',
-  globalSetup: 'jest-preset-angular/global-setup',
   setupFilesAfterEnv: ['<rootDir>/src/setup-jest.ts'],
   collectCoverage: false,
   collectCoverageFrom: ["./src/**/*.ts"],
@@ -27,12 +32,14 @@ module.exports = {
   coverageDirectory: 'coverage/webui',
   moduleDirectories: ['node_modules', 'src'],
   cacheDirectory: "<rootDir>/.jest/cache",
-  moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths || {}),
+  moduleNameMapper: {
+    ...pathsToModuleNameMapper(compilerOptions.paths || {}),
+  },
   testPathIgnorePatterns: [
     '<rootDir>/dist/',
   ],
   transformIgnorePatterns: [
-    `node_modules/(?!(${esmPatterns.join('|')}))`
+    `node_modules/(?!${esmPatterns.join('|')})`
   ],
   reporters: [
     "default",

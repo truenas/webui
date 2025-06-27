@@ -3,7 +3,7 @@
 ## Requirements
 
 - yarn >= 1.22
-- Node.js >= 18.19.1
+- Node.js >= 20.19
 - Running instance with TrueNAS nightly (VM is fine).
 
 > [!TIP]

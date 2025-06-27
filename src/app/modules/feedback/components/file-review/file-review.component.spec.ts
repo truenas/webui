@@ -8,6 +8,7 @@ import {
 } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { FileReviewComponent } from 'app/modules/feedback/components/file-review/file-review.component';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
 import { IxStarRatingComponent } from 'app/modules/forms/ix-forms/components/ix-star-rating/ix-star-rating.component';
@@ -28,6 +29,9 @@ describe('FileReviewComponent', () => {
       IxStarRatingComponent,
     ],
     providers: [
+      mockApi([
+        mockCall('system.product_type'),
+      ]),
       mockProvider(FeedbackService, {
         createReview: jest.fn(() => of()),
       }),

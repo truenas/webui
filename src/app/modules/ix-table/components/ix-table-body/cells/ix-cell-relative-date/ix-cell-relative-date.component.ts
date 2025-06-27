@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateService } from '@ngx-translate/core';
 import { isValid } from 'date-fns';
-import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
+import { toZonedTime, fromZonedTime } from 'date-fns-tz';
 import { invalidDate } from 'app/constants/invalid-date';
 import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
@@ -36,8 +36,8 @@ export class IxCellRelativeDateComponent<T> extends ColumnComponent<T> {
   }
 
   get machineTime(): Date {
-    const utc = zonedTimeToUtc(this.value as number, this.defaultTz);
-    return utcToZonedTime(utc, this.machineTimezone);
+    const utc = fromZonedTime(this.value as number, this.defaultTz);
+    return toZonedTime(utc, this.machineTimezone);
   }
 
   get isTimezoneDifference(): boolean {

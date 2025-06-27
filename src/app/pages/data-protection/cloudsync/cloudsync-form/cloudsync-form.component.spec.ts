@@ -139,7 +139,7 @@ describe('CloudSyncFormComponent', () => {
   const slideInRef: SlideInRef<CloudSyncTaskUi | undefined, unknown> = {
     close: jest.fn(),
     requireConfirmationWhen: jest.fn(),
-    getData: jest.fn(() => undefined),
+    getData: jest.fn((): undefined => undefined),
     swap: jest.fn(),
   };
   const createComponent = createComponentFactory({

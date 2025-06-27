@@ -13,16 +13,11 @@ describe('RegisteredControlDirective', () => {
     const divElement = document.createElement('div');
     divElement.setAttribute('ixRegisteredControl', '');
     divElement.setAttribute('ix-label', 'Test Group');
-    divElement.setAttribute('ng-reflect-form-group-name', 'testGroup');
-    divElement.setAttribute('ng-reflect-label', 'Test Group');
-    divElement.setAttribute('ng-reflect-label', 'Test Group');
-    divElement.setAttribute('ng-reflect-name', 'testGroup');
     divElement.classList.add('ng-untouched');
     divElement.classList.add('ng-pristine');
     divElement.classList.add('ng-valid');
     const inputElement = document.createElement('input');
     inputElement.classList.add('ng-untouched');
-    inputElement.setAttribute('ng-reflect-name', 'testControl');
     inputElement.classList.add('ng-pristine');
     inputElement.classList.add('ng-valid');
     inputElement.setAttribute('formControlName', 'testControl');

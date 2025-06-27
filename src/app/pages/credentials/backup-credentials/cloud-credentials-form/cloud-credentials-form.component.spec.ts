@@ -95,7 +95,7 @@ describe('CloudCredentialsFormComponent', () => {
   const getData = jest.fn(() => ({ existingCredential: fakeCloudSyncCredential }));
   const slideInRef = {
     close: jest.fn(),
-    getData: jest.fn(() => undefined),
+    getData: jest.fn((): undefined => undefined),
     requireConfirmationWhen: jest.fn(),
   };
 
