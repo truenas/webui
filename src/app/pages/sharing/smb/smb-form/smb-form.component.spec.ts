@@ -314,7 +314,6 @@ describe('SmbFormComponent', () => {
       const optionLabels = await purposeSelect.getOptionLabels();
       expect(optionLabels).toEqual([
         'Default Share',
-        'Legacy Share',
         'Time Machine Share',
         'Multi-Protocol Share',
         'Time Locked Share',

@@ -280,13 +280,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     this.existingSmbShare = this.slideInRef.getData()?.existingSmbShare;
     this.defaultSmbShare = this.slideInRef.getData()?.defaultSmbShare;
     this.setupExplorerRootNodes();
-    this.purposeOptions$ = of(
-      mapToOptionsWithHoverTooltips(
-        smbPresetTypeLabels,
-        smbPresetTooltips,
-        this.translate,
-      ),
-    );
+    this.purposeOptions$ = of(this.buildPurposeOptions());
   }
 
   private setupExplorerRootNodes(): void {
@@ -690,5 +684,19 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     ).subscribe(() => {
       this.hasSmbUsers.set(false);
     });
+  }
+
+  private buildPurposeOptions(): SelectOption<SmbPresetType>[] {
+    const options = mapToOptionsWithHoverTooltips(
+      smbPresetTypeLabels,
+      smbPresetTooltips,
+      this.translate,
+    );
+
+    if (this.isNew || (!this.isNew && this.existingSmbShare.purpose !== SmbPresetType.LegacyShare)) {
+      return options.filter((option) => option.value !== SmbPresetType.LegacyShare);
+    }
+
+    return options;
   }
 }
