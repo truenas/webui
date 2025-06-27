@@ -1,9 +1,7 @@
 import {
   AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal,
 } from '@angular/core';
-import {
-  AbstractControl, NonNullableFormBuilder, ReactiveFormsModule, Validators,
-} from '@angular/forms';
+import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
@@ -44,6 +42,7 @@ import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-ex
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
@@ -89,6 +88,7 @@ import { selectService } from 'app/store/services/services.selectors';
     TestDirective,
     TranslateModule,
     IxIconComponent,
+    WarningComponent,
   ],
 })
 export class SmbFormComponent implements OnInit, AfterViewInit {
@@ -97,6 +97,11 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
   protected isLoading = signal(false);
   protected hasSmbUsers = signal(true);
+  protected showLegacyWarning = signal(false);
+  protected legacyWarningMessage = this.translate.instant(
+    'It’s recommended to select a modern SMB share purpose rather than using the legacy option.',
+  );
+
   protected SmbPresetType = SmbPresetType;
   protected isAdvancedMode = false;
   private namesInUse: string[] = [];
@@ -199,12 +204,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   form = this.formBuilder.group({
     path: ['', [Validators.required]],
     name: ['', Validators.required],
-    purpose: [SmbPresetType.DefaultShare as SmbPresetType | null, [
-      this.validatorsService.customValidator(
-        (control: AbstractControl) => control.value !== SmbPresetType.LegacyShare,
-        this.translate.instant('Select a new purpose before saving.'),
-      ),
-    ]],
+    purpose: [SmbPresetType.DefaultShare as SmbPresetType | null],
     comment: [''],
     enabled: [true],
     acl: [false],
@@ -224,9 +224,9 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     streams: [false],
     durablehandle: [false],
     fsrvp: [false],
-    path_suffix: [''],
+    path_suffix: [null as string | null],
     auxsmbconf: [''],
-    vuid: ['', [
+    vuid: [null as string | null, [
       this.validatorsService.withMessage(
         Validators.pattern(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i),
         this.translate.instant(this.translate.instant('Enter a valid UUID4 string.')),
@@ -280,7 +280,13 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     this.existingSmbShare = this.slideInRef.getData()?.existingSmbShare;
     this.defaultSmbShare = this.slideInRef.getData()?.defaultSmbShare;
     this.setupExplorerRootNodes();
-    this.purposeOptions$ = of(this.buildPurposeOptions());
+    this.purposeOptions$ = of(
+      mapToOptionsWithHoverTooltips(
+        smbPresetTypeLabels,
+        smbPresetTooltips,
+        this.translate,
+      ),
+    );
   }
 
   private setupExplorerRootNodes(): void {
@@ -370,6 +376,8 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   private setupPurposeControl(): void {
     this.form.controls.purpose.valueChanges.pipe(untilDestroyed(this))
       .subscribe((value) => {
+        this.showLegacyWarning.set(value === SmbPresetType.LegacyShare);
+
         this.clearPresets();
 
         if (value) {
@@ -480,13 +488,6 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
     if (!flatShare.purpose) {
       flatShare.purpose = SmbPresetType.LegacyShare;
-    }
-
-    if (share.purpose === SmbPresetType.LegacyShare) {
-      this.dialogService.warn(
-        this.translate.instant('Legacy Share'),
-        this.translate.instant('In order for share to be saved, it needs to be migrated. Please select a new share purpose to migrate the share.'),
-      );
     }
 
     this.form.patchValue(flatShare);
@@ -689,19 +690,5 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     ).subscribe(() => {
       this.hasSmbUsers.set(false);
     });
-  }
-
-  private buildPurposeOptions(): SelectOption<SmbPresetType>[] {
-    const options = mapToOptionsWithHoverTooltips(
-      smbPresetTypeLabels,
-      smbPresetTooltips,
-      this.translate,
-    );
-
-    if (this.isNew || (!this.isNew && this.existingSmbShare.purpose !== SmbPresetType.LegacyShare)) {
-      return options.filter((option) => option.value !== SmbPresetType.LegacyShare);
-    }
-
-    return options;
   }
 }

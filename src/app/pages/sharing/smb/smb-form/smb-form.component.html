@@ -70,6 +70,10 @@
           [options]="purposeOptions$"
         ></ix-select>
 
+        @if (showLegacyWarning()) {
+          <ix-warning [message]="legacyWarningMessage"></ix-warning>
+        }
+
         @if (form.controls.remote_path.enabled) {
           <ix-chips
             formControlName="remote_path"
@@ -92,47 +96,61 @@
 
       @if (isAdvancedMode) {
         <ix-fieldset [title]="'Access' | translate">
-          <ix-checkbox
-            formControlName="acl"
-            [label]="helptextSharingSmb.aclLabel | translate"
-            [tooltip]="helptextSharingSmb.aclTooltip | translate"
-          ></ix-checkbox>
+          @if (form.controls.acl.enabled) {
+            <ix-checkbox
+              formControlName="acl"
+              [label]="helptextSharingSmb.aclLabel | translate"
+              [tooltip]="helptextSharingSmb.aclTooltip | translate"
+            ></ix-checkbox>
+          }
 
-          <ix-checkbox
-            formControlName="ro"
-            [label]="helptextSharingSmb.readOnlyLabel | translate"
-            [tooltip]="helptextSharingSmb.readOnlyTooltip | translate"
-          ></ix-checkbox>
+          @if (form.controls.ro.enabled) {
+            <ix-checkbox
+              formControlName="ro"
+              [label]="helptextSharingSmb.readOnlyLabel | translate"
+              [tooltip]="helptextSharingSmb.readOnlyTooltip | translate"
+            ></ix-checkbox>
+          }
 
-          <ix-checkbox
-            formControlName="browsable"
-            [label]="helptextSharingSmb.browsableLabel | translate"
-            [tooltip]="helptextSharingSmb.browsableTooltip | translate"
-          ></ix-checkbox>
+          @if (form.controls.browsable.enabled) {
+            <ix-checkbox
+              formControlName="browsable"
+              [label]="helptextSharingSmb.browsableLabel | translate"
+              [tooltip]="helptextSharingSmb.browsableTooltip | translate"
+            ></ix-checkbox>
+          }
 
-          <ix-checkbox
-            formControlName="guestok"
-            [label]="helptextSharingSmb.guestokLabel | translate"
-            [tooltip]="helptextSharingSmb.guestokTooltip | translate"
-          ></ix-checkbox>
+          @if (form.controls.guestok.enabled) {
+            <ix-checkbox
+              formControlName="guestok"
+              [label]="helptextSharingSmb.guestokLabel | translate"
+              [tooltip]="helptextSharingSmb.guestokTooltip | translate"
+            ></ix-checkbox>
+          }
 
-          <ix-checkbox
-            formControlName="abe"
-            [label]="helptextSharingSmb.abeLabel | translate"
-            [tooltip]="helptextSharingSmb.abeTooltip | translate"
-          ></ix-checkbox>
+          @if (form.controls.abe.enabled) {
+            <ix-checkbox
+              formControlName="abe"
+              [label]="helptextSharingSmb.abeLabel | translate"
+              [tooltip]="helptextSharingSmb.abeTooltip | translate"
+            ></ix-checkbox>
+          }
 
-          <ix-chips
-            formControlName="hostsallow"
-            [label]="helptextSharingSmb.hostsallowLabel | translate"
-            [tooltip]="hostsAllowTooltip"
-          ></ix-chips>
+          @if (form.controls.hostsallow.enabled) {
+            <ix-chips
+              formControlName="hostsallow"
+              [label]="helptextSharingSmb.hostsallowLabel | translate"
+              [tooltip]="hostsAllowTooltip"
+            ></ix-chips>
+          }
 
-          <ix-chips
-            formControlName="hostsdeny"
-            [label]="helptextSharingSmb.hostsdenyLabel | translate"
-            [tooltip]="helptextSharingSmb.hostsdenyTooltip | translate"
-          ></ix-chips>
+          @if (form.controls.hostsdeny.enabled) {
+            <ix-chips
+              formControlName="hostsdeny"
+              [label]="helptextSharingSmb.hostsdenyLabel | translate"
+              [tooltip]="helptextSharingSmb.hostsdenyTooltip | translate"
+            ></ix-chips>
+          }
         </ix-fieldset>
 
         <ix-fieldset formGroupName="audit" [title]="'Audit Logging' | translate">

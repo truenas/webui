@@ -26,6 +26,8 @@ import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-chec
 import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
+import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
+import { WarningHarness } from 'app/modules/forms/ix-forms/components/warning/warning.harness';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { LoaderService } from 'app/modules/loader/loader.service';
@@ -110,6 +112,7 @@ describe('SmbFormComponent', () => {
     component: SmbFormComponent,
     imports: [
       ReactiveFormsModule,
+      WarningComponent,
     ],
     providers: [
       mockAuth(),
@@ -197,10 +200,10 @@ describe('SmbFormComponent', () => {
       });
     });
 
-    it('shows a warning when opening Legacy Share for editing', () => {
-      expect(spectator.inject(DialogService).warn).toHaveBeenLastCalledWith(
-        'Legacy Share',
-        'In order for share to be saved, it needs to be migrated. Please select a new share purpose to migrate the share.',
+    it('shows a warning when opening Legacy Share for editing', async () => {
+      const warning = await loader.getHarness(WarningHarness);
+      expect(await warning.getText()).toContain(
+        'It’s recommended to select a modern SMB share purpose rather than using the legacy option.',
       );
     });
 
@@ -311,6 +314,7 @@ describe('SmbFormComponent', () => {
       const optionLabels = await purposeSelect.getOptionLabels();
       expect(optionLabels).toEqual([
         'Default Share',
+        'Legacy Share',
         'Time Machine Share',
         'Multi-Protocol Share',
         'Time Locked Share',
