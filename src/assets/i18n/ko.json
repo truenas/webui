@@ -3,7 +3,7 @@
   "700 or owner - all, others - none": "700 또는 소유자 - 모두 허용, 그 외 - 허용하지 않음",
   "All hosts are now allowed": "모든 호스트 허용함",
   "Allow all hosts": "모든 호스트 허용",
-  "An ACL is detected on the selected path but <i>Enable ACL</i> is not selected for this share.  ACLs should be stripped from the dataset prior to creating an SMB share.": "선택한 경로의 ACL을 감지했으나 이 공유에 대해 <i>ACL 사용</i>을 선택하지 않았습니다. SMB 공유를 생성하기 전에 데이터 세트에서 ACL을 제거해야 합니다.",
+  "An ACL is detected on the selected path but <i>Enable ACL</i> is not selected for this share.  ACLs should be stripped from the dataset prior to creating an SMB share.": "선택한 경로의 ACL을 감지했으나 이 공유에 대해 <i>ACL 활성화</i>를 선택하지 않았습니다. SMB 공유를 생성하기 전에 데이터 세트에서 ACL을 제거해야 합니다.",
   "Configure manually": "수동 구성",
   "Copy NQN": "NQN 복사",
   "Create Subsystem": "서브시스템 생성",
