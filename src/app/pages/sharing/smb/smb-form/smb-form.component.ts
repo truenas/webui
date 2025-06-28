@@ -1,6 +1,7 @@
 import {
   AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -63,6 +64,7 @@ import { UserService } from 'app/services/user.service';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectService } from 'app/store/services/services.selectors';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -99,8 +101,10 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   protected hasSmbUsers = signal(true);
   protected showLegacyWarning = signal(false);
   protected legacyWarningMessage = this.translate.instant(
-    'It’s recommended to select a modern SMB share purpose rather than using the legacy option.',
+    'For the best experience, we recommend choosing a modern SMB share purpose instead of the legacy option.',
   );
+
+  readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
 
   protected SmbPresetType = SmbPresetType;
   protected isAdvancedMode = false;
@@ -123,6 +127,12 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
   get isNew(): boolean {
     return !this.existingSmbShare;
+  }
+
+  get showOtherOptions(): boolean {
+    const excludedPurposes = [SmbPresetType.ExternalShare, SmbPresetType.VeeamRepositoryShare];
+
+    return !excludedPurposes.includes(this.form.controls.purpose.value);
   }
 
   get isAsyncValidatorPending(): boolean {
@@ -234,7 +244,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     ]],
     auto_snapshot: [false],
     auto_dataset_creation: [false],
-    dataset_naming_schema: [''],
+    dataset_naming_schema: [null as string | null],
     grace_period: [900 as number],
     auto_quota: [null as number | null],
     remote_path: [[] as string[], [
@@ -313,6 +323,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
       this.setSmbShareForEdit(this.existingSmbShare);
     }
 
+    this.setupAutoDatasetCreationControl();
     this.setupAfpWarning();
     this.setupMangleWarning();
     this.setupPathControl();
@@ -347,6 +358,18 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
       untilDestroyed(this),
     )
       .subscribe();
+  }
+
+  private setupAutoDatasetCreationControl(): void {
+    this.form.controls.auto_dataset_creation.valueChanges.pipe(
+      untilDestroyed(this),
+    ).subscribe((autoCreate) => {
+      if (!autoCreate) {
+        this.form.controls.dataset_naming_schema.setValue(null);
+      } else if (this.form.controls.dataset_naming_schema.value === null) {
+        this.form.controls.dataset_naming_schema.setValue('');
+      }
+    });
   }
 
   private setupPathControl(): void {
@@ -424,8 +447,8 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
     if (preset === SmbPresetType.ExternalShare) {
       this.form.controls.path.patchValue(externalSmbSharePath, { emitEvent: false });
-    } else if (preset !== this.form.controls.purpose.value) {
-      this.form.controls.path.patchValue('', { emitEvent: false });
+    } else if (this.form.controls.path.value === externalSmbSharePath) {
+      this.form.controls.path.patchValue(null, { emitEvent: false });
     }
 
     if (!enabledFields) return;
@@ -548,7 +571,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     this.datasetService.rootLevelDatasetWarning(
       smbShare.path,
       this.translate.instant(helptextSharingSmb.rootLevelWarning),
-      !this.form.controls.path.dirty,
+      !this.form.controls.path.dirty || smbShare.purpose === SmbPresetType.ExternalShare,
     ).pipe(
       filter(Boolean),
       tap(() => {
@@ -687,14 +710,18 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   }
 
   private buildPurposeOptions(): SelectOption<SmbPresetType>[] {
-    const options = mapToOptionsWithHoverTooltips(
+    let options = mapToOptionsWithHoverTooltips(
       smbPresetTypeLabels,
       smbPresetTooltips,
       this.translate,
     );
 
-    if (this.isNew || (!this.isNew && this.existingSmbShare.purpose !== SmbPresetType.LegacyShare)) {
-      return options.filter((option) => option.value !== SmbPresetType.LegacyShare);
+    if (this.isNew || (!this.isNew && this.existingSmbShare?.purpose !== SmbPresetType.LegacyShare)) {
+      options = options.filter((option) => option.value !== SmbPresetType.LegacyShare);
+    }
+
+    if (!this.isEnterprise()) {
+      options = options.filter((option) => option.value !== SmbPresetType.VeeamRepositoryShare);
     }
 
     return options;

@@ -22,4 +22,5 @@ export const presetEnabledFields: Partial<{
     'dataset_naming_schema', 'auto_quota', 'aapl_name_mangling',
   ],
   [SmbPresetType.ExternalShare]: ['remote_path'],
+  [SmbPresetType.VeeamRepositoryShare]: [],
 };

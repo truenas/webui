@@ -178,7 +178,7 @@
           ></ix-chips>
         </ix-fieldset>
 
-        @if (form.controls.purpose.value !== SmbPresetType.ExternalShare) {
+        @if (showOtherOptions) {
           <ix-fieldset [title]="'Other Options' | translate">
             @if (form.controls.home.enabled) {
               <ix-checkbox
@@ -300,16 +300,16 @@
             @if (form.controls.auto_dataset_creation.enabled) {
               <ix-checkbox
                 formControlName="auto_dataset_creation"
-                [label]="'Auto Dataset Creation' | translate"
-                [tooltip]="'Create dataset automatically if it does not exist.' | translate"
+                [label]="helptextSharingSmb.autoDatasetCreationLabel | translate"
+                [tooltip]="helptextSharingSmb.autoDatasetCreationTooltip | translate"
               ></ix-checkbox>
             }
 
-            @if (form.controls.dataset_naming_schema.enabled) {
+            @if (form.controls.dataset_naming_schema.enabled && form.controls.auto_dataset_creation.value) {
               <ix-input
                 formControlName="dataset_naming_schema"
-                [label]="'Dataset Naming Schema' | translate"
-                [tooltip]="'Schema used to name auto-created datasets. E.g. %Y-%m-%d' | translate"
+                [label]="helptextSharingSmb.datasetNamingSchemaLabel | translate"
+                [tooltip]="helptextSharingSmb.datasetNamingSchemaTooltip | translate"
               ></ix-input>
             }
 
@@ -326,8 +326,8 @@
               <ix-input
                 type="number"
                 formControlName="auto_quota"
-                [label]="'Auto Quota' | translate"
-                [tooltip]="'Default quota for auto-created datasets.' | translate"
+                [label]="helptextSharingSmb.autoQuotaLabel | translate"
+                [tooltip]="helptextSharingSmb.autoQuotaTooltip | translate"
               ></ix-input>
             }
           </ix-fieldset>

@@ -42,6 +42,7 @@ import { FilesystemService } from 'app/services/filesystem.service';
 import { AppState } from 'app/store';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { selectServices } from 'app/store/services/services.selectors';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 import { SmbFormComponent } from './smb-form.component';
 
 describe('SmbFormComponent', () => {
@@ -157,6 +158,10 @@ describe('SmbFormComponent', () => {
         selectors: [{
           selector: selectServices,
           value: [],
+        },
+        {
+          selector: selectIsEnterprise,
+          value: true,
         }],
       }),
       mockProvider(FormErrorHandlerService, {
@@ -203,7 +208,7 @@ describe('SmbFormComponent', () => {
     it('shows a warning when opening Legacy Share for editing', async () => {
       const warning = await loader.getHarness(WarningHarness);
       expect(await warning.getText()).toContain(
-        'It’s recommended to select a modern SMB share purpose rather than using the legacy option.',
+        'For the best experience, we recommend choosing a modern SMB share purpose instead of the legacy option.',
       );
     });
 
@@ -319,6 +324,7 @@ describe('SmbFormComponent', () => {
         'Time Locked Share',
         'Private Datasets Share',
         'External Share',
+        'Veeam Repository Share',
       ]);
     });
 

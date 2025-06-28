@@ -45,6 +45,7 @@ export enum SmbPresetType {
   TimeLockedShare = 'TIME_LOCKED_SHARE',
   PrivateDatasetsShare = 'PRIVATE_DATASETS_SHARE',
   ExternalShare = 'EXTERNAL_SHARE',
+  VeeamRepositoryShare = 'VEEAM_REPOSITORY_SHARE',
 }
 
 export const externalSmbSharePath = 'EXTERNAL';
@@ -57,6 +58,7 @@ export const smbPresetTypeLabels = new Map<SmbPresetType, string>([
   [SmbPresetType.TimeLockedShare, T('Time Locked Share')],
   [SmbPresetType.PrivateDatasetsShare, T('Private Datasets Share')],
   [SmbPresetType.ExternalShare, T('External Share')],
+  [SmbPresetType.VeeamRepositoryShare, T('Veeam Repository Share')],
 ]);
 
 export const smbPresetTooltips = new Map<SmbPresetType, string>([
@@ -67,6 +69,7 @@ export const smbPresetTooltips = new Map<SmbPresetType, string>([
   [SmbPresetType.TimeLockedShare, T('The SMB share makes files read-only through the SMB protocol after the set graceperiod ends. WARNING: This setting does not work if the path is accessed locally or if another SMB share without the TIMELOCKED_SHARE purpose uses the same path. WARNING: This setting might not meet regulatory requirements for write-once storage.')],
   [SmbPresetType.PrivateDatasetsShare, T('The server uses the specified dataset_naming_schema in options to make a new ZFS dataset when the client connects. The server uses this dataset as the share path during the SMB session.')],
   [SmbPresetType.ExternalShare, T('The SMB share is a DFS proxy to a share hosted on an external SMB server.')],
+  [SmbPresetType.VeeamRepositoryShare, T('The SMB share is a repository for Veeam Backup & Replication and supports Fast Clone.')],
 ]);
 
 export interface LegacySmbShareOptions {
@@ -127,6 +130,10 @@ export interface ExternalSmbShareOptions {
   remote_path?: string[];
 }
 
+export interface VeeamRepositorySmbShareOptions {
+  purpose: SmbPresetType.VeeamRepositoryShare;
+}
+
 export type SmbShareOptions =
   | LegacySmbShareOptions
   | DefaultSmbShareOptions
@@ -134,7 +141,8 @@ export type SmbShareOptions =
   | MultiProtocolSmbShareOptions
   | TimeLockedSmbShareOptions
   | PrivateDatasetsSmbShareOptions
-  | ExternalSmbShareOptions;
+  | ExternalSmbShareOptions
+  | VeeamRepositorySmbShareOptions;
 
 export interface SmbPreset {
   cluster: boolean;
