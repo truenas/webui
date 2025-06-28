@@ -1,7 +1,6 @@
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnChanges,
-  OnInit,
 } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
 import { MatError } from '@angular/material/form-field';
@@ -32,7 +31,7 @@ export const ixManualValidateError = 'ixManualValidateError';
     TranslateModule,
   ],
 })
-export class IxErrorsComponent implements OnChanges, OnInit {
+export class IxErrorsComponent implements OnChanges {
   readonly control = input.required<AbstractControl>();
   readonly label = input<string>();
 
@@ -97,12 +96,6 @@ export class IxErrorsComponent implements OnChanges, OnInit {
     ).subscribe(() => {
       this.handleErrors();
     });
-  }
-
-  ngOnInit(): void {
-    if (this.control().errors) {
-      this.handleErrors();
-    }
   }
 
   private handleErrors(): void {
