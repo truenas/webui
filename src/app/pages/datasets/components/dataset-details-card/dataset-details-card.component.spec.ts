@@ -8,7 +8,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { DatasetType } from 'app/enums/dataset.enum';
+import { DatasetType, DatasetCaseSensitivity } from 'app/enums/dataset.enum';
+import { OnOff } from 'app/enums/on-off.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
@@ -29,9 +30,9 @@ const dataset = {
   sync: { value: 'STANDARD' },
   compression: { source: ZfsPropertySource.Inherited, value: 'LZ4' },
   compressratio: { value: '3.81x' },
-  atime: true,
+  atime: { parsed: true, rawvalue: 'on', value: OnOff.On, source: ZfsPropertySource.Local },
   deduplication: { value: 'OFF' },
-  casesensitive: false,
+  casesensitivity: { parsed: 'insensitive', rawvalue: 'insensitive', value: DatasetCaseSensitivity.Insensitive, source: ZfsPropertySource.Local },
   comments: { value: 'Test comment', source: ZfsPropertySource.Local },
 } as DatasetDetails;
 
