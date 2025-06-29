@@ -50,6 +50,7 @@ import { SystemDatasetConfig, SystemDatasetUpdate } from 'app/interfaces/system-
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { UpdateParams } from 'app/interfaces/system-update.interface';
 import { Tunable, TunableCreate, TunableUpdate } from 'app/interfaces/tunable.interface';
+import { VmStopParams } from 'app/interfaces/virtual-machine.interface';
 import {
   CreateVirtualizationInstance, ImportZvolParams,
   UpdateVirtualizationInstance,
@@ -219,6 +220,10 @@ export interface ApiJobDirectory {
     params: [instanceId: string, update: UpdateVirtualizationInstance];
     response: VirtualizationInstance;
   };
+
+  // VM
+  'vm.restart': { params: [id: number]; response: void };
+  'vm.stop': { params: VmStopParams; response: void };
 }
 
 export type ApiJobMethod = keyof ApiJobDirectory;
