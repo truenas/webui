@@ -170,7 +170,7 @@ export interface DatasetDetails {
   key_format: ZfsProperty<EncryptionKeyFormat>;
   key_loaded: boolean;
   locked: boolean;
-  readonly: boolean;
+  readonly: ZfsProperty<OnOff, boolean>;
   mountpoint: string;
   name: string;
   pool: string;
@@ -196,8 +196,8 @@ export interface DatasetDetails {
   children?: DatasetDetails[];
   volsize?: ZfsProperty<string, number>; // Present for type === DatasetType.Volume
   thick_provisioned?: boolean; // Present for type === DatasetType.Volume
-  atime: boolean;
-  casesensitive: boolean;
+  atime: ZfsProperty<OnOff, boolean>;
+  casesensitivity: ZfsProperty<DatasetCaseSensitivity, string>;
   origin: ZfsProperty<string>;
   sync: ZfsProperty<string>;
   compression: ZfsProperty<string>;

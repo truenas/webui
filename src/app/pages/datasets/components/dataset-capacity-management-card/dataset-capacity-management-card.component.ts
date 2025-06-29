@@ -75,7 +75,7 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
   });
 
   protected checkQuotas = computed(() => {
-    return !this.dataset().locked && this.isFilesystem() && !this.dataset().readonly;
+    return !this.dataset().locked && this.isFilesystem() && !this.dataset().readonly.parsed;
   });
 
   protected hasQuota = computed(() => {

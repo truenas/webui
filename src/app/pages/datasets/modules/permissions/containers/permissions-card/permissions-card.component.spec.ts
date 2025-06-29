@@ -9,6 +9,8 @@ import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AclType } from 'app/enums/acl-type.enum';
+import { OnOff } from 'app/enums/on-off.enum';
+import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { Acl, NfsAcl, PosixAcl } from 'app/interfaces/acl.interface';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
@@ -41,6 +43,12 @@ describe('PermissionsCardComponent', () => {
     name: 'testpool/dataset',
     mountpoint: '/mnt/testpool/dataset',
     pool: 'testpool',
+    readonly: {
+      parsed: false,
+      rawvalue: 'off',
+      value: OnOff.Off,
+      source: ZfsPropertySource.Local,
+    },
   } as DatasetDetails;
 
   let spectator: Spectator<PermissionsCardComponent>;
@@ -176,7 +184,12 @@ describe('PermissionsCardComponent', () => {
     it('does not show edit button when dataset is readonly', async () => {
       spectator.setInput('dataset', {
         ...dataset,
-        readonly: true,
+        readonly: {
+          parsed: true,
+          rawvalue: 'on',
+          value: OnOff.On,
+          source: ZfsPropertySource.Local,
+        },
       } as DatasetDetails);
 
       const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));

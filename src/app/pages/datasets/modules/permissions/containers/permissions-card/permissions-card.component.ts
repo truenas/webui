@@ -111,7 +111,7 @@ export class PermissionsCardComponent implements OnInit, OnChanges {
   });
 
   readonly canEditPermissions = computed(() => {
-    return this.acl() && !isRootDataset(this.dataset()) && !this.dataset().locked && !this.dataset().readonly;
+    return this.acl() && !isRootDataset(this.dataset()) && !this.dataset().locked && !this.dataset().readonly.parsed;
   });
 
   readonly isLocked = computed(() => {
@@ -131,7 +131,7 @@ export class PermissionsCardComponent implements OnInit, OnChanges {
       return this.translate.instant(helptextPermissions.editDisabled.locked);
     }
 
-    if (this.dataset().readonly) {
+    if (this.dataset().readonly.parsed) {
       return this.translate.instant(helptextPermissions.editDisabled.readonly);
     }
 
