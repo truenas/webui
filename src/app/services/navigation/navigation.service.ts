@@ -23,6 +23,7 @@ export class NavigationService {
   readonly hasEnclosure$ = this.store$.select(selectHasEnclosureSupport);
   readonly hasVms$ = new BehaviorSubject(false);
   readonly hasApps$ = new BehaviorSubject(false);
+  readonly hasInstances$ = new BehaviorSubject(false);
 
   readonly menuItems: MenuItem[] = [
     {
@@ -92,6 +93,7 @@ export class NavigationService {
       tooltip: T('Containers'),
       icon: iconMarker('mdi-package-variant-closed'),
       state: 'instances',
+      isVisible$: this.hasInstances$,
     },
     {
       name: T('Virtual Machines'),
@@ -153,6 +155,7 @@ export class NavigationService {
     if (this.systemGeneralService.getProductType() !== ProductType.Enterprise) {
       this.hasVms$.next(true);
       this.hasApps$.next(true);
+      this.hasInstances$.next(true);
       return;
     }
 
