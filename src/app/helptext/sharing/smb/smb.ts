@@ -49,6 +49,16 @@ export const helptextSharingSmb = {
   timemachineQuotaLabel: T('Time Machine Quota'),
   timemachineQuotaTooltip: T('Number of bytes'),
 
+  autoDatasetCreationLabel: T('Auto Dataset Creation'),
+  autoDatasetCreationTooltip: T('Create dataset automatically if it does not exist.'),
+  datasetNamingSchemaLabel: T('Dataset Naming Schema'),
+  datasetNamingSchemaTooltip: T('The naming schema to use when Auto Dataset Creation is specified.\
+ If you do not set a schema, the server uses %u (username) if it is not joined to Active Directory.\
+ If the server is joined to Active Directory it uses %D/%u (domain/username).'),
+  autoQuotaLabel: T('Auto Quota'),
+  autoQuotaTooltip: T('Set the specified ZFS quota (in gibibytes) on new datasets.\
+ If the value is zero, TrueNAS disables automatic quotas for the share.'),
+
   afpLabel: T('Legacy AFP Compatibility'),
   afpTooltip: T(
     'This controls how the SMB share reads and writes data. Leave unset for the share to behave like a normal SMB share and set for the share to behave like the deprecated Apple Filing Protocol (AFP). This should only be set when this share originated as an AFP sharing configuration. This is not required for pure SMB shares or MacOS SMB clients.',
