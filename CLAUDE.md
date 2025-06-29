@@ -1,4 +1,6 @@
-# CLAUDE.md - Guidelines for TrueNAS WebUI Project
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Build and Test Commands
 - Run `yarn ui reset` once to create the environment file. This must be done before running tests or building the UI.
@@ -8,7 +10,39 @@
 - Run specific test: `yarn test src/app/path/to/file.spec.ts`
 - Lint code: `yarn lint` or `yarn lint:fix` to auto-fix issues. Wait for longer when linting.
 - Run `yarn ui remote -i <some_ip>` to prepare UI for being served. Re-run this command after running `yarn build`.
+- Generate authenticated URL: `yarn auth-url /target-path` (for Playwright testing)
 - Ignore strict null check, i.e. don't run: `yarn strict-null-checks`
+
+## High-Level Architecture
+
+### State Management (NgRx)
+The application uses NgRx for state management. Each feature follows this pattern:
+- `store/[feature]/actions.ts` - Action definitions
+- `store/[feature]/effects.ts` - Side effects, API calls
+- `store/[feature]/reducer.ts` - State mutations
+- `store/[feature]/selectors.ts` - Memoized state queries
+
+Key state slices: systemConfig, preferences, services, jobs, alerts, networkInterfaces
+
+### Service Architecture
+- **ApiService** (`services/websocket/api.service.ts`): Central WebSocket API communication
+- **WebSocketHandlerService**: Low-level WebSocket connection management
+- **AuthService**: Authentication and authorization
+- **ErrorHandlerService**: Centralized error handling with Sentry
+- Domain services follow pattern: `services/[domain].service.ts`
+
+### Data Flow Pattern
+1. Component dispatches action
+2. Effect catches action, calls ApiService
+3. ApiService makes WebSocket call
+4. Effect dispatches success/failure action
+5. Reducer updates state
+6. Component subscribes to selector
+
+### Routing Structure
+- Lazy loaded feature modules under `pages/`
+- Admin layout wraps authenticated routes
+- Guards: AuthGuard, WebSocketGuard, TranslationsGuard
 
 ## Code Style Guidelines
 - **Angular Component Naming**: Use kebab-case with prefix `ix-` (e.g., `ix-my-component`)

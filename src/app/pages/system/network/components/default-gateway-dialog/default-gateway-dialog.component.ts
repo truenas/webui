@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild, AfterViewInit,
+} from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -7,11 +9,12 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { EMPTY } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { helptextNetworkConfiguration } from 'app/helptext/network/configuration/configuration';
+import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -42,10 +45,15 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     MatDialogClose,
     RequiresRolesDirective,
     TranslateModule,
+    CopyButtonComponent,
   ],
 })
-export class DefaultGatewayDialog {
+export class DefaultGatewayDialog implements OnInit, AfterViewInit {
+  @ViewChild(IxInputComponent) private gatewayInput: IxInputComponent;
   protected readonly requiredRoles = [Role.NetworkInterfaceWrite];
+  protected currentGateway = '';
+  private hasUserTyped = false;
+  private hasInitialFocus = false;
 
   form = this.fb.nonNullable.group({
     defaultGateway: [
@@ -55,12 +63,15 @@ export class DefaultGatewayDialog {
           ipv4Validator(),
           Validators.required,
         ],
-        updateOn: 'blur',
       },
     ],
   });
 
   currentGateway$ = this.api.call('network.general.summary').pipe(
+    map((summary) => {
+      this.currentGateway = summary.default_routes[0] || '';
+      return summary;
+    }),
     toLoadingState(),
   );
 
@@ -75,6 +86,47 @@ export class DefaultGatewayDialog {
     private translate: TranslateService,
     private validatorsService: IxValidatorsService,
   ) {}
+
+  ngOnInit(): void {
+    this.currentGateway$.pipe(untilDestroyed(this)).subscribe((state) => {
+      if (!state.isLoading && state.value && !this.hasUserTyped) {
+        const currentGateway = state.value.default_routes[0];
+        if (currentGateway) {
+          this.form.patchValue({ defaultGateway: currentGateway });
+        }
+      }
+    });
+  }
+
+  ngAfterViewInit(): void {
+    // Set up focus handler on the actual input element
+    setTimeout(() => {
+      if (this.gatewayInput?.inputElementRef) {
+        const inputElement = this.gatewayInput.inputElementRef()?.nativeElement;
+        if (inputElement) {
+          inputElement.addEventListener('focus', () => {
+            if (!this.hasInitialFocus && !this.hasUserTyped
+              && this.form.controls.defaultGateway.value === this.currentGateway) {
+              this.hasInitialFocus = true;
+              // Use setTimeout to ensure the value is cleared after Angular's change detection
+              setTimeout(() => {
+                this.form.patchValue({ defaultGateway: '' });
+                this.cdr.markForCheck();
+              });
+            }
+          });
+        }
+      }
+    });
+  }
+
+  onInputFocus(): void {
+    // This method is kept for compatibility but the actual logic is in ngAfterViewInit
+  }
+
+  onInputChange(): void {
+    this.hasUserTyped = true;
+  }
 
   onSubmit(): void {
     this.dialogRef.close();

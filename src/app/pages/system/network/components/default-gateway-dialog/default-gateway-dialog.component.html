@@ -6,6 +6,9 @@
     <span>{{ 'Current Default Gateway' | translate }}:</span>
     <span *ixWithLoadingState="currentGateway$ as currentGateway">
       {{ currentGateway.default_routes[0] || ('None' | translate) }}
+      @if (currentGateway.default_routes[0]) {
+        <ix-copy-button [text]="currentGateway.default_routes[0]"></ix-copy-button>
+      }
     </span>
   </div>
 </div>
@@ -17,6 +20,8 @@
         [label]="'New IPv4 Default Gateway' | translate"
         [required]="true"
         [tooltip]="helptext.ipv4gatewayTooltip | translate"
+        (focus)="onInputFocus()"
+        (input)="onInputChange()"
       ></ix-input>
     </ix-fieldset>
   </div>
