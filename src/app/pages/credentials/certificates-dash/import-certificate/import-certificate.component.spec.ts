@@ -87,4 +87,28 @@ describe('ImportCertificateComponent', () => {
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
     expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: true });
   });
+
+  it('imports certificate with empty private key', async () => {
+    await form.fillForm({
+      Name: 'test-cert-no-private-key',
+      'Add To Trusted Store': false,
+      Certificate: '--BEING CERTIFICATE--',
+      'Private Key': '',
+    });
+
+    const importButton = await loader.getHarness(MatButtonHarness.with({ text: 'Import' }));
+    await importButton.click();
+
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('certificate.create', [{
+      name: 'test-cert-no-private-key',
+      add_to_trusted_store: false,
+      certificate: '--BEING CERTIFICATE--',
+      privatekey: undefined,
+      passphrase: null,
+      create_type: CertificateCreateType.Import,
+    }]);
+
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
+    expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: true });
+  });
 });
