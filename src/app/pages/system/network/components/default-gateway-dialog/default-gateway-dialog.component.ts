@@ -1,7 +1,9 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild, AfterViewInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormBuilder, FormControl, Validators, ReactiveFormsModule,
+} from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
   MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose,
@@ -48,12 +50,11 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     CopyButtonComponent,
   ],
 })
-export class DefaultGatewayDialog implements OnInit, AfterViewInit {
-  @ViewChild(IxInputComponent) private gatewayInput: IxInputComponent;
+export class DefaultGatewayDialog implements OnInit {
   protected readonly requiredRoles = [Role.NetworkInterfaceWrite];
   protected currentGateway = '';
-  private hasUserTyped = false;
-  private hasInitialFocus = false;
+  protected currentDns1 = '';
+  protected currentDns2 = '';
 
   form = this.fb.nonNullable.group({
     defaultGateway: [
@@ -65,11 +66,29 @@ export class DefaultGatewayDialog implements OnInit, AfterViewInit {
         ],
       },
     ],
+    dns1: [
+      '',
+      {
+        validators: [
+          this.optionalIpValidator(),
+        ],
+      },
+    ],
+    dns2: [
+      '',
+      {
+        validators: [
+          this.optionalIpValidator(),
+        ],
+      },
+    ],
   });
 
   currentGateway$ = this.api.call('network.general.summary').pipe(
     map((summary) => {
       this.currentGateway = summary.default_routes[0] || '';
+      this.currentDns1 = summary.nameservers[0] || '';
+      this.currentDns2 = summary.nameservers[1] || '';
       return summary;
     }),
     toLoadingState(),
@@ -89,48 +108,51 @@ export class DefaultGatewayDialog implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.currentGateway$.pipe(untilDestroyed(this)).subscribe((state) => {
-      if (!state.isLoading && state.value && !this.hasUserTyped) {
+      if (!state.isLoading && state.value) {
         const currentGateway = state.value.default_routes[0];
         if (currentGateway) {
           this.form.patchValue({ defaultGateway: currentGateway });
         }
-      }
-    });
-  }
 
-  ngAfterViewInit(): void {
-    // Set up focus handler on the actual input element
-    setTimeout(() => {
-      if (this.gatewayInput?.inputElementRef) {
-        const inputElement = this.gatewayInput.inputElementRef()?.nativeElement;
-        if (inputElement) {
-          inputElement.addEventListener('focus', () => {
-            if (!this.hasInitialFocus && !this.hasUserTyped
-              && this.form.controls.defaultGateway.value === this.currentGateway) {
-              this.hasInitialFocus = true;
-              // Use setTimeout to ensure the value is cleared after Angular's change detection
-              setTimeout(() => {
-                this.form.patchValue({ defaultGateway: '' });
-                this.cdr.markForCheck();
-              });
-            }
-          });
+        const currentDns1 = state.value.nameservers[0];
+        if (currentDns1) {
+          this.form.patchValue({ dns1: currentDns1 });
+        }
+
+        const currentDns2 = state.value.nameservers[1];
+        if (currentDns2) {
+          this.form.patchValue({ dns2: currentDns2 });
         }
       }
     });
   }
 
-  onInputFocus(): void {
-    // This method is kept for compatibility but the actual logic is in ngAfterViewInit
-  }
-
-  onInputChange(): void {
-    this.hasUserTyped = true;
+  private optionalIpValidator() {
+    return (control: FormControl<string>) => {
+      if (!control.value || control.value.trim() === '') {
+        return null; // Valid if empty
+      }
+      return ipv4Validator()(control);
+    };
   }
 
   onSubmit(): void {
     this.dialogRef.close();
     const formValues = this.form.getRawValue();
+
+    // Save DNS entries to session storage for later use
+    if (formValues.dns1?.trim()) {
+      sessionStorage.setItem('pending-dns1', formValues.dns1.trim());
+    } else {
+      sessionStorage.removeItem('pending-dns1');
+    }
+
+    if (formValues.dns2?.trim()) {
+      sessionStorage.setItem('pending-dns2', formValues.dns2.trim());
+    } else {
+      sessionStorage.removeItem('pending-dns2');
+    }
+
     this.api.call('interface.save_default_route', [formValues.defaultGateway]).pipe(
       catchError((error: unknown) => {
         this.errorHandler.showErrorModal(error);

@@ -27,6 +27,7 @@ describe('DefaultGatewayDialogComponent', () => {
       mockApi([
         mockCall('network.general.summary', {
           default_routes: ['1.1.1.1'],
+          nameservers: ['8.8.8.8', '8.8.4.4'],
         } as NetworkSummary),
         mockCall('interface.save_default_route'),
       ]),
@@ -42,25 +43,22 @@ describe('DefaultGatewayDialogComponent', () => {
   });
 
   it('checks the header', () => {
-    expect(spectator.query('h1')).toHaveText('Register Default Gateway');
-    expect(spectator.query('p')).toHaveText('Editing interface will result in default gateway being removed, which may result in TrueNAS being inaccessible. You can provide new default gateway now:');
+    expect(spectator.query('h1')).toHaveText('Set Gateway and DNS');
+    expect(spectator.query('p')).toHaveText('Editing interface will result in default gateway being removed, which may result in TrueNAS being inaccessible. You can provide new default gateway and DNS information now:');
     expect(byText('Current Default Gateway: 1.1.1.1')).toBeTruthy();
+    expect(byText('Current DNS #1: 8.8.8.8')).toBeTruthy();
+    expect(byText('Current DNS #2: 8.8.4.4')).toBeTruthy();
   });
 
-  it('should pre-fill the input with current gateway', async () => {
-    const defaultGatewayInput = await loader.getHarness(IxInputHarness.with({ label: 'New IPv4 Default Gateway' }));
-    expect(await defaultGatewayInput.getValue()).toBe('1.1.1.1');
-  });
-
-  it('should clear pre-filled value on focus if user has not typed', async () => {
+  it('should pre-fill the input with current gateway and DNS', async () => {
     const defaultGatewayInput = await loader.getHarness(IxInputHarness.with({ label: 'New IPv4 Default Gateway' }));
     expect(await defaultGatewayInput.getValue()).toBe('1.1.1.1');
 
-    // The actual clearing happens in ngAfterViewInit with event listeners
-    // For testing purposes, we'll verify the initial state and that onInputChange works
-    spectator.component.onInputChange();
-    // We can't directly test private properties, but we can verify the behavior works
-    expect(await defaultGatewayInput.getValue()).toBe('1.1.1.1');
+    const dns1Input = await loader.getHarness(IxInputHarness.with({ label: 'DNS Server #1' }));
+    expect(await dns1Input.getValue()).toBe('8.8.8.8');
+
+    const dns2Input = await loader.getHarness(IxInputHarness.with({ label: 'DNS Server #2' }));
+    expect(await dns2Input.getValue()).toBe('8.8.4.4');
   });
 
   it('should close dialog and call WebSocket service on form submission', async () => {
@@ -71,5 +69,26 @@ describe('DefaultGatewayDialogComponent', () => {
     await registerGatewayButton.click();
 
     expect(api.call).toHaveBeenCalledWith('interface.save_default_route', ['192.168.1.1']);
+  });
+
+  it('should save DNS entries to session storage when provided', async () => {
+    const defaultGatewayInput = await loader.getHarness(IxInputHarness.with({ label: 'New IPv4 Default Gateway' }));
+    await defaultGatewayInput.setValue('192.168.1.1');
+
+    const dns1Input = await loader.getHarness(IxInputHarness.with({ label: 'DNS Server #1' }));
+    await dns1Input.setValue('9.9.9.9');
+
+    const dns2Input = await loader.getHarness(IxInputHarness.with({ label: 'DNS Server #2' }));
+    await dns2Input.setValue('1.1.1.1');
+
+    const registerGatewayButton = await loader.getHarness(MatButtonHarness.with({ text: 'Register' }));
+    await registerGatewayButton.click();
+
+    expect(sessionStorage.getItem('pending-dns1')).toBe('9.9.9.9');
+    expect(sessionStorage.getItem('pending-dns2')).toBe('1.1.1.1');
+
+    // Clean up
+    sessionStorage.removeItem('pending-dns1');
+    sessionStorage.removeItem('pending-dns2');
   });
 });

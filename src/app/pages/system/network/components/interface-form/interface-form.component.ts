@@ -232,6 +232,10 @@ export class InterfaceFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Clear any pending DNS entries from session storage to avoid applying them by mistake
+    sessionStorage.removeItem('pending-dns1');
+    sessionStorage.removeItem('pending-dns2');
+
     this.loadFailoverStatus();
     this.validateNameOnTypeChange();
 
