@@ -7,7 +7,7 @@
       "Bash(mkdir:*)",
       "Bash(mv:*)",
       "Bash(npx tsc:*)",
-      "Bash(ls *)",
+      "Bash(ls:*)",
       "Bash(find *)",
       "Bash(sed *)",
       "Bash(git add:*)",

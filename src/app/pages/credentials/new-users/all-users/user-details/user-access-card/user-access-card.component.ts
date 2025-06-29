@@ -12,6 +12,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { filter, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role, roleNames } from 'app/enums/role.enum';
 import { hasShellAccess } from 'app/helpers/user.helper';
 import { User } from 'app/interfaces/user.interface';
@@ -22,6 +23,7 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { userAccessCardElements } from 'app/pages/credentials/new-users/all-users/user-details/user-access-card/user-access-card.elements';
 import { UserLastActionComponent } from 'app/pages/credentials/new-users/all-users/user-details/user-last-action/user-last-action.component';
 import {
   ApiKeyFormComponent,
@@ -49,6 +51,7 @@ import { UrlOptionsService } from 'app/services/url-options.service';
     TestDirective,
     UserLastActionComponent,
     RouterLink,
+    UiSearchDirective,
   ],
 })
 export class UserAccessCardComponent {
@@ -58,6 +61,8 @@ export class UserAccessCardComponent {
   protected readonly Role = Role;
   protected readonly unlockUserText = this.translate.instant('Unlock User');
   protected readonly lockUserText = this.translate.instant('Lock User');
+
+  protected readonly searchableElements = userAccessCardElements;
 
   readonly sshAccessStatus = computed<string | null>(() => {
     if (this.user().sshpubkey && this.user().ssh_password_enabled) {

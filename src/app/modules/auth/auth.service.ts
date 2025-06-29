@@ -141,7 +141,7 @@ export class AuthService {
   login(
     username: string,
     password: string,
-  otp: string | null = null,
+    otp: string | null = null,
   ): Observable<{ loginResult: LoginResult; loginResponse: LoginExResponse }> {
     const loginCall$ = otp
       ? this.api.call('auth.login_ex_continue', [{ mechanism: LoginExMechanism.OtpToken, otp_token: otp }])
