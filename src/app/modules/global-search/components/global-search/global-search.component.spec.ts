@@ -2,7 +2,6 @@ import { A11yModule } from '@angular/cdk/a11y';
 import { fakeAsync, tick } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
@@ -37,7 +36,6 @@ describe('GlobalSearchComponent', () => {
     imports: [
       FormsModule,
       ReactiveFormsModule,
-      NoopAnimationsModule,
       RouterTestingModule,
       MatDialogModule,
       TranslateModule.forRoot(),

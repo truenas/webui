@@ -1,7 +1,4 @@
 import {
-  animate, group as groupAnimations, style, transition, trigger,
-} from '@angular/animations';
-import {
   CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray,
 } from '@angular/cdk/drag-drop';
 import {
@@ -15,6 +12,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { isEqual } from 'lodash-es';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { AnimateOutDirective } from 'app/directives/animate-out/animate-out.directive';
 import { DisableFocusableElementsDirective } from 'app/directives/disable-focusable-elements/disable-focusable-elements.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -45,16 +43,6 @@ import { WidgetGroupControlsComponent } from './widget-group-controls/widget-gro
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  animations: [
-    trigger('groupRemovedTrigger', [
-      transition(':leave', [
-        groupAnimations([
-          animate('200ms', style({ transform: 'scale(0.3)' })),
-          animate('100ms', style({ opacity: 0 })),
-        ]),
-      ]),
-    ]),
-  ],
   imports: [
     PageHeaderComponent,
     MatButton,
@@ -69,6 +57,7 @@ import { WidgetGroupControlsComponent } from './widget-group-controls/widget-gro
     MatTooltip,
     CdkDrag,
     CdkDropList,
+    AnimateOutDirective,
   ],
   providers: [
     WidgetResourcesService,
@@ -83,6 +72,7 @@ export class DashboardComponent implements OnInit {
   readonly isLoading = toSignal(this.dashboardStore.isLoading$);
   readonly isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
   readonly isLoadingFirstTime = computed(() => this.isLoading() && this.savedGroups() === null);
+  readonly removingGroups = signal(new Set<WidgetGroup>());
 
   readonly customLayout = computed(() => {
     return !isEqual(this.renderedGroups(), getDefaultWidgets(this.isHaLicensed()));
@@ -170,8 +160,21 @@ export class DashboardComponent implements OnInit {
   }
 
   protected onDeleteGroup(groupToRemove: WidgetGroup): void {
+    this.removingGroups.update((removing) => {
+      const newSet = new Set(removing);
+      newSet.add(groupToRemove);
+      return newSet;
+    });
+  }
+
+  protected onGroupRemovalComplete(groupToRemove: WidgetGroup): void {
     this.renderedGroups.update((groups) => {
       return groups.filter((group) => group !== groupToRemove);
+    });
+    this.removingGroups.update((removing) => {
+      const newSet = new Set(removing);
+      newSet.delete(groupToRemove);
+      return newSet;
     });
   }
 
@@ -200,6 +203,10 @@ export class DashboardComponent implements OnInit {
         this.renderedGroups.set(getDefaultWidgets(this.isHaLicensed()));
         this.snackbar.success(this.translate.instant('Default widgets restored'));
       });
+  }
+
+  protected isGroupRemoving(group: WidgetGroup): boolean {
+    return this.removingGroups().has(group);
   }
 
   private loadGroups(): void {

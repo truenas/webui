@@ -2,12 +2,14 @@ import { CdkDragDrop, CdkDropList } from '@angular/cdk/drag-drop';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { NgTemplateOutlet } from '@angular/common';
+import { fakeAsync, tick } from '@angular/core/testing';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { BehaviorSubject, of } from 'rxjs';
+import { AnimateOutDirective } from 'app/directives/animate-out/animate-out.directive';
 import {
   DisableFocusableElementsDirective,
 } from 'app/directives/disable-focusable-elements/disable-focusable-elements.directive';
@@ -49,6 +51,7 @@ describe('DashboardComponent', () => {
       MockComponent(WidgetGroupComponent),
       NewFeatureIndicatorDirective,
       DisableFocusableElementsDirective,
+      AnimateOutDirective,
     ],
     componentProviders: [
       mockProvider(WidgetResourcesService),
@@ -148,16 +151,20 @@ describe('DashboardComponent', () => {
       expect(groups[3].group).toEqual(groupD);
     });
 
-    it('removes a widget when delete button is pressed', async () => {
+    it('removes a widget when delete button is pressed', fakeAsync(async () => {
       const deleteIcon = await loader.getHarness(IxIconHarness.with({ name: 'mdi-delete' }));
       await deleteIcon.click();
+
+      // Wait for animation to complete
+      tick(350);
+      spectator.detectChanges();
 
       const groups = spectator.queryAll(WidgetGroupComponent);
       expect(groups).toHaveLength(3);
       expect(groups[0].group).toEqual(groupB);
       expect(groups[1].group).toEqual(groupC);
       expect(groups[2].group).toEqual(groupD);
-    });
+    }));
 
     it('adds a new widget and opens a slide in when Add is pressed', async () => {
       const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
@@ -183,16 +190,20 @@ describe('DashboardComponent', () => {
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Dashboard settings saved');
     });
 
-    it('saves new configuration when Save is pressed', async () => {
+    it('saves new configuration when Save is pressed', fakeAsync(async () => {
       const deleteIcon = await loader.getHarness(IxIconHarness.with({ name: 'mdi-delete' }));
       await deleteIcon.click();
+
+      // Wait for animation to complete
+      tick(350);
+      spectator.detectChanges();
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
       expect(spectator.inject(DashboardStore, true).save).toHaveBeenCalledWith([groupB, groupC, groupD]);
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Dashboard settings saved');
-    });
+    }));
 
     it('reverts to loaded configuration when Cancel button is pressed', async () => {
       const deleteIcon = await loader.getHarness(IxIconHarness.with({ name: 'mdi-delete' }));

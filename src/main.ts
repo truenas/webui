@@ -10,7 +10,6 @@ import {
 import { MatIconRegistry } from '@angular/material/icon';
 import { MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
-import { provideAnimations } from '@angular/platform-browser/animations';
 import {
   withPreloading,
   provideRouter,
@@ -148,7 +147,6 @@ bootstrapApplication(AppComponent, {
     },
     provideCharts(withDefaultRegisterables()),
     provideHttpClient(withInterceptorsFromDi()),
-    provideAnimations(),
     provideRouter(
       rootRoutes,
       withPreloading(PreloadAllModules),

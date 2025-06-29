@@ -77,7 +77,10 @@
           class="group-slot"
           cdkDrag
           cdkDragPreviewContainer="parent"
-          @groupRemovedTrigger
+          animateOutClass="group-remove"
+          [animateOut]="isGroupRemoving(group)"
+          [animateOutDuration]="300"
+          (animateOutComplete)="onGroupRemovalComplete(group)"
         >
           <div
             class="group-container"

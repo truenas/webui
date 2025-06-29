@@ -21,6 +21,7 @@ describe('FakeProgressBarComponent', () => {
 
   it('shows a progress bar when loading is true', fakeAsync(async () => {
     spectator.setInput('loading', true);
+    tick(200);
 
     const progressBar = await loader.getHarness(MatProgressBarHarness);
     expect(progressBar).toBeTruthy();
@@ -33,6 +34,7 @@ describe('FakeProgressBarComponent', () => {
       duration: 2000,
       loading: true,
     });
+    tick(200);
 
     const progressBar = await loader.getHarness(MatProgressBarHarness);
     tick(500);
@@ -47,21 +49,20 @@ describe('FakeProgressBarComponent', () => {
     discardPeriodicTasks();
   }));
 
-  it('reaches 100% when loading is switched back to false', async () => {
+  it('reaches 100% when loading is switched back to false', fakeAsync(async () => {
     spectator.setInput('loading', true);
+    tick(200);
     spectator.setInput('loading', false);
 
     const progressBar = await loader.getHarness(MatProgressBarHarness);
     expect(await progressBar.getValue()).toBe(100);
-  });
+  }));
 
-  it('when hideOnComplete is true, it hides progress bar when loading is set back to false', fakeAsync(async () => {
-    spectator.setInput({
-      hideOnComplete: true,
-      loading: true,
-    });
+  it('hides progress bar when loading is set back to false', fakeAsync(async () => {
+    spectator.setInput('loading', true);
+    tick(200); // Wait for grace period
     spectator.setInput('loading', false);
-    tick();
+    tick(300); // Wait for animation
 
     const progressBar = await loader.getHarnessOrNull(MatProgressBarHarness);
     expect(progressBar).toBeNull();

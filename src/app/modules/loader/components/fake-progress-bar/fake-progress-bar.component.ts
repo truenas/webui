@@ -1,9 +1,5 @@
 import {
-  animate, style, transition, trigger,
-} from '@angular/animations';
-import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component, input,
   OnChanges,
   OnDestroy, signal,
@@ -11,6 +7,7 @@ import {
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { interval, Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
+import { AnimateOutDirective } from 'app/directives/animate-out/animate-out.directive';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 
 /**
@@ -22,14 +19,7 @@ import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
   templateUrl: './fake-progress-bar.component.html',
   styleUrls: ['./fake-progress-bar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  animations: [
-    trigger('fadeOut', [
-      transition(':leave', [
-        animate('150ms 100ms', style({ opacity: 0 })),
-      ]),
-    ]),
-  ],
-  imports: [MatProgressBar],
+  imports: [MatProgressBar, AnimateOutDirective],
 })
 export class FakeProgressBarComponent implements OnChanges, OnDestroy {
   readonly loading = input<boolean>();
@@ -40,20 +30,18 @@ export class FakeProgressBarComponent implements OnChanges, OnDestroy {
    */
   readonly duration = input(1000);
 
-  /**
-   * Automatically fades out progress bar when loading becomes false.
-   */
-  readonly hideOnComplete = input(true);
-
   protected progress = signal(0);
   protected isAnimating = signal(false);
+  protected shouldFadeOut = signal(false);
+  protected isVisible = signal(false);
 
   private stop = new Subject<void>();
   private readonly redrawTime = 200;
 
-  constructor(
-    private cdr: ChangeDetectorRef,
-  ) {}
+  /**
+   * Don't show progress bar immediately when loading becomes true.
+   */
+  private readonly gracePeriod = 200;
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (!('loading' in changes)) {
@@ -61,9 +49,9 @@ export class FakeProgressBarComponent implements OnChanges, OnDestroy {
     }
 
     if (this.loading()) {
-      this.start();
+      this.startAnimating();
     } else {
-      this.stop.next();
+      this.stopAnimating();
     }
   }
 
@@ -71,8 +59,30 @@ export class FakeProgressBarComponent implements OnChanges, OnDestroy {
     this.stop.next();
   }
 
+  protected onFadeOutComplete(): void {
+    this.isAnimating.set(false);
+    this.isVisible.set(false);
+  }
+
+  private startAnimating(): void {
+    this.shouldFadeOut.set(false);
+
+    // Wait for grace period.
+    setTimeout(() => {
+      if (this.loading()) {
+        this.start();
+      }
+    }, this.gracePeriod);
+  }
+
+  private stopAnimating(): void {
+    this.stop.next();
+    this.shouldFadeOut.set(true);
+  }
+
   private start(): void {
     this.isAnimating.set(true);
+    this.isVisible.set(true);
     interval(this.redrawTime).pipe(
       map((sequence) => this.getPercentage(sequence)),
       takeUntil(this.stop),
@@ -82,9 +92,7 @@ export class FakeProgressBarComponent implements OnChanges, OnDestroy {
       },
       complete: () => {
         this.progress.set(100);
-        setTimeout(() => {
-          this.isAnimating.set(false);
-        });
+        this.isAnimating.set(false);
       },
     });
   }
