@@ -41,6 +41,7 @@ export interface VirtualMachine {
   uuid: string;
   display_available: boolean;
   trusted_platform_module: boolean;
+  enable_secure_boot: boolean;
 }
 
 export type VirtualMachineUpdate = Omit<VirtualMachine, 'status' | 'id' | 'devices'>;

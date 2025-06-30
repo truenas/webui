@@ -135,6 +135,10 @@ export class UserFormComponent implements OnInit {
     private dialog: DialogService,
     private translate: TranslateService,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty || this.authSection().form.dirty || this.allowedAccessSection().form.dirty
+        || this.additionalDetailsSection().form.dirty);
+    });
     this.setupUsernameUpdate();
   }
 

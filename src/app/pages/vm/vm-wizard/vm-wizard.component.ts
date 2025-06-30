@@ -212,7 +212,8 @@ export class VmWizardComponent implements OnInit {
   private createVm(): Observable<VirtualMachine> {
     const vmPayload = {
       ...pick(this.osForm, [
-        'name', 'description', 'time', 'hyperv_enlightenments', 'bootloader', 'shutdown_timeout', 'autostart',
+        'name', 'description', 'time', 'hyperv_enlightenments',
+        'bootloader', 'shutdown_timeout', 'autostart', 'enable_secure_boot',
       ]),
       ...pick(this.cpuAndMemoryForm, [
         'cpu_mode', 'vcpus', 'cores', 'threads', 'cpuset', 'nodeset', 'pin_vcpus',
