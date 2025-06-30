@@ -4,28 +4,28 @@
   <p class="message">{{ 'Editing interface will result in default gateway being removed, which may result in TrueNAS being inaccessible. You can provide new default gateway and DNS information now:' | translate }}</p>
   <div class="list-item">
     <span>{{ 'Current Default Gateway' | translate }}:</span>
-    <span *ixWithLoadingState="currentGateway$ as currentGateway">
-      {{ currentGateway.default_routes[0] || ('None' | translate) }}
-      @if (currentGateway.default_routes[0]) {
-        <ix-copy-button [text]="currentGateway.default_routes[0]"></ix-copy-button>
+    <span>
+      {{ currentGateway() || ('None' | translate) }}
+      @if (currentGateway()) {
+        <ix-copy-button [text]="currentGateway()"></ix-copy-button>
       }
     </span>
   </div>
-  <div *ixWithLoadingState="currentGateway$ as currentGateway" class="list-item">
+  <div class="list-item">
     <span>{{ 'Current DNS #1' | translate }}:</span>
     <span>
-      {{ currentGateway.nameservers[0] || ('None' | translate) }}
-      @if (currentGateway.nameservers[0]) {
-        <ix-copy-button [text]="currentGateway.nameservers[0]"></ix-copy-button>
+      {{ currentDns1() || ('None' | translate) }}
+      @if (currentDns1()) {
+        <ix-copy-button [text]="currentDns1()"></ix-copy-button>
       }
     </span>
   </div>
-  <div *ixWithLoadingState="currentGateway$ as currentGateway" class="list-item">
+  <div class="list-item">
     <span>{{ 'Current DNS #2' | translate }}:</span>
     <span>
-      {{ currentGateway.nameservers[1] || ('None' | translate) }}
-      @if (currentGateway.nameservers[1]) {
-        <ix-copy-button [text]="currentGateway.nameservers[1]"></ix-copy-button>
+      {{ currentDns2() || ('None' | translate) }}
+      @if (currentDns2()) {
+        <ix-copy-button [text]="currentDns2()"></ix-copy-button>
       }
     </span>
   </div>

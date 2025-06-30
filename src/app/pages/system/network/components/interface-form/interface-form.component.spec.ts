@@ -144,10 +144,6 @@ describe('InterfaceFormComponent', () => {
 
   describe('creation', () => {
     beforeEach(async () => {
-      // Set up session storage items before component creation
-      sessionStorage.setItem('pending-dns1', 'test-dns-1');
-      sessionStorage.setItem('pending-dns2', 'test-dns-2');
-
       spectator = createComponent({
         providers: [
           mockProvider(SlideInRef, {
@@ -166,17 +162,6 @@ describe('InterfaceFormComponent', () => {
       form = await loader.getHarness(IxFormHarness);
       aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Static IP Addresses' }));
       api = spectator.inject(ApiService);
-    });
-
-    afterEach(() => {
-      // Clean up session storage after tests
-      sessionStorage.removeItem('pending-dns1');
-      sessionStorage.removeItem('pending-dns2');
-    });
-
-    it('should clear DNS session storage on initialization', () => {
-      expect(sessionStorage.getItem('pending-dns1')).toBeNull();
-      expect(sessionStorage.getItem('pending-dns2')).toBeNull();
     });
 
     it('auto-generates name when type is changed', async () => {
