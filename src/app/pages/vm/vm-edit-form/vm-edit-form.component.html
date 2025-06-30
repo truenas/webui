@@ -49,6 +49,12 @@
           [label]="'Enable Hyper-V Enlightenments' | translate"
           [tooltip]="helptext.hyperv_enlightenments_tooltip | translate"
         ></ix-checkbox>
+
+        <ix-checkbox
+          formControlName="enable_secure_boot"
+          [label]="'Enable Secure Boot' | translate"
+          [tooltip]="helptext.enableSecureBoot | translate"
+        ></ix-checkbox>
       </ix-fieldset>
       <ix-fieldset [title]="'CPUs and Memory' | translate">
         <ix-input
