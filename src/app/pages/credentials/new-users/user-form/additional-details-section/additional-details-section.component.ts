@@ -173,6 +173,10 @@ export class AdditionalDetailsSectionComponent implements OnInit {
           return;
         }
 
+        groupOptions.forEach((group) => {
+          this.groupNameCache.set(group.value, group.label);
+        });
+
         const groupLabel = this.roleGroupMap.get(selectedRole);
         const groupId = groupOptions.find((group) => group.label === groupLabel)?.value;
         if (groupId) {
