@@ -20,6 +20,7 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextInterfaces } from 'app/helptext/network/interfaces/interfaces-list';
+import { NetworkConfigurationUpdate } from 'app/interfaces/network-configuration.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -345,16 +346,51 @@ export class NetworkComponent implements OnInit {
         untilDestroyed(this),
       )
       .subscribe(() => {
-        this.store$.dispatch(networkInterfacesChanged({ commit: true, checkIn: true }));
+        // Check for pending DNS entries from session storage
+        const pendingDns1 = sessionStorage.getItem('pending-dns1');
+        const pendingDns2 = sessionStorage.getItem('pending-dns2');
 
-        this.snackbar.success(
-          this.translate.instant(helptextInterfaces.checkinCompleteMessage),
-        );
-        this.hasPendingChanges = false;
-        this.checkinWaiting = false;
-        clearInterval(this.checkinInterval);
-        this.checkinRemaining = null;
-        this.cdr.markForCheck();
+        if (pendingDns1 || pendingDns2) {
+          // Build network configuration update object
+          const networkConfig: Partial<NetworkConfigurationUpdate> = {};
+          if (pendingDns1) networkConfig.nameserver1 = pendingDns1;
+          if (pendingDns2) networkConfig.nameserver2 = pendingDns2;
+
+          // Update network configuration with new DNS settings
+          this.api.call('network.configuration.update', [networkConfig as NetworkConfigurationUpdate])
+            .pipe(untilDestroyed(this))
+            .subscribe(() => {
+              // Dispatch after DNS update to refresh UI
+              this.store$.dispatch(networkInterfacesChanged({ commit: true, checkIn: true }));
+
+              this.snackbar.success(
+                this.translate.instant('Network configuration and DNS settings have been saved successfully.'),
+              );
+
+              this.hasPendingChanges = false;
+              this.checkinWaiting = false;
+              clearInterval(this.checkinInterval);
+              this.checkinRemaining = null;
+              this.cdr.markForCheck();
+            });
+
+          // Clear session storage
+          sessionStorage.removeItem('pending-dns1');
+          sessionStorage.removeItem('pending-dns2');
+        } else {
+          // Dispatch for non-DNS updates
+          this.store$.dispatch(networkInterfacesChanged({ commit: true, checkIn: true }));
+
+          this.snackbar.success(
+            this.translate.instant(helptextInterfaces.checkinCompleteMessage),
+          );
+
+          this.hasPendingChanges = false;
+          this.checkinWaiting = false;
+          clearInterval(this.checkinInterval);
+          this.checkinRemaining = null;
+          this.cdr.markForCheck();
+        }
       });
   }
 
