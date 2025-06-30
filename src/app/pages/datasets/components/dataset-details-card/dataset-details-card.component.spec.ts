@@ -28,12 +28,28 @@ const dataset = {
   pool: 'pool',
   type: DatasetType.Filesystem,
   sync: { value: 'STANDARD' },
-  compression: { source: ZfsPropertySource.Inherited, value: 'LZ4' },
+  compression: {
+    source: ZfsPropertySource.Inherited,
+    value: 'LZ4',
+  },
   compressratio: { value: '3.81x' },
-  atime: { parsed: true, rawvalue: 'on', value: OnOff.On, source: ZfsPropertySource.Local },
+  atime: {
+    parsed: true,
+    rawvalue: 'on',
+    value: OnOff.On,
+    source: ZfsPropertySource.Local,
+  },
   deduplication: { value: 'OFF' },
-  casesensitivity: { parsed: 'insensitive', rawvalue: 'insensitive', value: DatasetCaseSensitivity.Insensitive, source: ZfsPropertySource.Local },
-  comments: { value: 'Test comment', source: ZfsPropertySource.Local },
+  casesensitivity: {
+    parsed: 'insensitive',
+    rawvalue: 'insensitive',
+    value: DatasetCaseSensitivity.Insensitive,
+    source: ZfsPropertySource.Local,
+  },
+  comments: {
+    value: 'Test comment',
+    source: ZfsPropertySource.Local,
+  },
 } as DatasetDetails;
 
 const zvol = {
