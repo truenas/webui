@@ -1,12 +1,11 @@
-import { Router } from '@angular/router';
+import { Location } from '@angular/common';
 
-export function setUsernameInUrl(router: Router, username: string): void {
+export function setUsernameInUrl(location: Location, username: string): void {
   if (!username) {
     return;
   }
-  router.navigate(['credentials', 'users-new'], {
-    queryParams: { username },
-    queryParamsHandling: 'merge',
-    replaceUrl: true,
-  });
+  const queryParams = new URLSearchParams();
+  queryParams.set('username', username);
+  const newUrl = `credentials/users-new?${queryParams.toString()}`;
+  location.replaceState(newUrl);
 }

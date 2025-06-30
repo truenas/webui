@@ -1,10 +1,10 @@
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, Location } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, OnInit,
   viewChild, OnDestroy,
   ChangeDetectorRef,
 } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import {
@@ -52,7 +52,7 @@ export class AllUsersComponent implements OnInit, OnDestroy {
     [['OR', [['builtin', '=', false], ['username', '=', 'root']]]],
   ] as QueryParams<User>;
 
-  protected readonly dataProvider = new UsersDataProvider(this.api, 'user.query', this.defaultParams);
+  protected readonly dataProvider = new UsersDataProvider(this.api, this.defaultParams);
 
   protected readonly searchableElements = allUsersElements;
   protected readonly masterDetailView = viewChild.required(MasterDetailViewComponent);
@@ -60,16 +60,17 @@ export class AllUsersComponent implements OnInit, OnDestroy {
   constructor(
     private api: ApiService,
     private activatedRoute: ActivatedRoute,
-    private router: Router,
+    private location: Location,
     private cdr: ChangeDetectorRef,
   ) { }
 
   ngOnInit(): void {
-    this.setupDataProvider();
+    const urlUsername = this.activatedRoute.snapshot.queryParamMap.get('username') ?? null;
+    this.setupDataProvider(urlUsername);
     this.subscribeToUserChanges();
   }
 
-  setupDataProvider(): void {
+  setupDataProvider(urlUsername: string): void {
     this.dataProvider.paginationStrategy = new PaginationServerSide();
     this.dataProvider.sortingStrategy = new SortingServerSide();
     this.dataProvider.setSorting({
@@ -77,12 +78,15 @@ export class AllUsersComponent implements OnInit, OnDestroy {
       direction: SortDirection.Asc,
       active: 0,
     });
-    const urlUsername = this.activatedRoute.snapshot.queryParamMap.get('username');
+
     if (urlUsername) {
       this.dataProvider.shouldLoadUser(urlUsername);
     }
 
-    this.dataProvider.currentPage$.pipe(filter(Boolean), untilDestroyed(this)).subscribe((users) => {
+    this.dataProvider.currentPage$.pipe(
+      filter(Boolean),
+      untilDestroyed(this),
+    ).subscribe((users) => {
       let selectedUser: User = null;
 
       if (!this.masterDetailView().isMobileView()) {
@@ -91,7 +95,7 @@ export class AllUsersComponent implements OnInit, OnDestroy {
           : users[0];
       }
       this.dataProvider.expandedRow = selectedUser;
-      setUsernameInUrl(this.router, selectedUser?.username);
+      setUsernameInUrl(this.location, selectedUser?.username);
     });
     this.dataProvider.load();
   }
@@ -130,7 +134,11 @@ export class AllUsersComponent implements OnInit, OnDestroy {
     }
 
     this.dataProvider.expandedRow = user;
-    setUsernameInUrl(this.router, user.username);
+    setUsernameInUrl(this.location, user.username);
     this.cdr.markForCheck();
+  }
+
+  protected loadNewUser(newUser: User): void {
+    this.setupDataProvider(newUser.username);
   }
 }
