@@ -12,7 +12,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { filter, first, switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
-import { DatasetType } from 'app/enums/dataset.enum';
+import { DatasetType, DatasetCaseSensitivity } from 'app/enums/dataset.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { Role } from 'app/enums/role.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
@@ -59,6 +59,7 @@ export class DatasetDetailsCardComponent {
 
   protected readonly Role = Role;
   readonly OnOff = OnOff;
+  readonly DatasetCaseSensitivity = DatasetCaseSensitivity;
 
   constructor(
     private translate: TranslateService,
