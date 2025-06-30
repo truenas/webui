@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import {
   Spectator,
   createComponentFactory,
@@ -11,6 +12,8 @@ import { of } from 'rxjs';
 import { TncStatus, TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
+import { MockTruenasConnectSpinnerComponent } from 'app/modules/truenas-connect/components/truenas-connect-spinner/truenas-connect-spinner-mock.component';
+import { TruenasConnectSpinnerComponent } from 'app/modules/truenas-connect/components/truenas-connect-spinner/truenas-connect-spinner.component';
 import { TruenasConnectStatusModalComponent } from 'app/modules/truenas-connect/components/truenas-connect-status-modal/truenas-connect-status-modal.component';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 
@@ -18,18 +21,7 @@ describe('TruenasConnectStatusModalComponent', () => {
   let spectator: Spectator<TruenasConnectStatusModalComponent>;
   let loader: HarnessLoader;
 
-  beforeAll(() => {
-    // Mock animation functions for tests
-    jest.useFakeTimers();
-    global.requestAnimationFrame = jest.fn((cb: FrameRequestCallback) => {
-      cb(0);
-      return 0;
-    }) as unknown as typeof requestAnimationFrame;
-  });
-
-  afterAll(() => {
-    jest.useRealTimers();
-  });
+  // No need for animation mocks since we're using MockTruenasConnectSpinnerComponent
 
   const config = signal({
     enabled: true,
@@ -39,8 +31,19 @@ describe('TruenasConnectStatusModalComponent', () => {
     leca_service_base_url: 'https://leca-server.dev.ixsystems.net/',
     status: TruenasConnectStatus.Configured,
   } as TruenasConnectConfig);
+
   const createComponent = createComponentFactory({
     component: TruenasConnectStatusModalComponent,
+    imports: [NoopAnimationsModule],
+    overrideComponents: [
+      [
+        TruenasConnectStatusModalComponent,
+        {
+          remove: { imports: [TruenasConnectSpinnerComponent] },
+          add: { imports: [MockTruenasConnectSpinnerComponent] },
+        },
+      ],
+    ],
     providers: [
       mockProvider(TruenasConnectService, {
         config,
@@ -58,9 +61,8 @@ describe('TruenasConnectStatusModalComponent', () => {
   });
 
   beforeEach(() => {
-    spectator = createComponent({ detectChanges: false });
+    spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    spectator.detectChanges();
   });
 
   it('should show Close and Open TrueNAS Connect buttons when configured', async () => {
@@ -181,37 +183,14 @@ describe('TruenasConnectStatusModalComponent', () => {
   });
 
   it('should automatically re-enable service when status is DISABLED', () => {
-    // Create a new config for disabled state
-    const disabledConfig = signal({
-      enabled: false,
-      ips: ['10.220.36.85'],
-      tnc_base_url: 'https://truenas.connect.dev.ixsystems.net/',
-      account_service_base_url: 'https://account-service.dev.ixsystems.net/',
-      leca_service_base_url: 'https://leca-server.dev.ixsystems.net/',
-      status: TruenasConnectStatus.Disabled,
-    } as TruenasConnectConfig);
+    // Update the config to disabled state
+    config.update((conf) => ({ ...conf, status: TruenasConnectStatus.Disabled, enabled: false }));
 
-    const mockService = {
-      config: disabledConfig,
-      connect: jest.fn(() => of(null)),
-      disableService: jest.fn(() => of(null)),
-      enableService: jest.fn(() => of(null)),
-    };
+    const service = spectator.inject(TruenasConnectService);
+    const enableSpy = jest.spyOn(service, 'enableService');
 
-    const enableSpy = jest.spyOn(mockService, 'enableService');
-
-    createComponentFactory({
-      component: TruenasConnectStatusModalComponent,
-      providers: [
-        { provide: TruenasConnectService, useValue: mockService },
-        {
-          provide: WINDOW,
-          useValue: {
-            open: jest.fn(),
-          },
-        },
-      ],
-    })();
+    // Create a new component instance which should trigger ngOnInit
+    spectator.component.ngOnInit();
 
     expect(enableSpy).toHaveBeenCalled();
   });
