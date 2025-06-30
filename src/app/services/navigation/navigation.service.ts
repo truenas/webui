@@ -74,7 +74,7 @@ export class NavigationService {
       tooltip: T('Containers'),
       icon: iconMarker('mdi-package-variant-closed'),
       state: 'instances',
-      isVisible$: this.license.hasVms$,
+      isVisible$: this.license.hasInstances$,
     },
     {
       name: T('Virtual Machines'),

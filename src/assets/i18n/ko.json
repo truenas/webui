@@ -73,6 +73,8 @@
   "Enable Containers": "",
   "Enable Display": "",
   "Enable Hyper-V Enlightenments": "",
+  "Enable Secure Boot": "",
+  "Enabling secure boot may be a requirement for some operating systems like Windows 11.": "",
   "Ensure Display Device": "",
   "Enter <strong>{zvolName}</strong> below to confirm.": "",
   "Enter a Name (optional)": "",
