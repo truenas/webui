@@ -70,7 +70,7 @@ export class AllUsersComponent implements OnInit, OnDestroy {
     this.subscribeToUserChanges();
   }
 
-  setupDataProvider(urlUsername: string): void {
+  private setupDataProvider(urlUsername: string): void {
     this.dataProvider.paginationStrategy = new PaginationServerSide();
     this.dataProvider.sortingStrategy = new SortingServerSide();
     this.dataProvider.setSorting({
