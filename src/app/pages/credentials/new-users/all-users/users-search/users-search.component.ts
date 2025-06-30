@@ -15,9 +15,9 @@ import { SearchInputComponent } from 'app/modules/forms/search-input/components/
 import { SearchProperty } from 'app/modules/forms/search-input/types/search-property.interface';
 import { AdvancedSearchQuery, SearchQuery } from 'app/modules/forms/search-input/types/search-query.interface';
 import { booleanProperty, searchProperties, textProperty } from 'app/modules/forms/search-input/utils/search-properties.utils';
-import { ApiDataProvider } from 'app/modules/ix-table/classes/api-data-provider/api-data-provider';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { UsersDataProvider } from 'app/pages/credentials/new-users/all-users/users-data-provider';
 
 @UntilDestroy()
 @Component({
@@ -38,7 +38,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 export class UsersSearchComponent implements OnInit {
   protected readonly advancedSearchPlaceholder = this.translate.instant('Username = "root" AND "Built in" = "Yes"');
 
-  readonly dataProvider = input.required<ApiDataProvider<'user.query'>>();
+  readonly dataProvider = input.required<UsersDataProvider>();
 
   protected readonly searchQuery = signal<SearchQuery<User>>({
     query: '',
