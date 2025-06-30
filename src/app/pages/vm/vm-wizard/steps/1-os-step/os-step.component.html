@@ -44,6 +44,12 @@
     [tooltip]="helptext.bootloader_tooltip | translate"
   ></ix-select>
 
+  <ix-checkbox
+    formControlName="enable_secure_boot"
+    [label]="'Enable Secure Boot' | translate"
+    [tooltip]="helptext.enableSecureBoot | translate"
+  ></ix-checkbox>
+
   <ix-input
     formControlName="shutdown_timeout"
     type="number"

@@ -18,7 +18,6 @@ import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { VirtualMachine, VirtualMachineUpdate } from 'app/interfaces/virtual-machine.interface';
 import { VmPciPassthroughDevice } from 'app/interfaces/vm-device.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -75,6 +74,7 @@ export class VmEditFormComponent implements OnInit {
     shutdown_timeout: [null as number | null, Validators.min(0)],
     autostart: [false],
     hyperv_enlightenments: [false],
+    enable_secure_boot: [false],
     vcpus: [null as number | null, [Validators.required, Validators.min(1)], this.cpuValidator.createValidator()],
     cores: [null as number | null, [Validators.required, Validators.min(1)], this.cpuValidator.createValidator()],
     threads: [null as number | null, [Validators.required, Validators.min(1)], this.cpuValidator.createValidator()],
@@ -114,7 +114,6 @@ export class VmEditFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private cpuValidator: CpuValidatorService,
     private validators: IxValidatorsService,
-    private dialogService: DialogService,
     private gpuValidator: IsolatedGpuValidatorService,
     private gpuService: GpuService,
     private vmGpuService: VmGpuService,
