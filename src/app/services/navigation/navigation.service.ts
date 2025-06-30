@@ -69,11 +69,19 @@ export class NavigationService {
       ],
     },
     {
-      name: T('Instances'),
+      name: T('Containers'),
       type: MenuItemType.Link,
-      tooltip: T('Instances'),
-      icon: iconMarker('mdi-laptop'),
+      tooltip: T('Containers'),
+      icon: iconMarker('mdi-package-variant-closed'),
       state: 'instances',
+      isVisible$: this.license.hasInstances$,
+    },
+    {
+      name: T('Virtual Machines'),
+      type: MenuItemType.Link,
+      tooltip: T('Virtual Machines'),
+      icon: iconMarker('mdi-laptop'),
+      state: 'vm',
       isVisible$: this.license.hasVms$,
     },
     {

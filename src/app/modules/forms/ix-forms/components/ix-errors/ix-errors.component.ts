@@ -94,27 +94,31 @@ export class IxErrorsComponent implements OnChanges {
       filter((status) => status !== 'PENDING'),
       untilDestroyed(this),
     ).subscribe(() => {
-      const newErrors: (string | null)[] = Object.keys(this.control().errors || []).map((error) => {
-        if (error === ixManualValidateError) {
-          return null;
-        }
-        const message = (this.control().errors?.[error] as SomeError)?.message as string;
-        if (message) {
-          return message;
-        }
+      this.handleErrors();
+    });
+  }
 
-        return this.getDefaultError(error as DefaultValidationError);
-      });
-
-      this.messages = newErrors.filter((message) => !!message) as string[];
-
-      if (this.control().errors) {
-        this.control().markAllAsTouched();
+  private handleErrors(): void {
+    const newErrors: (string | null)[] = Object.keys(this.control().errors || []).map((error) => {
+      if (error === ixManualValidateError) {
+        return null;
+      }
+      const message = (this.control().errors?.[error] as SomeError)?.message as string;
+      if (message) {
+        return message;
       }
 
-      this.cdr.markForCheck();
-      this.announceErrors();
+      return this.getDefaultError(error as DefaultValidationError);
     });
+
+    this.messages = newErrors.filter((message) => !!message) as string[];
+
+    if (this.control().errors) {
+      this.control().markAllAsTouched();
+    }
+
+    this.cdr.markForCheck();
+    this.announceErrors();
   }
 
   /**

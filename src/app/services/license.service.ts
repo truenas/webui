@@ -58,6 +58,8 @@ export class LicenseService {
 
   hasKmip$ = this.store$.select(selectIsEnterprise);
 
+  hasInstances$ = this.store$.select(selectIsEnterprise);
+
   constructor(
     private store$: Store<AppState>,
     private api: ApiService,

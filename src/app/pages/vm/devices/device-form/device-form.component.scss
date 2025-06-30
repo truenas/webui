@@ -1,0 +1,16 @@
+.mac-address {
+  align-items: flex-end;
+  column-gap: 10px;
+  display: flex;
+
+  .mac-input {
+    flex-grow: 1;
+    margin-bottom: 0;
+    margin-top: 0;
+  }
+
+  button {
+    align-self: flex-end;
+    margin-bottom: 8px;
+  }
+}
