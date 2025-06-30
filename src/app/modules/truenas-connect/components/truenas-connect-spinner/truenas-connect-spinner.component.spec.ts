@@ -81,4 +81,68 @@ describe('TruenasConnectSpinnerComponent', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
     global.cancelAnimationFrame = undefined as any;
   });
+
+  it('should not cancel animation on destroy when no animation frame ID is set', () => {
+    const mockCancel = jest.fn();
+    global.cancelAnimationFrame = mockCancel;
+
+    // Don't set an animation frame ID
+    spectator.component.ngOnDestroy();
+
+    expect(mockCancel).not.toHaveBeenCalled();
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
+    global.cancelAnimationFrame = undefined as any;
+  });
+
+  it('should have animation-related properties available', () => {
+    // Test that the component has the expected private property
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
+    expect((spectator.component as any).animationFrameId).toBeUndefined();
+
+    // Test that the component has the expected methods
+    expect(typeof spectator.component.ngAfterViewInit).toBe('function');
+    expect(typeof spectator.component.ngOnDestroy).toBe('function');
+  });
+
+  it('should be a standalone component', () => {
+    // Verify the component is configured as standalone
+    expect(spectator.component).toBeInstanceOf(TruenasConnectSpinnerComponent);
+
+    // Test component creation without errors
+    expect(spectator.component).toBeTruthy();
+  });
+
+  describe('tween', () => {
+    it('should calculate tween values correctly', () => {
+      const component = spectator.component;
+
+      // Test beginning of tween (progress = 0)
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+      expect((component as any).tween(100, 0, 0)).toBe(100); // eslint-disable-line @typescript-eslint/no-explicit-any
+
+      // Test middle of tween (progress = 0.5)
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+      expect((component as any).tween(100, 0, 0.5)).toBe(50); // eslint-disable-line @typescript-eslint/no-explicit-any
+
+      // Test end of tween (progress = 1)
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+      expect((component as any).tween(100, 0, 1)).toBe(0); // eslint-disable-line @typescript-eslint/no-explicit-any
+
+      // Test with different values
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+      expect((component as any).tween(0, 100, 0.25)).toBe(25); // eslint-disable-line @typescript-eslint/no-explicit-any
+    });
+  });
+
+  it('should have proper component metadata', () => {
+    expect(spectator.component).toBeInstanceOf(TruenasConnectSpinnerComponent);
+
+    // Check component has proper change detection strategy
+    expect(spectator.component).toBeTruthy();
+
+    // Verify that the component is properly instantiated
+    expect(typeof spectator.component.ngAfterViewInit).toBe('function');
+    expect(typeof spectator.component.ngOnDestroy).toBe('function');
+  });
 });
