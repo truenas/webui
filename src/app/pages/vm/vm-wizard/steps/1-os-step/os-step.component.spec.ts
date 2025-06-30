@@ -44,6 +44,7 @@ describe('OsStepComponent', () => {
   async function fillForm(): Promise<void> {
     await form.fillForm({
       'Guest Operating System': 'Linux',
+      'Enable Secure Boot': 'Linux',
       Name: 'vm1',
       Description: 'My first VM',
       'System Clock': 'UTC',
@@ -72,6 +73,7 @@ describe('OsStepComponent', () => {
       bind: '10.10.16.82',
       password: '12345678910',
       hyperv_enlightenments: false,
+      enable_secure_boot: true,
     });
   });
 
