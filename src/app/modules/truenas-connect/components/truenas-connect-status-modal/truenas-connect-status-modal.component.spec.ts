@@ -61,6 +61,8 @@ describe('TruenasConnectStatusModalComponent', () => {
   });
 
   beforeEach(() => {
+    // Reset config to a known state before each test
+    config.update((conf) => ({ ...conf, status: TruenasConnectStatus.Configured }));
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
@@ -214,5 +216,88 @@ describe('TruenasConnectStatusModalComponent', () => {
     expect(disableSpy).toHaveBeenCalled();
     expect(enableSpy).toHaveBeenCalled();
     expect(connectSpy).not.toHaveBeenCalled();
+  });
+
+  it('should compute status correctly for all TruenasConnectStatus values', () => {
+    // Test that each status maps to the correct TncStatus
+    const statusMappings = [
+      { input: TruenasConnectStatus.Configured, expected: TncStatus.Active },
+      { input: TruenasConnectStatus.ClaimTokenMissing, expected: TncStatus.Waiting },
+      { input: TruenasConnectStatus.RegistrationFinalizationWaiting, expected: TncStatus.Waiting },
+      { input: TruenasConnectStatus.RegistrationFinalizationSuccess, expected: TncStatus.Connecting },
+      { input: TruenasConnectStatus.CertGenerationInProgress, expected: TncStatus.Connecting },
+      { input: TruenasConnectStatus.CertGenerationSuccess, expected: TncStatus.Connecting },
+      { input: TruenasConnectStatus.CertRenewalInProgress, expected: TncStatus.Connecting },
+      { input: TruenasConnectStatus.CertRenewalSuccess, expected: TncStatus.Connecting },
+      { input: TruenasConnectStatus.RegistrationFinalizationFailed, expected: TncStatus.Failed },
+      { input: TruenasConnectStatus.RegistrationFinalizationTimeout, expected: TncStatus.Failed },
+      { input: TruenasConnectStatus.CertGenerationFailed, expected: TncStatus.Failed },
+      { input: TruenasConnectStatus.CertConfigurationFailure, expected: TncStatus.Failed },
+      { input: TruenasConnectStatus.CertRenewalFailure, expected: TncStatus.Failed },
+      { input: TruenasConnectStatus.Disabled, expected: TncStatus.Disabled },
+    ];
+
+    statusMappings.forEach(({ input, expected }) => {
+      config.update((conf) => ({ ...conf, status: input }));
+      spectator.detectChanges();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
+      const component = spectator.component as any;
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+      expect(component.status()).toBe(expected);
+    });
+  });
+
+  it('should not auto-enable service when status is not DISABLED', () => {
+    // Reset config to Configured status
+    config.update((conf) => ({ ...conf, status: TruenasConnectStatus.Configured }));
+
+    const service = spectator.inject(TruenasConnectService);
+    const enableSpy = jest.spyOn(service, 'enableService');
+
+    // Call ngOnInit on existing component
+    spectator.component.ngOnInit();
+
+    expect(enableSpy).not.toHaveBeenCalled();
+  });
+
+  it('should handle null config gracefully', () => {
+    // Set config to null
+    config.set(null);
+
+    // Should not throw error when calling ngOnInit
+    expect(() => spectator.component.ngOnInit()).not.toThrow();
+
+    // The status computed property should return Disabled for null config
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
+    const component = spectator.component as any;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+    expect(component.status()).toBe(TncStatus.Disabled);
+
+    // Should not call enableService when config is null
+    const service = spectator.inject(TruenasConnectService);
+    const enableSpy = jest.spyOn(service, 'enableService');
+    spectator.component.ngOnInit();
+    expect(enableSpy).not.toHaveBeenCalled();
+  });
+
+  it('should handle undefined status in config', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
+    config.update((conf) => ({ ...conf, status: undefined as any }));
+    spectator.detectChanges();
+
+    // Should default to Disabled status
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
+    const component = spectator.component as any;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+    expect(component.status()).toBe(TncStatus.Disabled);
+  });
+
+  it('should have proper change detection strategy', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
+    const componentClass = TruenasConnectStatusModalComponent as any;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
+    const metadata = componentClass.ɵcmp;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    expect(metadata.onPush).toBe(true);
   });
 });
