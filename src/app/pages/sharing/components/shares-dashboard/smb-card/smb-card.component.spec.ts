@@ -38,7 +38,7 @@ describe('SmbCardComponent', () => {
   const smbShares = [
     {
       id: 3,
-      purpose: SmbPresetType.MultiUserTimeMachine,
+      purpose: SmbPresetType.MultiProtocolShare,
       path: '/mnt/APPS/smb1',
       home: true,
       name: 'smb123',

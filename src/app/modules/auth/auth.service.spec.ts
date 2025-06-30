@@ -324,19 +324,27 @@ describe('AuthService', () => {
   });
 
   describe('setQueryToken', () => {
-    it('does not set the token if the token is null or the protocol is not secure', async () => {
+    it('does not set the token if the token is null', async () => {
       spectator.service.setQueryToken(null);
-      let result = await firstValueFrom(spectator.service.loginWithToken());
+      const result = await firstValueFrom(spectator.service.loginWithToken());
       expect(result).toEqual(LoginResult.NoToken);
+    });
 
-      const window = spectator.inject<Window>(WINDOW);
-      Object.defineProperty(window, 'location', { value: { protocol: 'http:' } });
-      spectator.service.setQueryToken('token');
-      result = await firstValueFrom(spectator.service.loginWithToken());
-      expect(result).toEqual(LoginResult.NoToken);
-
+    it('sets the token for both HTTP and HTTPS in non-production environments', async () => {
       const token = 'token';
-      window.location.protocol = 'https:';
+      const window = spectator.inject<Window>(WINDOW);
+
+      // Test HTTP in development (non-production)
+      Object.defineProperty(window, 'location', { value: { protocol: 'http:' } });
+      spectator.service.setQueryToken(token);
+      await firstValueFrom(spectator.service.loginWithToken());
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+        'auth.login_ex',
+        [{ mechanism: LoginExMechanism.TokenPlain, token }],
+      );
+
+      // Test HTTPS
+      Object.defineProperty(window, 'location', { value: { protocol: 'https:' } });
       spectator.service.setQueryToken(token);
       await firstValueFrom(spectator.service.loginWithToken());
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
