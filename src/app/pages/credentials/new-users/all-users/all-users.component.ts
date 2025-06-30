@@ -1,4 +1,4 @@
-import { AsyncPipe, Location } from '@angular/common';
+import { Location } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, OnInit,
   viewChild, OnDestroy,
@@ -38,7 +38,6 @@ import { setUsernameInUrl } from 'app/pages/credentials/new-users/router-utils';
   imports: [
     TranslateModule,
     UiSearchDirective,
-    AsyncPipe,
     PageHeaderComponent,
     AllUsersHeaderComponent,
     UserDetailsComponent,

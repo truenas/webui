@@ -1,16 +1,20 @@
 import { Location } from '@angular/common';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { User } from 'app/interfaces/user.interface';
 import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master-detail-view.component';
-import { MockMasterDetailViewComponent } from 'app/modules/master-detail-view/testing/mock-master-detail-view.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { AllUsersHeaderComponent } from 'app/pages/credentials/new-users/all-users/all-users-header/all-users-header.component';
 import { mockUsers } from 'app/pages/credentials/new-users/all-users/testing/mock-user-api-data-provider';
+import { UserDetailHeaderComponent } from 'app/pages/credentials/new-users/all-users/user-details/user-detail-header/user-detail-header.component';
+import { UserDetailsComponent } from 'app/pages/credentials/new-users/all-users/user-details/user-details.component';
 import { UserListComponent } from 'app/pages/credentials/new-users/all-users/user-list/user-list.component';
+import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 import { AllUsersComponent } from './all-users.component';
 
 describe('AllUsersComponent', () => {
@@ -21,15 +25,29 @@ describe('AllUsersComponent', () => {
   const createComponent = createComponentFactory({
     component: AllUsersComponent,
     imports: [
-      MockComponent(MockMasterDetailViewComponent),
+      MasterDetailViewComponent,
       MockComponent(UserListComponent),
       MockComponent(AllUsersHeaderComponent),
+    ],
+    declarations: [
+      UserDetailHeaderComponent,
+      UserDetailsComponent,
     ],
     providers: [
       mockApi([
         mockCall('user.query', mockUsers),
       ]),
       mockAuth(),
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectAdvancedConfig,
+            value: {
+              consolemsg: true,
+            } as AdvancedConfig,
+          },
+        ],
+      }),
     ],
   });
 
@@ -52,22 +70,28 @@ describe('AllUsersComponent', () => {
   it('handles user selection by updating expanded row and URL', () => {
     const selectedUser = mockUsers[1];
     const userListComponent = spectator.query(UserListComponent);
-    userListComponent.userSelected.emit(selectedUser);
 
+    userListComponent.userSelected.emit(selectedUser);
     spectator.detectChanges();
 
-    expect(spectator.component.dataProvider.expandedRow).toBe(selectedUser);
+    const userDetails = spectator.query(UserDetailsComponent);
+
+    expect(userDetails.user()).toBe(selectedUser);
     expect(location.replaceState).toHaveBeenCalledWith('credentials/users-new?username=jane_smith');
   });
 
   it('does not update expanded row when no user is selected', () => {
+    const selectedUser = mockUsers[1];
     const userListComponent = spectator.query(UserListComponent);
-    const originalExpandedRow = spectator.component.dataProvider.expandedRow;
-    userListComponent.userSelected.emit(null);
 
+    userListComponent.userSelected.emit(selectedUser);
+    spectator.detectChanges();
+    const userDetails = spectator.query(UserDetailsComponent);
+    const originalExpandedRow = userDetails.user();
+    userListComponent.userSelected.emit(null);
     spectator.detectChanges();
 
-    expect(spectator.component.dataProvider.expandedRow).toBe(originalExpandedRow);
+    expect(userDetails.user()).toBe(originalExpandedRow);
   });
 
   it('loads new user by setting up data provider with the new user username', () => {

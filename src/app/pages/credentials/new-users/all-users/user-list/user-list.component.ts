@@ -7,7 +7,6 @@ import {
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
 import { getUserType } from 'app/helpers/user.helper';
 import { User } from 'app/interfaces/user.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -52,8 +51,6 @@ export class UserListComponent {
   readonly toggleShowMobileDetails = output<boolean>();
   readonly userSelected = output<User>();
   protected readonly currentBatch = signal<User[]>([]);
-  // TODO: NAS-135333 - Handle case after url linking is implemented to decide when no to show selected user
-  readonly isSelectedUserVisible$ = of(true);
   readonly dataProvider = input.required<UsersDataProvider>();
 
   protected readonly pagination: TablePagination = {
