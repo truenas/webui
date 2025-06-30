@@ -58,6 +58,7 @@ import { TreeNodeDefDirective } from 'app/modules/ix-tree/directives/tree-node-d
 import { TreeNodeToggleDirective } from 'app/modules/ix-tree/directives/tree-node-toggle.directive';
 import { TreeDataSource } from 'app/modules/ix-tree/tree-datasource';
 import { TreeFlattener } from 'app/modules/ix-tree/tree-flattener';
+import { LayoutService } from 'app/modules/layout/layout.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -172,6 +173,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     private errorHandler: ErrorHandlerService,
     private breakpointObserver: BreakpointObserver,
     private searchDirectives: UiSearchDirectivesService,
+    private layoutService: LayoutService,
     @Inject(WINDOW) private window: Window,
   ) {
     this.router.events
@@ -253,7 +255,13 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   }
 
   protected viewDetails(dataset: DatasetDetails): void {
-    this.router.navigate(['/datasets', dataset.id]);
+    const content = this.layoutService.getContentContainer();
+    const scrollTop = content?.scrollTop ?? 0;
+    this.router.navigate(['/datasets', dataset.id]).then(() => {
+      if (content) {
+        content.scrollTop = scrollTop;
+      }
+    });
 
     if (this.isMobileView) {
       this.showMobileDetails = true;
