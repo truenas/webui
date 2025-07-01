@@ -10,9 +10,8 @@ Commit changes and create a PR. Use with ticket number and title, e.g. `NAS-1234
 7. Analyze the code changes and ticket title to generate PR description:
    - Review git diff and commit messages to understand what changed
    - Update **Changes:** section with concise description of modifications
-   - Update **Testing:** section with brief testing instructions if confident about what needs testing
+   - Update **Testing:** section with brief testing instructions if confident about what needs testing, but always keep Downstream section unchanged, exactly as it is in the template file.
    - Leave sections unchanged if not confident about useful content to add
    - Keep descriptions short and factual, avoid superfluous language
    - Do not mention changes to translation files.
-   - Always copy Downstream section as is without changes.
 8. Open browser window with the link to create a pull request, using URL parameters to pre-fill title and generated description. Use `open` command or print url, do not use playwright for this.
