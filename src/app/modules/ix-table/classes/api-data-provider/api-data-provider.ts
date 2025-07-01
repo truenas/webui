@@ -16,7 +16,7 @@ export class ApiDataProvider<T extends QueryMethods> extends BaseDataProvider<Ap
   paginationStrategy: PaginationServerSide;
   sortingStrategy: SortingServerSide;
 
-  private rows: ApiCallResponseType<T>[] = [];
+  protected rows: ApiCallResponseType<T>[] = [];
 
   constructor(
     protected api: ApiService,
