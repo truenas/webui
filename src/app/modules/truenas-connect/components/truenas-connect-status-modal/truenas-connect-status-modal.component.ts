@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, computed, Inject, OnInit,
+  ChangeDetectionStrategy, Component, computed, Inject, OnInit, signal,
 } from '@angular/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import {
@@ -9,9 +9,12 @@ import { MatDivider } from '@angular/material/divider';
 import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { switchMap } from 'rxjs';
+import {
+  EMPTY, catchError, finalize, switchMap,
+} from 'rxjs';
 import { TncStatus, TruenasConnectStatus, TruenasConnectStatusReason } from 'app/enums/truenas-connect-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TruenasConnectSpinnerComponent } from 'app/modules/truenas-connect/components/truenas-connect-spinner/truenas-connect-spinner.component';
@@ -43,6 +46,11 @@ export class TruenasConnectStatusModalComponent implements OnInit {
   readonly TruenasConnectStatusReason = TruenasConnectStatusReason;
   readonly TncStatus = TncStatus;
 
+  protected isLoading = signal(false);
+  protected isConnecting = signal(false);
+  protected isDisabling = signal(false);
+  protected isRetrying = signal(false);
+
   protected status = computed(() => {
     switch (this.tnc.config()?.status) {
       case TruenasConnectStatus.Configured:
@@ -70,13 +78,22 @@ export class TruenasConnectStatusModalComponent implements OnInit {
   constructor(
     @Inject(WINDOW) private window: Window,
     protected tnc: TruenasConnectService,
+    private dialog: DialogService,
   ) { }
 
   ngOnInit(): void {
     // Automatically re-enable the service if it's disabled
     if (this.tnc.config()?.status === TruenasConnectStatus.Disabled) {
+      this.isLoading.set(true);
       this.tnc.enableService()
-        .pipe(untilDestroyed(this))
+        .pipe(
+          catchError((_: unknown) => {
+            this.dialog.error({ title: 'Error', message: 'Failed to enable TrueNAS Connect service' });
+            return EMPTY;
+          }),
+          finalize(() => this.isLoading.set(false)),
+          untilDestroyed(this),
+        )
         .subscribe();
     }
   }
@@ -86,21 +103,43 @@ export class TruenasConnectStatusModalComponent implements OnInit {
   }
 
   protected connect(): void {
+    this.isConnecting.set(true);
     this.tnc.connect()
-      .pipe(untilDestroyed(this))
+      .pipe(
+        catchError((_: unknown) => {
+          this.dialog.error({ title: 'Connection Error', message: 'Failed to connect to TrueNAS Connect' });
+          return EMPTY;
+        }),
+        finalize(() => this.isConnecting.set(false)),
+        untilDestroyed(this),
+      )
       .subscribe();
   }
 
   protected disableService(): void {
+    this.isDisabling.set(true);
     this.tnc.disableService()
-      .pipe(untilDestroyed(this))
+      .pipe(
+        catchError((_: unknown) => {
+          this.dialog.error({ title: 'Disable Error', message: 'Failed to disable TrueNAS Connect service' });
+          return EMPTY;
+        }),
+        finalize(() => this.isDisabling.set(false)),
+        untilDestroyed(this),
+      )
       .subscribe();
   }
 
   protected retryConnection(): void {
+    this.isRetrying.set(true);
     this.tnc.disableService()
       .pipe(
         switchMap(() => this.tnc.enableService()),
+        catchError((_: unknown) => {
+          this.dialog.error({ title: 'Retry Error', message: 'Failed to retry TrueNAS Connect connection' });
+          return EMPTY;
+        }),
+        finalize(() => this.isRetrying.set(false)),
         untilDestroyed(this),
       )
       .subscribe();

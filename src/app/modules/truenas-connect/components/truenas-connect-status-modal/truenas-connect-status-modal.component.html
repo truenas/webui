@@ -6,6 +6,7 @@
       class="disable-service-button"
       ixTest="tnc-disable-service"
       [matTooltip]="'Disable Service' | translate"
+      [disabled]="isDisabling()"
       (click)="disableService()"
     >
       <ix-icon name="ix-cloud-off"></ix-icon>
@@ -14,7 +15,14 @@
 </div>
 <mat-divider></mat-divider>
 <mat-dialog-content>
-  @if (status() === TncStatus.Waiting) {
+  @if (isLoading()) {
+    <div class="loading-state-content">
+      <ix-truenas-connect-spinner></ix-truenas-connect-spinner>
+      <div class="loading-state-text">
+        {{ "Initializing TrueNAS Connect service..." | translate }}
+      </div>
+    </div>
+  } @else if (status() === TncStatus.Waiting) {
     <div class="waiting-state-content">
       <ix-truenas-connect-spinner></ix-truenas-connect-spinner>
       <div ixTest="tnc-status-reason" class="waiting-state-text">
@@ -58,14 +66,19 @@
   }
 </mat-dialog-content>
 <div mat-dialog-actions>
-  @if (status() === TncStatus.Active) {
-    <button mat-button mat-dialog-close ixTest="tnc-close">
+  @if (isLoading()) {
+    <button mat-button ixTest="tnc-loading" [disabled]="true">
+      {{ "Loading..." | translate }}
+    </button>
+  } @else if (status() === TncStatus.Active) {
+    <button mat-button mat-dialog-close ixTest="tnc-close" [disabled]="isDisabling()">
       {{ "Close" | translate }}
     </button>
     <button
       color="primary"
       mat-button
       ixTest="tnc-open"
+      [disabled]="isDisabling()"
       (click)="open()"
     >
       {{ "Open TrueNAS Connect" | translate }}
@@ -75,18 +88,28 @@
       color="primary"
       mat-button
       ixTest="tnc-get-connected"
+      [disabled]="isConnecting()"
       (click)="connect()"
     >
-      {{ "Get Connected" | translate }}
+      @if (isConnecting()) {
+        {{ "Connecting..." | translate }}
+      } @else {
+        {{ "Get Connected" | translate }}
+      }
     </button>
   } @else if (status() === TncStatus.Failed) {
     <button
       color="primary"
       mat-button
       ixTest="tnc-retry-connection"
+      [disabled]="isRetrying()"
       (click)="retryConnection()"
     >
-      {{ "Retry Connection" | translate }}
+      @if (isRetrying()) {
+        {{ "Retrying..." | translate }}
+      } @else {
+        {{ "Retry Connection" | translate }}
+      }
     </button>
   } @else {
     <button
