@@ -42,7 +42,7 @@ export const cloudSyncProviderNameMap = new Map<CloudSyncProviderName, string>([
   [CloudSyncProviderName.Mega, T('Mega')],
   [CloudSyncProviderName.MicrosoftAzure, T('Microsoft Azure')],
   [CloudSyncProviderName.MicrosoftOneDrive, T('Microsoft OneDrive')],
-  [CloudSyncProviderName.OpenstackSwift, T('OpenStack Swift')],
+  [CloudSyncProviderName.OpenstackSwift, T('OpenStack Swift (OVH, Oracle, Rackspace, etc)')],
   [CloudSyncProviderName.Pcloud, T('pCloud')],
   [CloudSyncProviderName.Sftp, T('SFTP')],
   [CloudSyncProviderName.Storj, T('Storj')],
