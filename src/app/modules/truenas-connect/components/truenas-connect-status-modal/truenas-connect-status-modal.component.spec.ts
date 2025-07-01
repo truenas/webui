@@ -13,17 +13,12 @@ import { TncStatus, TruenasConnectStatus } from 'app/enums/truenas-connect-statu
 import { WINDOW } from 'app/helpers/window.helper';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { MockTruenasConnectSpinnerComponent } from 'app/modules/truenas-connect/components/truenas-connect-spinner/truenas-connect-spinner-mock.component';
-import { TruenasConnectSpinnerComponent } from 'app/modules/truenas-connect/components/truenas-connect-spinner/truenas-connect-spinner.component';
-import { TruenasConnectStatusDisplayComponent } from 'app/modules/truenas-connect/components/truenas-connect-status-display/truenas-connect-status-display.component';
 import { TruenasConnectStatusModalComponent } from 'app/modules/truenas-connect/components/truenas-connect-status-modal/truenas-connect-status-modal.component';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 
 describe('TruenasConnectStatusModalComponent', () => {
   let spectator: Spectator<TruenasConnectStatusModalComponent>;
   let loader: HarnessLoader;
-
-  // No need for animation mocks since we're using MockTruenasConnectSpinnerComponent
 
   const config = signal({
     enabled: true,
@@ -37,22 +32,6 @@ describe('TruenasConnectStatusModalComponent', () => {
   const createComponent = createComponentFactory({
     component: TruenasConnectStatusModalComponent,
     imports: [NoopAnimationsModule],
-    overrideComponents: [
-      [
-        TruenasConnectStatusModalComponent,
-        {
-          remove: { imports: [TruenasConnectSpinnerComponent] },
-          add: { imports: [MockTruenasConnectSpinnerComponent] },
-        },
-      ],
-      [
-        TruenasConnectStatusDisplayComponent,
-        {
-          remove: { imports: [TruenasConnectSpinnerComponent] },
-          add: { imports: [MockTruenasConnectSpinnerComponent] },
-        },
-      ],
-    ],
     providers: [
       mockProvider(TruenasConnectService, {
         config,

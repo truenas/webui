@@ -27,7 +27,7 @@ describe('TruenasConnectStatusDisplayComponent', () => {
     spectator.detectChanges();
 
     expect(spectator.query('.waiting-state-content')).toBeTruthy();
-    expect(spectator.query('[ixTest="tnc-status-reason"]')).toHaveText('Power Up your TrueNAS Experience! Link your system with TrueNAS Connect now for additional security, alerting and other features.');
+    expect(spectator.query('[ixTest="tnc-status-reason"]')).toHaveText('Power Up your TrueNAS Experience! Link your system with TrueNAS Connect now for additional security, alerting, and other features.');
   });
 
   it('should display failed state correctly', () => {

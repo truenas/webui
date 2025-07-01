@@ -138,7 +138,7 @@
   "PCI device does not have a reset mechanism defined and you may experience inconsistent/degraded behavior when starting/stopping the VM.": "",
   "PCI Passthrough Device": "",
   "Pin vcpus": "",
-  "Power Up your TrueNAS Experience! Link your system with TrueNAS Connect now for additional security, alerting and other features.": "",
+  "Power Up your TrueNAS Experience! Link your system with TrueNAS Connect now for additional security, alerting, and other features.": "",
   "Primary Group: {groupName}": "",
   "Private Datasets Share": "",
   "Product ID": "",
