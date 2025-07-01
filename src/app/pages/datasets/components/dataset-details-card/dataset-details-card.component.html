@@ -55,7 +55,7 @@
       <div class="details-item">
         <div class="label">{{ 'Enable Atime' | translate }}:</div>
         <div class="value">
-          {{ (dataset().atime ? OnOff.On : OnOff.Off) | translate }}
+        {{ (dataset().atime.parsed ? OnOff.On : OnOff.Off) | translate }}
         </div>
       </div>
     }
@@ -66,7 +66,11 @@
     <div class="details-item">
       <div class="label">{{ 'Case Sensitivity' | translate }}:</div>
       <div class="value">
-        {{ (dataset().casesensitive ? OnOff.On : OnOff.Off) | translate }}
+        {{ (
+            dataset().casesensitivity.value === DatasetCaseSensitivity.Sensitive
+              ? OnOff.On
+              : OnOff.Off
+          ) | translate }}
       </div>
     </div>
     <div class="details-item">
