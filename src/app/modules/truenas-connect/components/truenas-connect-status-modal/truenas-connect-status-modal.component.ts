@@ -18,6 +18,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TruenasConnectSpinnerComponent } from 'app/modules/truenas-connect/components/truenas-connect-spinner/truenas-connect-spinner.component';
+import { TruenasConnectStatusDisplayComponent } from 'app/modules/truenas-connect/components/truenas-connect-status-display/truenas-connect-status-display.component';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 
 @UntilDestroy()
@@ -36,6 +37,7 @@ import { TruenasConnectService } from 'app/modules/truenas-connect/services/true
     TranslateModule,
     TestDirective,
     TruenasConnectSpinnerComponent,
+    TruenasConnectStatusDisplayComponent,
   ],
   templateUrl: './truenas-connect-status-modal.component.html',
   styleUrl: './truenas-connect-status-modal.component.scss',

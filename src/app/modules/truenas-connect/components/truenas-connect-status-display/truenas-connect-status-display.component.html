@@ -1,0 +1,42 @@
+@if (status() === TncStatus.Waiting) {
+  <div class="waiting-state-content">
+    <ix-truenas-connect-spinner></ix-truenas-connect-spinner>
+    <div ixTest="tnc-status-reason" class="waiting-state-text">
+      {{ "Power Up your TrueNAS Experience! Link your system with TrueNAS Connect now for additional security, alerting and other features." | translate }}
+    </div>
+  </div>
+} @else if (status() === TncStatus.Failed) {
+  <div>
+    <ix-icon class="status-failed" name="cancel"></ix-icon>
+    <span ixTest="tnc-status" class="failed-header">{{ "Connection Failed..." | translate }}</span>
+  </div>
+  <div ixTest="tnc-status-reason" class="failed-description">
+    {{ "Something went wrong! Please check your network connectivity and then click Retry Connection to get started." | translate }}
+  </div>
+} @else if (status() === TncStatus.Active) {
+  <div>
+    <ix-icon class="status-connected" name="check_circle"></ix-icon>
+    <span ixTest="tnc-status" class="active-header">{{ "TrueNAS Connect - Status Healthy" | translate }}</span>
+  </div>
+  <div ixTest="tnc-status-reason" class="active-description">
+    {{ "Your system is linked with TrueNAS Connect. Click below to open the TrueNAS Connect Management Interface" | translate }}
+  </div>
+} @else if (status() === TncStatus.Connecting) {
+  <div class="connecting-state-content">
+    <ix-truenas-connect-spinner></ix-truenas-connect-spinner>
+    <div ixTest="tnc-status" class="connecting-header">{{ "Setting up TrueNAS Connect" | translate }}</div>
+    <div ixTest="tnc-status-reason" class="connecting-description">
+      {{ "Your system is setting up with TrueNAS Connect, this may take a few moments." | translate }}
+    </div>
+  </div>
+} @else {
+  <div>
+    @if (status() === TncStatus.Disabled) {
+      <ix-icon class="status-disabled" name="pause_circle_filled"></ix-icon>
+    }
+    <span ixTest="tnc-status">{{ status() }}</span>
+  </div>
+  <div ixTest="tnc-status-reason">
+    {{ TruenasConnectStatusReason[rawStatus()] | translate }}
+  </div>
+}
