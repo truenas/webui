@@ -22,6 +22,7 @@ import { allCommands } from 'app/constants/all-commands.constant';
 import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { isEmptyHomeDirectory } from 'app/helpers/user.helper';
+import { Group } from 'app/interfaces/group.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { User } from 'app/interfaces/user.interface';
 import { DetailsItemComponent } from 'app/modules/details-table/details-item/details-item.component';
@@ -39,7 +40,6 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxPermissionsComponent } from 'app/modules/forms/ix-forms/components/ix-permissions/ix-permissions.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-validation/email-validation';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { defaultHomePath, UserFormStore } from 'app/pages/credentials/new-users/user-form/user.store';
@@ -55,7 +55,6 @@ import { StorageService } from 'app/services/storage.service';
   imports: [
     ReactiveFormsModule,
     IxFieldsetComponent,
-    IxIconComponent,
     IxInputComponent,
     IxCheckboxComponent,
     MatCheckbox,
@@ -78,6 +77,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
   protected sshAccess = this.userFormStore.sshAccess;
   protected shellAccess = this.userFormStore.shellAccess;
   protected hasSharingRole = computed(() => this.userFormStore.role()?.includes(Role.SharingAdmin));
+  private groupNameCache = new Map<number, string>();
   protected homeDirectoryEmptyValue = computed(() => {
     if (this.editingUser()) {
       if (isEmptyHomeDirectory(this.editingUser()?.home)) {
@@ -147,6 +147,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
             home_create: values.home_create,
             full_name: values.full_name,
             groups: values.groups.map((grp) => (+grp)),
+            group: values.group_create ? null : values.group,
             home: values.home,
             home_mode: this.userFormStore.homeModeOldValue() !== values.home_mode
               ? values.home_mode
@@ -171,6 +172,10 @@ export class AdditionalDetailsSectionComponent implements OnInit {
         if (selectedRole == null) {
           return;
         }
+
+        groupOptions.forEach((group) => {
+          this.groupNameCache.set(group.value, group.label);
+        });
 
         const groupLabel = this.roleGroupMap.get(selectedRole);
         const groupId = groupOptions.find((group) => group.label === groupLabel)?.value;
@@ -204,11 +209,63 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     this.listenValueChanges();
   }
 
+  protected getPrimaryGroupName(): string {
+    if (this.form.controls.group_create.value) {
+      return this.translate.instant('New {username} group', { username: this.username() });
+    }
+
+    const id = this.form.controls.group.value;
+    if (id) {
+      return this.translate.instant('Primary Group: {groupName}', { groupName: this.groupNameCache.get(id) || String(id) });
+    }
+
+    return '';
+  }
+
+  protected getAuxGroupNames(): string[] {
+    const ids = this.form.controls.groups.value || [];
+    return ids.map((id) => this.groupNameCache.get(id) || String(id));
+  }
+
+  protected ensureAllGroupNames(): void {
+    const ids = new Set<number>(this.form.controls.groups.value || []);
+    if (!this.form.controls.group_create.value) {
+      const id = this.form.controls.group.value;
+      if (id) {
+        ids.add(id);
+      }
+    }
+
+    this.resolveGroupNames(Array.from(ids));
+  }
+
+  private resolveGroupNames(ids: number[]): void {
+    const missingIds = ids.filter((groupId) => !this.groupNameCache.has(groupId));
+    if (!missingIds.length) {
+      return;
+    }
+
+    missingIds.forEach((missingId) => this.groupNameCache.set(missingId, ''));
+    (this.api.call('group.query', [[['id', 'in', missingIds]]]) as Observable<Group[]>).pipe(
+      take(1),
+      tap((groups) => {
+        groups.forEach((group) => {
+          const name = group.group || group.name;
+          this.groupNameCache.set(group.id, name);
+        });
+        this.cdr.markForCheck();
+      }),
+      untilDestroyed(this),
+    ).subscribe();
+  }
+
   private setupEditUserForm(user: User): void {
+    const auxGroups = user.groups.filter((id) => id !== user.group?.id);
+
     this.form.patchValue({
       full_name: user.full_name,
       email: user.email,
-      groups: user.groups,
+      groups: auxGroups,
       home: user.home,
       uid: user.uid,
       group: user.group?.id,
@@ -220,6 +277,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     });
 
     this.form.controls.uid.disable();
+    this.form.controls.group_create.patchValue(false);
     this.form.controls.group_create.disable();
 
     if (user.immutable) {
@@ -241,6 +299,12 @@ export class AdditionalDetailsSectionComponent implements OnInit {
       this.form.patchValue({ home_mode: '700' });
       this.form.controls.home_mode.disable();
     }
+
+    const ids = [...auxGroups];
+    if (user.group?.id) {
+      ids.push(user.group.id);
+    }
+    this.resolveGroupNames(ids);
   }
 
   private listenValueChanges(): void {
