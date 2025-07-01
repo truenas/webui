@@ -255,13 +255,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   }
 
   protected viewDetails(dataset: DatasetDetails): void {
-    const content = this.layoutService.getContentContainer();
-    const scrollTop = content?.scrollTop ?? 0;
-    this.router.navigate(['/datasets', dataset.id]).then(() => {
-      if (content) {
-        content.scrollTop = scrollTop;
-      }
-    });
+    this.layoutService.navigatePreservingScroll(this.router, ['/datasets', dataset.id]);
 
     if (this.isMobileView) {
       this.showMobileDetails = true;
