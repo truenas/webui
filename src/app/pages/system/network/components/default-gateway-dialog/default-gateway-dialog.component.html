@@ -2,33 +2,7 @@
 
 <div mat-dialog-content>
   <p class="message">{{ 'Editing interface will result in default gateway being removed, which may result in TrueNAS being inaccessible. You can provide new default gateway and DNS information now:' | translate }}</p>
-  <div class="list-item">
-    <span>{{ 'Current Default Gateway' | translate }}:</span>
-    <span>
-      {{ currentGateway() || ('None' | translate) }}
-      @if (currentGateway()) {
-        <ix-copy-button [text]="currentGateway()"></ix-copy-button>
-      }
-    </span>
-  </div>
-  <div class="list-item">
-    <span>{{ 'Current DNS #1' | translate }}:</span>
-    <span>
-      {{ currentDns1() || ('None' | translate) }}
-      @if (currentDns1()) {
-        <ix-copy-button [text]="currentDns1()"></ix-copy-button>
-      }
-    </span>
-  </div>
-  <div class="list-item">
-    <span>{{ 'Current DNS #2' | translate }}:</span>
-    <span>
-      {{ currentDns2() || ('None' | translate) }}
-      @if (currentDns2()) {
-        <ix-copy-button [text]="currentDns2()"></ix-copy-button>
-      }
-    </span>
-  </div>
+  <p class="message">{{ 'Current values are pre-filled in the form below.' | translate }}</p>
 </div>
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   <div mat-dialog-content>
@@ -42,13 +16,13 @@
       
       <ix-input
         formControlName="dns1"
-        [label]="'DNS Server #1' | translate"
+        [label]="'Primary DNS Server' | translate"
         [tooltip]="'Primary DNS server address (optional)' | translate"
       ></ix-input>
       
       <ix-input
         formControlName="dns2"
-        [label]="'DNS Server #2' | translate"
+        [label]="'Secondary DNS Server' | translate"
         [tooltip]="'Secondary DNS server address (optional)' | translate"
       ></ix-input>
     </ix-fieldset>

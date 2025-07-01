@@ -54,13 +54,8 @@ describe('DefaultGatewayDialogComponent', () => {
     form = await loader.getHarness(IxFormHarness);
   });
 
-  it('shows current gateway and DNS values in the header', () => {
+  it('shows the correct dialog title', () => {
     expect(spectator.query('h1')).toHaveText('Set Gateway and DNS');
-
-    const listItems = spectator.queryAll('.list-item');
-    expect(listItems[0]).toHaveText('Current Default Gateway: 1.1.1.1');
-    expect(listItems[1]).toHaveText('Current DNS #1: 8.8.8.8');
-    expect(listItems[2]).toHaveText('Current DNS #2: 8.8.4.4');
   });
 
   it('pre-fills the form with current gateway and DNS values', async () => {
@@ -68,8 +63,8 @@ describe('DefaultGatewayDialogComponent', () => {
 
     expect(formValues).toEqual({
       'New IPv4 Default Gateway': '1.1.1.1',
-      'DNS Server #1': '8.8.8.8',
-      'DNS Server #2': '8.8.4.4',
+      'Primary DNS Server': '8.8.8.8',
+      'Secondary DNS Server': '8.8.4.4',
     });
   });
 
@@ -79,8 +74,8 @@ describe('DefaultGatewayDialogComponent', () => {
 
     await form.fillForm({
       'New IPv4 Default Gateway': '192.168.1.1',
-      'DNS Server #1': '9.9.9.9',
-      'DNS Server #2': '1.1.1.1',
+      'Primary DNS Server': '9.9.9.9',
+      'Secondary DNS Server': '1.1.1.1',
     });
 
     const registerButton = await loader.getHarness(MatButtonHarness.with({ text: 'Register' }));
