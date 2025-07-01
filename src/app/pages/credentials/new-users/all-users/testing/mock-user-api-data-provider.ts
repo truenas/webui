@@ -1,7 +1,7 @@
 import { BehaviorSubject, of } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { User } from 'app/interfaces/user.interface';
-import { ApiDataProvider } from 'app/modules/ix-table/classes/api-data-provider/api-data-provider';
+import { UsersDataProvider } from 'app/pages/credentials/new-users/all-users/users-data-provider';
 
 export const mockUsers = [
   {
@@ -41,4 +41,4 @@ export const mockUserApiDataProvider = {
     pageNumber: 1,
   },
   sortingOrPaginationUpdate: of(true),
-} as unknown as ApiDataProvider<'user.query'>;
+} as unknown as UsersDataProvider;

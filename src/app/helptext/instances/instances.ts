@@ -9,15 +9,6 @@ export const instancesHelptext = {
   namePlaceholderLabel: T('Name'),
 
   virtualizationMethodLabel: T('Virtualization Method'),
-  virtualizationMethodTooltip: T('<b>Why choose Container?</b><br />\
-Containers, powered by LXC, offer lightweight, efficient virtualization by sharing the host OS kernel, \
-providing faster startup times and reduced resource usage compared to VMs. \
-<br /><br />\
-Ideal for scalable applications.<br /><br />\
-<b>Why choose VM?</b><br />\
-Virtual Machines (VMs), powered by QEMU, offer full OS isolation, kernel independence, and can run diverse OS types. \
-<br /><br />\
-Ideal for legacy applications, full-featured desktops, or software with strict OS dependencies.'),
 
   cpuMemoryTooltip: T('<b>CPU Configuration</b><br />Enter the number of cores. Alternatively, use multiple values\
  or ranges to set the CPU topology.<br />Example: 1-2, 5, 9-11.'),
