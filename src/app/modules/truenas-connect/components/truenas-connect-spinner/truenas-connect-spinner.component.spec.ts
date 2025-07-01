@@ -3,70 +3,57 @@ import { TruenasConnectSpinnerComponent } from './truenas-connect-spinner.compon
 
 describe('TruenasConnectSpinnerComponent', () => {
   let spectator: Spectator<TruenasConnectSpinnerComponent>;
-  let mockStartAnimation: jest.SpyInstance;
 
   const createComponent = createComponentFactory({
     component: TruenasConnectSpinnerComponent,
   });
 
   beforeEach(() => {
-    // Mock the animation method to prevent infinite loop and spy on it
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    mockStartAnimation = jest.spyOn(TruenasConnectSpinnerComponent.prototype as any, 'startAnimation');
-    mockStartAnimation.mockImplementation(() => {
-      // Do nothing - prevents the infinite animation loop
-    });
-
     spectator = createComponent();
-  });
-
-  afterEach(() => {
-    jest.restoreAllMocks();
   });
 
   it('should create spinner component', () => {
     expect(spectator.component).toBeTruthy();
   });
 
-  it('should render SVG with animation paths', () => {
+  it('should render SVG with animated paths', () => {
     const svg = spectator.query('svg');
     expect(svg).toBeTruthy();
 
     const paths = spectator.queryAll('path.exploded');
     expect(paths).toHaveLength(5);
+
+    // Verify that each path has SVG animation elements
+    paths.forEach((path) => {
+      const animateElement = path.querySelector('animate');
+      expect(animateElement).toBeTruthy();
+      expect(animateElement.getAttribute('attributeName')).toBe('stroke-dashoffset');
+      expect(animateElement.getAttribute('repeatCount')).toBe('indefinite');
+    });
   });
 
-  it('should start animation automatically when component initializes', () => {
-    // Animation should be started automatically during component initialization
-    expect(mockStartAnimation).toHaveBeenCalled();
-  });
+  it('should have staggered animation timing for each path', () => {
+    const paths = spectator.queryAll('path.exploded');
+    const expectedDelays = ['0s', '0.5s', '1s', '1.5s', '2s'];
 
-  it('should have proper lifecycle methods', () => {
-    // Test that the component has the expected public methods
-    expect(typeof spectator.component.ngAfterViewInit).toBe('function');
-    expect(typeof spectator.component.ngOnDestroy).toBe('function');
-  });
-
-  it('should handle component destruction without errors', () => {
-    // Test that the component can be destroyed without throwing errors
-    expect(() => spectator.component.ngOnDestroy()).not.toThrow();
+    paths.forEach((path, index) => {
+      const animateElement = path.querySelector('animate');
+      expect(animateElement.getAttribute('begin')).toBe(expectedDelays[index]);
+    });
   });
 
   it('should be a standalone component', () => {
-    // Verify the component is configured as standalone
     expect(spectator.component).toBeInstanceOf(TruenasConnectSpinnerComponent);
-
-    // Test component creation without errors
-    expect(spectator.component).toBeTruthy();
   });
 
-  it('should display spinning animation visually', () => {
-    // Test that the component renders the expected visual elements
-    expect(spectator.component).toBeInstanceOf(TruenasConnectSpinnerComponent);
-    expect(spectator.component).toBeTruthy();
+  it('should use SVG-based animation instead of JavaScript', () => {
+    // Verify that SVG animations are present
+    const animateElements = spectator.queryAll('animate');
+    expect(animateElements.length).toBeGreaterThan(0);
 
-    // Verify SVG is present for visual feedback
-    const svg = spectator.query('svg');
-    expect(svg).toBeTruthy();
+    // Verify all animations target stroke-dashoffset
+    animateElements.forEach((animate) => {
+      expect(animate.getAttribute('attributeName')).toBe('stroke-dashoffset');
+    });
   });
 });
