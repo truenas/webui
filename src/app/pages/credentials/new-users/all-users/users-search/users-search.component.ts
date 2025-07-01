@@ -22,7 +22,17 @@ import { AdvancedSearchQuery, SearchQuery } from 'app/modules/forms/search-input
 import { booleanProperty, searchProperties, textProperty } from 'app/modules/forms/search-input/utils/search-properties.utils';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { UsersDataProvider } from 'app/pages/credentials/new-users/all-users/users-data-provider';
+import { getDefaultPresets, getBuiltinTogglePreset, getActiveDirectoryTogglePreset } from './users-search-presets';
+
+const searchDebounceTime = 250;
+
+enum UserType {
+  Builtin = 'builtin',
+  Local = 'local',
+  Directory = 'directory',
+}
 
 @UntilDestroy()
 @Component({
@@ -55,7 +65,7 @@ export class UsersSearchComponent implements OnInit {
 
   protected readonly searchProperties = signal<SearchProperty<User>[]>([]);
 
-  protected selectedUserTypes: UserType[] = [];
+  protected selectedUserTypes: UserType[] = [UserType.Local];
 
   protected readonly userPresets = signal<FilterPreset<User>[]>([]);
   private readonly isBuiltinFilterActive = signal<boolean>(false);
@@ -273,7 +283,10 @@ export class UsersSearchComponent implements OnInit {
       case UserType.Builtin:
         return params.andFilter('builtin', '=', true);
       case UserType.Local:
-        return params.andFilter('local', '=', true).andFilter('builtin', '=', false);
+        return params.andGroup((group) => {
+          group.filter('local', '=', true).andFilter('builtin', '=', false);
+          group.orFilter('username', '=', 'root');
+        });
       case UserType.Directory:
         return params.andFilter('local', '=', false).andFilter('builtin', '=', false);
       default:
@@ -293,11 +306,17 @@ export class UsersSearchComponent implements OnInit {
       case UserType.Local:
         if (isFirst) {
           group.group((subGroup: ParamsBuilderGroup<User>) => {
-            subGroup.filter('local', '=', true).andFilter('builtin', '=', false);
+            subGroup.group((innerGroup: ParamsBuilderGroup<User>) => {
+              innerGroup.filter('local', '=', true).andFilter('builtin', '=', false);
+              innerGroup.orFilter('username', '=', 'root');
+            });
           });
         } else {
           group.orGroup((subGroup: ParamsBuilderGroup<User>) => {
-            subGroup.filter('local', '=', true).andFilter('builtin', '=', false);
+            subGroup.group((innerGroup: ParamsBuilderGroup<User>) => {
+              innerGroup.filter('local', '=', true).andFilter('builtin', '=', false);
+              innerGroup.orFilter('username', '=', 'root');
+            });
           });
         }
         break;

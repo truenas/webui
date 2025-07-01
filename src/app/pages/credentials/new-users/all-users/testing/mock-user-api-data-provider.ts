@@ -31,6 +31,8 @@ export const mockUserApiDataProvider = {
   load: jest.fn(),
   setPagination: jest.fn(),
   setParams: jest.fn(),
+  additionalUsername: '',
+  shouldLoadUser: jest.fn(),
   sorting: {
     propertyName: 'message_timestamp',
     direction: 'desc',

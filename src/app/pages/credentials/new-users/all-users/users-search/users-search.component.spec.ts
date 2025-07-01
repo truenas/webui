@@ -11,8 +11,8 @@ import { AdvancedSearchHarness } from 'app/modules/forms/search-input/components
 import { SearchInputComponent } from 'app/modules/forms/search-input/components/search-input/search-input.component';
 import { SearchInputHarness } from 'app/modules/forms/search-input/components/search-input/search-input.harness';
 import { AdvancedSearchQuery } from 'app/modules/forms/search-input/types/search-query.interface';
-import { ApiDataProvider } from 'app/modules/ix-table/classes/api-data-provider/api-data-provider';
 import { mockUserApiDataProvider } from 'app/pages/credentials/new-users/all-users/testing/mock-user-api-data-provider';
+import { UsersDataProvider } from 'app/pages/credentials/new-users/all-users/users-data-provider';
 import * as UsersSearchPresets from 'app/pages/credentials/new-users/all-users/users-search/users-search-presets';
 import { UsersSearchComponent } from 'app/pages/credentials/new-users/all-users/users-search/users-search.component';
 
@@ -26,7 +26,7 @@ describe('UsersSearchComponent', () => {
   let spectator: Spectator<UsersSearchComponent>;
   let loader: HarnessLoader;
   let component: UsersSearchComponent;
-  let mockDataProvider: jest.Mocked<ApiDataProvider<'user.query'>>;
+  let mockDataProvider: jest.Mocked<UsersDataProvider>;
 
   const createComponent = createComponentFactory({
     component: UsersSearchComponent,
@@ -57,7 +57,9 @@ describe('UsersSearchComponent', () => {
           id: 3, username: 'aduser', builtin: false, local: false,
         } as User,
       ]),
-    } as unknown as jest.Mocked<ApiDataProvider<'user.query'>>;
+      additionalUsername: '',
+      shouldLoadUser: jest.fn(),
+    } as unknown as jest.Mocked<UsersDataProvider>;
 
     spectator = createComponent({
       props: {
@@ -80,8 +82,40 @@ describe('UsersSearchComponent', () => {
           [
             'OR',
             [
-              ['username', '~', '(?i)root'],
-              ['full_name', '~', '(?i)root'],
+              [
+                'username',
+                '~',
+                '(?i)root',
+              ],
+              [
+                [
+                  'full_name',
+                  '~',
+                  '(?i)root',
+                ],
+                [
+                  'OR',
+                  [
+                    [
+                      [
+                        'local',
+                        '=',
+                        true,
+                      ],
+                      [
+                        'builtin',
+                        '=',
+                        false,
+                      ],
+                    ],
+                    [
+                      'username',
+                      '=',
+                      'root',
+                    ],
+                  ],
+                ],
+              ],
             ],
           ],
         ],
