@@ -28,6 +28,11 @@
   margin-left: 8px;
 }
 
+.status-header {
+  align-items: center;
+  display: flex;
+}
+
 .status-failed {
   color: var(--red);
 }

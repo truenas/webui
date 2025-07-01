@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import {
-  MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose,
+  MatDialogTitle, MatDialogContent, MatDialogActions,
 } from '@angular/material/dialog';
 import { MatDivider } from '@angular/material/divider';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -32,7 +32,6 @@ import { TruenasConnectService } from 'app/modules/truenas-connect/services/true
     MatButton,
     MatIconButton,
     MatDialogActions,
-    MatDialogClose,
     MatTooltip,
     TranslateModule,
     TestDirective,
@@ -129,17 +128,29 @@ export class TruenasConnectStatusModalComponent implements OnInit {
   }
 
   protected disableService(): void {
-    this.isDisabling.set(true);
-    this.tnc.disableService()
+    this.dialog.confirm({
+      title: this.translate.instant('Disable TrueNAS Connect'),
+      message: this.translate.instant('Are you sure you wish to disable TrueNAS Connect? You will be able to re-connect this system later.'),
+      buttonText: this.translate.instant('Disable'),
+    })
       .pipe(
-        catchError((_: unknown) => {
-          this.dialog.error({
-            title: this.translate.instant('Disable Error'),
-            message: this.translate.instant('Failed to disable TrueNAS Connect service'),
-          });
-          return EMPTY;
+        switchMap((confirmed) => {
+          if (!confirmed) {
+            return EMPTY;
+          }
+          this.isDisabling.set(true);
+          return this.tnc.disableService()
+            .pipe(
+              catchError((_: unknown) => {
+                this.dialog.error({
+                  title: this.translate.instant('Disable Error'),
+                  message: this.translate.instant('Failed to disable TrueNAS Connect service'),
+                });
+                return EMPTY;
+              }),
+              finalize(() => this.isDisabling.set(false)),
+            );
         }),
-        finalize(() => this.isDisabling.set(false)),
         untilDestroyed(this),
       )
       .subscribe();

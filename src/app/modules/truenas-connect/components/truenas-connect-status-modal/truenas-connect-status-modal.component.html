@@ -35,9 +35,6 @@
       {{ "Loading..." | translate }}
     </button>
   } @else if (status() === TncStatus.Active) {
-    <button mat-button mat-dialog-close ixTest="tnc-close" [disabled]="isDisabling()">
-      {{ "Close" | translate }}
-    </button>
     <button
       color="primary"
       mat-button

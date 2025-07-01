@@ -5,7 +5,7 @@
     </div>
   </div>
 } @else if (status() === TncStatus.Failed) {
-  <div>
+  <div class="status-header">
     <ix-icon class="status-failed" name="cancel"></ix-icon>
     <span ixTest="tnc-status" class="failed-header">{{ "Connection Failed..." | translate }}</span>
   </div>
@@ -13,7 +13,7 @@
     {{ "Something went wrong! Please check your network connectivity and then click Retry Connection to get started." | translate }}
   </div>
 } @else if (status() === TncStatus.Active) {
-  <div>
+  <div class="status-header">
     <ix-icon class="status-connected" name="check_circle"></ix-icon>
     <span ixTest="tnc-status" class="active-header">{{ "TrueNAS Connect - Status Healthy" | translate }}</span>
   </div>
@@ -29,7 +29,7 @@
     </div>
   </div>
 } @else {
-  <div>
+  <div class="status-header">
     @if (status() === TncStatus.Disabled) {
       <ix-icon class="status-disabled" name="pause_circle_filled"></ix-icon>
     }

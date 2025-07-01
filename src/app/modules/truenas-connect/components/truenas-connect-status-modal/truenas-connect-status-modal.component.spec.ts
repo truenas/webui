@@ -62,6 +62,7 @@ describe('TruenasConnectStatusModalComponent', () => {
       }),
       mockProvider(DialogService, {
         error: jest.fn(),
+        confirm: jest.fn(() => of(true)),
       }),
       {
         provide: WINDOW,
@@ -79,16 +80,9 @@ describe('TruenasConnectStatusModalComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('should show Close and Open TrueNAS Connect buttons when configured', async () => {
+  it('should show Open TrueNAS Connect button when configured', async () => {
     config.update((conf) => ({ ...conf, status: TruenasConnectStatus.Configured }));
     spectator.detectChanges();
-
-    const closeBtn = await loader.getHarness(
-      MatButtonHarness.with({
-        text: 'Close',
-      }),
-    );
-    expect(closeBtn).toBeTruthy();
 
     const openBtn = await loader.getHarness(
       MatButtonHarness.with({
@@ -158,11 +152,20 @@ describe('TruenasConnectStatusModalComponent', () => {
     config.update((conf) => ({ ...conf, status: TruenasConnectStatus.Configured }));
     spectator.detectChanges();
 
+    const dialogService = spectator.inject(DialogService);
+    const confirmSpy = jest.spyOn(dialogService, 'confirm').mockImplementation((_) => {
+      return of(true) as ReturnType<typeof dialogService.confirm>;
+    });
     const disableSpy = jest.spyOn(spectator.inject(TruenasConnectService), 'disableService');
     const disableBtn = spectator.query('[ixTest="tnc-disable-service"]');
     expect(disableBtn).toBeTruthy();
 
     spectator.click(disableBtn);
+    expect(confirmSpy).toHaveBeenCalledWith({
+      title: expect.any(String),
+      message: expect.any(String),
+      buttonText: expect.any(String),
+    });
     expect(disableSpy).toHaveBeenCalled();
   });
 
@@ -173,16 +176,38 @@ describe('TruenasConnectStatusModalComponent', () => {
     const service = spectator.inject(TruenasConnectService);
     const disableSpy = jest.spyOn(service, 'disableService').mockReturnValue(throwError(() => new Error('Disable failed')));
     const dialogService = spectator.inject(DialogService);
+    const confirmSpy = jest.spyOn(dialogService, 'confirm').mockImplementation((_) => {
+      return of(true) as ReturnType<typeof dialogService.confirm>;
+    });
     const errorSpy = jest.spyOn(dialogService, 'error');
 
     const disableBtn = spectator.query('[ixTest="tnc-disable-service"]');
     spectator.click(disableBtn);
 
+    expect(confirmSpy).toHaveBeenCalled();
     expect(disableSpy).toHaveBeenCalled();
     expect(errorSpy).toHaveBeenCalledWith({
       title: expect.any(String),
       message: expect.any(String),
     });
+  });
+
+  it('should not disable service when user cancels confirmation', () => {
+    config.update((conf) => ({ ...conf, status: TruenasConnectStatus.Configured }));
+    spectator.detectChanges();
+
+    const service = spectator.inject(TruenasConnectService);
+    const disableSpy = jest.spyOn(service, 'disableService');
+    const dialogService = spectator.inject(DialogService);
+    const confirmSpy = jest.spyOn(dialogService, 'confirm').mockImplementation((_) => {
+      return of(false) as ReturnType<typeof dialogService.confirm>;
+    });
+
+    const disableBtn = spectator.query('[ixTest="tnc-disable-service"]');
+    spectator.click(disableBtn);
+
+    expect(confirmSpy).toHaveBeenCalled();
+    expect(disableSpy).not.toHaveBeenCalled();
   });
 
   it('should display the status as CONNECTING with custom text', () => {
