@@ -16,7 +16,8 @@ function getFilePath(language: string): string {
       .map(getFilePath)
       .join(' ');
 
-    exec('ngx-translate-extract --input src --output ' + outputArgument + ' --clean --string-as-default-value --fi "\t"', (err, stdout, stderr) => {
+    // Note: --clean flag removed to prevent over-aggressive removal of translation strings after Angular 20 upgrade
+    exec('ngx-translate-extract --input src --output ' + outputArgument + ' --string-as-default-value --fi "\t"', (err, stdout, stderr) => {
       if (err) {
         console.error(err);
         console.error('Error extracting strings.');
