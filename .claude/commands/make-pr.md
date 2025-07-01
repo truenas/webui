@@ -7,4 +7,11 @@ Commit changes and create a PR. Use with ticket number and title, e.g. `NAS-1234
 4. Commit the changes with the ticket number and title: "$ARGUMENTS". 
 5. Check if there are any uncommitted changes. If there are, run `git add .` and commit again.
 6. Push the branch to the remote repository.
-7. Open browser window with the link to create a pull request for the branch.
+7. Analyze the code changes and ticket title to generate PR description:
+   - Review git diff and commit messages to understand what changed
+   - Update **Changes:** section with concise description of modifications
+   - Update **Testing:** section with brief testing instructions if confident about what needs testing
+   - Leave sections unchanged if not confident about useful content to add
+   - Keep descriptions short and factual, avoid superfluous language
+   - Do not modify the Downstream section
+8. Open browser window with the link to create a pull request, using URL parameters to pre-fill title and generated description.
