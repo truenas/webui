@@ -13,5 +13,6 @@ Commit changes and create a PR. Use with ticket number and title, e.g. `NAS-1234
    - Update **Testing:** section with brief testing instructions if confident about what needs testing
    - Leave sections unchanged if not confident about useful content to add
    - Keep descriptions short and factual, avoid superfluous language
-   - Do not modify the Downstream section
-8. Open browser window with the link to create a pull request, using URL parameters to pre-fill title and generated description.
+   - Do not mention changes to translation files.
+   - NEVER modify the Downstream section.
+8. Open browser window with the link to create a pull request, using URL parameters to pre-fill title and generated description. Use `open` command or print url, dot not use playwright for this.
