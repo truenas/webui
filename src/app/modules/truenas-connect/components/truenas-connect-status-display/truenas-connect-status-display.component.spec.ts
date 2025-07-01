@@ -27,7 +27,9 @@ describe('TruenasConnectStatusDisplayComponent', () => {
     spectator.detectChanges();
 
     expect(spectator.query('.waiting-state-content')).toBeTruthy();
-    expect(spectator.query('ix-truenas-connect-spinner')).toBeTruthy();
+    expect(spectator.query('.truenas-connect-logo')).toBeTruthy();
+    expect(spectator.query('.truenas-connect-logo')).toHaveAttribute('src', 'assets/images/truenas-connect-logo-horizontal.svg');
+    expect(spectator.query('ix-truenas-connect-spinner')).toBeFalsy();
     expect(spectator.query('[ixTest="tnc-status-reason"]')).toHaveText('Power Up your TrueNAS Experience! Link your system with TrueNAS Connect now for additional security, alerting and other features.');
   });
 
