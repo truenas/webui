@@ -72,15 +72,5 @@
         {{ "Retry Connection" | translate }}
       }
     </button>
-  } @else {
-    <button
-      color="primary"
-      mat-button
-      ixTest="tnc-open"
-      [disabled]="tnc.config().status !== TruenasConnectStatus.Configured"
-      (click)="open()"
-    >
-      {{ "Open TrueNAS Connect" | translate }}
-    </button>
   }
 </div>
