@@ -36,6 +36,7 @@ describe('WebSocketHandlerService', () => {
     responseStream$ = new Subject();
     jest.spyOn(WebSocketConnection.prototype, 'send');
     jest.spyOn(WebSocketConnection.prototype, 'close');
+    jest.spyOn(WebSocketConnection.prototype, 'connect');
     jest.spyOn(WebSocketConnection.prototype, 'stream$', 'get').mockImplementation(() => responseStream$.asObservable());
     spectator = createService();
   });
@@ -100,5 +101,14 @@ describe('WebSocketHandlerService', () => {
     let isAccessRestricted;
     spectator.service.isAccessRestricted$.subscribe((value) => isAccessRestricted = value);
     expect(isAccessRestricted).toBe(true);
+  });
+
+  it('handles reconnect logic', () => {
+    const service: WebSocketHandlerService = spectator.service;
+
+    service.reconnect();
+
+    expect(WebSocketConnection.prototype.close).toHaveBeenCalled();
+    expect(WebSocketConnection.prototype.connect).toHaveBeenCalled();
   });
 });
