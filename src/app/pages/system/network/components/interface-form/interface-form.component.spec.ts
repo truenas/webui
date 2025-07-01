@@ -26,13 +26,16 @@ import {
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   DefaultGatewayDialog,
 } from 'app/pages/system/network/components/default-gateway-dialog/default-gateway-dialog.component';
 import { InterfaceFormComponent } from 'app/pages/system/network/components/interface-form/interface-form.component';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { NetworkService } from 'app/services/network.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { haInfoReducer } from 'app/store/ha-info/ha-info.reducer';
@@ -103,8 +106,11 @@ describe('InterfaceFormComponent', () => {
         }),
         mockCall('interface.create'),
         mockCall('interface.update'),
+        mockCall('interface.save_default_route'),
+        mockCall('network.configuration.update'),
         mockCall('network.general.summary', {
           default_routes: ['1.1.1.1'],
+          nameservers: ['8.8.8.8', '8.8.4.4'],
         } as NetworkSummary),
         mockCall('interface.default_route_will_be_removed', true),
         mockCall('failover.licensed', false),
@@ -139,6 +145,13 @@ describe('InterfaceFormComponent', () => {
       }),
       mockProvider(SlideInRef, slideInRef),
       mockAuth(),
+      mockProvider(LoaderService, {
+        withLoader: () => (source$: unknown) => source$,
+      }),
+      mockProvider(ErrorHandlerService, {
+        withErrorHandler: () => (source$: unknown) => source$,
+      }),
+      mockProvider(SnackbarService),
     ],
   });
 
