@@ -8,10 +8,11 @@ import {
   createComponentFactory,
   mockProvider,
 } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { TncStatus, TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { MockTruenasConnectSpinnerComponent } from 'app/modules/truenas-connect/components/truenas-connect-spinner/truenas-connect-spinner-mock.component';
 import { TruenasConnectSpinnerComponent } from 'app/modules/truenas-connect/components/truenas-connect-spinner/truenas-connect-spinner.component';
 import { TruenasConnectStatusDisplayComponent } from 'app/modules/truenas-connect/components/truenas-connect-status-display/truenas-connect-status-display.component';
@@ -58,6 +59,9 @@ describe('TruenasConnectStatusModalComponent', () => {
         connect: jest.fn(() => of(null)),
         disableService: jest.fn(() => of(null)),
         enableService: jest.fn(() => of(null)),
+      }),
+      mockProvider(DialogService, {
+        error: jest.fn(),
       }),
       {
         provide: WINDOW,
@@ -127,6 +131,29 @@ describe('TruenasConnectStatusModalComponent', () => {
     expect(connectSpy).toHaveBeenCalled();
   });
 
+  it('should handle error when clicking Get Connected button', async () => {
+    config.update((conf) => ({ ...conf, status: TruenasConnectStatus.RegistrationFinalizationWaiting }));
+    spectator.detectChanges();
+
+    const service = spectator.inject(TruenasConnectService);
+    const connectSpy = jest.spyOn(service, 'connect').mockReturnValue(throwError(() => new Error('Connection failed')));
+    const dialogService = spectator.inject(DialogService);
+    const errorSpy = jest.spyOn(dialogService, 'error');
+
+    const getConnectedBtn = await loader.getHarness(
+      MatButtonHarness.with({
+        text: 'Get Connected',
+      }),
+    );
+    await getConnectedBtn.click();
+
+    expect(connectSpy).toHaveBeenCalled();
+    expect(errorSpy).toHaveBeenCalledWith({
+      title: expect.any(String),
+      message: expect.any(String),
+    });
+  });
+
   it('should show disable service button when configured', () => {
     config.update((conf) => ({ ...conf, status: TruenasConnectStatus.Configured }));
     spectator.detectChanges();
@@ -137,6 +164,25 @@ describe('TruenasConnectStatusModalComponent', () => {
 
     spectator.click(disableBtn);
     expect(disableSpy).toHaveBeenCalled();
+  });
+
+  it('should handle error when clicking disable service button', () => {
+    config.update((conf) => ({ ...conf, status: TruenasConnectStatus.Configured }));
+    spectator.detectChanges();
+
+    const service = spectator.inject(TruenasConnectService);
+    const disableSpy = jest.spyOn(service, 'disableService').mockReturnValue(throwError(() => new Error('Disable failed')));
+    const dialogService = spectator.inject(DialogService);
+    const errorSpy = jest.spyOn(dialogService, 'error');
+
+    const disableBtn = spectator.query('[ixTest="tnc-disable-service"]');
+    spectator.click(disableBtn);
+
+    expect(disableSpy).toHaveBeenCalled();
+    expect(errorSpy).toHaveBeenCalledWith({
+      title: expect.any(String),
+      message: expect.any(String),
+    });
   });
 
   it('should display the status as CONNECTING with custom text', () => {
@@ -226,33 +272,102 @@ describe('TruenasConnectStatusModalComponent', () => {
     expect(connectSpy).not.toHaveBeenCalled();
   });
 
-  it('should compute status correctly for all TruenasConnectStatus values', () => {
-    // Test that each status maps to the correct TncStatus
-    const statusMappings = [
-      { input: TruenasConnectStatus.Configured, expected: TncStatus.Active },
-      { input: TruenasConnectStatus.ClaimTokenMissing, expected: TncStatus.Waiting },
-      { input: TruenasConnectStatus.RegistrationFinalizationWaiting, expected: TncStatus.Waiting },
-      { input: TruenasConnectStatus.RegistrationFinalizationSuccess, expected: TncStatus.Connecting },
-      { input: TruenasConnectStatus.CertGenerationInProgress, expected: TncStatus.Connecting },
-      { input: TruenasConnectStatus.CertGenerationSuccess, expected: TncStatus.Connecting },
-      { input: TruenasConnectStatus.CertRenewalInProgress, expected: TncStatus.Connecting },
-      { input: TruenasConnectStatus.CertRenewalSuccess, expected: TncStatus.Connecting },
-      { input: TruenasConnectStatus.RegistrationFinalizationFailed, expected: TncStatus.Failed },
-      { input: TruenasConnectStatus.RegistrationFinalizationTimeout, expected: TncStatus.Failed },
-      { input: TruenasConnectStatus.CertGenerationFailed, expected: TncStatus.Failed },
-      { input: TruenasConnectStatus.CertConfigurationFailure, expected: TncStatus.Failed },
-      { input: TruenasConnectStatus.CertRenewalFailure, expected: TncStatus.Failed },
-      { input: TruenasConnectStatus.Disabled, expected: TncStatus.Disabled },
+  it('should handle error when clicking Retry Connection button', async () => {
+    config.update((conf) => ({ ...conf, status: TruenasConnectStatus.RegistrationFinalizationFailed }));
+    spectator.detectChanges();
+
+    const service = spectator.inject(TruenasConnectService);
+    const disableSpy = jest.spyOn(service, 'disableService').mockReturnValue(throwError(() => new Error('Retry failed')));
+    const dialogService = spectator.inject(DialogService);
+    const errorSpy = jest.spyOn(dialogService, 'error');
+
+    const retryBtn = await loader.getHarness(
+      MatButtonHarness.with({
+        text: 'Retry Connection',
+      }),
+    );
+    await retryBtn.click();
+
+    expect(disableSpy).toHaveBeenCalled();
+    expect(errorSpy).toHaveBeenCalledWith({
+      title: expect.any(String),
+      message: expect.any(String),
+    });
+  });
+
+  it('should display waiting status correctly', () => {
+    const waitingStatuses = [
+      TruenasConnectStatus.ClaimTokenMissing,
+      TruenasConnectStatus.RegistrationFinalizationWaiting,
     ];
 
-    statusMappings.forEach(({ input, expected }) => {
-      config.update((conf) => ({ ...conf, status: input }));
+    waitingStatuses.forEach((status) => {
+      config.update((conf) => ({ ...conf, status }));
       spectator.detectChanges();
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
-      const component = spectator.component as any;
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-      expect(component.status()).toBe(expected);
+
+      const statusElement = spectator.query('[ixTest="tnc-status"]');
+      const statusReasonElement = spectator.query('[ixTest="tnc-status-reason"]');
+
+      expect(statusElement).toBeNull();
+      expect(statusReasonElement).toBeTruthy();
+      expect(statusReasonElement?.textContent).toContain('Power Up your TrueNAS Experience');
     });
+  });
+
+  it('should display connecting status correctly', () => {
+    const connectingStatuses = [
+      TruenasConnectStatus.RegistrationFinalizationSuccess,
+      TruenasConnectStatus.CertGenerationInProgress,
+      TruenasConnectStatus.CertGenerationSuccess,
+      TruenasConnectStatus.CertRenewalInProgress,
+      TruenasConnectStatus.CertRenewalSuccess,
+    ];
+
+    connectingStatuses.forEach((status) => {
+      config.update((conf) => ({ ...conf, status }));
+      spectator.detectChanges();
+
+      const statusElement = spectator.query('[ixTest="tnc-status"]');
+      expect(statusElement).toBeTruthy();
+      expect(statusElement?.textContent).toContain('Setting up TrueNAS Connect');
+    });
+  });
+
+  it('should display failed status correctly', () => {
+    const failedStatuses = [
+      TruenasConnectStatus.RegistrationFinalizationFailed,
+      TruenasConnectStatus.RegistrationFinalizationTimeout,
+      TruenasConnectStatus.CertGenerationFailed,
+      TruenasConnectStatus.CertConfigurationFailure,
+      TruenasConnectStatus.CertRenewalFailure,
+    ];
+
+    failedStatuses.forEach((status) => {
+      config.update((conf) => ({ ...conf, status }));
+      spectator.detectChanges();
+
+      const statusElement = spectator.query('[ixTest="tnc-status"]');
+      expect(statusElement).toBeTruthy();
+      expect(statusElement?.textContent).toContain('Connection Failed...');
+    });
+  });
+
+  it('should display configured status as active', () => {
+    config.update((conf) => ({ ...conf, status: TruenasConnectStatus.Configured }));
+    spectator.detectChanges();
+
+    const statusElement = spectator.query('[ixTest="tnc-status"]');
+    expect(statusElement).toBeTruthy();
+    expect(statusElement?.textContent).toContain('TrueNAS Connect - Status Healthy');
+  });
+
+  it('should display disabled status correctly', () => {
+    config.update((conf) => ({ ...conf, status: TruenasConnectStatus.Disabled }));
+    spectator.detectChanges();
+
+    const statusElement = spectator.query('[ixTest="tnc-status"]');
+    expect(statusElement).toBeTruthy();
+    expect(statusElement?.textContent).toContain('DISABLED');
   });
 
   it('should not auto-enable service when status is not DISABLED', () => {
@@ -275,12 +390,6 @@ describe('TruenasConnectStatusModalComponent', () => {
     // Should not throw error when calling ngOnInit
     expect(() => spectator.component.ngOnInit()).not.toThrow();
 
-    // The status computed property should return Disabled for null config
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
-    const component = spectator.component as any;
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-    expect(component.status()).toBe(TncStatus.Disabled);
-
     // Should not call enableService when config is null
     const service = spectator.inject(TruenasConnectService);
     const enableSpy = jest.spyOn(service, 'enableService');
@@ -289,23 +398,12 @@ describe('TruenasConnectStatusModalComponent', () => {
   });
 
   it('should handle undefined status in config', () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
-    config.update((conf) => ({ ...conf, status: undefined as any }));
+    config.update((conf) => ({ ...conf, status: undefined as TruenasConnectStatus }));
     spectator.detectChanges();
 
-    // Should default to Disabled status
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
-    const component = spectator.component as any;
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-    expect(component.status()).toBe(TncStatus.Disabled);
-  });
-
-  it('should have proper change detection strategy', () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
-    const componentClass = TruenasConnectStatusModalComponent as any;
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
-    const metadata = componentClass.ɵcmp;
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    expect(metadata.onPush).toBe(true);
+    // Should display Disabled status in the DOM
+    const statusElement = spectator.query('[ixTest="tnc-status"]');
+    expect(statusElement).toBeTruthy();
+    expect(statusElement!.textContent).toContain('DISABLED');
   });
 });

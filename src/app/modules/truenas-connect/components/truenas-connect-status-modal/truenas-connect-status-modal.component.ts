@@ -8,7 +8,7 @@ import {
 import { MatDivider } from '@angular/material/divider';
 import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   EMPTY, catchError, finalize, switchMap,
 } from 'rxjs';
@@ -81,6 +81,7 @@ export class TruenasConnectStatusModalComponent implements OnInit {
     @Inject(WINDOW) private window: Window,
     protected tnc: TruenasConnectService,
     private dialog: DialogService,
+    private translate: TranslateService,
   ) { }
 
   ngOnInit(): void {
@@ -93,7 +94,10 @@ export class TruenasConnectStatusModalComponent implements OnInit {
       this.tnc.enableService()
         .pipe(
           catchError((_: unknown) => {
-            this.dialog.error({ title: 'Error', message: 'Failed to enable TrueNAS Connect service' });
+            this.dialog.error({
+              title: this.translate.instant('Error'),
+              message: this.translate.instant('Failed to enable TrueNAS Connect service'),
+            });
             return EMPTY;
           }),
           finalize(() => this.isLoading.set(false)),
@@ -112,7 +116,10 @@ export class TruenasConnectStatusModalComponent implements OnInit {
     this.tnc.connect()
       .pipe(
         catchError((_: unknown) => {
-          this.dialog.error({ title: 'Connection Error', message: 'Failed to connect to TrueNAS Connect' });
+          this.dialog.error({
+            title: this.translate.instant('Connection Error'),
+            message: this.translate.instant('Failed to connect to TrueNAS Connect'),
+          });
           return EMPTY;
         }),
         finalize(() => this.isConnecting.set(false)),
@@ -126,7 +133,10 @@ export class TruenasConnectStatusModalComponent implements OnInit {
     this.tnc.disableService()
       .pipe(
         catchError((_: unknown) => {
-          this.dialog.error({ title: 'Disable Error', message: 'Failed to disable TrueNAS Connect service' });
+          this.dialog.error({
+            title: this.translate.instant('Disable Error'),
+            message: this.translate.instant('Failed to disable TrueNAS Connect service'),
+          });
           return EMPTY;
         }),
         finalize(() => this.isDisabling.set(false)),
@@ -141,7 +151,10 @@ export class TruenasConnectStatusModalComponent implements OnInit {
       .pipe(
         switchMap(() => this.tnc.enableService()),
         catchError((_: unknown) => {
-          this.dialog.error({ title: 'Retry Error', message: 'Failed to retry TrueNAS Connect connection' });
+          this.dialog.error({
+            title: this.translate.instant('Retry Error'),
+            message: this.translate.instant('Failed to retry TrueNAS Connect connection'),
+          });
           return EMPTY;
         }),
         finalize(() => this.isRetrying.set(false)),
