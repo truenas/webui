@@ -84,7 +84,10 @@ export class TruenasConnectStatusModalComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // Automatically re-enable the service if it's disabled
+    this.enableServiceIfDisabled();
+  }
+
+  private enableServiceIfDisabled(): void {
     if (this.tnc.config()?.status === TruenasConnectStatus.Disabled) {
       this.isLoading.set(true);
       this.tnc.enableService()
