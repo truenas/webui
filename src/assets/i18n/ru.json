@@ -5046,7 +5046,6 @@
   "TrueNAS Connect is active": "Соединение TrueNAS активно",
   "TrueNAS Connect is disabled": "Соединение TrueNAS отключено",
   "TrueNAS Connect Read": "Чтение соединения TrueNAS",
-  "TrueNAS Connect Service": "Служба соединения TrueNAS",
   "TrueNAS Connect Write": "Запись соединения TrueNAS",
   "TrueNAS connection has timed out or was interrupted. To continue, press Reconnect.": "Время ожидания подключения TrueNAS истекло или оно было прервано. Чтобы продолжить, нажмите кнопку «Переподключить».",
   "TrueNAS Help": "Справка TrueNAS",

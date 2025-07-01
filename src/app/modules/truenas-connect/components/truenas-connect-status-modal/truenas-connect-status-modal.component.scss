@@ -3,6 +3,15 @@
   display: flex;
   justify-content: space-between;
   
+  &.dialog-title-with-logo {
+    padding: 8px 24px;
+  }
+  
+  .title-logo {
+    height: 24px;
+    width: auto;
+  }
+  
   .disable-service-button {
     height: 36px;
     margin-left: auto;

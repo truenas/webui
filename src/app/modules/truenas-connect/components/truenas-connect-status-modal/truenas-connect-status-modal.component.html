@@ -1,5 +1,5 @@
-<div mat-dialog-title>
-  {{ "TrueNAS Connect Service" | translate }}
+<div mat-dialog-title class="dialog-title-with-logo">
+  <img class="title-logo" src="assets/images/truenas-connect-logo-horizontal.svg" alt="TrueNAS Connect" />
   @if (status() === TncStatus.Active) {
     <button
       mat-icon-button
