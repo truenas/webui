@@ -1,9 +1,10 @@
 [mat-dialog-title] {
   align-items: center;
   display: flex;
-  justify-content: space-between;
+  position: relative;
   
   &.dialog-title-with-logo {
+    justify-content: center;
     padding: 8px 24px;
   }
   
@@ -14,7 +15,8 @@
   
   .disable-service-button {
     height: 36px;
-    margin-left: auto;
+    position: absolute;
+    right: 0;
     width: 36px;
     
     ix-icon {
