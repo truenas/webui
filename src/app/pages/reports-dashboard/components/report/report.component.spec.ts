@@ -1,7 +1,7 @@
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { UUID } from 'angular2-uuid';
-import { format } from 'date-fns-tz';
+import { format } from 'date-fns';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Preferences } from 'app/interfaces/preferences.interface';

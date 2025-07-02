@@ -29,7 +29,7 @@ describe('VmwareSnapshotFormComponent', () => {
   const slideInRef: SlideInRef<VmwareSnapshot | undefined, unknown> = {
     close: jest.fn(),
     requireConfirmationWhen: jest.fn(),
-    getData: jest.fn(() => undefined),
+    getData: jest.fn((): undefined => undefined),
   };
 
   let spectator: Spectator<VmwareSnapshotFormComponent>;

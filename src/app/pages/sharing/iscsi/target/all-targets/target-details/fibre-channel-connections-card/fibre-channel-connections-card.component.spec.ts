@@ -65,8 +65,8 @@ describe('FibreChannelConnectionsCardComponent', () => {
   it('checks no connections message when have attached fc and no sessions', () => {
     const noSessionConnections = connections.map((connection) => ({
       ...connection,
-      A: { ...connection.A, sessions: [] },
-      B: { ...connection.B, sessions: [] },
+      A: { ...connection.A, sessions: [] as string[] },
+      B: { ...connection.B, sessions: [] as string[] },
     }));
     setupTest(noSessionConnections);
     expect(spectator.query('p')).toHaveText('No connections');

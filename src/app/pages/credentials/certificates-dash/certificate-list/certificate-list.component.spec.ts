@@ -31,7 +31,7 @@ const certificates = Array.from({ length: 10 }).map((_, index) => ({
   name: `cert_default_${index}`,
   certificate: '-----BEGIN CERTIFICATE-----\nMIIDrTCCApWgAwIBAgIENFgbaDANBgkqhkiG9w0BAQsFADCBgDELMAkGA1UEBhMC\n-----END CERTIFICATE-----\n',
   privatekey: '-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCWjoaj0WEOn1yQ\n-----END PRIVATE KEY-----\n',
-  CSR: null,
+  CSR: null as string | null,
   cert_type: 'CERTIFICATE',
   key_length: 2048,
   key_type: 'RSA',

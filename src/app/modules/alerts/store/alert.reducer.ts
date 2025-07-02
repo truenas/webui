@@ -38,7 +38,7 @@ export const alertReducer = createReducer(
   on(alertIndicatorPressed, (state) => ({ ...state, isPanelOpen: !state.isPanelOpen })),
   on(alertPanelClosed, (state) => ({ ...state, isPanelOpen: false })),
 
-  on(adminUiInitialized, (state) => ({ ...state, isLoading: true, error: null })),
+  on(adminUiInitialized, (state) => ({ ...state, isLoading: true, error: null as string | null })),
   on(alertsLoaded, (state, { alerts }) => {
     return {
       ...adapter.setAll(alerts, state),

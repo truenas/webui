@@ -37,7 +37,7 @@ $primary-txt: #fff;
 $accent-txt: #333;
 
 $primary: $blue;
-$accent: $yellow;
+$accent: $blue;
 $warn: $red;
 
 $md-primary: (
@@ -74,31 +74,31 @@ $md-primary: (
 );
 
 $md-accent: (
-  50 : #fff8e1,
-  100 : #ffecb5,
-  200 : #ffe083,
-  300 : #ffd451,
-  400 : #ffca2c,
-  500 : #ffc107,
-  600 : #ffbb06,
-  700 : #ffb305,
-  800 : #ffab04,
-  900 : #ff9e02,
-  A100 : #fff,
-  A200 : #fffaf2,
-  A400 : #ffe4bf,
-  A700 : #ffd9a6,
+  50 : #e0f2fa,
+  100 : #b3dff2,
+  200 : #80caea,
+  300 : #4db5e2,
+  400 : #26a5db,
+  500 : #0095d5,
+  600 : #008dd0,
+  700 : #0082ca,
+  800 : #0078c4,
+  900 : #0067ba,
+  A100 : #e3f1ff,
+  A200 : #b0d7ff,
+  A400 : #7dbdff,
+  A700 : #63b0ff,
   contrast: (
     50 : #000,
     100 : #000,
     200 : #000,
     300 : #000,
     400 : #000,
-    500 : #000,
-    600 : #000,
-    700 : #000,
-    800 : #000,
-    900 : #000,
+    500 : #fff,
+    600 : #fff,
+    700 : #fff,
+    800 : #fff,
+    900 : #fff,
     A100 : #000,
     A200 : #000,
     A400 : #000,

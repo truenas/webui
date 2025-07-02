@@ -70,7 +70,7 @@ describe('FormErrorHandlerService', () => {
         } as ErrorReport)),
       }),
       mockProvider(EditableService, {
-        findEditablesWithControl: jest.fn(() => []),
+        findEditablesWithControl: jest.fn(() => [] as EditableComponent[]),
       }),
       mockProvider(IxFormService, {
         getControlNames: jest.fn(() => Object.keys(formGroup.controls)),

@@ -64,7 +64,7 @@ describe('AdditionalDetailsSectionComponent', () => {
         isStigMode: jest.fn(() => false),
         updateUserConfig: jest.fn(),
         updateSetupDetails: jest.fn(),
-        role: jest.fn(() => null),
+        role: jest.fn(),
         isNewUser: jest.fn(() => false),
         homeModeOldValue: jest.fn(() => ''),
         userConfig: jest.fn(() => ({})),

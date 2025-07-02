@@ -1,11 +1,11 @@
 import { EventEmitter } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import {
+  ITreeState,
   TreeComponent,
   TreeModel,
   TreeModule,
 } from '@bugsplat/angular-tree-component';
-import { IDTypeDictionary } from '@bugsplat/angular-tree-component/lib/defs/api';
 import { FormControl } from '@ngneat/reactive-forms';
 import { SpectatorHost } from '@ngneat/spectator';
 import { createHostFactory } from '@ngneat/spectator/jest';
@@ -17,17 +17,13 @@ import { mntPath } from 'app/enums/mnt-path.enum';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 
-// TODO: Update when fix is ready
-// See https://github.com/help-me-mom/ng-mocks/issues/10503
-
-// eslint-disable-next-line jest/no-disabled-tests
-describe.skip('IxExplorerComponent', () => {
+describe('IxExplorerComponent', () => {
   const mockTreeMock = {
     selectedLeafNodeIds: {},
     get selectedLeafNodes(): unknown[] {
       return [];
     },
-    setState(newState: { selectedLeafNodeIds: IDTypeDictionary }) {
+    setState(newState: ITreeState) {
       this.selectedLeafNodeIds = newState.selectedLeafNodeIds;
     },
     getState() {
@@ -66,7 +62,7 @@ describe.skip('IxExplorerComponent', () => {
         [hint]="hint"
         [required]="required"
         [tooltip]="tooltip"
-        [roots]="[root]"
+        [rootNodes]="[root]"
         [multiple]="multiple"
       ></ix-explorer>`,
       {
@@ -77,7 +73,12 @@ describe.skip('IxExplorerComponent', () => {
           hint: undefined,
           required: false,
           tooltip: undefined,
-          root: mntPath,
+          root: {
+            hasChildren: true,
+            name: mntPath,
+            path: mntPath,
+            type: ExplorerNodeType.Directory,
+          },
           multiple: false,
         },
       },
@@ -95,7 +96,6 @@ describe.skip('IxExplorerComponent', () => {
           name: mntPath,
           path: mntPath,
           type: ExplorerNodeType.Directory,
-          isMountpoint: true,
         },
       ]);
     });

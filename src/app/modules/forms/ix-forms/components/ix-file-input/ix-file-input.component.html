@@ -15,7 +15,10 @@
       (keydown.enter)="fileInput.click()"
     >
       <ng-content>
-        {{ multiple() ? ('Choose Files' | translate) : ('Choose File' | translate) }}
+        {{ multiple() 
+          ? ('Choose Files' | translate) 
+          : ('Choose File' | translate) 
+        }}
       </ng-content>
       <input
         #fileInput

@@ -31,7 +31,7 @@ export function makeArrayDeviceSlots(
       is_top: options.is_top ?? false,
       is_rear: options.is_rear ?? false,
       is_internal: options.is_internal ?? false,
-    };
+    } as DashboardEnclosureSlot;
   });
 
   return keyBy(slots, 'drive_bay_number');

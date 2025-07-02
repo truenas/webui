@@ -40,7 +40,7 @@ export class FreeSpaceValidatorService {
     return freeSpaceInPath$.pipe(
       // TODO: Refactor to fix linter rule.
       // eslint-disable-next-line sonarjs/no-invariant-returns
-      map((freeSpace) => {
+      map((freeSpace): ValidationErrors | null => {
         this.previousPath = path;
         form.controls.volsize.setErrors(null);
 
