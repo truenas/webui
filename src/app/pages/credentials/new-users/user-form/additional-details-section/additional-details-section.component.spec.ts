@@ -10,6 +10,7 @@ import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Choices } from 'app/interfaces/choices.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
+import { Group } from 'app/interfaces/group.interface';
 import { User } from 'app/interfaces/user.interface';
 import { DetailsItemHarness } from 'app/modules/details-table/details-item/details-item.harness';
 import { DetailsTableHarness } from 'app/modules/details-table/details-table.harness';
@@ -47,7 +48,7 @@ describe('AdditionalDetailsSectionComponent', () => {
     group: {
       id: 101,
     },
-    groups: [101],
+    groups: [102, 103],
     immutable: false,
   } as User;
 
@@ -82,7 +83,20 @@ describe('AdditionalDetailsSectionComponent', () => {
           '/usr/bin/bash': 'bash',
           '/usr/bin/zsh': 'zsh',
         } as Choices),
-        mockCall('group.query', []),
+        mockCall('group.query', [
+          {
+            id: 101,
+            group: 'test-group',
+          },
+          {
+            id: 102,
+            group: 'test-group-2',
+          },
+          {
+            id: 103,
+            group: 'test-group-3',
+          },
+        ] as Group[]),
         mockCall('sharing.smb.query', []),
         mockCall('filesystem.stat', {
           mode: 16889,
@@ -105,6 +119,7 @@ describe('AdditionalDetailsSectionComponent', () => {
         shell: '/usr/bin/zsh',
         group_create: true,
         groups: [],
+        group: null,
         home: '/var/empty',
         home_mode: '700',
         home_create: false,
@@ -121,7 +136,7 @@ describe('AdditionalDetailsSectionComponent', () => {
       await (await loader.getHarness(DetailsTableHarness)).setValues({
         'Full Name': 'Editable field',
         Email: 'editable@truenas.local',
-        Groups: 'Not Set',
+        Groups: 'test-group',
         UID: 1234,
       });
 
@@ -132,6 +147,7 @@ describe('AdditionalDetailsSectionComponent', () => {
         sudo_commands: [],
         sudo_commands_nopasswd: [],
         group_create: true,
+        group: null,
         groups: [],
         home: '/var/empty',
         home_mode: '700',
@@ -169,7 +185,7 @@ describe('AdditionalDetailsSectionComponent', () => {
       expect(values).toEqual({
         'Full Name': 'test',
         Email: 'Not Set',
-        Groups: 'Not Set',
+        Groups: 'Primary Group: test-group  Auxiliary Groups: test-group-2, test-group-3',
         'Home Directory': '/home/test',
         UID: '1004',
         Shell: '/usr/bin/bash',
@@ -192,7 +208,7 @@ describe('AdditionalDetailsSectionComponent', () => {
       expect(await editables.getValues()).toEqual({
         'Full Name': 'test',
         Email: 'Not Set',
-        Groups: 'Not Set',
+        Groups: 'Primary Group: test-group  Auxiliary Groups: test-group-2, test-group-3',
         'Home Directory': '/home/test',
         UID: '1004',
       });
@@ -290,9 +306,9 @@ describe('AdditionalDetailsSectionComponent', () => {
       const perms = await loader.getHarnessOrNull(IxPermissionsHarness.with({ label: 'Home Directory Permissions' }));
       const createCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Create Home Directory' }));
 
-      expect(explorer).toBeNull();
-      expect(perms).toBeNull();
+      expect(await explorer.isDisabled()).toBe(true);
       expect(await createCheckbox.isDisabled()).toBe(true);
+      expect(perms).toBeNull();
     });
   });
 });

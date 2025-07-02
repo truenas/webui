@@ -62,7 +62,7 @@ describe('GlobalConfigFormComponent', () => {
   it('shows current global settings from the slide-in data', async () => {
     expect(await form.getValues()).toEqual({
       Bridge: 'bridge1',
-      'Enable Instances': true,
+      'Enable Containers': true,
       Pools: ['poolio'],
     });
 
@@ -74,7 +74,7 @@ describe('GlobalConfigFormComponent', () => {
 
   it('updates global settings and shows network fields when bridge is [AUTO] and closes slide-in', async () => {
     await form.fillForm({
-      'Enable Instances': true,
+      'Enable Containers': true,
       Bridge: '[AUTO]',
       Pools: ['poolio'],
     });

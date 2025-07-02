@@ -1,0 +1,46 @@
+:host {
+  display: block;
+}
+
+.waiting-state-content,
+.connecting-state-content {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  text-align: center;
+}
+
+
+.waiting-state-text,
+.connecting-description,
+.failed-description,
+.active-description {
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.connecting-header,
+.failed-header,
+.active-header {
+  font-size: 16px;
+  font-weight: 500;
+  margin-left: 8px;
+}
+
+.status-header {
+  align-items: center;
+  display: flex;
+}
+
+.status-failed {
+  color: var(--red);
+}
+
+.status-connected {
+  color: var(--green);
+}
+
+.status-disabled {
+  color: var(--yellow);
+}

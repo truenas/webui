@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { exec } from 'child_process';
+import { spawn } from 'child_process';
 import fs from 'fs';
 import { getLanguageFiles } from './language/get-language-files';
 
@@ -9,47 +9,76 @@ function getFilePath(language: string): string {
   return `${translationDir}${language}.json`;
 }
 
+function processLanguageFiles(languages: string[]): void {
+  // Reorder keys so that untranslated strings are on top.
+  languages.forEach((language) => {
+    const filePath = getFilePath(language);
+    try {
+      const fileContent = fs.readFileSync(filePath, { encoding: 'utf-8' });
+      let messages: Record<string, string> = {};
+
+      // Handle empty or malformed JSON files
+      if (fileContent.trim()) {
+        try {
+          messages = JSON.parse(fileContent) as Record<string, string>;
+        } catch (parseError) {
+          console.warn(`Warning: Could not parse ${filePath}, treating as empty:`, parseError);
+          messages = {};
+        }
+      }
+
+      const output: Record<string, string> = {};
+      const nonTranslatedKeys: string[] = [];
+      const translatedKeys: string[] = [];
+
+      Object.keys(messages).forEach((key) => {
+        if (messages[key] === '') {
+          nonTranslatedKeys.push(key);
+        } else {
+          translatedKeys.push(key);
+        }
+      });
+
+      nonTranslatedKeys.toSorted((a, b) => a.localeCompare(b)).forEach((key) => output[key] = messages[key]);
+      translatedKeys.toSorted((a, b) => a.localeCompare(b)).forEach((key) => output[key] = messages[key]);
+
+      const stream = fs.createWriteStream(filePath, {});
+      stream.write(JSON.stringify(output, null, '  '));
+      stream.end();
+    } catch (fileError) {
+      console.warn(`Warning: Could not process ${filePath}:`, fileError);
+    }
+  });
+}
+
 (async () => {
   try {
     const languages = await getLanguageFiles();
-    const outputArgument = languages
-      .map(getFilePath)
-      .join(' ');
+    const outputFiles = languages.map(getFilePath);
+
+    // Use spawn to avoid command line length limits
+    const args = [
+      '--input', 'src',
+      '--output', ...outputFiles,
+      '--string-as-default-value',
+      '--fi', '\t',
+    ];
 
     // Note: --clean flag removed to prevent over-aggressive removal of translation strings after Angular 20 upgrade
-    exec('ngx-translate-extract --input src --output ' + outputArgument + ' --string-as-default-value --fi "\t"', (err, stdout, stderr) => {
-      if (err) {
-        console.error(err);
-        console.error('Error extracting strings.');
-        // node couldn't execute the command
+    const child = spawn('./node_modules/.bin/ngx-translate-extract', args, { stdio: 'inherit' });
+
+    child.on('close', (code) => {
+      if (code !== 0) {
+        console.error(`Error extracting strings. Process exited with code ${code}`);
         process.exit(1);
       }
-      console.info(stdout);
-      console.error(stderr);
 
-      // Reorder keys so that untranslated strings are on top.
-      languages.forEach((language) => {
-        const filePath = getFilePath(language);
-        const messages = JSON.parse(fs.readFileSync(filePath, { encoding: 'utf-8' })) as Record<string, string>;
-        const output: Record<string, string> = {};
-        const nonTranslatedKeys: string[] = [];
-        const translatedKeys: string[] = [];
+      processLanguageFiles(languages);
+    });
 
-        Object.keys(messages).forEach((key) => {
-          if (messages[key] === '') {
-            nonTranslatedKeys.push(key);
-          } else {
-            translatedKeys.push(key);
-          }
-        });
-
-        nonTranslatedKeys.toSorted((a, b) => a.localeCompare(b)).forEach((key) => output[key] = messages[key]);
-        translatedKeys.toSorted((a, b) => a.localeCompare(b)).forEach((key) => output[key] = messages[key]);
-
-        const stream = fs.createWriteStream(filePath, {});
-        stream.write(JSON.stringify(output, null, '  '));
-        stream.end();
-      });
+    child.on('error', (err) => {
+      console.error('Error running ngx-translate-extract:', err);
+      process.exit(1);
     });
   } catch (err) {
     console.error('Error fetching language files:', err);
