@@ -23,7 +23,6 @@ export class SlideInContainerComponent implements AfterViewInit {
   @ViewChild(CdkPortalOutlet, { static: true }) private readonly portalOutlet!: CdkPortalOutlet;
 
   private readonly whenHidden$ = new Subject<void>();
-
   private readonly whenVisible$ = new Subject<void>();
 
   @HostBinding('class.slide-in-visible') private isVisible = false;
