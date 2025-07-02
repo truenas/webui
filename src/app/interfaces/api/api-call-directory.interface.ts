@@ -232,7 +232,7 @@ import { Service } from 'app/interfaces/service.interface';
 import { ResizeShellRequest } from 'app/interfaces/shell.interface';
 import { SmbConfig, SmbConfigUpdate } from 'app/interfaces/smb-config.interface';
 import {
-  SmbPresets, SmbShare, SmbSharesec, SmbSharesecAce, SmbShareUpdate,
+  SmbShare, SmbSharesec, SmbSharesecAce,
 } from 'app/interfaces/smb-share.interface';
 import { SmbStatus } from 'app/interfaces/smb-status.interface';
 import { SnmpConfig, SnmpConfigUpdate } from 'app/interfaces/snmp-config.interface';
@@ -263,20 +263,27 @@ import {
   DeleteUserParams, SetPasswordParams, User, UserUpdate,
 } from 'app/interfaces/user.interface';
 import {
-  VirtualizationInstance,
+  VirtualizationDetails,
+  VirtualMachine, VirtualMachineUpdate, VmCloneParams, VmDeleteParams, VmDisplayWebUri,
+  VmDisplayWebUriParams, VmPortWizardResult,
+} from 'app/interfaces/virtual-machine.interface';
+import {
   VirtualizationDevice,
+
+  VirtualizationGlobalConfig, VirtualizationImage,
   VirtualizationImageParams,
-  VirtualizationImage,
-  AvailableGpus,
-  AvailableUsb,
-  VirtualizationGlobalConfig,
+  VirtualizationInstance,
   VirtualizationNetwork,
-  VirtualizationVolume,
+  AvailableUsb,
+  AvailableGpus, VirtualizationVolume,
   VirtualizationVolumeUpdate,
   VirtualizationPciChoices,
   CreateVirtualizationVolume,
   VirtualizationImportIsoParams,
 } from 'app/interfaces/virtualization.interface';
+import {
+  VmDevice, VmDeviceDelete, VmDeviceUpdate, VmDisplayDevice, VmPassthroughDeviceChoice, VmUsbPassthroughDeviceChoice,
+} from 'app/interfaces/vm-device.interface';
 import {
   MatchDatastoresWithDatasets,
   MatchDatastoresWithDatasetsParams,
@@ -777,14 +784,13 @@ export interface ApiCallDirectory {
   'sharing.nfs.delete': { params: [id: number]; response: boolean };
   'sharing.nfs.query': { params: QueryParams<NfsShare>; response: NfsShare[] };
   'sharing.nfs.update': { params: [id: number, update: NfsShareUpdate]; response: NfsShare };
-  'sharing.smb.create': { params: [SmbShareUpdate]; response: SmbShare };
+  'sharing.smb.create': { params: [Partial<SmbShare>]; response: SmbShare };
   'sharing.smb.delete': { params: [id: number]; response: boolean };
   'sharing.smb.getacl': { params: [{ share_name: string }]; response: SmbSharesec };
-  'sharing.smb.presets': { params: void; response: SmbPresets };
   'sharing.smb.query': { params: QueryParams<SmbShare>; response: SmbShare[] };
   'sharing.smb.setacl': { params: [{ share_name: string; share_acl: SmbSharesecAce[] }]; response: SmbSharesec };
   'sharing.smb.share_precheck': { params: [{ name: string }]; response: null | { reason: string } };
-  'sharing.smb.update': { params: [id: number, update: SmbShareUpdate]; response: SmbShare };
+  'sharing.smb.update': { params: [id: number, update: Partial<SmbShare>]; response: SmbShare };
 
   // SMB
   'smb.bindip_choices': { params: void; response: Choices };
@@ -930,7 +936,35 @@ export interface ApiCallDirectory {
   'virt.volume.delete': { params: [id: string]; response: true };
   'virt.volume.import_iso': { params: [VirtualizationImportIsoParams]; response: VirtualizationVolume };
 
+  // VM
+  'vm.bootloader_options': { params: void; response: Choices };
+  'vm.clone': { params: VmCloneParams; response: boolean };
+  'vm.cpu_model_choices': { params: void; response: Choices };
+  'vm.create': { params: [VirtualMachineUpdate]; response: VirtualMachine };
+  'vm.delete': { params: VmDeleteParams; response: boolean };
+  'vm.device.bind_choices': { params: void; response: Choices };
+  'vm.device.create': { params: [VmDeviceUpdate]; response: VmDevice };
+  'vm.device.delete': { params: [number, VmDeviceDelete?]; response: boolean };
+  'vm.device.disk_choices': { params: void; response: Choices };
   'system.advanced.get_gpu_pci_choices': { params: void; response: Choices };
+  'vm.device.nic_attach_choices': { params: void; response: Choices };
+  'vm.device.passthrough_device_choices': { params: void; response: Record<string, VmPassthroughDeviceChoice> };
+  'vm.device.query': { params: QueryParams<VmDevice>; response: VmDevice[] };
+  'vm.device.update': { params: [id: number, update: VmDeviceUpdate]; response: VmDevice };
+  'vm.device.usb_controller_choices': { params: void; response: Choices };
+  'vm.device.usb_passthrough_choices': { params: void; response: Record<string, VmUsbPassthroughDeviceChoice> };
+  'vm.get_available_memory': { params: void; response: number };
+  'vm.get_display_devices': { params: [id: number]; response: VmDisplayDevice[] };
+  'vm.get_display_web_uri': { params: VmDisplayWebUriParams; response: VmDisplayWebUri };
+  'vm.maximum_supported_vcpus': { params: void; response: number };
+  'vm.port_wizard': { params: void; response: VmPortWizardResult };
+  'vm.poweroff': { params: [id: number]; response: void };
+  'vm.query': { params: QueryParams<VirtualMachine>; response: VirtualMachine[] };
+  'vm.random_mac': { params: void; response: string };
+  'vm.resolution_choices': { params: void; response: Choices };
+  'vm.start': { params: [id: number, params?: { overcommit?: boolean }]; response: void };
+  'vm.update': { params: [id: number, update: VirtualMachineUpdate]; response: VirtualMachine };
+  'vm.virtualization_details': { params: void; response: VirtualizationDetails };
 
   // Vmware
   'vmware.create': { params: [VmwareSnapshotUpdate]; response: VmwareSnapshot };
