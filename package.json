@@ -224,5 +224,8 @@
   },
   "devDependencies": {
     "@angular/build": "^20.0.1"
+  },
+  "optionalDependencies": {
+    "lmdb": "^3.3.0"
   }
 }
