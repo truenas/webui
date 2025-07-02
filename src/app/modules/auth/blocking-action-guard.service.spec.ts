@@ -4,14 +4,14 @@ import { SpectatorService, createServiceFactory, mockProvider } from '@ngneat/sp
 import { BehaviorSubject, firstValueFrom, of } from 'rxjs';
 import { GlobalTwoFactorConfig, UserTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { TwoFactorGuardService } from 'app/modules/auth/two-factor-guard.service';
+import { BlockingActionGuardService } from 'app/modules/auth/blocking-action-guard.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { FirstLoginDialog } from 'app/pages/credentials/users/first-login-dialog/first-login-dialog.component';
 import { PasswordChangeRequiredDialog } from 'app/pages/credentials/users/password-change-required-dialog/password-change-required-dialog.component';
+import { TwoFactorSetupDialog } from 'app/pages/credentials/users/two-factor-setup-dialog/two-factor-setup-dialog.component';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
-describe('TwoFactorGuardService', () => {
-  let spectator: SpectatorService<TwoFactorGuardService>;
+describe('BlockingActionGuardService', () => {
+  let spectator: SpectatorService<BlockingActionGuardService>;
 
   const isAuthenticated$ = new BehaviorSubject(false);
   const userTwoFactorConfig$ = new BehaviorSubject<UserTwoFactorConfig | null>(null);
@@ -24,7 +24,7 @@ describe('TwoFactorGuardService', () => {
   const isLocalUser$ = new BehaviorSubject(true);
 
   const createService = createServiceFactory({
-    service: TwoFactorGuardService,
+    service: BlockingActionGuardService,
     providers: [
       mockProvider(Router),
       mockProvider(WebSocketStatusService, {
@@ -113,7 +113,7 @@ describe('TwoFactorGuardService', () => {
     );
     expect(isAllowed).toBe(true);
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(FirstLoginDialog, {
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(TwoFactorSetupDialog, {
       maxWidth: '100vw',
       maxHeight: '100vh',
       height: '100%',
@@ -135,7 +135,7 @@ describe('TwoFactorGuardService', () => {
     );
     expect(isAllowed).toBe(true);
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(FirstLoginDialog, {
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(TwoFactorSetupDialog, {
       maxWidth: '100vw',
       maxHeight: '100vh',
       height: '100%',

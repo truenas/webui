@@ -11,10 +11,10 @@ import { BehaviorSubject } from 'rxjs';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { ChangePasswordFormComponent } from 'app/modules/layout/topbar/change-password-dialog/change-password-form/change-password-form.component';
 import { TwoFactorComponent } from 'app/pages/two-factor-auth/two-factor.component';
-import { FirstLoginDialog } from './first-login-dialog.component';
+import { TwoFactorSetupDialog } from './two-factor-setup-dialog.component';
 
 describe('FirstLoginDialogComponent', () => {
-  let spectator: Spectator<FirstLoginDialog>;
+  let spectator: Spectator<TwoFactorSetupDialog>;
   let loader: HarnessLoader;
 
   const mockTwoFactorConfig$ = new BehaviorSubject({ secret_configured: false });
@@ -24,7 +24,7 @@ describe('FirstLoginDialogComponent', () => {
   const global2faConfig$ = new BehaviorSubject({ enabled: true });
 
   const createComponent = createComponentFactory({
-    component: FirstLoginDialog,
+    component: TwoFactorSetupDialog,
     declarations: [MockComponents(ChangePasswordFormComponent, TwoFactorComponent)],
     providers: [
       mockProvider(AuthService, {
@@ -109,7 +109,7 @@ describe('FirstLoginDialogComponent', () => {
 
   it('calls passwordChanged when password is updated', () => {
     const authService = spectator.inject(AuthService);
-    const passwordChangedSpy = jest.spyOn(authService.wasOneTimePasswordChanged$, 'next');
+    const passwordChangedSpy = jest.spyOn(authService, 'requiredPasswordChanged');
     mockIsOtpwUser$.next(true);
     mockIsLocalUser$.next(true);
     spectator.detectChanges();

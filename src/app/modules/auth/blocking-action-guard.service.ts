@@ -9,17 +9,16 @@ import {
   Observable, of, switchMap, take,
   combineLatest,
 } from 'rxjs';
-import { Role } from 'app/enums/role.enum';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { FirstLoginDialog } from 'app/pages/credentials/users/first-login-dialog/first-login-dialog.component';
 import { PasswordChangeRequiredDialog } from 'app/pages/credentials/users/password-change-required-dialog/password-change-required-dialog.component';
+import { TwoFactorSetupDialog } from 'app/pages/credentials/users/two-factor-setup-dialog/two-factor-setup-dialog.component';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 @UntilDestroy()
 @Injectable({
   providedIn: 'root',
 })
-export class TwoFactorGuardService implements CanActivateChild {
+export class BlockingActionGuardService implements CanActivateChild {
   constructor(
     private authService: AuthService,
     private wsStatus: WebSocketStatusService,
@@ -41,50 +40,36 @@ export class TwoFactorGuardService implements CanActivateChild {
   private checkTwoFactorAuth(state: RouterStateSnapshot): Observable<boolean> {
     return combineLatest([
       this.authService.isPasswordChangeRequired$.pipe(take(1)),
-      this.authService.userTwoFactorConfig$.pipe(take(1)),
-      this.authService.getGlobalTwoFactorConfig(),
-      this.authService.hasRole([Role.FullAdmin]).pipe(take(1)),
-      this.authService.isOtpwUser$.pipe(take(1)),
-      this.authService.wasOneTimePasswordChanged$.asObservable().pipe(take(1)),
-      this.authService.wasRequiredPasswordChanged$.asObservable().pipe(take(1)),
-      this.authService.isLocalUser$,
+      this.authService.isTwoFactorSetupRequired(),
+      this.authService.isFullAdmin().pipe(take(1)),
     ]).pipe(
       take(1),
       switchMap(([
         isPasswordChangeRequired,
-        userConfig,
-        globalConfig,
+        isTwoFactorSetupRequired,
         isFullAdmin,
-        isOtpwUser,
-        wasOtpChanged,
-        wasRequiredPasswordChanged,
-        isLocalUser,
       ]) => {
-        const shouldShowFirstLoginDialog = (
-          (isOtpwUser && !wasOtpChanged && isLocalUser)
-          || (globalConfig.enabled && !userConfig.secret_configured)
-        );
-
-        if (shouldShowFirstLoginDialog) {
-          return this.openFullScreenDialog(FirstLoginDialog);
+        if (isTwoFactorSetupRequired) {
+          if (this.isAdminUsingSystemSettings(isFullAdmin, state)) {
+            return of(true);
+          }
+          if (state.url.endsWith('/two-factor-auth')) {
+            return of(true);
+          }
+          return this.openFullScreenDialog(TwoFactorSetupDialog);
         }
 
-        if (isPasswordChangeRequired && !wasRequiredPasswordChanged && !wasOtpChanged) {
+        if (isPasswordChangeRequired) {
           return this.openFullScreenDialog(PasswordChangeRequiredDialog);
         }
 
-        // Allow admins to access system settings regardless of 2FA status
-        if (isFullAdmin && state.url.startsWith('/system')) {
-          return of(true);
-        }
-
-        if (!globalConfig.enabled || userConfig.secret_configured || state.url.endsWith('/two-factor-auth')) {
-          return of(true);
-        }
-
-        return of(false);
+        return of(true);
       }),
     );
+  }
+
+  private isAdminUsingSystemSettings(isFullAdmin: boolean, state: RouterStateSnapshot): boolean {
+    return isFullAdmin && state.url.startsWith('/system');
   }
 
   private openFullScreenDialog<T>(component: ComponentType<T>): Observable<boolean> {

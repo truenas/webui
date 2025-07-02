@@ -31,17 +31,19 @@ import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler
   ],
 })
 export class PasswordChangeRequiredDialog {
-  wasRequiredPasswordChanged = toSignal(this.authService.wasRequiredPasswordChanged$);
+  protected isPasswordChangeRequired = toSignal(
+    this.authService.isPasswordChangeRequired$,
+  );
 
   constructor(
-    private authService: AuthService,
+    protected authService: AuthService,
     private dialogRef: MatDialogRef<PasswordChangeRequiredDialog>,
     private router: Router,
     private wsHandler: WebSocketHandlerService,
   ) { }
 
-  passwordChanged(): void {
-    this.authService.wasRequiredPasswordChanged$.next(true);
+  protected onPasswordUpdated(): void {
+    this.authService.requiredPasswordChanged();
   }
 
   logOut(): void {
