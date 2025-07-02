@@ -159,6 +159,7 @@ describe('VmEditFormComponent', () => {
       'Start on Boot': true,
       'Enable Hyper-V Enlightenments': false,
       'Enable Secure Boot': true,
+      'Enable Trusted Platform Module (TPM)': false,
 
       'Virtual CPUs': '1',
       Cores: '2',
@@ -209,6 +210,7 @@ describe('VmEditFormComponent', () => {
       shutdown_timeout: 90,
       threads: 3,
       time: VmTime.Local,
+      trusted_platform_module: false,
       vcpus: 1,
     }]);
     expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
@@ -247,6 +249,7 @@ describe('VmEditFormComponent', () => {
       shutdown_timeout: 90,
       threads: 3,
       time: VmTime.Local,
+      trusted_platform_module: false,
       vcpus: 1,
     }]);
     expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
