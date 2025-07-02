@@ -32,12 +32,12 @@ export class BlockingActionGuardService implements CanActivateChild {
         if (!isAuthenticated) {
           return of(false);
         }
-        return this.checkTwoFactorAuth(state);
+        return this.areBlockingActionsRequired(state);
       }),
     );
   }
 
-  private checkTwoFactorAuth(state: RouterStateSnapshot): Observable<boolean> {
+  private areBlockingActionsRequired(state: RouterStateSnapshot): Observable<boolean> {
     return combineLatest([
       this.authService.isPasswordChangeRequired$.pipe(take(1)),
       this.authService.isTwoFactorSetupRequired(),
