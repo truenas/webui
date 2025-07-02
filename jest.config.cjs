@@ -7,7 +7,7 @@ process.env.TZ = 'Europe/Kiev';
 const esmPatterns = [
   '.*\\.mjs$',
   'is-cidr',
-  'ip-regex', 
+  'ip-regex',
   'cidr-regex',
   'lodash-es',
   'internmap',
@@ -15,7 +15,6 @@ const esmPatterns = [
   'delaunator',
   'cheerio',
   'robust-predicates',
-  '@angular',
   '@ngneat',
   '@ngrx',
   '@ngx-translate',

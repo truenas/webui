@@ -245,8 +245,15 @@ ix-tooltip button {
 .mat-mdc-button,
 .mat-button,
 .mat-flat-button {
+  --mat-button-text-label-text-weight: 700;
+  --mdc-outlined-button-label-text-weight: 700;
+  --mdc-filled-button-label-text-weight: 700;
+  --mdc-text-button-container-color: var(--btn-default-bg);
+  --mdc-outlined-button-container-color: var(--btn-default-bg);
+  --mdc-filled-button-container-color: var(--btn-default-bg);
+  background-color: var(--btn-default-bg);
   border-radius: 0 !important;
-  font-weight: 400 !important;
+  font-weight: var(--mat-button-text-label-text-weight) !important;
 
   &:focus-visible {
     outline: 1.5px solid var(--alt-fg2) !important;
@@ -286,9 +293,9 @@ button.mat-mdc-button.mat-accent[type='button']:hover {
 
 a.mat-mdc-button.mat-primary,
 button.mat-mdc-button.mat-primary {
-  background-color: var(--primary) !important;
-  color: var(--primary-txt) !important;
-  opacity: 1;
+  // background-color: var(--primary) !important;
+  // color: var(--primary-txt) !important;
+  // opacity: 1;
 }
 
 a.mat-mdc-button.mat-primary:focus-visible,
@@ -308,9 +315,9 @@ button.mat-mdc-button.mat-accent {
 button.mat-mdc-button.mat-error,
 button.mat-mdc-button.mat-red,
 button.mat-mdc-button.mat-warn {
-  background-color: var(--red) !important;
-  color: #efefef !important;
-  opacity: 1 !important;
+  // background-color: var(--red) !important;
+  // color: #efefef !important;
+  // opacity: 1 !important;
 }
 
 button.mat-mdc-button.mat-finished,

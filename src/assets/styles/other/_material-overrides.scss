@@ -98,7 +98,7 @@ html .ix-dark {
   --mat-checkbox-unselected-icon-color: var(--fg2);
   --mat-checkbox-label-text-color: var(--fg1);
   --mdc-checkbox-unselected-icon-color: var(--primary);
-  --mdc-checkbox-selected-checkmark-color: var(--fg1);
+  --mdc-checkbox-selected-checkmark-color: var(--fg2);
   --mdc-checkbox-selected-focus-icon-color: var(--primary);
   --mdc-checkbox-selected-hover-icon-color: var(--primary);
   --mdc-checkbox-selected-icon-color: var(--primary);
@@ -144,6 +144,7 @@ html .ix-dark {
   --mat-dialog-subhead-tracking: 0;
   --mat-button-toggle-selected-state-text-color: var(--fg1);
   --mat-slide-toggle-label-text-color: var(--fg1);
+  --mat-checkbox-selected-checkmark-color: var(--fg2);
   --mat-checkbox-disabled-selected-icon-color: var(--grey);
   --mat-checkbox-disabled-unselected-icon-color: var(--grey);
   --mat-form-field-filled-container-color: transparent;
@@ -201,7 +202,7 @@ html .ix-dark {
       --mat-checkbox-selected-icon-color: var(--primary);
       --mat-checkbox-selected-hover-icon-color: var(--primary);
       --mat-checkbox-selected-focus-icon-color: var(--primary);
-      --mat-checkbox-selected-checkmark-color: var(--bg1);
+      --mat-checkbox-selected-checkmark-color: var(--fg2);
     }
   }
 
@@ -240,10 +241,62 @@ html .ix-dark {
     --mdc-chip-container-height: unset;
     --mdc-chip-label-text-size: 11px;
   }
+  
+  .mat-mdc-button.mat-primary {
+    --mat-button-filled-container-color: var(--primary);
+    --mat-button-outlined-label-text-color: var(--primary);
+    --mat-button-outlined-state-layer-color: var(--fg2);
+    --mat-button-protected-container-color: var(--primary);
+    --mat-button-text-label-text-color: var(--primary);
+    --mat-text-button-state-layer-color: var(--fg2);
+    --mat-text-button-pressed-state-layer-color: var(--fg2);
+    --mat-text-button-focus-state-layer-color: var(--fg2);
+    --mat-text-button-hover-state-layer-color: var(--fg2);
+    --mat-button-tonal-container-color: var(--primary);
+    --mat-text-button-ripple-color: var(--primary);
+    --mat-text-button-protected-ripple-color: var(--primary);
+    --mat-text-button-tonal-ripple-color: var(--primary);
+    --mdc-text-button-focus-state-layer-color: var(--fg2);
+    --mdc-text-button-hover-state-layer-color: var(--fg2);
+    --mdc-text-button-pressed-state-layer-color: var(--fg2);
+    background-color: var(--primary);
+  }
 
   .mat-mdc-button.mat-accent {
-    --mat-text-button-state-layer-color: var(--accent);
+    --mat-button-filled-container-color: var(--accent);
+    --mat-button-outlined-label-text-color: var(--accent);
+    --mat-button-outlined-state-layer-color: var(--fg2);
+    --mat-button-protected-container-color: var(--accent);
+    --mat-button-text-label-text-color: var(--accent);
+    --mat-text-button-state-layer-color: var(--fg2);
+    --mat-text-button-pressed-state-layer-color: var(--fg2);
+    --mat-text-button-focus-state-layer-color: var(--fg2);
+    --mat-text-button-hover-state-layer-color: var(--fg2);
+    --mat-button-tonal-container-color: var(--accent);
     --mat-text-button-ripple-color: var(--alt-bg1);
+    --mat-text-button-protected-ripple-color: var(--alt-bg1);
+    --mat-text-button-tonal-ripple-color: var(--alt-bg1);
+    --mdc-text-button-focus-state-layer-color: var(--fg2);
+    --mdc-text-button-hover-state-layer-color: var(--fg2);
+    --mdc-text-button-pressed-state-layer-color: var(--fg2);
+  }
+
+  .mat-mdc-button.mat-warn {
+    --mat-text-button-state-layer-color: var(--fg2);
+    --mat-text-button-pressed-state-layer-color: var(--fg2);
+    --mat-text-button-focus-state-layer-color: var(--fg2);
+    --mat-text-button-hover-state-layer-color: var(--fg2);
+    --mdc-text-button-focus-state-layer-color: var(--fg2);
+    --mdc-text-button-hover-state-layer-color: var(--fg2);
+    --mdc-text-button-pressed-state-layer-color: var(--fg2);
+    background-color: var(--red);
+
+    &:active,
+    &:focus,
+    &:focus-visible,
+    &.mat-mdc-button-pressed {
+      background-color: var(--red) !important;
+    }
   }
 
   .mat-mdc-tab-nav-bar,
