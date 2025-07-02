@@ -55,6 +55,12 @@
           [label]="'Enable Secure Boot' | translate"
           [tooltip]="helptext.enableSecureBoot | translate"
         ></ix-checkbox>
+
+        <ix-checkbox
+          formControlName="trusted_platform_module"
+          [label]="'Enable Trusted Platform Module (TPM)' | translate"
+          [tooltip]="helptext.enableTrustedPlatformModule | translate"
+        ></ix-checkbox>
       </ix-fieldset>
       <ix-fieldset [title]="'CPUs and Memory' | translate">
         <ix-input
