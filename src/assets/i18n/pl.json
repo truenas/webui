@@ -129,6 +129,7 @@
   "Change Root Disk Setup": "",
   "Changing System Dataset Pool requires SMB service to be restarted. This will cause a temporary disruption of any active SMB connections.": "",
   "Choose a location to store the installer image file.": "",
+  "Choose File": "",
   "Choose Files": "",
   "Choose the disk I/O bus type that best suits your system’s needs: <br /><br /> • NVMe – Ideal for high-performance storage with faster read and write speeds. <br /><br /> • Virtio-BLK – Efficient for virtualized environments, offering direct block device access with lower overhead. <br /><br /> • Virtio-SCSI – Flexible and scalable, supporting advanced features like hot-swapping and multiple devices.": "",
   "Choose the VM operating system type.": "",
