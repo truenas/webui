@@ -49,7 +49,7 @@ describe('SedFormComponent', () => {
     const values = await form.getValues();
 
     expect(values).toEqual({
-      'SED Password': '123',
+      'SED Password': '',
       'Confirm SED Password': '',
     });
   });

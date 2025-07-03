@@ -92,7 +92,7 @@ export class SelfEncryptingDriveFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadConfig();
+    this.isFormLoading.set(false);
   }
 
   onSubmit(): void {
@@ -113,12 +113,5 @@ export class SelfEncryptingDriveFormComponent implements OnInit {
         this.errorHandler.showErrorModal(error);
       },
     });
-  }
-
-  private loadConfig(): void {
-    this.form.patchValue({
-      sed_passwd: this.sedConfig.sedPassword,
-    });
-    this.isFormLoading.set(false);
   }
 }
