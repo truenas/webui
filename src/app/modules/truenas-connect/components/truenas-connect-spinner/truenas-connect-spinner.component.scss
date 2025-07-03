@@ -1,0 +1,20 @@
+.tnc-spinner {
+  align-items: center;
+  display: flex;
+  height: 100px;
+  justify-content: center;
+  width: 100px;
+  
+  svg {
+    height: 100%;
+    width: 100%;
+  }
+  
+  path.exploded {
+    fill-opacity: 0;
+    stroke: var(--primary);
+    stroke-dasharray: 200;
+    stroke-dashoffset: 200;
+    stroke-width: 1px;
+  }
+}
