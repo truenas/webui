@@ -26,8 +26,8 @@ import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler
     MatButton,
     MatCard,
     MatToolbarRow,
-    TestDirective,
     MatDialogClose,
+    TestDirective,
   ],
 })
 export class PasswordChangeRequiredDialog {
@@ -46,7 +46,7 @@ export class PasswordChangeRequiredDialog {
     this.authService.requiredPasswordChanged();
   }
 
-  logOut(): void {
+  protected logOut(): void {
     this.authService.logout()
       .pipe(untilDestroyed(this))
       .subscribe(() => {

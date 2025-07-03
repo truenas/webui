@@ -49,21 +49,23 @@ export class BlockingActionGuardService implements CanActivateChild {
         isTwoFactorSetupRequired,
         isFullAdmin,
       ]) => {
+        let twoFactroDialog$: Observable<boolean> = of(true);
         if (isTwoFactorSetupRequired) {
-          if (this.isAdminUsingSystemSettings(isFullAdmin, state)) {
-            return of(true);
+          if (this.isAdminUsingSystemSettings(isFullAdmin, state) || state.url.endsWith('/two-factor-auth')) {
+            twoFactroDialog$ = of(true);
+          } else {
+            twoFactroDialog$ = this.openFullScreenDialog(TwoFactorSetupDialog);
           }
-          if (state.url.endsWith('/two-factor-auth')) {
-            return of(true);
-          }
-          return this.openFullScreenDialog(TwoFactorSetupDialog);
         }
 
+        let passwordChangeRequired$: Observable<boolean> = of(true);
         if (isPasswordChangeRequired) {
-          return this.openFullScreenDialog(PasswordChangeRequiredDialog);
+          passwordChangeRequired$ = this.openFullScreenDialog(PasswordChangeRequiredDialog).pipe(
+            switchMap(() => twoFactroDialog$),
+          );
         }
 
-        return of(true);
+        return passwordChangeRequired$ ?? (twoFactroDialog$ ?? of(true));
       }),
     );
   }
@@ -73,8 +75,6 @@ export class BlockingActionGuardService implements CanActivateChild {
   }
 
   private openFullScreenDialog<T>(component: ComponentType<T>): Observable<boolean> {
-    this.matDialog.closeAll();
-
     const dialogRef = this.matDialog.open(component, {
       maxWidth: '100vw',
       maxHeight: '100vh',

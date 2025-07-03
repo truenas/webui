@@ -95,7 +95,7 @@ export class AuthService {
     map((user) => user.two_factor_config),
   );
 
-  private cachedGlobalTwoFactorConfig: GlobalTwoFactorConfig | null;
+  private readonly cachedGlobalTwoFactorConfig$ = new BehaviorSubject<GlobalTwoFactorConfig | null>(null);
 
   constructor(
     private store$: Store<AppState>,
@@ -112,19 +112,21 @@ export class AuthService {
   }
 
   getGlobalTwoFactorConfig(): Observable<GlobalTwoFactorConfig> {
-    if (this.cachedGlobalTwoFactorConfig) {
-      return of(this.cachedGlobalTwoFactorConfig);
-    }
+    return this.cachedGlobalTwoFactorConfig$.pipe(
+      switchMap((cachedConfig) => {
+        if (cachedConfig) {
+          return of(cachedConfig);
+        }
 
-    return this.api.call('auth.twofactor.config').pipe(
-      tap((config) => {
-        this.cachedGlobalTwoFactorConfig = config;
+        return this.api.call('auth.twofactor.config').pipe(
+          tap((config) => this.cachedGlobalTwoFactorConfig$.next(config)),
+        );
       }),
     );
   }
 
   globalTwoFactorConfigUpdated(): void {
-    this.cachedGlobalTwoFactorConfig = null;
+    this.cachedGlobalTwoFactorConfig$.next(null);
   }
 
   /**
@@ -335,6 +337,7 @@ export class AuthService {
           this.setupTokenUpdate();
           this.generateTokenSubscription.unsubscribe();
           this.generateTokenSubscription = null;
+          this.cachedGlobalTwoFactorConfig$.next(null);
         }
       },
     });
