@@ -75,6 +75,7 @@ export class VmEditFormComponent implements OnInit {
     autostart: [false],
     hyperv_enlightenments: [false],
     enable_secure_boot: [false],
+    trusted_platform_module: [false],
     vcpus: [null as number | null, [Validators.required, Validators.min(1)], this.cpuValidator.createValidator()],
     cores: [null as number | null, [Validators.required, Validators.min(1)], this.cpuValidator.createValidator()],
     threads: [null as number | null, [Validators.required, Validators.min(1)], this.cpuValidator.createValidator()],

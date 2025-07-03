@@ -14,6 +14,7 @@ export const helptextVmWizard = {
  used when the other options do not work.'),
   autostart_tooltip: T('Set to start this VM when the system boots.'),
   enableSecureBoot: T('Enabling secure boot may be a requirement for some operating systems like Windows 11.'),
+  enableTrustedPlatformModule: T('Enable Trusted Platform Module (TPM) for enhanced security features. TPM provides hardware-based cryptographic security functions and may be required by some operating systems like Windows 11.'),
   enable_display_tooltip: T('Enable a Display (Virtual Network Computing) remote\
  connection. Requires <i>UEFI</i> booting.'),
   display_bind_tooltip: T('Select an IP address to use for remote SPICE sessions.\
