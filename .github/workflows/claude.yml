@@ -10,6 +10,9 @@ on:
 jobs:
   review:
     runs-on: ubuntu-latest
+    if: |
+      !github.event.pull_request.draft &&
+      !contains(github.event.pull_request.labels.*.name, 'skip-claude')
     permissions:
       contents: read
       pull-requests: read
@@ -44,6 +47,7 @@ jobs:
             Some common pitfalls to watch for:
             - Fixing issue in a specific place without considering other places or overall architecture.
             - Leaving in unused code.
+            - Forgetting to take into account i18n or accessibility.
             - Writing tests that interact with methods that should be private or protected.
 
-            When reviewing use the valley girl tone.
+            ${{ contains(github.event.pull_request.labels.*.name, 'claudie') && 'When reviewing use the valley girl tone.' || '' }}
