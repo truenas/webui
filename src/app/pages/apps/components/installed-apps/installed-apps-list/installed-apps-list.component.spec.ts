@@ -17,6 +17,7 @@ import { App } from 'app/interfaces/app.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { LayoutService } from 'app/modules/layout/layout.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AppDeleteDialog } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.component';
@@ -98,8 +99,12 @@ describe('InstalledAppsListComponent', () => {
           afterClosed: () => of(null),
         })),
       }),
+      mockProvider(LayoutService, {
+        navigatePreservingScroll: jest.fn(() => of()),
+      }),
       mockProvider(Router, {
         events: of(),
+        navigate: jest.fn().mockResolvedValue(true),
       }),
       mockProvider(ApplicationsService, {
         restartApplication: jest.fn(() => of(null)),
@@ -146,8 +151,9 @@ describe('InstalledAppsListComponent', () => {
   });
 
   it('shows details', () => {
+    const router = spectator.inject(Router);
     spectator.click(spectator.query('ix-app-row')!);
-    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith([
+    expect(spectator.inject(LayoutService).navigatePreservingScroll).toHaveBeenCalledWith(router, [
       '/apps/installed', 'test-catalog-train', 'ix-test-app-1',
     ]);
   });
