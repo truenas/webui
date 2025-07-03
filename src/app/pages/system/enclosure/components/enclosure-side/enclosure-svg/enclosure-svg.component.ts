@@ -1,7 +1,4 @@
 import {
-  animate, style, transition, trigger,
-} from '@angular/animations';
-import {
   ChangeDetectionStrategy,
   Component,
   effect,
@@ -30,14 +27,6 @@ export type TintingFunction = (slot: DashboardEnclosureSlot) => string | null;
   templateUrl: './enclosure-svg.component.html',
   styleUrls: ['./enclosure-svg.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  animations: [
-    trigger('svgTransition', [
-      transition(':enter', [
-        style({ opacity: 0, height: '*' }),
-        animate('300ms ease-in', style({ opacity: 1, height: '*' })),
-      ]),
-    ]),
-  ],
   imports: [NgxSkeletonLoaderModule],
 })
 export class EnclosureSvgComponent implements OnDestroy {
