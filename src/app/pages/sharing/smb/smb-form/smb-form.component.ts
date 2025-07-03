@@ -154,10 +154,14 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
     const hasHosts = hostsAllow.length > 0 || hostsDeny.length > 0;
 
-    return (this.isNew && hasHosts) || this.hasHostAllowDenyChanged(hostsAllow, hostsDeny);
+    return (this.isNew && hasHosts) || (!this.isNew && this.hasHostAllowDenyChanged(hostsAllow, hostsDeny));
   }
 
   private hasHostAllowDenyChanged(hostsAllow: string[], hostsDeny: string[]): boolean {
+    if (!this.existingSmbShare) {
+      return false;
+    }
+
     const existingShareOptions = this.existingSmbShare.options as LegacySmbShareOptions;
     const existingAllow = existingShareOptions.hostsallow ?? [];
     const existingDeny = existingShareOptions.hostsdeny ?? [];
@@ -176,18 +180,18 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
   get isNewTimeMachineShare(): boolean {
     const timeMachine = this.form.controls.timemachine.value;
-    const existingTimeMachine = (this.existingSmbShare.options as LegacySmbShareOptions)?.timemachine;
+    const existingTimeMachine = (this.existingSmbShare?.options as LegacySmbShareOptions)?.timemachine;
 
     return typeof timeMachine === 'boolean'
-      && (this.isNew || (typeof existingTimeMachine === 'boolean' && timeMachine !== existingTimeMachine));
+      && ((this.isNew && timeMachine) || (typeof existingTimeMachine === 'boolean' && timeMachine !== existingTimeMachine));
   }
 
   get isNewHomeShare(): boolean {
     const homeShare = this.form.controls.home.value;
-    const existingHomeShare = (this.existingSmbShare.options as LegacySmbShareOptions)?.home;
+    const existingHomeShare = (this.existingSmbShare?.options as LegacySmbShareOptions)?.home;
 
     return typeof homeShare === 'boolean'
-      && (this.isNew || (typeof existingHomeShare === 'boolean' && homeShare !== existingHomeShare));
+      && ((this.isNew && homeShare) || (typeof existingHomeShare === 'boolean' && homeShare !== existingHomeShare));
   }
 
   get wasPathChanged(): boolean {
@@ -483,6 +487,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
         // eslint-disable-next-line no-restricted-syntax
         const control = this.form.get(field as string);
         if (control) {
+          control.reset();
           control.disable({ emitEvent: false });
         }
       });

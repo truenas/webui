@@ -227,6 +227,7 @@ describe('SmbFormComponent', () => {
       await form.fillForm({
         Path: '/mnt/pool123/new',
         'Time Machine': false,
+        'Hosts Allow': 'host1',
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -237,7 +238,7 @@ describe('SmbFormComponent', () => {
           timemachine: true,
           homeshare: false,
           path: true,
-          hosts: false,
+          hosts: true,
           isNew: false,
         },
       });
