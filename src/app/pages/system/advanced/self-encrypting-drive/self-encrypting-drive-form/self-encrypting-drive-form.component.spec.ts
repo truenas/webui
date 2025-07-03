@@ -24,14 +24,14 @@ describe('SedFormComponent', () => {
     providers: [
       mockApi([
         mockCall('system.advanced.update'),
-        mockCall('system.advanced.sed_global_password', '123'),
+        mockCall('system.advanced.sed_global_password', '***'),
       ]),
       mockProvider(SlideIn, {
         open: jest.fn(() => of({ response: true })),
       }),
       mockProvider(SlideInRef, {
         close: jest.fn(),
-        getData: jest.fn(() => ({ sedPassword: '123' })),
+        getData: jest.fn(() => ({ sedPassword: '***' })),
         requireConfirmationWhen: jest.fn(),
       }),
       mockAuth(),
@@ -44,7 +44,7 @@ describe('SedFormComponent', () => {
     api = spectator.inject(ApiService);
   });
 
-  it('shows current system advanced sed values when form is being edited', async () => {
+  it('shows current system advanced sed values when form is being edited without *** content', async () => {
     const form = await loader.getHarness(IxFormHarness);
     const values = await form.getValues();
 
