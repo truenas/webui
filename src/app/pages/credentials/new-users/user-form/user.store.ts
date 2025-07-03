@@ -112,10 +112,8 @@ export class UserFormStore extends ComponentStore<UserFormState> {
     payload = {
       ...payload,
       full_name: payload.full_name || payload.username,
-      smb: payload.smb,
       sudo_commands: payload.sudo_commands || [] as string[],
       sudo_commands_nopasswd: payload.sudo_commands_nopasswd || [] as string[],
-      group_create: payload.group_create || true,
       uid: payload.uid || null,
       password: oneTimePassword || payload.password_disabled ? null : payload.password,
       random_password: oneTimePassword,
@@ -140,6 +138,7 @@ export class UserFormStore extends ComponentStore<UserFormState> {
       ]).pipe(
         switchMap(() => {
           delete payload.home_create;
+          delete payload.group_create;
           delete payload.home;
           return this.api.call('user.update', [id, payload]);
         }),
