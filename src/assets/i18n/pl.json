@@ -443,6 +443,7 @@
   "Only users with the required privileges are shown.": "",
   "Open a port for SSH connection requests.": "",
   "Open TrueNAS Connect": "",
+  "OpenStack Swift (OVH, Oracle, Rackspace, etc)": "",
   "Operating System": "",
   "Optional: Choose installation media image": "",
   "Optional: CPU Set (Examples: 0-3,8-11)": "",
