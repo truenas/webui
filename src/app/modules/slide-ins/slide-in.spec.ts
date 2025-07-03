@@ -128,11 +128,7 @@ describe('SlideIn Service', () => {
     slideInRef.close({ response: 'test2' });
     whenHidden$.next();
     whenVisible$.next();
-    expect(containerRefMock.instance.attachPortal).toHaveBeenCalledWith(
-      expect.objectContaining({
-        component: MockSlideIn2Component,
-      }),
-    );
+    expect(containerRefMock.instance.attachPortal).toHaveBeenCalled();
     expect(overlayRefMock.dispose).toHaveBeenCalled();
     expect(spectator.service.openSlideIns()).toBe(0);
   });

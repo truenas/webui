@@ -256,6 +256,8 @@
   "Enable Remote Direct Memory Access (RDMA)": "",
   "Enable Secure Boot": "",
   "Enable Serial Console": "",
+  "Enable Trusted Platform Module (TPM)": "",
+  "Enable Trusted Platform Module (TPM) for enhanced security features. TPM provides hardware-based cryptographic security functions and may be required by some operating systems like Windows 11.": "",
   "Enable VLAN": "",
   "Enabling secure boot may be a requirement for some operating systems like Windows 11.": "",
   "Encryption root means that dataset has its own encryption settings. Only encryption roots can be directly locked, unlocked, or have their keys changed. Child datasets will inherit encryption settings from the parent encryption root.": "",

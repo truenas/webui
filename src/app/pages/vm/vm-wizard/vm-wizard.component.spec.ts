@@ -291,6 +291,7 @@ describe('VmWizardComponent', () => {
       shutdown_timeout: 90,
       threads: 1,
       time: VmTime.Local,
+      trusted_platform_module: false,
       vcpus: 2,
     }]);
     expect(api.call).toHaveBeenCalledWith('vm.device.create', [{
