@@ -50,4 +50,4 @@ jobs:
             - Forgetting to take into account i18n or accessibility.
             - Writing tests that interact with methods that should be private or protected.
 
-            ${{ contains(github.event.pull_request.labels.*.name, 'claudie') && 'When reviewing use the valley girl tone.' || '' }}
+            Keep review brief and focused, do not repeat yourself.
