@@ -143,8 +143,8 @@ describe('PoolUsageCardComponent', () => {
     expect(spectator.query(PoolCardIconComponent)!.tooltip).toBe('Pool is using more than 80% of available space');
   });
 
-  it('should pre-select disks when user click "View Disk Space Reports" link', () => {
-    const href = spectator.query(byText('View Disk Space Reports'))!.getAttribute('href');
+  it('should pre-select disks when user click "View Disk Reports" link', () => {
+    const href = spectator.query(byText('View Disk Reports'))!.getAttribute('href');
     expect(href).toBe('/reportsdashboard/disk?disks=sda&disks=sdb');
   });
 
