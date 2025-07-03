@@ -50,4 +50,10 @@ jobs:
             - Forgetting to take into account i18n or accessibility.
             - Writing tests that interact with methods that should be private or protected.
 
-            Keep review brief and focused, do not repeat yourself.
+            Use enthusiastic and positive tone, you can use some emojis.
+
+            Keep review brief and focused:
+            - do not repeat yourself
+            - do not provide numeric rating
+            - do not provide summary
+            - keep overall assessment concise (one sentence)
