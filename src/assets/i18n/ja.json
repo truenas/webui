@@ -930,6 +930,8 @@
   "Enable SMB1 support": "",
   "Enable TLS": "",
   "Enable TPC": "",
+  "Enable Trusted Platform Module (TPM)": "",
+  "Enable Trusted Platform Module (TPM) for enhanced security features. TPM provides hardware-based cryptographic security functions and may be required by some operating systems like Windows 11.": "",
   "Enable Two Factor Authentication for SSH": "",
   "Enable Two Factor Authentication Globally": "",
   "Enable VLAN": "",
