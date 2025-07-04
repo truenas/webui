@@ -109,7 +109,7 @@ export class SigninComponent implements AfterViewInit {
       filter(Boolean),
       untilDestroyed(this),
     ).subscribe(() => {
-      this.focusUsername();
+      this.focusFirstInput();
     });
 
     this.hasLoadingIndicator$
@@ -120,18 +120,19 @@ export class SigninComponent implements AfterViewInit {
         untilDestroyed(this),
       )
       .subscribe(() => {
-        this.focusUsername();
+        this.focusFirstInput();
       });
   }
 
   ngAfterViewInit(): void {
-    this.focusUsername();
+    this.focusFirstInput();
   }
 
-  private focusUsername(): void {
+  private focusFirstInput(): void {
     if (this.window.document.querySelector('ix-full-screen-dialog')) {
       return;
     }
-    this.window.document.querySelector<HTMLElement>('[ixAutofocus] input')?.focus();
+
+    this.window.document.querySelector<HTMLElement>('input')?.focus();
   }
 }
