@@ -164,6 +164,10 @@ export class ReplicationWizardComponent {
         }
         return of(createdReplication);
       }),
+      catchError((err: unknown) => {
+        this.handleError(err);
+        return EMPTY;
+      }),
       untilDestroyed(this),
     ).subscribe((createdReplication) => {
       this.cdr.markForCheck();

@@ -3513,7 +3513,7 @@
   "Set to suppress informational messages from the                remote server.": "",
   "Set to take a snapshot of the dataset before a <i>PUSH</i>.": "",
   "Set to take separate snapshots of the  dataset and each of its child datasets. Leave unset to take a  single snapshot only of the specified dataset <i>without</i> child  datasets.": "",
-  "Set to use encryption when replicating data. Additional encryption options will appear.": "",
+  "Set to use encryption when replicating data. Additional encryption options will appear. Replicating from an encrypted dataset requires enabling this option or inheriting encryption.": "",
   "Set to use the <i>Schedule</i> in place  of the <i>Replicate Specific Snapshots</i> time frame. The Schedule values are  read over the <i>Replicate Specific Snapshots</i> time frame.": "",
   "Set Up Two-Factor Authentication": "",
   "Set Warning Level": "",
