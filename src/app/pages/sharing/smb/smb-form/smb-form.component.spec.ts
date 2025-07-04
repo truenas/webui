@@ -19,6 +19,7 @@ import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { Group } from 'app/interfaces/group.interface';
 import { Service } from 'app/interfaces/service.interface';
 import {
+  LegacySmbShareOptions,
   SmbPresetType, smbPresetTypeLabels, SmbShare,
 } from 'app/interfaces/smb-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -51,7 +52,6 @@ describe('SmbFormComponent', () => {
     purpose: 'Default Share',
     name: 'ds222',
     path: '/mnt/pool123/ds222',
-    path_local: '/mnt/pool123/ds222',
     audit: {
       enable: true,
       watch_list: [] as string[],
@@ -183,6 +183,7 @@ describe('SmbFormComponent', () => {
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      mockStore$ = spectator.inject(MockStore);
       form = await loader.getHarness(IxFormHarness);
       api = spectator.inject(ApiService);
 
@@ -209,6 +210,41 @@ describe('SmbFormComponent', () => {
       const warning = await loader.getHarness(WarningHarness);
       expect(await warning.getText()).toContain(
         'For the best experience, we recommend choosing a modern SMB share purpose instead of the legacy option.',
+      );
+    });
+
+    it('should show restart dialog when save is clicked under certain conditions', async () => {
+      mockStore$.overrideSelector(selectServices, [{
+        id: 4,
+        service: ServiceName.Cifs,
+        enable: true,
+        state: ServiceStatus.Running,
+      } as Service]);
+
+      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
+      await advancedButton.click();
+
+      await form.fillForm({
+        Path: '/mnt/pool123/new',
+        'Time Machine': false,
+        'Hosts Allow': 'host1',
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(RestartSmbDialog, {
+        data: {
+          timemachine: true,
+          homeshare: false,
+          path: true,
+          hosts: true,
+          isNew: false,
+        },
+      });
+
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
+        helptextSharingSmb.restartedSmbDialog.message,
       );
     });
 
@@ -273,7 +309,7 @@ describe('SmbFormComponent', () => {
         IxCheckboxHarness.with({ label: formLabels.aapl_name_mangling }),
       );
 
-      if (existingShare.aapl_name_mangling) {
+      if ((existingShare.options as LegacySmbShareOptions).aapl_name_mangling) {
         await aaplNameManglingCheckbox.setValue(false);
       } else {
         await aaplNameManglingCheckbox.setValue(true);
@@ -416,20 +452,6 @@ describe('SmbFormComponent', () => {
           purpose: 'DEFAULT_SHARE',
         },
       }]);
-
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(RestartSmbDialog, {
-        data: {
-          timemachine: true,
-          homeshare: true,
-          path: false,
-          hosts: true,
-          isNew: true,
-        },
-      });
-
-      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
-        helptextSharingSmb.restartedSmbDialog.message,
-      );
     });
 
     it('should submit the form with the correct value and check service action is dispatched', async () => {

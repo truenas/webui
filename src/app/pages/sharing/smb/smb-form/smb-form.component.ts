@@ -31,6 +31,7 @@ import {
   externalSmbSharePath,
   smbPresetTooltips, SmbPresetType, smbPresetTypeLabels, SmbShareOptions, SmbShare,
   TimeMachineSmbShareOptions,
+  LegacySmbShareOptions,
 } from 'app/interfaces/smb-share.interface';
 import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -148,50 +149,53 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   protected purposeOptions$: Observable<SelectOption<SmbPresetType>[]>;
 
   get hasAddedAllowDenyHosts(): boolean {
-    const hostsallow = this.form.controls.hostsallow.value;
-    const hostsdeny = this.form.controls.hostsdeny.value;
-    return (
-      (this.isNew && hostsallow && hostsallow.length > 0)
-      || (this.isNew && hostsdeny && hostsdeny.length > 0)
-      || this.hasHostAllowDenyChanged(hostsallow, hostsdeny)
-    );
+    const hostsAllow = this.form.controls.hostsallow.value ?? [];
+    const hostsDeny = this.form.controls.hostsdeny.value ?? [];
+
+    const hasHosts = hostsAllow.length > 0 || hostsDeny.length > 0;
+
+    return (this.isNew && hasHosts) || (!this.isNew && this.hasHostAllowDenyChanged(hostsAllow, hostsDeny));
   }
 
-  private hasHostAllowDenyChanged(hostsallow: string[], hostsdeny: string[]): boolean {
-    return (
-      !isEqual(this.existingSmbShare?.hostsallow, hostsallow)
-      || !isEqual(this.existingSmbShare?.hostsdeny, hostsdeny)
-    );
+  private hasHostAllowDenyChanged(hostsAllow: string[], hostsDeny: string[]): boolean {
+    if (!this.existingSmbShare) {
+      return false;
+    }
+
+    const existingShareOptions = this.existingSmbShare.options as LegacySmbShareOptions;
+    const existingAllow = existingShareOptions.hostsallow ?? [];
+    const existingDeny = existingShareOptions.hostsdeny ?? [];
+
+    return !isEqual(existingAllow, hostsAllow) || !isEqual(existingDeny, hostsDeny);
   }
 
   get isRestartRequired(): boolean {
     return (
-      this.isNewTimemachineShare
+      this.isNewTimeMachineShare
       || this.isNewHomeShare
       || this.wasPathChanged
       || this.hasAddedAllowDenyHosts
     );
   }
 
-  get isNewTimemachineShare(): boolean {
-    const timemachine = this.form.controls.timemachine.value;
-    return (
-      (this.isNew && timemachine)
-      || timemachine !== this.existingSmbShare?.timemachine
-    );
+  get isNewTimeMachineShare(): boolean {
+    const timeMachine = this.form.controls.timemachine.value;
+    const existingTimeMachine = (this.existingSmbShare?.options as LegacySmbShareOptions)?.timemachine;
+
+    return typeof timeMachine === 'boolean'
+      && ((this.isNew && timeMachine) || (typeof existingTimeMachine === 'boolean' && timeMachine !== existingTimeMachine));
   }
 
   get isNewHomeShare(): boolean {
     const homeShare = this.form.controls.home.value;
-    return (
-      (this.isNew && homeShare) || homeShare !== this.existingSmbShare?.home
-    );
+    const existingHomeShare = (this.existingSmbShare?.options as LegacySmbShareOptions)?.home;
+
+    return typeof homeShare === 'boolean'
+      && ((this.isNew && homeShare) || (typeof existingHomeShare === 'boolean' && homeShare !== existingHomeShare));
   }
 
   get wasPathChanged(): boolean {
-    return (
-      !this.isNew && this.form.controls.path.value !== this.existingSmbShare?.path
-    );
+    return !this.isNew && this.form.controls.path.value !== this.existingSmbShare?.path;
   }
 
   protected rootNodes = signal<ExplorerNodeData[]>([]);
@@ -346,7 +350,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
   private setupMangleWarning(): void {
     this.form.controls.aapl_name_mangling.valueChanges.pipe(
-      filter((value) => value !== this.existingSmbShare?.aapl_name_mangling && !this.isNew),
+      filter((value) => value !== (this.existingSmbShare as LegacySmbShareOptions)?.aapl_name_mangling && !this.isNew),
       take(1),
       switchMap(() => this.dialogService.confirm({
         title: this.translate.instant(helptextSharingSmb.manglingDialog.title),
@@ -483,6 +487,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
         // eslint-disable-next-line no-restricted-syntax
         const control = this.form.get(field as string);
         if (control) {
+          control.reset();
           control.disable({ emitEvent: false });
         }
       });
@@ -600,7 +605,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
               const homeShare = this.form.controls.home.value;
               this.router.navigate(
                 ['/', 'datasets', 'acl', 'edit'],
-                { queryParams: { homeShare, path: smbShareResponse.path_local } },
+                { queryParams: { homeShare, path: smbShareResponse.path } },
               );
             }
             this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Cifs }));
@@ -643,7 +648,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
         if (isRunning && this.isRestartRequired) {
           return this.matDialog.open(RestartSmbDialog, {
             data: {
-              timemachine: this.isNewTimemachineShare,
+              timemachine: this.isNewTimeMachineShare,
               homeshare: this.isNewHomeShare,
               path: this.wasPathChanged,
               hosts: this.hasAddedAllowDenyHosts,
