@@ -416,7 +416,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
   private setHomeSharePath(): void {
     this.api.call('sharing.smb.query', [[
       ['enabled', '=', true],
-      ['home', '=', true],
+      ['options.home', '=', true],
     ]]).pipe(
       filter((shares) => !!shares?.length),
       map((shares) => shares[0].path),

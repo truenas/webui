@@ -64,6 +64,17 @@
 
 .group-slot {
   height: 100%;
+
+  &.group-remove {
+    animation: group-remove 200ms ease-in-out forwards;
+  }
+}
+
+@keyframes group-remove {
+  to {
+    opacity: 0;
+    transform: scale(0.3);
+  }
 }
 
 .group-container {

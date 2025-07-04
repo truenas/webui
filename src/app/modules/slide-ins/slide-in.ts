@@ -17,6 +17,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { UUID } from 'angular2-uuid';
 import { cloneDeep } from 'lodash-es';
 import {
+  delay,
   filter, Observable, of, share, Subject, switchMap,
   take,
   tap,
@@ -99,6 +100,7 @@ export class SlideIn {
     prevInstance.component = component;
     prevInstance.wide = Boolean(options?.wide);
     prevInstance.containerRef.instance.slideOut().pipe(
+      delay(0),
       untilDestroyed(this),
     ).subscribe({
       next: () => {
