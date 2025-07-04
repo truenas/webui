@@ -54,10 +54,10 @@
 @if (hasCreateNewButton()) {
   <a
     mat-button
-    ixTest="create-new-instance"
+    ixTest="create-new-container"
     [color]="canAddNewInstances() ? 'primary' : 'default'"
     [disabled]="!canAddNewInstances()"
     [routerLink]="['/instances/new']"
     [ixUiSearch]="searchableElements.elements.add"
-  >{{ 'Create New Instance' | translate }}</a>
+  >{{ 'Create New Container' | translate }}</a>
 }
