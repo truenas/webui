@@ -1,4 +1,4 @@
-import { of } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { User } from 'app/interfaces/user.interface';
 import { UsersDataProvider } from 'app/pages/credentials/new-users/all-users/users-data-provider';
@@ -27,10 +27,12 @@ export const mockUsers = [
 ] as User[];
 
 export const mockUserApiDataProvider = {
-  currentPage$: of(mockUsers),
+  currentPage$: new BehaviorSubject(mockUsers),
   load: jest.fn(),
   setPagination: jest.fn(),
   setParams: jest.fn(),
+  additionalUsername: '',
+  shouldLoadUser: jest.fn(),
   sorting: {
     propertyName: 'message_timestamp',
     direction: 'desc',
