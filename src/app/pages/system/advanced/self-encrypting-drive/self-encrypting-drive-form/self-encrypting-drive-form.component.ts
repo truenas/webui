@@ -2,7 +2,7 @@ import {
   Component, ChangeDetectionStrategy, OnInit,
   signal,
 } from '@angular/core';
-import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
+import { ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -11,11 +11,9 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
-import { SedUser } from 'app/enums/sed-user.enum';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -27,7 +25,6 @@ import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 
 export interface SedConfig {
-  sedUser: SedUser;
   sedPassword: string;
 }
 
@@ -43,7 +40,6 @@ export interface SedConfig {
     MatCardContent,
     ReactiveFormsModule,
     IxFieldsetComponent,
-    IxSelectComponent,
     IxInputComponent,
     RequiresRolesDirective,
     MatButton,
@@ -57,7 +53,6 @@ export class SelfEncryptingDriveFormComponent implements OnInit {
   protected isFormLoading = signal(false);
   title = helptextSystemAdvanced.sedTitle;
   form = this.fb.group({
-    sed_user: ['' as SedUser, Validators.required],
     sed_passwd: [''],
     sed_passwd2: [''],
   }, {
@@ -70,19 +65,12 @@ export class SelfEncryptingDriveFormComponent implements OnInit {
     ],
   });
 
-  readonly sedUserOptions$ = of([
-    { label: SedUser.User, value: SedUser.User },
-    { label: SedUser.Master, value: SedUser.Master },
-  ]);
-
   readonly labels = {
-    sed_user: helptextSystemAdvanced.sedUserLabel,
     sed_passwd: helptextSystemAdvanced.sedPasswordLabel,
     sed_passwd2: helptextSystemAdvanced.sedConfirmPasswordLabel,
   };
 
   readonly tooltips = {
-    sed_user: helptextSystemAdvanced.sedUserTooltip,
     sed_passwd: helptextSystemAdvanced.sedPasswordTooltip,
   };
 
@@ -104,7 +92,7 @@ export class SelfEncryptingDriveFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadConfig();
+    this.isFormLoading.set(false);
   }
 
   onSubmit(): void {
@@ -125,13 +113,5 @@ export class SelfEncryptingDriveFormComponent implements OnInit {
         this.errorHandler.showErrorModal(error);
       },
     });
-  }
-
-  private loadConfig(): void {
-    this.form.patchValue({
-      sed_user: this.sedConfig.sedUser,
-      sed_passwd: this.sedConfig.sedPassword,
-    });
-    this.isFormLoading.set(false);
   }
 }
