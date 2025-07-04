@@ -1,6 +1,6 @@
 <ix-page-header [loading]="!!(updateService.isLoading$ | async)"></ix-page-header>
 
-<div class="update-container">
+<div class="update-container" [class.no-profiles]="!hasAvailableProfiles()">
   <div>
     <h2>
       @if (showDownloadUpdateButton()) {
@@ -14,18 +14,12 @@
 
     <div class="update-available">
       <div class="versions">
-        <h4>
-          <b>{{ 'Current Train:' | translate }}</b>
-          @if (trainService.trainValue$ | async; as train) {
-            {{ train }}
-            @if (singleDescription) {
-              <span>- {{ singleDescription }}</span>
-            }
-          } @else {
-            <ngx-skeleton-loader class="inline-loader"></ngx-skeleton-loader>
-          }
-        </h4>
-
+        @if (currentTrainName) {
+          <h4>
+            <b>{{ 'Current Train:' | translate }}</b>
+            {{ currentTrainName }}
+          </h4>
+        }
         <h4>
           {{ 'Current version' | translate }}:
           @if (systemVersion(); as systemVersion) {
@@ -85,10 +79,6 @@
       <h4 class="hint">{{ 'An update is already applied. Please restart the system.' | translate }}</h4>
     }
 
-    @if (updateService.error$ | async) {
-      <h4 class="error-color">{{ updateService.error$ | async }}</h4>
-    }
-
     @if (updateVersion()) {
       <div class="update-summary">
         <h3>
@@ -104,7 +94,7 @@
           </p>
         }
 
-        @if ((updateService.changeLog$ | async) && (trainService.nightlyTrain$ | async)) {
+        @if ((updateService.changeLog$ | async)) {
           <h4>{{ 'Summary' | translate }}:</h4>
 
           <div [innerHTML]="updateService.changeLog$ | async"></div>
@@ -152,6 +142,7 @@
     </div>
   </div>
 
-  <!-- TODO: Ticket said: Build HTML for right column, but mark it as hidden in the PR. Ignore TrueNAS ad banner for now. -->
-  <ix-update-profile-card hidden></ix-update-profile-card>
+  @if (hasAvailableProfiles()) {
+    <ix-update-profile-card [profileChoices]="profileChoices()"></ix-update-profile-card>
+  }
 </div>

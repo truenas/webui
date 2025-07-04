@@ -71,8 +71,8 @@ export class WidgetResourcesService {
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
-  readonly updateAvailable$ = this.api.call('update.get_pending').pipe(
-    map((updates) => Boolean(updates.length)),
+  readonly updateAvailable$ = this.api.call('update.status').pipe(
+    map((updateStatus) => Boolean(updateStatus.status?.new_version)),
     catchError(() => of(false)),
     shareReplay({ refCount: false, bufferSize: 1 }),
   );
