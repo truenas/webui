@@ -14,6 +14,7 @@ import { AppState } from 'app/enums/app-state.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { App } from 'app/interfaces/app.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { LayoutService } from 'app/modules/layout/layout.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { AppDetailsPanelComponent } from 'app/pages/apps/components/installed-apps/app-details-panel/app-details-panel.component';
 import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
@@ -61,6 +62,9 @@ describe('InstalledAppsComponent', () => {
       mockProvider(InstalledAppsStore, {
         isLoading$: of(false),
         installedApps$: of([app]),
+      }),
+      mockProvider(LayoutService, {
+        navigatePreservingScroll: jest.fn(() => of()),
       }),
       mockProvider(AppsStore, {
         isLoading$: of(false),
@@ -115,8 +119,9 @@ describe('InstalledAppsComponent', () => {
   });
 
   it('shows details', () => {
+    const router = spectator.inject(Router);
     spectator.click(spectator.query('ix-app-row')!);
-    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith([
+    expect(spectator.inject(LayoutService).navigatePreservingScroll).toHaveBeenCalledWith(router, [
       '/apps/installed', 'test-catalog-train', 'ix-test-app',
     ]);
   });
