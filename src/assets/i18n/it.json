@@ -1,5 +1,7 @@
 {
   "": "",
+  "Enable Trusted Platform Module (TPM)": "",
+  "Enable Trusted Platform Module (TPM) for enhanced security features. TPM provides hardware-based cryptographic security functions and may be required by some operating systems like Windows 11.": "",
   "Looks like you don’t have any users who’ll be able to access this share.": "",
   "Not enabled, because this feature requires an Enterprise license.": "",
   "OpenStack Swift (OVH, Oracle, Rackspace, etc)": "",
