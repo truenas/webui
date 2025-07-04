@@ -1,8 +1,8 @@
 {
   "": "",
+  "Are you sure you want to use <b>{profile}</b> profile": "",
   "Are you sure you wish to disable TrueNAS Connect? You will be able to re-connect this system later.": "",
   "Change Update Profile": "",
-  "Changing update profile to <b>{profile}</b> may impact system stability. Reverting to a stable version might not be possible.": "",
   "Connecting...": "",
   "Connection Failed...": "",
   "Disable Error": "",

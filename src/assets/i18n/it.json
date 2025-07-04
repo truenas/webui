@@ -1,7 +1,7 @@
 {
   "": "",
+  "Are you sure you want to use <b>{profile}</b> profile": "",
   "Change Update Profile": "",
-  "Changing update profile to <b>{profile}</b> may impact system stability. Reverting to a stable version might not be possible.": "",
   "Enable Trusted Platform Module (TPM)": "",
   "Enable Trusted Platform Module (TPM) for enhanced security features. TPM provides hardware-based cryptographic security functions and may be required by some operating systems like Windows 11.": "",
   "Looks like you don’t have any users who’ll be able to access this share.": "",

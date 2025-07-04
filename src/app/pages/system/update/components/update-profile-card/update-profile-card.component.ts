@@ -9,9 +9,11 @@ import { filter, of, switchMap } from 'rxjs';
 import { UpdateProfileChoices } from 'app/interfaces/system-update.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { UpdateService } from 'app/pages/system/update/services/update.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -35,7 +37,7 @@ export class UpdateProfileCard implements OnInit {
 
   profiles = computed(() => {
     const choices = this.profileChoices();
-    return Object.entries(choices).map(([id, profile]) => ({
+    return Object.entries(choices).filter(([_, profile]) => profile.available).map(([id, profile]) => ({
       id,
       name: profile.name,
       note: profile.footnote,
@@ -58,6 +60,8 @@ export class UpdateProfileCard implements OnInit {
     private snackbar: SnackbarService,
     private dialogService: DialogService,
     private translate: TranslateService,
+    private loader: LoaderService,
+    private errorHandler: ErrorHandlerService,
   ) { }
 
   ngOnInit(): void {
@@ -73,13 +77,16 @@ export class UpdateProfileCard implements OnInit {
 
     this.dialogService.confirm({
       title: this.translate.instant('Change Update Profile'),
-      message: this.translate.instant('Changing update profile to <b>{profile}</b> may impact system stability. Reverting to a stable version might not be possible.', { profile: selectedProfile?.name }),
+      message: this.translate.instant('Are you sure you want to use <b>{profile}</b> profile', { profile: selectedProfile?.name }),
       hideCheckbox: true,
       buttonText: this.translate.instant('Continue'),
       cancelText: this.translate.instant('Cancel'),
     }).pipe(
       filter(Boolean),
-      switchMap(() => this.updateService.updateConfig({ profile: this.updateProfileControl.value })),
+      switchMap(() => this.updateService.updateConfig({ profile: this.updateProfileControl.value }).pipe(
+        this.loader.withLoader(),
+      )),
+      this.errorHandler.withErrorHandler(),
       untilDestroyed(this),
     ).subscribe({
       next: () => this.snackbar.success(this.translate.instant('Update profile saved')),
