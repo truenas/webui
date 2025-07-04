@@ -1,7 +1,6 @@
 import {
   ChangeDetectionStrategy, Component, OnInit, computed, input,
 } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -15,7 +14,6 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { UpdateService } from 'app/pages/system/update/services/update.service';
 import { AppState } from 'app/store';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -33,8 +31,6 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
 })
 
 export class UpdateProfileCard implements OnInit {
-  protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
-
   protected updateProfileControl = new FormControl('');
 
   readonly profileChoices = input<UpdateProfileChoices>({});
@@ -49,10 +45,6 @@ export class UpdateProfileCard implements OnInit {
       available: profile.available,
     }));
   });
-
-  otherProfiles = computed(() => this.profiles().filter((profile) => !profile.available));
-
-  upsellText = computed(() => this.otherProfiles().map((profile) => profile.name).join(', '));
 
   profileOptions = computed(() => {
     return of(
