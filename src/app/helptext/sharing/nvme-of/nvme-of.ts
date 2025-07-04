@@ -5,7 +5,7 @@ export const helptextNvmeOf = {
   rdmaTooltip: T('Once enabled one or more ports may be configured with RDMA selected as the transport. \
 Requires an Enterprise license, RDMA-capable system and network equipment.'),
   rdmaDisabledTooltip: T('Not enabled, because this system does not support RDMA.'),
-  xportReferralTooltip: T('If ANA is active then referrals will always be generated between the peer ports on each TrueNAS controller node. This setting controls whether referrals will be generated for other ports within a controller node.'),
+  anaDisabledTooltip: T('Not enabled, because this feature requires an Enterprise license.'),
 
   dhchapKeyTooltip: T('DH-CHAP key to be used to authenticate the host.'),
   noDhText: T("Don't use DH key exchange."),

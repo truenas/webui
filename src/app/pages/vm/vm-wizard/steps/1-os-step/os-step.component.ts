@@ -63,6 +63,7 @@ export class OsStepComponent implements SummaryProvider {
     time: [VmTime.Local],
     bootloader: [VmBootloader.Uefi],
     enable_secure_boot: [false],
+    trusted_platform_module: [false],
     shutdown_timeout: [90, [Validators.min(0)]],
     autostart: [true],
     enable_display: [true],

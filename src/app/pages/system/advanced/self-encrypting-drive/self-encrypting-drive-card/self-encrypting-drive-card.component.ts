@@ -16,7 +16,6 @@ import {
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
-import { SedUser } from 'app/enums/sed-user.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -53,7 +52,6 @@ export class SelfEncryptingDriveCardComponent {
   protected readonly searchableElements = sedCardElements;
   protected readonly requiredRoles = [Role.SystemAdvancedWrite];
 
-  private sedConfig: { sedUser: SedUser; sedPassword: string };
   readonly sedConfig$ = this.reloadConfig$.pipe(
     startWith(undefined),
     switchMap(() => {
@@ -71,7 +69,6 @@ export class SelfEncryptingDriveCardComponent {
       ]);
     }),
     map(([sedUser, sedPassword]) => ({ sedUser, sedPassword })),
-    tap((config) => this.sedConfig = config),
     toLoadingState(),
     shareReplay({
       refCount: false,
@@ -88,7 +85,10 @@ export class SelfEncryptingDriveCardComponent {
 
   onConfigure(): void {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
-      switchMap(() => this.slideIn.open(SelfEncryptingDriveFormComponent, { data: this.sedConfig })),
+      switchMap(() => this.slideIn.open(
+        SelfEncryptingDriveFormComponent,
+        { data: { sedPassword: '' } },
+      )),
       filter((response) => !!response.response),
       tap(() => this.reloadConfig$.next()),
       untilDestroyed(this),

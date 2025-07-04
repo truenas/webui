@@ -1,6 +1,3 @@
-import {
-  animate, style, transition, trigger,
-} from '@angular/animations';
 import { NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, input, TemplateRef,
@@ -17,14 +14,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './new-feature-indicator-wrapper.component.html',
   styleUrls: ['./new-feature-indicator-wrapper.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  animations: [
-    trigger('fadeIn', [
-      transition(':enter', [
-        style({ opacity: 0 }),
-        animate('200ms 150ms ease-in', style({ opacity: 1 })),
-      ]),
-    ]),
-  ],
   imports: [
     NgxPopperjsModule,
     NgTemplateOutlet,

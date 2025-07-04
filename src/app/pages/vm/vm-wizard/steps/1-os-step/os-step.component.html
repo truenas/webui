@@ -50,6 +50,12 @@
     [tooltip]="helptext.enableSecureBoot | translate"
   ></ix-checkbox>
 
+  <ix-checkbox
+    formControlName="trusted_platform_module"
+    [label]="'Enable Trusted Platform Module (TPM)' | translate"
+    [tooltip]="helptext.enableTrustedPlatformModule | translate"
+  ></ix-checkbox>
+
   <ix-input
     formControlName="shutdown_timeout"
     type="number"
