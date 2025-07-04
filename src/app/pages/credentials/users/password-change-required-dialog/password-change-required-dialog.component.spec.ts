@@ -3,8 +3,8 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
-import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { BehaviorSubject, of } from 'rxjs';
+import { dummyUser } from 'app/core/testing/utils/mock-auth.utils';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { ChangePasswordFormComponent } from 'app/modules/layout/topbar/change-password-dialog/change-password-form/change-password-form.component';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
@@ -13,6 +13,8 @@ import { PasswordChangeRequiredDialog } from './password-change-required-dialog.
 describe('PasswordChangeRequiredDialog', () => {
   let spectator: Spectator<PasswordChangeRequiredDialog>;
   let loader: HarnessLoader;
+
+  const mockIsPasswordChangeRequired$ = new BehaviorSubject(true);
 
   const createComponent = createComponentFactory({
     component: PasswordChangeRequiredDialog,
@@ -26,9 +28,11 @@ describe('PasswordChangeRequiredDialog', () => {
         reconnect: jest.fn(),
       }),
       mockProvider(AuthService, {
+        isPasswordChangeRequired$: mockIsPasswordChangeRequired$,
         logout: jest.fn(() => of()),
+        requiredPasswordChanged: jest.fn(),
+        user$: of(dummyUser),
       }),
-      mockAuth(),
     ],
   });
 
@@ -62,8 +66,10 @@ describe('PasswordChangeRequiredDialog', () => {
   });
 
   it('shows the Finish button after password is changed', async () => {
-    spectator.component.passwordChanged();
-    spectator.detectChanges();
+    const passwordChangeForm = spectator.query(ChangePasswordFormComponent);
+    passwordChangeForm.passwordUpdated.emit();
+    expect(spectator.inject(AuthService).requiredPasswordChanged).toHaveBeenCalled();
+    mockIsPasswordChangeRequired$.next(false);
 
     const finishButton = await loader.getHarness(MatButtonHarness.with({ text: 'Finish' }));
     expect(finishButton).toBeTruthy();
@@ -73,8 +79,7 @@ describe('PasswordChangeRequiredDialog', () => {
   });
 
   it('clicking Finish button closes dialog', async () => {
-    spectator.component.passwordChanged();
-    spectator.detectChanges();
+    mockIsPasswordChangeRequired$.next(false);
 
     const finishButton = await loader.getHarness(MatButtonHarness.with({ text: 'Finish' }));
     await finishButton.click();

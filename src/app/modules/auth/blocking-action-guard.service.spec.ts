@@ -2,43 +2,32 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router';
 import { SpectatorService, createServiceFactory, mockProvider } from '@ngneat/spectator/jest';
 import { BehaviorSubject, firstValueFrom, of } from 'rxjs';
-import { GlobalTwoFactorConfig, UserTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { TwoFactorGuardService } from 'app/modules/auth/two-factor-guard.service';
+import { BlockingActionGuardService } from 'app/modules/auth/blocking-action-guard.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { FirstLoginDialog } from 'app/pages/credentials/users/first-login-dialog/first-login-dialog.component';
 import { PasswordChangeRequiredDialog } from 'app/pages/credentials/users/password-change-required-dialog/password-change-required-dialog.component';
+import { TwoFactorSetupDialog } from 'app/pages/credentials/users/two-factor-setup-dialog/two-factor-setup-dialog.component';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
-describe('TwoFactorGuardService', () => {
-  let spectator: SpectatorService<TwoFactorGuardService>;
+describe('BlockingActionGuardService', () => {
+  let spectator: SpectatorService<BlockingActionGuardService>;
 
-  const isAuthenticated$ = new BehaviorSubject(false);
-  const userTwoFactorConfig$ = new BehaviorSubject<UserTwoFactorConfig | null>(null);
-  const getGlobalTwoFactorConfig = jest.fn(() => of(null as GlobalTwoFactorConfig | null));
-  const hasRole$ = new BehaviorSubject(false);
-  const isOtpwUser$ = new BehaviorSubject(false);
-  const isPasswordChangeRequired$ = new BehaviorSubject(false);
-  const wasOneTimePasswordChanged$ = new BehaviorSubject(false);
-  const wasRequiredPasswordChanged$ = new BehaviorSubject(false);
-  const isLocalUser$ = new BehaviorSubject(true);
+  const mockIsTwoFactorSetupRequired$ = new BehaviorSubject(false);
+  const mockIsPasswordChangeRequired$ = new BehaviorSubject(false);
+  const mockIsAuthenticated$ = new BehaviorSubject(false);
+  const mockIsFullAdmin$ = new BehaviorSubject(true);
 
   const createService = createServiceFactory({
-    service: TwoFactorGuardService,
+    service: BlockingActionGuardService,
     providers: [
       mockProvider(Router),
       mockProvider(WebSocketStatusService, {
-        isAuthenticated$,
+        isAuthenticated$: mockIsAuthenticated$,
       }),
       mockProvider(AuthService, {
-        userTwoFactorConfig$,
-        getGlobalTwoFactorConfig,
-        hasRole: jest.fn(() => hasRole$),
-        isOtpwUser$,
-        isPasswordChangeRequired$,
-        wasOneTimePasswordChanged$,
-        wasRequiredPasswordChanged$,
-        isLocalUser$,
+        isTwoFactorSetupRequired: jest.fn(() => mockIsTwoFactorSetupRequired$),
+        isPasswordChangeRequired$: mockIsPasswordChangeRequired$,
+        isFullAdmin: jest.fn(() => mockIsFullAdmin$),
       }),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
@@ -61,19 +50,9 @@ describe('TwoFactorGuardService', () => {
     ).toBe(false);
   });
 
-  it('allows route access when 2FA is not enabled globally', async () => {
-    isAuthenticated$.next(true);
-    getGlobalTwoFactorConfig.mockReturnValue(of({ enabled: false } as GlobalTwoFactorConfig));
-
-    expect(
-      await firstValueFrom(spectator.service.canActivateChild({} as ActivatedRouteSnapshot, {} as RouterStateSnapshot)),
-    ).toBe(true);
-  });
-
-  it('allows route access when 2FA is enabled and user has it configured', async () => {
-    isAuthenticated$.next(true);
-    getGlobalTwoFactorConfig.mockReturnValue(of({ enabled: true } as GlobalTwoFactorConfig));
-    userTwoFactorConfig$.next({ secret_configured: true } as UserTwoFactorConfig);
+  it('allows route access when 2FA setup is not required', async () => {
+    mockIsAuthenticated$.next(true);
+    mockIsTwoFactorSetupRequired$.next(false);
 
     expect(
       await firstValueFrom(spectator.service.canActivateChild({} as ActivatedRouteSnapshot, {} as RouterStateSnapshot)),
@@ -81,9 +60,8 @@ describe('TwoFactorGuardService', () => {
   });
 
   it('allows two-factor-auth page access for all authorized users', async () => {
-    isAuthenticated$.next(true);
-    getGlobalTwoFactorConfig.mockReturnValue(of({ enabled: true } as GlobalTwoFactorConfig));
-    userTwoFactorConfig$.next({ secret_configured: false } as UserTwoFactorConfig);
+    mockIsAuthenticated$.next(true);
+    mockIsTwoFactorSetupRequired$.next(true);
 
     const isAllowed = await firstValueFrom(
       spectator.service.canActivateChild({} as ActivatedRouteSnapshot, { url: '/two-factor-auth' } as RouterStateSnapshot),
@@ -92,10 +70,9 @@ describe('TwoFactorGuardService', () => {
   });
 
   it('allows system page access for full admin regardless of 2FA status', async () => {
-    isAuthenticated$.next(true);
-    getGlobalTwoFactorConfig.mockReturnValue(of({ enabled: true } as GlobalTwoFactorConfig));
-    userTwoFactorConfig$.next({ secret_configured: false } as UserTwoFactorConfig);
-    hasRole$.next(true);
+    mockIsAuthenticated$.next(true);
+    mockIsTwoFactorSetupRequired$.next(true);
+    mockIsFullAdmin$.next(true);
 
     const isAllowed = await firstValueFrom(
       spectator.service.canActivateChild({} as ActivatedRouteSnapshot, { url: '/system/upgrade' } as RouterStateSnapshot),
@@ -104,16 +81,15 @@ describe('TwoFactorGuardService', () => {
   });
 
   it('shows two-factor warning when 2FA is enabled and user has not configured it', async () => {
-    isAuthenticated$.next(true);
-    getGlobalTwoFactorConfig.mockReturnValue(of({ enabled: true } as GlobalTwoFactorConfig));
-    userTwoFactorConfig$.next({ secret_configured: false } as UserTwoFactorConfig);
+    mockIsAuthenticated$.next(true);
+    mockIsTwoFactorSetupRequired$.next(true);
 
     const isAllowed = await firstValueFrom(
       spectator.service.canActivateChild({} as ActivatedRouteSnapshot, { url: '/dashboard' } as RouterStateSnapshot),
     );
     expect(isAllowed).toBe(true);
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(FirstLoginDialog, {
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(TwoFactorSetupDialog, {
       maxWidth: '100vw',
       maxHeight: '100vh',
       height: '100%',
@@ -124,18 +100,16 @@ describe('TwoFactorGuardService', () => {
   });
 
   it('handles STIG first login for user to proceed with changing one-time password and setting up 2FA', async () => {
-    isAuthenticated$.next(true);
-    getGlobalTwoFactorConfig.mockReturnValue(of({ enabled: true } as GlobalTwoFactorConfig));
-    userTwoFactorConfig$.next({ secret_configured: false } as UserTwoFactorConfig);
-    isOtpwUser$.next(true);
-    isPasswordChangeRequired$.next(true);
+    mockIsAuthenticated$.next(true);
+    mockIsTwoFactorSetupRequired$.next(true);
+    mockIsPasswordChangeRequired$.next(true);
 
     const isAllowed = await firstValueFrom(
       spectator.service.canActivateChild({} as ActivatedRouteSnapshot, { url: '/dashboard' } as RouterStateSnapshot),
     );
     expect(isAllowed).toBe(true);
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(FirstLoginDialog, {
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(TwoFactorSetupDialog, {
       maxWidth: '100vw',
       maxHeight: '100vh',
       height: '100%',
@@ -153,13 +127,10 @@ describe('TwoFactorGuardService', () => {
   });
 
   it('shows password change required dialog when user must change password', async () => {
-    isAuthenticated$.next(true);
-    isOtpwUser$.next(false);
-    wasOneTimePasswordChanged$.next(false);
-    getGlobalTwoFactorConfig.mockReturnValue(of({ enabled: true } as GlobalTwoFactorConfig));
-    userTwoFactorConfig$.next({ secret_configured: true } as UserTwoFactorConfig);
-    hasRole$.next(true);
-    isPasswordChangeRequired$.next(true);
+    mockIsAuthenticated$.next(true);
+    mockIsTwoFactorSetupRequired$.next(false);
+    mockIsFullAdmin$.next(true);
+    mockIsPasswordChangeRequired$.next(true);
 
     const isAllowed = await firstValueFrom(
       spectator.service.canActivateChild({} as ActivatedRouteSnapshot, { url: '/dashboard' } as RouterStateSnapshot),

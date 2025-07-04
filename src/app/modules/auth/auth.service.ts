@@ -1,10 +1,12 @@
 import { Inject, Injectable } from '@angular/core';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { environment } from 'environments/environment';
 import { LocalStorage } from 'ngx-webstorage';
 import {
   BehaviorSubject,
   catchError,
+  combineLatest,
   filter,
   map,
   Observable,
@@ -35,14 +37,13 @@ import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { AppState } from 'app/store';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 
+@UntilDestroy()
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   @LocalStorage() private token: string | undefined | null;
   protected loggedInUser$ = new BehaviorSubject<LoggedInUser | null>(null);
-  wasOneTimePasswordChanged$ = new BehaviorSubject<boolean>(false);
-  wasRequiredPasswordChanged$ = new BehaviorSubject<boolean>(false);
 
   /**
    * This is 10 seconds less than 300 seconds which is the default life
@@ -65,19 +66,20 @@ export class AuthService {
   readonly user$ = this.loggedInUser$.asObservable();
   private readonly checkIsTokenAllowed$ = new Subject<void>();
 
-  isOtpwUser$: Observable<boolean> = this.user$.pipe(
-    filter(Boolean),
-    map((user) => user.account_attributes.includes(AccountAttribute.Otpw)),
-  );
-
-  isLocalUser$: Observable<boolean> = this.user$.pipe(
+  readonly isLocalUser$: Observable<boolean> = this.user$.pipe(
     filter(Boolean),
     map((user) => user.account_attributes.includes(AccountAttribute.Local)),
   );
 
-  isPasswordChangeRequired$: Observable<boolean> = this.user$.pipe(
-    filter(Boolean),
-    map((user) => user.account_attributes.includes(AccountAttribute.PasswordChangeRequired)),
+  private readonly hasPasswordChangedSinceLastLogin$ = new BehaviorSubject(false);
+  readonly isPasswordChangeRequired$: Observable<boolean> = combineLatest([
+    this.user$.pipe(
+      filter(Boolean),
+      map((user) => user.account_attributes.includes(AccountAttribute.PasswordChangeRequired)),
+    ),
+    this.hasPasswordChangedSinceLastLogin$,
+  ]).pipe(
+    map(([changeRequired, changedSinceLastLogin]) => changeRequired && !changedSinceLastLogin),
   );
 
   /**
@@ -93,7 +95,7 @@ export class AuthService {
     map((user) => user.two_factor_config),
   );
 
-  private cachedGlobalTwoFactorConfig: GlobalTwoFactorConfig | null;
+  private readonly cachedGlobalTwoFactorConfig$ = new BehaviorSubject<GlobalTwoFactorConfig | null>(null);
 
   constructor(
     private store$: Store<AppState>,
@@ -110,19 +112,21 @@ export class AuthService {
   }
 
   getGlobalTwoFactorConfig(): Observable<GlobalTwoFactorConfig> {
-    if (this.cachedGlobalTwoFactorConfig) {
-      return of(this.cachedGlobalTwoFactorConfig);
-    }
+    return this.cachedGlobalTwoFactorConfig$.pipe(
+      switchMap((cachedConfig) => {
+        if (cachedConfig) {
+          return of(cachedConfig);
+        }
 
-    return this.api.call('auth.twofactor.config').pipe(
-      tap((config) => {
-        this.cachedGlobalTwoFactorConfig = config;
+        return this.api.call('auth.twofactor.config').pipe(
+          tap((config) => this.cachedGlobalTwoFactorConfig$.next(config)),
+        );
       }),
     );
   }
 
   globalTwoFactorConfigUpdated(): void {
-    this.cachedGlobalTwoFactorConfig = null;
+    this.cachedGlobalTwoFactorConfig$.next(null);
   }
 
   /**
@@ -154,6 +158,20 @@ export class AuthService {
           loginResult,
         })),
       )),
+    );
+  }
+
+  isTwoFactorSetupRequired(): Observable<boolean> {
+    return this.getGlobalTwoFactorConfig().pipe(
+      switchMap((globalConfig) => {
+        if (!globalConfig.enabled) {
+          return of(false);
+        }
+
+        return this.userTwoFactorConfig$.pipe(
+          map((userConfig) => !userConfig.secret_configured),
+        );
+      }),
     );
   }
 
@@ -210,12 +228,19 @@ export class AuthService {
     return this.api.call('auth.logout').pipe(
       tap(() => {
         this.clearAuthToken();
-        this.wasOneTimePasswordChanged$.next(false);
-        this.wasRequiredPasswordChanged$.next(false);
+        this.hasPasswordChangedSinceLastLogin$.next(false);
         this.wsStatus.setLoginStatus(false);
         this.api.clearSubscriptions();
       }),
     );
+  }
+
+  requiredPasswordChanged(): void {
+    this.hasPasswordChangedSinceLastLogin$.next(true);
+  }
+
+  isFullAdmin(): Observable<boolean> {
+    return this.hasRole([Role.FullAdmin]).pipe(take(1));
   }
 
   refreshUser(): Observable<undefined> {
@@ -312,6 +337,7 @@ export class AuthService {
           this.setupTokenUpdate();
           this.generateTokenSubscription.unsubscribe();
           this.generateTokenSubscription = null;
+          this.cachedGlobalTwoFactorConfig$.next(null);
         }
       },
     });
