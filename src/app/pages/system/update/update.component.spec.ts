@@ -14,7 +14,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
-import { SystemUpdate, SystemUpdateChange } from 'app/interfaces/system-update.interface';
+import { UpdateStatus } from 'app/interfaces/system-update.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -57,10 +57,21 @@ describe('UpdateComponent', () => {
     providers: [
       mockApi([
         mockCall('core.get_jobs', []),
-        mockCall('update.check_available', {
-          status: SystemUpdateStatus.Available,
-          changes: [] as SystemUpdateChange[],
-        } as SystemUpdate),
+        mockCall('update.status', {
+          code: SystemUpdateStatus.Normal,
+          status: {
+            current_version: { train: '', profile: '', matches_profile: true },
+            new_version: {
+              version: '22.12.3',
+              manifest: {
+                filename: '', version: '22.12.3', date: '', changelog: '', checksum: '', filesize: 0, profile: '', train: '',
+              },
+              release_notes_url: '',
+            },
+          },
+          error: null,
+          update_download_progress: null,
+        } as UpdateStatus),
         mockJob('update.update'),
         mockCall('system.product_type', ProductType.CommunityEdition),
         mockCall('webui.main.dashboard.sys_info', {
@@ -95,9 +106,26 @@ describe('UpdateComponent', () => {
         status$,
         error$,
         packages$,
+        checkStatus: jest.fn(() => of({
+          code: SystemUpdateStatus.Available,
+          status: {
+            new_version: {
+              version: '22.12.3',
+            },
+          },
+          error: null,
+          update_download_progress: null,
+        })),
         changeLog$,
         releaseNotesUrl$,
         pendingUpdates: jest.fn(),
+        getConfig: jest.fn(() => of({ id: 1, autocheck: false, profile: 'general' })),
+        updateConfig: jest.fn(() => of({ id: 1, autocheck: true, profile: 'general' })),
+        getProfileChoices: jest.fn(() => of({
+          general: {
+            name: 'General', footnote: '', description: '', available: true,
+          },
+        })),
       }),
       mockProvider(TrainService, {
         trainValue$,
@@ -108,7 +136,6 @@ describe('UpdateComponent', () => {
             STABLE: { description: 'Stable Train' },
           },
         })),
-        getAutoDownload: jest.fn(() => of(false)),
         check: jest.fn(),
         fullTrainList$,
         selectedTrain$,
@@ -156,7 +183,7 @@ describe('UpdateComponent', () => {
       [['method', '=', 'update.update'], ['state', '=', JobState.Running]],
     ]);
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('update.check_available');
+    expect(spectator.inject(UpdateService).checkStatus).toHaveBeenCalled();
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(SaveConfigDialog, {
       data: {
@@ -303,6 +330,5 @@ describe('UpdateComponent', () => {
     const updateProfileCard = spectator.query('ix-update-profile-card');
 
     expect(updateProfileCard).toBeTruthy();
-    expect(updateProfileCard).toHaveAttribute('hidden');
   });
 });

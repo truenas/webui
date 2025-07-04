@@ -11,7 +11,7 @@
       [options]="profileOptions()"
     ></ix-select>
 
-    <button mat-button ixTest="apply-profile">Apply</button>
+    <button mat-button ixTest="apply-profile" (click)="applyProfile()">Apply</button>
   </div>
 
   <div class="hint">
@@ -41,4 +41,8 @@
       </div>
     </div>
   </div>
+
+  <!-- <div class="upsell" *ngIf="!isEnterprise() && otherProfiles().length">
+    {{ 'Additional update profiles available with Enterprise: {profiles}' | translate:{ profiles: upsellText() } }}
+  </div> -->
 </div>

@@ -1,6 +1,6 @@
 <ix-page-header [loading]="!!(updateService.isLoading$ | async)"></ix-page-header>
 
-<div class="update-container">
+<div class="update-container" [class.no-profiles]="!hasAvailableProfiles()">
   <div>
     <h2>
       @if (showDownloadUpdateButton()) {
@@ -25,7 +25,6 @@
             <ngx-skeleton-loader class="inline-loader"></ngx-skeleton-loader>
           }
         </h4>
-
         <h4>
           {{ 'Current version' | translate }}:
           @if (systemVersion(); as systemVersion) {
@@ -152,5 +151,7 @@
     </div>
   </div>
 
-  <ix-update-profile-card></ix-update-profile-card>
+  @if (hasAvailableProfiles()) {
+    <ix-update-profile-card [profileChoices]="profileChoices()"></ix-update-profile-card>
+  }
 </div>

@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import {
-  BehaviorSubject,
-} from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
+import { UpdateConfig, UpdateProfileChoices, UpdateStatus } from 'app/interfaces/system-update.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { Package } from 'app/pages/system/update/interfaces/package.interface';
 
@@ -26,11 +25,30 @@ export class UpdateService {
     private api: ApiService,
   ) {}
 
+  checkStatus(): Observable<UpdateStatus> {
+    return this.api.call('update.status');
+  }
+
   pendingUpdates(): void {
-    this.api.call('update.get_pending').pipe(untilDestroyed(this)).subscribe((pending) => {
-      if (pending.length !== 0) {
+    this.checkStatus().pipe(untilDestroyed(this)).subscribe((status) => {
+      if (
+        status.code === SystemUpdateStatus.RebootRequired
+        || (status.status?.new_version && status.update_download_progress)
+      ) {
         this.updateDownloaded$.next(true);
       }
     });
+  }
+
+  getConfig(): Observable<UpdateConfig> {
+    return this.api.call('update.config');
+  }
+
+  updateConfig(update: Partial<UpdateConfig>): Observable<UpdateConfig> {
+    return this.api.call('update.update', [update]);
+  }
+
+  getProfileChoices(): Observable<UpdateProfileChoices> {
+    return this.api.call('update.profile_choices');
   }
 }

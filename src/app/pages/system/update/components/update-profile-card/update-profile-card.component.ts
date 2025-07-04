@@ -1,16 +1,19 @@
 import {
-  ChangeDetectionStrategy, Component,
-  computed,
+  ChangeDetectionStrategy, Component, OnInit, computed, input,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { TranslateModule } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { filter, of, switchMap } from 'rxjs';
+import { UpdateProfileChoices } from 'app/interfaces/system-update.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { UpdateService } from 'app/pages/system/update/services/update.service';
 import { AppState } from 'app/store';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
@@ -28,66 +31,32 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     TranslateModule,
   ],
 })
-export class UpdateProfileCard {
+
+export class UpdateProfileCard implements OnInit {
   protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
 
-  protected updateProfileControl = new FormControl('general');
+  protected updateProfileControl = new FormControl('');
 
-  readonly enterpriseUpdateProfiles = [
-    {
-      name: 'General',
-      note: 'not recommended',
-      description: 'Field tested software with mature features. Few issues are expected.',
-      id: 'general',
-    },
-    {
-      name: 'Conservative',
-      note: 'Default',
-      description: 'Mature software with well documented limitations. Software updates are infrequent.',
-      id: 'conservative',
-    },
-    {
-      name: 'Mission Critical',
-      description: 'Mature software that enables 24 x 7 operations with high availability for a very clearly defined use case. Software updates are very infrequent and based on need.',
-      id: 'mission_critical',
-    },
-  ];
-
-  readonly communityEditionUpdateProfiles = [
-    {
-      name: 'Developer',
-      description: 'Latest software with new features and bugs alike. There is an opportunity to contribute directly to the development process.',
-      id: 'developer',
-    },
-    {
-      name: 'Tester',
-      description: 'New software with recent features. Some bugs are expected and there is a willingness to provide bug reports and feedback to the developers.',
-      id: 'tester',
-    },
-    {
-      name: 'Early Adopter',
-      description: 'Released software with new features. Data is protected, but some issues may need workarounds or patience.',
-      id: 'early_adopter',
-    },
-    {
-      name: 'General',
-      note: 'default',
-      description: 'Field tested software with mature features. Few issues are expected.',
-      id: 'general',
-    },
-  ];
+  readonly profileChoices = input<UpdateProfileChoices>({});
 
   profiles = computed(() => {
-    if (this.isEnterprise()) {
-      return this.enterpriseUpdateProfiles;
-    }
-
-    return this.communityEditionUpdateProfiles;
+    const choices = this.profileChoices();
+    return Object.entries(choices).map(([id, profile]) => ({
+      id,
+      name: profile.name,
+      note: profile.footnote,
+      description: profile.description,
+      available: profile.available,
+    }));
   });
+
+  otherProfiles = computed(() => this.profiles().filter((profile) => !profile.available));
+
+  upsellText = computed(() => this.otherProfiles().map((profile) => profile.name).join(', '));
 
   profileOptions = computed(() => {
     return of(
-      this.profiles().map((profile) => ({
+      this.profiles().filter((profile) => profile.available).map((profile) => ({
         label: profile.name,
         value: profile.id,
       })),
@@ -95,6 +64,36 @@ export class UpdateProfileCard {
   });
 
   constructor(
+    private updateService: UpdateService,
+    private snackbar: SnackbarService,
+    private dialogService: DialogService,
+    private translate: TranslateService,
     private store$: Store<AppState>,
   ) { }
+
+  ngOnInit(): void {
+    this.updateService.getConfig()
+      .pipe(untilDestroyed(this))
+      .subscribe((config) => {
+        this.updateProfileControl.patchValue(config.profile);
+      });
+  }
+
+  applyProfile(): void {
+    const selectedProfile = this.profiles().find((profile) => profile.id === this.updateProfileControl.value);
+
+    this.dialogService.confirm({
+      title: this.translate.instant('Change Update Profile'),
+      message: this.translate.instant('Changing update profile to <b>{profile}</b> may impact system stability. Reverting to a stable version might not be possible.', { profile: selectedProfile?.name }),
+      hideCheckbox: true,
+      buttonText: this.translate.instant('Continue'),
+      cancelText: this.translate.instant('Cancel'),
+    }).pipe(
+      filter(Boolean),
+      switchMap(() => this.updateService.updateConfig({ profile: this.updateProfileControl.value })),
+      untilDestroyed(this),
+    ).subscribe({
+      next: () => this.snackbar.success(this.translate.instant('Update profile saved')),
+    });
+  }
 }

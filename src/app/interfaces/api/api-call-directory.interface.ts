@@ -247,9 +247,10 @@ import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interf
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import {
-  SystemUpdate,
-  SystemUpdateChange,
   SystemUpdateTrains,
+  UpdateConfig,
+  UpdateProfileChoices,
+  UpdateStatus,
 } from 'app/interfaces/system-update.interface';
 import {
   TrueCommandConfig, TrueCommandUpdateResponse,
@@ -881,12 +882,12 @@ export interface ApiCallDirectory {
   'tunable.tunable_type_choices': { params: void; response: Choices };
 
   // Update
-  'update.check_available': { params: void; response: SystemUpdate };
-  'update.get_auto_download': { params: void; response: boolean };
-  'update.get_pending': { params: void; response: SystemUpdateChange[] };
+  'update.status': { params: void; response: UpdateStatus };
   'update.get_trains': { params: void; response: SystemUpdateTrains };
-  'update.set_auto_download': { params: [boolean]; response: void };
   'update.set_train': { params: [train: string]; response: void };
+  'update.profile_choices': { params: void; response: UpdateProfileChoices };
+  'update.config': { params: void; response: UpdateConfig };
+  'update.update': { params: [Partial<UpdateConfig>]; response: UpdateConfig };
 
   // UPS
   'ups.config': { params: void; response: UpsConfig };

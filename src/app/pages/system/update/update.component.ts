@@ -1,7 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component,
-  OnInit,
+  OnInit, computed,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -20,12 +20,13 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
-import { SystemUpdateOperationType, SystemUpdateStatus } from 'app/enums/system-update.enum';
+import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
 import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { UpdateProfileChoices } from 'app/interfaces/system-update.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
@@ -38,7 +39,6 @@ import { getSystemVersion } from 'app/pages/dashboard/widgets/system/common/widg
 import { SaveConfigDialog, SaveConfigDialogMessages } from 'app/pages/system/advanced/manage-configuration-menu/save-config-dialog/save-config-dialog.component';
 import { UpdateProfileCard } from 'app/pages/system/update/components/update-profile-card/update-profile-card.component';
 import { UpdateType } from 'app/pages/system/update/enums/update-type.enum';
-import { Package } from 'app/pages/system/update/interfaces/package.interface';
 import { TrainService } from 'app/pages/system/update/services/train.service';
 import { UpdateService } from 'app/pages/system/update/services/update.service';
 import { systemUpdateElements } from 'app/pages/system/update/update.elements';
@@ -131,6 +131,15 @@ export class UpdateComponent implements OnInit {
     map((info) => getSystemVersion(info.remote_info.version)),
   ));
 
+  protected readonly profileChoices = toSignal(
+    this.updateService.getProfileChoices().pipe(shareReplay({ bufferSize: 1, refCount: true })),
+    { initialValue: {} as UpdateProfileChoices },
+  );
+
+  protected readonly hasAvailableProfiles = computed(() => {
+    return Object.values(this.profileChoices()).some((profile) => profile.available);
+  });
+
   constructor(
     protected trainService: TrainService,
     protected updateService: UpdateService,
@@ -154,17 +163,17 @@ export class UpdateComponent implements OnInit {
 
   ngOnInit(): void {
     forkJoin([
-      this.trainService.getAutoDownload(),
+      this.updateService.getConfig(),
       this.trainService.getTrains(),
     ]).pipe(untilDestroyed(this)).subscribe({
-      next: ([isAutoDownloadOn, trains]) => {
+      next: ([config, trains]) => {
         this.cdr.markForCheck();
         this.trainService.fullTrainList$.next(trains.trains);
 
-        this.trainService.trainValue$.next(trains.selected || '');
+        this.trainService.trainValue$.next(trains.current || ' - ');
         this.trainService.selectedTrain$.next(trains.selected);
 
-        if (isAutoDownloadOn) {
+        if (config.autocheck) {
           this.trainService.check();
         }
 
@@ -198,8 +207,6 @@ export class UpdateComponent implements OnInit {
         this.errorHandler.showErrorModal(error);
       },
     });
-
-    this.trainService.toggleAutoCheck(true);
   }
 
   protected manualUpdate(): void {
@@ -265,53 +272,24 @@ export class UpdateComponent implements OnInit {
 
   private startUpdate(): void {
     this.updateService.error$.next(false);
-    this.api.call('update.check_available').pipe(this.loader.withLoader(), untilDestroyed(this)).subscribe({
+    this.updateService.checkStatus().pipe(this.loader.withLoader(), untilDestroyed(this)).subscribe({
       next: (update) => {
-        this.updateService.status$.next(update.status);
-        if (update.status === SystemUpdateStatus.Available) {
-          const packages: Package[] = [];
-          update.changes.forEach((change) => {
-            if (change.operation === SystemUpdateOperationType.Upgrade) {
-              packages.push({
-                operation: 'Upgrade',
-                name: change.old.name + '-' + change.old.version
-                  + ' -> ' + change.new.name + '-'
-                  + change.new.version,
-              });
-            } else if (change.operation === SystemUpdateOperationType.Install) {
-              packages.push({
-                operation: 'Install',
-                name: change.new.name + '-' + change.new.version,
-              });
-            } else if (change.operation === SystemUpdateOperationType.Delete) {
-              if (change.old) {
-                packages.push({
-                  operation: 'Delete',
-                  name: change.old.name + '-' + change.old.version,
-                });
-              } else if (change.new) {
-                packages.push({
-                  operation: 'Delete',
-                  name: change.new.name + '-' + change.new.version,
-                });
-              }
-            } else {
-              console.error('Unknown operation:', change.operation);
-            }
-          });
-          this.updateService.packages$.next(packages);
+        const status = update.code || SystemUpdateStatus.Unavailable;
+        this.updateService.status$.next(status);
 
-          if (update.changelog) {
-            this.updateService.changeLog$.next(update.changelog.replace(/\n/g, '<br>'));
+        if (status === SystemUpdateStatus.Available && update.status?.new_version) {
+          if (update.status?.new_version?.manifest?.changelog) {
+            this.updateService.changeLog$.next(update.status.new_version.manifest.changelog.replace(/\n/g, '<br>'));
           }
-          if (update.release_notes_url) {
-            this.updateService.releaseNotesUrl$.next(update.release_notes_url);
+          if (update.status?.new_version?.release_notes_url) {
+            this.updateService.releaseNotesUrl$.next(update.status.new_version.release_notes_url);
           }
+
           this.updateType = UpdateType.Standard;
           this.saveConfigurationIfNecessary()
             .pipe(untilDestroyed(this))
             .subscribe(() => this.confirmAndUpdate());
-        } else if (update.status === SystemUpdateStatus.Unavailable) {
+        } else if (status === SystemUpdateStatus.Unavailable) {
           this.snackbar.success(this.translate.instant('No updates available.'));
         }
       },

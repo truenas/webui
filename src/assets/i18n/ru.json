@@ -1,6 +1,8 @@
 {
   "": "",
   "Are you sure you wish to disable TrueNAS Connect? You will be able to re-connect this system later.": "",
+  "Change Update Profile": "",
+  "Changing update profile to <b>{profile}</b> may impact system stability. Reverting to a stable version might not be possible.": "",
   "Connecting...": "",
   "Connection Failed...": "",
   "Disable Error": "",
@@ -20,6 +22,7 @@
   "Setting up TrueNAS Connect": "",
   "Something went wrong! Please check your network connectivity and then click Retry Connection to get started.": "",
   "TrueNAS Connect - Status Healthy": "",
+  "Update profile saved": "",
   "When checked it will ensure that the guest always has access to a video device. For headless installations like ubuntu server this is required for the guest to operate properly. However for cases where consumer would like to use GPU passthrough and does not want a display device added should uncheck this.": "",
   "When not specified, guest system is given fixed amount of memory specified above.\nWhen minimum memory is specified, guest system is given memory within range between minimum and fixed as needed.": "",
   "When number of vcpus is equal to number of cpus in CPU set vcpus can be automatically pinned into CPU set. Pinning is done by mapping each vcpu into single cpu number in following the order in CPU set. This will improve CPU cache locality and can reduce possible stutter in GPU passthrough VMs.": "",

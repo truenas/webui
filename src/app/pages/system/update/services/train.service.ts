@@ -2,15 +2,14 @@ import { Injectable } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  BehaviorSubject, Observable, combineLatest,
+  BehaviorSubject, Observable, combineLatest, map,
 } from 'rxjs';
-import { SystemUpdateOperationType, SystemUpdateStatus } from 'app/enums/system-update.enum';
+import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { extractApiErrorDetails } from 'app/helpers/api.helper';
 import { SystemUpdateTrain, SystemUpdateTrains } from 'app/interfaces/system-update.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { Package } from 'app/pages/system/update/interfaces/package.interface';
 import { UpdateService } from 'app/pages/system/update/services/update.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -28,7 +27,7 @@ export class TrainService {
   fullTrainList$ = new BehaviorSubject<Record<string, SystemUpdateTrain> | undefined>(undefined);
   trainVersion$ = new BehaviorSubject<string | null>(null);
 
-  trainValue$ = new BehaviorSubject<string>('');
+  trainValue$ = new BehaviorSubject<string | null>(null);
 
   constructor(
     private updateService: UpdateService,
@@ -38,14 +37,16 @@ export class TrainService {
     private errorHandler: ErrorHandlerService,
   ) {}
 
+  // TODO: Investigate where to use it, it's currently not used anywhere
   getAutoDownload(): Observable<boolean> {
-    return this.api.call('update.get_auto_download');
+    return this.updateService.getConfig().pipe(map((config) => config.autocheck));
   }
 
   getTrains(): Observable<SystemUpdateTrains> {
     return this.api.call('update.get_trains');
   }
 
+  // TODO: Investigate where to use it, it's currently not used anywhere
   onTrainChanged(newTrain: string, prevTrain: string): void {
     combineLatest([this.fullTrainList$, this.selectedTrain$, this.trainDescriptionOnPageLoad$])
       .pipe(untilDestroyed(this)).subscribe(([fullTrainList, selectedTrain, trainDescriptionOnPageLoad]) => {
@@ -76,19 +77,9 @@ export class TrainService {
       });
   }
 
-  setTrainDescription(): void {
-    combineLatest([this.fullTrainList$, this.trainValue$])
-      .pipe(untilDestroyed(this)).subscribe(([fullTrainList, trainValue]) => {
-        if (fullTrainList?.[trainValue]) {
-          this.currentTrainDescription$.next(fullTrainList?.[trainValue]?.description?.toLowerCase());
-        } else {
-          this.currentTrainDescription$.next('');
-        }
-      });
-  }
-
+  // TODO: Investigate where to use it, it's currently not used anywhere
   toggleAutoCheck(autoCheck: boolean): void {
-    this.api.call('update.set_auto_download', [autoCheck])
+    this.updateService.updateConfig({ autocheck: autoCheck })
       .pipe(
         this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
@@ -126,56 +117,28 @@ export class TrainService {
     sessionStorage.updateLastChecked = Date.now();
 
     combineLatest([
-      this.api.call('update.check_available'),
+      this.updateService.checkStatus(),
       this.currentTrainDescription$,
     ]).pipe(untilDestroyed(this)).subscribe({
       next: ([update, currentTrainDescription]) => {
-        if (update.version) {
-          this.trainVersion$.next(update.version);
+        const status = update.code || SystemUpdateStatus.Unavailable;
+
+        if (update.status?.new_version) {
+          this.trainVersion$.next(update.status.new_version.version);
         }
-        this.updateService.status$.next(update.status);
-        if (update.status === SystemUpdateStatus.Available) {
+
+        this.updateService.status$.next(status);
+
+        if (status === SystemUpdateStatus.Available && update.status?.new_version) {
           sessionStorage.updateAvailable = 'true';
           this.updateService.updatesAvailable$.next(true);
 
-          const packages: Package[] = [];
-          update.changes.forEach((change) => {
-            if (change.operation === SystemUpdateOperationType.Upgrade) {
-              packages.push({
-                operation: 'Upgrade',
-                name: change.old.name + '-' + change.old.version
-                  + ' -> ' + change.new.name + '-'
-                  + change.new.version,
-              });
-            } else if (change.operation === SystemUpdateOperationType.Install) {
-              packages.push({
-                operation: 'Install',
-                name: change.new.name + '-' + change.new.version,
-              });
-            } else if (change.operation === SystemUpdateOperationType.Delete) {
-              if (change.old) {
-                packages.push({
-                  operation: 'Delete',
-                  name: change.old.name + '-' + change.old.version,
-                });
-              } else if (change.new) {
-                packages.push({
-                  operation: 'Delete',
-                  name: change.new.name + '-' + change.new.version,
-                });
-              }
-            } else {
-              console.error('Unknown operation:', change.operation);
-            }
-          });
-          this.updateService.packages$.next(packages);
-
-          if (update.changelog) {
-            this.updateService.changeLog$.next(update.changelog.replace(/\n/g, '<br>'));
+          if (update.status.new_version.manifest.changelog) {
+            this.updateService.changeLog$.next(update.status.new_version.manifest.changelog.replace(/\n/g, '<br>'));
           }
 
-          if (update.release_notes_url) {
-            this.updateService.releaseNotesUrl$.next(update.release_notes_url);
+          if (update.status.new_version.release_notes_url) {
+            this.updateService.releaseNotesUrl$.next(update.status.new_version.release_notes_url);
           }
         }
         if (currentTrainDescription?.includes('[release]')) {
@@ -204,5 +167,16 @@ export class TrainService {
         this.updateService.isLoading$.next(false);
       },
     });
+  }
+
+  private setTrainDescription(): void {
+    combineLatest([this.fullTrainList$, this.trainValue$])
+      .pipe(untilDestroyed(this)).subscribe(([fullTrainList, trainValue]) => {
+        if (fullTrainList?.[trainValue]) {
+          this.currentTrainDescription$.next(fullTrainList?.[trainValue]?.description?.toLowerCase());
+        } else {
+          this.currentTrainDescription$.next('');
+        }
+      });
   }
 }

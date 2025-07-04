@@ -1,7 +1,10 @@
 {
   "": "",
+  "Change Update Profile": "",
+  "Changing update profile to <b>{profile}</b> may impact system stability. Reverting to a stable version might not be possible.": "",
   "Looks like you don’t have any users who’ll be able to access this share.": "",
   "OpenStack Swift (OVH, Oracle, Rackspace, etc)": "",
+  "Update profile saved": "",
   "\n              It looks like your session has been inactive for more than {lifetime} seconds.<br>\n              For security reasons we will log you out at {time}.\n            ": "\nSembra che la tua sessione sia stata inattiva per più di {lifetime} secondi.<br>\nPer motivi di sicurezza, verrai disconnesso alle {time}.",
   " as of {dateTime}": " al {dateTime}",
   " bytes.": " byte.",
