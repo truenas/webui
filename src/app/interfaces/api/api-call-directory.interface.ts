@@ -247,7 +247,6 @@ import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interf
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import {
-  SystemUpdateTrains,
   UpdateConfig,
   UpdateProfileChoices,
   UpdateStatus,
@@ -883,8 +882,6 @@ export interface ApiCallDirectory {
 
   // Update
   'update.status': { params: void; response: UpdateStatus };
-  'update.get_trains': { params: void; response: SystemUpdateTrains };
-  'update.set_train': { params: [train: string]; response: void };
   'update.profile_choices': { params: void; response: UpdateProfileChoices };
   'update.config': { params: void; response: UpdateConfig };
   'update.update': { params: [Partial<UpdateConfig>]; response: UpdateConfig };

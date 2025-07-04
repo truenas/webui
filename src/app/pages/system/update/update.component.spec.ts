@@ -19,7 +19,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SaveConfigDialog } from 'app/pages/system/advanced/manage-configuration-menu/save-config-dialog/save-config-dialog.component';
-import { TrainService } from 'app/pages/system/update/services/train.service';
 import { UpdateService } from 'app/pages/system/update/services/update.service';
 import { UpdateComponent } from 'app/pages/system/update/update.component';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
@@ -36,16 +35,10 @@ describe('UpdateComponent', () => {
   const updatesAvailable$ = new BehaviorSubject(false);
   const updateDownloaded$ = new BehaviorSubject(false);
   const status$ = new BehaviorSubject(SystemUpdateStatus.Unavailable);
-  const error$ = new BehaviorSubject(null as string | null);
-  const packages$ = new BehaviorSubject([]);
   const changeLog$ = new BehaviorSubject('Changelog content');
   const releaseNotesUrl$ = new BehaviorSubject('http://release.notes.url');
-  const trainValue$ = new BehaviorSubject('STABLE');
-  const trainVersion$ = new BehaviorSubject('22.12.3');
-  const selectedTrain$ = new BehaviorSubject('STABLE');
-  const fullTrainList$ = new BehaviorSubject({});
+  const updateVersion$ = new BehaviorSubject('22.12.3');
   const currentTrainDescription$ = new BehaviorSubject('');
-  const trainDescriptionOnPageLoad$ = new BehaviorSubject('');
 
   const createComponent = createComponentFactory({
     component: UpdateComponent,
@@ -104,9 +97,7 @@ describe('UpdateComponent', () => {
         updatesAvailable$,
         updateDownloaded$,
         status$,
-        error$,
-        packages$,
-        checkStatus: jest.fn(() => of({
+        getUpdateStatus: jest.fn(() => of({
           code: SystemUpdateStatus.Available,
           status: {
             new_version: {
@@ -118,33 +109,17 @@ describe('UpdateComponent', () => {
         })),
         changeLog$,
         releaseNotesUrl$,
-        pendingUpdates: jest.fn(),
-        getConfig: jest.fn(() => of({ id: 1, autocheck: false, profile: 'general' })),
+        checkIfUpdateIsDownloaded: jest.fn(),
+        getUpdateConfig: jest.fn(() => of({ id: 1, autocheck: false, profile: 'general' })),
         updateConfig: jest.fn(() => of({ id: 1, autocheck: true, profile: 'general' })),
         getProfileChoices: jest.fn(() => of({
           general: {
             name: 'General', footnote: '', description: '', available: true,
           },
         })),
-      }),
-      mockProvider(TrainService, {
-        trainValue$,
-        getTrains: jest.fn(() => of({
-          current: 'STABLE',
-          selected: 'STABLE',
-          trains: {
-            STABLE: { description: 'Stable Train' },
-          },
-        })),
-        check: jest.fn(),
-        fullTrainList$,
-        selectedTrain$,
+        checkForUpdates: jest.fn(),
         currentTrainDescription$,
-        trainDescriptionOnPageLoad$,
-        trainVersion$,
-        nightlyTrain$: of(true),
-        preReleaseTrain$: of(true),
-        releaseTrain$: of(true),
+        updateVersion$,
       }),
     ],
   });
@@ -154,15 +129,10 @@ describe('UpdateComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('displays current train and version', () => {
+  it('displays current version', () => {
     spectator.detectChanges();
-
     const allHeadings = spectator.queryAll('h4');
-
-    const trainElement = allHeadings.find((el) => el.textContent?.includes('Current Train:'));
     const versionElement = allHeadings.find((el) => el.textContent?.includes('Current version'));
-
-    expect(trainElement).toHaveText('Current Train: STABLE - Stable Train');
     expect(versionElement).toHaveText('Current version: 22.12.3');
   });
 
@@ -183,7 +153,7 @@ describe('UpdateComponent', () => {
       [['method', '=', 'update.update'], ['state', '=', JobState.Running]],
     ]);
 
-    expect(spectator.inject(UpdateService).checkStatus).toHaveBeenCalled();
+    expect(spectator.inject(UpdateService).getUpdateStatus).toHaveBeenCalled();
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(SaveConfigDialog, {
       data: {
@@ -261,15 +231,6 @@ describe('UpdateComponent', () => {
 
     const rebootMessage = spectator.query('h4.hint');
     expect(rebootMessage).toHaveText('An update is already applied. Please restart the system.');
-  });
-
-  it('shows error message when updateService.error$ emits a string', () => {
-    error$.next('Something went wrong');
-    spectator = createComponent();
-    spectator.detectChanges();
-
-    const errorMessage = spectator.query('h4.error-color');
-    expect(errorMessage).toHaveText('Something went wrong');
   });
 
   it('renders update summary with version, changelog and release notes', () => {

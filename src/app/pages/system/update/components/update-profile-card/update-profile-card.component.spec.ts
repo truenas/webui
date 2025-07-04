@@ -52,7 +52,7 @@ describe('UpdateProfileCard', () => {
       {
         provide: UpdateService,
         useValue: {
-          getConfig: jest.fn(() => of({ profile: 'CONSERVATIVE' })),
+          getUpdateConfig: jest.fn(() => of({ profile: 'CONSERVATIVE' })),
           updateConfig: jest.fn(() => of({})),
         },
       },

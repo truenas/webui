@@ -4,7 +4,6 @@ import {
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { filter, of, switchMap } from 'rxjs';
 import { UpdateProfileChoices } from 'app/interfaces/system-update.interface';
@@ -13,7 +12,6 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { UpdateService } from 'app/pages/system/update/services/update.service';
-import { AppState } from 'app/store';
 
 @UntilDestroy()
 @Component({
@@ -60,11 +58,10 @@ export class UpdateProfileCard implements OnInit {
     private snackbar: SnackbarService,
     private dialogService: DialogService,
     private translate: TranslateService,
-    private store$: Store<AppState>,
   ) { }
 
   ngOnInit(): void {
-    this.updateService.getConfig()
+    this.updateService.getUpdateConfig()
       .pipe(untilDestroyed(this))
       .subscribe((config) => {
         this.updateProfileControl.patchValue(config.profile);

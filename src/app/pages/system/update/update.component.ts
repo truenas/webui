@@ -13,7 +13,7 @@ import { select, Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
-  combineLatest, filter, forkJoin, map, Observable, of, shareReplay, switchMap, take, tap,
+  combineLatest, filter, map, Observable, of, shareReplay, switchMap, tap,
 } from 'rxjs';
 import { scaleDownloadUrl } from 'app/constants/links.constants';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -25,7 +25,6 @@ import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
 import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { Option } from 'app/interfaces/option.interface';
 import { UpdateProfileChoices } from 'app/interfaces/system-update.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -39,7 +38,6 @@ import { getSystemVersion } from 'app/pages/dashboard/widgets/system/common/widg
 import { SaveConfigDialog, SaveConfigDialogMessages } from 'app/pages/system/advanced/manage-configuration-menu/save-config-dialog/save-config-dialog.component';
 import { UpdateProfileCard } from 'app/pages/system/update/components/update-profile-card/update-profile-card.component';
 import { UpdateType } from 'app/pages/system/update/enums/update-type.enum';
-import { TrainService } from 'app/pages/system/update/services/train.service';
 import { UpdateService } from 'app/pages/system/update/services/update.service';
 import { systemUpdateElements } from 'app/pages/system/update/update.elements';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -78,11 +76,10 @@ export class UpdateComponent implements OnInit {
   protected readonly scaleDownloadUrl = scaleDownloadUrl;
   protected updateType: UpdateType;
   protected isUpdateRunning = false;
-  protected singleDescription: string;
-  private trains: Option[] = [];
   private wasConfigurationSaved = false;
 
   protected readonly isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
+  protected currentTrainName = '';
 
   protected readonly showApplyPendingButton = toSignal(
     combineLatest([
@@ -104,12 +101,12 @@ export class UpdateComponent implements OnInit {
   protected readonly showInfoForTesting = toSignal(
     combineLatest([
       this.updateService.updatesAvailable$,
-      this.trainService.nightlyTrain$,
-      this.trainService.preReleaseTrain$,
+      this.updateService.currentTrainDescription$,
       this.sysGenService.isEnterprise$,
     ]).pipe(
-      map(([updatesAvailable, nightlyTrain, preReleaseTrain, isEnterprise]) => {
-        return updatesAvailable && (nightlyTrain || (preReleaseTrain && !isEnterprise));
+      map(([updatesAvailable, trainDescription, isEnterprise]) => {
+        const isNightlyTrain = !['[release]', '[prerelease]'].includes(trainDescription);
+        return updatesAvailable && (isNightlyTrain || (!isNightlyTrain && !isEnterprise));
       }),
     ),
   );
@@ -122,7 +119,7 @@ export class UpdateComponent implements OnInit {
     map((info) => getSystemVersion(info.version)),
   ));
 
-  protected readonly updateVersion = toSignal(this.trainService.trainVersion$.pipe(
+  protected readonly updateVersion = toSignal(this.updateService.updateVersion$.pipe(
     map((info) => getSystemVersion(info)),
   ));
 
@@ -141,7 +138,6 @@ export class UpdateComponent implements OnInit {
   });
 
   constructor(
-    protected trainService: TrainService,
     protected updateService: UpdateService,
     private router: Router,
     private translate: TranslateService,
@@ -162,49 +158,12 @@ export class UpdateComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    forkJoin([
-      this.updateService.getConfig(),
-      this.trainService.getTrains(),
-    ]).pipe(untilDestroyed(this)).subscribe({
-      next: ([config, trains]) => {
+    this.updateService.checkForUpdates();
+
+    this.updateService.getUpdateStatus().pipe(untilDestroyed(this)).subscribe({
+      next: (updateStatus) => {
+        this.currentTrainName = updateStatus.status?.current_version?.train;
         this.cdr.markForCheck();
-        this.trainService.fullTrainList$.next(trains.trains);
-
-        this.trainService.trainValue$.next(trains.current || ' - ');
-        this.trainService.selectedTrain$.next(trains.selected);
-
-        if (config.autocheck) {
-          this.trainService.check();
-        }
-
-        this.trains = Object.entries(trains.trains).map(([name, train]) => ({
-          label: train.description,
-          value: name,
-        }));
-        if (this.trains.length > 0) {
-          this.singleDescription = Object.values(trains.trains)[0]?.description;
-        }
-
-        let currentTrainDescription = '';
-
-        if (trains.trains[trains.current]) {
-          if (trains.trains[trains.current].description.toLowerCase().includes('[nightly]')) {
-            currentTrainDescription = '[nightly]';
-          } else if (trains.trains[trains.current].description.toLowerCase().includes('[release]')) {
-            currentTrainDescription = '[release]';
-          } else if (trains.trains[trains.current].description.toLowerCase().includes('[prerelease]')) {
-            currentTrainDescription = '[prerelease]';
-          } else {
-            currentTrainDescription = trains.trains[trains.selected].description.toLowerCase();
-          }
-        }
-        this.trainService.currentTrainDescription$.next(currentTrainDescription);
-        this.trainService.trainDescriptionOnPageLoad$.next(currentTrainDescription);
-
-        this.cdr.markForCheck();
-      },
-      error: (error: unknown) => {
-        this.errorHandler.showErrorModal(error);
       },
     });
   }
@@ -271,13 +230,12 @@ export class UpdateComponent implements OnInit {
   }
 
   private startUpdate(): void {
-    this.updateService.error$.next(false);
-    this.updateService.checkStatus().pipe(this.loader.withLoader(), untilDestroyed(this)).subscribe({
+    this.updateService.getUpdateStatus().pipe(this.loader.withLoader(), untilDestroyed(this)).subscribe({
       next: (update) => {
         const status = update.code || SystemUpdateStatus.Unavailable;
         this.updateService.status$.next(status);
 
-        if (status === SystemUpdateStatus.Available && update.status?.new_version) {
+        if (update.status?.new_version) {
           if (update.status?.new_version?.manifest?.changelog) {
             this.updateService.changeLog$.next(update.status.new_version.manifest.changelog.replace(/\n/g, '<br>'));
           }
@@ -379,11 +337,7 @@ export class UpdateComponent implements OnInit {
 
     let job$: Observable<Job>;
     if (this.isHaLicensed()) {
-      job$ = this.trainService.trainValue$.pipe(
-        take(1),
-        switchMap((trainValue) => this.api.call('update.set_train', [trainValue])),
-        switchMap(() => this.api.job('failover.upgrade', [{ resume }])),
-      );
+      job$ = this.api.job('failover.upgrade', [{ resume }]);
     } else {
       job$ = this.api.job('update.update', [{ resume, reboot: true }]);
     }
@@ -417,7 +371,7 @@ export class UpdateComponent implements OnInit {
       )
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Updates successfully downloaded'));
-        this.updateService.pendingUpdates();
+        this.updateService.checkIfUpdateIsDownloaded();
       });
   }
 
