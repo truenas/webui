@@ -2,6 +2,7 @@ import { AsyncPipe } from '@angular/common';
 import {
   Component, ChangeDetectionStrategy,
   Inject,
+  AfterViewInit,
 } from '@angular/core';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatProgressBar } from '@angular/material/progress-bar';
@@ -11,7 +12,7 @@ import {
   combineLatest,
 } from 'rxjs';
 import {
-  filter, map, switchMap, take,
+  filter, map, switchMap, take, pairwise, delay,
 } from 'rxjs/operators';
 import { WINDOW } from 'app/helpers/window.helper';
 import { AuthService } from 'app/modules/auth/auth.service';
@@ -50,7 +51,7 @@ import { WebSocketStatusService } from 'app/services/websocket-status.service';
   ],
   providers: [SigninStore],
 })
-export class SigninComponent {
+export class SigninComponent implements AfterViewInit {
   protected hasAuthToken = this.authService.hasAuthToken;
   protected isTokenWithinTimeline$ = this.tokenLastUsedService.isTokenWithinTimeline$;
 
@@ -108,8 +109,29 @@ export class SigninComponent {
       filter(Boolean),
       untilDestroyed(this),
     ).subscribe(() => {
-      // Restore focus on username input
-      this.window.document?.querySelector<HTMLElement>('[ixAutofocus] input')?.focus();
+      this.focusUsername();
     });
+
+    this.hasLoadingIndicator$
+      .pipe(
+        delay(0),
+        pairwise(),
+        filter(([prev, curr]) => prev && !curr),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        this.focusUsername();
+      });
+  }
+
+  ngAfterViewInit(): void {
+    this.focusUsername();
+  }
+
+  private focusUsername(): void {
+    if (this.window.document.querySelector('ix-full-screen-dialog')) {
+      return;
+    }
+    this.window.document.querySelector<HTMLElement>('[ixAutofocus] input')?.focus();
   }
 }
