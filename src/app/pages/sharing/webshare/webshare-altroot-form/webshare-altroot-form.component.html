@@ -1,0 +1,61 @@
+<ix-modal-header
+  [requiredRoles]="requiredRoles"
+  [title]="title | translate"
+  [loading]="isFormLoading()"
+></ix-modal-header>
+
+<mat-card>
+  <mat-card-content>
+    <form [formGroup]="form" (submit)="onSubmit()">
+      <ix-fieldset>
+        <ix-explorer
+          formControlName="path"
+          [label]="helptext.webshare_path_label | translate"
+          [tooltip]="helptext.webshare_path_tooltip | translate"
+          [required]="true"
+          [nodeProvider]="treeNodeProvider"
+          [disabled]="isFormLoading()"
+        ></ix-explorer>
+
+        <ix-input
+          formControlName="name"
+          [label]="helptext.webshare_name_label | translate"
+          [tooltip]="helptext.webshare_name_tooltip | translate"
+          [placeholder]="helptext.webshare_name_placeholder | translate"
+          [required]="true"
+        ></ix-input>
+
+        <ix-checkbox
+          formControlName="search_indexed"
+          [label]="helptext.webshare_search_indexed_label | translate"
+          [tooltip]="helptext.webshare_search_indexed_tooltip | translate"
+        ></ix-checkbox>
+
+        <div class="warning-message">
+          <ix-icon name="info"></ix-icon>
+          <span>{{ helptext.webshare_warning | translate }}</span>
+        </div>
+      </ix-fieldset>
+
+      <ix-form-actions>
+        <button
+          mat-button
+          type="submit"
+          color="primary"
+          ixTest="save"
+          [disabled]="form.invalid || isFormLoading()"
+        >
+          {{ 'Save' | translate }}
+        </button>
+        <button
+          mat-button
+          type="button"
+          ixTest="cancel"
+          (click)="slideInRef.close({ response: false, error: null })"
+        >
+          {{ 'Cancel' | translate }}
+        </button>
+      </ix-form-actions>
+    </form>
+  </mat-card-content>
+</mat-card>
