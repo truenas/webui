@@ -1,0 +1,10 @@
+<span class="webshare-name-container">
+  <span [ixTest]="[title, uniqueRowTag(row()), 'row-text']">{{ row().name }}</span>
+  @if (row().is_home_base) {
+    <ix-icon
+      name="mdi-home"
+      class="home-icon"
+      [matTooltip]="'Home Directory Share' | translate"
+    ></ix-icon>
+  }
+</span>
