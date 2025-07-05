@@ -193,6 +193,7 @@ export interface DatasetDetails {
   iscsi_shares?: { enabled: boolean; type: IscsiExtentType; path: string }[];
   vms?: { name: string; path: string }[];
   apps?: { name: string; path: string }[];
+  webshares?: { name: string; path: string }[];
   children?: DatasetDetails[];
   volsize?: ZfsProperty<string, number>; // Present for type === DatasetType.Volume
   thick_provisioned?: boolean; // Present for type === DatasetType.Volume

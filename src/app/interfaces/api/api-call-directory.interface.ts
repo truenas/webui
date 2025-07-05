@@ -289,6 +289,7 @@ import {
   MatchDatastoresWithDatasetsParams,
   VmwareSnapshot, VmwareSnapshotUpdate,
 } from 'app/interfaces/vmware.interface';
+import { WebShareConfig, WebShareConfigUpdate } from 'app/interfaces/webshare-config.interface';
 import {
   CloneZfsSnapshot,
   CreateZfsSnapshot,
@@ -981,6 +982,10 @@ export interface ApiCallDirectory {
   // WebUI Crypto
   'webui.crypto.csr_profiles': { params: void; response: CertificateProfiles };
   'webui.crypto.get_certificate_domain_names': { params: [number]; response: string[] };
+
+  // WebShare
+  'webshare.config': { params: void; response: WebShareConfig };
+  'webshare.update': { params: [WebShareConfigUpdate]; response: WebShareConfig };
 
   // ZFS
   'pool.snapshot.clone': { params: [CloneZfsSnapshot]; response: boolean };
