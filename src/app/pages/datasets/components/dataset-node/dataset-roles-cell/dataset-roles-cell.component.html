@@ -54,3 +54,10 @@
     [matTooltip]="'Dataset is shared via iSCSI' | translate"
   ></ix-icon>
 }
+
+@if (dataset().webshares?.length) {
+  <ix-icon
+    name="ix-webshare"
+    [matTooltip]="'Dataset is shared via WebShare' | translate"
+  ></ix-icon>
+}

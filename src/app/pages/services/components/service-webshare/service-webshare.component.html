@@ -1,0 +1,129 @@
+<ix-modal-header
+  [requiredRoles]="requiredRoles"
+  [title]="'WebShare' | translate"
+  [loading]="isFormLoading()"
+></ix-modal-header>
+
+<mat-card>
+  <mat-card-content>
+    <form [formGroup]="form" (submit)="onSubmit()">
+      <!-- General Configuration (No title needed) -->
+      <ix-fieldset>
+        <ix-checkbox
+          formControlName="storage_admins"
+          [label]="'Storage Admin full access' | translate"
+          [tooltip]="helptext.storage_admins_tooltip | translate"
+        ></ix-checkbox>
+
+        <ix-checkbox
+          formControlName="enable_web_terminal"
+          [label]="'Allow WebShell Access' | translate"
+          [tooltip]="helptext.enable_web_terminal_tooltip | translate"
+        ></ix-checkbox>
+
+        <ix-chips
+          formControlName="allowed_groups"
+          [label]="'Allowed Groups' | translate"
+          [autocompleteProvider]="groupProvider"
+          [tooltip]="helptext.allowed_groups_tooltip | translate"
+        ></ix-chips>
+      </ix-fieldset>
+
+      <ix-fieldset [title]="'Storage Configuration' | translate">
+        <ix-select
+          formControlName="search_index_pool"
+          [label]="'Index Pool' | translate"
+          [tooltip]="helptext.search_index_pool_tooltip | translate"
+          [options]="poolOptions$"
+        ></ix-select>
+
+        <ix-select
+          formControlName="bulk_download_pool"
+          [label]="'Scratch Pool' | translate"
+          [tooltip]="helptext.bulk_download_pool_tooltip | translate"
+          [options]="poolOptions$"
+        ></ix-select>
+      </ix-fieldset>
+
+      <ix-fieldset [title]="'Network Configuration' | translate">
+        <ix-input
+          formControlName="proxy_port"
+          type="number"
+          [label]="'Network Port' | translate"
+          [tooltip]="helptext.network_port_tooltip | translate"
+          [required]="true"
+        ></ix-input>
+
+        <ix-list
+          formArrayName="proxy_bind_addrs"
+          [empty]="form.controls.proxy_bind_addrs.controls.length === 0"
+          [label]="'Bind IP Addresses' | translate"
+          [tooltip]="'IP addresses the service should bind to' | translate"
+          (add)="addBindAddress()"
+        >
+          @for (address of form.controls.proxy_bind_addrs.controls; track address; let i = $index) {
+            <ix-list-item
+              [formGroupName]="i"
+              (delete)="removeBindAddress(i)"
+            >
+              <ix-select
+                formControlName="bindAddr"
+                [label]="'IP Address' | translate"
+                [options]="bindAddressOptions$"
+                [required]="true"
+              ></ix-select>
+            </ix-list-item>
+          }
+        </ix-list>
+      </ix-fieldset>
+
+      <ix-fieldset [title]="'Security Configuration' | translate">
+        <ix-select
+          formControlName="passkey_mode"
+          [label]="'Passkey Authentication' | translate"
+          [tooltip]="'Configure passkey authentication mode. Disabled turns off passkey authentication, Enabled allows both password and passkey authentication, Required makes passkey authentication mandatory.' | translate"
+          [options]="passkeyModeOptions$"
+        ></ix-select>
+
+        <ix-chips
+          formControlName="passkey_rp_origins"
+          [label]="'Allowed Origins' | translate"
+          [tooltip]="'List of HTTPS URLs allowed for passkey authentication. Leave empty to use default. Each URL must start with https://.' | translate"
+        ></ix-chips>
+
+        <div class="passkey-removal">
+          <ix-input
+            formControlName="remove_passkey_username"
+            [label]="'Remove User Passkey' | translate"
+            [tooltip]="'Enter a username to remove their passkey authentication' | translate"
+            [placeholder]="'Enter username...' | translate"
+          >
+            <button
+              mat-icon-button
+              ixSuffix
+              type="button"
+              color="warn"
+              [disabled]="!canRemovePasskey || isFormLoading()"
+              [title]="'Remove Passkey' | translate"
+              (click)="removeUserPasskey()"
+            >
+              <ix-icon name="mdi-delete"></ix-icon>
+            </button>
+          </ix-input>
+        </div>
+      </ix-fieldset>
+
+      <ix-form-actions>
+        <button
+          mat-button
+          type="submit"
+          color="primary"
+          ixTest="save"
+          [disabled]="form.invalid || isFormLoading()"
+        >
+          {{ 'Save' | translate }}
+        </button>
+      </ix-form-actions>
+    </form>
+  </mat-card-content>
+</mat-card>

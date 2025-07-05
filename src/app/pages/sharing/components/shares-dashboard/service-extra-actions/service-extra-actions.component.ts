@@ -19,6 +19,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
 import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
+import { ServiceWebshareComponent } from 'app/pages/services/components/service-webshare/service-webshare.component';
 import {
   GlobalTargetConfigurationComponent,
 } from 'app/pages/sharing/iscsi/global-target-configuration/global-target-configuration.component';
@@ -91,6 +92,9 @@ export class ServiceExtraActionsComponent {
         break;
       case ServiceName.Cifs:
         this.slideIn.open(ServiceSmbComponent);
+        break;
+      case ServiceName.WebShare:
+        this.slideIn.open(ServiceWebshareComponent, { wide: true });
         break;
       default:
         break;

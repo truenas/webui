@@ -39,7 +39,8 @@ export function isPropertyInherited(property?: ZfsProperty<unknown>): boolean {
 }
 
 export function doesDatasetOrChildrenHaveShares(dataset: DatasetDetails): boolean {
-  if (dataset.nfs_shares?.length || dataset.smb_shares?.length || dataset.iscsi_shares?.length) {
+  if (dataset.nfs_shares?.length || dataset.smb_shares?.length
+    || dataset.iscsi_shares?.length || dataset.webshares?.length) {
     return true;
   }
   for (const child of (dataset.children || [])) {
