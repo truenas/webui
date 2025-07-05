@@ -140,15 +140,25 @@ export class WebShareAltrootFormComponent implements OnInit {
     this.setupPathAutoPopulate();
 
     const data = this.slideInRef.getData();
-    if (!data?.isNew && data?.name) {
-      this.form.patchValue({
-        name: data.name,
-        path: data.path,
-        search_indexed: data.search_indexed ?? true,
-      });
+    if (data) {
+      if (!data.isNew && data.name) {
+        // Editing existing WebShare
+        this.form.patchValue({
+          name: data.name,
+          path: data.path,
+          search_indexed: data.search_indexed ?? true,
+        });
 
-      // Disable name field when editing
-      this.form.controls.name.disable();
+        // Disable name field when editing
+        this.form.controls.name.disable();
+      } else if (data.isNew && (data.name || data.path)) {
+        // Creating new WebShare with pre-filled values
+        this.form.patchValue({
+          name: data.name || '',
+          path: data.path || '',
+          search_indexed: data.search_indexed ?? true,
+        });
+      }
     }
   }
 
@@ -249,11 +259,14 @@ export class WebShareAltrootFormComponent implements OnInit {
       return;
     }
 
+    // Track if the name was pre-filled
+    const initialName = this.form.controls.name.value;
+
     this.form.controls.path.valueChanges
       .pipe(untilDestroyed(this))
       .subscribe((path: string) => {
-        // Only auto-populate if name field is empty
-        if (!this.form.controls.name.value && path) {
+        // Only auto-populate if name field is empty and wasn't pre-filled
+        if (!this.form.controls.name.value && !initialName && path) {
           // Extract the last directory name from the path
           const pathParts = path.split('/').filter((part) => part);
           if (pathParts.length > 0) {
