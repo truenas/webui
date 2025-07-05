@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import {
   MatCard, MatCardContent, MatCardHeader, MatCardTitle,
 } from '@angular/material/card';
@@ -49,6 +50,8 @@ export class UsageCardComponent {
   protected readonly nfsRequiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
   protected readonly smbRequiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
 
+  readonly selectedBranch = toSignal(this.datasetStore.selectedBranch$);
+
   readonly isApplications = computed(() => {
     return this.dataset().name?.endsWith(ixAppsDataset);
   });
@@ -84,6 +87,120 @@ export class UsageCardComponent {
     return shareNamesPretty;
   });
 
+  readonly webShareNames = computed(() => {
+    if (!this.dataset().webshares?.length) {
+      return '';
+    }
+    const shareNames: string[] = this.dataset().webshares?.map((item) => item.name) || [];
+    if (shareNames.length === 1) {
+      return "'" + shareNames[0] + "'";
+    }
+    let shareNamesPretty = "'";
+    for (let i = 0; i < shareNames.length - 1; i++) {
+      if (i + 1 >= shareNames.length - 1) {
+        shareNamesPretty += shareNames[i] + "', and '" + shareNames[shareNames.length - 1] + "'";
+      } else {
+        shareNamesPretty += shareNames[i] + "', '";
+      }
+    }
+    return shareNamesPretty;
+  });
+
+  readonly inheritedWebShares = computed(() => {
+    const branch = this.selectedBranch();
+    const currentDataset = this.dataset();
+
+    if (!branch || branch.length < 2) {
+      return [];
+    }
+
+    const inheritedShares: { name: string; path: string; parentDataset: string }[] = [];
+
+    // Check all ancestors (exclude the current dataset which is the last in branch)
+    for (let i = 0; i < branch.length - 1; i++) {
+      const ancestor = branch[i];
+      if (ancestor.webshares?.length) {
+        // Check if any webshare from this ancestor includes our dataset
+        for (const webshare of ancestor.webshares) {
+          // Check if current dataset path starts with the webshare path
+          if (currentDataset.mountpoint.startsWith(webshare.path)) {
+            inheritedShares.push({
+              name: webshare.name,
+              path: webshare.path,
+              parentDataset: ancestor.name,
+            });
+          }
+        }
+      }
+    }
+
+    return inheritedShares;
+  });
+
+  readonly inheritedWebShareNames = computed(() => {
+    const inherited = this.inheritedWebShares();
+    if (!inherited.length) {
+      return '';
+    }
+
+    const shareNames = inherited.map((share) => share.name);
+    if (shareNames.length === 1) {
+      return "'" + shareNames[0] + "' (inherited)";
+    }
+
+    let shareNamesPretty = "'";
+    for (let i = 0; i < shareNames.length - 1; i++) {
+      if (i + 1 >= shareNames.length - 1) {
+        shareNamesPretty += shareNames[i] + "', and '" + shareNames[shareNames.length - 1] + "' (inherited)";
+      } else {
+        shareNamesPretty += shareNames[i] + "', '";
+      }
+    }
+    return shareNamesPretty;
+  });
+
+  readonly hasDirectWebShares = computed(() => {
+    return this.dataset().webshares?.length > 0;
+  });
+
+  readonly hasInheritedWebShares = computed(() => {
+    return this.inheritedWebShares().length > 0;
+  });
+
+  readonly combinedWebShareDisplay = computed(() => {
+    const directShares = this.dataset().webshares || [];
+    const inheritedShares = this.inheritedWebShares();
+
+    // Get direct share names
+    const directShareNames = directShares.map((share) => share.name);
+
+    // Get inherited share names that are not already in direct shares
+    const uniqueInheritedShareNames = inheritedShares
+      .map((share) => share.name)
+      .filter((name) => !directShareNames.includes(name));
+
+    // Build display string
+    const allShareNames = [...directShareNames, ...uniqueInheritedShareNames.map((name) => `${name} (inherited)`)];
+
+    if (allShareNames.length === 0) {
+      return '';
+    }
+
+    if (allShareNames.length === 1) {
+      return "'" + allShareNames[0] + "'";
+    }
+
+    let shareNamesPretty = "'";
+    for (let i = 0; i < allShareNames.length - 1; i++) {
+      if (i + 1 >= allShareNames.length - 1) {
+        shareNamesPretty += allShareNames[i] + "', and '" + allShareNames[allShareNames.length - 1] + "'";
+      } else {
+        shareNamesPretty += allShareNames[i] + "', '";
+      }
+    }
+    return shareNamesPretty;
+  });
+
   readonly canCreateShare = computed(() => {
     return !this.hasChildrenWithShares()
       && !this.isSystemDataset()
@@ -92,7 +209,9 @@ export class UsageCardComponent {
       && !this.dataset().vms?.length
       && !this.dataset().smb_shares?.length
       && !this.dataset().nfs_shares?.length
-      && !this.dataset().iscsi_shares?.length;
+      && !this.dataset().iscsi_shares?.length
+      && !this.dataset().webshares?.length
+      && !this.hasInheritedWebShares();
   });
 
   constructor(

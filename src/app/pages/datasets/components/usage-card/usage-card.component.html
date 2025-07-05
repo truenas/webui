@@ -94,6 +94,18 @@
         </a>
       </div>
     }
+    @if (hasDirectWebShares() || hasInheritedWebShares()) {
+      <div class="details-item">
+        <ix-icon name="ix-webshare" class="icon"></ix-icon>
+        <div class="label">{{ 'Share Attached' | translate }}:</div>
+        <div class="webshares value">
+          {{ 'Dataset is shared via WebShare as {shares}' | translate: { shares: combinedWebShareDisplay() } }}
+        </div>
+        <a class="action" ixTest="manage-webshares" [routerLink]="['/sharing/webshare']">
+          {{ 'Manage WebShares' | translate }}
+        </a>
+      </div>
+    }
     @if (canCreateShare()) {
       <div class="details-item">
         <ix-icon class="icon" name="share"></ix-icon>
