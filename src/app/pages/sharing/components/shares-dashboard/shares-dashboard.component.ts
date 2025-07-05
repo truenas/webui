@@ -12,6 +12,7 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NvmeOfCardComponent } from 'app/pages/sharing/components/shares-dashboard/nvme-of-card/nvme-of-card.component';
 import { sharesDashboardElements } from 'app/pages/sharing/components/shares-dashboard/shares-dashboard.elements';
+import { WebShareCardComponent } from 'app/pages/sharing/components/shares-dashboard/webshare-card/webshare-card.component';
 import { IscsiCardComponent } from './iscsi-card/iscsi-card.component';
 import { NfsCardComponent } from './nfs-card/nfs-card.component';
 import { SmbCardComponent } from './smb-card/smb-card.component';
@@ -28,6 +29,7 @@ import { SmbCardComponent } from './smb-card/smb-card.component';
     NfsCardComponent,
     IscsiCardComponent,
     NvmeOfCardComponent,
+    WebShareCardComponent,
     EmptyComponent,
     TranslateModule,
     PageHeaderComponent,
