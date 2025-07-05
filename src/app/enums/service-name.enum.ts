@@ -8,6 +8,7 @@ export enum ServiceName {
   Ups = 'ups',
   Http = 'http',
   NvmeOf = 'nvmet',
+  WebShare = 'webshare',
 }
 
 export const serviceNames = new Map<ServiceName, string>([
@@ -19,6 +20,7 @@ export const serviceNames = new Map<ServiceName, string>([
   [ServiceName.Cifs, 'SMB'],
   [ServiceName.Ups, 'UPS'],
   [ServiceName.NvmeOf, 'NVMe-oF'],
+  [ServiceName.WebShare, 'WebShare'],
 ]);
 
 export enum RdmaProtocolName {
