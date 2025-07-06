@@ -499,7 +499,7 @@
   "Apps Write": "",
   "Apr": "",
   "Archs": "",
-  "Are you sure you want to delete \"{name}\"?": "Είστε σίγουρος ότι θέλετε να διαγράψετε το \"name}\";",
+  "Are you sure you want to delete \"{name}\"?": "Είστε σίγουρος ότι θέλετε να διαγράψετε το \"{name}\";",
   "Are you sure you want to delete <b>{name}</b> Reporting Exporter?": "",
   "Are you sure you want to delete cronjob <b>\"{name}\"</b>?": "",
   "Are you sure you want to delete group <b>\"{name}\"</b>?": "Είστε σίγουροι ότι θέλετε να διαγράψετε την ομάδα <b>\"{name}\"</b>;",
