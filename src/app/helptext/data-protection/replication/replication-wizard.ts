@@ -57,7 +57,7 @@ If not checked, <i>zfs allow</i> must be used to grant non-user permissions to p
  the selected dataset snapshots.'),
 
   encryptionLabel: T('Encryption'),
-  encryptionTooltip: T('Set to use encryption when replicating data. Additional encryption options will appear.'),
+  encryptionTooltip: T('Set to use encryption when replicating data. Additional encryption options will appear. Replicating from an encrypted dataset requires enabling this option or inheriting encryption.'),
 
   encryptionInheritLabel: T('Inherit Encryption'),
   encryptionInheritTooltip: T('Target dataset encryption will be inherited from its parent dataset.'),

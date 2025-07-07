@@ -135,6 +135,10 @@ export const extraRules = {
         "name": "lodash",
         "importNames": ["chain"],
         "message": "Use standalone methods to get results instead of using 'chain' for chaining."
+      },
+      {
+        "name": "@angular/animations",
+        "message": "Angular animations are now deprecated. Use CSS transitions and animations instead. See: https://angular.dev/guide/animations/migration"
       }
     ],
     "patterns": [{
