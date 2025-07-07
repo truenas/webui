@@ -93,6 +93,15 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
     textColumn({
       title: this.translate.instant('Name'),
       propertyName: 'name',
+      getValue: (row) => {
+        const value = row.name;
+
+        if (row.description) {
+          return `${value} (${row.description})`;
+        }
+
+        return value;
+      },
     }),
     ipAddressesColumn({
       title: this.translate.instant('IP Addresses'),
