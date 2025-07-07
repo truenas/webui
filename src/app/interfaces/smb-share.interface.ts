@@ -3,38 +3,22 @@ import { NfsAclTag } from 'app/enums/nfs-acl.enum';
 import { SmbSharesecPermission, SmbSharesecType } from 'app/enums/smb-sharesec.enum';
 
 export interface SmbShare {
-  aapl_name_mangling: boolean;
-  abe: boolean;
-  acl: boolean;
-  browsable: boolean;
-  comment: string;
-  durablehandle: boolean;
-  enabled: boolean;
-  fsrvp: boolean;
-  guestok: boolean;
-  home: boolean;
-  hostsallow: string[];
-  hostsdeny: string[];
   id: number;
-  locked: boolean;
+  purpose?: SmbPresetType;
   name: string;
   path: string;
-  path_suffix: string;
-  auxsmbconf: string;
-  purpose: SmbPresetType;
-  recyclebin: boolean;
-  ro: boolean;
-  shadowcopy: boolean;
-  streams: boolean;
-  timemachine: boolean;
-  vuid: string;
-  path_local: string;
-  audit: {
+  enabled?: boolean;
+  comment?: string;
+  readonly?: boolean;
+  browsable?: boolean;
+  access_based_share_enumeration?: boolean;
+  locked: boolean;
+  audit?: {
     enable?: boolean;
     watch_list?: string[];
     ignore_list?: string[];
   };
-  options: SmbShareOptions;
+  options?: SmbShareOptions;
 }
 
 export enum SmbPresetType {

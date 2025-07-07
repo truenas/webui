@@ -13,10 +13,6 @@ export const sedCardElements = {
       hierarchy: [T('Configure Self-Encrypting Drive')],
       synonyms: [T('Self-Encrypting Drive Settings')],
     },
-    sedUser: {
-      hierarchy: [T('ATA Security User')],
-      synonyms: [T('SED User')],
-    },
     sedPassword: {
       hierarchy: [T('SED Password')],
     },

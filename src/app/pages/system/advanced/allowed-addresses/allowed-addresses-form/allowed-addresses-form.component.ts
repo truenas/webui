@@ -136,6 +136,11 @@ export class AllowedAddressesFormComponent implements OnInit {
   }
 
   onSubmit(): void {
+    if (!this.form.dirty) {
+      this.slideInRef.close({ response: false });
+      return;
+    }
+
     this.isFormLoading.set(true);
     const addresses = this.form.getRawValue().addresses;
 
