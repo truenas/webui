@@ -6,7 +6,6 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { SedUser } from 'app/enums/sed-user.enum';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -25,14 +24,14 @@ describe('SedFormComponent', () => {
     providers: [
       mockApi([
         mockCall('system.advanced.update'),
-        mockCall('system.advanced.sed_global_password', '123'),
+        mockCall('system.advanced.sed_global_password', '***'),
       ]),
       mockProvider(SlideIn, {
         open: jest.fn(() => of({ response: true })),
       }),
       mockProvider(SlideInRef, {
         close: jest.fn(),
-        getData: jest.fn(() => ({ sedPassword: '123', sedUser: SedUser.User })),
+        getData: jest.fn(() => ({ sedPassword: '***' })),
         requireConfirmationWhen: jest.fn(),
       }),
       mockAuth(),
@@ -45,13 +44,12 @@ describe('SedFormComponent', () => {
     api = spectator.inject(ApiService);
   });
 
-  it('shows current system advanced sed values when form is being edited', async () => {
+  it('shows current system advanced sed values when form is being edited without *** content', async () => {
     const form = await loader.getHarness(IxFormHarness);
     const values = await form.getValues();
 
     expect(values).toEqual({
-      'ATA Security User': SedUser.User,
-      'SED Password': '123',
+      'SED Password': '',
       'Confirm SED Password': '',
     });
   });
@@ -59,7 +57,6 @@ describe('SedFormComponent', () => {
   it('sends an update payload to websocket and closes modal when save is pressed', async () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
-      'ATA Security User': SedUser.Master,
       'SED Password': 'pleasechange',
       'Confirm SED Password': 'pleasechange',
     });
@@ -69,7 +66,6 @@ describe('SedFormComponent', () => {
 
     expect(api.call).toHaveBeenCalledWith('system.advanced.update', [
       {
-        sed_user: SedUser.Master,
         sed_passwd: 'pleasechange',
       },
     ]);

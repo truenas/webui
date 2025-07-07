@@ -40,14 +40,14 @@ describe('SmbCardComponent', () => {
       id: 3,
       purpose: SmbPresetType.MultiProtocolShare,
       path: '/mnt/APPS/smb1',
-      home: true,
       name: 'smb123',
       comment: 'pool',
-      vuid: '04305a6f-7a37-43dc-8fc0-fe6662751437',
       enabled: true,
-      path_local: '/mnt/APPS/smb1',
       audit: {
         enable: true,
+      },
+      options: {
+        home: true,
       },
     },
   ] as SmbShare[];

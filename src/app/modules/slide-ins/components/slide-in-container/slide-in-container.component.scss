@@ -7,7 +7,19 @@
   padding-top: 75px;
   position: fixed;
   right: 0;
+  transform: translateX(100%); // Start hidden by default
+  transition: transform 150ms ease-out;
   width: 480px;
+
+  &.slide-in-hidden {
+    transform: translateX(100%);
+    transition: transform 150ms ease-in;
+  }
+
+  &.slide-in-visible {
+    transform: translateX(0);
+    transition: transform 150ms ease-out;
+  }
 }
 
 .slide-in-wrapper {
