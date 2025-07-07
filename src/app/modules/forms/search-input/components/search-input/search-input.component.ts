@@ -41,6 +41,7 @@ export class SearchInputComponent<T> implements OnChanges {
   protected toggleAdvancedMode(): void {
     this.isInAdvancedMode = !this.isInAdvancedMode;
     this.updateQuery();
+    this.queryChange.emit(this.query());
   }
 
   protected basicQuery: string;

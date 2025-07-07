@@ -10,6 +10,7 @@
   "Not enabled, because this feature requires an Enterprise license.": "",
   "OpenStack Swift (OVH, Oracle, Rackspace, etc)": "",
   "Set to use encryption when replicating data. Additional encryption options will appear. Replicating from an encrypted dataset requires enabling this option or inheriting encryption.": "",
+  "Show Active Directory": "",
   "\n              It looks like your session has been inactive for more than {lifetime} seconds.<br>\n              For security reasons we will log you out at {time}.\n            ": "\nSembra che la tua sessione sia stata inattiva per più di {lifetime} secondi.<br>\nPer motivi di sicurezza, verrai disconnesso alle {time}.",
   " as of {dateTime}": " al {dateTime}",
   " bytes.": " byte.",
