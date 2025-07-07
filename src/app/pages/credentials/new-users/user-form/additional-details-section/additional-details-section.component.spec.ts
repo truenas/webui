@@ -151,7 +151,7 @@ describe('AdditionalDetailsSectionComponent', () => {
         home: '/var/empty',
         home_mode: '700',
         home_create: false,
-        uid: '1234',
+        uid: 1234,
       });
     });
 
