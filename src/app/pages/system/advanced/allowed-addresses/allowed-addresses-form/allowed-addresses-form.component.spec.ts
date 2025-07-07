@@ -90,6 +90,14 @@ describe('AllowedAddressesComponent', () => {
     ]);
   });
 
+  it('closes the form normally when no changes are made', async () => {
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    await saveButton.click();
+
+    expect(api.call).not.toHaveBeenCalledWith('system.general.update');
+    expect(componentRef.close).toHaveBeenCalledWith({ response: false });
+  });
+
   describe('warnings', () => {
     it('does not show a warning when user already has allowed IPs and adds more', async () => {
       expect(spectator.query(WarningComponent)).not.toExist();
