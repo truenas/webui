@@ -30,7 +30,7 @@ export class SearchInputComponent<T> implements OnChanges {
   readonly runSearch = output();
 
   // TODO: Outside of scope for this component. Solve elsewhere.
-  readonly advancedSearch = viewChild('advancedSearch', { read: AdvancedSearchComponent });
+  readonly advancedSearch = viewChild('advancedSearch', { read: AdvancedSearchComponent<T> });
 
   ngOnChanges(): void {
     this.selectModeFromQuery();
@@ -41,6 +41,7 @@ export class SearchInputComponent<T> implements OnChanges {
   protected toggleAdvancedMode(): void {
     this.isInAdvancedMode = !this.isInAdvancedMode;
     this.updateQuery();
+    this.queryChange.emit(this.query());
   }
 
   protected basicQuery: string;
