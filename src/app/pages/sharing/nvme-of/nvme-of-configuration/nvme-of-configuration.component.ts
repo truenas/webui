@@ -1,11 +1,13 @@
 import {
   ChangeDetectionStrategy, Component, OnInit, signal,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { finalize, forkJoin } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -22,6 +24,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { AppState } from 'app/store';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -47,12 +51,12 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 export class NvmeOfConfigurationComponent implements OnInit {
   protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
   protected isLoading = signal(false);
+  protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
 
   protected form = this.formBuilder.nonNullable.group({
     basenqn: [''],
     ana: [false],
     rdma: [false],
-    xport_referral: [false],
   });
 
   constructor(
@@ -63,6 +67,7 @@ export class NvmeOfConfigurationComponent implements OnInit {
     private snackbar: SnackbarService,
     private translate: TranslateService,
     private nvmeOfService: NvmeOfService,
+    private store$: Store<AppState>,
   ) {}
 
   protected readonly helptext = helptextNvmeOf;
@@ -86,6 +91,10 @@ export class NvmeOfConfigurationComponent implements OnInit {
 
       if (!isRdmaEnabled) {
         this.form.controls.rdma.disable();
+      }
+
+      if (!this.isEnterprise()) {
+        this.form.controls.ana.disable();
       }
     });
   }

@@ -4576,27 +4576,6 @@
       "System",
       "Advanced Settings",
       "Self-Encrypting Drive",
-      "ATA Security User"
-    ],
-    "synonyms": [
-      "SED User"
-    ],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/system",
-      "advanced"
-    ],
-    "routerLink": null,
-    "anchor": "ata-security-user",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "Advanced Settings",
-      "Self-Encrypting Drive",
       "SED Password"
     ],
     "synonyms": [],
