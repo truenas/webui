@@ -16,5 +16,11 @@
       cursor: pointer;
       text-decoration: underline;
     }
+
+    li span {
+      color: var(--primary);
+      cursor: pointer;
+      text-decoration: underline;
+    }
   }
 }

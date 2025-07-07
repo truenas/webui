@@ -48,7 +48,6 @@ import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -57,6 +56,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { RestartSmbDialog } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
 import { presetEnabledFields } from 'app/pages/sharing/smb/smb-form/smb-form-presets';
+import { SmbUsersWarningComponent } from 'app/pages/sharing/smb/smb-form/smb-users-warning/smb-users-warning.component';
 import { SmbValidationService } from 'app/pages/sharing/smb/smb-form/smb-validator.service';
 import { getRootDatasetsValidator } from 'app/pages/sharing/utils/root-datasets-validator';
 import { DatasetService } from 'app/services/dataset/dataset.service';
@@ -70,7 +70,6 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
 @UntilDestroy()
 @Component({
   selector: 'ix-smb-form',
-  styleUrls: ['./smb-form.component.scss'],
   templateUrl: './smb-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
@@ -90,8 +89,8 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     MatButton,
     TestDirective,
     TranslateModule,
-    IxIconComponent,
     WarningComponent,
+    SmbUsersWarningComponent,
   ],
 })
 export class SmbFormComponent implements OnInit, AfterViewInit {
@@ -99,7 +98,6 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   private defaultSmbShare: SmbShare | undefined;
 
   protected isLoading = signal(false);
-  protected hasSmbUsers = signal(true);
   protected showLegacyWarning = signal(false);
   protected legacyWarningMessage = this.translate.instant(
     'For the best experience, we recommend choosing a modern SMB share purpose instead of the legacy option.',
@@ -145,7 +143,6 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     includeSnapshots: false,
   });
 
-  protected presetFields: (keyof SmbShare)[] = [];
   protected purposeOptions$: Observable<SelectOption<SmbPresetType>[]>;
 
   get hasAddedAllowDenyHosts(): boolean {
@@ -200,22 +197,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
   protected rootNodes = signal<ExplorerNodeData[]>([]);
 
-  hostsAllowTooltip = this.translate.instant('Enter a list of allowed hostnames or IP addresses.\
-    Separate entries by pressing <code>Enter</code>. A more detailed description \
-    with examples can be found \
-    <a href="{url}" target="_blank">here</a>. <br><br> \
-    If neither *Hosts Allow* or *Hosts Deny* contains \
-    an entry, then SMB share access is allowed for any host. <br><br> \
-    If there is a *Hosts Allow* list but no *Hosts Deny* list, then only allow \
-    hosts on the *Hosts Allow* list. <br><br> \
-    If there is a *Hosts Deny* list but no *Hosts Allow* list, then allow all \
-    hosts that are not on the *Hosts Deny* list. <br><br> \
-    If there is both a *Hosts Allow* and *Hosts Deny* list, then allow all hosts \
-    that are on the *Hosts Allow* list. <br><br> \
-    If there is a host not on the *Hosts Allow* and not on the *Hosts Deny* list, \
-    then allow it.', { url: 'https://wiki.samba.org/index.php/1.4_Samba_Security' });
-
-  form = this.formBuilder.group({
+  protected form = this.formBuilder.group({
     path: ['', [Validators.required]],
     name: ['', Validators.required],
     purpose: [SmbPresetType.DefaultShare as SmbPresetType | null],
@@ -309,7 +291,6 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.setupPurposeControl();
-    this.checkForSmbUsersWarning();
 
     if (this.defaultSmbShare) {
       this.form.patchValue(this.defaultSmbShare);
@@ -446,7 +427,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
       });
   }
 
-  setValuesFromPreset(preset: SmbPresetType): void {
+  private setValuesFromPreset(preset: SmbPresetType): void {
     const enabledFields = presetEnabledFields[preset];
 
     if (preset === SmbPresetType.ExternalShare) {
@@ -458,7 +439,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     if (!enabledFields) return;
 
     enabledFields.forEach((field) => {
-    // eslint-disable-next-line no-restricted-syntax
+      // eslint-disable-next-line no-restricted-syntax
       const ctrl = this.form.get(field as string);
       if (ctrl) {
         ctrl.enable({ emitEvent: false });
@@ -481,7 +462,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
       .subscribe();
   }
 
-  clearPresets(): void {
+  private clearPresets(): void {
     Object.values(presetEnabledFields).forEach((fields) => {
       fields?.forEach((field) => {
         // eslint-disable-next-line no-restricted-syntax
@@ -695,23 +676,6 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
         );
       }),
     );
-  }
-
-  protected closeForm(routerLink?: string[]): void {
-    this.slideInRef.close({ response: false });
-
-    if (routerLink) {
-      this.router.navigate(routerLink);
-    }
-  }
-
-  private checkForSmbUsersWarning(): void {
-    this.smbValidationService.checkForSmbUsersWarning().pipe(
-      filter(Boolean),
-      untilDestroyed(this),
-    ).subscribe(() => {
-      this.hasSmbUsers.set(false);
-    });
   }
 
   private buildPurposeOptions(): SelectOption<SmbPresetType>[] {

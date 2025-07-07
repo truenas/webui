@@ -1,15 +1,16 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { MockComponent } from 'ng-mocks';
 import { of, throwError } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockCall, mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
+import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
@@ -20,7 +21,9 @@ import { Group } from 'app/interfaces/group.interface';
 import { Service } from 'app/interfaces/service.interface';
 import {
   LegacySmbShareOptions,
-  SmbPresetType, smbPresetTypeLabels, SmbShare,
+  SmbPresetType,
+  smbPresetTypeLabels,
+  SmbShare,
 } from 'app/interfaces/smb-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
@@ -38,6 +41,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { ApiService } from 'app/modules/websocket/api.service';
 import { RestartSmbDialog } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
 import { presetEnabledFields } from 'app/pages/sharing/smb/smb-form/smb-form-presets';
+import { SmbUsersWarningComponent } from 'app/pages/sharing/smb/smb-form/smb-users-warning/smb-users-warning.component';
 import { ApiCallError } from 'app/services/errors/error.classes';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { AppState } from 'app/store';
@@ -49,16 +53,17 @@ import { SmbFormComponent } from './smb-form.component';
 describe('SmbFormComponent', () => {
   const existingShare = {
     id: 1,
-    purpose: 'Default Share',
+    purpose: SmbPresetType.DefaultShare,
     name: 'ds222',
     path: '/mnt/pool123/ds222',
+    locked: false,
     audit: {
       enable: true,
       watch_list: [] as string[],
       ignore_list: [] as string[],
     },
     options: {
-      purpose: 'Default Share',
+      purpose: SmbPresetType.DefaultShare,
       path_suffix: '%U',
       auxsmbconf: 'Aux SMB Conf',
       home: false,
@@ -78,9 +83,8 @@ describe('SmbFormComponent', () => {
       shadowcopy: true,
       fsrvp: false,
       enabled: true,
-      locked: false,
     },
-  } as unknown as SmbShare;
+  } as SmbShare;
 
   const slideInRef: SlideInRef<{ existingSmbShare?: SmbShare; defaultSmbShare?: SmbShare } | undefined, unknown> = {
     close: jest.fn(),
@@ -114,6 +118,7 @@ describe('SmbFormComponent', () => {
     imports: [
       ReactiveFormsModule,
       WarningComponent,
+      MockComponent(SmbUsersWarningComponent),
     ],
     providers: [
       mockAuth(),
@@ -177,7 +182,7 @@ describe('SmbFormComponent', () => {
           mockProvider(SlideInRef, {
             ...slideInRef,
             getData: () => ({
-              existingSmbShare: { ...existingShare, purpose: 'LEGACY_SHARE' },
+              existingSmbShare: { ...existingShare, purpose: SmbPresetType.LegacyShare },
             }),
           }),
         ],
@@ -436,7 +441,7 @@ describe('SmbFormComponent', () => {
       expect(api.call).toHaveBeenNthCalledWith(5, 'sharing.smb.create', [{
         name: 'ds223',
         path: '/mnt/pool123/ds222',
-        purpose: 'DEFAULT_SHARE',
+        purpose: SmbPresetType.DefaultShare,
         comment: '',
         enabled: true,
         ro: false,
@@ -449,7 +454,7 @@ describe('SmbFormComponent', () => {
         },
         options: {
           aapl_name_mangling: false,
-          purpose: 'DEFAULT_SHARE',
+          purpose: SmbPresetType.DefaultShare,
         },
       }]);
     });
@@ -525,31 +530,15 @@ describe('SmbFormComponent', () => {
       jest.spyOn(store$, 'dispatch');
     });
 
-    it('shows SMB users warning when there are no SMB users', () => {
-      spectator.component.ngOnInit();
-      spectator.detectChanges();
-
-      const warning = spectator.query('.smb-users-warning');
-      expect(warning).toBeTruthy();
-
-      expect(warning.textContent).toContain('Looks like you don’t have any users who’ll be able to access this share.');
-      expect(warning.textContent).toContain('Create a new user');
-      expect(warning.textContent).toContain('Configure Directory Services');
-      expect(warning.textContent).toContain('Ignore the error and add users later.');
-
-      const options = spectator.queryAll('ul li');
-
-      options[0].querySelector('a')?.click();
-      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/credentials', 'users']);
-
-      options[1].querySelector('a')?.click();
-      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/credentials', 'directory-services']);
-    });
-
     it('should have error for duplicate share name', async () => {
       const nameControl = await loader.getHarness(IxInputHarness.with({ label: 'Name' }));
       await nameControl.setValue('ds222');
       expect(await nameControl.getErrorText()).toBe('Share with this name already exists');
+    });
+
+    it('should have a component for warning user about missing SMB users', () => {
+      const warningComponent = spectator.query(SmbUsersWarningComponent);
+      expect(warningComponent).toBeTruthy();
     });
   });
 
@@ -605,7 +594,7 @@ describe('SmbFormComponent', () => {
             reason: '[EINVAL] sharingsmb_create.afp: Apple SMB2/3 protocol extension support is required by this parameter.',
           },
         } as JsonRpcError),
-        spectator.component.form,
+        expect.any(FormGroup),
         {},
         'smb-form-toggle-advanced-options',
       );
