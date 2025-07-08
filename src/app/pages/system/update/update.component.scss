@@ -7,14 +7,8 @@
   grid-template-columns: 1fr 1fr;
   margin-bottom: 100px;
 
-  &.no-profiles {
-    @media(max-width: $breakpoint-lg) {
-      grid-template-columns: 1fr 0.5fr;
-    }
-
-    @media(max-width: $breakpoint-md) {
-      grid-template-columns: 1fr;
-    }
+  ::ng-deep > * {
+    display: block;
   }
 
   @media(max-width: $breakpoint-sm) {

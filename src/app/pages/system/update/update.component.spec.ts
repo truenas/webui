@@ -285,7 +285,7 @@ describe('UpdateComponent', () => {
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/system/update/manualupdate']);
   });
 
-  it('renders ix-update-profile-card component with correct input', () => {
+  it('renders ix-update-profile-card', () => {
     spectator.detectChanges();
 
     const updateProfileCard = spectator.query('ix-update-profile-card');

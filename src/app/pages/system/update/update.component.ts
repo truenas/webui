@@ -1,7 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component,
-  OnInit, computed,
+  OnInit,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -22,13 +22,16 @@ import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
+import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
 import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { UpdateProfileChoices } from 'app/interfaces/system-update.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
+import {
+  WithLoadingStateDirective,
+} from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -67,6 +70,7 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
     ReactiveFormsModule,
     PageHeaderComponent,
     UpdateProfileCard,
+    WithLoadingStateDirective,
   ],
 })
 export class UpdateComponent implements OnInit {
@@ -128,14 +132,7 @@ export class UpdateComponent implements OnInit {
     map((info) => getSystemVersion(info.remote_info.version)),
   ));
 
-  protected readonly profileChoices = toSignal(
-    this.updateService.getProfileChoices().pipe(shareReplay({ bufferSize: 1, refCount: true })),
-    { initialValue: {} as UpdateProfileChoices },
-  );
-
-  protected readonly hasAvailableProfiles = computed(() => {
-    return Object.values(this.profileChoices()).some((profile) => profile.available);
-  });
+  protected readonly profileChoices$ = this.updateService.getProfileChoices().pipe(toLoadingState());
 
   constructor(
     protected updateService: UpdateService,

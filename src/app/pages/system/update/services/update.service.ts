@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
 import {
   BehaviorSubject, Observable,
 } from 'rxjs';
@@ -26,7 +25,6 @@ export class UpdateService {
 
   constructor(
     private api: ApiService,
-    private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
   ) {}
 

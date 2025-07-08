@@ -1,11 +1,14 @@
+import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, OnInit, computed, input,
+  ChangeDetectionStrategy, Component, OnInit, computed, input, signal,
 } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { filter, of, switchMap } from 'rxjs';
+import {
+  async, filter, of, switchMap,
+} from 'rxjs';
 import { UpdateProfileChoices } from 'app/interfaces/system-update.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
@@ -27,6 +30,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TestDirective,
     MatButtonModule,
     TranslateModule,
+    AsyncPipe,
   ],
 })
 
@@ -35,23 +39,54 @@ export class UpdateProfileCard implements OnInit {
 
   readonly profileChoices = input<UpdateProfileChoices>({});
 
-  profiles = computed(() => {
+  protected currentProfileId = signal('');
+
+  protected availableProfiles = computed(() => {
     const choices = this.profileChoices();
-    return Object.entries(choices).filter(([_, profile]) => profile.available).map(([id, profile]) => ({
-      id,
-      name: profile.name,
-      note: profile.footnote,
-      description: profile.description,
-      available: profile.available,
-    }));
+    return Object.entries(choices)
+      .filter(([_, profile]) => profile.available)
+      .map(([id, profile]) => ({
+        ...profile,
+        id,
+      }));
   });
 
-  profileOptions = computed(() => {
+  /**
+   * Attempt to get label.
+   * It may be absent in some situations.
+   */
+  protected currentProfileLabel = computed(() => {
+    const currentProfile = Object.entries(this.profileChoices())
+      .find(([id]) => id === this.currentProfileId());
+
+    return currentProfile?.[1]?.name || this.currentProfileId();
+  });
+
+  protected isProfileMissingFromOptions = computed(() => {
+    if (!this.currentProfileId()) {
+      return false;
+    }
+
+    return !this.availableProfiles().some((profile) => profile.id === this.currentProfileId());
+  });
+
+  protected notAvailableProfiles = computed(() => {
+    const choices = this.profileChoices();
+    return Object.entries(choices)
+      .filter(([_, profile]) => !profile.available)
+      .map(([id, profile]) => ({
+        ...profile,
+        id,
+      }));
+  });
+
+  protected profileOptions = computed(() => {
     return of(
-      this.profiles().filter((profile) => profile.available).map((profile) => ({
-        label: profile.name,
-        value: profile.id,
-      })),
+      this.availableProfiles()
+        .map((profile) => ({
+          label: profile.name,
+          value: profile.id,
+        })),
     );
   });
 
@@ -68,28 +103,33 @@ export class UpdateProfileCard implements OnInit {
     this.updateService.getUpdateConfig()
       .pipe(untilDestroyed(this))
       .subscribe((config) => {
+        this.currentProfileId.set(config.profile);
         this.updateProfileControl.patchValue(config.profile);
       });
   }
 
   applyProfile(): void {
-    const selectedProfile = this.profiles().find((profile) => profile.id === this.updateProfileControl.value);
+    const selectedProfile = this.availableProfiles().find((profile) => profile.id === this.updateProfileControl.value);
 
     this.dialogService.confirm({
-      title: this.translate.instant('Change Update Profile'),
-      message: this.translate.instant('Are you sure you want to use <b>{profile}</b> profile', { profile: selectedProfile?.name }),
+      message: this.translate.instant('Are you sure you want to switch to <b>{profile}</b> update profile?', { profile: selectedProfile?.name }),
       hideCheckbox: true,
       buttonText: this.translate.instant('Continue'),
-      cancelText: this.translate.instant('Cancel'),
     }).pipe(
       filter(Boolean),
-      switchMap(() => this.updateService.updateConfig({ profile: this.updateProfileControl.value }).pipe(
-        this.loader.withLoader(),
-      )),
-      this.errorHandler.withErrorHandler(),
+      switchMap(() => {
+        return this.updateService.updateConfig({ profile: this.updateProfileControl.value }).pipe(
+          this.loader.withLoader(),
+          this.errorHandler.withErrorHandler(),
+        );
+      }),
       untilDestroyed(this),
     ).subscribe({
-      next: () => this.snackbar.success(this.translate.instant('Update profile saved')),
+      next: () => {
+        this.snackbar.success(this.translate.instant('Switched to {profile} update profile', { profile: selectedProfile?.name }));
+      },
     });
   }
+
+  protected readonly async = async;
 }

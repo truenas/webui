@@ -1,6 +1,6 @@
 <ix-page-header [loading]="!!(updateService.isLoading$ | async)"></ix-page-header>
 
-<div class="update-container" [class.no-profiles]="!hasAvailableProfiles()">
+<div class="update-container">
   <div>
     <h2>
       @if (showDownloadUpdateButton()) {
@@ -142,7 +142,7 @@
     </div>
   </div>
 
-  @if (hasAvailableProfiles()) {
-    <ix-update-profile-card [profileChoices]="profileChoices()"></ix-update-profile-card>
-  }
+  <ng-container *ixWithLoadingState="profileChoices$ | async as profileChoices">
+    <ix-update-profile-card [profileChoices]="profileChoices"></ix-update-profile-card>
+  </ng-container>
 </div>
