@@ -72,9 +72,9 @@
             ></ix-checkbox>
           }
 
-          @if (form.controls.ro.enabled) {
+          @if (form.controls.readonly.enabled) {
             <ix-checkbox
-              formControlName="ro"
+              formControlName="readonly"
               [label]="helptextSharingSmb.readOnlyLabel | translate"
               [tooltip]="helptextSharingSmb.readOnlyTooltip | translate"
             ></ix-checkbox>
@@ -96,9 +96,9 @@
             ></ix-checkbox>
           }
 
-          @if (form.controls.abe.enabled) {
+          @if (form.controls.access_based_share_enumeration.enabled) {
             <ix-checkbox
-              formControlName="abe"
+              formControlName="access_based_share_enumeration"
               [label]="helptextSharingSmb.abeLabel | translate"
               [tooltip]="helptextSharingSmb.abeTooltip | translate"
             ></ix-checkbox>
@@ -124,26 +124,28 @@
         <ix-fieldset formGroupName="audit" [title]="'Audit Logging' | translate">
           <ix-checkbox
             formControlName="enable"
-            [label]="helptextSharingSmb.enabledLabel | translate"
+            [label]="'Enable Logging' | translate"
             [tooltip]="helptextSharingSmb.auditLogTooltip | translate"
           ></ix-checkbox>
 
-          <ix-chips
-            formControlName="watch_list"
-            [hint]="'Keep this list empty to Watch All' | translate"
-            [label]="'Watch List' | translate"
-            [tooltip]="helptextSharingSmb.watchListTooltip | translate"
-            [autocompleteProvider]="groupProvider"
-            [allowNewEntries]="false"
-          ></ix-chips>
+          @if (form.value.audit.enable) {
+            <ix-chips
+              formControlName="watch_list"
+              [hint]="'Keep this list empty to Watch All' | translate"
+              [label]="'Watch List' | translate"
+              [tooltip]="helptextSharingSmb.watchListTooltip | translate"
+              [autocompleteProvider]="groupProvider"
+              [allowNewEntries]="false"
+            ></ix-chips>
 
-          <ix-chips
-            formControlName="ignore_list"
-            [label]="'Ignore List' | translate"
-            [tooltip]="helptextSharingSmb.ignoreListTooltip | translate"
-            [autocompleteProvider]="groupProvider"
-            [allowNewEntries]="false"
-          ></ix-chips>
+            <ix-chips
+              formControlName="ignore_list"
+              [label]="'Ignore List' | translate"
+              [tooltip]="helptextSharingSmb.ignoreListTooltip | translate"
+              [autocompleteProvider]="groupProvider"
+              [allowNewEntries]="false"
+            ></ix-chips>
+          }
         </ix-fieldset>
 
         @if (showOtherOptions) {
@@ -273,7 +275,7 @@
               ></ix-checkbox>
             }
 
-            @if (form.controls.dataset_naming_schema.enabled && form.controls.auto_dataset_creation.value) {
+            @if (shouldShowNamingSchema) {
               <ix-input
                 formControlName="dataset_naming_schema"
                 [label]="helptextSharingSmb.datasetNamingSchemaLabel | translate"

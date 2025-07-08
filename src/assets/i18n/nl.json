@@ -254,6 +254,7 @@
   "Enable Display": "",
   "Enable Hyper-V Enlightenments": "",
   "Enable iSCSI Extensions for RDMA (iSER)": "",
+  "Enable Logging": "",
   "Enable Remote Direct Memory Access (RDMA)": "",
   "Enable Secure Boot": "",
   "Enable Serial Console": "",

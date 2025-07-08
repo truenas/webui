@@ -979,6 +979,7 @@
   "Enable iSCSI Extensions for RDMA (iSER)": "",
   "Enable iXsystems Proactive Support": "",
   "Enable Learning": "",
+  "Enable Logging": "",
   "Enable NFS over RDMA": "",
   "Enable passwordless sudo for zfs commands": "",
   "Enable Remote Direct Memory Access (RDMA)": "",

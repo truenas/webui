@@ -39,6 +39,13 @@ jobs:
             - Performance considerations
             - Security implications
 
+            Do not provide:
+            - summary of what PR does
+            - list of steps you took to review
+            - numeric rating or score
+
+            When describing positive aspects of the PR, just mention them briefly in one - three sentences.
+
             Ignore small nit-picky issues like formatting or style unless they significantly impact readability.
 
             Provide constructive feedback with specific suggestions for improvement.
@@ -54,6 +61,4 @@ jobs:
 
             Keep review brief and focused:
             - do not repeat yourself
-            - do not provide numeric rating
-            - do not provide summary
             - keep overall assessment concise (one sentence)
