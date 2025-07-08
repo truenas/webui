@@ -293,9 +293,9 @@ button.mat-mdc-button.mat-accent[type='button']:hover {
 
 a.mat-mdc-button.mat-primary,
 button.mat-mdc-button.mat-primary {
-  // background-color: var(--primary) !important;
-  // color: var(--primary-txt) !important;
-  // opacity: 1;
+  background-color: var(--primary) !important;
+  color: var(--primary-txt) !important;
+  opacity: 1;
 }
 
 a.mat-mdc-button.mat-primary:focus-visible,
@@ -315,9 +315,9 @@ button.mat-mdc-button.mat-accent {
 button.mat-mdc-button.mat-error,
 button.mat-mdc-button.mat-red,
 button.mat-mdc-button.mat-warn {
-  // background-color: var(--red) !important;
-  // color: #efefef !important;
-  // opacity: 1 !important;
+  background-color: var(--red) !important;
+  color: #efefef !important;
+  opacity: 1 !important;
 }
 
 button.mat-mdc-button.mat-finished,

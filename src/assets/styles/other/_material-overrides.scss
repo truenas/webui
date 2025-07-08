@@ -167,7 +167,7 @@ html .ix-dark {
     --mdc-form-field-label-text-tracking: normal;
     --mdc-form-field-label-text-size: inherit;
     --mdc-form-field-label-text-font: var(--font-family-body);
-    --mat-checkbox-label-text-color: var(--fg2);
+    --mat-checkbox-label-text-color: var(--fg1);
   }
 
   .mat-mdc-slide-toggle {
@@ -179,30 +179,40 @@ html .ix-dark {
     --mdc-form-field-label-text-font: var(--font-family-body);
 
     &.mat-mdc-checkbox-disabled label {
-      color: var(--grey);
+      color: var(--fg2);
+      opacity: 0.7;
     }
 
     &.mat-primary {
-      --mdc-checkbox-selected-icon-color: var(--primary);
-      --mdc-checkbox-unselected-icon-color: var(--primary);
-      --mdc-checkbox-selected-hover-icon-color: var(--primary);
-      --mdc-checkbox-unselected-hover-icon-color: var(--primary);
-      --mdc-checkbox-selected-pressed-icon-color: var(--primary);
-      --mdc-checkbox-unselected-pressed-icon-color: var(--primary);
-      --mdc-checkbox-selected-focus-state-layer-color: var(--primary);
-      --mdc-checkbox-unselected-focus-state-layer-color: var(--primary);
-      --mdc-checkbox-selected-hover-state-layer-color: var(--primary);
-      --mdc-checkbox-unselected-hover-state-layer-color: var(--primary);
-      --mdc-checkbox-disabled-selected-icon-color: #9c9c9c;
-      --mdc-checkbox-disabled-unselected-icon-color: #9c9c9c;
-      --mdc-checkbox-unselected-focus-icon-color: var(--fg2);
-      --mat-checkbox-unselected-icon-color: var(--primary);
-      --mat-checkbox-unselected-hover-icon-color: var(--fg1);
-      --mat-checkbox-unselected-focus-icon-color: var(--fg1);
-      --mat-checkbox-selected-icon-color: var(--primary);
-      --mat-checkbox-selected-hover-icon-color: var(--primary);
-      --mat-checkbox-selected-focus-icon-color: var(--primary);
+      --mat-checkbox-disabled-selected-icon-color: #9c9c9c;
+      --mat-checkbox-disabled-unselected-icon-color: #9c9c9c;
       --mat-checkbox-selected-checkmark-color: var(--fg2);
+      --mat-checkbox-selected-focus-icon-color: var(--primary);
+      --mat-checkbox-selected-focus-state-layer-color: var(--primary);
+      --mat-checkbox-selected-hover-icon-color: var(--primary);
+      --mat-checkbox-selected-hover-state-layer-color: var(--primary);
+      --mat-checkbox-selected-icon-color: var(--primary);
+      --mat-checkbox-selected-pressed-icon-color: var(--primary);
+      --mat-checkbox-unselected-focus-icon-color: var(--primary);
+      --mat-checkbox-unselected-focus-state-layer-color: var(--primary);
+      --mat-checkbox-unselected-hover-icon-color: var(--primary);
+      --mat-checkbox-unselected-hover-state-layer-color: var(--primary);
+      --mat-checkbox-unselected-icon-color: var(--primary);
+      --mat-checkbox-unselected-icon-color: var(--primary);
+      --mat-checkbox-unselected-pressed-icon-color: var(--primary);
+
+
+      &.mat-mdc-checkbox-disabled {
+        --mat-checkbox-disabled-selected-checkmark-color: var(--fg2);
+        --mat-checkbox-disabled-selected-icon-color: var(--grey);
+        --mat-checkbox-disabled-unselected-icon-color: var(--grey);
+        --mat-checkbox-disabled-selected-hover-icon-color: var(--grey);
+        --mat-checkbox-disabled-unselected-hover-icon-color: var(--grey);
+        --mat-checkbox-disabled-selected-hover-state-layer-color: transparent;
+        --mat-checkbox-disabled-unselected-hover-state-layer-color: transparent;
+        --mat-checkbox-disabled-unselected-focus-state-layer-color: transparent;
+        --mat-checkbox-disabled-unselected-pressed-state-layer-color: transparent;
+      }
     }
   }
 
@@ -241,7 +251,7 @@ html .ix-dark {
     --mdc-chip-container-height: unset;
     --mdc-chip-label-text-size: 11px;
   }
-  
+
   .mat-mdc-button.mat-primary {
     --mat-button-filled-container-color: var(--primary);
     --mat-button-outlined-label-text-color: var(--primary);
@@ -279,6 +289,10 @@ html .ix-dark {
     --mdc-text-button-focus-state-layer-color: var(--fg2);
     --mdc-text-button-hover-state-layer-color: var(--fg2);
     --mdc-text-button-pressed-state-layer-color: var(--fg2);
+
+    &:focus-visible {
+      outline: 1.5px solid var(--alt-fg2) !important;
+    }
   }
 
   .mat-mdc-button.mat-warn {
