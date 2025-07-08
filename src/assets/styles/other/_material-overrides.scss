@@ -210,8 +210,65 @@ html .ix-dark {
         --mat-checkbox-disabled-unselected-hover-icon-color: var(--grey);
         --mat-checkbox-disabled-selected-hover-state-layer-color: transparent;
         --mat-checkbox-disabled-unselected-hover-state-layer-color: transparent;
+        --mat-checkbox-disabled-selected-focus-state-layer-color: transparent;
         --mat-checkbox-disabled-unselected-focus-state-layer-color: transparent;
+        --mat-checkbox-selected-focus-state-layer-color: var(--grey);
+        --mat-checkbox-unselected-focus-icon-color: var(--grey);
+        --mat-checkbox-disabled-selected-pressed-state-layer-color: transparent;
         --mat-checkbox-disabled-unselected-pressed-state-layer-color: transparent;
+
+        // Override all interaction states to use grey
+        --mat-checkbox-selected-checkmark-color: var(--grey);
+        --mat-checkbox-selected-icon-color: var(--grey);
+        --mat-checkbox-unselected-icon-color: var(--grey);
+        --mat-checkbox-selected-hover-icon-color: var(--grey);
+        --mat-checkbox-unselected-hover-icon-color: var(--grey);
+        --mat-checkbox-selected-pressed-icon-color: var(--grey);
+        --mat-checkbox-unselected-pressed-icon-color: var(--grey);
+        --mat-checkbox-selected-focus-icon-color: var(--grey);
+        --mat-checkbox-unselected-focus-icon-color: var(--grey);
+        --mat-checkbox-selected-hover-state-layer-color: transparent;
+        --mat-checkbox-unselected-hover-state-layer-color: transparent;
+        --mat-checkbox-selected-focus-state-layer-color: transparent;
+        --mat-checkbox-unselected-focus-state-layer-color: transparent;
+        --mat-checkbox-selected-pressed-state-layer-color: transparent;
+        --mat-checkbox-unselected-pressed-state-layer-color: transparent;
+        
+        // Override MDC properties for disabled hover states - all grey
+        --mdc-checkbox-disabled-selected-icon-color: var(--grey);
+        --mdc-checkbox-disabled-unselected-icon-color: var(--grey);
+        --mdc-checkbox-disabled-selected-checkmark-color: var(--grey);
+        --mdc-checkbox-disabled-unselected-checkmark-color: var(--grey);
+        --mdc-checkbox-selected-checkmark-color: var(--grey);
+        --mdc-checkbox-selected-icon-color: var(--grey);
+        --mdc-checkbox-unselected-icon-color: var(--grey);
+        --mdc-checkbox-selected-hover-icon-color: var(--grey);
+        --mdc-checkbox-unselected-hover-icon-color: var(--grey);
+        --mdc-checkbox-selected-pressed-icon-color: var(--grey);
+        --mdc-checkbox-unselected-pressed-icon-color: var(--grey);
+        --mdc-checkbox-selected-focus-icon-color: var(--grey);
+        --mdc-checkbox-unselected-focus-icon-color: var(--grey);
+        --mdc-checkbox-selected-hover-state-layer-color: transparent;
+        --mdc-checkbox-unselected-hover-state-layer-color: transparent;
+        --mdc-checkbox-selected-focus-state-layer-color: transparent;
+        --mdc-checkbox-unselected-focus-state-layer-color: transparent;
+        --mdc-checkbox-selected-pressed-state-layer-color: transparent;
+        --mdc-checkbox-unselected-pressed-state-layer-color: transparent;
+
+        // Ensure disabled checkboxes don't get hover effects
+        &:hover {
+          --mdc-checkbox-selected-hover-icon-color: var(--grey);
+          --mdc-checkbox-unselected-hover-icon-color: var(--grey);
+          --mdc-checkbox-selected-hover-state-layer-color: transparent;
+          --mdc-checkbox-unselected-hover-state-layer-color: transparent;
+        }
+        
+        &:focus {
+          --mdc-checkbox-selected-focus-icon-color: var(--grey);
+          --mdc-checkbox-unselected-focus-icon-color: var(--grey);
+          --mdc-checkbox-selected-focus-state-layer-color: transparent;
+          --mdc-checkbox-unselected-focus-state-layer-color: transparent;
+        }
       }
     }
   }
