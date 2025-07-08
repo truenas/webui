@@ -18,6 +18,7 @@ import { JsonRpcError } from 'app/interfaces/api-message.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { Group } from 'app/interfaces/group.interface';
 import { Service } from 'app/interfaces/service.interface';
+import { SmbConfig } from 'app/interfaces/smb-config.interface';
 import {
   LegacySmbShareOptions,
   SmbPresetType, smbPresetTypeLabels, SmbShare,
@@ -128,6 +129,7 @@ describe('SmbFormComponent', () => {
         mockCall('filesystem.stat', {
           acl: true,
         } as FileSystemStat),
+        mockCall('smb.config', { aapl_extensions: true } as SmbConfig),
         mockJob('service.control', fakeSuccessfulJob()),
       ]),
       mockProvider(SlideIn),
@@ -433,7 +435,7 @@ describe('SmbFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(api.call).toHaveBeenNthCalledWith(5, 'sharing.smb.create', [{
+      expect(api.call).toHaveBeenNthCalledWith(6, 'sharing.smb.create', [{
         name: 'ds223',
         path: '/mnt/pool123/ds222',
         purpose: 'DEFAULT_SHARE',
@@ -481,7 +483,7 @@ describe('SmbFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(api.call).toHaveBeenNthCalledWith(5, 'sharing.smb.create', [{
+      expect(api.call).toHaveBeenNthCalledWith(6, 'sharing.smb.create', [{
         name: 'ds223',
         abe: false,
         path: '/mnt/pool123/ds222',

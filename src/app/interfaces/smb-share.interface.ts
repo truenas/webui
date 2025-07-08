@@ -48,7 +48,7 @@ export const smbPresetTypeLabels = new Map<SmbPresetType, string>([
 export const smbPresetTooltips = new Map<SmbPresetType, string>([
   [SmbPresetType.DefaultShare, T('Set the SMB share for best compatibility with common SMB clients.')],
   [SmbPresetType.LegacyShare, T('Legacy share type for compatibility with older TrueNAS versions. Please select a new share purpose.')],
-  [SmbPresetType.TimeMachineShare, T('The SMB share is presented to MacOS clients as a time machine target. NOTE: aapl_extensions must be set in the global smb.config')],
+  [SmbPresetType.TimeMachineShare, T('The SMB share is presented to MacOS clients as a time machine target.')],
   [SmbPresetType.MultiProtocolShare, T('The SMB share is configured for multi-protocol access. Set this if the path is shared through NFS, FTP, or used by containers or apps. NOTE: This setting can reduce SMB share performance because it turns off some SMB features for safer interoperability with external processes.')],
   [SmbPresetType.TimeLockedShare, T('The SMB share makes files read-only through the SMB protocol after the set graceperiod ends. WARNING: This setting does not work if the path is accessed locally or if another SMB share without the TIMELOCKED_SHARE purpose uses the same path. WARNING: This setting might not meet regulatory requirements for write-once storage.')],
   [SmbPresetType.PrivateDatasetsShare, T('The server uses the specified dataset_naming_schema in options to make a new ZFS dataset when the client connects. The server uses this dataset as the share path during the SMB session.')],

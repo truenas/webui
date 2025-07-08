@@ -10,7 +10,7 @@
       @if (!hasSmbUsers()) {
         <div class="smb-users-warning">
           <p class="title">
-            <ix-icon name="warning"></ix-icon>
+            <ix-icon name="info"></ix-icon>
 
             <span>
               {{ 'Looks like you don’t have any users who’ll be able to access this share.' | translate}}
@@ -70,6 +70,12 @@
 
         @if (showLegacyWarning()) {
           <ix-warning [message]="legacyWarningMessage"></ix-warning>
+        }
+
+        @if (showExtensionsWarning()) {
+          <ix-smb-extensions-warning
+            (extensionsEnabled)="extensionsEnabled()"
+          ></ix-smb-extensions-warning>
         }
 
         @if (form.controls.remote_path.enabled) {
