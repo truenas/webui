@@ -1,5 +1,5 @@
 @switch (true) {
-  @case (!isActiveDirectoryEnabled && !isLdapEnabled) {
+  @case (isDirectoryServicesDisabled()) {
     <div class="everything-disabled">
       <ix-empty [conf]="noDirectoryServicesConfig"></ix-empty>
       <div class="actions">
@@ -8,18 +8,9 @@
           mat-button
           ixTest="configure-active-directory"
           [ixUiSearch]="searchableElements.elements.configureActiveDirectory"
-          (click)="openActiveDirectoryForm()"
+          (click)="openDirectoryServicesForm()"
         >
-          {{ 'Configure Active Directory' | translate }}
-        </button>
-        <button
-          *ixRequiresRoles="requiredRoles"
-          mat-button
-          ixTest="configure-ldap"
-          [ixUiSearch]="searchableElements.elements.configureLdap"
-          (click)="openLdapForm()"
-        >
-          {{ 'Configure LDAP' | translate }}
+          {{ 'Configure Directory Services' | translate }}
         </button>
       </div>
     </div>
@@ -77,7 +68,6 @@
   </h3>
 
   <div class="advanced-settings-cards">
-    <ix-idmap-list [paginator]="false" [inCard]="true"></ix-idmap-list>
     <ng-container *ngTemplateOutlet="dataCard; context: { card: kerberosSettingsDataCard }"></ng-container>
     <ix-kerberos-realms-list [paginator]="false" [inCard]="true"></ix-kerberos-realms-list>
     <ix-kerberos-keytabs-list [paginator]="false" [inCard]="true"></ix-kerberos-keytabs-list>

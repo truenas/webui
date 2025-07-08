@@ -1,7 +1,7 @@
 import { CdkAccordionItem } from '@angular/cdk/accordion';
 import { NgTemplateOutlet } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, viewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, viewChild,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -15,9 +15,12 @@ import {
 import { filter } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
-import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
+import { DirectoryServiceStatus, DirectoryServiceType } from 'app/enums/directory-services.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextDashboard } from 'app/helptext/directory-service/dashboard';
+import {
+  ActiveDirectoryConfig, LdapConfig, LdapCredentialPlain,
+} from 'app/interfaces/directoryservices-config.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -28,14 +31,12 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ActiveDirectoryComponent } from 'app/pages/directory-service/components/active-directory/active-directory.component';
-import { IdmapListComponent } from 'app/pages/directory-service/components/idmap-list/idmap-list.component';
+import { DirectoryServicesConfigFormComponent } from 'app/pages/directory-service/components/directory-services-config-form/directory-services-config-form.component';
 import { KerberosKeytabsListComponent } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-list/kerberos-keytabs-list.component';
 import { KerberosRealmsListComponent } from 'app/pages/directory-service/components/kerberos-realms/kerberos-realms-list.component';
 import { KerberosSettingsComponent } from 'app/pages/directory-service/components/kerberos-settings/kerberos-settings.component';
 import { directoryServicesElements } from 'app/pages/directory-service/directory-services.elements';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
-import { LdapComponent } from './components/ldap/ldap.component';
 
 interface DataCard {
   title: TranslatedString;
@@ -60,7 +61,6 @@ interface DataCard {
     MatToolbarRow,
     MatCardContent,
     CdkAccordionItem,
-    IdmapListComponent,
     KerberosRealmsListComponent,
     KerberosKeytabsListComponent,
     MatList,
@@ -74,18 +74,18 @@ export class DirectoryServicesComponent implements OnInit {
 
   isActiveDirectoryEnabled = false;
   isLdapEnabled = false;
+  isDirectoryServicesDisabled = signal(true);
 
   activeDirectoryDataCard: DataCard;
   ldapDataCard: DataCard;
   kerberosSettingsDataCard: DataCard;
 
-  private readonly idmapListComponent = viewChild.required(IdmapListComponent);
   private readonly kerberosKeytabsListComponent = viewChild.required(KerberosKeytabsListComponent);
   private readonly kerberosRealmsListComponent = viewChild.required(KerberosRealmsListComponent);
 
   readonly noDirectoryServicesConfig: EmptyConfig = {
-    title: this.translate.instant('Active Directory and LDAP are disabled.'),
-    message: this.translate.instant('Only one can be active at a time.'),
+    title: this.translate.instant('Directory services are disabled.'),
+    message: this.translate.instant('Configure directory services to see details.'),
     large: true,
     icon: iconMarker('mdi-account-box'),
   };
@@ -107,9 +107,8 @@ export class DirectoryServicesComponent implements OnInit {
 
   refreshCards(): void {
     forkJoin([
-      this.api.call('directoryservices.get_state'),
-      this.api.call('activedirectory.config'),
-      this.api.call('ldap.config'),
+      this.api.call('directoryservices.status'),
+      this.api.call('directoryservices.config'),
       this.api.call('kerberos.config'),
     ])
       .pipe(
@@ -117,50 +116,60 @@ export class DirectoryServicesComponent implements OnInit {
         this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
-      .subscribe(([servicesState, activeDirectoryConfig, ldapConfig, kerberosSettings]) => {
-        this.isActiveDirectoryEnabled = servicesState.activedirectory !== DirectoryServiceState.Disabled;
-        this.isLdapEnabled = servicesState.ldap !== DirectoryServiceState.Disabled;
+      .subscribe(([servicesState, directoryServicesConfig, kerberosSettings]) => {
+        this.isDirectoryServicesDisabled.set(!directoryServicesConfig.enable);
+        this.isActiveDirectoryEnabled = servicesState.type === DirectoryServiceType.ActiveDirectory
+        && servicesState.status !== DirectoryServiceStatus.Disabled;
+        this.isLdapEnabled = servicesState.type === DirectoryServiceType.Ldap
+        && servicesState.status !== DirectoryServiceStatus.Disabled;
 
-        this.activeDirectoryDataCard = {
-          title: this.translate.instant(helptextDashboard.activeDirectory.title),
-          items: [
-            {
-              label: this.translate.instant(helptextDashboard.activeDirectory.status),
-              value: servicesState.activedirectory,
-            },
-            {
-              label: this.translate.instant(helptextDashboard.activeDirectory.domainName),
-              value: activeDirectoryConfig?.domainname || null,
-            },
-            {
-              label: this.translate.instant(helptextDashboard.activeDirectory.domainAccountName),
-              value: activeDirectoryConfig?.bindname || null,
-            },
-          ],
-          onSettingsPressed: () => this.openActiveDirectoryForm(),
-        };
-        this.ldapDataCard = {
-          title: this.translate.instant(helptextDashboard.ldap.title),
-          items: [
-            {
-              label: this.translate.instant(helptextDashboard.ldap.status),
-              value: servicesState.ldap,
-            },
-            {
-              label: this.translate.instant(helptextDashboard.ldap.hostname),
-              value: ldapConfig ? ldapConfig.hostname.join(',') : null,
-            },
-            {
-              label: this.translate.instant(helptextDashboard.ldap.baseDN),
-              value: ldapConfig?.basedn || null,
-            },
-            {
-              label: this.translate.instant(helptextDashboard.ldap.bindDN),
-              value: ldapConfig?.binddn || null,
-            },
-          ],
-          onSettingsPressed: () => this.openLdapForm(),
-        };
+        const adConfig = directoryServicesConfig?.configuration as ActiveDirectoryConfig;
+        if (adConfig) {
+          this.activeDirectoryDataCard = {
+            title: this.translate.instant(helptextDashboard.activeDirectory.title),
+            items: [
+              {
+                label: this.translate.instant(helptextDashboard.activeDirectory.status),
+                value: servicesState.type === DirectoryServiceType.ActiveDirectory
+                  ? servicesState.status
+                  : DirectoryServiceStatus.Disabled,
+              },
+              {
+                label: this.translate.instant(helptextDashboard.activeDirectory.domainName),
+                value: adConfig.domain || null,
+              },
+              {
+                label: this.translate.instant(helptextDashboard.activeDirectory.domainAccountName),
+                value: (directoryServicesConfig?.credential as LdapCredentialPlain).binddn || null,
+              },
+            ],
+            onSettingsPressed: () => this.openDirectoryServicesForm(),
+          };
+        }
+
+        const ldapConfig = directoryServicesConfig?.configuration as LdapConfig;
+        if (ldapConfig) {
+          this.ldapDataCard = {
+            title: this.translate.instant(helptextDashboard.ldap.title),
+            items: [
+              {
+                label: this.translate.instant(helptextDashboard.ldap.status),
+                value: servicesState.type === DirectoryServiceType.Ldap
+                  ? servicesState.status
+                  : DirectoryServiceStatus.Disabled,
+              },
+              {
+                label: this.translate.instant(helptextDashboard.ldap.baseDN),
+                value: ldapConfig.basedn || null,
+              },
+              {
+                label: this.translate.instant(helptextDashboard.ldap.bindDN),
+                value: (directoryServicesConfig?.credential as LdapCredentialPlain).binddn || null,
+              },
+            ],
+            onSettingsPressed: () => this.openDirectoryServicesForm(),
+          };
+        }
         this.kerberosSettingsDataCard = {
           title: this.translate.instant(helptextDashboard.kerberosSettings.title),
           items: [
@@ -196,15 +205,8 @@ export class DirectoryServicesComponent implements OnInit {
       });
   }
 
-  openActiveDirectoryForm(): void {
-    this.slideIn.open(ActiveDirectoryComponent, { wide: true }).pipe(
-      filter((response) => !!response.response),
-      untilDestroyed(this),
-    ).subscribe(() => this.refreshCards());
-  }
-
-  openLdapForm(): void {
-    this.slideIn.open(LdapComponent, { wide: true }).pipe(
+  openDirectoryServicesForm(): void {
+    this.slideIn.open(DirectoryServicesConfigFormComponent, { wide: true }).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(() => this.refreshCards());
@@ -218,9 +220,6 @@ export class DirectoryServicesComponent implements OnInit {
   }
 
   refreshTables(): void {
-    if (this.idmapListComponent()) {
-      this.idmapListComponent().getIdmaps();
-    }
     if (this.kerberosKeytabsListComponent()) {
       this.kerberosKeytabsListComponent().getKerberosKeytabs();
     }

@@ -1,0 +1,110 @@
+<form class="ix-form-container" [formGroup]="form">
+  <ix-fieldset [title]="'Active Directory Configuration' | translate">
+    <ix-input
+    formControlName="ad_hostname"
+    [label]="'Domain Controller Hostname/IP' | translate"
+    [required]="true"
+    [tooltip]="'Hostname or IP address of the Active Directory domain controller (e.g., dc01.example.com or 192.168.1.10)' | translate"
+  ></ix-input>
+
+  <ix-input
+    formControlName="ad_domain"
+    [label]="'Domain Name' | translate"
+    [required]="true"
+    [tooltip]="'Active Directory domain name (e.g., example.com). Do NOT enter an IP address here.' | translate"
+  ></ix-input>
+
+  <ix-input
+    formControlName="ad_site"
+    [label]="'Site Name' | translate"
+    [tooltip]="'Active Directory site name (optional)' | translate"
+  ></ix-input>
+
+  <ix-input
+    formControlName="ad_computer_account_ou"
+    [label]="'Computer Account OU' | translate"
+    [tooltip]="'Organizational Unit for computer accounts. Use full DN format (e.g., OU=Computers,DC=example,DC=com) or simple path (e.g., Computers/TrueNAS)' | translate"
+  ></ix-input>
+  </ix-fieldset>
+
+<ix-fieldset [title]="'Active Directory Options' | translate">
+  <ix-checkbox
+    formControlName="ad_use_default_domain"
+    [label]="'Use Default Domain' | translate"
+    [required]="true"
+    [tooltip]="'Use the default domain for user authentication' | translate"
+  ></ix-checkbox>
+
+  <ix-checkbox
+    formControlName="ad_enable_trusted_domains"
+    [label]="'Enable Trusted Domains' | translate"
+    [required]="true"
+    [tooltip]="'Allow authentication from trusted domains' | translate"
+  ></ix-checkbox>
+
+  <ix-checkbox
+    formControlName="ad_use_default_idmap"
+    [label]="'Use Default ID Mapping' | translate"
+    [tooltip]="'Use TrueNAS server default ID mapping configuration. When enabled, custom idmap settings will be omitted from the configuration.' | translate"
+  ></ix-checkbox>
+  </ix-fieldset>
+
+@if (enableTrustedDomains()) {
+  <ix-trusted-domains-config
+    [trustedDomains]="trustedDomainsValue"
+    (trustedDomainsChanged)="onTrustedDomainsChanged($event)"
+  ></ix-trusted-domains-config>
+}
+
+@if (!useDefaultIdmap()) {
+  <ix-fieldset [title]="'Active Directory ID Mapping Configuration' | translate">
+    <ix-select
+      formControlName="idmap_backend"
+      [label]="'ID Mapping Backend' | translate"
+      [required]="true"
+      [options]="idmapBackendOptions$"
+      [tooltip]="'Backend to use for ID mapping' | translate"
+    ></ix-select>
+
+    <ix-input
+      formControlName="idmap_range_low"
+      type="number"
+      [label]="'Range Low' | translate"
+      [required]="true"
+      [tooltip]="'Lowest ID in the mapping range (minimum 1000)' | translate"
+    ></ix-input>
+
+    <ix-input
+      formControlName="idmap_range_high"
+      type="number"
+      [label]="'Range High' | translate"
+      [required]="true"
+      [tooltip]="'Highest ID in the mapping range' | translate"
+    ></ix-input>
+
+    @if (selectedIdmapBackend() === 'AD') {
+      <ix-select
+        formControlName="idmap_schema_mode"
+        [label]="'Schema Mode' | translate"
+        [required]="true"
+        [options]="adSchemaOptions$"
+        [tooltip]="'Active Directory schema mode' | translate"
+      ></ix-select>
+
+      <ix-checkbox
+        formControlName="idmap_unix_primary_group"
+        [label]="'Unix Primary Group' | translate"
+        [required]="true"
+        [tooltip]="'Use Unix primary group from AD' | translate"
+      ></ix-checkbox>
+
+      <ix-checkbox
+        formControlName="idmap_unix_nss_info"
+        [label]="'Unix NSS Info' | translate"
+        [required]="true"
+        [tooltip]="'Use Unix NSS information from AD' | translate"
+      ></ix-checkbox>
+    }
+  </ix-fieldset>
+}
+</form>

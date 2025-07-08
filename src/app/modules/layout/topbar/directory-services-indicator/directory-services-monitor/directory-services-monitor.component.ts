@@ -9,7 +9,9 @@ import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { finalize } from 'rxjs';
-import { DirectoryServiceState, directoryServiceStateLabels } from 'app/enums/directory-service-state.enum';
+import {
+  directoryServiceNames, directoryServiceStateLabels, DirectoryServiceStatus,
+} from 'app/enums/directory-services.enum';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -37,9 +39,9 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 export class DirectoryServicesMonitorComponent implements OnInit {
   protected readonly isLoading = signal(false);
   protected readonly serviceName = signal<string>('');
-  protected readonly state = signal<DirectoryServiceState | null>(null);
+  protected readonly state = signal<DirectoryServiceStatus | null>(null);
 
-  protected readonly DirectoryServiceState = DirectoryServiceState;
+  protected readonly DirectoryServiceState = DirectoryServiceStatus;
   protected readonly directoryServiceStateLabels = directoryServiceStateLabels;
 
   constructor(
@@ -53,20 +55,15 @@ export class DirectoryServicesMonitorComponent implements OnInit {
 
   getStatus(): void {
     this.isLoading.set(true);
-    this.api.call('directoryservices.get_state')
+    this.api.call('directoryservices.status')
       .pipe(
         this.errorHandler.withErrorHandler(),
         finalize(() => this.isLoading.set(false)),
         untilDestroyed(this),
       )
       .subscribe((state) => {
-        if (state.ldap !== DirectoryServiceState.Disabled) {
-          this.serviceName.set('LDAP');
-          this.state.set(state.ldap);
-        } else {
-          this.serviceName.set('Active Directory');
-          this.state.set(state.activedirectory);
-        }
+        this.serviceName.set(directoryServiceNames[state.type]);
+        this.state.set(state.status);
       });
   }
 }
