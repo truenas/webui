@@ -13,14 +13,14 @@ import {
 } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
-import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
+import { DirectoryServiceStatus, DirectoryServiceType } from 'app/enums/directory-services.enum';
 import { NfsProtocol, nfsProtocolLabels } from 'app/enums/nfs-protocol.enum';
 import { Role } from 'app/enums/role.enum';
 import { RdmaProtocolName } from 'app/enums/service-name.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextServiceNfs } from 'app/helptext/services/components/service-nfs';
-import { DirectoryServicesState } from 'app/interfaces/directory-services-state.interface';
+import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-config.interface';
 import { NfsConfig } from 'app/interfaces/nfs-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -70,7 +70,7 @@ export class ServiceNfsComponent implements OnInit {
   protected readonly isFormLoading = signal(false);
   protected readonly isAddSpnDisabled = signal(true);
   protected readonly hasNfsStatus = signal(false);
-  protected activeDirectoryState = signal<DirectoryServiceState | null>(null);
+  protected activeDirectoryState = signal<DirectoryServiceStatus | null>(null);
 
   protected form = this.fb.group({
     allow_nonroot: [false],
@@ -215,10 +215,14 @@ export class ServiceNfsComponent implements OnInit {
     );
   }
 
-  private loadActiveDirectoryState(): Observable<DirectoryServicesState> {
-    return this.api.call('directoryservices.get_state').pipe(
-      tap(({ activedirectory }) => {
-        this.activeDirectoryState.set(activedirectory);
+  private loadActiveDirectoryState(): Observable<DirectoryServicesStatus> {
+    return this.api.call('directoryservices.status').pipe(
+      tap((dsStatus) => {
+        if (dsStatus.type === DirectoryServiceType.ActiveDirectory) {
+          this.activeDirectoryState.set(dsStatus.status);
+        } else {
+          this.activeDirectoryState.set(DirectoryServiceStatus.Disabled);
+        }
       }),
     );
   }
@@ -245,7 +249,7 @@ export class ServiceNfsComponent implements OnInit {
   get isAddSpnVisible(): boolean {
     return !this.hasNfsStatus()
       && this.form.getRawValue().v4_krb
-      && this.activeDirectoryState() === DirectoryServiceState.Healthy;
+      && this.activeDirectoryState() === DirectoryServiceStatus.Healthy;
   }
 
   addSpn(): void {

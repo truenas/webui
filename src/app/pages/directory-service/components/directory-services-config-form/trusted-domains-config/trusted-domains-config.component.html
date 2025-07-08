@@ -1,0 +1,197 @@
+<form class="ix-form-container" [formGroup]="form">
+  <ix-fieldset [title]="'Trusted Domains Configuration' | translate">
+    <ix-list
+    formArrayName="trustedDomains"
+    [empty]="trustedDomainsArray.controls.length === 0"
+    [label]="'Trusted Domains' | translate"
+    [formArray]="trustedDomainsArray"
+    [tooltip]="'Configure trusted domain mappings for authentication' | translate"
+    (add)="addTrustedDomain()"
+  >
+    @for (domain of trustedDomainsArray.controls; track domain; let i = $index) {
+      <ix-list-item
+        [label]="getTrustedDomainTypeLabel(domain.get('trusted_domain_type')?.value) + ' Domain'"
+        [formGroupName]="i"
+        (delete)="removeTrustedDomain(i)"
+      >
+        <div class="trusted-domain-config">
+          <div class="columns">
+            <ix-fieldset [title]="'Basic Configuration' | translate">
+              <ix-select
+                formControlName="trusted_domain_type"
+                [label]="'Domain Type' | translate"
+                [required]="true"
+                [options]="trustedDomainIdmapOptions$"
+                [tooltip]="'Select the type of trusted domain configuration' | translate"
+              ></ix-select>
+
+              <ix-input
+                formControlName="name"
+                [label]="'Domain Name' | translate"
+                [tooltip]="'Short-form name of the trusted domain (optional)' | translate"
+              ></ix-input>
+
+              <ix-input
+                formControlName="range_low"
+                type="number"
+                [label]="'Range Low' | translate"
+                [required]="true"
+                [tooltip]="'Lowest ID in the mapping range (minimum 1000)' | translate"
+              ></ix-input>
+
+              <ix-input
+                formControlName="range_high"
+                type="number"
+                [label]="'Range High' | translate"
+                [required]="true"
+                [tooltip]="'Highest ID in the mapping range' | translate"
+              ></ix-input>
+            </ix-fieldset>
+
+            @if (domain.get('trusted_domain_type')?.value) {
+              <ix-fieldset [title]="'Domain-Specific Configuration' | translate">
+                @if (domain.get('trusted_domain_type')?.value === 'ActiveDirectoryIdmap') {
+                  <ix-select
+                    formControlName="schema_mode"
+                    [label]="'Schema Mode' | translate"
+                    [required]="true"
+                    [options]="adSchemaOptions$"
+                    [tooltip]="'Active Directory schema mode' | translate"
+                  ></ix-select>
+
+                  <ix-checkbox
+                    formControlName="unix_primary_group"
+                    [label]="'Unix Primary Group' | translate"
+                    [required]="true"
+                    [tooltip]="'Use Unix primary group from AD' | translate"
+                  ></ix-checkbox>
+
+                  <ix-checkbox
+                    formControlName="unix_nss_info"
+                    [label]="'Unix NSS Info' | translate"
+                    [required]="true"
+                    [tooltip]="'Use Unix NSS information from AD' | translate"
+                  ></ix-checkbox>
+                }
+
+                @if (domain.get('trusted_domain_type')?.value === 'LdapIdmap') {
+                  <ix-input
+                    formControlName="ldap_base_dn"
+                    [label]="'LDAP Base DN' | translate"
+                    [required]="true"
+                    [tooltip]="'Base DN for LDAP ID mapping' | translate"
+                  ></ix-input>
+
+                  <ix-input
+                    formControlName="ldap_user_dn"
+                    [label]="'LDAP User DN' | translate"
+                    [required]="true"
+                    [tooltip]="'User DN for LDAP bind' | translate"
+                  ></ix-input>
+
+                  <ix-input
+                    formControlName="ldap_user_dn_password"
+                    type="password"
+                    [label]="'LDAP User Password' | translate"
+                    [required]="true"
+                    [tooltip]="'Password for LDAP bind user' | translate"
+                  ></ix-input>
+
+                  <ix-input
+                    formControlName="ldap_url"
+                    [label]="'LDAP URL' | translate"
+                    [required]="true"
+                    [tooltip]="'LDAP server URL for ID mapping' | translate"
+                  ></ix-input>
+
+                  <ix-checkbox
+                    formControlName="readonly"
+                    [label]="'Read Only' | translate"
+                    [required]="true"
+                    [tooltip]="'Use read-only mode for LDAP mapping' | translate"
+                  ></ix-checkbox>
+
+                  <ix-checkbox
+                    formControlName="validate_certificates"
+                    [label]="'Validate Certificates' | translate"
+                    [required]="true"
+                    [tooltip]="'Validate LDAP SSL/TLS certificates' | translate"
+                  ></ix-checkbox>
+                }
+
+                @if (domain.get('trusted_domain_type')?.value === 'Rfc2307Idmap') {
+                  <ix-input
+                    formControlName="ldap_url"
+                    [label]="'LDAP URL' | translate"
+                    [required]="true"
+                    [tooltip]="'LDAP server URL for ID mapping' | translate"
+                  ></ix-input>
+
+                  <ix-input
+                    formControlName="ldap_user_dn"
+                    [label]="'LDAP User DN' | translate"
+                    [required]="true"
+                    [tooltip]="'User DN for LDAP bind' | translate"
+                  ></ix-input>
+
+                  <ix-input
+                    formControlName="ldap_user_dn_password"
+                    type="password"
+                    [label]="'LDAP User Password' | translate"
+                    [required]="true"
+                    [tooltip]="'Password for LDAP bind user' | translate"
+                  ></ix-input>
+
+                  <ix-input
+                    formControlName="bind_path_user"
+                    [label]="'Bind Path User' | translate"
+                    [required]="true"
+                    [tooltip]="'LDAP path for user objects' | translate"
+                  ></ix-input>
+
+                  <ix-input
+                    formControlName="bind_path_group"
+                    [label]="'Bind Path Group' | translate"
+                    [required]="true"
+                    [tooltip]="'LDAP path for group objects' | translate"
+                  ></ix-input>
+
+                  <ix-checkbox
+                    formControlName="user_cn"
+                    [label]="'User CN' | translate"
+                    [required]="true"
+                    [tooltip]="'Use common name for user mapping' | translate"
+                  ></ix-checkbox>
+
+                  <ix-checkbox
+                    formControlName="ldap_realm"
+                    [label]="'LDAP Realm' | translate"
+                    [required]="true"
+                    [tooltip]="'Use LDAP realm for mapping' | translate"
+                  ></ix-checkbox>
+
+                  <ix-checkbox
+                    formControlName="validate_certificates"
+                    [label]="'Validate Certificates' | translate"
+                    [required]="true"
+                    [tooltip]="'Validate LDAP SSL/TLS certificates' | translate"
+                  ></ix-checkbox>
+                }
+
+                @if (domain.get('trusted_domain_type')?.value === 'RidIdmap') {
+                  <ix-checkbox
+                    formControlName="sssd_compat"
+                    [label]="'SSSD Compatibility' | translate"
+                    [required]="true"
+                    [tooltip]="'Enable SSSD compatibility mode' | translate"
+                  ></ix-checkbox>
+                }
+              </ix-fieldset>
+            }
+          </div>
+        </div>
+      </ix-list-item>
+    }
+    </ix-list>
+  </ix-fieldset>
+</form>

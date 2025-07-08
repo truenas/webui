@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnInit,
 } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -14,7 +14,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { Role } from 'app/enums/role.enum';
 import { idNameArrayToOptions, singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextLdap } from 'app/helptext/directory-service/ldap';
-import { LdapConfigUpdate } from 'app/interfaces/ldap-config.interface';
+import { LdapConfig, LdapConfigUpdate } from 'app/interfaces/ldap-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -65,6 +65,8 @@ export class LdapComponent implements OnInit {
 
   isLoading = false;
   isAdvancedMode = false;
+
+  ldapConfig = input.required<LdapConfig>();
 
   form = this.formBuilder.group({
     hostname: [[] as string[], this.validatorsService.validateOnCondition(

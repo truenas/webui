@@ -86,7 +86,9 @@ import {
   Dataset, DatasetCreate, DatasetDetails, DatasetUpdate, ExtraDatasetQueryOptions,
 } from 'app/interfaces/dataset.interface';
 import { Device } from 'app/interfaces/device.interface';
-import { DirectoryServicesConfigResponse, DirectoryServicesStatus } from 'app/interfaces/directory-services.interfaces';
+import { DirectoryServicesConfigResponse, DirectoryServicesStatus } from 'app/interfaces/directoryservices-config.interface';
+import { DirectoryServicesLeaveParams, DirectoryServicesLeaveResponse } from 'app/interfaces/directoryservices-leave.interface';
+import { DirectoryServicesUpdate, DirectoryServicesUpdateResponse } from 'app/interfaces/directoryservices-update.interface';
 import {
   Disk, DiskDetailsResponse,
   DiskTemperatureAgg,
@@ -158,6 +160,7 @@ import {
   SshKeyPair,
 } from 'app/interfaces/keychain-credential.interface';
 import { KmipConfig } from 'app/interfaces/kmip-config.interface';
+import { LdapConfig } from 'app/interfaces/ldap-config.interface';
 import { MailConfig, MailConfigUpdate } from 'app/interfaces/mail-config.interface';
 import {
   NetworkConfiguration,
@@ -452,6 +455,13 @@ export interface ApiCallDirectory {
   // Directory Services
   'directoryservices.status': { params: void; response: DirectoryServicesStatus };
   'directoryservices.config': { params: void; response: DirectoryServicesConfigResponse };
+  'directoryservices.update': { params: DirectoryServicesUpdate; response: DirectoryServicesUpdateResponse };
+  'directoryservices.leave': { params: [DirectoryServicesLeaveParams]; response: DirectoryServicesLeaveResponse };
+
+  // LDAP
+  'ldap.config': { params: void; response: LdapConfig };
+  'ldap.ssl_choices': { params: void; response: string[] };
+  'ldap.schema_choices': { params: void; response: string[] };
 
   // Disk
   'disk.details': { params: [params: DiskDetailsParams]; response: DiskDetailsResponse };

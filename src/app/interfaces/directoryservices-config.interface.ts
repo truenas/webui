@@ -35,13 +35,13 @@ export interface LdapCredentialMutualTls {
 
 export type DirectoryServiceCredential =
   | KerberosCredentialUser
-  | KerberosCredentialPrincipal
+  | KerberosCredentialPrincipal // Provide options from kerberos.keytab.kerberos_principal_choices
   | LdapCredentialPlain
   | LdapCredentialAnonymous
-  | LdapCredentialMutualTls;
+  | LdapCredentialMutualTls; // Provide options from a new endpoint
 
 export interface IdmapDomainBase {
-  name: string | null;
+  name: string | null; // short-form name of the domain. Can't be just anything, match with regex Andrew shared
   range_low: number;
   range_high: number;
 }
@@ -94,15 +94,16 @@ export interface IpaSmbDomain extends IdmapDomainBase {
 }
 
 export interface BuiltinDomainTdb extends IdmapDomainBase {
-  range_low: number;
-  range_high: number;
+  // 'name' attribute is not reuqired
+  range_low: number; // lowest is 1000
+  range_high: number; // highest can be picked from the api docs
 }
 
 export type DomainIdmap = ActiveDirectoryIdmap | LdapIdmap | Rfc2307Idmap | RidIdmap;
 
 export interface PrimaryDomainIdmap {
-  builtin: BuiltinDomainTdb;
-  idmap_domain: DomainIdmap;
+  builtin: BuiltinDomainTdb; // Should be filled in with defaults which can be found on api docs
+  idmap_domain: DomainIdmap; // Use would choose one of the four types before providing the info
 }
 
 export interface PrimaryDomainIdmapAutoRid {
@@ -156,12 +157,14 @@ export interface LdapSearchBases {
 export interface ActiveDirectoryConfig {
   hostname: string;
   domain: string;
+  // Provide TrueNAS server defaults option and leave empty, can omit if they choose to use defaults.
+  // If not, only then present idmap field. AutoRid might be removed pending support conversation
   idmap: PrimaryDomainIdmap | PrimaryDomainIdmapAutoRid;
   site: string | null;
   computer_account_ou: string | null;
   use_default_domain: boolean;
   enable_trusted_domains: boolean;
-  trusted_domains: DomainIdmap[];
+  trusted_domains: DomainIdmap[]; // only present if enabled trusted_domains
 }
 
 export interface LdapConfig {
@@ -170,8 +173,11 @@ export interface LdapConfig {
   starttls: boolean;
   validate_certificates: boolean;
   schema: LdapSchema;
+  // Should be hidden under advanced options, can be left null and backend will pick the standard value
   search_bases: LdapSearchBases;
+  // Should be hidden under advanced options, can be left null and backend will pick the standard value
   attribute_maps: LdapAttributeMaps;
+  // Should be hidden under advanced options, can be left null and backend will pick the standard value
   auxiliary_parameters: string | null;
 }
 

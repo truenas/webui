@@ -19,6 +19,7 @@ import {
   DatasetEncryptionSummaryQueryParams,
 } from 'app/interfaces/dataset-encryption-summary.interface';
 import { DatasetLockParams, DatasetUnlockParams, DatasetUnlockResult } from 'app/interfaces/dataset-lock.interface';
+import { DirectoryServicesUpdate, DirectoryServicesUpdateResponse } from 'app/interfaces/directoryservices-update.interface';
 import { DiskWipeParams } from 'app/interfaces/disk.interface';
 import { DockerConfig, DockerConfigUpdate } from 'app/interfaces/docker-config.interface';
 import { ExportParams } from 'app/interfaces/export-params.interface';
@@ -27,6 +28,7 @@ import { FilesystemPutParams, FilesystemSetPermParams } from 'app/interfaces/fil
 import { IpmiEvent } from 'app/interfaces/ipmi.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { KmipConfig, KmipConfigUpdate } from 'app/interfaces/kmip-config.interface';
+import { LdapConfig, LdapConfigUpdate } from 'app/interfaces/ldap-config.interface';
 import { MailConfigUpdate, SendMailParams } from 'app/interfaces/mail-config.interface';
 import { PoolExportParams } from 'app/interfaces/pool-export.interface';
 import { PoolFindResult, PoolImportParams } from 'app/interfaces/pool-import.interface';
@@ -107,6 +109,10 @@ export interface ApiJobDirectory {
 
   // Directory Services
   'directoryservices.cache_refresh': { params: void; response: void };
+  'directoryservices.update': { params: [DirectoryServicesUpdate]; response: DirectoryServicesUpdateResponse };
+
+  // LDAP
+  'ldap.update': { params: [LdapConfigUpdate]; response: LdapConfig };
 
   // Disk
   'disk.wipe': { params: DiskWipeParams; response: void };
