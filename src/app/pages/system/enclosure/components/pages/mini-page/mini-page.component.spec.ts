@@ -69,7 +69,7 @@ describe('MiniPageComponent', () => {
         isLoading: jest.fn(() => false),
         selectedEnclosure,
         enclosureLabel: () => 'MINI-X',
-        selectedSlot: jest.fn(() => null),
+        selectedSlot: jest.fn((): DashboardEnclosureSlot | null => null),
       }),
       mockProvider(Router),
     ],

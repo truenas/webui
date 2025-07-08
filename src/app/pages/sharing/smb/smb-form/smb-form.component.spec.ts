@@ -85,7 +85,7 @@ describe('SmbFormComponent', () => {
   const slideInRef: SlideInRef<{ existingSmbShare?: SmbShare; defaultSmbShare?: SmbShare } | undefined, unknown> = {
     close: jest.fn(),
     requireConfirmationWhen: jest.fn(),
-    getData: jest.fn(() => undefined),
+    getData: jest.fn((): undefined => undefined),
   };
 
   const formLabels: Record<string, string> = {
