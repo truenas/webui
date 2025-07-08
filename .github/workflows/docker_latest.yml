@@ -9,6 +9,7 @@ on:
 
 jobs:
   docker:
+    if: github.repository == 'truenas/webui'
     runs-on: ubuntu-latest
     steps:
       - name: Set up QEMU
