@@ -38,7 +38,7 @@ describe('SmbCardComponent', () => {
   const smbShares = [
     {
       id: 3,
-      purpose: SmbSharePurpose.MultiProtocolShare,
+      purpose: SmbSharePurpose.LegacyShare,
       path: '/mnt/APPS/smb1',
       name: 'smb123',
       comment: 'pool',
