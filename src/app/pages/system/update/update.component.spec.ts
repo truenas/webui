@@ -7,7 +7,6 @@ import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
 import { BehaviorSubject, of } from 'rxjs';
-import { scaleDownloadUrl } from 'app/constants/links.constants';
 import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { JobState } from 'app/enums/job-state.enum';
@@ -38,7 +37,6 @@ describe('UpdateComponent', () => {
   const changeLog$ = new BehaviorSubject('Changelog content');
   const releaseNotesUrl$ = new BehaviorSubject('http://release.notes.url');
   const updateVersion$ = new BehaviorSubject('22.12.3');
-  const currentTrainDescription$ = new BehaviorSubject('');
 
   const createComponent = createComponentFactory({
     component: UpdateComponent,
@@ -65,7 +63,7 @@ describe('UpdateComponent', () => {
           error: null,
           update_download_progress: null,
         } as UpdateStatus),
-        mockJob('update.update'),
+        mockJob('update.run'),
         mockCall('system.product_type', ProductType.CommunityEdition),
         mockCall('webui.main.dashboard.sys_info', {
           version: '22.12.3',
@@ -118,7 +116,6 @@ describe('UpdateComponent', () => {
           },
         })),
         checkForUpdates: jest.fn(),
-        currentTrainDescription$,
         updateVersion$,
       }),
     ],
@@ -150,7 +147,7 @@ describe('UpdateComponent', () => {
     await downloadUpdatesButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('core.get_jobs', [
-      [['method', '=', 'update.update'], ['state', '=', JobState.Running]],
+      [['method', '=', 'update.run'], ['state', '=', JobState.Running]],
     ]);
 
     expect(spectator.inject(UpdateService).getUpdateStatus).toHaveBeenCalled();
@@ -172,7 +169,7 @@ describe('UpdateComponent', () => {
       title: 'Download Update',
     });
 
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('update.update', [{ reboot: true, resume: false }]);
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('update.run', [{ reboot: true, resume: false }]);
   });
 
   it('shows "Pending Update" when updateDownloaded$ is true and status is not Unavailable', async () => {
@@ -201,7 +198,7 @@ describe('UpdateComponent', () => {
       title: 'Apply Pending Updates',
     });
 
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('update.update', [{ reboot: true, resume: false }]);
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('update.run', [{ reboot: true, resume: false }]);
   });
 
   it('shows "Installed Version" title and up-to-date message when no updates or pending updates', () => {
@@ -242,13 +239,6 @@ describe('UpdateComponent', () => {
     const summaryTitle = spectator.query('.update-summary h3');
     expect(summaryTitle).toHaveText('Update Summary for 22.12.3');
 
-    const allHeadings = spectator.queryAll('p.train-warning');
-
-    const trainWarning = allHeadings.find((el) => el.textContent?.includes('Selected train does not have production releases'));
-    expect(trainWarning).toHaveText(
-      'Selected train does not have production releases, and should only be used for testing.',
-    );
-
     const changelog = spectator.query('.update-summary');
     expect(changelog?.innerHTML).toContain('Changelog content');
 
@@ -269,7 +259,7 @@ describe('UpdateComponent', () => {
     expect(paragraph?.textContent).toContain('See the manual image installation guide');
 
     const link = spectator.query('.manual-update a');
-    expect(link).toHaveAttribute('href', scaleDownloadUrl);
+    expect(link.getAttribute('href')).toContain('https://www.truenas.com/docs/scale/scaletutorials/systemsettings/updatescale/#performing-a-manual-update');
 
     const installManualButton = await loader.getHarness(MatButtonHarness.with({ text: 'Install' }));
     await installManualButton.click();

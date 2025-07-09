@@ -1,7 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component,
-  OnInit,
+  OnInit, signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -15,7 +15,6 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
   combineLatest, filter, map, Observable, of, shareReplay, switchMap, tap,
 } from 'rxjs';
-import { scaleDownloadUrl } from 'app/constants/links.constants';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { JobState } from 'app/enums/job-state.enum';
@@ -26,6 +25,7 @@ import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
 import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { UpdateStatus } from 'app/interfaces/system-update.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
@@ -77,13 +77,13 @@ export class UpdateComponent implements OnInit {
   readonly SystemUpdateStatus = SystemUpdateStatus;
   protected readonly searchableElements = systemUpdateElements;
   protected readonly requiredRoles = [Role.SystemUpdateWrite];
-  protected readonly scaleDownloadUrl = scaleDownloadUrl;
+  protected readonly manualUpdateUrl = 'https://www.truenas.com/docs/scale/scaletutorials/systemsettings/updatescale/#performing-a-manual-update';
   protected updateType: UpdateType;
-  protected isUpdateRunning = false;
   private wasConfigurationSaved = false;
 
   protected readonly isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
-  protected currentTrainName = '';
+
+  protected updateStatus = signal<UpdateStatus | null>(null);
 
   protected readonly showApplyPendingButton = toSignal(
     combineLatest([
@@ -99,19 +99,6 @@ export class UpdateComponent implements OnInit {
   protected readonly isDownloadUpdatesButtonDisabled = toSignal(
     this.updateService.status$.pipe(
       map((status) => status === SystemUpdateStatus.RebootRequired),
-    ),
-  );
-
-  protected readonly showInfoForTesting = toSignal(
-    combineLatest([
-      this.updateService.updatesAvailable$,
-      this.updateService.currentTrainDescription$,
-      this.sysGenService.isEnterprise$,
-    ]).pipe(
-      map(([updatesAvailable, trainDescription, isEnterprise]) => {
-        const isNightlyTrain = !['[release]', '[prerelease]'].includes(trainDescription);
-        return updatesAvailable && (isNightlyTrain || (!isNightlyTrain && !isEnterprise));
-      }),
     ),
   );
 
@@ -147,21 +134,16 @@ export class UpdateComponent implements OnInit {
     private snackbar: SnackbarService,
     private store$: Store<AppState>,
     private loader: LoaderService,
-  ) {
-    this.sysGenService.updateRunning.pipe(untilDestroyed(this)).subscribe((isUpdating: string) => {
-      this.isUpdateRunning = isUpdating === 'true';
-      this.cdr.markForCheck();
-    });
-  }
+  ) {}
 
   ngOnInit(): void {
     this.updateService.checkForUpdates();
 
-    this.updateService.getUpdateStatus().pipe(untilDestroyed(this)).subscribe({
-      next: (updateStatus) => {
-        this.currentTrainName = updateStatus.status?.current_version?.train;
-        this.cdr.markForCheck();
-      },
+    this.updateService.getUpdateStatus().pipe(
+      this.errorHandler.withErrorHandler(),
+      untilDestroyed(this),
+    ).subscribe((updateStatus) => {
+      this.updateStatus.set(updateStatus);
     });
   }
 
@@ -253,13 +235,12 @@ export class UpdateComponent implements OnInit {
       },
       complete: () => {
         this.loader.close();
-        this.cdr.markForCheck();
       },
     });
   }
 
   protected downloadUpdate(): void {
-    this.api.call('core.get_jobs', [[['method', '=', 'update.update'], ['state', '=', JobState.Running]]])
+    this.api.call('core.get_jobs', [[['method', '=', 'update.run'], ['state', '=', JobState.Running]]])
       .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
       .subscribe((jobs) => {
         if (jobs[0]) {
@@ -336,7 +317,7 @@ export class UpdateComponent implements OnInit {
     if (this.isHaLicensed()) {
       job$ = this.api.job('failover.upgrade', [{ resume }]);
     } else {
-      job$ = this.api.job('update.update', [{ resume, reboot: true }]);
+      job$ = this.api.job('update.run', [{ resume, reboot: true }]);
     }
 
     this.dialogService
@@ -345,7 +326,6 @@ export class UpdateComponent implements OnInit {
       .pipe(
         switchMap(() => {
           this.dialogService.closeAllDialogs();
-          this.isUpdateRunning = false;
           this.sysGenService.updateDone();
           this.cdr.markForCheck();
           return this.isHaLicensed() ? this.finishHaUpdate() : this.finishNonHaUpdate();

@@ -3,6 +3,7 @@ export enum SystemUpdateStatus {
   Normal = 'NORMAL',
   Unavailable = 'UNAVAILABLE',
   RebootRequired = 'REBOOT_REQUIRED',
+  Error = 'ERROR',
 }
 
 export enum SystemUpdateOperationType {

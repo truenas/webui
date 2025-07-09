@@ -14,12 +14,6 @@
 
     <div class="update-available">
       <div class="versions">
-        @if (currentTrainName) {
-          <h4>
-            <b>{{ 'Current Train:' | translate }}</b>
-            {{ currentTrainName }}
-          </h4>
-        }
         <h4>
           {{ 'Current version' | translate }}:
           @if (systemVersion(); as systemVersion) {
@@ -28,6 +22,12 @@
             <ngx-skeleton-loader class="inline-loader"></ngx-skeleton-loader>
           }
         </h4>
+
+        @if (updateStatus()?.error) {
+          <h4>
+            {{ updateStatus()?.error }}
+          </h4>
+        }
 
         @if (standbySystemVersion(); as standbySystemVersion) {
           <h4>
@@ -85,15 +85,6 @@
           {{ 'Update Summary for {version}' | translate: { version: updateVersion() } }}
         </h3>
 
-        @if (showInfoForTesting()) {
-          <p class="train-warning">
-            <ix-icon name="info"></ix-icon>
-            <strong>
-              {{ 'Selected train does not have production releases, and should only be used for testing.' | translate }}
-            </strong>
-          </p>
-        }
-
         @if ((updateService.changeLog$ | async)) {
           <h4>{{ 'Summary' | translate }}:</h4>
 
@@ -124,7 +115,7 @@
           <a
             ixTest="download-truenas"
             target="_blank"
-            [attr.href]="scaleDownloadUrl"
+            [attr.href]="manualUpdateUrl"
           >
             {{ 'See the manual image installation guide' | translate }}
           </a>

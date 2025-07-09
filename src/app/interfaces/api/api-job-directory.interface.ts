@@ -205,7 +205,7 @@ export interface ApiJobDirectory {
   // Update
   'update.download': { params: void; response: boolean };
   'update.file': { params: [{ resume: boolean }?]; response: void };
-  'update.update': { params: [UpdateParams]; response: void };
+  'update.run': { params: [UpdateParams]; response: void };
 
   // Virt
   'virt.global.update': { params: [VirtualizationGlobalConfigUpdate]; response: VirtualizationGlobalConfig };

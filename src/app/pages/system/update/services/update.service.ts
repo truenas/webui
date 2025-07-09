@@ -20,7 +20,6 @@ export class UpdateService {
   releaseNotesUrl$ = new BehaviorSubject<string>('');
   changeLog$ = new BehaviorSubject<string>('');
 
-  currentTrainDescription$ = new BehaviorSubject<string>('');
   updateVersion$ = new BehaviorSubject<string | null>(null);
 
   constructor(
