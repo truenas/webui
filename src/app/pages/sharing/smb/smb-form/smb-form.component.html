@@ -7,37 +7,7 @@
 <mat-card>
   <mat-card-content>
     <form class="ix-form-container" [formGroup]="form" (submit)="submit()">
-      @if (!hasSmbUsers()) {
-        <div class="smb-users-warning">
-          <p class="title">
-            <ix-icon name="warning"></ix-icon>
-
-            <span>
-              {{ 'Looks like you don’t have any users who’ll be able to access this share.' | translate}}
-            </span>
-          </p>
-
-          <p>{{ 'You can:' | translate }}</p>
-
-          <ul>
-            <li>
-              <a ixTest="go-to-users-page" (click)="closeForm(['/credentials', 'users'])">
-                {{ 'Create a new user' | translate }}
-              </a>
-            </li>
-            <li>
-              <a ixTest="go-to-directory-services-page" (click)="closeForm(['/credentials', 'directory-services'])">
-                {{ 'Configure Directory Services' | translate }}
-              </a>
-            </li>
-            <li>
-              <span (click)="hasSmbUsers.set(true)">
-                {{ 'Ignore the error and add users later.' | translate }}
-              </span>
-            </li>
-          </ul>
-        </div>
-      }
+      <ix-smb-users-warning></ix-smb-users-warning>
 
       <ix-fieldset [title]="'Basic' | translate">
         @if (form.controls.purpose.value !== SmbPresetType.ExternalShare) {
@@ -102,9 +72,9 @@
             ></ix-checkbox>
           }
 
-          @if (form.controls.ro.enabled) {
+          @if (form.controls.readonly.enabled) {
             <ix-checkbox
-              formControlName="ro"
+              formControlName="readonly"
               [label]="helptextSharingSmb.readOnlyLabel | translate"
               [tooltip]="helptextSharingSmb.readOnlyTooltip | translate"
             ></ix-checkbox>
@@ -126,9 +96,9 @@
             ></ix-checkbox>
           }
 
-          @if (form.controls.abe.enabled) {
+          @if (form.controls.access_based_share_enumeration.enabled) {
             <ix-checkbox
-              formControlName="abe"
+              formControlName="access_based_share_enumeration"
               [label]="helptextSharingSmb.abeLabel | translate"
               [tooltip]="helptextSharingSmb.abeTooltip | translate"
             ></ix-checkbox>
@@ -138,7 +108,7 @@
             <ix-chips
               formControlName="hostsallow"
               [label]="helptextSharingSmb.hostsallowLabel | translate"
-              [tooltip]="hostsAllowTooltip"
+              [tooltip]="helptextSharingSmb.hostsAllowTooltip | translate"
             ></ix-chips>
           }
 
@@ -154,26 +124,28 @@
         <ix-fieldset formGroupName="audit" [title]="'Audit Logging' | translate">
           <ix-checkbox
             formControlName="enable"
-            [label]="helptextSharingSmb.enabledLabel | translate"
+            [label]="'Enable Logging' | translate"
             [tooltip]="helptextSharingSmb.auditLogTooltip | translate"
           ></ix-checkbox>
 
-          <ix-chips
-            formControlName="watch_list"
-            [hint]="'Keep this list empty to Watch All' | translate"
-            [label]="'Watch List' | translate"
-            [tooltip]="helptextSharingSmb.watchListTooltip | translate"
-            [autocompleteProvider]="groupProvider"
-            [allowNewEntries]="false"
-          ></ix-chips>
+          @if (form.value.audit.enable) {
+            <ix-chips
+              formControlName="watch_list"
+              [hint]="'Keep this list empty to Watch All' | translate"
+              [label]="'Watch List' | translate"
+              [tooltip]="helptextSharingSmb.watchListTooltip | translate"
+              [autocompleteProvider]="groupProvider"
+              [allowNewEntries]="false"
+            ></ix-chips>
 
-          <ix-chips
-            formControlName="ignore_list"
-            [label]="'Ignore List' | translate"
-            [tooltip]="helptextSharingSmb.ignoreListTooltip | translate"
-            [autocompleteProvider]="groupProvider"
-            [allowNewEntries]="false"
-          ></ix-chips>
+            <ix-chips
+              formControlName="ignore_list"
+              [label]="'Ignore List' | translate"
+              [tooltip]="helptextSharingSmb.ignoreListTooltip | translate"
+              [autocompleteProvider]="groupProvider"
+              [allowNewEntries]="false"
+            ></ix-chips>
+          }
         </ix-fieldset>
 
         @if (showOtherOptions) {
@@ -303,7 +275,7 @@
               ></ix-checkbox>
             }
 
-            @if (form.controls.dataset_naming_schema.enabled && form.controls.auto_dataset_creation.value) {
+            @if (shouldShowNamingSchema) {
               <ix-input
                 formControlName="dataset_naming_schema"
                 [label]="helptextSharingSmb.datasetNamingSchemaLabel | translate"

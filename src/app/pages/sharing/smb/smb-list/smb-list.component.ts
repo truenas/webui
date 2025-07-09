@@ -19,7 +19,7 @@ import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { shared } from 'app/helptext/sharing';
-import { LegacySmbShareOptions, SmbShare } from 'app/interfaces/smb-share.interface';
+import { SmbSharePurpose, SmbShare } from 'app/interfaces/smb-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -140,7 +140,9 @@ export class SmbListComponent implements OnInit {
               this.lockedPathDialog(row.path);
             } else {
               // A home share has a name (homes) set; row.name works for other shares
-              const searchName = (row.options as LegacySmbShareOptions)?.home ? 'homes' : row.name;
+              const searchName = (row.purpose === SmbSharePurpose.LegacyShare && row.options?.home)
+                ? 'homes'
+                : row.name;
               this.loader.open();
               this.api.call('sharing.smb.getacl', [{ share_name: searchName }])
                 .pipe(untilDestroyed(this))

@@ -14,7 +14,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
-import { SmbPresetType, SmbShare, SmbSharesec } from 'app/interfaces/smb-share.interface';
+import { SmbSharePurpose, SmbShare, SmbSharesec } from 'app/interfaces/smb-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import {
@@ -38,7 +38,7 @@ describe('SmbCardComponent', () => {
   const smbShares = [
     {
       id: 3,
-      purpose: SmbPresetType.MultiProtocolShare,
+      purpose: SmbSharePurpose.LegacyShare,
       path: '/mnt/APPS/smb1',
       name: 'smb123',
       comment: 'pool',
