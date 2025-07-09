@@ -81,9 +81,7 @@ describe('IxSelectComponent', () => {
       const label = spectator.query(IxLabelComponent)!;
       expect(label).toExist();
       expect(label.label()).toBe('Select Group');
-      // Required selects are always rendered without an asterisk,
-      // because there is no way to select an empty value anyway.
-      expect(label.required()).toBe(false);
+      expect(label.required()).toBe(true);
       expect(label.tooltip()).toBe('Select group to use.');
     });
 
@@ -263,6 +261,26 @@ describe('IxSelectComponent', () => {
       spectator.setHostInput('options$', options2$);
       // Unchanged
       expect(options1$.subscribe).toHaveBeenCalledTimes(2);
+    });
+
+    it('automatically selects first option when select is empty and required', async () => {
+      spectator = createHost(
+        '<ix-select [formControl]="control" [required]="true" [options]="options$"></ix-select>',
+        {
+          hostProps: {
+            control,
+            options$: of([
+              { label: 'Great Britain', value: 'GBR' },
+              { label: 'Greenland', value: 'GRL' },
+            ]),
+          },
+        },
+      );
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+
+      const select = await loader.getHarness(IxSelectHarness);
+      expect(await select.getValue()).toBe('Great Britain');
+      expect(control.value).toBe('GBR');
     });
   });
 });

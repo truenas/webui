@@ -178,15 +178,17 @@ export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChange
       this.optsSubscription?.unsubscribe();
       this.optsSubscription = this.opts$.pipe(untilDestroyed(this)).subscribe((opts) => {
         this.opts = opts;
+
+        // Auto-select the first option for empty required selects
+        if (!this.value && this.required && this.opts.length > 0 && !this.multiple()) {
+          this.value = opts[0].value;
+          this.onChange(this.value);
+        }
       });
     }
   }
 
-  onOptionTooltipClicked(event: MouseEvent): void {
-    event.stopPropagation();
-  }
-
-  selectAll(): void {
+  private selectAll(): void {
     if (this.multiple()) {
       this.value = this.opts.map((opt) => opt.value) as SelectOptionValueType;
       this.onChange(this.value);
@@ -198,7 +200,7 @@ export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChange
     this.onChange(this.value);
   }
 
-  toggleSelectAll(checked: boolean): void {
+  protected toggleSelectAll(checked: boolean): void {
     if (checked) {
       this.selectAll();
     } else {

@@ -3,6 +3,7 @@
     <ix-label
       [label]="label()"
       [tooltip]="tooltip()"
+      [required]="required()"
       [ixTestOverride]="controlDirective.name || ''"
     ></ix-label>
   }
@@ -77,7 +78,7 @@
                 class="option-tooltip"
                 [header]="option.label | translate"
                 [message]="option.tooltip | translate"
-                (click)="onOptionTooltipClicked($event)"
+                (click)="$event.stopPropagation()"
               ></ix-tooltip>
             }
           </mat-option>
