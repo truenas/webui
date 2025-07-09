@@ -1,10 +1,10 @@
 import { CdkTrapFocus } from '@angular/cdk/a11y';
-import { DOCUMENT } from '@angular/common';
 import {
   Component, ChangeDetectionStrategy, OnInit, ElementRef, ChangeDetectorRef,
   Inject,
   AfterViewInit,
   OnDestroy, Signal, viewChild,
+  DOCUMENT,
 } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatInput } from '@angular/material/input';

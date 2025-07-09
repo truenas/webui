@@ -12,7 +12,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import {
   autocompletion, closeBrackets, CompletionContext, startCompletion,
 } from '@codemirror/autocomplete';
-import { linter } from '@codemirror/lint';
+import { Diagnostic, linter } from '@codemirror/lint';
 import { EditorState, StateEffect, StateField } from '@codemirror/state';
 import {
   EditorView, keymap, placeholder,
@@ -29,7 +29,7 @@ import { SearchProperty } from 'app/modules/forms/search-input/types/search-prop
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
-const setDiagnostics = StateEffect.define<unknown[] | null>();
+const setDiagnostics = StateEffect.define<Diagnostic[] | null>();
 
 @Component({
   selector: 'ix-advanced-search',
@@ -105,10 +105,10 @@ export class AdvancedSearchComponent<T> implements OnInit {
     });
 
     const diagnosticField = StateField.define({
-      create() {
-        return [];
+      create(): Diagnostic[] {
+        return [] as Diagnostic[];
       },
-      update(diagnostics, transaction) {
+      update(diagnostics, transaction): Diagnostic[] {
         for (const effect of transaction.effects) {
           if (effect.is(setDiagnostics)) {
             return effect.value;
@@ -233,7 +233,7 @@ export class AdvancedSearchComponent<T> implements OnInit {
         this.errorMessages = parsedQuery.errors;
         this.editorView.dispatch({
           effects: setDiagnostics.of(
-            parsedQuery.errors.filter((error) => error.from !== error.to),
+            parsedQuery.errors.filter((error) => error.from !== error.to) as Diagnostic[],
           ),
         });
         return;

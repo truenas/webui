@@ -62,7 +62,7 @@ describe('SigninStore', () => {
           },
         },
       },
-      mockProvider(ActivatedRoute, { snapshot: { queryParamMap: { get: jest.fn(() => null) } } }),
+      mockProvider(ActivatedRoute, { snapshot: { queryParamMap: { get: jest.fn((): null => null) } } }),
     ],
   });
 

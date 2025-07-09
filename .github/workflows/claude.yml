@@ -57,6 +57,9 @@ jobs:
             - Forgetting to take into account i18n or accessibility.
             - Writing tests that interact with methods that should be private or protected.
 
+            Sometimes PRs may contain changes to `src/assets/i18n/**`.
+            Reordering of strings and addition/removal of keys corresponding to code changes are expected and normal.
+
             Use enthusiastic and positive tone, you can use some emojis.
 
             Keep review brief and focused:
