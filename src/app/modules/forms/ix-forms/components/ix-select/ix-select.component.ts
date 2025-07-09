@@ -181,7 +181,7 @@ export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChange
 
         // Auto-select the first option for empty required selects
         const nonDisabledOptions = opts.filter((opt) => !opt.disabled);
-        if (!this.value && this.required && nonDisabledOptions.length > 0 && !this.multiple()) {
+        if (!this.value && this.required() && nonDisabledOptions.length > 0 && !this.multiple()) {
           this.value = nonDisabledOptions[0].value;
           this.onChange(this.value);
         }
