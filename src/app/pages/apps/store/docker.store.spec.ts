@@ -1,8 +1,8 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
-import { DockerConfig } from 'app/enums/docker-config.interface';
 import { DockerStatus } from 'app/enums/docker-status.enum';
+import { DockerConfig } from 'app/interfaces/docker-config.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 
