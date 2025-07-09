@@ -1,7 +1,6 @@
 <form [formGroup]="form" (keydown.enter)="hasTwoFactor ? loginWithOtp() : login()">
   @if (!hasTwoFactor) {
     <ix-input
-      ixAutofocus
       formControlName="username"
       autocomplete="username"
       class="username-input"
@@ -44,7 +43,6 @@
     </p>
 
     <ix-input
-      ixAutofocus
       formControlName="otp"
       autocomplete="one-time-code"
       [prefixIcon]="iconMarker('phonelink')"

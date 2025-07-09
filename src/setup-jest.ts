@@ -1,5 +1,7 @@
 // eslint-disable-next-line max-classes-per-file
-import 'jest-preset-angular/setup-jest';
+import '@angular/compiler';
+import 'zone.js';
+import 'zone.js/testing';
 import { HighContrastModeDetector } from '@angular/cdk/a11y';
 import { APP_BASE_HREF } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
@@ -31,6 +33,7 @@ import {
   MissingTranslationHandler, TranslateCompiler, TranslateLoader, TranslateModule, TranslateFakeLoader,
 } from '@ngx-translate/core';
 import failOnConsole from 'jest-fail-on-console';
+import { setupZoneTestEnv } from 'jest-preset-angular/setup-env/zone';
 import { MockComponent, MockProvider } from 'ng-mocks';
 import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
 import {
@@ -90,6 +93,8 @@ import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-ov
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+
+setupZoneTestEnv();
 
 const silenceJsDomCssParseError: (message: string, methodName: string) => boolean = (message, methodName) => {
   return (

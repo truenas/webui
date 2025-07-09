@@ -27,6 +27,7 @@ describe('SigninComponent', () => {
   const isConnected$ = new BehaviorSubject<boolean>(true);
   const loginBanner$ = new BehaviorSubject<string>('');
   const isTokenWithinTimeline$ = new BehaviorSubject<boolean>(true);
+  const isLoading$ = new BehaviorSubject<boolean>(false);
   const isReconnectAllowed$ = new BehaviorSubject<boolean>(false);
   const isFailoverRestart$ = new BehaviorSubject<boolean>(false);
 
@@ -47,7 +48,7 @@ describe('SigninComponent', () => {
         wasAdminSet$,
         canLogin$,
         loginBanner$,
-        isLoading$: of(false),
+        isLoading$,
         init: jest.fn(),
       }),
     ],
@@ -78,6 +79,7 @@ describe('SigninComponent', () => {
     isConnected$.next(true);
     loginBanner$.next('');
     isTokenWithinTimeline$.next(false);
+    isLoading$.next(false);
   });
 
   it('initializes SigninStore on component init', () => {

@@ -1,7 +1,7 @@
 name: Claude Review
 on:
   pull_request:
-    types: [opened, synchronize]
+    types: [opened]
     branches:
       - master
     paths-ignore:
