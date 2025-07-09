@@ -5,7 +5,7 @@
     "baseUrl": "src",
     "sourceMap": true,
     "declaration": false,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "experimentalDecorators": true,
     "esModuleInterop": true,
     "resolveJsonModule": true,
@@ -17,7 +17,11 @@
     "useUnknownInCatchVariables": true,
     "module": "es2020",
     "target": "ES2022",
-    "lib": ["es2023", "dom", "dom.Iterable"],
+    "lib": [
+      "es2023",
+      "dom",
+      "dom.Iterable"
+    ],
     "useDefineForClassFields": false,
     "skipLibCheck": true
   },

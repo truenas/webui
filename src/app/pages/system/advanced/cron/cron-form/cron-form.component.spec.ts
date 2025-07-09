@@ -42,7 +42,7 @@ describe('CronFormComponent', () => {
   const getData = jest.fn(() => existingCronJob);
   const componentRef: SlideInRef<Cronjob | undefined, unknown> = {
     close: jest.fn(),
-    getData: jest.fn(() => undefined),
+    getData: jest.fn((): undefined => undefined),
     requireConfirmationWhen: jest.fn(),
   };
 

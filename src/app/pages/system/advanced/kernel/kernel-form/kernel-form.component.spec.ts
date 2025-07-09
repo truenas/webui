@@ -31,7 +31,7 @@ describe('KernelFormComponent', () => {
       }),
       mockProvider(SlideInRef, {
         close: jest.fn(),
-        getData: jest.fn(() => undefined),
+        getData: jest.fn((): undefined => undefined),
         requireConfirmationWhen: jest.fn(),
       }),
       provideMockStore(),
