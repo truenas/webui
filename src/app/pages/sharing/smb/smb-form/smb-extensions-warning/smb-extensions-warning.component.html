@@ -1,0 +1,16 @@
+<ix-icon name="info" class="warning-icon"></ix-icon>
+
+<div class="warning-content">
+  <span class="warning-text">
+    {{ 'This parameter requires Apple SMB2/3 protocol extension support to be enabled in SMB service.' | translate }}
+  </span>
+  <button
+    mat-button
+    type="button"
+    class="enable-button"
+    ixTest="enable-apple-extensions"
+    (click)="enableExtensions()"
+  >
+    {{ 'Enable Now' | translate }}
+  </button>
+</div>
