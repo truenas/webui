@@ -53,4 +53,7 @@ export const helptextCloudBackup = {
 
   password: T('Password'),
   schedule: T('Schedule'),
+
+  rateLimit: T('Rate Limit'),
+  rateLimitTooltip: T('Rate limit for the backup process in KiB/s. Leave empty for no rate limit.'),
 };
