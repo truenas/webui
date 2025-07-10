@@ -15,6 +15,9 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { IdmapBackend, LdapSchema } from 'app/enums/directory-services.enum';
 import {
+  PrimaryDomainIdmap, BuiltinDomainTdb, DomainIdmap, LdapIdmap, Rfc2307Idmap, RidIdmap,
+} from 'app/interfaces/active-directory-config.interface';
+import {
   LdapConfig,
   LdapSearchBases,
   LdapAttributeMaps,
@@ -22,14 +25,6 @@ import {
   LdapMapShadow,
   LdapMapGroup,
   LdapMapNetgroup,
-  PrimaryDomainIdmap,
-  PrimaryDomainIdmapAutoRid,
-  BuiltinDomainTdb,
-  DomainIdmap,
-  AutoridIdmap,
-  LdapIdmap,
-  Rfc2307Idmap,
-  RidIdmap,
 } from 'app/interfaces/directoryservices-config.interface';
 import { DirectoryServicesUpdate } from 'app/interfaces/directoryservices-update.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -324,7 +319,7 @@ export class LdapConfigComponent implements OnInit {
     };
 
     // Build the main LDAP configuration
-    const ldapConfig: LdapConfig & { idmap?: PrimaryDomainIdmap | PrimaryDomainIdmapAutoRid } = {
+    const ldapConfig: LdapConfig & { idmap?: PrimaryDomainIdmap } = {
       server_urls: (formValue.ldap_server_urls as string[]) || [],
       basedn: (formValue.ldap_basedn as string | null) || '',
       starttls: (formValue.ldap_starttls as boolean) || false,
@@ -352,18 +347,6 @@ export class LdapConfigComponent implements OnInit {
       let domainIdmap: DomainIdmap;
 
       switch (formValue.idmap_backend as IdmapBackend) {
-        case IdmapBackend.Autorid:
-          (ldapConfig as LdapConfig & { idmap: PrimaryDomainIdmapAutoRid }).idmap = {
-            idmap_domain: {
-              ...baseDomainIdmap,
-              idmap_backend: IdmapBackend.Autorid,
-              rangesize: (formValue.idmap_rangesize as number) || 100000,
-              readonly: (formValue.idmap_readonly as boolean) || false,
-              ignore_builtin: (formValue.idmap_ignore_builtin as boolean) || false,
-            } as AutoridIdmap,
-          } as PrimaryDomainIdmapAutoRid;
-          break;
-
         case IdmapBackend.Ldap:
           domainIdmap = {
             ...baseDomainIdmap,
