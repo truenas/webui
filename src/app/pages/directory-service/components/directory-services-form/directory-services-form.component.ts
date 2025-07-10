@@ -37,9 +37,9 @@ import { LdapConfigComponent } from './ldap-config/ldap-config.component';
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-directory-services-config-form',
-  templateUrl: './directory-services-config-form.component.html',
-  styleUrls: ['./directory-services-config-form.component.scss'],
+  selector: 'ix-directory-services-form',
+  templateUrl: './directory-services-form.component.html',
+  styleUrls: ['./directory-services-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ModalHeaderComponent,
@@ -62,6 +62,9 @@ import { LdapConfigComponent } from './ldap-config/ldap-config.component';
 export class DirectoryServicesConfigFormComponent implements OnInit {
   protected readonly isLoading = signal(false);
   protected readonly requiredRoles = [Role.DirectoryServiceWrite];
+
+  protected readonly isCredentialValid = signal(false);
+  protected readonly DirectoryServiceType = DirectoryServiceType;
 
   protected form = this.fb.group({
     // Basic configuration - DirectoryServicesConfigResponse non-nullable fields
@@ -191,7 +194,7 @@ export class DirectoryServicesConfigFormComponent implements OnInit {
   }
 
   // Getter methods for template conditionals
-  get selectedConfigurationType(): string | null {
+  get selectedConfigurationType(): DirectoryServiceType | null {
     return this.form.controls.configuration_type.value;
   }
 }

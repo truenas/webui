@@ -18,8 +18,9 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { DirectoryServiceStatus, DirectoryServiceType } from 'app/enums/directory-services.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextDashboard } from 'app/helptext/directory-service/dashboard';
+import { LdapCredentialPlain } from 'app/interfaces/directoryservice-credentials.interface';
 import {
-  ActiveDirectoryConfig, LdapConfig, LdapCredentialPlain,
+  ActiveDirectoryConfig, LdapConfig,
 } from 'app/interfaces/directoryservices-config.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -31,7 +32,7 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { DirectoryServicesConfigFormComponent } from 'app/pages/directory-service/components/directory-services-config-form/directory-services-config-form.component';
+import { DirectoryServicesConfigFormComponent } from 'app/pages/directory-service/components/directory-services-form/directory-services-form.component';
 import { KerberosKeytabsListComponent } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-list/kerberos-keytabs-list.component';
 import { KerberosRealmsListComponent } from 'app/pages/directory-service/components/kerberos-realms/kerberos-realms-list.component';
 import { KerberosSettingsComponent } from 'app/pages/directory-service/components/kerberos-settings/kerberos-settings.component';
