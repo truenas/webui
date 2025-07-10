@@ -1,44 +1,11 @@
 import {
-  DirectoryServiceCredentialType,
   ActiveDirectorySchemaMode,
   LdapSchema,
   DirectoryServiceType,
   DirectoryServiceStatus,
   IdmapBackend,
 } from 'app/enums/directory-services.enum';
-
-export interface KerberosCredentialPrincipal {
-  credential_type: DirectoryServiceCredentialType.KerberosPrincipal;
-  principal: string;
-}
-
-export interface KerberosCredentialUser {
-  credential_type: DirectoryServiceCredentialType.KerberosUser;
-  username: string;
-  password: string;
-}
-
-export interface LdapCredentialPlain {
-  credential_type: DirectoryServiceCredentialType.LdapPlain;
-  binddn: string;
-  bindpw: string;
-}
-
-export interface LdapCredentialAnonymous {
-  credential_type: DirectoryServiceCredentialType.LdapAnonymous;
-}
-
-export interface LdapCredentialMutualTls {
-  credential_type: DirectoryServiceCredentialType.LdapMtls;
-  client_certificate: string;
-}
-
-export type DirectoryServiceCredential =
-  | KerberosCredentialUser
-  | KerberosCredentialPrincipal // Provide options from kerberos.keytab.kerberos_principal_choices
-  | LdapCredentialPlain
-  | LdapCredentialAnonymous
-  | LdapCredentialMutualTls; // Provide options from a new endpoint
+import { DirectoryServiceCredential } from 'app/interfaces/directoryservice-credentials.interface';
 
 export interface IdmapDomainBase {
   name: string | null; // short-form name of the domain. Can't be just anything, match with regex Andrew shared

@@ -30,7 +30,7 @@ import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-ch
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { TrustedDomainsConfigComponent } from 'app/pages/directory-service/components/directory-services-config-form/trusted-domains-config/trusted-domains-config.component';
+import { TrustedDomainsConfigComponent } from 'app/pages/directory-service/components/directory-services-form/trusted-domains-config/trusted-domains-config.component';
 
 @UntilDestroy()
 @Component({

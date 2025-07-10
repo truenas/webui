@@ -56,27 +56,28 @@
       <!-- Credential Configuration Sub-Component -->
       @if (selectedConfigurationType) {
         <ix-credential-config
-          [configurationType]="selectedConfigurationType"
-          [credentialData]="credentialData"
-          (credentialDataChanged)="onCredentialDataChanged($event)"
+          [serviceType]="selectedConfigurationType"
+          [credential]="credentialData"
+          (credentialUpdated)="onCredentialDataChanged($event)"
+          (isValid)="isCredentialValid.set($event);"
         ></ix-credential-config>
       }
 
       <!-- Service-specific Configuration Sub-Components -->
-      @if (selectedConfigurationType === 'ACTIVEDIRECTORY') {
+      @if (selectedConfigurationType === DirectoryServiceType.ActiveDirectory) {
         <ix-active-directory-config
           (configurationDataChanged)="onConfigurationDataChanged($event)"
           (kerberosRealmSuggested)="onKerberosRealmSuggested($event)"
         ></ix-active-directory-config>
       }
 
-      @if (selectedConfigurationType === 'LDAP') {
+      @if (selectedConfigurationType === DirectoryServiceType.Ldap) {
         <ix-ldap-config
           (configurationDataChanged)="onConfigurationDataChanged($event)"
         ></ix-ldap-config>
       }
 
-      @if (selectedConfigurationType === 'IPA') {
+      @if (selectedConfigurationType === DirectoryServiceType.Ipa) {
         <ix-ipa-config
           (configurationDataChanged)="onConfigurationDataChanged($event)"
         ></ix-ipa-config>
