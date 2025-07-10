@@ -262,25 +262,5 @@ describe('IxSelectComponent', () => {
       // Unchanged
       expect(options1$.subscribe).toHaveBeenCalledTimes(2);
     });
-
-    it('automatically selects first non-disabled option when select is empty and required', async () => {
-      spectator = createHost(
-        '<ix-select [formControl]="control" [required]="true" [options]="options$"></ix-select>',
-        {
-          hostProps: {
-            control,
-            options$: of([
-              { label: 'Great Britain', value: 'GBR', disabled: true },
-              { label: 'Greenland', value: 'GRL' },
-            ]),
-          },
-        },
-      );
-      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-
-      const select = await loader.getHarness(IxSelectHarness);
-      expect(await select.getValue()).toBe('Greenland');
-      expect(control.value).toBe('GRL');
-    });
   });
 });

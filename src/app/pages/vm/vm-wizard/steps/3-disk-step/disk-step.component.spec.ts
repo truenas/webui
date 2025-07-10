@@ -94,7 +94,7 @@ describe('DiskStepComponent', () => {
         newOrExisting: NewOrExistingDisk.Existing,
         hdd_path: '/dev/zvol/poolio/test-327brn',
         hdd_type: VmDiskMode.Virtio,
-        datastore: '',
+        datastore: 'poolio',
         volsize: null,
       });
     });
