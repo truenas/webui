@@ -38,7 +38,7 @@ describe('SshConnectionFormComponent', () => {
   } as KeychainSshCredentials;
 
   const closeSlideInRef = jest.fn();
-  const getNoData = jest.fn(() => undefined);
+  const getNoData = jest.fn((): undefined => undefined);
   const getData = jest.fn(() => existingConnection);
 
   const createComponent = createComponentFactory({

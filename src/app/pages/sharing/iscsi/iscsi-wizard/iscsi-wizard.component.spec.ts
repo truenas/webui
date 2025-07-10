@@ -48,7 +48,7 @@ describe('IscsiWizardComponent', () => {
   const slideInRef: SlideInRef<undefined, unknown> = {
     close: jest.fn(() => true),
     requireConfirmationWhen: jest.fn(),
-    getData: jest.fn(() => undefined),
+    getData: jest.fn((): undefined => undefined),
   };
 
   const createComponent = createComponentFactory({

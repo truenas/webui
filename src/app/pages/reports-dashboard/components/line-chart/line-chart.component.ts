@@ -12,7 +12,7 @@ import {
 } from '@angular/core';
 import { TinyColor } from '@ctrl/tinycolor';
 import { UUID } from 'angular2-uuid';
-import { utcToZonedTime } from 'date-fns-tz';
+import { toZonedTime } from 'date-fns-tz';
 import Dygraph, { dygraphs } from 'dygraphs';
 import { Gb, kb, Mb } from 'app/constants/bits.constant';
 import {
@@ -126,7 +126,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
 
     const newRows = rowData.map((row, index) => {
       // replace unix timestamp in first column with date
-      const convertedDate = utcToZonedTime(row[0] * 1000, this.timezone());
+      const convertedDate = toZonedTime(row[0] * 1000, this.timezone());
 
       if (index === 0) {
         this.lastMinDate = convertedDate.getTime();

@@ -12,7 +12,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
-  Observable, forkJoin, of, EMPTY,
+  Observable, of, EMPTY,
+  combineLatest,
 } from 'rxjs';
 import {
   catchError,
@@ -106,11 +107,11 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
 
   private loadTwoFactorConfigs(): void {
     this.isDataLoading.set(true);
-    forkJoin([
+    combineLatest([
       this.authService.userTwoFactorConfig$.pipe(take(1)),
       this.authService.getGlobalTwoFactorConfig(),
     ])
-      .pipe(untilDestroyed(this))
+      .pipe(take(1), untilDestroyed(this))
       .subscribe({
         next: ([userConfig, globalConfig]) => {
           this.isDataLoading.set(false);

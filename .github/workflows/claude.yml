@@ -39,6 +39,13 @@ jobs:
             - Performance considerations
             - Security implications
 
+            Do not provide:
+            - summary of what PR does
+            - list of steps you took to review
+            - numeric rating or score
+
+            When describing positive aspects of the PR, just mention them briefly in one - three sentences.
+
             Ignore small nit-picky issues like formatting or style unless they significantly impact readability.
 
             Provide constructive feedback with specific suggestions for improvement.
@@ -50,10 +57,11 @@ jobs:
             - Forgetting to take into account i18n or accessibility.
             - Writing tests that interact with methods that should be private or protected.
 
+            Sometimes PRs may contain changes to `src/assets/i18n/**`.
+            Reordering of strings and addition/removal of keys corresponding to code changes are expected and normal.
+
             Use enthusiastic and positive tone, you can use some emojis.
 
             Keep review brief and focused:
             - do not repeat yourself
-            - do not provide numeric rating
-            - do not provide summary
             - keep overall assessment concise (one sentence)

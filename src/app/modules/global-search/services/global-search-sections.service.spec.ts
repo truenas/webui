@@ -3,6 +3,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
 import { GlobalSearchSection } from 'app/modules/global-search/enums/global-search-section.enum';
+import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 import { GlobalSearchSectionsProvider } from 'app/modules/global-search/services/global-search-sections.service';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
 
@@ -22,7 +23,7 @@ jest.mock('app/../assets/ui-searchable-elements.json', () => ([
     anchor: 'some-anchor',
     triggerAnchor: null,
     section: GlobalSearchSection.Ui,
-  },
+  } as UiSearchableElement,
 ]));
 
 describe('GlobalSearchSectionsProvider', () => {
