@@ -93,7 +93,7 @@ describe('UpdateComponent', () => {
           },
           {
             selector: selectUpdateJob,
-            value: null,
+            value: [],
           },
         ],
       }),
