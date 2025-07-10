@@ -24,7 +24,7 @@ describe('ModalHeader2Component', () => {
       mockAuth(),
       mockProvider(SlideInRef, {
         close: jest.fn(),
-        getData: jest.fn(() => undefined),
+        getData: jest.fn((): undefined => undefined),
         swap: jest.fn(),
       }),
     ],

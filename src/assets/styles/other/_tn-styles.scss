@@ -192,9 +192,9 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     pointer-events: all;
 
     label {
-      @include variable(color, --grey, #4d4d4d);
+      @include variable(color, --fg2, $fg2);
       cursor: not-allowed;
-      opacity: 0.6;
+      opacity: 0.7;
     }
   }
 
@@ -474,8 +474,8 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   .fn-theme-grey {
-    @include variable(background-color, --grey, #4d4d4d);
-    @include variable(color, --grey, #4d4d4d);
+    @include variable(background-color, --grey, #989898);
+    @include variable(color, --grey, #989898);
   }
 
   .fn-theme-green {
@@ -532,7 +532,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     }
 
     &.fn-theme-grey {
-      @include variable(color, --grey, #4d4d4d, !important);
+      @include variable(color, --grey, #989898, !important);
     }
 
     &.fn-theme-red {

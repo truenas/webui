@@ -912,6 +912,28 @@
     "hierarchy": [
       "Credentials",
       "Users (WIP)",
+      "Toggle Lock Status"
+    ],
+    "synonyms": [
+      "Lock User",
+      "Unlock User"
+    ],
+    "requiredRoles": [
+      "ACCOUNT_WRITE"
+    ],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/credentials/users-new"
+    ],
+    "routerLink": null,
+    "anchor": "toggle-lock-status",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
+      "Users (WIP)",
       "Profile"
     ],
     "synonyms": [],

@@ -17,7 +17,6 @@ import { DetailsTableHarness } from 'app/modules/details-table/details-table.har
 import { EditableHarness } from 'app/modules/forms/editable/editable.harness';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
-import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxPermissionsHarness } from 'app/modules/forms/ix-forms/components/ix-permissions/ix-permissions.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AdditionalDetailsSectionComponent } from 'app/pages/credentials/new-users/user-form/additional-details-section/additional-details-section.component';
@@ -64,7 +63,7 @@ describe('AdditionalDetailsSectionComponent', () => {
         isStigMode: jest.fn(() => false),
         updateUserConfig: jest.fn(),
         updateSetupDetails: jest.fn(),
-        role: jest.fn(() => null),
+        role: jest.fn(),
         isNewUser: jest.fn(() => false),
         homeModeOldValue: jest.fn(() => ''),
         userConfig: jest.fn(() => ({})),
@@ -152,7 +151,7 @@ describe('AdditionalDetailsSectionComponent', () => {
         home: '/var/empty',
         home_mode: '700',
         home_create: false,
-        uid: '1234',
+        uid: 1234,
       });
     });
 
@@ -187,7 +186,6 @@ describe('AdditionalDetailsSectionComponent', () => {
         Email: 'Not Set',
         Groups: 'Primary Group: test-group  Auxiliary Groups: test-group-2, test-group-3',
         'Home Directory': '/home/test',
-        UID: '1004',
         Shell: '/usr/bin/bash',
       });
 
@@ -196,30 +194,16 @@ describe('AdditionalDetailsSectionComponent', () => {
       });
     });
 
+    it('does not show UID on edit', async () => {
+      const values = await (await loader.getHarness(DetailsTableHarness)).getValues();
+
+      expect(Object.keys(values)).not.toContain('UID');
+    });
+
     it('loads home share path and puts it in home field', async () => {
       const homeInput = await loader.getHarness(DetailsItemHarness.with({ label: 'Home Directory' }));
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('sharing.smb.query', [[['enabled', '=', true], ['options.home', '=', true]]]);
       expect(await homeInput.getValueText()).toBe('/home/test');
-    });
-
-    it('check uid field is disabled', async () => {
-      const editables = await loader.getHarness(DetailsTableHarness);
-
-      expect(await editables.getValues()).toEqual({
-        'Full Name': 'test',
-        Email: 'Not Set',
-        Groups: 'Primary Group: test-group  Auxiliary Groups: test-group-2, test-group-3',
-        'Home Directory': '/home/test',
-        UID: '1004',
-      });
-
-      const uidField = await editables.getHarnessForItem('UID', EditableHarness);
-      await uidField.open();
-
-      spectator.detectChanges();
-
-      const uidInput = await loader.getHarness(IxInputHarness.with({ selector: '[aria-label="UID"]' }));
-      expect(await uidInput.isDisabled()).toBeTruthy();
     });
   });
 

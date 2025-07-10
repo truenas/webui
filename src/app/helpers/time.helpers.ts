@@ -1,4 +1,4 @@
-import { intervalToDuration } from 'date-fns';
+import { intervalToDuration, Duration } from 'date-fns';
 
 export function secondsToDuration(seconds: number): Duration {
   return intervalToDuration({

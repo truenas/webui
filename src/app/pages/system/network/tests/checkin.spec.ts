@@ -96,16 +96,16 @@ describe('NetworkComponent', () => {
         mockCall('interface.has_pending_changes', () => wasEditMade),
         mockCall('interface.services_restarted_on_sync', []),
         mockCall('interface.checkin'),
-        mockCall('interface.cancel_rollback', () => {
+        mockCall('interface.cancel_rollback', (): undefined => {
           isTestingChanges = false;
           return undefined;
         }),
-        mockCall('interface.rollback', () => {
+        mockCall('interface.rollback', (): undefined => {
           wasEditMade = false;
           isTestingChanges = false;
           return undefined;
         }),
-        mockCall('interface.commit', () => {
+        mockCall('interface.commit', (): undefined => {
           isTestingChanges = true;
           return undefined;
         }),

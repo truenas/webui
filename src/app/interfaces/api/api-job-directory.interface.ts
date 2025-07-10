@@ -1,4 +1,3 @@
-import { DockerConfig, DockerConfigUpdate } from 'app/enums/docker-config.interface';
 import { ServiceName, ServiceOperation } from 'app/enums/service-name.enum';
 import { SetAcl } from 'app/interfaces/acl.interface';
 import { ActiveDirectoryConfig, LeaveActiveDirectory } from 'app/interfaces/active-directory-config.interface';
@@ -23,6 +22,7 @@ import {
 } from 'app/interfaces/dataset-encryption-summary.interface';
 import { DatasetLockParams, DatasetUnlockParams, DatasetUnlockResult } from 'app/interfaces/dataset-lock.interface';
 import { DiskWipeParams } from 'app/interfaces/disk.interface';
+import { DockerConfig, DockerConfigUpdate } from 'app/interfaces/docker-config.interface';
 import { ExportParams } from 'app/interfaces/export-params.interface';
 import { FailoverUpgradeParams } from 'app/interfaces/failover.interface';
 import { FilesystemPutParams, FilesystemSetPermParams } from 'app/interfaces/filesystem-stat.interface';

@@ -246,7 +246,7 @@ export class AuthService {
   refreshUser(): Observable<undefined> {
     this.loggedInUser$.next(null);
     return this.getLoggedInUserInformation().pipe(
-      map(() => undefined),
+      map((): undefined => undefined),
     );
   }
 
