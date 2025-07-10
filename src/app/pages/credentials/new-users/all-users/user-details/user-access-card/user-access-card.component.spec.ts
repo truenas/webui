@@ -120,7 +120,7 @@ describe('UserAccessCardComponent', () => {
     expect(sshSection).toHaveText('SSH Key Set & Password Login Enabled');
   });
 
-  it('should open lock/unlock dialog when button is clicked', async () => {
+  it('should open lock user when button Lock User is clicked', async () => {
     const lockButton = await loader.getHarness(MatButtonHarness.with({ text: 'Lock User' }));
     await lockButton.click();
 
@@ -129,6 +129,31 @@ describe('UserAccessCardComponent', () => {
       locked: true,
     }]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
+  });
+
+  it('should unlock user when Unlock is clicked', async () => {
+    spectator.setInput('user', { ...mockUser, locked: true });
+
+    const unlockButton = await loader.getHarness(MatButtonHarness.with({ text: 'Unlock User' }));
+    await unlockButton.click();
+
+    expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('user.update', [mockUser.id, {
+      locked: false,
+    }]);
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
+  });
+
+  it('should not show Lock User button if this is a built-in user (other than root)', async () => {
+    spectator.setInput('user', { ...mockUser, builtin: true, username: 'testuser' });
+
+    const lockButton = await loader.getHarnessOrNull(MatButtonHarness.with({ text: 'Lock User' }));
+    expect(lockButton).toBeNull();
+
+    // Check root
+    spectator.setInput('user', { ...mockUser, builtin: true, username: 'root' });
+    const rootLockButton = await loader.getHarness(MatButtonHarness.with({ text: 'Lock User' }));
+    expect(rootLockButton).toBeTruthy();
   });
 
   describe('API Keys', () => {

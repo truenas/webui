@@ -91,6 +91,11 @@ export class UserAccessCardComponent {
     return this.user().roles.length && this.user().local;
   });
 
+  protected shouldShowLockButton = computed(() => {
+    const user = this.user();
+    return !user.locked && (!user.builtin || user.username === 'root');
+  });
+
   constructor(
     private translate: TranslateService,
     private api: ApiService,
@@ -122,7 +127,6 @@ export class UserAccessCardComponent {
     this.dialogService.confirm({
       message,
       buttonText,
-      title: this.translate.instant('Confirmation'),
       hideCheckbox: true,
     }).pipe(
       filter(Boolean),
