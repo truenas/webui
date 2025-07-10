@@ -6,6 +6,7 @@ import {
 } from '@angular/material/card';
 import { TranslateModule } from '@ngx-translate/core';
 import { cloudsyncTransferSettingLabels } from 'app/enums/cloudsync-transfer-setting.enum';
+import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 
@@ -26,4 +27,10 @@ import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 export class CloudBackupStatsComponent {
   readonly backup = input.required<CloudBackup>();
   protected readonly cloudsyncTransferSettingLabels = cloudsyncTransferSettingLabels;
+
+  formatRateLimit(value: number): string {
+    // Convert KiB to bytes, then format using binary units (base 2)
+    const bytesValue = value * 1024;
+    return `${buildNormalizedFileSize(bytesValue, 'B', 2)}/s`;
+  }
 }
