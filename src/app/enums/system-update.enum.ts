@@ -1,9 +1,8 @@
-export enum SystemUpdateStatus {
-  Available = 'AVAILABLE',
+export enum UpdateCode {
   Normal = 'NORMAL',
-  Unavailable = 'UNAVAILABLE',
-  RebootRequired = 'REBOOT_REQUIRED',
   Error = 'ERROR',
+  RebootRequired = 'REBOOT_REQUIRED',
+  HaUnavailable = 'HA_UNAVAILABLE',
 }
 
 export enum SystemUpdateOperationType {

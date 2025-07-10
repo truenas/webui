@@ -1,21 +1,20 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, OnInit, computed, input, signal,
+  ChangeDetectionStrategy, Component, computed, input, OnChanges,
 } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import {
-  async, filter, of, switchMap,
-} from 'rxjs';
+import { filter, of, switchMap } from 'rxjs';
+import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { UpdateProfileChoices } from 'app/interfaces/system-update.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { UpdateService } from 'app/pages/system/update/services/update.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
@@ -34,12 +33,11 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 
-export class UpdateProfileCard implements OnInit {
+export class UpdateProfileCard implements OnChanges {
+  readonly currentProfileId = input.required<string>();
+  readonly profileChoices = input.required<UpdateProfileChoices>();
+
   protected updateProfileControl = new FormControl('');
-
-  readonly profileChoices = input<UpdateProfileChoices>({});
-
-  protected currentProfileId = signal('');
 
   protected availableProfiles = computed(() => {
     const choices = this.profileChoices();
@@ -91,7 +89,7 @@ export class UpdateProfileCard implements OnInit {
   });
 
   constructor(
-    private updateService: UpdateService,
+    private api: ApiService,
     private snackbar: SnackbarService,
     private dialogService: DialogService,
     private translate: TranslateService,
@@ -99,13 +97,10 @@ export class UpdateProfileCard implements OnInit {
     private errorHandler: ErrorHandlerService,
   ) { }
 
-  ngOnInit(): void {
-    this.updateService.getUpdateConfig()
-      .pipe(untilDestroyed(this))
-      .subscribe((config) => {
-        this.currentProfileId.set(config.profile);
-        this.updateProfileControl.patchValue(config.profile);
-      });
+  ngOnChanges(changes: IxSimpleChanges<UpdateProfileCard>): void {
+    if ('currentProfileId' in changes) {
+      this.updateProfileControl.patchValue(this.currentProfileId());
+    }
   }
 
   applyProfile(): void {
@@ -118,7 +113,7 @@ export class UpdateProfileCard implements OnInit {
     }).pipe(
       filter(Boolean),
       switchMap(() => {
-        return this.updateService.updateConfig({ profile: this.updateProfileControl.value }).pipe(
+        return this.api.call('update.update', [{ profile: this.updateProfileControl.value }]).pipe(
           this.loader.withLoader(),
           this.errorHandler.withErrorHandler(),
         );
@@ -130,6 +125,4 @@ export class UpdateProfileCard implements OnInit {
       },
     });
   }
-
-  protected readonly async = async;
 }

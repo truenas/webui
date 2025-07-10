@@ -84,6 +84,7 @@ export const selectJobsPanelSlice = createSelector(
   (runningJobs, waitingJobs, failedJobs) => [...runningJobs, ...waitingJobs, ...failedJobs],
 );
 
+// TODO: Fix selector to return single item or rename selector.
 export const selectUpdateJob = createSelector(
   selectRunningJobs,
   (jobs: Job[]) => jobs.filter((job) => job.method === 'update.run' || job.method === 'failover.upgrade'),

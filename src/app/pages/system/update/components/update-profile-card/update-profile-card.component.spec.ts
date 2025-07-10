@@ -3,19 +3,18 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { BehaviorSubject, of } from 'rxjs';
+import { of } from 'rxjs';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { UpdateProfileChoices } from 'app/interfaces/system-update.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { UpdateService } from 'app/pages/system/update/services/update.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { UpdateProfileCard } from './update-profile-card.component';
 
 describe('UpdateProfileCard', () => {
   let spectator: Spectator<UpdateProfileCard>;
   let loader: HarnessLoader;
-
-  const getUpdateConfig$ = new BehaviorSubject({ profile: 'CONSERVATIVE' });
 
   const mockProfiles: UpdateProfileChoices = {
     CONSERVATIVE: {
@@ -44,6 +43,9 @@ describe('UpdateProfileCard', () => {
       ReactiveFormsModule,
     ],
     providers: [
+      mockApi([
+        mockCall('update.update'),
+      ]),
       provideMockStore(),
       {
         provide: DialogService,
@@ -57,20 +59,13 @@ describe('UpdateProfileCard', () => {
           success: jest.fn(),
         },
       },
-      {
-        provide: UpdateService,
-        useValue: {
-          getUpdateConfig: () => getUpdateConfig$,
-          updateConfig: jest.fn(() => of({})),
-        },
-      },
     ],
   });
 
   beforeEach(() => {
-    getUpdateConfig$.next({ profile: 'CONSERVATIVE' });
     spectator = createComponent({
       props: {
+        currentProfileId: 'CONSERVATIVE',
         profileChoices: mockProfiles,
       },
     });
@@ -91,7 +86,7 @@ describe('UpdateProfileCard', () => {
 
   it('opens confirm dialog and applies profile', async () => {
     const dialog = spectator.inject(DialogService);
-    const updateService = spectator.inject(UpdateService);
+    const api = spectator.inject(ApiService);
     const snackbar = spectator.inject(SnackbarService);
 
     const select = await loader.getHarness(IxSelectHarness.with({ label: 'Select an update profile' }));
@@ -101,7 +96,7 @@ describe('UpdateProfileCard', () => {
     spectator.click(button);
 
     expect(dialog.confirm).toHaveBeenCalled();
-    expect(updateService.updateConfig).toHaveBeenCalledWith({ profile: 'DEVELOPER' });
+    expect(api.call).toHaveBeenCalledWith('update.update', [{ profile: 'DEVELOPER' }]);
 
     expect(snackbar.success).toHaveBeenCalledWith(expect.stringMatching('Switched to Developer update profile'));
   });
@@ -122,16 +117,14 @@ describe('UpdateProfileCard', () => {
   });
 
   it('shows a separate Current Profile line when current profile is not available in the options', () => {
-    getUpdateConfig$.next({ profile: 'CRITICAL' });
-    spectator.detectChanges();
+    spectator.setInput('currentProfileId', 'CRITICAL');
 
     const currentProfile = spectator.query('.current-profile');
     expect(currentProfile).toHaveText('Current Profile:Mission Critical');
   });
 
   it('shows raw current value when Current Profile is absent from profile choices at all', () => {
-    getUpdateConfig$.next({ profile: 'MISSING_PROFILE' });
-    spectator.detectChanges();
+    spectator.setInput('currentProfileId', 'MISSING_PROFILE');
 
     const currentProfile = spectator.query('.current-profile');
     expect(currentProfile).toHaveText('Current Profile:MISSING_PROFILE');

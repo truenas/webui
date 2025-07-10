@@ -1,4 +1,4 @@
-import { SystemUpdateOperationType, SystemUpdateStatus } from 'app/enums/system-update.enum';
+import { SystemUpdateOperationType, UpdateCode } from 'app/enums/system-update.enum';
 
 export interface SystemUpdate {
   changelog: string;
@@ -7,7 +7,7 @@ export interface SystemUpdate {
   filename: string;
   notice: string;
   release_notes_url: string;
-  status: SystemUpdateStatus;
+  status: UpdateCode;
   version: string;
 }
 
@@ -65,10 +65,10 @@ export interface UpdateManifest {
   train: string;
 }
 
-export interface UpdateVersion {
+export interface NewVersion {
   version: string;
   manifest: UpdateManifest;
-  release_notes_url: string;
+  release_notes_url?: string;
 }
 
 export interface UpdateStatusCurrentVersion {
@@ -77,9 +77,9 @@ export interface UpdateStatusCurrentVersion {
   matches_profile: boolean;
 }
 
-export interface UpdateStatusState {
+export interface UpdateStatusDetails {
   current_version: UpdateStatusCurrentVersion;
-  new_version: UpdateVersion | null;
+  new_version: NewVersion | null;
 }
 
 export interface UpdateDownloadProgress {
@@ -89,8 +89,8 @@ export interface UpdateDownloadProgress {
 }
 
 export interface UpdateStatus {
-  code: SystemUpdateStatus;
-  status: UpdateStatusState | null;
+  code: UpdateCode;
+  status: UpdateStatusDetails | null;
   error: string | null;
   update_download_progress: UpdateDownloadProgress | null;
 }
