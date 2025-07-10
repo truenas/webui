@@ -5,8 +5,8 @@ import {
   filter,
   forkJoin, map, Observable, switchMap, tap,
 } from 'rxjs';
-import { DockerConfig, DockerStatusData } from 'app/enums/docker-config.interface';
 import { DockerStatus } from 'app/enums/docker-status.enum';
+import { DockerConfig, DockerStatusData } from 'app/interfaces/docker-config.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApiService } from 'app/modules/websocket/api.service';

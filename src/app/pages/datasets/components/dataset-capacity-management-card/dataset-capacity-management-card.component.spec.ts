@@ -8,6 +8,8 @@ import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DatasetType } from 'app/enums/dataset.enum';
+import { OnOff } from 'app/enums/on-off.enum';
+import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { DatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -27,6 +29,12 @@ const datasetQuotas = {
   },
   quota: {
     parsed: 8388608,
+  },
+  readonly: {
+    parsed: false,
+    rawvalue: 'off',
+    value: OnOff.Off,
+    source: ZfsPropertySource.Local,
   },
 } as DatasetDetails;
 

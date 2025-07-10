@@ -36,7 +36,7 @@ export const preferencesReducer = createReducer(
   initialState,
 
   on(dashboardStateLoaded, dashboardStateUpdated, (state, { dashboardState }) => ({ ...state, dashboardState })),
-  on(noDashboardStateFound, (state) => ({ ...state, dashboardState: null })),
+  on(noDashboardStateFound, (state) => ({ ...state, dashboardState: null as DashConfigItem[] | null })),
   on(adminUiInitialized, () => ({ ...initialState, areLoaded: false })),
   on(preferencesLoaded, (state, { preferences }) => ({ ...state, preferences, areLoaded: true })),
   on(noPreferencesFound, (state) => ({ ...state, preferences: defaultPreferences, areLoaded: true })),
@@ -76,10 +76,10 @@ export const preferencesReducer = createReducer(
   })),
   on(guiFormSubmitted, (state, { theme }) => ({
     ...updatePreferences(state, { userTheme: theme }),
-    previewTheme: null,
+    previewTheme: null as string | null,
   })),
   on(themeChangedInGuiForm, (state, { theme }) => ({ ...state, previewTheme: theme })),
-  on(guiFormClosedWithoutSaving, (state) => ({ ...state, previewTheme: null })),
+  on(guiFormClosedWithoutSaving, (state) => ({ ...state, previewTheme: null as string | null })),
   on(themeNotFound, (state) => updatePreferences(state, {
     userTheme: defaultTheme.name,
   })),

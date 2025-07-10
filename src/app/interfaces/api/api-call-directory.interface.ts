@@ -3,7 +3,6 @@ import { AuthMechanism } from 'app/enums/auth-mechanism.enum';
 import { CloudsyncTransferSetting } from 'app/enums/cloudsync-transfer-setting.enum';
 import { DatasetRecordSize, DatasetType } from 'app/enums/dataset.enum';
 import { DeviceType } from 'app/enums/device-type.enum';
-import { DockerConfig, DockerStatusData } from 'app/enums/docker-config.interface';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { OnOff } from 'app/enums/on-off.enum';
@@ -101,6 +100,7 @@ import {
   CreateDnsAuthenticator,
   DnsAuthenticator, UpdateDnsAuthenticator,
 } from 'app/interfaces/dns-authenticator.interface';
+import { DockerConfig, DockerStatusData } from 'app/interfaces/docker-config.interface';
 import { DockerRegistry, DockerRegistryPayload } from 'app/interfaces/docker-registry.interface';
 import { DockerHubRateLimit } from 'app/interfaces/dockerhub-rate-limit.interface';
 import {

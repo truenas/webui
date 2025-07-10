@@ -182,11 +182,7 @@ export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChange
     }
   }
 
-  onOptionTooltipClicked(event: MouseEvent): void {
-    event.stopPropagation();
-  }
-
-  selectAll(): void {
+  private selectAll(): void {
     if (this.multiple()) {
       this.value = this.opts.map((opt) => opt.value) as SelectOptionValueType;
       this.onChange(this.value);
@@ -198,7 +194,7 @@ export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChange
     this.onChange(this.value);
   }
 
-  toggleSelectAll(checked: boolean): void {
+  protected toggleSelectAll(checked: boolean): void {
     if (checked) {
       this.selectAll();
     } else {
