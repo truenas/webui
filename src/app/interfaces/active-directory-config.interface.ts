@@ -2,7 +2,7 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { ActiveDirectorySchemaMode, IdmapBackend } from 'app/enums/directory-services.enum';
 import { Option } from 'app/interfaces/option.interface';
 
-export interface ActiveDirectoryIdmap {
+export interface IdmapBase {
   /** Short-form name of the domain. Can't be just anything, match with regex
    * r"^(?![0-9]*$)[a-zA-Z0-9\.\-_!@#\$%^&\(\)'\{\}~]{1,15}$"" */
   name: string | null;
@@ -10,20 +10,17 @@ export interface ActiveDirectoryIdmap {
   range_low: number;
   /** Value must be greater or equal to 1000 and lesser or equal to 2147000000. Default is 200000000 */
   range_high: number;
+  idmap_backend: IdmapBackend;
+}
+
+export interface ActiveDirectoryIdmap extends IdmapBase {
   idmap_backend: IdmapBackend.Ad;
   schema_mode: ActiveDirectorySchemaMode;
   unix_primary_group: boolean;
   unix_nss_info: boolean;
 }
 
-export interface LdapIdmap {
-  /** Short-form name of the domain. Can't be just anything, match with regex
-   * r"^(?![0-9]*$)[a-zA-Z0-9\.\-_!@#\$%^&\(\)'\{\}~]{1,15}$"" */
-  name: string | null;
-  /** Value must be greater or equal to 1000 and lesser or equal to 2147000000. Default is 100000001 */
-  range_low: number;
-  /** Value must be greater or equal to 1000 and lesser or equal to 2147000000. Default is 200000000 */
-  range_high: number;
+export interface LdapIdmap extends IdmapBase {
   idmap_backend: IdmapBackend.Ldap;
   ldap_base_dn: string;
   ldap_user_dn: string;
@@ -33,14 +30,7 @@ export interface LdapIdmap {
   validate_certificates: boolean;
 }
 
-export interface Rfc2307Idmap {
-  /** Short-form name of the domain. Can't be just anything, match with regex
-   * r"^(?![0-9]*$)[a-zA-Z0-9\.\-_!@#\$%^&\(\)'\{\}~]{1,15}$"" */
-  name: string | null;
-  /** Value must be greater or equal to 1000 and lesser or equal to 2147000000. Default is 100000001 */
-  range_low: number;
-  /** Value must be greater or equal to 1000 and lesser or equal to 2147000000. Default is 200000000 */
-  range_high: number;
+export interface Rfc2307Idmap extends IdmapBase {
   idmap_backend: IdmapBackend.Rfc2307;
   ldap_url: string;
   ldap_user_dn: string;
@@ -52,14 +42,7 @@ export interface Rfc2307Idmap {
   validate_certificates: boolean;
 }
 
-export interface RidIdmap {
-  /** Short-form name of the domain. Can't be just anything, match with regex
-   * r"^(?![0-9]*$)[a-zA-Z0-9\.\-_!@#\$%^&\(\)'\{\}~]{1,15}$"" */
-  name: string | null;
-  /** Value must be greater or equal to 1000 and lesser or equal to 2147000000. Default is 100000001 */
-  range_low: number;
-  /** Value must be greater or equal to 1000 and lesser or equal to 2147000000. Default is 200000000 */
-  range_high: number;
+export interface RidIdmap extends IdmapBase {
   idmap_backend: IdmapBackend.Rid;
   sssd_compat: boolean;
 }
