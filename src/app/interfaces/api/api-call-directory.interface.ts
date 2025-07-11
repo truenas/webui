@@ -86,8 +86,9 @@ import {
   Dataset, DatasetCreate, DatasetDetails, DatasetUpdate, ExtraDatasetQueryOptions,
 } from 'app/interfaces/dataset.interface';
 import { Device } from 'app/interfaces/device.interface';
-import { DirectoryServicesConfigResponse, DirectoryServicesStatus } from 'app/interfaces/directoryservices-config.interface';
+import { DirectoryServicesConfigResponse } from 'app/interfaces/directoryservices-config.interface';
 import { DirectoryServicesLeaveParams, DirectoryServicesLeaveResponse } from 'app/interfaces/directoryservices-leave.interface';
+import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
 import { DirectoryServicesUpdate, DirectoryServicesUpdateResponse } from 'app/interfaces/directoryservices-update.interface';
 import {
   Disk, DiskDetailsResponse,
