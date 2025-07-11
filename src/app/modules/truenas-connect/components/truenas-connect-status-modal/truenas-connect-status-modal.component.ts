@@ -112,7 +112,7 @@ export class TruenasConnectStatusModalComponent implements OnInit {
 
   protected connect(): void {
     this.isConnecting.set(true);
-    const generateToken$ = this.tnc.config().status === TruenasConnectStatus.ClaimTokenMissing ? this.tnc.generateToken() : of('');
+    const generateToken$ = this.tnc.config()?.status === TruenasConnectStatus.ClaimTokenMissing ? this.tnc.generateToken() : of('');
     generateToken$
       .pipe(
         switchMap(() => {

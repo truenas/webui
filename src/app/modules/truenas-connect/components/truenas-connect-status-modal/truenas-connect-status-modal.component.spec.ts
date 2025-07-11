@@ -38,6 +38,7 @@ describe('TruenasConnectStatusModalComponent', () => {
         connect: jest.fn(() => of(null)),
         disableService: jest.fn(() => of(null)),
         enableService: jest.fn(() => of(null)),
+        generateToken: jest.fn(() => of('')),
       }),
       mockProvider(DialogService, {
         error: jest.fn(),
@@ -104,6 +105,25 @@ describe('TruenasConnectStatusModalComponent', () => {
     expect(connectSpy).toHaveBeenCalled();
   });
 
+  it('should call generateToken when status is ClaimTokenMissing', async () => {
+    config.update((conf) => ({ ...conf, status: TruenasConnectStatus.ClaimTokenMissing }));
+    spectator.detectChanges();
+
+    const service = spectator.inject(TruenasConnectService);
+    const generateTokenSpy = jest.spyOn(service, 'generateToken');
+    const connectSpy = jest.spyOn(service, 'connect');
+
+    const getConnectedBtn = await loader.getHarness(
+      MatButtonHarness.with({
+        text: 'Get Connected',
+      }),
+    );
+    await getConnectedBtn.click();
+
+    expect(generateTokenSpy).toHaveBeenCalled();
+    expect(connectSpy).toHaveBeenCalled();
+  });
+
   it('should handle error when clicking Get Connected button', async () => {
     config.update((conf) => ({ ...conf, status: TruenasConnectStatus.RegistrationFinalizationWaiting }));
     spectator.detectChanges();
@@ -121,6 +141,29 @@ describe('TruenasConnectStatusModalComponent', () => {
     await getConnectedBtn.click();
 
     expect(connectSpy).toHaveBeenCalled();
+    expect(errorSpy).toHaveBeenCalledWith({
+      title: expect.any(String),
+      message: expect.any(String),
+    });
+  });
+
+  it('should handle error when generateToken fails', async () => {
+    config.update((conf) => ({ ...conf, status: TruenasConnectStatus.ClaimTokenMissing }));
+    spectator.detectChanges();
+
+    const service = spectator.inject(TruenasConnectService);
+    const generateTokenSpy = jest.spyOn(service, 'generateToken').mockReturnValue(throwError(() => new Error('Token generation failed')));
+    const dialogService = spectator.inject(DialogService);
+    const errorSpy = jest.spyOn(dialogService, 'error');
+
+    const getConnectedBtn = await loader.getHarness(
+      MatButtonHarness.with({
+        text: 'Get Connected',
+      }),
+    );
+    await getConnectedBtn.click();
+
+    expect(generateTokenSpy).toHaveBeenCalled();
     expect(errorSpy).toHaveBeenCalledWith({
       title: expect.any(String),
       message: expect.any(String),
