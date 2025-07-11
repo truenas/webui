@@ -28,7 +28,6 @@ import { FilesystemPutParams, FilesystemSetPermParams } from 'app/interfaces/fil
 import { IpmiEvent } from 'app/interfaces/ipmi.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { KmipConfig, KmipConfigUpdate } from 'app/interfaces/kmip-config.interface';
-import { LdapConfig, LdapConfigUpdate } from 'app/interfaces/ldap-config.interface';
 import { MailConfigUpdate, SendMailParams } from 'app/interfaces/mail-config.interface';
 import { PoolExportParams } from 'app/interfaces/pool-export.interface';
 import { PoolFindResult, PoolImportParams } from 'app/interfaces/pool-import.interface';
@@ -109,9 +108,6 @@ export interface ApiJobDirectory {
   // Directory Services
   'directoryservices.cache_refresh': { params: void; response: void };
   'directoryservices.update': { params: [DirectoryServicesUpdate]; response: DirectoryServicesUpdateResponse };
-
-  // LDAP
-  'ldap.update': { params: [LdapConfigUpdate]; response: LdapConfig };
 
   // Disk
   'disk.wipe': { params: DiskWipeParams; response: void };

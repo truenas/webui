@@ -33,7 +33,7 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
   ],
 })
 export class IpaConfigComponent implements OnInit {
-  readonly configurationDataChanged = output<IpaConfig>();
+  readonly configurationChanged = output<IpaConfig>();
 
   form = this.fb.group({
     target_server: [null, Validators.required],
@@ -73,7 +73,7 @@ export class IpaConfigComponent implements OnInit {
     this.form.valueChanges
       .pipe(untilDestroyed(this))
       .subscribe(() => {
-        this.configurationDataChanged.emit(this.buildIpaConfig());
+        this.configurationChanged.emit(this.buildIpaConfig());
       });
   }
 

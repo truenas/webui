@@ -39,7 +39,7 @@ import { TrustedDomainsConfigComponent } from 'app/pages/directory-service/compo
   ],
 })
 export class ActiveDirectoryConfigComponent implements OnInit {
-  readonly configurationDataChanged = output<DirectoryServicesUpdate['configuration']>();
+  readonly configurationChanged = output<DirectoryServicesUpdate['configuration']>();
   readonly kerberosRealmSuggested = output<string | null>();
 
   protected readonly primaryDomainIdmap = signal<PrimaryDomainIdmap>(null);
@@ -86,7 +86,7 @@ export class ActiveDirectoryConfigComponent implements OnInit {
     this.form.valueChanges
       .pipe(untilDestroyed(this))
       .subscribe(() => {
-        this.configurationDataChanged.emit(this.buildActiveDirectoryConfig());
+        this.configurationChanged.emit(this.buildActiveDirectoryConfig());
       });
   }
 

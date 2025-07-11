@@ -20,10 +20,8 @@ import { Role } from 'app/enums/role.enum';
 import { helptextDashboard } from 'app/helptext/directory-service/dashboard';
 import { ActiveDirectoryConfig } from 'app/interfaces/active-directory-config.interface';
 import { LdapCredentialPlain } from 'app/interfaces/directoryservice-credentials.interface';
-import {
-  LdapConfig,
-} from 'app/interfaces/directoryservices-config.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
+import { LdapConfig } from 'app/interfaces/ldap-config.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';

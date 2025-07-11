@@ -66,20 +66,20 @@
       <!-- Service-specific Configuration Sub-Components -->
       @if (selectedConfigurationType === DirectoryServiceType.ActiveDirectory) {
         <ix-active-directory-config
-          (configurationDataChanged)="onConfigurationDataChanged($event)"
+          (configurationChanged)="onConfigurationDataChanged($event)"
           (kerberosRealmSuggested)="onKerberosRealmSuggested($event)"
         ></ix-active-directory-config>
       }
 
       @if (selectedConfigurationType === DirectoryServiceType.Ldap) {
         <ix-ldap-config
-          (configurationDataChanged)="onConfigurationDataChanged($event)"
+          (configurationChanged)="onConfigurationDataChanged($event)"
         ></ix-ldap-config>
       }
 
       @if (selectedConfigurationType === DirectoryServiceType.Ipa) {
         <ix-ipa-config
-          (configurationDataChanged)="onConfigurationDataChanged($event)"
+          (configurationChanged)="onConfigurationDataChanged($event)"
         ></ix-ipa-config>
       }
 

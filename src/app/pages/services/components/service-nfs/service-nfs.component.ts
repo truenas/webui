@@ -20,7 +20,7 @@ import { RdmaProtocolName } from 'app/enums/service-name.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextServiceNfs } from 'app/helptext/services/components/service-nfs';
-import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-config.interface';
+import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
 import { NfsConfig } from 'app/interfaces/nfs-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';

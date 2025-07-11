@@ -9,7 +9,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { DirectoryServiceStatus } from 'app/enums/directory-services.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
-import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-config.interface';
+import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import {

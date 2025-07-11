@@ -1,326 +1,207 @@
 <form class="ix-form-container" [formGroup]="form">
   <ix-fieldset [title]="'LDAP Configuration' | translate">
-  <ix-chips
-    formControlName="ldap_server_urls"
-    [label]="'Server URLs' | translate"
-    [required]="true"
-    [tooltip]="'LDAP server URLs (e.g., ldap://server.domain.com)' | translate"
-  ></ix-chips>
-
-  <ix-input
-    formControlName="ldap_basedn"
-    [label]="'Base DN' | translate"
-    [required]="true"
-    [tooltip]="'Base Distinguished Name for LDAP searches' | translate"
-  ></ix-input>
-
-  <ix-checkbox
-    formControlName="ldap_starttls"
-    [label]="'Start TLS' | translate"
-    [required]="true"
-    [tooltip]="'Use StartTLS for secure connections' | translate"
-  ></ix-checkbox>
-
-  <ix-checkbox
-    formControlName="ldap_validate_certificates"
-    [label]="'Validate Certificates' | translate"
-    [required]="true"
-    [tooltip]="'Validate SSL/TLS certificates' | translate"
-  ></ix-checkbox>
-</ix-fieldset>
-
-<ix-fieldset [title]="'LDAP Options' | translate">
-  <ix-select
-    formControlName="ldap_schema"
-    [label]="'Schema' | translate"
-    [required]="true"
-    [options]="ldapSchemaOptions$"
-    [tooltip]="'LDAP schema type to use' | translate"
-  ></ix-select>
-
-  @if (isAdvancedMode()) {
-    <ix-textarea
-      formControlName="ldap_auxiliary_parameters"
-      [label]="'Auxiliary Parameters' | translate"
-      [tooltip]="'Additional LDAP configuration parameters' | translate"
-    ></ix-textarea>
-  }
-</ix-fieldset>
-
-@if (isAdvancedMode()) {
-  <ix-fieldset [title]="'LDAP Search Bases' | translate">
-    <ix-input
-      formControlName="ldap_base_user"
-      [label]="'User Base DN' | translate"
-      [tooltip]="'Base DN for user searches' | translate"
-    ></ix-input>
-
-    <ix-input
-      formControlName="ldap_base_group"
-      [label]="'Group Base DN' | translate"
-      [tooltip]="'Base DN for group searches' | translate"
-    ></ix-input>
-
-    <ix-input
-      formControlName="ldap_base_netgroup"
-      [label]="'Netgroup Base DN' | translate"
-      [tooltip]="'Base DN for netgroup searches' | translate"
-    ></ix-input>
-  </ix-fieldset>
-
-  <ix-fieldset [title]="'LDAP User Attributes' | translate">
-    <ix-input
-      formControlName="ldap_user_object_class"
-      [label]="'User Object Class' | translate"
-      [tooltip]="'LDAP object class for users' | translate"
-    ></ix-input>
-
-    <ix-input
-      formControlName="ldap_user_name"
-      [label]="'Username Attribute' | translate"
-      [tooltip]="'LDAP attribute for username' | translate"
-    ></ix-input>
-
-    <ix-input
-      formControlName="ldap_user_uid"
-      [label]="'UID Attribute' | translate"
-      [tooltip]="'LDAP attribute for user ID' | translate"
-    ></ix-input>
-
-    <ix-input
-      formControlName="ldap_user_gid"
-      [label]="'GID Attribute' | translate"
-      [tooltip]="'LDAP attribute for group ID' | translate"
-    ></ix-input>
-
-    <ix-input
-      formControlName="ldap_user_gecos"
-      [label]="'GECOS Attribute' | translate"
-      [tooltip]="'LDAP attribute for user information' | translate"
-    ></ix-input>
-
-    <ix-input
-      formControlName="ldap_user_home_directory"
-      [label]="'Home Directory Attribute' | translate"
-      [tooltip]="'LDAP attribute for user home directory' | translate"
-    ></ix-input>
-
-    <ix-input
-      formControlName="ldap_user_shell"
-      [label]="'Shell Attribute' | translate"
-      [tooltip]="'LDAP attribute for user shell' | translate"
-    ></ix-input>
-  </ix-fieldset>
-
-  <ix-fieldset [title]="'LDAP Shadow Attributes' | translate">
-    <ix-input
-      formControlName="ldap_shadow_last_change"
-      [label]="'Last Change Attribute' | translate"
-      [tooltip]="'LDAP attribute for password last change' | translate"
-    ></ix-input>
-
-    <ix-input
-      formControlName="ldap_shadow_min"
-      [label]="'Min Days Attribute' | translate"
-      [tooltip]="'LDAP attribute for minimum password age' | translate"
-    ></ix-input>
-
-    <ix-input
-      formControlName="ldap_shadow_max"
-      [label]="'Max Days Attribute' | translate"
-      [tooltip]="'LDAP attribute for maximum password age' | translate"
-    ></ix-input>
-
-    <ix-input
-      formControlName="ldap_shadow_warning"
-      [label]="'Warning Attribute' | translate"
-      [tooltip]="'LDAP attribute for password warning period' | translate"
-    ></ix-input>
-
-    <ix-input
-      formControlName="ldap_shadow_inactive"
-      [label]="'Inactive Attribute' | translate"
-      [tooltip]="'LDAP attribute for account inactive period' | translate"
-    ></ix-input>
-
-    <ix-input
-      formControlName="ldap_shadow_expire"
-      [label]="'Expire Attribute' | translate"
-      [tooltip]="'LDAP attribute for account expiration' | translate"
-    ></ix-input>
-  </ix-fieldset>
-
-  <ix-fieldset [title]="'LDAP Group Attributes' | translate">
-    <ix-input
-      formControlName="ldap_group_object_class"
-      [label]="'Group Object Class' | translate"
-      [tooltip]="'LDAP object class for groups' | translate"
-    ></ix-input>
-
-    <ix-input
-      formControlName="ldap_group_gid"
-      [label]="'Group GID Attribute' | translate"
-      [tooltip]="'LDAP attribute for group ID' | translate"
-    ></ix-input>
-
-    <ix-input
-      formControlName="ldap_group_member"
-      [label]="'Group Member Attribute' | translate"
-      [tooltip]="'LDAP attribute for group members' | translate"
-    ></ix-input>
-
-    <ix-input
-      formControlName="ldap_netgroup_object_class"
-      [label]="'Netgroup Object Class' | translate"
-      [tooltip]="'LDAP object class for netgroups' | translate"
-    ></ix-input>
-
-    <ix-input
-      formControlName="ldap_netgroup_member"
-      [label]="'Netgroup Member Attribute' | translate"
-      [tooltip]="'LDAP attribute for netgroup members' | translate"
-    ></ix-input>
-
-    <ix-input
-      formControlName="ldap_netgroup_triple"
-      [label]="'Netgroup Triple Attribute' | translate"
-      [tooltip]="'LDAP attribute for netgroup triples' | translate"
-    ></ix-input>
-  </ix-fieldset>
-}
-
-<ix-fieldset [title]="'ID Mapping Configuration' | translate">
-  <ix-checkbox
-    formControlName="use_default_idmap"
-    [label]="'Use Default ID Mapping' | translate"
-    [tooltip]="'Use system default ID mapping configuration' | translate"
-  ></ix-checkbox>
-
-  @if (!useDefaultIdmap) {
-    <ix-select
-      formControlName="idmap_backend"
-      [label]="'ID Mapping Backend' | translate"
+    <ix-chips
+      formControlName="server_urls"
+      [label]="'Server URLs' | translate"
       [required]="true"
-      [options]="idmapBackendOptions$"
-      [tooltip]="'Backend to use for ID mapping' | translate"
+    ></ix-chips>
+
+    <ix-input 
+      formControlName="basedn"
+      [label]="'Base DN' | translate"
+      [required]="true"
+    ></ix-input>
+
+    <ix-checkbox
+      formControlName="starttls"
+      [label]="'Start TLS' | translate"
+    ></ix-checkbox>
+
+    <ix-checkbox
+      formControlName="validate_certificates"
+      [label]="'Validate Certificates' | translate"
+    ></ix-checkbox>
+
+    <ix-select
+      formControlName="schema"
+      [label]="'Schema' | translate"
+      [options]="ldapSchemaOptions$"
+      [required]="true"
     ></ix-select>
 
-    <ix-input
-      formControlName="idmap_range_low"
-      type="number"
-      [label]="'Range Low' | translate"
-      [required]="true"
-      [tooltip]="'Lowest ID in the mapping range (minimum 1000)' | translate"
-    ></ix-input>
-
-    <ix-input
-      formControlName="idmap_range_high"
-      type="number"
-      [label]="'Range High' | translate"
-      [required]="true"
-      [tooltip]="'Highest ID in the mapping range' | translate"
-    ></ix-input>
-
-    @if (selectedIdmapBackend === 'AUTORID') {
-      <ix-input
-        formControlName="idmap_rangesize"
-        type="number"
-        [label]="'Range Size' | translate"
-        [required]="true"
-        [tooltip]="'Size of each domain range for AutoRID' | translate"
-      ></ix-input>
-
+    <ix-fieldset
+      [title]="'Auxiliary Parameters' | translate"
+    >
       <ix-checkbox
-        formControlName="idmap_readonly"
-        [label]="'Read Only' | translate"
-        [required]="true"
-        [tooltip]="'Use read-only mode for AutoRID' | translate"
+        formControlName="use_standard_auxiliary_parameters"
+        [label]="'Use Standard Auxiliary Parameters' | translate"
       ></ix-checkbox>
-
-      <ix-checkbox
-        formControlName="idmap_ignore_builtin"
-        [label]="'Ignore Builtin' | translate"
-        [required]="true"
-        [tooltip]="'Ignore builtin users and groups' | translate"
-      ></ix-checkbox>
-    }
-
-    @if (selectedIdmapBackend === 'LDAP' || selectedIdmapBackend === 'RFC2307') {
-      <ix-input
-        formControlName="idmap_ldap_base_dn"
-        [label]="'LDAP Base DN' | translate"
-        [required]="selectedIdmapBackend === 'LDAP'"
-        [tooltip]="'Base DN for LDAP ID mapping' | translate"
-      ></ix-input>
-
-      <ix-input
-        formControlName="idmap_ldap_user_dn"
-        [label]="'LDAP User DN' | translate"
-        [required]="true"
-        [tooltip]="'User DN for LDAP bind' | translate"
-      ></ix-input>
-
-      <ix-input
-        formControlName="idmap_ldap_user_dn_password"
-        type="password"
-        [label]="'LDAP User Password' | translate"
-        [required]="true"
-        [tooltip]="'Password for LDAP bind user' | translate"
-      ></ix-input>
-
-      <ix-input
-        formControlName="idmap_ldap_url"
-        [label]="'LDAP URL' | translate"
-        [required]="true"
-        [tooltip]="'LDAP server URL for ID mapping' | translate"
-      ></ix-input>
-
-      <ix-checkbox
-        formControlName="idmap_validate_certificates"
-        [label]="'Validate Certificates' | translate"
-        [required]="true"
-        [tooltip]="'Validate LDAP SSL/TLS certificates' | translate"
-      ></ix-checkbox>
-
-      @if (selectedIdmapBackend === 'RFC2307') {
-        <ix-input
-          formControlName="idmap_bind_path_user"
-          [label]="'Bind Path User' | translate"
-          [required]="true"
-          [tooltip]="'LDAP path for user objects' | translate"
-        ></ix-input>
-
-        <ix-input
-          formControlName="idmap_bind_path_group"
-          [label]="'Bind Path Group' | translate"
-          [required]="true"
-          [tooltip]="'LDAP path for group objects' | translate"
-        ></ix-input>
-
-        <ix-checkbox
-          formControlName="idmap_user_cn"
-          [label]="'User CN' | translate"
-          [required]="true"
-          [tooltip]="'Use common name for user mapping' | translate"
-        ></ix-checkbox>
-
-        <ix-checkbox
-          formControlName="idmap_ldap_realm"
-          [label]="'LDAP Realm' | translate"
-          [required]="true"
-          [tooltip]="'Use LDAP realm for mapping' | translate"
-        ></ix-checkbox>
+      @if (!(form.controls.use_standard_auxiliary_parameters.value)) {
+        <ix-textarea
+          formControlName="auxiliary_parameters"
+          [label]="'Auxiliary Parameters' | translate"
+        ></ix-textarea>
       }
-    }
+    </ix-fieldset>
+    
 
-    @if (selectedIdmapBackend === 'RID') {
+    <ix-fieldset [title]="'Search Bases' | translate">
       <ix-checkbox
-        formControlName="idmap_sssd_compat"
-        [label]="'SSSD Compatibility' | translate"
-        [required]="true"
-        [tooltip]="'Enable SSSD compatibility mode' | translate"
+        formControlName="use_standard_search_bases"
+        [label]="'Use Standard Search Bases' | translate"
       ></ix-checkbox>
-    }
-  }
-</ix-fieldset>
+      @if (!(form.controls.use_standard_search_bases.value)) {
+        <div [formGroup]="form.controls.search_bases">
+          <ix-input
+            formControlName="base_user"
+            [label]="'User Base DN' | translate"
+          ></ix-input>
+
+          <ix-input
+            formControlName="base_group"
+            [label]="'Group Base DN' | translate"
+          ></ix-input>
+
+          <ix-input
+            formControlName="base_netgroup"
+            [label]="'Netgroup Base DN' | translate"
+          ></ix-input>
+        </div>
+      }
+      
+    </ix-fieldset>
+
+    <ix-fieldset [title]="'Attribute Maps' | translate">
+      <ix-checkbox
+        formControlName="use_standard_attribute_maps"
+        [label]="'Use Standard Attribute Maps'"
+      ></ix-checkbox>
+      @if (!(form.controls.use_standard_attribute_maps.value)) {
+        <ix-fieldset 
+          [title]="'LDAP Password Attributes' | translate" 
+          [formGroup]="form.controls.attribute_maps.controls.passwd"
+        >
+          <ix-input
+            formControlName="user_object_class"
+            [label]="'User Object Class' | translate"
+          ></ix-input>
+
+          <ix-input
+            formControlName="user_name"
+            [label]="'Username Attribute' | translate"
+          ></ix-input>
+
+          <ix-input
+            formControlName="user_uid"
+            [label]="'UID Attribute' | translate"
+          ></ix-input>
+
+          <ix-input
+            formControlName="user_gid"
+            [label]="'GID Attribute' | translate"
+          ></ix-input>
+
+          <ix-input
+            formControlName="user_gecos"
+            [label]="'GECOS Attribute' | translate"
+          ></ix-input>
+
+          <ix-input
+            formControlName="user_home_directory"
+            [label]="'Home Directory Attribute' | translate"
+          ></ix-input>
+
+          <ix-input
+            formControlName="user_shell"
+            [label]="'Shell Attribute' | translate"
+          ></ix-input>
+        </ix-fieldset>
+        <ix-fieldset
+          [title]="'LDAP Shadow Attributes' | translate"
+          [formGroup]="form.controls.attribute_maps.controls.shadow"
+        >
+          <ix-input
+            formControlName="shadow_last_change"
+            [label]="'Last Change Attribute' | translate"
+            [tooltip]="'LDAP attribute for password last change' | translate"
+          ></ix-input>
+
+          <ix-input
+            formControlName="shadow_min"
+            [label]="'Min Days Attribute' | translate"
+            [tooltip]="'LDAP attribute for minimum password age' | translate"
+          ></ix-input>
+
+          <ix-input
+            formControlName="shadow_max"
+            [label]="'Max Days Attribute' | translate"
+            [tooltip]="'LDAP attribute for maximum password age' | translate"
+          ></ix-input>
+
+          <ix-input
+            formControlName="shadow_warning"
+            [label]="'Warning Attribute' | translate"
+            [tooltip]="'LDAP attribute for password warning period' | translate"
+          ></ix-input>
+
+          <ix-input
+            formControlName="shadow_inactive"
+            [label]="'Inactive Attribute' | translate"
+            [tooltip]="'LDAP attribute for account inactive period' | translate"
+          ></ix-input>
+
+          <ix-input
+            formControlName="shadow_expire"
+            [label]="'Expire Attribute' | translate"
+            [tooltip]="'LDAP attribute for account expiration' | translate"
+          ></ix-input>
+        </ix-fieldset>
+        <ix-fieldset 
+          [title]="'LDAP Group Attributes' | translate"
+          [formGroup]="form.controls.attribute_maps.controls.group"
+        >
+          <ix-input
+            formControlName="group_object_class"
+            [label]="'Group Object Class' | translate"
+            [tooltip]="'LDAP object class for groups' | translate"
+          ></ix-input>
+
+          <ix-input
+            formControlName="group_gid"
+            [label]="'Group GID Attribute' | translate"
+            [tooltip]="'LDAP attribute for group ID' | translate"
+          ></ix-input>
+
+          <ix-input
+            formControlName="group_member"
+            [label]="'Group Member Attribute' | translate"
+            [tooltip]="'LDAP attribute for group members' | translate"
+          ></ix-input>
+        </ix-fieldset>
+        <ix-fieldset
+          [title]="'LDAP Net Group Attributes' | translate"
+          [formGroup]="form.controls.attribute_maps.controls.netgroup"
+        >
+          <ix-input
+            formControlName="netgroup_object_class"
+            [label]="'Netgroup Object Class' | translate"
+            [tooltip]="'LDAP object class for netgroups' | translate"
+          ></ix-input>
+
+          <ix-input
+            formControlName="netgroup_member"
+            [label]="'Netgroup Member Attribute' | translate"
+            [tooltip]="'LDAP attribute for netgroup members' | translate"
+          ></ix-input>
+
+          <ix-input
+            formControlName="netgroup_triple"
+            [label]="'Netgroup Triple Attribute' | translate"
+            [tooltip]="'LDAP attribute for netgroup triples' | translate"
+          ></ix-input>
+        </ix-fieldset>
+      }
+    </ix-fieldset>
+  </ix-fieldset>
+
 </form>
