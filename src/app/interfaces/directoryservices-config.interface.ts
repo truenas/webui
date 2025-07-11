@@ -2,19 +2,10 @@ import {
   LdapSchema,
   DirectoryServiceType,
   DirectoryServiceStatus,
-  IdmapBackend,
 } from 'app/enums/directory-services.enum';
 import { ActiveDirectoryConfig } from 'app/interfaces/active-directory-config.interface';
 import { DirectoryServiceCredential } from 'app/interfaces/directoryservice-credentials.interface';
-
-export interface IpaSmbDomain {
-  name: string | null; // short-form name of the domain. Can't be just anything, match with regex Andrew shared
-  range_low: number;
-  range_high: number;
-  idmap_backend: IdmapBackend.Sss;
-  domain_name: string | null;
-  domain_sid: string | null;
-}
+import { IpaConfig } from 'app/interfaces/ipa-config.interface';
 
 export interface LdapMapPasswd {
   user_object_class: string | null;
@@ -72,15 +63,6 @@ export interface LdapConfig {
   attribute_maps: LdapAttributeMaps;
   // Should be hidden under advanced options, can be left null and backend will pick the standard value
   auxiliary_parameters: string | null;
-}
-
-export interface IpaConfig {
-  target_server: string;
-  hostname: string;
-  domain: string;
-  basedn: string;
-  smb_domain: IpaSmbDomain | null;
-  validate_certificates: boolean;
 }
 
 export interface DirectoryServicesConfigResponse {
