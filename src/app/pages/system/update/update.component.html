@@ -1,12 +1,10 @@
-<ix-page-header [loading]="!!(updateService.isLoading$ | async)"></ix-page-header>
+<ix-page-header [loading]="isLoading()"></ix-page-header>
 
 <div class="update-container">
   <div>
     <h2>
-      @if (showDownloadUpdateButton()) {
+      @if (isUpdateAvailable()) {
         {{ 'Update Available' | translate }}
-      } @else if (showApplyPendingButton()) {
-        {{ 'Pending Update' | translate }}
       } @else {
         {{ 'Installed Version' | translate }}
       }
@@ -14,25 +12,24 @@
 
     <div class="update-available">
       <div class="versions">
-        <h4>
-          <b>{{ 'Current Train:' | translate }}</b>
-          @if (trainService.trainValue$ | async; as train) {
-            {{ train }}
-            @if (singleDescription) {
-              <span>- {{ singleDescription }}</span>
-            }
-          } @else {
-            <ngx-skeleton-loader class="inline-loader"></ngx-skeleton-loader>
-          }
-        </h4>
-
-        <h4>
-          {{ 'Current version' | translate }}:
-          @if (systemVersion(); as systemVersion) {
-            <span>{{ systemVersion }}</span>
-          } @else {
-            <ngx-skeleton-loader class="inline-loader"></ngx-skeleton-loader>
-          }
+        <h4 class="current-version">
+          <div class="label">
+            {{ 'Current version' | translate }}:
+          </div>
+          <div class="value">
+            <div class="current-version-number">
+              @if (systemVersion(); as systemVersion) {
+                <span>{{ systemVersion }}</span>
+              } @else {
+                <ngx-skeleton-loader class="inline-loader"></ngx-skeleton-loader>
+              }
+            </div>
+            @if (doesNotMatchProfile() && currentVersionProfile()) {
+              <div class="profile-mismatch">
+                {{ '(from {profile} profile)' | translate: { profile: currentVersionProfile() } }}
+              </div>
+              }
+          </div>
         </h4>
 
         @if (standbySystemVersion(); as standbySystemVersion) {
@@ -42,80 +39,67 @@
           </h4>
         }
 
-        @if (updateVersion(); as updateVersion) {
+        @if (status()?.error) {
           <h4>
-            {{ 'Update Version' | translate }}:
-            <span>{{ updateVersion }}</span>
+            {{ status()?.error }}
+          </h4>
+        }
+
+        @if (newVersion()) {
+          <h4>
+            {{ 'Update version' | translate }}:
+            <span>{{ newVersion().version }}</span>
           </h4>
         }
       </div>
 
-       @if (showDownloadUpdateButton()) {
+      @if (isUpdateAvailable()) {
         <button
           *ixRequiresRoles="requiredRoles"
           mat-button
           color="primary"
-          ixTest="download-updates"
-          [disabled]="isDownloadUpdatesButtonDisabled()"
-          (click)="downloadUpdate()"
+          ixTest="install-updates"
+          [disabled]="isUpdateInProgress$ | async"
+          (click)="onInstallUpdatePressed()"
         >
-          {{ 'Install Update' | translate }}
-        </button>
-      } @else if (showApplyPendingButton()) {
-        <button
-          *ixRequiresRoles="requiredRoles"
-          mat-button
-          color="primary"
-          ixTest="apply-pending-update"
-          (click)="applyPendingUpdate()"
-        >
-          {{ 'Apply Pending Update' | translate }}
+          @if (isUpdateInProgress$ | async) {
+            {{ 'Installing Update...' | translate }}
+          } @else {
+            {{ 'Install Update' | translate }}
+          }
         </button>
       }
 
-      @if ((updateService.status$ | async) === SystemUpdateStatus.Unavailable) {
+      @if (isSystemUpToDate()) {
         <h4>
           <b>{{ 'System is up to date!' | translate }}</b>
-          <ix-icon name="check_circle" class="green-color"></ix-icon>
+          <ix-icon name="check_circle" class="up-to-date-icon"></ix-icon>
         </h4>
       }
     </div>
 
-    @if ((updateService.status$ | async) === SystemUpdateStatus.RebootRequired) {
+    @if (isRebootRequired()) {
       <h4 class="hint">{{ 'An update is already applied. Please restart the system.' | translate }}</h4>
     }
 
-    @if (updateService.error$ | async) {
-      <h4 class="error-color">{{ updateService.error$ | async }}</h4>
-    }
-
-    @if (updateVersion()) {
+    @if (changelog() || newVersion()?.release_notes_url) {
       <div class="update-summary">
         <h3>
-          {{ 'Update Summary for {version}' | translate: { version: updateVersion() } }}
+          {{ 'Update Summary for {version}' | translate: { version: newVersion().version } }}
         </h3>
 
-        @if (showInfoForTesting()) {
-          <p class="train-warning">
-            <ix-icon name="info"></ix-icon>
-            <strong>
-              {{ 'Selected train does not have production releases, and should only be used for testing.' | translate }}
-            </strong>
-          </p>
-        }
-
-        @if ((updateService.changeLog$ | async) && (trainService.nightlyTrain$ | async)) {
+        @if (changelog()) {
           <h4>{{ 'Summary' | translate }}:</h4>
 
-          <div [innerHTML]="updateService.changeLog$ | async"></div>
+          <div class="changelog" [innerHTML]="changelog()"></div>
         }
 
-        @if (updateService.releaseNotesUrl$ | async; as releaseNotesUrl) {
+        @if (newVersion()?.release_notes_url) {
           <a
             class="release-notes-link"
             target="_blank"
             ixTest="view-release-notes"
-            [href]="releaseNotesUrl"
+            [href]="newVersion()?.release_notes_url"
             [ixUiSearch]="searchableElements.elements.releaseNotes"
           >
             {{ 'View Release Notes' | translate }}
@@ -127,18 +111,17 @@
     <div class="other-options">
       <h3>{{ 'Other Options' | translate }}</h3>
 
-      <h4>{{ 'Manual Update' | translate }}</h4>
-
       <div class="manual-update">
-        <p>
+        <div>
+          <h4>{{ 'Manual Update' | translate }}</h4>
           <a
             ixTest="download-truenas"
             target="_blank"
-            [attr.href]="scaleDownloadUrl"
+            [attr.href]="manualUpdateUrl"
           >
             {{ 'See the manual image installation guide' | translate }}
           </a>
-        </p>
+        </div>
 
         <button
           *ixRequiresRoles="requiredRoles"
@@ -152,6 +135,10 @@
     </div>
   </div>
 
-  <!-- TODO: Ticket said: Build HTML for right column, but mark it as hidden in the PR. Ignore TrueNAS ad banner for now. -->
-  <ix-update-profile-card hidden></ix-update-profile-card>
+  @if (profileChoices()) {
+    <ix-update-profile-card
+      [currentProfileId]="config().profile"
+      [profileChoices]="profileChoices()"
+    ></ix-update-profile-card>
+  }
 </div>
