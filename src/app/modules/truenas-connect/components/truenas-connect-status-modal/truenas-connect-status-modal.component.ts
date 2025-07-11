@@ -10,7 +10,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  EMPTY, catchError, finalize, switchMap,
+  EMPTY, catchError, finalize, of, switchMap,
 } from 'rxjs';
 import { TncStatus, TruenasConnectStatus, TruenasConnectStatusReason } from 'app/enums/truenas-connect-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -112,8 +112,12 @@ export class TruenasConnectStatusModalComponent implements OnInit {
 
   protected connect(): void {
     this.isConnecting.set(true);
-    this.tnc.connect()
+    const generateToken$ = this.tnc.config().status === TruenasConnectStatus.ClaimTokenMissing ? this.tnc.generateToken() : of('');
+    generateToken$
       .pipe(
+        switchMap(() => {
+          return this.tnc.connect();
+        }),
         catchError((_: unknown) => {
           this.dialog.error({
             title: this.translate.instant('Connection Error'),
