@@ -50,8 +50,9 @@
 
 @if (enableTrustedDomains()) {
   <ix-trusted-domains-config
-    [trustedDomains]="trustedDomainsValue"
+    [trustedDomains]="form.controls.trusted_domains.value"
     (trustedDomainsChanged)="onTrustedDomainsChanged($event)"
+    (isValid)="isTrustedDomainsValid.set($event)"
   ></ix-trusted-domains-config>
 }
 
