@@ -30,6 +30,7 @@ describe('InstanceListComponent', () => {
         isLoading: jest.fn(() => false),
         selectedInstance: jest.fn(() => mockInstance),
         selectInstance: jest.fn(),
+        getMetricsForInstance: jest.fn(),
       }),
       mockProvider(Router, {
         events: of(),

@@ -4,12 +4,15 @@ import {
 import { Router, NavigationStart } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { distinctUntilChanged, filter, map } from 'rxjs';
+import {
+  distinctUntilChanged, filter, map,
+} from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { WINDOW } from 'app/helpers/window.helper';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master-detail-view.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   AllInstancesHeaderComponent,
 } from 'app/pages/instances/components/all-instances/all-instances-header/all-instances-header.component';
@@ -44,6 +47,7 @@ export class AllInstancesComponent implements OnInit {
     private instancesStore: VirtualizationInstancesStore,
     private router: Router,
     private dialogService: DialogService,
+    private api: ApiService,
     @Inject(WINDOW) private window: Window,
   ) {
     this.router.events

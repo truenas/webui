@@ -26,6 +26,30 @@
   {{ instance().type | mapValue: typeLabels | translate }}
 </div>
 
+<div class="cell" [matTooltip]="'Percentage of total core utilization' | translate">
+  @if (hasMetrics()) {
+    <span>{{ metrics()?.cpu.cpu_user_percentage.toFixed(0) }}%</span>
+  } @else {
+    {{ 'N/A' | translate }}
+  }
+</div>
+
+<div class="cell" [matTooltip]="'Memory usage' | translate">
+  @if (hasMetrics()) {
+    <span>{{ metrics()?.mem_usage.mem_usage_ram_mib.toFixed(0) }} MiB</span>
+  } @else {
+    {{ 'N/A' | translate }}
+  }
+</div>
+
+<div class="cell" [matTooltip]="'Disk I/O Full Pressure' | translate">
+  @if (hasMetrics()) {
+    <span>{{ metrics()?.io_full_pressure.io_full_pressure_full_60_percentage.toFixed(0) }}%</span>
+  } @else {
+    {{ 'N/A' | translate }}
+  }
+</div>
+
 <div class="cell actions">
   @if (isStopped()) {
     <button

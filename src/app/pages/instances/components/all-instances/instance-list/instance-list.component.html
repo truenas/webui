@@ -41,12 +41,16 @@
       <div class="cell">{{ 'Status' | translate }}</div>
       <div class="cell">{{ 'Autostart' | translate }}</div>
       <div class="cell">{{ 'Type' | translate }}</div>
+      <div class="cell">CPU</div>
+      <div class="cell">RAM</div>
+      <div class="cell">Disk I/O</div>
       <div class="cell actions">{{ 'Controls' | translate }}</div>
     </div>
 
     @for (instance of filteredInstances(); track instance.id) {
       <ix-instance-row
         [instance]="instance"
+        [metrics]="metrics()?.[instance.id]"
         [class.selected]="selectedInstance()?.id === instance.id"
         [selected]="selection.isSelected(instance.id)"
         (click)="navigateToDetails(instance)"

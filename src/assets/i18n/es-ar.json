@@ -224,6 +224,7 @@
   "MAC Address": "",
   "Make sure to add your current IP address to the list. Otherwise you will lose access to TrueNAS UI.": "",
   "Manage Hosts": "",
+  "Memory usage": "",
   "Metadata (Special) Small Block Size": "",
   "MiB. Units  smaller than MiB are not allowed.": "",
   "Minimum Memory": "",

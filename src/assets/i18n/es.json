@@ -2617,6 +2617,7 @@
   "Member Disk": "",
   "Members of this group are local admins and automatically have privileges to take ownership of any file in an SMB share, reset permissions, and administer the SMB server through the Computer Management MMC snap-in.": "",
   "Memory Stats": "",
+  "Memory usage": "",
   "Memory Usage": "",
   "Memory Utilization": "",
   "Message": "",

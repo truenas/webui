@@ -16,15 +16,21 @@ import {
   VirtualizationType, VolumeContentType,
 } from 'app/enums/virtualization.enum';
 
+export type VirtualizationMetrics = Record<string, VirtualizationInstanceMetrics>;
+
 export interface VirtualizationInstanceMetrics {
   cpu: {
     cpu_user_percentage: number;
+    cpu_system_percentage: number;
   };
   mem_usage: {
     mem_usage_ram_mib: number;
+    mem_usage_swap_mib: number;
   };
   io_full_pressure: {
+    io_full_pressure_full_10_percentage: number;
     io_full_pressure_full_60_percentage: number;
+    io_full_pressure_full_300_percentage: number;
   };
 }
 

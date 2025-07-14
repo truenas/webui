@@ -2124,26 +2124,6 @@
   },
   {
     "hierarchy": [
-      "Containers",
-      "Metrics"
-    ],
-    "synonyms": [
-      "Instances"
-    ],
-    "requiredRoles": [],
-    "visibleTokens": [
-      "VMS"
-    ],
-    "anchorRouterLink": [
-      "/instances/view/def"
-    ],
-    "routerLink": null,
-    "anchor": "metrics",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
       "Jobs"
     ],
     "synonyms": [
