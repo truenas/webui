@@ -10,7 +10,7 @@
       <!-- Basic Configuration -->
       <ix-fieldset [title]="'Basic Configuration' | translate">
         <ix-select
-          formControlName="configuration_type"
+          formControlName="service_type"
           [label]="'Configuration Type' | translate"
           [required]="true"
           [options]="configurationTypeOptions$"
@@ -57,15 +57,16 @@
       @if (selectedConfigurationType) {
         <ix-credential-config
           [serviceType]="selectedConfigurationType"
-          [credential]="credentialData"
+          [credential]="previousConfig().credential"
           (credentialUpdated)="onCredentialDataChanged($event)"
           (isValid)="isCredentialValid.set($event);"
         ></ix-credential-config>
       }
 
-      <!-- Service-specific Configuration Sub-Components -->
       @if (selectedConfigurationType === DirectoryServiceType.ActiveDirectory) {
         <ix-active-directory-config
+          [activeDirectoryConfig]="activeDirectoryConfig()"
+          (isValid)="isActiveDirectoryValid.set($event)"
           (configurationChanged)="onConfigurationDataChanged($event)"
           (kerberosRealmSuggested)="onKerberosRealmSuggested($event)"
         ></ix-active-directory-config>
@@ -73,13 +74,17 @@
 
       @if (selectedConfigurationType === DirectoryServiceType.Ldap) {
         <ix-ldap-config
+          [ldapConfig]="ldapConfig()"
+          (isValid)="isLdapValid.set($event)"
           (configurationChanged)="onConfigurationDataChanged($event)"
         ></ix-ldap-config>
       }
 
       @if (selectedConfigurationType === DirectoryServiceType.Ipa) {
         <ix-ipa-config
+          [ipaConfig]="ipaConfig()"
           (configurationChanged)="onConfigurationDataChanged($event)"
+          (isValid)="isIpaValid.set($event)"
         ></ix-ipa-config>
       }
 
@@ -89,7 +94,7 @@
           type="submit"
           color="primary"
           ixTest="save"
-          [disabled]="form.invalid"
+          [disabled]="!isFormValid()"
         >
           {{ 'Save' | translate }}
         </button>

@@ -1,137 +1,143 @@
 <form class="ix-form-container" [formGroup]="form">
-  <ix-fieldset [title]="'Builtin' | translate" [formGroup]="form.controls.builtin">
-    <ix-input
-      formControlName="name"
-      [label]="'Name' | translate"
-      [required]="true"
-    ></ix-input>
-    <ix-input
-      formControlName="range_low"
-      [label]="'Range Low' | translate"
-      [required]="true"
-      [type]="'number'"
-    ></ix-input>
-    <ix-input
-      formControlName="range_high"
-      [label]="'Range High' | translate"
-      [required]="true"
-      [type]="'number'"
-    ></ix-input>
-  </ix-fieldset>
-  <ix-fieldset [title]="'IDMAP Domain' | translate" [formGroup]="form.controls.idmap_domain">
-    <ix-select
-      formControlName="idmap_backend"
-      [required]="true"
-      [label]="'IDMAP Backend' | translate"
-      [options]="domainIdmapTypeOptions$"
-    ></ix-select>
+  <ix-fieldset [title]="'IDMAP Configuration' | translate">
+    <ix-checkbox
+      formControlName="use_default_idmap"
+      [label]="'Use TrueNAS Server IDMAP Defaults' | translate"
+    ></ix-checkbox>
+    @if (!(form.controls.use_default_idmap.value)) {
+      <ix-fieldset [title]="'Builtin' | translate" [formGroup]="form.controls.builtin">
+        <ix-input
+          formControlName="name"
+          [label]="'Name' | translate"
+        ></ix-input>
+        <ix-input
+          formControlName="range_low"
+          [label]="'Range Low' | translate"
+          [required]="true"
+          [type]="'number'"
+        ></ix-input>
+        <ix-input
+          formControlName="range_high"
+          [label]="'Range High' | translate"
+          [required]="true"
+          [type]="'number'"
+        ></ix-input>
+      </ix-fieldset>
+      <ix-fieldset [title]="'IDMAP Domain' | translate" [formGroup]="form.controls.idmap_domain">
+        <ix-select
+          formControlName="idmap_backend"
+          [required]="true"
+          [label]="'IDMAP Backend' | translate"
+          [options]="domainIdmapTypeOptions$"
+        ></ix-select>
 
-    <ix-input
-      formControlName="name"
-      [label]="'Name' | translate"
-      [required]="true"
-    ></ix-input>
-    <ix-input
-      formControlName="range_low"
-      [label]="'Range Low' | translate"
-      [required]="true"
-      [type]="'number'"
-    ></ix-input>
-    <ix-input
-      formControlName="range_high"
-      [label]="'Range High' | translate"
-      [required]="true"
-      [type]="'number'"
-    ></ix-input>
-    @if (idmapType() === IdmapBackend.Ad) {
-      <ix-select
-        formControlName="schema_mode"
-        [label]="'Schema Mode' | translate"
-        [required]="true"
-        [options]="schemaModeOptions$"
-      ></ix-select>
-      <ix-checkbox
-        formControlName="unix_primary_group"
-        [label]="'Unix Primary Group' | translate"
-        [required]="true"
-      ></ix-checkbox>
-      <ix-checkbox
-        formControlName="unix_nss_info"
-        [label]="'Unix NSS Info' | translate"
-        [required]="true"
-      ></ix-checkbox>
-    }
-    @if (idmapType() === IdmapBackend.Rfc2307 || idmapType() === IdmapBackend.Ldap) {
-      @if (idmapType() === IdmapBackend.Rfc2307) {
         <ix-input
-          formControlName="ldap_url"
-          [required]="true"
-          [label]="'LDAP Url' | translate"
-        ></ix-input>
-      }
-      @if (idmapType() === IdmapBackend.Ldap) {
-        <ix-input
-          formControlName="ldap_base_dn"
-          [label]="'LDAP Base DN' | translate"
-          [required]="true"
-        ></ix-input>
-      }
-      <ix-input
-        formControlName="ldap_user_dn"
-        [required]="true"
-        [label]="'LDAP User DN' | translate"
-      ></ix-input>
-      <ix-input
-        formControlName="ldap_user_dn_password"
-        [required]="true"
-        [label]="'LDAP User DN Password' | translate"
-      ></ix-input>
-      @if (idmapType() === IdmapBackend.Ldap) {
-        <ix-input
-          formControlName="ldap_url"
-          [required]="true"
-          [label]="'LDAP Url' | translate"
-        ></ix-input>
-        <ix-checkbox
-          formControlName="readonly"
-          [label]="'Readonly' | translate"
-          [required]="true"
-        ></ix-checkbox>
-      }
-      @if (idmapType() === IdmapBackend.Rfc2307) {
-        <ix-input
-          formControlName="bind_path_user"
-          [label]="'Bind Path User' | translate"
+          formControlName="name"
+          [label]="'Name' | translate"
           [required]="true"
         ></ix-input>
         <ix-input
-          formControlName="bind_path_group"
-          [label]="'Bind Path Group' | translate"
+          formControlName="range_low"
+          [label]="'Range Low' | translate"
           [required]="true"
+          [type]="'number'"
         ></ix-input>
-        <ix-checkbox
-          formControlName="user_cn"
-          [label]="'User CN' | translate"
+        <ix-input
+          formControlName="range_high"
+          [label]="'Range High' | translate"
           [required]="true"
-        ></ix-checkbox>
-        <ix-checkbox
-          formControlName="ldap_realm"
-          [label]="'LDAP Realm' | translate"
-          [required]="true"
-        ></ix-checkbox>
-      }
-      <ix-checkbox
-        formControlName="validate_certificates"
-        [label]="'Validate Certificates' | translate"
-        [required]="true"
-      ></ix-checkbox>
-    }
-    @if (idmapType() === IdmapBackend.Rid) {
-      <ix-checkbox
-        formControlName="sssd_compat"
-        [label]="'SSSD Compat' | translate"
-        [required]="true"
-      ></ix-checkbox>
+          [type]="'number'"
+        ></ix-input>
+        @if (idmapType() === IdmapBackend.Ad) {
+          <ix-select
+            formControlName="schema_mode"
+            [label]="'Schema Mode' | translate"
+            [required]="true"
+            [options]="schemaModeOptions$"
+          ></ix-select>
+          <ix-checkbox
+            formControlName="unix_primary_group"
+            [label]="'Unix Primary Group' | translate"
+            [required]="true"
+          ></ix-checkbox>
+          <ix-checkbox
+            formControlName="unix_nss_info"
+            [label]="'Unix NSS Info' | translate"
+            [required]="true"
+          ></ix-checkbox>
+        }
+        @if (idmapType() === IdmapBackend.Rfc2307 || idmapType() === IdmapBackend.Ldap) {
+          @if (idmapType() === IdmapBackend.Rfc2307) {
+            <ix-input
+              formControlName="ldap_url"
+              [required]="true"
+              [label]="'LDAP Url' | translate"
+            ></ix-input>
+          }
+          @if (idmapType() === IdmapBackend.Ldap) {
+            <ix-input
+              formControlName="ldap_base_dn"
+              [label]="'LDAP Base DN' | translate"
+              [required]="true"
+            ></ix-input>
+          }
+          <ix-input
+            formControlName="ldap_user_dn"
+            [required]="true"
+            [label]="'LDAP User DN' | translate"
+          ></ix-input>
+          <ix-input
+            formControlName="ldap_user_dn_password"
+            [required]="true"
+            [label]="'LDAP User DN Password' | translate"
+          ></ix-input>
+          @if (idmapType() === IdmapBackend.Ldap) {
+            <ix-input
+              formControlName="ldap_url"
+              [required]="true"
+              [label]="'LDAP Url' | translate"
+            ></ix-input>
+            <ix-checkbox
+              formControlName="readonly"
+              [label]="'Readonly' | translate"
+              [required]="true"
+            ></ix-checkbox>
+          }
+          @if (idmapType() === IdmapBackend.Rfc2307) {
+            <ix-input
+              formControlName="bind_path_user"
+              [label]="'Bind Path User' | translate"
+              [required]="true"
+            ></ix-input>
+            <ix-input
+              formControlName="bind_path_group"
+              [label]="'Bind Path Group' | translate"
+              [required]="true"
+            ></ix-input>
+            <ix-checkbox
+              formControlName="user_cn"
+              [label]="'User CN' | translate"
+              [required]="true"
+            ></ix-checkbox>
+            <ix-checkbox
+              formControlName="ldap_realm"
+              [label]="'LDAP Realm' | translate"
+              [required]="true"
+            ></ix-checkbox>
+          }
+          <ix-checkbox
+            formControlName="validate_certificates"
+            [label]="'Validate Certificates' | translate"
+            [required]="true"
+          ></ix-checkbox>
+        }
+        @if (idmapType() === IdmapBackend.Rid) {
+          <ix-checkbox
+            formControlName="sssd_compat"
+            [label]="'SSSD Compat' | translate"
+          ></ix-checkbox>
+        }
+      </ix-fieldset>
     }
   </ix-fieldset>
 </form>

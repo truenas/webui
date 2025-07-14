@@ -4,15 +4,15 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { DirectoryServiceType } from 'app/enums/directory-services.enum';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { DirectoryServicesConfigFormComponent } from './directory-services-form.component';
+import { DirectoryServicesFormComponent } from './directory-services-form.component';
 
 describe('DirectoryServicesConfigFormComponent', () => {
-  let spectator: Spectator<DirectoryServicesConfigFormComponent>;
+  let spectator: Spectator<DirectoryServicesFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
 
   const createComponent = createComponentFactory({
-    component: DirectoryServicesConfigFormComponent,
+    component: DirectoryServicesFormComponent,
     imports: [
       ReactiveFormsModule,
     ],

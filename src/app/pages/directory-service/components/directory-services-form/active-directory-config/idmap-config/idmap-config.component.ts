@@ -6,7 +6,7 @@ import {
   FormControl, FormGroup, ReactiveFormsModule, Validators,
 } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
-import { untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { of, tap } from 'rxjs';
 import { ActiveDirectorySchemaMode, IdmapBackend } from 'app/enums/directory-services.enum';
@@ -16,6 +16,7 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 
+@UntilDestroy()
 @Component({
   selector: 'ix-idmap-config',
   templateUrl: './idmap-config.component.html',
@@ -31,11 +32,12 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IdmapConfigComponent implements OnInit {
-  idmap = input<PrimaryDomainIdmap>();
-  idmapUpdated = output<PrimaryDomainIdmap>();
+  idmap = input.required<PrimaryDomainIdmap>();
+  idmapUpdated = output<[useDefaultIdmap: boolean, primaryDomainIdmap: PrimaryDomainIdmap]>();
   isValid = output<boolean>();
 
   protected form = this.fb.group({
+    use_default_idmap: [true],
     builtin: this.fb.group({
       name: [null as string, [
         Validators.pattern(/^(?![0-9]*$)[a-zA-Z0-9.-_!@#$%^&()'{}~]{1,15}$/),
@@ -78,13 +80,21 @@ export class IdmapConfigComponent implements OnInit {
 
   ngOnInit(): void {
     this.listenToTypeChanges();
+    this.fillFormWithIdmapConfig();
     this.form.value$.pipe(
-      tap((value: PrimaryDomainIdmap) => {
+      tap((value: PrimaryDomainIdmap & { use_default_idmap: boolean }) => {
         this.isValid.emit(this.form.valid);
-        this.idmapUpdated.emit(value);
+        this.idmapUpdated.emit([value.use_default_idmap, value as PrimaryDomainIdmap]);
       }),
       untilDestroyed(this),
     ).subscribe();
+  }
+
+  private fillFormWithIdmapConfig(): void {
+    this.form.patchValue({
+      ...this.idmap(),
+      use_default_idmap: this.idmap() == null,
+    });
   }
 
   private listenToTypeChanges(): void {
@@ -132,7 +142,7 @@ export class IdmapConfigComponent implements OnInit {
         idmapFg.addControl('readonly', createRequiredControl(false));
       }
     } else if (type === IdmapBackend.Rid) {
-      idmapFg.addControl('sssd_compat', createRequiredControl(false));
+      idmapFg.addControl('sssd_compat', new FormControl(false));
     }
   }
 }

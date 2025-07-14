@@ -1,7 +1,7 @@
 import { CdkAccordionItem } from '@angular/cdk/accordion';
 import { NgTemplateOutlet } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, viewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, OnInit, signal, viewChild,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -20,7 +20,9 @@ import { Role } from 'app/enums/role.enum';
 import { helptextDashboard } from 'app/helptext/directory-service/dashboard';
 import { ActiveDirectoryConfig } from 'app/interfaces/active-directory-config.interface';
 import { LdapCredentialPlain } from 'app/interfaces/directoryservice-credentials.interface';
+import { DirectoryServicesConfig } from 'app/interfaces/directoryservices-config.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
+import { IpaConfig } from 'app/interfaces/ipa-config.interface';
 import { LdapConfig } from 'app/interfaces/ldap-config.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -31,7 +33,7 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { DirectoryServicesConfigFormComponent } from 'app/pages/directory-service/components/directory-services-form/directory-services-form.component';
+import { DirectoryServicesFormComponent } from 'app/pages/directory-service/components/directory-services-form/directory-services-form.component';
 import { KerberosKeytabsListComponent } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-list/kerberos-keytabs-list.component';
 import { KerberosRealmsListComponent } from 'app/pages/directory-service/components/kerberos-realms/kerberos-realms-list.component';
 import { KerberosSettingsComponent } from 'app/pages/directory-service/components/kerberos-settings/kerberos-settings.component';
@@ -72,13 +74,16 @@ export class DirectoryServicesComponent implements OnInit {
   protected readonly requiredRoles = [Role.DirectoryServiceWrite];
   protected readonly searchableElements = directoryServicesElements;
 
-  isActiveDirectoryEnabled = false;
-  isLdapEnabled = false;
-  isDirectoryServicesDisabled = signal(true);
+  protected isActiveDirectoryEnabled = false;
+  protected isLdapEnabled = false;
+  protected isIpaEnabled = false;
+  protected readonly directoryServicesConfig = signal<DirectoryServicesConfig | null>(null);
+  protected readonly isDirectoryServicesDisabled = computed(() => !this.directoryServicesConfig()?.enable);
 
-  activeDirectoryDataCard: DataCard;
-  ldapDataCard: DataCard;
-  kerberosSettingsDataCard: DataCard;
+  protected activeDirectoryDataCard: DataCard;
+  protected ldapDataCard: DataCard;
+  protected ipaDataCard: DataCard;
+  protected kerberosSettingsDataCard: DataCard;
 
   private readonly kerberosKeytabsListComponent = viewChild.required(KerberosKeytabsListComponent);
   private readonly kerberosRealmsListComponent = viewChild.required(KerberosRealmsListComponent);
@@ -105,6 +110,22 @@ export class DirectoryServicesComponent implements OnInit {
     this.refreshCards();
   }
 
+  protected getDataCard(): DataCard {
+    let dataCard: DataCard;
+    if (this.isActiveDirectoryEnabled) {
+      dataCard = this.activeDirectoryDataCard;
+    }
+
+    if (this.isLdapEnabled) {
+      dataCard = this.ldapDataCard;
+    }
+
+    if (this.isIpaEnabled) {
+      dataCard = this.ipaDataCard;
+    }
+    return dataCard;
+  }
+
   refreshCards(): void {
     forkJoin([
       this.api.call('directoryservices.status'),
@@ -117,12 +138,14 @@ export class DirectoryServicesComponent implements OnInit {
         untilDestroyed(this),
       )
       .subscribe(([servicesState, directoryServicesConfig, kerberosSettings]) => {
-        this.isDirectoryServicesDisabled.set(!directoryServicesConfig.enable);
+        this.directoryServicesConfig.set(directoryServicesConfig);
         this.isActiveDirectoryEnabled = servicesState.type === DirectoryServiceType.ActiveDirectory
         && servicesState.status !== DirectoryServiceStatus.Disabled;
         this.isLdapEnabled = servicesState.type === DirectoryServiceType.Ldap
         && servicesState.status !== DirectoryServiceStatus.Disabled;
 
+        this.isIpaEnabled = servicesState.type === DirectoryServiceType.Ipa
+        && servicesState.status !== DirectoryServiceStatus.Disabled;
         const adConfig = directoryServicesConfig?.configuration as ActiveDirectoryConfig;
         if (adConfig) {
           this.activeDirectoryDataCard = {
@@ -170,6 +193,32 @@ export class DirectoryServicesComponent implements OnInit {
             onSettingsPressed: () => this.openDirectoryServicesForm(),
           };
         }
+
+        const ipaConfig = directoryServicesConfig.configuration as IpaConfig;
+        if (ipaConfig) {
+          this.ipaDataCard = {
+            title: this.translate.instant(helptextDashboard.ipa.title),
+            items: [
+              {
+                label: this.translate.instant(helptextDashboard.ipa.target_server),
+                value: ipaConfig.target_server,
+              },
+              {
+                label: this.translate.instant(helptextDashboard.ipa.hostname),
+                value: ipaConfig.hostname,
+              },
+              {
+                label: this.translate.instant(helptextDashboard.ipa.domain),
+                value: ipaConfig.domain,
+              },
+              {
+                label: this.translate.instant(helptextDashboard.ipa.basedn),
+                value: ipaConfig.basedn,
+              },
+            ],
+            onSettingsPressed: () => this.openDirectoryServicesForm(),
+          };
+        }
         this.kerberosSettingsDataCard = {
           title: this.translate.instant(helptextDashboard.kerberosSettings.title),
           items: [
@@ -206,7 +255,9 @@ export class DirectoryServicesComponent implements OnInit {
   }
 
   openDirectoryServicesForm(): void {
-    this.slideIn.open(DirectoryServicesConfigFormComponent, { wide: true }).pipe(
+    this.slideIn.open(DirectoryServicesFormComponent, {
+      data: this.directoryServicesConfig(),
+    }).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(() => this.refreshCards());

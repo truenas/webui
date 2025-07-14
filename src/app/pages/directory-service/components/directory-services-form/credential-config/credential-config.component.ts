@@ -18,18 +18,22 @@ import {
 } from 'rxjs';
 import { DirectoryServiceCredentialType, DirectoryServiceType } from 'app/enums/directory-services.enum';
 import {
-  adAndIpaSupportedCredentialTypes, DirectoryServiceCredential, ldapSupportedCredentialTypes,
+  adAndIpaSupportedCredentialTypes,
+  DirectoryServiceCredential,
+  ldapSupportedCredentialTypes,
 } from 'app/interfaces/directoryservice-credentials.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 @UntilDestroy()
 @Component({
   selector: 'ix-credential-config',
   templateUrl: './credential-config.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxFieldsetComponent,
@@ -49,8 +53,8 @@ export class CredentialConfigComponent implements OnInit {
     client_certificate: [null as string],
   });
 
-  readonly serviceType = input<DirectoryServiceType | null>(null);
-  readonly credential = input<DirectoryServiceCredential | null>(null);
+  readonly serviceType = input.required<DirectoryServiceType | null>();
+  readonly credential = input.required<DirectoryServiceCredential | null>();
   readonly credentialUpdated = output<DirectoryServiceCredential | null>();
   readonly isValid = output<boolean>();
 
@@ -73,9 +77,24 @@ export class CredentialConfigComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-  ) {}
+    private api: ApiService,
+  ) {
+
+  }
+
+  private fetchPrincipalChoices(): void {
+    this.api.call('kerberos.keytab.kerberos_principal_choices').pipe(
+      untilDestroyed(this),
+    ).subscribe({
+      next: (choices: string[]) => {
+        const options = choices.map((choice) => ({ label: choice, value: choice } as Option));
+        this.kerberosPrincipals$ = of(options);
+      },
+    });
+  }
 
   ngOnInit(): void {
+    this.fetchPrincipalChoices();
     this.initializeFormWithExistingData();
     this.buildCredentialsFromForm();
   }
@@ -101,7 +120,6 @@ export class CredentialConfigComponent implements OnInit {
     if (!existingCredential) {
       return;
     }
-
     this.form.controls.credential_type.setValue(existingCredential.credential_type);
 
     switch (existingCredential.credential_type) {

@@ -1,9 +1,9 @@
-import { DirectoryServicesConfigResponse } from './directoryservices-config.interface';
+import { DirectoryServicesConfig } from './directoryservices-config.interface';
 
-export interface DirectoryServicesUpdate extends Omit<DirectoryServicesConfigResponse, 'id'> {
+export interface DirectoryServicesUpdate extends Omit<DirectoryServicesConfig, 'id'> {
   force: boolean;
 }
 
 export interface DirectoryServicesUpdateResponse {
-  result: DirectoryServicesConfigResponse;
+  result: DirectoryServicesConfig;
 }

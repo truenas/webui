@@ -1,53 +1,25 @@
-@switch (true) {
-  @case (isDirectoryServicesDisabled()) {
-    <div class="everything-disabled">
-      <ix-empty [conf]="noDirectoryServicesConfig"></ix-empty>
-      <div class="actions">
-        <button
-          *ixRequiresRoles="requiredRoles"
-          mat-button
-          ixTest="configure-active-directory"
-          [ixUiSearch]="searchableElements.elements.configureActiveDirectory"
-          (click)="openDirectoryServicesForm()"
-        >
-          {{ 'Configure Directory Services' | translate }}
-        </button>
-      </div>
+@if(isDirectoryServicesDisabled()) {
+  <div class="everything-disabled">
+    <ix-empty [conf]="noDirectoryServicesConfig"></ix-empty>
+    <div class="actions">
+      <button
+        *ixRequiresRoles="requiredRoles"
+        mat-button
+        ixTest="configure-active-directory"
+        [ixUiSearch]="searchableElements.elements.configureActiveDirectory"
+        (click)="openDirectoryServicesForm()"
+      >
+        {{ 'Configure Directory Services' | translate }}
+      </button>
     </div>
-  }
-
-  @case (isActiveDirectoryEnabled) {
-    <div
-      class="services"
-      [ixUiSearch]="searchableElements.elements.directoryServices"
-    >
-      <ng-container *ngTemplateOutlet="dataCard; context: { card: activeDirectoryDataCard }"></ng-container>
-      <mat-card>
-        <mat-toolbar-row><h3>{{ 'LDAP' | translate }}</h3></mat-toolbar-row>
-        <mat-card-content>
-          <div class="disabled-message">
-            <p>{{ 'LDAP is disabled.' | translate }}</p>
-            <p>{{ 'To enable disable Active Directory first.' | translate }}</p>
-          </div>
-        </mat-card-content>
-      </mat-card>
-    </div>
-  }
-
-  @case (isLdapEnabled) {
-    <div class="services">
-      <mat-card>
-        <mat-toolbar-row><h3>{{ 'Active Directory' | translate }}</h3></mat-toolbar-row>
-        <mat-card-content>
-          <div class="disabled-message">
-            <p>{{ 'Active Directory is disabled.' | translate }}</p>
-            <p>{{ 'To enable disable LDAP first.' | translate }}</p>
-          </div>
-        </mat-card-content>
-      </mat-card>
-      <ng-container *ngTemplateOutlet="dataCard; context: { card: ldapDataCard }"></ng-container>
-    </div>
-  }
+  </div>
+} @else {
+  <div
+    class="services"
+    [ixUiSearch]="searchableElements.elements.directoryServices"
+  >
+    <ng-container *ngTemplateOutlet="dataCard; context: { card: getDataCard() }"></ng-container>
+  </div>  
 }
 
 <cdk-accordion-item

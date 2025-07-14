@@ -17,6 +17,13 @@ export const helptextDashboard = {
     baseDN: T('Base DN'),
     bindDN: T('Bind DN'),
   },
+  ipa: {
+    title: T('IPA'),
+    target_server: T('Target Server'),
+    hostname: T('Host Name'),
+    domain: T('Domain'),
+    basedn: T('Base DN'),
+  },
   kerberosSettings: {
     title: T('Kerberos Settings'),
     appdefaults: T('Appdefaults Auxiliary Parameters'),

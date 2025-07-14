@@ -25,41 +25,23 @@
       [label]="'Computer Account OU' | translate"
       [tooltip]="'Organizational Unit for computer accounts. Use full DN format (e.g., OU=Computers,DC=example,DC=com) or simple path (e.g., Computers/TrueNAS)' | translate"
     ></ix-input>
-  </ix-fieldset>
-
-  <ix-fieldset [title]="'Active Directory Options' | translate">
     <ix-checkbox
       formControlName="use_default_domain"
       [label]="'Use Default Domain' | translate"
-      [required]="true"
       [tooltip]="'Use the default domain for user authentication' | translate"
     ></ix-checkbox>
-
-    <ix-checkbox
-      formControlName="enable_trusted_domains"
-      [label]="'Enable Trusted Domains' | translate"
-      [required]="true"
-      [tooltip]="'Allow authentication from trusted domains' | translate"
-    ></ix-checkbox>
-
-    <ix-checkbox
-      formControlName="use_default_idmap"
-      [label]="'Use TrueNAS Server IDMAP Defaults' | translate"
-    ></ix-checkbox>
   </ix-fieldset>
-
-@if (enableTrustedDomains()) {
+  
   <ix-trusted-domains-config
+    [enableTrustedDomains]="form.controls.enable_trusted_domains.value"
     [trustedDomains]="form.controls.trusted_domains.value"
     (trustedDomainsChanged)="onTrustedDomainsChanged($event)"
     (isValid)="isTrustedDomainsValid.set($event)"
   ></ix-trusted-domains-config>
-}
 
-@if (!useDefaultIdmap()) {
   <ix-idmap-config
-    (idmapUpdated)="primaryDomainIdmap.set($event)"
+    [idmap]="activeDirectoryConfig().idmap"
+    (idmapUpdated)="primaryDomainIdmapUpdated($event)"
     (isValid)="isIdmapValid.set($event)"
   ></ix-idmap-config>
-}
 </form>
