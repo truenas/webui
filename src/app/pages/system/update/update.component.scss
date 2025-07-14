@@ -7,14 +7,8 @@
   grid-template-columns: 1fr 1fr;
   margin-bottom: 100px;
 
-  // TODO: remove when .right-side will be shown, currently it's hidden
-  @media(max-width: $breakpoint-lg) {
-    grid-template-columns: 1fr 0.5fr;
-  }
-
-  // TODO: remove when .right-side will be shown, currently it's hidden
-  @media(max-width: $breakpoint-md) {
-    grid-template-columns: 1fr;
+  ::ng-deep > * {
+    display: block;
   }
 
   @media(max-width: $breakpoint-sm) {
@@ -22,8 +16,10 @@
     grid-template-columns: 1fr;
   }
 
-  .green-color {
+  .up-to-date-icon {
+    bottom: 2px;
     color: var(--green);
+    position: relative;
   }
 
   .error-color {
@@ -47,7 +43,7 @@
   }
 
   h3 {
-    margin-top: 30px;
+    margin-top: 40px;
   }
 
   .train-warning {
@@ -69,8 +65,17 @@
     justify-content: space-between;
     padding: 16px 0 0;
 
+    .label {
+      margin-right: 0;
+    }
+
+    .profile-mismatch {
+      font-size: 12px;
+      margin-top: 2px;
+    }
+
     h4 {
-      align-items: center;
+      align-items: flex-start;
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
@@ -87,26 +92,36 @@
         width: 100px;
       }
     }
+
+    .current-version-number {
+      font-weight: 600;
+    }
   }
 
   .update-summary {
     h4 {
       margin-top: 15px;
     }
+
+    .changelog {
+      margin-top: 3px;
+    }
   }
 
   .other-options {
-    margin-top: 20px;
-
-    h4 {
-      margin-top: 15px;
-    }
+    margin-top: 40px;
 
     .manual-update {
       align-items: center;
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
+      margin-top: 15px;
+
+      h4 {
+        margin-bottom: 6px;
+        margin-top: 3px;
+      }
     }
   }
 

@@ -912,6 +912,28 @@
     "hierarchy": [
       "Credentials",
       "Users (WIP)",
+      "Toggle Lock Status"
+    ],
+    "synonyms": [
+      "Lock User",
+      "Unlock User"
+    ],
+    "requiredRoles": [
+      "ACCOUNT_WRITE"
+    ],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/credentials/users-new"
+    ],
+    "routerLink": null,
+    "anchor": "toggle-lock-status",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
+      "Users (WIP)",
       "Profile"
     ],
     "synonyms": [],
@@ -1898,16 +1920,11 @@
   },
   {
     "hierarchy": [
-      "Instances",
+      "Containers",
       "Global Settings"
     ],
     "synonyms": [
-      "VMs",
-      "Virtual Machines",
-      "Virtualization",
-      "Containers",
-      "VM Settings",
-      "Virtual Machine Settings"
+      "Container Settings"
     ],
     "requiredRoles": [],
     "visibleTokens": [
@@ -1923,18 +1940,10 @@
   },
   {
     "hierarchy": [
-      "Instances",
-      "Create New Instance"
+      "Containers",
+      "Create New Container"
     ],
     "synonyms": [
-      "VMs",
-      "Virtual Machines",
-      "Virtualization",
-      "Containers",
-      "Add Instance",
-      "Create VM",
-      "Add VM",
-      "New VM",
       "New Container",
       "Add Container"
     ],
@@ -1954,14 +1963,12 @@
   },
   {
     "hierarchy": [
-      "Instances",
+      "Containers",
       "List"
     ],
     "synonyms": [
-      "VM",
-      "Virtual Machines",
-      "Incus",
-      "Containers"
+      "Instances",
+      "Incus"
     ],
     "requiredRoles": [],
     "visibleTokens": [
@@ -1977,14 +1984,11 @@
   },
   {
     "hierarchy": [
-      "Instances",
+      "Containers",
       "General Info"
     ],
     "synonyms": [
-      "VM",
-      "Virtual Machines",
-      "Virtualization",
-      "Containers"
+      "Instances"
     ],
     "requiredRoles": [],
     "visibleTokens": [
@@ -2000,14 +2004,11 @@
   },
   {
     "hierarchy": [
-      "Instances",
+      "Containers",
       "Devices"
     ],
     "synonyms": [
-      "VM",
-      "Virtual Machines",
-      "Virtualization",
-      "Containers"
+      "Instances"
     ],
     "requiredRoles": [],
     "visibleTokens": [
@@ -2023,14 +2024,11 @@
   },
   {
     "hierarchy": [
-      "Instances",
+      "Containers",
       "Disks"
     ],
     "synonyms": [
-      "VM",
-      "Virtual Machines",
-      "Virtualization",
-      "Containers"
+      "Instances"
     ],
     "requiredRoles": [],
     "visibleTokens": [
@@ -2046,14 +2044,11 @@
   },
   {
     "hierarchy": [
-      "Instances",
+      "Containers",
       "NIC"
     ],
     "synonyms": [
-      "VM",
-      "Virtual Machines",
-      "Virtualization",
-      "Containers"
+      "Instances"
     ],
     "requiredRoles": [],
     "visibleTokens": [
@@ -2069,14 +2064,11 @@
   },
   {
     "hierarchy": [
-      "Instances",
+      "Containers",
       "Proxies"
     ],
     "synonyms": [
-      "VM",
-      "Virtual Machines",
-      "Virtualization",
-      "Containers"
+      "Instances"
     ],
     "requiredRoles": [],
     "visibleTokens": [
@@ -2092,14 +2084,11 @@
   },
   {
     "hierarchy": [
-      "Instances",
+      "Containers",
       "Idmap"
     ],
     "synonyms": [
-      "VM",
-      "Virtual Machines",
-      "Virtualization",
-      "Containers"
+      "Instances"
     ],
     "requiredRoles": [],
     "visibleTokens": [
@@ -2115,14 +2104,11 @@
   },
   {
     "hierarchy": [
-      "Instances",
+      "Containers",
       "Tools"
     ],
     "synonyms": [
-      "VM",
-      "Virtual Machines",
-      "Virtualization",
-      "Containers"
+      "Instances"
     ],
     "requiredRoles": [],
     "visibleTokens": [
@@ -2138,14 +2124,11 @@
   },
   {
     "hierarchy": [
-      "Instances",
+      "Containers",
       "Metrics"
     ],
     "synonyms": [
-      "VM",
-      "Virtual Machines",
-      "Virtualization",
-      "Containers"
+      "Instances"
     ],
     "requiredRoles": [],
     "visibleTokens": [
@@ -4607,27 +4590,6 @@
     ],
     "routerLink": null,
     "anchor": "sed-settings",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "Advanced Settings",
-      "Self-Encrypting Drive",
-      "ATA Security User"
-    ],
-    "synonyms": [
-      "SED User"
-    ],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/system",
-      "advanced"
-    ],
-    "routerLink": null,
-    "anchor": "ata-security-user",
     "triggerAnchor": null,
     "section": "ui"
   },

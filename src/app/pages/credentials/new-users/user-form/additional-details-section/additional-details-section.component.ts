@@ -203,7 +203,6 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     if (!this.editingUser()) {
       this.setFirstShellOption();
     }
-    this.detectFullNameChanges();
     this.detectHomeDirectoryChanges();
     this.setHomeSharePath();
     this.listenValueChanges();
@@ -372,31 +371,6 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     });
   }
 
-  private detectFullNameChanges(): void {
-    this.form.controls.full_name.valueChanges.pipe(
-      map((fullName) => this.getUserName(fullName)),
-      filter((username) => !!username),
-      untilDestroyed(this),
-    ).subscribe((username) => {
-      this.userFormStore.updateUserConfig({ username });
-    });
-  }
-
-  private getUserName(fullName: string): string {
-    let username: string;
-    const formatted = fullName.trim().split(/[\s,]+/);
-    if (formatted.length === 1) {
-      username = formatted[0];
-    } else {
-      username = formatted[0][0] + formatted.pop();
-    }
-    if (username.length >= 8) {
-      username = username.substring(0, 8);
-    }
-
-    return username.toLocaleLowerCase();
-  }
-
   private detectHomeDirectoryChanges(): void {
     this.form.controls.home.valueChanges.pipe(untilDestroyed(this)).subscribe((home) => {
       if (isEmptyHomeDirectory(home) || this.editingUser()?.immutable) {
@@ -416,7 +390,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
   private setHomeSharePath(): void {
     this.api.call('sharing.smb.query', [[
       ['enabled', '=', true],
-      ['home', '=', true],
+      ['options.home', '=', true],
     ]]).pipe(
       filter((shares) => !!shares?.length),
       map((shares) => shares[0].path),

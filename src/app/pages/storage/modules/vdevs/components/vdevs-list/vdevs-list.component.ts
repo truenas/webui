@@ -29,6 +29,7 @@ import { TreeNodeOutletDirective } from 'app/modules/ix-tree/directives/tree-nod
 import { TreeNodeToggleDirective } from 'app/modules/ix-tree/directives/tree-node-toggle.directive';
 import { NestedTreeDataSource } from 'app/modules/ix-tree/nested-tree-datasource';
 import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-with-filter';
+import { LayoutService } from 'app/modules/layout/layout.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -90,6 +91,7 @@ export class VDevsListComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     protected vDevsStore: VDevsStore,
+    private layoutService: LayoutService,
   ) { }
 
   ngOnInit(): void {
@@ -192,7 +194,8 @@ export class VDevsListComponent implements OnInit {
 
   protected viewDetails(poolId: number, guid: string): void {
     this.showDetails.emit({ poolId, guid });
-    this.router.navigate(['/storage', poolId, 'vdevs', guid]);
+
+    this.layoutService.navigatePreservingScroll(this.router, ['/storage', poolId, 'vdevs', guid]);
 
     if (this.isMobileView()) {
       this.showMobileDetails.emit(true);

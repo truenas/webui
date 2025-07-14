@@ -74,6 +74,7 @@ describe('OsStepComponent', () => {
       password: '12345678910',
       hyperv_enlightenments: false,
       enable_secure_boot: true,
+      trusted_platform_module: false,
     });
   });
 

@@ -44,9 +44,10 @@ describe('TruenasConnectButtonComponent', () => {
     expect(openSpy).toHaveBeenCalledWith(TruenasConnectStatusModalComponent, {
       width: '400px',
       hasBackdrop: true,
+      panelClass: 'topbar-panel',
       position: {
         top: '48px',
-        right: '0px',
+        right: '16px',
       },
     });
   });

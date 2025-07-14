@@ -1,5 +1,5 @@
 import {
-  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal,
+  AfterViewInit, ChangeDetectionStrategy, Component, OnInit, signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -27,10 +27,12 @@ import { mapToOptionsWithHoverTooltips } from 'app/helpers/options.helper';
 import { helptextSharingSmb } from 'app/helptext/sharing';
 import { DatasetCreate } from 'app/interfaces/dataset.interface';
 import { SelectOption } from 'app/interfaces/option.interface';
+import { SmbConfig } from 'app/interfaces/smb-config.interface';
 import {
   externalSmbSharePath,
-  smbPresetTooltips, SmbPresetType, smbPresetTypeLabels, SmbShareOptions, SmbShare,
+  smbSharePurposeTooltips, SmbSharePurpose, smbSharePurposeLabels, SmbShare,
   TimeMachineSmbShareOptions,
+  LegacySmbShareOptions, SmbShareOptions,
 } from 'app/interfaces/smb-share.interface';
 import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -47,7 +49,6 @@ import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -55,10 +56,13 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { RestartSmbDialog } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
+import { SmbExtensionsWarningComponent } from 'app/pages/sharing/smb/smb-form/smb-extensions-warning/smb-extensions-warning.component';
 import { presetEnabledFields } from 'app/pages/sharing/smb/smb-form/smb-form-presets';
+import { SmbUsersWarningComponent } from 'app/pages/sharing/smb/smb-form/smb-users-warning/smb-users-warning.component';
 import { SmbValidationService } from 'app/pages/sharing/smb/smb-form/smb-validator.service';
 import { getRootDatasetsValidator } from 'app/pages/sharing/utils/root-datasets-validator';
 import { DatasetService } from 'app/services/dataset/dataset.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { UserService } from 'app/services/user.service';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
@@ -69,7 +73,6 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
 @UntilDestroy()
 @Component({
   selector: 'ix-smb-form',
-  styleUrls: ['./smb-form.component.scss'],
   templateUrl: './smb-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
@@ -89,8 +92,9 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     MatButton,
     TestDirective,
     TranslateModule,
-    IxIconComponent,
     WarningComponent,
+    SmbUsersWarningComponent,
+    SmbExtensionsWarningComponent,
   ],
 })
 export class SmbFormComponent implements OnInit, AfterViewInit {
@@ -98,22 +102,24 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   private defaultSmbShare: SmbShare | undefined;
 
   protected isLoading = signal(false);
-  protected hasSmbUsers = signal(true);
   protected showLegacyWarning = signal(false);
+  protected showExtensionsWarning = signal(false);
   protected legacyWarningMessage = this.translate.instant(
     'For the best experience, we recommend choosing a modern SMB share purpose instead of the legacy option.',
   );
 
   readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
 
-  protected SmbPresetType = SmbPresetType;
+  protected SmbPresetType = SmbSharePurpose;
   protected isAdvancedMode = false;
   private namesInUse: string[] = [];
   protected readonly helptextSharingSmb = helptextSharingSmb;
   protected readonly requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
-  private wasStripAclWarningShown = false;
 
-  groupProvider: ChipsProvider = (query) => {
+  private wasStripAclWarningShown = false;
+  private smbConfig = signal<SmbConfig | null>(null);
+
+  protected groupProvider: ChipsProvider = (query) => {
     return this.userService.groupQueryDsCache(query).pipe(
       map((groups) => groups.map((group) => group.group)),
     );
@@ -130,7 +136,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   }
 
   get showOtherOptions(): boolean {
-    const excludedPurposes = [SmbPresetType.ExternalShare, SmbPresetType.VeeamRepositoryShare];
+    const excludedPurposes = [SmbSharePurpose.ExternalShare, SmbSharePurpose.VeeamRepositoryShare];
 
     return !excludedPurposes.includes(this.form.controls.purpose.value);
   }
@@ -144,98 +150,95 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     includeSnapshots: false,
   });
 
-  protected presetFields: (keyof SmbShare)[] = [];
-  protected purposeOptions$: Observable<SelectOption<SmbPresetType>[]>;
+  protected purposeOptions$: Observable<SelectOption<SmbSharePurpose>[]>;
 
   get hasAddedAllowDenyHosts(): boolean {
-    const hostsallow = this.form.controls.hostsallow.value;
-    const hostsdeny = this.form.controls.hostsdeny.value;
-    return (
-      (this.isNew && hostsallow && hostsallow.length > 0)
-      || (this.isNew && hostsdeny && hostsdeny.length > 0)
-      || this.hasHostAllowDenyChanged(hostsallow, hostsdeny)
-    );
+    const hostsAllow = this.form.controls.hostsallow.value ?? [];
+    const hostsDeny = this.form.controls.hostsdeny.value ?? [];
+
+    const hasHosts = hostsAllow.length > 0 || hostsDeny.length > 0;
+
+    return (this.isNew && hasHosts) || (!this.isNew && this.hasHostAllowDenyChanged(hostsAllow, hostsDeny));
   }
 
-  private hasHostAllowDenyChanged(hostsallow: string[], hostsdeny: string[]): boolean {
-    return (
-      !isEqual(this.existingSmbShare?.hostsallow, hostsallow)
-      || !isEqual(this.existingSmbShare?.hostsdeny, hostsdeny)
-    );
+  private hasHostAllowDenyChanged(hostsAllow: string[], hostsDeny: string[]): boolean {
+    if (!this.existingSmbShare) {
+      return false;
+    }
+
+    const existingShareOptions = this.existingSmbShare.options as LegacySmbShareOptions;
+    const existingAllow = existingShareOptions.hostsallow ?? [];
+    const existingDeny = existingShareOptions.hostsdeny ?? [];
+
+    return !isEqual(existingAllow, hostsAllow) || !isEqual(existingDeny, hostsDeny);
   }
 
   get isRestartRequired(): boolean {
     return (
-      this.isNewTimemachineShare
+      this.isNewTimeMachineShare
       || this.isNewHomeShare
       || this.wasPathChanged
       || this.hasAddedAllowDenyHosts
     );
   }
 
-  get isNewTimemachineShare(): boolean {
-    const timemachine = this.form.controls.timemachine.value;
-    return (
-      (this.isNew && timemachine)
-      || timemachine !== this.existingSmbShare?.timemachine
-    );
+  get isNewTimeMachineShare(): boolean {
+    const timeMachine = this.form.controls.timemachine.value;
+    const existingTimeMachine = (this.existingSmbShare?.options as LegacySmbShareOptions)?.timemachine;
+
+    return typeof timeMachine === 'boolean'
+      && ((this.isNew && timeMachine) || (typeof existingTimeMachine === 'boolean' && timeMachine !== existingTimeMachine));
   }
 
   get isNewHomeShare(): boolean {
     const homeShare = this.form.controls.home.value;
-    return (
-      (this.isNew && homeShare) || homeShare !== this.existingSmbShare?.home
-    );
+    const existingHomeShare = (this.existingSmbShare?.options as LegacySmbShareOptions)?.home;
+
+    return typeof homeShare === 'boolean'
+      && ((this.isNew && homeShare) || (typeof existingHomeShare === 'boolean' && homeShare !== existingHomeShare));
   }
 
   get wasPathChanged(): boolean {
-    return (
-      !this.isNew && this.form.controls.path.value !== this.existingSmbShare?.path
-    );
+    return !this.isNew && this.form.controls.path.value !== this.existingSmbShare?.path;
   }
 
   protected rootNodes = signal<ExplorerNodeData[]>([]);
 
-  hostsAllowTooltip = this.translate.instant('Enter a list of allowed hostnames or IP addresses.\
-    Separate entries by pressing <code>Enter</code>. A more detailed description \
-    with examples can be found \
-    <a href="{url}" target="_blank">here</a>. <br><br> \
-    If neither *Hosts Allow* or *Hosts Deny* contains \
-    an entry, then SMB share access is allowed for any host. <br><br> \
-    If there is a *Hosts Allow* list but no *Hosts Deny* list, then only allow \
-    hosts on the *Hosts Allow* list. <br><br> \
-    If there is a *Hosts Deny* list but no *Hosts Allow* list, then allow all \
-    hosts that are not on the *Hosts Deny* list. <br><br> \
-    If there is both a *Hosts Allow* and *Hosts Deny* list, then allow all hosts \
-    that are on the *Hosts Allow* list. <br><br> \
-    If there is a host not on the *Hosts Allow* and not on the *Hosts Deny* list, \
-    then allow it.', { url: 'https://wiki.samba.org/index.php/1.4_Samba_Security' });
-
-  form = this.formBuilder.group({
-    path: ['', [Validators.required]],
+  protected form = this.formBuilder.group({
+    // Common for all share purposes
+    purpose: [SmbSharePurpose.DefaultShare as SmbSharePurpose | null],
     name: ['', Validators.required],
-    purpose: [SmbPresetType.DefaultShare as SmbPresetType | null],
-    comment: [''],
+    path: ['', [Validators.required]],
     enabled: [true],
-    acl: [false],
-    ro: [false],
+    comment: [''],
+    readonly: [false],
     browsable: [true],
-    guestok: [false],
-    abe: [false],
+    access_based_share_enumeration: [false],
+    audit: this.formBuilder.group({
+      enable: [false],
+      watch_list: [[] as string[]],
+      ignore_list: [[] as string[]],
+    }),
+
+    // Only relevant to legacy shares
+    recyclebin: [false],
+    path_suffix: [null as string | null],
     hostsallow: [[] as string[]],
     hostsdeny: [[] as string[]],
-    home: [false],
-    timemachine: [false],
-    timemachine_quota: [null as number | null],
-    afp: [false],
-    shadowcopy: [false],
-    recyclebin: [false],
-    aapl_name_mangling: [false],
+    guestok: [false],
     streams: [false],
     durablehandle: [false],
+    shadowcopy: [false],
     fsrvp: [false],
-    path_suffix: [null as string | null],
+    home: [false],
+    acl: [false],
+    timemachine: [false],
+    afp: [false],
     auxsmbconf: [''],
+
+    // Other purpose-specific fields
+    timemachine_quota: [null as number | null],
+    aapl_name_mangling: [false],
     vuid: [null as string | null, [
       this.validatorsService.withMessage(
         Validators.pattern(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i),
@@ -256,16 +259,10 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
         this.translate.instant('Invalid remote path. Valid examples: SERVER\\SHARE or 192.168.0.1\\SHARE'),
       ),
     ]],
-    audit: this.formBuilder.group({
-      enable: [false],
-      watch_list: [[] as string[]],
-      ignore_list: [[] as string[]],
-    }),
   });
 
   constructor(
     public formatter: IxFormatterService,
-    private cdr: ChangeDetectorRef,
     private formBuilder: NonNullableFormBuilder,
     private api: ApiService,
     private matDialog: MatDialog,
@@ -275,6 +272,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     private router: Router,
     private userService: UserService,
     protected loader: LoaderService,
+    private errorHandler: ErrorHandlerService,
     private formErrorHandler: FormErrorHandlerService,
     private filesystemService: FilesystemService,
     private snackbar: SnackbarService,
@@ -293,6 +291,11 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     this.purposeOptions$ = of(this.buildPurposeOptions());
   }
 
+  get shouldShowNamingSchema(): boolean {
+    return (this.form.controls.dataset_naming_schema.enabled && this.form.controls.auto_dataset_creation.value)
+      || this.form.controls.purpose.value === SmbSharePurpose.PrivateDatasetsShare;
+  }
+
   private setupExplorerRootNodes(): void {
     this.filesystemService.getTopLevelDatasetsNodes().pipe(
       untilDestroyed(this),
@@ -305,7 +308,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.setupPurposeControl();
-    this.checkForSmbUsersWarning();
+    this.loadSmbConfig();
 
     if (this.defaultSmbShare) {
       this.form.patchValue(this.defaultSmbShare);
@@ -346,7 +349,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
   private setupMangleWarning(): void {
     this.form.controls.aapl_name_mangling.valueChanges.pipe(
-      filter((value) => value !== this.existingSmbShare?.aapl_name_mangling && !this.isNew),
+      filter((value) => value !== (this.existingSmbShare as LegacySmbShareOptions)?.aapl_name_mangling && !this.isNew),
       take(1),
       switchMap(() => this.dialogService.confirm({
         title: this.translate.instant(helptextSharingSmb.manglingDialog.title),
@@ -393,7 +396,8 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   private setupPurposeControl(): void {
     this.form.controls.purpose.valueChanges.pipe(untilDestroyed(this))
       .subscribe((value) => {
-        this.showLegacyWarning.set(value === SmbPresetType.LegacyShare);
+        this.showLegacyWarning.set(value === SmbSharePurpose.LegacyShare);
+        this.updateExtensionsWarning();
 
         this.clearPresets();
 
@@ -418,7 +422,6 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
       nameControl.setValue(name);
       nameControl.markAsTouched();
     }
-    this.cdr.markForCheck();
   }
 
   private checkAndShowStripAclWarning(path: string, aclValue: boolean): void {
@@ -426,7 +429,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
       this.wasStripAclWarningShown
       || !path
       || aclValue
-      || this.form.controls.purpose.value !== SmbPresetType.LegacyShare
+      || this.form.controls.purpose.value !== SmbSharePurpose.LegacyShare
     ) {
       return;
     }
@@ -442,10 +445,10 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
       });
   }
 
-  setValuesFromPreset(preset: SmbPresetType): void {
+  private setValuesFromPreset(preset: SmbSharePurpose): void {
     const enabledFields = presetEnabledFields[preset];
 
-    if (preset === SmbPresetType.ExternalShare) {
+    if (preset === SmbSharePurpose.ExternalShare) {
       this.form.controls.path.patchValue(externalSmbSharePath, { emitEvent: false });
     } else if (this.form.controls.path.value === externalSmbSharePath) {
       this.form.controls.path.patchValue(null, { emitEvent: false });
@@ -454,14 +457,11 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     if (!enabledFields) return;
 
     enabledFields.forEach((field) => {
-    // eslint-disable-next-line no-restricted-syntax
-      const ctrl = this.form.get(field as string);
-      if (ctrl) {
-        ctrl.enable({ emitEvent: false });
+      const control = this.form.controls[field as keyof typeof this.form.controls];
+      if (control) {
+        control.enable({ emitEvent: false });
       }
     });
-
-    this.cdr.markForCheck();
   }
 
   private showStripAclWarning(): void {
@@ -477,12 +477,13 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
       .subscribe();
   }
 
-  clearPresets(): void {
+  private clearPresets(): void {
     Object.values(presetEnabledFields).forEach((fields) => {
       fields?.forEach((field) => {
         // eslint-disable-next-line no-restricted-syntax
         const control = this.form.get(field as string);
         if (control) {
+          control.reset();
           control.disable({ emitEvent: false });
         }
       });
@@ -504,7 +505,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     delete flatShare.options;
 
     if (!flatShare.purpose) {
-      flatShare.purpose = SmbPresetType.LegacyShare;
+      flatShare.purpose = SmbSharePurpose.LegacyShare;
     }
 
     this.form.patchValue(flatShare);
@@ -537,7 +538,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     const presetFields = presetEnabledFields[purpose] ?? [];
 
     if (purpose) {
-      const options: Partial<SmbShareOptions> = { purpose } as SmbShareOptions;
+      const options = { } as SmbShareOptions;
 
       // Move related fields from root into `options` and delete them from root
       for (const field of presetFields) {
@@ -548,7 +549,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
         }
       }
 
-      smbShare.options = options as SmbShareOptions;
+      smbShare.options = options;
     }
 
     const timeMachineOptions = smbShare.options as TimeMachineSmbShareOptions;
@@ -571,7 +572,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     this.datasetService.rootLevelDatasetWarning(
       smbShare.path,
       this.translate.instant(helptextSharingSmb.rootLevelWarning),
-      !this.form.controls.path.dirty || smbShare.purpose === SmbPresetType.ExternalShare,
+      !this.form.controls.path.dirty || smbShare.purpose === SmbSharePurpose.ExternalShare,
     ).pipe(
       filter(Boolean),
       tap(() => {
@@ -600,7 +601,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
               const homeShare = this.form.controls.home.value;
               this.router.navigate(
                 ['/', 'datasets', 'acl', 'edit'],
-                { queryParams: { homeShare, path: smbShareResponse.path_local } },
+                { queryParams: { homeShare, path: smbShareResponse.path } },
               );
             }
             this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Cifs }));
@@ -643,7 +644,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
         if (isRunning && this.isRestartRequired) {
           return this.matDialog.open(RestartSmbDialog, {
             data: {
-              timemachine: this.isNewTimemachineShare,
+              timemachine: this.isNewTimeMachineShare,
               homeshare: this.isNewHomeShare,
               path: this.wasPathChanged,
               hosts: this.hasAddedAllowDenyHosts,
@@ -679,7 +680,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     const sharePath: string = this.form.controls.path.value;
     const datasetId = sharePath.replace('/mnt/', '');
 
-    if (this.form.controls.purpose.value !== SmbPresetType.LegacyShare) {
+    if (this.form.controls.purpose.value !== SmbSharePurpose.LegacyShare) {
       return of(false);
     }
 
@@ -692,38 +693,48 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     );
   }
 
-  protected closeForm(routerLink?: string[]): void {
-    this.slideInRef.close({ response: false });
-
-    if (routerLink) {
-      this.router.navigate(routerLink);
-    }
-  }
-
-  private checkForSmbUsersWarning(): void {
-    this.smbValidationService.checkForSmbUsersWarning().pipe(
-      filter(Boolean),
-      untilDestroyed(this),
-    ).subscribe(() => {
-      this.hasSmbUsers.set(false);
-    });
-  }
-
-  private buildPurposeOptions(): SelectOption<SmbPresetType>[] {
+  private buildPurposeOptions(): SelectOption<SmbSharePurpose>[] {
     let options = mapToOptionsWithHoverTooltips(
-      smbPresetTypeLabels,
-      smbPresetTooltips,
+      smbSharePurposeLabels,
+      smbSharePurposeTooltips,
       this.translate,
     );
 
-    if (this.isNew || (!this.isNew && this.existingSmbShare?.purpose !== SmbPresetType.LegacyShare)) {
-      options = options.filter((option) => option.value !== SmbPresetType.LegacyShare);
+    if (this.isNew || (!this.isNew && this.existingSmbShare?.purpose !== SmbSharePurpose.LegacyShare)) {
+      options = options.filter((option) => option.value !== SmbSharePurpose.LegacyShare);
     }
 
     if (!this.isEnterprise()) {
-      options = options.filter((option) => option.value !== SmbPresetType.VeeamRepositoryShare);
+      options = options.filter((option) => option.value !== SmbSharePurpose.VeeamRepositoryShare);
     }
 
     return options;
+  }
+
+  private updateExtensionsWarning(): void {
+    const shouldShow = !this.smbConfig().aapl_extensions
+      && this.form.controls.purpose.value === SmbSharePurpose.TimeMachineShare;
+
+    this.showExtensionsWarning.set(shouldShow);
+  }
+
+  private loadSmbConfig(): void {
+    this.api.call('smb.config')
+      .pipe(
+        this.errorHandler.withErrorHandler(),
+        untilDestroyed(this),
+      )
+      .subscribe((config) => {
+        this.smbConfig.set(config);
+      });
+  }
+
+  protected extensionsEnabled(): void {
+    this.smbConfig.set({
+      ...this.smbConfig(),
+      aapl_extensions: true,
+    });
+
+    this.updateExtensionsWarning();
   }
 }

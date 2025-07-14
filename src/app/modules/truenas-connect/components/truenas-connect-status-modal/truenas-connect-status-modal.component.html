@@ -1,35 +1,76 @@
-<div mat-dialog-title>{{ "TrueNAS Connect Service" | translate }}</div>
+<div mat-dialog-title class="dialog-title-with-logo">
+  <img class="title-logo" src="assets/images/truenas-connect-logo-horizontal.svg" alt="TrueNAS Connect" />
+  @if (status() === TncStatus.Active) {
+    <button
+      mat-icon-button
+      class="disable-service-button"
+      ixTest="tnc-disable-service"
+      [matTooltip]="'Disable Service' | translate"
+      [disabled]="isDisabling()"
+      (click)="disableService()"
+    >
+      <ix-icon name="ix-cloud-off"></ix-icon>
+    </button>
+  }
+</div>
 <mat-divider></mat-divider>
 <mat-dialog-content>
-  <div>
-    @if (status() === TncStatus.Active) {
-      <ix-icon class="status-connected" name="check_circle"></ix-icon>
-    } @else if (status() === TncStatus.Disabled) {
-      <ix-icon class="status-disabled" name="pause_circle_filled"></ix-icon>
-    } @else if (status() === TncStatus.Failed){
-      <ix-icon class="status-failed" name="cancel"></ix-icon>
-    } @else if (status() === TncStatus.Waiting) {
-      <ix-icon class="status-pending" name="pending"></ix-icon>
-    } @else if (status() === TncStatus.Connecting) {
-      <ix-icon class="status-connecting" name="pending"></ix-icon>
-    }
-    <span ixTest="tnc-status">{{ status() }}</span>
-  </div>
-  <div ixTest="tnc-status-reason">
-    {{ TruenasConnectStatusReason[tnc.config().status] | translate }}
-  </div>
+  @if (isLoading()) {
+    <div class="loading-state-content">
+      <ix-truenas-connect-spinner></ix-truenas-connect-spinner>
+      <div class="loading-state-text">
+        {{ "Initializing TrueNAS Connect service..." | translate }}
+      </div>
+    </div>
+  } @else {
+    <ix-truenas-connect-status-display
+      [status]="status()"
+      [rawStatus]="tnc.config()?.status"
+    ></ix-truenas-connect-status-display>
+  }
 </mat-dialog-content>
 <div mat-dialog-actions>
-  <button ixTest="tnc-settings" mat-button (click)="openSettings()">
-    {{ "Settings" | translate }}
-  </button>
-  <button
-    color="primary"
-    mat-button
-    ixTest="tnc-open"
-    [disabled]="tnc.config().status !== TruenasConnectStatus.Configured"
-    (click)="open()"
-  >
-    {{ "Open TrueNAS Connect" | translate }}
-  </button>
+  @if (isLoading()) {
+    <button mat-button ixTest="tnc-loading" [disabled]="true">
+      {{ "Loading..." | translate }}
+    </button>
+  } @else if (status() === TncStatus.Active) {
+    <button
+      color="primary"
+      mat-button
+      ixTest="tnc-open"
+      [disabled]="isDisabling()"
+      (click)="open()"
+    >
+      {{ "Open TrueNAS Connect" | translate }}
+    </button>
+  } @else if (status() === TncStatus.Waiting) {
+    <button
+      color="primary"
+      mat-button
+      ixTest="tnc-get-connected"
+      [disabled]="isConnecting()"
+      (click)="connect()"
+    >
+      @if (isConnecting()) {
+        {{ "Connecting..." | translate }}
+      } @else {
+        {{ "Get Connected" | translate }}
+      }
+    </button>
+  } @else if (status() === TncStatus.Failed) {
+    <button
+      color="primary"
+      mat-button
+      ixTest="tnc-retry-connection"
+      [disabled]="isRetrying()"
+      (click)="retryConnection()"
+    >
+      @if (isRetrying()) {
+        {{ "Retrying..." | translate }}
+      } @else {
+        {{ "Retry Connection" | translate }}
+      }
+    </button>
+  }
 </div>

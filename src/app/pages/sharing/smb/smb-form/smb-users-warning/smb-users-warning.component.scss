@@ -1,0 +1,26 @@
+.smb-users-warning {
+  border-bottom: 1px solid var(--lines);
+  padding: 0 10px 3px;
+
+  .title {
+    align-items: center;
+    display: flex;
+    gap: 12px;
+  }
+
+  ul {
+    padding: 0 15px;
+
+    li a {
+      color: var(--primary);
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    li span {
+      color: var(--primary);
+      cursor: pointer;
+      text-decoration: underline;
+    }
+  }
+}

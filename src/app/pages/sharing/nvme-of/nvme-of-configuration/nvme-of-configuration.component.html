@@ -17,6 +17,7 @@
         <ix-checkbox
           formControlName="ana"
           [label]="'Enable Asymmetric Namespace Access (ANA)' | translate"
+          [matTooltip]="form.controls.ana.disabled ? (helptext.anaDisabledTooltip | translate) : ''"
         ></ix-checkbox>
 
         <ix-checkbox
@@ -24,12 +25,6 @@
           [label]="'Enable Remote Direct Memory Access (RDMA)' | translate"
           [tooltip]="helptext.rdmaTooltip"
           [matTooltip]="form.controls.rdma.disabled ? (helptext.rdmaDisabledTooltip | translate) : ''"
-        ></ix-checkbox>
-
-        <ix-checkbox
-          formControlName="xport_referral"
-          [label]="'Generate Cross-port Referrals for Ports On This System ' | translate"
-          [tooltip]="helptext.xportReferralTooltip"
         ></ix-checkbox>
       </ix-fieldset>
 

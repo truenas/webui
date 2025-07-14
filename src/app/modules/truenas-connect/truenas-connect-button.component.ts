@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component, effect } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule, MatIconButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
@@ -33,22 +33,16 @@ export class TruenasConnectButtonComponent {
   tooltips = helptextTopbar.tooltips;
 
   constructor(private matDialog: MatDialog, public tnc: TruenasConnectService) {
-    effect(() => {
-      if (this.tnc.config()?.status === TruenasConnectStatus.ClaimTokenMissing) {
-        this.tnc.generateToken()
-          .pipe(untilDestroyed(this))
-          .subscribe();
-      }
-    });
   }
 
   protected showStatus(): void {
     this.matDialog.open(TruenasConnectStatusModalComponent, {
       width: '400px',
       hasBackdrop: true,
+      panelClass: 'topbar-panel',
       position: {
         top: '48px',
-        right: '0px',
+        right: '16px',
       },
     });
   }

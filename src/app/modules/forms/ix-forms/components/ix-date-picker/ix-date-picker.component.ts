@@ -7,7 +7,7 @@ import { MatDatepickerInputEvent, MatDatepickerModule } from '@angular/material/
 import { MatHint, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { TranslateModule } from '@ngx-translate/core';
-import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
+import { toZonedTime, fromZonedTime } from 'date-fns-tz';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { IxDateAdapter } from 'app/modules/dates/services/ix-date-adapter';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
@@ -86,7 +86,7 @@ export class IxDatepickerComponent implements ControlValueAccessor {
   }
 
   writeValue(value: Date): void {
-    const dateInMachineTimezone = utcToZonedTime(value, this.locale.timezone);
+    const dateInMachineTimezone = toZonedTime(value, this.locale.timezone);
     this.value.set(dateInMachineTimezone);
   }
 
@@ -96,7 +96,7 @@ export class IxDatepickerComponent implements ControlValueAccessor {
 
   onDateChanged(event: MatDatepickerInputEvent<Date>): void {
     this.value.set(event.value);
-    const dateInUtc = zonedTimeToUtc(event.value, this.locale.timezone);
+    const dateInUtc = fromZonedTime(event.value, this.locale.timezone);
     this.onChange(dateInUtc);
   }
 

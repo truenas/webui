@@ -23,7 +23,7 @@ describe('PortalFormComponent', () => {
   const slideInRef: SlideInRef<IscsiPortal | undefined, unknown> = {
     close: jest.fn(),
     requireConfirmationWhen: jest.fn(),
-    getData: jest.fn(() => undefined),
+    getData: jest.fn((): undefined => undefined),
   };
 
   const editingPortal = {

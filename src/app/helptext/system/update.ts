@@ -42,10 +42,10 @@ export const helptextSystemUpdate = {
     completeAction: T('Close'),
   },
 
-  nonHaDownloadMessage: T('Continue with download?'),
-  haDownloadMessage: T('Upgrades both controllers. Files are downloaded to the Active Controller\
+  nonHaUpdateConfirmation: T('System will reboot after the update and clients will be disconnected.\
+ Continue with the update?'),
+
+  haUpdateConfirmation: T('Upgrades both controllers. Files are downloaded to the Active Controller\
  and then transferred to the Standby Controller. The upgrade process starts concurrently on both TrueNAS Controllers.\
- Continue with download?'),
-  nonHaConfirmMessage: T('Apply updates and restart system after downloading.'),
-  haConfirmMessage: T('Check the box for full upgrade. Leave unchecked to download only.'),
+ Continue with the update?'),
 };
