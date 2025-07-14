@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
-import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
+import { toZonedTime, fromZonedTime } from 'date-fns-tz';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { LocaleService } from 'app/modules/language/locale.service';
 
@@ -26,8 +26,8 @@ export class IxDateComponent {
   defaultTz: string = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   get machineTime(): Date {
-    const utc = zonedTimeToUtc(this.date(), this.defaultTz);
-    return utcToZonedTime(utc, this.machineTimezone);
+    const utc = fromZonedTime(this.date(), this.defaultTz);
+    return toZonedTime(utc, this.machineTimezone);
   }
 
   get isTimezoneDifference(): boolean {

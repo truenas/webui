@@ -1,6 +1,15 @@
 @import 'scss-imports/variables';
 
-.available-profiles {
+.profiles-section {
+  &.not-available {
+    opacity: 0.4;
+    transition: opacity 0.3s ease-in-out;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
   .profile-list {
     display: flex;
     flex-direction: column;
@@ -29,6 +38,27 @@
       font-size: 0.85rem;
       padding-top: 2px;
     }
+  }
+}
+
+.tag-line {
+  font-size: 12px;
+  font-weight: 400;
+  margin-top: 5px;
+}
+
+.current-profile {
+  display: flex;
+  font-size: 13px;
+  gap: 4px;
+  margin-top: 16px;
+
+  .label {
+    margin-right: 0;
+  }
+
+  .value {
+    font-weight: bold;
   }
 }
 

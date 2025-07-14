@@ -181,7 +181,7 @@ export class ReplicationTaskCardComponent implements OnInit {
     this.dataProvider.load();
   }
 
-  doDelete(replicationTask: ReplicationTask): void {
+  protected doDelete(replicationTask: ReplicationTask): void {
     this.dialogService.confirm({
       title: this.translate.instant('Confirmation'),
       message: this.translate.instant('Delete Replication Task <b>"{name}"</b>?', {
@@ -203,20 +203,20 @@ export class ReplicationTaskCardComponent implements OnInit {
     });
   }
 
-  addReplicationTask(): void {
+  protected addReplicationTask(): void {
     this.slideIn.open(ReplicationWizardComponent, { wide: true }).pipe(
       filter((response) => !!response),
       untilDestroyed(this),
     ).subscribe(() => this.getReplicationTasks());
   }
 
-  editReplicationTask(row: ReplicationTask): void {
+  private editReplicationTask(row: ReplicationTask): void {
     this.slideIn.open(ReplicationFormComponent, { wide: true, data: row })
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => this.getReplicationTasks());
   }
 
-  runNow(row: ReplicationTask): void {
+  protected runNow(row: ReplicationTask): void {
     this.dialogService.confirm({
       title: this.translate.instant('Run Now'),
       message: this.translate.instant('Replicate «{name}» now?', { name: row.name }),
@@ -245,14 +245,14 @@ export class ReplicationTaskCardComponent implements OnInit {
     });
   }
 
-  restore(row: ReplicationTask): void {
+  protected restore(row: ReplicationTask): void {
     const dialog = this.matDialog.open(ReplicationRestoreDialog, {
       data: row.id,
     });
     dialog.afterClosed().pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getReplicationTasks());
   }
 
-  downloadKeys(row: ReplicationTask): void {
+  protected downloadKeys(row: ReplicationTask): void {
     this.download.coreDownload({
       method: 'pool.dataset.export_keys_for_replication',
       mimeType: 'application/json',

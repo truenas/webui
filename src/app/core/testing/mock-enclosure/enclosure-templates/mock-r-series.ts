@@ -105,3 +105,15 @@ export const mockR50Bm = makeEnclosure({
   ...mockR50,
   model: EnclosureModel.R50BM,
 });
+
+export const mockR60 = makeEnclosure({
+  model: EnclosureModel.R60,
+  controller: true,
+  rackmount: true,
+  front_slots: 12,
+  elements: {
+    'Array Device Slot': makeArrayDeviceSlots(1, 12, {
+      is_front: true,
+    }),
+  },
+});

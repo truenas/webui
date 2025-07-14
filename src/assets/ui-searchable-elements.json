@@ -798,10 +798,9 @@
     "hierarchy": [
       "Credentials",
       "Users (WIP)",
-      "Create New User"
+      "Add User"
     ],
     "synonyms": [
-      "Add User",
       "Create User",
       "New User"
     ],
@@ -820,7 +819,12 @@
       "Credentials",
       "Users (WIP)"
     ],
-    "synonyms": [],
+    "synonyms": [
+      "Local Users",
+      "Users",
+      "User List",
+      "User Management"
+    ],
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -828,6 +832,101 @@
     ],
     "routerLink": null,
     "anchor": "users-list",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
+      "Users (WIP)",
+      "View API Keys"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/credentials/users-new"
+    ],
+    "routerLink": null,
+    "anchor": "view-api-keys",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
+      "Users (WIP)",
+      "Add API Key"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/credentials/users-new"
+    ],
+    "routerLink": null,
+    "anchor": "add-api-key",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
+      "Users (WIP)",
+      "Download Key"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/credentials/users-new"
+    ],
+    "routerLink": null,
+    "anchor": "download-key",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
+      "Users (WIP)",
+      "Toggle Lock Status"
+    ],
+    "synonyms": [
+      "Lock User",
+      "Unlock User"
+    ],
+    "requiredRoles": [
+      "ACCOUNT_WRITE"
+    ],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/credentials/users-new"
+    ],
+    "routerLink": null,
+    "anchor": "toggle-lock-status",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
+      "Users (WIP)",
+      "Toggle Lock Status"
+    ],
+    "synonyms": [
+      "Lock User",
+      "Unlock User"
+    ],
+    "requiredRoles": [
+      "ACCOUNT_WRITE"
+    ],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/credentials/users-new"
+    ],
+    "routerLink": null,
+    "anchor": "toggle-lock-status",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -852,6 +951,23 @@
     "hierarchy": [
       "Credentials",
       "Users (WIP)",
+      "Access Card"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/credentials/users-new"
+    ],
+    "routerLink": null,
+    "anchor": "access-card",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
+      "Users (WIP)",
       "Password Card"
     ],
     "synonyms": [],
@@ -869,16 +985,18 @@
     "hierarchy": [
       "Credentials",
       "Users (WIP)",
-      "Access Card"
+      "Generate One-Time Password"
     ],
     "synonyms": [],
-    "requiredRoles": [],
+    "requiredRoles": [
+      "ACCOUNT_WRITE"
+    ],
     "visibleTokens": [],
     "anchorRouterLink": [
       "/credentials/users-new"
     ],
     "routerLink": null,
-    "anchor": "access-card",
+    "anchor": "generate-one-time-password",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -1742,16 +1860,11 @@
   },
   {
     "hierarchy": [
-      "Instances",
+      "Containers",
       "Global Settings"
     ],
     "synonyms": [
-      "VMs",
-      "Virtual Machines",
-      "Virtualization",
-      "Containers",
-      "VM Settings",
-      "Virtual Machine Settings"
+      "Container Settings"
     ],
     "requiredRoles": [],
     "visibleTokens": [
@@ -1767,18 +1880,10 @@
   },
   {
     "hierarchy": [
-      "Instances",
-      "Create New Instance"
+      "Containers",
+      "Create New Container"
     ],
     "synonyms": [
-      "VMs",
-      "Virtual Machines",
-      "Virtualization",
-      "Containers",
-      "Add Instance",
-      "Create VM",
-      "Add VM",
-      "New VM",
       "New Container",
       "Add Container"
     ],
@@ -1798,14 +1903,12 @@
   },
   {
     "hierarchy": [
-      "Instances",
+      "Containers",
       "List"
     ],
     "synonyms": [
-      "VM",
-      "Virtual Machines",
-      "Incus",
-      "Containers"
+      "Instances",
+      "Incus"
     ],
     "requiredRoles": [],
     "visibleTokens": [
@@ -1821,14 +1924,11 @@
   },
   {
     "hierarchy": [
-      "Instances",
+      "Containers",
       "General Info"
     ],
     "synonyms": [
-      "VM",
-      "Virtual Machines",
-      "Virtualization",
-      "Containers"
+      "Instances"
     ],
     "requiredRoles": [],
     "visibleTokens": [
@@ -1844,14 +1944,11 @@
   },
   {
     "hierarchy": [
-      "Instances",
+      "Containers",
       "Devices"
     ],
     "synonyms": [
-      "VM",
-      "Virtual Machines",
-      "Virtualization",
-      "Containers"
+      "Instances"
     ],
     "requiredRoles": [],
     "visibleTokens": [
@@ -1867,14 +1964,11 @@
   },
   {
     "hierarchy": [
-      "Instances",
+      "Containers",
       "Disks"
     ],
     "synonyms": [
-      "VM",
-      "Virtual Machines",
-      "Virtualization",
-      "Containers"
+      "Instances"
     ],
     "requiredRoles": [],
     "visibleTokens": [
@@ -1890,14 +1984,11 @@
   },
   {
     "hierarchy": [
-      "Instances",
+      "Containers",
       "NIC"
     ],
     "synonyms": [
-      "VM",
-      "Virtual Machines",
-      "Virtualization",
-      "Containers"
+      "Instances"
     ],
     "requiredRoles": [],
     "visibleTokens": [
@@ -1913,14 +2004,11 @@
   },
   {
     "hierarchy": [
-      "Instances",
+      "Containers",
       "Proxies"
     ],
     "synonyms": [
-      "VM",
-      "Virtual Machines",
-      "Virtualization",
-      "Containers"
+      "Instances"
     ],
     "requiredRoles": [],
     "visibleTokens": [
@@ -1936,14 +2024,11 @@
   },
   {
     "hierarchy": [
-      "Instances",
+      "Containers",
       "Idmap"
     ],
     "synonyms": [
-      "VM",
-      "Virtual Machines",
-      "Virtualization",
-      "Containers"
+      "Instances"
     ],
     "requiredRoles": [],
     "visibleTokens": [
@@ -1959,14 +2044,11 @@
   },
   {
     "hierarchy": [
-      "Instances",
+      "Containers",
       "Tools"
     ],
     "synonyms": [
-      "VM",
-      "Virtual Machines",
-      "Virtualization",
-      "Containers"
+      "Instances"
     ],
     "requiredRoles": [],
     "visibleTokens": [
@@ -1982,14 +2064,11 @@
   },
   {
     "hierarchy": [
-      "Instances",
+      "Containers",
       "Metrics"
     ],
     "synonyms": [
-      "VM",
-      "Virtual Machines",
-      "Virtualization",
-      "Containers"
+      "Instances"
     ],
     "requiredRoles": [],
     "visibleTokens": [
@@ -2778,7 +2857,9 @@
       "NVMe-oF",
       "Global Configuration"
     ],
-    "synonyms": [],
+    "synonyms": [
+      "NVMeOF"
+    ],
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -2787,6 +2868,174 @@
     ],
     "routerLink": null,
     "anchor": "global-configuration",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Shares",
+      "NVMe-oF",
+      "Add Subsystem"
+    ],
+    "synonyms": [
+      "NVMeOF",
+      "Create Subsystem",
+      "New Subsystem"
+    ],
+    "requiredRoles": [
+      "SHARING_NVME_TARGET_WRITE"
+    ],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/sharing",
+      "nvme-of"
+    ],
+    "routerLink": null,
+    "anchor": "add-subsystem",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Shares",
+      "NVMe-oF",
+      "Copy NQN"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/sharing",
+      "nvme-of"
+    ],
+    "routerLink": null,
+    "anchor": "copy-nqn",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Shares",
+      "NVMe-oF",
+      "Details"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/sharing",
+      "nvme-of"
+    ],
+    "routerLink": null,
+    "anchor": "details",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Shares",
+      "NVMe-oF",
+      "Namespaces"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/sharing",
+      "nvme-of"
+    ],
+    "routerLink": null,
+    "anchor": "namespaces",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Shares",
+      "NVMe-oF",
+      "Ports"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/sharing",
+      "nvme-of"
+    ],
+    "routerLink": null,
+    "anchor": "ports",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Shares",
+      "NVMe-oF",
+      "Associated Hosts"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/sharing",
+      "nvme-of"
+    ],
+    "routerLink": null,
+    "anchor": "associated-hosts",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Shares",
+      "NVMe-oF",
+      "Add Host"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/sharing",
+      "nvme-of"
+    ],
+    "routerLink": null,
+    "anchor": "add-host",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Shares",
+      "NVMe-oF",
+      "Add Namespace"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/sharing",
+      "nvme-of"
+    ],
+    "routerLink": null,
+    "anchor": "add-namespace",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Shares",
+      "NVMe-oF",
+      "Add Port"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/sharing",
+      "nvme-of"
+    ],
+    "routerLink": null,
+    "anchor": "add-port",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -4289,27 +4538,6 @@
       "System",
       "Advanced Settings",
       "Self-Encrypting Drive",
-      "ATA Security User"
-    ],
-    "synonyms": [
-      "SED User"
-    ],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/system",
-      "advanced"
-    ],
-    "routerLink": null,
-    "anchor": "ata-security-user",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "Advanced Settings",
-      "Self-Encrypting Drive",
       "SED Password"
     ],
     "synonyms": [],
@@ -5621,6 +5849,53 @@
     ],
     "routerLink": null,
     "anchor": "configure-2fa-secret",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Virtual Machines",
+      "Add VM"
+    ],
+    "synonyms": [
+      "Create VM",
+      "New VM",
+      "VM",
+      "Add Virtual Machine",
+      "New Virtual Machine",
+      "Create Virtual Machine"
+    ],
+    "requiredRoles": [
+      "VM_WRITE"
+    ],
+    "visibleTokens": [
+      "VMS"
+    ],
+    "anchorRouterLink": [
+      "/vm"
+    ],
+    "routerLink": null,
+    "anchor": "add-vm",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Virtual Machines"
+    ],
+    "synonyms": [
+      "VM",
+      "Virtualization"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [
+      "VMS"
+    ],
+    "anchorRouterLink": [
+      "/vm"
+    ],
+    "routerLink": null,
+    "anchor": "vm-list",
     "triggerAnchor": null,
     "section": "ui"
   }

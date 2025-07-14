@@ -32,7 +32,7 @@ describe('AuthorizedAccessFormComponent', () => {
   const slideInRef: SlideInRef<IscsiAuthAccess | undefined, unknown> = {
     close: jest.fn(),
     requireConfirmationWhen: jest.fn(),
-    getData: jest.fn(() => undefined),
+    getData: jest.fn((): undefined => undefined),
   };
 
   const createComponent = createComponentFactory({

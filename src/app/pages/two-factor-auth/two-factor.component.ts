@@ -12,7 +12,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
-  Observable, forkJoin, of, EMPTY,
+  Observable, of, EMPTY,
+  combineLatest,
 } from 'rxjs';
 import {
   catchError,
@@ -62,7 +63,7 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
   globalTwoFactorEnabled: boolean;
   showQrCodeWarning = false;
 
-  get global2FaMsg(): string {
+  protected get global2FaMsg(): string {
     if (!this.globalTwoFactorEnabled) {
       return this.translate.instant(helptext2fa.globallyDisabled);
     }
@@ -104,13 +105,13 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
     this.window.localStorage.setItem('showQr2FaWarning', 'false');
   }
 
-  loadTwoFactorConfigs(): void {
+  private loadTwoFactorConfigs(): void {
     this.isDataLoading.set(true);
-    forkJoin([
+    combineLatest([
       this.authService.userTwoFactorConfig$.pipe(take(1)),
       this.authService.getGlobalTwoFactorConfig(),
     ])
-      .pipe(untilDestroyed(this))
+      .pipe(take(1), untilDestroyed(this))
       .subscribe({
         next: ([userConfig, globalConfig]) => {
           this.isDataLoading.set(false);
@@ -120,7 +121,7 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
       });
   }
 
-  renewSecretOrEnable2Fa(): void {
+  protected renewSecretOrEnable2Fa(): void {
     this.getConfirmation().pipe(
       filter(Boolean),
       switchMap(() => this.renewSecretForUser()),
@@ -130,7 +131,7 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
     ).subscribe();
   }
 
-  getProvisioningUriSecret(uri: string): string | null {
+  protected getProvisioningUriSecret(uri: string): string | null {
     const url = new URL(uri);
     const params = new URLSearchParams(url.search);
 

@@ -102,6 +102,15 @@ export class EditableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   isElementWithin(target: HTMLElement): boolean {
+    const allowedOverlaySelectors = [
+      '.mat-mdc-autocomplete-panel',
+      '.mat-mdc-select-panel',
+    ];
+
+    if (allowedOverlaySelectors.some((selector) => target.closest(selector))) {
+      return true;
+    }
+
     return this.elementRef.nativeElement.contains(target);
   }
 
@@ -134,6 +143,6 @@ export class EditableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private canClose(): boolean {
-    return this.controls().every((control) => control.errors === null || Object.keys(control.errors).length === 0);
+    return this.controls().every((control) => control?.errors === null || Object.keys(control?.errors)?.length === 0);
   }
 }

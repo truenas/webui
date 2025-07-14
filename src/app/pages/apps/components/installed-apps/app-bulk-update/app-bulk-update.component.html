@@ -1,0 +1,92 @@
+<h1 matDialogTitle>{{ 'Update' | translate }}</h1>
+<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+  <p>
+    <strong>
+      {{ 'The following { n, plural, one {application} other {# applications} } will be updated. Are you sure you want to proceed?' | translate: { n: bulkItems.size } }}
+    </strong>
+  </p>
+
+  <mat-accordion displayMode="flat" class="bulk-list">
+    @for (bulkItem of bulkItems | keyvalue: originalOrder; track trackByKey($index, bulkItem)) {
+      <mat-expansion-panel (afterExpand)="onExpand(bulkItem)">
+        <mat-expansion-panel-header collapsedHeight="48px" expandedHeight="48px">
+          <ix-fake-progress-bar [loading]="loadingMap.get(bulkItem.key)"></ix-fake-progress-bar>
+          <mat-panel-title>
+            <ix-bulk-list-item [item]="bulkItem.value">
+              {{ bulkItem.key }}
+              {{ bulkItem.value.item.human_version.split('_')[0] }}
+
+              <div class="version">
+                <span>{{ bulkItem.value.item.human_version.split('_')[1] }}</span>
+                <ix-icon name="mdi-arrow-right-thin"></ix-icon>
+                @if (isItemExpanded(bulkItem)){
+                  <span>{{ form.get(bulkItem.key)?.value }}</span>
+                } @else {
+                  <span>{{ bulkItem.value.item.latest_version }}</span>
+                }
+              </div>
+
+              <div class="logo">
+                <img
+                  [src]="bulkItem.value.item.metadata.icon"
+                  [src-fallback]="imagePlaceholder"
+                />
+              </div>
+            </ix-bulk-list-item>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        @let summary = upgradeSummaryMap.get(bulkItem.key);
+        <div class="expansion-content">
+          @if(isItemExpanded(bulkItem)) {
+            <ix-select
+              [formControlName]="bulkItem.key"
+              [label]="'Version to be updated to' | translate"
+              [required]="true"
+              [options]="optionsMap.get(bulkItem.key)"
+            ></ix-select>
+          }
+
+          @if (hasErrors(bulkItem.key)) {
+            <span>{{ bulkItem.value.message ? (bulkItem.value.message | translate) : '' }}</span>
+          }
+
+          <mat-accordion class="details-list" displayMode="flat">
+            <mat-expansion-panel>
+              <mat-expansion-panel-header collapsedHeight="48px" expandedHeight="48px">
+                <mat-panel-title>{{ 'Changelog' | translate }}</mat-panel-title>
+              </mat-expansion-panel-header>
+              <div class="details-expansion-content">
+                <div class="detail-row row-dark">
+                  @if (summary?.changelog) {
+                    <div [innerHTML]="summary?.changelog"></div>
+                  } @else {
+                    {{ 'No Changelog' | translate }}
+                  }
+                </div>
+              </div>
+            </mat-expansion-panel>
+          </mat-accordion>
+        </div>
+      </mat-expansion-panel>
+    }
+  </mat-accordion>
+
+
+
+  <div class="form-actions">
+    <button
+      *ixRequiresRoles="requiredRoles"
+      mat-button
+      type="submit"
+      color="primary"
+      ixTest="update"
+      [disabled]="form.invalid || bulkItems.size === 0"
+    >
+      {{ 'Update' | translate }}
+    </button>
+    <button mat-button type="button" matDialogClose ixTest="cancel">
+      {{ 'Cancel' | translate }}
+    </button>
+  </div>
+</form>

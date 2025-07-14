@@ -26,7 +26,7 @@ describe('AccessFormComponent', () => {
   let loader: HarnessLoader;
   const slideInRef: SlideInRef<unknown, unknown> = {
     close: jest.fn(),
-    getData: jest.fn(() => undefined),
+    getData: jest.fn((): undefined => undefined),
     requireConfirmationWhen: jest.fn(),
   };
   const createComponent = createComponentFactory({

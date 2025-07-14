@@ -1,8 +1,8 @@
 import { AlertPolicy } from 'app/enums/alert-policy.enum';
+import { AuthMechanism } from 'app/enums/auth-mechanism.enum';
 import { CloudsyncTransferSetting } from 'app/enums/cloudsync-transfer-setting.enum';
 import { DatasetRecordSize, DatasetType } from 'app/enums/dataset.enum';
 import { DeviceType } from 'app/enums/device-type.enum';
-import { DockerConfig, DockerStatusData } from 'app/enums/docker-config.interface';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { OnOff } from 'app/enums/on-off.enum';
@@ -102,6 +102,7 @@ import {
   CreateDnsAuthenticator,
   DnsAuthenticator, UpdateDnsAuthenticator,
 } from 'app/interfaces/dns-authenticator.interface';
+import { DockerConfig, DockerStatusData } from 'app/interfaces/docker-config.interface';
 import { DockerRegistry, DockerRegistryPayload } from 'app/interfaces/docker-registry.interface';
 import { DockerHubRateLimit } from 'app/interfaces/dockerhub-rate-limit.interface';
 import {
@@ -231,7 +232,7 @@ import { Service } from 'app/interfaces/service.interface';
 import { ResizeShellRequest } from 'app/interfaces/shell.interface';
 import { SmbConfig, SmbConfigUpdate } from 'app/interfaces/smb-config.interface';
 import {
-  SmbPresets, SmbShare, SmbSharesec, SmbSharesecAce, SmbShareUpdate,
+  SmbShare, SmbSharesec, SmbSharesecAce,
 } from 'app/interfaces/smb-share.interface';
 import { SmbStatus } from 'app/interfaces/smb-status.interface';
 import { SnmpConfig, SnmpConfigUpdate } from 'app/interfaces/snmp-config.interface';
@@ -246,9 +247,9 @@ import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interf
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import {
-  SystemUpdate,
-  SystemUpdateChange,
-  SystemUpdateTrains,
+  UpdateConfig,
+  UpdateProfileChoices,
+  UpdateStatus,
 } from 'app/interfaces/system-update.interface';
 import {
   TrueCommandConfig, TrueCommandUpdateResponse,
@@ -262,20 +263,27 @@ import {
   DeleteUserParams, SetPasswordParams, User, UserUpdate,
 } from 'app/interfaces/user.interface';
 import {
-  VirtualizationInstance,
+  VirtualizationDetails,
+  VirtualMachine, VirtualMachineUpdate, VmCloneParams, VmDeleteParams, VmDisplayWebUri,
+  VmDisplayWebUriParams, VmPortWizardResult,
+} from 'app/interfaces/virtual-machine.interface';
+import {
   VirtualizationDevice,
+
+  VirtualizationGlobalConfig, VirtualizationImage,
   VirtualizationImageParams,
-  VirtualizationImage,
-  AvailableGpus,
-  AvailableUsb,
-  VirtualizationGlobalConfig,
+  VirtualizationInstance,
   VirtualizationNetwork,
-  VirtualizationVolume,
+  AvailableUsb,
+  AvailableGpus, VirtualizationVolume,
   VirtualizationVolumeUpdate,
   VirtualizationPciChoices,
   CreateVirtualizationVolume,
   VirtualizationImportIsoParams,
 } from 'app/interfaces/virtualization.interface';
+import {
+  VmDevice, VmDeviceDelete, VmDeviceUpdate, VmDisplayDevice, VmPassthroughDeviceChoice, VmUsbPassthroughDeviceChoice,
+} from 'app/interfaces/vm-device.interface';
 import {
   MatchDatastoresWithDatasets,
   MatchDatastoresWithDatasetsParams,
@@ -370,6 +378,7 @@ export interface ApiCallDirectory {
   'auth.terminate_session': { params: [id: string]; response: void };
   'auth.twofactor.config': { params: void; response: GlobalTwoFactorConfig };
   'auth.twofactor.update': { params: [GlobalTwoFactorConfigUpdate]; response: GlobalTwoFactorConfig };
+  'auth.mechanism_choices': { params: void; response: AuthMechanism[] };
 
   // Boot
   'boot.detach': { params: [disk: string]; response: void };
@@ -767,14 +776,13 @@ export interface ApiCallDirectory {
   'sharing.nfs.delete': { params: [id: number]; response: boolean };
   'sharing.nfs.query': { params: QueryParams<NfsShare>; response: NfsShare[] };
   'sharing.nfs.update': { params: [id: number, update: NfsShareUpdate]; response: NfsShare };
-  'sharing.smb.create': { params: [SmbShareUpdate]; response: SmbShare };
+  'sharing.smb.create': { params: [Partial<SmbShare>]; response: SmbShare };
   'sharing.smb.delete': { params: [id: number]; response: boolean };
   'sharing.smb.getacl': { params: [{ share_name: string }]; response: SmbSharesec };
-  'sharing.smb.presets': { params: void; response: SmbPresets };
   'sharing.smb.query': { params: QueryParams<SmbShare>; response: SmbShare[] };
   'sharing.smb.setacl': { params: [{ share_name: string; share_acl: SmbSharesecAce[] }]; response: SmbSharesec };
   'sharing.smb.share_precheck': { params: [{ name: string }]; response: null | { reason: string } };
-  'sharing.smb.update': { params: [id: number, update: SmbShareUpdate]; response: SmbShare };
+  'sharing.smb.update': { params: [id: number, update: Partial<SmbShare>]; response: SmbShare };
 
   // SMB
   'smb.bindip_choices': { params: void; response: Choices };
@@ -865,12 +873,10 @@ export interface ApiCallDirectory {
   'tunable.tunable_type_choices': { params: void; response: Choices };
 
   // Update
-  'update.check_available': { params: void; response: SystemUpdate };
-  'update.get_auto_download': { params: void; response: boolean };
-  'update.get_pending': { params: void; response: SystemUpdateChange[] };
-  'update.get_trains': { params: void; response: SystemUpdateTrains };
-  'update.set_auto_download': { params: [boolean]; response: void };
-  'update.set_train': { params: [train: string]; response: void };
+  'update.status': { params: void; response: UpdateStatus };
+  'update.profile_choices': { params: void; response: UpdateProfileChoices };
+  'update.config': { params: void; response: UpdateConfig };
+  'update.update': { params: [Partial<UpdateConfig>]; response: UpdateConfig };
 
   // UPS
   'ups.config': { params: void; response: UpsConfig };
@@ -920,7 +926,35 @@ export interface ApiCallDirectory {
   'virt.volume.delete': { params: [id: string]; response: true };
   'virt.volume.import_iso': { params: [VirtualizationImportIsoParams]; response: VirtualizationVolume };
 
+  // VM
+  'vm.bootloader_options': { params: void; response: Choices };
+  'vm.clone': { params: VmCloneParams; response: boolean };
+  'vm.cpu_model_choices': { params: void; response: Choices };
+  'vm.create': { params: [VirtualMachineUpdate]; response: VirtualMachine };
+  'vm.delete': { params: VmDeleteParams; response: boolean };
+  'vm.device.bind_choices': { params: void; response: Choices };
+  'vm.device.create': { params: [VmDeviceUpdate]; response: VmDevice };
+  'vm.device.delete': { params: [number, VmDeviceDelete?]; response: boolean };
+  'vm.device.disk_choices': { params: void; response: Choices };
   'system.advanced.get_gpu_pci_choices': { params: void; response: Choices };
+  'vm.device.nic_attach_choices': { params: void; response: Choices };
+  'vm.device.passthrough_device_choices': { params: void; response: Record<string, VmPassthroughDeviceChoice> };
+  'vm.device.query': { params: QueryParams<VmDevice>; response: VmDevice[] };
+  'vm.device.update': { params: [id: number, update: VmDeviceUpdate]; response: VmDevice };
+  'vm.device.usb_controller_choices': { params: void; response: Choices };
+  'vm.device.usb_passthrough_choices': { params: void; response: Record<string, VmUsbPassthroughDeviceChoice> };
+  'vm.get_available_memory': { params: void; response: number };
+  'vm.get_display_devices': { params: [id: number]; response: VmDisplayDevice[] };
+  'vm.get_display_web_uri': { params: VmDisplayWebUriParams; response: VmDisplayWebUri };
+  'vm.maximum_supported_vcpus': { params: void; response: number };
+  'vm.port_wizard': { params: void; response: VmPortWizardResult };
+  'vm.poweroff': { params: [id: number]; response: void };
+  'vm.query': { params: QueryParams<VirtualMachine>; response: VirtualMachine[] };
+  'vm.random_mac': { params: void; response: string };
+  'vm.resolution_choices': { params: void; response: Choices };
+  'vm.start': { params: [id: number, params?: { overcommit?: boolean }]; response: void };
+  'vm.update': { params: [id: number, update: VirtualMachineUpdate]; response: VirtualMachine };
+  'vm.virtualization_details': { params: void; response: VirtualizationDetails };
 
   // Vmware
   'vmware.create': { params: [VmwareSnapshotUpdate]; response: VmwareSnapshot };

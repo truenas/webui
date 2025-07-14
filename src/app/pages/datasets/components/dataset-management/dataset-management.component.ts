@@ -45,7 +45,6 @@ import { extractApiErrorDetails } from 'app/helpers/api.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
@@ -59,6 +58,7 @@ import { TreeNodeDefDirective } from 'app/modules/ix-tree/directives/tree-node-d
 import { TreeNodeToggleDirective } from 'app/modules/ix-tree/directives/tree-node-toggle.directive';
 import { TreeDataSource } from 'app/modules/ix-tree/tree-datasource';
 import { TreeFlattener } from 'app/modules/ix-tree/tree-flattener';
+import { LayoutService } from 'app/modules/layout/layout.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -171,9 +171,9 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     private router: Router,
     protected translate: TranslateService,
     private errorHandler: ErrorHandlerService,
-    private dialogService: DialogService,
     private breakpointObserver: BreakpointObserver,
     private searchDirectives: UiSearchDirectivesService,
+    private layoutService: LayoutService,
     @Inject(WINDOW) private window: Window,
   ) {
     this.router.events
@@ -215,7 +215,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     }
   }
 
-  listenForLoading(): void {
+  private listenForLoading(): void {
     this.isLoading$.pipe(untilDestroyed(this)).subscribe((isLoading) => {
       this.isLoading = isLoading;
       this.cdr.markForCheck();
@@ -226,36 +226,36 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     });
   }
 
-  isSystemDataset(dataset: DatasetDetails): boolean {
+  protected isSystemDataset(dataset: DatasetDetails): boolean {
     return dataset.name.split('/').length === 1 && this.systemDataset() === dataset.name;
   }
 
-  treeHeaderScrolled(): void {
+  protected treeHeaderScrolled(): void {
     this.scrollSubject.next(this.ixTreeHeader()?.nativeElement?.scrollLeft || 0);
   }
 
-  datasetTreeScrolled(scrollLeft: number): void {
+  protected datasetTreeScrolled(scrollLeft: number): void {
     this.scrollSubject.next(scrollLeft);
   }
 
-  datasetTreeWidthChanged(event: ResizedEvent): void {
+  protected datasetTreeWidthChanged(event: ResizedEvent): void {
     this.treeWidthChange$.next(event);
   }
 
-  onSearch(query: string): void {
+  protected onSearch(query: string): void {
     this.dataSource.filter(query);
   }
 
-  closeMobileDetails(): void {
+  protected closeMobileDetails(): void {
     this.showMobileDetails = false;
   }
 
-  createPool(): void {
+  protected createPool(): void {
     this.router.navigate(['/storage', 'create']);
   }
 
-  viewDetails(dataset: DatasetDetails): void {
-    this.router.navigate(['/datasets', dataset.id]);
+  protected viewDetails(dataset: DatasetDetails): void {
+    this.layoutService.navigatePreservingScroll(this.router, ['/datasets', dataset.id]);
 
     if (this.isMobileView) {
       this.showMobileDetails = true;

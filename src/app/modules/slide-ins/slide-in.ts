@@ -17,6 +17,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { UUID } from 'angular2-uuid';
 import { cloneDeep } from 'lodash-es';
 import {
+  delay,
   filter, Observable, of, share, Subject, switchMap,
   take,
   tap,
@@ -39,11 +40,17 @@ export class SlideIn {
     private unsavedChangesService: UnsavedChangesService,
   ) {}
 
+  // TODO: Refactor this -> https://github.com/truenas/webui/pull/12168#pullrequestreview-2949579034
   closeAll(): void {
-    for (const slideInInstance of this.slideInInstances().reverse()) {
-      slideInInstance.slideInRef.requireConfirmationWhen(undefined);
-      slideInInstance.slideInRef.close({ response: false, error: undefined });
+    const instances = [...this.slideInInstances()].reverse();
+
+    for (const instance of instances) {
+      instance.slideInRef.requireConfirmationWhen(undefined);
+      instance.cdkOverlayRef.dispose();
+      instance.slideInRef.close({ response: false, error: undefined });
     }
+
+    this.slideInInstances.set([]);
   }
 
   open<D, R>(
@@ -93,6 +100,7 @@ export class SlideIn {
     prevInstance.component = component;
     prevInstance.wide = Boolean(options?.wide);
     prevInstance.containerRef.instance.slideOut().pipe(
+      delay(0),
       untilDestroyed(this),
     ).subscribe({
       next: () => {

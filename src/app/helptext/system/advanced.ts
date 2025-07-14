@@ -34,10 +34,6 @@ simultaneously.'),
  in logs to precisely identify systems with similar\
  hostnames.'),
 
-  sedUserLabel: T('ATA Security User'),
-  sedUserTooltip: T('User passed to <i>camcontrol security -u</i> to unlock\
- SEDs'),
-
   sedPasswordLabel: T('SED Password'),
   sedPasswordTooltip: T('Global password to unlock SEDs.'),
   sedConfirmPasswordLabel: T('Confirm SED Password'),

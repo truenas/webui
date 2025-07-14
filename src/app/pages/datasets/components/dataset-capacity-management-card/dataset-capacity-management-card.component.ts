@@ -75,7 +75,7 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
   });
 
   protected checkQuotas = computed(() => {
-    return !this.dataset().locked && this.isFilesystem() && !this.dataset().readonly;
+    return !this.dataset().locked && this.isFilesystem() && !this.dataset().readonly.parsed;
   });
 
   protected hasQuota = computed(() => {
@@ -113,7 +113,7 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
     }
   }
 
-  initQuotas(): void {
+  private initQuotas(): void {
     this.refreshQuotas$.pipe(
       tap(() => {
         this.isLoadingQuotas = true;
@@ -139,7 +139,7 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
     });
   }
 
-  getInheritedQuotas(): void {
+  private getInheritedQuotas(): void {
     this.datasetStore.selectedBranch$.pipe(
       filter((branch): branch is DatasetDetails[] => !!(branch)),
       map((datasets) => {

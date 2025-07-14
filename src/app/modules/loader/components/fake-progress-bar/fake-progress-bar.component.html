@@ -1,7 +1,11 @@
-@if (isAnimating() || !hideOnComplete()) {
+@if (isVisible()) {
   <mat-progress-bar
     mode="determinate"
-    @fadeOut
+    class="progress-bar"
+    animateOutClass="fade-out"
     [value]="progress()"
+    [animateOut]="shouldFadeOut()"
+    [animateOutDuration]="250"
+    (animateOutComplete)="onFadeOutComplete()"
   ></mat-progress-bar>
 }

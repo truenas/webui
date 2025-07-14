@@ -10,6 +10,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { async, finalize } from 'rxjs';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { NvmeOfSubsystemDetails, UpdateNvmeOfSubsystem } from 'app/interfaces/nvme-of.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
@@ -24,8 +25,9 @@ import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-te
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
+import { subsystemDetailsCardElements } from 'app/pages/sharing/nvme-of/subsystem-details/subsystem-details-card/subsystem-details-card.elements';
 
 @UntilDestroy()
 @Component({
@@ -48,6 +50,7 @@ import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
     IxTextareaComponent,
     EditableSaveOnEnterDirective,
     TestDirective,
+    UiSearchDirective,
     AsyncPipe,
   ],
 })
@@ -63,13 +66,15 @@ export class SubsystemDetailsCardComponent implements OnChanges {
 
   protected hasRole$ = this.auth.hasRole(Role.SharingNvmeTargetWrite);
 
+  protected readonly searchableElements = subsystemDetailsCardElements;
+
   constructor(
     private formBuilder: FormBuilder,
-    private api: ApiService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
     private formErrorHandler: FormErrorHandlerService,
     private nvmeOfStore: NvmeOfStore,
+    private nvmeOfService: NvmeOfService,
     private clipboard: Clipboard,
     private auth: AuthService,
   ) {}
@@ -98,7 +103,7 @@ export class SubsystemDetailsCardComponent implements OnChanges {
       [field]: this.form.value[field],
     };
 
-    this.api.call('nvmet.subsys.update', [this.subsystem().id, update])
+    this.nvmeOfService.updateSubsystem(this.subsystem(), update)
       .pipe(
         finalize(() => this.isSaving.set(false)),
         untilDestroyed(this),

@@ -39,7 +39,6 @@ const shares: Partial<SmbShare>[] = [
     name: 'some-name',
     comment: 'comment',
     path: '/some-path',
-    path_local: 'some-local-path',
     audit: {
       enable: true,
     },
@@ -49,7 +48,7 @@ const shares: Partial<SmbShare>[] = [
 const slideInRef: SlideInRef<SmbShare | undefined, unknown> = {
   close: jest.fn(),
   requireConfirmationWhen: jest.fn(),
-  getData: jest.fn(() => undefined),
+  getData: jest.fn((): undefined => undefined),
 };
 
 describe('SmbListComponent', () => {
@@ -151,7 +150,7 @@ describe('SmbListComponent', () => {
 
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(
       ['/', 'datasets', 'acl', 'edit'],
-      { queryParams: { path: 'some-local-path' } },
+      { queryParams: { path: '/some-path' } },
     );
   });
 
@@ -179,7 +178,7 @@ describe('SmbListComponent', () => {
   it('should show table rows', async () => {
     const expectedRows = [
       ['Name', 'Path', 'Description', 'Enabled', 'Audit Logging', ''],
-      ['some-name', 'some-local-path', 'comment', '', 'Yes', ''],
+      ['some-name', '/some-path', 'comment', '', 'Yes', ''],
     ];
 
     const cells = await table.getCellTexts();

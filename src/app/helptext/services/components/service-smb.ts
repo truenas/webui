@@ -45,9 +45,9 @@ export const helptextServiceSmb = {
  Control List (ACL), add a new entry for the chosen guest account, and \
  configure the permissions in that entry. If the selected <i>Guest Account</i> \
  is deleted the field resets to <i>nobody</i>.'),
-  filemaskTooltip: T('Overrides default file creation mask of <i>0666</i> \
+  filemaskTooltip: T('Overrides default file creation mask of <i>0664</i> \
  which creates files with read and write access for everybody.'),
-  dirmaskTooltip: T('Overrides default directory creation mask of <i>0777</i> \
+  dirmaskTooltip: T('Overrides default directory creation mask of <i>0775</i> \
  which grants directory read, write and execute access for everybody.'),
   adminGroupTooltip: T('Members of this group are local admins\
  and automatically have privileges to take ownership of any file in an SMB\

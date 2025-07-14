@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -14,6 +15,7 @@ import {
   NvmeOfConfigurationComponent,
 } from 'app/pages/sharing/nvme-of/nvme-of-configuration/nvme-of-configuration.component';
 import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 describe('NvmeOfConfigurationComponent', () => {
   let spectator: Spectator<NvmeOfConfigurationComponent>;
@@ -34,6 +36,14 @@ describe('NvmeOfConfigurationComponent', () => {
       ]),
       mockProvider(SlideInRef, {
         close: jest.fn(),
+      }),
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectIsEnterprise,
+            value: true,
+          },
+        ],
       }),
       mockProvider(NvmeOfService, {
         isRdmaEnabled: jest.fn(() => of(true)),
@@ -59,7 +69,6 @@ describe('NvmeOfConfigurationComponent', () => {
       'Base NQN': 'iqn.2005-10.org.freenas:ctl',
       'Enable Asymmetric Namespace Access (ANA)': true,
       'Enable Remote Direct Memory Access (RDMA)': true,
-      'Generate Cross-port Referrals for Ports On This System': false,
     });
   });
 
@@ -68,7 +77,6 @@ describe('NvmeOfConfigurationComponent', () => {
       'Base NQN': 'new.2005-10.org.freenas:ctl',
       'Enable Asymmetric Namespace Access (ANA)': true,
       'Enable Remote Direct Memory Access (RDMA)': true,
-      'Generate Cross-port Referrals for Ports On This System': false,
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -78,7 +86,6 @@ describe('NvmeOfConfigurationComponent', () => {
       ana: true,
       basenqn: 'new.2005-10.org.freenas:ctl',
       rdma: true,
-      xport_referral: false,
     }]);
     expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
   });
@@ -90,6 +97,16 @@ describe('NvmeOfConfigurationComponent', () => {
     const controls = await form.getDisabledState();
     expect(controls).toMatchObject({
       'Enable Remote Direct Memory Access (RDMA)': true,
+    });
+  });
+
+  it('disables ANA for non enterprise systems', async () => {
+    spectator.inject(MockStore).overrideSelector(selectIsEnterprise, false);
+    spectator.inject(MockStore).refreshState();
+
+    const controls = await form.getDisabledState();
+    expect(controls).toMatchObject({
+      'Enable Asymmetric Namespace Access (ANA)': false,
     });
   });
 });

@@ -38,7 +38,7 @@ export class CustomLayoutAppliedComponent {
     });
   }
 
-  resetLayout(): void {
+  private resetLayout(): void {
     this.poolManagerStore.resetTopologyCategory(this.type());
   }
 }

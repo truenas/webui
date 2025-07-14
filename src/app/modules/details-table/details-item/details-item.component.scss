@@ -3,6 +3,7 @@
 }
 
 .key-column {
+  font-weight: bold;
   max-width: 50%;
   padding-right: 12px;
   white-space: nowrap;
@@ -10,11 +11,13 @@
 
 .value-column {
   width: 100%;
+  word-break: break-all;
 }
 
 .key-column,
 .value-column {
-  height: 27px;
+  min-height: 27px;
+  padding-bottom: 5px;
   padding-top: 2px;
   vertical-align: baseline;
 }

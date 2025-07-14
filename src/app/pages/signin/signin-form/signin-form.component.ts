@@ -13,7 +13,6 @@ import {
   distinctUntilChanged, firstValueFrom,
 } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
-import { AutofocusDirective } from 'app/directives/autofocus/autofocus.directive';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { LoginExResponse, LoginRedirectResponse } from 'app/interfaces/auth.interface';
@@ -38,7 +37,6 @@ import { SigninStore } from 'app/pages/signin/store/signin.store';
     MatButton,
     TranslateModule,
     IxInputComponent,
-    AutofocusDirective,
     TestDirective,
   ],
 })
@@ -107,7 +105,7 @@ export class SigninFormComponent implements OnInit {
     });
   }
 
-  async login(): Promise<void> {
+  protected async login(): Promise<void> {
     if (await firstValueFrom(this.signinStore.isLoading$)) {
       return;
     }

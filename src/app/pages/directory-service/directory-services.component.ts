@@ -126,7 +126,7 @@ export class DirectoryServicesComponent implements OnInit {
     return dataCard;
   }
 
-  refreshCards(): void {
+  private refreshCards(): void {
     forkJoin([
       this.api.call('directoryservices.status'),
       this.api.call('directoryservices.config'),
@@ -239,7 +239,7 @@ export class DirectoryServicesComponent implements OnInit {
       });
   }
 
-  onAdvancedSettingsOpened(expansionPanel: CdkAccordionItem): void {
+  protected onAdvancedSettingsOpened(expansionPanel: CdkAccordionItem): void {
     // Immediately show additional setting, so that user knows what they are.
     expansionPanel.open();
     this.dialog.confirm({
@@ -254,7 +254,7 @@ export class DirectoryServicesComponent implements OnInit {
       });
   }
 
-  openDirectoryServicesForm(): void {
+  private openDirectoryServicesForm(): void {
     this.slideIn.open(DirectoryServicesFormComponent, {
       data: this.directoryServicesConfig(),
     }).pipe(
@@ -263,7 +263,7 @@ export class DirectoryServicesComponent implements OnInit {
     ).subscribe(() => this.refreshCards());
   }
 
-  openKerberosSettingsForm(): void {
+  private openKerberosSettingsForm(): void {
     this.slideIn.open(KerberosSettingsComponent).pipe(
       filter(Boolean),
       untilDestroyed(this),
@@ -282,7 +282,7 @@ export class DirectoryServicesComponent implements OnInit {
   /**
    * All this does is provide correct typing in ng-template
    */
-  typeCard(card: DataCard): DataCard {
+  protected typeCard(card: DataCard): DataCard {
     return card;
   }
 }

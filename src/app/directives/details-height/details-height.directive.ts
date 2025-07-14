@@ -44,7 +44,7 @@ export class DetailsHeightDirective implements OnInit, OnDestroy, OnChanges {
     this.listenForConsoleFooterChanges();
     this.precalculateHeights();
     this.applyHeight();
-    this.window.addEventListener('scroll', this.onScroll.bind(this), true);
+    this.window.addEventListener('scroll', this.onScroll, true);
     setTimeout(() => this.onResize());
   }
 
@@ -62,7 +62,7 @@ export class DetailsHeightDirective implements OnInit, OnDestroy, OnChanges {
     if (this.scrollAnimationFrame) {
       cancelAnimationFrame(this.scrollAnimationFrame);
     }
-    this.window.removeEventListener('scroll', this.onScroll.bind(this), true);
+    this.window.removeEventListener('scroll', this.onScroll, true);
   }
 
   @HostListener('window:resize')
@@ -71,7 +71,7 @@ export class DetailsHeightDirective implements OnInit, OnDestroy, OnChanges {
     this.applyHeight();
   }
 
-  onScroll(): void {
+  onScroll = (): void => {
     if (this.scrollAnimationFrame) {
       cancelAnimationFrame(this.scrollAnimationFrame);
     }
@@ -92,7 +92,7 @@ export class DetailsHeightDirective implements OnInit, OnDestroy, OnChanges {
 
       this.element.nativeElement.style.height = this.heightCssValue;
     });
-  }
+  };
 
   private setupResizeObserver(): void {
     this.resizeObserver = new ResizeObserver(() => {

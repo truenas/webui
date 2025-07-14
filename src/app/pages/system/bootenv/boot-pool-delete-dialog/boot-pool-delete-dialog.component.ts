@@ -73,7 +73,7 @@ export class BootPoolDeleteDialog {
     });
   }
 
-  getSelectedNames(selectedBootenvs: BootEnvironment[]): { id: string }[][] {
+  private getSelectedNames(selectedBootenvs: BootEnvironment[]): { id: string }[][] {
     return selectedBootenvs.map(({ id }) => [{ id }]);
   }
 

@@ -1,0 +1,77 @@
+<div mat-dialog-content>
+  <div class="logo-container">
+    <div class="logo">
+      <img [src]="dialogConfig.appInfo.metadata.icon" [src-fallback]="imagePlaceholder" />
+    </div>
+    <div class="name-container">
+      <strong class="app-name">{{ dialogConfig.appInfo.name }}</strong>
+      <span class="version"> {{ dialogConfig.appInfo.human_version }}</span>
+    </div>
+  </div>
+
+  @if (selectedVersion?.available_versions_for_upgrade?.length) {
+    <div class="resource">
+      <span>{{ 'Version to be updated to' | translate }}:</span>
+      <mat-form-field class="form-element">
+        <mat-select
+          ixTest="versions"
+          [(ngModel)]="selectedVersionKey"
+          (ngModelChange)="onVersionOptionChanged()"
+        >
+          @for (option of versionOptions | keyvalue: originalOrder; track option) {
+            <mat-option
+              [value]="option.key"
+              [ixTest]="['versions', option.value.latest_human_version]"
+            >
+              {{ option.value.latest_human_version }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+  } @else {
+    <div class="resource">
+      <span>{{ 'Only image(s) will be updated' | translate }}</span>
+    </div>
+  }
+
+
+  <mat-accordion>
+    @if (selectedVersion?.available_versions_for_upgrade?.length) {
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            {{ 'Changelog' | translate }}
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <div class="expansion-content">
+          <div class="detail-row row-dark">
+            <div
+              [innerHTML]="selectedVersion.changelog || ('No Changelog' | translate)"
+            ></div>
+          </div>
+        </div>
+      </mat-expansion-panel>
+    }
+  </mat-accordion>
+
+  <ix-form-actions>
+    <button
+      mat-button
+      ixTest="close"
+      (click)="dialogRef.close(false)"
+    >
+      {{ 'Close' | translate }}
+    </button>
+    <button
+      *ixRequiresRoles="requiredRoles"
+      mat-button
+      color="primary"
+      ixTest="update"
+      (click)="dialogRef.close(selectedVersionKey)"
+    >
+      {{ 'Update' | translate }}
+    </button>
+  </ix-form-actions>
+
+</div>

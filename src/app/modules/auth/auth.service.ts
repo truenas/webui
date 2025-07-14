@@ -1,14 +1,18 @@
 import { Inject, Injectable } from '@angular/core';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
+import { environment } from 'environments/environment';
 import { LocalStorage } from 'ngx-webstorage';
 import {
   BehaviorSubject,
   catchError,
+  combineLatest,
   filter,
   map,
   Observable,
   of,
   ReplaySubject,
+  Subject,
   Subscription,
   switchMap,
   take,
@@ -16,6 +20,7 @@ import {
   timer,
 } from 'rxjs';
 import { AccountAttribute } from 'app/enums/account-attribute.enum';
+import { AuthMechanism } from 'app/enums/auth-mechanism.enum';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { Role } from 'app/enums/role.enum';
 import { filterAsync } from 'app/helpers/operators/filter-async.operator';
@@ -32,14 +37,13 @@ import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { AppState } from 'app/store';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 
+@UntilDestroy()
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   @LocalStorage() private token: string | undefined | null;
   protected loggedInUser$ = new BehaviorSubject<LoggedInUser | null>(null);
-  wasOneTimePasswordChanged$ = new BehaviorSubject<boolean>(false);
-  wasRequiredPasswordChanged$ = new BehaviorSubject<boolean>(false);
 
   /**
    * This is 10 seconds less than 300 seconds which is the default life
@@ -60,21 +64,22 @@ export class AuthService {
   private generateTokenSubscription: Subscription | null;
 
   readonly user$ = this.loggedInUser$.asObservable();
-  readonly isTokenAllowed$ = new BehaviorSubject<boolean>(false);
+  private readonly checkIsTokenAllowed$ = new Subject<void>();
 
-  isOtpwUser$: Observable<boolean> = this.user$.pipe(
-    filter(Boolean),
-    map((user) => user.account_attributes.includes(AccountAttribute.Otpw)),
-  );
-
-  isLocalUser$: Observable<boolean> = this.user$.pipe(
+  readonly isLocalUser$: Observable<boolean> = this.user$.pipe(
     filter(Boolean),
     map((user) => user.account_attributes.includes(AccountAttribute.Local)),
   );
 
-  isPasswordChangeRequired$: Observable<boolean> = this.user$.pipe(
-    filter(Boolean),
-    map((user) => user.account_attributes.includes(AccountAttribute.PasswordChangeRequired)),
+  private readonly hasPasswordChangedSinceLastLogin$ = new BehaviorSubject(false);
+  readonly isPasswordChangeRequired$: Observable<boolean> = combineLatest([
+    this.user$.pipe(
+      filter(Boolean),
+      map((user) => user.account_attributes.includes(AccountAttribute.PasswordChangeRequired)),
+    ),
+    this.hasPasswordChangedSinceLastLogin$,
+  ]).pipe(
+    map(([changeRequired, changedSinceLastLogin]) => changeRequired && !changedSinceLastLogin),
   );
 
   /**
@@ -90,7 +95,7 @@ export class AuthService {
     map((user) => user.two_factor_config),
   );
 
-  private cachedGlobalTwoFactorConfig: GlobalTwoFactorConfig | null;
+  private readonly cachedGlobalTwoFactorConfig$ = new BehaviorSubject<GlobalTwoFactorConfig | null>(null);
 
   constructor(
     private store$: Store<AppState>,
@@ -107,19 +112,21 @@ export class AuthService {
   }
 
   getGlobalTwoFactorConfig(): Observable<GlobalTwoFactorConfig> {
-    if (this.cachedGlobalTwoFactorConfig) {
-      return of(this.cachedGlobalTwoFactorConfig);
-    }
+    return this.cachedGlobalTwoFactorConfig$.pipe(
+      switchMap((cachedConfig) => {
+        if (cachedConfig) {
+          return of(cachedConfig);
+        }
 
-    return this.api.call('auth.twofactor.config').pipe(
-      tap((config) => {
-        this.cachedGlobalTwoFactorConfig = config;
+        return this.api.call('auth.twofactor.config').pipe(
+          tap((config) => this.cachedGlobalTwoFactorConfig$.next(config)),
+        );
       }),
     );
   }
 
   globalTwoFactorConfigUpdated(): void {
-    this.cachedGlobalTwoFactorConfig = null;
+    this.cachedGlobalTwoFactorConfig$.next(null);
   }
 
   /**
@@ -138,7 +145,7 @@ export class AuthService {
   login(
     username: string,
     password: string,
-  otp: string | null = null,
+    otp: string | null = null,
   ): Observable<{ loginResult: LoginResult; loginResponse: LoginExResponse }> {
     const loginCall$ = otp
       ? this.api.call('auth.login_ex_continue', [{ mechanism: LoginExMechanism.OtpToken, otp_token: otp }])
@@ -154,8 +161,23 @@ export class AuthService {
     );
   }
 
+  isTwoFactorSetupRequired(): Observable<boolean> {
+    return this.getGlobalTwoFactorConfig().pipe(
+      switchMap((globalConfig) => {
+        if (!globalConfig.enabled) {
+          return of(false);
+        }
+
+        return this.userTwoFactorConfig$.pipe(
+          map((userConfig) => !userConfig.secret_configured),
+        );
+      }),
+    );
+  }
+
   setQueryToken(token: string | null): void {
-    if (!token || this.window.location.protocol !== 'https:') {
+    const isSecure = this.window.location.protocol === 'https:' || !environment.production;
+    if (!token || !isSecure) {
       return;
     }
 
@@ -206,18 +228,25 @@ export class AuthService {
     return this.api.call('auth.logout').pipe(
       tap(() => {
         this.clearAuthToken();
-        this.wasOneTimePasswordChanged$.next(false);
-        this.wasRequiredPasswordChanged$.next(false);
+        this.hasPasswordChangedSinceLastLogin$.next(false);
         this.wsStatus.setLoginStatus(false);
         this.api.clearSubscriptions();
       }),
     );
   }
 
+  requiredPasswordChanged(): void {
+    this.hasPasswordChangedSinceLastLogin$.next(true);
+  }
+
+  isFullAdmin(): Observable<boolean> {
+    return this.hasRole([Role.FullAdmin]).pipe(take(1));
+  }
+
   refreshUser(): Observable<undefined> {
     this.loggedInUser$.next(null);
     return this.getLoggedInUserInformation().pipe(
-      map(() => undefined),
+      map((): undefined => undefined),
     );
   }
 
@@ -239,8 +268,8 @@ export class AuthService {
           this.wsStatus.setLoginStatus(true);
           this.window.sessionStorage.setItem('loginBannerDismissed', 'true');
           if (result?.authenticator === AuthenticatorLoginLevel.Level1) {
-            this.isTokenAllowed$.next(true);
-            return this.authToken$.pipe(
+            this.checkIsTokenAllowed$.next();
+            return this.latestTokenGenerated$.pipe(
               take(1),
               map(() => LoginResult.Success),
             );
@@ -264,10 +293,20 @@ export class AuthService {
   }
 
   private setupPeriodicTokenGeneration(): void {
-    this.isTokenAllowed$.pipe(
-      filter(Boolean),
+    this.checkIsTokenAllowed$.pipe(
       filterAsync(() => this.wsStatus.isAuthenticated$),
-    ).subscribe(() => {
+      switchMap(() => this.api.call('auth.mechanism_choices').pipe(
+        catchError((wsError: unknown) => {
+          console.error(wsError);
+          return of([]);
+        }),
+      )),
+      map((choices) => choices.includes(AuthMechanism.TokenPlain)),
+    ).subscribe((canGenerateToken) => {
+      if (!canGenerateToken) {
+        this.latestTokenGenerated$.next(null);
+        return;
+      }
       if (!this.generateTokenSubscription || this.generateTokenSubscription.closed) {
         this.generateTokenSubscription = timer(0, this.tokenRegenerationTimeMillis).pipe(
           switchMap(() => this.wsStatus.isAuthenticated$.pipe(take(1))),
@@ -298,6 +337,7 @@ export class AuthService {
           this.setupTokenUpdate();
           this.generateTokenSubscription.unsubscribe();
           this.generateTokenSubscription = null;
+          this.cachedGlobalTwoFactorConfig$.next(null);
         }
       },
     });

@@ -44,6 +44,7 @@ export enum EnclosureModel {
   R50B = 'R50B',
   // eslint-disable-next-line @typescript-eslint/naming-convention
   R50BM = 'R50BM',
+  R60 = 'R60',
 
   X10 = 'X10',
   X20 = 'X20',

@@ -19,7 +19,7 @@ import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { shared } from 'app/helptext/sharing';
-import { SmbShare } from 'app/interfaces/smb-share.interface';
+import { SmbSharePurpose, SmbShare } from 'app/interfaces/smb-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -103,7 +103,7 @@ export class SmbListComponent implements OnInit {
     }),
     textColumn({
       title: this.translate.instant('Path'),
-      propertyName: 'path_local',
+      propertyName: 'path',
     }),
     textColumn({
       title: this.translate.instant('Description'),
@@ -140,7 +140,9 @@ export class SmbListComponent implements OnInit {
               this.lockedPathDialog(row.path);
             } else {
               // A home share has a name (homes) set; row.name works for other shares
-              const searchName = row.home ? 'homes' : row.name;
+              const searchName = (row.purpose === SmbSharePurpose.LegacyShare && row.options?.home)
+                ? 'homes'
+                : row.name;
               this.loader.open();
               this.api.call('sharing.smb.getacl', [{ share_name: searchName }])
                 .pipe(untilDestroyed(this))
@@ -167,7 +169,7 @@ export class SmbListComponent implements OnInit {
             } else {
               this.router.navigate(['/', 'datasets', 'acl', 'edit'], {
                 queryParams: {
-                  path: row.path_local,
+                  path: row.path,
                 },
               });
             }
@@ -232,7 +234,7 @@ export class SmbListComponent implements OnInit {
     });
   }
 
-  setDefaultSort(): void {
+  private setDefaultSort(): void {
     this.dataProvider.setSorting({
       active: 0,
       direction: SortDirection.Asc,
@@ -240,7 +242,7 @@ export class SmbListComponent implements OnInit {
     });
   }
 
-  doAdd(): void {
+  protected doAdd(): void {
     this.slideIn.open(SmbFormComponent).pipe(
       take(1),
       filter((response) => !!response.response),
@@ -252,7 +254,7 @@ export class SmbListComponent implements OnInit {
     });
   }
 
-  onListFiltered(query: string): void {
+  protected onListFiltered(query: string): void {
     this.filterString = query;
     this.dataProvider.setFilter({
       query,
@@ -261,7 +263,7 @@ export class SmbListComponent implements OnInit {
     this.cdr.markForCheck();
   }
 
-  columnsChange(columns: typeof this.columns): void {
+  protected columnsChange(columns: typeof this.columns): void {
     this.columns = [...columns];
     this.cdr.detectChanges();
     this.cdr.markForCheck();

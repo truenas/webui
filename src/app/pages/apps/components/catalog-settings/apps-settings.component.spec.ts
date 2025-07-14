@@ -7,10 +7,13 @@ import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { DockerConfig } from 'app/enums/docker-config.interface';
 import { CatalogConfig } from 'app/interfaces/catalog.interface';
+import { DockerConfig } from 'app/interfaces/docker-config.interface';
+import { DetailsTableHarness } from 'app/modules/details-table/details-table.harness';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EditableHarness } from 'app/modules/forms/editable/editable.harness';
 import { IxCheckboxListHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.harness';
+import { IxChipsHarness } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.harness';
 import {
   IxIpInputWithNetmaskComponent,
 } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
@@ -32,12 +35,17 @@ describe('AppsSettingsComponent', () => {
       { base: '172.17.0.0/12', size: 12 },
     ],
     enable_image_updates: false,
+    secure_registry_mirrors: ['registry1.example.com', 'registry2.example.com'],
+    insecure_registry_mirrors: ['insecure.example.com'],
+    pool: 'test-pool',
+    dataset: 'test-dataset',
+    nvidia: false,
   } as DockerConfig;
 
   const slideInRef: SlideInRef<undefined, unknown> = {
     close: jest.fn(),
     requireConfirmationWhen: jest.fn(),
-    getData: jest.fn(() => undefined),
+    getData: jest.fn((): undefined => undefined),
   };
 
   const createComponent = createComponentFactory({
@@ -142,16 +150,11 @@ describe('AppsSettingsComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('docker.update', [{
-        nvidia: true,
-        enable_image_updates: false,
-        address_pools: [
-          {
-            base: '172.17.0.0/12',
-            size: 12,
-          },
-        ],
-      }]);
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('docker.update', [
+        expect.objectContaining({
+          nvidia: true,
+        }),
+      ]);
     });
 
     describe('other docker settings', () => {
@@ -161,7 +164,7 @@ describe('AppsSettingsComponent', () => {
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       });
 
-      it('shows current docker settings for address pools and image updates', async () => {
+      it('shows other current docker settings', async () => {
         const form = await loader.getHarness(IxFormHarness);
         const values = await form.getValues();
 
@@ -170,6 +173,12 @@ describe('AppsSettingsComponent', () => {
           Base: '172.17.0.0/12',
           Size: '12',
         });
+
+        const detailsTable = await loader.getHarness(DetailsTableHarness);
+        const mirrorItem = await detailsTable.getItemByLabel('Registry Mirrors');
+        const mirrorValue = await mirrorItem.getValueText();
+
+        expect(mirrorValue).toContain('3 mirrors');
       });
 
       it('updates docker settings when form is edited', async () => {
@@ -188,6 +197,20 @@ describe('AppsSettingsComponent', () => {
           Size: 12,
         });
 
+        const detailsTable = await loader.getHarness(DetailsTableHarness);
+        const mirrorItem = await detailsTable.getItemByLabel('Registry Mirrors');
+        const editable = await mirrorItem.getHarness(EditableHarness);
+
+        await editable.open();
+
+        const secureChips = await editable.getHarness(IxChipsHarness.with({ label: 'Secure Mirror URLs' }));
+        await secureChips.setValue(['new-secure.example.com']);
+
+        const insecureChips = await editable.getHarness(IxChipsHarness.with({ label: 'Insecure Mirror URLs' }));
+        await insecureChips.setValue(['new-insecure.example.com']);
+
+        await editable.tryToClose();
+
         const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
         await saveButton.click();
 
@@ -198,6 +221,8 @@ describe('AppsSettingsComponent', () => {
             { base: '173.17.0.0/12', size: 12 },
           ],
           nvidia: false,
+          secure_registry_mirrors: ['new-secure.example.com'],
+          insecure_registry_mirrors: ['new-insecure.example.com'],
         }]);
       });
     });

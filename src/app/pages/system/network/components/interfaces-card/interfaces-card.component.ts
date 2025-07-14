@@ -93,6 +93,15 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
     textColumn({
       title: this.translate.instant('Name'),
       propertyName: 'name',
+      getValue: (row) => {
+        const value = row.name;
+
+        if (row.description) {
+          return `${value} (${row.description})`;
+        }
+
+        return value;
+      },
     }),
     ipAddressesColumn({
       title: this.translate.instant('IP Addresses'),
@@ -153,7 +162,7 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
     private networkService: NetworkService,
   ) {}
 
-  isPhysical(row: NetworkInterface): boolean {
+  private isPhysical(row: NetworkInterface): boolean {
     return row.type === NetworkInterfaceType.Physical;
   }
 
@@ -185,7 +194,7 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
     });
   }
 
-  onAddNew(): void {
+  protected onAddNew(): void {
     this.slideIn.open(InterfaceFormComponent, {
       data: {
         interfaces: this.interfaces,
@@ -200,7 +209,7 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
       });
   }
 
-  onEdit(row: NetworkInterface): void {
+  protected onEdit(row: NetworkInterface): void {
     this.slideIn.open(InterfaceFormComponent, {
       data: {
         interface: row,
@@ -214,7 +223,7 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
     });
   }
 
-  onDelete(row: NetworkInterface): void {
+  protected onDelete(row: NetworkInterface): void {
     this.dialogService.confirm({
       title: this.translate.instant('Delete Interface'),
       message: this.translate.instant(helptextInterfaces.deleteDialogText),
@@ -224,7 +233,7 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
       .subscribe(() => this.makeDeleteCall(row));
   }
 
-  onReset(row: NetworkInterface): void {
+  protected onReset(row: NetworkInterface): void {
     this.dialogService.confirm({
       title: this.translate.instant('Reset Configuration'),
       message: this.translate.instant(helptextInterfaces.deleteDialogText),

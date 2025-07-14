@@ -17,7 +17,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { LoadingMap, accumulateLoadingState } from 'app/helpers/operators/accumulate-loading-state.helper';
-import { SmbShare, SmbSharesec } from 'app/interfaces/smb-share.interface';
+import { LegacySmbShareOptions, SmbShare, SmbSharesec } from 'app/interfaces/smb-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -91,7 +91,7 @@ export class SmbCardComponent implements OnInit {
     }),
     textColumn({
       title: this.translate.instant('Path'),
-      propertyName: 'path_local',
+      propertyName: 'path',
     }),
     textColumn({
       title: this.translate.instant('Description'),
@@ -110,6 +110,12 @@ export class SmbCardComponent implements OnInit {
     actionsWithMenuColumn({
       actions: [
         {
+          iconName: iconMarker('edit'),
+          tooltip: this.translate.instant('Edit'),
+          disabled: (row) => this.loadingMap$.pipe(map((ids) => Boolean(ids.get(row.id)))),
+          onClick: (row) => this.openForm(row),
+        },
+        {
           iconName: iconMarker('share'),
           tooltip: this.translate.instant('Edit Share ACL'),
           onClick: (row) => this.doShareAclEdit(row),
@@ -119,12 +125,6 @@ export class SmbCardComponent implements OnInit {
           tooltip: this.translate.instant('Edit Filesystem ACL'),
           disabled: (row) => of(isRootShare(row.path)),
           onClick: (row) => this.doFilesystemAclEdit(row),
-        },
-        {
-          iconName: iconMarker('edit'),
-          tooltip: this.translate.instant('Edit'),
-          disabled: (row) => this.loadingMap$.pipe(map((ids) => Boolean(ids.get(row.id)))),
-          onClick: (row) => this.openForm(row),
         },
         {
           iconName: iconMarker('mdi-delete'),
@@ -157,7 +157,7 @@ export class SmbCardComponent implements OnInit {
     this.dataProvider.load();
   }
 
-  openForm(row?: SmbShare): void {
+  protected openForm(row?: SmbShare): void {
     this.slideIn.open(SmbFormComponent, { data: { existingSmbShare: row } }).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
@@ -166,7 +166,7 @@ export class SmbCardComponent implements OnInit {
     });
   }
 
-  doDelete(smb: SmbShare): void {
+  protected doDelete(smb: SmbShare): void {
     this.dialogService.confirm({
       message: this.translate.instant('Are you sure you want to delete SMB Share <b>"{name}"</b>?', { name: smb.name }),
       buttonText: this.translate.instant('Delete'),
@@ -185,12 +185,12 @@ export class SmbCardComponent implements OnInit {
     });
   }
 
-  doShareAclEdit(row: SmbShare): void {
+  private doShareAclEdit(row: SmbShare): void {
     if (row.locked) {
       this.showLockedPathDialog(row.path);
     } else {
       // A home share has a name (homes) set; row.name works for other shares
-      const searchName = row.home ? 'homes' : row.name;
+      const searchName = (row.options as LegacySmbShareOptions)?.home ? 'homes' : row.name;
       this.api.call('sharing.smb.getacl', [{ share_name: searchName }])
         .pipe(untilDestroyed(this))
         .subscribe({
@@ -209,13 +209,13 @@ export class SmbCardComponent implements OnInit {
     }
   }
 
-  doFilesystemAclEdit(row: SmbShare): void {
+  private doFilesystemAclEdit(row: SmbShare): void {
     if (row.locked) {
       this.showLockedPathDialog(row.path);
     } else {
       this.router.navigate(['/', 'datasets', 'acl', 'edit'], {
         queryParams: {
-          path: row.path_local,
+          path: row.path,
         },
       });
     }
@@ -245,7 +245,7 @@ export class SmbCardComponent implements OnInit {
     });
   }
 
-  setDefaultSort(): void {
+  protected setDefaultSort(): void {
     this.dataProvider.setSorting({
       active: 0,
       direction: SortDirection.Asc,

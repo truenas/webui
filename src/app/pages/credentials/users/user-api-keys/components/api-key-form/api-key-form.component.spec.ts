@@ -16,7 +16,7 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { LocaleService } from 'app/modules/language/locale.service';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ApiKeyFormComponent } from 'app/pages/credentials/users/user-api-keys/components/api-key-form/api-key-form.component';
+import { ApiKeyFormComponent, ApiKeyParams } from 'app/pages/credentials/users/user-api-keys/components/api-key-form/api-key-form.component';
 import { KeyCreatedDialog } from 'app/pages/credentials/users/user-api-keys/components/key-created-dialog/key-created-dialog.component';
 
 describe('ApiKeyFormComponent', () => {
@@ -24,10 +24,10 @@ describe('ApiKeyFormComponent', () => {
   let loader: HarnessLoader;
   let form: IxFormHarness;
 
-  const slideInRef: SlideInRef<ApiKey | undefined, unknown> = {
+  const slideInRef: SlideInRef<ApiKeyParams | undefined, unknown> = {
     close: jest.fn(),
     requireConfirmationWhen: jest.fn(),
-    getData: jest.fn(() => undefined),
+    getData: jest.fn((): undefined => undefined),
   };
 
   const createComponent = createComponentFactory({
@@ -51,10 +51,10 @@ describe('ApiKeyFormComponent', () => {
     ],
   });
 
-  async function setupTest(apiKey?: Partial<ApiKey> | null): Promise<void> {
+  async function setupTest(data?: ApiKeyParams | null): Promise<void> {
     spectator = createComponent({
       providers: [
-        mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => apiKey) }),
+        mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => data) }),
       ],
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -64,7 +64,7 @@ describe('ApiKeyFormComponent', () => {
   }
 
   it('creates a new API key and shows it when dialog is opened with no data', async () => {
-    await setupTest(null);
+    await setupTest({});
 
     await form.fillForm({
       Name: 'My key',
@@ -86,10 +86,12 @@ describe('ApiKeyFormComponent', () => {
 
   it('shows values for the existing key when form is opened for edit', async () => {
     await setupTest({
-      id: 1,
-      name: 'existing key',
-      username: 'root',
-      expires_at: { $date: parseISO('2024-11-22T00:00:00Z').getTime() },
+      editingKey: {
+        id: 1,
+        name: 'existing key',
+        username: 'root',
+        expires_at: { $date: parseISO('2024-11-22T00:00:00Z').getTime() },
+      } as ApiKey,
     });
 
     expect(await form.getValues()).toEqual({
@@ -103,10 +105,12 @@ describe('ApiKeyFormComponent', () => {
 
   it('edits key name when dialog is opened with existing api key', async () => {
     await setupTest({
-      id: 1,
-      name: 'existing key',
-      username: 'root',
-      expires_at: { $date: parseISO('2024-11-22T00:00:00Z').getTime() },
+      editingKey: {
+        id: 1,
+        name: 'existing key',
+        username: 'root',
+        expires_at: { $date: parseISO('2024-11-22T00:00:00Z').getTime() },
+      } as ApiKey,
     });
 
     await form.fillForm({
@@ -130,10 +134,12 @@ describe('ApiKeyFormComponent', () => {
 
   it('disables username on edit', async () => {
     await setupTest({
-      id: 1,
-      name: 'existing key',
-      username: 'root',
-      expires_at: { $date: parseISO('2024-11-22T00:00:00Z').getTime() },
+      editingKey: {
+        id: 1,
+        name: 'existing key',
+        username: 'root',
+        expires_at: { $date: parseISO('2024-11-22T00:00:00Z').getTime() },
+      } as ApiKey,
     });
 
     const disabledFields = await form.getDisabledState();
@@ -144,10 +150,12 @@ describe('ApiKeyFormComponent', () => {
 
   it('allows existing api key to be reset and shows newly generated key', async () => {
     await setupTest({
-      id: 1,
-      name: 'existing key',
-      username: 'root',
-      expires_at: { $date: parseISO('2024-11-22T00:00:00Z').getTime() },
+      editingKey: {
+        id: 1,
+        name: 'existing key',
+        username: 'root',
+        expires_at: { $date: parseISO('2024-11-22T00:00:00Z').getTime() },
+      } as ApiKey,
     });
     spectator.inject(MockApiService).mockCallOnce('api_key.update', { key: 'generated-key' } as ApiKey);
 
@@ -171,6 +179,24 @@ describe('ApiKeyFormComponent', () => {
     expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: true });
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(KeyCreatedDialog, {
       data: 'generated-key',
+    });
+  });
+
+  describe('username field on new api key', () => {
+    it('sets current username when no username is provided in params', async () => {
+      await setupTest({});
+
+      expect(await form.getValues()).toMatchObject({
+        Username: 'root',
+      });
+    });
+
+    it('sets username from params when username is provided', async () => {
+      await setupTest({ username: 'testuser' });
+
+      expect(await form.getValues()).toMatchObject({
+        Username: 'testuser',
+      });
     });
   });
 });

@@ -1,4 +1,4 @@
-import { format } from 'date-fns-tz';
+import { format } from 'date-fns';
 import { CronSchedulePreview } from 'app/modules/scheduler/classes/cron-schedule-preview/cron-schedule-preview';
 
 describe('CronSchedulePreview - listNextRunsInMonth', () => {

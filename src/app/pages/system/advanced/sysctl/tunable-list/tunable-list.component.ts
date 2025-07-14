@@ -130,11 +130,11 @@ export class TunableListComponent implements OnInit {
     });
   }
 
-  getTunables(): void {
+  private getTunables(): void {
     this.dataProvider.load();
   }
 
-  doAdd(): void {
+  protected doAdd(): void {
     this.slideIn.open(TunableFormComponent).pipe(
       filter((response) => !!response.response),
       tap(() => this.getTunables()),
@@ -142,7 +142,7 @@ export class TunableListComponent implements OnInit {
     ).subscribe();
   }
 
-  doEdit(tunable: Tunable): void {
+  protected doEdit(tunable: Tunable): void {
     this.slideIn.open(TunableFormComponent, { data: tunable }).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
@@ -151,7 +151,7 @@ export class TunableListComponent implements OnInit {
     });
   }
 
-  doDelete(tunable: Tunable): void {
+  protected doDelete(tunable: Tunable): void {
     this.dialogService
       .confirm({
         title: this.translate.instant('Delete Sysctl'),
@@ -182,7 +182,7 @@ export class TunableListComponent implements OnInit {
       .subscribe();
   }
 
-  onListFiltered(query: string): void {
+  protected onListFiltered(query: string): void {
     this.filterString = query;
     this.dataProvider.setFilter({
       query,
@@ -194,7 +194,7 @@ export class TunableListComponent implements OnInit {
     this.cdr.markForCheck();
   }
 
-  setDefaultSort(): void {
+  protected setDefaultSort(): void {
     this.dataProvider.setSorting({
       active: 1,
       direction: SortDirection.Asc,

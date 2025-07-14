@@ -383,7 +383,7 @@ export class OldUserFormComponent implements OnInit {
     }
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     const payload = this.getPayload();
 
     const homeCreateConfirmation$ = this.getHomeCreateConfirmation();
@@ -513,7 +513,7 @@ export class OldUserFormComponent implements OnInit {
     return this.api.call('user.update', [this.editingUser.id, payload]);
   }
 
-  onDownloadSshPublicKey(): void {
+  protected onDownloadSshPublicKey(): void {
     const name = this.form.controls.username.value;
     const key = this.form.controls.sshpubkey.value;
     const blob = new Blob([key], { type: 'text/plain' });
@@ -588,7 +588,7 @@ export class OldUserFormComponent implements OnInit {
   private setHomeSharePath(): void {
     this.api.call('sharing.smb.query', [[
       ['enabled', '=', true],
-      ['home', '=', true],
+      ['options.home', '=', true],
     ]]).pipe(
       filter((shares) => !!shares?.length),
       map((shares) => shares[0].path),

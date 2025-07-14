@@ -1,15 +1,19 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, effect, input,
+} from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { Role, roleNames } from 'app/enums/role.enum';
+import { hasShellAccess, hasSshAccess } from 'app/helpers/user.helper';
+import { User } from 'app/interfaces/user.interface';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { UserFormStore } from 'app/pages/credentials/new-users/user-form/user.store';
+import { defaultRole, UserFormStore } from 'app/pages/credentials/new-users/user-form/user.store';
 
 @UntilDestroy()
 @Component({
@@ -28,6 +32,9 @@ import { UserFormStore } from 'app/pages/credentials/new-users/user-form/user.st
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AllowedAccessSectionComponent {
+  editingUser = input<User>();
+  protected sshAccess = this.userFormStore.sshAccess;
+
   protected readonly roles$ = of([
     { label: roleNames.get(Role.FullAdmin), value: Role.FullAdmin },
     { label: roleNames.get(Role.SharingAdmin), value: Role.SharingAdmin },
@@ -35,16 +42,12 @@ export class AllowedAccessSectionComponent {
   ]);
 
   form = this.formBuilder.group({
-    smb_access: [true],
+    smb: [true],
     truenas_access: [false],
     ssh_access: [false],
     shell_access: [false],
     role: [null as Role | null],
   });
-
-  protected get hasTrueNasAccess(): boolean {
-    return this.form.controls.truenas_access.value;
-  }
 
   constructor(
     private formBuilder: NonNullableFormBuilder,
@@ -60,8 +63,8 @@ export class AllowedAccessSectionComponent {
     ).subscribe({
       next: (sshAccess) => {
         if (sshAccess) {
-          this.form.controls.shell_access.disable();
           this.form.controls.shell_access.setValue(true);
+          this.form.controls.shell_access.disable();
         } else {
           this.form.controls.shell_access.enable();
         }
@@ -83,7 +86,7 @@ export class AllowedAccessSectionComponent {
     this.form.valueChanges.pipe(untilDestroyed(this)).subscribe({
       next: (values) => {
         this.userFormStore.setAllowedAccessConfig({
-          smbAccess: values.smb_access,
+          smbAccess: values.smb,
           truenasAccess: values.truenas_access,
           sshAccess: values.ssh_access,
           shellAccess: values.shell_access,
@@ -93,6 +96,18 @@ export class AllowedAccessSectionComponent {
           role: values.truenas_access ? values.role : null,
         });
       },
+    });
+
+    effect(() => {
+      if (this.editingUser()) {
+        this.form.patchValue({
+          smb: this.editingUser().smb,
+          truenas_access: !!this.editingUser().roles.length,
+          shell_access: hasShellAccess(this.editingUser()),
+          ssh_access: hasSshAccess(this.editingUser()),
+          role: this.editingUser().roles.length > 0 ? this.editingUser().roles[0] : defaultRole,
+        });
+      }
     });
   }
 }

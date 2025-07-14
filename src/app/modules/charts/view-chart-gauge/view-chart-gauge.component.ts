@@ -173,11 +173,11 @@ export class ViewChartGaugeComponent implements AfterViewInit, OnChanges {
     };
   }
 
-  percentToAngle(value: number): number {
+  private percentToAngle(value: number): number {
     return value / 100 * this.doublePi;
   }
 
-  updateSubtitle(): void {
+  private updateSubtitle(): void {
     d3.select('#gauge-' + this.chartId + ' #text-value');
     d3.select('#gauge-' + this.chartId + ' #text-subtitle')
       .text(this.subtitle);

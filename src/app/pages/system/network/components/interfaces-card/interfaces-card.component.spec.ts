@@ -44,6 +44,7 @@ describe('InterfacesCardComponent', () => {
     {
       id: 'eno2',
       name: 'eno2',
+      description: 'Main NIC',
       type: NetworkInterfaceType.Physical,
       aliases: [] as string[],
       state: {
@@ -110,7 +111,7 @@ describe('InterfacesCardComponent', () => {
     expect(await table.getCellTexts()).toEqual([
       ['', 'Name', 'IP Addresses', 'MAC Address', ''],
       ['', 'eno1', '84.23.23.1/24', '', ''],
-      ['', 'eno2', '', 'ac:1f:6b:ca:32:24', ''],
+      ['', 'eno2 (Main NIC)', '', 'ac:1f:6b:ca:32:24', ''],
       ['', 'vlan1', '', '', ''],
     ]);
   });

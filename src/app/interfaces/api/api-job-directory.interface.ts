@@ -1,4 +1,3 @@
-import { DockerConfig, DockerConfigUpdate } from 'app/enums/docker-config.interface';
 import { ServiceName, ServiceOperation } from 'app/enums/service-name.enum';
 import { SetAcl } from 'app/interfaces/acl.interface';
 import {
@@ -22,6 +21,7 @@ import {
 import { DatasetLockParams, DatasetUnlockParams, DatasetUnlockResult } from 'app/interfaces/dataset-lock.interface';
 import { DirectoryServicesUpdate, DirectoryServicesUpdateResponse } from 'app/interfaces/directoryservices-update.interface';
 import { DiskWipeParams } from 'app/interfaces/disk.interface';
+import { DockerConfig, DockerConfigUpdate } from 'app/interfaces/docker-config.interface';
 import { ExportParams } from 'app/interfaces/export-params.interface';
 import { FailoverUpgradeParams } from 'app/interfaces/failover.interface';
 import { FilesystemPutParams, FilesystemSetPermParams } from 'app/interfaces/filesystem-stat.interface';
@@ -48,6 +48,7 @@ import { SystemDatasetConfig, SystemDatasetUpdate } from 'app/interfaces/system-
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { UpdateParams } from 'app/interfaces/system-update.interface';
 import { Tunable, TunableCreate, TunableUpdate } from 'app/interfaces/tunable.interface';
+import { VmStopParams } from 'app/interfaces/virtual-machine.interface';
 import {
   CreateVirtualizationInstance, ImportZvolParams,
   UpdateVirtualizationInstance,
@@ -191,9 +192,8 @@ export interface ApiJobDirectory {
   'tunable.update': { params: [id: number, update: TunableUpdate]; response: Tunable };
 
   // Update
-  'update.download': { params: void; response: boolean };
   'update.file': { params: [{ resume: boolean }?]; response: void };
-  'update.update': { params: [UpdateParams]; response: void };
+  'update.run': { params: [UpdateParams]; response: void };
 
   // Virt
   'virt.global.update': { params: [VirtualizationGlobalConfigUpdate]; response: VirtualizationGlobalConfig };
@@ -208,6 +208,10 @@ export interface ApiJobDirectory {
     params: [instanceId: string, update: UpdateVirtualizationInstance];
     response: VirtualizationInstance;
   };
+
+  // VM
+  'vm.restart': { params: [id: number]; response: void };
+  'vm.stop': { params: VmStopParams; response: void };
 }
 
 export type ApiJobMethod = keyof ApiJobDirectory;

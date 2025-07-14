@@ -80,7 +80,7 @@ export class ConfigResetComponent implements OnInit, OnDestroy {
     }
   }
 
-  resetConfig(): void {
+  private resetConfig(): void {
     this.dialogService.jobDialog(
       this.api.job('config.reset', [{ reboot: true }]),
       {

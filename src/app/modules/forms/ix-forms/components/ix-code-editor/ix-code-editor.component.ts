@@ -103,7 +103,7 @@ export class IxCodeEditorComponent implements OnChanges, OnInit, AfterViewInit, 
     this.handleValueUpdate();
   }
 
-  handleDisableState(): void {
+  private handleDisableState(): void {
     combineLatest([
       this.editorReady$.pipe(filter(Boolean)),
       this.isDisabled$,
@@ -117,7 +117,7 @@ export class IxCodeEditorComponent implements OnChanges, OnInit, AfterViewInit, 
     });
   }
 
-  handleValueUpdate(): void {
+  private handleValueUpdate(): void {
     combineLatest([
       this.editorReady$.pipe(filter(Boolean)),
       this.value$,

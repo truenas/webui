@@ -36,6 +36,7 @@ import { SearchInput1Component } from 'app/modules/forms/search-input1/search-in
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
+import { LayoutService } from 'app/modules/layout/layout.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -44,7 +45,7 @@ import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AppDeleteDialog } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.component';
 import { AppDeleteDialogInputData, AppDeleteDialogOutputData } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.interface';
-import { AppBulkUpgradeComponent } from 'app/pages/apps/components/installed-apps/app-bulk-upgrade/app-bulk-upgrade.component';
+import { AppBulkUpdateComponent } from 'app/pages/apps/components/installed-apps/app-bulk-update/app-bulk-update.component';
 import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
 import { InstalledAppsListBulkActionsComponent } from 'app/pages/apps/components/installed-apps/installed-apps-list/installed-apps-list-bulk-actions/installed-apps-list-bulk-actions.component';
 import { installedAppsElements } from 'app/pages/apps/components/installed-apps/installed-apps.elements';
@@ -180,6 +181,7 @@ export class InstalledAppsListComponent implements OnInit {
     private location: Location,
     private appsStats: AppsStatsService,
     private loader: LoaderService,
+    private layoutService: LayoutService,
   ) {
     this.router.events
       .pipe(
@@ -206,8 +208,7 @@ export class InstalledAppsListComponent implements OnInit {
 
   viewDetails(app: App): void {
     this.selectAppForDetails(app.id);
-
-    this.router.navigate(['/apps/installed', app.metadata.train, app.id]);
+    this.layoutService.navigatePreservingScroll(this.router, ['/apps/installed', app.metadata.train, app.id]);
 
     if (this.isMobileView()) {
       this.toggleShowMobileDetails.emit(true);
@@ -230,7 +231,9 @@ export class InstalledAppsListComponent implements OnInit {
     }
   }
 
-  showLoadStatus(type: EmptyType.FirstUse | EmptyType.NoPageData | EmptyType.Errors | EmptyType.NoSearchResults): void {
+  private showLoadStatus(
+    type: EmptyType.FirstUse | EmptyType.NoPageData | EmptyType.Errors | EmptyType.NoSearchResults,
+  ): void {
     switch (type) {
       case EmptyType.FirstUse:
       case EmptyType.NoPageData:
@@ -260,7 +263,7 @@ export class InstalledAppsListComponent implements OnInit {
     this.entityEmptyConf.type = type;
   }
 
-  loadInstalledApps(): void {
+  private loadInstalledApps(): void {
     this.cdr.markForCheck();
 
     combineLatest([
@@ -370,11 +373,11 @@ export class InstalledAppsListComponent implements OnInit {
     this.toggleAppsChecked(false);
   }
 
-  onBulkUpgrade(updateAll = false): void {
+  onBulkUpdate(updateAll = false): void {
     const apps = this.dataSource.filter((app) => (
       updateAll ? app.upgrade_available : this.selection.isSelected(app.id)
     ));
-    this.matDialog.open(AppBulkUpgradeComponent, { data: apps })
+    this.matDialog.open(AppBulkUpdateComponent, { data: apps })
       .afterClosed()
       .pipe(untilDestroyed(this))
       .subscribe(() => {

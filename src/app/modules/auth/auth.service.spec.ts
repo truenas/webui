@@ -9,12 +9,14 @@ import {
 import * as rxjs from 'rxjs';
 import {
   BehaviorSubject, firstValueFrom,
+  of,
 } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AccountAttribute } from 'app/enums/account-attribute.enum';
+import { AuthMechanism } from 'app/enums/auth-mechanism.enum';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -24,6 +26,7 @@ import {
 import { DashConfigItem } from 'app/interfaces/dash-config-item.interface';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
+import { GlobalTwoFactorConfig, UserTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
@@ -76,6 +79,17 @@ describe('AuthService', () => {
             ],
           },
         } as LoginExResponse),
+        mockCall('auth.mechanism_choices', [
+          AuthMechanism.PasswordPlain,
+          AuthMechanism.TokenPlain,
+          AuthMechanism.OtpToken,
+        ]),
+        mockCall('auth.twofactor.config', {
+          enabled: true,
+          id: 1,
+          services: { ssh: true },
+          window: 30,
+        } as GlobalTwoFactorConfig),
       ]),
       {
         provide: WebSocketStatusService,
@@ -154,6 +168,53 @@ describe('AuthService', () => {
       );
       expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('auth.me');
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('auth.generate_token');
+    });
+
+    it('initializes auth session with triggers and without token with username/password OTP login', () => {
+      timer$.next(0);
+
+      const api = spectator.inject(ApiService);
+      jest.spyOn(api, 'call').mockImplementation((method) => {
+        if (method === 'auth.login_ex') {
+          return of({
+            authenticator: AuthenticatorLoginLevel.Level1,
+            response_type: LoginExResponseType.Success,
+            user_info: {
+              privilege: { webui_access: true },
+              account_attributes: [
+                AccountAttribute.Local,
+                AccountAttribute.PasswordChangeRequired,
+              ],
+            },
+          } as LoginExResponse);
+        }
+        if (method === 'auth.mechanism_choices') {
+          return of([
+            AuthMechanism.PasswordPlain,
+            AuthMechanism.OtpToken,
+          ]);
+        }
+        return of();
+      });
+
+      const obs$ = spectator.service.login('dummy', 'dummy');
+
+      testScheduler.run(({ expectObservable }) => {
+        expectObservable(obs$).toBe(
+          '(a|)',
+          {
+            a: expect.objectContaining({
+              loginResult: LoginResult.Success,
+            }),
+          },
+        );
+      });
+      expect(api.call).toHaveBeenCalledWith(
+        'auth.login_ex',
+        [{ mechanism: 'PASSWORD_PLAIN', username: 'dummy', password: 'dummy' }],
+      );
+      expect(api.call).not.toHaveBeenCalledWith('auth.me');
+      expect(api.call).not.toHaveBeenCalledWith('auth.generate_token');
     });
 
     it('initializes auth session with LEVEL_2 with no token support.', () => {
@@ -237,22 +298,22 @@ describe('AuthService', () => {
     });
   });
 
-  describe('hasRole', () => {
-    async function setUserRoles(roles: Role[]): Promise<void> {
-      const mockedApi = spectator.inject(MockApiService);
-      mockedApi.mockCall('auth.me', {
-        ...authMeUser,
-        privilege: {
-          ...authMeUser.privilege,
-          roles: {
-            $set: roles,
-          },
+  async function setUserRoles(roles: Role[]): Promise<void> {
+    const mockedApi = spectator.inject(MockApiService);
+    mockedApi.mockCall('auth.me', {
+      ...authMeUser,
+      privilege: {
+        ...authMeUser.privilege,
+        roles: {
+          $set: roles,
         },
-      });
+      },
+    });
 
-      await firstValueFrom(spectator.service.refreshUser());
-    }
+    await firstValueFrom(spectator.service.refreshUser());
+  }
 
+  describe('hasRole', () => {
     it('returns false when user does not have required role', async () => {
       await setUserRoles([Role.SharingSmbRead]);
       expect(await firstValueFrom(spectator.service.hasRole([Role.AlertListRead]))).toBe(false);
@@ -270,25 +331,157 @@ describe('AuthService', () => {
   });
 
   describe('setQueryToken', () => {
-    it('does not set the token if the token is null or the protocol is not secure', async () => {
+    it('does not set the token if the token is null', async () => {
       spectator.service.setQueryToken(null);
-      let result = await firstValueFrom(spectator.service.loginWithToken());
+      const result = await firstValueFrom(spectator.service.loginWithToken());
       expect(result).toEqual(LoginResult.NoToken);
+    });
 
-      const window = spectator.inject<Window>(WINDOW);
-      Object.defineProperty(window, 'location', { value: { protocol: 'http:' } });
-      spectator.service.setQueryToken('token');
-      result = await firstValueFrom(spectator.service.loginWithToken());
-      expect(result).toEqual(LoginResult.NoToken);
-
+    it('sets the token for both HTTP and HTTPS in non-production environments', async () => {
       const token = 'token';
-      window.location.protocol = 'https:';
+      const window = spectator.inject<Window>(WINDOW);
+
+      // Test HTTP in development (non-production)
+      Object.defineProperty(window, 'location', { value: { protocol: 'http:' } });
       spectator.service.setQueryToken(token);
       await firstValueFrom(spectator.service.loginWithToken());
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
         'auth.login_ex',
         [{ mechanism: LoginExMechanism.TokenPlain, token }],
       );
+
+      // Test HTTPS
+      Object.defineProperty(window, 'location', { value: { protocol: 'https:' } });
+      spectator.service.setQueryToken(token);
+      await firstValueFrom(spectator.service.loginWithToken());
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+        'auth.login_ex',
+        [{ mechanism: LoginExMechanism.TokenPlain, token }],
+      );
+    });
+  });
+
+  describe('getGlobalTwoFactorConfig', () => {
+    it('fetches global two-factor config from API on first call', async () => {
+      const result = await firstValueFrom(spectator.service.getGlobalTwoFactorConfig());
+
+      expect(result).toEqual({
+        enabled: true,
+        id: 1,
+        services: { ssh: true },
+        window: 30,
+      });
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('auth.twofactor.config');
+    });
+
+    it('returns cached config on subsequent calls', async () => {
+      await firstValueFrom(spectator.service.getGlobalTwoFactorConfig());
+      const api = spectator.inject(ApiService);
+      jest.clearAllMocks();
+
+      const result = await firstValueFrom(spectator.service.getGlobalTwoFactorConfig());
+
+      expect(result).toEqual({
+        enabled: true,
+        id: 1,
+        services: { ssh: true },
+        window: 30,
+      });
+      expect(api.call).not.toHaveBeenCalledWith('auth.twofactor.config');
+    });
+  });
+
+  describe('globalTwoFactorConfigUpdated', () => {
+    it('clears cached config when called', async () => {
+      await firstValueFrom(spectator.service.getGlobalTwoFactorConfig());
+      spectator.service.globalTwoFactorConfigUpdated();
+
+      const result = await firstValueFrom(spectator.service.getGlobalTwoFactorConfig());
+
+      expect(result).toEqual({
+        enabled: true,
+        id: 1,
+        services: { ssh: true },
+        window: 30,
+      });
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('auth.twofactor.config');
+    });
+  });
+
+  describe('isTwoFactorSetupRequired', () => {
+    it('returns false when global two-factor is disabled', async () => {
+      spectator.inject(MockApiService).mockCall('auth.twofactor.config', {
+        enabled: false,
+      } as GlobalTwoFactorConfig);
+
+      const result = await firstValueFrom(spectator.service.isTwoFactorSetupRequired());
+
+      expect(result).toBe(false);
+    });
+
+    it('returns true when global two-factor is enabled but user has no secret configured', async () => {
+      const userWithoutSecret = {
+        ...authMeUser,
+        two_factor_config: {
+          secret_configured: false,
+        } as UserTwoFactorConfig,
+      };
+
+      spectator.inject(MockApiService).mockCall('auth.me', userWithoutSecret);
+      await firstValueFrom(spectator.service.refreshUser());
+
+      const result = await firstValueFrom(spectator.service.isTwoFactorSetupRequired());
+
+      expect(result).toBe(true);
+    });
+
+    it('returns false when global two-factor is enabled and user has secret configured', async () => {
+      const userWithSecret = {
+        ...authMeUser,
+        two_factor_config: {
+          secret_configured: true,
+        } as UserTwoFactorConfig,
+      };
+
+      spectator.inject(MockApiService).mockCall('auth.me', userWithSecret);
+      await firstValueFrom(spectator.service.refreshUser());
+
+      const result = await firstValueFrom(spectator.service.isTwoFactorSetupRequired());
+
+      expect(result).toBe(false);
+    });
+  });
+
+  describe('requiredPasswordChanged', () => {
+    it('updates password change status', async () => {
+      timer$.next(0);
+      await firstValueFrom(spectator.service.login('dummy', 'dummy'));
+
+      let isPasswordChangeRequired = await firstValueFrom(spectator.service.isPasswordChangeRequired$);
+      expect(isPasswordChangeRequired).toBe(true);
+
+      spectator.service.requiredPasswordChanged();
+
+      isPasswordChangeRequired = await firstValueFrom(spectator.service.isPasswordChangeRequired$);
+      expect(isPasswordChangeRequired).toBe(false);
+    });
+  });
+
+  describe('isFullAdmin', () => {
+    it('returns true when user has FullAdmin role', async () => {
+      await setUserRoles([Role.FullAdmin]);
+
+      const result = await firstValueFrom(spectator.service.isFullAdmin());
+
+      expect(result).toBe(true);
+    });
+
+    it('returns false when user does not have FullAdmin role', async () => {
+      await setUserRoles([Role.SharingSmbRead]);
+
+      const result = await firstValueFrom(spectator.service.isFullAdmin());
+
+      expect(result).toBe(false);
     });
   });
 });

@@ -1,13 +1,14 @@
-import { of } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { User } from 'app/interfaces/user.interface';
-import { ApiDataProvider } from 'app/modules/ix-table/classes/api-data-provider/api-data-provider';
+import { UsersDataProvider } from 'app/pages/credentials/new-users/all-users/users-data-provider';
 
 export const mockUsers = [
   {
     id: 1,
     uid: 1,
     builtin: false,
+    local: true,
     username: 'john_doe',
     full_name: 'John Doe',
     locked: false,
@@ -20,15 +21,18 @@ export const mockUsers = [
     full_name: 'Jane Smith',
     locked: false,
     builtin: true,
+    local: false,
     roles: [Role.FullAdmin],
   },
 ] as User[];
 
 export const mockUserApiDataProvider = {
-  currentPage$: of(mockUsers),
+  currentPage$: new BehaviorSubject(mockUsers),
   load: jest.fn(),
   setPagination: jest.fn(),
   setParams: jest.fn(),
+  additionalUsername: '',
+  shouldLoadUser: jest.fn(),
   sorting: {
     propertyName: 'message_timestamp',
     direction: 'desc',
@@ -39,4 +43,4 @@ export const mockUserApiDataProvider = {
     pageNumber: 1,
   },
   sortingOrPaginationUpdate: of(true),
-} as unknown as ApiDataProvider<'user.query'>;
+} as unknown as UsersDataProvider;

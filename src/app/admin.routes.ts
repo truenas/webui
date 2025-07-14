@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { AuthGuardService } from 'app/modules/auth/auth-guard.service';
-import { TwoFactorGuardService } from 'app/modules/auth/two-factor-guard.service';
+import { BlockingActionGuardService } from 'app/modules/auth/blocking-action-guard.service';
 import { TranslationsLoadedGuard } from 'app/modules/language/translations/translations-loaded.guard';
 import { AdminLayoutComponent } from 'app/modules/layout/admin-layout/admin-layout.component';
 import { WebSocketConnectionGuard } from 'app/modules/websocket/websocket-connection.guard';
@@ -13,7 +13,7 @@ export const adminRoutes: Routes = [
     path: '',
     component: AdminLayoutComponent,
     canActivate: [AuthGuardService, TranslationsLoadedGuard, WebSocketConnectionGuard],
-    canActivateChild: [TwoFactorGuardService],
+    canActivateChild: [BlockingActionGuardService],
     children: [
       {
         path: 'dashboard',
@@ -39,6 +39,11 @@ export const adminRoutes: Routes = [
         path: 'directoryservice',
         loadChildren: () => import('app/pages/directory-service/directory-service.routes').then((module) => module.routes),
         data: { title: T('Directory Services'), breadcrumb: T('Directory Services') },
+      },
+      {
+        path: 'vm',
+        loadChildren: () => import('app/pages/vm/vm.routes').then((module) => module.vmRoutes),
+        data: { title: T('Virtual Machines'), breadcrumb: T('Virtual Machines') },
       },
       {
         path: 'apps',

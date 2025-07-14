@@ -1,7 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component,
-  OnInit,
+  ChangeDetectionStrategy, Component, computed, OnInit, signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -9,38 +8,32 @@ import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { select, Store } from '@ngrx/store';
+import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
-  combineLatest, filter, forkJoin, map, Observable, of, shareReplay, switchMap, take, tap,
+  filter, finalize, forkJoin, map, Observable, shareReplay, switchMap,
 } from 'rxjs';
-import { scaleDownloadUrl } from 'app/constants/links.constants';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
-import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
-import { SystemUpdateOperationType, SystemUpdateStatus } from 'app/enums/system-update.enum';
-import { observeJob } from 'app/helpers/operators/observe-job.operator';
+import { UpdateCode } from 'app/enums/system-update.enum';
 import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
-import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { Option } from 'app/interfaces/option.interface';
+import { UpdateConfig, UpdateProfileChoices, UpdateStatus } from 'app/interfaces/system-update.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { selectJob } from 'app/modules/jobs/store/job.selectors';
-import { LoaderService } from 'app/modules/loader/loader.service';
+import { selectUpdateJob } from 'app/modules/jobs/store/job.selectors';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { getSystemVersion } from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
-import { SaveConfigDialog, SaveConfigDialogMessages } from 'app/pages/system/advanced/manage-configuration-menu/save-config-dialog/save-config-dialog.component';
-import { UpdateProfileCard } from 'app/pages/system/update/components/update-profile-card/update-profile-card.component';
-import { UpdateType } from 'app/pages/system/update/enums/update-type.enum';
-import { Package } from 'app/pages/system/update/interfaces/package.interface';
-import { TrainService } from 'app/pages/system/update/services/train.service';
-import { UpdateService } from 'app/pages/system/update/services/update.service';
+import {
+  SaveConfigDialog,
+  SaveConfigDialogMessages,
+} from 'app/pages/system/advanced/manage-configuration-menu/save-config-dialog/save-config-dialog.component';
+import {
+  UpdateProfileCard,
+} from 'app/pages/system/update/components/update-profile-card/update-profile-card.component';
 import { systemUpdateElements } from 'app/pages/system/update/update.elements';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -54,15 +47,14 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
   templateUrl: './update.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    AsyncPipe,
     UiSearchDirective,
     TestDirective,
     TranslateModule,
-    AsyncPipe,
     RequiresRolesDirective,
     UiSearchDirective,
     TestDirective,
     TranslateModule,
-    AsyncPipe,
     NgxSkeletonLoaderModule,
     MatButton,
     IxIconComponent,
@@ -72,311 +64,126 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
   ],
 })
 export class UpdateComponent implements OnInit {
-  readonly SystemUpdateStatus = SystemUpdateStatus;
   protected readonly searchableElements = systemUpdateElements;
   protected readonly requiredRoles = [Role.SystemUpdateWrite];
-  protected readonly scaleDownloadUrl = scaleDownloadUrl;
-  protected updateType: UpdateType;
-  protected isUpdateRunning = false;
-  protected singleDescription: string;
-  private trains: Option[] = [];
-  private wasConfigurationSaved = false;
+  protected readonly manualUpdateUrl = 'https://www.truenas.com/docs/scale/scaletutorials/systemsettings/updatescale/#performing-a-manual-update';
 
   protected readonly isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
 
-  protected readonly showApplyPendingButton = toSignal(
-    combineLatest([
-      this.updateService.updateDownloaded$,
-      this.updateService.status$,
-    ]).pipe(
-      map(([updateDownloaded, status]) => updateDownloaded && status !== SystemUpdateStatus.Unavailable),
-    ),
-  );
+  protected isLoading = signal(true);
+  protected profileChoices = signal<UpdateProfileChoices | null>(null);
+  protected status = signal<UpdateStatus | null>(null);
+  protected config = signal<UpdateConfig | null>(null);
 
-  protected readonly showDownloadUpdateButton = toSignal(this.updateService.updatesAvailable$);
+  protected statusDetails = computed(() => this.status()?.status);
 
-  protected readonly isDownloadUpdatesButtonDisabled = toSignal(
-    this.updateService.status$.pipe(
-      map((status) => status === SystemUpdateStatus.RebootRequired),
-    ),
-  );
+  protected newVersion = computed(() => this.statusDetails()?.new_version);
 
-  protected readonly showInfoForTesting = toSignal(
-    combineLatest([
-      this.updateService.updatesAvailable$,
-      this.trainService.nightlyTrain$,
-      this.trainService.preReleaseTrain$,
-      this.sysGenService.isEnterprise$,
-    ]).pipe(
-      map(([updatesAvailable, nightlyTrain, preReleaseTrain, isEnterprise]) => {
-        return updatesAvailable && (nightlyTrain || (preReleaseTrain && !isEnterprise));
-      }),
-    ),
-  );
+  protected doesNotMatchProfile = computed(() => {
+    return !this.statusDetails()?.current_version?.matches_profile;
+  });
+
+  protected currentVersionProfile = computed(() => {
+    const profileId = this.statusDetails()?.current_version?.profile || '';
+    const profile = this.profileChoices()?.[profileId];
+
+    return profile?.name || profileId;
+  });
+
+  protected readonly isUpdateAvailable = computed(() => {
+    return this.status()?.code === UpdateCode.Normal && Boolean(this.newVersion());
+  });
+
+  protected readonly isSystemUpToDate = computed(() => {
+    return this.status()?.code === UpdateCode.Normal && !this.newVersion();
+  });
+
+  protected readonly isRebootRequired = computed(() => this.status()?.code === UpdateCode.RebootRequired);
 
   private readonly systemInfo$ = this.api.call('webui.main.dashboard.sys_info').pipe(
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
   protected readonly systemVersion = toSignal(this.systemInfo$.pipe(
-    map((info) => getSystemVersion(info.version)),
+    map((info) => info.version),
   ));
 
-  protected readonly updateVersion = toSignal(this.trainService.trainVersion$.pipe(
-    map((info) => getSystemVersion(info)),
-  ));
+  protected readonly changelog = computed(() => {
+    if (!this.newVersion()?.manifest?.changelog) {
+      return '';
+    }
+
+    return this.newVersion()?.manifest?.changelog.replace(/\n/g, '\n');
+  });
 
   protected readonly standbySystemVersion = toSignal(this.systemInfo$.pipe(
     filter((info) => Boolean(info?.remote_info?.version)),
-    map((info) => getSystemVersion(info.remote_info.version)),
+    map((info) => info.remote_info.version),
   ));
 
+  protected isUpdateInProgress$ = this.store$.select(selectUpdateJob).pipe(
+    map((jobs) => jobs.length > 0),
+  );
+
   constructor(
-    protected trainService: TrainService,
-    protected updateService: UpdateService,
     private router: Router,
     private translate: TranslateService,
     private matDialog: MatDialog,
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
-    private cdr: ChangeDetectorRef,
     private sysGenService: SystemGeneralService,
-    private snackbar: SnackbarService,
     private store$: Store<AppState>,
-    private loader: LoaderService,
-  ) {
-    this.sysGenService.updateRunning.pipe(untilDestroyed(this)).subscribe((isUpdating: string) => {
-      this.isUpdateRunning = isUpdating === 'true';
-      this.cdr.markForCheck();
-    });
-  }
+  ) {}
 
   ngOnInit(): void {
-    forkJoin([
-      this.trainService.getAutoDownload(),
-      this.trainService.getTrains(),
-    ]).pipe(untilDestroyed(this)).subscribe({
-      next: ([isAutoDownloadOn, trains]) => {
-        this.cdr.markForCheck();
-        this.trainService.fullTrainList$.next(trains.trains);
-
-        this.trainService.trainValue$.next(trains.selected || '');
-        this.trainService.selectedTrain$.next(trains.selected);
-
-        if (isAutoDownloadOn) {
-          this.trainService.check();
-        }
-
-        this.trains = Object.entries(trains.trains).map(([name, train]) => ({
-          label: train.description,
-          value: name,
-        }));
-        if (this.trains.length > 0) {
-          this.singleDescription = Object.values(trains.trains)[0]?.description;
-        }
-
-        let currentTrainDescription = '';
-
-        if (trains.trains[trains.current]) {
-          if (trains.trains[trains.current].description.toLowerCase().includes('[nightly]')) {
-            currentTrainDescription = '[nightly]';
-          } else if (trains.trains[trains.current].description.toLowerCase().includes('[release]')) {
-            currentTrainDescription = '[release]';
-          } else if (trains.trains[trains.current].description.toLowerCase().includes('[prerelease]')) {
-            currentTrainDescription = '[prerelease]';
-          } else {
-            currentTrainDescription = trains.trains[trains.selected].description.toLowerCase();
-          }
-        }
-        this.trainService.currentTrainDescription$.next(currentTrainDescription);
-        this.trainService.trainDescriptionOnPageLoad$.next(currentTrainDescription);
-
-        this.cdr.markForCheck();
-      },
-      error: (error: unknown) => {
-        this.errorHandler.showErrorModal(error);
-      },
-    });
-
-    this.trainService.toggleAutoCheck(true);
+    this.loadUpdateInfo();
   }
 
-  manualUpdate(): void {
-    this.updateType = UpdateType.Manual;
-    this.saveConfigurationIfNecessary()
+  private loadUpdateInfo(): void {
+    this.isLoading.set(true);
+
+    forkJoin([
+      this.api.call('update.profile_choices'),
+      this.api.call('update.status'),
+      this.api.call('update.config'),
+    ])
+      .pipe(
+        this.errorHandler.withErrorHandler(),
+        finalize(() => this.isLoading.set(false)),
+        untilDestroyed(this),
+      )
+      .subscribe(([profileChoices, updateStatus, updateConfig]) => {
+        this.profileChoices.set(profileChoices);
+        this.status.set(updateStatus);
+        this.config.set(updateConfig);
+      });
+  }
+
+  protected manualUpdate(): void {
+    this.offerToSaveConfiguration()
       .pipe(untilDestroyed(this))
       .subscribe(() => {
         this.router.navigate(['/system/update/manualupdate']);
       });
   }
 
-  applyPendingUpdate(): void {
-    this.updateType = UpdateType.ApplyPending;
-    this.saveConfigurationIfNecessary()
-      .pipe(untilDestroyed(this))
-      .subscribe(() => this.continueUpdate());
-  }
-
-  continueUpdate(): void {
-    switch (this.updateType) {
-      case UpdateType.ApplyPending: {
-        const message = this.isHaLicensed()
-          ? this.translate.instant('The standby controller will be automatically restarted to finalize the update. Apply updates and restart the standby controller?')
-          : this.translate.instant('The system will restart and be briefly unavailable while applying updates. Apply updates and restart?');
-        this.dialogService.confirm({
-          title: this.translate.instant('Apply Pending Updates'),
-          message: this.translate.instant(message),
-        }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-          this.update();
-        });
-        break;
-      }
-      case UpdateType.Standard:
-        this.confirmAndUpdate();
-        break;
-      default:
-        console.warn('Unhandled updateType in continueUpdate:', this.updateType);
-    }
-  }
-
-  showRunningUpdate(jobId: number): void {
-    const job$ = this.store$.pipe(
-      select(selectJob(jobId)),
-      observeJob(),
-    ) as Observable<Job<ApiJobMethod>>;
-
-    this.dialogService.jobDialog(
-      job$,
-      {
-        title: this.translate.instant('Update'),
-        canMinimize: true,
-      },
-    )
-      .afterClosed()
+  protected onInstallUpdatePressed(): void {
+    this.offerToSaveConfiguration()
       .pipe(
+        switchMap(() => this.confirmUpdate()),
+        switchMap(() => this.update()),
         this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => {
-        this.router.navigate(['/system-tasks/restart'], { skipLocationChange: true });
+        this.dialogService.closeAllDialogs();
+        this.sysGenService.updateDone();
+        return this.isHaLicensed() ? this.controllerUpdateFinished() : this.nonHaUpdateFinished();
       });
   }
 
-  startUpdate(): void {
-    this.updateService.error$.next(false);
-    this.api.call('update.check_available').pipe(this.loader.withLoader(), untilDestroyed(this)).subscribe({
-      next: (update) => {
-        this.updateService.status$.next(update.status);
-        if (update.status === SystemUpdateStatus.Available) {
-          const packages: Package[] = [];
-          update.changes.forEach((change) => {
-            if (change.operation === SystemUpdateOperationType.Upgrade) {
-              packages.push({
-                operation: 'Upgrade',
-                name: change.old.name + '-' + change.old.version
-                  + ' -> ' + change.new.name + '-'
-                  + change.new.version,
-              });
-            } else if (change.operation === SystemUpdateOperationType.Install) {
-              packages.push({
-                operation: 'Install',
-                name: change.new.name + '-' + change.new.version,
-              });
-            } else if (change.operation === SystemUpdateOperationType.Delete) {
-              if (change.old) {
-                packages.push({
-                  operation: 'Delete',
-                  name: change.old.name + '-' + change.old.version,
-                });
-              } else if (change.new) {
-                packages.push({
-                  operation: 'Delete',
-                  name: change.new.name + '-' + change.new.version,
-                });
-              }
-            } else {
-              console.error('Unknown operation:', change.operation);
-            }
-          });
-          this.updateService.packages$.next(packages);
-
-          if (update.changelog) {
-            this.updateService.changeLog$.next(update.changelog.replace(/\n/g, '<br>'));
-          }
-          if (update.release_notes_url) {
-            this.updateService.releaseNotesUrl$.next(update.release_notes_url);
-          }
-          this.updateType = UpdateType.Standard;
-          this.saveConfigurationIfNecessary()
-            .pipe(untilDestroyed(this))
-            .subscribe(() => this.confirmAndUpdate());
-        } else if (update.status === SystemUpdateStatus.Unavailable) {
-          this.snackbar.success(this.translate.instant('No updates available.'));
-        }
-      },
-      error: (error: unknown) => {
-        this.errorHandler.showErrorModal(error);
-      },
-      complete: () => {
-        this.loader.close();
-        this.cdr.markForCheck();
-      },
-    });
-  }
-
-  downloadUpdate(): void {
-    this.api.call('core.get_jobs', [[['method', '=', 'update.update'], ['state', '=', JobState.Running]]])
-      .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
-      .subscribe((jobs) => {
-        if (jobs[0]) {
-          this.showRunningUpdate(jobs[0].id);
-        } else {
-          this.startUpdate();
-        }
-        this.cdr.markForCheck();
-      });
-  }
-
-  confirmAndUpdate(): void {
-    let downloadMsg;
-    let confirmMsg;
-
-    if (!this.isHaLicensed()) {
-      downloadMsg = helptext.nonHaDownloadMessage;
-      confirmMsg = helptext.nonHaConfirmMessage;
-    } else {
-      downloadMsg = helptext.haDownloadMessage;
-      confirmMsg = helptext.haConfirmMessage;
-    }
-
-    this.dialogService.confirm({
-      title: this.translate.instant('Download Update'),
-      message: this.translate.instant(downloadMsg),
-      hideCheckbox: true,
-      buttonText: this.translate.instant('Download'),
-      secondaryCheckbox: true,
-      secondaryCheckboxText: this.translate.instant(confirmMsg),
-    })
-      .pipe(untilDestroyed(this))
-      .subscribe((result) => {
-        if (!result.confirmed) {
-          return;
-        }
-
-        if (!result.secondaryCheckbox) {
-          this.downloadUpdates();
-        } else {
-          this.update();
-        }
-      });
-  }
-
-  private saveConfigurationIfNecessary(): Observable<unknown> {
-    if (this.wasConfigurationSaved) {
-      return of(null);
-    }
-
+  private offerToSaveConfiguration(): Observable<unknown> {
     return this.matDialog.open(SaveConfigDialog, {
       data: {
         title: this.translate.instant('Save configuration settings from this machine before updating?'),
@@ -384,66 +191,39 @@ export class UpdateComponent implements OnInit {
         cancelButton: this.translate.instant('Do not save'),
       } as Partial<SaveConfigDialogMessages>,
     })
-      .afterClosed()
-      .pipe(
-        tap((wasSaved) => {
-          if (wasSaved) {
-            this.wasConfigurationSaved = true;
-          }
-        }),
-      );
+      .afterClosed();
   }
 
-  private update(resume = false): void {
-    sessionStorage.removeItem('updateLastChecked');
-    sessionStorage.removeItem('updateAvailable');
+  private confirmUpdate(): Observable<true> {
+    return this.dialogService.confirm({
+      title: this.translate.instant('Install Update?'),
+      message: this.translate.instant(
+        this.isHaLicensed()
+          ? helptext.haUpdateConfirmation
+          : helptext.nonHaUpdateConfirmation,
+      ),
+      hideCheckbox: true,
+      buttonText: this.translate.instant('Install'),
+    })
+      .pipe(filter(Boolean));
+  }
+
+  private update(): Observable<unknown> {
     this.sysGenService.updateRunningNoticeSent.emit();
 
     let job$: Observable<Job>;
     if (this.isHaLicensed()) {
-      job$ = this.trainService.trainValue$.pipe(
-        take(1),
-        switchMap((trainValue) => this.api.call('update.set_train', [trainValue])),
-        switchMap(() => this.api.job('failover.upgrade', [{ resume }])),
-      );
+      job$ = this.api.job('failover.upgrade');
     } else {
-      job$ = this.api.job('update.update', [{ resume, reboot: true }]);
+      job$ = this.api.job('update.run', [{ reboot: true }]);
     }
 
-    this.dialogService
+    return this.dialogService
       .jobDialog(job$, { title: this.translate.instant(this.translate.instant('Update')) })
-      .afterClosed()
-      .pipe(
-        switchMap(() => {
-          this.dialogService.closeAllDialogs();
-          this.isUpdateRunning = false;
-          this.sysGenService.updateDone();
-          this.cdr.markForCheck();
-          return this.isHaLicensed() ? this.finishHaUpdate() : this.finishNonHaUpdate();
-        }),
-        this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
-      )
-      .subscribe();
+      .afterClosed();
   }
 
-  private downloadUpdates(): void {
-    this.dialogService.jobDialog(
-      this.api.job('update.download'),
-      { title: this.translate.instant('Update') },
-    )
-      .afterClosed()
-      .pipe(
-        this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
-      )
-      .subscribe(() => {
-        this.snackbar.success(this.translate.instant('Updates successfully downloaded'));
-        this.updateService.pendingUpdates();
-      });
-  }
-
-  private finishHaUpdate(): Observable<boolean> {
+  private controllerUpdateFinished(): Observable<boolean> {
     return this.dialogService.confirm({
       title: this.translate.instant(helptext.haUpdate.completeTitle),
       message: this.translate.instant(helptext.haUpdate.completeMessage),
@@ -453,7 +233,7 @@ export class UpdateComponent implements OnInit {
     });
   }
 
-  private finishNonHaUpdate(): Observable<boolean> {
+  private nonHaUpdateFinished(): Observable<boolean> {
     return this.dialogService.confirm({
       title: this.translate.instant(helptext.haUpdate.completeTitle),
       message: this.translate.instant('Update completed successfully. The system will restart shortly'),

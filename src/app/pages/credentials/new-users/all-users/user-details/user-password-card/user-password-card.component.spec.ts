@@ -6,6 +6,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { helptextUsers } from 'app/helptext/account/user-form';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -52,8 +53,14 @@ describe('UserPasswordCardComponent', () => {
 
   function getRows(): Record<string, string> {
     return spectator.queryAll('.row').reduce((acc, item: HTMLElement) => {
-      const key = item.querySelector('.label')!.textContent!;
-      const value = item.querySelector('.value')!.textContent!.trim();
+      const labelElement = item.querySelector('.label');
+      const valueElement = item.querySelector('.value');
+
+      if (!labelElement) return acc;
+
+      const key = labelElement.textContent || '';
+      const value = valueElement?.textContent?.trim() || '';
+
       acc[key] = value;
       return acc;
     }, {} as Record<string, string>);
@@ -74,8 +81,6 @@ describe('UserPasswordCardComponent', () => {
   it('shows password details when no change is required', () => {
     const rows = getRows();
     expect(rows).toEqual({
-      'Change Required:': 'No',
-      'History:': 'No History',
       'Age:': '1 day',
       'Last Change:': '2023-10-11 16:20:00',
     });
@@ -96,7 +101,7 @@ describe('UserPasswordCardComponent', () => {
 
     const rows = getRows();
     expect(rows).toEqual({
-      'Change Required:': 'Yes',
+      'Password change is required:': '',
       'History:': '4 entries',
       'Age:': '4 days',
       'Last Change:': '2023-10-11 16:20:00',
@@ -110,7 +115,7 @@ describe('UserPasswordCardComponent', () => {
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
       expect.objectContaining({
         title: 'Generate One-Time Password',
-        message: 'Are you sure you want to generate a one-time password for "test-user" user?',
+        message: helptextUsers.oneTimePasswordWarning,
         hideCheckbox: true,
       }),
     );

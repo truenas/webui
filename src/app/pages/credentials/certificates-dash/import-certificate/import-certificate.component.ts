@@ -120,6 +120,7 @@ export class ImportCertificateComponent {
       ...omit(this.form.getRawValue(), ['passphrase2']),
       create_type: CertificateCreateType.Import,
       passphrase: this.form.controls.passphrase.value || null,
+      privatekey: this.form.controls.privatekey.value || undefined,
     };
   }
 }
