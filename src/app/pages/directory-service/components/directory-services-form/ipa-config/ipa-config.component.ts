@@ -3,6 +3,7 @@ import {
   Component,
   output,
   OnInit,
+  input,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
@@ -31,15 +32,18 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
     IxCheckboxComponent,
     TranslateModule,
   ],
+  standalone: true,
 })
 export class IpaConfigComponent implements OnInit {
+  readonly ipaConfig = input.required<IpaConfig | null>();
   readonly configurationChanged = output<IpaConfig>();
+  readonly isValid = output<boolean>();
 
-  form = this.fb.group({
-    target_server: [null, Validators.required],
-    hostname: [null, Validators.required],
-    domain: [null, Validators.required],
-    basedn: [null, Validators.required],
+  protected readonly form = this.fb.group({
+    target_server: [null as string, Validators.required],
+    hostname: [null as string, Validators.required],
+    domain: [null as string, Validators.required],
+    basedn: [null as string, Validators.required],
     validate_certificates: [false, Validators.required],
 
     use_default_smb_domain: [true],
@@ -66,13 +70,19 @@ export class IpaConfigComponent implements OnInit {
   constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
+    this.fillFormWithPreviousConfig();
     this.watchForFormChanges();
+  }
+
+  private fillFormWithPreviousConfig(): void {
+    this.form.patchValue(this.ipaConfig());
   }
 
   private watchForFormChanges(): void {
     this.form.valueChanges
       .pipe(untilDestroyed(this))
       .subscribe(() => {
+        this.isValid.emit(this.form.valid);
         this.configurationChanged.emit(this.buildIpaConfig());
       });
   }

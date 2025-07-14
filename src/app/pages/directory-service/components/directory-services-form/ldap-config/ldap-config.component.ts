@@ -3,6 +3,7 @@ import {
   Component,
   output,
   OnInit,
+  input,
 } from '@angular/core';
 import {
   FormBuilder,
@@ -24,12 +25,14 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
+import { hasDeepNonNullValue } from 'app/pages/directory-service/components/directory-services-form/utils';
 
 @UntilDestroy()
 @Component({
   selector: 'ix-ldap-config',
   templateUrl: './ldap-config.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxFieldsetComponent,
@@ -42,6 +45,7 @@ import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-te
   ],
 })
 export class LdapConfigComponent implements OnInit {
+  readonly ldapConfig = input.required<LdapConfig | null>();
   readonly configurationChanged = output<LdapConfig>();
   readonly isValid = output<boolean>();
 
@@ -102,7 +106,17 @@ export class LdapConfigComponent implements OnInit {
   constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
+    this.fillFormWithExistingConfig();
     this.watchForFormChanges();
+  }
+
+  private fillFormWithExistingConfig(): void {
+    this.form.patchValue({
+      ...this.ldapConfig(),
+      use_standard_attribute_maps: !hasDeepNonNullValue(this.ldapConfig().attribute_maps),
+      use_standard_search_bases: !hasDeepNonNullValue(this.ldapConfig().search_bases),
+      use_standard_auxiliary_parameters: !hasDeepNonNullValue(this.ldapConfig().auxiliary_parameters),
+    });
   }
 
   private watchForFormChanges(): void {

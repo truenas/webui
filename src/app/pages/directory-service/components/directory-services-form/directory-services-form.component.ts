@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  computed,
   OnInit,
   signal,
 } from '@angular/core';
@@ -19,7 +20,12 @@ import {
   DirectoryServiceType,
 } from 'app/enums/directory-services.enum';
 import { Role } from 'app/enums/role.enum';
+import { ActiveDirectoryConfig } from 'app/interfaces/active-directory-config.interface';
+import { DirectoryServiceCredential } from 'app/interfaces/directoryservice-credentials.interface';
+import { DirectoryServicesConfig } from 'app/interfaces/directoryservices-config.interface';
 import { DirectoryServicesUpdate } from 'app/interfaces/directoryservices-update.interface';
+import { IpaConfig } from 'app/interfaces/ipa-config.interface';
+import { LdapConfig } from 'app/interfaces/ldap-config.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -41,6 +47,7 @@ import { LdapConfigComponent } from './ldap-config/ldap-config.component';
   templateUrl: './directory-services-form.component.html',
   styleUrls: ['./directory-services-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
@@ -59,26 +66,43 @@ import { LdapConfigComponent } from './ldap-config/ldap-config.component';
     IpaConfigComponent,
   ],
 })
-export class DirectoryServicesConfigFormComponent implements OnInit {
+export class DirectoryServicesFormComponent implements OnInit {
+  protected readonly previousConfig = signal<DirectoryServicesConfig | null>(null);
   protected readonly isLoading = signal(false);
   protected readonly requiredRoles = [Role.DirectoryServiceWrite];
 
-  protected readonly isCredentialValid = signal(false);
+  protected readonly isActiveDirectoryValid = signal(true);
+  protected readonly isLdapValid = signal(true);
+  protected readonly isIpaValid = signal(true);
+
+  protected readonly isCredentialValid = signal(true);
+  protected credentialData: DirectoryServiceCredential | null = null;
   protected readonly DirectoryServiceType = DirectoryServiceType;
 
-  protected form = this.fb.group({
-    // Basic configuration - DirectoryServicesConfigResponse non-nullable fields
-    configuration_type: [null, Validators.required], // user selects AD, LDAP, or IPA
-    enable: [false, Validators.required], // boolean - non-nullable
-    enable_account_cache: [true, Validators.required], // boolean - non-nullable
-    enable_dns_updates: [false, Validators.required], // boolean - non-nullable
-    timeout: [30, [Validators.required, Validators.min(1), Validators.max(40)]], // max 40 seconds
-    kerberos_realm: [null], // nullable
+  protected readonly isFormValid = computed(() => {
+    return this.isActiveDirectoryValid()
+      && this.isLdapValid()
+      && this.isIpaValid()
+      && this.isCredentialValid()
+      && this.form.valid;
   });
 
-  // Store refined sub-component data
-  protected credentialData: DirectoryServicesUpdate['credential'] = null;
+  protected readonly form = this.fb.group({
+    service_type: [null as DirectoryServiceType, Validators.required],
+    enable: [false, Validators.required],
+    enable_account_cache: [true, Validators.required],
+    enable_dns_updates: [false, Validators.required],
+    timeout: [30, [Validators.required, Validators.min(1), Validators.max(40)]],
+    kerberos_realm: [null],
+  });
+
   protected configurationData: DirectoryServicesUpdate['configuration'] = null;
+  protected readonly activeDirectoryConfig = computed(
+    () => this.previousConfig().configuration as ActiveDirectoryConfig,
+  );
+
+  protected readonly ldapConfig = computed(() => this.previousConfig().configuration as LdapConfig);
+  protected readonly ipaConfig = computed(() => this.previousConfig().configuration as IpaConfig);
 
   protected configurationTypeOptions$: Observable<Option[]> = of([
     { label: 'Active Directory', value: DirectoryServiceType.ActiveDirectory },
@@ -91,18 +115,26 @@ export class DirectoryServicesConfigFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
-    public slideInRef: SlideInRef<DirectoryServicesConfigFormComponent | undefined, boolean>,
+    public slideInRef: SlideInRef<DirectoryServicesConfig | undefined, boolean>,
   ) {
+    const data = this.slideInRef.getData();
+    if (data) {
+      this.previousConfig.set(data);
+    }
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
   }
 
   ngOnInit(): void {
+    this.fillFormWithPreviousConfig();
     this.setupFormWatchers();
   }
 
-  // Handle sub-component refined data changes
+  private fillFormWithPreviousConfig(): void {
+    this.form.patchValue(this.previousConfig());
+  }
+
   onCredentialDataChanged(credentialData: DirectoryServicesUpdate['credential']): void {
     this.credentialData = credentialData;
     this.cdr.markForCheck();
@@ -114,11 +146,9 @@ export class DirectoryServicesConfigFormComponent implements OnInit {
   }
 
   onKerberosRealmSuggested(suggestedRealm: string | null): void {
-    // Auto-populate Kerberos realm if it's currently empty
     if (suggestedRealm && !this.form.controls.kerberos_realm.value) {
       this.form.controls.kerberos_realm.setValue(suggestedRealm);
     } else if (!suggestedRealm) {
-      // Clear realm if domain is cleared
       this.form.controls.kerberos_realm.setValue(null);
     }
     this.cdr.markForCheck();
@@ -148,11 +178,9 @@ export class DirectoryServicesConfigFormComponent implements OnInit {
   }
 
   private setupFormWatchers(): void {
-    // Watch configuration type changes to clear form data when switching
-    this.form.controls.configuration_type.valueChanges.pipe(
+    this.form.controls.service_type.valueChanges.pipe(
       untilDestroyed(this),
     ).subscribe(() => {
-      // Clear sub-component data when configuration type changes
       this.credentialData = null;
       this.configurationData = null;
       this.cdr.markForCheck();
@@ -161,7 +189,7 @@ export class DirectoryServicesConfigFormComponent implements OnInit {
 
   private transformFormDataToApiPayload(formValue: typeof this.form.value): DirectoryServicesUpdate {
     const payload: DirectoryServicesUpdate = {
-      service_type: this.mapConfigurationTypeToServiceType(formValue.configuration_type || ''),
+      service_type: this.mapConfigurationTypeToServiceType(formValue.service_type || ''),
       enable: formValue.enable ?? false,
       enable_account_cache: formValue.enable_account_cache ?? true,
       enable_dns_updates: formValue.enable_dns_updates ?? false,
@@ -172,12 +200,11 @@ export class DirectoryServicesConfigFormComponent implements OnInit {
       configuration: null,
     };
 
-    // Use refined data from sub-components
     if (this.credentialData) {
       payload.credential = this.credentialData;
     }
 
-    if (formValue.configuration_type && formValue.enable && this.configurationData) {
+    if (formValue.service_type && formValue.enable && this.configurationData) {
       payload.configuration = this.configurationData;
     }
 
@@ -193,8 +220,11 @@ export class DirectoryServicesConfigFormComponent implements OnInit {
     }
   }
 
-  // Getter methods for template conditionals
   get selectedConfigurationType(): DirectoryServiceType | null {
-    return this.form.controls.configuration_type.value;
+    return this.form.controls.service_type.value;
+  }
+
+  protected getCredentialPrevious(): DirectoryServiceCredential {
+    return this.previousConfig().credential;
   }
 }

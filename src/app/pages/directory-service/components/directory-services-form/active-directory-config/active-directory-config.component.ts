@@ -5,6 +5,7 @@ import {
   OnInit,
   signal,
   effect,
+  input,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
@@ -12,9 +13,9 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { startWith } from 'rxjs';
+import { map } from 'rxjs';
 import { ActiveDirectoryConfig, PrimaryDomainIdmap, DomainIdmap } from 'app/interfaces/active-directory-config.interface';
 import { DirectoryServicesUpdate } from 'app/interfaces/directoryservices-update.interface';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -28,6 +29,7 @@ import { TrustedDomainsConfigComponent } from 'app/pages/directory-service/compo
   selector: 'ix-active-directory-config',
   templateUrl: './active-directory-config.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxFieldsetComponent,
@@ -39,34 +41,31 @@ import { TrustedDomainsConfigComponent } from 'app/pages/directory-service/compo
   ],
 })
 export class ActiveDirectoryConfigComponent implements OnInit {
+  readonly activeDirectoryConfig = input.required<ActiveDirectoryConfig | null>();
+  readonly isValid = output<boolean>();
+
   readonly configurationChanged = output<DirectoryServicesUpdate['configuration']>();
   readonly kerberosRealmSuggested = output<string | null>();
 
   protected readonly primaryDomainIdmap = signal<PrimaryDomainIdmap>(null);
-  protected readonly isIdmapValid = signal(false);
-
-  protected readonly isTrustedDomainsValid = signal(false);
+  protected readonly isIdmapValid = signal(true);
+  protected readonly isTrustedDomainsValid = signal(true);
 
   protected readonly form = this.fb.group({
-    hostname: [null, Validators.required],
-    domain: [null, [Validators.required]],
-    site: [null],
-    computer_account_ou: [null],
+    hostname: [null as string, Validators.required],
+    domain: [null as string, [Validators.required]],
+    site: [null as string],
+    computer_account_ou: [null as string],
 
-    use_default_domain: [false, Validators.required],
-    enable_trusted_domains: [false, Validators.required],
-    use_default_idmap: [true],
+    use_default_domain: [false],
+    enable_trusted_domains: [false],
 
     trusted_domains: [[] as DomainIdmap[]],
   });
 
-  protected readonly useDefaultIdmap = toSignal(
-    this.form.controls.use_default_idmap.valueChanges.pipe(startWith(true)),
-  );
+  private readonly formValid = toSignal(this.form.valueChanges.pipe(map(() => this.form.valid)));
 
-  protected readonly enableTrustedDomains = toSignal<boolean>(
-    this.form.controls.enable_trusted_domains.valueChanges.pipe(startWith(false)),
-  );
+  protected readonly useDefaultIdmap = signal(true);
 
   constructor(
     private fb: FormBuilder,
@@ -75,22 +74,40 @@ export class ActiveDirectoryConfigComponent implements OnInit {
       if (this.useDefaultIdmap()) {
         this.primaryDomainIdmap.set(null);
       }
+
+      const formValid = this.formValid();
+      const isIdmapValid = this.isIdmapValid();
+      const isTrustedDomainsValid = this.isTrustedDomainsValid();
+      this.isValid.emit(formValid && isIdmapValid && isTrustedDomainsValid);
+      this.configurationChanged.emit(this.buildActiveDirectoryConfig());
     });
   }
 
   ngOnInit(): void {
-    this.watchForAdConfigChanges();
+    this.updateFormWithExistingConfig();
   }
 
-  private watchForAdConfigChanges(): void {
-    this.form.valueChanges
-      .pipe(untilDestroyed(this))
-      .subscribe(() => {
-        this.configurationChanged.emit(this.buildActiveDirectoryConfig());
-      });
+  private updateFormWithExistingConfig(): void {
+    this.form.patchValue({
+      ...this.activeDirectoryConfig(),
+    });
   }
 
-  onTrustedDomainsChanged(trustedDomains: DomainIdmap[]): void {
+  protected primaryDomainIdmapUpdated(
+    [useDefaultIdmap, primaryDomainIdmap]: [useDefaultIdmap: boolean, primaryDomainIdmap: PrimaryDomainIdmap],
+  ): void {
+    this.useDefaultIdmap.set(useDefaultIdmap);
+    if (useDefaultIdmap) {
+      this.primaryDomainIdmap.set(null);
+    } else {
+      this.primaryDomainIdmap.set(primaryDomainIdmap);
+    }
+  }
+
+  protected onTrustedDomainsChanged(
+    [enableTrustedDomains, trustedDomains]: [enableTrustedDomains: boolean, trustedDomains: DomainIdmap[]],
+  ): void {
+    this.form.controls.enable_trusted_domains.setValue(enableTrustedDomains);
     this.form.controls.trusted_domains.setValue(trustedDomains);
   }
 

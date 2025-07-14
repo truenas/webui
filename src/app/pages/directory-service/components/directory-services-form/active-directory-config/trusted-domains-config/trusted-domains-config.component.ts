@@ -30,6 +30,7 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
   selector: 'ix-trusted-domains-config',
   templateUrl: './trusted-domains-config.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxFieldsetComponent,
@@ -42,13 +43,15 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
   ],
 })
 export class TrustedDomainsConfigComponent implements OnInit {
+  readonly enableTrustedDomains = input.required<boolean>();
   readonly trustedDomains = input<DomainIdmap[]>([]);
-  readonly trustedDomainsChanged = output<DomainIdmap[]>();
+  readonly trustedDomainsChanged = output<[enableTrustedDomains: boolean, trustedDomains: DomainIdmap[]]>();
   readonly isValid = output<boolean>();
 
   protected readonly IdmapBackend = IdmapBackend;
 
   protected readonly form = this.fb.group({
+    enable_trusted_domains: [false],
     trustedDomains: this.fb.array<FormGroup<Record<string, AbstractControl>>>([]),
   });
 
@@ -75,6 +78,7 @@ export class TrustedDomainsConfigComponent implements OnInit {
   }
 
   private initializeFormOnEdit(): void {
+    this.form.controls.enable_trusted_domains.setValue(this.enableTrustedDomains());
     const initialDomains = this.trustedDomains();
     if (initialDomains?.length > 0) {
       initialDomains.forEach((domain) => this.addTrustedDomain(domain));
@@ -85,7 +89,10 @@ export class TrustedDomainsConfigComponent implements OnInit {
     this.form.valueChanges
       .pipe(untilDestroyed(this))
       .subscribe(() => {
-        this.trustedDomainsChanged.emit(this.form.controls.trustedDomains.value as unknown as DomainIdmap[]);
+        this.trustedDomainsChanged.emit([
+          this.form.controls.enable_trusted_domains.value,
+          this.form.controls.trustedDomains.value as unknown as DomainIdmap[],
+        ]);
         this.isValid.emit(this.form.valid);
       });
   }

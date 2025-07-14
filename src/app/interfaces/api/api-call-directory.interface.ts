@@ -86,7 +86,7 @@ import {
   Dataset, DatasetCreate, DatasetDetails, DatasetUpdate, ExtraDatasetQueryOptions,
 } from 'app/interfaces/dataset.interface';
 import { Device } from 'app/interfaces/device.interface';
-import { DirectoryServicesConfigResponse } from 'app/interfaces/directoryservices-config.interface';
+import { DirectoryServicesConfig } from 'app/interfaces/directoryservices-config.interface';
 import { DirectoryServicesLeaveParams, DirectoryServicesLeaveResponse } from 'app/interfaces/directoryservices-leave.interface';
 import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
 import { DirectoryServicesUpdate, DirectoryServicesUpdateResponse } from 'app/interfaces/directoryservices-update.interface';
@@ -455,7 +455,7 @@ export interface ApiCallDirectory {
 
   // Directory Services
   'directoryservices.status': { params: void; response: DirectoryServicesStatus };
-  'directoryservices.config': { params: void; response: DirectoryServicesConfigResponse };
+  'directoryservices.config': { params: void; response: DirectoryServicesConfig };
   'directoryservices.update': { params: DirectoryServicesUpdate; response: DirectoryServicesUpdateResponse };
   'directoryservices.leave': { params: [DirectoryServicesLeaveParams]; response: DirectoryServicesLeaveResponse };
 
