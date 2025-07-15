@@ -27,10 +27,10 @@ describe('InstanceListComponent', () => {
       mockProvider(VirtualizationInstancesStore, {
         initialize: jest.fn(),
         instances: jest.fn(() => [mockInstance]),
+        metrics: jest.fn(() => ({})),
         isLoading: jest.fn(() => false),
         selectedInstance: jest.fn(() => mockInstance),
         selectInstance: jest.fn(),
-        getMetricsForInstance: jest.fn(),
       }),
       mockProvider(Router, {
         events: of(),

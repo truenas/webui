@@ -35,16 +35,12 @@ const instance = {
 const metrics: VirtualizationInstanceMetrics = {
   cpu: {
     cpu_user_percentage: 20,
-    cpu_system_percentage: 0,
   },
   mem_usage: {
     mem_usage_ram_mib: 512,
-    mem_usage_swap_mib: 0,
   },
   io_full_pressure: {
     io_full_pressure_full_60_percentage: 10,
-    io_full_pressure_full_10_percentage: 0,
-    io_full_pressure_full_300_percentage: 0,
   },
 };
 

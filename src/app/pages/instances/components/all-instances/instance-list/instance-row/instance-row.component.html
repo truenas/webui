@@ -34,7 +34,7 @@
   }
 </div>
 
-<div class="cell" [matTooltip]="'Memory usage' | translate">
+<div class="cell" [matTooltip]="'Memory Usage' | translate">
   @if (hasMetrics()) {
     <span>{{ metrics()?.mem_usage.mem_usage_ram_mib.toFixed(0) }} MiB</span>
   } @else {
