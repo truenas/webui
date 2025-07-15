@@ -43,6 +43,8 @@
   "OpenStack Swift (OVH, Oracle, Rackspace, etc)": "",
   "Other Profiles": "",
   "Power Up your TrueNAS Experience! Link your system with TrueNAS Connect now for additional security, alerting, and other features.": "",
+  "Rate Limit": "",
+  "Rate limit for the backup process in KiB/s. Leave empty for no rate limit.": "",
   "Registry Mirrors": "",
   "Retry Connection": "",
   "Retry Error": "",

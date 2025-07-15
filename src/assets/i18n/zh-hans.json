@@ -213,6 +213,8 @@
   "Private Datasets Share": "",
   "Product ID": "",
   "Public SSH Key": "",
+  "Rate Limit": "",
+  "Rate limit for the backup process in KiB/s. Leave empty for no rate limit.": "",
   "Raw File": "",
   "Raw Filesize": "",
   "Read only client that supports directory listings from popular web servers like Apache and Nginx.": "",
