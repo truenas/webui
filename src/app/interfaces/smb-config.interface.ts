@@ -25,4 +25,4 @@ export interface SmbConfig {
 
 export type SmbConfigUpdate = {
   multichannel?: boolean;
-} & Omit<SmbConfig, 'cifs_SID' | 'id' | 'next_rid'>;
+} & Partial<Omit<SmbConfig, 'cifs_SID' | 'id' | 'next_rid'>>;

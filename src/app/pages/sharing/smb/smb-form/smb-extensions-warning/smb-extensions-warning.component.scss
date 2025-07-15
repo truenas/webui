@@ -1,0 +1,19 @@
+:host {
+  display: flex;
+  font-size: 13px;
+  gap: 8px;
+}
+
+ix-icon {
+  margin-top: 9px;
+}
+
+.warning-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.enable-button {
+  align-self: flex-start;
+}

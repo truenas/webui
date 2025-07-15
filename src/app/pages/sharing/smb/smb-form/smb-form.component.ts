@@ -27,6 +27,7 @@ import { mapToOptionsWithHoverTooltips } from 'app/helpers/options.helper';
 import { helptextSharingSmb } from 'app/helptext/sharing';
 import { DatasetCreate } from 'app/interfaces/dataset.interface';
 import { SelectOption } from 'app/interfaces/option.interface';
+import { SmbConfig } from 'app/interfaces/smb-config.interface';
 import {
   externalSmbSharePath,
   smbSharePurposeTooltips, SmbSharePurpose, smbSharePurposeLabels, SmbShare,
@@ -55,11 +56,13 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { RestartSmbDialog } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
+import { SmbExtensionsWarningComponent } from 'app/pages/sharing/smb/smb-form/smb-extensions-warning/smb-extensions-warning.component';
 import { presetEnabledFields } from 'app/pages/sharing/smb/smb-form/smb-form-presets';
 import { SmbUsersWarningComponent } from 'app/pages/sharing/smb/smb-form/smb-users-warning/smb-users-warning.component';
 import { SmbValidationService } from 'app/pages/sharing/smb/smb-form/smb-validator.service';
 import { getRootDatasetsValidator } from 'app/pages/sharing/utils/root-datasets-validator';
 import { DatasetService } from 'app/services/dataset/dataset.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { UserService } from 'app/services/user.service';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
@@ -91,6 +94,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     TranslateModule,
     WarningComponent,
     SmbUsersWarningComponent,
+    SmbExtensionsWarningComponent,
   ],
 })
 export class SmbFormComponent implements OnInit, AfterViewInit {
@@ -99,6 +103,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
   protected isLoading = signal(false);
   protected showLegacyWarning = signal(false);
+  protected showExtensionsWarning = signal(false);
   protected legacyWarningMessage = this.translate.instant(
     'For the best experience, we recommend choosing a modern SMB share purpose instead of the legacy option.',
   );
@@ -110,7 +115,9 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   private namesInUse: string[] = [];
   protected readonly helptextSharingSmb = helptextSharingSmb;
   protected readonly requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
+
   private wasStripAclWarningShown = false;
+  private smbConfig = signal<SmbConfig | null>(null);
 
   protected groupProvider: ChipsProvider = (query) => {
     return this.userService.groupQueryDsCache(query).pipe(
@@ -265,6 +272,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     private router: Router,
     private userService: UserService,
     protected loader: LoaderService,
+    private errorHandler: ErrorHandlerService,
     private formErrorHandler: FormErrorHandlerService,
     private filesystemService: FilesystemService,
     private snackbar: SnackbarService,
@@ -300,6 +308,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.setupPurposeControl();
+    this.loadSmbConfig();
 
     if (this.defaultSmbShare) {
       this.form.patchValue(this.defaultSmbShare);
@@ -388,6 +397,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     this.form.controls.purpose.valueChanges.pipe(untilDestroyed(this))
       .subscribe((value) => {
         this.showLegacyWarning.set(value === SmbSharePurpose.LegacyShare);
+        this.updateExtensionsWarning();
 
         this.clearPresets();
 
@@ -699,5 +709,32 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     }
 
     return options;
+  }
+
+  private updateExtensionsWarning(): void {
+    const shouldShow = !this.smbConfig().aapl_extensions
+      && this.form.controls.purpose.value === SmbSharePurpose.TimeMachineShare;
+
+    this.showExtensionsWarning.set(shouldShow);
+  }
+
+  private loadSmbConfig(): void {
+    this.api.call('smb.config')
+      .pipe(
+        this.errorHandler.withErrorHandler(),
+        untilDestroyed(this),
+      )
+      .subscribe((config) => {
+        this.smbConfig.set(config);
+      });
+  }
+
+  protected extensionsEnabled(): void {
+    this.smbConfig.set({
+      ...this.smbConfig(),
+      aapl_extensions: true,
+    });
+
+    this.updateExtensionsWarning();
   }
 }

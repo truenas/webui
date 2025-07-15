@@ -42,6 +42,12 @@
           <ix-warning [message]="legacyWarningMessage"></ix-warning>
         }
 
+        @if (showExtensionsWarning()) {
+          <ix-smb-extensions-warning
+            (extensionsEnabled)="extensionsEnabled()"
+          ></ix-smb-extensions-warning>
+        }
+
         @if (form.controls.remote_path.enabled) {
           <ix-chips
             formControlName="remote_path"

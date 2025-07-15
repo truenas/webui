@@ -1,18 +1,21 @@
+import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component,
-  computed,
+  ChangeDetectionStrategy, Component, computed, input, OnChanges,
 } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { UntilDestroy } from '@ngneat/until-destroy';
-import { Store } from '@ngrx/store';
-import { TranslateModule } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { filter, of, switchMap } from 'rxjs';
+import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
+import { UpdateProfileChoices } from 'app/interfaces/system-update.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { LoaderService } from 'app/modules/loader/loader.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { AppState } from 'app/store';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
+import { ApiService } from 'app/modules/websocket/api.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -26,75 +29,100 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     TestDirective,
     MatButtonModule,
     TranslateModule,
+    AsyncPipe,
   ],
 })
-export class UpdateProfileCard {
-  protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
 
-  protected updateProfileControl = new FormControl('general');
+export class UpdateProfileCard implements OnChanges {
+  readonly currentProfileId = input.required<string>();
+  readonly profileChoices = input.required<UpdateProfileChoices>();
 
-  readonly enterpriseUpdateProfiles = [
-    {
-      name: 'General',
-      note: 'not recommended',
-      description: 'Field tested software with mature features. Few issues are expected.',
-      id: 'general',
-    },
-    {
-      name: 'Conservative',
-      note: 'Default',
-      description: 'Mature software with well documented limitations. Software updates are infrequent.',
-      id: 'conservative',
-    },
-    {
-      name: 'Mission Critical',
-      description: 'Mature software that enables 24 x 7 operations with high availability for a very clearly defined use case. Software updates are very infrequent and based on need.',
-      id: 'mission_critical',
-    },
-  ];
+  protected updateProfileControl = new FormControl('');
 
-  readonly communityEditionUpdateProfiles = [
-    {
-      name: 'Developer',
-      description: 'Latest software with new features and bugs alike. There is an opportunity to contribute directly to the development process.',
-      id: 'developer',
-    },
-    {
-      name: 'Tester',
-      description: 'New software with recent features. Some bugs are expected and there is a willingness to provide bug reports and feedback to the developers.',
-      id: 'tester',
-    },
-    {
-      name: 'Early Adopter',
-      description: 'Released software with new features. Data is protected, but some issues may need workarounds or patience.',
-      id: 'early_adopter',
-    },
-    {
-      name: 'General',
-      note: 'default',
-      description: 'Field tested software with mature features. Few issues are expected.',
-      id: 'general',
-    },
-  ];
-
-  profiles = computed(() => {
-    if (this.isEnterprise()) {
-      return this.enterpriseUpdateProfiles;
-    }
-
-    return this.communityEditionUpdateProfiles;
+  protected availableProfiles = computed(() => {
+    const choices = this.profileChoices();
+    return Object.entries(choices)
+      .filter(([_, profile]) => profile.available)
+      .map(([id, profile]) => ({
+        ...profile,
+        id,
+      }));
   });
 
-  profileOptions = computed(() => {
+  /**
+   * Attempt to get label.
+   * It may be absent in some situations.
+   */
+  protected currentProfileLabel = computed(() => {
+    const currentProfile = Object.entries(this.profileChoices())
+      .find(([id]) => id === this.currentProfileId());
+
+    return currentProfile?.[1]?.name || this.currentProfileId();
+  });
+
+  protected isProfileMissingFromOptions = computed(() => {
+    if (!this.currentProfileId()) {
+      return false;
+    }
+
+    return !this.availableProfiles().some((profile) => profile.id === this.currentProfileId());
+  });
+
+  protected notAvailableProfiles = computed(() => {
+    const choices = this.profileChoices();
+    return Object.entries(choices)
+      .filter(([_, profile]) => !profile.available)
+      .map(([id, profile]) => ({
+        ...profile,
+        id,
+      }));
+  });
+
+  protected profileOptions = computed(() => {
     return of(
-      this.profiles().map((profile) => ({
-        label: profile.name,
-        value: profile.id,
-      })),
+      this.availableProfiles()
+        .map((profile) => ({
+          label: profile.name,
+          value: profile.id,
+        })),
     );
   });
 
   constructor(
-    private store$: Store<AppState>,
+    private api: ApiService,
+    private snackbar: SnackbarService,
+    private dialogService: DialogService,
+    private translate: TranslateService,
+    private loader: LoaderService,
+    private errorHandler: ErrorHandlerService,
   ) { }
+
+  ngOnChanges(changes: IxSimpleChanges<UpdateProfileCard>): void {
+    if ('currentProfileId' in changes) {
+      this.updateProfileControl.patchValue(this.currentProfileId());
+    }
+  }
+
+  applyProfile(): void {
+    const selectedProfile = this.availableProfiles().find((profile) => profile.id === this.updateProfileControl.value);
+
+    this.dialogService.confirm({
+      message: this.translate.instant('Are you sure you want to switch to <b>{profile}</b> update profile?', { profile: selectedProfile?.name }),
+      hideCheckbox: true,
+      buttonText: this.translate.instant('Continue'),
+    }).pipe(
+      filter(Boolean),
+      switchMap(() => {
+        return this.api.call('update.update', [{ profile: this.updateProfileControl.value }]).pipe(
+          this.loader.withLoader(),
+          this.errorHandler.withErrorHandler(),
+        );
+      }),
+      untilDestroyed(this),
+    ).subscribe({
+      next: () => {
+        this.snackbar.success(this.translate.instant('Switched to {profile} update profile', { profile: selectedProfile?.name }));
+      },
+    });
+  }
 }
