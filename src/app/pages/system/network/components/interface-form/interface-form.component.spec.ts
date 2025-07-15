@@ -26,13 +26,16 @@ import {
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   DefaultGatewayDialog,
 } from 'app/pages/system/network/components/default-gateway-dialog/default-gateway-dialog.component';
 import { InterfaceFormComponent } from 'app/pages/system/network/components/interface-form/interface-form.component';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { NetworkService } from 'app/services/network.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { haInfoReducer } from 'app/store/ha-info/ha-info.reducer';
@@ -103,10 +106,13 @@ describe('InterfaceFormComponent', () => {
         }),
         mockCall('interface.create'),
         mockCall('interface.update'),
+        mockCall('interface.save_default_route'),
+        mockCall('network.configuration.update'),
         mockCall('network.general.summary', {
           default_routes: ['1.1.1.1'],
+          nameservers: ['8.8.8.8', '8.8.4.4'],
         } as NetworkSummary),
-        mockCall('interface.default_route_will_be_removed', true),
+        mockCall('interface.network_config_to_be_removed', { ipv4gateway: '192.168.1.1', nameserver1: '8.8.8.8', nameserver2: '8.8.4.4' }),
         mockCall('failover.licensed', false),
         mockCall('failover.node', 'A'),
       ]),
@@ -139,6 +145,13 @@ describe('InterfaceFormComponent', () => {
       }),
       mockProvider(SlideInRef, slideInRef),
       mockAuth(),
+      mockProvider(LoaderService, {
+        withLoader: () => (source$: unknown) => source$,
+      }),
+      mockProvider(ErrorHandlerService, {
+        withErrorHandler: () => (source$: unknown) => source$,
+      }),
+      mockProvider(SnackbarService),
     ],
   });
 
@@ -226,11 +239,14 @@ describe('InterfaceFormComponent', () => {
       const store$ = spectator.inject(Store);
       expect(store$.dispatch).toHaveBeenCalledWith(networkInterfacesChanged({ commit: false, checkIn: false }));
 
-      expect(api.call).toHaveBeenCalledWith('interface.default_route_will_be_removed');
+      expect(api.call).toHaveBeenCalledWith('interface.network_config_to_be_removed');
 
       expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
         DefaultGatewayDialog,
-        { width: '600px' },
+        {
+          width: '600px',
+          data: { ipv4gateway: '192.168.1.1', nameserver1: '8.8.8.8', nameserver2: '8.8.4.4' },
+        },
       );
       jest.spyOn(spectator.inject(MatDialog), 'closeAll');
     });
@@ -273,11 +289,14 @@ describe('InterfaceFormComponent', () => {
       expect(store$.dispatch).toHaveBeenCalledWith(networkInterfacesChanged({ commit: false, checkIn: false }));
 
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
-      expect(api.call).toHaveBeenCalledWith('interface.default_route_will_be_removed');
+      expect(api.call).toHaveBeenCalledWith('interface.network_config_to_be_removed');
 
       expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
         DefaultGatewayDialog,
-        { width: '600px' },
+        {
+          width: '600px',
+          data: { ipv4gateway: '192.168.1.1', nameserver1: '8.8.8.8', nameserver2: '8.8.4.4' },
+        },
       );
     });
 
@@ -310,11 +329,14 @@ describe('InterfaceFormComponent', () => {
         mtu: 1500,
         aliases: [],
       }]);
-      expect(api.call).toHaveBeenCalledWith('interface.default_route_will_be_removed');
+      expect(api.call).toHaveBeenCalledWith('interface.network_config_to_be_removed');
 
       expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
         DefaultGatewayDialog,
-        { width: '600px' },
+        {
+          width: '600px',
+          data: { ipv4gateway: '192.168.1.1', nameserver1: '8.8.8.8', nameserver2: '8.8.4.4' },
+        },
       );
     });
 
@@ -491,11 +513,14 @@ describe('InterfaceFormComponent', () => {
           failover_group: 1,
         }),
       ]);
-      expect(api.call).toHaveBeenCalledWith('interface.default_route_will_be_removed');
+      expect(api.call).toHaveBeenCalledWith('interface.network_config_to_be_removed');
 
       expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
         DefaultGatewayDialog,
-        { width: '600px' },
+        {
+          width: '600px',
+          data: { ipv4gateway: '192.168.1.1', nameserver1: '8.8.8.8', nameserver2: '8.8.4.4' },
+        },
       );
     });
 
@@ -525,11 +550,14 @@ describe('InterfaceFormComponent', () => {
           failover_virtual_aliases: [{ address: '192.168.1.3' }],
         }),
       ]);
-      expect(api.call).toHaveBeenCalledWith('interface.default_route_will_be_removed');
+      expect(api.call).toHaveBeenCalledWith('interface.network_config_to_be_removed');
 
       expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
         DefaultGatewayDialog,
-        { width: '600px' },
+        {
+          width: '600px',
+          data: { ipv4gateway: '192.168.1.1', nameserver1: '8.8.8.8', nameserver2: '8.8.4.4' },
+        },
       );
     });
   });

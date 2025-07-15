@@ -90,6 +90,12 @@
             [required]="true"
           ></ix-input>
           <ix-input
+            formControlName="rate_limit"
+            type="number"
+            [label]="helptext.rateLimit | translate"
+            [tooltip]="helptext.rateLimitTooltip | translate"
+          ></ix-input>
+          <ix-input
             formControlName="password"
             type="password"
             [label]="helptext.password | translate"
