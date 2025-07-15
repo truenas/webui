@@ -1,10 +1,10 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import {
   Component, ChangeDetectionStrategy,
-  signal, computed, inject,
+  computed, inject,
   output,
   input,
-  AfterViewInit,
+  signal,
 } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -12,18 +12,17 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { injectParams } from 'ngxtension/inject-params';
-import { distinctUntilChanged, map, tap } from 'rxjs';
+import { distinctUntilChanged, tap } from 'rxjs';
 import { instancesEmptyConfig, noSearchResultsConfig } from 'app/constants/empty-configs';
 import { WINDOW } from 'app/helpers/window.helper';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
-import { VirtualizationInstance, VirtualizationMetrics } from 'app/interfaces/virtualization.interface';
+import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
 import { LayoutService } from 'app/modules/layout/layout.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/modules/websocket/api.service';
 import { InstanceListBulkActionsComponent } from 'app/pages/instances/components/all-instances/instance-list/instance-list-bulk-actions/instance-list-bulk-actions.component';
 import { InstanceRowComponent } from 'app/pages/instances/components/all-instances/instance-list/instance-row/instance-row.component';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
@@ -46,7 +45,7 @@ import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtual
   ],
 })
 
-export class InstanceListComponent implements AfterViewInit {
+export class InstanceListComponent {
   readonly instanceId = injectParams('id');
   readonly isMobileView = input<boolean>();
   readonly toggleShowMobileDetails = output<boolean>();
@@ -58,7 +57,7 @@ export class InstanceListComponent implements AfterViewInit {
   protected readonly instances = this.store.instances;
   protected readonly isLoading = this.store.isLoading;
 
-  protected metrics = signal<VirtualizationMetrics>({});
+  protected readonly metrics = this.store.metrics;
 
   protected readonly selectedInstance = this.instancesStore.selectedInstance;
   get isAllSelected(): boolean {
@@ -96,7 +95,6 @@ export class InstanceListComponent implements AfterViewInit {
     private instancesStore: VirtualizationInstancesStore,
     private searchDirectives: UiSearchDirectivesService,
     private layoutService: LayoutService,
-    private api: ApiService,
   ) {
     toObservable(this.instanceId).pipe(
       distinctUntilChanged(),
@@ -108,15 +106,6 @@ export class InstanceListComponent implements AfterViewInit {
 
     setTimeout(() => {
       this.handlePendingGlobalSearchElement();
-    });
-  }
-
-  ngAfterViewInit(): void {
-    this.api.subscribe('virt.instance.metrics').pipe(
-      map((event) => event.fields),
-      untilDestroyed(this),
-    ).subscribe((metrics) => {
-      this.metrics.set(metrics);
     });
   }
 
