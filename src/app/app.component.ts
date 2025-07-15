@@ -37,10 +37,11 @@ export class AppComponent implements OnInit {
     private translate: TranslateService,
     @Inject(WINDOW) private window: Window,
     private slideIn: SlideIn,
-    private pingService: PingService, // Inject to ensure it's instantiated
+    private pingService: PingService,
   ) {
-    // Force PingService instantiation
-    this.pingService.constructor.name;
+    // Ensure PingService is instantiated so it can listen for WebSocket connections
+    // and automatically set up ping when connection is established
+    this.pingService.initializePingService();
     this.wsStatus.isAuthenticated$.pipe(untilDestroyed(this)).subscribe((isAuthenticated) => {
       if (!isAuthenticated && this.isAuthenticated) {
         this.logOutExpiredUser();

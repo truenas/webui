@@ -14,16 +14,26 @@ import { WebSocketStatusService } from 'app/services/websocket-status.service';
 export class PingService {
   private readonly pingTimeoutMillis = 20 * 1000;
   private pingSubscription: Subscription | null = null;
+  private isInitialized = false;
 
   constructor(
     private wsHandler: WebSocketHandlerService,
     private wsStatus: WebSocketStatusService,
   ) {
-    // Check current connection status immediately
-    if (this.wsStatus.isConnected) {
-      this.setupPing();
+    // Initialization will be called from AppComponent to ensure proper service instantiation
+  }
+
+  /**
+   * Initialize ping service to automatically setup ping when WebSocket connection is established.
+   * This ensures ping is sent every 20 seconds while connected, including on signin page.
+   */
+  public initializePingService(): void {
+    // Guard against multiple initialization calls
+    if (this.isInitialized) {
+      return;
     }
-    
+    this.isInitialized = true;
+
     // Automatically setup ping when connection is established
     this.wsStatus.isConnected$.pipe(
       distinctUntilChanged(),
@@ -36,6 +46,11 @@ export class PingService {
 
 
   private setupPing(): void {
+    // Guard against setting up ping if service is not initialized
+    if (!this.isInitialized) {
+      return;
+    }
+
     // Clean up existing ping subscription to prevent duplicates
     if (this.pingSubscription) {
       this.pingSubscription.unsubscribe();
