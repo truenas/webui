@@ -82,7 +82,6 @@ export class SessionTimeoutService {
 
   private expireSession(): void {
     this.authService.clearAuthToken();
-    this.wsStatus.setReconnectAllowed(false);
     this.router.navigate(['/signin']);
     this.dialogService.closeAllDialogs();
     this.snackbar.open(

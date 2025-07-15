@@ -31,14 +31,16 @@ export class AppComponent implements OnInit {
     private wsStatus: WebSocketStatusService,
     private detectBrowser: DetectBrowserService,
     private layoutService: LayoutService,
-    private pingService: PingService,
     private authService: AuthService,
     private dialog: DialogService,
     private snackbar: MatSnackBar,
     private translate: TranslateService,
     @Inject(WINDOW) private window: Window,
     private slideIn: SlideIn,
+    private pingService: PingService, // Inject to ensure it's instantiated
   ) {
+    // Force PingService instantiation
+    this.pingService.constructor.name;
     this.wsStatus.isAuthenticated$.pipe(untilDestroyed(this)).subscribe((isAuthenticated) => {
       if (!isAuthenticated && this.isAuthenticated) {
         this.logOutExpiredUser();
@@ -69,7 +71,6 @@ export class AppComponent implements OnInit {
         }
       }
     });
-    this.pingService.setupPing();
   }
 
   ngOnInit(): void {
