@@ -56,9 +56,15 @@ export class InstanceRowComponent {
   readonly instance = input.required<VirtualizationInstance>();
   readonly metrics = input<VirtualizationInstanceMetrics | undefined>();
   readonly selected = input<boolean>(false);
-  protected readonly isStopped = computed(() => this.instance().status === VirtualizationStatus.Stopped);
+  protected readonly isStopped = computed(() => this.instance()?.status === VirtualizationStatus.Stopped);
 
-  readonly hasMetrics = computed(() => this.instance().status === VirtualizationStatus.Running && !!this.metrics());
+  readonly hasMetrics = computed(() => {
+    const metrics = this.metrics();
+
+    return this.instance()?.status === VirtualizationStatus.Running
+      && metrics
+      && Object.keys(metrics).length > 0;
+  });
 
   readonly selectionChange = output();
 
