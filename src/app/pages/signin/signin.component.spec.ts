@@ -7,7 +7,6 @@ import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyri
 import {
   DisconnectedMessageComponent,
 } from 'app/pages/signin/disconnected-message/disconnected-message.component';
-import { ReconnectMessage } from 'app/pages/signin/reconnect-message/reconnect-message.component';
 import {
   SetAdminPasswordFormComponent,
 } from 'app/pages/signin/set-admin-password-form/set-admin-password-form.component';
@@ -40,7 +39,6 @@ describe('SigninComponent', () => {
         SetAdminPasswordFormComponent,
         TrueCommandStatusComponent,
         CopyrightLineComponent,
-        ReconnectMessage,
       ),
     ],
     componentProviders: [
@@ -96,13 +94,13 @@ describe('SigninComponent', () => {
       expect(spectator.query(DisconnectedMessageComponent)).toExist();
     });
 
-    it('shows ReconnectMessage when has established initial connection', () => {
+    it('shows DisconnectedMessageComponent when has established initial connection', () => {
       isConnected$.next(false);
       isReconnectAllowed$.next(true);
 
       spectator.detectChanges();
 
-      expect(spectator.query(ReconnectMessage)).toExist();
+      expect(spectator.query(DisconnectedMessageComponent)).toExist();
     });
   });
 
