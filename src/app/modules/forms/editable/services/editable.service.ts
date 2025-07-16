@@ -77,7 +77,7 @@ export class EditableService implements OnDestroy {
     if (event.key !== 'Escape' || !this.hasOpenEditables) return;
 
     // Defer the decision to end of event loop
-    setTimeout(() => {
+    requestAnimationFrame(() => {
       if (!event.defaultPrevented) {
         this.tryToCloseAll();
       }

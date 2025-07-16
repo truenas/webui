@@ -1,5 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { fakeAsync } from '@angular/core/testing';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { createHostFactory, SpectatorHost } from '@ngneat/spectator/jest';
 import { DetailsItemComponent } from 'app/modules/details-table/details-item/details-item.component';
@@ -68,9 +69,13 @@ describe('DetailsTableHarness', () => {
   });
 
   describe('setValues', () => {
-    it('attempts to edit all editable elements based on their keys', async () => {
+    it('attempts to edit all editable elements based on their keys', fakeAsync(async () => {
       await details.setValues({
         'Last Name': 'Gonzalez',
+      });
+
+      await new Promise((resolve) => {
+        requestAnimationFrame(resolve);
       });
 
       const values = await details.getValues();
@@ -78,7 +83,7 @@ describe('DetailsTableHarness', () => {
         'First Name': 'Manuel',
         'Last Name': 'Gonzalez',
       });
-    });
+    }));
   });
 
   describe('getItemByLabel', () => {
@@ -96,9 +101,13 @@ describe('DetailsTableHarness', () => {
   });
 
   describe('getHarnessForItem', () => {
-    it('returns harness found in specific details item', async () => {
+    it('returns harness found in specific details item', fakeAsync(async () => {
       const lastNameEditable = await details.getHarnessForItem('Last Name', EditableHarness);
       await lastNameEditable.setFirstControlValue('Gonzalez');
+
+      await new Promise((resolve) => {
+        requestAnimationFrame(resolve);
+      });
 
       await lastNameEditable.tryToClose();
 
@@ -106,7 +115,7 @@ describe('DetailsTableHarness', () => {
         'First Name': 'Manuel',
         'Last Name': 'Gonzalez',
       });
-    });
+    }));
   });
 
   describe('getHarnessForItemOrNull', () => {
