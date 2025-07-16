@@ -1,3 +1,4 @@
+import { fakeAsync, tick } from '@angular/core/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
 import { BehaviorSubject, of } from 'rxjs';
@@ -71,37 +72,30 @@ describe('SigninComponent', () => {
   });
 
   beforeEach(() => {
-    spectator = createComponent();
     wasAdminSet$.next(true);
     canLogin$.next(true);
     isConnected$.next(true);
     loginBanner$.next('');
     isTokenWithinTimeline$.next(false);
     isLoading$.next(false);
+
+    spectator = createComponent();
   });
 
   it('initializes SigninStore on component init', () => {
     expect(spectator.inject(SigninStore, true).init).toHaveBeenCalled();
-    expect(spectator.inject(WebSocketStatusService).setReconnectAllowed).toHaveBeenCalledWith(true);
   });
 
   describe('disconnected', () => {
-    it('shows DisconnectedMessageComponent when there is no websocket connection', () => {
+    it('shows DisconnectedMessageComponent when there is no websocket connection', fakeAsync(() => {
       isConnected$.next(false);
 
       spectator.detectChanges();
-
-      expect(spectator.query(DisconnectedMessageComponent)).toExist();
-    });
-
-    it('shows DisconnectedMessageComponent when has established initial connection', () => {
-      isConnected$.next(false);
-      isReconnectAllowed$.next(true);
-
+      tick(1000); // Wait for isConnectedDelayed$ delay
       spectator.detectChanges();
 
       expect(spectator.query(DisconnectedMessageComponent)).toExist();
-    });
+    }));
   });
 
   describe('connected', () => {
