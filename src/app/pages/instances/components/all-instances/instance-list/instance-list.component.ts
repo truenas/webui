@@ -1,9 +1,10 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import {
   Component, ChangeDetectionStrategy,
-  signal, computed, inject,
+  computed, inject,
   output,
   input,
+  signal,
 } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -53,8 +54,10 @@ export class InstanceListComponent {
   protected readonly window = inject<Window>(WINDOW);
   protected readonly selection = new SelectionModel<string>(true, []);
 
-  protected readonly instances = this.store.instances;
-  protected readonly isLoading = this.store.isLoading;
+  protected readonly instances = this.instancesStore.instances;
+  protected readonly isLoading = this.instancesStore.isLoading;
+
+  protected readonly metrics = this.instancesStore.metrics;
 
   protected readonly selectedInstance = this.instancesStore.selectedInstance;
   get isAllSelected(): boolean {
@@ -87,7 +90,6 @@ export class InstanceListComponent {
   });
 
   constructor(
-    private store: VirtualizationInstancesStore,
     private router: Router,
     private instancesStore: VirtualizationInstancesStore,
     private searchDirectives: UiSearchDirectivesService,

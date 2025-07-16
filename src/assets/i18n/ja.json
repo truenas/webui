@@ -764,6 +764,7 @@
   "Edit User Quota": "",
   "Edit VM": "VMの編集",
   "Edit VM Snapshot": "",
+  "Editing interface will result in default gateway being removed, which may result in TrueNAS being inaccessible. You can provide new default gateway and DNS information now:": "",
   "Element": "",
   "Elements": "",
   "Emergency": "",

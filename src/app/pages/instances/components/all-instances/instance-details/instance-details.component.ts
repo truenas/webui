@@ -16,7 +16,6 @@ import {
   InstanceGeneralInfoComponent,
 } from 'app/pages/instances/components/all-instances/instance-details/instance-general-info/instance-general-info.component';
 import { InstanceIdmapComponent } from 'app/pages/instances/components/all-instances/instance-details/instance-idmap/instance-idmap.component';
-import { InstanceMetricsComponent } from 'app/pages/instances/components/all-instances/instance-details/instance-metrics/instance-metrics.component';
 import { InstanceNicsComponent } from 'app/pages/instances/components/all-instances/instance-details/instance-nics/instance-nics.component';
 import {
   InstanceProxiesComponent,
@@ -36,7 +35,6 @@ import {
     InstanceProxiesComponent,
     InstanceDisksComponent,
     InstanceToolsComponent,
-    InstanceMetricsComponent,
     InstanceNicsComponent,
     UiSearchDirective,
     InstanceIdmapComponent,

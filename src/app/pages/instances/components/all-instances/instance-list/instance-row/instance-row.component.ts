@@ -13,7 +13,11 @@ import {
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { VirtualizationStatus, virtualizationTypeLabels } from 'app/enums/virtualization.enum';
-import { VirtualizationInstance, VirtualizationStopParams } from 'app/interfaces/virtualization.interface';
+import {
+  VirtualizationInstance,
+  VirtualizationStopParams,
+  VirtualizationInstanceMetrics,
+} from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
@@ -50,8 +54,17 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 export class InstanceRowComponent {
   protected readonly requiredRoles = [Role.VirtInstanceWrite];
   readonly instance = input.required<VirtualizationInstance>();
+  readonly metrics = input<VirtualizationInstanceMetrics | undefined>();
   readonly selected = input<boolean>(false);
-  protected readonly isStopped = computed(() => this.instance().status === VirtualizationStatus.Stopped);
+  protected readonly isStopped = computed(() => this.instance()?.status === VirtualizationStatus.Stopped);
+
+  readonly hasMetrics = computed(() => {
+    const metrics = this.metrics();
+
+    return this.instance()?.status === VirtualizationStatus.Running
+      && metrics
+      && Object.keys(metrics).length > 0;
+  });
 
   readonly selectionChange = output();
 

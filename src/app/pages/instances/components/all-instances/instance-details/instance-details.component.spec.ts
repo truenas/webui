@@ -20,9 +20,6 @@ import {
   InstanceIdmapComponent,
 } from 'app/pages/instances/components/all-instances/instance-details/instance-idmap/instance-idmap.component';
 import {
-  InstanceMetricsComponent,
-} from 'app/pages/instances/components/all-instances/instance-details/instance-metrics/instance-metrics.component';
-import {
   InstanceNicsComponent,
 } from 'app/pages/instances/components/all-instances/instance-details/instance-nics/instance-nics.component';
 import {
@@ -46,7 +43,6 @@ describe('InstanceDetailsComponent', () => {
         InstanceProxiesComponent,
         InstanceIdmapComponent,
         InstanceToolsComponent,
-        InstanceMetricsComponent,
       ),
     ],
   });
@@ -71,7 +67,6 @@ describe('InstanceDetailsComponent', () => {
       InstanceProxiesComponent,
       InstanceIdmapComponent,
       InstanceToolsComponent,
-      InstanceMetricsComponent,
     ];
 
     expectedComponents.forEach((component) => {
@@ -91,7 +86,6 @@ describe('InstanceDetailsComponent', () => {
       InstanceDisksComponent,
       InstanceNicsComponent,
       InstanceToolsComponent,
-      InstanceMetricsComponent,
     ];
 
     expectedComponents.forEach((component) => {
