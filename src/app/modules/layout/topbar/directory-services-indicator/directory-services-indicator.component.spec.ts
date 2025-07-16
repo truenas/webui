@@ -8,9 +8,9 @@ import { of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
-import { ApiEvent } from 'app/interfaces/api-message.interface';
-import { DirectoryServicesState } from 'app/interfaces/directory-services-state.interface';
+import { CollectionChangeType } from 'app/enums/api.enum';
+import { DirectoryServiceStatus, DirectoryServiceType } from 'app/enums/directory-services.enum';
+import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
 import {
   DirectoryServicesIndicatorComponent,
 } from 'app/modules/layout/topbar/directory-services-indicator/directory-services-indicator.component';
@@ -28,9 +28,10 @@ describe('DirectoryServicesIndicatorComponent', () => {
     providers: [
       mockAuth(),
       mockApi([
-        mockCall('directoryservices.get_state', {
-          activedirectory: DirectoryServiceState.Healthy,
-          ldap: DirectoryServiceState.Disabled,
+        mockCall('directoryservices.status', {
+          type: DirectoryServiceType.ActiveDirectory,
+          status: DirectoryServiceStatus.Healthy,
+          status_msg: 'Healthy',
         }),
       ]),
       mockProvider(MatDialog),
@@ -43,7 +44,7 @@ describe('DirectoryServicesIndicatorComponent', () => {
   });
 
   it('loads directory services state and shows an icon if one of the services is enabled', async () => {
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('directoryservices.get_state');
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('directoryservices.status');
 
     const iconButton = await loader.getHarness(MatButtonHarness);
     await iconButton.click();
@@ -69,11 +70,15 @@ describe('DirectoryServicesIndicatorComponent', () => {
 
     const websocketMock = spectator.inject(MockApiService);
     websocketMock.subscribe.mockImplementation(() => of({
+      id: '',
+      collection: 'directoryservices.status',
+      msg: CollectionChangeType.Changed,
       fields: {
-        activedirectory: DirectoryServiceState.Disabled,
-        ldap: DirectoryServiceState.Disabled,
-      },
-    } as ApiEvent<DirectoryServicesState>));
+        status: DirectoryServiceStatus.Disabled,
+        type: DirectoryServiceType.ActiveDirectory,
+        status_msg: 'Disabled',
+      } as DirectoryServicesStatus,
+    }));
     spectator.component.ngOnInit();
     spectator.detectChanges();
 

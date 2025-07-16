@@ -98,11 +98,11 @@ export class DirectoryServicesFormComponent implements OnInit {
 
   protected configurationData: DirectoryServicesUpdate['configuration'] = null;
   protected readonly activeDirectoryConfig = computed(
-    () => this.previousConfig().configuration as ActiveDirectoryConfig,
+    () => this.previousConfig()?.configuration as ActiveDirectoryConfig,
   );
 
-  protected readonly ldapConfig = computed(() => this.previousConfig().configuration as LdapConfig);
-  protected readonly ipaConfig = computed(() => this.previousConfig().configuration as IpaConfig);
+  protected readonly ldapConfig = computed(() => this.previousConfig()?.configuration as LdapConfig);
+  protected readonly ipaConfig = computed(() => this.previousConfig()?.configuration as IpaConfig);
 
   protected configurationTypeOptions$: Observable<Option[]> = of([
     { label: 'Active Directory', value: DirectoryServiceType.ActiveDirectory },
@@ -225,6 +225,6 @@ export class DirectoryServicesFormComponent implements OnInit {
   }
 
   protected getCredentialPrevious(): DirectoryServiceCredential {
-    return this.previousConfig().credential;
+    return this.previousConfig()?.credential;
   }
 }

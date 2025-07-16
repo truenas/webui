@@ -83,7 +83,7 @@ export class IdmapConfigComponent implements OnInit {
     this.fillFormWithIdmapConfig();
     this.form.value$.pipe(
       tap((value: PrimaryDomainIdmap & { use_default_idmap: boolean }) => {
-        this.isValid.emit(this.form.valid);
+        this.isValid.emit(this.form.controls.use_default_idmap.value || this.form.valid);
         this.idmapUpdated.emit([value.use_default_idmap, value as PrimaryDomainIdmap]);
       }),
       untilDestroyed(this),
@@ -92,9 +92,13 @@ export class IdmapConfigComponent implements OnInit {
 
   private fillFormWithIdmapConfig(): void {
     this.form.patchValue({
-      ...this.idmap(),
       use_default_idmap: this.idmap() == null,
     });
+    if (this.idmap()) {
+      this.form.patchValue({
+        ...this.idmap(),
+      });
+    }
   }
 
   private listenToTypeChanges(): void {

@@ -3,6 +3,7 @@ import { Alert } from 'app/interfaces/alert.interface';
 import { App, AppContainerLog, AppStats } from 'app/interfaces/app.interface';
 import { BootEnvironment } from 'app/interfaces/boot-environment.interface';
 import { ContainerImage } from 'app/interfaces/container-image.interface';
+import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
 import { Disk } from 'app/interfaces/disk.interface';
 import { DockerStatusData } from 'app/interfaces/docker-config.interface';
 import { FailoverDisabledReasonEvent } from 'app/interfaces/failover-disabled-reasons.interface';
@@ -50,4 +51,5 @@ export interface ApiEventDirectory {
   'vm.query': { response: VirtualMachine };
   'zfs.pool.scan': { response: PoolScan };
   'pool.snapshot.query': { response: ZfsSnapshot };
+  'directoryservices.status': { response: DirectoryServicesStatus };
 }

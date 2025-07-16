@@ -113,9 +113,9 @@ export class LdapConfigComponent implements OnInit {
   private fillFormWithExistingConfig(): void {
     this.form.patchValue({
       ...this.ldapConfig(),
-      use_standard_attribute_maps: !hasDeepNonNullValue(this.ldapConfig().attribute_maps),
-      use_standard_search_bases: !hasDeepNonNullValue(this.ldapConfig().search_bases),
-      use_standard_auxiliary_parameters: !hasDeepNonNullValue(this.ldapConfig().auxiliary_parameters),
+      use_standard_attribute_maps: !hasDeepNonNullValue(this.ldapConfig()?.attribute_maps),
+      use_standard_search_bases: !hasDeepNonNullValue(this.ldapConfig()?.search_bases),
+      use_standard_auxiliary_parameters: !hasDeepNonNullValue(this.ldapConfig()?.auxiliary_parameters),
     });
   }
 

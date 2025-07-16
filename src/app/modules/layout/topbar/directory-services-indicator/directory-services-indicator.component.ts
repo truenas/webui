@@ -6,8 +6,9 @@ import { MatDialog, MatDialogRef, MatDialogState } from '@angular/material/dialo
 import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { Subscription } from 'rxjs';
+import { filter, Subscription, switchMap } from 'rxjs';
 import { DirectoryServiceStatus } from 'app/enums/directory-services.enum';
+import { Role } from 'app/enums/role.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
@@ -71,11 +72,19 @@ export class DirectoryServicesIndicatorComponent implements OnInit, OnDestroy {
   }
 
   private loadDirectoryServicesStatus(): void {
-    // TODO: Sync endpoints
     this.api.call('directoryservices.status')
       .pipe(untilDestroyed(this))
       .subscribe((state) => {
         this.updateIconVisibility(state);
+      });
+    this.statusSubscription = this.auth.hasRole(Role.DirectoryServiceRead)
+      .pipe(
+        filter(Boolean),
+        switchMap(() => this.api.subscribe('directoryservices.status')),
+        untilDestroyed(this),
+      )
+      .subscribe((event) => {
+        this.updateIconVisibility(event.fields);
       });
   }
 

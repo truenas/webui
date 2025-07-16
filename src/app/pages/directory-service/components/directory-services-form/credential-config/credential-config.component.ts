@@ -14,12 +14,19 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import {
+  map,
   Observable, of, pairwise, startWith, switchMap,
 } from 'rxjs';
 import { DirectoryServiceCredentialType, DirectoryServiceType } from 'app/enums/directory-services.enum';
+import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import {
   adAndIpaSupportedCredentialTypes,
   DirectoryServiceCredential,
+  KerberosCredentialPrincipal,
+  KerberosCredentialUser,
+  LdapCredentialAnonymous,
+  LdapCredentialMutualTls,
+  LdapCredentialPlain,
   ldapSupportedCredentialTypes,
 } from 'app/interfaces/directoryservice-credentials.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -63,6 +70,10 @@ export class CredentialConfigComponent implements OnInit {
     this.form.controls.credential_type.valueChanges,
   );
 
+  protected readonly clientCertsOptions$ = this.api.call('directoryservices.certificate_choices').pipe(
+    choicesToOptions(),
+  );
+
   protected readonly credentialTypeOptions$: Observable<Option[]> = toObservable(this.serviceType).pipe(
     switchMap((serviceType) => {
       if (serviceType === DirectoryServiceType.Ldap) {
@@ -72,8 +83,11 @@ export class CredentialConfigComponent implements OnInit {
     }),
   );
 
-  protected kerberosPrincipals$: Observable<Option[]> = of([] as Option[]);
-  protected certificates$: Observable<Option[]> = of([] as Option[]);
+  protected kerberosPrincipals$: Observable<Option[]> = this.api.call(
+    'kerberos.keytab.kerberos_principal_choices',
+  ).pipe(
+    map((choices) => choices.map((choice) => ({ label: choice, value: choice } as Option))),
+  );
 
   constructor(
     private fb: FormBuilder,
@@ -82,19 +96,7 @@ export class CredentialConfigComponent implements OnInit {
 
   }
 
-  private fetchPrincipalChoices(): void {
-    this.api.call('kerberos.keytab.kerberos_principal_choices').pipe(
-      untilDestroyed(this),
-    ).subscribe({
-      next: (choices: string[]) => {
-        const options = choices.map((choice) => ({ label: choice, value: choice } as Option));
-        this.kerberosPrincipals$ = of(options);
-      },
-    });
-  }
-
   ngOnInit(): void {
-    this.fetchPrincipalChoices();
     this.initializeFormWithExistingData();
     this.buildCredentialsFromForm();
   }
@@ -107,11 +109,50 @@ export class CredentialConfigComponent implements OnInit {
         untilDestroyed(this),
       )
       .subscribe(([prev, current]) => {
-        if (prev.credential_type !== current.credential_type) {
+        if (prev?.credential_type !== current.credential_type) {
           this.updateFormValidators();
         }
         this.isValid.emit(this.form.valid);
-        this.credentialUpdated.emit(this.form.value as DirectoryServiceCredential);
+        if (current.credential_type === DirectoryServiceCredentialType.KerberosUser) {
+          const userCred: KerberosCredentialUser = {
+            credential_type: DirectoryServiceCredentialType.KerberosUser,
+            password: current.password,
+            username: current.username,
+          };
+          this.credentialUpdated.emit(userCred);
+        }
+
+        if (current.credential_type === DirectoryServiceCredentialType.KerberosPrincipal) {
+          const principalCred: KerberosCredentialPrincipal = {
+            credential_type: DirectoryServiceCredentialType.KerberosPrincipal,
+            principal: current.principal,
+          };
+          this.credentialUpdated.emit(principalCred);
+        }
+
+        if (current.credential_type === DirectoryServiceCredentialType.LdapAnonymous) {
+          const anonCred: LdapCredentialAnonymous = {
+            credential_type: DirectoryServiceCredentialType.LdapAnonymous,
+          };
+          this.credentialUpdated.emit(anonCred);
+        }
+
+        if (current.credential_type === DirectoryServiceCredentialType.LdapMtls) {
+          const ldapMtlsCred: LdapCredentialMutualTls = {
+            credential_type: DirectoryServiceCredentialType.LdapMtls,
+            client_certificate: current.client_certificate,
+          };
+          this.credentialUpdated.emit(ldapMtlsCred);
+        }
+
+        if (current.credential_type === DirectoryServiceCredentialType.LdapPlain) {
+          const ldapPlainCred: LdapCredentialPlain = {
+            credential_type: DirectoryServiceCredentialType.LdapPlain,
+            binddn: current.binddn,
+            bindpw: current.bindpw,
+          };
+          this.credentialUpdated.emit(ldapPlainCred);
+        }
       });
   }
 
