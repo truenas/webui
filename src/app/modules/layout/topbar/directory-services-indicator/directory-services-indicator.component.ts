@@ -89,7 +89,8 @@ export class DirectoryServicesIndicatorComponent implements OnInit, OnDestroy {
   }
 
   private updateIconVisibility(servicesState: DirectoryServicesStatus): void {
-    const anyServiceEnabled = servicesState.status !== DirectoryServiceStatus.Disabled;
+    const anyServiceEnabled = servicesState.status != null
+      && servicesState.status !== DirectoryServiceStatus.Disabled;
     this.isIconShown.set(anyServiceEnabled);
   }
 }
