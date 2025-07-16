@@ -458,6 +458,7 @@ export interface ApiCallDirectory {
   'directoryservices.config': { params: void; response: DirectoryServicesConfig };
   'directoryservices.update': { params: DirectoryServicesUpdate; response: DirectoryServicesUpdateResponse };
   'directoryservices.leave': { params: [DirectoryServicesLeaveParams]; response: DirectoryServicesLeaveResponse };
+  'directoryservices.certificate_choices': { params: void; response: Choices };
 
   // LDAP
   'ldap.config': { params: void; response: LdapConfig };

@@ -4,31 +4,26 @@
       formControlName="hostname"
       [label]="'Domain Controller Hostname/IP' | translate"
       [required]="true"
-      [tooltip]="'Hostname or IP address of the Active Directory domain controller (e.g., dc01.example.com or 192.168.1.10)' | translate"
     ></ix-input>
 
     <ix-input
       formControlName="domain"
       [label]="'Domain Name' | translate"
       [required]="true"
-      [tooltip]="'Active Directory domain name (e.g., example.com). Do NOT enter an IP address here.' | translate"
     ></ix-input>
 
     <ix-input
       formControlName="site"
       [label]="'Site Name' | translate"
-      [tooltip]="'Active Directory site name (optional)' | translate"
     ></ix-input>
 
     <ix-input
       formControlName="computer_account_ou"
       [label]="'Computer Account OU' | translate"
-      [tooltip]="'Organizational Unit for computer accounts. Use full DN format (e.g., OU=Computers,DC=example,DC=com) or simple path (e.g., Computers/TrueNAS)' | translate"
     ></ix-input>
     <ix-checkbox
       formControlName="use_default_domain"
       [label]="'Use Default Domain' | translate"
-      [tooltip]="'Use the default domain for user authentication' | translate"
     ></ix-checkbox>
   </ix-fieldset>
   
@@ -40,7 +35,7 @@
   ></ix-trusted-domains-config>
 
   <ix-idmap-config
-    [idmap]="activeDirectoryConfig().idmap"
+    [idmap]="activeDirectoryConfig()?.idmap"
     (idmapUpdated)="primaryDomainIdmapUpdated($event)"
     (isValid)="isIdmapValid.set($event)"
   ></ix-idmap-config>

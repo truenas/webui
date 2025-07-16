@@ -63,7 +63,12 @@ export class ActiveDirectoryConfigComponent implements OnInit {
     trusted_domains: [[] as DomainIdmap[]],
   });
 
-  private readonly formValid = toSignal(this.form.valueChanges.pipe(map(() => this.form.valid)));
+  private readonly formValid = toSignal(this.form.valueChanges.pipe(
+    map(() => {
+      this.configurationChanged.emit(this.buildActiveDirectoryConfig());
+      return this.form.valid;
+    }),
+  ));
 
   protected readonly useDefaultIdmap = signal(true);
 
@@ -75,10 +80,9 @@ export class ActiveDirectoryConfigComponent implements OnInit {
         this.primaryDomainIdmap.set(null);
       }
 
-      const formValid = this.formValid();
       const isIdmapValid = this.isIdmapValid();
       const isTrustedDomainsValid = this.isTrustedDomainsValid();
-      this.isValid.emit(formValid && isIdmapValid && isTrustedDomainsValid);
+      this.isValid.emit(this.formValid() && isIdmapValid && isTrustedDomainsValid);
       this.configurationChanged.emit(this.buildActiveDirectoryConfig());
     });
   }

@@ -50,7 +50,7 @@ export interface RidIdmap extends IdmapBase {
 export type DomainIdmap = ActiveDirectoryIdmap | LdapIdmap | Rfc2307Idmap | RidIdmap;
 
 export const domainIdmapTypeOptions: Option<IdmapBackend>[] = [
-  { label: T('Active Directoy'), value: IdmapBackend.Ad },
+  { label: T('Active Directory'), value: IdmapBackend.Ad },
   { label: T('LDAP'), value: IdmapBackend.Ldap },
   { label: T('RFC2037'), value: IdmapBackend.Rfc2307 },
   { label: T('RID'), value: IdmapBackend.Rid },

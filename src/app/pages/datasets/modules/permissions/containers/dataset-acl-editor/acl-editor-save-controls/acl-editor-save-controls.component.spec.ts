@@ -5,8 +5,9 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { BehaviorSubject, of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
+import { DirectoryServiceStatus, DirectoryServiceType } from 'app/enums/directory-services.enum';
 import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
+import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -18,9 +19,10 @@ import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/st
 describe('AclEditorSaveControlsComponent', () => {
   let spectator: Spectator<AclEditorSaveControlsComponent>;
   let loader: HarnessLoader;
-  const call$ = new BehaviorSubject({
-    activedirectory: DirectoryServiceState.Disabled,
-    ldap: DirectoryServiceState.Disabled,
+  const call$ = new BehaviorSubject<DirectoryServicesStatus>({
+    type: DirectoryServiceType.ActiveDirectory,
+    status: DirectoryServiceStatus.Disabled,
+    status_msg: 'disabled',
   });
   const createComponent = createComponentFactory({
     component: AclEditorSaveControlsComponent,
@@ -84,8 +86,9 @@ describe('AclEditorSaveControlsComponent', () => {
 
   it('shows Validate Effective ACL checkbox that defaults to true when directory services are enabled', async () => {
     call$.next({
-      activedirectory: DirectoryServiceState.Healthy,
-      ldap: DirectoryServiceState.Disabled,
+      type: DirectoryServiceType.ActiveDirectory,
+      status: DirectoryServiceStatus.Healthy,
+      status_msg: 'Healthy',
     });
 
     const validateAclCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Validate effective ACL' }));

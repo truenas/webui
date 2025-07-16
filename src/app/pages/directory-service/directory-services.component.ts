@@ -254,7 +254,7 @@ export class DirectoryServicesComponent implements OnInit {
       });
   }
 
-  private openDirectoryServicesForm(): void {
+  protected openDirectoryServicesForm(): void {
     this.slideIn.open(DirectoryServicesFormComponent, {
       data: this.directoryServicesConfig(),
     }).pipe(

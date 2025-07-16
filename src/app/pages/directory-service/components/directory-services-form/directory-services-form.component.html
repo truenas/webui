@@ -57,7 +57,7 @@
       @if (selectedConfigurationType) {
         <ix-credential-config
           [serviceType]="selectedConfigurationType"
-          [credential]="previousConfig().credential"
+          [credential]="previousConfig()?.credential"
           (credentialUpdated)="onCredentialDataChanged($event)"
           (isValid)="isCredentialValid.set($event);"
         ></ix-credential-config>
