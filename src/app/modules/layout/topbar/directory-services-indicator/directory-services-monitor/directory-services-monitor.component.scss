@@ -19,15 +19,12 @@
 
 .status-row {
   align-items: center;
-  cursor: pointer;
   display: flex;
   font-size: 13px;
   justify-content: space-between;
   padding: 11px 18px;
 
-  &:hover {
-    background: var(--hover-bg);
-  }
+  
 
   .state {
     align-items: center;
@@ -66,4 +63,23 @@
   min-height: 98px;
   text-align: center;
   width: 100%;
+}
+
+.container {
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+
+  &:hover {
+    background: var(--hover-bg);
+  }
+}
+
+.row-title {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.msg {
+  padding: 18px;
 }

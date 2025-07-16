@@ -3,9 +3,9 @@ import {
   signal,
 } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
-import { MatDialogContent, MatDialogClose } from '@angular/material/dialog';
+import { MatDialogContent, MatDialogClose, MatDialogRef } from '@angular/material/dialog';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
-import { RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { finalize } from 'rxjs';
@@ -30,7 +30,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     IxIconComponent,
     MatDialogClose,
     MatProgressSpinner,
-    RouterLink,
     TranslateModule,
     MapValuePipe,
     TestDirective,
@@ -40,6 +39,7 @@ export class DirectoryServicesMonitorComponent implements OnInit {
   protected readonly isLoading = signal(false);
   protected readonly serviceName = signal<string>('');
   protected readonly state = signal<DirectoryServiceStatus | null>(null);
+  protected readonly statusMsg = signal<string>(null);
 
   protected readonly DirectoryServiceState = DirectoryServiceStatus;
   protected readonly directoryServiceStateLabels = directoryServiceStateLabels;
@@ -47,6 +47,8 @@ export class DirectoryServicesMonitorComponent implements OnInit {
   constructor(
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
+    private router: Router,
+    private dialogRef: MatDialogRef<DirectoryServicesMonitorComponent>,
   ) {}
 
   ngOnInit(): void {
@@ -64,6 +66,12 @@ export class DirectoryServicesMonitorComponent implements OnInit {
       .subscribe((state) => {
         this.serviceName.set(directoryServiceNames[state.type]);
         this.state.set(state.status);
+        this.statusMsg.set(state.status_msg);
       });
+  }
+
+  protected linkClicked(): void {
+    this.dialogRef.close();
+    this.router.navigate(['/credentials', 'directory-services']);
   }
 }
