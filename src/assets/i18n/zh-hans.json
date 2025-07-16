@@ -140,6 +140,7 @@
   "Failed to enable TrueNAS Connect service": "",
   "Failed to retry TrueNAS Connect connection": "",
   "Filter by Type": "",
+  "for {roleName} role": "",
   "For the best experience, we recommend choosing a modern SMB share purpose instead of the legacy option.": "",
   "Force Delete?": "",
   "Force Stop After Timeout": "",

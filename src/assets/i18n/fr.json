@@ -493,6 +493,7 @@
   "Flags": "",
   "Flash Identify Light": "",
   "Font Size:": "",
+  "for {roleName} role": "",
   "for Sharing Admin role": "",
   "Force the VM to stop if it has not already  stopped within the specified shutdown timeout. Without this option selected, the VM will  receive the shutdown signal, but may or may not complete the shutdown process.": "",
   "Force-remove iXVolumes": "",

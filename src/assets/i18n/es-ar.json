@@ -178,6 +178,7 @@
   "File Size": "",
   "Files are split into chunks of this size before upload. Up to «--transfers» chunks can be in progress at one time. The single largest file being transferred must fit into no more than 10,000 chunks.": "",
   "Filter by Type": "",
+  "for {roleName} role": "",
   "For the best experience, we recommend choosing a modern SMB share purpose instead of the legacy option.": "",
   "Force Delete?": "",
   "Force Stop After Timeout": "",

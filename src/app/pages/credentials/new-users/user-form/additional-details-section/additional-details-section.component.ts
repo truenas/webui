@@ -19,7 +19,7 @@ import {
   withLatestFrom,
 } from 'rxjs';
 import { allCommands } from 'app/constants/all-commands.constant';
-import { Role } from 'app/enums/role.enum';
+import { Role, roleNames } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { isEmptyHomeDirectory } from 'app/helpers/user.helper';
 import { Group } from 'app/interfaces/group.interface';
@@ -76,7 +76,11 @@ export class AdditionalDetailsSectionComponent implements OnInit {
   protected username = computed(() => this.userFormStore?.userConfig().username ?? '');
   protected sshAccess = this.userFormStore.sshAccess;
   protected shellAccess = this.userFormStore.shellAccess;
-  protected hasSharingRole = computed(() => this.userFormStore.role()?.includes(Role.SharingAdmin));
+  protected selectedRoleName = computed(() => {
+    const role = this.userFormStore.role();
+    return role ? roleNames.get(role) : '';
+  });
+
   private groupNameCache = new Map<number, string>();
   protected homeDirectoryEmptyValue = computed(() => {
     if (this.editingUser()) {
@@ -102,7 +106,10 @@ export class AdditionalDetailsSectionComponent implements OnInit {
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
 
   groupsProvider: ChipsProvider = (query: string) => {
-    return this.api.call('group.query', [[['name', '^', query], ['local', '=', true]]]).pipe(
+    return this.api.call('group.query', [[
+      ['name', '^', query],
+      ['local', '=', true],
+    ]]).pipe(
       map((groups) => groups.map((group) => group.group)),
     );
   };
@@ -318,6 +325,18 @@ export class AdditionalDetailsSectionComponent implements OnInit {
         this.form.controls.home_mode.enable();
       }
     });
+
+    this.form.controls.groups.valueChanges.pipe(debounceTime(300), untilDestroyed(this)).subscribe((groups) => {
+      const currentRole = this.userFormStore.role();
+      if (!currentRole) {
+        return;
+      }
+      const requiredGroup = this.roleGroupMap.get(currentRole);
+      const groupNames = groups.map((id) => this.groupNameCache.get(id));
+      if (requiredGroup && !groupNames.includes(requiredGroup)) {
+        this.userFormStore.updateSetupDetails({ role: null });
+      }
+    });
   }
 
   private setupShellUpdate(): void {
@@ -359,12 +378,12 @@ export class AdditionalDetailsSectionComponent implements OnInit {
   private setFirstShellOption(): void {
     this.api.call('user.shell_choices', [this.form.value.groups]).pipe(
       choicesToOptions(),
-      map((shells) => shells.filter((shell) => !(shell.value as string).includes('nologin'))),
       filter((shells) => shells.length > 0),
       take(1),
       untilDestroyed(this),
     ).subscribe((shells) => {
       const defaultShell = (shells.find((shell) => shell.label.includes('zsh'))?.value || shells[0].value) as string;
+
       if (!this.form.value.shell || this.form.value.shell.includes('nologin')) {
         this.form.patchValue({ shell: defaultShell });
       }

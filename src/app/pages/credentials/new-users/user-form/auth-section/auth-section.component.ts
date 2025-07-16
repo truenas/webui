@@ -95,6 +95,12 @@ export class AuthSectionComponent implements OnInit {
         });
       }
     });
+
+    effect(() => {
+      if (!this.sshAccess()) {
+        this.form.patchValue({ ssh_password_enabled: false });
+      }
+    });
   }
 
   ngOnInit(): void {
