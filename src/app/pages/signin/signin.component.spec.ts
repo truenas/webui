@@ -1,3 +1,4 @@
+import { fakeAsync, tick } from '@angular/core/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
 import { BehaviorSubject, of } from 'rxjs';
@@ -7,7 +8,6 @@ import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyri
 import {
   DisconnectedMessageComponent,
 } from 'app/pages/signin/disconnected-message/disconnected-message.component';
-import { ReconnectMessage } from 'app/pages/signin/reconnect-message/reconnect-message.component';
 import {
   SetAdminPasswordFormComponent,
 } from 'app/pages/signin/set-admin-password-form/set-admin-password-form.component';
@@ -40,7 +40,6 @@ describe('SigninComponent', () => {
         SetAdminPasswordFormComponent,
         TrueCommandStatusComponent,
         CopyrightLineComponent,
-        ReconnectMessage,
       ),
     ],
     componentProviders: [
@@ -73,37 +72,30 @@ describe('SigninComponent', () => {
   });
 
   beforeEach(() => {
-    spectator = createComponent();
     wasAdminSet$.next(true);
     canLogin$.next(true);
     isConnected$.next(true);
     loginBanner$.next('');
     isTokenWithinTimeline$.next(false);
     isLoading$.next(false);
+
+    spectator = createComponent();
   });
 
   it('initializes SigninStore on component init', () => {
     expect(spectator.inject(SigninStore, true).init).toHaveBeenCalled();
-    expect(spectator.inject(WebSocketStatusService).setReconnectAllowed).toHaveBeenCalledWith(true);
   });
 
   describe('disconnected', () => {
-    it('shows DisconnectedMessageComponent when there is no websocket connection', () => {
+    it('shows DisconnectedMessageComponent when there is no websocket connection', fakeAsync(() => {
       isConnected$.next(false);
 
+      spectator.detectChanges();
+      tick(1000); // Wait for isConnectedDelayed$ delay
       spectator.detectChanges();
 
       expect(spectator.query(DisconnectedMessageComponent)).toExist();
-    });
-
-    it('shows ReconnectMessage when has established initial connection', () => {
-      isConnected$.next(false);
-      isReconnectAllowed$.next(true);
-
-      spectator.detectChanges();
-
-      expect(spectator.query(ReconnectMessage)).toExist();
-    });
+    }));
   });
 
   describe('connected', () => {
