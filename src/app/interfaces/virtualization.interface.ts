@@ -16,6 +16,8 @@ import {
   VirtualizationType, VolumeContentType,
 } from 'app/enums/virtualization.enum';
 
+export type VirtualizationMetrics = Record<string, VirtualizationInstanceMetrics>;
+
 export interface VirtualizationInstanceMetrics {
   cpu: {
     cpu_user_percentage: number;

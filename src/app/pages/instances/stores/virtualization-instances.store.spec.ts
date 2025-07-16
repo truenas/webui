@@ -1,8 +1,11 @@
+import { Router, NavigationEnd } from '@angular/router';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { of, Subject } from 'rxjs';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
-import { VirtualizationDevice, VirtualizationInstance } from 'app/interfaces/virtualization.interface';
+import {
+  VirtualizationDevice, VirtualizationInstance, VirtualizationMetrics,
+} from 'app/interfaces/virtualization.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 
@@ -10,6 +13,7 @@ describe('VirtualizationInstancesStore', () => {
   let spectator: SpectatorService<VirtualizationInstancesStore>;
 
   const event$ = new Subject<ApiEvent<VirtualizationInstance>>();
+  const metricsEvent$ = new Subject<ApiEvent<VirtualizationMetrics>>();
   const instances = [
     { id: 'instance1' },
     { id: 'instance2' },
@@ -19,6 +23,8 @@ describe('VirtualizationInstancesStore', () => {
     { name: 'device1' },
     { name: 'device2' },
   ] as VirtualizationDevice[];
+
+  const routerEvents$ = new Subject<NavigationEnd>();
 
   const createService = createServiceFactory({
     service: VirtualizationInstancesStore,
@@ -30,7 +36,17 @@ describe('VirtualizationInstancesStore', () => {
           }
           return of(devices);
         }),
-        subscribe: jest.fn(() => event$),
+        subscribe: jest.fn((method) => {
+          if (method === 'virt.instance.metrics') {
+            return metricsEvent$;
+          }
+          return event$;
+        }),
+      }),
+      mockProvider(Router, {
+        events: routerEvents$,
+        url: '/instances/view/instance1',
+        navigate: jest.fn(),
       }),
     ],
   });
@@ -45,6 +61,7 @@ describe('VirtualizationInstancesStore', () => {
       selectedInstance: undefined,
       selectedInstanceId: null,
       instances: undefined,
+      metrics: {},
     });
   });
 
@@ -57,6 +74,7 @@ describe('VirtualizationInstancesStore', () => {
       selectedInstance: undefined,
       selectedInstanceId: null,
       isLoading: false,
+      metrics: {},
     });
   });
 
@@ -68,6 +86,7 @@ describe('VirtualizationInstancesStore', () => {
       isLoading: false,
       selectedInstance: instances[0],
       selectedInstanceId: 'instance1',
+      metrics: {},
     });
   });
 
@@ -79,6 +98,7 @@ describe('VirtualizationInstancesStore', () => {
       isLoading: false,
       selectedInstance: instances[0],
       selectedInstanceId: 'instance1',
+      metrics: {},
     });
     spectator.service.resetInstance();
     expect(spectator.service.state()).toEqual({
@@ -86,6 +106,7 @@ describe('VirtualizationInstancesStore', () => {
       isLoading: false,
       selectedInstance: null,
       selectedInstanceId: 'instance1',
+      metrics: {},
     });
   });
 
@@ -140,6 +161,31 @@ describe('VirtualizationInstancesStore', () => {
       expect(spectator.service.instances()).toEqual([
         { id: 'instance1' },
       ]);
+    });
+
+    it('handles metrics event when on view page', () => {
+      const mockInstanceMetrics = {
+        test: {
+          cpu: {
+            cpu_user_percentage: 20,
+          },
+          mem_usage: {
+            mem_usage_ram_mib: 512,
+          },
+          io_full_pressure: {
+            io_full_pressure_full_60_percentage: 10,
+          },
+        },
+      } as unknown as VirtualizationMetrics;
+
+      metricsEvent$.next({
+        collection: 'virt.instance.metrics',
+        id: 'metrics',
+        msg: CollectionChangeType.Changed,
+        fields: mockInstanceMetrics,
+      });
+
+      expect(spectator.service.metrics()).toEqual(mockInstanceMetrics);
     });
   });
 });

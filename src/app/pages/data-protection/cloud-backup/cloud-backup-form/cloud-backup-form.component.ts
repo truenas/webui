@@ -112,6 +112,7 @@ export class CloudBackupFormComponent implements OnInit {
     enabled: [true],
     password: ['', [Validators.required]],
     keep_last: new FormControl(null as number | null, [Validators.required]),
+    rate_limit: new FormControl(null as number | null, [Validators.min(1)]),
 
     folder: ['', [Validators.required]],
     bucket: ['', [Validators.required]],
@@ -255,6 +256,7 @@ export class CloudBackupFormComponent implements OnInit {
       credentials: editingTask.credentials.id,
       folder: editingTask.attributes.folder as string,
       bucket: editingTask.attributes.bucket === newOption ? '' : editingTask.attributes.bucket as string || '',
+      rate_limit: editingTask.rate_limit,
     });
   }
 

@@ -26,6 +26,7 @@ export interface CloudBackup {
   transfer_setting: CloudsyncTransferSetting;
   cache_path: string | null;
   keep_last?: number;
+  rate_limit: number | null;
 }
 
 export interface CloudBackupUpdate extends Omit<CloudBackup, 'id' | 'job' | 'locked' | 'credentials'> {
