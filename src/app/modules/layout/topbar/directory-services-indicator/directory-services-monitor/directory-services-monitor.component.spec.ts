@@ -35,7 +35,7 @@ describe('DirectoryServicesMonitorComponent', () => {
   });
 
   it('loads directory services status on component initialization', () => {
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('directoryservices.get_state');
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('directoryservices.status');
   });
 
   it('shows status of a non-disabled directory service', () => {
@@ -49,6 +49,6 @@ describe('DirectoryServicesMonitorComponent', () => {
     const refreshButton = await loader.getHarness(IxIconHarness.with({ name: 'refresh' }));
     await refreshButton.click();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('directoryservices.get_state');
+    expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('directoryservices.status');
   });
 });
