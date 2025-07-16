@@ -8,6 +8,7 @@ import { DirectoryServiceCredential } from 'app/interfaces/directoryservice-cred
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CredentialConfigComponent } from 'app/pages/directory-service/components/directory-services-form/credential-config/credential-config.component';
+import { DirectoryServiceValidationService } from 'app/pages/directory-service/components/directory-services-form/services/directory-service-validation.service';
 
 describe('CredentialConfigComponent', () => {
   let spectator: Spectator<CredentialConfigComponent>;
@@ -26,6 +27,7 @@ describe('CredentialConfigComponent', () => {
         mockCall('kerberos.keytab.kerberos_principal_choices', mockKerberosPrincipals),
         mockCall('directoryservices.certificate_choices', { 1: 'truenas_default' }),
       ]),
+      DirectoryServiceValidationService,
     ],
   });
 
@@ -64,16 +66,24 @@ describe('CredentialConfigComponent', () => {
     });
 
     it('should require username and password when KerberosUser is selected', async () => {
-      let emittedValid: boolean | undefined;
-      spectator.component.isValid.subscribe((valid) => {
-        emittedValid = valid;
-      });
+      // Since Active Directory service type defaults to KerberosUser credential type,
+      // the form should already be set up with this credential type
+      const isValidSpy = jest.fn();
+      spectator.component.isValid.subscribe(isValidSpy);
 
-      await form.fillForm({
+      // The form should already have KerberosUser as default for Active Directory
+      expect(await form.getValues()).toEqual(expect.objectContaining({
         'Credential Type': 'Kerberos User',
+      }));
+
+      // Username and password fields should be required and empty, making form invalid
+      // Trigger a small change to ensure emissions happen
+      await form.fillForm({
+        Username: '', // Explicitly set empty to trigger validation
       });
 
-      expect(emittedValid).toBe(false);
+      // The form should be invalid due to missing required fields
+      expect(isValidSpy).toHaveBeenCalledWith(false);
     });
 
     it('should require bind DN and password when LdapPlain is selected', async () => {

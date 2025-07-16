@@ -148,74 +148,119 @@ export class DirectoryServicesComponent implements OnInit {
         && servicesState.status !== DirectoryServiceStatus.Disabled;
         const adConfig = directoryServicesConfig?.configuration as ActiveDirectoryConfig;
         if (adConfig) {
+          const items: Option[] = [
+            {
+              label: this.translate.instant(helptextDashboard.activeDirectory.status),
+              value: servicesState.type === DirectoryServiceType.ActiveDirectory
+                ? servicesState.status
+                : DirectoryServiceStatus.Disabled,
+            },
+          ];
+
+          // Add status message right after status if it exists
+          if (servicesState.status_msg) {
+            items.push({
+              label: this.translate.instant(helptextDashboard.activeDirectory.statusMessage),
+              value: servicesState.status_msg,
+            });
+          }
+
+          items.push(
+            {
+              label: this.translate.instant(helptextDashboard.activeDirectory.domainName),
+              value: adConfig.domain || null,
+            },
+            {
+              label: this.translate.instant(helptextDashboard.activeDirectory.domainAccountName),
+              value: (directoryServicesConfig?.credential as LdapCredentialPlain).binddn || null,
+            },
+          );
+
           this.activeDirectoryDataCard = {
             title: this.translate.instant(helptextDashboard.activeDirectory.title),
-            items: [
-              {
-                label: this.translate.instant(helptextDashboard.activeDirectory.status),
-                value: servicesState.type === DirectoryServiceType.ActiveDirectory
-                  ? servicesState.status
-                  : DirectoryServiceStatus.Disabled,
-              },
-              {
-                label: this.translate.instant(helptextDashboard.activeDirectory.domainName),
-                value: adConfig.domain || null,
-              },
-              {
-                label: this.translate.instant(helptextDashboard.activeDirectory.domainAccountName),
-                value: (directoryServicesConfig?.credential as LdapCredentialPlain).binddn || null,
-              },
-            ],
+            items,
             onSettingsPressed: () => this.openDirectoryServicesForm(),
           };
         }
 
         const ldapConfig = directoryServicesConfig?.configuration as LdapConfig;
         if (ldapConfig) {
+          const items: Option[] = [
+            {
+              label: this.translate.instant(helptextDashboard.ldap.status),
+              value: servicesState.type === DirectoryServiceType.Ldap
+                ? servicesState.status
+                : DirectoryServiceStatus.Disabled,
+            },
+          ];
+
+          // Add status message right after status if it exists
+          if (servicesState.status_msg) {
+            items.push({
+              label: this.translate.instant(helptextDashboard.ldap.statusMessage),
+              value: servicesState.status_msg,
+            });
+          }
+
+          items.push(
+            {
+              label: this.translate.instant(helptextDashboard.ldap.baseDN),
+              value: ldapConfig.basedn || null,
+            },
+            {
+              label: this.translate.instant(helptextDashboard.ldap.bindDN),
+              value: (directoryServicesConfig?.credential as LdapCredentialPlain).binddn || null,
+            },
+          );
+
           this.ldapDataCard = {
             title: this.translate.instant(helptextDashboard.ldap.title),
-            items: [
-              {
-                label: this.translate.instant(helptextDashboard.ldap.status),
-                value: servicesState.type === DirectoryServiceType.Ldap
-                  ? servicesState.status
-                  : DirectoryServiceStatus.Disabled,
-              },
-              {
-                label: this.translate.instant(helptextDashboard.ldap.baseDN),
-                value: ldapConfig.basedn || null,
-              },
-              {
-                label: this.translate.instant(helptextDashboard.ldap.bindDN),
-                value: (directoryServicesConfig?.credential as LdapCredentialPlain).binddn || null,
-              },
-            ],
+            items,
             onSettingsPressed: () => this.openDirectoryServicesForm(),
           };
         }
 
         const ipaConfig = directoryServicesConfig.configuration as IpaConfig;
         if (ipaConfig) {
+          const items: Option[] = [
+            {
+              label: this.translate.instant(helptextDashboard.ipa.status),
+              value: servicesState.type === DirectoryServiceType.Ipa
+                ? servicesState.status
+                : DirectoryServiceStatus.Disabled,
+            },
+          ];
+
+          // Add status message right after status if it exists
+          if (servicesState.status_msg) {
+            items.push({
+              label: this.translate.instant(helptextDashboard.ipa.statusMessage),
+              value: servicesState.status_msg,
+            });
+          }
+
+          items.push(
+            {
+              label: this.translate.instant(helptextDashboard.ipa.target_server),
+              value: ipaConfig.target_server,
+            },
+            {
+              label: this.translate.instant(helptextDashboard.ipa.hostname),
+              value: ipaConfig.hostname,
+            },
+            {
+              label: this.translate.instant(helptextDashboard.ipa.domain),
+              value: ipaConfig.domain,
+            },
+            {
+              label: this.translate.instant(helptextDashboard.ipa.basedn),
+              value: ipaConfig.basedn,
+            },
+          );
+
           this.ipaDataCard = {
             title: this.translate.instant(helptextDashboard.ipa.title),
-            items: [
-              {
-                label: this.translate.instant(helptextDashboard.ipa.target_server),
-                value: ipaConfig.target_server,
-              },
-              {
-                label: this.translate.instant(helptextDashboard.ipa.hostname),
-                value: ipaConfig.hostname,
-              },
-              {
-                label: this.translate.instant(helptextDashboard.ipa.domain),
-                value: ipaConfig.domain,
-              },
-              {
-                label: this.translate.instant(helptextDashboard.ipa.basedn),
-                value: ipaConfig.basedn,
-              },
-            ],
+            items,
             onSettingsPressed: () => this.openDirectoryServicesForm(),
           };
         }

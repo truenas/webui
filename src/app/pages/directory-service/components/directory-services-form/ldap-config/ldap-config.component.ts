@@ -108,6 +108,9 @@ export class LdapConfigComponent implements OnInit {
   ngOnInit(): void {
     this.fillFormWithExistingConfig();
     this.watchForFormChanges();
+
+    // Emit current configuration data immediately if form has valid data
+    this.emitCurrentConfigurationData();
   }
 
   private fillFormWithExistingConfig(): void {
@@ -128,6 +131,12 @@ export class LdapConfigComponent implements OnInit {
       });
   }
 
+  private emitCurrentConfigurationData(): void {
+    // Always emit validity state, even if there's no existing config
+    this.isValid.emit(this.form.valid);
+    this.configurationChanged.emit(this.buildLdapConfig());
+  }
+
   private buildLdapConfig(): LdapConfig {
     const formValue = this.form.value;
 
@@ -143,18 +152,32 @@ export class LdapConfigComponent implements OnInit {
       ? null
       : formValue.attribute_maps as LdapAttributeMaps;
 
-    const ldapConfig: LdapConfig & { idmap?: PrimaryDomainIdmap } = {
+    const ldapConfig: Partial<LdapConfig & { idmap?: PrimaryDomainIdmap }> = {
       server_urls: formValue.server_urls,
       basedn: formValue.basedn,
       starttls: formValue.starttls,
       validate_certificates: formValue.validate_certificates,
       schema: formValue.schema,
-      search_bases: searchBases,
-      attribute_maps: attributeMaps,
-      auxiliary_parameters: formValue.use_standard_auxiliary_parameters
-        ? null
-        : formValue.auxiliary_parameters,
     };
-    return ldapConfig;
+
+    // Only include search_bases if not null/empty
+    if (searchBases) {
+      ldapConfig.search_bases = searchBases;
+    }
+
+    // Only include attribute_maps if not null/empty
+    if (attributeMaps) {
+      ldapConfig.attribute_maps = attributeMaps;
+    }
+
+    // Only include auxiliary_parameters if not null/empty
+    const auxiliaryParams = formValue.use_standard_auxiliary_parameters
+      ? null
+      : formValue.auxiliary_parameters;
+    if (auxiliaryParams) {
+      ldapConfig.auxiliary_parameters = auxiliaryParams;
+    }
+
+    return ldapConfig as LdapConfig;
   }
 }

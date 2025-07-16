@@ -5,6 +5,7 @@ export const helptextDashboard = {
     title: T('Active Directory'),
     domainName: T('Domain Name'),
     status: T('Status'),
+    statusMessage: T('Status Message'),
     domainAccountName: T('Domain Account Name'),
   },
   idmap: {
@@ -13,12 +14,15 @@ export const helptextDashboard = {
   ldap: {
     title: T('LDAP'),
     status: T('Status'),
+    statusMessage: T('Status Message'),
     hostname: T('Hostname'),
     baseDN: T('Base DN'),
     bindDN: T('Bind DN'),
   },
   ipa: {
     title: T('IPA'),
+    status: T('Status'),
+    statusMessage: T('Status Message'),
     target_server: T('Target Server'),
     hostname: T('Host Name'),
     domain: T('Domain'),

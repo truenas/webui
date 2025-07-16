@@ -84,7 +84,10 @@ export class IdmapConfigComponent implements OnInit {
     this.form.value$.pipe(
       tap((value: PrimaryDomainIdmap & { use_default_idmap: boolean }) => {
         this.isValid.emit(this.form.controls.use_default_idmap.value || this.form.valid);
-        this.idmapUpdated.emit([value.use_default_idmap, value as PrimaryDomainIdmap]);
+
+        // Filter out use_default_idmap from the payload as it's UI-only
+        const { use_default_idmap: useDefaultIdmap, ...idmapPayload } = value;
+        this.idmapUpdated.emit([useDefaultIdmap, idmapPayload as PrimaryDomainIdmap]);
       }),
       untilDestroyed(this),
     ).subscribe();

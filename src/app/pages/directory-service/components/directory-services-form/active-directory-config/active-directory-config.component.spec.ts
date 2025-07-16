@@ -46,7 +46,7 @@ describe('ActiveDirectoryConfigComponent', () => {
   it('should initialize form with existing config values', async () => {
     const values = await form.getValues();
     expect(values).toEqual(expect.objectContaining({
-      'Domain Controller Hostname/IP': 'test-host',
+      'TrueNAS Hostname': 'test-host',
       'Domain Name': 'test-domain.com',
       'Site Name': 'test-site',
       'Computer Account OU': 'OU=Computers,DC=test,DC=com',
@@ -61,7 +61,7 @@ describe('ActiveDirectoryConfigComponent', () => {
     });
 
     await form.fillForm({
-      'Domain Controller Hostname/IP': '',
+      'TrueNAS Hostname': '',
       'Domain Name': '',
     });
 
@@ -75,7 +75,7 @@ describe('ActiveDirectoryConfigComponent', () => {
     });
 
     await form.fillForm({
-      'Domain Controller Hostname/IP': 'valid-host',
+      'TrueNAS Hostname': 'valid-host',
       'Domain Name': 'valid-domain.com',
     });
 
@@ -89,7 +89,7 @@ describe('ActiveDirectoryConfigComponent', () => {
     });
 
     await form.fillForm({
-      'Domain Controller Hostname/IP': 'new-host',
+      'TrueNAS Hostname': 'new-host',
       'Domain Name': 'new-domain2.com',
       'Site Name': 'new-site',
     });
@@ -100,7 +100,6 @@ describe('ActiveDirectoryConfigComponent', () => {
       site: 'new-site',
       computer_account_ou: 'OU=Computers,DC=test,DC=com',
       enable_trusted_domains: false,
-      idmap: null,
       trusted_domains: [],
       use_default_domain: true,
     }));
@@ -113,7 +112,7 @@ describe('ActiveDirectoryConfigComponent', () => {
     });
 
     await form.fillForm({
-      'Domain Controller Hostname/IP': 'test-host2',
+      'TrueNAS Hostname': 'test-host2',
       'Domain Name': 'test-domain.com',
       'Use Default Domain': false,
     });
@@ -126,7 +125,6 @@ describe('ActiveDirectoryConfigComponent', () => {
       enable_trusted_domains: false,
       trusted_domains: [],
       site: 'test-site',
-      idmap: null,
     }));
   });
 
@@ -137,7 +135,7 @@ describe('ActiveDirectoryConfigComponent', () => {
     });
 
     await form.fillForm({
-      'Domain Controller Hostname/IP': 'build-test-host',
+      'TrueNAS Hostname': 'build-test-host',
       'Domain Name': 'build-test-domain.com',
       'Site Name': 'build-test-site',
       'Computer Account OU': 'OU=TestComputers,DC=build,DC=test,DC=com',
@@ -160,7 +158,7 @@ describe('ActiveDirectoryConfigComponent', () => {
     });
 
     await form.fillForm({
-      'Domain Controller Hostname/IP': '',
+      'TrueNAS Hostname': '',
       'Domain Name': 'test-domain.com',
     });
 
@@ -179,9 +177,10 @@ describe('ActiveDirectoryConfigComponent', () => {
     });
 
     expect(emittedConfig).toEqual(expect.objectContaining({
-      site: null,
       computer_account_ou: null,
     }));
+    // Site should not be included when empty
+    expect(emittedConfig).not.toHaveProperty('site');
   });
 
   it('should handle various form validation scenarios', async () => {
@@ -192,14 +191,14 @@ describe('ActiveDirectoryConfigComponent', () => {
 
     // Test with only hostname filled
     await form.fillForm({
-      'Domain Controller Hostname/IP': 'test-host',
+      'TrueNAS Hostname': 'test-host',
       'Domain Name': '',
     });
     expect(isValidEmitted).toBe(false);
 
     // Test with both required fields filled
     await form.fillForm({
-      'Domain Controller Hostname/IP': 'valid-host',
+      'TrueNAS Hostname': 'valid-host',
       'Domain Name': 'valid-domain.com',
     });
     expect(isValidEmitted).toBe(true);

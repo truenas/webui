@@ -195,7 +195,7 @@ describe('LdapConfigComponent', () => {
         Schema: LdapSchema.Rfc2307,
       });
 
-      expect(emittedConfig?.search_bases).toBeNull();
+      expect(emittedConfig).not.toHaveProperty('search_bases');
     });
   });
 
@@ -223,7 +223,7 @@ describe('LdapConfigComponent', () => {
         Schema: LdapSchema.Rfc2307,
       });
 
-      expect(emittedConfig?.attribute_maps).toBeNull();
+      expect(emittedConfig).not.toHaveProperty('attribute_maps');
     });
   });
 
@@ -250,7 +250,7 @@ describe('LdapConfigComponent', () => {
         Schema: LdapSchema.Rfc2307,
       });
 
-      expect(emittedConfig?.auxiliary_parameters).toBeNull();
+      expect(emittedConfig).not.toHaveProperty('auxiliary_parameters');
     });
   });
 
@@ -287,15 +287,13 @@ describe('LdapConfigComponent', () => {
         'Use Standard Auxiliary Parameters': true,
       });
 
+      // The improved config only includes non-null fields
       expect(emittedConfig).toEqual({
         server_urls: ['ldap://new.com'],
         basedn: 'dc=new,dc=com',
         starttls: false,
         validate_certificates: false,
         schema: LdapSchema.Rfc2307Bis,
-        search_bases: null,
-        attribute_maps: null,
-        auxiliary_parameters: null,
       });
     });
 
@@ -462,7 +460,8 @@ describe('LdapConfigComponent', () => {
         'Auxiliary Parameters': '',
       });
 
-      expect(emittedConfig.auxiliary_parameters).toBe('');
+      // Empty string auxiliary parameters should not be included in config
+      expect(emittedConfig).not.toHaveProperty('auxiliary_parameters');
     });
 
     it('should handle form initialization with incomplete config', () => {

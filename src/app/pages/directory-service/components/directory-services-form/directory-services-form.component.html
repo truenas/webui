@@ -20,21 +20,18 @@
         <ix-checkbox
           formControlName="enable"
           [label]="'Enable Service' | translate"
-          [required]="true"
           [tooltip]="'Enable this directory service configuration' | translate"
         ></ix-checkbox>
 
         <ix-checkbox
           formControlName="enable_account_cache"
           [label]="'Enable Account Cache' | translate"
-          [required]="true"
           [tooltip]="'Cache user and group information for improved performance' | translate"
         ></ix-checkbox>
 
         <ix-checkbox
           formControlName="enable_dns_updates"
           [label]="'Enable DNS Updates' | translate"
-          [required]="true"
           [tooltip]="'Allow the directory service to update DNS records' | translate"
         ></ix-checkbox>
 
@@ -57,16 +54,16 @@
       @if (selectedConfigurationType) {
         <ix-credential-config
           [serviceType]="selectedConfigurationType"
-          [credential]="previousConfig()?.credential"
+          [credential]="credentialData || preservedCredentialData || previousConfig()?.credential"
           (credentialUpdated)="onCredentialDataChanged($event)"
-          (isValid)="isCredentialValid.set($event);"
+          (isValid)="onCredentialValidityChanged($event)"
         ></ix-credential-config>
       }
 
       @if (selectedConfigurationType === DirectoryServiceType.ActiveDirectory) {
         <ix-active-directory-config
           [activeDirectoryConfig]="activeDirectoryConfig()"
-          (isValid)="isActiveDirectoryValid.set($event)"
+          (isValid)="onActiveDirectoryValidityChanged($event)"
           (configurationChanged)="onConfigurationDataChanged($event)"
           (kerberosRealmSuggested)="onKerberosRealmSuggested($event)"
         ></ix-active-directory-config>
@@ -75,7 +72,7 @@
       @if (selectedConfigurationType === DirectoryServiceType.Ldap) {
         <ix-ldap-config
           [ldapConfig]="ldapConfig()"
-          (isValid)="isLdapValid.set($event)"
+          (isValid)="onLdapValidityChanged($event)"
           (configurationChanged)="onConfigurationDataChanged($event)"
         ></ix-ldap-config>
       }
@@ -84,7 +81,7 @@
         <ix-ipa-config
           [ipaConfig]="ipaConfig()"
           (configurationChanged)="onConfigurationDataChanged($event)"
-          (isValid)="isIpaValid.set($event)"
+          (isValid)="onIpaValidityChanged($event)"
         ></ix-ipa-config>
       }
 

@@ -79,14 +79,19 @@ describe('IpaConfigComponent', () => {
   });
 
   it('should handle null config input', () => {
-    let emittedValue: IpaConfig;
-    spectator.component.configurationChanged.subscribe((ipaConfig) => {
-      emittedValue = ipaConfig;
+    // Create a new component with null config from the start
+    const nullConfigSpectator = createComponent({
+      props: {
+        ipaConfig: null,
+      },
     });
-    spectator.setInput('ipaConfig', null);
-    spectator.component.ngOnInit();
 
-    expect(emittedValue).toBeUndefined();
+    // Component should be created successfully even with null input
+    expect(nullConfigSpectator.component).toBeTruthy();
+
+    // Form should initialize with appropriate default values
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
+    expect((nullConfigSpectator.component as any).form.value.use_default_smb_domain).toBe(true);
   });
 
   describe('form validation', () => {

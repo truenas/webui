@@ -89,12 +89,20 @@ export class ActiveDirectoryConfigComponent implements OnInit {
 
   ngOnInit(): void {
     this.updateFormWithExistingConfig();
+
+    // Emit current configuration data immediately if form has valid data
+    this.emitCurrentConfigurationData();
   }
 
   private updateFormWithExistingConfig(): void {
     this.form.patchValue({
       ...this.activeDirectoryConfig(),
     });
+  }
+
+  private emitCurrentConfigurationData(): void {
+    // Always emit validity state, even if there's no existing config
+    this.configurationChanged.emit(this.buildActiveDirectoryConfig());
   }
 
   protected primaryDomainIdmapUpdated(
@@ -122,15 +130,27 @@ export class ActiveDirectoryConfigComponent implements OnInit {
       return null;
     }
 
-    return {
+    const config: Partial<ActiveDirectoryConfig> = {
       hostname: formValue.hostname as string,
       domain: formValue.domain as string,
       use_default_domain: formValue.use_default_domain ?? false,
       enable_trusted_domains: formValue.enable_trusted_domains ?? false,
-      idmap: this.primaryDomainIdmap(),
-      site: (formValue.site as string) || null,
       computer_account_ou: (formValue.computer_account_ou as string) || null,
       trusted_domains: formValue.trusted_domains || [],
     };
+
+    // Only include idmap if it's not null/empty
+    const idmap = this.primaryDomainIdmap();
+    if (idmap) {
+      config.idmap = idmap;
+    }
+
+    // Only include site if it's not null/empty
+    const site = (formValue.site as string) || null;
+    if (site) {
+      config.site = site;
+    }
+
+    return config as ActiveDirectoryConfig;
   }
 }

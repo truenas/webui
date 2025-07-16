@@ -22,11 +22,6 @@ import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import {
   adAndIpaSupportedCredentialTypes,
   DirectoryServiceCredential,
-  KerberosCredentialPrincipal,
-  KerberosCredentialUser,
-  LdapCredentialAnonymous,
-  LdapCredentialMutualTls,
-  LdapCredentialPlain,
   ldapSupportedCredentialTypes,
 } from 'app/interfaces/directoryservice-credentials.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -34,6 +29,7 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { DirectoryServiceValidationService } from 'app/pages/directory-service/components/directory-services-form/services/directory-service-validation.service';
 
 @UntilDestroy()
 @Component({
@@ -92,6 +88,7 @@ export class CredentialConfigComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private api: ApiService,
+    private validationService: DirectoryServiceValidationService,
   ) {
 
   }
@@ -99,6 +96,9 @@ export class CredentialConfigComponent implements OnInit {
   ngOnInit(): void {
     this.initializeFormWithExistingData();
     this.buildCredentialsFromForm();
+
+    // Emit current credential data immediately if form has valid data
+    this.emitCurrentCredentialData();
   }
 
   private buildCredentialsFromForm(): void {
@@ -113,45 +113,8 @@ export class CredentialConfigComponent implements OnInit {
           this.updateFormValidators();
         }
         this.isValid.emit(this.form.valid);
-        if (current.credential_type === DirectoryServiceCredentialType.KerberosUser) {
-          const userCred: KerberosCredentialUser = {
-            credential_type: DirectoryServiceCredentialType.KerberosUser,
-            password: current.password,
-            username: current.username,
-          };
-          this.credentialUpdated.emit(userCred);
-        }
-
-        if (current.credential_type === DirectoryServiceCredentialType.KerberosPrincipal) {
-          const principalCred: KerberosCredentialPrincipal = {
-            credential_type: DirectoryServiceCredentialType.KerberosPrincipal,
-            principal: current.principal,
-          };
-          this.credentialUpdated.emit(principalCred);
-        }
-
-        if (current.credential_type === DirectoryServiceCredentialType.LdapAnonymous) {
-          const anonCred: LdapCredentialAnonymous = {
-            credential_type: DirectoryServiceCredentialType.LdapAnonymous,
-          };
-          this.credentialUpdated.emit(anonCred);
-        }
-
-        if (current.credential_type === DirectoryServiceCredentialType.LdapMtls) {
-          const ldapMtlsCred: LdapCredentialMutualTls = {
-            credential_type: DirectoryServiceCredentialType.LdapMtls,
-            client_certificate: current.client_certificate,
-          };
-          this.credentialUpdated.emit(ldapMtlsCred);
-        }
-
-        if (current.credential_type === DirectoryServiceCredentialType.LdapPlain) {
-          const ldapPlainCred: LdapCredentialPlain = {
-            credential_type: DirectoryServiceCredentialType.LdapPlain,
-            binddn: current.binddn,
-            bindpw: current.bindpw,
-          };
-          this.credentialUpdated.emit(ldapPlainCred);
+        if (current.credential_type) {
+          this.emitCredentialByType(current);
         }
       });
   }
@@ -159,6 +122,10 @@ export class CredentialConfigComponent implements OnInit {
   private initializeFormWithExistingData(): void {
     const existingCredential = this.credential();
     if (!existingCredential) {
+      // Set default credential type to Kerberos User for Active Directory
+      if (this.serviceType() === DirectoryServiceType.ActiveDirectory) {
+        this.form.controls.credential_type.setValue(DirectoryServiceCredentialType.KerberosUser);
+      }
       return;
     }
     this.form.controls.credential_type.setValue(existingCredential.credential_type);
@@ -198,11 +165,68 @@ export class CredentialConfigComponent implements OnInit {
     }
   }
 
-  private updateFormValidators(): void {
-    const controls = Object.values(this.form.controls);
-    for (const control of controls) {
-      control.clearValidators();
+  private emitCurrentCredentialData(): void {
+    const current = this.form.value;
+
+    // Always emit validity state
+    this.isValid.emit(this.form.valid);
+
+    // Only emit credential data if there's a credential type
+    if (current.credential_type) {
+      this.emitCredentialByType(current as Record<string, unknown>);
     }
+  }
+
+  private emitCredentialByType(current: Record<string, unknown>): void {
+    const credentialType = current.credential_type as DirectoryServiceCredentialType;
+    switch (credentialType) {
+      case DirectoryServiceCredentialType.KerberosUser:
+        this.credentialUpdated.emit({
+          credential_type: DirectoryServiceCredentialType.KerberosUser,
+          password: current.password as string,
+          username: current.username as string,
+        });
+        break;
+
+      case DirectoryServiceCredentialType.KerberosPrincipal:
+        this.credentialUpdated.emit({
+          credential_type: DirectoryServiceCredentialType.KerberosPrincipal,
+          principal: current.principal as string,
+        });
+        break;
+
+      case DirectoryServiceCredentialType.LdapAnonymous:
+        this.credentialUpdated.emit({
+          credential_type: DirectoryServiceCredentialType.LdapAnonymous,
+        });
+        break;
+
+      case DirectoryServiceCredentialType.LdapMtls:
+        this.credentialUpdated.emit({
+          credential_type: DirectoryServiceCredentialType.LdapMtls,
+          client_certificate: current.client_certificate as string,
+        });
+        break;
+
+      case DirectoryServiceCredentialType.LdapPlain:
+        this.credentialUpdated.emit({
+          credential_type: DirectoryServiceCredentialType.LdapPlain,
+          binddn: current.binddn as string,
+          bindpw: current.bindpw as string,
+        });
+        break;
+    }
+  }
+
+  private updateFormValidators(): void {
+    // Clear validators from all controls using the validation service
+    this.validationService.clearFormControlErrors(this.form);
+
+    // Clear validators from all form controls
+    Object.values(this.form.controls).forEach((control) => {
+      control.clearValidators();
+    });
+
     switch (this.credentialType()) {
       case DirectoryServiceCredentialType.KerberosPrincipal:
         this.form.controls.principal.addValidators([Validators.required]);
@@ -221,9 +245,11 @@ export class CredentialConfigComponent implements OnInit {
         this.form.controls.bindpw.addValidators([Validators.required]);
         break;
     }
-    for (const control of controls) {
+
+    // Update validity for all controls
+    Object.values(this.form.controls).forEach((control) => {
       control.updateValueAndValidity({ emitEvent: false });
-    }
+    });
     this.form.updateValueAndValidity({ emitEvent: false });
   }
 }
