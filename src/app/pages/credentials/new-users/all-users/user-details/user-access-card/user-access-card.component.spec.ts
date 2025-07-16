@@ -65,6 +65,7 @@ describe('UserAccessCardComponent', () => {
       mockProvider(ApiService),
       mockProvider(AuthService, {
         getGlobalTwoFactorConfig: jest.fn(() => of(mockGlobalTwoFactorConfig)),
+        hasRole: jest.fn(() => of(true)),
       }),
       mockProvider(SnackbarService),
       mockProvider(DialogService, {
