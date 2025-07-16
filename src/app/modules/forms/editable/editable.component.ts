@@ -105,6 +105,8 @@ export class EditableComponent implements OnInit, AfterViewInit, OnDestroy {
     const allowedOverlaySelectors = [
       '.mat-mdc-autocomplete-panel',
       '.mat-mdc-select-panel',
+      '.cdk-global-overlay-wrapper',
+      '.cdk-overlay-backdrop',
     ];
 
     if (allowedOverlaySelectors.some((selector) => target.closest(selector))) {
