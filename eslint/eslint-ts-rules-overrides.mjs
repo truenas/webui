@@ -23,6 +23,7 @@ export const ruleOverrides = {
   "import/no-unresolved": ["off"],
   "import/named": ["off"],
 
+  "sonarjs/aws-restricted-ip-admin-access", ["off"],
   "sonarjs/no-duplicate-string": ["off"],
   "sonarjs/no-clear-text-protocols": ["off"],
   "sonarjs/todo-tag": ["off"],
