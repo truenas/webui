@@ -8,12 +8,12 @@
       "Bash(mv:*)",
       "Bash(npx tsc:*)",
       "Bash(ls:*)",
-      "Bash(find *)",
-      "Bash(sed *)",
+      "Bash(find:*)",
+      "Bash(sed:*)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(open \"https://github.com/truenas/webui/:*)",
-      "Fetch(https://github.com:*",
+      "Bash(open \"https://github.com/truenas/webui/*\")",
+      "Fetch(https://github.com:*)",
       "Bash(curl:*)",
       "mcp__playwright__browser_navigate",
       "mcp__playwright__browser_wait_for",
@@ -22,15 +22,5 @@
     "deny": []
   },
   "includeCoAuthoredBy": false,
-  "enableAllProjectMcpServers": false,
-  "mcpServers": {
-    "playwright": {
-      "command": "npx",
-      "args": [
-        "@playwright/mcp@latest",
-        "--browser-arg=--lang=en-US",
-        "--browser-arg=--accept-lang=en-US,en;q=0.9"
-      ]
-    }
-  }
+  "enableAllProjectMcpServers": false
 }
