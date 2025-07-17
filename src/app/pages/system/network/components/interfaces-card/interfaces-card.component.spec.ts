@@ -4,8 +4,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
-import { of, Subject } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { BehaviorSubject, of, Subject } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { LinkState, NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { AllNetworkInterfacesUpdate, NetworkInterfaceUpdate } from 'app/interfaces/reporting.interface';
@@ -62,6 +61,7 @@ describe('InterfacesCardComponent', () => {
       },
     },
   ];
+  const failoverConfig$ = new BehaviorSubject({ disabled: true });
 
   const updateSubject$ = new Subject<AllNetworkInterfacesUpdate>();
 
@@ -80,9 +80,14 @@ describe('InterfacesCardComponent', () => {
           isLoading: false,
         } as InterfacesState),
       }),
-      mockApi([
-        mockCall('interface.delete'),
-      ]),
+      mockProvider(ApiService, {
+        call: jest.fn((method) => {
+          if (method === 'failover.config') {
+            return failoverConfig$;
+          }
+          return of({});
+        }),
+      }),
       mockProvider(NetworkService, {
         subscribeToInOutUpdates: jest.fn(() => updateSubject$),
       }),
@@ -167,6 +172,7 @@ describe('InterfacesCardComponent', () => {
 
   it('disables Add and Delete buttons on HA systems', async () => {
     spectator.setInput('isHaLicensed', true);
+    failoverConfig$.next({ disabled: false });
 
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     expect(await addButton.isDisabled()).toBe(true);

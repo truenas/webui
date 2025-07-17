@@ -17,6 +17,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { helptextInterfaces } from 'app/helptext/network/interfaces/interfaces-list';
+import { FailoverConfig } from 'app/interfaces/failover.interface';
 import { NetworkInterface, PhysicalNetworkInterface } from 'app/interfaces/network-interface.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
@@ -109,6 +110,9 @@ describe('NetworkComponent', () => {
           isTestingChanges = true;
           return undefined;
         }),
+        mockCall('failover.config', {
+          disabled: true,
+        } as FailoverConfig),
         mockCall('interface.query', () => [existingInterface]),
         mockCall('interface.xmit_hash_policy_choices'),
         mockCall('interface.lacpdu_rate_choices'),

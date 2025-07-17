@@ -17,6 +17,7 @@ import {
   XmitHashPolicy,
 } from 'app/enums/network-interface.enum';
 import { ProductType } from 'app/enums/product-type.enum';
+import { FailoverConfig } from 'app/interfaces/failover.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -115,6 +116,9 @@ describe('InterfaceFormComponent', () => {
         mockCall('interface.network_config_to_be_removed', { ipv4gateway: '192.168.1.1', nameserver1: '8.8.8.8', nameserver2: '8.8.4.4' }),
         mockCall('failover.licensed', false),
         mockCall('failover.node', 'A'),
+        mockCall('failover.config', {
+          disabled: true,
+        } as FailoverConfig),
       ]),
       mockProvider(NetworkService, {
         getBridgeMembersChoices: jest.fn(() => of({
