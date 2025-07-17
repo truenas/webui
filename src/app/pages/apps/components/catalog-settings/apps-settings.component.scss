@@ -1,11 +1,6 @@
 :host ::ng-deep {
-  .trains {
-    fieldset {
-      padding: 0 0 10px;
-    }
-
-    ix-label {
-      padding-left: 10px;
+  .trains {    .checkbox-list {
+      margin-left: -10px;
     }
   }
 }
