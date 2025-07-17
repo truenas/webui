@@ -7,6 +7,7 @@ export const helptextDashboard = {
     status: T('Status'),
     statusMessage: T('Status Message'),
     domainAccountName: T('Domain Account Name'),
+    accountCache: T('Account Cache'),
   },
   idmap: {
     title: T('Idmap'),

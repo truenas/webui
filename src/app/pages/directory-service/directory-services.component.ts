@@ -5,6 +5,7 @@ import {
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatDialog } from '@angular/material/dialog';
 import { MatList, MatListItem } from '@angular/material/list';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -21,6 +22,7 @@ import { helptextDashboard } from 'app/helptext/directory-service/dashboard';
 import { ActiveDirectoryConfig } from 'app/interfaces/active-directory-config.interface';
 import { LdapCredentialPlain } from 'app/interfaces/directoryservice-credentials.interface';
 import { DirectoryServicesConfig } from 'app/interfaces/directoryservices-config.interface';
+import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { IpaConfig } from 'app/interfaces/ipa-config.interface';
 import { LdapConfig } from 'app/interfaces/ldap-config.interface';
@@ -30,6 +32,7 @@ import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -37,6 +40,7 @@ import { DirectoryServicesFormComponent } from 'app/pages/directory-service/comp
 import { KerberosKeytabsListComponent } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-list/kerberos-keytabs-list.component';
 import { KerberosRealmsListComponent } from 'app/pages/directory-service/components/kerberos-realms/kerberos-realms-list.component';
 import { KerberosSettingsComponent } from 'app/pages/directory-service/components/kerberos-settings/kerberos-settings.component';
+import { LeaveDomainDialog } from 'app/pages/directory-service/components/leave-domain-dialog/leave-domain-dialog.component';
 import { directoryServicesElements } from 'app/pages/directory-service/directory-services.elements';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -44,6 +48,8 @@ interface DataCard {
   title: TranslatedString;
   items: Option[];
   onSettingsPressed: () => void;
+  showLeaveButton?: boolean;
+  onLeavePressed?: () => void;
 }
 
 @UntilDestroy()
@@ -78,6 +84,7 @@ export class DirectoryServicesComponent implements OnInit {
   protected isLdapEnabled = false;
   protected isIpaEnabled = false;
   protected readonly directoryServicesConfig = signal<DirectoryServicesConfig | null>(null);
+  protected readonly directoryServicesStatus = signal<DirectoryServicesStatus | null>(null);
   protected readonly isDirectoryServicesDisabled = computed(() => !this.directoryServicesConfig()?.enable);
 
   protected activeDirectoryDataCard: DataCard;
@@ -99,10 +106,12 @@ export class DirectoryServicesComponent implements OnInit {
     private api: ApiService,
     private slideIn: SlideIn,
     private dialog: DialogService,
+    private matDialog: MatDialog,
     private loader: LoaderService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
+    private snackbar: SnackbarService,
   ) {
   }
 
@@ -126,7 +135,7 @@ export class DirectoryServicesComponent implements OnInit {
     return dataCard;
   }
 
-  private refreshCards(): void {
+  protected refreshCards(): void {
     forkJoin([
       this.api.call('directoryservices.status'),
       this.api.call('directoryservices.config'),
@@ -139,6 +148,7 @@ export class DirectoryServicesComponent implements OnInit {
       )
       .subscribe(([servicesState, directoryServicesConfig, kerberosSettings]) => {
         this.directoryServicesConfig.set(directoryServicesConfig);
+        this.directoryServicesStatus.set(servicesState);
         this.isActiveDirectoryEnabled = servicesState.type === DirectoryServiceType.ActiveDirectory
         && servicesState.status !== DirectoryServiceStatus.Disabled;
         this.isLdapEnabled = servicesState.type === DirectoryServiceType.Ldap
@@ -171,8 +181,10 @@ export class DirectoryServicesComponent implements OnInit {
               value: adConfig.domain || null,
             },
             {
-              label: this.translate.instant(helptextDashboard.activeDirectory.domainAccountName),
-              value: (directoryServicesConfig?.credential as LdapCredentialPlain).binddn || null,
+              label: this.translate.instant(helptextDashboard.activeDirectory.accountCache),
+              value: directoryServicesConfig?.enable_account_cache
+                ? this.translate.instant('Enabled')
+                : this.translate.instant('Disabled'),
             },
           );
 
@@ -180,6 +192,8 @@ export class DirectoryServicesComponent implements OnInit {
             title: this.translate.instant(helptextDashboard.activeDirectory.title),
             items,
             onSettingsPressed: () => this.openDirectoryServicesForm(),
+            showLeaveButton: servicesState.status === DirectoryServiceStatus.Healthy,
+            onLeavePressed: () => this.openLeaveDialog(),
           };
         }
 
@@ -262,6 +276,8 @@ export class DirectoryServicesComponent implements OnInit {
             title: this.translate.instant(helptextDashboard.ipa.title),
             items,
             onSettingsPressed: () => this.openDirectoryServicesForm(),
+            showLeaveButton: servicesState.status === DirectoryServiceStatus.Healthy,
+            onLeavePressed: () => this.openLeaveDialog(),
           };
         }
         this.kerberosSettingsDataCard = {
@@ -329,5 +345,17 @@ export class DirectoryServicesComponent implements OnInit {
    */
   protected typeCard(card: DataCard): DataCard {
     return card;
+  }
+
+  protected openLeaveDialog(): void {
+    this.matDialog.open(LeaveDomainDialog)
+      .afterClosed()
+      .pipe(
+        filter(Boolean),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        this.refreshCards();
+      });
   }
 }

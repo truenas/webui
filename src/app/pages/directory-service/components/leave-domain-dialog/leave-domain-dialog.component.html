@@ -1,5 +1,14 @@
 <h1 matDialogTitle>{{ 'Leave Domain' | translate }}</h1>
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+  <div class="warning-section">
+    <p><strong>{{ 'Warning:' | translate }}</strong> {{ 'This action will:' | translate }}</p>
+    <ul>
+      <li>{{ 'Disable the directory service' | translate }}</li>
+      <li>{{ 'Delete the TrueNAS account from the directory service' | translate }}</li>
+    </ul>
+    <p><strong>{{ 'This action cannot be undone.' | translate }}</strong></p>
+  </div>
+
   <p>
     {{ 'Leaving the domain requires sufficient privileges. Enter your credentials below.' | translate }}
   </p>
