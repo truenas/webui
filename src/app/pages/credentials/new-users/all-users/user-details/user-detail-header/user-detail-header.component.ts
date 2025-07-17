@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, input, output,
+  ChangeDetectionStrategy, Component, input,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
@@ -31,7 +31,6 @@ import { UserFormComponent } from 'app/pages/credentials/new-users/user-form/use
 })
 export class UserDetailHeaderComponent {
   user = input.required<User>();
-  reloadUsers = output();
 
   protected readonly Role = Role;
   protected loggedInUser = toSignal(this.authService.user$.pipe(filter(Boolean)));
@@ -43,14 +42,7 @@ export class UserDetailHeaderComponent {
   ) {}
 
   protected doEdit(): void {
-    this.slideIn
-      .open(UserFormComponent, { data: this.user() })
-      .pipe(untilDestroyed(this))
-      .subscribe((result) => {
-        if (result?.response) {
-          this.reloadUsers.emit();
-        }
-      });
+    this.slideIn.open(UserFormComponent, { data: this.user() });
   }
 
   protected doDelete(): void {
