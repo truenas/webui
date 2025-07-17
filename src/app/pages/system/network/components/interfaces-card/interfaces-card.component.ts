@@ -147,7 +147,7 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
           ),
           hidden: (row) => of(this.isPhysical(row)),
           onClick: (row) => this.onDelete(row),
-          disabled: () => this.isHaLicensed$,
+          disabled: () => this.isHaEnabled$,
         },
       ],
     }),
