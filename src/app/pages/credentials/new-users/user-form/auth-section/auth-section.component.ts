@@ -99,13 +99,13 @@ export class AuthSectionComponent implements OnInit {
     effect(() => {
       if (!this.sshAccess()) {
         this.form.patchValue({ ssh_password_enabled: false });
-        this.form.controls.password_disabled.enable({ emitEvent: false });
+        this.form.controls.password_disabled.enable();
       }
     });
 
     effect(() => {
       if (this.smbAccess()) {
-        this.form.controls.password.enable({ emitEvent: false });
+        this.form.controls.password.enable();
         this.form.patchValue({ password_disabled: false });
       }
     });
@@ -126,10 +126,10 @@ export class AuthSectionComponent implements OnInit {
     ).subscribe((isDisabled) => {
       if (isDisabled) {
         this.form.controls.password.disable();
-        this.form.controls.ssh_password_enabled.disable({ emitEvent: false });
+        this.form.controls.ssh_password_enabled.disable();
       } else {
         this.form.controls.password.enable();
-        this.form.controls.ssh_password_enabled.enable({ emitEvent: false });
+        this.form.controls.ssh_password_enabled.enable();
       }
     });
 
@@ -137,10 +137,10 @@ export class AuthSectionComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe((sshPasswordEnabled) => {
       if (sshPasswordEnabled) {
-        this.form.controls.password_disabled.disable({ emitEvent: false });
+        this.form.controls.password_disabled.disable();
         this.form.controls.password_disabled.setValue(false);
       } else {
-        this.form.controls.password_disabled.enable({ emitEvent: false });
+        this.form.controls.password_disabled.enable();
       }
     });
   }
