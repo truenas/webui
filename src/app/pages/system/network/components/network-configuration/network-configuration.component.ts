@@ -1,9 +1,10 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal,
+  ChangeDetectionStrategy, Component, OnInit, signal,
 } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
@@ -34,7 +35,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
-import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { systemInfoUpdated } from 'app/store/system-info/system-info.actions';
 
 /**
@@ -68,6 +68,7 @@ export type UiNetworkActivityType = NetworkActivityType | SpecificActivityType;
     IxSelectComponent,
     RequiresRolesDirective,
     MatButton,
+    MatTooltip,
     TestDirective,
     TranslateModule,
   ],
@@ -76,6 +77,9 @@ export class NetworkConfigurationComponent implements OnInit {
   protected readonly requiredRoles = [Role.NetworkGeneralWrite];
 
   protected isFormLoading = signal(false);
+
+  protected readonly isHaEnabled = signal(false);
+  protected readonly isHaLicensed = signal(false);
 
   form = this.fb.group({
     hostname: ['', Validators.required],
@@ -234,15 +238,16 @@ export class NetworkConfigurationComponent implements OnInit {
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private formErrorHandler: FormErrorHandlerService,
-    private cdr: ChangeDetectorRef,
     private fb: NonNullableFormBuilder,
     private systemGeneralService: SystemGeneralService,
     private store$: Store<AppState>,
-    public slideInRef: SlideInRef<undefined, boolean>,
+    public slideInRef: SlideInRef<{ isHaEnabled: boolean; isHaLicensed: boolean }, boolean>,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
+    this.isHaEnabled.set(this.slideInRef.getData()?.isHaEnabled);
+    this.isHaLicensed.set(this.slideInRef.getData()?.isHaLicensed);
   }
 
   ngOnInit(): void {
@@ -270,10 +275,8 @@ export class NetworkConfigurationComponent implements OnInit {
     );
 
     if (this.systemGeneralService.getProductType() === ProductType.Enterprise) {
-      this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)).subscribe((isHaLicensed) => {
-        this.hostnameB.hidden = !isHaLicensed;
-        this.hostnameVirtual.hidden = !isHaLicensed;
-      });
+      this.hostnameB.hidden = !this.isHaLicensed();
+      this.hostnameVirtual.hidden = !this.isHaLicensed();
     }
   }
 

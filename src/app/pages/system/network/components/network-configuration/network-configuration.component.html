@@ -157,7 +157,8 @@
           type="submit"
           color="primary"
           ixTest="save"
-          [disabled]="form.invalid || isFormLoading()"
+          [matTooltip]="isHaEnabled() ? ('Changing settings is not allowed while HA is enabled' | translate): ''"
+          [disabled]="form.invalid || isFormLoading() || isHaEnabled()"
         >
           {{ 'Save' | translate }}
         </button>

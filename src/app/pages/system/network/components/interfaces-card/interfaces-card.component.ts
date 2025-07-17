@@ -1,11 +1,11 @@
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
-  Component, input,
-  OnChanges,
+  Component,
   OnInit, output,
   signal,
 } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -13,7 +13,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { BehaviorSubject, of } from 'rxjs';
+import { of } from 'rxjs';
 import { filter, map, throttleTime } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -70,17 +70,19 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
     TranslateModule,
   ],
 })
-export class InterfacesCardComponent implements OnInit, OnChanges {
-  readonly isHaLicensed = input(false);
-
+export class InterfacesCardComponent implements OnInit {
   protected readonly searchableElements = interfacesCardElements.elements;
 
   readonly interfacesUpdated = output();
 
+  protected readonly isHaEnabled = this.interfacesStore$.isHaEnabled;
+  protected readonly isHaEnabled$ = toObservable(this.isHaEnabled);
+
+  protected readonly isHaLicensed = this.interfacesStore$.isHaLicensed;
+  protected readonly isHaLicensed$ = toObservable(this.isHaLicensed);
+
   protected readonly requiredRoles = [Role.NetworkInterfaceWrite];
   protected interfaces: NetworkInterface[] = [];
-
-  isHaLicensed$ = new BehaviorSubject(false);
 
   isLoading = false;
   dataProvider = new ArrayDataProvider<NetworkInterface>();
@@ -124,8 +126,8 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
           iconName: iconMarker('refresh'),
           requiredRoles: this.requiredRoles,
           hidden: (row) => of(!this.isPhysical(row)),
-          disabled: () => this.isHaLicensed$,
-          dynamicTooltip: () => this.isHaLicensed$.pipe(map((isHaLicensed) => (isHaLicensed
+          disabled: () => this.isHaEnabled$,
+          dynamicTooltip: () => this.isHaEnabled$.pipe(map((isHaEnabled) => (isHaEnabled
             ? this.translate.instant(helptextInterfaces.haEnabledResetMessage)
             : this.translate.instant('Reset configuration')))),
           onClick: (row) => this.onReset(row),
@@ -133,12 +135,12 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
         {
           iconName: iconMarker('mdi-delete'),
           requiredRoles: this.requiredRoles,
-          tooltip: this.isHaLicensed()
+          tooltip: this.isHaEnabled()
             ? this.translate.instant(helptextInterfaces.haEnabledDeleteMessage)
             : this.translate.instant('Delete'),
           hidden: (row) => of(this.isPhysical(row)),
           onClick: (row) => this.onDelete(row),
-          disabled: () => this.isHaLicensed$,
+          disabled: () => this.isHaEnabled$.pipe(map((isHaEnabled) => !isHaEnabled)),
         },
       ],
     }),
@@ -164,10 +166,6 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
 
   private isPhysical(row: NetworkInterface): boolean {
     return row.type === NetworkInterfaceType.Physical;
-  }
-
-  ngOnChanges(): void {
-    this.isHaLicensed$.next(this.isHaLicensed());
   }
 
   ngOnInit(): void {
@@ -198,6 +196,8 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
     this.slideIn.open(InterfaceFormComponent, {
       data: {
         interfaces: this.interfaces,
+        isHaEnabled: this.isHaEnabled(),
+        isHaLicensed: this.isHaLicensed(),
       },
     })
       .pipe(
@@ -213,6 +213,8 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
     this.slideIn.open(InterfaceFormComponent, {
       data: {
         interface: row,
+        isHaEnabled: this.isHaEnabled(),
+        isHaLicensed: this.isHaLicensed(),
       },
     }).pipe(
       filter((response) => !!response.response),

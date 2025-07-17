@@ -26,6 +26,7 @@ import { NetworkConfigurationComponent } from 'app/pages/system/network/componen
 import {
   networkConfigurationCardElements,
 } from 'app/pages/system/network/components/network-configuration-card/network-configuration-card.elements';
+import { InterfacesStore } from 'app/pages/system/network/stores/interfaces.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
 
@@ -56,6 +57,9 @@ export class NetworkConfigurationCardComponent implements OnInit {
   config: NetworkConfiguration;
   isLoading = false;
 
+  protected readonly isHaEnabled = this.interfacesStore.isHaEnabled;
+  protected readonly isHaLicensed = this.interfacesStore.isHaLicensed;
+
   constructor(
     private api: ApiService,
     private translate: TranslateService,
@@ -64,6 +68,7 @@ export class NetworkConfigurationCardComponent implements OnInit {
     private searchDirectives: UiSearchDirectivesService,
     private actions$: Actions,
     private errorHandler: ErrorHandlerService,
+    private interfacesStore: InterfacesStore,
   ) {}
 
   ngOnInit(): void {
@@ -156,7 +161,10 @@ export class NetworkConfigurationCardComponent implements OnInit {
   }
 
   onSettingsClicked(): void {
-    this.slideIn.open(NetworkConfigurationComponent, { wide: true }).pipe(
+    this.slideIn.open(
+      NetworkConfigurationComponent,
+      { wide: true, data: { isHaEnabled: this.isHaEnabled(), isHaLicensed: this.isHaLicensed() } },
+    ).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(() => this.loadNetworkConfigAndSummary());

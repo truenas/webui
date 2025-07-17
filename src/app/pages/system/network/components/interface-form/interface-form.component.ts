@@ -5,12 +5,13 @@ import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
+import { MatTooltip } from '@angular/material/tooltip';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { range } from 'lodash-es';
-import { forkJoin, of } from 'rxjs';
+import { of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import {
   CreateNetworkInterfaceType,
@@ -92,6 +93,7 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
     MatButton,
     TestDirective,
     TranslateModule,
+    MatTooltip,
     IxRadioGroupComponent,
   ],
 })
@@ -102,7 +104,8 @@ export class InterfaceFormComponent implements OnInit {
   readonly defaultMtu = 1500;
 
   protected isLoading = signal(false);
-  isHaLicensed = false;
+  protected readonly isHaLicensed = signal(false);
+  protected readonly isHaEnabled = signal(false);
   ipLabelSuffix: TranslatedString = '';
   failoverLabelSuffix: TranslatedString = '';
 
@@ -191,12 +194,23 @@ export class InterfaceFormComponent implements OnInit {
     private matDialog: MatDialog,
     private systemGeneralService: SystemGeneralService,
     private store$: Store<AppState>,
-    public slideInRef: SlideInRef<{ interfaces?: NetworkInterface[]; interface?: NetworkInterface }, boolean>,
+    public slideInRef: SlideInRef<
+      {
+        interfaces?: NetworkInterface[];
+        interface?: NetworkInterface;
+        isHaEnabled: boolean;
+        isHaLicensed: boolean;
+      },
+      boolean
+    >,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
-    this.existingInterface = slideInRef.getData()?.interface;
+    const data = this.slideInRef.getData();
+    this.existingInterface = data?.interface;
+    this.isHaEnabled.set(Boolean(data?.isHaEnabled));
+    this.isHaLicensed.set(Boolean(data?.isHaLicensed));
   }
 
   get isNew(): boolean {
@@ -257,14 +271,14 @@ export class InterfaceFormComponent implements OnInit {
       address: ['', [Validators.required, ipv4or6cidrValidator()]],
       failover_address: ['', [
         this.validatorsService.validateOnCondition(
-          () => this.isHaLicensed,
+          () => this.isHaLicensed(),
           Validators.required,
         ),
         ipv4or6Validator(),
       ]],
       failover_virtual_address: ['', [
         this.validatorsService.validateOnCondition(
-          () => this.isHaLicensed,
+          () => this.isHaLicensed(),
           Validators.required,
         ),
         ipv4or6Validator(),
@@ -385,17 +399,13 @@ export class InterfaceFormComponent implements OnInit {
       return;
     }
 
-    forkJoin([
-      this.api.call('failover.licensed'),
-      this.api.call('failover.node'),
-    ])
+    this.api.call('failover.node')
       .pipe(
         this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
-      .subscribe(([isHaLicensed, failoverNode]) => {
-        this.isHaLicensed = isHaLicensed;
-        if (isHaLicensed) {
+      .subscribe((failoverNode) => {
+        if (this.isHaLicensed()) {
           if (failoverNode === 'A') {
             this.ipLabelSuffix = ' ' + this.translate.instant('(This Controller)') as TranslatedString;
             this.failoverLabelSuffix = ' ' + this.translate.instant('(TrueNAS Controller 2)') as TranslatedString;

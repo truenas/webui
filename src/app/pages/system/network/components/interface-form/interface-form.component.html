@@ -216,7 +216,8 @@
           type="submit"
           color="primary"
           ixTest="save"
-          [disabled]="form.invalid || isLoading()"
+          [matTooltip]="isHaEnabled() ? ('Editing interfaces is not allowed while HA is enabled' | translate) : ''"
+          [disabled]="form.invalid || isLoading() || isHaEnabled()"
         >
           {{ 'Save' | translate }}
         </button>
