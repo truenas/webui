@@ -1,12 +1,16 @@
 import { Location } from '@angular/common';
-import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
+import { BehaviorSubject, of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
+import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
+import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { User } from 'app/interfaces/user.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master-detail-view.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { AllUsersHeaderComponent } from 'app/pages/credentials/new-users/all-users/all-users-header/all-users-header.component';
@@ -16,6 +20,34 @@ import { UserDetailsComponent } from 'app/pages/credentials/new-users/all-users/
 import { UserListComponent } from 'app/pages/credentials/new-users/all-users/user-list/user-list.component';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 import { AllUsersComponent } from './all-users.component';
+
+const mockGlobalTwoFactorConfig: GlobalTwoFactorConfig = {
+  id: 1,
+  enabled: true,
+  window: 0,
+  services: { ssh: false },
+};
+
+const mockLoggedInUser = {
+  pw_uid: 1,
+  pw_name: 'admin',
+  pw_gecos: 'Admin User',
+  pw_dir: '/home/admin',
+  pw_shell: '/bin/bash',
+  pw_gid: 1,
+  privilege: {
+    roles: { $set: [] },
+    web_shell: true,
+    webui_access: true,
+  },
+  account_attributes: [],
+  two_factor_config: {},
+  attributes: {
+    preferences: {},
+    dashState: [],
+    appsAgreement: false,
+  },
+} as LoggedInUser;
 
 describe('AllUsersComponent', () => {
   let spectator: Spectator<AllUsersComponent>;
@@ -38,6 +70,11 @@ describe('AllUsersComponent', () => {
         mockCall('user.query', mockUsers),
       ]),
       mockAuth(),
+      mockProvider(AuthService, {
+        getGlobalTwoFactorConfig: jest.fn(() => of(mockGlobalTwoFactorConfig)),
+        hasRole: jest.fn(() => of(true)),
+        user$: new BehaviorSubject(mockLoggedInUser),
+      }),
       provideMockStore({
         selectors: [
           {

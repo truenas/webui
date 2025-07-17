@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy, Component, computed, input,
   output,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import {
   MatCard, MatCardActions, MatCardContent, MatCardHeader,
@@ -16,6 +17,7 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role, roleNames } from 'app/enums/role.enum';
 import { hasShellAccess } from 'app/helpers/user.helper';
 import { User } from 'app/interfaces/user.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
@@ -64,6 +66,8 @@ export class UserAccessCardComponent {
 
   protected readonly searchableElements = userAccessCardElements;
 
+  protected readonly globalTwoFactorConfig = toSignal(this.authService.getGlobalTwoFactorConfig());
+
   readonly sshAccessStatus = computed<string | null>(() => {
     if (this.user().sshpubkey && this.user().ssh_password_enabled) {
       return this.translate.instant('SSH Key Set & Password Login Enabled');
@@ -106,6 +110,7 @@ export class UserAccessCardComponent {
     private slideIn: SlideIn,
     private downloadService: DownloadService,
     private urlOptions: UrlOptionsService,
+    private authService: AuthService,
   ) {}
 
   protected get auditLink(): string {
@@ -143,6 +148,7 @@ export class UserAccessCardComponent {
           ? this.translate.instant('User unlocked')
           : this.translate.instant('User locked'),
       );
+      this.reloadUsers.emit();
     });
   }
 

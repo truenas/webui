@@ -101,17 +101,37 @@ export class EditableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.editableService.deregister(this);
   }
 
+  /**
+   * Determines whether the given target element should be considered "inside"
+   * this editable component. This prevents the editable from being closed when:
+   *
+   * - The click occurs within the editable itself.
+   * - The click occurs within allowed overlay components like autocomplete, select dropdowns, menus, or datepickers.
+   * - Any modal/dialog container is currently open (assumes it overlaps the editable contextually).
+   *
+   * @param target - The DOM element that was clicked or interacted with.
+   * @returns True if the target is within the editable or a valid overlay area; otherwise, false.
+  */
   isElementWithin(target: HTMLElement): boolean {
+    const editableEl = this.elementRef.nativeElement;
+
+    if (editableEl.contains(target)) return true;
+
     const allowedOverlaySelectors = [
       '.mat-mdc-autocomplete-panel',
       '.mat-mdc-select-panel',
+      '.mat-mdc-menu-panel',
+      '.mat-datepicker-content',
     ];
 
-    if (allowedOverlaySelectors.some((selector) => target.closest(selector))) {
+    if (
+      allowedOverlaySelectors.some((sel) => document.querySelector(sel)?.contains(target))
+      || document.querySelector('.mat-mdc-dialog-container')
+    ) {
       return true;
     }
 
-    return this.elementRef.nativeElement.contains(target);
+    return false;
   }
 
   open(): void {

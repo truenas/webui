@@ -88,19 +88,19 @@ export class UserFormComponent implements OnInit {
     return !this.editingUser();
   });
 
-  protected readonly formValues = computed(() => {
+  protected get formValues(): UserUpdate & { stig_password?: UserStigPasswordOption } {
     return {
       ...this.form.value,
       ...this.allowedAccessSection().form.value,
       ...this.authSection().form.value,
       ...this.additionalDetailsSection().form.value,
     };
-  });
+  }
 
-  protected homeCreateWarning = computed<TranslatedString>(() => {
-    const homeCreate = this.formValues().home_create;
-    const home = this.formValues().home;
-    const homeMode = this.formValues().home_mode;
+  protected getHomeCreateWarning(): TranslatedString {
+    const homeCreate = this.formValues.home_create;
+    const home = this.formValues.home;
+    const homeMode = this.formValues.home_mode;
     if (this.editingUser()) {
       if (this.editingUser().immutable || isEmptyHomeDirectory(home)) {
         return '';
@@ -108,23 +108,23 @@ export class UserFormComponent implements OnInit {
       if (!homeCreate && this.editingUser().home !== home) {
         return this.translate.instant(
           'Operation will change permissions on path: {path}',
-          { path: `'${home}'` },
+          { path: `'${String(home)}'` },
         );
       }
       if (!homeCreate && !!homeMode && this.userFormStore.homeModeOldValue() !== homeMode) {
         return this.translate.instant(
           'Operation will change permissions on path: {path}',
-          { path: `'${home}'` },
+          { path: `'${String(home)}'` },
         );
       }
     } else if (!homeCreate && home !== defaultHomePath) {
       return this.translate.instant(
         'With this configuration, the existing directory {path} will be used as a home directory without creating a new directory for the user.',
-        { path: `'${home}'` },
+        { path: `'${String(home)}'` },
       );
     }
     return '';
-  });
+  }
 
   constructor(
     private formBuilder: NonNullableFormBuilder,
@@ -227,10 +227,11 @@ export class UserFormComponent implements OnInit {
   }
 
   private getHomeCreateConfirmation(): Observable<boolean> {
-    if (this.homeCreateWarning()) {
+    const warning = this.getHomeCreateWarning();
+    if (warning) {
       return this.dialog.confirm({
         title: this.translate.instant('Warning!'),
-        message: this.homeCreateWarning(),
+        message: warning,
       });
     }
     return of(true);
@@ -245,7 +246,7 @@ export class UserFormComponent implements OnInit {
   }
 
   protected onSubmit(): void {
-    const values = { ...this.formValues() };
+    const values = { ...this.formValues };
     let payload = { ...this.userFormStore.userConfig() };
 
     const disablePassword = this.isStigMode() && this.isNewUser()

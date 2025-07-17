@@ -11,7 +11,7 @@ import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  from, Observable, of, Subscription,
+  from, Observable, of, Subscription, catchError, EMPTY,
 } from 'rxjs';
 import {
   debounceTime, filter, map, switchMap, take,
@@ -19,6 +19,7 @@ import {
 import { allCommands } from 'app/constants/all-commands.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
+import { extractApiErrorDetails } from 'app/helpers/api.helper';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { isEmptyHomeDirectory } from 'app/helpers/user.helper';
 import { helptextUsers } from 'app/helptext/account/user-form';
@@ -341,10 +342,25 @@ export class OldUserFormComponent implements OnInit {
 
     if (this.editingUser?.home && !isEmptyHomeDirectory(this.editingUser.home)) {
       this.storageService.filesystemStat(this.editingUser.home)
-        .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
+        .pipe(
+          catchError((error: unknown) => {
+            const apiError = extractApiErrorDetails(error);
+            if (apiError?.reason?.includes('[ENOENT]')) {
+              return of(null);
+            }
+            this.errorHandler.showErrorModal(error);
+            return EMPTY;
+          }),
+          untilDestroyed(this),
+        )
         .subscribe((stat) => {
-          this.form.patchValue({ home_mode: stat.mode.toString(8).substring(2, 5) });
-          this.homeModeOldValue = stat.mode.toString(8).substring(2, 5);
+          if (stat) {
+            this.form.patchValue({ home_mode: stat.mode.toString(8).substring(2, 5) });
+            this.homeModeOldValue = stat.mode.toString(8).substring(2, 5);
+          } else {
+            this.form.patchValue({ home_mode: '700' });
+            this.form.controls.home_mode.disable();
+          }
         });
     } else {
       this.form.patchValue({ home_mode: '700' });
