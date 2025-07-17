@@ -8,7 +8,7 @@ import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
+import { DirectoryServiceStatus } from 'app/enums/directory-services.enum';
 import { NfsProtocol } from 'app/enums/nfs-protocol.enum';
 import { RdmaProtocolName } from 'app/enums/service-name.enum';
 import { NfsConfig } from 'app/interfaces/nfs-config.interface';
@@ -64,9 +64,10 @@ describe('ServiceNfsComponent', () => {
         }),
         mockCall('nfs.update'),
         mockCall('rdma.capable_protocols', [RdmaProtocolName.Nfs]),
-        mockCall('directoryservices.get_state', {
-          activedirectory: DirectoryServiceState.Healthy,
-          ldap: DirectoryServiceState.Disabled,
+        mockCall('directoryservices.status', {
+          status: DirectoryServiceStatus.Healthy,
+          type: null,
+          status_msg: null,
         }),
       ]),
       provideMockStore({
