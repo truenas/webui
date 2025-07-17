@@ -288,10 +288,11 @@ export class InterfaceFormComponent implements OnInit {
       next: () => {
         this.store$.dispatch(networkInterfacesChanged({ commit: false, checkIn: false }));
 
-        this.api.call('interface.default_route_will_be_removed').pipe(untilDestroyed(this)).subscribe((approved) => {
-          if (approved) {
+        this.api.call('interface.network_config_to_be_removed').pipe(untilDestroyed(this)).subscribe((configToRemove) => {
+          if (configToRemove && Object.keys(configToRemove).length > 0) {
             this.matDialog.open(DefaultGatewayDialog, {
               width: '600px',
+              data: configToRemove,
             });
           }
 

@@ -35,10 +35,6 @@ export const instanceDetailsElements = {
       hierarchy: [T('Tools')],
       anchor: 'tools',
     },
-    metrics: {
-      hierarchy: [T('Metrics')],
-      anchor: 'metrics',
-    },
   },
   visibleTokens: [GlobalSearchVisibleToken.Vms],
 } satisfies UiSearchableElement;

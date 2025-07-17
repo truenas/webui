@@ -12,6 +12,7 @@
     <p>{{ 'Bucket' | translate }}: {{ backup().attributes.bucket || '-' }}</p>
     <p>{{ 'Folder' | translate }}: {{ backup().attributes.folder || '-' }}</p>
     <p>{{ 'Keep Last' | translate }}: {{ backup().keep_last || '-' }}</p>
+    <p>{{ 'Rate Limit' | translate }}: @if (backup().rate_limit) {{{ formatRateLimit(backup().rate_limit) }}} @else {{{ 'No limit' | translate }}}</p>
     <p>
       {{ 'Transfer Setting' | translate }}:
       {{ (backup().transfer_setting | mapValue: cloudsyncTransferSettingLabels) || '-' }}

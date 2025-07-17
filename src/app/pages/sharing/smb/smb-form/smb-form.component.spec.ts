@@ -470,6 +470,18 @@ describe('SmbFormComponent', () => {
         hideCancel: true,
       });
     });
+
+    it('should not show warning if aaple_name_mangling value is unchanged when editing', async () => {
+      const aaplNameManglingCheckbox = await loader.getHarness(
+        IxCheckboxHarness.with({ label: formLabels.aapl_name_mangling }),
+      );
+
+      await aaplNameManglingCheckbox.setValue(
+        (existingShare.options as LegacySmbShareOptions).aapl_name_mangling,
+      );
+
+      expect(spectator.inject(DialogService).confirm).not.toHaveBeenCalled();
+    });
   });
 
   describe('smb form operations (default share)', () => {
