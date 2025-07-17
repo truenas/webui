@@ -187,12 +187,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
         const groupLabel = this.roleGroupMap.get(selectedRole);
         const groupId = groupOptions.find((group) => group.label === groupLabel)?.value;
         if (groupId) {
-          if (this.editingUser()) {
-            const groups = [...this.form.value.groups, groupId];
-            this.form.patchValue({ groups });
-          } else {
-            this.form.patchValue({ groups: [groupId] });
-          }
+          this.form.patchValue({ groups: [groupId] });
         }
       }),
       untilDestroyed(this),
@@ -203,12 +198,22 @@ export class AdditionalDetailsSectionComponent implements OnInit {
         this.setupEditUserForm(this.editingUser());
       }
     });
+
+    effect(() => {
+      if (!this.editingUser() && this.shellAccess()) {
+        this.setFirstShellOption();
+      }
+    });
   }
 
   ngOnInit(): void {
     this.setupShellUpdate();
     if (!this.editingUser()) {
-      this.setFirstShellOption();
+      if (this.shellAccess()) {
+        this.setFirstShellOption();
+      } else {
+        this.setNoLoginShell();
+      }
     }
     this.detectHomeDirectoryChanges();
     this.setHomeSharePath();
@@ -328,12 +333,14 @@ export class AdditionalDetailsSectionComponent implements OnInit {
 
     this.form.controls.groups.valueChanges.pipe(debounceTime(300), untilDestroyed(this)).subscribe((groups) => {
       const currentRole = this.userFormStore.role();
-      if (!currentRole) {
-        return;
-      }
       const requiredGroup = this.roleGroupMap.get(currentRole);
       const groupNames = groups.map((id) => this.groupNameCache.get(id));
-      if (requiredGroup && !groupNames.includes(requiredGroup)) {
+
+      if (groupNames.includes('')) {
+        return;
+      }
+
+      if ((requiredGroup && !groupNames.includes(requiredGroup)) || !groups.length) {
         this.userFormStore.updateSetupDetails({ role: null });
       }
     });
@@ -355,6 +362,8 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     ).subscribe((shellAccess) => {
       if (shellAccess) {
         this.setFirstShellOption();
+      } else {
+        this.setNoLoginShell();
       }
     });
   }
@@ -388,6 +397,10 @@ export class AdditionalDetailsSectionComponent implements OnInit {
         this.form.patchValue({ shell: defaultShell });
       }
     });
+  }
+
+  private setNoLoginShell(): void {
+    this.form.patchValue({ shell: '/usr/sbin/nologin' });
   }
 
   private detectHomeDirectoryChanges(): void {

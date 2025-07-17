@@ -7,13 +7,13 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { Role, roleNames } from 'app/enums/role.enum';
-import { hasShellAccess, hasSshAccess } from 'app/helpers/user.helper';
+import { hasShellAccess, hasSshAccess, hasTrueNasAccess } from 'app/helpers/user.helper';
 import { User } from 'app/interfaces/user.interface';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { defaultRole, UserFormStore } from 'app/pages/credentials/new-users/user-form/user.store';
+import { UserFormStore } from 'app/pages/credentials/new-users/user-form/user.store';
 
 @UntilDestroy()
 @Component({
@@ -106,18 +106,19 @@ export class AllowedAccessSectionComponent {
       if (this.editingUser()) {
         this.form.patchValue({
           smb: this.editingUser().smb,
-          truenas_access: !!this.editingUser().roles.length,
+          truenas_access: hasTrueNasAccess(this.editingUser()),
           shell_access: hasShellAccess(this.editingUser()),
           ssh_access: hasSshAccess(this.editingUser()),
-          role: this.editingUser().roles.length > 0 ? this.editingUser().roles[0] : defaultRole,
+          role: this.editingUser().roles.length > 0 ? this.editingUser().roles[0] : null,
         });
       }
     });
 
     effect(() => {
       const role = this.userFormStore.role();
-      if (role !== this.form.controls.role.value) {
-        this.form.controls.role.patchValue(role, { emitEvent: false });
+
+      if (!role) {
+        this.form.controls.role.patchValue(null, { emitEvent: false });
       }
     });
   }

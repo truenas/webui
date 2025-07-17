@@ -258,6 +258,13 @@ export class UserFormComponent implements OnInit {
       password_disabled: disablePassword,
     };
 
+    if (!this.userFormStore.shellAccess()) {
+      payload = {
+        ...payload,
+        shell: '/usr/sbin/nologin',
+      };
+    }
+
     if (!payload.password) {
       delete payload.password;
     }

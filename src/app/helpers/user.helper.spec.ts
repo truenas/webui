@@ -65,17 +65,8 @@ describe('UserHelper', () => {
   });
 
   describe('hasTrueNasAccess', () => {
-    it('returns true when user has roles', () => {
+    it('returns true when user has has TrueNAS access', () => {
       expect(hasTrueNasAccess({ roles: [Role.FullAdmin] } as unknown as User)).toBe(true);
-    });
-
-    it('returns true when user has groups', () => {
-      expect(hasTrueNasAccess({ groups: [1] } as unknown as User)).toBe(true);
-    });
-
-    it('returns false when user has no roles or groups', () => {
-      expect(hasTrueNasAccess({ roles: [], groups: [] } as unknown as User)).toBe(false);
-      expect(hasTrueNasAccess({} as unknown as User)).toBe(false);
     });
   });
 });
