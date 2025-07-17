@@ -242,10 +242,11 @@ describe('UsersSearchComponent', () => {
       imports: [SearchInputComponent],
       providers: [
         mockApi([
-          mockCall('directoryservices.get_state', {
-            activedirectory: DirectoryServiceState.Disabled,
-            ldap: DirectoryServiceState.Disabled,
-          } as DirectoryServicesState),
+          mockCall('directoryservices.status', {
+            status: DirectoryServiceStatus.Disabled,
+            type: null,
+            status_msg: null,
+          } as DirectoryServicesStatus),
         ]),
       ],
     });
