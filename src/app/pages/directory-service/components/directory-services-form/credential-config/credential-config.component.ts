@@ -179,20 +179,26 @@ export class CredentialConfigComponent implements OnInit {
 
   private emitCredentialByType(current: Record<string, unknown>): void {
     const credentialType = current.credential_type as DirectoryServiceCredentialType;
+
+    // Validate required fields before emitting
     switch (credentialType) {
       case DirectoryServiceCredentialType.KerberosUser:
-        this.credentialUpdated.emit({
-          credential_type: DirectoryServiceCredentialType.KerberosUser,
-          password: current.password as string,
-          username: current.username as string,
-        });
+        if (current.username && current.password) {
+          this.credentialUpdated.emit({
+            credential_type: DirectoryServiceCredentialType.KerberosUser,
+            password: current.password as string,
+            username: current.username as string,
+          });
+        }
         break;
 
       case DirectoryServiceCredentialType.KerberosPrincipal:
-        this.credentialUpdated.emit({
-          credential_type: DirectoryServiceCredentialType.KerberosPrincipal,
-          principal: current.principal as string,
-        });
+        if (current.principal) {
+          this.credentialUpdated.emit({
+            credential_type: DirectoryServiceCredentialType.KerberosPrincipal,
+            principal: current.principal as string,
+          });
+        }
         break;
 
       case DirectoryServiceCredentialType.LdapAnonymous:
@@ -202,18 +208,22 @@ export class CredentialConfigComponent implements OnInit {
         break;
 
       case DirectoryServiceCredentialType.LdapMtls:
-        this.credentialUpdated.emit({
-          credential_type: DirectoryServiceCredentialType.LdapMtls,
-          client_certificate: current.client_certificate as string,
-        });
+        if (current.client_certificate) {
+          this.credentialUpdated.emit({
+            credential_type: DirectoryServiceCredentialType.LdapMtls,
+            client_certificate: current.client_certificate as string,
+          });
+        }
         break;
 
       case DirectoryServiceCredentialType.LdapPlain:
-        this.credentialUpdated.emit({
-          credential_type: DirectoryServiceCredentialType.LdapPlain,
-          binddn: current.binddn as string,
-          bindpw: current.bindpw as string,
-        });
+        if (current.binddn && current.bindpw) {
+          this.credentialUpdated.emit({
+            credential_type: DirectoryServiceCredentialType.LdapPlain,
+            binddn: current.binddn as string,
+            bindpw: current.bindpw as string,
+          });
+        }
         break;
     }
   }

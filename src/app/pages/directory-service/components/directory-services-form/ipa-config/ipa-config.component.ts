@@ -73,6 +73,9 @@ export class IpaConfigComponent implements OnInit {
     this.fillFormWithPreviousConfig();
     this.setupSmbDomainValidation();
     this.watchForFormChanges();
+
+    // Emit current configuration data immediately if form has valid data
+    this.emitCurrentConfigurationData();
   }
 
   private fillFormWithPreviousConfig(): void {

@@ -20,7 +20,7 @@ import { DirectoryServiceStatus, DirectoryServiceType } from 'app/enums/director
 import { Role } from 'app/enums/role.enum';
 import { helptextDashboard } from 'app/helptext/directory-service/dashboard';
 import { ActiveDirectoryConfig } from 'app/interfaces/active-directory-config.interface';
-import { LdapCredentialPlain } from 'app/interfaces/directoryservice-credentials.interface';
+import { isLdapCredentialPlain } from 'app/interfaces/directoryservice-credentials.interface';
 import { DirectoryServicesConfig } from 'app/interfaces/directoryservices-config.interface';
 import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
@@ -157,7 +157,7 @@ export class DirectoryServicesComponent implements OnInit {
         this.isIpaEnabled = servicesState.type === DirectoryServiceType.Ipa
         && servicesState.status !== DirectoryServiceStatus.Disabled;
         const adConfig = directoryServicesConfig?.configuration as ActiveDirectoryConfig;
-        if (adConfig) {
+        if (adConfig && directoryServicesConfig) {
           const items: Option[] = [
             {
               label: this.translate.instant(helptextDashboard.activeDirectory.status),
@@ -198,7 +198,7 @@ export class DirectoryServicesComponent implements OnInit {
         }
 
         const ldapConfig = directoryServicesConfig?.configuration as LdapConfig;
-        if (ldapConfig) {
+        if (ldapConfig && directoryServicesConfig) {
           const items: Option[] = [
             {
               label: this.translate.instant(helptextDashboard.ldap.status),
@@ -223,7 +223,9 @@ export class DirectoryServicesComponent implements OnInit {
             },
             {
               label: this.translate.instant(helptextDashboard.ldap.bindDN),
-              value: (directoryServicesConfig?.credential as LdapCredentialPlain).binddn || null,
+              value: isLdapCredentialPlain(directoryServicesConfig?.credential)
+                ? directoryServicesConfig.credential.binddn
+                : null,
             },
           );
 
@@ -234,8 +236,8 @@ export class DirectoryServicesComponent implements OnInit {
           };
         }
 
-        const ipaConfig = directoryServicesConfig.configuration as IpaConfig;
-        if (ipaConfig) {
+        const ipaConfig = directoryServicesConfig?.configuration as IpaConfig;
+        if (ipaConfig && directoryServicesConfig) {
           const items: Option[] = [
             {
               label: this.translate.instant(helptextDashboard.ipa.status),

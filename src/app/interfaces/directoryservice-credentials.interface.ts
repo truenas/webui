@@ -75,3 +75,33 @@ export type DirectoryServiceCredential =
   | LdapCredentialPlain
   | LdapCredentialAnonymous
   | LdapCredentialMutualTls; // Provide options from a new endpoint
+
+export function isLdapCredentialPlain(
+  credential: DirectoryServiceCredential | null | undefined,
+): credential is LdapCredentialPlain {
+  return credential?.credential_type === DirectoryServiceCredentialType.LdapPlain;
+}
+
+export function isKerberosCredentialUser(
+  credential: DirectoryServiceCredential | null | undefined,
+): credential is KerberosCredentialUser {
+  return credential?.credential_type === DirectoryServiceCredentialType.KerberosUser;
+}
+
+export function isKerberosCredentialPrincipal(
+  credential: DirectoryServiceCredential | null | undefined,
+): credential is KerberosCredentialPrincipal {
+  return credential?.credential_type === DirectoryServiceCredentialType.KerberosPrincipal;
+}
+
+export function isLdapCredentialAnonymous(
+  credential: DirectoryServiceCredential | null | undefined,
+): credential is LdapCredentialAnonymous {
+  return credential?.credential_type === DirectoryServiceCredentialType.LdapAnonymous;
+}
+
+export function isLdapCredentialMutualTls(
+  credential: DirectoryServiceCredential | null | undefined,
+): credential is LdapCredentialMutualTls {
+  return credential?.credential_type === DirectoryServiceCredentialType.LdapMtls;
+}
