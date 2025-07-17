@@ -27,5 +27,5 @@ export function hasSshAccess(user: User): boolean {
 }
 
 export function hasTrueNasAccess(user: User): boolean {
-  return Boolean(user.roles?.length > 0);
+  return Boolean(user.roles?.length > 0 || user.groups?.length > 0);
 }

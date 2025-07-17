@@ -187,7 +187,19 @@ export class AdditionalDetailsSectionComponent implements OnInit {
       distinctUntilChanged(),
       withLatestFrom(this.groupOptions$),
       tap(([selectedRole, groupOptions]) => {
-        if (selectedRole == null) {
+        if (selectedRole === null) {
+          this.form.patchValue({
+            groups: this.form.controls.groups.value.filter((groupId) => {
+              const groupName = groupOptions.find((group) => group.value === groupId)?.label as string;
+
+              if (Array.from(this.roleGroupMap.values()).includes(groupName)) {
+                return false;
+              }
+
+              return true;
+            }),
+          });
+
           return;
         }
 
