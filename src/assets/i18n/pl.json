@@ -227,6 +227,7 @@
   "Edit Service": "",
   "Edit VM": "",
   "Editing interface will result in default gateway being removed, which may result in TrueNAS being inaccessible. You can provide new default gateway and DNS information now:": "",
+  "Editing interfaces is not allowed while HA is enabled": "",
   "Emulating an <i>Intel e82545 (e1000)</i> Ethernet card provides compatibility with most operating systems. Change to <i>VirtIO</i> to provide better performance on systems with VirtIO paravirtualized network driver support.": "",
   "Enable a Display (Virtual Network Computing) remote connection. Requires <i>UEFI</i> booting.": "",
   "Enable Asymmetric Namespace Access (ANA)": "",

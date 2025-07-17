@@ -19,6 +19,7 @@
   "Disable Error": "",
   "Disable TrueNAS Connect": "",
   "Editing interface will result in default gateway being removed, which may result in TrueNAS being inaccessible. You can provide new default gateway and DNS information now:": "",
+  "Editing interfaces is not allowed while HA is enabled": "",
   "Enable Logging": "",
   "Enable Now": "",
   "Enable Trusted Platform Module (TPM)": "",

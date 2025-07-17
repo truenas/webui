@@ -1,6 +1,7 @@
 import {
   Component, Inject, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, viewChild,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { NgModel, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent, MatCardActions } from '@angular/material/card';
@@ -12,9 +13,9 @@ import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  combineLatest, firstValueFrom, lastValueFrom, Observable, switchMap,
+  firstValueFrom, lastValueFrom, Observable, switchMap,
 } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { ProductType } from 'app/enums/product-type.enum';
 import { Role } from 'app/enums/role.enum';
@@ -39,7 +40,7 @@ import { InterfacesStore } from 'app/pages/system/network/stores/interfaces.stor
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
-import { selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
+import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
 
 @UntilDestroy()
@@ -75,7 +76,7 @@ export class NetworkComponent implements OnInit {
 
   readonly checkinTimeoutField = viewChild<NgModel>('checkinTimeoutField');
 
-  isHaEnabled = false;
+  protected readonly isHaEnabled = toSignal(this.api.call('failover.config').pipe(map((config) => !config.disabled)));
   isHaLicensed = false;
   hasPendingChanges = false;
   checkinWaiting = false;
@@ -181,14 +182,11 @@ export class NetworkComponent implements OnInit {
   }
 
   private listenForHaStatus(): void {
-    combineLatest([
-      this.store$.select(selectIsHaLicensed),
-      this.store$.select(selectHaStatus).pipe(filter(Boolean)),
-    ]).pipe(untilDestroyed(this)).subscribe(([isHa, { hasHa }]) => {
-      this.isHaEnabled = isHa && hasHa;
-      this.isHaLicensed = isHa;
-      this.cdr.markForCheck();
-    });
+    this.store$.select(selectIsHaLicensed)
+      .pipe(untilDestroyed(this)).subscribe((isHa) => {
+        this.isHaLicensed = isHa;
+        this.cdr.markForCheck();
+      });
   }
 
   private getCheckInWaitingSeconds(): Promise<number | null> {

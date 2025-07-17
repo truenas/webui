@@ -1,3 +1,4 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -14,7 +15,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, of } from 'rxjs';
-import { filter, map, throttleTime } from 'rxjs/operators';
+import {
+  filter, map, throttleTime,
+} from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { NetworkInterfaceType } from 'app/enums/network-interface.enum';
@@ -64,6 +67,7 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
     UiSearchDirective,
     IxTableComponent,
     IxTableHeadComponent,
+    AsyncPipe,
     IxTableBodyComponent,
     IxTableCellDirective,
     InterfaceStatusIconComponent,
@@ -81,6 +85,7 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
   protected interfaces: NetworkInterface[] = [];
 
   isHaLicensed$ = new BehaviorSubject(false);
+  protected readonly isHaEnabled$ = new BehaviorSubject<boolean>(false);
 
   isLoading = false;
   dataProvider = new ArrayDataProvider<NetworkInterface>();
@@ -124,18 +129,22 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
           iconName: iconMarker('refresh'),
           requiredRoles: this.requiredRoles,
           hidden: (row) => of(!this.isPhysical(row)),
-          disabled: () => this.isHaLicensed$,
-          dynamicTooltip: () => this.isHaLicensed$.pipe(map((isHaLicensed) => (isHaLicensed
-            ? this.translate.instant(helptextInterfaces.haEnabledResetMessage)
-            : this.translate.instant('Reset configuration')))),
+          disabled: () => this.isHaEnabled$,
+          dynamicTooltip: () => this.isHaEnabled$.pipe(
+            map((isHaEnabled) => (isHaEnabled
+              ? this.translate.instant(helptextInterfaces.haEnabledResetMessage)
+              : this.translate.instant('Reset configuration'))),
+          ),
           onClick: (row) => this.onReset(row),
         },
         {
           iconName: iconMarker('mdi-delete'),
           requiredRoles: this.requiredRoles,
-          tooltip: this.isHaLicensed()
-            ? this.translate.instant(helptextInterfaces.haEnabledDeleteMessage)
-            : this.translate.instant('Delete'),
+          dynamicTooltip: () => this.isHaEnabled$.pipe(
+            map((isHaEnabled) => (isHaEnabled
+              ? this.translate.instant(helptextInterfaces.haEnabledDeleteMessage)
+              : this.translate.instant('Delete'))),
+          ),
           hidden: (row) => of(this.isPhysical(row)),
           onClick: (row) => this.onDelete(row),
           disabled: () => this.isHaLicensed$,
@@ -190,6 +199,16 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
       }
       this.subscribeToUpdates();
 
+      this.cdr.markForCheck();
+    });
+    this.checkFailoverDisabled();
+  }
+
+  private checkFailoverDisabled(): void {
+    this.api.call('failover.config').pipe(
+      untilDestroyed(this),
+    ).subscribe((config) => {
+      this.isHaEnabled$.next(!config.disabled);
       this.cdr.markForCheck();
     });
   }
