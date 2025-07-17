@@ -1,5 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { DirectoryServiceStatus, DirectoryServiceType } from 'app/enums/directory-services.enum';
@@ -26,6 +27,12 @@ describe('DirectoryServicesMonitorComponent', () => {
           status_msg: 'Healthy',
         }),
       ]),
+      {
+        provide: MatDialogRef,
+        useValue: {
+          close: jest.fn(),
+        },
+      },
     ],
   });
 
@@ -39,7 +46,7 @@ describe('DirectoryServicesMonitorComponent', () => {
   });
 
   it('shows status of a non-disabled directory service', () => {
-    expect(spectator.query('.status-row')).toHaveText('LDAP Healthy');
+    expect(spectator.query('.status-row')).toHaveText('ServiceLDAP');
 
     const statusIcon = spectator.query('.status-row .icon');
     expect(statusIcon).toHaveClass('state-healthy');
