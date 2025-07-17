@@ -238,7 +238,7 @@ describe('AdditionalDetailsSectionComponent', () => {
       const createCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Create Home Directory' }));
       await createCheckbox.setValue(true);
 
-      const explorer = await loader.getHarness(IxExplorerHarness.with({ label: 'Home Directory' }));
+      const explorer = await loader.getHarness(IxExplorerHarness.with({ label: 'Create Home Directory Under' }));
       await explorer.setValue('/mnt/tank/user');
       spectator.detectChanges();
 

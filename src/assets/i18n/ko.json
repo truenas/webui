@@ -3,6 +3,7 @@
   "Current values are pre-filled in the form below.": "",
   "Editing interface will result in default gateway being removed, which may result in TrueNAS being inaccessible. You can provide new default gateway and DNS information now:": "",
   "Network configuration updated successfully": "",
+  "New directory under {path}": "",
   "No limit": "",
   "Primary DNS Server": "",
   "Primary DNS server address (optional)": "",

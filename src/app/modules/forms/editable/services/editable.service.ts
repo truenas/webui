@@ -74,10 +74,14 @@ export class EditableService implements OnDestroy {
   }
 
   private handleKeydown(event: KeyboardEvent): void {
-    if (event.key === 'Escape' && this.hasOpenEditables) {
-      event.stopImmediatePropagation();
-      this.tryToCloseAll();
-    }
+    if (event.key !== 'Escape' || !this.hasOpenEditables) return;
+
+    // Defer the decision to end of event loop
+    requestAnimationFrame(() => {
+      if (!event.defaultPrevented) {
+        this.tryToCloseAll();
+      }
+    });
   }
 
   private handleMousedown(event: MouseEvent): void {

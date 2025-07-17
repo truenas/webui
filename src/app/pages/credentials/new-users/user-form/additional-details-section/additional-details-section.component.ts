@@ -17,9 +17,12 @@ import {
   tap,
   take,
   withLatestFrom,
+  catchError,
+  EMPTY,
 } from 'rxjs';
 import { allCommands } from 'app/constants/all-commands.constant';
 import { Role } from 'app/enums/role.enum';
+import { extractApiErrorDetails } from 'app/helpers/api.helper';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { isEmptyHomeDirectory } from 'app/helpers/user.helper';
 import { Group } from 'app/interfaces/group.interface';
@@ -88,6 +91,14 @@ export class AdditionalDetailsSectionComponent implements OnInit {
 
     return this.translate.instant('Not Set');
   });
+
+  protected homeDirectoryViewValue(): string {
+    const path = this.form.controls.home.value;
+    if (this.form.controls.home_create.value && path) {
+      return this.translate.instant('New directory under {path}', { path });
+    }
+    return path;
+  }
 
   readonly groupOptions$ = this.api.call('group.query', [[['local', '=', true]]]).pipe(
     map((groups) => groups.map((group) => ({ label: group.group, value: group.id }))),
@@ -288,11 +299,27 @@ export class AdditionalDetailsSectionComponent implements OnInit {
 
     if (user?.home && !isEmptyHomeDirectory(user.home)) {
       this.storageService.filesystemStat(user.home)
-        .pipe(take(1), this.errorHandler.withErrorHandler(), untilDestroyed(this))
+        .pipe(
+          take(1),
+          catchError((error: unknown) => {
+            const apiError = extractApiErrorDetails(error);
+            if (apiError?.reason?.includes('[ENOENT]')) {
+              return of(null);
+            }
+            this.errorHandler.showErrorModal(error);
+            return EMPTY;
+          }),
+          untilDestroyed(this),
+        )
         .subscribe((stat) => {
-          const homeMode = stat.mode.toString(8).substring(2, 5);
-          this.form.patchValue({ home_mode: homeMode });
-          this.userFormStore.updateSetupDetails({ homeModeOldValue: homeMode });
+          if (stat) {
+            const homeMode = stat.mode.toString(8).substring(2, 5);
+            this.form.patchValue({ home_mode: homeMode });
+            this.userFormStore.updateSetupDetails({ homeModeOldValue: homeMode });
+          } else {
+            this.form.patchValue({ home_mode: '700' });
+            this.form.controls.home_mode.disable();
+          }
         });
     } else {
       this.form.patchValue({ home_mode: '700' });
