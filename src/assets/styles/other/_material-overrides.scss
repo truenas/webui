@@ -144,7 +144,7 @@ html .ix-dark {
   --mat-dialog-subhead-tracking: 0;
   --mat-button-toggle-selected-state-text-color: var(--fg1);
   --mat-slide-toggle-label-text-color: var(--fg1);
-  --mat-checkbox-selected-checkmark-color: var(--fg2);
+  --mat-checkbox-selected-checkmark-color: var(--primary-txt);
   --mat-checkbox-disabled-selected-icon-color: var(--grey);
   --mat-checkbox-disabled-unselected-icon-color: var(--grey);
   --mat-form-field-filled-container-color: transparent;
@@ -186,7 +186,7 @@ html .ix-dark {
     &.mat-primary {
       --mat-checkbox-disabled-selected-icon-color: #9c9c9c;
       --mat-checkbox-disabled-unselected-icon-color: #9c9c9c;
-      --mat-checkbox-selected-checkmark-color: var(--fg2);
+      --mat-checkbox-selected-checkmark-color: var(--primary-txt);
       --mat-checkbox-selected-focus-icon-color: var(--primary);
       --mat-checkbox-selected-focus-state-layer-color: var(--primary);
       --mat-checkbox-selected-hover-icon-color: var(--primary);
@@ -233,7 +233,7 @@ html .ix-dark {
         --mat-checkbox-unselected-focus-state-layer-color: transparent;
         --mat-checkbox-selected-pressed-state-layer-color: transparent;
         --mat-checkbox-unselected-pressed-state-layer-color: transparent;
-        
+
         // Override MDC properties for disabled hover states - all grey
         --mdc-checkbox-disabled-selected-icon-color: var(--grey);
         --mdc-checkbox-disabled-unselected-icon-color: var(--grey);
@@ -262,7 +262,7 @@ html .ix-dark {
           --mdc-checkbox-selected-hover-state-layer-color: transparent;
           --mdc-checkbox-unselected-hover-state-layer-color: transparent;
         }
-        
+
         &:focus {
           --mdc-checkbox-selected-focus-icon-color: var(--grey);
           --mdc-checkbox-unselected-focus-icon-color: var(--grey);
