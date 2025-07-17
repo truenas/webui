@@ -2,8 +2,7 @@ import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
-  Component, input,
-  OnChanges,
+  Component,
   OnInit, output,
   signal,
 } from '@angular/core';
@@ -74,9 +73,7 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
     TranslateModule,
   ],
 })
-export class InterfacesCardComponent implements OnInit, OnChanges {
-  readonly isHaLicensed = input(false);
-
+export class InterfacesCardComponent implements OnInit {
   protected readonly searchableElements = interfacesCardElements.elements;
 
   readonly interfacesUpdated = output();
@@ -84,7 +81,6 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
   protected readonly requiredRoles = [Role.NetworkInterfaceWrite];
   protected interfaces: NetworkInterface[] = [];
 
-  isHaLicensed$ = new BehaviorSubject(false);
   protected readonly isHaEnabled$ = new BehaviorSubject<boolean>(false);
 
   isLoading = false;
@@ -173,10 +169,6 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
 
   private isPhysical(row: NetworkInterface): boolean {
     return row.type === NetworkInterfaceType.Physical;
-  }
-
-  ngOnChanges(): void {
-    this.isHaLicensed$.next(this.isHaLicensed());
   }
 
   ngOnInit(): void {
