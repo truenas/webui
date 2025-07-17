@@ -364,6 +364,31 @@ describe('InterfaceFormComponent', () => {
       aliasesList = await loader.getHarnessOrNull(IxListHarness.with({ label: 'Static IP Addresses' }));
       expect(aliasesList).toBeTruthy();
     });
+
+    it('disables save button when HA is enabled', async () => {
+      // Fill form with valid data first
+      await form.fillForm({
+        Type: 'Bridge',
+        Name: 'br0',
+        Description: 'Test Bridge',
+      });
+
+      const networkService = spectator.inject(NetworkService);
+      jest.spyOn(networkService, 'getIsHaEnabled').mockReturnValue(of(true));
+
+      spectator.component.ngOnInit();
+      spectator.detectChanges();
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(true);
+
+      // Reset to HA disabled
+      jest.spyOn(networkService, 'getIsHaEnabled').mockReturnValue(of(false));
+      spectator.component.ngOnInit();
+      spectator.detectChanges();
+
+      expect(await saveButton.isDisabled()).toBe(false);
+    });
   });
 
   describe('edit network interface', () => {

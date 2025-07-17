@@ -10,7 +10,7 @@ import {
   mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
-import { of } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -43,6 +43,7 @@ describe('NetworkComponent', () => {
   let spectator: Spectator<NetworkComponent>;
   let loader: HarnessLoader;
   let api: MockApiService;
+  const isHaEnabled$ = new BehaviorSubject(false);
 
   const existingInterface = {
     id: '1',
@@ -122,6 +123,7 @@ describe('NetworkComponent', () => {
         getLaggProtocolChoices: () => of({}),
         getLaggPortsChoices: () => of({}),
         getVlanParentInterfaceChoices: () => of({}),
+        getIsHaEnabled: jest.fn(() => isHaEnabled$),
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
