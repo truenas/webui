@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "@playwright/mcp@latest",
+        "--browser-arg=--lang=en-US",
+        "--browser-arg=--accept-lang=en-US,en;q=0.9"
+      ]
+    }
+  }
+}
