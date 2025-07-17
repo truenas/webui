@@ -106,7 +106,7 @@ describe('DirectoryServicesComponent', () => {
 
     it('should not show Leave button for Active Directory when not healthy', async () => {
       mockServicesStatus.status = DirectoryServiceStatus.Faulted;
-      
+
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       await spectator.fixture.whenStable();
@@ -182,7 +182,7 @@ describe('DirectoryServicesComponent', () => {
       // Temporarily mock console.warn to avoid jest-fail-on-console error
       const originalWarn = console.warn;
       console.warn = jest.fn();
-      
+
       const dialogRef: Partial<MatDialogRef<unknown>> = {
         afterClosed: () => of(true),
       };
@@ -200,7 +200,7 @@ describe('DirectoryServicesComponent', () => {
       expect(apiCallSpy).toHaveBeenCalledWith('directoryservices.status');
       expect(apiCallSpy).toHaveBeenCalledWith('directoryservices.config');
       expect(apiCallSpy).toHaveBeenCalledWith('kerberos.config');
-      
+
       // Restore console.warn
       console.warn = originalWarn;
     });
