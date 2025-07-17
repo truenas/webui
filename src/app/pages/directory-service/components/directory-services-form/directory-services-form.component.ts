@@ -16,7 +16,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
-import { finalize } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, finalize } from 'rxjs/operators';
 import {
   DirectoryServiceCredentialType,
   DirectoryServiceType,
@@ -276,6 +276,8 @@ export class DirectoryServicesFormComponent implements OnInit {
     });
 
     this.form.controls.service_type.valueChanges.pipe(
+      debounceTime(300), // Add debounce to prevent rapid changes
+      distinctUntilChanged(), // Only emit when value actually changes
       untilDestroyed(this),
     ).subscribe((serviceType) => {
       // Check if we're trying to change service type while the current service is enabled
