@@ -7,8 +7,11 @@ import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
+import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { User } from 'app/interfaces/user.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -37,6 +40,13 @@ const mockUser = {
   password_change_required: true,
 } as User;
 
+const mockGlobalTwoFactorConfig: GlobalTwoFactorConfig = {
+  id: 1,
+  enabled: true,
+  window: 0,
+  services: { ssh: false },
+};
+
 describe('UserAccessCardComponent', () => {
   let spectator: Spectator<UserAccessCardComponent>;
   let loader: HarnessLoader;
@@ -45,6 +55,7 @@ describe('UserAccessCardComponent', () => {
     component: UserAccessCardComponent,
     imports: [
       IxIconComponent,
+      RequiresRolesDirective,
     ],
     declarations: [
       MockComponent(UserLastActionComponent),
@@ -52,6 +63,10 @@ describe('UserAccessCardComponent', () => {
     providers: [
       mockAuth(),
       mockProvider(ApiService),
+      mockProvider(AuthService, {
+        getGlobalTwoFactorConfig: jest.fn(() => of(mockGlobalTwoFactorConfig)),
+        hasRole: jest.fn(() => of(true)),
+      }),
       mockProvider(SnackbarService),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),

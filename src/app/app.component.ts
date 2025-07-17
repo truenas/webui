@@ -31,14 +31,17 @@ export class AppComponent implements OnInit {
     private wsStatus: WebSocketStatusService,
     private detectBrowser: DetectBrowserService,
     private layoutService: LayoutService,
-    private pingService: PingService,
     private authService: AuthService,
     private dialog: DialogService,
     private snackbar: MatSnackBar,
     private translate: TranslateService,
     @Inject(WINDOW) private window: Window,
     private slideIn: SlideIn,
+    private pingService: PingService,
   ) {
+    // Ensure PingService is instantiated so it can listen for WebSocket connections
+    // and automatically set up ping when connection is established
+    this.pingService.initializePingService();
     this.wsStatus.isAuthenticated$.pipe(untilDestroyed(this)).subscribe((isAuthenticated) => {
       if (!isAuthenticated && this.isAuthenticated) {
         this.logOutExpiredUser();
@@ -69,7 +72,6 @@ export class AppComponent implements OnInit {
         }
       }
     });
-    this.pingService.setupPing();
   }
 
   ngOnInit(): void {

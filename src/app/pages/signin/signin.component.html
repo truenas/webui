@@ -1,22 +1,14 @@
 <div class="page-wrap login-form">
   <div class="session-form-hold">
-    @if ((isConnected$ | async) || !(isReconnectAllowed$ | async)) {
+    @if ((isConnected$ | async) || (!(isConnected$ | async) && (isConnectedDelayed$ | async) !== null)) {
       <mat-progress-bar
         value="0"
         class="session-progress"
-        [mode]="(hasLoadingIndicator$ | async)
-          ? 'indeterminate'
-          : 'determinate'"
+        [mode]="(hasLoadingIndicator$ | async) ? 'indeterminate' : 'determinate'"
       ></mat-progress-bar>
     }
 
-    @if (!(isConnected$ | async) && (isReconnectAllowed$ | async)) {
-      <mat-card>
-        <mat-card-content>
-          <ix-reconnect-message></ix-reconnect-message>
-        </mat-card-content>
-      </mat-card>
-    } @else if (!(isConnected$ | async)) {
+    @if (!(isConnected$ | async) && (isConnectedDelayed$ | async) !== null) {
       <mat-card>
         <mat-card-content>
           <ix-disconnected-message></ix-disconnected-message>
