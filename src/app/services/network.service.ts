@@ -70,4 +70,10 @@ export class NetworkService {
       filter(Boolean),
     );
   }
+
+  getIsHaEnabled(): Observable<boolean> {
+    return this.api.call('failover.config').pipe(
+      map((config) => !config.disabled),
+    );
+  }
 }

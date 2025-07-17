@@ -197,10 +197,10 @@ export class InterfacesCardComponent implements OnInit {
   }
 
   private checkFailoverDisabled(): void {
-    this.api.call('failover.config').pipe(
+    this.networkService.getIsHaEnabled().pipe(
       untilDestroyed(this),
-    ).subscribe((config) => {
-      this.isHaEnabled$.next(!config.disabled);
+    ).subscribe((isHaEnabled) => {
+      this.isHaEnabled$.next(isHaEnabled);
       this.cdr.markForCheck();
     });
   }

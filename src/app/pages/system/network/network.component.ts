@@ -15,7 +15,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   firstValueFrom, lastValueFrom, Observable, switchMap,
 } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import { filter } from 'rxjs/operators';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -37,6 +37,7 @@ import { StaticRoutesCardComponent } from 'app/pages/system/network/components/s
 import { networkElements } from 'app/pages/system/network/network.elements';
 import { InterfacesStore } from 'app/pages/system/network/stores/interfaces.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { NetworkService } from 'app/services/network.service';
 import { AppState } from 'app/store';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
 
@@ -73,7 +74,7 @@ export class NetworkComponent implements OnInit {
 
   readonly checkinTimeoutField = viewChild<NgModel>('checkinTimeoutField');
 
-  protected readonly isHaEnabled = toSignal(this.api.call('failover.config').pipe(map((config) => !config.disabled)));
+  protected readonly isHaEnabled = toSignal(this.networkService.getIsHaEnabled());
   hasPendingChanges = false;
   checkinWaiting = false;
   checkinTimeout = 60;
@@ -105,6 +106,7 @@ export class NetworkComponent implements OnInit {
     private actions$: Actions,
     private authService: AuthService,
     private cdr: ChangeDetectorRef,
+    private networkService: NetworkService,
     @Inject(WINDOW) private window: Window,
   ) {
     this.navigation = this.router.getCurrentNavigation();

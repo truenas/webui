@@ -141,6 +141,7 @@ describe('InterfaceFormComponent', () => {
         getV4Netmasks: () => [
           { label: '24', value: '24' },
         ],
+        getIsHaEnabled: jest.fn(() => of(false)),
       }),
       mockProvider(DialogService),
       mockProvider(SlideIn),
