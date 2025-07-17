@@ -39,11 +39,13 @@
     }
   </h3>
 
-  <div class="advanced-settings-cards">
-    <ng-container *ngTemplateOutlet="dataCard; context: { card: kerberosSettingsDataCard }"></ng-container>
-    <ix-kerberos-realms-list [paginator]="false" [inCard]="true"></ix-kerberos-realms-list>
-    <ix-kerberos-keytabs-list [paginator]="false" [inCard]="true"></ix-kerberos-keytabs-list>
-  </div>
+  @if (expansionPanel.expanded) {
+    <div class="advanced-settings-cards">
+      <ng-container *ngTemplateOutlet="dataCard; context: { card: kerberosSettingsDataCard }"></ng-container>
+      <ix-kerberos-realms-list [paginator]="false" [inCard]="true"></ix-kerberos-realms-list>
+      <ix-kerberos-keytabs-list [paginator]="false" [inCard]="true"></ix-kerberos-keytabs-list>
+    </div>
+  }
 </cdk-accordion-item>
 
 <ng-template #dataCard let-card="card">

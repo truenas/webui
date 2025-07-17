@@ -92,8 +92,8 @@ export class DirectoryServicesComponent implements OnInit {
   protected ipaDataCard: DataCard;
   protected kerberosSettingsDataCard: DataCard;
 
-  private readonly kerberosKeytabsListComponent = viewChild.required(KerberosKeytabsListComponent);
-  private readonly kerberosRealmsListComponent = viewChild.required(KerberosRealmsListComponent);
+  private readonly kerberosKeytabsListComponent = viewChild(KerberosKeytabsListComponent);
+  private readonly kerberosRealmsListComponent = viewChild(KerberosRealmsListComponent);
 
   readonly noDirectoryServicesConfig: EmptyConfig = {
     title: this.translate.instant('Directory services are disabled.'),
@@ -117,6 +117,7 @@ export class DirectoryServicesComponent implements OnInit {
 
   ngOnInit(): void {
     this.refreshCards();
+    this.subscribeToDirectoryServicesStatus();
   }
 
   protected getDataCard(): DataCard {
@@ -302,6 +303,28 @@ export class DirectoryServicesComponent implements OnInit {
       });
   }
 
+  private subscribeToDirectoryServicesStatus(): void {
+    this.api.subscribe('directoryservices.status')
+      .pipe(
+        untilDestroyed(this),
+      )
+      .subscribe((event) => {
+        const status = event.fields as DirectoryServicesStatus;
+        this.directoryServicesStatus.set(status);
+
+        // Update enabled states based on new status
+        this.isActiveDirectoryEnabled = status.type === DirectoryServiceType.ActiveDirectory
+        && status.status !== DirectoryServiceStatus.Disabled;
+        this.isLdapEnabled = status.type === DirectoryServiceType.Ldap
+        && status.status !== DirectoryServiceStatus.Disabled;
+        this.isIpaEnabled = status.type === DirectoryServiceType.Ipa
+        && status.status !== DirectoryServiceStatus.Disabled;
+
+        // Refresh the cards to update the UI with new status
+        this.refreshCards();
+      });
+  }
+
   protected onAdvancedSettingsOpened(expansionPanel: CdkAccordionItem): void {
     // Immediately show additional setting, so that user knows what they are.
     expansionPanel.open();
@@ -315,6 +338,12 @@ export class DirectoryServicesComponent implements OnInit {
         // Hide settings back, if user cancels.
         expansionPanel.close();
       });
+
+    // Refresh tables when accordion is opened
+    // Using setTimeout to ensure components are rendered first
+    setTimeout(() => {
+      this.refreshTables();
+    });
   }
 
   protected openDirectoryServicesForm(): void {
