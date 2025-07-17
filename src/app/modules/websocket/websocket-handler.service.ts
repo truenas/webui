@@ -180,6 +180,13 @@ export class WebSocketHandlerService {
   private onClose(event: CloseEvent): void {
     this.wsStatus.setConnectionStatus(false);
     this.isConnectionLive$.next(false);
+
+    // Clean up pending calls when connection closes
+    this.activeCalls = 0;
+    this.pendingCalls.clear();
+    this.callsInConcurrentCallsError.clear();
+    // Note: queuedCalls are kept so they can be processed when connection reopens
+
     if (this.reconnectTimerSubscription) {
       return;
     }
