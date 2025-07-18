@@ -7,7 +7,6 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { MockAuthService } from 'app/core/testing/classes/mock-auth.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { PasswordComplexityRuleset } from 'app/enums/password-complexity-ruleset.enum';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -48,7 +47,7 @@ describe('SystemSecurityFormComponent', () => {
         ],
       }),
       mockProvider(DialogService, {
-        confirm: jest.fn(() => of()),
+        confirm: jest.fn(() => of(true)),
         jobDialog: jest.fn(() => ({ afterClosed: () => of(undefined) })),
       }),
       mockProvider(SnackbarService),
@@ -61,9 +60,18 @@ describe('SystemSecurityFormComponent', () => {
         requireConfirmationWhen: jest.fn(),
       }),
       mockAuth(),
-      mockApi([
-        mockJob('system.security.update', fakeSuccessfulJob()),
-      ]),
+      mockProvider(ApiService, {
+        call: jest.fn((method: string) => {
+          if (method === 'user.query') {
+            return of([]);
+          }
+          if (method === 'auth.twofactor.config') {
+            return of({ enabled: false });
+          }
+          return of(null);
+        }),
+        job: jest.fn(() => fakeSuccessfulJob()),
+      }),
     ],
   });
 

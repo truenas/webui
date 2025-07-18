@@ -10,17 +10,20 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { isEqual } from 'lodash-es';
 import {
-  distinctUntilChanged, firstValueFrom,
+  distinctUntilChanged, firstValueFrom, forkJoin, catchError, of,
 } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { LoginExResponse, LoginRedirectResponse } from 'app/interfaces/auth.interface';
+import { QueryParams } from 'app/interfaces/query-api.interface';
+import { User } from 'app/interfaces/user.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { InsecureConnectionComponent } from 'app/pages/signin/insecure-connection/insecure-connection.component';
 import { SigninStore } from 'app/pages/signin/store/signin.store';
 
@@ -66,6 +69,7 @@ export class SigninFormComponent implements OnInit {
     private translate: TranslateService,
     private authService: AuthService,
     private cdr: ChangeDetectorRef,
+    private api: ApiService,
     @Inject(WINDOW) private window: Window,
   ) {
     effect(() => {
@@ -158,12 +162,63 @@ export class SigninFormComponent implements OnInit {
 
     if (loginResult === LoginResult.NoAccess) {
       this.lastLoginError = this.translate.instant('User is lacking permissions to access WebUI.');
+      this.cdr.markForCheck();
+      this.signinStore.showSnackbar(this.lastLoginError);
     } else {
-      this.lastLoginError = this.translate.instant('Wrong username or password. Please try again.');
+      this.checkStigModeForBetterErrorMessage();
+    }
+  }
+
+  private checkStigModeForBetterErrorMessage(): void {
+    const formValues = this.form.getRawValue();
+    const username = formValues.username;
+
+    if (!username) {
+      this.showGenericLoginError();
+      return;
     }
 
-    this.cdr.markForCheck();
-    this.signinStore.showSnackbar(this.lastLoginError);
+    forkJoin({
+      systemConfig: this.api.call('system.security.config').pipe(
+        catchError(() => of(null)),
+      ),
+      users: this.api.call('user.query', [['username', '=', username]] as unknown as QueryParams<User>).pipe(
+        catchError(() => of([])),
+      ),
+    }).pipe(
+      untilDestroyed(this),
+    ).subscribe({
+      next: ({ systemConfig, users }) => {
+        if (systemConfig?.enable_gpos_stig && users.length > 0) {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          const user = users[0];
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+          if (!user.twofactor_auth_configured && !user.locked && user.password_disabled === false
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            && (user.roles?.length > 0 || user.groups?.length > 0)) {
+            this.lastLoginError = this.translate.instant(
+              'Two-Factor Authentication is not configured for this user. '
+              + 'STIG mode is enabled and requires Two-Factor Authentication for all users.',
+            );
+          } else {
+            this.showGenericLoginError();
+          }
+        } else {
+          this.showGenericLoginError();
+        }
+        this.cdr.markForCheck();
+        this.signinStore.showSnackbar(this.lastLoginError);
+      },
+      error: () => {
+        this.showGenericLoginError();
+        this.cdr.markForCheck();
+        this.signinStore.showSnackbar(this.lastLoginError);
+      },
+    });
+  }
+
+  private showGenericLoginError(): void {
+    this.lastLoginError = this.translate.instant('Wrong username or password. Please try again.');
   }
 
   private handleFailedOtpLogin(loginResult: LoginResult): void {
