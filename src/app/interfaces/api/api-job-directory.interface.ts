@@ -114,6 +114,7 @@ export interface ApiJobDirectory {
   'disk.wipe': { params: DiskWipeParams; response: void };
 
   // Failover
+  'failover.events.vrrp_master': { params: void; response: void };
   'failover.reboot.other_node': { params: void; response: void };
   'failover.upgrade': { params: [FailoverUpgradeParams]; response: boolean };
 
