@@ -655,6 +655,7 @@
   "Edit User Quota": "",
   "Edit VM Snapshot": "",
   "Editing interface will result in default gateway being removed, which may result in TrueNAS being inaccessible. You can provide new default gateway and DNS information now:": "",
+  "Editing interfaces is not allowed while HA is enabled": "",
   "Element": "",
   "Elements": "",
   "Emergency": "",

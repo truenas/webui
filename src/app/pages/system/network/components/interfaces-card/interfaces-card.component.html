@@ -2,12 +2,14 @@
   <mat-toolbar-row>
     <h3>{{ 'Interfaces' | translate }}</h3>
     <div class="actions">
-      <div [matTooltip]="isHaLicensed() ? (helptext.haEnabledEditMessage | translate) : ''">
+      <div>
         <button
           *ixRequiresRoles="requiredRoles"
           mat-button
           [ixTest]="['add', 'interface']"
-          [disabled]="isHaLicensed()"
+          [disabled]="(isHaEnabled$ | async)"
+          [matTooltip]="'Editing interfaces is not allowed while HA is enabled' | translate"
+          [matTooltipDisabled]="!(isHaEnabled$ | async)"
           [ixUiSearch]="searchableElements.addInterface"
           (click)="onAddNew()"
         >

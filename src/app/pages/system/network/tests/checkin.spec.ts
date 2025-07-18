@@ -10,13 +10,13 @@ import {
   mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
-import { of } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/network-interface.enum';
-import { ProductType } from 'app/enums/product-type.enum';
 import { helptextInterfaces } from 'app/helptext/network/interfaces/interfaces-list';
+import { FailoverConfig } from 'app/interfaces/failover.interface';
 import { NetworkInterface, PhysicalNetworkInterface } from 'app/interfaces/network-interface.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
@@ -38,12 +38,12 @@ import {
 import { NetworkComponent } from 'app/pages/system/network/network.component';
 import { InterfacesStore } from 'app/pages/system/network/stores/interfaces.store';
 import { NetworkService } from 'app/services/network.service';
-import { SystemGeneralService } from 'app/services/system-general.service';
 
 describe('NetworkComponent', () => {
   let spectator: Spectator<NetworkComponent>;
   let loader: HarnessLoader;
   let api: MockApiService;
+  const isHaEnabled$ = new BehaviorSubject(false);
 
   const existingInterface = {
     id: '1',
@@ -109,6 +109,9 @@ describe('NetworkComponent', () => {
           isTestingChanges = true;
           return undefined;
         }),
+        mockCall('failover.config', {
+          disabled: true,
+        } as FailoverConfig),
         mockCall('interface.query', () => [existingInterface]),
         mockCall('interface.xmit_hash_policy_choices'),
         mockCall('interface.lacpdu_rate_choices'),
@@ -120,12 +123,10 @@ describe('NetworkComponent', () => {
         getLaggProtocolChoices: () => of({}),
         getLaggPortsChoices: () => of({}),
         getVlanParentInterfaceChoices: () => of({}),
+        getIsHaEnabled: jest.fn(() => isHaEnabled$),
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
-      }),
-      mockProvider(SystemGeneralService, {
-        getProductType$: of(ProductType.CommunityEdition),
       }),
       mockProvider(SlideInRef, slideInRef),
       mockProvider(SlideIn, {

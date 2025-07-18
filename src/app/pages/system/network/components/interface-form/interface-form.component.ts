@@ -1,3 +1,4 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal,
 } from '@angular/core';
@@ -5,12 +6,15 @@ import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
+import { MatTooltip } from '@angular/material/tooltip';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { range } from 'lodash-es';
-import { forkJoin, of } from 'rxjs';
+import {
+  BehaviorSubject, forkJoin, of,
+} from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import {
   CreateNetworkInterfaceType,
@@ -92,7 +96,9 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
     MatButton,
     TestDirective,
     TranslateModule,
+    AsyncPipe,
     IxRadioGroupComponent,
+    MatTooltip,
   ],
 })
 export class InterfaceFormComponent implements OnInit {
@@ -100,6 +106,7 @@ export class InterfaceFormComponent implements OnInit {
   protected existingInterface: NetworkInterface | undefined;
 
   readonly defaultMtu = 1500;
+  protected readonly isHaEnabled$ = new BehaviorSubject(false);
 
   protected isLoading = signal(false);
   isHaLicensed = false;
@@ -234,10 +241,19 @@ export class InterfaceFormComponent implements OnInit {
   ngOnInit(): void {
     this.loadFailoverStatus();
     this.validateNameOnTypeChange();
+    this.checkFailoverDisabled();
 
     if (this.existingInterface) {
       this.setInterfaceForEdit(this.existingInterface);
     }
+  }
+
+  private checkFailoverDisabled(): void {
+    this.networkService.getIsHaEnabled().pipe(
+      untilDestroyed(this),
+    ).subscribe((isHaEnabled) => {
+      this.isHaEnabled$.next(isHaEnabled);
+    });
   }
 
   private setInterfaceForEdit(nic: NetworkInterface): void {
