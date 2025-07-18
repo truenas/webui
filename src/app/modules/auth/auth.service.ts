@@ -1,5 +1,5 @@
-import { Inject, Injectable } from '@angular/core';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { Inject, Injectable, OnDestroy } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { environment } from 'environments/environment';
 import { LocalStorage } from 'ngx-webstorage';
@@ -41,9 +41,18 @@ import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 @Injectable({
   providedIn: 'root',
 })
-export class AuthService {
+export class AuthService implements OnDestroy {
   @LocalStorage() private token: string | undefined | null;
   protected loggedInUser$ = new BehaviorSubject<LoggedInUser | null>(null);
+
+  // Store pending authentication data before session initialization
+  private pendingAuthData: {
+    userInfo: LoggedInUser;
+    authenticator?: AuthenticatorLoginLevel;
+  } | null = null;
+
+  // Flag to prevent premature adminUiInitialized dispatch
+  private sessionInitialized = false;
 
   /**
    * This is 10 seconds less than 300 seconds which is the default life
@@ -54,7 +63,7 @@ export class AuthService {
 
   private latestTokenGenerated$ = new ReplaySubject<string | null>(1);
   get authToken$(): Observable<string> {
-    return this.latestTokenGenerated$.asObservable().pipe(filter<string>((token) => !!token));
+    return this.latestTokenGenerated$.asObservable().pipe(filter((token): token is string => !!token));
   }
 
   get hasAuthToken(): boolean {
@@ -231,6 +240,8 @@ export class AuthService {
         this.hasPasswordChangedSinceLastLogin$.next(false);
         this.wsStatus.setLoginStatus(false);
         this.api.clearSubscriptions();
+        this.sessionInitialized = false;
+        this.pendingAuthData = null;
       }),
     );
   }
@@ -254,30 +265,67 @@ export class AuthService {
     return this.api.call('auth.generate_token', [300, {}, true, true]);
   }
 
-  private processLoginResult(loginResult: LoginExResponse): Observable<LoginResult> {
+  /**
+   * Completes the login process by initializing the session.
+   * This should only be called after all pre-flight checks (like failover) have passed.
+   */
+  initializeSession(): Observable<LoginResult> {
+    if (!this.pendingAuthData) {
+      return of(LoginResult.NoToken);
+    }
+
+    const { userInfo, authenticator } = this.pendingAuthData;
+
+    // Now safe to set the user and initialize the app
+    this.loggedInUser$.next(userInfo);
+    this.wsStatus.setLoginStatus(true);
+    this.window.sessionStorage.setItem('loginBannerDismissed', 'true');
+
+    // Mark session as initialized and dispatch adminUiInitialized
+    this.sessionInitialized = true;
+    this.store$.dispatch(adminUiInitialized());
+
+    // Clear pending data
+    this.pendingAuthData = null;
+
+    if (authenticator === AuthenticatorLoginLevel.Level1) {
+      this.checkIsTokenAllowed$.next();
+      return this.latestTokenGenerated$.pipe(
+        take(1),
+        map(() => LoginResult.Success),
+        catchError(() => {
+          // Clean up on error
+          this.cleanupFailedSession();
+          return of(LoginResult.NoToken);
+        }),
+      );
+    }
+
+    return of(LoginResult.Success);
+  }
+
+  protected processLoginResult(loginResult: LoginExResponse): Observable<LoginResult> {
     return of(loginResult).pipe(
       switchMap((result) => {
         if (result.response_type === LoginExResponseType.Success) {
-          this.loggedInUser$.next(result.user_info);
-
           if (!result.user_info?.privilege?.webui_access) {
-            this.wsStatus.setLoginStatus(false);
+            // Don't set login status here - wait for session initialization
             return of(LoginResult.NoAccess);
           }
 
-          this.wsStatus.setLoginStatus(true);
-          this.window.sessionStorage.setItem('loginBannerDismissed', 'true');
-          if (result?.authenticator === AuthenticatorLoginLevel.Level1) {
-            this.checkIsTokenAllowed$.next();
-            return this.latestTokenGenerated$.pipe(
-              take(1),
-              map(() => LoginResult.Success),
-            );
-          }
+          // Store authentication data but don't initialize session yet
+          this.pendingAuthData = {
+            userInfo: result.user_info,
+            authenticator: result?.authenticator,
+          };
+
+          // Return success but session is not initialized
           return of(LoginResult.Success);
         }
 
-        this.wsStatus.setLoginStatus(false);
+        // Don't set login status for error cases - it should remain false
+        // Clean up any pending auth data on error
+        this.pendingAuthData = null;
 
         if (result.response_type === LoginExResponseType.OtpRequired) {
           return of(LoginResult.NoOtp);
@@ -326,10 +374,12 @@ export class AuthService {
     );
   }
 
-  private setupAuthenticationUpdate(): void {
-    this.wsStatus.isAuthenticated$.subscribe({
+  protected setupAuthenticationUpdate(): void {
+    this.wsStatus.isAuthenticated$.pipe(
+      untilDestroyed(this),
+    ).subscribe({
       next: (isAuthenticated) => {
-        if (isAuthenticated) {
+        if (isAuthenticated && this.sessionInitialized) {
           this.store$.dispatch(adminUiInitialized());
         } else if (this.generateTokenSubscription) {
           this.latestTokenGenerated$?.complete();
@@ -343,15 +393,37 @@ export class AuthService {
     });
   }
 
-  private setupWsConnectionUpdate(): void {
-    this.wsStatus.isConnected$.pipe(filter((isConnected) => !isConnected)).subscribe(() => {
+  protected setupWsConnectionUpdate(): void {
+    this.wsStatus.isConnected$.pipe(
+      filter((isConnected) => !isConnected),
+      untilDestroyed(this),
+    ).subscribe(() => {
       this.wsStatus.setLoginStatus(false);
+      this.loggedInUser$.next(null);
+      // Reset session initialized flag when connection is lost
+      this.sessionInitialized = false;
     });
   }
 
-  private setupTokenUpdate(): void {
-    this.latestTokenGenerated$.subscribe((token) => {
+  protected setupTokenUpdate(): void {
+    this.latestTokenGenerated$.pipe(
+      untilDestroyed(this),
+    ).subscribe((token) => {
       this.token = token;
     });
+  }
+
+  ngOnDestroy(): void {
+    // @UntilDestroy will handle unsubscribing from all observables
+    // Reset session state
+    this.sessionInitialized = false;
+    this.pendingAuthData = null;
+  }
+
+  protected cleanupFailedSession(): void {
+    this.sessionInitialized = false;
+    this.pendingAuthData = null;
+    this.loggedInUser$.next(null);
+    this.wsStatus.setLoginStatus(false);
   }
 }
