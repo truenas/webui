@@ -3,8 +3,8 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { AutofillMonitor } from '@angular/cdk/text-field';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { TranslateService } from '@ngx-translate/core';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TranslateService } from '@ngx-translate/core';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -91,7 +91,7 @@ describe('SigninFormComponent', () => {
       const signinStore = spectator.inject(SigninStore);
       jest.spyOn(spectator.inject(AuthService), 'login').mockReturnValue(of({
         loginResult: LoginResult.NoAccess,
-        loginResponse: { 
+        loginResponse: {
           response_type: LoginExResponseType.Success,
           user_info: { privilege: { webui_access: false } },
           authenticator: null,
@@ -132,7 +132,7 @@ describe('SigninFormComponent', () => {
     it('handles OTP required login result', async () => {
       jest.spyOn(spectator.inject(AuthService), 'login').mockReturnValue(of({
         loginResult: LoginResult.NoOtp,
-        loginResponse: { 
+        loginResponse: {
           response_type: LoginExResponseType.OtpRequired,
           username: 'testuser',
         } as LoginExResponse,
@@ -151,11 +151,11 @@ describe('SigninFormComponent', () => {
 
     it('handles failed OTP login', async () => {
       const signinStore = spectator.inject(SigninStore);
-      
+
       // First set up OTP field
       jest.spyOn(spectator.inject(AuthService), 'login').mockReturnValue(of({
         loginResult: LoginResult.NoOtp,
-        loginResponse: { 
+        loginResponse: {
           response_type: LoginExResponseType.OtpRequired,
           username: 'testuser',
         } as LoginExResponse,

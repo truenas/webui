@@ -4,13 +4,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import { Actions, ofType } from '@ngrx/effects';
-import { tapResponse } from '@ngrx/operators';
 import { TranslateService } from '@ngx-translate/core';
 import {
   EMPTY, forkJoin, Observable, of, from,
 } from 'rxjs';
 import {
-  catchError, filter, switchMap, take, tap, finalize,
+  catchError, filter, switchMap, take, tap,
 } from 'rxjs/operators';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { WINDOW } from 'app/helpers/window.helper';

@@ -2,7 +2,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator';
 import { mockProvider } from '@ngneat/spectator/jest';
-import { BehaviorSubject, firstValueFrom, of, throwError } from 'rxjs';
+import {
+  BehaviorSubject, firstValueFrom, of, throwError,
+} from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { LoginResult } from 'app/enums/login-result.enum';
@@ -239,90 +241,87 @@ describe('SigninStore', () => {
   });
 
   describe('performFailoverChecksAndCompleteLogin', () => {
-    it('completes login when failover validation succeeds', (done) => {
+    it('completes login when failover validation succeeds', async () => {
       const failoverValidation = spectator.inject(FailoverValidationService);
       jest.spyOn(authService, 'initializeSession').mockReturnValue(of(LoginResult.Success));
-      
-      spectator.service.performFailoverChecksAndCompleteLogin().subscribe((result) => {
-        expect(result).toBe(LoginResult.Success);
-        expect(failoverValidation.validateFailover).toHaveBeenCalled();
-        expect(authService.initializeSession).toHaveBeenCalled();
-        done();
-      });
+
+      const result = await firstValueFrom(spectator.service.performFailoverChecksAndCompleteLogin());
+      expect(result).toBe(LoginResult.Success);
+      expect(failoverValidation.validateFailover).toHaveBeenCalled();
+      expect(authService.initializeSession).toHaveBeenCalled();
     });
 
-    it('returns NoAccess when failover validation fails', (done) => {
+    it('returns NoAccess when failover validation fails', async () => {
       const failoverValidation = spectator.inject(FailoverValidationService);
       jest.spyOn(failoverValidation, 'validateFailover').mockReturnValue(
         of({ success: false, error: 'Failover check failed' }),
       );
-      
-      spectator.service.performFailoverChecksAndCompleteLogin().subscribe((result) => {
-        expect(result).toBe(LoginResult.NoAccess);
-        expect(spectator.service.setLoadingState).toHaveBeenCalledWith(false);
-        expect(spectator.service.showSnackbar).toHaveBeenCalledWith('Failover check failed');
-        done();
-      });
+
+      const result = await firstValueFrom(spectator.service.performFailoverChecksAndCompleteLogin());
+      expect(result).toBe(LoginResult.NoAccess);
+      expect(spectator.service.setLoadingState).toHaveBeenCalledWith(false);
+      expect(spectator.service.showSnackbar).toHaveBeenCalledWith('Failover check failed');
     });
 
-    it('handles failover validation errors gracefully', (done) => {
+    it('handles failover validation errors gracefully', async () => {
       const failoverValidation = spectator.inject(FailoverValidationService);
       jest.spyOn(failoverValidation, 'validateFailover').mockReturnValue(
         throwError(() => new Error('Network error')),
       );
-      
-      spectator.service.performFailoverChecksAndCompleteLogin().subscribe((result) => {
-        expect(result).toBe(LoginResult.NoAccess);
-        expect(spectator.service.setLoadingState).toHaveBeenCalledWith(false);
-        expect(spectator.service.showSnackbar).toHaveBeenCalledWith(
-          'Unable to check failover status. Please try again later or contact the system administrator.',
-        );
-        done();
-      });
+
+      const result = await firstValueFrom(spectator.service.performFailoverChecksAndCompleteLogin());
+      expect(result).toBe(LoginResult.NoAccess);
+      expect(spectator.service.setLoadingState).toHaveBeenCalledWith(false);
+      expect(spectator.service.showSnackbar).toHaveBeenCalledWith(
+        'Unable to check failover status. Please try again later or contact the system administrator.',
+      );
     });
   });
 
   describe('failover integration during login', () => {
-    it('performs failover checks on successful login via handleSuccessfulLogin', (done) => {
+    it('performs failover checks on successful login via handleSuccessfulLogin', async () => {
       const failoverValidation = spectator.inject(FailoverValidationService);
       jest.spyOn(authService, 'initializeSession').mockReturnValue(of(LoginResult.Success));
       jest.spyOn(api, 'call').mockReturnValueOnce(of({ enabled: false }));
-      
+
       spectator.service.handleSuccessfulLogin();
-      
-      setTimeout(() => {
-        expect(failoverValidation.validateFailover).toHaveBeenCalled();
-        expect(authService.initializeSession).toHaveBeenCalled();
-        done();
-      }, 100);
+
+      // Wait for async operations
+      await new Promise((resolve) => {
+        setTimeout(resolve, 100);
+      });
+
+      expect(failoverValidation.validateFailover).toHaveBeenCalled();
+      expect(authService.initializeSession).toHaveBeenCalled();
     });
 
-    it('handles failover validation failure in handleSuccessfulLogin', (done) => {
+    it('handles failover validation failure in handleSuccessfulLogin', async () => {
       const failoverValidation = spectator.inject(FailoverValidationService);
       jest.spyOn(failoverValidation, 'validateFailover').mockReturnValue(
         of({ success: false, error: 'Failover check failed' }),
       );
       jest.spyOn(api, 'call').mockReturnValueOnce(of({ enabled: false }));
-      
+
       spectator.service.handleSuccessfulLogin();
-      
-      setTimeout(() => {
-        expect(spectator.service.setLoadingState).toHaveBeenCalledWith(false);
-        expect(spectator.service.showSnackbar).toHaveBeenCalledWith('Failover check failed');
-        done();
-      }, 100);
+
+      // Wait for async operations
+      await new Promise((resolve) => {
+        setTimeout(resolve, 100);
+      });
+
+      expect(spectator.service.setLoadingState).toHaveBeenCalledWith(false);
+      expect(spectator.service.showSnackbar).toHaveBeenCalledWith('Failover check failed');
     });
   });
 
   describe('tokenLogin integration with failover', () => {
     it('performs failover checks after successful token login through init', () => {
-      const failoverValidation = spectator.inject(FailoverValidationService);
       jest.spyOn(authService, 'loginWithToken').mockReturnValue(of(LoginResult.Success));
       jest.spyOn(authService, 'initializeSession').mockReturnValue(of(LoginResult.Success));
       jest.spyOn(api, 'call').mockReturnValueOnce(of({ enabled: false }));
-      
+
       spectator.service.init();
-      
+
       expect(authService.loginWithToken).toHaveBeenCalled();
     });
 
@@ -336,9 +335,9 @@ describe('SigninStore', () => {
         of({ success: false, error: 'Failover error' }),
       );
       jest.spyOn(api, 'call').mockReturnValueOnce(of({ enabled: false }));
-      
+
       spectator.service.init();
-      
+
       expect(authService.setQueryToken).toHaveBeenCalledWith('test-token');
       expect(authService.loginWithToken).toHaveBeenCalled();
     });

@@ -491,89 +491,83 @@ describe('AuthService', () => {
   });
 
   describe('initializeSession', () => {
-    it('returns NoToken when no pending auth data exists', (done) => {
-      spectator.service.initializeSession().subscribe((result) => {
-        expect(result).toBe(LoginResult.NoToken);
-        done();
-      });
+    it('returns NoToken when no pending auth data exists', async () => {
+      const result = await firstValueFrom(spectator.service.initializeSession());
+      expect(result).toBe(LoginResult.NoToken);
     });
 
-    it('initializes session successfully with Level1 authenticator', (done) => {
+    it('initializes session successfully with Level1 authenticator', async () => {
       // Set up pending auth data
-      spectator.service['pendingAuthData'] = {
+      spectator.service.pendingAuthData = {
         userInfo: authMeUser,
         authenticator: AuthenticatorLoginLevel.Level1,
       };
 
-      spectator.service.initializeSession().subscribe((result) => {
-        expect(result).toBe(LoginResult.Success);
-        expect(spectator.service['sessionInitialized']).toBe(true);
-        expect(spectator.service['pendingAuthData']).toBeNull();
-        expect(mockWsStatus.setLoginStatus).toHaveBeenCalledWith(true);
-        done();
-      });
+      const promise = firstValueFrom(spectator.service.initializeSession());
 
       // Trigger token generation
-      spectator.service['checkIsTokenAllowed$'].next();
-      spectator.service['latestTokenGenerated$'].next('NEW_TOKEN');
+      spectator.service.checkIsTokenAllowed$.next();
+      spectator.service.latestTokenGenerated$.next('NEW_TOKEN');
+
+      const result = await promise;
+      expect(result).toBe(LoginResult.Success);
+      expect(spectator.service.sessionInitialized).toBe(true);
+      expect(spectator.service.pendingAuthData).toBeNull();
+      expect(mockWsStatus.setLoginStatus).toHaveBeenCalledWith(true);
     });
 
-    it('initializes session successfully without Level1 authenticator', (done) => {
+    it('initializes session successfully without Level1 authenticator', async () => {
       // Set up pending auth data
-      spectator.service['pendingAuthData'] = {
+      spectator.service.pendingAuthData = {
         userInfo: authMeUser,
         authenticator: AuthenticatorLoginLevel.Level2,
       };
 
-      spectator.service.initializeSession().subscribe((result) => {
-        expect(result).toBe(LoginResult.Success);
-        expect(spectator.service['sessionInitialized']).toBe(true);
-        expect(spectator.service['pendingAuthData']).toBeNull();
-        done();
-      });
+      const result = await firstValueFrom(spectator.service.initializeSession());
+      expect(result).toBe(LoginResult.Success);
+      expect(spectator.service.sessionInitialized).toBe(true);
+      expect(spectator.service.pendingAuthData).toBeNull();
     });
 
-    it('cleans up on token generation error', (done) => {
+    it('cleans up on token generation error', async () => {
       // Set up pending auth data
-      spectator.service['pendingAuthData'] = {
+      spectator.service.pendingAuthData = {
         userInfo: authMeUser,
         authenticator: AuthenticatorLoginLevel.Level1,
       };
 
-      spectator.service.initializeSession().subscribe((result) => {
-        expect(result).toBe(LoginResult.NoToken);
-        expect(spectator.service['sessionInitialized']).toBe(false);
-        expect(spectator.service['pendingAuthData']).toBeNull();
-        expect(mockWsStatus.setLoginStatus).toHaveBeenCalledWith(false);
-        done();
-      });
+      const promise = firstValueFrom(spectator.service.initializeSession());
 
       // Trigger error in token generation
-      spectator.service['checkIsTokenAllowed$'].next();
-      spectator.service['latestTokenGenerated$'].error(new Error('Token generation failed'));
+      spectator.service.checkIsTokenAllowed$.next();
+      spectator.service.latestTokenGenerated$.error(new Error('Token generation failed'));
+
+      const result = await promise;
+      expect(result).toBe(LoginResult.NoToken);
+      expect(spectator.service.sessionInitialized).toBe(false);
+      expect(spectator.service.pendingAuthData).toBeNull();
+      expect(mockWsStatus.setLoginStatus).toHaveBeenCalledWith(false);
     });
   });
 
   describe('processLoginResult', () => {
-    it('stores pending auth data on successful login', (done) => {
+    it('stores pending auth data on successful login', async () => {
       const loginResponse = {
         response_type: LoginExResponseType.Success,
         user_info: authMeUser,
         authenticator: AuthenticatorLoginLevel.Level1,
       } as LoginExResponse;
 
-      spectator.service['processLoginResult'](loginResponse).subscribe((result) => {
-        expect(result).toBe(LoginResult.Success);
-        expect(spectator.service['pendingAuthData']).toEqual({
-          userInfo: authMeUser,
-          authenticator: AuthenticatorLoginLevel.Level1,
-        });
-        expect(mockWsStatus.setLoginStatus).not.toHaveBeenCalled();
-        done();
+      const result = await firstValueFrom(spectator.service.processLoginResult(loginResponse));
+      expect(result).toBe(LoginResult.Success);
+      expect(spectator.service.pendingAuthData).toEqual({
+        userInfo: authMeUser,
+        authenticator: AuthenticatorLoginLevel.Level1,
       });
+      expect(mockWsStatus.setLoginStatus).not.toHaveBeenCalled();
     });
 
-    it('returns NoAccess when user lacks webui_access', (done) => {
+    it('returns NoAccess when user lacks webui_access', async () => {
       const loginResponse = {
         response_type: LoginExResponseType.Success,
         user_info: {
@@ -582,99 +576,95 @@ describe('AuthService', () => {
         },
       } as LoginExResponse;
 
-      spectator.service['processLoginResult'](loginResponse).subscribe((result) => {
-        expect(result).toBe(LoginResult.NoAccess);
-        expect(spectator.service['pendingAuthData']).toBeNull();
-        done();
-      });
+      const result = await firstValueFrom(spectator.service.processLoginResult(loginResponse));
+      expect(result).toBe(LoginResult.NoAccess);
+      expect(spectator.service.pendingAuthData).toBeNull();
     });
 
-    it('clears pending auth data on OTP required', (done) => {
+    it('clears pending auth data on OTP required', async () => {
       const loginResponse = {
         response_type: LoginExResponseType.OtpRequired,
       } as LoginExResponse;
 
-      spectator.service['processLoginResult'](loginResponse).subscribe((result) => {
-        expect(result).toBe(LoginResult.NoOtp);
-        expect(spectator.service['pendingAuthData']).toBeNull();
-        done();
-      });
+      const result = await firstValueFrom(spectator.service.processLoginResult(loginResponse));
+      expect(result).toBe(LoginResult.NoOtp);
+      expect(spectator.service.pendingAuthData).toBeNull();
     });
   });
 
   describe('cleanupFailedSession', () => {
     it('resets all session-related state', () => {
       // Set up some state
-      spectator.service['sessionInitialized'] = true;
-      spectator.service['pendingAuthData'] = {
+      spectator.service.sessionInitialized = true;
+      spectator.service.pendingAuthData = {
         userInfo: authMeUser,
         authenticator: AuthenticatorLoginLevel.Level1,
       };
 
-      spectator.service['cleanupFailedSession']();
+      spectator.service.cleanupFailedSession();
 
-      expect(spectator.service['sessionInitialized']).toBe(false);
-      expect(spectator.service['pendingAuthData']).toBeNull();
+      expect(spectator.service.sessionInitialized).toBe(false);
+      expect(spectator.service.pendingAuthData).toBeNull();
       expect(mockWsStatus.setLoginStatus).toHaveBeenCalledWith(false);
     });
   });
 
   describe('setupAuthenticationUpdate', () => {
     it('dispatches adminUiInitialized only when authenticated and session initialized', () => {
-      const store = spectator.inject(Store);
-      jest.spyOn(store, 'dispatch');
+      const store$ = spectator.inject(Store);
+      jest.spyOn(store$, 'dispatch');
 
       // Mock isAuthenticated$ as a new BehaviorSubject
-      const isAuthenticated$ = new BehaviorSubject(false);
+      const mockIsAuthenticated$ = new BehaviorSubject(false);
       Object.defineProperty(mockWsStatus, 'isAuthenticated$', {
-        value: isAuthenticated$,
+        value: mockIsAuthenticated$,
         writable: true,
       });
 
-      spectator.service['setupAuthenticationUpdate']();
+      spectator.service.setupAuthenticationUpdate();
 
       // Authenticated but session not initialized
-      spectator.service['sessionInitialized'] = false;
-      isAuthenticated$.next(true);
-      expect(store.dispatch).not.toHaveBeenCalled();
+      spectator.service.sessionInitialized = false;
+      mockIsAuthenticated$.next(true);
+      expect(store$.dispatch).not.toHaveBeenCalled();
 
       // Authenticated and session initialized
-      spectator.service['sessionInitialized'] = true;
-      isAuthenticated$.next(true);
-      expect(store.dispatch).toHaveBeenCalledWith(adminUiInitialized());
+      spectator.service.sessionInitialized = true;
+      mockIsAuthenticated$.next(true);
+      expect(store$.dispatch).toHaveBeenCalledWith(adminUiInitialized());
     });
   });
 
   describe('setupWsConnectionUpdate', () => {
     it('resets session state when connection is lost', () => {
-      const isConnected$ = new BehaviorSubject(true);
+      const mockIsConnected$ = new BehaviorSubject(true);
       Object.defineProperty(mockWsStatus, 'isConnected$', {
-        value: isConnected$,
+        value: mockIsConnected$,
         writable: true,
       });
 
-      spectator.service['sessionInitialized'] = true;
-      spectator.service['setupWsConnectionUpdate']();
+      spectator.service.sessionInitialized = true;
+      spectator.service.setupWsConnectionUpdate();
 
-      isConnected$.next(false);
+      mockIsConnected$.next(false);
 
-      expect(spectator.service['sessionInitialized']).toBe(false);
+      expect(spectator.service.sessionInitialized).toBe(false);
       expect(mockWsStatus.setLoginStatus).toHaveBeenCalledWith(false);
     });
   });
 
   describe('ngOnDestroy', () => {
     it('resets session state on destroy', () => {
-      spectator.service['sessionInitialized'] = true;
-      spectator.service['pendingAuthData'] = {
+      spectator.service.sessionInitialized = true;
+      spectator.service.pendingAuthData = {
         userInfo: authMeUser,
         authenticator: AuthenticatorLoginLevel.Level1,
       };
 
       spectator.service.ngOnDestroy();
 
-      expect(spectator.service['sessionInitialized']).toBe(false);
-      expect(spectator.service['pendingAuthData']).toBeNull();
+      expect(spectator.service.sessionInitialized).toBe(false);
+      expect(spectator.service.pendingAuthData).toBeNull();
     });
   });
 });
