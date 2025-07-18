@@ -42,10 +42,7 @@ export class UserDetailHeaderComponent {
   ) {}
 
   protected doEdit(): void {
-    this.slideIn
-      .open(UserFormComponent, { data: this.user() })
-      .pipe(untilDestroyed(this))
-      .subscribe();
+    this.slideIn.open(UserFormComponent, { data: this.user() });
   }
 
   protected doDelete(): void {

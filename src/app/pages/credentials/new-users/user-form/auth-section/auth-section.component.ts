@@ -95,6 +95,20 @@ export class AuthSectionComponent implements OnInit {
         });
       }
     });
+
+    effect(() => {
+      if (!this.sshAccess()) {
+        this.form.patchValue({ ssh_password_enabled: false });
+        this.form.controls.password_disabled.enable({ emitEvent: false });
+      }
+    });
+
+    effect(() => {
+      if (this.smbAccess()) {
+        this.form.controls.password.enable({ emitEvent: false });
+        this.form.patchValue({ password_disabled: false });
+      }
+    });
   }
 
   ngOnInit(): void {
@@ -124,7 +138,7 @@ export class AuthSectionComponent implements OnInit {
     ).subscribe((sshPasswordEnabled) => {
       if (sshPasswordEnabled) {
         this.form.controls.password_disabled.disable({ emitEvent: false });
-        this.form.controls.password_disabled.setValue(false, { emitEvent: false });
+        this.form.controls.password_disabled.setValue(false);
       } else {
         this.form.controls.password_disabled.enable({ emitEvent: false });
       }

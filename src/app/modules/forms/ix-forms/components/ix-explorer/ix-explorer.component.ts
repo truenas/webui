@@ -223,11 +223,38 @@ export class IxExplorerComponent implements ControlValueAccessor {
     this.cdr.markForCheck();
   }
 
-  onInputChanged(inputValue: string): void {
+  async onInputChanged(inputValue: string): Promise<void> {
     this.inputValue = inputValue;
     this.value = this.multiple() ? inputValue.split(',') : inputValue;
     this.selectTreeNodes(Array.isArray(this.value) ? this.value : [this.value]);
+    const node = await this.expandTreeToPathNode(inputValue);
+    if (node) {
+      this.lastSelectedNode.set(node);
+    }
     this.onChange(this.value);
+  }
+
+  private async expandTreeToPathNode(path: string): Promise<TreeNode<ExplorerNodeData> | null> {
+    const segments = path.split('/').filter(Boolean);
+    const pathArray: string[] = ['/'];
+    let currentPath = '';
+    let currentNode = this.tree().treeModel.getNodeByPath([...pathArray]);
+
+    for (const segment of segments) {
+      currentPath = currentPath ? `${currentPath}/${segment}` : `/${segment}`;
+      pathArray.push(currentPath);
+
+      if (!currentNode) {
+        return null;
+      }
+
+      await currentNode.loadNodeChildren();
+      currentNode.setIsExpanded(true);
+      currentNode.expand();
+
+      currentNode = this.tree().treeModel.getNodeByPath([...pathArray]);
+    }
+    return currentNode;
   }
 
   isPathSelected(path: string): boolean {

@@ -18,9 +18,6 @@ import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.s
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { selectUpdateJob } from 'app/modules/jobs/store/job.selectors';
 import { CheckinIndicatorComponent } from 'app/modules/layout/topbar/checkin-indicator/checkin-indicator.component';
-import {
-  DirectoryServicesIndicatorComponent,
-} from 'app/modules/layout/topbar/directory-services-indicator/directory-services-indicator.component';
 import { JobsIndicatorComponent } from 'app/modules/layout/topbar/jobs-indicator/jobs-indicator.component';
 import { PowerMenuComponent } from 'app/modules/layout/topbar/power-menu/power-menu.component';
 import { TopbarComponent } from 'app/modules/layout/topbar/topbar.component';
@@ -56,7 +53,6 @@ describe('TopbarComponent', () => {
     declarations: [
       MockComponents(
         CheckinIndicatorComponent,
-        DirectoryServicesIndicatorComponent,
         JobsIndicatorComponent,
         UserMenuComponent,
         PowerMenuComponent,

@@ -19,7 +19,6 @@ import {
   AclTemplateCreateParams,
   AclTemplateCreateResponse,
 } from 'app/interfaces/acl.interface';
-import { ActiveDirectoryConfig } from 'app/interfaces/active-directory-config.interface';
 import { AdvancedConfig, AdvancedConfigUpdate } from 'app/interfaces/advanced-config.interface';
 import { AlertService, AlertServiceEdit } from 'app/interfaces/alert-service.interface';
 import {
@@ -87,7 +86,10 @@ import {
   Dataset, DatasetCreate, DatasetDetails, DatasetUpdate, ExtraDatasetQueryOptions,
 } from 'app/interfaces/dataset.interface';
 import { Device } from 'app/interfaces/device.interface';
-import { DirectoryServicesState } from 'app/interfaces/directory-services-state.interface';
+import { DirectoryServicesConfig } from 'app/interfaces/directoryservices-config.interface';
+import { DirectoryServicesLeaveParams, DirectoryServicesLeaveResponse } from 'app/interfaces/directoryservices-leave.interface';
+import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
+import { DirectoryServicesUpdate, DirectoryServicesUpdateResponse } from 'app/interfaces/directoryservices-update.interface';
 import {
   Disk, DiskDetailsResponse,
   DiskTemperatureAgg,
@@ -124,8 +126,6 @@ import { FtpConfig, FtpConfigUpdate } from 'app/interfaces/ftp-config.interface'
 import {
   CreateGroup, DeleteGroupParams, Group, UpdateGroup,
 } from 'app/interfaces/group.interface';
-import { IdmapBackendOptions } from 'app/interfaces/idmap-backend-options.interface';
-import { Idmap, IdmapUpdate } from 'app/interfaces/idmap.interface';
 import {
   CreateInitShutdownScript,
   InitShutdownScript,
@@ -314,10 +314,6 @@ export interface ApiCallDirectory {
   'acme.dns.authenticator.query': { params: void; response: DnsAuthenticator[] };
   'acme.dns.authenticator.update': { params: [number, UpdateDnsAuthenticator]; response: DnsAuthenticator };
 
-  // Active Directory
-  'activedirectory.config': { params: void; response: ActiveDirectoryConfig };
-  'activedirectory.nss_info_choices': { params: void; response: string[] };
-
   // Alert
   'alert.dismiss': { params: string[]; response: void };
   'alert.list': { params: void; response: Alert[] };
@@ -458,7 +454,16 @@ export interface ApiCallDirectory {
   'device.get_info': { params: [{ type: DeviceType }]; response: Device[] };
 
   // Directory Services
-  'directoryservices.get_state': { params: void; response: DirectoryServicesState };
+  'directoryservices.status': { params: void; response: DirectoryServicesStatus };
+  'directoryservices.config': { params: void; response: DirectoryServicesConfig };
+  'directoryservices.update': { params: DirectoryServicesUpdate; response: DirectoryServicesUpdateResponse };
+  'directoryservices.leave': { params: [DirectoryServicesLeaveParams]; response: DirectoryServicesLeaveResponse };
+  'directoryservices.certificate_choices': { params: void; response: Choices };
+
+  // LDAP
+  'ldap.config': { params: void; response: LdapConfig };
+  'ldap.ssl_choices': { params: void; response: string[] };
+  'ldap.schema_choices': { params: void; response: string[] };
 
   // Disk
   'disk.details': { params: [params: DiskDetailsParams]; response: DiskDetailsResponse };
@@ -522,13 +527,6 @@ export interface ApiCallDirectory {
   'group.get_next_gid': { params: void; response: number };
   'group.query': { params: QueryParams<Group>; response: Group[] };
   'group.update': { params: [number, UpdateGroup]; response: number };
-
-  // Idmap
-  'idmap.backend_options': { params: void; response: IdmapBackendOptions };
-  'idmap.create': { params: [IdmapUpdate]; response: Idmap };
-  'idmap.delete': { params: [id: number]; response: boolean };
-  'idmap.query': { params: QueryParams<Idmap>; response: Idmap[] };
-  'idmap.update': { params: [id: number, update: IdmapUpdate]; response: Idmap };
 
   // Initshutdownscript
   'initshutdownscript.create': { params: [CreateInitShutdownScript]; response: InitShutdownScript };
@@ -637,11 +635,6 @@ export interface ApiCallDirectory {
   'docker.config': { params: void; response: DockerConfig };
   'docker.status': { params: void; response: DockerStatusData };
   'docker.nvidia_present': { params: void; response: boolean };
-
-  // LDAP
-  'ldap.config': { params: void; response: LdapConfig };
-  'ldap.schema_choices': { params: void; response: string[] };
-  'ldap.ssl_choices': { params: void; response: string[] };
 
   // Mail
   'mail.config': { params: void; response: MailConfig };

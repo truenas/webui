@@ -1,6 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
+import { fakeAsync, tick } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
@@ -63,11 +64,11 @@ describe('AdditionalDetailsSectionComponent', () => {
         isStigMode: jest.fn(() => false),
         updateUserConfig: jest.fn(),
         updateSetupDetails: jest.fn(),
-        role: jest.fn(),
         isNewUser: jest.fn(() => false),
         homeModeOldValue: jest.fn(() => ''),
         userConfig: jest.fn(() => ({})),
         shellAccess: jest.fn(() => shellAccess()),
+        role: jest.fn(),
         state$: of({
           setupDetails: {
             allowedAccess: {
@@ -115,7 +116,7 @@ describe('AdditionalDetailsSectionComponent', () => {
       expect(spectator.inject(UserFormStore).updateUserConfig).toHaveBeenCalledWith({
         full_name: '',
         email: null,
-        shell: '/usr/bin/zsh',
+        shell: '/usr/sbin/nologin',
         group_create: true,
         groups: [],
         group: null,
@@ -142,7 +143,7 @@ describe('AdditionalDetailsSectionComponent', () => {
       expect(spectator.inject(UserFormStore).updateUserConfig).toHaveBeenLastCalledWith({
         full_name: 'Editable field',
         email: 'editable@truenas.local',
-        shell: '/usr/bin/zsh',
+        shell: '/usr/sbin/nologin',
         sudo_commands: [],
         sudo_commands_nopasswd: [],
         group_create: true,
@@ -155,15 +156,17 @@ describe('AdditionalDetailsSectionComponent', () => {
       });
     });
 
-    it('checks zsh shell is selected when shell access is enabled', async () => {
+    it('checks zsh shell is selected when shell access is enabled', fakeAsync(async () => {
       shellAccess.set(true);
       spectator.detectChanges();
+
+      tick();
 
       const editables = await loader.getHarness(DetailsTableHarness);
       expect(await editables.getValues()).toEqual(expect.objectContaining({
         Shell: '/usr/bin/zsh',
       }));
-    });
+    }));
   });
 
   describe('when editing a user', () => {
@@ -184,7 +187,7 @@ describe('AdditionalDetailsSectionComponent', () => {
       expect(values).toEqual({
         'Full Name': 'test',
         Email: 'Not Set',
-        Groups: 'Primary Group: test-group  Auxiliary Groups: test-group-2, test-group-3',
+        Groups: 'Primary Group: test-group  Auxiliary Groups:  test-group-2, test-group-3',
         'Home Directory': '/home/test',
         Shell: '/usr/bin/bash',
       });

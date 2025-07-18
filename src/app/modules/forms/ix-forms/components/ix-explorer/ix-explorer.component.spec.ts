@@ -18,21 +18,32 @@ import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-ex
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 
 describe('IxExplorerComponent', () => {
+  const mockNode = {
+    id: '/mnt/test',
+    data: { path: '/mnt/test', name: 'test', type: ExplorerNodeType.Directory },
+    loadNodeChildren: jest.fn().mockResolvedValue([]),
+    setIsExpanded: jest.fn(),
+    expand: jest.fn(),
+  };
+
   const mockTreeMock = {
-    selectedLeafNodeIds: {},
+    selectedLeafNodeIds: {} as Record<string, boolean>,
     get selectedLeafNodes(): unknown[] {
       return [];
     },
     setState(newState: ITreeState) {
-      this.selectedLeafNodeIds = newState.selectedLeafNodeIds;
+      const typedMockTreeMock = mockTreeMock as { selectedLeafNodeIds: Record<string, boolean> };
+      typedMockTreeMock.selectedLeafNodeIds = newState.selectedLeafNodeIds;
     },
     getState() {
+      const typedMockTreeMock = mockTreeMock as { selectedLeafNodeIds: Record<string, boolean> };
       return {
-        selectedLeafNodeIds: this.selectedLeafNodeIds,
+        selectedLeafNodeIds: typedMockTreeMock.selectedLeafNodeIds,
       };
     },
     update() {},
-  } as TreeModel;
+    getNodeByPath: jest.fn().mockReturnValue(mockNode),
+  } as unknown as TreeModel;
   jest.spyOn(mockTreeMock, 'setState');
   jest.spyOn(mockTreeMock, 'getState');
   MockInstance(TreeComponent, 'treeModel', mockTreeMock);
@@ -85,6 +96,10 @@ describe('IxExplorerComponent', () => {
     );
     (mockTreeMock.setState as jest.Mock).mockClear();
     (mockTreeMock.getState as jest.Mock).mockClear();
+    (mockTreeMock.getNodeByPath as jest.Mock).mockClear();
+    (mockNode.loadNodeChildren as jest.Mock).mockClear();
+    (mockNode.setIsExpanded as jest.Mock).mockClear();
+    (mockNode.expand as jest.Mock).mockClear();
   });
 
   describe('rendering – tree', () => {
@@ -254,5 +269,30 @@ describe('IxExplorerComponent', () => {
     // TODO: Add test 'disables input when readonly is set to true on ix-explorer'
     // when overall tests for the component are working, after the following issue is solved
     // https://github.com/help-me-mom/ng-mocks/issues/10503
+  });
+
+  describe('expandTreeToPathNode', () => {
+    it('expands tree and selects node when user types a path in input', async () => {
+      const testPath = '/mnt/test';
+
+      spectator.typeInElement(testPath, 'input');
+      spectator.dispatchFakeEvent('input', 'change');
+
+      await spectator.fixture.whenStable();
+      spectator.detectComponentChanges();
+
+      expect(mockTreeMock.getNodeByPath).toHaveBeenCalledWith(['/']);
+      expect(mockTreeMock.getNodeByPath).toHaveBeenCalledWith(['/', '/mnt']);
+      expect(mockTreeMock.getNodeByPath).toHaveBeenCalledWith(['/', '/mnt', '/mnt/test']);
+      expect(mockNode.loadNodeChildren).toHaveBeenCalled();
+      expect(mockNode.setIsExpanded).toHaveBeenCalledWith(true);
+      expect(mockNode.expand).toHaveBeenCalled();
+      expect(spectator.component.lastSelectedNode()).toBe(mockNode);
+      expect(spectator.component.lastSelectedNode()?.id).toBe('/mnt/test');
+      expect(spectator.component.lastSelectedNode()?.data.path).toBe('/mnt/test');
+      expect(spectator.component.lastSelectedNode()?.data.name).toBe('test');
+      expect(spectator.component.lastSelectedNode()?.data.type).toBe(ExplorerNodeType.Directory);
+      expect(formControl.value).toBe(testPath);
+    });
   });
 });

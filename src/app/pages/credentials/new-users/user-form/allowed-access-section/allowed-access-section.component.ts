@@ -92,6 +92,10 @@ export class AllowedAccessSectionComponent {
           shellAccess: values.shell_access,
         });
 
+        this.userFormStore.updateUserConfig({
+          smb: values.smb,
+        });
+
         this.userFormStore.updateSetupDetails({
           role: values.truenas_access ? values.role : null,
         });
@@ -107,6 +111,14 @@ export class AllowedAccessSectionComponent {
           ssh_access: hasSshAccess(this.editingUser()),
           role: this.editingUser().roles.length > 0 ? this.editingUser().roles[0] : defaultRole,
         });
+      }
+    });
+
+    effect(() => {
+      const role = this.userFormStore.role();
+
+      if (!role) {
+        this.form.controls.role.patchValue(null);
       }
     });
   }
