@@ -4,8 +4,8 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { BehaviorSubject } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
-import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
-import { DirectoryServicesState } from 'app/interfaces/directory-services-state.interface';
+import { DirectoryServiceStatus } from 'app/enums/directory-services.enum';
+import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
 import { User } from 'app/interfaces/user.interface';
 import { AdvancedSearchHarness } from 'app/modules/forms/search-input/components/advanced-search/advanced-search.harness';
 import { SearchInputComponent } from 'app/modules/forms/search-input/components/search-input/search-input.component';
@@ -35,10 +35,11 @@ describe('UsersSearchComponent', () => {
     ],
     providers: [
       mockApi([
-        mockCall('directoryservices.get_state', {
-          activedirectory: DirectoryServiceState.Healthy,
-          ldap: DirectoryServiceState.Disabled,
-        } as DirectoryServicesState),
+        mockCall('directoryservices.status', {
+          status: DirectoryServiceStatus.Healthy,
+          type: null,
+          status_msg: null,
+        } as DirectoryServicesStatus),
       ]),
     ],
   });
@@ -241,10 +242,11 @@ describe('UsersSearchComponent', () => {
       imports: [SearchInputComponent],
       providers: [
         mockApi([
-          mockCall('directoryservices.get_state', {
-            activedirectory: DirectoryServiceState.Disabled,
-            ldap: DirectoryServiceState.Disabled,
-          } as DirectoryServicesState),
+          mockCall('directoryservices.status', {
+            status: DirectoryServiceStatus.Disabled,
+            type: null,
+            status_msg: null,
+          } as DirectoryServicesStatus),
         ]),
       ],
     });

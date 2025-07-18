@@ -5,10 +5,9 @@ import { MatDialogRef, MatDialogTitle, MatDialogClose } from '@angular/material/
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
-import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextActiveDirectory } from 'app/helptext/directory-service/active-directory';
-import { LeaveActiveDirectory } from 'app/interfaces/active-directory-config.interface';
+import { DirectoryServicesLeaveParams } from 'app/interfaces/directoryservices-leave.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
@@ -56,14 +55,10 @@ export class LeaveDomainDialog {
   onSubmit(): void {
     const params = this.form.value;
 
-    this.api.job('activedirectory.leave', [params as LeaveActiveDirectory])
+    this.api.call('directoryservices.leave', [params as DirectoryServicesLeaveParams])
       .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
-        next: (job) => {
-          if (job.state !== JobState.Success) {
-            return;
-          }
-
+        next: () => {
           this.snackbar.success(
             this.translate.instant(helptextActiveDirectory.domainLeftMessage),
           );

@@ -1,62 +1,25 @@
-@switch (true) {
-  @case (!isActiveDirectoryEnabled && !isLdapEnabled) {
-    <div class="everything-disabled">
-      <ix-empty [conf]="noDirectoryServicesConfig"></ix-empty>
-      <div class="actions">
-        <button
-          *ixRequiresRoles="requiredRoles"
-          mat-button
-          ixTest="configure-active-directory"
-          [ixUiSearch]="searchableElements.elements.configureActiveDirectory"
-          (click)="openActiveDirectoryForm()"
-        >
-          {{ 'Configure Active Directory' | translate }}
-        </button>
-        <button
-          *ixRequiresRoles="requiredRoles"
-          mat-button
-          ixTest="configure-ldap"
-          [ixUiSearch]="searchableElements.elements.configureLdap"
-          (click)="openLdapForm()"
-        >
-          {{ 'Configure LDAP' | translate }}
-        </button>
-      </div>
+@if(isDirectoryServicesDisabled()) {
+  <div class="everything-disabled">
+    <ix-empty [conf]="noDirectoryServicesConfig"></ix-empty>
+    <div class="actions">
+      <button
+        *ixRequiresRoles="requiredRoles"
+        mat-button
+        ixTest="configure-active-directory"
+        [ixUiSearch]="searchableElements.elements.configureActiveDirectory"
+        (click)="openDirectoryServicesForm()"
+      >
+        {{ 'Configure Directory Services' | translate }}
+      </button>
     </div>
-  }
-
-  @case (isActiveDirectoryEnabled) {
-    <div
-      class="services"
-      [ixUiSearch]="searchableElements.elements.directoryServices"
-    >
-      <ng-container *ngTemplateOutlet="dataCard; context: { card: activeDirectoryDataCard }"></ng-container>
-      <mat-card>
-        <mat-toolbar-row><h3>{{ 'LDAP' | translate }}</h3></mat-toolbar-row>
-        <mat-card-content>
-          <div class="disabled-message">
-            <p>{{ 'LDAP is disabled.' | translate }}</p>
-            <p>{{ 'To enable disable Active Directory first.' | translate }}</p>
-          </div>
-        </mat-card-content>
-      </mat-card>
-    </div>
-  }
-
-  @case (isLdapEnabled) {
-    <div class="services">
-      <mat-card>
-        <mat-toolbar-row><h3>{{ 'Active Directory' | translate }}</h3></mat-toolbar-row>
-        <mat-card-content>
-          <div class="disabled-message">
-            <p>{{ 'Active Directory is disabled.' | translate }}</p>
-            <p>{{ 'To enable disable LDAP first.' | translate }}</p>
-          </div>
-        </mat-card-content>
-      </mat-card>
-      <ng-container *ngTemplateOutlet="dataCard; context: { card: ldapDataCard }"></ng-container>
-    </div>
-  }
+  </div>
+} @else {
+  <div
+    class="services"
+    [ixUiSearch]="searchableElements.elements.directoryServices"
+  >
+    <ng-container *ngTemplateOutlet="dataCard; context: { card: getDataCard() }"></ng-container>
+  </div>
 }
 
 <cdk-accordion-item
@@ -76,12 +39,13 @@
     }
   </h3>
 
-  <div class="advanced-settings-cards">
-    <ix-idmap-list [paginator]="false" [inCard]="true"></ix-idmap-list>
-    <ng-container *ngTemplateOutlet="dataCard; context: { card: kerberosSettingsDataCard }"></ng-container>
-    <ix-kerberos-realms-list [paginator]="false" [inCard]="true"></ix-kerberos-realms-list>
-    <ix-kerberos-keytabs-list [paginator]="false" [inCard]="true"></ix-kerberos-keytabs-list>
-  </div>
+  @if (expansionPanel.expanded) {
+    <div class="advanced-settings-cards">
+      <ng-container *ngTemplateOutlet="dataCard; context: { card: kerberosSettingsDataCard }"></ng-container>
+      <ix-kerberos-realms-list [paginator]="false" [inCard]="true"></ix-kerberos-realms-list>
+      <ix-kerberos-keytabs-list [paginator]="false" [inCard]="true"></ix-kerberos-keytabs-list>
+    </div>
+  }
 </cdk-accordion-item>
 
 <ng-template #dataCard let-card="card">
@@ -97,6 +61,16 @@
           >
             {{ 'Settings' | translate }}
           </button>
+          @if (card.showLeaveButton) {
+            <button
+              mat-button
+              color="warn"
+              [ixTest]="[card.title, 'leave']"
+              (click)="card.onLeavePressed()"
+            >
+              {{ 'Leave' | translate }}
+            </button>
+          }
         </div>
       </mat-toolbar-row>
       <mat-card-content>
