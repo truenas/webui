@@ -317,6 +317,20 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     @include variable(color, --primary-txt, $primary-txt, !important);
   }
 
+  .mat-mdc-option-active {
+    &:not(:hover) {
+      span {
+        color: var(--primary-txt) !important;
+      }
+    }
+
+    &:hover {
+      span {
+        color: var(--fg2) !important;
+      }
+    }
+  }
+
   .mat-mdc-select-panel .mat-mdc-option:hover,
   mat-option.mat-mdc-option-active,
   .mat-mdc-menu-content button.mat-mdc-menu-item:hover,
