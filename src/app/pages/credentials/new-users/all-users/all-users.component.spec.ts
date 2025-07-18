@@ -131,7 +131,7 @@ describe('AllUsersComponent', () => {
     expect(userDetails.user()).toBe(originalExpandedRow);
   });
 
-  it('loads new user by setting up data provider with the new user username', () => {
+  it('shows new user by setting up data provider with the new user username', () => {
     const usersHeaderComponent = spectator.query(AllUsersHeaderComponent);
     const newUser = {
       id: 3,
@@ -141,9 +141,11 @@ describe('AllUsersComponent', () => {
     } as User;
     usersHeaderComponent.userCreated.emit(newUser);
 
+    const userDetails = spectator.query(UserDetailsComponent);
+
     spectator.detectChanges();
 
-    expect(api.call).toHaveBeenCalledWith('user.query', [[['OR', [['builtin', '=', false], ['username', '=', 'root']]]], { order_by: ['uid'] }]);
-    expect(api.call).toHaveBeenCalledWith('user.query', [[['username', '=', 'new_test_user']]]);
+    expect(userDetails.user()).toBe(newUser);
+    expect(location.replaceState).toHaveBeenCalledWith('credentials/users-new?username=new_test_user');
   });
 });

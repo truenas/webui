@@ -21,7 +21,7 @@ import {
   EMPTY,
 } from 'rxjs';
 import { allCommands } from 'app/constants/all-commands.constant';
-import { Role } from 'app/enums/role.enum';
+import { Role, roleNames } from 'app/enums/role.enum';
 import { extractApiErrorDetails } from 'app/helpers/api.helper';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { isEmptyHomeDirectory } from 'app/helpers/user.helper';
@@ -79,7 +79,11 @@ export class AdditionalDetailsSectionComponent implements OnInit {
   protected username = computed(() => this.userFormStore?.userConfig().username ?? '');
   protected sshAccess = this.userFormStore.sshAccess;
   protected shellAccess = this.userFormStore.shellAccess;
-  protected hasSharingRole = computed(() => this.userFormStore.role()?.includes(Role.SharingAdmin));
+  protected selectedRoleName = computed(() => {
+    const role = this.userFormStore.role();
+    return role ? roleNames.get(role) : '';
+  });
+
   private groupNameCache = new Map<number, string>();
   protected homeDirectoryEmptyValue = computed(() => {
     if (this.editingUser()) {
@@ -113,7 +117,10 @@ export class AdditionalDetailsSectionComponent implements OnInit {
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
 
   groupsProvider: ChipsProvider = (query: string) => {
-    return this.api.call('group.query', [[['name', '^', query], ['local', '=', true]]]).pipe(
+    return this.api.call('group.query', [[
+      ['name', '^', query],
+      ['local', '=', true],
+    ]]).pipe(
       map((groups) => groups.map((group) => group.group)),
     );
   };
@@ -180,7 +187,19 @@ export class AdditionalDetailsSectionComponent implements OnInit {
       distinctUntilChanged(),
       withLatestFrom(this.groupOptions$),
       tap(([selectedRole, groupOptions]) => {
-        if (selectedRole == null) {
+        if (selectedRole === null) {
+          this.form.patchValue({
+            groups: this.form.controls.groups.value.filter((groupId) => {
+              const groupName = groupOptions.find((group) => group.value === groupId)?.label as string;
+
+              if (Array.from(this.roleGroupMap.values()).includes(groupName)) {
+                return false;
+              }
+
+              return true;
+            }),
+          });
+
           return;
         }
 
@@ -191,12 +210,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
         const groupLabel = this.roleGroupMap.get(selectedRole);
         const groupId = groupOptions.find((group) => group.label === groupLabel)?.value;
         if (groupId) {
-          if (this.editingUser()) {
-            const groups = [...this.form.value.groups, groupId];
-            this.form.patchValue({ groups });
-          } else {
-            this.form.patchValue({ groups: [groupId] });
-          }
+          this.form.patchValue({ groups: [groupId] });
         }
       }),
       untilDestroyed(this),
@@ -207,12 +221,22 @@ export class AdditionalDetailsSectionComponent implements OnInit {
         this.setupEditUserForm(this.editingUser());
       }
     });
+
+    effect(() => {
+      if (!this.editingUser() && this.shellAccess()) {
+        this.setFirstShellOption();
+      }
+    });
   }
 
   ngOnInit(): void {
     this.setupShellUpdate();
     if (!this.editingUser()) {
-      this.setFirstShellOption();
+      if (this.shellAccess()) {
+        this.setFirstShellOption();
+      } else {
+        this.setNoLoginShell();
+      }
     }
     this.detectHomeDirectoryChanges();
     this.setHomeSharePath();
@@ -345,6 +369,20 @@ export class AdditionalDetailsSectionComponent implements OnInit {
         this.form.controls.home_mode.enable();
       }
     });
+
+    this.form.controls.groups.valueChanges.pipe(debounceTime(300), untilDestroyed(this)).subscribe((groups) => {
+      const currentRole = this.userFormStore.role();
+      const requiredGroup = this.roleGroupMap.get(currentRole);
+      const groupNames = groups.map((id) => this.groupNameCache.get(id));
+
+      if (groupNames.includes('')) {
+        return;
+      }
+
+      if ((requiredGroup && !groupNames.includes(requiredGroup)) || !groups.length) {
+        this.userFormStore.updateSetupDetails({ role: null });
+      }
+    });
   }
 
   private setupShellUpdate(): void {
@@ -363,6 +401,8 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     ).subscribe((shellAccess) => {
       if (shellAccess) {
         this.setFirstShellOption();
+      } else {
+        this.setNoLoginShell();
       }
     });
   }
@@ -386,16 +426,20 @@ export class AdditionalDetailsSectionComponent implements OnInit {
   private setFirstShellOption(): void {
     this.api.call('user.shell_choices', [this.form.value.groups]).pipe(
       choicesToOptions(),
-      map((shells) => shells.filter((shell) => !(shell.value as string).includes('nologin'))),
       filter((shells) => shells.length > 0),
       take(1),
       untilDestroyed(this),
     ).subscribe((shells) => {
       const defaultShell = (shells.find((shell) => shell.label.includes('zsh'))?.value || shells[0].value) as string;
+
       if (!this.form.value.shell || this.form.value.shell.includes('nologin')) {
         this.form.patchValue({ shell: defaultShell });
       }
     });
+  }
+
+  private setNoLoginShell(): void {
+    this.form.patchValue({ shell: '/usr/sbin/nologin' });
   }
 
   private detectHomeDirectoryChanges(): void {

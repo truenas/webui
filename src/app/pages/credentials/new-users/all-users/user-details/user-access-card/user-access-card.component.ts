@@ -148,7 +148,6 @@ export class UserAccessCardComponent {
           ? this.translate.instant('User unlocked')
           : this.translate.instant('User locked'),
       );
-      this.reloadUsers.emit();
     });
   }
 
