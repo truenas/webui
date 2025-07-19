@@ -1740,46 +1740,6 @@
   {
     "hierarchy": [
       "Directory Services",
-      "Idmap",
-      "Add Idmap"
-    ],
-    "synonyms": [
-      "Create Idmap",
-      "New Idmap"
-    ],
-    "requiredRoles": [
-      "DIRECTORY_SERVICE_WRITE"
-    ],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/directoryservice",
-      "idmap"
-    ],
-    "routerLink": null,
-    "anchor": "add-idmap",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Directory Services",
-      "Idmap"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/directoryservice",
-      "idmap"
-    ],
-    "routerLink": null,
-    "anchor": "idmap",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Directory Services",
       "Kerberos Keytabs",
       "Add Kerberos Keytab"
     ],
@@ -1878,26 +1838,6 @@
     ],
     "routerLink": null,
     "anchor": "configure-active-directory",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Credentials",
-      "Directory Services",
-      "Configure LDAP"
-    ],
-    "synonyms": [],
-    "requiredRoles": [
-      "DIRECTORY_SERVICE_WRITE"
-    ],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/credentials",
-      "directory-services"
-    ],
-    "routerLink": null,
-    "anchor": "configure-ldap",
     "triggerAnchor": null,
     "section": "ui"
   },

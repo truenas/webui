@@ -8,7 +8,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { filter, map, switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
-import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
+import { DirectoryServiceStatus } from 'app/enums/directory-services.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -63,11 +63,8 @@ export class AclEditorSaveControlsComponent implements OnInit {
   }
 
   // TODO: Move here and in other places to global store.
-  protected readonly hasValidateAclCheckbox = toSignal(this.api.call('directoryservices.get_state').pipe(
-    map((state) => {
-      return state.activedirectory !== DirectoryServiceState.Disabled
-        || state.ldap !== DirectoryServiceState.Disabled;
-    }),
+  protected readonly hasValidateAclCheckbox = toSignal(this.api.call('directoryservices.status').pipe(
+    map((state) => state.status !== DirectoryServiceStatus.Disabled),
   ));
 
   protected onSavePressed(): void {

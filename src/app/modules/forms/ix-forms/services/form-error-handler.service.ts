@@ -83,16 +83,17 @@ export class FormErrorHandlerService {
       const errorMessage = extraItem[1];
 
       const control = this.getFormField(formGroup, field, fieldsMap);
+      const mappedFieldName = fieldsMap[field] ?? field; // Get the mapped field name
       const controlsNames = this.formService.getControlNames();
 
-      if (triggerAnchor && control && !controlsNames.includes(field)) {
+      if (triggerAnchor && control && !controlsNames.includes(mappedFieldName)) {
         const triggerAnchorRef = this.document.getElementById(triggerAnchor);
         if (triggerAnchorRef) {
           triggerAnchorRef.click();
           setTimeout(() => {
             this.showValidationError({
               control,
-              field,
+              field: mappedFieldName, // Use mapped field name
               errorMessage,
             });
           });
@@ -101,7 +102,9 @@ export class FormErrorHandlerService {
       }
 
       this.showValidationError({
-        control, field, errorMessage,
+        control,
+        field: mappedFieldName, // Use mapped field name
+        errorMessage,
       });
     }
 

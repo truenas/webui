@@ -4,8 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
-import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
@@ -23,7 +22,7 @@ describe('LeaveDomainDialogComponent', () => {
     ],
     providers: [
       mockApi([
-        mockJob('activedirectory.leave', fakeSuccessfulJob()),
+        mockCall('directoryservices.leave'),
       ]),
       mockProvider(DialogService),
       mockProvider(SnackbarService),
@@ -47,7 +46,7 @@ describe('LeaveDomainDialogComponent', () => {
     const leaveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Leave Domain' }));
     await leaveButton.click();
 
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('activedirectory.leave', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('directoryservices.leave', [{
       username: 'Administrator',
       password: '12345678',
     }]);

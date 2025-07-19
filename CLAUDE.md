@@ -10,7 +10,7 @@ Additional documentation is available in the `docs/devs` directory.
 - Start dev server: `yarn start`
 - Never run all tests with `yarn test`. Instead test changed files: `yarn test:changed` or test individual files.
 - Run specific test: `yarn test src/app/path/to/file.spec.ts`
-- Lint code: `yarn lint` or `yarn lint:fix` to auto-fix issues. Wait for longer when linting.
+- Lint code: `yarn lint` or `yarn lint:fix` to auto-fix issues. Wait for longer when linting. Accepts file arguments: `yarn lint src/path/to/file.ts`
 - Run `yarn ui remote -i <some_ip>` to prepare UI for being served. Re-run this command after running `yarn build`.
 - Generate authenticated URL: `yarn auth-url /target-path` (for Playwright testing)
 - Ignore strict null check, i.e. don't run: `yarn strict-null-checks`

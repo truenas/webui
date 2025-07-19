@@ -1,7 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef,
-  Component, input, model, OnChanges, OnInit,
+  Component, input, model, OnChanges, OnInit, ViewChild,
 } from '@angular/core';
 import {
   ControlValueAccessor, NgControl, FormsModule, ReactiveFormsModule,
@@ -55,6 +55,10 @@ export type IxSelectValue = SelectOptionValueType;
   hostDirectives: [
     { ...registeredDirectiveConfig },
   ],
+  host: {
+    tabindex: '0',
+    '(focus)': 'onHostFocus()',
+  },
 })
 export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChanges {
   readonly label = input<TranslatedString>();
@@ -81,6 +85,8 @@ export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChange
 
   private opts: SelectOption[] = [];
   private optsSubscription: Subscription;
+
+  @ViewChild(MatSelect) private matSelect: MatSelect;
 
   get selectedLabel(): string {
     if (this.value === undefined) {
@@ -212,6 +218,24 @@ export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChange
       } else {
         this.selectAllState.checked = false;
       }
+    }
+  }
+
+  /**
+   * Focus the select element
+   */
+  focus(): void {
+    if (this.matSelect) {
+      this.matSelect.focus();
+    }
+  }
+
+  /**
+   * Handle focus on the host element
+   */
+  onHostFocus(): void {
+    if (this.matSelect && !this.isDisabled) {
+      this.matSelect.focus();
     }
   }
 }

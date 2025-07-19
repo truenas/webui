@@ -3,6 +3,7 @@
     "allow": [
       "Bash(grep:*)",
       "Bash(yarn:*)",
+      "Bash(yarn test:*)",
       "Bash(npx eslint:*)",
       "Bash(mkdir:*)",
       "Bash(mv:*)",

@@ -1,0 +1,151 @@
+<form class="ix-form-container" [formGroup]="form">
+  <ix-fieldset [title]="'Trusted Domains Configuration' | translate">
+    <ix-checkbox
+      formControlName="enable_trusted_domains"
+      [label]="'Enable Trusted Domains' | translate"
+    ></ix-checkbox>
+    @if (form.controls.enable_trusted_domains.value) {
+      <ix-list
+        formArrayName="trustedDomains"
+        [empty]="trustedDomainsArray.length === 0"
+        [label]="'Trusted Domains' | translate"
+        [formArray]="trustedDomainsArray"
+        (add)="addTrustedDomain()"
+      >
+      @for (domain of trustedDomainsArray.controls; track domain; let i = $index) {
+        <ix-list-item
+          [label]="'Trusted Domain' | translate"
+          [formGroupName]="i"
+          (delete)="removeTrustedDomain(i)"
+        >
+          <div class="trusted-domain-config">
+            <div class="columns">
+              <ix-fieldset [title]="'Basic Configuration' | translate">
+                <ix-select
+                  formControlName="idmap_backend"
+                  [required]="true"
+                  [label]="'IDMAP Backend' | translate"
+                  [options]="trustedDomainIdmapOptions$"
+                ></ix-select>
+
+                @let idmapBackend = getIdmapTypeForItem(i);
+                @if(idmapBackend) {
+                  <ix-input
+                    formControlName="name"
+                    [label]="'Name' | translate"
+                    [required]="true"
+                  ></ix-input>
+                  <ix-input
+                    formControlName="range_low"
+                    [label]="'Range Low' | translate"
+                    [required]="true"
+                    [type]="'number'"
+                  ></ix-input>
+                  <ix-input
+                    formControlName="range_high"
+                    [label]="'Range High' | translate"
+                    [required]="true"
+                    [type]="'number'"
+                  ></ix-input>
+                  @if (idmapBackend === IdmapBackend.Ad) {
+                    <ix-select
+                      formControlName="schema_mode"
+                      [label]="'Schema Mode' | translate"
+                      [required]="true"
+                      [options]="schemaModeOptions$"
+                    ></ix-select>
+                    <ix-checkbox
+                      formControlName="unix_primary_group"
+                      [label]="'Unix Primary Group' | translate"
+                      [required]="true"
+                    ></ix-checkbox>
+                    <ix-checkbox
+                      formControlName="unix_nss_info"
+                      [label]="'Unix NSS Info' | translate"
+                      [required]="true"
+                    ></ix-checkbox>
+                  }
+                  @if (idmapBackend === IdmapBackend.Rfc2307 || idmapBackend === IdmapBackend.Ldap) {
+                    @if (idmapBackend === IdmapBackend.Rfc2307) {
+                      <ix-input
+                        formControlName="ldap_url"
+                        [required]="true"
+                        [label]="'LDAP Url' | translate"
+                      ></ix-input>
+                    }
+                    @if (idmapBackend === IdmapBackend.Ldap) {
+                      <ix-input
+                        formControlName="ldap_base_dn"
+                        [label]="'LDAP Base DN' | translate"
+                        [required]="true"
+                      ></ix-input>
+                    }
+                    <ix-input
+                      formControlName="ldap_user_dn"
+                      [required]="true"
+                      [label]="'LDAP User DN' | translate"
+                    ></ix-input>
+                    <ix-input
+                      formControlName="ldap_user_dn_password"
+                      [required]="true"
+                      [label]="'LDAP User DN Password' | translate"
+                    ></ix-input>
+                    @if (idmapBackend === IdmapBackend.Ldap) {
+                      <ix-input
+                        formControlName="ldap_url"
+                        [required]="true"
+                        [label]="'LDAP Url' | translate"
+                      ></ix-input>
+                      <ix-checkbox
+                        formControlName="readonly"
+                        [label]="'Readonly' | translate"
+                        [required]="true"
+                      ></ix-checkbox>
+                    }
+                    @if (idmapBackend === IdmapBackend.Rfc2307) {
+                      <ix-input
+                        formControlName="bind_path_user"
+                        [label]="'Bind Path User' | translate"
+                        [required]="true"
+                      ></ix-input>
+                      <ix-input
+                        formControlName="bind_path_group"
+                        [label]="'Bind Path Group' | translate"
+                        [required]="true"
+                      ></ix-input>
+                      <ix-checkbox
+                        formControlName="user_cn"
+                        [label]="'User CN' | translate"
+                        [required]="true"
+                      ></ix-checkbox>
+                      <ix-checkbox
+                        formControlName="ldap_realm"
+                        [label]="'LDAP Realm' | translate"
+                        [required]="true"
+                      ></ix-checkbox>
+                    }
+                    <ix-checkbox
+                      formControlName="validate_certificates"
+                      [label]="'Validate Certificates' | translate"
+                      [required]="true"
+                    ></ix-checkbox>
+                  }
+                  @if (idmapBackend === IdmapBackend.Rid) {
+                    <ix-checkbox
+                      formControlName="sssd_compat"
+                      [label]="'SSSD Compat' | translate"
+                      [required]="true"
+                    ></ix-checkbox>
+                  }
+                }
+                
+              </ix-fieldset>
+            </div>
+          </div>
+        </ix-list-item>
+      }
+      </ix-list>
+    }
+    
+  </ix-fieldset>
+</form>

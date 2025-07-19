@@ -25,6 +25,7 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { forbiddenValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { AdditionalDetailsSectionComponent } from 'app/pages/credentials/new-users/user-form/additional-details-section/additional-details-section.component';
@@ -134,6 +135,7 @@ export class UserFormComponent implements OnInit {
     private store$: Store<AppState>,
     private dialog: DialogService,
     private translate: TranslateService,
+    private snackbar: SnackbarService,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty || this.authSection().form.dirty || this.allowedAccessSection().form.dirty
@@ -276,6 +278,12 @@ export class UserFormComponent implements OnInit {
         this.isFormLoading.set(false);
         if (user) {
           this.slideInRef.close({ response: user });
+
+          if (this.isNewUser()) {
+            this.snackbar.success(this.translate.instant('User created'));
+          } else {
+            this.snackbar.success(this.translate.instant('User updated'));
+          }
         }
       },
     });

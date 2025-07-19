@@ -1,0 +1,42 @@
+<form class="ix-form-container" [formGroup]="form">
+  <ix-fieldset [title]="'Active Directory Configuration' | translate">
+    <ix-input
+      formControlName="hostname"
+      [label]="'TrueNAS Hostname' | translate"
+      [required]="true"
+    ></ix-input>
+
+    <ix-input
+      formControlName="domain"
+      [label]="'Domain Name' | translate"
+      [required]="true"
+    ></ix-input>
+
+    <ix-input
+      formControlName="site"
+      [label]="'Site Name' | translate"
+    ></ix-input>
+
+    <ix-input
+      formControlName="computer_account_ou"
+      [label]="'Computer Account OU' | translate"
+    ></ix-input>
+    <ix-checkbox
+      formControlName="use_default_domain"
+      [label]="'Use Default Domain' | translate"
+    ></ix-checkbox>
+  </ix-fieldset>
+  
+  <ix-trusted-domains-config
+    [enableTrustedDomains]="form.controls.enable_trusted_domains.value"
+    [trustedDomains]="form.controls.trusted_domains.value"
+    (trustedDomainsChanged)="onTrustedDomainsChanged($event)"
+    (isValid)="isTrustedDomainsValid.set($event)"
+  ></ix-trusted-domains-config>
+
+  <ix-idmap-config
+    [idmap]="activeDirectoryConfig()?.idmap"
+    (idmapUpdated)="primaryDomainIdmapUpdated($event)"
+    (isValid)="isIdmapValid.set($event)"
+  ></ix-idmap-config>
+</form>
