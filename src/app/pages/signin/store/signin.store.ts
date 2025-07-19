@@ -4,7 +4,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import { Actions, ofType } from '@ngrx/effects';
-import { tapResponse } from '@ngrx/operators';
 import { TranslateService } from '@ngx-translate/core';
 import {
   EMPTY, forkJoin, Observable, of, from,
@@ -17,6 +16,7 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { FailoverValidationService } from 'app/services/failover-validation.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
 import { UpdateService } from 'app/services/update.service';
@@ -50,9 +50,20 @@ export class SigninStore extends ComponentStore<SigninState> {
     if (loginResult !== LoginResult.Success) {
       this.authService.clearAuthToken();
     } else {
-      this.handleSuccessfulLogin();
+      // Don't immediately handle successful login - need to check failover first
+      // This will be handled by the component that initiated the login
     }
   };
+
+  getLoginErrorMessage(loginResult: LoginResult, isOtpError = false): string {
+    if (loginResult === LoginResult.NoAccess) {
+      return this.translate.instant('User is lacking permissions to access WebUI.');
+    }
+
+    return isOtpError
+      ? this.translate.instant('Incorrect or expired OTP. Please try again.')
+      : this.translate.instant('Wrong username or password. Please try again.');
+  }
 
   constructor(
     private api: ApiService,
@@ -67,6 +78,7 @@ export class SigninStore extends ComponentStore<SigninState> {
     private actions$: Actions,
     private wsStatus: WebSocketStatusService,
     private activatedRoute: ActivatedRoute,
+    private failoverValidation: FailoverValidationService,
     @Inject(WINDOW) private window: Window,
   ) {
     super(initialState);
@@ -95,11 +107,26 @@ export class SigninStore extends ComponentStore<SigninState> {
     }),
   ));
 
+  private withFailoverValidation = () => (source$: Observable<LoginResult>) => {
+    return source$.pipe(
+      switchMap((loginResult) => {
+        if (loginResult === LoginResult.Success) {
+          return this.performFailoverChecksAndCompleteLogin();
+        }
+        this.handleLoginResult(loginResult);
+        return of(loginResult);
+      }),
+    );
+  };
+
   handleSuccessfulLogin = this.effect((trigger$: Observable<void>) => trigger$.pipe(
     tap(() => {
       this.setLoadingState(true);
       this.snackbar.dismiss();
     }),
+    // Perform failover checks before completing login
+    switchMap(() => this.performFailoverChecksAndCompleteLogin()),
+    filter((result) => result === LoginResult.Success),
     // Wait for user to be loaded
     switchMap(() => this.authService.user$.pipe(filter(Boolean))),
     switchMap(() => {
@@ -170,13 +197,11 @@ export class SigninStore extends ComponentStore<SigninState> {
     this.authService.setQueryToken(token);
 
     return this.authService.loginWithToken().pipe(
-      tap(this.handleLoginResult.bind(this)),
-      tapResponse(
-        () => {},
-        (error: unknown) => {
-          this.errorHandler.showErrorModal(error);
-        },
-      ),
+      this.withFailoverValidation(),
+      catchError((error: unknown) => {
+        this.errorHandler.showErrorModal(error);
+        return of(LoginResult.NoAccess);
+      }),
     );
   }
 
@@ -191,13 +216,51 @@ export class SigninStore extends ComponentStore<SigninState> {
         return isTokenWithinTimeline;
       }),
       switchMap(() => this.authService.loginWithToken()),
-      tap(this.handleLoginResult.bind(this)),
-      tapResponse(
-        () => {},
-        (error: unknown) => {
-          this.errorHandler.showErrorModal(error);
-        },
-      ),
+      this.withFailoverValidation(),
+      catchError((error: unknown) => {
+        this.errorHandler.showErrorModal(error);
+        return of(LoginResult.NoAccess);
+      }),
+    );
+  }
+
+  performFailoverChecksAndCompleteLogin(): Observable<LoginResult> {
+    return this.failoverValidation.validateFailover().pipe(
+      switchMap((result) => {
+        if (result.success) {
+          return this.completeLogin();
+        }
+
+        this.setLoadingState(false);
+        this.showSnackbar(result.error || this.translate.instant('Failover validation failed.'));
+        return of(LoginResult.NoAccess);
+      }),
+      catchError(() => {
+        this.setLoadingState(false);
+        const errorMsg = this.translate.instant(
+          'Unable to check failover status. Please try again later or contact the system administrator.',
+        );
+        this.showSnackbar(errorMsg);
+        return of(LoginResult.NoAccess);
+      }),
+    );
+  }
+
+  private completeLogin(): Observable<LoginResult> {
+    return this.authService.initializeSession().pipe(
+      tap((result) => {
+        if (result === LoginResult.Success) {
+          this.handleSuccessfulLogin();
+        } else {
+          this.setLoadingState(false);
+          this.showSnackbar(this.translate.instant('Failed to initialize session.'));
+        }
+      }),
+      catchError(() => {
+        this.setLoadingState(false);
+        this.showSnackbar(this.translate.instant('Failed to initialize session.'));
+        return of(LoginResult.NoAccess);
+      }),
     );
   }
 }
