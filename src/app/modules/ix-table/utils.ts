@@ -30,7 +30,7 @@ export function createTable<T>(
 
 export function filterTableRows<T>(filter: TableFilter<T>): T[] {
   const {
-    list = [], query = '', columnKeys = [], preprocessMap,
+    list = [], query = '', columnKeys = [], preprocessMap, exact = false,
   } = filter;
 
   const filterString = query.toLowerCase();
@@ -49,7 +49,8 @@ export function filterTableRows<T>(filter: TableFilter<T>): T[] {
         value = preprocessMap[columnKey]?.(value as T[keyof T]);
       }
 
-      return value?.toString()?.toLowerCase()?.includes(filterString);
+      const valueString = value?.toString()?.toLowerCase();
+      return exact ? valueString === filterString : valueString?.includes(filterString);
     });
   });
 }

@@ -5,4 +5,5 @@ export interface TableFilter<T> {
   preprocessMap?: {
     [K in keyof T]?: (value: T[K]) => string;
   };
+  exact?: boolean;
 }

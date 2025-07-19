@@ -10,6 +10,7 @@ import { of } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideToggleHarness } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.harness';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
@@ -130,5 +131,55 @@ describe('SnapshotListComponent', () => {
     await addButton.click();
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(SnapshotAddFormComponent);
+  });
+
+  it('should filter snapshots by dataset when route parameter is present', () => {
+    // Test the onListFiltered method directly
+    const component = spectator.component;
+
+    // Mock snapshots with different datasets (using full paths like in real system)
+    const testSnapshots = [
+      {
+        id: '1',
+        name: '/dozer/test-dataset@snapshot1',
+        dataset: '/dozer/test-dataset',
+        snapshot_name: 'snapshot1',
+      } as ZfsSnapshot,
+      {
+        id: '2',
+        name: '/dozer/test2@snapshot2',
+        dataset: '/dozer/test2',
+        snapshot_name: 'snapshot2',
+      } as ZfsSnapshot,
+      {
+        id: '3',
+        name: '/dozer/test3@snapshot3',
+        dataset: '/dozer/test3',
+        snapshot_name: 'snapshot3',
+      } as ZfsSnapshot,
+    ];
+
+    // Set the component's snapshots
+    component.snapshots = testSnapshots.map((snapshot) => ({ ...snapshot, selected: false }));
+
+    // Spy on the dataProvider setFilter method
+    const setFilterSpy = jest.spyOn(component.dataProvider, 'setFilter');
+
+    // Trigger the search event to call onListFiltered
+    spectator.triggerEventHandler('ix-search-input1', 'search', 'test-dataset');
+
+    // Verify that the filterString is set correctly
+    expect(component.filterString).toBe('test-dataset');
+
+    // Verify that setFilter was called with exact: true for dataset filtering
+    expect(setFilterSpy).toHaveBeenCalledWith({
+      list: component.snapshots,
+      query: 'test-dataset',
+      columnKeys: ['dataset'],
+      exact: true,
+      preprocessMap: {
+        dataset: expect.any(Function),
+      },
+    });
   });
 });
