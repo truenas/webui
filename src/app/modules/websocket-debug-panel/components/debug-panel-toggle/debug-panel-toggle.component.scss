@@ -1,0 +1,15 @@
+.debug-panel-toggle {
+  position: fixed;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  z-index: 999;
+  background-color: var(--bg2);
+  border-radius: 4px 0 0 4px;
+
+  &.active-mocks {
+    mat-icon {
+      color: var(--orange);
+    }
+  }
+}

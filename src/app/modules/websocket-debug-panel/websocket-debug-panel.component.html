@@ -1,0 +1,17 @@
+<div class="websocket-debug-panel" [class.open]="isPanelOpen$ | async">
+  <ix-debug-panel-toggle
+    [isPanelOpen]="isPanelOpen$ | async"
+    [hasActiveMocks]="hasActiveMocks$ | async"
+    (togglePanel)="togglePanel()"
+  ></ix-debug-panel-toggle>
+
+  @if (isPanelOpen$ | async) {
+    <div class="panel-content">
+      <mat-tab-group [selectedIndex]="0" (selectedIndexChange)="onTabChange($event === 0 ? 'websocket' : 'other')">
+        <mat-tab label="WebSocket">
+          <ix-websocket-tab></ix-websocket-tab>
+        </mat-tab>
+      </mat-tab-group>
+    </div>
+  }
+</div>

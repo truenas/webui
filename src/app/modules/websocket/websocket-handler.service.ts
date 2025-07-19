@@ -8,6 +8,7 @@ import {
   combineLatest,
   filter,
   map,
+  merge,
   mergeMap,
   Observable,
   of,
@@ -26,9 +27,11 @@ import {
 } from 'app/interfaces/api-message.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { WebSocketConnection } from 'app/modules/websocket/websocket-connection.class';
+import { MockResponseService } from 'app/modules/websocket-debug-panel/services/mock-response.service';
+import { WebSocketDebugService } from 'app/modules/websocket-debug-panel/services/websocket-debug.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
-type ApiCall = Required<Pick<RequestMessage, 'id' | 'method' | 'params'>>;
+type ApiCall = Required<Pick<RequestMessage, 'id' | 'method' | 'params'>> & { jsonrpc: '2.0' };
 
 @UntilDestroy()
 @Injectable({
@@ -62,7 +65,22 @@ export class WebSocketHandlerService {
   }
 
   get responses$(): Observable<IncomingMessage> {
-    return this.wsConnection.stream$ as Observable<IncomingMessage>;
+    const realResponses$ = this.wsConnection.stream$ as Observable<IncomingMessage>;
+    const mockResponses$ = this.mockResponseService.responses$;
+
+    // Combine real and mock responses
+    return merge(realResponses$, mockResponses$).pipe(
+      tap((message) => {
+        // Log incoming messages for debugging
+        if (environment.debugPanel?.enabled) {
+          const isMocked = mockResponses$ === this.mockResponseService.responses$
+            && 'result' in message
+            && typeof message.result === 'number'
+            && this.mockResponseService.getActiveJobs().has(message.result);
+          this.debugService.logIncomingMessage(message, isMocked);
+        }
+      }),
+    );
   }
 
   private readonly triggerNextCall$ = new Subject<void>();
@@ -78,6 +96,8 @@ export class WebSocketHandlerService {
     private translate: TranslateService,
     @Inject(WINDOW) protected window: Window,
     @Inject(WEBSOCKET) private webSocket: typeof rxjsWebSocket,
+    private debugService: WebSocketDebugService,
+    private mockResponseService: MockResponseService,
   ) {
     this.setupWebSocket();
   }
@@ -109,6 +129,30 @@ export class WebSocketHandlerService {
   private processCall(call: ApiCall): Observable<unknown> {
     this.activeCalls++;
     this.pendingCalls.set(call.id, call);
+
+    // Check for mock response
+    if (environment.debugPanel?.enabled) {
+      const mockResponse = this.mockResponseService.checkMock(call);
+      if (mockResponse) {
+        // Log the outgoing message as mocked
+        this.debugService.logOutgoingMessage(call, true);
+        // Generate the mock response
+        this.mockResponseService.generateMockResponse(call, mockResponse);
+        // Don't send the real request
+        return this.responses$.pipe(
+          filter((message) => 'id' in message && message.id === call.id),
+          take(1),
+          tap(() => {
+            this.activeCalls--;
+            this.pendingCalls.delete(call.id);
+            this.triggerNextCall$.next();
+          }),
+        );
+      }
+      // Log normal outgoing message
+      this.debugService.logOutgoingMessage(call, false);
+    }
+
     this.wsConnection.send(call);
 
     return this.responses$.pipe(
@@ -217,7 +261,7 @@ export class WebSocketHandlerService {
     });
   }
 
-  scheduleCall(payload: ApiCall): void {
+  scheduleCall(payload: Pick<ApiCall, 'id' | 'method' | 'params'>): void {
     const message = makeRequestMessage(payload);
     this.queuedCalls.push(message as ApiCall);
     this.triggerNextCall$.next();
