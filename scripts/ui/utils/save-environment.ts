@@ -17,6 +17,12 @@ interface ConfigVariables {
     expansionModels: string[];
     scenario: MockEnclosureScenario;
   };
+  debugPanel?: {
+    enabled: boolean;
+    defaultMessageLimit: number;
+    mockJobDefaultDelay: number;
+    persistMockConfigs: boolean;
+  };
 }
 
 const defaults: ConfigVariables = {
@@ -28,6 +34,12 @@ const defaults: ConfigVariables = {
     expansionModels: [],
     scenario: MockEnclosureScenario.FillSomeSlots,
   },
+  debugPanel: {
+    enabled: false,
+    defaultMessageLimit: 100,
+    mockJobDefaultDelay: 1000,
+    persistMockConfigs: true,
+  },
 };
 
 export async function updateEnvironment(newValues: DeepPartial<ConfigVariables>): Promise<void> {
@@ -37,7 +49,7 @@ export async function updateEnvironment(newValues: DeepPartial<ConfigVariables>)
   });
 
   const configTemplate = getConfigTemplate();
-  const configToWrite = configTemplate
+  let configToWrite = configTemplate
     .replace('_REMOTE_', stringify(valuesToWrite.remote))
     .replace('_BUILD_YEAR_', stringify(valuesToWrite.buildYear))
     .replace('_MOCK_ENABLED_', stringify(Boolean(valuesToWrite.mockConfig.enabled)))
@@ -52,6 +64,23 @@ export async function updateEnvironment(newValues: DeepPartial<ConfigVariables>)
       enum: MockEnclosureScenario,
       value: valuesToWrite.mockConfig.scenario,
     }));
+
+  // Add debugPanel configuration if present
+  if (valuesToWrite.debugPanel) {
+    const debugPanelConfig = `
+  debugPanel: {
+    enabled: ${stringify(valuesToWrite.debugPanel.enabled)},
+    defaultMessageLimit: ${stringify(valuesToWrite.debugPanel.defaultMessageLimit)},
+    mockJobDefaultDelay: ${stringify(valuesToWrite.debugPanel.mockJobDefaultDelay)},
+    persistMockConfigs: ${stringify(valuesToWrite.debugPanel.persistMockConfigs)},
+  },`;
+
+    // Insert debugPanel configuration after mockConfig
+    configToWrite = configToWrite.replace(
+      /(\s*mockConfig: {[^}]+}),/,
+      `$1,${debugPanelConfig}`,
+    );
+  }
 
   writeToEnvironment(configToWrite);
 }

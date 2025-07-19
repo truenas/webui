@@ -16,7 +16,7 @@ export class WebSocketDebugService {
   logOutgoingMessage(message: RequestMessage, isMocked = false): void {
     const debugMessage: WebSocketDebugMessage = {
       id: UUID.UUID(),
-      timestamp: new Date(),
+      timestamp: new Date().toISOString(),
       direction: 'out',
       message,
       isMocked,
@@ -27,7 +27,7 @@ export class WebSocketDebugService {
   logIncomingMessage(message: IncomingMessage, isMocked = false): void {
     const debugMessage: WebSocketDebugMessage = {
       id: UUID.UUID(),
-      timestamp: new Date(),
+      timestamp: new Date().toISOString(),
       direction: 'in',
       message,
       isMocked,

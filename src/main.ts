@@ -44,6 +44,7 @@ import { createTranslateLoader } from 'app/modules/language/translations/icu-tra
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SubscriptionManagerService } from 'app/modules/websocket/subscription-manager.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
+import { provideWebSocketDebugState } from 'app/modules/websocket-debug-panel/providers/websocket-debug.providers';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { rootReducers, rootEffects } from 'app/store';
@@ -96,6 +97,7 @@ bootstrapApplication(AppComponent, {
       },
     }),
     provideEffects(rootEffects),
+    ...(environment.debugPanel?.enabled ? [provideWebSocketDebugState()] : []),
     provideRouterStore({
       serializer: CustomRouterStateSerializer,
     }),

@@ -1,0 +1,55 @@
+.websocket-tab {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.messages-section {
+  border-bottom: 2px solid var(--lines);
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 200px;
+  overflow: hidden;
+
+  h3 {
+    background-color: var(--bg2);
+    border-bottom: 1px solid var(--lines);
+    color: var(--fg1);
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0;
+    padding: 12px 16px;
+  }
+
+  ix-message-list {
+    display: block;
+    flex: 1;
+    overflow: hidden;
+  }
+}
+
+.mock-config-section {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 200px;
+  overflow: hidden;
+
+  h3 {
+    background-color: var(--bg2);
+    border-bottom: 1px solid var(--lines);
+    color: var(--fg1);
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0;
+    padding: 12px 16px;
+  }
+
+  ix-mock-config-list {
+    display: block;
+    flex: 1;
+    overflow: auto;
+  }
+}

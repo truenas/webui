@@ -2,6 +2,8 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
   selector: 'ix-mock-config-form',
+  standalone: true,
+  imports: [],
   templateUrl: './mock-config-form.component.html',
   styleUrls: ['./mock-config-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

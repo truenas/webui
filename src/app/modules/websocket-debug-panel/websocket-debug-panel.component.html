@@ -1,17 +1,29 @@
-<div class="websocket-debug-panel" [class.open]="isPanelOpen$ | async">
+<div class="websocket-debug-panel" 
+     [class.open]="isPanelOpen$ | async"
+     [style.width.px]="panelWidth">
+  
+  <div class="resize-handle" (mousedown)="onResizeStart($event)"></div>
+  
   <ix-debug-panel-toggle
     [isPanelOpen]="isPanelOpen$ | async"
     [hasActiveMocks]="hasActiveMocks$ | async"
     (togglePanel)="togglePanel()"
   ></ix-debug-panel-toggle>
 
-  @if (isPanelOpen$ | async) {
-    <div class="panel-content">
-      <mat-tab-group [selectedIndex]="0" (selectedIndexChange)="onTabChange($event === 0 ? 'websocket' : 'other')">
-        <mat-tab label="WebSocket">
-          <ix-websocket-tab></ix-websocket-tab>
-        </mat-tab>
-      </mat-tab-group>
+  <div class="panel-content">
+    <div class="panel-header">
+      <h2>WebSocket Debug Panel</h2>
+      <span class="keyboard-hint">Ctrl+Shift+X</span>
     </div>
-  }
+    
+    <mat-tab-group 
+      class="panel-tabs" 
+      [selectedIndex]="0"
+      (selectedIndexChange)="onTabChange($event === 0 ? 'websocket' : 'other')">
+      <mat-tab label="WebSocket">
+        <ix-websocket-tab></ix-websocket-tab>
+      </mat-tab>
+      <!-- Future tabs can be added here -->
+    </mat-tab-group>
+  </div>
 </div>

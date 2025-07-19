@@ -2,7 +2,7 @@ import { IncomingMessage, RequestMessage } from 'app/interfaces/api-message.inte
 
 export interface WebSocketDebugMessage {
   id: string;
-  timestamp: Date;
+  timestamp: string; // ISO string for serialization
   direction: 'in' | 'out';
   message: IncomingMessage | RequestMessage;
   isMocked?: boolean;

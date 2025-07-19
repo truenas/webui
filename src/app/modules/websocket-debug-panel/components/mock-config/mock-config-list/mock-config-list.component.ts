@@ -4,12 +4,14 @@ import { selectMockConfigs } from 'app/modules/websocket-debug-panel/store/webso
 
 @Component({
   selector: 'ix-mock-config-list',
+  standalone: true,
+  imports: [],
   templateUrl: './mock-config-list.component.html',
   styleUrls: ['./mock-config-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MockConfigListComponent {
-  mockConfigs$ = this.store.select(selectMockConfigs);
+  mockConfigs$ = this.store$.select(selectMockConfigs);
 
-  constructor(private store: Store) {}
+  constructor(private store$: Store) {}
 }

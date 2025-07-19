@@ -1,0 +1,63 @@
+<div class="message-list-container">
+  <div class="message-list-header">
+    <h3>Messages</h3>
+    <button mat-icon-button 
+            matTooltip="Clear messages" 
+            class="clear-button"
+            ixTest="websocket-debug-clear-messages"
+            (click)="clearMessages()">
+      <ix-icon name="mdi-delete-outline"></ix-icon>
+    </button>
+  </div>
+
+  <cdk-virtual-scroll-viewport 
+    itemSize="80" 
+    class="message-viewport"
+    [maxBufferPx]="300"
+    [minBufferPx]="100">
+    
+    <div *cdkVirtualFor="let message of formattedMessages$ | async; trackBy: trackByMessage"
+         class="message-item"
+         [class.outgoing]="message.direction === 'out'"
+         [class.incoming]="message.direction === 'in'"
+         [class.mocked]="message.isMocked">
+      
+      <div class="message-header">
+        <span class="direction-icon">
+          @if (message.direction === 'out') {
+            <ix-icon name="mdi-arrow-right" class="icon-out"></ix-icon>
+          } @else {
+            <ix-icon name="mdi-arrow-left" class="icon-in"></ix-icon>
+          }
+        </span>
+        
+        <span class="method-name">{{ message.methodName }}</span>
+        
+        @if (message.isMocked) {
+          <span class="mocked-badge">MOCKED</span>
+        }
+        
+        <span class="timestamp">{{ message.formattedTime }}</span>
+        
+        <button mat-icon-button 
+                matTooltip="Copy message" 
+                class="copy-button"
+                ixTest="websocket-debug-copy-message"
+                (click)="copyMessage(message)">
+          <ix-icon name="mdi-content-copy"></ix-icon>
+        </button>
+      </div>
+      
+      <div class="message-preview">
+        {{ message.messagePreview }}
+      </div>
+    </div>
+    
+    @if ((messages$ | async)?.length === 0) {
+      <div class="empty-state">
+        <ix-icon name="mdi-message-text-outline" class="empty-icon"></ix-icon>
+        <p>No messages yet</p>
+      </div>
+    }
+  </cdk-virtual-scroll-viewport>
+</div>

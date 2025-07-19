@@ -7,7 +7,7 @@ import {
 } from 'rxjs/operators';
 import { MockConfig } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
 import * as WebSocketDebugActions from './websocket-debug.actions';
-import { selectMockConfigs } from './websocket-debug.selectors';
+import { selectMockConfigs, selectIsPanelOpen } from './websocket-debug.selectors';
 
 const mockConfigsStorageKey = 'websocket-debug-mock-configs';
 
@@ -47,10 +47,10 @@ export class WebSocketDebugEffects {
 
   persistPanelState$ = createEffect(() => this.actions$.pipe(
     ofType(WebSocketDebugActions.setPanelOpen, WebSocketDebugActions.togglePanel),
-    withLatestFrom(this.store$.select((state) => state.webSocketDebug)),
-    tap(([, state]) => {
+    withLatestFrom(this.store$.select(selectIsPanelOpen)),
+    tap(([, isPanelOpen]) => {
       try {
-        localStorage.setItem('websocket-debug-panel-open', JSON.stringify((state as { isPanelOpen: boolean }).isPanelOpen));
+        localStorage.setItem('websocket-debug-panel-open', JSON.stringify(isPanelOpen));
       } catch (error) {
         console.error('Failed to persist panel state:', error);
       }
