@@ -7,17 +7,6 @@
   margin-bottom: 0;
   margin-top: 0;
 
-  mat-checkbox {
-    max-width: 93%;
-
-    &::ng-deep {
-      label {
-        line-height: normal;
-        max-width: 90%;
-      }
-    }
-  }
-
   mat-hint {
     color: var(--fg2) !important;
     margin-left: 30px;
