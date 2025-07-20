@@ -1,0 +1,101 @@
+<div class="job-events">
+  <div class="events-header">
+    <h4>{{ 'Job Events Timeline' | translate }}</h4>
+    <button mat-button ixTest="add-event-button" color="primary" (click)="addEvent()">
+      <ix-icon name="add"></ix-icon>
+      {{ 'Add Event' | translate }}
+    </button>
+  </div>
+
+  @if (events().length === 0) {
+    <p class="empty-message">{{ 'No events. Add an event to simulate job progress.' | translate }}</p>
+  }
+
+  @for (event of events(); track $index; let i = $index) {
+    <mat-card class="event-card">
+      <mat-card-content>
+        <div class="event-header">
+          <h5>{{ 'Event' | translate }} #{{ i + 1 }}</h5>
+          <button mat-icon-button ixTest="remove-event-button" (click)="removeEvent(i)">
+            <ix-icon name="mdi-delete"></ix-icon>
+          </button>
+        </div>
+
+        <div class="event-fields">
+          <mat-form-field class="delay-field">
+            <mat-label>{{ 'Delay (ms)' | translate }}</mat-label>
+            <input 
+              matInput 
+              ixTest="delay-input"
+              type="number" 
+              [value]="event.delay"
+              (change)="updateEvent(i, 'delay', $any($event.target).value)"
+            >
+          </mat-form-field>
+
+          <mat-form-field class="state-field">
+            <mat-label>{{ 'State' | translate }}</mat-label>
+            <mat-select 
+              ixTest="state-select"
+              [value]="event.fields.state"
+              (selectionChange)="updateEvent(i, 'state', $event.value)"
+            >
+              <mat-option ixTest="state-running" value="RUNNING">RUNNING</mat-option>
+              <mat-option ixTest="state-success" value="SUCCESS">SUCCESS</mat-option>
+              <mat-option ixTest="state-failed" value="FAILED">FAILED</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field class="full-width">
+            <mat-label>{{ 'Description' | translate }}</mat-label>
+            <input 
+              matInput 
+              ixTest="description-input"
+              [value]="event.fields.description"
+              (change)="updateEvent(i, 'description', $any($event.target).value)"
+            >
+          </mat-form-field>
+
+          <div class="progress-fields">
+            <mat-form-field class="percent-field">
+              <mat-label>{{ 'Progress %' | translate }}</mat-label>
+              <input 
+                matInput 
+                ixTest="progress-percent-input"
+                type="number" 
+                min="0" 
+                max="100"
+                [value]="event.fields.progress.percent"
+                (change)="updateEvent(i, 'progress.percent', $any($event.target).value)"
+              >
+            </mat-form-field>
+
+            <mat-form-field class="progress-desc-field">
+              <mat-label>{{ 'Progress Description' | translate }}</mat-label>
+              <input 
+                matInput 
+                ixTest="progress-description-input"
+                [value]="event.fields.progress.description"
+                (change)="updateEvent(i, 'progress.description', $any($event.target).value)"
+              >
+            </mat-form-field>
+          </div>
+
+          @if (event.fields.state === 'SUCCESS' || event.fields.state === 'FAILED') {
+            <mat-form-field class="full-width">
+              <mat-label>{{ 'Result (JSON)' | translate }}</mat-label>
+              <textarea 
+                matInput 
+                ixTest="result-textarea"
+                rows="3"
+                placeholder='{ "id": 1, "name": "tank" }'
+                [value]="getResultString(event)"
+                (change)="updateResult(i, $any($event.target).value)"
+              ></textarea>
+            </mat-form-field>
+          }
+        </div>
+      </mat-card-content>
+    </mat-card>
+  }
+</div>

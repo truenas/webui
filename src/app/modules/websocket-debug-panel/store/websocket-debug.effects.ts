@@ -57,6 +57,22 @@ export class WebSocketDebugEffects {
     }),
   ), { dispatch: false });
 
+  exportMockConfigs$ = createEffect(() => this.actions$.pipe(
+    ofType(WebSocketDebugActions.exportMockConfigs),
+    withLatestFrom(this.store$.select(selectMockConfigs)),
+    tap(([, configs]) => {
+      const dataStr = JSON.stringify(configs, null, 2);
+      const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+
+      const exportFileDefaultName = `mock-configs-${new Date().toISOString().split('T')[0]}.json`;
+
+      const linkElement = document.createElement('a');
+      linkElement.setAttribute('href', dataUri);
+      linkElement.setAttribute('download', exportFileDefaultName);
+      linkElement.click();
+    }),
+  ), { dispatch: false });
+
   constructor(
     private actions$: Actions,
     private store$: Store,

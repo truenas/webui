@@ -1,0 +1,56 @@
+<mat-card>
+  <mat-card-content>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <mat-form-field class="full-width">
+        <mat-label>{{ 'Method Name' | translate }}</mat-label>
+        <input matInput ixTest="method-name-input" formControlName="methodName" placeholder="e.g., pool.create" />
+        @if (form.controls.methodName.hasError('required') && form.controls.methodName.touched) {
+          <mat-error>{{ 'Method name is required' | translate }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field class="full-width">
+        <mat-label>{{ 'Message Pattern (Optional)' | translate }}</mat-label>
+        <input matInput ixTest="message-pattern-input" formControlName="messagePattern" placeholder='e.g., "name":"tank"' />
+        <mat-hint>{{ 'Regex pattern to match against message content' | translate }}</mat-hint>
+      </mat-form-field>
+
+      <div class="type-selection">
+        <label>{{ 'Response Type' | translate }}</label>
+        <mat-radio-group formControlName="type" ixTest="response-type-group">
+          <mat-radio-button value="call" ixTest="response-type-call">{{ 'Call (Immediate Response)' | translate }}</mat-radio-button>
+          <mat-radio-button value="job" ixTest="response-type-job">{{ 'Job (Progress Events)' | translate }}</mat-radio-button>
+        </mat-radio-group>
+      </div>
+
+      @if (currentType === 'call') {
+        <div class="response-editor">
+          <label>{{ 'Response Data' | translate }}</label>
+          <ix-monaco-editor
+            [value]="form.controls.callResponse.value.result"
+            [language]="'json'"
+            [height]="200"
+            (valueChange)="onCallResponseChange($event)"
+          />
+        </div>
+      } @else {
+        <div class="events-builder">
+          <label>{{ 'Job Events' | translate }}</label>
+          <ix-job-event-builder
+            [events]="form.controls.jobResponse.value.events"
+            (eventsChange)="onJobEventsChange($event)"
+          />
+        </div>
+      }
+    </form>
+  </mat-card-content>
+
+  <mat-card-actions align="end">
+    <button mat-button ixTest="cancel-button" type="button" (click)="onCancel()">
+      {{ 'Cancel' | translate }}
+    </button>
+    <button mat-button ixTest="submit-button" color="primary" type="button" [disabled]="form.invalid" (click)="onSubmit()">
+      {{ isEditMode ? ('Update' | translate) : ('Create' | translate) }}
+    </button>
+  </mat-card-actions>
+</mat-card>

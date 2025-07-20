@@ -1,0 +1,11 @@
+<mat-form-field class="full-width">
+  <mat-label>JSON Response</mat-label>
+  <textarea
+    matInput
+    ixTest="monaco-editor-textarea"
+    placeholder='{ "result": "success" }'
+    [value]="displayValue"
+    [style.height.px]="height()"
+    (input)="onValueChange($event)"
+  ></textarea>
+</mat-form-field>

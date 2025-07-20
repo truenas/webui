@@ -1,0 +1,70 @@
+@import 'scss-imports/variables';
+
+.job-events {
+  .events-header {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 16px;
+
+    h4 {
+      margin: 0;
+    }
+  }
+
+  .empty-message {
+    color: var(--fg2);
+    padding: 24px;
+    text-align: center;
+  }
+
+  .event-card {
+    background-color: var(--bg2);
+    margin-bottom: 16px;
+
+    .event-header {
+      align-items: center;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 16px;
+
+      h5 {
+        margin: 0;
+      }
+    }
+
+    .event-fields {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+
+      .delay-field,
+      .state-field {
+        width: calc(50% - 8px);
+      }
+
+      .full-width {
+        width: 100%;
+      }
+
+      .progress-fields {
+        display: flex;
+        gap: 16px;
+        width: 100%;
+
+        .percent-field {
+          width: 120px;
+        }
+
+        .progress-desc-field {
+          flex: 1;
+        }
+      }
+
+      textarea {
+        font-family: monospace;
+        font-size: 12px;
+      }
+    }
+  }
+}

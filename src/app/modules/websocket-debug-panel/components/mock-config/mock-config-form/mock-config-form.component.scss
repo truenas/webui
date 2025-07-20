@@ -1,0 +1,44 @@
+@import 'scss-imports/variables';
+
+:host {
+  display: block;
+}
+
+.full-width {
+  margin-bottom: 16px;
+  width: 100%;
+}
+
+.type-selection {
+  margin-bottom: 24px;
+
+  label {
+    color: var(--fg2);
+    display: block;
+    font-size: 12px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+
+  mat-radio-button {
+    margin-right: 16px;
+  }
+}
+
+.response-editor,
+.events-builder {
+  margin-top: 16px;
+
+  label {
+    color: var(--fg2);
+    display: block;
+    font-size: 12px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+}
+
+mat-card-actions {
+  border-top: 1px solid var(--lines);
+  padding: 16px;
+}

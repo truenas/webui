@@ -69,3 +69,12 @@ export const setMessageLimit = createAction(
   `${actionPrefix} Set Message Limit`,
   props<{ limit: number }>(),
 );
+
+export const importMockConfigs = createAction(
+  `${actionPrefix} Import Mock Configs`,
+  props<{ configs: MockConfig[] }>(),
+);
+
+export const exportMockConfigs = createAction(
+  `${actionPrefix} Export Mock Configs`,
+);
