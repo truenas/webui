@@ -1,6 +1,5 @@
-<mat-card class="mock-config-list">
-  <mat-card-header>
-    <h3>{{ 'Mock Configurations' | translate }}</h3>
+<div class="mock-config-list">
+  <div class="mock-config-header">
     <div class="header-actions">
       <input
         #fileInput
@@ -37,9 +36,9 @@
         {{ 'Add Mock' | translate }}
       </button>
     </div>
-  </mat-card-header>
+  </div>
 
-  <mat-card-content>
+  <div class="mock-config-content">
     @if (showForm) {
       <ix-mock-config-form
         [config]="editingConfig"
@@ -95,5 +94,5 @@
         }
       </div>
     }
-  </mat-card-content>
-</mat-card>
+  </div>
+</div>

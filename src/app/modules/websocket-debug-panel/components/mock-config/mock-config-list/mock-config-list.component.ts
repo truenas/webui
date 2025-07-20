@@ -2,7 +2,6 @@ import {
   ChangeDetectionStrategy, Component, computed, inject,
 } from '@angular/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Store } from '@ngrx/store';
@@ -19,9 +18,6 @@ import { selectMockConfigs } from 'app/modules/websocket-debug-panel/store/webso
   selector: 'ix-mock-config-list',
   standalone: true,
   imports: [
-    MatCard,
-    MatCardHeader,
-    MatCardContent,
     MatButton,
     MatIconButton,
     MatSlideToggle,

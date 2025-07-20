@@ -1,5 +1,5 @@
-<mat-card>
-  <mat-card-content>
+<div class="mock-config-form">
+  <div class="form-content">
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
       <mat-form-field class="full-width">
         <mat-label>{{ 'Method Name' | translate }}</mat-label>
@@ -43,14 +43,14 @@
         </div>
       }
     </form>
-  </mat-card-content>
+  </div>
 
-  <mat-card-actions align="end">
+  <div class="form-actions">
     <button mat-button ixTest="cancel-button" type="button" (click)="onCancel()">
       {{ 'Cancel' | translate }}
     </button>
     <button mat-button ixTest="submit-button" color="primary" type="button" [disabled]="form.invalid" (click)="onSubmit()">
       {{ isEditMode ? ('Update' | translate) : ('Create' | translate) }}
     </button>
-  </mat-card-actions>
-</mat-card>
+  </div>
+</div>

@@ -1,26 +1,30 @@
 <div class="message-list-container">
   <div class="message-list-header">
-    <h3>Messages</h3>
-    <button mat-icon-button 
-            matTooltip="Clear messages" 
-            class="clear-button"
-            ixTest="websocket-debug-clear-messages"
-            (click)="clearMessages()">
-      <ix-icon name="mdi-delete-outline"></ix-icon>
-    </button>
+    <div class="header-controls">
+      <mat-checkbox
+        ixTest="websocket-debug-auto-scroll"
+        matTooltip="Auto-scroll to latest message"
+        [(ngModel)]="autoScroll">
+        Auto-scroll
+      </mat-checkbox>
+      <button mat-icon-button 
+              matTooltip="Clear messages" 
+              class="clear-button"
+              ixTest="websocket-debug-clear-messages"
+              (click)="clearMessages()">
+        <ix-icon name="mdi-delete-outline"></ix-icon>
+      </button>
+    </div>
   </div>
 
-  <cdk-virtual-scroll-viewport 
-    itemSize="80" 
-    class="message-viewport"
-    [maxBufferPx]="300"
-    [minBufferPx]="100">
-    
-    <div *cdkVirtualFor="let message of formattedMessages$ | async; trackBy: trackByMessage"
-         class="message-item"
-         [class.outgoing]="message.direction === 'out'"
-         [class.incoming]="message.direction === 'in'"
-         [class.mocked]="message.isMocked">
+  <div #messageViewport class="message-viewport">
+    @for (message of formattedMessages$ | async; track $index) {
+      <div class="message-item"
+           [class.outgoing]="message.direction === 'out'"
+           [class.incoming]="message.direction === 'in'"
+           [class.mocked]="message.isMocked"
+           [class.expanded]="message.isExpanded"
+           (click)="toggleMessage(message.id)">
       
       <div class="message-header">
         <span class="direction-icon">
@@ -43,15 +47,24 @@
                 matTooltip="Copy message" 
                 class="copy-button"
                 ixTest="websocket-debug-copy-message"
-                (click)="copyMessage(message)">
+                (click)="copyMessage(message); $event.stopPropagation()">
           <ix-icon name="mdi-content-copy"></ix-icon>
         </button>
       </div>
       
-      <div class="message-preview">
-        {{ message.messagePreview }}
+      @if (!message.isExpanded) {
+        <div class="message-preview">
+          {{ message.messagePreview }}
+        </div>
+      }
+      
+      @if (message.isExpanded) {
+        <div class="message-expanded">
+          <pre>{{ message.message | json }}</pre>
+        </div>
+      }
       </div>
-    </div>
+    }
     
     @if ((messages$ | async)?.length === 0) {
       <div class="empty-state">
@@ -59,5 +72,5 @@
         <p>No messages yet</p>
       </div>
     }
-  </cdk-virtual-scroll-viewport>
+  </div>
 </div>

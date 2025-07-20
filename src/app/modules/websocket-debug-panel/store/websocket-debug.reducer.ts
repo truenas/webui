@@ -16,7 +16,7 @@ export const initialState: WebSocketDebugState = {
   mockConfigs: [] as MockConfig[],
   isPanelOpen: false,
   activeTab: 'websocket',
-  messageLimit: 15,
+  messageLimit: 200,
 };
 
 export const webSocketDebugReducer = createReducer(
@@ -76,5 +76,14 @@ export const webSocketDebugReducer = createReducer(
   on(WebSocketDebugActions.setMessageLimit, (state, { limit }) => ({
     ...state,
     messageLimit: limit,
+  })),
+  on(WebSocketDebugActions.toggleMessageExpansion, (state, { messageId }) => ({
+    ...state,
+    messages: state.messages.map((msg) => {
+      if (msg.id === messageId) {
+        return { ...msg, isExpanded: !msg.isExpanded };
+      }
+      return msg;
+    }),
   })),
 );

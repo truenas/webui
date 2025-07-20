@@ -1,14 +1,18 @@
-import { ScrollingModule } from '@angular/cdk/scrolling';
-import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, TrackByFunction } from '@angular/core';
+import { AsyncPipe, JsonPipe } from '@angular/common';
+import {
+  ChangeDetectionStrategy, Component, TrackByFunction, ViewChild, ElementRef, AfterViewChecked,
+} from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, shareReplay } from 'rxjs/operators';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { WebSocketDebugMessage } from 'app/modules/websocket-debug-panel/interfaces/websocket-debug.interface';
-import { clearMessages } from 'app/modules/websocket-debug-panel/store/websocket-debug.actions';
+import { clearMessages, toggleMessageExpansion } from 'app/modules/websocket-debug-panel/store/websocket-debug.actions';
 import { selectMessages } from 'app/modules/websocket-debug-panel/store/websocket-debug.selectors';
 
 interface FormattedWebSocketDebugMessage extends WebSocketDebugMessage {
@@ -17,16 +21,20 @@ interface FormattedWebSocketDebugMessage extends WebSocketDebugMessage {
   messagePreview: string;
 }
 
+@UntilDestroy()
 @Component({
   selector: 'ix-message-list',
   standalone: true,
-  imports: [AsyncPipe, ScrollingModule, MatButtonModule, MatTooltipModule, IxIconComponent],
+  imports: [AsyncPipe, JsonPipe, FormsModule, MatButtonModule, MatCheckboxModule, MatTooltipModule, IxIconComponent],
   templateUrl: './message-list.component.html',
   styleUrls: ['./message-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MessageListComponent {
+export class MessageListComponent implements AfterViewChecked {
+  @ViewChild('messageViewport', { static: false }) private messageViewport?: ElementRef<HTMLDivElement>;
   messages$: Observable<WebSocketDebugMessage[]> = this.store$.select(selectMessages);
+  autoScroll = true;
+  private shouldScrollToBottom = false;
 
   formattedMessages$: Observable<FormattedWebSocketDebugMessage[]> = this.messages$.pipe(
     map((messages) => messages.map((msg) => ({
@@ -35,11 +43,33 @@ export class MessageListComponent {
       methodName: this.getMethodName(msg),
       messagePreview: this.getMessagePreview(msg),
     }))),
+    shareReplay({ bufferSize: 1, refCount: true }),
   );
 
   trackByMessage: TrackByFunction<FormattedWebSocketDebugMessage> = (_, message) => message.id;
 
-  constructor(private store$: Store) {}
+  constructor(private store$: Store) {
+    // Subscribe to new messages to trigger scroll
+    this.messages$.pipe(untilDestroyed(this)).subscribe(() => {
+      if (this.autoScroll) {
+        this.shouldScrollToBottom = true;
+      }
+    });
+  }
+
+  ngAfterViewChecked(): void {
+    if (this.shouldScrollToBottom && this.messageViewport) {
+      this.scrollToBottom();
+      this.shouldScrollToBottom = false;
+    }
+  }
+
+  private scrollToBottom(): void {
+    if (this.messageViewport) {
+      const element = this.messageViewport.nativeElement;
+      element.scrollTop = element.scrollHeight;
+    }
+  }
 
   clearMessages(): void {
     this.store$.dispatch(clearMessages());
@@ -48,6 +78,11 @@ export class MessageListComponent {
   copyMessage(message: WebSocketDebugMessage): void {
     const messageContent = JSON.stringify(message.message, null, 2);
     navigator.clipboard.writeText(messageContent);
+  }
+
+  toggleMessage(messageId: string): void {
+    // Create a new action to toggle message expansion
+    this.store$.dispatch(toggleMessageExpansion({ messageId }));
   }
 
   private formatTime(timestamp: string): string {
@@ -62,7 +97,16 @@ export class MessageListComponent {
   }
 
   private getMethodName(message: WebSocketDebugMessage): string {
+    // First check if we have a cached method name
+    if (message.methodName) {
+      return message.methodName;
+    }
+
+    // Fallback to extracting from message content
     if (message.direction === 'out' && 'method' in message.message) {
+      return message.message.method;
+    }
+    if (message.direction === 'in' && 'method' in message.message && message.message.method) {
       return message.message.method;
     }
     if (message.direction === 'in' && 'msg' in message.message) {
@@ -76,12 +120,23 @@ export class MessageListComponent {
 
   private getMessagePreview(message: WebSocketDebugMessage): string {
     const content = message.message;
+    let data: unknown;
+
     if ('params' in content && content.params) {
-      return JSON.stringify(content.params).substring(0, 100) + '...';
+      data = content.params;
+    } else if ('result' in content) {
+      data = content.result;
+    } else {
+      data = content;
     }
-    if ('result' in content) {
-      return JSON.stringify(content.result).substring(0, 100) + '...';
+
+    // Create a compact single-line preview
+    const preview = JSON.stringify(data);
+    const maxLength = 150;
+
+    if (preview.length > maxLength) {
+      return preview.substring(0, maxLength) + '...';
     }
-    return '';
+    return preview;
   }
 }

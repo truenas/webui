@@ -1,5 +1,5 @@
 :host {
-  --debug-panel-width: 450px;
+  --debug-panel-width: 550px;
 }
 
 .websocket-debug-panel {
@@ -14,7 +14,7 @@
   transform: translateX(100%);
   transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
   width: var(--debug-panel-width);
-  z-index: 1000;
+  z-index: 999;
 
   &.open {
     transform: translateX(0);
@@ -58,6 +58,12 @@
       margin: 0;
     }
 
+    .header-actions {
+      align-items: center;
+      display: flex;
+      gap: 12px;
+    }
+
     .keyboard-hint {
       background-color: var(--bg1);
       border-radius: 4px;
@@ -66,25 +72,84 @@
       font-size: 12px;
       padding: 4px 8px;
     }
+
+    .toggle-button {
+      color: var(--fg2);
+      transition: color 0.2s;
+
+      &:hover {
+        color: var(--fg1);
+      }
+    }
   }
 
   .panel-tabs {
     display: flex;
     flex: 1;
     flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
 
     ::ng-deep {
+      .mat-mdc-tab-header {
+        background-color: var(--bg1);
+        border-bottom: 1px solid var(--lines);
+        flex-shrink: 0;
+      }
+
+      .mat-mdc-tab-label {
+        color: var(--fg2) !important;
+        opacity: 1 !important;
+
+        &.mdc-tab--active {
+          color: var(--fg1) !important;
+        }
+
+        &:hover {
+          color: var(--fg1) !important;
+        }
+      }
+
+      .mat-mdc-tab-label-content {
+        color: inherit !important;
+      }
+
+      .mdc-tab__text-label {
+        color: inherit !important;
+      }
+
+      .mat-mdc-tab:not(.mat-mdc-tab-disabled) {
+        color: var(--fg2) !important;
+        opacity: 1 !important;
+
+        &.mdc-tab--active {
+          color: var(--fg1) !important;
+        }
+      }
+
+      .mdc-tab-indicator__content {
+        background-color: var(--primary);
+      }
+
       .mat-mdc-tab-body-wrapper {
+        display: flex;
         flex: 1;
+        overflow: hidden;
       }
 
       .mat-mdc-tab-body {
+        display: flex;
+        flex-direction: column;
         height: 100%;
+        width: 100%;
       }
 
       .mat-mdc-tab-body-content {
+        display: flex;
+        flex: 1;
         height: 100%;
         overflow: hidden;
+        width: 100%;
       }
     }
   }

@@ -78,3 +78,8 @@ export const importMockConfigs = createAction(
 export const exportMockConfigs = createAction(
   `${actionPrefix} Export Mock Configs`,
 );
+
+export const toggleMessageExpansion = createAction(
+  `${actionPrefix} Toggle Message Expansion`,
+  props<{ messageId: string }>(),
+);

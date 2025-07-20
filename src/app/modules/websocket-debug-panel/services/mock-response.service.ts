@@ -25,6 +25,7 @@ export class MockResponseService {
   private readonly mockResponses$ = new Subject<IncomingMessage>();
   private jobIdCounter = 10000;
   private readonly activeJobs = new Map<number, { requestId: string; method: string }>();
+  private readonly mockedCallIds = new Set<string>();
 
   get responses$(): Observable<IncomingMessage> {
     return this.mockResponses$.asObservable();
@@ -88,12 +89,20 @@ export class MockResponseService {
   }
 
   private handleCallMock(message: RequestMessage, response: CallMockResponse): void {
+    // Track this as a mocked call response
+    this.mockedCallIds.add(message.id);
+
     const mockResponse: SuccessfulResponse = {
       jsonrpc: '2.0',
       id: message.id,
       result: response.result,
     };
     this.mockResponses$.next(mockResponse);
+
+    // Clean up after a short delay to prevent memory leak
+    setTimeout(() => {
+      this.mockedCallIds.delete(message.id);
+    }, 5000);
   }
 
   private handleJobMock(message: RequestMessage, response: JobMockResponse, jobId: number): void {
@@ -144,5 +153,27 @@ export class MockResponseService {
 
   isJobActive(jobId: number): boolean {
     return this.activeJobs.has(jobId);
+  }
+
+  isMockedResponse(message: IncomingMessage): boolean {
+    // Check if it's a mocked call response
+    if ('id' in message && message.id && this.mockedCallIds.has(message.id)) {
+      return true;
+    }
+
+    // Check if it's a mocked job response
+    if ('result' in message && typeof message.result === 'number' && this.activeJobs.has(message.result)) {
+      return true;
+    }
+
+    // Check if it's a mocked job event
+    if ('method' in message && message.method === 'collection_update' && 'params' in message) {
+      const params = message.params as { id?: unknown };
+      if (params?.id && typeof params.id === 'number' && this.activeJobs.has(params.id)) {
+        return true;
+      }
+    }
+
+    return false;
   }
 }

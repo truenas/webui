@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, input, output,
+  ChangeDetectionStrategy, Component, input, output, OnInit, OnChanges,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
@@ -13,21 +13,39 @@ import { MatInput } from '@angular/material/input';
   styleUrls: ['./monaco-editor.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MonacoEditorComponent {
+export class MonacoEditorComponent implements OnInit, OnChanges {
   readonly value = input<unknown>(null);
   readonly language = input('json');
   readonly height = input(200);
   readonly valueChange = output<unknown>();
 
-  protected get displayValue(): string {
+  protected displayValue = '';
+
+  ngOnChanges(): void {
+    this.updateDisplayValue();
+  }
+
+  ngOnInit(): void {
+    this.updateDisplayValue();
+  }
+
+  private updateDisplayValue(): void {
     const val = this.value();
     if (val === null || val === undefined) {
-      return '';
+      this.displayValue = '';
+      return;
     }
-    try {
-      return JSON.stringify(val, null, 2);
-    } catch {
-      return String(val);
+
+    // If it's already a string, use it directly
+    if (typeof val === 'string') {
+      this.displayValue = val;
+    } else {
+      // Otherwise stringify it
+      try {
+        this.displayValue = JSON.stringify(val, null, 2);
+      } catch {
+        this.displayValue = String(val);
+      }
     }
   }
 

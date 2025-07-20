@@ -5,7 +5,6 @@ import {
   FormBuilder, ReactiveFormsModule, Validators,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent, MatCardActions } from '@angular/material/card';
 import {
   MatError, MatFormField, MatLabel, MatHint,
 } from '@angular/material/form-field';
@@ -25,9 +24,6 @@ import { updateMockConfig } from 'app/modules/websocket-debug-panel/store/websoc
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    MatCard,
-    MatCardContent,
-    MatCardActions,
     MatFormField,
     MatLabel,
     MatHint,

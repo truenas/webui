@@ -3,27 +3,34 @@
      [style.width.px]="panelWidth">
   
   <div class="resize-handle" (mousedown)="onResizeStart($event)"></div>
-  
-  <ix-debug-panel-toggle
-    [isPanelOpen]="isPanelOpen$ | async"
-    [hasActiveMocks]="hasActiveMocks$ | async"
-    (togglePanel)="togglePanel()"
-  ></ix-debug-panel-toggle>
 
   <div class="panel-content">
     <div class="panel-header">
       <h2>WebSocket Debug Panel</h2>
-      <span class="keyboard-hint">Ctrl+Shift+X</span>
+      <div class="header-actions">
+        <span class="keyboard-hint">Ctrl+Shift+X</span>
+        <button
+          mat-icon-button
+          class="toggle-button"
+          ixTest="debug-panel-toggle"
+          [attr.aria-label]="(isPanelOpen$ | async) ? 'Close debug panel' : 'Open debug panel'"
+          (click)="togglePanel()"
+        >
+          <ix-icon name="mdi-close"></ix-icon>
+        </button>
+      </div>
     </div>
     
     <mat-tab-group 
       class="panel-tabs" 
-      [selectedIndex]="0"
-      (selectedIndexChange)="onTabChange($event === 0 ? 'websocket' : 'other')">
-      <mat-tab label="WebSocket">
+      [selectedIndex]="selectedTabIndex$ | async"
+      (selectedIndexChange)="onTabChange($event)">
+      <mat-tab label="Messages">
         <ix-websocket-tab></ix-websocket-tab>
       </mat-tab>
-      <!-- Future tabs can be added here -->
+      <mat-tab label="Mock Configurations">
+        <ix-mock-configurations-tab></ix-mock-configurations-tab>
+      </mat-tab>
     </mat-tab-group>
   </div>
 </div>

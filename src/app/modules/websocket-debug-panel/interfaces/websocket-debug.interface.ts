@@ -6,4 +6,6 @@ export interface WebSocketDebugMessage {
   direction: 'in' | 'out';
   message: IncomingMessage | RequestMessage;
   isMocked?: boolean;
+  methodName?: string; // Cached method name for incoming responses
+  isExpanded?: boolean; // Track expanded state
 }
