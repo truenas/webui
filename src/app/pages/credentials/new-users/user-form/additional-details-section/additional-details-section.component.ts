@@ -104,7 +104,10 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     return path;
   }
 
-  readonly groupOptions$ = this.api.call('group.query', [[['local', '=', true]]]).pipe(
+  readonly groupOptions$ = this.api.call('group.query', [[
+    ['local', '=', true],
+    ['immutable', '=', false],
+  ]]).pipe(
     map((groups) => groups.map((group) => ({ label: group.group, value: group.id }))),
   );
 
@@ -120,6 +123,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     return this.api.call('group.query', [[
       ['name', '^', query],
       ['local', '=', true],
+      ['immutable', '=', false],
     ]]).pipe(
       map((groups) => groups.map((group) => group.group)),
     );

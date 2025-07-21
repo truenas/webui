@@ -14,6 +14,7 @@ export interface Group {
   sudo_commands_nopasswd?: string[];
   sudo_commands?: string[];
   roles: Role[];
+  immutable: boolean;
   /**
    * List of user ids.
    */
