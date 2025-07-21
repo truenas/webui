@@ -3,7 +3,9 @@ import {
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
+import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -33,6 +35,7 @@ import { GroupFormComponent } from 'app/pages/credentials/groups/group-form/grou
     IxIconComponent,
     RequiresRolesDirective,
     TranslateModule,
+    MatTooltip,
   ],
 })
 export class GroupDetailsRowComponent {
@@ -40,6 +43,8 @@ export class GroupDetailsRowComponent {
   readonly colspan = input<number>();
 
   readonly delete = output<number>();
+
+  protected readonly deleteNotAllowedMsg = marker('Groups with privileges or members cannot be deleted.');
 
   protected readonly Role = Role;
 
@@ -51,6 +56,10 @@ export class GroupDetailsRowComponent {
 
   doEdit(group: Group): void {
     this.slideIn.open(GroupFormComponent, { data: group });
+  }
+
+  protected isDeleteDisabled(): boolean {
+    return Boolean(this.group()?.roles?.length) || Boolean(this.group()?.users?.length);
   }
 
   openGroupMembersForm(): void {
