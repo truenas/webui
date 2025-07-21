@@ -140,4 +140,12 @@ describe('GroupDetailsRowComponent', () => {
       data: dummyGroup,
     });
   });
+
+  it('should disable Delete button when group has roles or users', async () => {
+    spectator.setInput('group', { ...dummyGroup, roles: ['admin'], users: [1] });
+
+    const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: /Delete/ }));
+
+    expect(await deleteButton.isDisabled()).toBe(true);
+  });
 });
