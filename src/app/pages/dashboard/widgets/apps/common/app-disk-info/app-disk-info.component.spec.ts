@@ -52,15 +52,15 @@ describe('AppDiskInfoComponent', () => {
     expect(readWriteRows[1]).toHaveText('Write: 2.24 MiB');
   });
 
-  it('checks network chart receives correct input', fakeAsync(() => {
+  it('updates chart with delta of disk stats', fakeAsync(() => {
     const chartComponent = spectator.query(NetworkChartComponent)!;
     expect(chartComponent).toBeTruthy();
 
     spectator.tick(1);
 
-    const makeEmptyPoints = (y = 0): { x: number; y: number }[] => {
-      return Array.from({ length: 59 }, (_, i) => ({
-        x: expect.closeTo(Date.now() - (59 - i) * 1000, -2) as number,
+    const makeEmptyPoints = (y = 0, points = 59): { x: number; y: number }[] => {
+      return Array.from({ length: points }, (_, i) => ({
+        x: expect.closeTo(Date.now() - (points - i) * 1000, -2) as number,
         y,
       }));
     };
@@ -71,10 +71,7 @@ describe('AppDiskInfoComponent', () => {
           label: 'Read',
           data: [
             ...makeEmptyPoints(),
-            {
-              x: expect.closeTo(Date.now(), -2) as number,
-              y: 1234567,
-            },
+            { x: expect.closeTo(Date.now(), -2) as number, y: 1234567 },
           ],
           borderColor: '#0000FF',
           backgroundColor: '#0000FF',
@@ -87,10 +84,7 @@ describe('AppDiskInfoComponent', () => {
           label: 'Write',
           data: [
             ...makeEmptyPoints(-0),
-            {
-              x: expect.closeTo(Date.now(), -2) as number,
-              y: -2345678,
-            },
+            { x: expect.closeTo(Date.now(), -2) as number, y: -2345678 },
           ],
           borderColor: '#FFA500',
           backgroundColor: '#FFA500',
@@ -101,5 +95,22 @@ describe('AppDiskInfoComponent', () => {
         },
       ],
     });
+
+    // update stats with new cumulative values
+    spectator.setInput('stats', {
+      isLoading: false,
+      error: null,
+      value: {
+        blkio: {
+          read: 1334567,
+          write: 2445678,
+        },
+      },
+    } as LoadingState<AppStats>);
+
+    spectator.tick(1);
+
+    const diskStats = spectator.component.diskStats();
+    expect(diskStats[diskStats.length - 1]).toEqual([100000, 100000]);
   }));
 });
