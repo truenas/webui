@@ -124,6 +124,13 @@ describe('GroupDetailsRowComponent', () => {
       expect(editButton).toBeNull();
     });
 
+    it('does not show Edit button for immutable groups', async () => {
+      spectator.setInput('group', { ...dummyGroup, immutable: true });
+
+      const editButton = await loader.getHarnessOrNull(MatButtonHarness.with({ text: 'Edit' }));
+      expect(editButton).toBeNull();
+    });
+
     it('does not show Edit button for Active Directory groups', async () => {
       spectator.setInput('group', { ...dummyGroup, local: false });
 
