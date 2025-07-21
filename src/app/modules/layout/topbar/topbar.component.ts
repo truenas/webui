@@ -26,9 +26,6 @@ import { GlobalSearchTriggerComponent } from 'app/modules/global-search/componen
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { selectUpdateJob } from 'app/modules/jobs/store/job.selectors';
 import { CheckinIndicatorComponent } from 'app/modules/layout/topbar/checkin-indicator/checkin-indicator.component';
-import {
-  DirectoryServicesIndicatorComponent,
-} from 'app/modules/layout/topbar/directory-services-indicator/directory-services-indicator.component';
 import { HaStatusIconComponent } from 'app/modules/layout/topbar/ha-status-icon/ha-status-icon.component';
 import { JobsIndicatorComponent } from 'app/modules/layout/topbar/jobs-indicator/jobs-indicator.component';
 import { PowerMenuComponent } from 'app/modules/layout/topbar/power-menu/power-menu.component';
@@ -64,7 +61,6 @@ import { TruenasLogoComponent } from './truenas-logo/truenas-logo.component';
     CheckinIndicatorComponent,
     ResilveringIndicatorComponent,
     HaStatusIconComponent,
-    DirectoryServicesIndicatorComponent,
     JobsIndicatorComponent,
     MatBadge,
     UserMenuComponent,

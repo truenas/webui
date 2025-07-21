@@ -8,10 +8,10 @@ import { MatButton } from '@angular/material/button';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of, map } from 'rxjs';
-import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
+import { DirectoryServiceStatus } from 'app/enums/directory-services.enum';
 import { Role, roleNames } from 'app/enums/role.enum';
 import { ParamsBuilder, ParamsBuilderGroup } from 'app/helpers/params-builder/params-builder.class';
-import { DirectoryServicesState } from 'app/interfaces/directory-services-state.interface';
+import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
 import { Option, SelectOption } from 'app/interfaces/option.interface';
 import { FilterPreset, QueryFilters, QueryFilter } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
@@ -87,8 +87,8 @@ export class UsersSearchComponent implements OnInit {
   protected readonly userTypeOptions$ = toObservable(this.userTypeOptionsSignal);
 
   private readonly api = inject(ApiService);
-  private readonly isActiveDirectoryEnabled = toSignal(this.api.call('directoryservices.get_state').pipe(
-    map((state: DirectoryServicesState) => state.activedirectory !== DirectoryServiceState.Disabled),
+  private readonly isActiveDirectoryEnabled = toSignal(this.api.call('directoryservices.status').pipe(
+    map((state: DirectoryServicesStatus) => state.status !== DirectoryServiceStatus.Disabled),
   ));
 
   private lastProcessedQuery = signal<SearchQuery<User> | null>(null);
