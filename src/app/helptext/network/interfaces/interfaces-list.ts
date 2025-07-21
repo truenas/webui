@@ -43,7 +43,7 @@ export const helptextInterfaces = {
   haEnabledEditMessage: T('Editing interfaces while HA is enabled is not allowed.'),
 
   haEnabledDeleteMessage: T('Deleting interfaces while HA is enabled is not allowed.'),
-  haEnabledResetMessage: T('Resetting interfaces while HA is enabled is not allowed.'),
+  haEnabledResetMessage: T('Changing interfaces while HA is enabled is not allowed.'),
 
   haEnabledText: T('Cannot edit while HA is enabled.'),
   goToHa: T('Go to HA settings'),

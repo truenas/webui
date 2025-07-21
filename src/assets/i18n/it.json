@@ -9,6 +9,7 @@
   "Add Port": "",
   "Apple SMB2/3 protocol extension support has been enabled.": "",
   "Are you sure you want to switch to <b>{profile}</b> update profile?": "",
+  "Changing interfaces while HA is enabled is not allowed.": "",
   "Container Settings": "",
   "Create New Container": "",
   "Current Profile:": "",

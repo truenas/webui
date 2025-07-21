@@ -263,6 +263,7 @@
   "Change Number Of Virtual Ports": "",
   "Change Root Disk Setup": "",
   "Change Session Timeout in": "",
+  "Changing interfaces while HA is enabled is not allowed.": "",
   "Channel": "",
   "Channel {n}": "",
   "Check App Details": "",

@@ -133,6 +133,7 @@
   "Change Boot From Disk": "",
   "Change Required": "",
   "Change Root Disk Setup": "",
+  "Changing interfaces while HA is enabled is not allowed.": "",
   "Changing System Dataset Pool requires SMB service to be restarted. This will cause a temporary disruption of any active SMB connections.": "",
   "Choose a location to store the installer image file.": "",
   "Choose File": "",

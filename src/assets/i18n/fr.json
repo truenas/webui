@@ -219,6 +219,7 @@
   "Change Boot From Disk": "",
   "Change Required": "",
   "Change Root Disk Setup": "",
+  "Changing interfaces while HA is enabled is not allowed.": "",
   "Check": "",
   "Clear": "",
   "Clear mapping": "",

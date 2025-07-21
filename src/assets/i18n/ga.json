@@ -7,6 +7,7 @@
   "Apple SMB2/3 protocol extension support has been enabled.": "",
   "Are you sure you want to switch to <b>{profile}</b> update profile?": "",
   "Are you sure you wish to disable TrueNAS Connect? You will be able to re-connect this system later.": "",
+  "Changing interfaces while HA is enabled is not allowed.": "",
   "Choose File": "",
   "Choose Files": "",
   "Connecting...": "",

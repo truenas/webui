@@ -418,6 +418,7 @@
   "Change Root Disk Setup": "",
   "Change Session Timeout in": "",
   "Changing global 2FA settings might cause user secrets to reset. Which means users will have to reconfigure their 2FA. Are you sure you want to continue?": "",
+  "Changing interfaces while HA is enabled is not allowed.": "",
   "Changing System Dataset Pool requires SMB service to be restarted. This will cause a temporary disruption of any active SMB connections.": "",
   "Check {name} and {n, plural, one {# other disk} other {# other disks}}.": "",
   "Check {name}.": "",

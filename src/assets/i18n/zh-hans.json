@@ -54,6 +54,7 @@
   "Caution: Allocating too much memory can slow the system or prevent VMs from running.": "",
   "CD-ROM": "",
   "CD-ROM Path": "",
+  "Changing interfaces while HA is enabled is not allowed.": "",
   "Choose a location to store the installer image file.": "",
   "Choose File": "",
   "Choose Files": "",
