@@ -1,6 +1,7 @@
 import {
   Component, Inject, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, viewChild,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { NgModel, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent, MatCardActions } from '@angular/material/card';
@@ -12,11 +13,10 @@ import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  combineLatest, firstValueFrom, lastValueFrom, Observable, switchMap,
+  firstValueFrom, lastValueFrom, Observable, switchMap,
 } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
-import { ProductType } from 'app/enums/product-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextInterfaces } from 'app/helptext/network/interfaces/interfaces-list';
@@ -37,9 +37,8 @@ import { StaticRoutesCardComponent } from 'app/pages/system/network/components/s
 import { networkElements } from 'app/pages/system/network/network.elements';
 import { InterfacesStore } from 'app/pages/system/network/stores/interfaces.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
-import { SystemGeneralService } from 'app/services/system-general.service';
+import { NetworkService } from 'app/services/network.service';
 import { AppState } from 'app/store';
-import { selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
 
 @UntilDestroy()
@@ -75,8 +74,7 @@ export class NetworkComponent implements OnInit {
 
   readonly checkinTimeoutField = viewChild<NgModel>('checkinTimeoutField');
 
-  isHaEnabled = false;
-  isHaLicensed = false;
+  protected readonly isHaEnabled = toSignal(this.networkService.getIsHaEnabled());
   hasPendingChanges = false;
   checkinWaiting = false;
   checkinTimeout = 60;
@@ -104,11 +102,11 @@ export class NetworkComponent implements OnInit {
     private snackbar: SnackbarService,
     private store$: Store<AppState>,
     private errorHandler: ErrorHandlerService,
-    private systemGeneralService: SystemGeneralService,
     private interfacesStore: InterfacesStore,
     private actions$: Actions,
     private authService: AuthService,
     private cdr: ChangeDetectorRef,
+    private networkService: NetworkService,
     @Inject(WINDOW) private window: Window,
   ) {
     this.navigation = this.router.getCurrentNavigation();
@@ -131,10 +129,6 @@ export class NetworkComponent implements OnInit {
         this.hasPendingChanges = false;
         this.cdr.markForCheck();
       });
-
-    if (this.systemGeneralService.getProductType() === ProductType.Enterprise) {
-      this.listenForHaStatus();
-    }
 
     this.openInterfaceForEditFromRoute();
   }
@@ -178,17 +172,6 @@ export class NetworkComponent implements OnInit {
     this.hasPendingChanges = hasPendingChanges;
     this.handleWaitingCheckIn(checkinWaitingSeconds);
     this.cdr.markForCheck();
-  }
-
-  private listenForHaStatus(): void {
-    combineLatest([
-      this.store$.select(selectIsHaLicensed),
-      this.store$.select(selectHaStatus).pipe(filter(Boolean)),
-    ]).pipe(untilDestroyed(this)).subscribe(([isHa, { hasHa }]) => {
-      this.isHaEnabled = isHa && hasHa;
-      this.isHaLicensed = isHa;
-      this.cdr.markForCheck();
-    });
   }
 
   private getCheckInWaitingSeconds(): Promise<number | null> {
