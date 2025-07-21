@@ -21,6 +21,8 @@ describe('AllowedAccessSectionComponent', () => {
       mockProvider(UserFormStore, {
         setAllowedAccessConfig: jest.fn(),
         updateSetupDetails: jest.fn(),
+        role: jest.fn(),
+        updateUserConfig: jest.fn(),
       }),
     ],
   });

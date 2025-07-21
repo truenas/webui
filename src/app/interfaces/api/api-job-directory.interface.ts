@@ -1,7 +1,5 @@
 import { ServiceName, ServiceOperation } from 'app/enums/service-name.enum';
 import { SetAcl } from 'app/interfaces/acl.interface';
-import { ActiveDirectoryConfig, LeaveActiveDirectory } from 'app/interfaces/active-directory-config.interface';
-import { ActiveDirectoryUpdate } from 'app/interfaces/active-directory.interface';
 import {
   App,
   AppCreate, AppDeleteParams, AppRollbackParams, AppStartQueryParams,
@@ -21,6 +19,7 @@ import {
   DatasetEncryptionSummaryQueryParams,
 } from 'app/interfaces/dataset-encryption-summary.interface';
 import { DatasetLockParams, DatasetUnlockParams, DatasetUnlockResult } from 'app/interfaces/dataset-lock.interface';
+import { DirectoryServicesUpdate, DirectoryServicesUpdateResponse } from 'app/interfaces/directoryservices-update.interface';
 import { DiskWipeParams } from 'app/interfaces/disk.interface';
 import { DockerConfig, DockerConfigUpdate } from 'app/interfaces/docker-config.interface';
 import { ExportParams } from 'app/interfaces/export-params.interface';
@@ -29,7 +28,6 @@ import { FilesystemPutParams, FilesystemSetPermParams } from 'app/interfaces/fil
 import { IpmiEvent } from 'app/interfaces/ipmi.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { KmipConfig, KmipConfigUpdate } from 'app/interfaces/kmip-config.interface';
-import { LdapConfig, LdapConfigUpdate } from 'app/interfaces/ldap-config.interface';
 import { MailConfigUpdate, SendMailParams } from 'app/interfaces/mail-config.interface';
 import { PoolExportParams } from 'app/interfaces/pool-export.interface';
 import { PoolFindResult, PoolImportParams } from 'app/interfaces/pool-import.interface';
@@ -62,10 +60,6 @@ import {
 import { AttachTicketParams, CreateNewTicket, NewTicketResponse } from 'app/modules/feedback/interfaces/file-ticket.interface';
 
 export interface ApiJobDirectory {
-  // Active Directory
-  'activedirectory.update': { params: [ActiveDirectoryUpdate]; response: ActiveDirectoryConfig };
-  'activedirectory.leave': { params: [LeaveActiveDirectory]; response: void };
-
   // Audit
   'audit.export': { params: [ExportParams<AuditEntry>]; response: string };
 
@@ -114,6 +108,7 @@ export interface ApiJobDirectory {
 
   // Directory Services
   'directoryservices.cache_refresh': { params: void; response: void };
+  'directoryservices.update': { params: [DirectoryServicesUpdate]; response: DirectoryServicesUpdateResponse };
 
   // Disk
   'disk.wipe': { params: DiskWipeParams; response: void };
@@ -127,9 +122,6 @@ export interface ApiJobDirectory {
   'filesystem.setacl': { params: [SetAcl]; response: void };
   'filesystem.setperm': { params: [FilesystemSetPermParams]; response: void };
 
-  // idmap
-  'idmap.clear_idmap_cache': { params: void; response: void };
-
   // IPMI
   'ipmi.sel.clear': { params: void; response: void };
   'ipmi.sel.elist': { params: void; response: IpmiEvent[] };
@@ -139,9 +131,6 @@ export interface ApiJobDirectory {
 
   // Docker
   'docker.update': { params: [DockerConfigUpdate]; response: DockerConfig };
-
-  // LDAP
-  'ldap.update': { params: [LdapConfigUpdate]; response: LdapConfig };
 
   // Mail
   'mail.send': { params: [SendMailParams, MailConfigUpdate]; response: boolean };

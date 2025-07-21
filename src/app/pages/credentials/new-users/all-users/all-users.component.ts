@@ -7,9 +7,7 @@ import {
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import {
-  combineLatest, filter, startWith, tap,
-} from 'rxjs';
+import { filter, startWith, tap } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { QueryParams } from 'app/interfaces/query-api.interface';
@@ -64,12 +62,12 @@ export class AllUsersComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    const urlUsername = this.activatedRoute.snapshot.queryParamMap.get('username') ?? null;
-    this.setupDataProvider(urlUsername);
+    this.setupDataProvider();
     this.subscribeToUserChanges();
   }
 
-  private setupDataProvider(urlUsername: string): void {
+  private setupDataProvider(): void {
+    const urlUsername = this.activatedRoute.snapshot.queryParamMap.get('username') ?? null;
     this.dataProvider.paginationStrategy = new PaginationServerSide();
     this.dataProvider.sortingStrategy = new SortingServerSide();
     this.dataProvider.setSorting({
@@ -86,13 +84,16 @@ export class AllUsersComponent implements OnInit, OnDestroy {
       filter(Boolean),
       untilDestroyed(this),
     ).subscribe((users) => {
-      let selectedUser: User = null;
+      const name = (this.dataProvider.expandedRow?.username || urlUsername) ?? null;
+
+      let selectedUser: User = this.dataProvider.expandedRow || null;
 
       if (!this.masterDetailView().isMobileView()) {
-        selectedUser = urlUsername
-          ? users.find((user) => user.username === urlUsername) ?? users[0]
+        selectedUser = name
+          ? users.find((user) => user.username === name) ?? users[0]
           : users[0];
       }
+
       this.dataProvider.expandedRow = selectedUser;
       setUsernameInUrl(this.location, selectedUser?.username);
     });
@@ -104,17 +105,10 @@ export class AllUsersComponent implements OnInit, OnDestroy {
   }
 
   private subscribeToUserChanges(): void {
-    combineLatest([
-      this.api.subscribe('user.query').pipe(startWith(null)),
-      this.dataProvider.currentPage$,
-    ]).pipe(
-      tap(([event, users]) => {
+    this.api.subscribe('user.query').pipe(startWith(null)).pipe(
+      tap((event) => {
         switch (event?.msg) {
           case CollectionChangeType.Changed:
-            this.dataProvider.currentPage$.next(
-              users.map((item) => (item.id === event.id ? { ...item, ...event?.fields } : item)),
-            );
-            break;
           case CollectionChangeType.Removed:
           case CollectionChangeType.Added:
             this.dataProvider.load();
@@ -134,10 +128,12 @@ export class AllUsersComponent implements OnInit, OnDestroy {
 
     this.dataProvider.expandedRow = user;
     setUsernameInUrl(this.location, user.username);
+
     this.cdr.markForCheck();
   }
 
   protected loadNewUser(newUser: User): void {
-    this.setupDataProvider(newUser.username);
+    this.dataProvider.expandedRow = newUser;
+    setUsernameInUrl(this.location, newUser?.username);
   }
 }

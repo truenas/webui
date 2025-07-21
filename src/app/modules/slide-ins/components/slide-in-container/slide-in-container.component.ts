@@ -1,11 +1,20 @@
 import { CdkPortalOutlet, ComponentPortal } from '@angular/cdk/portal';
 import {
-  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, HostBinding, HostListener, ViewChild,
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  HostBinding,
+  HostListener,
+  Inject,
+  ViewChild,
 } from '@angular/core';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
+  debounceTime,
   Observable, Subject, take,
 } from 'rxjs';
+import { WINDOW } from 'app/helpers/window.helper';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 
 @UntilDestroy()
@@ -24,11 +33,13 @@ export class SlideInContainerComponent implements AfterViewInit {
 
   private readonly whenHidden$ = new Subject<void>();
   private readonly whenVisible$ = new Subject<void>();
+  private readonly resizeSubject$ = new Subject<void>();
 
   @HostBinding('class.slide-in-visible') private isVisible = false;
   @HostBinding('class.slide-in-hidden') private isHidden = true;
   @HostBinding('style.width') private width = '480px';
   @HostBinding('style.max-width') private maxWidth = '480px';
+  private isWide = false;
 
   @HostListener('transitionend', ['$event'])
   private onTransitionEnd(event: TransitionEvent): void {
@@ -42,9 +53,17 @@ export class SlideInContainerComponent implements AfterViewInit {
     }
   }
 
-  constructor(private cdr: ChangeDetectorRef) {}
+  constructor(
+    private cdr: ChangeDetectorRef,
+    @Inject(WINDOW) private window: Window,
+  ) {}
 
   ngAfterViewInit(): void {
+    this.resizeSubject$.pipe(
+      debounceTime(100),
+      untilDestroyed(this),
+    ).subscribe(() => this.updateWidth());
+
     // Trigger entrance animation after view is initialized
     setTimeout(() => {
       this.slideIn();
@@ -65,10 +84,22 @@ export class SlideInContainerComponent implements AfterViewInit {
     return this.whenVisible$.pipe(take(1));
   }
 
-  makeWide(wide: boolean): void {
-    this.width = wide ? '800px' : '480px';
-    this.maxWidth = wide ? '800px' : '480px';
+  @HostListener('window:resize')
+  private onResize(): void {
+    this.resizeSubject$.next();
+  }
+
+  private updateWidth(): void {
+    const baseWidth = this.isWide ? 800 : 480;
+    const computedWidth = this.window.innerWidth <= baseWidth ? '100vw' : `${baseWidth}px`;
+    this.width = computedWidth;
+    this.maxWidth = computedWidth;
     this.cdr.markForCheck();
+  }
+
+  makeWide(wide: boolean): void {
+    this.isWide = wide;
+    this.updateWidth();
   }
 
   detachPortal(): void {
