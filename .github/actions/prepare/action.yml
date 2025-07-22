@@ -7,7 +7,7 @@ runs:
     - name: Setup Node
       uses: actions/setup-node@v4
       with:
-        node-version: 22
+        node-version: '22.17.1'
         cache: 'yarn'
     - name: Cache Jest cache
       uses: actions/cache@v4
