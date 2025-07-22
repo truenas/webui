@@ -28,6 +28,18 @@ html .ix-dark {
   --mdc-dialog-subhead-tracking: 0;
   --mdc-shape-medium: 4px;
   --mdc-theme-primary: var(--primary);
+  --mat-slide-toggle-selected-track-color: var(--primary);
+  --mat-slide-toggle-selected-hover-track-color: var(--primary);
+  --mat-slide-toggle-selected-focus-track-color: var(--primary);
+  --mat-slide-toggle-selected-focus-state-layer-color: var(--primary);
+  --mat-slide-toggle-selected-focus-handle-color: var(--primary);
+  --mat-slide-toggle-selected-pressed-track-color: var(--primary);
+  --mat-slide-toggle-selected-pressed-state-layer-color: var(--primary);
+  --mat-slide-toggle-selected-pressed-handle-color: var(--primary);
+  --mat-button-outlined-label-text-color: var(--fg2);
+  --mat-button-filled-container-color: var(--bg2);
+  --mat-snack-bar-container-color: var(--bg2);
+  --mat-slide-toggle-selected-hover-handle-color: var(--primary);
   --mdc-switch-selected-handle-color: var(--primary);
   --mdc-switch-selected-track-color: var(--primary);
   --mdc-switch-selected-hover-handle-color: var(--primary);
