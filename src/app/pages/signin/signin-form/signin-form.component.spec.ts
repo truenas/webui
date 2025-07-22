@@ -8,7 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { LoginResult } from 'app/enums/login-result.enum';
-import { LoginExResponse, LoginExResponseType, LoginSuccessResponse } from 'app/interfaces/auth.interface';
+import { LoginExResponseType, LoginSuccessResponse } from 'app/interfaces/auth.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SigninFormComponent } from 'app/pages/signin/signin-form/signin-form.component';
@@ -103,14 +103,7 @@ describe('SigninFormComponent', () => {
   describe('error handling', () => {
     it('handles NoAccess login failure', async () => {
       const signinStore = spectator.inject(SigninStore);
-      jest.spyOn(spectator.inject(AuthService), 'login').mockReturnValue(of({
-        loginResult: LoginResult.NoAccess,
-        loginResponse: {
-          response_type: LoginExResponseType.Success,
-          user_info: { privilege: { webui_access: false } },
-          authenticator: null,
-        } as LoginExResponse,
-      }));
+      jest.spyOn(spectator.inject(AuthService), 'login').mockReturnValue(of(LoginResult.NoAccess));
 
       await form.fillForm({
         Username: 'test',
@@ -126,10 +119,7 @@ describe('SigninFormComponent', () => {
 
     it('handles wrong credentials login failure', async () => {
       const signinStore = spectator.inject(SigninStore);
-      jest.spyOn(spectator.inject(AuthService), 'login').mockReturnValue(of({
-        loginResult: LoginResult.NoToken,
-        loginResponse: { response_type: LoginExResponseType.Success } as LoginExResponse,
-      }));
+      jest.spyOn(spectator.inject(AuthService), 'login').mockReturnValue(of(LoginResult.NoToken));
 
       await form.fillForm({
         Username: 'test',
@@ -144,13 +134,7 @@ describe('SigninFormComponent', () => {
     });
 
     it('handles OTP required login result', async () => {
-      jest.spyOn(spectator.inject(AuthService), 'login').mockReturnValue(of({
-        loginResult: LoginResult.NoOtp,
-        loginResponse: {
-          response_type: LoginExResponseType.OtpRequired,
-          username: 'testuser',
-        } as LoginExResponse,
-      }));
+      jest.spyOn(spectator.inject(AuthService), 'login').mockReturnValue(of(LoginResult.NoOtp));
 
       await form.fillForm({
         Username: 'testuser',
@@ -167,13 +151,7 @@ describe('SigninFormComponent', () => {
       const signinStore = spectator.inject(SigninStore);
 
       // First set up OTP field
-      jest.spyOn(spectator.inject(AuthService), 'login').mockReturnValue(of({
-        loginResult: LoginResult.NoOtp,
-        loginResponse: {
-          response_type: LoginExResponseType.OtpRequired,
-          username: 'testuser',
-        } as LoginExResponse,
-      }));
+      jest.spyOn(spectator.inject(AuthService), 'login').mockReturnValue(of(LoginResult.NoOtp));
 
       await form.fillForm({
         Username: 'testuser',
@@ -188,10 +166,7 @@ describe('SigninFormComponent', () => {
       form = await loader.getHarness(IxFormHarness);
 
       // Now test OTP failure
-      jest.spyOn(spectator.inject(AuthService), 'login').mockReturnValue(of({
-        loginResult: LoginResult.NoAccess,
-        loginResponse: { response_type: LoginExResponseType.Success } as LoginExResponse,
-      }));
+      jest.spyOn(spectator.inject(AuthService), 'login').mockReturnValue(of(LoginResult.NoAccess));
 
       await form.fillForm({ 'Two-Factor Authentication Code': '123456' });
       await (await loader.getHarness(MatButtonHarness.with({ text: 'Proceed' }))).click();
