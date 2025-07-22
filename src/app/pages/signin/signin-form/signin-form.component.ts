@@ -12,7 +12,9 @@ import { isEqual } from 'lodash-es';
 import {
   distinctUntilChanged, firstValueFrom,
 } from 'rxjs';
-import { filter, take } from 'rxjs/operators';
+import {
+  filter, take,
+} from 'rxjs/operators';
 import { AutofocusDirective } from 'app/directives/autofocus/autofocus.directive';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -120,10 +122,10 @@ export class SigninFormComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe({
       next: (loginResult) => {
-        this.signinStore.setLoadingState(false);
         if (loginResult === LoginResult.Success) {
           this.signinStore.handleSuccessfulLogin();
         } else {
+          this.signinStore.setLoadingState(false);
           this.handleFailedLogin(loginResult);
           this.cdr.markForCheck();
         }
@@ -135,36 +137,30 @@ export class SigninFormComponent implements OnInit {
     });
   }
 
-  private handleFailedLogin(loginResult: LoginResult): void {
+  protected handleFailedLogin(loginResult: LoginResult): void {
     this.isLastLoginAttemptFailed = true;
 
     if (loginResult === LoginResult.NoOtp) {
       this.hasTwoFactor = true;
+      this.form.controls.password.setValue('');
       return;
     }
 
-    if (loginResult === LoginResult.NoAccess) {
-      this.lastLoginError = this.translate.instant('User is lacking permissions to access WebUI.');
-    } else {
-      this.lastLoginError = this.translate.instant('Wrong username or password. Please try again.');
-    }
-
-    this.cdr.markForCheck();
-    this.signinStore.showSnackbar(this.lastLoginError);
+    const errorMessage = this.signinStore.getLoginErrorMessage(loginResult);
+    this.handleError(errorMessage);
   }
 
-  private handleFailedOtpLogin(loginResult: LoginResult): void {
-    this.lastLoginError = loginResult === LoginResult.NoAccess
-      ? this.translate.instant('User is lacking permissions to access WebUI.')
-      : this.translate.instant('Incorrect or expired OTP. Please try again.');
-    this.signinStore.showSnackbar(this.lastLoginError);
+  protected handleFailedOtpLogin(loginResult: LoginResult): void {
+    const errorMessage = this.signinStore.getLoginErrorMessage(loginResult, true);
+
     this.form.patchValue({ otp: '' });
     this.form.controls.otp.updateValueAndValidity();
     this.isLastOtpAttemptFailed = true;
-    this.cdr.markForCheck();
+
+    this.handleError(errorMessage);
   }
 
-  private clearForm(): void {
+  protected clearForm(): void {
     this.form.patchValue({ password: '', otp: '' });
     this.form.controls.password.setErrors(null);
     this.form.controls.otp.setErrors(null);
@@ -198,4 +194,12 @@ export class SigninFormComponent implements OnInit {
   }
 
   protected readonly iconMarker = iconMarker;
+
+  protected handleError(errorMessage: string): void {
+    this.signinStore.setLoadingState(false);
+    this.lastLoginError = errorMessage;
+    this.isLastLoginAttemptFailed = true;
+    this.cdr.markForCheck();
+    this.signinStore.showSnackbar(errorMessage);
+  }
 }
