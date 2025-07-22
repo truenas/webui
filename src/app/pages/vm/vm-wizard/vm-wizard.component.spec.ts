@@ -100,8 +100,16 @@ describe('VmWizardComponent', () => {
         }),
         mockCall('system.advanced.update_gpu_pci_ids'),
         mockCall('system.advanced.get_gpu_pci_choices', {
-          'GeForce GTX 1080 [0000:03:00.0]': '0000:03:00.0',
-          'GeForce GTX 1070 [0000:02:00.0]': '0000:02:00.0',
+          'GeForce GTX 1080 [0000:03:00.0]': {
+            pci_slot: '0000:03:00.0',
+            uses_system_critical_devices: false,
+            critical_reason: '',
+          },
+          'GeForce GTX 1070 [0000:02:00.0]': {
+            pci_slot: '0000:02:00.0',
+            uses_system_critical_devices: false,
+            critical_reason: '',
+          },
         }),
       ]),
       mockProvider(GpuService, {

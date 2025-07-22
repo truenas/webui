@@ -84,8 +84,16 @@ describe('VmEditFormComponent', () => {
         mockCall('vm.update'),
         mockCall('system.advanced.update_gpu_pci_ids'),
         mockCall('system.advanced.get_gpu_pci_choices', {
-          'GeForce [0000:02:00.0]': '0000:02:00.0',
-          'Intel Arc [0000:03:00.0]': '0000:03:00.0',
+          'GeForce [0000:02:00.0]': {
+            pci_slot: '0000:02:00.0',
+            uses_system_critical_devices: false,
+            critical_reason: '',
+          },
+          'Intel Arc [0000:03:00.0]': {
+            pci_slot: '0000:03:00.0',
+            uses_system_critical_devices: false,
+            critical_reason: '',
+          },
         }),
       ]),
       mockAuth(),

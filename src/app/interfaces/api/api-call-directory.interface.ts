@@ -123,6 +123,7 @@ import {
 import { FileRecord, ListdirQueryParams } from 'app/interfaces/file-record.interface';
 import { FileSystemStat, Statfs } from 'app/interfaces/filesystem-stat.interface';
 import { FtpConfig, FtpConfigUpdate } from 'app/interfaces/ftp-config.interface';
+import { GpuPciChoices } from 'app/interfaces/gpu-pci-choice.interface';
 import {
   CreateGroup, DeleteGroupParams, Group, UpdateGroup,
 } from 'app/interfaces/group.interface';
@@ -939,7 +940,7 @@ export interface ApiCallDirectory {
   'vm.device.create': { params: [VmDeviceUpdate]; response: VmDevice };
   'vm.device.delete': { params: [number, VmDeviceDelete?]; response: boolean };
   'vm.device.disk_choices': { params: void; response: Choices };
-  'system.advanced.get_gpu_pci_choices': { params: void; response: Choices };
+  'system.advanced.get_gpu_pci_choices': { params: void; response: GpuPciChoices };
   'vm.device.nic_attach_choices': { params: void; response: Choices };
   'vm.device.passthrough_device_choices': { params: void; response: Record<string, VmPassthroughDeviceChoice> };
   'vm.device.query': { params: QueryParams<VmDevice>; response: VmDevice[] };

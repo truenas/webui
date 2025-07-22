@@ -6,7 +6,9 @@ import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { forkJoin, of, switchMap } from 'rxjs';
+import {
+  forkJoin, of, switchMap,
+} from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -18,6 +20,7 @@ import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { VirtualMachine, VirtualMachineUpdate } from 'app/interfaces/virtual-machine.interface';
 import { VmPciPassthroughDevice } from 'app/interfaces/vm-device.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -35,6 +38,7 @@ import { CpuValidatorService } from 'app/pages/vm/utils/cpu-validator.service';
 import { vmCpusetPattern, vmNodesetPattern } from 'app/pages/vm/utils/vm-form-patterns.constant';
 import { VmGpuService } from 'app/pages/vm/utils/vm-gpu.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { CriticalGpuPreventionService } from 'app/services/gpu/critical-gpu-prevention.service';
 import { GpuService } from 'app/services/gpu/gpu.service';
 import { IsolatedGpuValidatorService } from 'app/services/gpu/isolated-gpu-validator.service';
 
@@ -103,6 +107,7 @@ export class VmEditFormComponent implements OnInit {
 
   readonly helptext = helptextVmWizard;
   previouslySetGpuPciIds: string[] = [];
+  criticalGpus = new Map<string, string>(); // Maps pci_slot to critical_reason
 
   protected existingVm: VirtualMachine;
 
@@ -119,6 +124,8 @@ export class VmEditFormComponent implements OnInit {
     private gpuService: GpuService,
     private vmGpuService: VmGpuService,
     private snackbar: SnackbarService,
+    private dialog: DialogService,
+    private criticalGpuPrevention: CriticalGpuPreventionService,
     public slideInRef: SlideInRef<VirtualMachine, boolean>,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
@@ -129,6 +136,7 @@ export class VmEditFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.listenForFormValueChanges();
+    this.setupCriticalGpuPrevention();
 
     if (this.existingVm) {
       this.setVmForEdit();
@@ -209,6 +217,16 @@ export class VmEditFormComponent implements OnInit {
       .subscribe((value) => {
         this.showCpuModelField = value === VmCpuMode.Custom;
       });
+  }
+
+  private setupCriticalGpuPrevention(): void {
+    // Setup critical GPU prevention
+    this.criticalGpus = this.criticalGpuPrevention.setupCriticalGpuPrevention(
+      this.form.controls.gpus,
+      this,
+      this.translate.instant('Cannot Select GPU'),
+      this.translate.instant('System critical GPUs cannot be used for VMs'),
+    );
   }
 
   private setPinVcpusRelation(): void {
