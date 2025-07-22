@@ -52,4 +52,17 @@ export const ruleOverrides = {
   "sonarjs/xml-parser-xxe": ["off"],
 
   "@smarttools/rxjs/no-ignored-takewhile-value": ["off"],
+
+  // Fix compatibility issues with ESLint 9
+  "@typescript-eslint/no-unused-expressions": ["error", {
+    allowShortCircuit: false,
+    allowTernary: false
+  }],
+  "sonarjs/no-empty-function": ["error", {
+    allow: []
+  }],
+  "sonarjs/no-unused-expressions": ["error", {
+    allowShortCircuit: false,
+    allowTernary: false
+  }],
 };
