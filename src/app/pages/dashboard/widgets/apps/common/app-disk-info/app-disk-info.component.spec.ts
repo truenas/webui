@@ -96,7 +96,6 @@ describe('AppDiskInfoComponent', () => {
       ],
     });
 
-    // update stats with new cumulative values
     spectator.setInput('stats', {
       isLoading: false,
       error: null,
