@@ -10,7 +10,6 @@ import { warnAboutDuplicates } from './lib/warn-about-duplicates';
 
 async function makeSprite(): Promise<void> {
   try {
-
     const srcDir = resolve(import.meta.dirname, '../../src');
     const targetPath = resolve(import.meta.dirname, '../../src/assets/icons/sprite.svg');
     const configPath = resolve(import.meta.dirname, '../../src/assets/icons/sprite-config.json');
