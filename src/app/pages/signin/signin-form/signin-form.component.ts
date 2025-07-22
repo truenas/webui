@@ -18,7 +18,6 @@ import {
 import { AutofocusDirective } from 'app/directives/autofocus/autofocus.directive';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { WINDOW } from 'app/helpers/window.helper';
-import { LoginExResponse, LoginRedirectResponse } from 'app/interfaces/auth.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';

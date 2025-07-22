@@ -7,7 +7,7 @@ import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum'
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
-import { LoaderService } from 'app/modules/loader/loader.service';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 
 export interface FailoverValidationResult {
@@ -30,7 +30,7 @@ export class FailoverValidationService {
   constructor(
     private api: ApiService,
     private translate: TranslateService,
-    private loader: LoaderService,
+    private loader: AppLoaderService,
   ) {}
 
   /**

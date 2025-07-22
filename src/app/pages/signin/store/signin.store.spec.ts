@@ -15,7 +15,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { SigninStore } from 'app/pages/signin/store/signin.store';
-import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { FailoverValidationService } from 'app/services/failover-validation.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';

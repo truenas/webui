@@ -11,7 +11,7 @@ import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ApiEventTyped } from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { LoaderService } from 'app/modules/loader/loader.service';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import {
   FailoverErrorType,
   FailoverValidationResult,
@@ -33,7 +33,7 @@ describe('FailoverValidationService', () => {
       mockProvider(TranslateService, {
         instant: jest.fn((key: string) => key),
       }),
-      mockProvider(LoaderService, {
+      mockProvider(AppLoaderService, {
         open: jest.fn(),
         close: jest.fn(),
       }),
@@ -117,10 +117,11 @@ describe('FailoverValidationService', () => {
 
       spectator.service.validateFailover().subscribe((result) => {
         expect(result).toEqual({ success: true });
-        expect(spectator.inject(LoaderService).open).toHaveBeenCalledWith(
+        const loaderService = spectator.inject(AppLoaderService);
+        expect(loaderService.open).toHaveBeenCalledWith(
           'Waiting for failover operation to complete...',
         );
-        expect(spectator.inject(LoaderService).close).toHaveBeenCalled();
+        expect(loaderService.close).toHaveBeenCalled();
       });
     });
 
@@ -146,7 +147,8 @@ describe('FailoverValidationService', () => {
       spectator.service.validateFailover().subscribe((result) => {
         expect(result.success).toBe(false);
         expect(result.error).toContain('Failover operation failed');
-        expect(spectator.inject(LoaderService).close).toHaveBeenCalled();
+        const loaderService = spectator.inject(AppLoaderService);
+        expect(loaderService.close).toHaveBeenCalled();
       });
     });
 
@@ -170,7 +172,8 @@ describe('FailoverValidationService', () => {
         error: 'Failover operation timed out. This may indicate a problem with the failover process. Please contact the system administrator.',
         errorType: FailoverErrorType.Timeout,
       });
-      expect(spectator.inject(LoaderService).close).toHaveBeenCalled();
+      const loaderService = spectator.inject(AppLoaderService);
+      expect(loaderService.close).toHaveBeenCalled();
     }));
   });
 });
