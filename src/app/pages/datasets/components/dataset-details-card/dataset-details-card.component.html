@@ -67,7 +67,7 @@
       <div class="label">{{ 'Case Sensitivity' | translate }}:</div>
       <div class="value">
         {{ (
-            dataset().casesensitivity.value === DatasetCaseSensitivity.Sensitive
+            dataset().casesensitivity?.value === DatasetCaseSensitivity.Sensitive
               ? OnOff.On
               : OnOff.Off
           ) | translate }}
