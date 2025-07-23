@@ -1,14 +1,23 @@
 import {
-  ChangeDetectionStrategy, Component, OnInit,
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
   signal,
 } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  ReactiveFormsModule,
+  ValidationErrors,
+  Validators,
+} from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatHint } from '@angular/material/form-field';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { filter, map, of } from 'rxjs';
+import { map, of } from 'rxjs';
+import { stigPasswordRequirements } from 'app/constants/stig-password-requirements.constants';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { PasswordComplexityRuleset, passwordComplexityRulesetLabels } from 'app/enums/password-complexity-ruleset.enum';
 import { Role } from 'app/enums/role.enum';
@@ -48,16 +57,32 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class SystemSecurityFormComponent implements OnInit {
+  protected readonly stigRequirements = stigPasswordRequirements;
   protected readonly requiredRoles = [Role.SystemSecurityWrite];
 
   form = this.formBuilder.group({
     enable_fips: [false],
     enable_gpos_stig: [false],
-    min_password_age: [null as number | null, [Validators.min(1), Validators.max(365)]],
-    max_password_age: [null as number | null, [Validators.min(7), Validators.max(365)]],
-    password_complexity_ruleset: [null as PasswordComplexityRuleset[] | null],
-    min_password_length: [null as number | null, [Validators.min(8), Validators.max(128)]],
-    password_history_length: [null as number | null, [Validators.min(1), Validators.max(10)]],
+    min_password_age: [
+      null as number | null,
+      [Validators.min(1), Validators.max(365), this.stigValidator.bind(this)],
+    ],
+    max_password_age: [
+      null as number | null,
+      [Validators.min(7), Validators.max(365), this.stigValidator.bind(this)],
+    ],
+    password_complexity_ruleset: [
+      null as PasswordComplexityRuleset[] | null,
+      [this.stigValidator.bind(this)],
+    ],
+    min_password_length: [
+      null as number | null,
+      [Validators.min(8), Validators.max(128), this.stigValidator.bind(this)],
+    ],
+    password_history_length: [
+      null as number | null,
+      [Validators.min(1), Validators.max(10), this.stigValidator.bind(this)],
+    ],
   });
 
   complexityRulesetLabels$ = of(passwordComplexityRulesetLabels).pipe(
@@ -65,6 +90,7 @@ export class SystemSecurityFormComponent implements OnInit {
   );
 
   private systemSecurityConfig = signal<SystemSecurityConfig>(this.slideInRef.getData());
+  protected isStigEnabled = signal<boolean>(false);
 
   constructor(
     private formBuilder: FormBuilder,
@@ -85,6 +111,76 @@ export class SystemSecurityFormComponent implements OnInit {
     if (this.systemSecurityConfig()) {
       this.initSystemSecurityForm();
     }
+  }
+
+  private stigValidator(control: AbstractControl): ValidationErrors | null {
+    if (!this.isStigEnabled?.()) {
+      return null;
+    }
+
+    const controlName = Object.keys(this.form?.controls || {}).find(
+      (key) => this.form?.controls[key as keyof typeof this.form.controls] === control,
+    );
+
+    if (!controlName) {
+      return null;
+    }
+
+    const value = control.value as unknown;
+
+    switch (controlName) {
+      case 'min_password_age':
+        if (value !== null && (value as number) < stigPasswordRequirements.minPasswordAge) {
+          return {
+            stigMinPasswordAge: {
+              required: stigPasswordRequirements.minPasswordAge,
+              actual: value as number,
+            },
+          };
+        }
+        break;
+      case 'max_password_age':
+        if (value !== null && (value as number) > stigPasswordRequirements.maxPasswordAge) {
+          return {
+            stigMaxPasswordAge: {
+              required: stigPasswordRequirements.maxPasswordAge,
+              actual: value as number,
+            },
+          };
+        }
+        break;
+      case 'min_password_length':
+        if (value !== null && (value as number) < stigPasswordRequirements.minPasswordLength) {
+          return {
+            stigMinPasswordLength: {
+              required: stigPasswordRequirements.minPasswordLength,
+              actual: value as number,
+            },
+          };
+        }
+        break;
+      case 'password_history_length':
+        if (value !== null && (value as number) < stigPasswordRequirements.passwordHistoryLength) {
+          return {
+            stigPasswordHistoryLength: {
+              required: stigPasswordRequirements.passwordHistoryLength,
+              actual: value as number,
+            },
+          };
+        }
+        break;
+      case 'password_complexity_ruleset':
+        if (value && Array.isArray(value)) {
+          const requiredComplexity = [...stigPasswordRequirements.passwordComplexity];
+          const hasAllRequired = requiredComplexity.every((req) => (value as unknown[]).includes(req));
+          if (!hasAllRequired) {
+            return { stigPasswordComplexity: { required: requiredComplexity, actual: value } };
+          }
+        }
+        break;
+    }
+
+    return null;
   }
 
   protected onSubmit(): void {
@@ -118,14 +214,38 @@ export class SystemSecurityFormComponent implements OnInit {
   }
 
   private initSystemSecurityForm(): void {
+    const config = this.systemSecurityConfig();
+    this.isStigEnabled.set(config.enable_gpos_stig);
+
     this.form.patchValue({
-      ...this.systemSecurityConfig(),
-      password_complexity_ruleset: this.systemSecurityConfig().password_complexity_ruleset?.$set,
+      ...config,
+      password_complexity_ruleset: config.password_complexity_ruleset?.$set,
     });
+
     this.form.controls.enable_gpos_stig.valueChanges
-      .pipe(filter(Boolean), untilDestroyed(this))
+      .pipe(untilDestroyed(this))
       .subscribe((value) => {
-        this.form.patchValue({ enable_fips: value });
+        this.isStigEnabled.set(value);
+
+        if (value) {
+          // Pre-populate STIG requirements when STIG is enabled
+          this.form.patchValue({
+            enable_fips: true,
+            min_password_age: stigPasswordRequirements.minPasswordAge,
+            max_password_age: stigPasswordRequirements.maxPasswordAge,
+            password_complexity_ruleset: [...stigPasswordRequirements.passwordComplexity],
+            min_password_length: stigPasswordRequirements.minPasswordLength,
+            password_history_length: stigPasswordRequirements.passwordHistoryLength,
+          });
+        }
+
+        // Trigger validation update
+        Object.keys(this.form.controls).forEach((key) => {
+          if (key !== 'enable_gpos_stig' && key !== 'enable_fips') {
+            const control = this.form.controls[key as keyof typeof this.form.controls];
+            control.updateValueAndValidity();
+          }
+        });
       });
   }
 }

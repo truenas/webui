@@ -7,4 +7,14 @@
 mat-hint {
   display: flex;
   font-size: 12px;
+
+  &.stig-error {
+    color: var(--red);
+    font-weight: 500;
+  }
+
+  &.stig-info {
+    color: var(--orange);
+    font-weight: 500;
+  }
 }
