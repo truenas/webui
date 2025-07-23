@@ -137,12 +137,12 @@ export class WebSocketHandlerService {
 
     // Check for mock response
     if (environment.debugPanel?.enabled) {
-      const mockResponse = this.mockResponseService.checkMock(call);
-      if (mockResponse) {
+      const mockConfig = this.mockResponseService.checkMock(call);
+      if (mockConfig) {
         // Log the outgoing message as mocked
         this.debugService.logOutgoingMessage(call, true);
         // Generate the mock response
-        this.mockResponseService.generateMockResponse(call, mockResponse);
+        this.mockResponseService.generateMockResponse(call, mockConfig);
         // Don't send the real request
         return this.responses$.pipe(
           filter((message) => 'id' in message && message.id === call.id),

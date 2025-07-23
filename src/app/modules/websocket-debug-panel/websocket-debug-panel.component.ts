@@ -77,6 +77,13 @@ export class WebSocketDebugPanelComponent implements OnInit, OnDestroy {
     // Manage body margin when panel opens/closes
     this.isPanelOpen$.pipe(untilDestroyed(this)).subscribe((isOpen) => {
       this.isPanelOpen = isOpen;
+      this.updateAdminLayoutMargin(isOpen);
+    });
+  }
+
+  private updateAdminLayoutMargin(isOpen: boolean): void {
+    // Use a small timeout to ensure the DOM is ready, especially on page refresh
+    setTimeout(() => {
       const adminLayout = this.document.querySelector('.fn-maincontent') as HTMLElement;
       if (adminLayout) {
         if (isOpen) {
@@ -84,9 +91,14 @@ export class WebSocketDebugPanelComponent implements OnInit, OnDestroy {
           this.renderer.setStyle(adminLayout, 'transition', 'margin-right 300ms cubic-bezier(0.4, 0, 0.2, 1)');
         } else {
           this.renderer.removeStyle(adminLayout, 'margin-right');
+          this.renderer.removeStyle(adminLayout, 'transition');
         }
+      } else if (isOpen) {
+        // If admin layout is not found yet and panel should be open, try again
+        // This handles the case where the panel initializes before the router loads the admin layout
+        setTimeout(() => this.updateAdminLayoutMargin(isOpen), 100);
       }
-    });
+    }, 0);
   }
 
   ngOnDestroy(): void {
@@ -94,6 +106,7 @@ export class WebSocketDebugPanelComponent implements OnInit, OnDestroy {
     const adminLayout = this.document.querySelector('.fn-maincontent') as HTMLElement;
     if (adminLayout) {
       this.renderer.removeStyle(adminLayout, 'margin-right');
+      this.renderer.removeStyle(adminLayout, 'transition');
     }
   }
 
@@ -125,9 +138,8 @@ export class WebSocketDebugPanelComponent implements OnInit, OnDestroy {
       document.documentElement.style.setProperty('--debug-panel-width', `${this.panelWidth}px`);
 
       // Update admin layout margin if panel is open
-      const adminLayout = this.document.querySelector('.fn-maincontent') as HTMLElement;
-      if (adminLayout && this.isPanelOpen) {
-        this.renderer.setStyle(adminLayout, 'margin-right', `${this.panelWidth}px`);
+      if (this.isPanelOpen) {
+        this.updateAdminLayoutMargin(true);
       }
     };
 

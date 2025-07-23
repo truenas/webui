@@ -20,7 +20,7 @@
 
   .event-card {
     background-color: var(--bg2);
-    margin-bottom: 16px;
+    margin-bottom: 8px;
 
     .event-header {
       align-items: center;
@@ -35,35 +35,30 @@
 
     .event-fields {
       display: flex;
-      flex-wrap: wrap;
-      gap: 16px;
+      flex-direction: column;
+      gap: 8px;
 
-      .delay-field,
-      .state-field {
-        width: calc(50% - 8px);
-      }
-
-      .full-width {
-        width: 100%;
-      }
-
-      .progress-fields {
+      .field-row {
         display: flex;
-        gap: 16px;
-        width: 100%;
+        gap: 8px;
 
-        .percent-field {
-          width: 120px;
-        }
-
-        .progress-desc-field {
+        > * {
           flex: 1;
         }
       }
 
-      textarea {
-        font-family: monospace;
-        font-size: 12px;
+      .progress-fields {
+        display: flex;
+        gap: 8px;
+        width: 100%;
+
+        ix-input:first-child {
+          width: 150px;
+        }
+
+        ix-input:last-child {
+          flex: 1;
+        }
       }
     }
   }

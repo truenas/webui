@@ -5,17 +5,13 @@ import {
   FormBuilder, ReactiveFormsModule, Validators,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import {
-  MatError, MatFormField, MatLabel, MatHint,
-} from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { JobEventBuilderComponent } from 'app/modules/websocket-debug-panel/components/mock-config/job-event-builder/job-event-builder.component';
 import { MonacoEditorComponent } from 'app/modules/websocket-debug-panel/components/mock-config/monaco-editor/monaco-editor.component';
 import {
-  MockConfig, CallMockResponse, JobMockResponse, JobMockEvent,
+  MockConfig, MockEvent,
 } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
 import { updateMockConfig } from 'app/modules/websocket-debug-panel/store/websocket-debug.actions';
 
@@ -24,15 +20,9 @@ import { updateMockConfig } from 'app/modules/websocket-debug-panel/store/websoc
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    MatFormField,
-    MatLabel,
-    MatHint,
-    MatInputModule,
-    MatError,
     MatButton,
-    MatRadioGroup,
-    MatRadioButton,
     TranslateModule,
+    IxInputComponent,
     MonacoEditorComponent,
     JobEventBuilderComponent,
   ],
@@ -51,13 +41,9 @@ export class MockConfigFormComponent implements OnInit {
   protected readonly form = this.fb.group({
     methodName: ['', Validators.required],
     messagePattern: [''],
-    type: ['call' as 'call' | 'job', Validators.required],
-    callResponse: this.fb.group({
-      result: this.fb.control<unknown>(null),
-    }),
-    jobResponse: this.fb.group({
-      events: [[] as JobMockEvent[]],
-    }),
+    responseResult: this.fb.control<unknown>(null),
+    responseDelay: [0, [Validators.min(0)]],
+    events: [[] as MockEvent[]],
   });
 
   ngOnInit(): void {
@@ -66,20 +52,10 @@ export class MockConfigFormComponent implements OnInit {
       this.form.patchValue({
         methodName: configValue.methodName,
         messagePattern: configValue.messagePattern || '',
-        type: configValue.type,
+        responseResult: configValue.response.result,
+        responseDelay: configValue.response.delay ?? 0,
+        events: configValue.events || [],
       });
-
-      if (configValue.type === 'call') {
-        const response = configValue.response as CallMockResponse;
-        this.form.controls.callResponse.patchValue({
-          result: response.result,
-        });
-      } else {
-        const response = configValue.response as JobMockResponse;
-        this.form.controls.jobResponse.patchValue({
-          events: response.events,
-        });
-      }
     }
   }
 
@@ -95,10 +71,11 @@ export class MockConfigFormComponent implements OnInit {
       enabled: configValue?.enabled ?? true,
       methodName: formValue.methodName ?? '',
       messagePattern: formValue.messagePattern || undefined,
-      type: formValue.type ?? 'call',
-      response: formValue.type === 'call'
-        ? { result: formValue.callResponse?.result } as CallMockResponse
-        : { events: formValue.jobResponse?.events ?? [] } as JobMockResponse,
+      response: {
+        result: formValue.responseResult,
+        delay: formValue.responseDelay ?? 0,
+      },
+      events: formValue.events && formValue.events.length > 0 ? formValue.events : undefined,
     };
 
     if (configValue) {
@@ -112,19 +89,15 @@ export class MockConfigFormComponent implements OnInit {
     this.cancelled.emit();
   }
 
-  protected onCallResponseChange(value: unknown): void {
-    this.form.controls.callResponse.patchValue({ result: value });
+  protected onResponseChange(value: unknown): void {
+    this.form.patchValue({ responseResult: value });
   }
 
-  protected onJobEventsChange(events: JobMockEvent[]): void {
-    this.form.controls.jobResponse.patchValue({ events });
+  protected onEventsChange(events: MockEvent[]): void {
+    this.form.patchValue({ events });
   }
 
   protected get isEditMode(): boolean {
     return !!this.config();
-  }
-
-  protected get currentType(): 'call' | 'job' {
-    return this.form.controls.type.value ?? 'call';
   }
 }

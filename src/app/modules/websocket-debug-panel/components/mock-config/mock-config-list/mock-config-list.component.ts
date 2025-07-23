@@ -98,7 +98,8 @@ export class MockConfigListComponent {
   }
 
   protected getConfigDescription(config: MockConfig): string {
-    const type = config.type === 'call' ? 'Call' : 'Job';
+    const hasEvents = config.events && config.events.length > 0;
+    const type = hasEvents ? 'With Events' : 'Response';
     const pattern = config.messagePattern ? ` (${config.messagePattern})` : '';
     return `${type}: ${config.methodName}${pattern}`;
   }

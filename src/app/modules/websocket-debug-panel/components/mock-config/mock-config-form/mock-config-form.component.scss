@@ -15,86 +15,18 @@
 .form-content {
   flex: 1;
   overflow-y: auto;
-  padding: 16px;
+  padding: 12px;
 
-  ::ng-deep {
-    .mat-mdc-form-field {
-      .mat-mdc-text-field-wrapper {
-        background-color: var(--bg2);
-      }
-
-      .mat-mdc-form-field-flex {
-        background-color: var(--bg2);
-      }
-
-      .mdc-text-field--filled:not(.mdc-text-field--disabled) {
-        background-color: var(--bg2);
-      }
-
-      .mat-mdc-form-field-bottom-align {
-        &::before {
-          background-color: var(--lines);
-        }
-      }
-
-      .mat-mdc-input-element {
-        color: var(--fg1);
-      }
-
-      .mat-mdc-floating-label {
-        color: var(--fg2);
-      }
-
-      .mat-mdc-form-field-hint {
-        color: var(--fg2);
-      }
-
-      .mat-mdc-form-field-error {
-        color: var(--red);
-      }
-    }
-  }
-}
-
-.full-width {
-  margin-bottom: 16px;
-  width: 100%;
-}
-
-.type-selection {
-  margin-bottom: 24px;
-
-  label {
-    color: var(--fg2);
-    display: block;
-    font-size: 12px;
-    margin-bottom: 8px;
-    text-transform: uppercase;
-  }
-
-  mat-radio-button {
-    margin-right: 16px;
-    
-    ::ng-deep {
-      .mat-mdc-radio-button .mdc-form-field {
-        color: var(--fg1);
-      }
-
-      .mdc-radio__native-control:checked + .mdc-radio__background .mdc-radio__inner-circle {
-        background-color: var(--primary);
-        border-color: var(--primary);
-      }
-
-      .mdc-radio__native-control:checked + .mdc-radio__background .mdc-radio__outer-circle {
-        border-color: var(--primary);
-      }
-    }
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
   }
 }
 
 .response-editor,
-.events-builder {
-  margin-top: 16px;
+.events-section {
+  margin-top: 8px;
 
   label {
     color: var(--fg2);
@@ -103,6 +35,12 @@
     margin-bottom: 8px;
     text-transform: uppercase;
   }
+}
+
+.events-section {
+  border-top: 1px solid var(--lines);
+  margin-top: 16px;
+  padding-top: 16px;
 }
 
 .form-actions {
@@ -111,7 +49,7 @@
   display: flex;
   gap: 8px;
   justify-content: flex-end;
-  padding: 16px;
+  padding: 12px;
 
   ::ng-deep {
     .mat-mdc-button {

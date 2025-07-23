@@ -1,47 +1,47 @@
 <div class="mock-config-form">
   <div class="form-content">
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
-      <mat-form-field class="full-width">
-        <mat-label>{{ 'Method Name' | translate }}</mat-label>
-        <input matInput ixTest="method-name-input" formControlName="methodName" placeholder="e.g., pool.create" />
-        @if (form.controls.methodName.hasError('required') && form.controls.methodName.touched) {
-          <mat-error>{{ 'Method name is required' | translate }}</mat-error>
-        }
-      </mat-form-field>
-
-      <mat-form-field class="full-width">
-        <mat-label>{{ 'Message Pattern (Optional)' | translate }}</mat-label>
-        <input matInput ixTest="message-pattern-input" formControlName="messagePattern" placeholder='e.g., "name":"tank"' />
-        <mat-hint>{{ 'Regex pattern to match against message content' | translate }}</mat-hint>
-      </mat-form-field>
-
-      <div class="type-selection">
-        <label>{{ 'Response Type' | translate }}</label>
-        <mat-radio-group formControlName="type" ixTest="response-type-group">
-          <mat-radio-button value="call" ixTest="response-type-call">{{ 'Call (Immediate Response)' | translate }}</mat-radio-button>
-          <mat-radio-button value="job" ixTest="response-type-job">{{ 'Job (Progress Events)' | translate }}</mat-radio-button>
-        </mat-radio-group>
+      <ix-input
+        ixTest="method-name-input"
+        formControlName="methodName"
+        [label]="'Method Name' | translate"
+        [placeholder]="'e.g., pool.create' | translate"
+        [required]="true"
+      ></ix-input>
+      <ix-input
+        ixTest="message-pattern-input"
+        formControlName="messagePattern"
+        [label]="'Message Pattern (Optional)' | translate"
+        [placeholder]="'e.g., &quot;name&quot;:&quot;tank&quot;' | translate"
+        [hint]="'Regex pattern to match against message content' | translate"
+      ></ix-input>
+      
+      <div class="response-editor">
+        <label>{{ 'Response Data' | translate }}</label>
+        <ix-monaco-editor
+          [value]="form.value.responseResult"
+          [language]="'json'"
+          [height]="200"
+          (valueChange)="onResponseChange($event)">
+        </ix-monaco-editor>
       </div>
 
-      @if (currentType === 'call') {
-        <div class="response-editor">
-          <label>{{ 'Response Data' | translate }}</label>
-          <ix-monaco-editor
-            [value]="form.controls.callResponse.value.result"
-            [language]="'json'"
-            [height]="200"
-            (valueChange)="onCallResponseChange($event)"
-          />
-        </div>
-      } @else {
-        <div class="events-builder">
-          <label>{{ 'Job Events' | translate }}</label>
-          <ix-job-event-builder
-            [events]="form.controls.jobResponse.value.events"
-            (eventsChange)="onJobEventsChange($event)"
-          />
-        </div>
-      }
+      <ix-input
+        ixTest="response-delay-input"
+        formControlName="responseDelay"
+        type="number"
+        [label]="'Response Delay (ms)' | translate"
+        [placeholder]="'0' | translate"
+        [hint]="'Delay in milliseconds before returning the response' | translate"
+      ></ix-input>
+
+      <div class="events-section">
+        <label>{{ 'Events (Optional)' | translate }}</label>
+        <ix-job-event-builder
+          [events]="form.value.events"
+          (eventsChange)="onEventsChange($event)">
+        </ix-job-event-builder>
+      </div>
     </form>
   </div>
 

@@ -23,8 +23,7 @@
            [class.outgoing]="message.direction === 'out'"
            [class.incoming]="message.direction === 'in'"
            [class.mocked]="message.isMocked"
-           [class.expanded]="message.isExpanded"
-           (click)="toggleMessage(message.id)">
+           [class.expanded]="message.isExpanded">
       
       <div class="message-header">
         <span class="direction-icon">
@@ -44,11 +43,26 @@
         <span class="timestamp">{{ message.formattedTime }}</span>
         
         <button mat-icon-button 
-                matTooltip="Copy message" 
-                class="copy-button"
+                matTooltip="Copy message"
+                class="copy-button" 
                 ixTest="websocket-debug-copy-message"
+                [attr.aria-label]="'Copy message'"
                 (click)="copyMessage(message); $event.stopPropagation()">
           <ix-icon name="mdi-content-copy"></ix-icon>
+        </button>
+        
+        <button mat-icon-button 
+                class="toggle-button"
+                ixTest="websocket-debug-toggle-message"
+                matTooltip="Toggle message details"
+                [attr.aria-label]="message.isExpanded ? 'Collapse message details' : 'Expand message details'"
+                [attr.aria-expanded]="message.isExpanded"
+                (click)="toggleMessage(message.id)">
+          @if (message.isExpanded) {
+            <ix-icon name="mdi-chevron-down"></ix-icon>
+          } @else {
+            <ix-icon name="mdi-chevron-right"></ix-icon>
+          }
         </button>
       </div>
       

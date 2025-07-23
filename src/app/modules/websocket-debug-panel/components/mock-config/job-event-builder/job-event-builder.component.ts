@@ -1,47 +1,174 @@
 import {
-  ChangeDetectionStrategy, Component, input, output,
+  ChangeDetectionStrategy, Component, OnInit, OnChanges, inject, input, output,
 } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import {
+  FormArray, FormBuilder, FormGroup, ReactiveFormsModule,
+} from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
-import { MatSelect, MatOption } from '@angular/material/select';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { of } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
+import { SelectOption } from 'app/interfaces/option.interface';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { JobMockEvent } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
+import { MockEvent } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
 
+@UntilDestroy()
 @Component({
   selector: 'ix-job-event-builder',
   standalone: true,
   imports: [
-    FormsModule,
+    ReactiveFormsModule,
     MatCard,
     MatCardContent,
     MatButton,
     MatIconButton,
-    MatFormField,
-    MatLabel,
-    MatInput,
-    MatSelect,
-    MatOption,
     TranslateModule,
     IxIconComponent,
+    IxInputComponent,
+    IxSelectComponent,
+    IxTextareaComponent,
   ],
   templateUrl: './job-event-builder.component.html',
   styleUrls: ['./job-event-builder.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class JobEventBuilderComponent {
-  readonly events = input<JobMockEvent[]>([]);
-  readonly eventsChange = output<JobMockEvent[]>();
+export class JobEventBuilderComponent implements OnInit, OnChanges {
+  readonly events = input<MockEvent[]>([]);
+  readonly eventsChange = output<MockEvent[]>();
 
-  private getEvents(): JobMockEvent[] {
-    return [...this.events()];
+  private readonly fb = inject(FormBuilder);
+  private isUpdatingFromInput = false;
+
+  protected readonly stateOptions$ = of<SelectOption[]>([
+    { label: 'RUNNING', value: 'RUNNING' },
+    { label: 'SUCCESS', value: 'SUCCESS' },
+    { label: 'FAILED', value: 'FAILED' },
+    { label: 'ABORTED', value: 'ABORTED' },
+    { label: 'WAITING', value: 'WAITING' },
+  ]);
+
+  protected form = this.fb.group({
+    events: this.fb.array<FormGroup>([]),
+  });
+
+  constructor() {
+    // Emit changes when form updates with debounce to prevent partial values
+    this.form.valueChanges.pipe(
+      debounceTime(300),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      if (!this.isUpdatingFromInput) {
+        const formEvents = this.getFormEvents();
+        this.eventsChange.emit(formEvents);
+      }
+    });
+  }
+
+  ngOnChanges(): void {
+    // Only update if the events actually changed to prevent feedback loops
+    const newEvents = this.events();
+    const currentEvents = this.getFormEvents();
+
+    if (!this.areEventsEqual(newEvents, currentEvents)) {
+      this.setFormEvents(newEvents);
+    }
+  }
+
+  ngOnInit(): void {
+    this.setFormEvents(this.events());
+  }
+
+  get eventsFormArray(): FormArray {
+    return this.form.controls.events;
+  }
+
+  private createEventFormGroup(event: MockEvent): FormGroup {
+    // Ensure delay is treated as a number and handle all possible formats
+    let delayValue = 2000; // default
+    if (event.delay !== undefined && event.delay !== null) {
+      if (typeof event.delay === 'string') {
+        const parsed = parseInt(event.delay as unknown as string, 10);
+        delayValue = Number.isNaN(parsed) ? 2000 : parsed;
+      } else if (typeof event.delay === 'number') {
+        delayValue = event.delay;
+      }
+    }
+
+    return this.fb.group({
+      delay: [delayValue],
+      state: [event.fields.state],
+      description: [event.fields.description || ''],
+      progressPercent: [event.fields.progress?.percent !== undefined && event.fields.progress?.percent !== null
+        ? event.fields.progress.percent
+        : 0],
+      progressDescription: [event.fields.progress?.description || ''],
+      result: [this.stringifyResult(event.fields.result)],
+      error: [event.fields.error || ''],
+    });
+  }
+
+  private setFormEvents(events: MockEvent[]): void {
+    this.isUpdatingFromInput = true;
+    this.eventsFormArray.clear();
+    events.forEach((event) => {
+      this.eventsFormArray.push(this.createEventFormGroup(event));
+    });
+    this.isUpdatingFromInput = false;
+  }
+
+  private getFormEvents(): MockEvent[] {
+    return this.eventsFormArray.controls.map((control) => {
+      const formGroup = control as FormGroup;
+      const value = formGroup.value as {
+        delay: number;
+        state: string;
+        description: string;
+        progressPercent: number;
+        progressDescription: string;
+        result: string;
+        error: string;
+      };
+      const event: MockEvent = {
+        delay: value.delay !== undefined && value.delay !== null
+          ? Number(value.delay)
+          : 2000,
+        fields: {
+          state: value.state as MockEvent['fields']['state'],
+          description: value.description || null,
+          progress: {
+            percent: value.progressPercent !== undefined && value.progressPercent !== null
+              ? Number(value.progressPercent)
+              : 0,
+            description: value.progressDescription || '',
+          },
+        },
+      };
+
+      if (value.result) {
+        try {
+          event.fields.result = JSON.parse(value.result) as unknown;
+        } catch (error) {
+          console.warn('Invalid JSON in result field:', error);
+          // Keep the original string value to preserve user input
+          event.fields.result = value.result;
+        }
+      }
+
+      if (value.error) {
+        event.fields.error = value.error;
+      }
+
+      return event;
+    });
   }
 
   protected addEvent(): void {
-    const newEvent: JobMockEvent = {
+    const newEvent: MockEvent = {
       delay: 2000,
       fields: {
         description: 'Processing...',
@@ -52,72 +179,81 @@ export class JobEventBuilderComponent {
         state: 'RUNNING',
       },
     };
-    const events = [...this.getEvents(), newEvent];
-    this.eventsChange.emit(events);
+    this.eventsFormArray.push(this.createEventFormGroup(newEvent));
   }
 
   protected removeEvent(index: number): void {
-    const events = this.getEvents().filter((_, i) => i !== index);
-    this.eventsChange.emit(events);
+    this.eventsFormArray.removeAt(index);
   }
 
-  protected updateEvent(index: number, field: string, value: unknown): void {
-    const updatedEvents = [...this.getEvents()];
-    const event = { ...updatedEvents[index] };
-
-    if (field.includes('.')) {
-      const [parent, child] = field.split('.');
-      // Type-safe field update for nested properties
-      if (parent === 'progress' && event.fields.progress) {
-        event.fields = {
-          ...event.fields,
-          progress: {
-            ...event.fields.progress,
-            [child]: value,
-          },
-        };
-      }
-    } else if (field === 'delay') {
-      event.delay = Number(value) || 2000;
-    } else if (field === 'description' && typeof value === 'string') {
-      event.fields = {
-        ...event.fields,
-        description: value,
-      };
-    } else if (field === 'state' && (value === 'RUNNING' || value === 'SUCCESS' || value === 'FAILED')) {
-      event.fields = {
-        ...event.fields,
-        state: value,
-      };
+  protected getEventControl(index: number): FormGroup {
+    const control = this.eventsFormArray.at(index);
+    if (!control) {
+      throw new Error(`Event control at index ${index} not found`);
     }
-
-    updatedEvents[index] = event;
-    this.eventsChange.emit(updatedEvents);
+    return control as FormGroup;
   }
 
-  protected updateResult(index: number, value: string): void {
-    try {
-      const parsed = value ? JSON.parse(value) as unknown : undefined;
-      const updatedEvents = [...this.getEvents()];
-      updatedEvents[index] = {
-        ...updatedEvents[index],
-        fields: {
-          ...updatedEvents[index].fields,
-          result: parsed,
-        },
-      };
-      this.eventsChange.emit(updatedEvents);
-    } catch {
-      // Invalid JSON, ignore
-    }
+  protected isResultVisible(index: number): boolean {
+    const control = this.getEventControl(index);
+    const state = control.controls.state?.value as string;
+    return state === 'SUCCESS' || state === 'FAILED';
   }
 
-  protected getResultString(event: JobMockEvent): string {
-    if (!event.fields.result) return '';
-    try {
-      return JSON.stringify(event.fields.result, null, 2);
-    } catch {
+  private stringifyResult(result: unknown): string {
+    if (!result) {
       return '';
     }
+
+    try {
+      return JSON.stringify(result, null, 2);
+    } catch (error) {
+      console.warn('Failed to stringify result:', error);
+      // If it's already a string, return it as-is
+      return typeof result === 'string' ? result : String(result);
+    }
+  }
+
+  private areEventsEqual(events1: MockEvent[], events2: MockEvent[]): boolean {
+    if (events1.length !== events2.length) {
+      return false;
+    }
+
+    return events1.every((event1, index) => {
+      const event2 = events2[index];
+
+      // Compare basic properties
+      if (event1.delay !== event2.delay) {
+        return false;
+      }
+
+      // Compare fields
+      const fields1 = event1.fields;
+      const fields2 = event2.fields;
+
+      if (fields1.state !== fields2.state
+        || fields1.description !== fields2.description
+        || fields1.error !== fields2.error) {
+        return false;
+      }
+
+      // Compare progress
+      if (fields1.progress?.percent !== fields2.progress?.percent
+        || fields1.progress?.description !== fields2.progress?.description) {
+        return false;
+      }
+
+      // Compare result (both could be undefined/null or objects)
+      if (fields1.result !== fields2.result) {
+        // If they're not strictly equal, check if they're both objects
+        if (typeof fields1.result === 'object' && typeof fields2.result === 'object') {
+          // Simple object comparison - could be enhanced for nested objects
+          return JSON.stringify(fields1.result) === JSON.stringify(fields2.result);
+        }
+        return false;
+      }
+
+      return true;
+    });
   }
 }

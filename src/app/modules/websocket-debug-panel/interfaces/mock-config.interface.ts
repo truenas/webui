@@ -3,27 +3,40 @@ export interface MockConfig {
   enabled: boolean;
   methodName: string;
   messagePattern?: string;
-  type: 'call' | 'job';
-  response: CallMockResponse | JobMockResponse;
+  response: MockResponse;
+  events?: MockEvent[];
 }
 
-export interface CallMockResponse {
+export interface MockResponse {
   result: unknown;
+  delay?: number;
 }
 
-export interface JobMockResponse {
-  events: JobMockEvent[];
-}
-
-export interface JobMockEvent {
+export interface MockEvent {
   delay: number;
   fields: {
-    description: string;
-    progress: {
+    id?: number;
+    message_ids?: string[];
+    method?: string;
+    arguments?: unknown[];
+    transient?: boolean;
+    description?: string | null;
+    abortable?: boolean;
+    logs_path?: string | null;
+    logs_excerpt?: string | null;
+    progress?: {
       percent: number;
       description: string;
+      extra?: unknown;
     };
     result?: unknown;
-    state: 'RUNNING' | 'SUCCESS' | 'FAILED';
+    result_encoding_error?: unknown;
+    error?: string | null;
+    exception?: string | null;
+    exc_info?: unknown;
+    state: 'RUNNING' | 'SUCCESS' | 'FAILED' | 'ABORTED' | 'WAITING';
+    time_started?: { $date: number };
+    time_finished?: { $date: number } | null;
+    credentials?: unknown;
   };
 }

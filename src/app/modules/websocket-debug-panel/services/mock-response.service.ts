@@ -1,22 +1,18 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { environment } from 'environments/environment';
-import { Observable, Subject, timer } from 'rxjs';
-import { first } from 'rxjs/operators';
+import {
+  Observable, Subject, Subscription, timer,
+} from 'rxjs';
+import { first, take } from 'rxjs/operators';
 import { CollectionChangeType } from 'app/enums/api.enum';
-import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import {
   CollectionUpdateMessage, IncomingMessage, RequestMessage, SuccessfulResponse,
 } from 'app/interfaces/api-message.interface';
 import {
-  CallMockResponse, JobMockEvent, JobMockResponse, MockConfig,
+  MockConfig, MockEvent,
 } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
 import { selectEnabledMockConfigs } from 'app/modules/websocket-debug-panel/store/websocket-debug.selectors';
-
-interface MockResponse {
-  config: MockConfig;
-  jobId?: number;
-}
 
 @Injectable({
   providedIn: 'root',
@@ -24,8 +20,9 @@ interface MockResponse {
 export class MockResponseService {
   private readonly mockResponses$ = new Subject<IncomingMessage>();
   private jobIdCounter = 10000;
-  private readonly activeJobs = new Map<number, { requestId: string; method: string }>();
   private readonly mockedCallIds = new Set<string>();
+  private readonly activeEvents = new Map<string, number[]>();
+  private readonly eventSubscriptions = new Map<string, Subscription>();
 
   get responses$(): Observable<IncomingMessage> {
     return this.mockResponses$.asObservable();
@@ -35,7 +32,7 @@ export class MockResponseService {
     private store$: Store,
   ) {}
 
-  checkMock(message: RequestMessage): MockResponse | null {
+  checkMock(message: RequestMessage): MockConfig | null {
     if (!environment.debugPanel?.enabled) {
       return null;
     }
@@ -47,26 +44,15 @@ export class MockResponseService {
 
     for (const config of enabledMocks) {
       if (this.matchesConfig(message, config)) {
-        if (config.type === 'job') {
-          const jobId = this.getNextJobId();
-          this.activeJobs.set(jobId, { requestId: message.id, method: message.method });
-          return { config, jobId };
-        }
-        return { config };
+        return config;
       }
     }
 
     return null;
   }
 
-  generateMockResponse(message: RequestMessage, mockResponse: MockResponse): void {
-    const { config, jobId } = mockResponse;
-
-    if (config.type === 'call') {
-      this.handleCallMock(message, config.response as CallMockResponse);
-    } else if (config.type === 'job') {
-      this.handleJobMock(message, config.response as JobMockResponse, jobId);
-    }
+  generateMockResponse(message: RequestMessage, config: MockConfig): void {
+    this.handleMockResponse(message, config);
   }
 
   private matchesConfig(message: RequestMessage, config: MockConfig): boolean {
@@ -88,71 +74,98 @@ export class MockResponseService {
     return true;
   }
 
-  private handleCallMock(message: RequestMessage, response: CallMockResponse): void {
+  private handleMockResponse(message: RequestMessage, config: MockConfig): void {
     // Track this as a mocked call response
     this.mockedCallIds.add(message.id);
 
     const mockResponse: SuccessfulResponse = {
       jsonrpc: '2.0',
       id: message.id,
-      result: response.result,
+      result: config.response.result,
     };
-    this.mockResponses$.next(mockResponse);
+
+    // Apply delay if specified
+    const responseDelay = config.response.delay || 0;
+    if (responseDelay > 0) {
+      const subscription = timer(responseDelay).pipe(take(1)).subscribe(() => {
+        this.mockResponses$.next(mockResponse);
+      });
+      this.eventSubscriptions.set(`${message.id}-response`, subscription);
+    } else {
+      this.mockResponses$.next(mockResponse);
+    }
+
+    // Handle events if present
+    if (config.events && config.events.length > 0) {
+      this.scheduleEvents(message, config.events);
+    }
 
     // Clean up after a short delay to prevent memory leak
     setTimeout(() => {
       this.mockedCallIds.delete(message.id);
-    }, 5000);
+      this.activeEvents.delete(message.id);
+      this.cleanupEventSubscriptions(message.id);
+    }, 5000 + responseDelay + this.getTotalEventDelay(config.events));
   }
 
-  private handleJobMock(message: RequestMessage, response: JobMockResponse, jobId: number): void {
-    const jobResponse: SuccessfulResponse = {
-      jsonrpc: '2.0',
-      id: message.id,
-      result: jobId,
-    };
-    this.mockResponses$.next(jobResponse);
-
+  private scheduleEvents(message: RequestMessage, events: MockEvent[]): void {
+    const eventIds: number[] = [];
     let totalDelay = 0;
-    response.events.forEach((event) => {
-      totalDelay += event.delay || environment.debugPanel?.mockJobDefaultDelay || 2000;
-      timer(totalDelay).subscribe(() => {
-        this.emitJobEvent(jobId, message.method as ApiJobMethod, event);
+
+    events.forEach((event) => {
+      const eventId = this.getNextJobId();
+      eventIds.push(eventId);
+      totalDelay += event.delay || 0;
+
+      const subscription = timer(totalDelay).pipe(take(1)).subscribe(() => {
+        this.emitEvent(message, event, eventId);
       });
+      this.eventSubscriptions.set(`${message.id}-event-${eventId}`, subscription);
     });
+
+    this.activeEvents.set(message.id, eventIds);
   }
 
-  private emitJobEvent(jobId: number, method: ApiJobMethod, event: JobMockEvent): void {
+  private emitEvent(message: RequestMessage, event: MockEvent, eventId: number): void {
     const updateMessage: CollectionUpdateMessage = {
       jsonrpc: '2.0',
       method: 'collection_update',
       params: {
-        collection: `core.job_update.${method}` as ApiJobMethod,
+        msg: CollectionChangeType.Changed,
+        collection: 'core.get_jobs',
+        id: eventId,
         fields: {
           ...event.fields,
-          id: jobId,
+          id: event.fields.id || eventId,
+          message_ids: event.fields.message_ids || [message.id],
+          method: event.fields.method || message.method,
+          arguments: event.fields.arguments || message.params,
+          transient: event.fields.transient ?? true,
+          time_started: event.fields.time_started || { $date: Date.now() },
         },
-        id: jobId,
-        msg: CollectionChangeType.Changed,
       },
     };
     this.mockResponses$.next(updateMessage);
-
-    if (event.fields.state === 'SUCCESS' || event.fields.state === 'FAILED') {
-      this.activeJobs.delete(jobId);
-    }
   }
 
   private getNextJobId(): number {
     return ++this.jobIdCounter;
   }
 
-  getActiveJobs(): Map<number, { requestId: string; method: string }> {
-    return new Map(this.activeJobs);
+  private getTotalEventDelay(events?: MockEvent[]): number {
+    if (!events || events.length === 0) {
+      return 0;
+    }
+    return events.reduce((total, event) => total + (event.delay || 0), 0);
   }
 
-  isJobActive(jobId: number): boolean {
-    return this.activeJobs.has(jobId);
+  private cleanupEventSubscriptions(messageId: string): void {
+    this.eventSubscriptions.forEach((subscription, key) => {
+      if (key.startsWith(messageId)) {
+        subscription.unsubscribe();
+        this.eventSubscriptions.delete(key);
+      }
+    });
   }
 
   isMockedResponse(message: IncomingMessage): boolean {
@@ -161,16 +174,15 @@ export class MockResponseService {
       return true;
     }
 
-    // Check if it's a mocked job response
-    if ('result' in message && typeof message.result === 'number' && this.activeJobs.has(message.result)) {
-      return true;
-    }
-
-    // Check if it's a mocked job event
+    // Check if it's a mocked event
     if ('method' in message && message.method === 'collection_update' && 'params' in message) {
-      const params = message.params as { id?: unknown };
-      if (params?.id && typeof params.id === 'number' && this.activeJobs.has(params.id)) {
-        return true;
+      const params = message.params as { fields?: { message_ids?: string[] } };
+      if (params?.fields?.message_ids) {
+        for (const messageId of params.fields.message_ids) {
+          if (this.activeEvents.has(messageId)) {
+            return true;
+          }
+        }
       }
     }
 
