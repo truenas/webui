@@ -1,1 +1,14 @@
-> 0.2% and not dead
+# Angular 20 supported browsers
+# https://angular.dev/reference/versions#browser-support
+last 2 Chrome versions
+last 2 Firefox versions
+last 2 Edge versions
+last 2 Safari versions
+last 2 iOS versions
+Firefox ESR
+not dead
+not and_uc 15.5
+not android 138
+not ios_saf 15.6-15.8
+not op_mob 80
+not samsung 28
