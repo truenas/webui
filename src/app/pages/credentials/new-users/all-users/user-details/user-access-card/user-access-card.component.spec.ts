@@ -34,6 +34,8 @@ const mockUser = {
   sshpubkey: 'ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA...',
   smb: true,
   shell: '/bin/bash',
+  sudo_commands: ['command1', 'command2'],
+  sudo_commands_nopasswd: ['command3'],
   api_keys: [1, 2],
   roles: [Role.FullAdmin],
   twofactor_auth_configured: true,
@@ -125,14 +127,17 @@ describe('UserAccessCardComponent', () => {
     expect(apiKeysSection).toHaveText('API Keys: 2 keys');
   });
 
-  it('should display Shell Access status', () => {
-    const apiKeysSection = spectator.query('.content-wrapper:nth-of-type(8)');
-    expect(apiKeysSection).toHaveText('Shell Access: /bin/bash');
+  it('should display SSH access status', () => {
+    const sshSection = spectator.query('.content-wrapper:nth-of-type(8)');
+    expect(sshSection).toHaveText('SSH Key Set & Password Login Enabled');
   });
 
-  it('should display SSH access status', () => {
-    const sshSection = spectator.query('.content-wrapper:nth-of-type(9)');
-    expect(sshSection).toHaveText('SSH Key Set & Password Login Enabled');
+  it('should display Shell Access status', () => {
+    const shellAccessSection = spectator.query('.content-wrapper:nth-of-type(9)');
+    expect(shellAccessSection).toHaveText('Shell Access: /bin/bash');
+
+    const additionalShellAccessInfo = spectator.query('.additional-info');
+    expect(additionalShellAccessInfo).toHaveText('Allowed sudo commands: command1, command2  Allowed Sudo Commands (No Password): command3');
   });
 
   it('should open lock user when button Lock User is clicked', async () => {

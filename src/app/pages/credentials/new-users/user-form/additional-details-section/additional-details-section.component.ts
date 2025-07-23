@@ -277,6 +277,22 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     this.resolveGroupNames(Array.from(ids));
   }
 
+  protected getSudoCommands(): string {
+    if (this.form.controls.sudo_commands_all.value) {
+      return allCommands;
+    }
+
+    return this.form.controls.sudo_commands.value?.join(', ') || '';
+  }
+
+  protected getSudoCommandsNoPasswd(): string {
+    if (this.form.controls.sudo_commands_nopasswd_all.value) {
+      return allCommands;
+    }
+
+    return this.form.controls.sudo_commands_nopasswd.value?.join(', ') || '';
+  }
+
   private resolveGroupNames(ids: number[]): void {
     const missingIds = ids.filter((groupId) => !this.groupNameCache.has(groupId));
     if (!missingIds.length) {
@@ -299,6 +315,8 @@ export class AdditionalDetailsSectionComponent implements OnInit {
 
   private setupEditUserForm(user: User): void {
     const auxGroups = user.groups.filter((id) => id !== user.group?.id);
+    const allSudoCommands = user.sudo_commands.includes(allCommands);
+    const allSudoCommandsNoPasswd = user.sudo_commands_nopasswd.includes(allCommands);
 
     this.form.patchValue({
       full_name: user.full_name,
@@ -308,10 +326,10 @@ export class AdditionalDetailsSectionComponent implements OnInit {
       uid: user.uid,
       group: user.group?.id,
       shell: user.shell,
-      sudo_commands: this.form.value.sudo_commands_all ? [allCommands] : this.form.value.sudo_commands,
-      sudo_commands_nopasswd: this.form.value.sudo_commands_nopasswd_all
-        ? [allCommands]
-        : this.form.value.sudo_commands_nopasswd,
+      sudo_commands_all: allSudoCommands,
+      sudo_commands: allSudoCommands ? [] : user.sudo_commands,
+      sudo_commands_nopasswd_all: allSudoCommandsNoPasswd,
+      sudo_commands_nopasswd: allSudoCommandsNoPasswd ? [] : user.sudo_commands_nopasswd,
     });
 
     this.form.controls.uid.disable();
