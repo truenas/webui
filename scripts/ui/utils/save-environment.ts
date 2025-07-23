@@ -35,8 +35,8 @@ const defaults: ConfigVariables = {
     scenario: MockEnclosureScenario.FillSomeSlots,
   },
   debugPanel: {
-    enabled: false,
-    defaultMessageLimit: 100,
+    enabled: true,
+    defaultMessageLimit: 300,
     mockJobDefaultDelay: 1000,
     persistMockConfigs: true,
   },
