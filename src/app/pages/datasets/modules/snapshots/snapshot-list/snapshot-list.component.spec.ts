@@ -170,9 +170,6 @@ describe('SnapshotListComponent', () => {
       query: 'test-dataset',
       columnKeys: ['dataset'],
       exact: true,
-      preprocessMap: {
-        dataset: expect.any(Function),
-      },
     });
   });
 
@@ -206,14 +203,53 @@ describe('SnapshotListComponent', () => {
       query: 'test-dataset',
       columnKeys: ['dataset'],
       exact: true,
-      preprocessMap: {
-        dataset: expect.any(Function),
-      },
     });
     expect(setFilterSpy).toHaveBeenNthCalledWith(2, {
       list: component.snapshots,
       query: 'test-dataset',
       columnKeys: ['name'],
+    });
+  });
+
+  it('should not show partial matches when using exact dataset filtering', () => {
+    const component = spectator.component;
+
+    // eslint-disable-next-line @typescript-eslint/dot-notation
+    jest.spyOn(component['route'].snapshot.paramMap, 'get').mockReturnValue('dozer/boom');
+
+    const testSnapshots = [
+      {
+        id: '1',
+        name: 'dozer/boom@snapshot1',
+        dataset: 'dozer/boom',
+        snapshot_name: 'snapshot1',
+      } as ZfsSnapshot,
+      {
+        id: '2',
+        name: 'dozer/boom1@snapshot2',
+        dataset: 'dozer/boom1',
+        snapshot_name: 'snapshot2',
+      } as ZfsSnapshot,
+      {
+        id: '3',
+        name: 'dozer/boom2@snapshot3',
+        dataset: 'dozer/boom2',
+        snapshot_name: 'snapshot3',
+      } as ZfsSnapshot,
+    ];
+
+    component.snapshots = testSnapshots.map((snapshot) => ({ ...snapshot, selected: false }));
+
+    const setFilterSpy = jest.spyOn(component.dataProvider, 'setFilter');
+
+    spectator.triggerEventHandler('ix-search-input1', 'search', 'dozer/boom');
+
+    expect(setFilterSpy).toHaveBeenCalledTimes(1);
+    expect(setFilterSpy).toHaveBeenCalledWith({
+      list: component.snapshots,
+      query: 'dozer/boom',
+      columnKeys: ['dataset'],
+      exact: true,
     });
   });
 });

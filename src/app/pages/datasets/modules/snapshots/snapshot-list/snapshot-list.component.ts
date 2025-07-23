@@ -314,11 +314,6 @@ export class SnapshotListComponent implements OnInit {
         query,
         columnKeys: ['dataset'],
         exact: true,
-        preprocessMap: {
-          dataset: (value: string) => {
-            return value.split('/').pop() || value;
-          },
-        },
       });
 
       if (this.dataProvider.totalRows === 0) {
