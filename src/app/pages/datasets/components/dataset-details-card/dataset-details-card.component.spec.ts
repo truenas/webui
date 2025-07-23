@@ -162,7 +162,6 @@ describe('DatasetDetailsCardComponent', () => {
         'Sync:': 'STANDARD',
         'Compression:': 'Inherit (3.81x (LZ4))',
         'ZFS Deduplication:': 'OFF',
-        'Case Sensitivity:': 'OFF',
         'Path:': 'pool/child',
         'Comments:': 'Test comment',
       });
