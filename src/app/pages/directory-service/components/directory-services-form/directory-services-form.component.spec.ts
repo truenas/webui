@@ -5,6 +5,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
 import { DirectoryServicesConfig } from 'app/interfaces/directoryservices-config.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ActiveDirectoryConfigComponent } from 'app/pages/directory-service/components/directory-services-form/active-directory-config/active-directory-config.component';
@@ -37,6 +38,9 @@ describe('DirectoryServicesConfigFormComponent', () => {
         close: jest.fn(),
         requireConfirmationWhen: jest.fn(() => of(false)),
         swap: jest.fn(),
+      }),
+      mockProvider(AuthService, {
+        hasRole: jest.fn(() => of(true)),
       }),
     ],
   });
