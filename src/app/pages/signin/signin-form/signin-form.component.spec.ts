@@ -25,7 +25,9 @@ describe('SigninFormComponent', () => {
     ],
     providers: [
       mockProvider(AuthService, {
-        login: jest.fn(() => of(LoginResult.Success)),
+        login: jest.fn(() => of({
+          loginResult: LoginResult.Success,
+        })),
       }),
       mockApi([
         mockCall('auth.login_ex', { response_type: LoginExResponseType.Success } as LoginSuccessResponse),

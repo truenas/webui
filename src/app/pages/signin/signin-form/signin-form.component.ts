@@ -18,6 +18,7 @@ import {
 import { AutofocusDirective } from 'app/directives/autofocus/autofocus.directive';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { WINDOW } from 'app/helpers/window.helper';
+import { LoginExResponse, LoginRedirectResponse } from 'app/interfaces/auth.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
@@ -121,12 +122,12 @@ export class SigninFormComponent implements OnInit {
     this.authService.login(formValues.username, formValues.password).pipe(
       untilDestroyed(this),
     ).subscribe({
-      next: (loginResult) => {
+      next: ({ loginResult, loginResponse }) => {
         if (loginResult === LoginResult.Success) {
           this.signinStore.handleSuccessfulLogin();
         } else {
           this.signinStore.setLoadingState(false);
-          this.handleFailedLogin(loginResult);
+          this.handleFailedLogin(loginResult, loginResponse);
           this.cdr.markForCheck();
         }
       },
@@ -137,12 +138,27 @@ export class SigninFormComponent implements OnInit {
     });
   }
 
-  protected handleFailedLogin(loginResult: LoginResult): void {
+  protected handleFailedLogin(loginResult: LoginResult, loginResponse: LoginExResponse): void {
     this.isLastLoginAttemptFailed = true;
 
     if (loginResult === LoginResult.NoOtp) {
       this.hasTwoFactor = true;
       this.form.controls.password.setValue('');
+      return;
+    }
+
+    if (loginResult === LoginResult.Redirect) {
+      const links = (loginResponse as LoginRedirectResponse).urls.map((url) => {
+        return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
+      }).join(', ');
+
+      this.lastLoginError = this.translate.instant(
+        'Logging in at the current URL is not possible.<br>To login, please navigate to: {links}',
+        { links },
+      );
+      this.cdr.markForCheck();
+      this.signinStore.showSnackbar(this.translate.instant('Logging in at the current URL is not possible.'));
+
       return;
     }
 
@@ -177,7 +193,7 @@ export class SigninFormComponent implements OnInit {
     this.authService.login(formValues.username, formValues.password, formValues.otp).pipe(
       untilDestroyed(this),
     ).subscribe({
-      next: (loginResult) => {
+      next: ({ loginResult }) => {
         if (loginResult === LoginResult.Success) {
           this.signinStore.handleSuccessfulLogin();
         } else {

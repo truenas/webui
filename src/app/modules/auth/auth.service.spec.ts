@@ -243,7 +243,14 @@ describe('AuthService', () => {
       testScheduler.run(({ expectObservable }) => {
         expectObservable(obs$).toBe(
           '(a|)',
-          { a: LoginResult.Success },
+          {
+            a: {
+              loginResult: LoginResult.Success,
+              loginResponse: expect.objectContaining({
+                response_type: LoginExResponseType.Success,
+              }),
+            },
+          },
         );
       });
 
