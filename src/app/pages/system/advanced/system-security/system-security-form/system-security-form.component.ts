@@ -60,28 +60,30 @@ export class SystemSecurityFormComponent implements OnInit {
   protected readonly stigRequirements = stigPasswordRequirements;
   protected readonly requiredRoles = [Role.SystemSecurityWrite];
 
+  private readonly stigValidatorFn = this.stigValidator.bind(this);
+
   form = this.formBuilder.group({
     enable_fips: [false],
     enable_gpos_stig: [false],
     min_password_age: [
       null as number | null,
-      [Validators.min(1), Validators.max(365), this.stigValidator.bind(this)],
+      [Validators.min(1), Validators.max(365), this.stigValidatorFn],
     ],
     max_password_age: [
       null as number | null,
-      [Validators.min(7), Validators.max(365), this.stigValidator.bind(this)],
+      [Validators.min(7), Validators.max(365), this.stigValidatorFn],
     ],
     password_complexity_ruleset: [
       null as PasswordComplexityRuleset[] | null,
-      [this.stigValidator.bind(this)],
+      [this.stigValidatorFn],
     ],
     min_password_length: [
       null as number | null,
-      [Validators.min(8), Validators.max(128), this.stigValidator.bind(this)],
+      [Validators.min(8), Validators.max(128), this.stigValidatorFn],
     ],
     password_history_length: [
       null as number | null,
-      [Validators.min(1), Validators.max(10), this.stigValidator.bind(this)],
+      [Validators.min(1), Validators.max(10), this.stigValidatorFn],
     ],
   });
 
