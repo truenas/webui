@@ -134,10 +134,8 @@ describe('SnapshotListComponent', () => {
   });
 
   it('should filter snapshots by dataset when route parameter is present', () => {
-    // Test the onListFiltered method directly
     const component = spectator.component;
 
-    // Mock snapshots with different datasets (using full paths like in real system)
     const testSnapshots = [
       {
         id: '1',
@@ -159,19 +157,14 @@ describe('SnapshotListComponent', () => {
       } as ZfsSnapshot,
     ];
 
-    // Set the component's snapshots
     component.snapshots = testSnapshots.map((snapshot) => ({ ...snapshot, selected: false }));
 
-    // Spy on the dataProvider setFilter method
     const setFilterSpy = jest.spyOn(component.dataProvider, 'setFilter');
 
-    // Trigger the search event to call onListFiltered
     spectator.triggerEventHandler('ix-search-input1', 'search', 'test-dataset');
 
-    // Verify that the filterString is set correctly
     expect(component.filterString).toBe('test-dataset');
 
-    // Verify that setFilter was called with exact: true for dataset filtering
     expect(setFilterSpy).toHaveBeenCalledWith({
       list: component.snapshots,
       query: 'test-dataset',
@@ -180,6 +173,47 @@ describe('SnapshotListComponent', () => {
       preprocessMap: {
         dataset: expect.any(Function),
       },
+    });
+  });
+
+  it('should fallback to name-based filtering when dataset exact match fails', () => {
+    const component = spectator.component;
+
+    const testSnapshots = [
+      {
+        id: '1',
+        name: '/dozer/different-dataset@snapshot1',
+        dataset: '/dozer/different-dataset',
+        snapshot_name: 'snapshot1',
+      } as ZfsSnapshot,
+      {
+        id: '2',
+        name: '/dozer/another-dataset@test-dataset-backup',
+        dataset: '/dozer/another-dataset',
+        snapshot_name: 'test-dataset-backup',
+      } as ZfsSnapshot,
+    ];
+
+    component.snapshots = testSnapshots.map((snapshot) => ({ ...snapshot, selected: false }));
+
+    const setFilterSpy = jest.spyOn(component.dataProvider, 'setFilter');
+
+    spectator.triggerEventHandler('ix-search-input1', 'search', 'test-dataset');
+
+    expect(setFilterSpy).toHaveBeenCalledTimes(2);
+    expect(setFilterSpy).toHaveBeenNthCalledWith(1, {
+      list: component.snapshots,
+      query: 'test-dataset',
+      columnKeys: ['dataset'],
+      exact: true,
+      preprocessMap: {
+        dataset: expect.any(Function),
+      },
+    });
+    expect(setFilterSpy).toHaveBeenNthCalledWith(2, {
+      list: component.snapshots,
+      query: 'test-dataset',
+      columnKeys: ['name'],
     });
   });
 });

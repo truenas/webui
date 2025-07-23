@@ -306,12 +306,9 @@ export class SnapshotListComponent implements OnInit {
   protected onListFiltered(query: string): void {
     this.filterString = query;
 
-    // Check if we have a dataset parameter from the route
     const datasetParam = this.route.snapshot.paramMap.get('dataset');
 
     if (datasetParam && query === datasetParam) {
-      // Filter by dataset field with exact match when query matches the route dataset parameter
-      // Use a preprocessor to handle full dataset paths (e.g., "/dozer/test" -> "test")
       this.dataProvider.setFilter({
         list: this.snapshots,
         query,
@@ -319,13 +316,15 @@ export class SnapshotListComponent implements OnInit {
         exact: true,
         preprocessMap: {
           dataset: (value: string) => {
-            // Extract the last part of the dataset path for exact matching
             return value.split('/').pop() || value;
           },
         },
       });
+
+      if (this.dataProvider.totalRows === 0) {
+        this.dataProvider.setFilter({ list: this.snapshots, query, columnKeys: ['name'] });
+      }
     } else {
-      // Filter by name field for general search
       this.dataProvider.setFilter({ list: this.snapshots, query, columnKeys: ['name'] });
     }
   }
