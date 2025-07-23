@@ -228,7 +228,6 @@ export class SystemSecurityFormComponent implements OnInit {
         this.isStigEnabled.set(value);
 
         if (value) {
-          // Pre-populate STIG requirements when STIG is enabled
           this.form.patchValue({
             enable_fips: true,
             min_password_age: stigPasswordRequirements.minPasswordAge,
@@ -239,7 +238,6 @@ export class SystemSecurityFormComponent implements OnInit {
           });
         }
 
-        // Trigger validation update
         Object.keys(this.form.controls).forEach((key) => {
           if (key !== 'enable_gpos_stig' && key !== 'enable_fips') {
             const control = this.form.controls[key as keyof typeof this.form.controls];
