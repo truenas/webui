@@ -17,6 +17,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { debounceTime, distinctUntilChanged, finalize } from 'rxjs/operators';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import {
   DirectoryServiceCredentialType,
   DirectoryServiceType,
@@ -66,6 +67,7 @@ import { DirectoryServiceValidationService } from './services/directory-service-
     MatButton,
     TranslateModule,
     TestDirective,
+    RequiresRolesDirective,
     CredentialConfigComponent,
     ActiveDirectoryConfigComponent,
     LdapConfigComponent,
