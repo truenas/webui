@@ -3,6 +3,29 @@
 }
 
 textarea {
+  background-color: var(--bg1) !important;
+  color: var(--fg1) !important;
   font-family: monospace;
   font-size: 12px;
+
+  &::placeholder {
+    color: var(--fg2);
+    opacity: 0.7;
+  }
+}
+
+::ng-deep {
+  .mat-mdc-form-field {
+    .mat-mdc-input-element {
+      color: var(--fg1) !important;
+    }
+
+    .mat-mdc-form-field-label {
+      color: var(--fg2) !important;
+    }
+
+    .mdc-floating-label {
+      color: var(--fg2) !important;
+    }
+  }
 }
