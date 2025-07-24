@@ -54,7 +54,7 @@ describe('IpaConfigComponent', () => {
     const values = await form.getValues();
     expect(values).toEqual(expect.objectContaining({
       'Target Server': 'ipa.example.com',
-      Hostname: 'test-host',
+      'TrueNAS Hostname': 'test-host',
       Domain: 'example.com',
       'Base DN': 'dc=example,dc=com',
       'Validate Certificates': true,
@@ -103,7 +103,7 @@ describe('IpaConfigComponent', () => {
 
       await form.fillForm({
         'Target Server': '',
-        Hostname: '',
+        'TrueNAS Hostname': '',
         Domain: '',
         'Base DN': '',
       });
@@ -119,7 +119,7 @@ describe('IpaConfigComponent', () => {
 
       await form.fillForm({
         'Target Server': 'ipa.test.com',
-        Hostname: 'test_host',
+        'TrueNAS Hostname': 'test_host',
         Domain: 'test.com',
         'Base DN': 'dc=test,dc=com',
         'Validate Certificates': false,
@@ -165,7 +165,7 @@ describe('IpaConfigComponent', () => {
 
       await form.fillForm({
         'Target Server': 'valid-server',
-        Hostname: 'valid-host',
+        'TrueNAS Hostname': 'valid-host',
         Domain: 'valid-domain',
         'Base DN': 'dc=valid,dc=com',
         'Use Default SMB Domain Configuration': true,
@@ -182,7 +182,7 @@ describe('IpaConfigComponent', () => {
 
       await form.fillForm({
         'Target Server': 'new-server',
-        Hostname: 'new-host',
+        'TrueNAS Hostname': 'new-host',
         Domain: 'new-domain',
         'Base DN': 'dc=new,dc=com',
         'Validate Certificates': false,
@@ -207,7 +207,7 @@ describe('IpaConfigComponent', () => {
 
       await form.fillForm({
         'Target Server': 'test-server',
-        Hostname: 'test-host',
+        'TrueNAS Hostname': 'test-host',
         Domain: 'test-domain',
         'Base DN': 'dc=test,dc=com',
         'Validate Certificates': true,
@@ -246,7 +246,7 @@ describe('IpaConfigComponent', () => {
 
       await form.fillForm({
         'Target Server': '',
-        Hostname: '',
+        'TrueNAS Hostname': '',
         Domain: '',
         'Base DN': '',
         'Use Default SMB Domain Configuration': true,
@@ -270,7 +270,7 @@ describe('IpaConfigComponent', () => {
 
       await form.fillForm({
         'Target Server': '',
-        Hostname: '',
+        'TrueNAS Hostname': '',
         Domain: '',
         'Base DN': '',
         'Validate Certificates': false,
@@ -291,7 +291,7 @@ describe('IpaConfigComponent', () => {
 
       await form.fillForm({
         'Target Server': 'test-server',
-        Hostname: 'test-host',
+        'TrueNAS Hostname': 'test-host',
         Domain: 'test-domain',
         'Base DN': 'dc=test,dc=com',
         'Use Default SMB Domain Configuration': false,
@@ -301,11 +301,11 @@ describe('IpaConfigComponent', () => {
       });
 
       expect(emittedConfig.smb_domain).toEqual({
-        name: '',
+        name: null,
         range_high: 200000000,
         range_low: 100000001,
-        domain_name: '',
-        domain_sid: '',
+        domain_name: null,
+        domain_sid: null,
         idmap_backend: IdmapBackend.Sss,
       });
     });

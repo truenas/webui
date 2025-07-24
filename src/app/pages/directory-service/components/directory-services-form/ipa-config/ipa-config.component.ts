@@ -115,10 +115,9 @@ export class IpaConfigComponent implements OnInit {
       this.validationService.disableAndClearControl(this.form, 'smb_domain_range_low');
     } else {
       // Add validators and enable controls for custom SMB domain
-      this.validationService.enableControl(this.form, 'smb_domain_domain_name', [Validators.required]);
-      this.validationService.enableControl(this.form, 'smb_domain_domain_sid', [Validators.required]);
+      this.validationService.enableControl(this.form, 'smb_domain_domain_name');
+      this.validationService.enableControl(this.form, 'smb_domain_domain_sid');
       this.validationService.enableControl(this.form, 'smb_domain_name', [
-        Validators.required,
         Validators.pattern(/^(?![0-9]*$)[a-zA-Z0-9.-_!@#$%^&()'{}~]{1,15}$/),
       ]);
       this.validationService.enableControl(this.form, 'smb_domain_range_high');
@@ -166,10 +165,9 @@ export class IpaConfigComponent implements OnInit {
           });
 
           // Add validators and enable controls
-          this.validationService.enableControl(this.form, 'smb_domain_domain_name', [Validators.required]);
-          this.validationService.enableControl(this.form, 'smb_domain_domain_sid', [Validators.required]);
+          this.validationService.enableControl(this.form, 'smb_domain_domain_name');
+          this.validationService.enableControl(this.form, 'smb_domain_domain_sid');
           this.validationService.enableControl(this.form, 'smb_domain_name', [
-            Validators.required,
             Validators.pattern(/^(?![0-9]*$)[a-zA-Z0-9.-_!@#$%^&()'{}~]{1,15}$/),
           ]);
           this.validationService.enableControl(this.form, 'smb_domain_range_high');
@@ -200,11 +198,11 @@ export class IpaConfigComponent implements OnInit {
     const smbDomain: IpaSmbDomain | null = useDefaultSmbDomain
       ? null
       : {
-          name: formValue.smb_domain_name,
+          name: formValue.smb_domain_name || null,
           range_high: formValue.smb_domain_range_high,
           range_low: formValue.smb_domain_range_low,
-          domain_name: formValue.smb_domain_domain_name,
-          domain_sid: formValue.smb_domain_domain_sid,
+          domain_name: formValue.smb_domain_domain_name || null,
+          domain_sid: formValue.smb_domain_domain_sid || null,
           idmap_backend: IdmapBackend.Sss,
         } as IpaSmbDomain;
 
