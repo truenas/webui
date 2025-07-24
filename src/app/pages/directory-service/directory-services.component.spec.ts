@@ -12,6 +12,7 @@ import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status
 import { IpaConfig } from 'app/interfaces/ipa-config.interface';
 import { KerberosConfig } from 'app/interfaces/kerberos-config.interface';
 import { LdapConfig } from 'app/interfaces/ldap-config.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -63,6 +64,9 @@ describe('DirectoryServicesComponent', () => {
       mockProvider(DialogService),
       mockProvider(SlideIn),
       mockProvider(MatDialog),
+      mockProvider(AuthService, {
+        hasRole: jest.fn(() => of(true)),
+      }),
     ],
   });
 
