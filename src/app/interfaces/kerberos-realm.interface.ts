@@ -6,6 +6,7 @@ export interface KerberosRealm {
   realm: string;
   kdc_string: string;
   admin_server_string: string;
+  primary_kdc: string;
   kpasswd_server_string: string;
 }
 
