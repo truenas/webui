@@ -262,10 +262,6 @@ export class DirectoryServicesComponent implements OnInit {
               value: ipaConfig.target_server,
             },
             {
-              label: this.translate.instant(helptextDashboard.ipa.hostname),
-              value: ipaConfig.hostname,
-            },
-            {
               label: this.translate.instant(helptextDashboard.ipa.domain),
               value: ipaConfig.domain,
             },
