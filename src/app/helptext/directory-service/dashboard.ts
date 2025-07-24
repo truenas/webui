@@ -25,7 +25,6 @@ export const helptextDashboard = {
     status: T('Status'),
     statusMessage: T('Status Message'),
     target_server: T('Target Server'),
-    hostname: T('Host Name'),
     domain: T('Domain'),
     basedn: T('Base DN'),
   },
