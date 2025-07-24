@@ -55,6 +55,7 @@ export class KerberosRealmsFormComponent implements OnInit {
   form = this.fb.group({
     realm: ['', Validators.required],
     kdc: [[] as string[]],
+    primary_kdc: [null as string, Validators.required],
     admin_server: [[] as string[]],
     kpasswd_server: [[] as string[]],
   });
@@ -64,6 +65,7 @@ export class KerberosRealmsFormComponent implements OnInit {
     kdc: `${helptextKerberosRealms.kdcTooltip} ${helptextKerberosRealms.multipleValues}`,
     admin_server: `${helptextKerberosRealms.adminServersTooltip} ${helptextKerberosRealms.multipleValues}`,
     kpasswd_server: `${helptextKerberosRealms.passwordServersTooltip} ${helptextKerberosRealms.multipleValues}`,
+    primary_kdc: helptextKerberosRealms.primaryKdcTooltip,
   };
 
   get title(): string {
