@@ -47,7 +47,7 @@ import { DirectoryServiceValidationService } from 'app/pages/directory-service/c
 })
 export class CredentialConfigComponent implements OnInit {
   protected form = this.fb.group({
-    credential_type: [null as DirectoryServiceCredentialType],
+    credential_type: [null as DirectoryServiceCredentialType, Validators.required],
     principal: [null as string],
     username: [null as string],
     password: [null as string],
