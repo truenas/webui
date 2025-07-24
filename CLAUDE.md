@@ -58,7 +58,6 @@ Key state slices: systemConfig, preferences, services, jobs, alerts, networkInte
 - **Line Length**: Maximum 120 characters
 - **Prefer**: Signals over @Output, standalone components, OnPush change detection
 - **Error Handling**: Throw Error objects only, use explicit error types.
-- **Comments**: DO NOT add any comments to the code unless explicitly requested by the user.
 
 ## Testing Guidelines
 - Cover main happy paths.
