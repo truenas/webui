@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { combineLatest, Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
+import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { Choices } from 'app/interfaces/choices.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { AllNetworkInterfacesUpdate } from 'app/interfaces/reporting.interface';
@@ -72,8 +73,12 @@ export class NetworkService {
   }
 
   getIsHaEnabled(): Observable<boolean> {
-    return combineLatest([this.api.call('failover.config'), this.api.call('failover.licensed')]).pipe(
-      map(([config, licensed]) => licensed && !config.disabled),
+    return combineLatest([
+      this.api.call('failover.licensed'),
+      this.api.call('failover.status'),
+      this.api.call('failover.config'),
+    ]).pipe(
+      map(([licensed, status, config]) => licensed && status !== FailoverStatus.Single && !config.disabled),
     );
   }
 }
