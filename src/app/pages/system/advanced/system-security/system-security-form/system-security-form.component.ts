@@ -230,14 +230,48 @@ export class SystemSecurityFormComponent implements OnInit {
         this.isStigEnabled.set(value);
 
         if (value) {
-          this.form.patchValue({
+          const currentValues = this.form.value;
+          const updates: Partial<typeof currentValues> = {
             enable_fips: true,
-            min_password_age: stigPasswordRequirements.minPasswordAge,
-            max_password_age: stigPasswordRequirements.maxPasswordAge,
-            password_complexity_ruleset: [...stigPasswordRequirements.passwordComplexity],
-            min_password_length: stigPasswordRequirements.minPasswordLength,
-            password_history_length: stigPasswordRequirements.passwordHistoryLength,
-          });
+          };
+
+          if (
+            !currentValues.min_password_age
+            || currentValues.min_password_age < stigPasswordRequirements.minPasswordAge
+          ) {
+            updates.min_password_age = stigPasswordRequirements.minPasswordAge;
+          }
+
+          if (
+            !currentValues.max_password_age
+            || currentValues.max_password_age > stigPasswordRequirements.maxPasswordAge
+          ) {
+            updates.max_password_age = stigPasswordRequirements.maxPasswordAge;
+          }
+
+          if (
+            !currentValues.min_password_length
+            || currentValues.min_password_length < stigPasswordRequirements.minPasswordLength
+          ) {
+            updates.min_password_length = stigPasswordRequirements.minPasswordLength;
+          }
+
+          if (
+            !currentValues.password_history_length
+            || currentValues.password_history_length < stigPasswordRequirements.passwordHistoryLength
+          ) {
+            updates.password_history_length = stigPasswordRequirements.passwordHistoryLength;
+          }
+
+          const currentComplexity = currentValues.password_complexity_ruleset || [];
+          const requiredComplexity = [...stigPasswordRequirements.passwordComplexity];
+          const hasAllRequired = requiredComplexity.every((req) => currentComplexity.includes(req));
+          if (!hasAllRequired) {
+            const mergedComplexity = [...new Set([...currentComplexity, ...requiredComplexity])];
+            updates.password_complexity_ruleset = mergedComplexity;
+          }
+
+          this.form.patchValue(updates);
         }
 
         Object.keys(this.form.controls).forEach((key) => {

@@ -121,7 +121,15 @@ describe('SystemSecurityFormComponent', () => {
       });
     });
 
-    it('enables FIPS and pre-populates STIG requirements when STIG is enabled', async () => {
+    it('enables FIPS and corrects invalid values when STIG is enabled', async () => {
+      await form.fillForm({
+        'Min Password Age': 0,
+        'Max Password Age': 90,
+        'Min Password Length': 10,
+        'Password History Length': 3,
+        'Password Complexity Ruleset': ['Upper', 'Lower'],
+      });
+
       await form.fillForm({
         'Enable General Purpose OS STIG compatibility mode': true,
       });
@@ -133,6 +141,54 @@ describe('SystemSecurityFormComponent', () => {
         'Max Password Age': stigPasswordRequirements.maxPasswordAge.toString(),
         'Min Password Length': stigPasswordRequirements.minPasswordLength.toString(),
         'Password History Length': stigPasswordRequirements.passwordHistoryLength.toString(),
+        'Password Complexity Ruleset': ['Upper', 'Lower', 'Number', 'Special'],
+      });
+    });
+
+    it('preserves valid values when STIG is enabled', async () => {
+      await form.fillForm({
+        'Min Password Age': 1,
+        'Max Password Age': 45,
+        'Min Password Length': 16,
+        'Password History Length': 6,
+        'Password Complexity Ruleset': ['Upper', 'Lower', 'Number', 'Special'],
+      });
+
+      await form.fillForm({
+        'Enable General Purpose OS STIG compatibility mode': true,
+      });
+
+      const values = await form.getValues();
+      expect(values).toMatchObject({
+        'Enable FIPS': true,
+        'Min Password Age': '1',
+        'Max Password Age': '45',
+        'Min Password Length': '16',
+        'Password History Length': '6',
+        'Password Complexity Ruleset': ['Upper', 'Lower', 'Number', 'Special'],
+      });
+    });
+
+    it('preserves more restrictive values when STIG is enabled', async () => {
+      await form.fillForm({
+        'Min Password Age': 2,
+        'Max Password Age': 30,
+        'Min Password Length': 20,
+        'Password History Length': 8,
+        'Password Complexity Ruleset': ['Upper', 'Lower', 'Number', 'Special'],
+      });
+
+      await form.fillForm({
+        'Enable General Purpose OS STIG compatibility mode': true,
+      });
+
+      const values = await form.getValues();
+      expect(values).toMatchObject({
+        'Enable FIPS': true,
+        'Min Password Age': '2',
+        'Max Password Age': '30',
+        'Min Password Length': '20',
+        'Password History Length': '8',
         'Password Complexity Ruleset': ['Upper', 'Lower', 'Number', 'Special'],
       });
     });
