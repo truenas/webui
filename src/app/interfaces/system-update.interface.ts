@@ -69,6 +69,7 @@ export interface NewVersion {
   version: string;
   manifest: UpdateManifest;
   release_notes_url?: string;
+  release_notes?: string;
 }
 
 export interface UpdateStatusCurrentVersion {

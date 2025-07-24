@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { MarkdownModule } from 'ngx-markdown';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
   filter, finalize, forkJoin, map, Observable, shareReplay, switchMap,
@@ -32,6 +33,9 @@ import {
   SaveConfigDialogMessages,
 } from 'app/pages/system/advanced/manage-configuration-menu/save-config-dialog/save-config-dialog.component';
 import {
+  DynamicMarkdownComponent,
+} from 'app/pages/system/update/components/dynamic-markdown/dynamic-markdown.component';
+import {
   UpdateProfileCard,
 } from 'app/pages/system/update/components/update-profile-card/update-profile-card.component';
 import { systemUpdateElements } from 'app/pages/system/update/update.elements';
@@ -39,6 +43,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -61,6 +66,8 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
     ReactiveFormsModule,
     PageHeaderComponent,
     UpdateProfileCard,
+    MarkdownModule,
+    DynamicMarkdownComponent,
   ],
 })
 export class UpdateComponent implements OnInit {
@@ -69,6 +76,7 @@ export class UpdateComponent implements OnInit {
   protected readonly manualUpdateUrl = 'https://www.truenas.com/docs/scale/scaletutorials/systemsettings/updatescale/#performing-a-manual-update';
 
   protected readonly isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
+  protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
 
   protected isLoading = signal(true);
   protected profileChoices = signal<UpdateProfileChoices | null>(null);
@@ -115,6 +123,11 @@ export class UpdateComponent implements OnInit {
 
     return this.newVersion()?.manifest?.changelog.replace(/\n/g, '\n');
   });
+
+  protected readonly releaseNotesContext = computed(() => ({
+    isHaLicensed: this.isHaLicensed(),
+    isEnterprise: this.isEnterprise(),
+  }));
 
   protected readonly standbySystemVersion = toSignal(this.systemInfo$.pipe(
     filter((info) => Boolean(info?.remote_info?.version)),
