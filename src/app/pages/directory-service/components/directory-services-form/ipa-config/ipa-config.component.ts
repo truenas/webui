@@ -62,6 +62,7 @@ export class IpaConfigComponent implements OnInit {
 
   protected readonly useDefaultSmbDomain = toSignal(
     this.form.controls.use_default_smb_domain.valueChanges,
+    { initialValue: this.form.controls.use_default_smb_domain.value },
   );
 
   constructor(
