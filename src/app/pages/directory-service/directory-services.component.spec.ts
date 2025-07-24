@@ -10,7 +10,6 @@ import { LdapCredentialPlain } from 'app/interfaces/directoryservice-credentials
 import { DirectoryServicesConfig } from 'app/interfaces/directoryservices-config.interface';
 import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
 import { IpaConfig } from 'app/interfaces/ipa-config.interface';
-import { KerberosConfig } from 'app/interfaces/kerberos-config.interface';
 import { LdapConfig } from 'app/interfaces/ldap-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -44,13 +43,6 @@ describe('DirectoryServicesComponent', () => {
           }
           if (method === 'directoryservices.config') {
             return of(mockDirectoryServicesConfig);
-          }
-          if (method === 'kerberos.config') {
-            return of({
-              id: 1,
-              appdefaults_aux: '',
-              libdefaults_aux: '',
-            } as KerberosConfig);
           }
           return of(null);
         }),
@@ -199,7 +191,6 @@ describe('DirectoryServicesComponent', () => {
       // Verify that refreshCards was called by checking if the API calls were made
       expect(apiCallSpy).toHaveBeenCalledWith('directoryservices.status');
       expect(apiCallSpy).toHaveBeenCalledWith('directoryservices.config');
-      expect(apiCallSpy).toHaveBeenCalledWith('kerberos.config');
 
       // Restore console.warn
       console.warn = originalWarn;
