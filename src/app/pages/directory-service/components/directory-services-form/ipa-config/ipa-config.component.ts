@@ -36,6 +36,10 @@ import { hasDeepNonNullValue } from 'app/pages/directory-service/components/dire
   standalone: true,
 })
 export class IpaConfigComponent implements OnInit {
+  private readonly SMB_RANGE_MIN = 1000;
+  private readonly SMB_RANGE_MAX = 2147000000;
+  private readonly SMB_RANGE_LOW_DEFAULT = 100000001;
+  private readonly SMB_RANGE_HIGH_DEFAULT = 200000000;
   readonly ipaConfig = input.required<IpaConfig | null>();
   readonly configurationChanged = output<IpaConfig>();
   readonly isValid = output<boolean>();
@@ -50,13 +54,13 @@ export class IpaConfigComponent implements OnInit {
     smb_domain_name: [null as string],
     smb_domain_domain_name: [null as string],
     smb_domain_domain_sid: [null as string],
-    smb_domain_range_low: [100000001, [
-      Validators.min(1000),
-      Validators.max(2147000000),
+    smb_domain_range_low: [this.SMB_RANGE_LOW_DEFAULT, [
+      Validators.min(this.SMB_RANGE_MIN),
+      Validators.max(this.SMB_RANGE_MAX),
     ]],
-    smb_domain_range_high: [200000000, [
-      Validators.min(1000),
-      Validators.max(2147000000),
+    smb_domain_range_high: [this.SMB_RANGE_HIGH_DEFAULT, [
+      Validators.min(this.SMB_RANGE_MIN),
+      Validators.max(this.SMB_RANGE_MAX),
     ]],
   });
 
@@ -72,7 +76,7 @@ export class IpaConfigComponent implements OnInit {
 
   ngOnInit(): void {
     this.fillFormWithPreviousConfig();
-    this.setupSmbDomainValidation();
+    this.updateSmbDomainValidation(this.form.controls.use_default_smb_domain.value);
     this.watchForFormChanges();
 
     // Emit current configuration data immediately if form has valid data
@@ -103,16 +107,20 @@ export class IpaConfigComponent implements OnInit {
     }
   }
 
-  private setupSmbDomainValidation(): void {
-    const useDefaultSmbDomain = this.form.controls.use_default_smb_domain.value;
+  private updateSmbDomainValidation(useDefaultSmbDomain: boolean): void {
+    const smbDomainControls = [
+      'smb_domain_domain_name',
+      'smb_domain_domain_sid',
+      'smb_domain_name',
+      'smb_domain_range_high',
+      'smb_domain_range_low',
+    ] as const;
 
     if (useDefaultSmbDomain) {
       // Remove validators and disable controls for default SMB domain
-      this.validationService.disableAndClearControl(this.form, 'smb_domain_domain_name');
-      this.validationService.disableAndClearControl(this.form, 'smb_domain_domain_sid');
-      this.validationService.disableAndClearControl(this.form, 'smb_domain_name');
-      this.validationService.disableAndClearControl(this.form, 'smb_domain_range_high');
-      this.validationService.disableAndClearControl(this.form, 'smb_domain_range_low');
+      smbDomainControls.forEach((controlName) => {
+        this.validationService.disableAndClearControl(this.form, controlName);
+      });
     } else {
       // Add validators and enable controls for custom SMB domain
       this.validationService.enableControl(this.form, 'smb_domain_domain_name');
@@ -124,10 +132,10 @@ export class IpaConfigComponent implements OnInit {
       this.validationService.enableControl(this.form, 'smb_domain_range_low');
     }
 
-    // Update validity after validator changes
-    this.form.controls.smb_domain_domain_name.updateValueAndValidity();
-    this.form.controls.smb_domain_domain_sid.updateValueAndValidity();
-    this.form.controls.smb_domain_name.updateValueAndValidity();
+    // Batch update validity for better performance
+    ['smb_domain_domain_name', 'smb_domain_domain_sid', 'smb_domain_name'].forEach((controlName) => {
+      this.form.controls[controlName as keyof typeof this.form.controls].updateValueAndValidity();
+    });
 
     // Emit form validity after all updates are complete
     this.isValid.emit(this.form.valid);
@@ -139,7 +147,7 @@ export class IpaConfigComponent implements OnInit {
     ).subscribe({
       next: (useDefaultSmbDomain) => {
         if (useDefaultSmbDomain) {
-          // Clear values and disable fields
+          // Clear values when using default SMB domain
           this.form.patchValue({
             smb_domain_domain_name: null,
             smb_domain_domain_sid: null,
@@ -147,40 +155,20 @@ export class IpaConfigComponent implements OnInit {
             smb_domain_range_high: null,
             smb_domain_range_low: null,
           });
-
-          // Remove validators and disable controls
-          this.validationService.disableAndClearControl(this.form, 'smb_domain_domain_name');
-          this.validationService.disableAndClearControl(this.form, 'smb_domain_domain_sid');
-          this.validationService.disableAndClearControl(this.form, 'smb_domain_name');
-          this.validationService.disableAndClearControl(this.form, 'smb_domain_range_high');
-          this.validationService.disableAndClearControl(this.form, 'smb_domain_range_low');
         } else {
+          // Restore values from config when not using default
           const ipaConfig = this.ipaConfig();
           this.form.patchValue({
             smb_domain_domain_name: ipaConfig?.smb_domain?.domain_name ?? null,
             smb_domain_domain_sid: ipaConfig?.smb_domain?.domain_sid ?? null,
             smb_domain_name: ipaConfig?.smb_domain?.name ?? null,
-            smb_domain_range_high: ipaConfig?.smb_domain?.range_high ?? 200000000,
-            smb_domain_range_low: ipaConfig?.smb_domain?.range_low ?? 100000001,
+            smb_domain_range_high: ipaConfig?.smb_domain?.range_high ?? this.SMB_RANGE_HIGH_DEFAULT,
+            smb_domain_range_low: ipaConfig?.smb_domain?.range_low ?? this.SMB_RANGE_LOW_DEFAULT,
           });
-
-          // Add validators and enable controls
-          this.validationService.enableControl(this.form, 'smb_domain_domain_name');
-          this.validationService.enableControl(this.form, 'smb_domain_domain_sid');
-          this.validationService.enableControl(this.form, 'smb_domain_name', [
-            Validators.pattern(/^(?![0-9]*$)[a-zA-Z0-9.-_!@#$%^&()'{}~]{1,15}$/),
-          ]);
-          this.validationService.enableControl(this.form, 'smb_domain_range_high');
-          this.validationService.enableControl(this.form, 'smb_domain_range_low');
         }
 
-        // Update validity after validator changes
-        this.form.controls.smb_domain_domain_name.updateValueAndValidity();
-        this.form.controls.smb_domain_domain_sid.updateValueAndValidity();
-        this.form.controls.smb_domain_name.updateValueAndValidity();
-
-        // Emit form validity after all updates are complete
-        this.isValid.emit(this.form.valid);
+        // Use the refactored method to update validation
+        this.updateSmbDomainValidation(useDefaultSmbDomain);
       },
     });
     this.form.valueChanges
