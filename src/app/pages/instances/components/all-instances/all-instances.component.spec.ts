@@ -84,6 +84,21 @@ describe('AllInstancesComponent', () => {
     expect(spectator.inject(VirtualizationInstancesStore).initialize).toHaveBeenCalled();
   });
 
+  it('shows warning dialog and updates localStorage if warning has not been shown before', () => {
+    mockLocalStorage.getItem.mockReturnValue(null);
+
+    spectator.component.ngOnInit();
+
+    const dialogService = spectator.inject(DialogService);
+
+    expect(dialogService.warn).toHaveBeenCalledTimes(1);
+    expect(dialogService.warn).toHaveBeenCalledWith(
+      'Warning',
+      'Containers are experimental and only recommended for advanced users. Make all configuration changes using the TrueNAS UI. Operations using the command line are not supported.',
+    );
+    expect(mockLocalStorage.setItem).toHaveBeenCalledWith('showNewVmInstancesWarning', 'true');
+  });
+
   it('does not show warning dialog if it has been shown before', () => {
     mockLocalStorage.getItem.mockReturnValue('true');
 
