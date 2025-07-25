@@ -67,18 +67,5 @@ export class AllInstancesComponent implements OnInit {
       distinctUntilChanged(),
       untilDestroyed(this),
     ).subscribe(() => this.instancesStore.initialize());
-
-    const showVmInstancesWarning = !this.window.localStorage.getItem('showNewVmInstancesWarning');
-
-    if (showVmInstancesWarning) {
-      this.dialogService.closeAllDialogs();
-
-      this.dialogService.warn(
-        'Warning',
-        'Containers powered by Incus are experimental and only recommended for advanced users. Make all configuration changes using the TrueNAS UI. Operations using the command line are not supported.',
-      ).pipe(untilDestroyed(this)).subscribe(() => {
-        this.window.localStorage.setItem('showNewVmInstancesWarning', 'true');
-      });
-    }
   }
 }

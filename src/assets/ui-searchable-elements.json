@@ -1906,10 +1906,7 @@
       "Containers",
       "List"
     ],
-    "synonyms": [
-      "Instances",
-      "Incus"
-    ],
+    "synonyms": [],
     "requiredRoles": [],
     "visibleTokens": [
       "VMS"
