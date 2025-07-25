@@ -431,7 +431,10 @@ export class AppSchemaService {
       altDefault = false;
     }
 
-    const defaultValue = isNew && schema.default !== undefined ? schema.default : altDefault;
+    // For hidden fields with default values, always use the default value from schema
+    // For new apps, use schema default if available
+    const shouldUseSchemaDefault = (schema.hidden || isNew) && schema.default !== undefined;
+    const defaultValue = shouldUseSchemaDefault ? schema.default : altDefault;
     const newFormControl = new CustomUntypedFormControl(
       defaultValue,
       this.buildSchemaControlValidator(defaultValue, schema),
