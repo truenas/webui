@@ -84,10 +84,10 @@ describe('InstallAppButtonComponent', () => {
       expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/apps', 'available', 'stable', 'SETI@home', 'install']);
     });
 
-    it('shows Install Another Container when app is installed', async () => {
+    it('shows Install Another Instance when app is installed', async () => {
       spectator.setInput('app', { ...application, installed: true });
 
-      const button = await loader.getHarness(MatButtonHarness.with({ text: 'Install Another Container' }));
+      const button = await loader.getHarness(MatButtonHarness.with({ text: 'Install Another Instance' }));
       expect(button).toBeTruthy();
 
       await button.click();
