@@ -72,6 +72,7 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
   readonly type = input<string>('text');
   readonly autocomplete = input('off');
   readonly autocompleteOptions = input<Option[]>();
+  readonly disableMatAutocomplete = input<boolean>(false);
   readonly maxLength = input(524288);
 
   /** If formatted value returned by parseAndFormatInput has non-numeric letters

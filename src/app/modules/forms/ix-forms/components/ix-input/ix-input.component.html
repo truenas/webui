@@ -70,7 +70,7 @@
     </button>
   }
 
-  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="optionSelected($event.option.value)">
+  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="optionSelected($event.option.value)" [matAutocompleteDisabled]="disableMatAutocomplete()">
     @if (filteredOptions?.length) {
       @for (option of filteredOptions; track trackByIdentity(option)) {
         <mat-option
