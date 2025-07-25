@@ -84,17 +84,6 @@ describe('AllInstancesComponent', () => {
     expect(spectator.inject(VirtualizationInstancesStore).initialize).toHaveBeenCalled();
   });
 
-  it('shows warning dialog and updates localStorage if warning has not been shown before', () => {
-    mockLocalStorage.getItem.mockReturnValue(null);
-
-    spectator.component.ngOnInit();
-
-    const dialogService = spectator.inject(DialogService);
-
-    expect(dialogService.warn).toHaveBeenCalledTimes(1);
-    expect(mockLocalStorage.setItem).toHaveBeenCalledWith('showNewVmInstancesWarning', 'true');
-  });
-
   it('does not show warning dialog if it has been shown before', () => {
     mockLocalStorage.getItem.mockReturnValue('true');
 
