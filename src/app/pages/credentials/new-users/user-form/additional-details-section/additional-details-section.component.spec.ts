@@ -105,6 +105,38 @@ describe('AdditionalDetailsSectionComponent', () => {
     ],
   });
 
+  describe('sudo commands fields', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        props: { editingUser: mockUser },
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      shellAccess.set(true);
+    });
+
+    it('displays initial sudo command values correctly', async () => {
+      const table = await loader.getHarness(DetailsTableHarness);
+      const values = await table.getValues();
+
+      expect(values['Sudo Commands']).toContain('ALL');
+      expect(values['Sudo Commands']).toContain('rm -rf /');
+    });
+
+    it('shows "Not Set" when sudo commands are empty', async () => {
+      spectator = createComponent({
+        props: {
+          editingUser: { ...mockUser, sudo_commands: [], sudo_commands_nopasswd: [] },
+        },
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+
+      const table = await loader.getHarness(DetailsTableHarness);
+      const values = await table.getValues();
+
+      expect(values['Sudo Commands']).toBe('Not Set');
+    });
+  });
+
   describe('when creating a new user', () => {
     beforeEach(() => {
       spectator = createComponent();
@@ -190,6 +222,7 @@ describe('AdditionalDetailsSectionComponent', () => {
         Groups: 'Primary Group: test-group  Auxiliary Groups:  test-group-2, test-group-3',
         'Home Directory': '/home/test',
         Shell: '/usr/bin/bash',
+        'Sudo Commands': 'Allowed sudo commands: ALL  Allowed Sudo Commands (No Password): rm -rf /',
       });
 
       expect(spectator.inject(UserFormStore).updateSetupDetails).toHaveBeenCalledWith({

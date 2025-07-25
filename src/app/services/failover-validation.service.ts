@@ -87,6 +87,11 @@ export class FailoverValidationService {
   protected checkFailoverStatus(): Observable<FailoverValidationResult> {
     return this.api.call('failover.status').pipe(
       switchMap((status) => {
+        // SINGLE status means no failover is configured, proceed as normal
+        if (status === FailoverStatus.Single) {
+          return of({ success: true });
+        }
+
         if (status !== FailoverStatus.Master) {
           return of({
             success: false,
