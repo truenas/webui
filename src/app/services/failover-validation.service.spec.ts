@@ -69,6 +69,18 @@ describe('FailoverValidationService', () => {
       });
     });
 
+    it('returns success when status is SINGLE', () => {
+      api.mockCall('failover.licensed', true);
+      api.mockCall('failover.status', FailoverStatus.Single);
+
+      spectator.service.validateFailover().subscribe((result) => {
+        expect(result).toEqual({ success: true });
+        expect(api.call).toHaveBeenCalledWith('failover.licensed');
+        expect(api.call).toHaveBeenCalledWith('failover.status');
+        expect(api.call).not.toHaveBeenCalledWith('failover.disabled.reasons');
+      });
+    });
+
     it('returns error when status is not MASTER', () => {
       api.mockCall('failover.licensed', true);
       api.mockCall('failover.status', FailoverStatus.Backup);
