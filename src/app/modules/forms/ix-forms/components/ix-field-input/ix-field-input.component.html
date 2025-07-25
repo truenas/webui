@@ -19,7 +19,6 @@
   }
   <input
     #ixInput
-    #trigger="matAutocompleteTrigger"
     matInput
     [class.prefix-padding]="prefixIcon()"
     [class.password-field]="isPasswordField()"
@@ -31,7 +30,6 @@
     [value]="formatted"
     [autocomplete]="autocomplete()"
     [maxLength]="maxLength()"
-    [matAutocomplete]="auto"
     [placeholder]="placeholder()"
     [ixTest]="controlDirective.name"
     [attr.aria-label]="label()"
@@ -69,20 +67,6 @@
       }
     </button>
   }
-
-  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="optionSelected($event.option.value)">
-    @if (filteredOptions?.length) {
-      @for (option of filteredOptions; track trackByIdentity(option)) {
-        <mat-option
-          class="option"
-          [value]="option"
-          [ixTest]="[controlDirective.name, option.value]"
-        >
-          {{ option.label | translate }}
-        </mat-option>
-      }
-    }
-  </mat-autocomplete>
 </div>
 
 @if (invalid) {

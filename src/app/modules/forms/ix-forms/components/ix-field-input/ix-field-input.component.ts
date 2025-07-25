@@ -4,7 +4,6 @@ import {
   Component,
   ElementRef,
   input,
-  OnChanges,
   OnInit, Signal, viewChild,
 } from '@angular/core';
 import {
@@ -12,17 +11,12 @@ import {
   NgControl,
   ReactiveFormsModule,
 } from '@angular/forms';
-import { MatAutocompleteTrigger, MatAutocomplete } from '@angular/material/autocomplete';
 import { MatIconButton } from '@angular/material/button';
-import { MatOption } from '@angular/material/core';
 import { MatError, MatHint } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatTooltip } from '@angular/material/tooltip';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { debounceTime, distinctUntilChanged } from 'rxjs';
-import { Option } from 'app/interfaces/option.interface';
-import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
@@ -36,20 +30,17 @@ type InputValue = string | number | null;
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-input',
-  templateUrl: './ix-input.component.html',
-  styleUrls: ['./ix-input.component.scss'],
+  selector: 'ix-field-input',
+  templateUrl: './ix-field-input.component.html',
+  styleUrls: ['./ix-field-input.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     IxLabelComponent,
     IxIconComponent,
     MatInput,
-    MatAutocompleteTrigger,
     MatIconButton,
     MatTooltip,
-    MatAutocomplete,
     ReactiveFormsModule,
-    MatOption,
     MatError,
     IxErrorsComponent,
     MatHint,
@@ -61,7 +52,7 @@ type InputValue = string | number | null;
     { ...registeredDirectiveConfig },
   ],
 })
-export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges {
+export class IxFieldInputComponent implements ControlValueAccessor, OnInit {
   readonly label = input<TranslatedString>();
   readonly placeholder = input<TranslatedString>('');
   readonly prefixIcon = input<MarkedIcon>();
@@ -71,7 +62,6 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
   readonly readonly = input<boolean>();
   readonly type = input<string>('text');
   readonly autocomplete = input('off');
-  readonly autocompleteOptions = input<Option[]>();
   readonly maxLength = input(524288);
 
   /** If formatted value returned by parseAndFormatInput has non-numeric letters
@@ -87,7 +77,6 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
   isDisabled = false;
   showPassword = false;
   invalid = false;
-  filteredOptions: Option[] | undefined;
 
   onChange: (value: InputValue) => void = (): void => {};
   onTouch: () => void = (): void => {};
@@ -100,16 +89,8 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
     this.controlDirective.valueAccessor = this;
   }
 
-  ngOnChanges(changes: IxSimpleChanges<this>): void {
-    if ('autocompleteOptions' in changes) {
-      this.filterOptions();
-    }
-  }
-
   ngOnInit(): void {
-    if (this.autocompleteOptions()) {
-      this.handleAutocompleteOptionsOnInit();
-    }
+    // No autocomplete initialization needed
   }
 
   get value(): InputValue {
@@ -144,7 +125,6 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
       this.value = parseFn(value);
     }
     this.onChange(this.value);
-    this.filterOptions();
   }
 
   invalidMessage(): string {
@@ -190,7 +170,6 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
     this.value = '';
     this.formatted = '';
     this.onChange(this.value);
-    this.filterOptions();
   }
 
   setDisabledState(isDisabled: boolean): void {
@@ -203,7 +182,6 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
     if (this.readonly()) {
       ixInput.select();
     }
-    this.filterOptions('');
   }
 
   blurred(): void {
@@ -222,68 +200,10 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
       }
     }
 
-    if (this.autocompleteOptions() && !this.findExistingOption(this.value)) {
-      this.writeValue('');
-      this.onChange('');
-      this.formatted = '';
-    }
-
     this.cdr.markForCheck();
   }
 
   onPasswordToggled(): void {
     this.showPassword = !this.showPassword;
-  }
-
-  optionSelected(option: Option): void {
-    if (this.inputElementRef()?.nativeElement) {
-      this.inputElementRef().nativeElement.value = option.label;
-    }
-
-    this.value = option.value;
-    this.onChange(option.value);
-    this.cdr.markForCheck();
-  }
-
-  filterOptions(customFilterValue?: string): void {
-    const filterValue = (customFilterValue ?? this.value) || '';
-    const autocompleteOptions = this.autocompleteOptions();
-    if (autocompleteOptions) {
-      this.filteredOptions = autocompleteOptions.filter((option) => {
-        return option.label.toString().toLowerCase().includes(filterValue.toString().toLowerCase());
-      }).slice(0, 50);
-    }
-  }
-
-  private findExistingOption(value: string | number | null): Option | undefined {
-    return this.autocompleteOptions()?.find((option) => (option.label === value) || (option.value === value));
-  }
-
-  private handleAutocompleteOptionsOnInit(): void {
-    // handle input value changes for this.autocomplete options
-    this.controlDirective.control?.valueChanges?.pipe(
-      debounceTime(100),
-      distinctUntilChanged(),
-      untilDestroyed(this),
-    ).subscribe((value: string) => {
-      const existingOption = this.findExistingOption(value);
-
-      if (this.autocompleteOptions() && existingOption?.value) {
-        this.value = existingOption.value;
-        this.onChange(existingOption.value);
-        this.cdr.markForCheck();
-      }
-    });
-
-    // handling initial value formatting from value to label
-    if (this.value !== undefined) {
-      this.formatted = this.findExistingOption(this.value)?.label ?? '';
-    }
-
-    this.filterOptions('');
-  }
-
-  trackByIdentity(option: Option): Option {
-    return option;
   }
 }

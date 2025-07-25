@@ -1,22 +1,20 @@
 <form [formGroup]="form" (keydown.enter)="hasTwoFactor ? loginWithOtp() : login()">
   @if (!hasTwoFactor) {
-    <ix-input
+    <ix-field-input
       formControlName="username"
       autocomplete="username"
       class="username-input"
       [prefixIcon]="iconMarker('person')"
       [label]="'Username' | translate"
-      [disableMatAutocomplete]="true"
-    ></ix-input>
+    ></ix-field-input>
 
-    <ix-input
+    <ix-field-input
       formControlName="password"
       type="password"
       autocomplete="current-password"
       [prefixIcon]="iconMarker('mdi-lock')"
       [label]="'Password' | translate"
-      [disableMatAutocomplete]="true"
-    ></ix-input>
+    ></ix-field-input>
 
     @if (showSecurityWarning) {
       <ix-insecure-connection></ix-insecure-connection>
@@ -44,14 +42,13 @@
       {{ '2FA has been configured for this account. Enter the OTP to continue.' | translate }}
     </p>
 
-    <ix-input
+    <ix-field-input
       formControlName="otp"
       autocomplete="one-time-code"
       [prefixIcon]="iconMarker('phonelink')"
       [label]="'Two-Factor Authentication Code' | translate"
       [required]="true"
-      [disableMatAutocomplete]="true"
-    ></ix-input>
+    ></ix-field-input>
 
     @if (showSecurityWarning) {
       <ix-insecure-connection></ix-insecure-connection>
