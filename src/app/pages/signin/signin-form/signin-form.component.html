@@ -6,6 +6,7 @@
       class="username-input"
       [prefixIcon]="iconMarker('person')"
       [label]="'Username' | translate"
+      [disableMatAutocomplete]="true"
     ></ix-input>
 
     <ix-input
@@ -14,6 +15,7 @@
       autocomplete="current-password"
       [prefixIcon]="iconMarker('mdi-lock')"
       [label]="'Password' | translate"
+      [disableMatAutocomplete]="true"
     ></ix-input>
 
     @if (showSecurityWarning) {
@@ -48,6 +50,7 @@
       [prefixIcon]="iconMarker('phonelink')"
       [label]="'Two-Factor Authentication Code' | translate"
       [required]="true"
+      [disableMatAutocomplete]="true"
     ></ix-input>
 
     @if (showSecurityWarning) {
