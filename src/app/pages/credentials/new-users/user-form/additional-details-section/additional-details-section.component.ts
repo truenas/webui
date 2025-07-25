@@ -46,6 +46,7 @@ import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-vali
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { defaultHomePath, UserFormStore } from 'app/pages/credentials/new-users/user-form/user.store';
+import { SudoCommandsValidatorService } from 'app/pages/credentials/new-users/user-form/validators/sudo-commands-validator.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { StorageService } from 'app/services/storage.service';
@@ -71,6 +72,9 @@ import { StorageService } from 'app/services/storage.service';
     IxSelectComponent,
     TestDirective,
     ExplorerCreateDatasetComponent,
+  ],
+  providers: [
+    SudoCommandsValidatorService,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -142,9 +146,9 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     uid: [null as number],
     shell: [null as string | null],
 
-    sudo_commands: [[] as string[]],
+    sudo_commands: [[] as string[], this.sudoCommandsValidator.validate],
     sudo_commands_all: [false],
-    sudo_commands_nopasswd: [[] as string[]],
+    sudo_commands_nopasswd: [[] as string[], this.sudoCommandsValidator.validate],
     sudo_commands_nopasswd_all: [false],
   });
 
@@ -159,6 +163,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
+    private sudoCommandsValidator: SudoCommandsValidatorService,
   ) {
     this.form.valueChanges
       .pipe(untilDestroyed(this))
