@@ -840,4 +840,276 @@ describe('AppSchemaService', () => {
       ]);
     });
   });
+
+  describe('hidden fields with default values in dict structures', () => {
+    it('preserves default values for hidden string fields when editing', () => {
+      const simpleSchema: ChartSchemaNode = {
+        variable: 'simple_dict',
+        label: 'Simple Dict',
+        schema: {
+          type: 'dict' as ChartSchemaType.Dict,
+          attrs: [
+            {
+              variable: 'hidden_uuid',
+              label: 'Hidden UUID',
+              schema: {
+                type: 'string' as ChartSchemaType.String,
+                default: 'test-uuid-value',
+                hidden: true,
+              },
+            },
+            {
+              variable: 'visible_field',
+              label: 'Visible Field',
+              schema: {
+                type: 'string' as ChartSchemaType.String,
+                default: 'default-visible',
+              },
+            },
+          ],
+        },
+      };
+
+      const formGroup = new UntypedFormGroup({});
+      service.getNewFormControlChangesSubscription({
+        isNew: false, // Testing edit mode
+        chartSchemaNode: simpleSchema,
+        formGroup,
+        config: null,
+        isParentImmutable: false,
+      });
+
+      const dict = formGroup.get('simple_dict') as UntypedFormGroup;
+      expect(dict).toBeDefined();
+      expect(dict.get('hidden_uuid').value).toBe('test-uuid-value');
+      expect(dict.get('hidden_uuid').disabled).toBe(true);
+      expect(dict.get('visible_field').value).toBe(''); // Not hidden, so empty for edit mode
+    });
+  });
+
+  describe('GPU UUID handling for hidden fields', () => {
+    const gpuSchemaNode: ChartSchemaNode = {
+      variable: 'nvidia_gpu_selection',
+      label: 'NVIDIA GPU Selection',
+      schema: {
+        type: 'dict' as ChartSchemaType.Dict,
+        attrs: [
+          {
+            variable: '0000:17:00.0',
+            label: 'GPU 0',
+            schema: {
+              type: 'dict' as ChartSchemaType.Dict,
+              attrs: [
+                {
+                  variable: 'uuid',
+                  label: 'UUID',
+                  schema: {
+                    type: 'string' as ChartSchemaType.String,
+                    default: 'GPU-12345678-1234-1234-1234-123456789012',
+                    hidden: true,
+                  },
+                },
+                {
+                  variable: 'use_gpu',
+                  label: 'Use GPU',
+                  schema: {
+                    type: 'boolean' as ChartSchemaType.Boolean,
+                    default: false,
+                  },
+                },
+              ],
+            },
+          },
+          {
+            variable: '0000:65:00.0',
+            label: 'GPU 1',
+            schema: {
+              type: 'dict' as ChartSchemaType.Dict,
+              attrs: [
+                {
+                  variable: 'uuid',
+                  label: 'UUID',
+                  schema: {
+                    type: 'string' as ChartSchemaType.String,
+                    default: 'GPU-87654321-4321-4321-4321-210987654321',
+                    hidden: true,
+                  },
+                },
+                {
+                  variable: 'use_gpu',
+                  label: 'Use GPU',
+                  schema: {
+                    type: 'boolean' as ChartSchemaType.Boolean,
+                    default: false,
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    };
+
+    it('creates form controls with UUID default values for new apps', () => {
+      const formGroup = new UntypedFormGroup({});
+      service.getNewFormControlChangesSubscription({
+        isNew: true,
+        chartSchemaNode: gpuSchemaNode,
+        formGroup,
+        config: null,
+        isParentImmutable: false,
+      });
+
+      const gpuSelection = formGroup.get('nvidia_gpu_selection') as UntypedFormGroup;
+      expect(gpuSelection).toBeTruthy();
+
+      // GPU keys contain special characters, need to access via controls object
+      const gpuControls = gpuSelection.controls;
+      const gpuKeys = Object.keys(gpuControls);
+      expect(gpuKeys).toContain('0000:17:00.0');
+      expect(gpuKeys).toContain('0000:65:00.0');
+
+      const gpu0 = gpuControls['0000:17:00.0'] as UntypedFormGroup;
+      const gpu1 = gpuControls['0000:65:00.0'] as UntypedFormGroup;
+      expect(gpu0).toBeTruthy();
+      expect(gpu1).toBeTruthy();
+
+      expect(gpu0.get('uuid').value).toBe('GPU-12345678-1234-1234-1234-123456789012');
+      expect(gpu0.get('uuid').disabled).toBe(true);
+      expect(gpu0.get('use_gpu').value).toBe(false);
+
+      expect(gpu1.get('uuid').value).toBe('GPU-87654321-4321-4321-4321-210987654321');
+      expect(gpu1.get('uuid').disabled).toBe(true);
+      expect(gpu1.get('use_gpu').value).toBe(false);
+    });
+
+    it('creates form controls with UUID default values when editing apps', () => {
+      const formGroup = new UntypedFormGroup({});
+      service.getNewFormControlChangesSubscription({
+        isNew: false,
+        chartSchemaNode: gpuSchemaNode,
+        formGroup,
+        config: null,
+        isParentImmutable: false,
+      });
+
+      const gpuSelection = formGroup.get('nvidia_gpu_selection') as UntypedFormGroup;
+      expect(gpuSelection).toBeTruthy();
+
+      // GPU keys contain special characters, need to access via controls object
+      const gpuControls = gpuSelection.controls;
+      const gpuKeys = Object.keys(gpuControls);
+      expect(gpuKeys).toContain('0000:17:00.0');
+      expect(gpuKeys).toContain('0000:65:00.0');
+
+      const gpu0 = gpuControls['0000:17:00.0'] as UntypedFormGroup;
+      const gpu1 = gpuControls['0000:65:00.0'] as UntypedFormGroup;
+      expect(gpu0).toBeTruthy();
+      expect(gpu1).toBeTruthy();
+
+      // The key test: UUID should have default value even when editing (isNew = false)
+      expect(gpu0.get('uuid').value).toBe('GPU-12345678-1234-1234-1234-123456789012');
+      expect(gpu0.get('uuid').disabled).toBe(true);
+      expect(gpu0.get('use_gpu').value).toBe(false);
+
+      expect(gpu1.get('uuid').value).toBe('GPU-87654321-4321-4321-4321-210987654321');
+      expect(gpu1.get('uuid').disabled).toBe(true);
+      expect(gpu1.get('use_gpu').value).toBe(false);
+    });
+
+    it('serializes form values including hidden UUID fields', () => {
+      const formGroup = new UntypedFormGroup({});
+      service.getNewFormControlChangesSubscription({
+        isNew: false,
+        chartSchemaNode: gpuSchemaNode,
+        formGroup,
+        config: null,
+        isParentImmutable: false,
+      });
+
+      // Enable one GPU
+      const gpuSelection = formGroup.get('nvidia_gpu_selection') as UntypedFormGroup;
+      expect(gpuSelection).toBeTruthy();
+
+      // GPU keys contain special characters, need to access via controls object
+      const gpu0 = gpuSelection.controls['0000:17:00.0'] as UntypedFormGroup;
+      expect(gpu0).toBeTruthy();
+      gpu0.get('use_gpu').setValue(true);
+
+      const serialized = service.serializeFormValue(
+        formGroup.getRawValue() as HierarchicalObjectMap<ChartFormValue>,
+        {
+          groups: [],
+          questions: [gpuSchemaNode],
+        },
+      );
+
+      expect(serialized).toEqual({
+        nvidia_gpu_selection: {
+          '0000:17:00.0': {
+            uuid: 'GPU-12345678-1234-1234-1234-123456789012',
+            use_gpu: true,
+          },
+          '0000:65:00.0': {
+            uuid: 'GPU-87654321-4321-4321-4321-210987654321',
+            use_gpu: false,
+          },
+        },
+      });
+    });
+
+    it('handles hidden fields with default values for other types', () => {
+      const testSchema: ChartSchemaNode = {
+        variable: 'test_dict',
+        label: 'Test Dict',
+        schema: {
+          type: 'dict' as ChartSchemaType.Dict,
+          attrs: [
+            {
+              variable: 'hidden_int',
+              label: 'Hidden Int',
+              schema: {
+                type: 'int' as ChartSchemaType.Int,
+                default: 42,
+                hidden: true,
+              },
+            },
+            {
+              variable: 'hidden_bool',
+              label: 'Hidden Bool',
+              schema: {
+                type: 'boolean' as ChartSchemaType.Boolean,
+                default: true,
+                hidden: true,
+              },
+            },
+            {
+              variable: 'visible_string',
+              label: 'Visible String',
+              schema: {
+                type: 'string' as ChartSchemaType.String,
+                default: 'visible',
+              },
+            },
+          ],
+        },
+      };
+
+      const formGroup = new UntypedFormGroup({});
+      service.getNewFormControlChangesSubscription({
+        isNew: false, // Testing edit mode
+        chartSchemaNode: testSchema,
+        formGroup,
+        config: null,
+        isParentImmutable: false,
+      });
+
+      const dict = formGroup.get('test_dict') as UntypedFormGroup;
+      expect(dict.get('hidden_int').value).toBe(42);
+      expect(dict.get('hidden_int').disabled).toBe(true);
+      expect(dict.get('hidden_bool').value).toBe(true);
+      expect(dict.get('hidden_bool').disabled).toBe(true);
+      expect(dict.get('visible_string').value).toBe(''); // Not hidden, so uses empty string for edit mode
+    });
+  });
 });
