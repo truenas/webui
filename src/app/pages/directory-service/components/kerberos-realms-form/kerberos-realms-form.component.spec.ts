@@ -24,6 +24,7 @@ describe('KerberosRealmsFormComponent', () => {
     kdc: ['center1', 'center2'],
     admin_server: ['10.1.12.1', '10.1.12.2'],
     kpasswd_server: ['10.2.30.1', '10.2.30.2'],
+    primary_kdc: 'primary_kdc',
   } as KerberosRealm;
 
   const slideInRef: SlideInRef<KerberosRealm | undefined, unknown> = {
@@ -63,6 +64,7 @@ describe('KerberosRealmsFormComponent', () => {
         KDC: ['kdc1', 'kdc2'],
         'Admin Servers': ['10.10.12.1', '10.10.12.2'],
         'Password Servers': ['10.10.30.1', '10.10.30.2'],
+        'Primary KDC': 'primary_kdc2',
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -73,6 +75,7 @@ describe('KerberosRealmsFormComponent', () => {
         kdc: ['kdc1', 'kdc2'],
         admin_server: ['10.10.12.1', '10.10.12.2'],
         kpasswd_server: ['10.10.30.1', '10.10.30.2'],
+        primary_kdc: 'primary_kdc2',
       }]);
     });
   });
@@ -97,6 +100,7 @@ describe('KerberosRealmsFormComponent', () => {
         KDC: ['center1', 'center2'],
         'Admin Servers': ['10.1.12.1', '10.1.12.2'],
         'Password Servers': ['10.2.30.1', '10.2.30.2'],
+        'Primary KDC': 'primary_kdc',
       });
     });
 
@@ -107,6 +111,7 @@ describe('KerberosRealmsFormComponent', () => {
         KDC: ['center3', 'center4'],
         'Admin Servers': ['10.10.12.1'],
         'Password Servers': ['10.120.30.1'],
+        'Primary KDC': 'primary_kdc3',
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -119,6 +124,7 @@ describe('KerberosRealmsFormComponent', () => {
           admin_server: ['10.10.12.1'],
           kdc: ['center3', 'center4'],
           kpasswd_server: ['10.120.30.1'],
+          primary_kdc: 'primary_kdc3',
         },
       ]);
     });
