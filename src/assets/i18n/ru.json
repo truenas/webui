@@ -2,6 +2,7 @@
   "": "",
   "Changing interfaces while HA is enabled is not allowed.": "",
   "Editing interfaces is not allowed while HA is enabled": "",
+  "Groups with privileges or members cannot be deleted.": "",
   "\n              It looks like your session has been inactive for more than {lifetime} seconds.<br>\n              For security reasons we will log you out at {time}.\n            ": "\n              Похоже, что ваш сеанс была неактивна более {lifetime} секунд.<br>\n              По соображениям безопасности мы выйдем из системы в любое время.\n",
   " as of {dateTime}": " в {dateTime}",
   " bytes.": " байт(ов).",

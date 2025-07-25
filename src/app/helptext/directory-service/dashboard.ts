@@ -25,14 +25,8 @@ export const helptextDashboard = {
     status: T('Status'),
     statusMessage: T('Status Message'),
     target_server: T('Target Server'),
-    hostname: T('Host Name'),
     domain: T('Domain'),
     basedn: T('Base DN'),
-  },
-  kerberosSettings: {
-    title: T('Kerberos Settings'),
-    appdefaults: T('Appdefaults Auxiliary Parameters'),
-    libdefaults: T('Libdefaults Auxiliary Parameters'),
   },
   advancedEdit: {
     title: T('Warning'),

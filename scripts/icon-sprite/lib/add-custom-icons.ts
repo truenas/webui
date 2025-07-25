@@ -1,14 +1,8 @@
 import fs from 'fs';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { resolve } from 'path';
 
 export function addCustomIcons(usedIcons: Set<string>): Set<string> {
-  // TODO: Can be simplified in node 20.11+
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-  const customIconsPath = resolve(__dirname, '../../../src/assets/icons/custom');
+  const customIconsPath = resolve(import.meta.dirname, '../../../src/assets/icons/custom');
 
   const customIcons = new Set<string>();
   const unusedCustomIcons = new Set<string>();

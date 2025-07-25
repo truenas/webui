@@ -19,6 +19,7 @@ import {
   DatasetEncryptionSummaryQueryParams,
 } from 'app/interfaces/dataset-encryption-summary.interface';
 import { DatasetLockParams, DatasetUnlockParams, DatasetUnlockResult } from 'app/interfaces/dataset-lock.interface';
+import { DirectoryServicesLeaveParams } from 'app/interfaces/directoryservices-leave.interface';
 import { DirectoryServicesUpdate, DirectoryServicesUpdateResponse } from 'app/interfaces/directoryservices-update.interface';
 import { DiskWipeParams } from 'app/interfaces/disk.interface';
 import { DockerConfig, DockerConfigUpdate } from 'app/interfaces/docker-config.interface';
@@ -108,6 +109,7 @@ export interface ApiJobDirectory {
 
   // Directory Services
   'directoryservices.cache_refresh': { params: void; response: void };
+  'directoryservices.leave': { params: [DirectoryServicesLeaveParams]; response: void };
   'directoryservices.update': { params: [DirectoryServicesUpdate]; response: DirectoryServicesUpdateResponse };
 
   // Disk

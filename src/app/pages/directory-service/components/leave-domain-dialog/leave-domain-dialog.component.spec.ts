@@ -4,8 +4,10 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { of } from 'rxjs';
+import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { DirectoryServiceCredentialType } from 'app/enums/directory-services.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -15,6 +17,7 @@ import { LeaveDomainDialog } from './leave-domain-dialog.component';
 describe('LeaveDomainDialogComponent', () => {
   let spectator: Spectator<LeaveDomainDialog>;
   let loader: HarnessLoader;
+
   const createComponent = createComponentFactory({
     component: LeaveDomainDialog,
     imports: [
@@ -22,9 +25,13 @@ describe('LeaveDomainDialogComponent', () => {
     ],
     providers: [
       mockApi([
-        mockCall('directoryservices.leave'),
+        mockJob('directoryservices.leave'),
       ]),
-      mockProvider(DialogService),
+      mockProvider(DialogService, {
+        jobDialog: jest.fn(() => ({
+          afterClosed: () => of(undefined),
+        })),
+      }),
       mockProvider(SnackbarService),
       mockProvider(MatDialogRef),
       mockAuth(),
@@ -46,10 +53,14 @@ describe('LeaveDomainDialogComponent', () => {
     const leaveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Leave Domain' }));
     await leaveButton.click();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('directoryservices.leave', [{
-      username: 'Administrator',
-      password: '12345678',
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('directoryservices.leave', [{
+      credential: {
+        credential_type: DirectoryServiceCredentialType.KerberosUser,
+        username: 'Administrator',
+        password: '12345678',
+      },
     }]);
+    expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
   });

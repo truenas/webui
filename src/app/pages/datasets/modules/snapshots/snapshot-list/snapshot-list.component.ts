@@ -305,7 +305,23 @@ export class SnapshotListComponent implements OnInit {
 
   protected onListFiltered(query: string): void {
     this.filterString = query;
-    this.dataProvider.setFilter({ list: this.snapshots, query, columnKeys: ['name'] });
+
+    const datasetParam = this.route.snapshot.paramMap.get('dataset');
+
+    if (datasetParam && query === datasetParam) {
+      this.dataProvider.setFilter({
+        list: this.snapshots,
+        query,
+        columnKeys: ['dataset'],
+        exact: true,
+      });
+
+      if (this.dataProvider.totalRows === 0) {
+        this.dataProvider.setFilter({ list: this.snapshots, query, columnKeys: ['name'] });
+      }
+    } else {
+      this.dataProvider.setFilter({ list: this.snapshots, query, columnKeys: ['name'] });
+    }
   }
 
   private setDefaultSort(): void {

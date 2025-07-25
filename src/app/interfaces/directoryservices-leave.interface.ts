@@ -1,11 +1,11 @@
-export interface CredentialKerberosUser {
-  credential_type: 'KERBEROS_USER';
+export interface CredentialWithUsernamePassword {
+  credential_type: string;
   username: string;
   password: string;
 }
 
 export interface DirectoryServicesLeaveParams {
-  credential: CredentialKerberosUser;
+  credential: CredentialWithUsernamePassword;
 }
 
 export interface DirectoryServicesLeaveResponse {

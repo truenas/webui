@@ -184,7 +184,6 @@
     "./src/app/helptext/directory-service/idmap.ts",
     "./src/app/helptext/directory-service/kerberos-keytabs-form-list.ts",
     "./src/app/helptext/directory-service/kerberos-realms-form-list.ts",
-    "./src/app/helptext/directory-service/kerberos-settings.ts",
     "./src/app/helptext/directory-service/ldap.ts",
     "./src/app/helptext/global-helptext.ts",
     "./src/app/helptext/network/configuration/configuration.ts",
