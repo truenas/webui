@@ -108,6 +108,18 @@
       </div>
     }
 
+    @if (newVersion()?.release_notes) {
+      <div class="release-notes-section">
+        <h3>{{ 'Release Notes' | translate }}</h3>
+        <div class="release-notes-content">
+          <ix-dynamic-markdown 
+            [content]="newVersion().release_notes"
+            [context]="releaseNotesContext()"
+          ></ix-dynamic-markdown>
+        </div>
+      </div>
+    }
+
     <div class="other-options">
       <h3>{{ 'Other Options' | translate }}</h3>
 

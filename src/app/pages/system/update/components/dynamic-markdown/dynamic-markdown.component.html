@@ -1,0 +1,15 @@
+@for (section of processedData().sections; track $index) {
+  @if (section.type === 'markdown') {
+    <markdown [data]="section.content || ''"></markdown>
+  } @else if (section.type === 'tabs' && section.tabs) {
+    <mat-tab-group>
+      @for (tab of section.tabs; track tab.label) {
+        <mat-tab [label]="tab.label">
+          <div class="tab-content">
+            <markdown [data]="tab.content"></markdown>
+          </div>
+        </mat-tab>
+      }
+    </mat-tab-group>
+  }
+}

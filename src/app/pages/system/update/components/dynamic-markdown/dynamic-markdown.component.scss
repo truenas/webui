@@ -1,0 +1,29 @@
+.tab-content {
+  padding: 16px 0;
+}
+
+::ng-deep {
+  mat-tab-group {
+    .mat-mdc-tab-labels {
+      background-color: var(--bg2);
+      border-bottom: 1px solid var(--lines);
+    }
+
+    .mat-mdc-tab {
+      color: var(--fg2);
+      opacity: 1;
+
+      &:hover {
+        color: var(--fg1);
+      }
+
+      &.mat-mdc-tab-label-active {
+        color: var(--primary);
+      }
+    }
+
+    .mat-mdc-tab-body-content {
+      padding: 0;
+    }
+  }
+}
