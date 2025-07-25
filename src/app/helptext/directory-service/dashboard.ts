@@ -28,11 +28,6 @@ export const helptextDashboard = {
     domain: T('Domain'),
     basedn: T('Base DN'),
   },
-  kerberosSettings: {
-    title: T('Kerberos Settings'),
-    appdefaults: T('Appdefaults Auxiliary Parameters'),
-    libdefaults: T('Libdefaults Auxiliary Parameters'),
-  },
   advancedEdit: {
     title: T('Warning'),
     message: T('Changing Advanced settings can be dangerous when done incorrectly. Please use caution before saving.'),

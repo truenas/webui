@@ -39,7 +39,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { DirectoryServicesFormComponent } from 'app/pages/directory-service/components/directory-services-form/directory-services-form.component';
 import { KerberosKeytabsListComponent } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-list/kerberos-keytabs-list.component';
 import { KerberosRealmsListComponent } from 'app/pages/directory-service/components/kerberos-realms/kerberos-realms-list.component';
-import { KerberosSettingsComponent } from 'app/pages/directory-service/components/kerberos-settings/kerberos-settings.component';
 import { LeaveDomainDialog } from 'app/pages/directory-service/components/leave-domain-dialog/leave-domain-dialog.component';
 import { directoryServicesElements } from 'app/pages/directory-service/directory-services.elements';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -90,7 +89,6 @@ export class DirectoryServicesComponent implements OnInit {
   protected activeDirectoryDataCard: DataCard;
   protected ldapDataCard: DataCard;
   protected ipaDataCard: DataCard;
-  protected kerberosSettingsDataCard: DataCard;
 
   private readonly kerberosKeytabsListComponent = viewChild(KerberosKeytabsListComponent);
   private readonly kerberosRealmsListComponent = viewChild(KerberosRealmsListComponent);
@@ -140,14 +138,13 @@ export class DirectoryServicesComponent implements OnInit {
     forkJoin([
       this.api.call('directoryservices.status'),
       this.api.call('directoryservices.config'),
-      this.api.call('kerberos.config'),
     ])
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
-      .subscribe(([servicesState, directoryServicesConfig, kerberosSettings]) => {
+      .subscribe(([servicesState, directoryServicesConfig]) => {
         this.directoryServicesConfig.set(directoryServicesConfig);
         this.directoryServicesStatus.set(servicesState);
         this.isActiveDirectoryEnabled = servicesState.type === DirectoryServiceType.ActiveDirectory
@@ -279,20 +276,6 @@ export class DirectoryServicesComponent implements OnInit {
             onLeavePressed: () => this.openLeaveDialog(),
           };
         }
-        this.kerberosSettingsDataCard = {
-          title: this.translate.instant(helptextDashboard.kerberosSettings.title),
-          items: [
-            {
-              label: this.translate.instant(helptextDashboard.kerberosSettings.appdefaults),
-              value: kerberosSettings?.appdefaults_aux || null,
-            },
-            {
-              label: this.translate.instant(helptextDashboard.kerberosSettings.libdefaults),
-              value: kerberosSettings?.libdefaults_aux || null,
-            },
-          ],
-          onSettingsPressed: () => this.openKerberosSettingsForm(),
-        };
 
         this.refreshTables();
         this.cdr.markForCheck();
@@ -347,13 +330,6 @@ export class DirectoryServicesComponent implements OnInit {
       data: this.directoryServicesConfig(),
     }).pipe(
       filter((response) => !!response.response),
-      untilDestroyed(this),
-    ).subscribe(() => this.refreshCards());
-  }
-
-  private openKerberosSettingsForm(): void {
-    this.slideIn.open(KerberosSettingsComponent).pipe(
-      filter(Boolean),
       untilDestroyed(this),
     ).subscribe(() => this.refreshCards());
   }
