@@ -49,6 +49,7 @@ export const ruleOverrides = {
   "sonarjs/no-redundant-assignments": ["off"],
   "sonarjs/pseudo-random": ["off"],
   "sonarjs/todo-tag": ["off"],
+  "sonarjs/unused-import": ["off"],
   "sonarjs/xml-parser-xxe": ["off"],
 
   "@smarttools/rxjs/no-ignored-takewhile-value": ["off"],
