@@ -1906,10 +1906,7 @@
       "Containers",
       "List"
     ],
-    "synonyms": [
-      "Instances",
-      "Incus"
-    ],
+    "synonyms": [],
     "requiredRoles": [],
     "visibleTokens": [
       "VMS"
@@ -1927,9 +1924,7 @@
       "Containers",
       "General Info"
     ],
-    "synonyms": [
-      "Instances"
-    ],
+    "synonyms": [],
     "requiredRoles": [],
     "visibleTokens": [
       "VMS"
@@ -1947,9 +1942,7 @@
       "Containers",
       "Devices"
     ],
-    "synonyms": [
-      "Instances"
-    ],
+    "synonyms": [],
     "requiredRoles": [],
     "visibleTokens": [
       "VMS"
@@ -1967,9 +1960,7 @@
       "Containers",
       "Disks"
     ],
-    "synonyms": [
-      "Instances"
-    ],
+    "synonyms": [],
     "requiredRoles": [],
     "visibleTokens": [
       "VMS"
@@ -1987,9 +1978,7 @@
       "Containers",
       "NIC"
     ],
-    "synonyms": [
-      "Instances"
-    ],
+    "synonyms": [],
     "requiredRoles": [],
     "visibleTokens": [
       "VMS"
@@ -2007,9 +1996,7 @@
       "Containers",
       "Proxies"
     ],
-    "synonyms": [
-      "Instances"
-    ],
+    "synonyms": [],
     "requiredRoles": [],
     "visibleTokens": [
       "VMS"
@@ -2027,9 +2014,7 @@
       "Containers",
       "Idmap"
     ],
-    "synonyms": [
-      "Instances"
-    ],
+    "synonyms": [],
     "requiredRoles": [],
     "visibleTokens": [
       "VMS"
@@ -2047,9 +2032,7 @@
       "Containers",
       "Tools"
     ],
-    "synonyms": [
-      "Instances"
-    ],
+    "synonyms": [],
     "requiredRoles": [],
     "visibleTokens": [
       "VMS"

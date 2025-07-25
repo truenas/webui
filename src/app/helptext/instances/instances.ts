@@ -77,7 +77,7 @@ export const instancesHelptext = {
   importZvol: {
     cloneTooltip: T('Clone and promote a temporary snapshot of the zvol into a custom storage volume.'),
     moveTooltip: T('Renames the ZFS dataset to a path in the `ix-virt` dataset in which the zvol is located.'),
-    description: T('Importing a zvol as Instances volume allows its lifecycle to be managed, including backups, restores, and snapshots. This allows portability between systems using standard tools.'),
+    description: T('Importing a zvol as Containers volume allows its lifecycle to be managed, including backups, restores, and snapshots. This allows portability between systems using standard tools.'),
   },
 
   osImage: {

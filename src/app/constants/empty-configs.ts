@@ -118,12 +118,12 @@ export const installedAppsEmptyConfig = {
  <br> Click below and browse available apps to get started.`),
 } as EmptyConfig;
 
-export const instancesEmptyConfig = {
+export const containersEmptyConfig = {
   type: EmptyType.NoPageData,
   title: T('No instances'),
   icon: iconMarker('mdi-laptop'),
   large: true,
-  message: T('Instances you create will automatically appear here.'),
+  message: T('Containers you create will automatically appear here.'),
 } as EmptyConfig;
 
 export const noSearchResultsConfig = {
