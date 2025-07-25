@@ -107,16 +107,11 @@ describe('InstanceRowComponent', () => {
       expect(cells[3]).toHaveText('No');
     });
 
-    it('shows instance type', () => {
-      const cells = spectator.queryAll('.cell');
-      expect(cells[4]).toHaveText('Container');
-    });
-
     it('shows metrics', () => {
       const cells = spectator.queryAll('.cell');
-      expect(cells[5]).toHaveText('20%');
-      expect(cells[6]).toHaveText('512 MiB');
-      expect(cells[7]).toHaveText('10%');
+      expect(cells[4]).toHaveText('20%');
+      expect(cells[5]).toHaveText('512 MiB');
+      expect(cells[6]).toHaveText('10%');
     });
 
     it('shows Stop and Restart button when instance is Running', async () => {
@@ -163,7 +158,7 @@ describe('InstanceRowComponent', () => {
         'virt.instance.stop',
         ['my-instance', { force: true, timeout: -1 }],
       );
-      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Instance stopped');
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Container stopped');
     });
 
     it('shows restart options dialog and restarts instance when Restart icon is pressed', async () => {
@@ -178,7 +173,7 @@ describe('InstanceRowComponent', () => {
         'virt.instance.restart',
         ['my-instance', { force: true, timeout: -1 }],
       );
-      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Instance restarted');
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Container restarted');
     });
 
     it('starts an instance when Start icon is pressed', async () => {
@@ -192,7 +187,7 @@ describe('InstanceRowComponent', () => {
 
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('virt.instance.start', ['my-instance']);
-      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Instance started');
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Container started');
     });
   });
 });

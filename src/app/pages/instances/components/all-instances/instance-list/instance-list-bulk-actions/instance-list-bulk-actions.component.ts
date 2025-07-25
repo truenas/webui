@@ -49,7 +49,7 @@ export class InstanceListBulkActionsComponent {
 
   protected readonly requiredRoles = [Role.VirtInstanceWrite];
 
-  readonly bulkActionStartedMessage = this.translate.instant('Requested action performed for selected Instances');
+  readonly bulkActionStartedMessage = this.translate.instant('Requested action performed for selected Containers');
 
   protected readonly isBulkStartDisabled = computed(() => {
     return this.checkedInstances().every(

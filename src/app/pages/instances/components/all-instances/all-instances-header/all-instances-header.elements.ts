@@ -4,7 +4,7 @@ import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-sea
 
 export const allInstancesHeaderElements = {
   hierarchy: [T('Containers')],
-  anchorRouterLink: ['/instances'],
+  anchorRouterLink: ['/containers'],
   elements: {
     globalSettings: {
       hierarchy: [T('Global Settings')],

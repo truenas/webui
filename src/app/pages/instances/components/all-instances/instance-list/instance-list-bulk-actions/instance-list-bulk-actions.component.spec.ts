@@ -60,7 +60,7 @@ describe('InstanceListBulkActionsComponent', () => {
     await menu.clickItem({ text: 'Start All Selected' });
 
     expect(startSpy).toHaveBeenCalled();
-    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Requested action performed for selected Instances');
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Requested action performed for selected Containers');
   });
 
   it('opens the Stop Options dialog when Stop All Selected is clicked', async () => {

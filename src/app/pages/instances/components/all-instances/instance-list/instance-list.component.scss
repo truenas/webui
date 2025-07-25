@@ -103,10 +103,10 @@
   .instances-header-row,
   ix-instance-row {
     display: grid;
-    grid-template-columns: 5% minmax(13%, auto) 10% 11% 10% 10% 10% 10% 10%;
+    grid-template-columns: 5% minmax(13%, auto) 15% 11% 10% 10% 10% 10%;
 
     @media (max-width: $breakpoint-xs) {
-      grid-template-columns: 45px minmax(15%, auto) 10% 10% 10% minmax(100px, 120px);
+      grid-template-columns: 45px minmax(15%, auto) 10% 10% minmax(100px, 120px);
     }
   }
 

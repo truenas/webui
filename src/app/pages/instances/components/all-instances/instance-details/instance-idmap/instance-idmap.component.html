@@ -7,7 +7,7 @@
 
   <mat-card-content>
     @if (instance().status !== virtualizationStatus.Running) {
-      {{ 'Instance is not running' | translate }}
+      {{ 'Container is not running' | translate }}
     } @else {
       <ix-card-expand-collapse [maxHeight]="250">
         <h4 class="card-subtitle">{{ 'UID' | translate }}</h4>
