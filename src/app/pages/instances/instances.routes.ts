@@ -42,12 +42,12 @@ export const instancesRoutes: Routes = [{
         {
           path: 'shell',
           component: InstanceShellComponent,
-          data: { title: T('Instance Shell') },
+          data: { title: T('Container Shell') },
         },
         {
           path: 'console',
           component: InstanceConsoleComponent,
-          data: { title: T('Instance Console') },
+          data: { title: T('Container Console') },
         },
       ],
     },

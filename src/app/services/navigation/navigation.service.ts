@@ -73,7 +73,7 @@ export class NavigationService {
       type: MenuItemType.Link,
       tooltip: T('Containers'),
       icon: iconMarker('mdi-package-variant-closed'),
-      state: 'instances',
+      state: 'containers',
       isVisible$: this.license.shouldShowContainers$,
     },
     {

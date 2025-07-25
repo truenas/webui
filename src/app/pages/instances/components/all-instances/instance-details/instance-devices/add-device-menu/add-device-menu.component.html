@@ -43,7 +43,7 @@
       <button
         mat-menu-item
         [ixTest]="['add-tpm']"
-        [matTooltip]="isInstanceStopped() ? '' : ('Instance must be stopped to add TPM.' | translate)"
+        [matTooltip]="isInstanceStopped() ? '' : ('Container must be stopped to add TPM.' | translate)"
         [disabled]="!isInstanceStopped()"
         (click)="addTpm()"
       >
@@ -57,7 +57,7 @@
       <button
         mat-menu-item
         [ixTest]="['add-pci-passthrough']"
-        [matTooltip]="isInstanceStopped() ? '' : ('Instance must be stopped to add devices.' | translate)"
+        [matTooltip]="isInstanceStopped() ? '' : ('Container must be stopped to add devices.' | translate)"
         [disabled]="!isInstanceStopped()"
         (click)="addPciPassthrough()"
       >

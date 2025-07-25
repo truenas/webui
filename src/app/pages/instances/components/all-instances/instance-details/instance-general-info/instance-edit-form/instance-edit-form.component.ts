@@ -111,7 +111,7 @@ export class InstanceEditFormComponent {
 
     this.editingInstance = this.slideInRef.getData();
 
-    this.title = this.translate.instant('Edit Instance: {name}', { name: this.editingInstance.name });
+    this.title = this.translate.instant('Edit Container: {name}', { name: this.editingInstance.name });
     this.form.patchValue({
       cpu: this.editingInstance.cpu,
       autostart: this.editingInstance.autostart,
@@ -135,13 +135,13 @@ export class InstanceEditFormComponent {
     const job$ = this.api.job('virt.instance.update', [this.editingInstance.id, payload]);
 
     this.dialogService.jobDialog(job$, {
-      title: this.translate.instant('Updating Instance'),
+      title: this.translate.instant('Updating Container'),
     })
       .afterClosed()
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (response) => {
-          this.snackbar.success(this.translate.instant('Instance updated'));
+          this.snackbar.success(this.translate.instant('Container updated'));
           this.slideInRef.close({ response: response.result });
         },
         error: (error: unknown) => {

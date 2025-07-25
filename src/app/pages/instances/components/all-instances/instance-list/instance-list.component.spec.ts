@@ -59,7 +59,7 @@ describe('InstanceListComponent', () => {
     const router = spectator.inject(Router);
     spectator.click(spectator.query('ix-instance-row')!);
     expect(spectator.inject(LayoutService).navigatePreservingScroll).toHaveBeenCalledWith(router, [
-      '/instances', 'view', '1',
+      '/containers', 'view', '1',
     ]);
   });
 });

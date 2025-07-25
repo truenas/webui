@@ -372,8 +372,8 @@ export class InstanceWizardComponent implements OnInit {
     this.createInstance().pipe(untilDestroyed(this)).subscribe({
       next: (instance) => {
         this.form.markAsPristine();
-        this.snackbar.success(this.translate.instant('Instance created'));
-        this.router.navigate(['/instances', 'view', instance?.id]);
+        this.snackbar.success(this.translate.instant('Container created'));
+        this.router.navigate(['/containers', 'view', instance?.id]);
       },
       error: (error: unknown) => {
         this.formErrorHandler.handleValidationErrors(error, this.form);
@@ -400,7 +400,7 @@ export class InstanceWizardComponent implements OnInit {
     const job$ = this.api.job('virt.instance.create', [payload]);
 
     return this.dialogService
-      .jobDialog(job$, { title: this.translate.instant('Creating Instance') })
+      .jobDialog(job$, { title: this.translate.instant('Creating Container') })
       .afterClosed().pipe(map((job) => job.result));
   }
 

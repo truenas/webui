@@ -2,7 +2,7 @@
 
 <div class="container">
   <form class="form" [formGroup]="form" (submit)="onSubmit()">
-    <ix-fieldset [title]="'Instance Configuration' | translate">
+    <ix-fieldset [title]="'Container Configuration' | translate">
       <ix-checkbox
         formControlName="autostart"
         [label]="'Autostart' | translate"
@@ -43,7 +43,7 @@
 
     @if (isVm) {
       <ix-fieldset [title]="'VNC' | translate">
-        <div [matTooltip]="isStopped ? '' : ('Instance must be stopped to update VNC.' | translate)">
+        <div [matTooltip]="isStopped ? '' : ('Container must be stopped to update VNC.' | translate)">
           <ix-checkbox
             formControlName="enable_vnc"
             [label]="'Enable VNC' | translate"

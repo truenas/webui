@@ -79,8 +79,8 @@ describe('InstanceProxiesComponent', () => {
     const proxies = spectator.queryAll('.proxy');
 
     expect(proxies).toHaveLength(2);
-    expect(proxies[0]).toHaveText('4000 TCP (Host) → 3000 UDP (Instance)');
-    expect(proxies[1]).toHaveText('5000 UDP (Host) → 5000 UDP (Instance)');
+    expect(proxies[0]).toHaveText('4000 TCP (Host) → 3000 UDP (Container)');
+    expect(proxies[1]).toHaveText('5000 UDP (Host) → 5000 UDP (Container)');
   });
 
   it('opens a form to add a new proxy when the add button is clicked and reloads the list', async () => {

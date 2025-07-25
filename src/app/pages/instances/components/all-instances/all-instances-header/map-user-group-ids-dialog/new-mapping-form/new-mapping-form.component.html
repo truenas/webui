@@ -19,7 +19,7 @@
     <ix-checkbox
       formControlName="mapDirectly"
       class="default-checkbox"
-      [label]="isUserType() ? ('Map to the same UID in the instance' | translate) : ('Map to the same GID in the instance' | translate)"
+      [label]="isUserType() ? ('Map to the same UID in the container' | translate) : ('Map to the same GID in the container' | translate)"
       [tooltip]="instancesHelptext.mapDirectlyTooltip | translate"
     ></ix-checkbox>
 
@@ -27,7 +27,7 @@
       <ix-input
         formControlName="instanceUidOrGid"
         type="number"
-        [label]="isUserType() ? ('Instance UID' | translate) : ('Instance GID' | translate)"
+        [label]="isUserType() ? ('Container UID' | translate) : ('Container GID' | translate)"
         [required]="true"
       ></ix-input>
     }

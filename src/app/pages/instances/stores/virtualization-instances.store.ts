@@ -68,9 +68,9 @@ export class VirtualizationInstancesStore extends ComponentStore<VirtualizationI
               if (updatedSelectedInstance) {
                 this.patchState({ selectedInstance: updatedSelectedInstance });
               } else if (instances.length) {
-                this.router.navigate(['/instances', 'view', instances[0].id]);
+                this.router.navigate(['/containers', 'view', instances[0].id]);
               } else {
-                this.router.navigate(['/instances']);
+                this.router.navigate(['/containers']);
               }
             }
           }),
@@ -157,7 +157,7 @@ export class VirtualizationInstancesStore extends ComponentStore<VirtualizationI
         startWith(null),
         filter((event): event is NavigationEnd | null => !event || event instanceof NavigationEnd),
         map((event) => (event ? event.urlAfterRedirects : this.router.url)),
-        map((url) => url.includes('/instances/view')),
+        map((url) => url.includes('/containers/view')),
         distinctUntilChanged(),
         switchMap((shouldSubscribe) => {
           if (!shouldSubscribe) {

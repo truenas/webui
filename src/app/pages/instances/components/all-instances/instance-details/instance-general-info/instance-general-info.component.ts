@@ -93,7 +93,7 @@ export class InstanceGeneralInfoComponent {
       this.errorHandler.withErrorHandler(),
       untilDestroyed(this),
     ).subscribe(() => {
-      this.router.navigate(['/instances'], { state: { hideMobileDetails: true } });
+      this.router.navigate(['/containers'], { state: { hideMobileDetails: true } });
     });
   }
 }

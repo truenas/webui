@@ -120,7 +120,7 @@ export const installedAppsEmptyConfig = {
 
 export const containersEmptyConfig = {
   type: EmptyType.NoPageData,
-  title: T('No instances'),
+  title: T('No containers'),
   icon: iconMarker('mdi-laptop'),
   large: true,
   message: T('Containers you create will automatically appear here.'),

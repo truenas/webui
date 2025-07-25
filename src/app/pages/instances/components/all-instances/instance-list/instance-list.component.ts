@@ -121,7 +121,7 @@ export class InstanceListComponent {
   }
 
   navigateToDetails(instance: VirtualizationInstance): void {
-    this.layoutService.navigatePreservingScroll(this.router, ['/instances', 'view', instance.id]);
+    this.layoutService.navigatePreservingScroll(this.router, ['/containers', 'view', instance.id]);
 
     if (this.isMobileView()) {
       this.toggleShowMobileDetails.emit(true);

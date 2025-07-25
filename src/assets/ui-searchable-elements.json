@@ -1871,7 +1871,7 @@
       "VMS"
     ],
     "anchorRouterLink": [
-      "/instances"
+      "/containers"
     ],
     "routerLink": null,
     "anchor": "vm-global-settings",
@@ -1892,10 +1892,10 @@
       "VMS"
     ],
     "anchorRouterLink": [
-      "/instances"
+      "/containers"
     ],
     "routerLink": [
-      "/instances/new"
+      "/containers/new"
     ],
     "anchor": "add-instance",
     "triggerAnchor": null,
@@ -1912,7 +1912,7 @@
       "VMS"
     ],
     "anchorRouterLink": [
-      "/instances/view/def"
+      "/containers/view/def"
     ],
     "routerLink": null,
     "anchor": "containers-list",
@@ -1930,7 +1930,7 @@
       "VMS"
     ],
     "anchorRouterLink": [
-      "/instances/view/def"
+      "/containers/view/def"
     ],
     "routerLink": null,
     "anchor": "general-info",
@@ -1948,7 +1948,7 @@
       "VMS"
     ],
     "anchorRouterLink": [
-      "/instances/view/def"
+      "/containers/view/def"
     ],
     "routerLink": null,
     "anchor": "devices",
@@ -1966,7 +1966,7 @@
       "VMS"
     ],
     "anchorRouterLink": [
-      "/instances/view/def"
+      "/containers/view/def"
     ],
     "routerLink": null,
     "anchor": "disks",
@@ -1984,7 +1984,7 @@
       "VMS"
     ],
     "anchorRouterLink": [
-      "/instances/view/def"
+      "/containers/view/def"
     ],
     "routerLink": null,
     "anchor": "nic",
@@ -2002,7 +2002,7 @@
       "VMS"
     ],
     "anchorRouterLink": [
-      "/instances/view/def"
+      "/containers/view/def"
     ],
     "routerLink": null,
     "anchor": "proxies",
@@ -2020,7 +2020,7 @@
       "VMS"
     ],
     "anchorRouterLink": [
-      "/instances/view/def"
+      "/containers/view/def"
     ],
     "routerLink": null,
     "anchor": "idmap",
@@ -2038,7 +2038,7 @@
       "VMS"
     ],
     "anchorRouterLink": [
-      "/instances/view/def"
+      "/containers/view/def"
     ],
     "routerLink": null,
     "anchor": "tools",
