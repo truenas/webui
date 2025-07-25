@@ -89,6 +89,10 @@ export class EditableService implements OnDestroy {
 
     const target = event.target as HTMLElement;
     const clickedWithin = this.getAll().filter((editable) => editable.isElementWithin(target));
-    this.tryToCloseAllExcept(clickedWithin);
+
+    // Defer closing to allow inputs to handle blur events
+    setTimeout(() => {
+      this.tryToCloseAllExcept(clickedWithin);
+    });
   }
 }
