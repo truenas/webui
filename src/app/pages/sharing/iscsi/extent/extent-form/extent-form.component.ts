@@ -94,6 +94,7 @@ export class ExtentFormComponent implements OnInit {
     path: [mntPath],
     filesize: new FormControl(null as number | null),
     serial: [''],
+    product_id: [''],
     blocksize: [512],
     pblocksize: [false],
     avail_threshold: new FormControl(null as number | null, [Validators.min(1), Validators.max(99)]),
