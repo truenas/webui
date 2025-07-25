@@ -5,6 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
+import { stigPasswordRequirements } from 'app/constants/stig-password-requirements.constants';
 import { MockAuthService } from 'app/core/testing/classes/mock-auth.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -80,7 +81,7 @@ describe('SystemSecurityFormComponent', () => {
     it('saves full system security config when Save is clicked', async () => {
       await form.fillForm({
         'Enable FIPS': true,
-        'Enable General Purpose OS STIG compatibility mode': true,
+        'Enable General Purpose OS STIG compatibility mode': false,
         'Min Password Age': 15,
         'Max Password Age': 120,
         'Min Password Length': 10,
@@ -93,7 +94,7 @@ describe('SystemSecurityFormComponent', () => {
 
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('system.security.update', [{
         enable_fips: true,
-        enable_gpos_stig: true,
+        enable_gpos_stig: false,
         min_password_age: 15,
         max_password_age: 120,
         password_complexity_ruleset: { $set: ['UPPER', 'LOWER'] },
@@ -120,13 +121,75 @@ describe('SystemSecurityFormComponent', () => {
       });
     });
 
-    it('enables FIPS when STIG is enabled first', async () => {
+    it('enables FIPS and corrects invalid values when STIG is enabled', async () => {
+      await form.fillForm({
+        'Min Password Age': 0,
+        'Max Password Age': 90,
+        'Min Password Length': 10,
+        'Password History Length': 3,
+        'Password Complexity Ruleset': ['Upper', 'Lower'],
+      });
+
       await form.fillForm({
         'Enable General Purpose OS STIG compatibility mode': true,
       });
 
-      expect(await form.getValues()).toMatchObject({
+      const values = await form.getValues();
+      expect(values).toMatchObject({
         'Enable FIPS': true,
+        'Min Password Age': stigPasswordRequirements.minPasswordAge.toString(),
+        'Max Password Age': stigPasswordRequirements.maxPasswordAge.toString(),
+        'Min Password Length': stigPasswordRequirements.minPasswordLength.toString(),
+        'Password History Length': stigPasswordRequirements.passwordHistoryLength.toString(),
+        'Password Complexity Ruleset': ['Upper', 'Lower', 'Number', 'Special'],
+      });
+    });
+
+    it('preserves valid values when STIG is enabled', async () => {
+      await form.fillForm({
+        'Min Password Age': 1,
+        'Max Password Age': 45,
+        'Min Password Length': 16,
+        'Password History Length': 6,
+        'Password Complexity Ruleset': ['Upper', 'Lower', 'Number', 'Special'],
+      });
+
+      await form.fillForm({
+        'Enable General Purpose OS STIG compatibility mode': true,
+      });
+
+      const values = await form.getValues();
+      expect(values).toMatchObject({
+        'Enable FIPS': true,
+        'Min Password Age': '1',
+        'Max Password Age': '45',
+        'Min Password Length': '16',
+        'Password History Length': '6',
+        'Password Complexity Ruleset': ['Upper', 'Lower', 'Number', 'Special'],
+      });
+    });
+
+    it('preserves more restrictive values when STIG is enabled', async () => {
+      await form.fillForm({
+        'Min Password Age': 2,
+        'Max Password Age': 30,
+        'Min Password Length': 20,
+        'Password History Length': 8,
+        'Password Complexity Ruleset': ['Upper', 'Lower', 'Number', 'Special'],
+      });
+
+      await form.fillForm({
+        'Enable General Purpose OS STIG compatibility mode': true,
+      });
+
+      const values = await form.getValues();
+      expect(values).toMatchObject({
+        'Enable FIPS': true,
+        'Min Password Age': '2',
+        'Max Password Age': '30',
+        'Min Password Length': '20',
+        'Password History Length': '8',
+        'Password Complexity Ruleset': ['Upper', 'Lower', 'Number', 'Special'],
       });
     });
 
@@ -154,6 +217,70 @@ describe('SystemSecurityFormComponent', () => {
       await saveButton.click();
 
       expect(spectator.inject(MockAuthService).clearAuthToken).toHaveBeenCalled();
+    });
+
+    it('validates STIG requirements when STIG mode is enabled', async () => {
+      // Enable STIG mode to activate validation
+      await form.fillForm({
+        'Enable General Purpose OS STIG compatibility mode': true,
+      });
+
+      // Try to set values below STIG requirements
+      await form.fillForm({
+        'Min Password Age': 0, // Below STIG minimum of 1
+        'Max Password Age': 90, // Above STIG maximum of 60
+        'Min Password Length': 10, // Below STIG minimum of 15
+        'Password History Length': 3, // Below STIG minimum of 5
+        'Password Complexity Ruleset': ['Upper'], // Missing required complexity rules
+      });
+
+      // Form should be invalid due to STIG validation
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(true);
+    });
+
+    it('allows editing password settings when STIG is disabled', async () => {
+      // Form starts with STIG disabled
+      expect(await form.getValues()).toMatchObject({
+        'Enable General Purpose OS STIG compatibility mode': false,
+      });
+
+      // Set values that would be invalid under STIG
+      await form.fillForm({
+        'Min Password Age': 1, // This is valid even under basic validation
+        'Max Password Age': 365,
+        'Min Password Length': 8,
+        'Password History Length': 1,
+        'Password Complexity Ruleset': ['Upper'],
+      });
+
+      // Form should be valid since STIG validation is not active
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(false);
+    });
+  });
+
+  describe('STIG validation', () => {
+    let stigSpectator: Spectator<SystemSecurityFormComponent>;
+    let stigLoader: HarnessLoader;
+    let stigForm: IxFormHarness;
+
+    beforeEach(async () => {
+      stigSpectator = createComponent();
+      stigLoader = TestbedHarnessEnvironment.loader(stigSpectator.fixture);
+      stigForm = await stigLoader.getHarness(IxFormHarness);
+    });
+
+    it('displays STIG info message when STIG mode is enabled', async () => {
+      await stigForm.fillForm({
+        'Enable General Purpose OS STIG compatibility mode': true,
+      });
+
+      stigSpectator.detectChanges();
+
+      const infoMessage = stigSpectator.query('.stig-info');
+      expect(infoMessage).toBeTruthy();
+      expect(infoMessage?.textContent).toContain('STIG mode is enabled');
     });
   });
 });

@@ -20,22 +20,35 @@
         [tooltip]="'Enable this mode to enhance system security to meet US federal government security requirements. Note that enabling STIG mode will restrict some functionality.' | translate"
       ></ix-slide-toggle>
 
-      <mat-hint>{{ 'Global Two-Factor Authentication must be enabled to activate this feature.' | translate }}</mat-hint>
+      @if (form.controls.enable_gpos_stig.value) {
+        <mat-hint>{{ 'Global Two-Factor Authentication must be enabled to activate this feature.' | translate }}</mat-hint>
+      }
       <mat-hint>{{ 'Restart is required after changing these settings.' | translate }}</mat-hint>
+      @if (isStigEnabled()) {
+        <mat-hint class="stig-info">{{ 'STIG mode is enabled. Password policy fields have minimum required values that cannot be reduced.' | translate }}</mat-hint>
+      }
 
       <ix-input
         formControlName="min_password_age"
         type="number"
         [label]="'Min Password Age' | translate"
         [tooltip]="'Minimum number of days a password must be used before it can be changed.' | translate"
+        [attr.aria-describedby]="isStigEnabled() && form.controls.min_password_age.hasError('stigMinPasswordAge') ? 'min-password-age-error' : null"
       ></ix-input>
+      @if (isStigEnabled() && form.controls.min_password_age.hasError('stigMinPasswordAge')) {
+        <mat-hint id="min-password-age-error" class="stig-error" role="alert" [attr.aria-live]="'assertive'">{{ 'STIG requires minimum password age of' | translate }} {{ stigRequirements.minPasswordAge }} {{ 'days' | translate }}</mat-hint>
+      }
 
       <ix-input
         formControlName="max_password_age"
         type="number"
         [label]="'Max Password Age' | translate"
         [tooltip]="'Maximum number of days a password can be used before it must be changed.' | translate"
+        [attr.aria-describedby]="isStigEnabled() && form.controls.max_password_age.hasError('stigMaxPasswordAge') ? 'max-password-age-error' : null"
       ></ix-input>
+      @if (isStigEnabled() && form.controls.max_password_age.hasError('stigMaxPasswordAge')) {
+        <mat-hint id="max-password-age-error" class="stig-error" role="alert" [attr.aria-live]="'assertive'">{{ 'STIG requires maximum password age of' | translate }} {{ stigRequirements.maxPasswordAge }} {{ 'days' | translate }}</mat-hint>
+      }
 
       <ix-select
         formControlName="password_complexity_ruleset"
@@ -43,21 +56,33 @@
         [multiple]="true"
         [label]="'Password Complexity Ruleset' | translate"
         [tooltip]="'Password complexity ruleset. Choose between Upper, Lower, Number and Special complexity levels.' | translate"
+        [attr.aria-describedby]="isStigEnabled() && form.controls.password_complexity_ruleset.hasError('stigPasswordComplexity') ? 'password-complexity-error' : null"
       ></ix-select>
+      @if (isStigEnabled() && form.controls.password_complexity_ruleset.hasError('stigPasswordComplexity')) {
+        <mat-hint id="password-complexity-error" class="stig-error" role="alert" [attr.aria-live]="'assertive'">{{ 'STIG requires Upper, Lower, Number, and Special complexity rules' | translate }}</mat-hint>
+      }
 
       <ix-input
         formControlName="min_password_length"
         type="number"
         [label]="'Min Password Length' | translate"
         [tooltip]="'Minimum number of characters in a password. Must be at least 8 characters.' | translate"
+        [attr.aria-describedby]="isStigEnabled() && form.controls.min_password_length.hasError('stigMinPasswordLength') ? 'min-password-length-error' : null"
       ></ix-input>
+      @if (isStigEnabled() && form.controls.min_password_length.hasError('stigMinPasswordLength')) {
+        <mat-hint id="min-password-length-error" class="stig-error" role="alert" [attr.aria-live]="'assertive'">{{ 'STIG requires minimum password length of' | translate }} {{ stigRequirements.minPasswordLength }} {{ 'characters' | translate }}</mat-hint>
+      }
 
       <ix-input
         formControlName="password_history_length"
         type="number"
         [label]="'Password History Length' | translate"
         [tooltip]="'Number of previous passwords to remember. Must be between 1 and 10.' | translate"
+        [attr.aria-describedby]="isStigEnabled() && form.controls.password_history_length.hasError('stigPasswordHistoryLength') ? 'password-history-error' : null"
       ></ix-input>
+      @if (isStigEnabled() && form.controls.password_history_length.hasError('stigPasswordHistoryLength')) {
+        <mat-hint id="password-history-error" class="stig-error" role="alert" [attr.aria-live]="'assertive'">{{ 'STIG requires password history length of at least' | translate }} {{ stigRequirements.passwordHistoryLength }} {{ 'passwords' | translate }}</mat-hint>
+      }
 
       <div class="form-actions">
         <button
