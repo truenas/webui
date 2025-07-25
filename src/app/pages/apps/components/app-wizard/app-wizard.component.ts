@@ -259,6 +259,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
 
   onSubmit(): void {
     const data = this.appSchemaService.serializeFormValue(this.form.getRawValue(), this.chartSchema) as ChartFormValues;
+
     const deleteField$ = new Subject<string>();
     deleteField$.pipe(untilDestroyed(this)).subscribe({
       next: (fieldToBeDeleted) => {
