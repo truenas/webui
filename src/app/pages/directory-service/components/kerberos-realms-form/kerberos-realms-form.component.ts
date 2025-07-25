@@ -55,7 +55,7 @@ export class KerberosRealmsFormComponent implements OnInit {
   form = this.fb.group({
     realm: ['', Validators.required],
     kdc: [[] as string[]],
-    primary_kdc: [null as string, Validators.required],
+    primary_kdc: [null as string],
     admin_server: [[] as string[]],
     kpasswd_server: [[] as string[]],
   });
