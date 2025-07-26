@@ -18,6 +18,8 @@ import {
   tap,
   timer,
   shareReplay,
+  catchError,
+  throwError,
 } from 'rxjs';
 import { webSocket as rxjsWebSocket } from 'rxjs/webSocket';
 import { makeRequestMessage } from 'app/helpers/api.helper';
@@ -89,7 +91,7 @@ export class WebSocketHandlerService {
             this.debugService.logIncomingMessage(message, isMocked);
           }
         }),
-        shareReplay({ bufferSize: 0, refCount: true }),
+        shareReplay({ bufferSize: 1, refCount: true }),
       );
     }
     return this._responses$;
@@ -139,40 +141,92 @@ export class WebSocketHandlerService {
     this.activeCalls++;
     this.pendingCalls.set(call.id, call);
 
-    // Check for mock response
-    if (environment.debugPanel?.enabled) {
-      const mockConfig = this.mockResponseService.checkMock(call);
-      if (mockConfig) {
-        // Log the outgoing message as mocked
-        this.debugService.logOutgoingMessage(call, true);
-        // Generate the mock response
-        this.mockResponseService.generateMockResponse(call, mockConfig);
-        // Don't send the real request
-        return this.responses$.pipe(
-          filter((message) => 'id' in message && message.id === call.id),
-          take(1),
-          tap(() => {
+    try {
+      // Check for mock response
+      if (environment.debugPanel?.enabled) {
+        let mockConfig;
+        try {
+          mockConfig = this.mockResponseService.checkMock(call);
+        } catch (error) {
+          console.error('Error checking mock config:', error);
+          mockConfig = null;
+        }
+
+        if (mockConfig) {
+          try {
+            // Log the outgoing message as mocked
+            this.debugService.logOutgoingMessage(call, true);
+            // Generate the mock response
+            this.mockResponseService.generateMockResponse(call, mockConfig);
+          } catch (error) {
+            console.error('Error generating mock response:', error);
+            // Cleanup and rethrow
             this.activeCalls--;
             this.pendingCalls.delete(call.id);
             this.triggerNextCall$.next();
-          }),
-        );
+            return throwError(() => new Error(`Mock response generation failed: ${error instanceof Error ? error.message : 'Unknown error'}`));
+          }
+          // Don't send the real request
+          return this.responses$.pipe(
+            filter((message) => 'id' in message && message.id === call.id),
+            take(1),
+            tap(() => {
+              this.activeCalls--;
+              this.pendingCalls.delete(call.id);
+              this.triggerNextCall$.next();
+            }),
+            catchError((error) => {
+              console.error('Error processing mock response:', error);
+              this.activeCalls--;
+              this.pendingCalls.delete(call.id);
+              this.triggerNextCall$.next();
+              return throwError(() => error);
+            }),
+          );
+        }
+        // Log normal outgoing message
+        try {
+          this.debugService.logOutgoingMessage(call, false);
+        } catch (error) {
+          console.error('Error logging outgoing message:', error);
+        }
       }
-      // Log normal outgoing message
-      this.debugService.logOutgoingMessage(call, false);
-    }
 
-    this.wsConnection.send(call);
-
-    return this.responses$.pipe(
-      filter((message) => 'id' in message && message.id === call.id),
-      take(1),
-      tap(() => {
+      // Send the real request
+      try {
+        this.wsConnection.send(call);
+      } catch (error) {
+        console.error('Error sending WebSocket message:', error);
         this.activeCalls--;
         this.pendingCalls.delete(call.id);
         this.triggerNextCall$.next();
-      }),
-    );
+        return throwError(() => new Error(`WebSocket send failed: ${error instanceof Error ? error.message : 'Unknown error'}`));
+      }
+
+      return this.responses$.pipe(
+        filter((message) => 'id' in message && message.id === call.id),
+        take(1),
+        tap(() => {
+          this.activeCalls--;
+          this.pendingCalls.delete(call.id);
+          this.triggerNextCall$.next();
+        }),
+        catchError((error) => {
+          console.error('Error processing WebSocket response:', error);
+          this.activeCalls--;
+          this.pendingCalls.delete(call.id);
+          this.triggerNextCall$.next();
+          return throwError(() => error);
+        }),
+      );
+    } catch (error) {
+      // Catch any unexpected errors
+      console.error('Unexpected error in processCall:', error);
+      this.activeCalls--;
+      this.pendingCalls.delete(call.id);
+      this.triggerNextCall$.next();
+      return throwError(() => new Error(`Unexpected error: ${error instanceof Error ? error.message : 'Unknown error'}`));
+    }
   }
 
   private raiseConcurrentCallsError(): void {

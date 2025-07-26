@@ -4,6 +4,7 @@ import { Store } from '@ngrx/store';
 import {
   tap, switchMap, withLatestFrom,
 } from 'rxjs/operators';
+import { LocalStorageError } from 'app/modules/websocket-debug-panel/interfaces/error.types';
 import { MockConfig } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
 import * as WebSocketDebugActions from './websocket-debug.actions';
 import { selectMockConfigs, selectIsPanelOpen } from './websocket-debug.selectors';
@@ -19,9 +20,29 @@ export class WebSocketDebugEffects {
       return Promise.resolve().then(() => {
         try {
           const stored = localStorage.getItem(mockConfigsStorageKey);
-          const configs: MockConfig[] = stored ? JSON.parse(stored) as MockConfig[] : [];
-          return WebSocketDebugActions.mockConfigsLoaded({ configs });
-        } catch (error) {
+          if (!stored) {
+            return WebSocketDebugActions.mockConfigsLoaded({ configs: [] });
+          }
+          try {
+            const configs: MockConfig[] = JSON.parse(stored) as MockConfig[];
+            return WebSocketDebugActions.mockConfigsLoaded({ configs });
+          } catch (parseError) {
+            const error = new LocalStorageError(
+              'Failed to parse mock configs from localStorage',
+              'parse',
+              mockConfigsStorageKey,
+              parseError,
+            );
+            console.error('Failed to load mock configs:', error);
+            return WebSocketDebugActions.mockConfigsLoaded({ configs: [] });
+          }
+        } catch (readError) {
+          const error = new LocalStorageError(
+            'Failed to read mock configs from localStorage',
+            'read',
+            mockConfigsStorageKey,
+            readError,
+          );
           console.error('Failed to load mock configs:', error);
           return WebSocketDebugActions.mockConfigsLoaded({ configs: [] });
         }
@@ -42,8 +63,15 @@ export class WebSocketDebugEffects {
       // Async localStorage write
       Promise.resolve().then(() => {
         try {
-          localStorage.setItem(mockConfigsStorageKey, JSON.stringify(configs));
-        } catch (error) {
+          const serialized = JSON.stringify(configs);
+          localStorage.setItem(mockConfigsStorageKey, serialized);
+        } catch (writeError) {
+          const error = new LocalStorageError(
+            'Failed to save mock configs to localStorage',
+            'write',
+            mockConfigsStorageKey,
+            writeError,
+          );
           console.error('Failed to save mock configs:', error);
         }
       });
@@ -58,7 +86,13 @@ export class WebSocketDebugEffects {
       Promise.resolve().then(() => {
         try {
           localStorage.setItem('websocket-debug-panel-open', JSON.stringify(isPanelOpen));
-        } catch (error) {
+        } catch (writeError) {
+          const error = new LocalStorageError(
+            'Failed to persist panel state to localStorage',
+            'write',
+            'websocket-debug-panel-open',
+            writeError,
+          );
           console.error('Failed to persist panel state:', error);
         }
       });

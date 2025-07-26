@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { environment } from 'environments/environment';
 import {
@@ -9,6 +9,7 @@ import { CollectionChangeType } from 'app/enums/api.enum';
 import {
   CollectionUpdateMessage, IncomingMessage, RequestMessage, SuccessfulResponse,
 } from 'app/interfaces/api-message.interface';
+import { WebSocketDebugError } from 'app/modules/websocket-debug-panel/interfaces/error.types';
 import {
   MockConfig, MockEvent,
 } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
@@ -17,12 +18,13 @@ import { selectEnabledMockConfigs } from 'app/modules/websocket-debug-panel/stor
 @Injectable({
   providedIn: 'root',
 })
-export class MockResponseService {
+export class MockResponseService implements OnDestroy {
   private readonly mockResponses$ = new Subject<IncomingMessage>();
   private jobIdCounter = 10000;
   private readonly mockedCallIds = new Set<string>();
   private readonly activeEvents = new Map<string, number[]>();
   private readonly eventSubscriptions = new Map<string, Subscription>();
+  private readonly cleanupTimers = new Map<string, number>();
 
   get responses$(): Observable<IncomingMessage> {
     return this.mockResponses$.asObservable();
@@ -32,15 +34,33 @@ export class MockResponseService {
     private store$: Store,
   ) {}
 
+  ngOnDestroy(): void {
+    // Clean up all subscriptions
+    this.eventSubscriptions.forEach((subscription) => {
+      subscription.unsubscribe();
+    });
+    this.eventSubscriptions.clear();
+
+    // Clean up all timers
+    this.cleanupTimers.forEach((timeoutId) => {
+      clearTimeout(timeoutId);
+    });
+    this.cleanupTimers.clear();
+
+    // Complete the subject
+    this.mockResponses$.complete();
+  }
+
   checkMock(message: RequestMessage): MockConfig | null {
     if (!environment.debugPanel?.enabled) {
       return null;
     }
 
     let enabledMocks: MockConfig[] = [];
-    this.store$.select(selectEnabledMockConfigs)
+    const subscription = this.store$.select(selectEnabledMockConfigs)
       .pipe(first())
       .subscribe((configs) => { enabledMocks = configs; });
+    subscription.unsubscribe();
 
     for (const config of enabledMocks) {
       if (this.matchesConfig(message, config)) {
@@ -62,11 +82,29 @@ export class MockResponseService {
 
     if (config.messagePattern) {
       try {
+        // Validate the regex pattern first
         const regex = new RegExp(config.messagePattern);
-        const messageStr = JSON.stringify(message);
+        // Safely stringify the message
+        let messageStr: string;
+        try {
+          messageStr = JSON.stringify(message);
+        } catch (stringifyError) {
+          const error = new WebSocketDebugError(
+            `Failed to stringify message for pattern matching: ${stringifyError instanceof Error ? stringifyError.message : 'Unknown error'}`,
+            'MESSAGE_STRINGIFY_ERROR',
+            stringifyError,
+          );
+          console.error(error.message, { config: config.id, method: message.method });
+          return false;
+        }
         return regex.test(messageStr);
-      } catch (error) {
-        console.error('Invalid regex pattern:', config.messagePattern, error);
+      } catch (regexError) {
+        const error = new WebSocketDebugError(
+          `Invalid regex pattern in mock config: ${config.messagePattern}`,
+          'INVALID_REGEX_PATTERN',
+          regexError,
+        );
+        console.error(error.message, { configId: config.id, pattern: config.messagePattern });
         return false;
       }
     }
@@ -87,10 +125,10 @@ export class MockResponseService {
     // Apply delay if specified
     const responseDelay = config.response.delay || 0;
     if (responseDelay > 0) {
-      const subscription = timer(responseDelay).pipe(take(1)).subscribe(() => {
+      const responseSubscription = timer(responseDelay).pipe(take(1)).subscribe(() => {
         this.mockResponses$.next(mockResponse);
       });
-      this.eventSubscriptions.set(`${message.id}-response`, subscription);
+      this.eventSubscriptions.set(`${message.id}-response`, responseSubscription);
     } else {
       this.mockResponses$.next(mockResponse);
     }
@@ -101,11 +139,14 @@ export class MockResponseService {
     }
 
     // Clean up after a short delay to prevent memory leak
-    setTimeout(() => {
+    const cleanupDelay = 5000 + responseDelay + this.getTotalEventDelay(config.events);
+    const cleanupTimer = setTimeout(() => {
       this.mockedCallIds.delete(message.id);
       this.activeEvents.delete(message.id);
       this.cleanupEventSubscriptions(message.id);
-    }, 5000 + responseDelay + this.getTotalEventDelay(config.events));
+      this.cleanupTimers.delete(message.id);
+    }, cleanupDelay);
+    this.cleanupTimers.set(message.id, cleanupTimer);
   }
 
   private scheduleEvents(message: RequestMessage, events: MockEvent[]): void {
@@ -117,10 +158,10 @@ export class MockResponseService {
       eventIds.push(eventId);
       totalDelay += event.delay || 0;
 
-      const subscription = timer(totalDelay).pipe(take(1)).subscribe(() => {
+      const eventSubscription = timer(totalDelay).pipe(take(1)).subscribe(() => {
         this.emitEvent(message, event, eventId);
       });
-      this.eventSubscriptions.set(`${message.id}-event-${eventId}`, subscription);
+      this.eventSubscriptions.set(`${message.id}-event-${eventId}`, eventSubscription);
     });
 
     this.activeEvents.set(message.id, eventIds);

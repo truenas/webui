@@ -15,6 +15,7 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { WebSocketDebugError } from 'app/modules/websocket-debug-panel/interfaces/error.types';
 import { MockEvent } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
 
 @UntilDestroy()
@@ -122,7 +123,7 @@ export class JobEventBuilderComponent implements OnInit, OnChanges {
   }
 
   private getFormEvents(): MockEvent[] {
-    return this.eventsFormArray.controls.map((control) => {
+    return this.eventsFormArray.controls.map((control, index) => {
       const formGroup = control as FormGroup;
       const value = formGroup.value as {
         delay: number;
@@ -152,7 +153,12 @@ export class JobEventBuilderComponent implements OnInit, OnChanges {
       if (value.result) {
         try {
           event.fields.result = JSON.parse(value.result) as unknown;
-        } catch (error) {
+        } catch (parseError) {
+          const error = new WebSocketDebugError(
+            'Invalid JSON in result field',
+            'INVALID_JSON_RESULT',
+            parseError,
+          );
           console.warn('Invalid JSON in result field:', error);
           // Keep the original string value to preserve user input
           event.fields.result = value.result;
@@ -207,7 +213,12 @@ export class JobEventBuilderComponent implements OnInit, OnChanges {
 
     try {
       return JSON.stringify(result, null, 2);
-    } catch (error) {
+    } catch (stringifyError) {
+      const error = new WebSocketDebugError(
+        'Failed to stringify result for display',
+        'JSON_STRINGIFY_ERROR',
+        stringifyError,
+      );
       console.warn('Failed to stringify result:', error);
       // If it's already a string, return it as-is
       return typeof result === 'string' ? result : String(result);
