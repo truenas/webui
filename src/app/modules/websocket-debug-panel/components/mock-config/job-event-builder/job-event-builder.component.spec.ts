@@ -250,8 +250,6 @@ describe('JobEventBuilderComponent', () => {
     });
 
     it('should preserve invalid JSON as string', () => {
-      const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation();
-
       spectator.component['addEvent']();
       const eventControl = spectator.component['getEventControl'](0);
 
@@ -268,22 +266,22 @@ describe('JobEventBuilderComponent', () => {
       const testObject = { nested: { value: 42 }, array: [1, 2, 3] };
       // Add an event first
       spectator.component['addEvent']();
-      
+
       // The component now uses safeJsonStringify from utils
       const control = spectator.component.eventsFormArray.at(0) as FormGroup;
       control.controls.result.setValue(JSON.stringify(testObject));
-      
+
       expect(control.controls.result.value).toBe(JSON.stringify(testObject));
     });
 
     it('should handle invalid JSON in result field gracefully', () => {
       // Add an event first
       spectator.component['addEvent']();
-      
+
       // The component now uses safeJsonParse which handles errors internally
       const control = spectator.component.eventsFormArray.at(0) as FormGroup;
       control.controls.result.setValue('invalid json');
-      
+
       // The invalid JSON should be preserved as a string when getting form events
       const events = spectator.component['getFormEvents']();
       expect(events[0].fields.result).toBe('invalid json');

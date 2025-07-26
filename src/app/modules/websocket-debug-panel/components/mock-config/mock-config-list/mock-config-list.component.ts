@@ -151,11 +151,11 @@ export class MockConfigListComponent {
             error,
           );
         console.error(debugError.message, debugError);
-        
+
         this.dialog.error({ title: 'Import Failed', message: debugError.message });
       }
     };
-    
+
     reader.onerror = () => {
       const error = new WebSocketDebugError(
         'Failed to read file',
@@ -164,7 +164,7 @@ export class MockConfigListComponent {
       console.error(error.message);
       this.dialog.error({ title: 'File Read Error', message: 'Could not read the selected file' });
     };
-    
+
     reader.readAsText(file);
   }
 

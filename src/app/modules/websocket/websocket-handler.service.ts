@@ -175,7 +175,7 @@ export class WebSocketHandlerService {
               this.pendingCalls.delete(call.id);
               this.triggerNextCall$.next();
             }),
-            catchError((error) => {
+            catchError((error: unknown) => {
               console.error('Error processing mock response:', error);
               this.activeCalls--;
               this.pendingCalls.delete(call.id);
@@ -211,7 +211,7 @@ export class WebSocketHandlerService {
           this.pendingCalls.delete(call.id);
           this.triggerNextCall$.next();
         }),
-        catchError((error) => {
+        catchError((error: unknown) => {
           console.error('Error processing WebSocket response:', error);
           this.activeCalls--;
           this.pendingCalls.delete(call.id);
