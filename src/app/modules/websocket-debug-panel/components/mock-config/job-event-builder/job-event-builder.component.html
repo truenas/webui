@@ -1,0 +1,91 @@
+<div class="job-events">
+  <div class="events-header">
+    <h4>{{ 'Events Timeline' | translate }}</h4>
+    <button mat-button ixTest="add-event-button" type="button" color="primary" (click)="addEvent()">
+      <ix-icon name="add"></ix-icon>
+      {{ 'Add Event' | translate }}
+    </button>
+  </div>
+
+  @if (events().length === 0) {
+    <p class="empty-message">{{ 'No events. Add an event to simulate collection updates.' | translate }}</p>
+  }
+
+  <form [formGroup]="form">
+    <div formArrayName="events">
+      @for (eventControl of eventsFormArray.controls; track $index; let i = $index) {
+        <mat-card class="event-card" [formGroupName]="i">
+          <mat-card-content>
+            <div class="event-header">
+              <h5>{{ 'Event' | translate }} #{{ i + 1 }}</h5>
+              <button mat-icon-button ixTest="remove-event-button" type="button" (click)="removeEvent(i)">
+                <ix-icon name="mdi-delete"></ix-icon>
+              </button>
+            </div>
+
+            <div class="event-fields">
+              <div class="field-row">
+                <ix-input
+                  ixTest="delay-input"
+                  formControlName="delay"
+                  [label]="'Delay (ms)' | translate"
+                  [type]="'number'"
+                  [required]="true"
+                ></ix-input>
+
+                <ix-select
+                  ixTest="state-select"
+                  formControlName="state"
+                  [label]="'State' | translate"
+                  [options]="stateOptions$"
+                  [required]="true"
+                ></ix-select>
+              </div>
+
+              <ix-input
+                ixTest="description-input"
+                formControlName="description"
+                [label]="'Description' | translate"
+                [required]="true"
+              ></ix-input>
+
+              <div class="progress-fields">
+                <ix-input
+                  ixTest="progress-percent-input"
+                  formControlName="progressPercent"
+                  [label]="'Progress %' | translate"
+                  [type]="'number'"
+                ></ix-input>
+
+                <ix-input
+                  ixTest="progress-description-input"
+                  formControlName="progressDescription"
+                  [label]="'Progress Description' | translate"
+                ></ix-input>
+              </div>
+
+              @if (isResultVisible(i)) {
+                <ix-textarea
+                  ixTest="result-textarea"
+                  formControlName="result"
+                  [label]="'Result (JSON)' | translate"
+                  [rows]="3"
+                  [placeholder]="'{ &quot;id&quot;: 1, &quot;name&quot;: &quot;tank&quot; }' | translate"
+                ></ix-textarea>
+              }
+              
+              @if (getEventControl(i).get('state')?.value === 'FAILED') {
+                <ix-input
+                  ixTest="error-input"
+                  formControlName="error"
+                  [label]="'Error Message' | translate"
+                  [placeholder]="'Error description' | translate"
+                ></ix-input>
+              }
+            </div>
+          </mat-card-content>
+        </mat-card>
+      }
+    </div>
+  </form>
+</div>

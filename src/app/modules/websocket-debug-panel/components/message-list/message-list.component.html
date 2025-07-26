@@ -1,0 +1,90 @@
+<div class="message-list-container">
+  <div class="message-list-header">
+    <div class="header-controls">
+      <mat-checkbox
+        ixTest="websocket-debug-auto-scroll"
+        matTooltip="Auto-scroll to latest message"
+        [(ngModel)]="autoScroll">
+        Auto-scroll
+      </mat-checkbox>
+      <button mat-icon-button 
+              matTooltip="Clear messages" 
+              class="clear-button"
+              ixTest="websocket-debug-clear-messages"
+              (click)="clearMessages()">
+        <ix-icon name="mdi-delete-outline"></ix-icon>
+      </button>
+    </div>
+  </div>
+
+  @if (!hasMessages) {
+    <div class="empty-state">
+      <ix-icon name="mdi-message-text-outline" class="empty-icon"></ix-icon>
+      <p>No messages yet</p>
+    </div>
+  } @else {
+    <div #messageViewport class="message-viewport">
+      @for (message of formattedMessagesArray; track message.id) {
+        <div class="message-item"
+             [class.outgoing]="message.direction === 'out'"
+             [class.incoming]="message.direction === 'in'"
+             [class.mocked]="message.isMocked"
+             [class.expanded]="message.isExpanded">
+          
+          <div class="message-header">
+          <span class="direction-icon">
+            @if (message.direction === 'out') {
+              <ix-icon name="mdi-arrow-right" class="icon-out"></ix-icon>
+            } @else {
+              <ix-icon name="mdi-arrow-left" class="icon-in"></ix-icon>
+            }
+          </span>
+          
+          <span class="method-name">{{ message.methodName }}</span>
+          
+          @if (message.isMocked) {
+            <span class="mocked-badge">MOCKED</span>
+          }
+          
+          <span class="timestamp">{{ message.formattedTime }}</span>
+          
+          <button mat-icon-button 
+                  matTooltip="Copy message"
+                  class="copy-button" 
+                  ixTest="websocket-debug-copy-message"
+                  [attr.aria-label]="'Copy message'"
+                  (click)="copyMessage(message); $event.stopPropagation()">
+            <ix-icon name="mdi-content-copy"></ix-icon>
+          </button>
+          
+          <button mat-icon-button 
+                  class="toggle-button"
+                  ixTest="websocket-debug-toggle-message"
+                  matTooltip="Toggle message details"
+                  [attr.aria-label]="message.isExpanded ? 'Collapse message details' : 'Expand message details'"
+                  [attr.aria-expanded]="message.isExpanded"
+                  (click)="toggleMessage(message.id)">
+            @if (message.isExpanded) {
+              <ix-icon name="mdi-chevron-down"></ix-icon>
+            } @else {
+              <ix-icon name="mdi-chevron-right"></ix-icon>
+            }
+          </button>
+        </div>
+        
+        @if (!message.isExpanded) {
+          <div class="message-preview">
+            {{ message.messagePreview }}
+          </div>
+        }
+        
+        @if (message.isExpanded) {
+          <div class="message-expanded">
+            <pre>{{ message.message | json }}</pre>
+          </div>
+        }
+      </div>
+      }
+    </div>
+  }
+</div>

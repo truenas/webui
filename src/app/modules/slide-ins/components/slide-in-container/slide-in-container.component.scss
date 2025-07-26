@@ -22,6 +22,13 @@
   }
 }
 
+// When debug panel is open, adjust the slide-in position
+body:has(ix-websocket-debug-panel .websocket-debug-panel.open) {
+  :host {
+    right: var(--debug-panel-width, 550px); // Use dynamic debug panel width
+  }
+}
+
 .slide-in-wrapper {
   display: flex;
   flex: 1;

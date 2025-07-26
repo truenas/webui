@@ -1,0 +1,98 @@
+<div class="mock-config-list">
+  <div class="mock-config-header">
+    <div class="header-actions">
+      <input
+        #fileInput
+        type="file"
+        accept=".json"
+        style="display: none"
+        ixTest="import-file-input"
+        (change)="importConfigs($event)"
+      />
+      <button
+        mat-button
+        ixTest="import-button"
+        [matTooltip]="'Import' | translate"
+        (click)="fileInput.click()"
+      >
+        <ix-icon name="mdi-upload"></ix-icon>
+      </button>
+      <button
+        mat-button
+        ixTest="export-button"
+        [matTooltip]="'Export' | translate"
+        [disabled]="mockConfigs().length === 0"
+        (click)="exportConfigs()"
+      >
+        <ix-icon name="mdi-download"></ix-icon>
+      </button>
+      <button
+        mat-button
+        ixTest="add-mock-button"
+        color="primary"
+        (click)="addNewConfig()"
+      >
+        <ix-icon name="add"></ix-icon>
+        {{ 'Add Mock' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <div class="mock-config-content">
+    @if (showForm) {
+      <ix-mock-config-form
+        [config]="editingConfig"
+        (submitted)="onFormSubmit($event)"
+        (cancelled)="onFormCancel()"
+      />
+    } @else {
+      @if (hasEnabledMocks()) {
+        <div class="active-indicator">
+          <ix-icon name="radio_button_checked" class="active-icon"></ix-icon>
+          {{ 'Mocking Active' | translate }}
+        </div>
+      }
+
+      <div class="config-list">
+        @for (config of mockConfigs(); track config.id) {
+          <div class="config-item" [class.enabled]="config.enabled">
+            <mat-slide-toggle
+              [checked]="config.enabled"
+              [matTooltip]="config.enabled ? ('Disable' | translate) : ('Enable' | translate)"
+              (change)="toggleConfig(config.id)"
+            ></mat-slide-toggle>
+
+            <div class="config-info">
+              <div class="method-name">{{ config.methodName }}</div>
+              <div class="config-type">{{ getConfigDescription(config) }}</div>
+            </div>
+
+            <div class="config-actions">
+              <button
+                mat-icon-button
+                ixTest="edit-config-button"
+                [matTooltip]="'Edit' | translate"
+                (click)="editConfig(config)"
+              >
+                <ix-icon name="edit"></ix-icon>
+              </button>
+              <button
+                mat-icon-button
+                ixTest="delete-config-button"
+                [matTooltip]="'Delete' | translate"
+                (click)="deleteConfig(config.id)"
+              >
+                <ix-icon name="mdi-delete"></ix-icon>
+              </button>
+            </div>
+          </div>
+        } @empty {
+          <div class="empty-state">
+            <p>{{ 'No mock configurations' | translate }}</p>
+            <p class="hint">{{ 'Click "Add Mock" to create your first mock configuration' | translate }}</p>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>

@@ -19,6 +19,12 @@ export const environment: WebUiEnvironment = {
     expansionModels: [],
     scenario: MockEnclosureScenario.FillSomeSlots,
   },
+  debugPanel: {
+    enabled: false,
+    defaultMessageLimit: 100,
+    mockJobDefaultDelay: 1000,
+    persistMockConfigs: true,
+  },
 };
 
 // Production

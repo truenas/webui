@@ -1,0 +1,73 @@
+@import 'scss-imports/variables';
+
+:host {
+  display: block;
+  height: 100%;
+  overflow: hidden;
+}
+
+.mock-config-form {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.form-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
+.response-editor,
+.events-section {
+  margin-top: 8px;
+
+  label {
+    color: var(--fg2);
+    display: block;
+    font-size: 12px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+}
+
+.events-section {
+  border-top: 1px solid var(--lines);
+  margin-top: 16px;
+  padding-top: 16px;
+}
+
+.form-actions {
+  background-color: var(--bg2);
+  border-top: 1px solid var(--lines);
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  padding: 12px;
+
+}
+
+// Material button overrides
+.form-actions {
+  .mat-mdc-button {
+    .mat-mdc-button-persistent-ripple {
+      background-color: var(--bg2);
+    }
+
+    .mdc-button__label {
+      color: var(--fg1);
+    }
+
+    &.mat-primary {
+      .mdc-button__label {
+        color: var(--primary);
+      }
+    }
+  }
+}

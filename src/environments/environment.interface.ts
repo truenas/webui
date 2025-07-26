@@ -8,6 +8,12 @@ export interface WebUiEnvironment {
   production: boolean;
   sentryPublicDsn: string;
   mockConfig: MockEnclosureConfig;
+  debugPanel?: {
+    enabled: boolean;
+    defaultMessageLimit: number;
+    mockJobDefaultDelay: number;
+    persistMockConfigs: boolean;
+  };
 }
 
 export const environmentVersion = '0.0.3';

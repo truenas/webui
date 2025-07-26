@@ -6,6 +6,7 @@ import { Title } from '@angular/platform-browser';
 import { Router, NavigationEnd, RouterOutlet } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { environment } from 'environments/environment';
 import { filter, tap } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
 import { AuthService } from 'app/modules/auth/auth.service';
@@ -13,6 +14,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LayoutService } from 'app/modules/layout/layout.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { PingService } from 'app/modules/websocket/ping.service';
+import { WebSocketDebugPanelComponent } from 'app/modules/websocket-debug-panel/websocket-debug-panel.component';
 import { DetectBrowserService } from 'app/services/detect-browser.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
@@ -21,10 +23,12 @@ import { WebSocketStatusService } from 'app/services/websocket-status.service';
   selector: 'ix-root',
   templateUrl: './app.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, WebSocketDebugPanelComponent],
 })
 export class AppComponent implements OnInit {
   isAuthenticated = false;
+  debugPanelEnabled = environment.debugPanel?.enabled || false;
+
   constructor(
     public title: Title,
     private router: Router,

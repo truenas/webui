@@ -27,6 +27,7 @@ jobs:
         uses: anthropics/claude-code-action@v0.0.33
         with:
           anthropic_api_key: ${{ secrets.CLAUDE_API_KEY }}
+          use_sticky_comment: true
           timeout_minutes: "20"
           direct_prompt: |
             Please review this pull request and provide comprehensive feedback.

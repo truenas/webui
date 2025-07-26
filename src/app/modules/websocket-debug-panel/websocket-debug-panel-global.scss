@@ -1,0 +1,43 @@
+// Global styles for WebSocket Debug Panel
+// These styles are CSP-compliant and avoid inline styles
+
+// Define width classes for different panel sizes
+// This avoids the need for inline styles or CSS custom properties
+@for $width from 400 through 900 {
+  body.websocket-debug-panel-open.websocket-debug-panel-width-#{$width} {
+    .fn-maincontent {
+      margin-right: #{$width}px;
+    }
+  }
+}
+
+// Base styles for panel open/closed states
+body.websocket-debug-panel-open {
+  .fn-maincontent {
+    transition: margin-right 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+body:not(.websocket-debug-panel-open) {
+  .fn-maincontent {
+    margin-right: 0;
+    transition: margin-right 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+// Alternative approach using data attributes if preferred
+// This is also CSP-compliant
+body[data-websocket-debug-panel='open'] {
+  .fn-maincontent {
+    transition: margin-right 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  // Generate margin classes for different widths
+  @for $width from 400 through 900 {
+    &[data-websocket-debug-panel-width='#{$width}'] {
+      .fn-maincontent {
+        margin-right: #{$width}px;
+      }
+    }
+  }
+}

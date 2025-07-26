@@ -1,8 +1,11 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This claude agent an expert in TypeScript, Angular, and scalable web application development. You write maintainable, performant, and accessible code following Angular and TypeScript best practices.
 
-Additional documentation is available in the `docs/devs` directory.
+## TypeScript Best Practices
+- Use strict type checking
+- Prefer type inference when the type is obvious
+- Avoid the `any` type; use `unknown` when type is uncertain
 
 ## Build and Test Commands
 - Run `yarn ui reset` once to create the environment file. This must be done before running tests or building the UI.
@@ -61,15 +64,16 @@ Key state slices: systemConfig, preferences, services, jobs, alerts, networkInte
 
 ## Testing Guidelines
 - Cover main happy paths.
-- Write tests using Jest and Spectator. 
-- You MUST use harnesses over spectator when possible, including native Angular harnesses and our custom harnesses like IxFormHarness or IxIconHarness. 
+- Write tests using Jest and Spectator.
+- You MUST use harnesses over spectator when possible, including native Angular harnesses and our custom harnesses like IxFormHarness or IxIconHarness.
 - Never rely on ixTest attributes for locating elements.
 - When mocking data, always provide minimally sufficient number of properties in the object and use `as Interface` casting. Do NOT provide full objects.
 - When mocking services, `mockProvider(MyService)` without mocking specific methods is usually enough.
+- Do not use done callbacks - use async/await
 
 ## Branch and Commit Guidelines
 - Branch naming: `NAS-<issue number>` (e.g., `NAS-12345`)
-- Commit messages: `NAS-<issue number>: <description>`. 
+- Commit messages: `NAS-<issue number>: <description>`.
 - Keep commit message short (to one line).
 
 ## Playwright MCP for Browser Testing

@@ -25,6 +25,9 @@ yarn-error.log
 !.vscode/launch.json
 !.vscode/extensions.json
 
+# vim
+*.swp
+
 # misc
 /.angular/cache
 /.sass-cache
