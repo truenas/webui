@@ -72,8 +72,28 @@ export class WebSocketHandlerService {
   private showingConcurrentCallsError = false;
   private callsInConcurrentCallsError = new Set<string>();
 
-  // Shared responses observable initialized in constructor to prevent memory leaks
-  readonly responses$: Observable<IncomingMessage>;
+  // Create a single shared responses$ observable
+  private _responses$: Observable<IncomingMessage> | undefined;
+
+  get responses$(): Observable<IncomingMessage> {
+    if (!this._responses$) {
+      // Return merged stream of real and mock responses
+      const realResponses$ = this.wsConnection.stream$ as Observable<IncomingMessage>;
+      const mockResponses$ = this.mockResponseService.responses$;
+
+      this._responses$ = merge(realResponses$, mockResponses$).pipe(
+        tap((message) => {
+          // Log incoming messages for debugging
+          if (environment.debugPanel?.enabled) {
+            const isMocked = this.mockResponseService.isMockedResponse(message);
+            this.debugService.logIncomingMessage(message, isMocked);
+          }
+        }),
+        shareReplay({ bufferSize: 0, refCount: true }),
+      );
+    }
+    return this._responses$;
+  }
 
   constructor(
     private wsStatus: WebSocketStatusService,
@@ -87,21 +107,6 @@ export class WebSocketHandlerService {
     // Initialize connection properties
     this.wsConnection = new WebSocketConnection(this.webSocket);
     this.connectionUrl = (this.window.location.protocol === 'https:' ? 'wss://' : 'ws://') + environment.remote + '/api/current';
-
-    // Initialize responses$ after wsConnection is created
-    const realResponses$ = this.wsConnection.stream$ as Observable<IncomingMessage>;
-    const mockResponses$ = this.mockResponseService.responses$;
-
-    this.responses$ = merge(realResponses$, mockResponses$).pipe(
-      tap((message) => {
-        // Log incoming messages for debugging
-        if (environment.debugPanel?.enabled) {
-          const isMocked = this.mockResponseService.isMockedResponse(message);
-          this.debugService.logIncomingMessage(message, isMocked);
-        }
-      }),
-      shareReplay({ bufferSize: 0, refCount: true }),
-    );
 
     this.setupWebSocket();
   }

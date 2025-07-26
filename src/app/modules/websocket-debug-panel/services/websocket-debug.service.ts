@@ -38,16 +38,15 @@ export class WebSocketDebugService {
   logIncomingMessage(message: IncomingMessage, isMocked = false): void {
     let methodName: string | undefined;
 
-    // For response messages, look up the method name from the cache
-    if ('id' in message && message.id) {
-      const messageId = String(message.id);
-      methodName = this.requestMethodCache.get(messageId);
-      // Clean up the cache entry after using it
-      this.requestMethodCache.delete(messageId);
-    }
     // For subscription/event messages that have their own method field
     if ('method' in message && message.method) {
       methodName = message.method;
+    } else if ('id' in message && message.id) {
+      // For response messages, look up the method name from the cache
+      const messageId = String(message.id);
+      methodName = this.requestMethodCache.get(messageId);
+      // Don't delete the cache entry immediately - it might be needed for duplicate logs
+      // The cache cleanup happens in the cacheRequestMethod with LRU logic
     }
 
     const debugMessage: WebSocketDebugMessage = {
@@ -81,5 +80,10 @@ export class WebSocketDebugService {
         this.requestMethodCache.delete(firstKey);
       }
     }
+
+    // Clean up old entries after a delay to handle duplicate logs
+    setTimeout(() => {
+      this.requestMethodCache.delete(id);
+    }, 5000);
   }
 }

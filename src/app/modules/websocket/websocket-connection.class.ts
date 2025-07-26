@@ -1,9 +1,10 @@
-import { Observable, NEVER } from 'rxjs';
+import { Observable, EMPTY } from 'rxjs';
 import { webSocket as rxjsWebSocket, WebSocketSubject, WebSocketSubjectConfig } from 'rxjs/webSocket';
 
 export class WebSocketConnection {
   private ws$?: WebSocketSubject<unknown>;
-  private wsAsObservable$: Observable<unknown> = NEVER;
+  private wsAsObservable$: Observable<unknown> = EMPTY;
+  
   get stream$(): Observable<unknown> {
     return this.wsAsObservable$;
   }
