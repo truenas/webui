@@ -69,6 +69,7 @@ Key state slices: systemConfig, preferences, services, jobs, alerts, networkInte
 - Never rely on ixTest attributes for locating elements.
 - When mocking data, always provide minimally sufficient number of properties in the object and use `as Interface` casting. Do NOT provide full objects.
 - When mocking services, `mockProvider(MyService)` without mocking specific methods is usually enough.
+- Do not use done callbacks - use async/await
 
 ## Branch and Commit Guidelines
 - Branch naming: `NAS-<issue number>` (e.g., `NAS-12345`)
