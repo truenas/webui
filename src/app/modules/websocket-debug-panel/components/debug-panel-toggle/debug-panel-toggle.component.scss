@@ -1,14 +1,14 @@
 .debug-panel-toggle {
-  position: fixed;
-  top: 50%;
-  right: 0;
-  transform: translateY(-50%);
-  z-index: 999;
   background-color: var(--bg2);
   border-radius: 4px 0 0 4px;
+  position: fixed;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 999;
 
   &.active-mocks {
-    mat-icon {
+    ix-icon {
       color: var(--orange);
     }
   }
