@@ -2,6 +2,7 @@ import {
   discardPeriodicTasks, fakeAsync, tick,
 } from '@angular/core/testing';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { Subject } from 'rxjs';
 import { WebSocketSubject, WebSocketSubjectConfig } from 'rxjs/webSocket';
 import { WEBSOCKET } from 'app/helpers/websocket.helper';
@@ -29,6 +30,17 @@ describe('WebSocketHandlerService', () => {
         provide: WEBSOCKET,
         useFactory: () => fakeSocketFactory,
       },
+      provideMockStore({
+        initialState: {
+          webSocketDebug: {
+            isPanelOpen: false,
+            activeTab: 'websocket',
+            messages: [],
+            mockConfigs: [],
+            messageLimit: 200,
+          },
+        },
+      }),
     ],
   });
 
