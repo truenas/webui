@@ -918,3 +918,11 @@ mat-tab-nav-panel {
 .custom-slide-in-nobackdrop {
   top: 48px !important;
 }
+
+// When debug panel is open, adjust the backdrop
+body:has(ix-websocket-debug-panel .websocket-debug-panel.open) {
+  .custom-slide-in-backdrop,
+  .custom-slide-in-nobackdrop {
+    right: var(--debug-panel-width, 550px) !important; // Use dynamic debug panel width
+  }
+}
