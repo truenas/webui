@@ -10,7 +10,7 @@ describe('reducer-utils', () => {
       id,
       timestamp: new Date().toISOString(),
       direction: 'in',
-      message: { id: 'test-123', msg: 'test' } as IncomingMessage,
+      message: { id: 'test-123', result: 'test result', jsonrpc: '2.0' } as IncomingMessage,
       isMocked: false,
     });
 
@@ -80,7 +80,15 @@ describe('reducer-utils', () => {
       const state = createMockState();
       state.isPanelOpen = true;
       state.activeTab = 'mock-config';
-      state.mockConfigs = [{ id: '1', name: 'test', enabled: true }] as MockConfig[];
+      state.mockConfigs = [{ 
+        id: '1', 
+        enabled: true,
+        methodName: 'test.method',
+        response: {
+          result: {},
+          delay: 0,
+        },
+      }] as MockConfig[];
       const message = createMockMessage('1');
 
       const result = addMessageWithLimit(state, message);
