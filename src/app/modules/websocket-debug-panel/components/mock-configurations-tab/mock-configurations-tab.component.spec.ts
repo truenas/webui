@@ -1,14 +1,14 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { MessageListComponent } from 'app/modules/websocket-debug-panel/components/message-list/message-list.component';
-import { WebSocketTabComponent } from './websocket-tab.component';
+import { MockConfigListComponent } from 'app/modules/websocket-debug-panel/components/mock-config/mock-config-list/mock-config-list.component';
+import { MockConfigurationsTabComponent } from './mock-configurations-tab.component';
 
-describe('WebSocketTabComponent', () => {
-  let spectator: Spectator<WebSocketTabComponent>;
+describe('MockConfigurationsTabComponent', () => {
+  let spectator: Spectator<MockConfigurationsTabComponent>;
 
   const createComponent = createComponentFactory({
-    component: WebSocketTabComponent,
-    imports: [MessageListComponent],
+    component: MockConfigurationsTabComponent,
+    imports: [MockConfigListComponent],
     providers: [
       provideMockStore({
         initialState: {
@@ -16,7 +16,7 @@ describe('WebSocketTabComponent', () => {
             messages: [],
             mockConfigs: [],
             isPanelOpen: false,
-            activeTab: 'websocket',
+            activeTab: 'mock',
             messageLimit: 15,
             hasActiveMocks: false,
           },
@@ -34,8 +34,8 @@ describe('WebSocketTabComponent', () => {
     expect(spectator.component).toBeTruthy();
   });
 
-  it('should render message list component', () => {
-    const messageList = spectator.query(MessageListComponent);
-    expect(messageList).toBeTruthy();
+  it('should render mock config list component', () => {
+    const mockConfigList = spectator.query(MockConfigListComponent);
+    expect(mockConfigList).toBeTruthy();
   });
 });
