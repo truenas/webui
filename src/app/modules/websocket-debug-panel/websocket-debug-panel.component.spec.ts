@@ -66,24 +66,33 @@ describe('WebSocketDebugPanelComponent', () => {
       expect(store$.dispatch).toHaveBeenCalledWith(WebSocketDebugActions.loadMockConfigs());
     });
 
-    it('should restore panel state from localStorage when available', () => {
+    it('should restore panel state from localStorage when available', async () => {
       mockLocalStorage.getItem.mockReturnValue('true');
 
       spectator.detectChanges();
 
+      // Wait for async localStorage read
+      await new Promise((resolve) => {
+        setTimeout(resolve, 0);
+      });
       expect(store$.dispatch).toHaveBeenCalledWith(
         WebSocketDebugActions.setPanelOpen({ isOpen: true }),
       );
     });
 
-    it('should handle localStorage errors gracefully', () => {
+    it('should handle localStorage errors gracefully', async () => {
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
       mockLocalStorage.getItem.mockImplementation(() => {
         throw new Error('Storage error');
       });
 
       spectator.detectChanges();
 
-      expect(console.error).toHaveBeenCalledWith('Failed to restore panel state:', expect.any(Error));
+      // Wait for async localStorage read
+      await new Promise((resolve) => {
+        setTimeout(resolve, 0);
+      });
+      expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to restore panel state:', expect.any(Error));
     });
   });
 

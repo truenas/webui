@@ -62,7 +62,7 @@ describe('MockConfigFormComponent', () => {
       expect(spectator.component['form'].value).toEqual({
         methodName: '',
         messagePattern: '',
-        responseResult: null,
+        responseResult: '',
         responseDelay: 0,
         events: [],
       });
@@ -75,7 +75,7 @@ describe('MockConfigFormComponent', () => {
       expect(spectator.component['form'].value).toEqual({
         methodName: 'test.method',
         messagePattern: 'test pattern',
-        responseResult: { success: true },
+        responseResult: '{\n  "success": true\n}',
         responseDelay: 500,
         events: [
           {
@@ -106,7 +106,7 @@ describe('MockConfigFormComponent', () => {
       expect(spectator.component['form'].value).toEqual({
         methodName: 'minimal.method',
         messagePattern: '',
-        responseResult: null,
+        responseResult: '',
         responseDelay: 0,
         events: [],
       });
@@ -124,7 +124,7 @@ describe('MockConfigFormComponent', () => {
       });
 
       spectator.component['form'].patchValue({
-        responseResult: { newResult: true },
+        responseResult: '{"newResult":true}',
         events: [],
       });
 
@@ -232,14 +232,6 @@ describe('MockConfigFormComponent', () => {
       spectator.component['onCancel']();
 
       expect(cancelledSpy).toHaveBeenCalled();
-    });
-
-    it('should update responseResult when onResponseChange is called', () => {
-      const newResponse = { updated: 'response' };
-
-      spectator.component['onResponseChange'](newResponse);
-
-      expect(spectator.component['form'].value.responseResult).toEqual(newResponse);
     });
 
     it('should update events when onEventsChange is called', () => {

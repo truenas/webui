@@ -38,10 +38,10 @@
 }
 
 .message-viewport {
-  flex: 1;
+  flex: 1 1 auto;
   min-height: 0;
-  overflow-x: hidden;
   overflow-y: auto;
+  width: 100%;
 }
 
 .message-item {
@@ -175,8 +175,8 @@
   align-items: center;
   color: var(--fg2);
   display: flex;
+  flex: 1;
   flex-direction: column;
-  height: 200px;
   justify-content: center;
 
   .empty-icon {

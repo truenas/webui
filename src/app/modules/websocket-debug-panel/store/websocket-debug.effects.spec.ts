@@ -2,7 +2,6 @@ import { TestBed } from '@angular/core/testing';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { Observable, of } from 'rxjs';
-import { TestScheduler } from 'rxjs/testing';
 import { MockConfig } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
 import * as WebSocketDebugActions from './websocket-debug.actions';
 import { WebSocketDebugEffects } from './websocket-debug.effects';
@@ -12,7 +11,6 @@ describe('WebSocketDebugEffects', () => {
   let effects: WebSocketDebugEffects;
   let actions$: Observable<unknown>;
   let store$: MockStore;
-  let testScheduler: TestScheduler;
 
   const mockConfigs: MockConfig[] = [
     {
@@ -65,10 +63,6 @@ describe('WebSocketDebugEffects', () => {
 
     effects = TestBed.inject(WebSocketDebugEffects);
     store$ = TestBed.inject(MockStore) as MockStore;
-
-    testScheduler = new TestScheduler((actual, expected) => {
-      expect(actual).toEqual(expected);
-    });
   });
 
   afterEach(() => {
@@ -76,79 +70,79 @@ describe('WebSocketDebugEffects', () => {
   });
 
   describe('loadMockConfigs$', () => {
-    it('should load configs from localStorage', () => {
-      testScheduler.run(({ hot, expectObservable }) => {
-        const action = WebSocketDebugActions.loadMockConfigs();
-        const completion = WebSocketDebugActions.mockConfigsLoaded({ configs: mockConfigs });
+    it('should load configs from localStorage', async () => {
+      const action = WebSocketDebugActions.loadMockConfigs();
+      const completion = WebSocketDebugActions.mockConfigsLoaded({ configs: mockConfigs });
 
-        (localStorage.getItem as jest.Mock).mockReturnValue(JSON.stringify(mockConfigs));
+      (localStorage.getItem as jest.Mock).mockReturnValue(JSON.stringify(mockConfigs));
 
-        actions$ = hot('-a', { a: action });
+      actions$ = of(action);
 
-        expectObservable(effects.loadMockConfigs$).toBe('-b', { b: completion });
+      const result = await new Promise((resolve) => {
+        effects.loadMockConfigs$.subscribe(resolve);
       });
+      expect(result).toEqual(completion);
     });
 
-    it('should return empty array when localStorage is empty', () => {
-      testScheduler.run(({ hot, expectObservable }) => {
-        const action = WebSocketDebugActions.loadMockConfigs();
-        const completion = WebSocketDebugActions.mockConfigsLoaded({ configs: [] });
+    it('should return empty array when localStorage is empty', async () => {
+      const action = WebSocketDebugActions.loadMockConfigs();
+      const completion = WebSocketDebugActions.mockConfigsLoaded({ configs: [] });
 
-        (localStorage.getItem as jest.Mock).mockReturnValue(null);
+      (localStorage.getItem as jest.Mock).mockReturnValue(null);
 
-        actions$ = hot('-a', { a: action });
+      actions$ = of(action);
 
-        expectObservable(effects.loadMockConfigs$).toBe('-b', { b: completion });
+      const result = await new Promise((resolve) => {
+        effects.loadMockConfigs$.subscribe(resolve);
       });
+      expect(result).toEqual(completion);
     });
 
-    it('should handle localStorage errors gracefully', () => {
-      testScheduler.run(({ hot, expectObservable }) => {
-        const action = WebSocketDebugActions.loadMockConfigs();
-        const completion = WebSocketDebugActions.mockConfigsLoaded({ configs: [] });
+    it('should handle localStorage errors gracefully', async () => {
+      const action = WebSocketDebugActions.loadMockConfigs();
+      const completion = WebSocketDebugActions.mockConfigsLoaded({ configs: [] });
 
-        (localStorage.getItem as jest.Mock).mockImplementation(() => {
-          throw new Error('Storage error');
-        });
-
-        const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
-
-        actions$ = hot('-a', { a: action });
-
-        expectObservable(effects.loadMockConfigs$).toBe('-b', { b: completion });
-
-        testScheduler.flush();
-        expect(consoleErrorSpy).toHaveBeenCalledWith(
-          'Failed to load mock configs:',
-          expect.any(Error),
-        );
+      (localStorage.getItem as jest.Mock).mockImplementation(() => {
+        throw new Error('Storage error');
       });
+
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+
+      actions$ = of(action);
+
+      const result = await new Promise((resolve) => {
+        effects.loadMockConfigs$.subscribe(resolve);
+      });
+      expect(result).toEqual(completion);
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Failed to load mock configs:',
+        expect.any(Error),
+      );
     });
 
-    it('should handle invalid JSON in localStorage', () => {
-      testScheduler.run(({ hot, expectObservable }) => {
-        const action = WebSocketDebugActions.loadMockConfigs();
-        const completion = WebSocketDebugActions.mockConfigsLoaded({ configs: [] });
+    it('should handle invalid JSON in localStorage', async () => {
+      const action = WebSocketDebugActions.loadMockConfigs();
+      const completion = WebSocketDebugActions.mockConfigsLoaded({ configs: [] });
 
-        (localStorage.getItem as jest.Mock).mockReturnValue('invalid json');
+      (localStorage.getItem as jest.Mock).mockReturnValue('invalid json');
 
-        const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
 
-        actions$ = hot('-a', { a: action });
+      actions$ = of(action);
 
-        expectObservable(effects.loadMockConfigs$).toBe('-b', { b: completion });
-
-        testScheduler.flush();
-        expect(consoleErrorSpy).toHaveBeenCalledWith(
-          'Failed to load mock configs:',
-          expect.any(Error),
-        );
+      const result = await new Promise((resolve) => {
+        effects.loadMockConfigs$.subscribe(resolve);
       });
+      expect(result).toEqual(completion);
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Failed to load mock configs:',
+        expect.any(Error),
+      );
     });
   });
 
   describe('saveMockConfigs$', () => {
-    it('should save configs to localStorage on add action', () => {
+    it('should save configs to localStorage on add action', async () => {
       const action = WebSocketDebugActions.addMockConfig({
         config: {
           id: 'new-config',
@@ -162,15 +156,19 @@ describe('WebSocketDebugEffects', () => {
 
       const subscription = effects.saveMockConfigs$.subscribe();
 
+      // Wait for async operation to complete
+      await new Promise((resolve) => {
+        setTimeout(resolve, 0);
+      });
+
       expect(localStorage.setItem).toHaveBeenCalledWith(
         'websocket-debug-mock-configs',
         JSON.stringify(mockConfigs),
       );
-
       subscription.unsubscribe();
     });
 
-    it('should save configs on update action', () => {
+    it('should save configs on update action', async () => {
       const action = WebSocketDebugActions.updateMockConfig({
         config: mockConfigs[0],
       });
@@ -179,36 +177,48 @@ describe('WebSocketDebugEffects', () => {
 
       const subscription = effects.saveMockConfigs$.subscribe();
 
-      expect(localStorage.setItem).toHaveBeenCalled();
+      // Wait for async operation to complete
+      await new Promise((resolve) => {
+        setTimeout(resolve, 0);
+      });
 
+      expect(localStorage.setItem).toHaveBeenCalled();
       subscription.unsubscribe();
     });
 
-    it('should save configs on delete action', () => {
+    it('should save configs on delete action', async () => {
       const action = WebSocketDebugActions.deleteMockConfig({ id: 'config-1' });
 
       actions$ = of(action);
 
       const subscription = effects.saveMockConfigs$.subscribe();
 
-      expect(localStorage.setItem).toHaveBeenCalled();
+      // Wait for async operation to complete
+      await new Promise((resolve) => {
+        setTimeout(resolve, 0);
+      });
 
+      expect(localStorage.setItem).toHaveBeenCalled();
       subscription.unsubscribe();
     });
 
-    it('should save configs on toggle action', () => {
+    it('should save configs on toggle action', async () => {
       const action = WebSocketDebugActions.toggleMockConfig({ id: 'config-1' });
 
       actions$ = of(action);
 
       const subscription = effects.saveMockConfigs$.subscribe();
 
-      expect(localStorage.setItem).toHaveBeenCalled();
+      // Wait for async operation to complete
+      await new Promise((resolve) => {
+        setTimeout(resolve, 0);
+      });
 
+      expect(localStorage.setItem).toHaveBeenCalled();
       subscription.unsubscribe();
     });
 
-    it('should handle localStorage errors when saving', () => {
+    it('should handle localStorage errors when saving', async () => {
       const action = WebSocketDebugActions.saveMockConfigs();
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
 
@@ -220,17 +230,21 @@ describe('WebSocketDebugEffects', () => {
 
       const subscription = effects.saveMockConfigs$.subscribe();
 
+      // Wait for async operation to complete
+      await new Promise((resolve) => {
+        setTimeout(resolve, 0);
+      });
+
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         'Failed to save mock configs:',
         expect.any(Error),
       );
-
       subscription.unsubscribe();
     });
   });
 
   describe('persistPanelState$', () => {
-    it('should persist panel state on setPanelOpen', () => {
+    it('should persist panel state on setPanelOpen', async () => {
       const action = WebSocketDebugActions.setPanelOpen({ isOpen: true });
 
       store$.overrideSelector(selectIsPanelOpen, true);
@@ -239,15 +253,19 @@ describe('WebSocketDebugEffects', () => {
 
       const subscription = effects.persistPanelState$.subscribe();
 
+      // Wait for async operation to complete
+      await new Promise((resolve) => {
+        setTimeout(resolve, 0);
+      });
+
       expect(localStorage.setItem).toHaveBeenCalledWith(
         'websocket-debug-panel-open',
         'true',
       );
-
       subscription.unsubscribe();
     });
 
-    it('should persist panel state on togglePanel', () => {
+    it('should persist panel state on togglePanel', async () => {
       const action = WebSocketDebugActions.togglePanel();
 
       store$.overrideSelector(selectIsPanelOpen, false);
@@ -256,15 +274,19 @@ describe('WebSocketDebugEffects', () => {
 
       const subscription = effects.persistPanelState$.subscribe();
 
+      // Wait for async operation to complete
+      await new Promise((resolve) => {
+        setTimeout(resolve, 0);
+      });
+
       expect(localStorage.setItem).toHaveBeenCalledWith(
         'websocket-debug-panel-open',
         'false',
       );
-
       subscription.unsubscribe();
     });
 
-    it('should handle localStorage errors when persisting panel state', () => {
+    it('should handle localStorage errors when persisting panel state', async () => {
       const action = WebSocketDebugActions.setPanelOpen({ isOpen: true });
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
 
@@ -276,11 +298,15 @@ describe('WebSocketDebugEffects', () => {
 
       const subscription = effects.persistPanelState$.subscribe();
 
+      // Wait for async operation to complete
+      await new Promise((resolve) => {
+        setTimeout(resolve, 0);
+      });
+
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         'Failed to persist panel state:',
         expect.any(Error),
       );
-
       subscription.unsubscribe();
     });
   });

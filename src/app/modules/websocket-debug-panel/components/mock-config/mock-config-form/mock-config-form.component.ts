@@ -2,14 +2,14 @@ import {
   ChangeDetectionStrategy, Component, OnInit, inject, input, output,
 } from '@angular/core';
 import {
-  FormBuilder, ReactiveFormsModule, Validators,
+  FormBuilder, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { JobEventBuilderComponent } from 'app/modules/websocket-debug-panel/components/mock-config/job-event-builder/job-event-builder.component';
-import { MonacoEditorComponent } from 'app/modules/websocket-debug-panel/components/mock-config/monaco-editor/monaco-editor.component';
 import {
   MockConfig, MockEvent,
 } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
@@ -23,7 +23,7 @@ import { updateMockConfig } from 'app/modules/websocket-debug-panel/store/websoc
     MatButton,
     TranslateModule,
     IxInputComponent,
-    MonacoEditorComponent,
+    IxTextareaComponent,
     JobEventBuilderComponent,
   ],
   templateUrl: './mock-config-form.component.html',
@@ -41,7 +41,7 @@ export class MockConfigFormComponent implements OnInit {
   protected readonly form = this.fb.group({
     methodName: ['', Validators.required],
     messagePattern: [''],
-    responseResult: this.fb.control<unknown>(null),
+    responseResult: ['', this.jsonValidator],
     responseDelay: [0, [Validators.min(0)]],
     events: [[] as MockEvent[]],
   });
@@ -52,7 +52,7 @@ export class MockConfigFormComponent implements OnInit {
       this.form.patchValue({
         methodName: configValue.methodName,
         messagePattern: configValue.messagePattern || '',
-        responseResult: configValue.response.result,
+        responseResult: this.stringifyJson(configValue.response.result),
         responseDelay: configValue.response.delay ?? 0,
         events: configValue.events || [],
       });
@@ -72,7 +72,7 @@ export class MockConfigFormComponent implements OnInit {
       methodName: formValue.methodName ?? '',
       messagePattern: formValue.messagePattern || undefined,
       response: {
-        result: formValue.responseResult,
+        result: this.parseJson(formValue.responseResult ?? ''),
         delay: formValue.responseDelay ?? 0,
       },
       events: formValue.events && formValue.events.length > 0 ? formValue.events : undefined,
@@ -89,12 +89,46 @@ export class MockConfigFormComponent implements OnInit {
     this.cancelled.emit();
   }
 
-  protected onResponseChange(value: unknown): void {
-    this.form.patchValue({ responseResult: value });
-  }
-
   protected onEventsChange(events: MockEvent[]): void {
     this.form.patchValue({ events });
+  }
+
+  private jsonValidator(control: AbstractControl): ValidationErrors | null {
+    const value = control.value as string;
+    if (!value || value.trim() === '') {
+      return null; // Allow empty values
+    }
+    try {
+      JSON.parse(value);
+      return null;
+    } catch {
+      return { invalidJson: true };
+    }
+  }
+
+  private stringifyJson(value: unknown): string {
+    if (value === null || value === undefined) {
+      return '';
+    }
+    if (typeof value === 'string') {
+      return value;
+    }
+    try {
+      return JSON.stringify(value, null, 2);
+    } catch {
+      return String(value);
+    }
+  }
+
+  private parseJson(value: string): unknown {
+    if (!value || value.trim() === '') {
+      return null;
+    }
+    try {
+      return JSON.parse(value);
+    } catch {
+      return value; // Return as string if not valid JSON
+    }
   }
 
   protected get isEditMode(): boolean {

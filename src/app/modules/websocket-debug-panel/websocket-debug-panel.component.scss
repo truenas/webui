@@ -153,5 +153,12 @@
     height: 100%;
     overflow: hidden;
     width: 100%;
+    
+    // Ensure direct child (websocket-tab) gets full height
+    > * {
+      flex: 1;
+      height: 100%;
+      width: 100%;
+    }
   }
 }

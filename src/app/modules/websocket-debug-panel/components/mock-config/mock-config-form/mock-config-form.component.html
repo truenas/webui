@@ -16,15 +16,14 @@
         [hint]="'Regex pattern to match against message content' | translate"
       ></ix-input>
       
-      <div class="response-editor">
-        <label>{{ 'Response Data' | translate }}</label>
-        <ix-monaco-editor
-          [value]="form.value.responseResult"
-          [language]="'json'"
-          [height]="200"
-          (valueChange)="onResponseChange($event)">
-        </ix-monaco-editor>
-      </div>
+      <ix-textarea
+        ixTest="response-data-textarea"
+        formControlName="responseResult"
+        [label]="'Response Data' | translate"
+        [placeholder]="'{ &quot;result&quot;: &quot;success&quot; }' | translate"
+        [hint]="'JSON format expected' | translate"
+        [rows]="8"
+      ></ix-textarea>
 
       <ix-input
         ixTest="response-delay-input"

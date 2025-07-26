@@ -1,6 +1,6 @@
-import { AsyncPipe, JsonPipe } from '@angular/common';
+import { JsonPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, TrackByFunction, ViewChild, ElementRef, AfterViewChecked,
+  ChangeDetectionStrategy, Component, AfterViewInit, ChangeDetectorRef, ViewChild, ElementRef,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -25,16 +25,24 @@ interface FormattedWebSocketDebugMessage extends WebSocketDebugMessage {
 @Component({
   selector: 'ix-message-list',
   standalone: true,
-  imports: [AsyncPipe, JsonPipe, FormsModule, MatButtonModule, MatCheckboxModule, MatTooltipModule, IxIconComponent],
+  imports: [
+    JsonPipe,
+    FormsModule,
+    MatButtonModule,
+    MatCheckboxModule,
+    MatTooltipModule,
+    IxIconComponent,
+  ],
   templateUrl: './message-list.component.html',
   styleUrls: ['./message-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MessageListComponent implements AfterViewChecked {
-  @ViewChild('messageViewport', { static: false }) private messageViewport?: ElementRef<HTMLDivElement>;
+export class MessageListComponent implements AfterViewInit {
+  @ViewChild('messageViewport', { read: ElementRef }) private messageViewport?: ElementRef<HTMLDivElement>;
   messages$: Observable<WebSocketDebugMessage[]> = this.store$.select(selectMessages);
   autoScroll = true;
-  private shouldScrollToBottom = false;
+  hasMessages = false;
+  formattedMessagesArray: FormattedWebSocketDebugMessage[] = [];
 
   formattedMessages$: Observable<FormattedWebSocketDebugMessage[]> = this.messages$.pipe(
     map((messages) => messages.map((msg) => ({
@@ -46,29 +54,30 @@ export class MessageListComponent implements AfterViewChecked {
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
-  trackByMessage: TrackByFunction<FormattedWebSocketDebugMessage> = (_, message) => message.id;
+  constructor(
+    private store$: Store,
+    private cdr: ChangeDetectorRef,
+  ) {}
 
-  constructor(private store$: Store) {
-    // Subscribe to new messages to trigger scroll
-    this.messages$.pipe(untilDestroyed(this)).subscribe(() => {
-      if (this.autoScroll) {
-        this.shouldScrollToBottom = true;
+  ngAfterViewInit(): void {
+    // Subscribe to messages for both empty state check and auto-scroll
+    this.formattedMessages$.pipe(
+      untilDestroyed(this),
+    ).subscribe((messages) => {
+      this.hasMessages = messages.length > 0;
+      this.formattedMessagesArray = messages;
+      this.cdr.markForCheck();
+      // Auto-scroll logic
+      if (this.autoScroll && messages.length > 0 && this.messageViewport) {
+        // Use setTimeout to ensure the DOM has updated
+        setTimeout(() => {
+          const element = this.messageViewport?.nativeElement;
+          if (element) {
+            element.scrollTop = element.scrollHeight;
+          }
+        }, 100);
       }
     });
-  }
-
-  ngAfterViewChecked(): void {
-    if (this.shouldScrollToBottom && this.messageViewport) {
-      this.scrollToBottom();
-      this.shouldScrollToBottom = false;
-    }
-  }
-
-  private scrollToBottom(): void {
-    if (this.messageViewport) {
-      const element = this.messageViewport.nativeElement;
-      element.scrollTop = element.scrollHeight;
-    }
   }
 
   clearMessages(): void {

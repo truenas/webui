@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { of } from 'rxjs';
 import {
   tap, switchMap, withLatestFrom,
 } from 'rxjs/operators';
@@ -16,14 +15,17 @@ export class WebSocketDebugEffects {
   loadMockConfigs$ = createEffect(() => this.actions$.pipe(
     ofType(WebSocketDebugActions.loadMockConfigs),
     switchMap(() => {
-      try {
-        const stored = localStorage.getItem(mockConfigsStorageKey);
-        const configs: MockConfig[] = stored ? JSON.parse(stored) as MockConfig[] : [];
-        return of(WebSocketDebugActions.mockConfigsLoaded({ configs }));
-      } catch (error) {
-        console.error('Failed to load mock configs:', error);
-        return of(WebSocketDebugActions.mockConfigsLoaded({ configs: [] }));
-      }
+      // Async localStorage read
+      return Promise.resolve().then(() => {
+        try {
+          const stored = localStorage.getItem(mockConfigsStorageKey);
+          const configs: MockConfig[] = stored ? JSON.parse(stored) as MockConfig[] : [];
+          return WebSocketDebugActions.mockConfigsLoaded({ configs });
+        } catch (error) {
+          console.error('Failed to load mock configs:', error);
+          return WebSocketDebugActions.mockConfigsLoaded({ configs: [] });
+        }
+      });
     }),
   ));
 
@@ -37,11 +39,14 @@ export class WebSocketDebugEffects {
     ),
     withLatestFrom(this.store$.select(selectMockConfigs)),
     tap(([, configs]) => {
-      try {
-        localStorage.setItem(mockConfigsStorageKey, JSON.stringify(configs));
-      } catch (error) {
-        console.error('Failed to save mock configs:', error);
-      }
+      // Async localStorage write
+      Promise.resolve().then(() => {
+        try {
+          localStorage.setItem(mockConfigsStorageKey, JSON.stringify(configs));
+        } catch (error) {
+          console.error('Failed to save mock configs:', error);
+        }
+      });
     }),
   ), { dispatch: false });
 
@@ -49,11 +54,14 @@ export class WebSocketDebugEffects {
     ofType(WebSocketDebugActions.setPanelOpen, WebSocketDebugActions.togglePanel),
     withLatestFrom(this.store$.select(selectIsPanelOpen)),
     tap(([, isPanelOpen]) => {
-      try {
-        localStorage.setItem('websocket-debug-panel-open', JSON.stringify(isPanelOpen));
-      } catch (error) {
-        console.error('Failed to persist panel state:', error);
-      }
+      // Async localStorage write
+      Promise.resolve().then(() => {
+        try {
+          localStorage.setItem('websocket-debug-panel-open', JSON.stringify(isPanelOpen));
+        } catch (error) {
+          console.error('Failed to persist panel state:', error);
+        }
+      });
     }),
   ), { dispatch: false });
 

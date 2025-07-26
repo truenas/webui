@@ -64,16 +64,22 @@ export class WebSocketDebugPanelComponent implements OnInit, OnDestroy {
     // Load saved mock configs and restore panel state
     this.store$.dispatch(WebSocketDebugActions.loadMockConfigs());
 
-    // Restore panel state from localStorage if available
-    try {
-      const savedState = localStorage.getItem('websocket-debug-panel-open');
-      if (savedState) {
-        const isOpen = JSON.parse(savedState) as boolean;
-        this.store$.dispatch(WebSocketDebugActions.setPanelOpen({ isOpen }));
-      }
-    } catch (error) {
-      console.error('Failed to restore panel state:', error);
-    }
+    // Restore panel state from localStorage asynchronously
+    this.ngZone.runOutsideAngular(() => {
+      Promise.resolve().then(() => {
+        try {
+          const savedState = localStorage.getItem('websocket-debug-panel-open');
+          if (savedState) {
+            const isOpen = JSON.parse(savedState) as boolean;
+            this.ngZone.run(() => {
+              this.store$.dispatch(WebSocketDebugActions.setPanelOpen({ isOpen }));
+            });
+          }
+        } catch (error) {
+          console.error('Failed to restore panel state:', error);
+        }
+      });
+    });
 
     // Manage body margin when panel opens/closes
     this.isPanelOpen$.pipe(untilDestroyed(this)).subscribe((isOpen) => {

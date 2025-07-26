@@ -237,62 +237,48 @@ describe('MessageListComponent', () => {
       expect(spectator.component.autoScroll).toBe(true);
     });
 
-    it('should scroll to bottom when new messages arrive and auto-scroll is enabled', () => {
-      const mockElement = {
-        scrollHeight: 1000,
-        scrollTop: 0,
-      };
-
-      spectator.component['messageViewport'] = {
-        nativeElement: mockElement,
-      } as ElementRef<HTMLDivElement>;
-
-      spectator.component.autoScroll = true;
-      spectator.component['shouldScrollToBottom'] = true;
-
-      spectator.component['ngAfterViewChecked']();
-
-      expect(mockElement.scrollTop).toBe(1000);
-      expect(spectator.component['shouldScrollToBottom']).toBe(false);
-    });
-
-    it('should not scroll when auto-scroll is disabled', () => {
-      const mockElement = {
-        scrollHeight: 1000,
-        scrollTop: 0,
-      };
-
-      spectator.component['messageViewport'] = {
-        nativeElement: mockElement,
-      } as ElementRef<HTMLDivElement>;
-
-      spectator.component.autoScroll = false;
-      spectator.component['shouldScrollToBottom'] = false;
-
-      spectator.component['ngAfterViewChecked']();
-
-      expect(mockElement.scrollTop).toBe(0);
-    });
-  });
-
-  describe('trackBy function', () => {
-    it('should track messages by id', () => {
-      const message = {
-        id: 'test-123',
-        timestamp: new Date().toISOString(),
-        direction: 'out' as const,
-        message: {
-          jsonrpc: '2.0' as const,
-          id: 'test-123',
-          method: 'test' as never,
+    it('should setup auto-scroll subscription on init', async () => {
+      const mockViewport = {
+        nativeElement: {
+          scrollTop: 0,
+          scrollHeight: 1000,
         },
-        formattedTime: '1s ago',
-        methodName: 'test',
-        messagePreview: '{}',
-        isExpanded: false,
-      };
+      } as ElementRef<HTMLDivElement>;
 
-      expect(spectator.component['trackByMessage'](0, message)).toBe('test-123');
+      spectator.component['messageViewport'] = mockViewport;
+      spectator.component.autoScroll = true;
+
+      // Trigger ngAfterViewInit
+      spectator.component.ngAfterViewInit();
+
+      // Wait for the timeout in the component
+      await new Promise((resolve) => {
+        setTimeout(resolve, 150);
+      });
+      expect(mockViewport.nativeElement.scrollTop).toBe(mockViewport.nativeElement.scrollHeight);
+    });
+
+    it('should not scroll when auto-scroll is disabled', async () => {
+      const mockViewport = {
+        nativeElement: {
+          scrollTop: 0,
+          scrollHeight: 1000,
+        },
+      } as ElementRef<HTMLDivElement>;
+
+      spectator.component['messageViewport'] = mockViewport;
+      spectator.component.autoScroll = false;
+
+      // Trigger ngAfterViewInit
+      spectator.component.ngAfterViewInit();
+
+      // Wait and verify scrollTop was not changed
+      await new Promise((resolve) => {
+        setTimeout(resolve, 150);
+      });
+      expect(mockViewport.nativeElement.scrollTop).toBe(0);
     });
   });
+
+  // trackBy function was removed from the component
 });
