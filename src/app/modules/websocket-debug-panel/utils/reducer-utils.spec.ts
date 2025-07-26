@@ -80,8 +80,8 @@ describe('reducer-utils', () => {
       const state = createMockState();
       state.isPanelOpen = true;
       state.activeTab = 'mock-config';
-      state.mockConfigs = [{ 
-        id: '1', 
+      state.mockConfigs = [{
+        id: '1',
         enabled: true,
         methodName: 'test.method',
         response: {
