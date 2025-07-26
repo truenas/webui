@@ -31,6 +31,7 @@ const extents: IscsiExtent[] = [
     path: '/dev/zvol/tank/iscsi-extent',
     comment: 'test-iscsi-extent-comment',
     serial: 'test-iscsi-extent-serial',
+    product_id: 'test-product-id',
     enabled: true,
     naa: '0x6589cfc00000097bd2aa6aff515d84c9',
   } as IscsiExtent,
@@ -125,12 +126,13 @@ describe('ExtentListComponent', () => {
 
   it('should show table rows', async () => {
     const expectedRows = [
-      ['Extent Name', 'Device/File', 'Description', 'Serial', 'NAA', 'Enabled', ''],
+      ['Extent Name', 'Device/File', 'Description', 'Serial', 'Product ID', 'NAA', 'Enabled', ''],
       [
         'test-iscsi-extent',
         '/dev/zvol/tank/iscsi-extent',
         'test-iscsi-extent-comment',
         'test-iscsi-extent-serial',
+        'test-product-id',
         '0x6589cfc00000097bd2aa6aff515d84c9',
         'Yes',
         '',

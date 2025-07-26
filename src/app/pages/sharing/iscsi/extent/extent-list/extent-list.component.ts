@@ -99,6 +99,10 @@ export class ExtentListComponent implements OnInit {
       propertyName: 'serial',
     }),
     textColumn({
+      title: this.translate.instant('Product ID'),
+      propertyName: 'product_id',
+    }),
+    textColumn({
       title: this.translate.instant('NAA'),
       propertyName: 'naa',
     }),

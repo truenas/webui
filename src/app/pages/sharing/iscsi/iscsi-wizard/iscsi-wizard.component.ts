@@ -119,6 +119,7 @@ export class IscsiWizardComponent implements OnInit {
       dataset: ['', [Validators.required]],
       volsize: new FormControl(null as number | null, [Validators.required]),
       usefor: [IscsiExtentUsefor.Vmware, [Validators.required]],
+      product_id: [''],
     }),
     options: this.fb.group({
       portal: new FormControl(null as typeof newOption | number | null, [Validators.required]),
@@ -185,6 +186,7 @@ export class IscsiWizardComponent implements OnInit {
       insecure_tpc: true,
       xen: value.usefor === IscsiExtentUsefor.Xen,
       rpm: IscsiExtentRpm.Ssd,
+      product_id: value.product_id,
     } as IscsiExtentUpdate;
 
     if (extentPayload.type === IscsiExtentType.File) {

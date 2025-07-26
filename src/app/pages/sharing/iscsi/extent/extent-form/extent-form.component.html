@@ -110,6 +110,13 @@
               ></ix-input>
             }
 
+            <ix-input
+              formControlName="product_id"
+              [label]="helptext.extent.productIdLabel | translate"
+              [tooltip]="helptext.extent.productIdTooltip | translate"
+              [placeholder]="helptext.extent.productIdPlaceholder | translate"
+            ></ix-input>
+
             <ix-select
               formControlName="blocksize"
               [label]="helptext.extent.blocksizeLabel | translate"

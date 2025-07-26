@@ -140,6 +140,13 @@ export const helptextIscsi = {
  the MAC address of the system.',
     ),
 
+    productIdLabel: T('Product ID'),
+    productIdTooltip: T(
+      'Product identification string for the extent.\
+ The default is "iSCSI Disk" when left empty.',
+    ),
+    productIdPlaceholder: T('iSCSI Disk'),
+
     pathLabel: T('Path to the Extent'),
     pathTooltip: T('Browse to an existing file. Create a new file by browsing to a\
  dataset and appending /<i>(filename.ext)</i> to the path.'),
