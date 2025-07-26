@@ -24,7 +24,7 @@ export class MockResponseService implements OnDestroy {
   private readonly mockedCallIds = new Set<string>();
   private readonly activeEvents = new Map<string, number[]>();
   private readonly eventSubscriptions = new Map<string, Subscription>();
-  private readonly cleanupTimers = new Map<string, number>();
+  private readonly cleanupTimers = new Map<string, ReturnType<typeof setTimeout>>();
 
   get responses$(): Observable<IncomingMessage> {
     return this.mockResponses$.asObservable();

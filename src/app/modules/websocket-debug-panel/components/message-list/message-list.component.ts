@@ -11,6 +11,7 @@ import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { scrollToBottomDelayMs } from 'app/modules/websocket-debug-panel/constants';
 import { WebSocketDebugMessage } from 'app/modules/websocket-debug-panel/interfaces/websocket-debug.interface';
 import { clearMessages, toggleMessageExpansion } from 'app/modules/websocket-debug-panel/store/websocket-debug.actions';
 import { selectMessages } from 'app/modules/websocket-debug-panel/store/websocket-debug.selectors';
@@ -38,11 +39,11 @@ interface FormattedWebSocketDebugMessage extends WebSocketDebugMessage {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MessageListComponent implements AfterViewInit {
-  @ViewChild('messageViewport', { read: ElementRef }) private messageViewport?: ElementRef<HTMLDivElement>;
+  @ViewChild('messageViewport', { read: ElementRef }) protected messageViewport?: ElementRef<HTMLDivElement>;
   messages$: Observable<WebSocketDebugMessage[]> = this.store$.select(selectMessages);
   autoScroll = true;
-  hasMessages = false;
-  formattedMessagesArray: FormattedWebSocketDebugMessage[] = [];
+  protected hasMessages = false;
+  protected formattedMessagesArray: FormattedWebSocketDebugMessage[] = [];
 
   formattedMessages$: Observable<FormattedWebSocketDebugMessage[]> = this.messages$.pipe(
     map((messages) => messages.map((msg) => ({
@@ -75,21 +76,21 @@ export class MessageListComponent implements AfterViewInit {
           if (element) {
             element.scrollTop = element.scrollHeight;
           }
-        }, 100);
+        }, scrollToBottomDelayMs);
       }
     });
   }
 
-  clearMessages(): void {
+  protected clearMessages(): void {
     this.store$.dispatch(clearMessages());
   }
 
-  copyMessage(message: WebSocketDebugMessage): void {
+  protected copyMessage(message: WebSocketDebugMessage): void {
     const messageContent = JSON.stringify(message.message, null, 2);
     navigator.clipboard.writeText(messageContent);
   }
 
-  toggleMessage(messageId: string): void {
+  protected toggleMessage(messageId: string): void {
     // Create a new action to toggle message expansion
     this.store$.dispatch(toggleMessageExpansion({ messageId }));
   }

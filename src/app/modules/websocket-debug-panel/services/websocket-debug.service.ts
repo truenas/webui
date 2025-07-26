@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { UUID } from 'angular2-uuid';
 import { IncomingMessage, RequestMessage } from 'app/interfaces/api-message.interface';
+import { cacheCleanupIntervalMs, maxCacheSize } from 'app/modules/websocket-debug-panel/constants';
 import { WebSocketDebugMessage } from 'app/modules/websocket-debug-panel/interfaces/websocket-debug.interface';
 import * as WebSocketDebugActions from 'app/modules/websocket-debug-panel/store/websocket-debug.actions';
 
@@ -12,7 +13,7 @@ export class WebSocketDebugService {
   // Cache to map request IDs to method names
   private requestMethodCache = new Map<string, string>();
   // Limit cache size to prevent memory leaks
-  private readonly maxCacheSize = 1000;
+  private readonly maxCacheSize = maxCacheSize;
 
   constructor(
     private store$: Store,
@@ -84,6 +85,6 @@ export class WebSocketDebugService {
     // Clean up old entries after a delay to handle duplicate logs
     setTimeout(() => {
       this.requestMethodCache.delete(id);
-    }, 5000);
+    }, cacheCleanupIntervalMs);
   }
 }

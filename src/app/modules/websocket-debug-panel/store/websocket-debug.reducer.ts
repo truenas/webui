@@ -1,6 +1,8 @@
 import { createReducer, on } from '@ngrx/store';
+import { defaultMessageLimit, tabs } from 'app/modules/websocket-debug-panel/constants';
 import { MockConfig } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
 import { WebSocketDebugMessage } from 'app/modules/websocket-debug-panel/interfaces/websocket-debug.interface';
+import { addMessageWithLimit } from 'app/modules/websocket-debug-panel/utils/reducer-utils';
 import * as WebSocketDebugActions from './websocket-debug.actions';
 
 export interface WebSocketDebugState {
@@ -15,26 +17,14 @@ export const initialState: WebSocketDebugState = {
   messages: [] as WebSocketDebugMessage[],
   mockConfigs: [] as MockConfig[],
   isPanelOpen: false,
-  activeTab: 'websocket',
-  messageLimit: 200,
+  activeTab: tabs.WEBSOCKET,
+  messageLimit: defaultMessageLimit,
 };
 
 export const webSocketDebugReducer = createReducer(
   initialState,
-  on(WebSocketDebugActions.messageReceived, (state, { message }) => {
-    const messages = [...state.messages, message];
-    if (messages.length > state.messageLimit) {
-      messages.splice(0, messages.length - state.messageLimit);
-    }
-    return { ...state, messages };
-  }),
-  on(WebSocketDebugActions.messageSent, (state, { message }) => {
-    const messages = [...state.messages, message];
-    if (messages.length > state.messageLimit) {
-      messages.splice(0, messages.length - state.messageLimit);
-    }
-    return { ...state, messages };
-  }),
+  on(WebSocketDebugActions.messageReceived, (state, { message }) => addMessageWithLimit(state, message)),
+  on(WebSocketDebugActions.messageSent, (state, { message }) => addMessageWithLimit(state, message)),
   on(WebSocketDebugActions.clearMessages, (state) => ({
     ...state,
     messages: [] as WebSocketDebugMessage[],

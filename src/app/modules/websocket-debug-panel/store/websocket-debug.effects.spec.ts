@@ -115,7 +115,7 @@ describe('WebSocketDebugEffects', () => {
       });
       expect(result).toEqual(completion);
       expect(consoleErrorSpy).toHaveBeenCalledWith(
-        'Failed to load mock configs:',
+        'LocalStorage read error:',
         expect.any(Error),
       );
     });
@@ -135,7 +135,7 @@ describe('WebSocketDebugEffects', () => {
       });
       expect(result).toEqual(completion);
       expect(consoleErrorSpy).toHaveBeenCalledWith(
-        'Failed to load mock configs:',
+        'LocalStorage parse error:',
         expect.any(Error),
       );
     });
@@ -236,7 +236,7 @@ describe('WebSocketDebugEffects', () => {
       });
 
       expect(consoleErrorSpy).toHaveBeenCalledWith(
-        'Failed to save mock configs:',
+        'LocalStorage write error:',
         expect.any(Error),
       );
       subscription.unsubscribe();
@@ -304,7 +304,7 @@ describe('WebSocketDebugEffects', () => {
       });
 
       expect(consoleErrorSpy).toHaveBeenCalledWith(
-        'Failed to persist panel state:',
+        'LocalStorage write error:',
         expect.any(Error),
       );
       subscription.unsubscribe();

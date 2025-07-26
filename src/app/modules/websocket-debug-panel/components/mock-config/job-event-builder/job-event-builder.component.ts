@@ -15,8 +15,8 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { WebSocketDebugError } from 'app/modules/websocket-debug-panel/interfaces/error.types';
 import { MockEvent } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
+import { parseDelay, safeJsonParse, safeJsonStringify } from 'app/modules/websocket-debug-panel/utils/type-guards';
 
 @UntilDestroy()
 @Component({
@@ -89,16 +89,7 @@ export class JobEventBuilderComponent implements OnInit, OnChanges {
   }
 
   private createEventFormGroup(event: MockEvent): FormGroup {
-    // Ensure delay is treated as a number and handle all possible formats
-    let delayValue = 2000; // default
-    if (event.delay !== undefined && event.delay !== null) {
-      if (typeof event.delay === 'string') {
-        const parsed = parseInt(event.delay as unknown as string, 10);
-        delayValue = Number.isNaN(parsed) ? 2000 : parsed;
-      } else if (typeof event.delay === 'number') {
-        delayValue = event.delay;
-      }
-    }
+    const delayValue = parseDelay(event.delay);
 
     return this.fb.group({
       delay: [delayValue],
@@ -108,7 +99,7 @@ export class JobEventBuilderComponent implements OnInit, OnChanges {
         ? event.fields.progress.percent
         : 0],
       progressDescription: [event.fields.progress?.description || ''],
-      result: [this.stringifyResult(event.fields.result)],
+      result: [safeJsonStringify(event.fields.result)],
       error: [event.fields.error || ''],
     });
   }
@@ -123,7 +114,7 @@ export class JobEventBuilderComponent implements OnInit, OnChanges {
   }
 
   private getFormEvents(): MockEvent[] {
-    return this.eventsFormArray.controls.map((control, index) => {
+    return this.eventsFormArray.controls.map((control) => {
       const formGroup = control as FormGroup;
       const value = formGroup.value as {
         delay: number;
@@ -135,9 +126,7 @@ export class JobEventBuilderComponent implements OnInit, OnChanges {
         error: string;
       };
       const event: MockEvent = {
-        delay: value.delay !== undefined && value.delay !== null
-          ? Number(value.delay)
-          : 2000,
+        delay: parseDelay(value.delay),
         fields: {
           state: value.state as MockEvent['fields']['state'],
           description: value.description || null,
@@ -151,18 +140,7 @@ export class JobEventBuilderComponent implements OnInit, OnChanges {
       };
 
       if (value.result) {
-        try {
-          event.fields.result = JSON.parse(value.result) as unknown;
-        } catch (parseError) {
-          const error = new WebSocketDebugError(
-            'Invalid JSON in result field',
-            'INVALID_JSON_RESULT',
-            parseError,
-          );
-          console.warn('Invalid JSON in result field:', error);
-          // Keep the original string value to preserve user input
-          event.fields.result = value.result;
-        }
+        event.fields.result = safeJsonParse(value.result, value.result);
       }
 
       if (value.error) {
@@ -204,25 +182,6 @@ export class JobEventBuilderComponent implements OnInit, OnChanges {
     const control = this.getEventControl(index);
     const state = control.controls.state?.value as string;
     return state === 'SUCCESS' || state === 'FAILED';
-  }
-
-  private stringifyResult(result: unknown): string {
-    if (!result) {
-      return '';
-    }
-
-    try {
-      return JSON.stringify(result, null, 2);
-    } catch (stringifyError) {
-      const error = new WebSocketDebugError(
-        'Failed to stringify result for display',
-        'JSON_STRINGIFY_ERROR',
-        stringifyError,
-      );
-      console.warn('Failed to stringify result:', error);
-      // If it's already a string, return it as-is
-      return typeof result === 'string' ? result : String(result);
-    }
   }
 
   private areEventsEqual(events1: MockEvent[], events2: MockEvent[]): boolean {

@@ -1,7 +1,7 @@
 export class LocalStorageError extends Error {
   constructor(
     message: string,
-    public readonly operation: 'read' | 'write' | 'parse',
+    public readonly operation: 'read' | 'write' | 'parse' | 'remove',
     public readonly key: string,
     public override readonly cause?: unknown,
   ) {
