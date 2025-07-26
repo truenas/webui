@@ -64,6 +64,7 @@ export class PermissionsCardComponent implements OnInit, OnChanges {
 
   protected readonly isLoading = signal(false);
   protected readonly isMissingMountpoint = signal(false);
+  protected readonly isNotMounted = signal(false);
   protected readonly stat = signal<FileSystemStat | null>(null);
   protected readonly acl = signal<Acl | null>(null);
 
@@ -75,6 +76,11 @@ export class PermissionsCardComponent implements OnInit, OnChanges {
   missionMountpointEmptyConfig: EmptyConfig = {
     type: EmptyType.NoPageData,
     title: this.translate.instant('Dataset has no mountpoint'),
+  };
+
+  notMountedEmptyConfig: EmptyConfig = {
+    type: EmptyType.NoPageData,
+    title: this.translate.instant('Dataset is not mounted'),
   };
 
   lockedEmptyConfig: EmptyConfig = {
@@ -102,6 +108,9 @@ export class PermissionsCardComponent implements OnInit, OnChanges {
   readonly emptyConfig = computed(() => {
     if (this.isMissingMountpoint()) {
       return this.missionMountpointEmptyConfig;
+    }
+    if (this.isNotMounted()) {
+      return this.notMountedEmptyConfig;
     }
     if (this.isLocked()) {
       return this.lockedEmptyConfig;
@@ -183,6 +192,12 @@ export class PermissionsCardComponent implements OnInit, OnChanges {
     if (this.isMissingMountpoint()) {
       return;
     }
+
+    this.isNotMounted.set(!this.dataset().mounted?.parsed);
+    if (this.isNotMounted()) {
+      return;
+    }
+
     this.store.loadPermissions(this.dataset().mountpoint);
   }
 }
