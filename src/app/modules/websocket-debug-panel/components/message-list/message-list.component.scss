@@ -28,10 +28,6 @@
     
     mat-checkbox {
       font-size: 12px;
-      
-      ::ng-deep .mat-mdc-checkbox-label {
-        font-size: 12px;
-      }
     }
   }
 
@@ -192,5 +188,12 @@
   p {
     font-size: 14px;
     margin: 0;
+  }
+}
+
+// Material checkbox override
+.message-list-header {
+  .mat-mdc-checkbox-label {
+    font-size: 12px;
   }
 }

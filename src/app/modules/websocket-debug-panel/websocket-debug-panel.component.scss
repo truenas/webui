@@ -89,68 +89,69 @@
     flex-direction: column;
     min-height: 0;
     overflow: hidden;
+  }
+}
 
-    ::ng-deep {
-      .mat-mdc-tab-header {
-        background-color: var(--bg1);
-        border-bottom: 1px solid var(--lines);
-        flex-shrink: 0;
-      }
+// Material tab overrides using :host
+:host {
+  .mat-mdc-tab-header {
+    background-color: var(--bg1);
+    border-bottom: 1px solid var(--lines);
+    flex-shrink: 0;
+  }
 
-      .mat-mdc-tab-label {
-        color: var(--fg2) !important;
-        opacity: 1 !important;
+  .mat-mdc-tab-label {
+    color: var(--fg2) !important;
+    opacity: 1 !important;
 
-        &.mdc-tab--active {
-          color: var(--fg1) !important;
-        }
-
-        &:hover {
-          color: var(--fg1) !important;
-        }
-      }
-
-      .mat-mdc-tab-label-content {
-        color: inherit !important;
-      }
-
-      .mdc-tab__text-label {
-        color: inherit !important;
-      }
-
-      .mat-mdc-tab:not(.mat-mdc-tab-disabled) {
-        color: var(--fg2) !important;
-        opacity: 1 !important;
-
-        &.mdc-tab--active {
-          color: var(--fg1) !important;
-        }
-      }
-
-      .mdc-tab-indicator__content {
-        background-color: var(--primary);
-      }
-
-      .mat-mdc-tab-body-wrapper {
-        display: flex;
-        flex: 1;
-        overflow: hidden;
-      }
-
-      .mat-mdc-tab-body {
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        width: 100%;
-      }
-
-      .mat-mdc-tab-body-content {
-        display: flex;
-        flex: 1;
-        height: 100%;
-        overflow: hidden;
-        width: 100%;
-      }
+    &.mdc-tab--active {
+      color: var(--fg1) !important;
     }
+
+    &:hover {
+      color: var(--fg1) !important;
+    }
+  }
+
+  .mat-mdc-tab-label-content {
+    color: inherit !important;
+  }
+
+  .mdc-tab__text-label {
+    color: inherit !important;
+  }
+
+  .mat-mdc-tab:not(.mat-mdc-tab-disabled) {
+    color: var(--fg2) !important;
+    opacity: 1 !important;
+
+    &.mdc-tab--active {
+      color: var(--fg1) !important;
+    }
+  }
+
+  .mdc-tab-indicator__content {
+    background-color: var(--primary);
+  }
+
+  .mat-mdc-tab-body-wrapper {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  .mat-mdc-tab-body {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+  }
+
+  .mat-mdc-tab-body-content {
+    display: flex;
+    flex: 1;
+    height: 100%;
+    overflow: hidden;
+    width: 100%;
   }
 }

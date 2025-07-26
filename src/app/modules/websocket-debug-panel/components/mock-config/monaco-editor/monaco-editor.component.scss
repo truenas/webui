@@ -14,7 +14,8 @@ textarea {
   }
 }
 
-::ng-deep {
+// Material form field overrides
+:host {
   .mat-mdc-form-field {
     .mat-mdc-input-element {
       color: var(--fg1) !important;

@@ -1,6 +1,7 @@
 import { AsyncPipe, DOCUMENT } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, OnInit, HostListener, OnDestroy, Renderer2, Inject,
+  ChangeDetectorRef, NgZone,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -14,7 +15,6 @@ import * as WebSocketDebugActions from './store/websocket-debug.actions';
 import {
   selectIsPanelOpen, selectActiveTab, selectHasActiveMocks,
 } from './store/websocket-debug.selectors';
-import { WebSocketDebugPanelModule } from './websocket-debug-panel.module';
 
 @UntilDestroy()
 @Component({
@@ -27,7 +27,6 @@ import { WebSocketDebugPanelModule } from './websocket-debug-panel.module';
     IxIconComponent,
     WebSocketTabComponent,
     MockConfigurationsTabComponent,
-    WebSocketDebugPanelModule,
   ],
   providers: [],
   templateUrl: './websocket-debug-panel.component.html',
@@ -57,6 +56,8 @@ export class WebSocketDebugPanelComponent implements OnInit, OnDestroy {
     private store$: Store,
     private renderer: Renderer2,
     @Inject(DOCUMENT) private document: Document,
+    private cdr: ChangeDetectorRef,
+    private ngZone: NgZone,
   ) {}
 
   ngOnInit(): void {
@@ -81,9 +82,9 @@ export class WebSocketDebugPanelComponent implements OnInit, OnDestroy {
     });
   }
 
-  private updateAdminLayoutMargin(isOpen: boolean): void {
-    // Use a small timeout to ensure the DOM is ready, especially on page refresh
-    setTimeout(() => {
+  private updateAdminLayoutMargin(isOpen: boolean, retryCount = 0): void {
+    // Run outside Angular to avoid unnecessary change detection
+    this.ngZone.runOutsideAngular(() => {
       const adminLayout = this.document.querySelector('.fn-maincontent') as HTMLElement;
       if (adminLayout) {
         if (isOpen) {
@@ -93,12 +94,16 @@ export class WebSocketDebugPanelComponent implements OnInit, OnDestroy {
           this.renderer.removeStyle(adminLayout, 'margin-right');
           this.renderer.removeStyle(adminLayout, 'transition');
         }
-      } else if (isOpen) {
+      } else if (isOpen && retryCount < 10) {
         // If admin layout is not found yet and panel should be open, try again
-        // This handles the case where the panel initializes before the router loads the admin layout
-        setTimeout(() => this.updateAdminLayoutMargin(isOpen), 100);
+        // Use requestAnimationFrame for better performance
+        requestAnimationFrame(() => {
+          this.ngZone.run(() => {
+            this.updateAdminLayoutMargin(isOpen, retryCount + 1);
+          });
+        });
       }
-    }, 0);
+    });
   }
 
   ngOnDestroy(): void {

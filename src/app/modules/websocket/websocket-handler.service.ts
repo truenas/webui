@@ -39,8 +39,8 @@ type ApiCall = Required<Pick<RequestMessage, 'id' | 'method' | 'params'>> & { js
   providedIn: 'root',
 })
 export class WebSocketHandlerService {
-  private readonly wsConnection: WebSocketConnection = new WebSocketConnection(this.webSocket);
-  private connectionUrl = (this.window.location.protocol === 'https:' ? 'wss://' : 'ws://') + environment.remote + '/api/current';
+  private readonly wsConnection: WebSocketConnection;
+  private connectionUrl: string;
 
   private readonly reconnectTimeoutMillis = 5 * 1000;
   private reconnectTimerSubscription: Subscription | undefined;
@@ -65,8 +65,6 @@ export class WebSocketHandlerService {
     return this.isConnectionLive$.pipe(map((isLive) => !isLive));
   }
 
-  // Getter removed - responses$ is now a shared property initialized in constructor
-
   private readonly triggerNextCall$ = new Subject<void>();
   private activeCalls = 0;
   private readonly queuedCalls: ApiCall[] = [];
@@ -74,26 +72,8 @@ export class WebSocketHandlerService {
   private showingConcurrentCallsError = false;
   private callsInConcurrentCallsError = new Set<string>();
 
-  // Shared responses observable to prevent duplicate subscriptions
-  private _responses$: Observable<IncomingMessage> | undefined;
-  get responses$(): Observable<IncomingMessage> {
-    if (!this._responses$) {
-      const realResponses$ = this.wsConnection.stream$ as Observable<IncomingMessage>;
-      const mockResponses$ = this.mockResponseService.responses$;
-
-      this._responses$ = merge(realResponses$, mockResponses$).pipe(
-        tap((message) => {
-          // Log incoming messages for debugging
-          if (environment.debugPanel?.enabled) {
-            const isMocked = this.mockResponseService.isMockedResponse(message);
-            this.debugService.logIncomingMessage(message, isMocked);
-          }
-        }),
-        shareReplay({ bufferSize: 0, refCount: true }),
-      );
-    }
-    return this._responses$;
-  }
+  // Shared responses observable initialized in constructor to prevent memory leaks
+  readonly responses$: Observable<IncomingMessage>;
 
   constructor(
     private wsStatus: WebSocketStatusService,
@@ -104,6 +84,25 @@ export class WebSocketHandlerService {
     private debugService: WebSocketDebugService,
     private mockResponseService: MockResponseService,
   ) {
+    // Initialize connection properties
+    this.wsConnection = new WebSocketConnection(this.webSocket);
+    this.connectionUrl = (this.window.location.protocol === 'https:' ? 'wss://' : 'ws://') + environment.remote + '/api/current';
+
+    // Initialize responses$ after wsConnection is created
+    const realResponses$ = this.wsConnection.stream$ as Observable<IncomingMessage>;
+    const mockResponses$ = this.mockResponseService.responses$;
+
+    this.responses$ = merge(realResponses$, mockResponses$).pipe(
+      tap((message) => {
+        // Log incoming messages for debugging
+        if (environment.debugPanel?.enabled) {
+          const isMocked = this.mockResponseService.isMockedResponse(message);
+          this.debugService.logIncomingMessage(message, isMocked);
+        }
+      }),
+      shareReplay({ bufferSize: 0, refCount: true }),
+    );
+
     this.setupWebSocket();
   }
 

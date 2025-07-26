@@ -74,28 +74,6 @@
     padding-left: 13px;
   }
 
-  ::ng-deep {
-    .mat-mdc-slide-toggle {
-      .mdc-switch__track {
-        background-color: var(--bg2);
-        border-color: var(--lines);
-      }
-
-      .mdc-switch--checked .mdc-switch__track {
-        background-color: var(--primary);
-        border-color: var(--primary);
-      }
-
-      .mdc-switch__handle {
-        background-color: var(--fg2);
-      }
-
-      .mdc-switch--checked .mdc-switch__handle {
-        background-color: var(--fg1);
-      }
-    }
-  }
-
   .config-info {
     flex: 1;
 
@@ -131,5 +109,28 @@
 
   .hint {
     font-size: 14px;
+  }
+}
+
+// Material slide toggle overrides
+.config-item {
+  .mat-mdc-slide-toggle {
+    .mdc-switch__track {
+      background-color: var(--bg2);
+      border-color: var(--lines);
+    }
+
+    .mdc-switch--checked .mdc-switch__track {
+      background-color: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .mdc-switch__handle {
+      background-color: var(--fg2);
+    }
+
+    .mdc-switch--checked .mdc-switch__handle {
+      background-color: var(--fg1);
+    }
   }
 }
