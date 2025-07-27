@@ -16,13 +16,17 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatHint } from '@angular/material/form-field';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { map, of } from 'rxjs';
+import {
+  filter, forkJoin, map, of,
+} from 'rxjs';
 import { stigPasswordRequirements } from 'app/constants/stig-password-requirements.constants';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { PasswordComplexityRuleset, passwordComplexityRulesetLabels } from 'app/enums/password-complexity-ruleset.enum';
 import { Role } from 'app/enums/role.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
+import { QueryParams } from 'app/interfaces/query-api.interface';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
+import { User } from 'app/interfaces/user.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -187,7 +191,65 @@ export class SystemSecurityFormComponent implements OnInit {
 
   protected onSubmit(): void {
     const values = this.form.value as unknown as SystemSecurityConfig;
+    const isEnablingStig = values.enable_gpos_stig && !this.systemSecurityConfig().enable_gpos_stig;
 
+    if (isEnablingStig) {
+      this.checkUsersWithoutTwoFactorAuth(() => this.saveSettings(values));
+    } else {
+      this.saveSettings(values);
+    }
+  }
+
+  private checkUsersWithoutTwoFactorAuth(callback: () => void): void {
+    forkJoin({
+      users: this.api.call('user.query', [[
+        ['OR', [['builtin', '=', false], ['username', '=', 'root']]],
+        ['twofactor_auth_configured', '=', false],
+        ['locked', '=', false],
+        ['password_disabled', '=', false],
+        ['roles', '!=', []],
+      ]] as QueryParams<User>),
+      globalTwoFactorConfig: this.api.call('auth.twofactor.config'),
+    }).pipe(
+      untilDestroyed(this),
+    ).subscribe({
+      next: ({ users }) => {
+        if (users.length > 0) {
+          this.showStigWarningDialog(users, callback);
+        } else {
+          callback();
+        }
+      },
+      error: (error: unknown) => {
+        this.errorHandler.withErrorHandler()(of(error));
+      },
+    });
+  }
+
+  private showStigWarningDialog(usersWithoutTwoFactor: User[], callback: () => void): void {
+    const userList = usersWithoutTwoFactor.map((user) => user.username).join(', ');
+    const message = this.translate.instant(
+      'Warning: The following users have roles but do not have Two-Factor Authentication configured: {userList}. '
+      + 'These users will not be able to log in once STIG mode is enabled. '
+      + 'Please configure Two-Factor Authentication for these users before enabling STIG mode if you want them to retain access.',
+      { userList },
+    );
+
+    this.dialogService.confirm({
+      title: this.translate.instant('STIG Mode Warning'),
+      message,
+      buttonText: this.translate.instant('Enable STIG Mode Anyway'),
+      cancelText: this.translate.instant('Cancel'),
+      hideCheckbox: true,
+    }).pipe(
+      filter(Boolean),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      callback();
+    });
+  }
+
+  private saveSettings(values: SystemSecurityConfig): void {
     if (values.password_complexity_ruleset) {
       values.password_complexity_ruleset = {
         $set: values.password_complexity_ruleset as unknown as PasswordComplexityRuleset[],
