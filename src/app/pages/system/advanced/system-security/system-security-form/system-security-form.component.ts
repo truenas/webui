@@ -13,11 +13,12 @@ import {
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatHint } from '@angular/material/form-field';
+import { MatError, MatHint } from '@angular/material/form-field';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  filter, map, of,
+  filter, map, of, switchMap,
 } from 'rxjs';
 import { stigPasswordRequirements } from 'app/constants/stig-password-requirements.constants';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -55,6 +56,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     MatButton,
     TestDirective,
     TranslateModule,
+    MatError,
     MatHint,
     IxInputComponent,
     IxSelectComponent,
@@ -97,6 +99,8 @@ export class SystemSecurityFormComponent implements OnInit {
 
   private systemSecurityConfig = signal<SystemSecurityConfig>(this.slideInRef.getData());
   protected isStigEnabled = signal<boolean>(false);
+  protected globalTwoFactorEnabled = signal<boolean>(false);
+  protected stigValidationError = signal<string | null>(null);
 
   constructor(
     private formBuilder: FormBuilder,
@@ -106,6 +110,7 @@ export class SystemSecurityFormComponent implements OnInit {
     private api: ApiService,
     private authService: AuthService,
     private errorHandler: ErrorHandlerService,
+    private router: Router,
     public slideInRef: SlideInRef<SystemSecurityConfig, boolean>,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
@@ -116,6 +121,19 @@ export class SystemSecurityFormComponent implements OnInit {
   ngOnInit(): void {
     if (this.systemSecurityConfig()) {
       this.initSystemSecurityForm();
+      // Check global 2FA status if STIG is already enabled
+      if (this.systemSecurityConfig().enable_gpos_stig) {
+        this.api.call('auth.twofactor.config').pipe(
+          untilDestroyed(this),
+        ).subscribe((twoFactorConfig) => {
+          const enabled = twoFactorConfig?.enabled || false;
+          this.globalTwoFactorEnabled.set(enabled);
+          if (!enabled) {
+            this.stigValidationError.set('Global Two-Factor Authentication must be enabled to activate this feature.');
+            this.form.controls.enable_gpos_stig.setErrors({ globalTwoFactorRequired: true });
+          }
+        });
+      }
     }
   }
 
@@ -284,11 +302,35 @@ export class SystemSecurityFormComponent implements OnInit {
     });
 
     this.form.controls.enable_gpos_stig.valueChanges
-      .pipe(untilDestroyed(this))
-      .subscribe((value) => {
-        this.isStigEnabled.set(value);
-
-        if (value) {
+      .pipe(
+        switchMap((value) => {
+          this.isStigEnabled.set(value);
+          if (value) {
+            // Check if global 2FA is enabled
+            return this.api.call('auth.twofactor.config').pipe(
+              map((twoFactorConfig) => ({ stigEnabled: value, twoFactorEnabled: twoFactorConfig?.enabled || false })),
+            );
+          }
+          return of({ stigEnabled: value, twoFactorEnabled: false });
+        }),
+        untilDestroyed(this),
+      )
+      .subscribe(({ stigEnabled, twoFactorEnabled }) => {
+        if (stigEnabled) {
+          this.globalTwoFactorEnabled.set(twoFactorEnabled);
+          if (!twoFactorEnabled) {
+            this.stigValidationError.set('Global Two-Factor Authentication must be enabled to activate this feature.');
+            this.form.controls.enable_gpos_stig.setErrors({ globalTwoFactorRequired: true });
+          } else {
+            this.stigValidationError.set(null);
+            // Remove only the globalTwoFactorRequired error
+            const errors = this.form.controls.enable_gpos_stig.errors;
+            if (errors?.['globalTwoFactorRequired']) {
+              delete errors['globalTwoFactorRequired'];
+              const hasErrors = Object.keys(errors).length > 0;
+              this.form.controls.enable_gpos_stig.setErrors(hasErrors ? errors : null);
+            }
+          }
           const currentValues = this.form.value;
           const updates: Partial<typeof currentValues> = {
             enable_fips: true,
@@ -331,6 +373,16 @@ export class SystemSecurityFormComponent implements OnInit {
           }
 
           this.form.patchValue(updates);
+        } else {
+          // Reset validation error when STIG is disabled
+          this.stigValidationError.set(null);
+          this.globalTwoFactorEnabled.set(false);
+          const errors = this.form.controls.enable_gpos_stig.errors;
+          if (errors?.['globalTwoFactorRequired']) {
+            delete errors['globalTwoFactorRequired'];
+            const hasErrors = Object.keys(errors).length > 0;
+            this.form.controls.enable_gpos_stig.setErrors(hasErrors ? errors : null);
+          }
         }
 
         Object.keys(this.form.controls).forEach((key) => {
@@ -340,5 +392,12 @@ export class SystemSecurityFormComponent implements OnInit {
           }
         });
       });
+  }
+
+  navigateToGlobal2Fa(): void {
+    // Mark form as pristine to avoid unsaved changes dialog
+    this.form.markAsPristine();
+    this.slideInRef.close({ response: false });
+    this.router.navigate(['/credentials/two-factor']);
   }
 }
