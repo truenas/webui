@@ -49,7 +49,11 @@ export function mockAuth(
             isAuthenticated$: of(false),
           }),
           createSpyObject(ErrorHandlerService),
-          createSpyObject(Window),
+          createSpyObject(Window, {
+            sessionStorage: {
+              removeItem: jest.fn(),
+            },
+          }),
         );
 
         mockService.setUser(user as LoggedInUser);
