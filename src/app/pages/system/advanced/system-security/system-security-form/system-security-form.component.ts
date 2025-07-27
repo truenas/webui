@@ -17,7 +17,7 @@ import { MatHint } from '@angular/material/form-field';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  filter, forkJoin, map, of,
+  filter, map, of,
 } from 'rxjs';
 import { stigPasswordRequirements } from 'app/constants/stig-password-requirements.constants';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -201,19 +201,16 @@ export class SystemSecurityFormComponent implements OnInit {
   }
 
   private checkUsersWithoutTwoFactorAuth(callback: () => void): void {
-    forkJoin({
-      users: this.api.call('user.query', [[
-        ['OR', [['builtin', '=', false], ['username', '=', 'root']]],
-        ['twofactor_auth_configured', '=', false],
-        ['locked', '=', false],
-        ['password_disabled', '=', false],
-        ['roles', '!=', []],
-      ]] as QueryParams<User>),
-      globalTwoFactorConfig: this.api.call('auth.twofactor.config'),
-    }).pipe(
+    this.api.call('user.query', [[
+      ['OR', [['builtin', '=', false], ['username', '=', 'root']]],
+      ['twofactor_auth_configured', '=', false],
+      ['locked', '=', false],
+      ['password_disabled', '=', false],
+      ['roles', '!=', []],
+    ]] as QueryParams<User>).pipe(
       untilDestroyed(this),
     ).subscribe({
-      next: ({ users }) => {
+      next: (users) => {
         if (users.length > 0) {
           this.showStigWarningDialog(users, callback);
         } else {
@@ -242,7 +239,7 @@ export class SystemSecurityFormComponent implements OnInit {
       cancelText: this.translate.instant('Cancel'),
       hideCheckbox: true,
     }).pipe(
-      filter(Boolean),
+      filter((result) => !!result),
       untilDestroyed(this),
     ).subscribe(() => {
       callback();

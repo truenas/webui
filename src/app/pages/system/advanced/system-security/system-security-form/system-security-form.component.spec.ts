@@ -4,20 +4,23 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { stigPasswordRequirements } from 'app/constants/stig-password-requirements.constants';
 import { MockAuthService } from 'app/core/testing/classes/mock-auth.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { PasswordComplexityRuleset } from 'app/enums/password-complexity-ruleset.enum';
 import { ProductType } from 'app/enums/product-type.enum';
+import { DialogWithSecondaryCheckboxResult } from 'app/interfaces/dialog.interface';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
+import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SystemSecurityFormComponent } from 'app/pages/system/advanced/system-security/system-security-form/system-security-form.component';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -59,6 +62,9 @@ describe('SystemSecurityFormComponent', () => {
         close: jest.fn(),
         getData: jest.fn(() => fakeSystemSecurityConfig),
         requireConfirmationWhen: jest.fn(),
+      }),
+      mockProvider(ErrorHandlerService, {
+        withErrorHandler: jest.fn(() => (source$: Observable<unknown>) => source$),
       }),
       mockAuth(),
       mockProvider(ApiService, {
@@ -289,6 +295,178 @@ describe('SystemSecurityFormComponent', () => {
       const infoMessage = stigSpectator.query('.stig-info');
       expect(infoMessage).toBeTruthy();
       expect(infoMessage?.textContent).toContain('STIG mode is enabled');
+    });
+  });
+
+  describe('2FA warning when enabling STIG', () => {
+    let warningSpectator: Spectator<SystemSecurityFormComponent>;
+    let warningLoader: HarnessLoader;
+    let warningForm: IxFormHarness;
+    let apiService: ApiService;
+    let dialogService: DialogService;
+
+    beforeEach(async () => {
+      warningSpectator = createComponent();
+      warningLoader = TestbedHarnessEnvironment.loader(warningSpectator.fixture);
+      warningForm = await warningLoader.getHarness(IxFormHarness);
+      apiService = warningSpectator.inject(ApiService);
+      dialogService = warningSpectator.inject(DialogService);
+    });
+
+    it('shows warning dialog when users without 2FA exist', async () => {
+      const usersWithoutTwoFa = [
+        { username: 'user1', roles: [{ id: 1 }] } as unknown as User,
+        { username: 'user2', roles: [{ id: 2 }] } as unknown as User,
+      ];
+
+      jest.spyOn(apiService, 'call').mockImplementation((method: string) => {
+        if (method === 'user.query') {
+          return of(usersWithoutTwoFa);
+        }
+        return of(null);
+      });
+
+      const dialogSpy = jest.spyOn(dialogService, 'confirm').mockReturnValue(of(true) as unknown as Observable<DialogWithSecondaryCheckboxResult>);
+
+      // Enable STIG mode
+      await warningForm.fillForm({
+        'Enable General Purpose OS STIG compatibility mode': true,
+      });
+
+      const saveButton = await warningLoader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(dialogSpy).toHaveBeenCalledWith({
+        title: 'STIG Mode Warning',
+        message: expect.stringContaining('user1, user2'),
+        buttonText: 'Enable STIG Mode Anyway',
+        cancelText: 'Cancel',
+        hideCheckbox: true,
+      });
+    });
+
+    it('does not show warning when all users have 2FA configured', async () => {
+      jest.spyOn(apiService, 'call').mockImplementation((method: string) => {
+        if (method === 'user.query') {
+          return of([]); // No users without 2FA
+        }
+        return of(null);
+      });
+
+      const dialogSpy = jest.spyOn(dialogService, 'confirm');
+
+      // Enable STIG mode
+      await warningForm.fillForm({
+        'Enable General Purpose OS STIG compatibility mode': true,
+      });
+
+      const saveButton = await warningLoader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(dialogSpy).not.toHaveBeenCalled();
+      expect(apiService.job).toHaveBeenCalledWith('system.security.update', expect.any(Array));
+    });
+
+    it('cancels STIG enablement when user cancels warning dialog', async () => {
+      const usersWithoutTwoFa = [{ username: 'user1', roles: [{ id: 1 }] } as unknown as User];
+
+      jest.spyOn(apiService, 'call').mockImplementation((method: string) => {
+        if (method === 'user.query') {
+          return of(usersWithoutTwoFa);
+        }
+        return of(null);
+      });
+
+      jest.spyOn(dialogService, 'confirm').mockReturnValue(of(false) as unknown as Observable<DialogWithSecondaryCheckboxResult>); // User cancels
+
+      // Enable STIG mode
+      await warningForm.fillForm({
+        'Enable General Purpose OS STIG compatibility mode': true,
+      });
+
+      const saveButton = await warningLoader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(apiService.job).not.toHaveBeenCalled(); // Save should not proceed
+    });
+
+    it('proceeds with save when user confirms warning dialog', async () => {
+      const usersWithoutTwoFa = [{ username: 'user1', roles: [{ id: 1 }] } as unknown as User];
+
+      jest.spyOn(apiService, 'call').mockImplementation((method: string) => {
+        if (method === 'user.query') {
+          return of(usersWithoutTwoFa);
+        }
+        return of(null);
+      });
+
+      jest.spyOn(dialogService, 'confirm').mockReturnValue(of(true) as unknown as Observable<DialogWithSecondaryCheckboxResult>); // User confirms
+
+      // Enable STIG mode
+      await warningForm.fillForm({
+        'Enable General Purpose OS STIG compatibility mode': true,
+      });
+
+      const saveButton = await warningLoader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(apiService.job).toHaveBeenCalledWith('system.security.update', [expect.objectContaining({
+        enable_gpos_stig: true,
+      })]);
+    });
+
+    it('handles API error when checking users', async () => {
+      const error = new Error('API Error');
+      jest.spyOn(apiService, 'call').mockImplementation((method: string) => {
+        if (method === 'user.query') {
+          return throwError(() => error);
+        }
+        return of(null);
+      });
+
+      const errorHandlerService = warningSpectator.inject(ErrorHandlerService);
+      const errorHandlerSpy = jest.spyOn(errorHandlerService, 'withErrorHandler');
+
+      // Enable STIG mode
+      await warningForm.fillForm({
+        'Enable General Purpose OS STIG compatibility mode': true,
+      });
+
+      const saveButton = await warningLoader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(errorHandlerSpy).toHaveBeenCalled();
+      expect(apiService.job).not.toHaveBeenCalled();
+    });
+
+    it('does not check users when disabling STIG', async () => {
+      // Start with STIG enabled by mocking the slide-in data
+      jest.spyOn(warningSpectator.inject(SlideInRef), 'getData').mockReturnValue({
+        ...fakeSystemSecurityConfig,
+        enable_gpos_stig: true,
+      });
+
+      // Re-initialize the component to pick up the new data
+      warningSpectator.component.ngOnInit();
+      warningSpectator.detectChanges();
+
+      // Reset the api.call spy to clear any previous calls
+      jest.clearAllMocks();
+      const apiCallSpy = jest.spyOn(apiService, 'call');
+
+      // Disable STIG mode
+      await warningForm.fillForm({
+        'Enable General Purpose OS STIG compatibility mode': false,
+      });
+
+      const saveButton = await warningLoader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      // Should not call user.query when disabling STIG
+      expect(apiCallSpy).not.toHaveBeenCalledWith('user.query', expect.any(Array));
+      expect(apiService.job).toHaveBeenCalledWith('system.security.update', [expect.objectContaining({
+        enable_gpos_stig: false,
+      })]);
     });
   });
 });
