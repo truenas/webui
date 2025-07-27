@@ -19,9 +19,8 @@
         [label]="'Enable General Purpose OS STIG compatibility mode' | translate"
         [tooltip]="'Enable this mode to enhance system security to meet US federal government security requirements. Note that enabling STIG mode will restrict some functionality.' | translate"
       ></ix-slide-toggle>
-
-      @if (form.controls.enable_gpos_stig.value) {
-        <mat-hint>{{ 'Global Two-Factor Authentication must be enabled to activate this feature.' | translate }}</mat-hint>
+      @if (form.controls.enable_gpos_stig.hasError('globalTwoFactorRequired')) {
+        <mat-error>{{ stigValidationError() | translate }}<span class="link-button" (click)="navigateToGlobal2Fa()">{{ 'Enable it here.' | translate }}</span></mat-error>
       }
       <mat-hint>{{ 'Restart is required after changing these settings.' | translate }}</mat-hint>
       @if (isStigEnabled()) {
