@@ -66,6 +66,7 @@ export interface IscsiExtent {
   name: string;
   path: string;
   pblocksize: boolean;
+  product_id: string;
   ro: boolean;
   rpm: IscsiExtentRpm;
   serial: string;
