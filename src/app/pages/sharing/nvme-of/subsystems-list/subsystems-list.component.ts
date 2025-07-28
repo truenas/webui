@@ -57,6 +57,7 @@ export class SubsystemsListComponent {
   readonly isMobileView = input<boolean>();
   readonly isLoading = input(false);
   readonly toggleShowMobileDetails = output<boolean>();
+  readonly subsystemSelected = output<NvmeOfSubsystemDetails>();
   readonly dataProvider = input.required<ArrayDataProvider<NvmeOfSubsystemDetails>>();
   readonly search = output<string>();
   protected readonly emptyConfig = nvmeOfEmptyConfig;
@@ -110,6 +111,9 @@ export class SubsystemsListComponent {
         this.dataProvider().expandedRow = null;
         this.cdr.markForCheck();
       }
+    }
+    if (subsys) {
+      this.subsystemSelected.emit(subsys);
     }
   }
 

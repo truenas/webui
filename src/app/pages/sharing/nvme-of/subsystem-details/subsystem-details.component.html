@@ -3,6 +3,7 @@
     <ix-subsystem-details-card
       [subsystem]="subsystem()"
       [ixUiSearch]="searchableElements.elements.detailsCard"
+      (nameUpdated)="nameUpdated.emit($event)"
     ></ix-subsystem-details-card>
     <ix-subsystem-namespaces-card
       [subsystem]="subsystem()"
