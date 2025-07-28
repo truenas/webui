@@ -186,7 +186,9 @@ export class AddSubsystemComponent {
         device_type: namespace.device_type,
         filesize: namespace.filesize,
         device_path: namespace.device_path,
+        enabled: namespace.enabled,
       };
+
       return this.api.call('nvmet.namespace.create', [payload]);
     });
   }
