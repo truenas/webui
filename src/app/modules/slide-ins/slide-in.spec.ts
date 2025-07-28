@@ -1,6 +1,7 @@
 import { Overlay, OverlayPositionBuilder, OverlayRef } from '@angular/cdk/overlay';
 import { ComponentRef, Injector, ValueProvider } from '@angular/core';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
+import { Store } from '@ngrx/store';
 import { of, Subject } from 'rxjs';
 import { SlideInContainerComponent } from 'app/modules/slide-ins/components/slide-in-container/slide-in-container.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -25,6 +26,9 @@ describe('SlideIn Service', () => {
       }),
       mockProvider(Overlay),
       mockProvider(Injector),
+      mockProvider(Store, {
+        selectSignal: jest.fn(() => () => false),
+      }),
     ],
     declarations: [SlideInContainerComponent],
   });
