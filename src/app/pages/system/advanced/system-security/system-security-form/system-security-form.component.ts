@@ -220,7 +220,7 @@ export class SystemSecurityFormComponent implements OnInit {
 
   private checkUsersWithoutTwoFactorAuth(callback: () => void): void {
     this.api.call('user.query', [[
-      ['OR', [['builtin', '=', false], ['username', '=', 'root']]],
+      ['builtin', '=', false],
       ['twofactor_auth_configured', '=', false],
       ['locked', '=', false],
       ['password_disabled', '=', false],
