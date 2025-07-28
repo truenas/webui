@@ -1,7 +1,9 @@
+import { NgClass } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { nvmeOfNamespaceTypeLabels, NvmeOfNamespaceType } from 'app/enums/nvme-of.enum';
+import { nvmeOfNamespaceTypeLabels } from 'app/enums/nvme-of.enum';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
+import { NamespaceChanges } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/namespace-changes.interface';
 
 @Component({
   selector: 'ix-namespace-description',
@@ -11,10 +13,11 @@ import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
   imports: [
     MapValuePipe,
     TranslateModule,
+    NgClass,
   ],
 })
 export class NamespaceDescriptionComponent {
-  namespace = input.required<{ device_type: NvmeOfNamespaceType; device_path: string }>();
+  namespace = input.required<NamespaceChanges>();
 
   protected readonly typeLabels = nvmeOfNamespaceTypeLabels;
 }

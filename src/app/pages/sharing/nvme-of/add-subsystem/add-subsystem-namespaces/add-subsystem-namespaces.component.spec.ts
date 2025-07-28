@@ -28,6 +28,7 @@ describe('AddSubsystemNamespacesComponent', () => {
     device_path: '/mnt/tank/file1',
     device_type: NvmeOfNamespaceType.File,
     filesize: 1024,
+    enabled: true,
   };
 
   const createComponent = createComponentFactory({
@@ -65,6 +66,7 @@ describe('AddSubsystemNamespacesComponent', () => {
         device_path: '/mnt/tank/file1',
         device_type: NvmeOfNamespaceType.File,
         filesize: 1024,
+        enabled: true,
       },
     ];
 
@@ -95,11 +97,13 @@ describe('AddSubsystemNamespacesComponent', () => {
         device_path: '/mnt/tank/file1',
         device_type: NvmeOfNamespaceType.File,
         filesize: 1024,
+        enabled: true,
       },
       {
         device_path: '/mnt/tank/file2',
         device_type: NvmeOfNamespaceType.File,
         filesize: 2048,
+        enabled: true,
       },
     ];
 

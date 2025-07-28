@@ -57,6 +57,7 @@ describe('BaseNamespaceFormComponent', () => {
         device_path: 'zvol/tank/test-zvol',
         device_type: NvmeOfNamespaceType.Zvol,
         filesize: undefined,
+        enabled: true,
       } as NamespaceChanges);
     });
 
@@ -74,6 +75,7 @@ describe('BaseNamespaceFormComponent', () => {
         device_path: '/mnt/tank/test-file',
         device_type: NvmeOfNamespaceType.File,
         filesize: undefined,
+        enabled: true,
       } as NamespaceChanges);
     });
 
@@ -93,6 +95,7 @@ describe('BaseNamespaceFormComponent', () => {
         device_path: '/mnt/tank/new-file.img',
         device_type: NvmeOfNamespaceType.File,
         filesize: 1024 * MiB,
+        enabled: true,
       } as NamespaceChanges);
     });
 
@@ -113,6 +116,7 @@ describe('BaseNamespaceFormComponent', () => {
       const mockNamespace = {
         device_type: NvmeOfNamespaceType.Zvol,
         device_path: 'zvol/tank/test-zvol',
+        enabled: true,
       } as NvmeOfNamespace;
 
       spectator = createComponent({
@@ -132,6 +136,7 @@ describe('BaseNamespaceFormComponent', () => {
       expect(values).toEqual({
         Type: 'Zvol',
         'Path To Zvol': 'zvol/tank/test-zvol',
+        Enabled: true,
       });
     });
 
@@ -149,6 +154,7 @@ describe('BaseNamespaceFormComponent', () => {
         device_path: '/mnt/tank/updated-file',
         device_type: NvmeOfNamespaceType.File,
         filesize: undefined,
+        enabled: true,
       } as NamespaceChanges);
     });
   });

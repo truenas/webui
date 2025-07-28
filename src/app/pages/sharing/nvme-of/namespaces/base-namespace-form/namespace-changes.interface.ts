@@ -4,4 +4,5 @@ export interface NamespaceChanges {
   device_path: string;
   device_type: NvmeOfNamespaceType;
   filesize: number | null;
+  enabled: boolean;
 }

@@ -82,10 +82,12 @@ describe('AddSubsystemComponent', () => {
       {
         device_path: '/dev/zvol/pool/zvol1',
         device_type: NvmeOfNamespaceType.Zvol,
+        enabled: true,
       },
       {
         device_path: '/mnt/pool/file.img',
         device_type: NvmeOfNamespaceType.File,
+        enabled: true,
       },
     ] as NamespaceChanges[];
     (addNamespaces.namespacesControl as unknown as FormControl).setValue(namespaces);
@@ -126,12 +128,14 @@ describe('AddSubsystemComponent', () => {
       subsys_id: 7,
       device_type: NvmeOfNamespaceType.Zvol,
       device_path: '/dev/zvol/pool/zvol1',
+      enabled: true,
     }]);
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nvmet.namespace.create', [{
       subsys_id: 7,
       device_type: NvmeOfNamespaceType.File,
       device_path: '/mnt/pool/file.img',
+      enabled: true,
     }]);
 
     expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({

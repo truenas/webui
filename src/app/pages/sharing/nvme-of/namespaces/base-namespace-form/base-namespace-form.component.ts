@@ -17,6 +17,7 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import {
   IxButtonGroupComponent,
 } from 'app/modules/forms/ix-forms/components/ix-button-group/ix-button-group.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import {
   ExplorerCreateZvolComponent,
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-zvol/explorer-create-zvol.component';
@@ -70,6 +71,7 @@ const typeOptions: Option[] = [
     IxFieldsetComponent,
     IxButtonGroupComponent,
     IxInputComponent,
+    IxCheckboxComponent,
     ExplorerCreateZvolComponent,
   ],
 })
@@ -95,6 +97,7 @@ export class BaseNamespaceFormComponent implements OnInit, OnChanges {
     device_path: ['', Validators.required],
     filename: [''],
     filesize: [null as number | null],
+    enabled: [true],
   });
 
   protected readonly FormNamespaceType = FormNamespaceType;
@@ -124,6 +127,7 @@ export class BaseNamespaceFormComponent implements OnInit, OnChanges {
         device_type: this.namespace().device_type === NvmeOfNamespaceType.Zvol
           ? FormNamespaceType.Zvol
           : FormNamespaceType.ExistingFile,
+        enabled: this.namespace().enabled,
       });
     }
   }
@@ -150,6 +154,7 @@ export class BaseNamespaceFormComponent implements OnInit, OnChanges {
       device_path: path,
       device_type: value.device_type === FormNamespaceType.Zvol ? NvmeOfNamespaceType.Zvol : NvmeOfNamespaceType.File,
       filesize: value.device_type === FormNamespaceType.NewFile ? value.filesize : undefined,
+      enabled: value.enabled,
     });
   }
 

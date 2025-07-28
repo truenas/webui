@@ -40,6 +40,7 @@ describe('AddSubsystemNamespaceComponent', () => {
       device_path: '/mnt/dozer/file',
       device_type: NvmeOfNamespaceType.File,
       filesize: 1024,
+      enabled: true,
     };
     component.submitted.emit(newNamespace);
 

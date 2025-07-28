@@ -1,3 +1,5 @@
-{{ namespace().device_type | mapValue: typeLabels | translate }}
-<span class="separator">&mdash;</span>
-{{ namespace().device_path }}
+<span [ngClass]="{ 'disabled': !namespace().enabled }">
+  {{ namespace().device_type | mapValue: typeLabels | translate }}
+  <span class="separator">&mdash;</span>
+  {{ namespace().device_path }}
+</span>

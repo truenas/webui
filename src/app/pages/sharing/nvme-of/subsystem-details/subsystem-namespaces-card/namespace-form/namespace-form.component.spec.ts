@@ -64,6 +64,7 @@ describe('NamespaceFormComponent', () => {
         device_path: '/mnt/tank/new-file',
         device_type: NvmeOfNamespaceType.File,
         filesize: 200 * MiB,
+        enabled: true,
       };
 
       const baseFormComponent = spectator.query(BaseNamespaceFormComponent);
@@ -97,6 +98,7 @@ describe('NamespaceFormComponent', () => {
         device_path: '/mnt/tank/updated-file',
         device_type: NvmeOfNamespaceType.File,
         filesize: 200 * MiB,
+        enabled: true,
       };
 
       const baseFormComponent = spectator.query(BaseNamespaceFormComponent);

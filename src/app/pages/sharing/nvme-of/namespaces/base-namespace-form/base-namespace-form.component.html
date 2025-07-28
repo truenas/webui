@@ -12,6 +12,11 @@
           [label]="'Type' | translate"
         ></ix-button-group>
 
+        <ix-checkbox
+          formControlName="enabled"
+          [label]="'Enabled' | translate"
+        ></ix-checkbox>
+
         @switch (form.value.device_type) {
           @case (FormNamespaceType.Zvol) {
             <ix-explorer
