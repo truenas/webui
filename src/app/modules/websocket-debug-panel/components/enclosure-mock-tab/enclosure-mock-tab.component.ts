@@ -15,9 +15,13 @@ import {
   MockEnclosureScenario,
   mockEnclosureScenarioLabels,
 } from 'app/core/testing/mock-enclosure/enums/mock-enclosure.enum';
+import { EnclosureModel } from 'app/enums/enclosure-model.enum';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { setEnclosureMockConfig } from 'app/modules/websocket-debug-panel/store/websocket-debug.actions';
+import { selectEnclosureMockConfig } from 'app/modules/websocket-debug-panel/store/websocket-debug.selectors';
+import { AppState } from 'app/store';
 
 @UntilDestroy()
 @Component({
@@ -38,7 +42,7 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
 })
 export class EnclosureMockTabComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
-  private readonly store = inject(Store);
+  private readonly store = inject(Store<AppState>);
 
   protected readonly form = this.fb.group({
     enabled: [false],
@@ -72,7 +76,7 @@ export class EnclosureMockTabComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // TODO: Load current configuration from store
+    this.loadCurrentConfig();
     this.setupFormListeners();
   }
 
@@ -81,7 +85,14 @@ export class EnclosureMockTabComponent implements OnInit {
       return;
     }
 
-    // TODO: Dispatch action to update enclosure mock config with this.form.value
+    const config = {
+      enabled: this.form.value.enabled || false,
+      controllerModel: this.form.value.controllerModel as EnclosureModel | null,
+      expansionModels: this.form.value.expansionModels as EnclosureModel[],
+      scenario: this.form.value.scenario || MockEnclosureScenario.FillSomeSlots,
+    };
+
+    this.store.dispatch(setEnclosureMockConfig({ config }));
   }
 
   private setupFormListeners(): void {
@@ -104,5 +115,18 @@ export class EnclosureMockTabComponent implements OnInit {
       this.form.controls.expansionModels.disable();
       this.form.controls.scenario.disable();
     }
+  }
+
+  private loadCurrentConfig(): void {
+    this.store.select(selectEnclosureMockConfig)
+      .pipe(untilDestroyed(this))
+      .subscribe((config) => {
+        this.form.patchValue({
+          enabled: config.enabled,
+          controllerModel: config.controllerModel,
+          expansionModels: config.expansionModels,
+          scenario: config.scenario,
+        });
+      });
   }
 }
