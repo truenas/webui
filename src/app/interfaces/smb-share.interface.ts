@@ -45,6 +45,8 @@ export enum SmbPresetType {
   SmbWorm = 'WORM_DROPBOX',
 }
 
+export const externalSmbSharePath = 'EXTERNAL';
+
 export interface SmbPreset {
   cluster: boolean;
   verbose_name: string;

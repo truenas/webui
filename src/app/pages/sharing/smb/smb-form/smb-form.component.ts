@@ -35,6 +35,7 @@ import { helptextSharingSmb } from 'app/helptext/sharing';
 import { DatasetCreate } from 'app/interfaces/dataset.interface';
 import { Option } from 'app/interfaces/option.interface';
 import {
+  externalSmbSharePath,
   SmbPresets,
   SmbPresetType,
   SmbShare,
@@ -353,7 +354,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   }
 
   checkAndShowStripAclWarning(path: string, aclValue: boolean): void {
-    if (this.wasStripAclWarningShown || !path || aclValue) {
+    if (this.wasStripAclWarningShown || !path || aclValue || path.startsWith(externalSmbSharePath)) {
       return;
     }
     this.api
@@ -585,13 +586,13 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
   shouldRedirectToAclEdit(): Observable<boolean> {
     const sharePath: string = this.form.controls.path.value;
-    const datasetId = sharePath.replace('/mnt/', '');
+
+    if (!sharePath || sharePath.startsWith(externalSmbSharePath)) {
+      return of(false);
+    }
+
     return this.api.call('filesystem.stat', [sharePath]).pipe(
-      switchMap((stat) => {
-        return of(
-          stat.acl !== this.form.controls.acl.value && datasetId.includes('/'),
-        );
-      }),
+      map((stat) => !stat.acl),
     );
   }
 }
