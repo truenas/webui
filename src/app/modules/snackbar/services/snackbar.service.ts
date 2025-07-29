@@ -20,6 +20,7 @@ export class SnackbarService {
     const config: MatSnackBarConfig = {
       announcementMessage: message,
       politeness: 'assertive',
+      panelClass: 'ix-snackbar-high-priority',
       data: {
         message,
         icon: iconMarker('mdi-check'),
@@ -27,24 +28,6 @@ export class SnackbarService {
       },
     };
 
-    const ref = this.matSnackBar.openFromComponent(SnackbarComponent, config);
-
-    this.forceOverlayIndex(ref, 3000);
-
-    return ref;
-  }
-
-  // This is a workaround to force the snackbar to be on top of other overlays.
-  private forceOverlayIndex(ref: MatSnackBarRef<SnackbarComponent>, zIndex: number): void {
-    if (!ref?.containerInstance) {
-      return;
-    }
-
-    const containerEl = ref.containerInstance._elementRef.nativeElement as HTMLElement;
-    const overlayPane = containerEl.closest('.cdk-global-overlay-wrapper') as HTMLElement | null;
-
-    if (overlayPane) {
-      overlayPane.style.zIndex = String(zIndex);
-    }
+    return this.matSnackBar.openFromComponent(SnackbarComponent, config);
   }
 }

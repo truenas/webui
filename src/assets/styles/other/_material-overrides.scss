@@ -414,3 +414,31 @@ html .ix-dark {
     opacity: var(--disabled-opacity);
   }
 }
+
+// Fix for snackbar z-index to ensure it appears above other overlays like dialogs
+// Apply high z-index to the overlay wrapper that contains snackbars
+.cdk-global-overlay-wrapper {
+  &:has(.mat-mdc-snack-bar-container),
+  &:has(.ix-snackbar-high-priority) {
+    z-index: 3000 !important;
+  }
+}
+
+// Fallback approach for browsers that don't support :has()
+// Target the snackbar container directly
+.mat-mdc-snack-bar-container.ix-snackbar-high-priority {
+  // Force the parent overlay wrapper to have higher z-index
+  position: relative;
+  
+  // Use a pseudo-element to push the z-index up
+  &::before {
+    bottom: 0;
+    content: '';
+    left: 0;
+    pointer-events: none;
+    position: fixed;
+    right: 0;
+    top: 0;
+    z-index: -1;
+  }
+}
