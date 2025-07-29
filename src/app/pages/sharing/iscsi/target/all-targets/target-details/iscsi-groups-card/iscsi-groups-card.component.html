@@ -1,0 +1,19 @@
+<mat-card class="card">
+  <mat-card-header>
+    <h3 mat-card-title>
+      {{ 'iSCSI Groups' | translate }}
+    </h3>
+  </mat-card-header>
+  <mat-card-content>
+    @for (group of targetGroups(); track $index) {
+      <div class="group">
+        {{ 'Portal Group ID' | translate }}: {{ group.portalLabel ?? '-' }} |
+        {{ 'Initiator Group ID' | translate }}: {{ group.initiatorLabel ?? '-' }} |
+        {{ 'Authentication Method' | translate }}: {{ group.authmethod ?? '-' }} |
+        {{ 'Authentication Group Number' | translate }}: {{ group.auth ?? '-' }}
+      </div>
+    } @empty {
+      <p>{{ 'No groups.' | translate }}</p>
+    }
+  </mat-card-content>
+</mat-card>

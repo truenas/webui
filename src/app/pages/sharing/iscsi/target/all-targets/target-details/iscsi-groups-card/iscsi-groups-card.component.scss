@@ -1,0 +1,10 @@
+.group {
+  border-bottom: 1px solid var(--lines);
+  margin-bottom: 5px;
+  padding-bottom: 5px !important;
+
+  &:last-of-type {
+    border-bottom: none;
+    margin-bottom: 0;
+  }
+}
