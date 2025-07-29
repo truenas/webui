@@ -1,4 +1,6 @@
 import { createReducer, on } from '@ngrx/store';
+import { MockEnclosureScenario } from 'app/core/testing/mock-enclosure/enums/mock-enclosure.enum';
+import { EnclosureModel } from 'app/enums/enclosure-model.enum';
 import { defaultMessageLimit, tabs } from 'app/modules/websocket-debug-panel/constants';
 import { MockConfig } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
 import { WebSocketDebugMessage } from 'app/modules/websocket-debug-panel/interfaces/websocket-debug.interface';
@@ -11,6 +13,12 @@ export interface WebSocketDebugState {
   isPanelOpen: boolean;
   activeTab: string;
   messageLimit: number;
+  enclosureMock: {
+    enabled: boolean;
+    controllerModel: EnclosureModel | null;
+    expansionModels: EnclosureModel[];
+    scenario: MockEnclosureScenario;
+  };
 }
 
 export const initialState: WebSocketDebugState = {
@@ -19,6 +27,12 @@ export const initialState: WebSocketDebugState = {
   isPanelOpen: false,
   activeTab: tabs.WEBSOCKET,
   messageLimit: defaultMessageLimit,
+  enclosureMock: {
+    enabled: false,
+    controllerModel: null,
+    expansionModels: [],
+    scenario: MockEnclosureScenario.FillSomeSlots,
+  },
 };
 
 export const webSocketDebugReducer = createReducer(
@@ -75,5 +89,23 @@ export const webSocketDebugReducer = createReducer(
       }
       return msg;
     }),
+  })),
+  on(WebSocketDebugActions.setEnclosureMockConfig, (state, { config }) => ({
+    ...state,
+    enclosureMock: config,
+  })),
+  on(WebSocketDebugActions.toggleEnclosureMock, (state, { enabled }) => ({
+    ...state,
+    enclosureMock: {
+      ...state.enclosureMock,
+      enabled,
+    },
+  })),
+  on(WebSocketDebugActions.updateEnclosureScenario, (state, { scenario }) => ({
+    ...state,
+    enclosureMock: {
+      ...state.enclosureMock,
+      scenario,
+    },
   })),
 );

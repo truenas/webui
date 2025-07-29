@@ -1,3 +1,4 @@
+import { MockEnclosureScenario } from 'app/core/testing/mock-enclosure/enums/mock-enclosure.enum';
 import { MockConfig } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
 import { WebSocketDebugMessage } from 'app/modules/websocket-debug-panel/interfaces/websocket-debug.interface';
 import { WebSocketDebugState } from './websocket-debug.reducer';
@@ -62,6 +63,12 @@ describe('WebSocketDebug Selectors', () => {
     isPanelOpen: true,
     activeTab: 'websocket',
     messageLimit: 200,
+    enclosureMock: {
+      enabled: false,
+      controllerModel: null,
+      expansionModels: [],
+      scenario: MockEnclosureScenario.FillSomeSlots,
+    },
   };
 
   const rootState = {
