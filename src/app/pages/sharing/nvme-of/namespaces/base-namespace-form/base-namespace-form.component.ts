@@ -24,6 +24,7 @@ import {
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
@@ -73,6 +74,7 @@ const typeOptions: Option[] = [
     IxInputComponent,
     IxCheckboxComponent,
     ExplorerCreateZvolComponent,
+    WarningComponent,
   ],
 })
 export class BaseNamespaceFormComponent implements OnInit, OnChanges {
@@ -129,6 +131,12 @@ export class BaseNamespaceFormComponent implements OnInit, OnChanges {
           : FormNamespaceType.ExistingFile,
         enabled: this.namespace().enabled,
       });
+
+      if (this.namespace().enabled) {
+        this.form.controls.device_type.disable();
+        this.form.controls.device_path.disable();
+        this.form.controls.device_path.patchValue(this.namespace()?.device_path || '');
+      }
     }
   }
 

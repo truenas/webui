@@ -17,12 +17,13 @@ describe('NamespaceDescriptionComponent', () => {
         namespace: {
           device_type: NvmeOfNamespaceType.File,
           device_path: '/mnt/dozer/myfile',
+          enabled: true,
         } as NvmeOfNamespace,
       },
     });
   });
 
   it('shows namespace description', () => {
-    expect(spectator.fixture.nativeElement).toHaveText('File\n—\n/mnt/dozer/myfile');
+    expect(spectator.fixture.nativeElement).toHaveText('File — /mnt/dozer/myfile');
   });
 });

@@ -10,6 +10,7 @@ import { NvmeOfNamespace } from 'app/interfaces/nvme-of.interface';
 import {
   ExplorerCreateZvolComponent,
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-zvol/explorer-create-zvol.component';
+import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -116,7 +117,7 @@ describe('BaseNamespaceFormComponent', () => {
       const mockNamespace = {
         device_type: NvmeOfNamespaceType.Zvol,
         device_path: 'zvol/tank/test-zvol',
-        enabled: true,
+        enabled: false,
       } as NvmeOfNamespace;
 
       spectator = createComponent({
@@ -136,7 +137,7 @@ describe('BaseNamespaceFormComponent', () => {
       expect(values).toEqual({
         Type: 'Zvol',
         'Path To Zvol': 'zvol/tank/test-zvol',
-        Enabled: true,
+        Enabled: false,
       });
     });
 
@@ -154,8 +155,49 @@ describe('BaseNamespaceFormComponent', () => {
         device_path: '/mnt/tank/updated-file',
         device_type: NvmeOfNamespaceType.File,
         filesize: undefined,
-        enabled: true,
+        enabled: false,
       } as NamespaceChanges);
+    });
+  });
+
+  describe('enabled namespaces limitations', () => {
+    beforeEach(() => {
+      const mockNamespace = {
+        device_type: NvmeOfNamespaceType.File,
+        device_path: 'zvol/tank/test-file',
+        enabled: true,
+      } as NvmeOfNamespace;
+
+      spectator = createComponent({
+        props: {
+          namespace: mockNamespace,
+        },
+      });
+
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      jest.spyOn(spectator.component.submitted, 'emit');
+    });
+
+    it('disables form controls for enabled namespaces', async () => {
+      const form = await loader.getHarness(IxFormHarness);
+      const values = await form.getValues();
+      expect(values).toEqual({
+        Type: 'Existing File',
+        'Path To File': 'zvol/tank/test-file',
+        Enabled: true,
+      });
+
+      expect(await (await form.getControl('Type')).isDisabled()).toBe(true);
+      expect(await (await form.getControl('Path To File')).isDisabled()).toBe(true);
+      expect(await (await form.getControl('Enabled')).isDisabled()).toBe(false);
+    });
+
+    it('shows warning when trying to change device type or path for enabled namespaces', () => {
+      const warning = spectator.query(WarningComponent);
+      expect(warning.color()).toBe('orange');
+      expect(warning.message()).toBe(
+        'Changes to the device type or path are not allowed while the namespace is enabled. Please disable the namespace before making modifications.',
+      );
     });
   });
 });
