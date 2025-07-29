@@ -431,7 +431,8 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
       this.wasStripAclWarningShown
       || !path
       || aclValue
-      || this.form.controls.purpose.value !== SmbSharePurpose.LegacyShare
+      || this.form.controls.purpose.value === SmbSharePurpose.ExternalShare
+      || path.startsWith(externalSmbSharePath)
     ) {
       return;
     }
@@ -682,7 +683,10 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     const sharePath: string = this.form.controls.path.value;
     const datasetId = sharePath.replace('/mnt/', '');
 
-    if (this.form.controls.purpose.value !== SmbSharePurpose.LegacyShare) {
+    if (
+      this.form.controls.purpose.value === SmbSharePurpose.ExternalShare
+      || sharePath.startsWith(externalSmbSharePath)
+    ) {
       return of(false);
     }
 
@@ -714,10 +718,9 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   }
 
   private updateExtensionsWarning(): void {
-    const shouldShow = !this.smbConfig().aapl_extensions
-      && this.form.controls.purpose.value === SmbSharePurpose.TimeMachineShare;
-
-    this.showExtensionsWarning.set(shouldShow);
+    this.showExtensionsWarning.set(
+      !this.smbConfig()?.aapl_extensions && this.form.controls.purpose.value === SmbSharePurpose.TimeMachineShare,
+    );
   }
 
   private loadSmbConfig(): void {
