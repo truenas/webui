@@ -1,3 +1,4 @@
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { fakeAsync, tick } from '@angular/core/testing';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore, MockStore } from '@ngrx/store/testing';
@@ -24,6 +25,7 @@ describe('WebSocketDebugPanelComponent', () => {
       }),
     ],
     detectChanges: false, // Don't automatically detect changes
+    schemas: [NO_ERRORS_SCHEMA],
   });
 
   const mockLocalStorage = {

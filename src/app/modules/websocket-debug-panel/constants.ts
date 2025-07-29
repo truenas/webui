@@ -21,7 +21,8 @@ export const storageKeys = {
 // Tab identifiers
 export const tabs = {
   WEBSOCKET: 'websocket',
-  MOCK_CONFIG: 'mock-config',
+  MOCK_CONFIG: 'mock-configurations',
+  ENCLOSURE_MOCK: 'enclosure-mock',
 } as const;
 
 // Export file naming
