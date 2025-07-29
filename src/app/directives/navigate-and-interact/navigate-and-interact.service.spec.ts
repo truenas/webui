@@ -1,3 +1,4 @@
+import { fakeAsync, tick } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import {
   createServiceFactory,
@@ -26,28 +27,20 @@ describe('NavigateAndInteractService', () => {
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/some-path'], { fragment: 'testHash' });
   });
 
-  it('should scroll to and highlight the element with the given ID', () => {
+  it('should scroll to and highlight the element with the given ID', fakeAsync(() => {
     const scrollIntoViewMock = jest.fn();
-    HTMLElement.prototype.scrollIntoView = scrollIntoViewMock;
 
-    const mockElement = document.createElement('div');
-    mockElement.id = 'testHash';
-    document.body.appendChild(mockElement);
-
-    const clickSpy = jest.spyOn(HTMLElement.prototype, 'click');
+    const element = document.createElement('div');
+    element.id = 'testHash';
+    element.scrollIntoView = scrollIntoViewMock;
+    document.body.appendChild(element);
 
     spectator.service.navigateAndHighlight(['/some-path'], 'testHash');
 
-    setTimeout(() => {
-      expect(scrollIntoViewMock).toHaveBeenCalled();
-      expect(clickSpy).toHaveBeenCalled();
+    tick(150);
 
-      // Clean up
-      document.body.removeChild(mockElement);
-      // Restore original scrollIntoView
-      delete HTMLElement.prototype.scrollIntoView;
-    }, 0);
-  });
+    expect(scrollIntoViewMock).toHaveBeenCalled();
+  }));
 
   it('creates an overlay around element and removes it on click', () => {
     const element = document.createElement('div');
