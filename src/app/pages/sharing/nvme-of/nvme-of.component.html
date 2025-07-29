@@ -34,6 +34,7 @@
     [isLoading]="isLoading()"
     [isMobileView]="masterDetailView.isMobileView()"
     (toggleShowMobileDetails)="masterDetailView.toggleShowMobileDetails($event)"
+    (subsystemSelected)="onSubsystemSelected($event)"
     (search)="onFilter($event)"
   ></ix-subsystems-list>
 
@@ -48,7 +49,10 @@
 
   <ng-container detail>
     @if (subsystem) {
-      <ix-subsystem-details [subsystem]="subsystem"></ix-subsystem-details>
+      <ix-subsystem-details
+        [subsystem]="subsystem"
+        (nameUpdated)="onSubsystemRenamed($event)"
+      ></ix-subsystem-details>
     }
   </ng-container>
 </ix-master-detail-view>
