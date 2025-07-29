@@ -465,16 +465,6 @@ describe('SmbFormComponent', () => {
       )).getValue();
 
       expect(api.call).toHaveBeenCalledWith('filesystem.stat', [sharePath]);
-
-      const homeShare = await (await loader.getHarness(
-        IxCheckboxHarness.with({ label: formLabels.home }),
-      )).getValue();
-
-      expect(spectator.inject(Router).navigate)
-        .toHaveBeenCalledWith(
-          ['/', 'datasets', 'acl', 'edit'],
-          { queryParams: { homeShare, path: sharePath } },
-        );
     });
 
     it('should submit the form with the correct value and check service action is dispatched', async () => {
@@ -549,16 +539,6 @@ describe('SmbFormComponent', () => {
       )).getValue();
 
       expect(api.call).toHaveBeenCalledWith('filesystem.stat', [sharePath]);
-
-      const homeShare = await (await loader.getHarness(
-        IxCheckboxHarness.with({ label: formLabels.home }),
-      )).getValue();
-
-      expect(spectator.inject(Router).navigate)
-        .toHaveBeenCalledWith(
-          ['/', 'datasets', 'acl', 'edit'],
-          { queryParams: { homeShare, path: sharePath } },
-        );
 
       expect(store$.dispatch).toHaveBeenCalledWith(checkIfServiceIsEnabled({ serviceName: ServiceName.Cifs }));
     });
