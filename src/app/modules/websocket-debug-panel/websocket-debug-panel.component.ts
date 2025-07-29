@@ -9,6 +9,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { map } from 'rxjs/operators';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { EnclosureMockTabComponent } from './components/enclosure-mock-tab/enclosure-mock-tab.component';
 import { MockConfigurationsTabComponent } from './components/mock-configurations-tab/mock-configurations-tab.component';
 import { WebSocketTabComponent } from './components/websocket-tab/websocket-tab.component';
 import * as WebSocketDebugActions from './store/websocket-debug.actions';
@@ -27,6 +28,7 @@ import {
     IxIconComponent,
     WebSocketTabComponent,
     MockConfigurationsTabComponent,
+    EnclosureMockTabComponent,
   ],
   providers: [],
   templateUrl: './websocket-debug-panel.component.html',
@@ -44,6 +46,9 @@ export class WebSocketDebugPanelComponent implements OnInit, OnDestroy {
       }
       if (tab === 'mock-configurations') {
         return 1;
+      }
+      if (tab === 'enclosure-mock') {
+        return 2;
       }
       return 0;
     }),
@@ -122,7 +127,12 @@ export class WebSocketDebugPanelComponent implements OnInit, OnDestroy {
   }
 
   onTabChange(index: number): void {
-    const tab = index === 0 ? 'websocket' : 'mock-configurations';
+    let tab: 'websocket' | 'mock-configurations' | 'enclosure-mock' = 'websocket';
+    if (index === 1) {
+      tab = 'mock-configurations';
+    } else if (index === 2) {
+      tab = 'enclosure-mock';
+    }
     this.store$.dispatch(WebSocketDebugActions.setActiveTab({ tab }));
   }
 

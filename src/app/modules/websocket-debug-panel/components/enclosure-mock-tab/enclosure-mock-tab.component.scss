@@ -1,0 +1,64 @@
+.enclosure-mock-tab {
+  padding: 16px;
+  height: 100%;
+  overflow-y: auto;
+
+  .enclosure-mock-form {
+    max-width: 600px;
+
+    .enable-section {
+      margin-bottom: 24px;
+      padding: 16px;
+      background-color: var(--bg2);
+      border-radius: 8px;
+
+      .enable-checkbox {
+        font-weight: 500;
+      }
+    }
+
+
+    .actions {
+      margin-top: 24px;
+      padding-top: 16px;
+      border-top: 1px solid var(--lines);
+    }
+
+    .preview-section {
+      margin-top: 24px;
+      padding: 16px;
+      background-color: var(--bg1);
+      border: 1px solid var(--lines);
+      border-radius: 8px;
+
+      h3 {
+        margin: 0 0 12px 0;
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--fg1);
+      }
+
+      .preview-content {
+        .preview-item {
+          display: flex;
+          gap: 8px;
+          margin-bottom: 8px;
+
+          &:last-child {
+            margin-bottom: 0;
+          }
+
+          .preview-label {
+            font-weight: 500;
+            color: var(--fg2);
+            min-width: 140px;
+          }
+
+          .preview-value {
+            color: var(--fg1);
+          }
+        }
+      }
+    }
+  }
+}
