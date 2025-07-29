@@ -1,7 +1,12 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { fakeAsync, tick } from '@angular/core/testing';
-import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore, MockStore } from '@ngrx/store/testing';
+import { MockEnclosureScenario } from 'app/core/testing/mock-enclosure/enums/mock-enclosure.enum';
+import { EnclosureModel } from 'app/enums/enclosure-model.enum';
+import { MockConfig } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
+import { WebSocketDebugMessage } from 'app/modules/websocket-debug-panel/interfaces/websocket-debug.interface';
+import { EnclosureMockService } from 'app/services/enclosure-mock.service';
 import * as WebSocketDebugActions from './store/websocket-debug.actions';
 import { WebSocketDebugPanelComponent } from './websocket-debug-panel.component';
 
@@ -11,6 +16,7 @@ describe('WebSocketDebugPanelComponent', () => {
   const createComponent = createComponentFactory({
     component: WebSocketDebugPanelComponent,
     providers: [
+      mockProvider(EnclosureMockService),
       provideMockStore({
         initialState: {
           webSocketDebug: {
@@ -20,6 +26,12 @@ describe('WebSocketDebugPanelComponent', () => {
             mockConfigs: [],
             messageLimit: 15,
             hasActiveMocks: false,
+            enclosureMock: {
+              enabled: false,
+              controllerModel: null,
+              expansionModels: [],
+              scenario: MockEnclosureScenario.AllSlotsEmpty,
+            },
           },
         },
       }),
@@ -100,6 +112,20 @@ describe('WebSocketDebugPanelComponent', () => {
 
   describe('layout margin management', () => {
     let mockAdminLayout: HTMLElement;
+    const defaultDebugState = {
+      isPanelOpen: false,
+      activeTab: 'websocket' as const,
+      messages: [] as WebSocketDebugMessage[],
+      mockConfigs: [] as MockConfig[],
+      messageLimit: 15,
+      hasActiveMocks: false,
+      enclosureMock: {
+        enabled: false,
+        controllerModel: null as EnclosureModel | null,
+        expansionModels: [] as EnclosureModel[],
+        scenario: MockEnclosureScenario.AllSlotsEmpty,
+      },
+    };
 
     beforeEach(() => {
       mockAdminLayout = document.createElement('div');
@@ -120,12 +146,8 @@ describe('WebSocketDebugPanelComponent', () => {
       // Then update the state to open the panel
       store$.setState({
         webSocketDebug: {
+          ...defaultDebugState,
           isPanelOpen: true,
-          activeTab: 'websocket',
-          messages: [],
-          mockConfigs: [],
-          messageLimit: 15,
-          hasActiveMocks: false,
         },
       });
 
@@ -143,12 +165,8 @@ describe('WebSocketDebugPanelComponent', () => {
       // First set the panel to open state
       store$.setState({
         webSocketDebug: {
+          ...defaultDebugState,
           isPanelOpen: true,
-          activeTab: 'websocket',
-          messages: [],
-          mockConfigs: [],
-          messageLimit: 15,
-          hasActiveMocks: false,
         },
       });
 
@@ -163,12 +181,8 @@ describe('WebSocketDebugPanelComponent', () => {
       // Then update the state to close the panel
       store$.setState({
         webSocketDebug: {
+          ...defaultDebugState,
           isPanelOpen: false,
-          activeTab: 'websocket',
-          messages: [],
-          mockConfigs: [],
-          messageLimit: 15,
-          hasActiveMocks: false,
         },
       });
 
@@ -189,12 +203,8 @@ describe('WebSocketDebugPanelComponent', () => {
       // Set the state to open before initializing
       store$.setState({
         webSocketDebug: {
+          ...defaultDebugState,
           isPanelOpen: true,
-          activeTab: 'websocket',
-          messages: [],
-          mockConfigs: [],
-          messageLimit: 15,
-          hasActiveMocks: false,
         },
       });
 

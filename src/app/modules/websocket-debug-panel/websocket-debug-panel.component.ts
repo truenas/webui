@@ -9,6 +9,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { map } from 'rxjs/operators';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { EnclosureMockService } from 'app/services/enclosure-mock.service';
 import { EnclosureMockTabComponent } from './components/enclosure-mock-tab/enclosure-mock-tab.component';
 import { MockConfigurationsTabComponent } from './components/mock-configurations-tab/mock-configurations-tab.component';
 import { WebSocketTabComponent } from './components/websocket-tab/websocket-tab.component';
@@ -63,6 +64,7 @@ export class WebSocketDebugPanelComponent implements OnInit, OnDestroy {
     @Inject(DOCUMENT) private document: Document,
     private cdr: ChangeDetectorRef,
     private ngZone: NgZone,
+    private enclosureMockService: EnclosureMockService,
   ) {}
 
   ngOnInit(): void {
