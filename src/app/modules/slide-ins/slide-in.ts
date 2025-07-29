@@ -16,6 +16,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { UUID } from 'angular2-uuid';
+import { environment } from 'environments/environment';
 import { cloneDeep } from 'lodash-es';
 import {
   delay,
@@ -190,13 +191,16 @@ export class SlideIn {
 
   private getOverlayConfig(): OverlayConfig {
     let rightPosition = '0';
-    const isDebugPanelOpen = this.store$.selectSignal(selectIsPanelOpen)();
 
-    if (isDebugPanelOpen) {
-      // Get the actual debug panel width from CSS variable
-      const debugPanelWidth = getComputedStyle(document.documentElement)
-        .getPropertyValue('--debug-panel-width') || '550px';
-      rightPosition = debugPanelWidth;
+    if (environment.debugPanel?.enabled) {
+      const isDebugPanelOpen = this.store$.selectSignal(selectIsPanelOpen)();
+
+      if (isDebugPanelOpen) {
+        // Get the actual debug panel width from CSS variable
+        const debugPanelWidth = getComputedStyle(document.documentElement)
+          .getPropertyValue('--debug-panel-width') || '550px';
+        rightPosition = debugPanelWidth;
+      }
     }
 
     return new OverlayConfig({
