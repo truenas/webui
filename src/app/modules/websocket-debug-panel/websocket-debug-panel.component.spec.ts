@@ -106,7 +106,7 @@ describe('WebSocketDebugPanelComponent', () => {
       await new Promise((resolve) => {
         setTimeout(resolve, 0);
       });
-      expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to restore panel state:', expect.any(Error));
+      expect(consoleErrorSpy).toHaveBeenCalledWith('LocalStorage read error:', expect.any(Error));
     });
   });
 
