@@ -1,7 +1,5 @@
 import { enableProdMode } from '@angular/core';
 import { sentryPublicDsn } from 'environments/sentry-public-dns.const';
-import { MockEnclosureScenario } from 'app/core/testing/mock-enclosure/enums/mock-enclosure.enum';
-import { EnclosureModel } from 'app/enums/enclosure-model.enum';
 import { WebUiEnvironment, environmentVersion, remote } from './environment.interface';
 
 export const environment: WebUiEnvironment = {
@@ -10,11 +8,11 @@ export const environment: WebUiEnvironment = {
   buildYear: 2025,
   production: true,
   sentryPublicDsn,
-  mockConfig: {
+  debugPanel: {
     enabled: false,
-    controllerModel: EnclosureModel.M40,
-    expansionModels: [],
-    scenario: MockEnclosureScenario.FillSomeSlots,
+    defaultMessageLimit: 100,
+    mockJobDefaultDelay: 1000,
+    persistMockConfigs: true,
   },
   debugPanel: {
     enabled: false,

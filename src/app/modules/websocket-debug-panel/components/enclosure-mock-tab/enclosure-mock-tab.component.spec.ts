@@ -38,7 +38,7 @@ describe('EnclosureMockTabComponent', () => {
 
   it('should disable form controls when enabled is false', () => {
     spectator.component.ngOnInit();
-    const form = spectator.component.form;
+    const form = spectator.component['form'];
     form.patchValue({ enabled: false });
 
     expect(form.controls.controllerModel.disabled).toBe(true);
@@ -47,7 +47,7 @@ describe('EnclosureMockTabComponent', () => {
   });
 
   it('should enable form controls when enabled is true', () => {
-    const form = spectator.component.form;
+    const form = spectator.component['form'];
     form.patchValue({ enabled: true });
 
     expect(form.controls.controllerModel.disabled).toBe(false);
@@ -56,12 +56,12 @@ describe('EnclosureMockTabComponent', () => {
   });
 
   it('should have default scenario set to FillSomeSlots', () => {
-    const form = spectator.component.form;
+    const form = spectator.component['form'];
     expect(form.value.scenario).toBe(MockEnclosureScenario.FillSomeSlots);
   });
 
   it('should not apply config when form is invalid and enabled', () => {
-    const form = spectator.component.form;
+    const form = spectator.component['form'];
     form.patchValue({ enabled: true, controllerModel: null });
 
     const initialFormValue = form.value;
@@ -72,7 +72,7 @@ describe('EnclosureMockTabComponent', () => {
   });
 
   it('should apply config when form is valid', () => {
-    const form = spectator.component.form;
+    const form = spectator.component['form'];
     form.patchValue({
       enabled: true,
       controllerModel: 'M50',

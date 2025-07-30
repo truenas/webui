@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { environment } from 'environments/environment';
-import { Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, of, Subject } from 'rxjs';
+import { map, takeUntil } from 'rxjs/operators';
 import { MockEnclosureConfig } from 'app/core/testing/mock-enclosure/interfaces/mock-enclosure.interface';
 import { MockEnclosureGenerator } from 'app/core/testing/mock-enclosure/mock-enclosure-generator.utils';
 import { ApiCallMethod, ApiCallParams, ApiCallResponse } from 'app/interfaces/api/api-call-directory.interface';
@@ -10,24 +10,49 @@ import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SubscriptionManagerService } from 'app/modules/websocket/subscription-manager.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
+import { selectEnclosureMockConfig } from 'app/modules/websocket-debug-panel/store/websocket-debug.selectors';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
+/**
+ * @deprecated Use EnclosureMockService with standard ApiService instead.
+ * This service is kept for backward compatibility only.
+ */
 @Injectable({
   providedIn: 'root',
 })
-export class MockEnclosureApiService extends ApiService {
-  private mockConfig: MockEnclosureConfig = environment.mockConfig;
-  private mockStorage = new MockEnclosureGenerator(this.mockConfig);
+export class MockEnclosureApiService extends ApiService implements OnDestroy {
+  private mockConfig: MockEnclosureConfig | null = null;
+  private mockStorage: MockEnclosureGenerator | null = null;
+  private readonly destroy$ = new Subject<void>();
 
   constructor(
     wsManager: WebSocketHandlerService,
     wsStatus: WebSocketStatusService,
     subscriptionManager: SubscriptionManagerService,
     translate: TranslateService,
+    private store$: Store,
   ) {
     super(wsManager, wsStatus, subscriptionManager, translate);
 
     console.warn('MockEnclosureApiService is in effect. Some calls will be mocked');
+    console.warn('MockEnclosureApiService is deprecated. Use EnclosureMockService with standard ApiService instead.');
+
+    // Subscribe to enclosure mock configuration from store
+    this.store$.select(selectEnclosureMockConfig)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((config) => {
+        this.mockConfig = config;
+        if (config.enabled && config.controllerModel !== null) {
+          this.mockStorage = new MockEnclosureGenerator(config);
+        } else {
+          this.mockStorage = null;
+        }
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   override call<M extends ApiCallMethod>(method: M, params?: ApiCallParams<M>): Observable<ApiCallResponse<M>> {
@@ -45,6 +70,10 @@ export class MockEnclosureApiService extends ApiService {
   }
 
   private preCallOverride<M extends ApiCallMethod>(method: M, _?: ApiCallParams<M>): ApiCallResponse<M> | undefined {
+    if (!this.mockStorage || !this.mockConfig?.enabled) {
+      return undefined;
+    }
+
     switch (method) {
       case 'webui.enclosure.dashboard':
         return this.mockStorage.webuiDashboardEnclosureResponse() ?? undefined;
@@ -56,6 +85,10 @@ export class MockEnclosureApiService extends ApiService {
   }
 
   private postCallOverride<M extends ApiCallMethod>(method: M, response: ApiCallResponse<M>): ApiCallResponse<M> {
+    if (!this.mockStorage || !this.mockConfig?.enabled) {
+      return undefined;
+    }
+
     switch (method) {
       case 'webui.main.dashboard.sys_info':
       case 'system.info':
