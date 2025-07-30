@@ -94,6 +94,7 @@ export class ExtentFormComponent implements OnInit {
     path: [mntPath],
     filesize: new FormControl(null as number | null),
     serial: [''],
+    product_id: [''],
     blocksize: [512],
     pblocksize: [false],
     avail_threshold: new FormControl(null as number | null, [Validators.min(1), Validators.max(99)]),
@@ -189,6 +190,10 @@ export class ExtentFormComponent implements OnInit {
 
     if (values.type === IscsiExtentType.File && Number(values.filesize) !== 0) {
       values.filesize = Number(values.filesize) + (values.blocksize - Number(values.filesize) % values.blocksize);
+    }
+
+    if (values.product_id === '') {
+      values.product_id = null;
     }
 
     this.isLoading.set(true);

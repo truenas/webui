@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, effect, OnInit,
 } from '@angular/core';
@@ -10,7 +11,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
-import { NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.interface';
+import { NvmeOfSubsystem, NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.interface';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master-detail-view.component';
@@ -32,6 +33,7 @@ import {
 import {
   SubsystemsListComponent,
 } from 'app/pages/sharing/nvme-of/subsystems-list/subsystems-list.component';
+import { setSubsystemNameInUrl } from 'app/pages/sharing/nvme-of/utils/router-utils';
 
 @UntilDestroy()
 @Component({
@@ -56,6 +58,8 @@ export class NvmeOfComponent implements OnInit {
 
   protected dataProvider = new ArrayDataProvider<NvmeOfSubsystemDetails>();
 
+  private selectedSubsystemName: string | null = null;
+
   protected readonly isLoading = this.nvmeOfStore.isLoading;
   protected readonly searchableElements = nvmeOfElements;
   protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
@@ -64,6 +68,7 @@ export class NvmeOfComponent implements OnInit {
     private nvmeOfStore: NvmeOfStore,
     private slideIn: SlideIn,
     private activatedRoute: ActivatedRoute,
+    private location: Location,
   ) {
     this.setupDataProvider();
   }
@@ -89,13 +94,23 @@ export class NvmeOfComponent implements OnInit {
         if (!subsystems.length) {
           this.dataProvider.setEmptyType(EmptyType.NoPageData);
         } else {
-          const routeSelectedRow = subsystems.find(
-            (subsystem) => subsystem.name === this.activatedRoute.snapshot.paramMap.get('name'),
-          );
+          const urlName = this.activatedRoute.snapshot.paramMap.get('name');
+          const selectedName = this.selectedSubsystemName || urlName;
+          const routeSelectedRow = subsystems.find((subsystem) => subsystem.name === selectedName);
           this.dataProvider.expandedRow = routeSelectedRow || subsystems[0];
+          this.selectedSubsystemName = this.dataProvider.expandedRow?.name || null;
+          setSubsystemNameInUrl(this.location, this.selectedSubsystemName);
         }
       }
     });
+
+    this.dataProvider.expandedRow$
+      .pipe(filter((row): row is NvmeOfSubsystemDetails => !!row))
+      .pipe(untilDestroyed(this))
+      .subscribe((row) => {
+        this.selectedSubsystemName = row.name;
+        setSubsystemNameInUrl(this.location, row.name);
+      });
   }
 
   protected onFilter(query: string): void {
@@ -114,7 +129,21 @@ export class NvmeOfComponent implements OnInit {
     this.slideIn.open(AddSubsystemComponent).pipe(
       filter(({ response }) => !!response),
       untilDestroyed(this),
-    ).subscribe(() => this.nvmeOfStore.initialize());
+    ).subscribe(({ response }) => {
+      this.selectedSubsystemName = (response as NvmeOfSubsystem).name;
+      this.nvmeOfStore.initialize();
+    });
+  }
+
+  protected onSubsystemSelected(subsystem: NvmeOfSubsystemDetails): void {
+    this.dataProvider.expandedRow = subsystem;
+    this.selectedSubsystemName = subsystem.name;
+    setSubsystemNameInUrl(this.location, subsystem.name);
+  }
+
+  protected onSubsystemRenamed(newName: string): void {
+    this.selectedSubsystemName = newName;
+    setSubsystemNameInUrl(this.location, newName);
   }
 
   protected onSubsystemRemoved(): void {

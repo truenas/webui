@@ -69,6 +69,7 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
 import { ReadOnlyComponent } from 'app/modules/forms/ix-forms/components/readonly-badge/readonly-badge.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
+import { cpuValidator } from 'app/modules/forms/ix-forms/validators/cpu-validation/cpu-validation';
 import {
   forbiddenAsyncValues,
 } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
@@ -177,7 +178,7 @@ export class InstanceWizardComponent implements OnInit {
       [forbiddenAsyncValues(this.forbiddenNames$)],
     ],
     image: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(200)]],
-    cpu: [''],
+    cpu: ['', [cpuValidator()]],
     memory: [null as number | null],
     storage_pool: [null as string | null, [Validators.required]],
     use_default_network: [true],
@@ -340,9 +341,9 @@ export class InstanceWizardComponent implements OnInit {
   protected addProxy(): void {
     const control = this.formBuilder.group({
       source_proto: [VirtualizationProxyProtocol.Tcp],
-      source_port: [null as number | null, Validators.required],
+      source_port: [null as number | null, [Validators.required, Validators.min(1), Validators.max(65535)]],
       dest_proto: [VirtualizationProxyProtocol.Tcp],
-      dest_port: [null as number | null, Validators.required],
+      dest_port: [null as number | null, [Validators.required, Validators.min(1), Validators.max(65535)]],
     });
 
     this.form.controls.proxies.push(control);

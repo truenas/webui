@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, input, output,
+} from '@angular/core';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.interface';
 import {
@@ -30,5 +32,6 @@ import {
 })
 export class SubsystemDetailsComponent {
   readonly subsystem = input.required<NvmeOfSubsystemDetails>();
+  readonly nameUpdated = output<string>();
   protected readonly searchableElements = subsystemDetailsElements;
 }

@@ -14,7 +14,9 @@ import {
   signal,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { UUID } from 'angular2-uuid';
+import { environment } from 'environments/environment';
 import { cloneDeep } from 'lodash-es';
 import {
   delay,
@@ -26,6 +28,8 @@ import { SlideInContainerComponent } from 'app/modules/slide-ins/components/slid
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ComponentInSlideIn, SlideInInstance, SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
 import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
+import { selectIsPanelOpen } from 'app/modules/websocket-debug-panel/store/websocket-debug.selectors';
+import { AppState } from 'app/store';
 
 @UntilDestroy()
 // eslint-disable-next-line angular-file-naming/service-filename-suffix
@@ -38,6 +42,7 @@ export class SlideIn {
     private cdkOverlay: Overlay,
     private injector: Injector,
     private unsavedChangesService: UnsavedChangesService,
+    private store$: Store<AppState>,
   ) {}
 
   // TODO: Refactor this -> https://github.com/truenas/webui/pull/12168#pullrequestreview-2949579034
@@ -185,10 +190,23 @@ export class SlideIn {
   }
 
   private getOverlayConfig(): OverlayConfig {
+    let rightPosition = '0';
+
+    if (environment.debugPanel?.enabled) {
+      const isDebugPanelOpen = this.store$.selectSignal(selectIsPanelOpen)();
+
+      if (isDebugPanelOpen) {
+        // Get the actual debug panel width from CSS variable
+        const debugPanelWidth = getComputedStyle(document.documentElement)
+          .getPropertyValue('--debug-panel-width') || '550px';
+        rightPosition = debugPanelWidth;
+      }
+    }
+
     return new OverlayConfig({
       hasBackdrop: true,
       backdropClass: !this.slideInInstances().length ? 'custom-slide-in-backdrop' : 'custom-slide-in-nobackdrop',
-      positionStrategy: this.cdkOverlay.position().global().top('48px').right('0'),
+      positionStrategy: this.cdkOverlay.position().global().top('48px').right(rightPosition),
       height: 'calc(100% - 48px)',
       panelClass: 'slide-in-panel',
     });
