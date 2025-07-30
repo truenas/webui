@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subject } from 'rxjs';
-import { first, takeUntil } from 'rxjs/operators';
+import { distinctUntilChanged, first, takeUntil } from 'rxjs/operators';
 import { MockEnclosureConfig } from 'app/core/testing/mock-enclosure/interfaces/mock-enclosure.interface';
 import { MockEnclosureGenerator } from 'app/core/testing/mock-enclosure/mock-enclosure-generator.utils';
 import { MockConfig } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
@@ -27,9 +27,20 @@ export class EnclosureMockService implements OnDestroy {
   };
 
   constructor(private store$: Store) {
+    // Initialize the subscription immediately
+    this.initializeSubscription();
+  }
+
+  private initializeSubscription(): void {
+    // Use distinctUntilChanged to avoid processing the same config multiple times
     const enclosureMockConfig$ = this.store$.select(selectEnclosureMockConfig);
     enclosureMockConfig$
       .pipe(
+        // Skip processing if config hasn't actually changed
+        distinctUntilChanged((prev, curr) => prev.enabled === curr.enabled
+          && prev.controllerModel === curr.controllerModel
+          && JSON.stringify(prev.expansionModels) === JSON.stringify(curr.expansionModels)
+          && prev.scenario === curr.scenario),
         takeUntil(this.destroy$),
       )
       .subscribe((config) => {

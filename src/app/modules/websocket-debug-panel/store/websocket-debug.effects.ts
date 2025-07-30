@@ -4,11 +4,13 @@ import { Store } from '@ngrx/store';
 import {
   tap, switchMap, withLatestFrom,
 } from 'rxjs/operators';
+import { MockEnclosureScenario } from 'app/core/testing/mock-enclosure/enums/mock-enclosure.enum';
+import { EnclosureModel } from 'app/enums/enclosure-model.enum';
 import { exportFilePrefix, storageKeys } from 'app/modules/websocket-debug-panel/constants';
 import { MockConfig } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
 import { safeGetItem, safeSetItem } from 'app/modules/websocket-debug-panel/utils/local-storage-utils';
 import * as WebSocketDebugActions from './websocket-debug.actions';
-import { selectMockConfigs, selectIsPanelOpen } from './websocket-debug.selectors';
+import { selectMockConfigs, selectIsPanelOpen, selectEnclosureMockConfig } from './websocket-debug.selectors';
 
 @Injectable()
 export class WebSocketDebugEffects {
@@ -55,6 +57,27 @@ export class WebSocketDebugEffects {
       linkElement.setAttribute('href', dataUri);
       linkElement.setAttribute('download', exportFileDefaultName);
       linkElement.click();
+    }),
+  ), { dispatch: false });
+
+  loadEnclosureMockConfig$ = createEffect(() => this.actions$.pipe(
+    ofType(WebSocketDebugActions.loadEnclosureMockConfig),
+    switchMap(() => {
+      const config = safeGetItem<{
+        enabled: boolean;
+        controllerModel: EnclosureModel | null;
+        expansionModels: EnclosureModel[];
+        scenario: MockEnclosureScenario;
+      } | null>(storageKeys.ENCLOSURE_MOCK_CONFIG, null);
+      return [WebSocketDebugActions.enclosureMockConfigLoaded({ config })];
+    }),
+  ));
+
+  saveEnclosureMockConfig$ = createEffect(() => this.actions$.pipe(
+    ofType(WebSocketDebugActions.setEnclosureMockConfig),
+    withLatestFrom(this.store$.select(selectEnclosureMockConfig)),
+    tap(([, config]) => {
+      safeSetItem(storageKeys.ENCLOSURE_MOCK_CONFIG, config);
     }),
   ), { dispatch: false });
 

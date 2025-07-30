@@ -106,3 +106,17 @@ export const updateEnclosureScenario = createAction(
   `${actionPrefix} Update Enclosure Scenario`,
   props<{ scenario: MockEnclosureScenario }>(),
 );
+
+export const loadEnclosureMockConfig = createAction(
+  `${actionPrefix} Load Enclosure Mock Config`,
+);
+
+export const enclosureMockConfigLoaded = createAction(
+  `${actionPrefix} Enclosure Mock Config Loaded`,
+  props<{ config: {
+    enabled: boolean;
+    controllerModel: EnclosureModel | null;
+    expansionModels: EnclosureModel[];
+    scenario: MockEnclosureScenario;
+  } | null; }>(),
+);

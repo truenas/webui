@@ -70,6 +70,10 @@ export class WebSocketDebugPanelComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     // Load saved mock configs and restore panel state
     this.store$.dispatch(WebSocketDebugActions.loadMockConfigs());
+    this.store$.dispatch(WebSocketDebugActions.loadEnclosureMockConfig());
+
+    // Ensure EnclosureMockService starts listening after configs are loaded
+    // The service is injected in constructor, so it's already created
 
     // Restore panel state from localStorage asynchronously
     this.ngZone.runOutsideAngular(() => {
