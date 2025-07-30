@@ -2,6 +2,7 @@ import { Overlay, OverlayPositionBuilder, OverlayRef } from '@angular/cdk/overla
 import { ComponentRef, Injector, ValueProvider } from '@angular/core';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
+import { environment } from 'environments/environment';
 import { of, Subject } from 'rxjs';
 import { SlideInContainerComponent } from 'app/modules/slide-ins/components/slide-in-container/slide-in-container.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -135,5 +136,84 @@ describe('SlideIn Service', () => {
     expect(containerRefMock.instance.attachPortal).toHaveBeenCalled();
     expect(overlayRefMock.dispose).toHaveBeenCalled();
     expect(spectator.service.openSlideIns()).toBe(0);
+  });
+
+  describe('debug panel integration', () => {
+    let originalDebugPanel: typeof environment.debugPanel;
+    let store$: Store;
+    let selectSignalSpy: jest.Mock;
+
+    beforeEach(() => {
+      originalDebugPanel = environment.debugPanel;
+      store$ = spectator.inject(Store);
+      selectSignalSpy = store$.selectSignal as jest.Mock;
+    });
+
+    afterEach(() => {
+      environment.debugPanel = originalDebugPanel;
+    });
+
+    it('should not call selectIsPanelOpen when debug panel is disabled', () => {
+      environment.debugPanel = { enabled: false } as typeof environment.debugPanel;
+      selectSignalSpy.mockClear();
+
+      spectator.service.open(MockSlideInComponent);
+
+      expect(selectSignalSpy).not.toHaveBeenCalled();
+    });
+
+    it('should call selectIsPanelOpen when debug panel is enabled', () => {
+      environment.debugPanel = { enabled: true } as typeof environment.debugPanel;
+      selectSignalSpy.mockClear();
+      selectSignalSpy.mockReturnValue(() => false);
+
+      spectator.service.open(MockSlideInComponent);
+
+      expect(selectSignalSpy).toHaveBeenCalled();
+    });
+
+    it('should apply debug panel offset when panel is open', () => {
+      environment.debugPanel = { enabled: true } as typeof environment.debugPanel;
+      selectSignalSpy.mockReturnValue(() => true);
+
+      const mockDebugPanelWidth = '600px';
+      // Mock getComputedStyle globally for this test
+      jest.spyOn(globalThis, 'getComputedStyle').mockImplementation(() => ({
+        getPropertyValue: (prop: string) => (prop === '--debug-panel-width' ? mockDebugPanelWidth : ''),
+      }) as CSSStyleDeclaration);
+
+      const overlay = spectator.inject(Overlay);
+      const rightSpy = jest.fn();
+      const topSpy = jest.fn(() => ({ right: rightSpy }));
+      const globalSpy = jest.fn(() => ({ top: topSpy }));
+      jest.spyOn(overlay, 'position').mockImplementation(() => ({
+        global: globalSpy,
+      }) as unknown as OverlayPositionBuilder);
+
+      spectator.service.open(MockSlideInComponent);
+
+      expect(globalSpy).toHaveBeenCalled();
+      expect(topSpy).toHaveBeenCalledWith('48px');
+      expect(rightSpy).toHaveBeenCalledWith(mockDebugPanelWidth);
+    });
+
+    it('should use default position when debug panel is closed', () => {
+      environment.debugPanel = { enabled: true } as typeof environment.debugPanel;
+      selectSignalSpy.mockReturnValue(() => false);
+
+      const overlay = spectator.inject(Overlay);
+      const rightSpy = jest.fn();
+      const topSpy = jest.fn(() => ({ right: rightSpy }));
+      const globalSpy = jest.fn(() => ({ top: topSpy }));
+      jest.spyOn(overlay, 'position').mockImplementation(() => ({
+        global: globalSpy,
+      }) as unknown as OverlayPositionBuilder);
+
+      spectator.service.open(MockSlideInComponent);
+
+      expect(globalSpy).toHaveBeenCalled();
+      expect(topSpy).toHaveBeenCalledWith('48px');
+      expect(rightSpy).toHaveBeenCalledWith('0');
+    });
   });
 });
