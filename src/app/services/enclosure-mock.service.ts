@@ -11,6 +11,7 @@ import {
   updateMockConfig,
 } from 'app/modules/websocket-debug-panel/store/websocket-debug.actions';
 import { selectEnclosureMockConfig, selectMockConfigs } from 'app/modules/websocket-debug-panel/store/websocket-debug.selectors';
+import { enclosureMockIds } from 'app/modules/websocket-debug-panel/utils/mock-id.utils';
 
 @Injectable({
   providedIn: 'root',
@@ -19,12 +20,6 @@ export class EnclosureMockService implements OnDestroy {
   private mockGenerator: MockEnclosureGenerator | null = null;
   private currentConfig: MockEnclosureConfig | null = null;
   private readonly destroy$ = new Subject<void>();
-  private readonly enclosureMockIds = {
-    dashboard: 'enclosure-mock-dashboard',
-    isIxHardware: 'enclosure-mock-is-ix-hardware',
-    systemInfo: 'enclosure-mock-system-info',
-    mainDashboardSysInfo: 'enclosure-mock-main-dashboard-sys-info',
-  };
 
   constructor(private store$: Store) {
     // Initialize the subscription immediately
@@ -75,7 +70,7 @@ export class EnclosureMockService implements OnDestroy {
     // Create/update mock configs for each enclosure endpoint
     const mockConfigs: MockConfig[] = [
       {
-        id: this.enclosureMockIds.dashboard,
+        id: enclosureMockIds.dashboard,
         enabled: true,
         methodName: 'webui.enclosure.dashboard',
         response: {
@@ -83,7 +78,7 @@ export class EnclosureMockService implements OnDestroy {
         },
       },
       {
-        id: this.enclosureMockIds.isIxHardware,
+        id: enclosureMockIds.isIxHardware,
         enabled: true,
         methodName: 'truenas.is_ix_hardware',
         response: {
@@ -109,7 +104,7 @@ export class EnclosureMockService implements OnDestroy {
 
   private removeMockConfigs(): void {
     // Remove all enclosure mock configs
-    Object.values(this.enclosureMockIds).forEach((id) => {
+    Object.values(enclosureMockIds).forEach((id) => {
       this.store$.dispatch(deleteMockConfig({ id }));
     });
   }

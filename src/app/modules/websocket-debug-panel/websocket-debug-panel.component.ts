@@ -13,10 +13,12 @@ import { EnclosureMockService } from 'app/services/enclosure-mock.service';
 import { EnclosureMockTabComponent } from './components/enclosure-mock-tab/enclosure-mock-tab.component';
 import { MockConfigurationsTabComponent } from './components/mock-configurations-tab/mock-configurations-tab.component';
 import { WebSocketTabComponent } from './components/websocket-tab/websocket-tab.component';
+import { storageKeys } from './constants';
 import * as WebSocketDebugActions from './store/websocket-debug.actions';
 import {
   selectIsPanelOpen, selectActiveTab, selectHasActiveMocks,
 } from './store/websocket-debug.selectors';
+import { safeGetItem } from './utils/local-storage-utils';
 
 @UntilDestroy()
 @Component({
@@ -78,16 +80,11 @@ export class WebSocketDebugPanelComponent implements OnInit, OnDestroy {
     // Restore panel state from localStorage asynchronously
     this.ngZone.runOutsideAngular(() => {
       Promise.resolve().then(() => {
-        try {
-          const savedState = localStorage.getItem('websocket-debug-panel-open');
-          if (savedState) {
-            const isOpen = JSON.parse(savedState) as boolean;
-            this.ngZone.run(() => {
-              this.store$.dispatch(WebSocketDebugActions.setPanelOpen({ isOpen }));
-            });
-          }
-        } catch (error) {
-          console.error('Failed to restore panel state:', error);
+        const isOpen = safeGetItem<boolean>(storageKeys.PANEL_OPEN, false);
+        if (isOpen) {
+          this.ngZone.run(() => {
+            this.store$.dispatch(WebSocketDebugActions.setPanelOpen({ isOpen }));
+          });
         }
       });
     });
