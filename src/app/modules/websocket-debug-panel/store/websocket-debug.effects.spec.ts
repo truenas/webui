@@ -2,10 +2,12 @@ import { TestBed } from '@angular/core/testing';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { Observable, of } from 'rxjs';
+import { MockEnclosureScenario } from 'app/core/testing/mock-enclosure/enums/mock-enclosure.enum';
+import { EnclosureModel } from 'app/enums/enclosure-model.enum';
 import { MockConfig } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
 import * as WebSocketDebugActions from './websocket-debug.actions';
 import { WebSocketDebugEffects } from './websocket-debug.effects';
-import { selectMockConfigs, selectIsPanelOpen } from './websocket-debug.selectors';
+import { selectMockConfigs, selectIsPanelOpen, selectEnclosureMockConfig } from './websocket-debug.selectors';
 
 describe('WebSocketDebugEffects', () => {
   let effects: WebSocketDebugEffects;
@@ -27,6 +29,13 @@ describe('WebSocketDebugEffects', () => {
       response: { result: null, delay: 1000 },
     },
   ];
+
+  const mockEnclosureConfig = {
+    enabled: true,
+    controllerModel: EnclosureModel.M40,
+    expansionModels: [EnclosureModel.Es24F],
+    scenario: MockEnclosureScenario.FillSomeSlots,
+  };
 
   beforeEach(() => {
     // Mock localStorage
@@ -56,6 +65,7 @@ describe('WebSocketDebugEffects', () => {
           selectors: [
             { selector: selectMockConfigs, value: mockConfigs },
             { selector: selectIsPanelOpen, value: false },
+            { selector: selectEnclosureMockConfig, value: mockEnclosureConfig },
           ],
         }),
       ],
@@ -349,6 +359,127 @@ describe('WebSocketDebugEffects', () => {
 
       expect(dataUri).toContain(encodeURIComponent(JSON.stringify(mockConfigs, null, 2)));
 
+      subscription.unsubscribe();
+    });
+  });
+
+  describe('loadEnclosureMockConfig$', () => {
+    it('should load enclosure mock config from localStorage', async () => {
+      const action = WebSocketDebugActions.loadEnclosureMockConfig();
+      const completion = WebSocketDebugActions.enclosureMockConfigLoaded({ config: mockEnclosureConfig });
+
+      (localStorage.getItem as jest.Mock).mockReturnValue(JSON.stringify(mockEnclosureConfig));
+
+      actions$ = of(action);
+
+      const result = await new Promise((resolve) => {
+        effects.loadEnclosureMockConfig$.subscribe(resolve);
+      });
+      expect(result).toEqual(completion);
+    });
+
+    it('should return null when localStorage is empty', async () => {
+      const action = WebSocketDebugActions.loadEnclosureMockConfig();
+      const completion = WebSocketDebugActions.enclosureMockConfigLoaded({ config: null });
+
+      (localStorage.getItem as jest.Mock).mockReturnValue(null);
+
+      actions$ = of(action);
+
+      const result = await new Promise((resolve) => {
+        effects.loadEnclosureMockConfig$.subscribe(resolve);
+      });
+      expect(result).toEqual(completion);
+    });
+
+    it('should handle localStorage errors gracefully', async () => {
+      const action = WebSocketDebugActions.loadEnclosureMockConfig();
+      const completion = WebSocketDebugActions.enclosureMockConfigLoaded({ config: null });
+
+      (localStorage.getItem as jest.Mock).mockImplementation(() => {
+        throw new Error('Storage error');
+      });
+
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+
+      actions$ = of(action);
+
+      const result = await new Promise((resolve) => {
+        effects.loadEnclosureMockConfig$.subscribe(resolve);
+      });
+      expect(result).toEqual(completion);
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'LocalStorage read error:',
+        expect.any(Error),
+      );
+    });
+
+    it('should handle invalid JSON in localStorage', async () => {
+      const action = WebSocketDebugActions.loadEnclosureMockConfig();
+      const completion = WebSocketDebugActions.enclosureMockConfigLoaded({ config: null });
+
+      (localStorage.getItem as jest.Mock).mockReturnValue('invalid json');
+
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+
+      actions$ = of(action);
+
+      const result = await new Promise((resolve) => {
+        effects.loadEnclosureMockConfig$.subscribe(resolve);
+      });
+      expect(result).toEqual(completion);
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'LocalStorage parse error:',
+        expect.any(Error),
+      );
+    });
+  });
+
+  describe('saveEnclosureMockConfig$', () => {
+    it('should save enclosure mock config to localStorage', async () => {
+      const action = WebSocketDebugActions.setEnclosureMockConfig({
+        config: mockEnclosureConfig,
+      });
+
+      actions$ = of(action);
+
+      const subscription = effects.saveEnclosureMockConfig$.subscribe();
+
+      // Wait for async operation to complete
+      await new Promise((resolve) => {
+        setTimeout(resolve, 0);
+      });
+
+      expect(localStorage.setItem).toHaveBeenCalledWith(
+        'websocket-debug-enclosure-mock-config',
+        JSON.stringify(mockEnclosureConfig),
+      );
+      subscription.unsubscribe();
+    });
+
+    it('should handle localStorage errors when saving enclosure mock config', async () => {
+      const action = WebSocketDebugActions.setEnclosureMockConfig({
+        config: mockEnclosureConfig,
+      });
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+
+      (localStorage.setItem as jest.Mock).mockImplementation(() => {
+        throw new Error('Storage full');
+      });
+
+      actions$ = of(action);
+
+      const subscription = effects.saveEnclosureMockConfig$.subscribe();
+
+      // Wait for async operation to complete
+      await new Promise((resolve) => {
+        setTimeout(resolve, 0);
+      });
+
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'LocalStorage write error:',
+        expect.any(Error),
+      );
       subscription.unsubscribe();
     });
   });

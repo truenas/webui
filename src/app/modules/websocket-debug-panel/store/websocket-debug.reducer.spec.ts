@@ -1,3 +1,5 @@
+import { MockEnclosureScenario } from 'app/core/testing/mock-enclosure/enums/mock-enclosure.enum';
+import { EnclosureModel } from 'app/enums/enclosure-model.enum';
 import { MockConfig } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
 import { WebSocketDebugMessage } from 'app/modules/websocket-debug-panel/interfaces/websocket-debug.interface';
 import * as WebSocketDebugActions from './websocket-debug.actions';
@@ -15,6 +17,12 @@ describe('WebSocketDebugReducer', () => {
       expect(state.isPanelOpen).toBe(false);
       expect(state.activeTab).toBe('websocket');
       expect(state.messageLimit).toBe(200);
+      expect(state.enclosureMock).toEqual({
+        enabled: false,
+        controllerModel: null,
+        expansionModels: [],
+        scenario: MockEnclosureScenario.FillSomeSlots,
+      });
     });
   });
 
@@ -257,6 +265,110 @@ describe('WebSocketDebugReducer', () => {
       expect(state.isPanelOpen).toBe(true);
       expect(state.activeTab).toBe('mock');
       expect(state.mockConfigs).toHaveLength(1);
+    });
+  });
+
+  describe('enclosure mock actions', () => {
+    it('should set enclosure mock config', () => {
+      const config = {
+        enabled: true,
+        controllerModel: EnclosureModel.M40,
+        expansionModels: [EnclosureModel.Es24F],
+        scenario: MockEnclosureScenario.FillAllSlots,
+      };
+
+      const action = WebSocketDebugActions.setEnclosureMockConfig({ config });
+      const state = webSocketDebugReducer(initialState, action);
+
+      expect(state.enclosureMock).toEqual(config);
+    });
+
+    it('should toggle enclosure mock enabled state', () => {
+      const action = WebSocketDebugActions.toggleEnclosureMock({ enabled: true });
+      const state = webSocketDebugReducer(initialState, action);
+
+      expect(state.enclosureMock.enabled).toBe(true);
+      expect(state.enclosureMock.controllerModel).toBeNull(); // Other properties unchanged
+      expect(state.enclosureMock.expansionModels).toEqual([]);
+      expect(state.enclosureMock.scenario).toBe(MockEnclosureScenario.FillSomeSlots);
+
+      const action2 = WebSocketDebugActions.toggleEnclosureMock({ enabled: false });
+      const state2 = webSocketDebugReducer(state, action2);
+
+      expect(state2.enclosureMock.enabled).toBe(false);
+    });
+
+    it('should update enclosure scenario', () => {
+      const action = WebSocketDebugActions.updateEnclosureScenario({ scenario: MockEnclosureScenario.FillAllSlots });
+      const state = webSocketDebugReducer(initialState, action);
+
+      expect(state.enclosureMock.scenario).toBe(MockEnclosureScenario.FillAllSlots);
+      expect(state.enclosureMock.enabled).toBe(false); // Other properties unchanged
+      expect(state.enclosureMock.controllerModel).toBeNull();
+      expect(state.enclosureMock.expansionModels).toEqual([]);
+    });
+
+    it('should load enclosure mock config', () => {
+      const config = {
+        enabled: true,
+        controllerModel: EnclosureModel.M50,
+        expansionModels: [EnclosureModel.Es24F, EnclosureModel.Es60],
+        scenario: MockEnclosureScenario.FillSomeSlots,
+      };
+
+      const action = WebSocketDebugActions.enclosureMockConfigLoaded({ config });
+      const state = webSocketDebugReducer(initialState, action);
+
+      expect(state.enclosureMock).toEqual(config);
+    });
+
+    it('should reset to initial enclosure mock state when loading null config', () => {
+      const stateWithConfig: WebSocketDebugState = {
+        ...initialState,
+        enclosureMock: {
+          enabled: true,
+          controllerModel: EnclosureModel.M40,
+          expansionModels: [EnclosureModel.Es24F],
+          scenario: MockEnclosureScenario.FillAllSlots,
+        },
+      };
+
+      const action = WebSocketDebugActions.enclosureMockConfigLoaded({ config: null });
+      const state = webSocketDebugReducer(stateWithConfig, action);
+
+      expect(state.enclosureMock).toEqual(initialState.enclosureMock);
+      expect(state.enclosureMock.enabled).toBe(false);
+      expect(state.enclosureMock.controllerModel).toBeNull();
+      expect(state.enclosureMock.expansionModels).toEqual([]);
+      expect(state.enclosureMock.scenario).toBe(MockEnclosureScenario.FillSomeSlots);
+    });
+
+    it('should preserve other state when updating enclosure mock', () => {
+      const stateWithData: WebSocketDebugState = {
+        ...initialState,
+        messages: [
+          {
+            id: 'msg-1', timestamp: '2024-01-01', direction: 'in', message: { jsonrpc: '2.0', id: '1', result: {} },
+          },
+        ],
+        mockConfigs: [{
+          id: 'config-1',
+          enabled: true,
+          methodName: 'test',
+          response: { result: {} },
+        }],
+        isPanelOpen: true,
+        activeTab: 'enclosure',
+      };
+
+      const action = WebSocketDebugActions.toggleEnclosureMock({ enabled: true });
+      const state = webSocketDebugReducer(stateWithData, action);
+
+      expect(state.messages).toEqual(stateWithData.messages);
+      expect(state.mockConfigs).toEqual(stateWithData.mockConfigs);
+      expect(state.isPanelOpen).toBe(true);
+      expect(state.activeTab).toBe('enclosure');
+      expect(state.enclosureMock.enabled).toBe(true);
     });
   });
 
