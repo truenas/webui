@@ -15,6 +15,12 @@ export function cpuValidator(): ValidatorFn {
 
     const parts = value.split(',').map((part) => part.split('-').map(Number));
 
+    // Incus will use single number as number of CPUs. This is not used for VMs cpuset.
+    // Check if it's a single "0" (not allowed)
+    if (parts.length === 1 && parts[0].length === 1 && parts[0][0] === 0) {
+      return { cpu: true };
+    }
+
     for (const part of parts) {
       if (part.length === 2 && part[0] > part[1]) {
         // Example: '3-1' is invalid

@@ -24,6 +24,7 @@ describe('SnackbarService', () => {
       expect(spectator.inject(MatSnackBar).openFromComponent).toHaveBeenCalledWith(SnackbarComponent, {
         announcementMessage: 'All good',
         politeness: 'assertive',
+        panelClass: 'ix-snackbar-high-priority',
         data: {
           message: 'All good',
           icon: 'mdi-check',

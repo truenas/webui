@@ -53,6 +53,8 @@ describe('SubsystemDetailsCardComponent', () => {
       },
     });
 
+    jest.spyOn(spectator.component.nameUpdated, 'emit');
+
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     details = await loader.getHarness(DetailsTableHarness);
   });
@@ -73,6 +75,7 @@ describe('SubsystemDetailsCardComponent', () => {
 
     expect(spectator.inject(NvmeOfService).updateSubsystem).toHaveBeenCalledWith(subsystem, { name: 'Updated Subsystem' });
     expect(spectator.inject(NvmeOfStore).initialize).toHaveBeenCalled();
+    expect(spectator.component.nameUpdated.emit).not.toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
   });
 

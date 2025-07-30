@@ -1,0 +1,14 @@
+:host {
+  display: block;
+  height: 100%;
+  overflow: hidden;
+  width: 100%;
+}
+
+.websocket-tab {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}

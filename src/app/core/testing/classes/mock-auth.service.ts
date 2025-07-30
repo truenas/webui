@@ -24,4 +24,8 @@ export class MockAuthService extends AuthService {
   }
 
   override refreshUser = jest.fn(() => of(undefined));
+
+  override clearAuthToken(): void {
+    // Mock implementation to avoid ngx-webstorage issues in tests
+  }
 }

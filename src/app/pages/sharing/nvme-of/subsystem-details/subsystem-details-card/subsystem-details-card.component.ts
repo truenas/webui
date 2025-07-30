@@ -1,7 +1,7 @@
 import { Clipboard } from '@angular/cdk/clipboard';
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, input, OnChanges, signal,
+  ChangeDetectionStrategy, Component, input, OnChanges, output, signal,
 } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
@@ -56,6 +56,7 @@ import { subsystemDetailsCardElements } from 'app/pages/sharing/nvme-of/subsyste
 })
 export class SubsystemDetailsCardComponent implements OnChanges {
   subsystem = input.required<NvmeOfSubsystemDetails>();
+  readonly nameUpdated = output<string>();
 
   protected isSaving = signal(false);
 
@@ -109,8 +110,11 @@ export class SubsystemDetailsCardComponent implements OnChanges {
         untilDestroyed(this),
       )
       .subscribe({
-        next: () => {
+        next: (updated) => {
           this.snackbar.success(this.translate.instant('Subsystem updated.'));
+          if (field === 'name' && updated) {
+            this.nameUpdated.emit(updated.name);
+          }
           this.nvmeOfStore.initialize();
         },
         error: (error: unknown) => {

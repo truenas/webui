@@ -12,6 +12,11 @@
           </ix-warning>
         }
 
+        <ix-checkbox
+          formControlName="enabled"
+          [label]="'Enabled' | translate"
+        ></ix-checkbox>
+
         <ix-button-group
           formControlName="device_type"
           [options]="typeOptions$"
@@ -62,11 +67,6 @@
             ></ix-input>
           }
         }
-
-        <ix-checkbox
-          formControlName="enabled"
-          [label]="'Enabled' | translate"
-        ></ix-checkbox>
       </ix-fieldset>
 
       <ix-form-actions>
