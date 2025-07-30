@@ -44,7 +44,7 @@ export class EnclosureMockTabComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly store = inject(Store<AppState>);
 
-  protected readonly form = this.fb.group({
+  readonly form = this.fb.group({
     enabled: [false],
     controllerModel: [null as string | null, Validators.required],
     expansionModels: [[] as string[]],
@@ -81,15 +81,17 @@ export class EnclosureMockTabComponent implements OnInit {
   }
 
   onApply(): void {
-    if (this.form.invalid && this.form.value.enabled) {
+    const formValue = this.form.getRawValue();
+
+    if (this.form.invalid && formValue.enabled) {
       return;
     }
 
     const config = {
-      enabled: this.form.value.enabled || false,
-      controllerModel: this.form.value.controllerModel as EnclosureModel | null,
-      expansionModels: this.form.value.expansionModels as EnclosureModel[],
-      scenario: this.form.value.scenario || MockEnclosureScenario.FillSomeSlots,
+      enabled: formValue.enabled || false,
+      controllerModel: formValue.controllerModel as EnclosureModel | null,
+      expansionModels: formValue.expansionModels as EnclosureModel[],
+      scenario: formValue.scenario || MockEnclosureScenario.FillSomeSlots,
     };
 
     this.store.dispatch(setEnclosureMockConfig({ config }));

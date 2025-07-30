@@ -108,4 +108,8 @@ export const webSocketDebugReducer = createReducer(
       scenario,
     },
   })),
+  on(WebSocketDebugActions.enclosureMockConfigLoaded, (state, { config }) => ({
+    ...state,
+    enclosureMock: config || initialState.enclosureMock,
+  })),
 );
