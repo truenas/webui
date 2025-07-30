@@ -22,6 +22,12 @@ interface ContentSection {
   tabs?: TabSection[];
 }
 
+// Regex patterns for highlighting
+const highlightPatterns = {
+  warning: /(?<!=)===([^=]+?)===(?!=)/g,
+  error: /(?<!=)==([^=]+?)==(?!=)/g,
+} as const;
+
 @Component({
   selector: 'ix-dynamic-markdown',
   templateUrl: './dynamic-markdown.component.html',
@@ -202,18 +208,22 @@ export class DynamicMarkdownComponent {
   private processHighlightSyntax(content: string): string {
     let processed = content;
 
-    // Match ===text=== for warning highlights
-    // Must have exactly 3 equals on each side
+    // Process warning highlights (===text===)
     processed = processed.replace(
-      /(?<![=])===([^=]+?)===(?![=])/gu,
-      '<span class="highlight-warning">$1</span>',
+      highlightPatterns.warning,
+      (match, text: string) => {
+        const trimmedText = text.trim();
+        return `<span class="highlight-warning" role="note" aria-label="Warning: ${trimmedText}">${trimmedText}</span>`;
+      },
     );
 
-    // Match ==text== for error highlights
-    // Must have exactly 2 equals on each side
+    // Process error highlights (==text==)
     processed = processed.replace(
-      /(?<![=])==([^=]+?)==(?![=])/gu,
-      '<span class="highlight-error">$1</span>',
+      highlightPatterns.error,
+      (match, text: string) => {
+        const trimmedText = text.trim();
+        return `<span class="highlight-error" role="alert" aria-label="Error: ${trimmedText}">${trimmedText}</span>`;
+      },
     );
 
     return processed;
