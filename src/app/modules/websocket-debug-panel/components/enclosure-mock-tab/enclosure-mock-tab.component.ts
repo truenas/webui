@@ -44,6 +44,8 @@ export class EnclosureMockTabComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly store = inject(Store<AppState>);
 
+  validationError: string | null = null;
+
   readonly form = this.fb.group({
     enabled: [false],
     controllerModel: [null as string | null, Validators.required],
@@ -83,8 +85,15 @@ export class EnclosureMockTabComponent implements OnInit {
   onApply(): void {
     const formValue = this.form.getRawValue();
 
-    if (this.form.invalid && formValue.enabled) {
-      return;
+    // Only validate when trying to enable mocking
+    if (formValue.enabled && this.form.invalid) {
+      this.validationError = this.getValidationError();
+      if (this.validationError) {
+        console.warn('Enclosure mock configuration invalid:', this.validationError);
+        return;
+      }
+    } else {
+      this.validationError = null;
     }
 
     const config = {
@@ -95,6 +104,18 @@ export class EnclosureMockTabComponent implements OnInit {
     };
 
     this.store.dispatch(setEnclosureMockConfig({ config }));
+  }
+
+  private getValidationError(): string | null {
+    if (!this.form.controls.controllerModel.value && this.form.controls.enabled.value) {
+      return 'Controller model is required when enclosure mocking is enabled';
+    }
+
+    if (this.form.controls.scenario.invalid) {
+      return 'Invalid scenario selected';
+    }
+
+    return null;
   }
 
   private setupFormListeners(): void {

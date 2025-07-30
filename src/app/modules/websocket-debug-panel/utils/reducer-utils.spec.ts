@@ -1,3 +1,4 @@
+import { MockEnclosureScenario } from 'app/core/testing/mock-enclosure/enums/mock-enclosure.enum';
 import { IncomingMessage } from 'app/interfaces/api-message.interface';
 import { MockConfig } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
 import { WebSocketDebugMessage } from 'app/modules/websocket-debug-panel/interfaces/websocket-debug.interface';
@@ -20,6 +21,12 @@ describe('reducer-utils', () => {
       isPanelOpen: false,
       activeTab: 'websocket',
       messageLimit,
+      enclosureMock: {
+        enabled: false,
+        controllerModel: null,
+        expansionModels: [],
+        scenario: MockEnclosureScenario.FillSomeSlots,
+      },
     });
 
     it('should add message when under limit', () => {
