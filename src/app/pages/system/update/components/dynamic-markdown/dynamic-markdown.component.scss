@@ -26,4 +26,36 @@
       padding: 0;
     }
   }
+
+  .highlight-warning {
+    background-color: rgba(var(--color-warning-rgb), 0.15);
+    border-radius: 4px;
+    color: var(--orange);
+    display: inline-block;
+    font-weight: 500;
+    padding: 2px 8px;
+    position: relative;
+
+    &::before {
+      content: '⚠ ';
+      font-size: 1.1em;
+      margin-right: 4px;
+    }
+  }
+
+  .highlight-error {
+    background-color: rgba(var(--color-error-rgb), 0.15);
+    border-radius: 4px;
+    color: var(--red);
+    display: inline-block;
+    font-weight: 500;
+    padding: 2px 8px;
+    position: relative;
+
+    &::before {
+      content: '✖ ';
+      font-size: 1.1em;
+      margin-right: 4px;
+    }
+  }
 }

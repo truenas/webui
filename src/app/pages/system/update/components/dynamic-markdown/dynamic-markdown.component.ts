@@ -66,6 +66,9 @@ export class DynamicMarkdownComponent {
       },
     );
 
+    // Process highlight syntax and convert to warnings
+    processed = this.processHighlightSyntax(processed);
+
     return processed;
   }
 
@@ -194,5 +197,25 @@ export class DynamicMarkdownComponent {
     }
 
     return tabs;
+  }
+
+  private processHighlightSyntax(content: string): string {
+    let processed = content;
+
+    // Match ===text=== for warning highlights
+    // Must have exactly 3 equals on each side
+    processed = processed.replace(
+      /(?<![=])===([^=]+?)===(?![=])/gu,
+      '<span class="highlight-warning">$1</span>',
+    );
+
+    // Match ==text== for error highlights
+    // Must have exactly 2 equals on each side
+    processed = processed.replace(
+      /(?<![=])==([^=]+?)==(?![=])/gu,
+      '<span class="highlight-error">$1</span>',
+    );
+
+    return processed;
   }
 }
