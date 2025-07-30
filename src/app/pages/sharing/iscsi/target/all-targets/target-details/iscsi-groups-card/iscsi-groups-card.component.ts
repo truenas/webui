@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, computed, input, signal,
+  ChangeDetectionStrategy, Component, computed, input, OnInit, signal,
 } from '@angular/core';
 import {
   MatCard, MatCardContent, MatCardHeader, MatCardTitle,
@@ -25,19 +25,42 @@ import { IscsiService } from 'app/services/iscsi.service';
     TranslateModule,
   ],
 })
-export class IscsiGroupsCardComponent {
+export class IscsiGroupsCardComponent implements OnInit {
   readonly target = input.required<IscsiTarget>();
+
+  protected readonly portals = signal<Option[]>([]);
+  protected readonly initiators = signal<Option[]>([]);
+
+  private readonly portalMap = computed(() => {
+    return new Map(this.portals().map((portal) => [portal.value, portal.label]));
+  });
+
+  private readonly initiatorMap = computed(() => {
+    return new Map(this.initiators().map((initiator) => [initiator.value, initiator.label]));
+  });
+
+  protected readonly targetGroups = computed(() => {
+    const target = this.target();
+    const portalMap = this.portalMap();
+    const initiatorMap = this.initiatorMap();
+
+    return target.groups.map((group) => ({
+      portalLabel: portalMap.get(group.portal),
+      initiatorLabel: group.initiator ? initiatorMap.get(group.initiator) : '-',
+      authmethod: group.authmethod,
+      auth: group.auth ?? '-',
+    }));
+  });
 
   constructor(
     private iscsiService: IscsiService,
     private translate: TranslateService,
-  ) {
+  ) {}
+
+  ngOnInit(): void {
     this.loadPortals();
     this.loadInitiators();
   }
-
-  readonly portals = signal<Option[]>([]);
-  readonly initiators = signal<Option[]>([]);
 
   private loadPortals(): void {
     this.iscsiService.listPortals().pipe(
@@ -67,20 +90,4 @@ export class IscsiGroupsCardComponent {
       this.initiators.set(opts);
     });
   }
-
-  readonly targetGroups = computed(() => {
-    const target = this.target();
-    const portals = this.portals();
-    const initiators = this.initiators();
-
-    const portalMap = new Map(portals.map((portal) => [portal.value, portal.label]));
-    const initiatorMap = new Map(initiators.map((initiator) => [initiator.value, initiator.label]));
-
-    return target.groups.map((group) => ({
-      portalLabel: portalMap.get(group.portal),
-      initiatorLabel: group.initiator ? initiatorMap.get(group.initiator) : '-',
-      authmethod: group.authmethod,
-      auth: group.auth ?? '-',
-    }));
-  });
 }

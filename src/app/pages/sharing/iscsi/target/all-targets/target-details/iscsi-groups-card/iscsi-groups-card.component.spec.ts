@@ -43,4 +43,42 @@ describe('IscsiGroupsCardComponent', () => {
     const group = await spectator.fixture.whenStable().then(() => spectator.query('.group'));
     expect(group).toHaveText('Portal Group ID: 11 (Test Portal) | Initiator Group ID: 12 (iqn.1994-05.com.redhat:123) | Authentication Method: CHAP | Authentication Group Number: 5');
   });
+
+  it('displays "No groups." message when groups array is empty', () => {
+    spectator.setInput('target', { groups: [] } as IscsiTarget);
+    const fallback = spectator.query('p');
+    expect(fallback).toHaveText('No groups.');
+  });
+
+  it('displays "-" when portal or initiator IDs are not found in maps', () => {
+    spectator.setInput('target', {
+      groups: [{
+        portal: 99,
+        initiator: 88,
+        authmethod: IscsiAuthMethod.None,
+        auth: null,
+      }],
+    } as IscsiTarget);
+
+    const group = spectator.query('.group');
+    expect(group).toHaveText(
+      'Portal Group ID: - | Initiator Group ID: - | Authentication Method: NONE | Authentication Group Number: -',
+    );
+  });
+
+  it('handles group with null initiator and auth', () => {
+    spectator.setInput('target', {
+      groups: [{
+        portal: 11,
+        initiator: null,
+        authmethod: IscsiAuthMethod.None,
+        auth: null,
+      }],
+    } as IscsiTarget);
+
+    const group = spectator.query('.group');
+    expect(group).toHaveText(
+      'Portal Group ID: 11 (Test Portal) | Initiator Group ID: - | Authentication Method: NONE | Authentication Group Number: -',
+    );
+  });
 });
