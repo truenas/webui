@@ -31,7 +31,7 @@ export class WebSocketConnectionGuard {
     this.wsManager.isAccessRestricted$.pipe(untilDestroyed(this)).subscribe((isRestricted) => {
       if (isRestricted) {
         this.showAccessRestrictedDialog();
-        this.wsManager.isAccessRestricted$ = false;
+        this.wsManager.isAccessRestricted = false;
       }
     });
   }

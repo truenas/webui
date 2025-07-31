@@ -107,9 +107,9 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
   activeStep: PoolCreationWizardStep = PoolCreationWizardStep.General;
   hasEnclosureStep = false;
   state: PoolManagerState;
-  topLevelWarningsForEachStep: Partial<{ [key in PoolCreationWizardStep]: string | null }>;
-  topLevelErrorsForEachStep: Partial<{ [key in PoolCreationWizardStep]: string | null }>;
-  activatedSteps: Partial<{ [key in PoolCreationWizardStep]: boolean }> = {};
+  topLevelWarningsForEachStep: Partial<Record<PoolCreationWizardStep, string | null>>;
+  topLevelErrorsForEachStep: Partial<Record<PoolCreationWizardStep, string | null>>;
+  activatedSteps: Partial<Record<PoolCreationWizardStep, boolean>> = {};
 
   protected readonly PoolCreationWizardStep = PoolCreationWizardStep;
 

@@ -1,6 +1,6 @@
 function processSearchDocsHierarchyItem(hierarchyItem: string): string {
   const regex = /(.*«)(.*?)(».*)/;
-  const match: RegExpMatchArray | null = hierarchyItem.match(regex);
+  const match: RegExpMatchArray | null = regex.exec(hierarchyItem);
 
   if (match) {
     const beforeQuote: string = match[1];
@@ -39,7 +39,7 @@ export function processHierarchy(hierarchy: string[] = [], searchTerm = ''): str
     // When a search term is provided, match and highlight within the last item only
     if (hierarchy.length >= 1 && index === hierarchy.length - 1) {
       const lastItemSegments = item.split(regex).map((segment) => {
-        return segment.match(regex) ? `<span class="highlight">${segment}</span>` : `<span class="dimmed-text">${segment}</span>`;
+        return regex.exec(segment) ? `<span class="highlight">${segment}</span>` : `<span class="dimmed-text">${segment}</span>`;
       });
       return lastItemSegments.join('');
     }

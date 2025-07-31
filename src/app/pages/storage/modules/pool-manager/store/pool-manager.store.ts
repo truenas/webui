@@ -49,9 +49,7 @@ export interface PoolManagerTopologyCategory {
   draidSpareDisks: number | null;
 }
 
-export type PoolManagerTopology = {
-  [category in VDevType]: PoolManagerTopologyCategory;
-};
+export type PoolManagerTopology = Record<VDevType, PoolManagerTopologyCategory>;
 
 interface PoolManagerDiskSettings {
   allowNonUniqueSerialDisks: boolean;

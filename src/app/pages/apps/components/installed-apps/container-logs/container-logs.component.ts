@@ -121,7 +121,7 @@ export class ContainerLogsComponent implements OnInit {
   scrollToBottom(): void {
     try {
       this.logContainer().nativeElement.scrollTop = this.logContainer().nativeElement.scrollHeight;
-    } catch (_: unknown) {
+    } catch {
       // Ignore error
     }
   }

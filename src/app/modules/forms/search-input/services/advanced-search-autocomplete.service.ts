@@ -60,7 +60,7 @@ export class AdvancedSearchAutocompleteService<T> {
     in: this.translate.instant('{comparator} (In)', { comparator: 'IN' }),
     nin: this.translate.instant('{comparator} (Not In)', { comparator: 'NIN' }),
     $: this.translate.instant('{comparator} (Ends With)', { comparator: '$' }),
-  } as { [key in QueryComparator]: string };
+  } as Record<QueryComparator, string>;
 
   showDatePicker$ = new BehaviorSubject(false);
 

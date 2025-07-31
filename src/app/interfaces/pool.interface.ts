@@ -50,9 +50,7 @@ export interface Pool {
   dedup_table_size: number;
 }
 
-export type PoolTopology = {
-  [category in VDevType]: VDevItem[];
-};
+export type PoolTopology = Record<VDevType, VDevItem[]>;
 
 export interface PoolScanUpdate {
   bytes_issued: number;

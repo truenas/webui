@@ -7,9 +7,7 @@ export enum EnclosureSide {
   Internal = 'internal',
 }
 
-export type EnclosureViews = {
-  [key in EnclosureSide]?: string;
-};
+export type EnclosureViews = Partial<Record<EnclosureSide, string>>;
 
 const fSeries = {
   [EnclosureSide.Front]: 'assets/images/new-hardware/f-series/f-series-front.svg',

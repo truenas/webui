@@ -38,7 +38,7 @@ export class ConsoleFooterComponent implements OnInit {
     this.lastThreeLogLines$.pipe(untilDestroyed(this)).subscribe(() => {
       try {
         this.messageContainer().nativeElement.scroll({ top: this.messageContainer().nativeElement.scrollHeight });
-      } catch (err: unknown) {}
+      } catch {}
     });
   }
 }

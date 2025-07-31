@@ -319,7 +319,7 @@ describe('LdapConfigComponent', () => {
           'Base Group': 'ou=groups,dc=test,dc=com',
           'Base Netgroup': 'ou=netgroups,dc=test,dc=com',
         });
-      } catch (error) {
+      } catch {
         // Fields might not be available immediately after checkbox change
       }
 
@@ -350,7 +350,7 @@ describe('LdapConfigComponent', () => {
           'User Name': 'cn',
           'User UID': 'employeeNumber',
         });
-      } catch (error) {
+      } catch {
         // Fields might not be available immediately after checkbox change
       }
 
@@ -435,7 +435,7 @@ describe('LdapConfigComponent', () => {
           'Base Group': '',
           'Base Netgroup': '',
         });
-      } catch (error) {
+      } catch {
         // Fields might not be available immediately after checkbox change
       }
 

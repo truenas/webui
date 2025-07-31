@@ -57,16 +57,13 @@ export class QueryToApiService<T> {
       } else {
         paramsGroup.orFilter(...this.buildCondition(conditionGroup.right));
       }
-    } else {
+    } else if (isConditionGroup(conditionGroup.right)) {
       // Right AND
-      // eslint-disable-next-line sonarjs/no-lonely-if
-      if (isConditionGroup(conditionGroup.right)) {
-        paramsGroup.andGroup((rightGroup) => {
-          this.buildGroup(rightGroup, conditionGroup.right as ConditionGroup);
-        });
-      } else {
-        paramsGroup.andFilter(...this.buildCondition(conditionGroup.right));
-      }
+      paramsGroup.andGroup((rightGroup) => {
+        this.buildGroup(rightGroup, conditionGroup.right as ConditionGroup);
+      });
+    } else {
+      paramsGroup.andFilter(...this.buildCondition(conditionGroup.right));
     }
   }
 
@@ -99,7 +96,7 @@ export class QueryToApiService<T> {
     return value;
   }
 
-  private parseDateAsUnixSeconds(value: LiteralValue | LiteralValue[]): (number | null) | (number | null)[] {
+  private parseDateAsUnixSeconds(value: LiteralValue | LiteralValue[]): number | null | (number | null)[] {
     const convertDate = (dateValue: LiteralValue): number | null => {
       const date = parseISO(dateValue as string);
       if (Number.isNaN(date.getTime())) {
