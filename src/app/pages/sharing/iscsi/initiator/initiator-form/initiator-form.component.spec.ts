@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { createRoutingFactory, mockProvider, SpectatorRouting } from '@ngneat/spectator/jest';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { IscsiGlobalSession } from 'app/interfaces/iscsi-global-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
@@ -27,6 +28,11 @@ describe('InitiatorFormComponent', () => {
     ],
     providers: [
       mockAuth(),
+      mockWindow({
+        navigator: {
+          userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+        },
+      }),
       mockApi([
         mockCall('iscsi.global.sessions', [{
           initiator: 'inr1',
