@@ -23,6 +23,7 @@ describe('TruenasConnectStatusModalComponent', () => {
   const config = signal({
     enabled: true,
     ips: ['10.220.36.85'],
+    interfaces_ips: [],
     tnc_base_url: 'https://truenas.connect.dev.ixsystems.net/',
     account_service_base_url: 'https://account-service.dev.ixsystems.net/',
     leca_service_base_url: 'https://leca-server.dev.ixsystems.net/',

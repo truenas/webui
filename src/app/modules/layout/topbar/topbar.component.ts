@@ -89,7 +89,7 @@ export class TopbarComponent implements OnInit {
   readonly shownDialog = signal(false);
   readonly hasTncConfig = computed(() => {
     const config = this.tnc.config();
-    return config?.ips?.length && config.tnc_base_url
+    return config && (config.ips.length || config.interfaces_ips.length) && config.tnc_base_url
       && config.account_service_base_url
       && config.leca_service_base_url;
   });
