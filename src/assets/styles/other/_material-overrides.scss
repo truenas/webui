@@ -38,6 +38,9 @@ html .ix-dark {
   --mat-slide-toggle-selected-pressed-handle-color: var(--primary);
   --mat-button-outlined-label-text-color: var(--fg2);
   --mat-button-filled-container-color: var(--bg2);
+  --mat-button-filled-label-text-color: var(--fg2);
+  --mat-icon-button-disabled-icon-color: var(--alt-fg1);
+  --mat-list-list-item-disabled-label-text-color: var(--fg2);
   --mat-snack-bar-container-color: var(--bg2);
   --mat-slide-toggle-selected-hover-handle-color: var(--primary);
   --mdc-switch-selected-handle-color: var(--primary);
@@ -429,7 +432,7 @@ html .ix-dark {
 .mat-mdc-snack-bar-container.ix-snackbar-high-priority {
   // Force the parent overlay wrapper to have higher z-index
   position: relative;
-  
+
   // Use a pseudo-element to push the z-index up
   &::before {
     bottom: 0;
