@@ -41,7 +41,7 @@ describe('IscsiGroupsCardComponent', () => {
 
   it('shows group information with labels', async () => {
     const group = await spectator.fixture.whenStable().then(() => spectator.query('.group'));
-    expect(group).toHaveText('Portal Group ID: 11 (Test Portal) | Initiator Group ID: 12 (iqn.1994-05.com.redhat:123) | Authentication Method: CHAP | Authentication Group Number: 5');
+    expect(group).toHaveText('Group 1Portal Group ID:11 (Test Portal)Initiator Group ID:12 (iqn.1994-05.com.redhat:123)Authentication Method:CHAPAuthentication Group Number:5');
   });
 
   it('displays "No groups." message when groups array is empty', () => {
@@ -62,7 +62,7 @@ describe('IscsiGroupsCardComponent', () => {
 
     const group = spectator.query('.group');
     expect(group).toHaveText(
-      'Portal Group ID: - | Initiator Group ID: - | Authentication Method: NONE | Authentication Group Number: -',
+      'Group 1Portal Group ID:-Initiator Group ID:-Authentication Method:NONEAuthentication Group Number:-',
     );
   });
 
@@ -78,7 +78,7 @@ describe('IscsiGroupsCardComponent', () => {
 
     const group = spectator.query('.group');
     expect(group).toHaveText(
-      'Portal Group ID: 11 (Test Portal) | Initiator Group ID: - | Authentication Method: NONE | Authentication Group Number: -',
+      'Group 1Portal Group ID:11 (Test Portal)Initiator Group ID:-Authentication Method:NONEAuthentication Group Number:-',
     );
   });
 });
